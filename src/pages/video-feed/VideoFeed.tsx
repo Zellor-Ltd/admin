@@ -11,26 +11,10 @@ import { Link, RouteComponentProps, withRouter } from "react-router-dom";
 import { ColumnsType } from "antd/es/table";
 import { fetchVideoFeed } from "services/DiscoClubService";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import { FeedItem } from "interfaces/FeedItem";
+import { Tag } from "interfaces/Tag";
 
 const { Content } = Layout;
-
-interface Video {
-  title: string;
-  videoUrl: string;
-  thumbnailUrl: string;
-  tags: Tag;
-  brands: Brand;
-}
-
-interface Brand {}
-interface Tag {
-  discoDollars: number;
-  discoGold: number;
-}
-interface FeedItem {
-  video: Video;
-  id: string;
-}
 
 const deleteItem = (id: string) => {
   // deleteVideoFeed(id);
@@ -67,7 +51,7 @@ const columns: ColumnsType<FeedItem> = [
     align: "right",
     render: (value, record) => (
       <>
-        <Link to={`/video-feed/${record.id}`}>
+        <Link to={{ pathname: `/video-feed/${record.id}`, state: record }}>
           <EditOutlined />
         </Link>
         <Popconfirm title="Are you sure？" okText="Yes" cancelText="No">

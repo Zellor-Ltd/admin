@@ -8,7 +8,7 @@ const { Header, Sider, Content } = Layout;
 const AuthenticatedLayout: React.FC = (props) => {
   const { children } = props;
   return (
-    <Layout style={{ height: "100vh" }}>
+    <Layout>
       <Header className="header">
         <h2>
           <Link to="/"> Disco Admin</Link>
