@@ -11,9 +11,12 @@
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
     "antd": "^4.13.0",
+    "axios": "^0.21.1",
+    "lodash": "^4.17.21",
     "node-sass": "^5.0.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
+    "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3",
     "typescript": "^4.1.2",
     "web-vitals": "^1.0.1"
@@ -22,8 +25,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "deploy-azure": "yarn build && az storage blob upload-batch -s ./build -d $web --connection-string DefaultEndpointsProtocol=https;AccountName=discoclubreact;AccountKey=N6O0rUyyEIrA06BY90oULb5KQxkMuoEmJgTEZidSBmiV9cTSsh/SmCgfA0xWiW5Ld6aN3fZLKlKU7K9FwxQxpg==;EndpointSuffix=core.windows.net"
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [
@@ -42,5 +44,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.168",
+    "@types/react-router-dom": "^5.1.7"
   }
 }
