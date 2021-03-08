@@ -6,12 +6,14 @@ import {
   Input,
   InputNumber,
   PageHeader,
+  Popconfirm,
   Row,
   Select,
   Table,
+  Typography,
 } from "antd";
 
-import { EditOutlined } from "@ant-design/icons";
+import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { Tag } from "interfaces/Tag";
 import { Position } from "interfaces/Position";
 import { RouteComponentProps, withRouter } from "react-router-dom";
@@ -19,6 +21,8 @@ import ModalTag from "./ModalTag";
 import { Brand } from "interfaces/Brand";
 import ModalBrand from "./ModalBrand";
 const { Option } = Select;
+
+const { Title } = Typography;
 
 const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
   const { history, location } = props;
@@ -66,10 +70,6 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
     });
   };
 
-  const onValuesChange = (values: any) => {
-    console.log(values);
-  };
-
   const onEditTag = (tag: Tag, index: number) => {
     setSelectedTag(tag);
     setTagModalVisible(true);
@@ -77,9 +77,22 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
     setSelectedPositions(tag.position || []);
   };
 
-  const onDeletePosition = (record: Position) => {
+  const onDeletePosition = (index: number) => {
     const dataSource = [...selectedPositions];
-    setSelectedPositions(dataSource.filter((item) => item.key !== record.key));
+    dataSource.splice(index, 1);
+    setSelectedPositions(dataSource);
+  };
+
+  const onDeleteBrand = (index: number) => {
+    const brand: Brand[] = form.getFieldValue("brand") || [];
+    brand.splice(index, 1);
+    form.setFieldsValue({ brand: [...brand] });
+  };
+
+  const onDeleteTag = (index: number) => {
+    const tags: Tag[] = form.getFieldValue("tags") || [];
+    tags.splice(index, 1);
+    form.setFieldsValue({ tags: [...tags] });
   };
 
   const onSavePosition = (row: Position) => {
@@ -109,8 +122,8 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
 
   const brandColumns = [
     {
-      title: "Product Name",
-      dataIndex: "productName",
+      title: "Brand Name",
+      dataIndex: "brandName",
     },
 
     {
@@ -120,8 +133,19 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
     {
       title: "actions",
       dataIndex: "actions",
-      render: (_: any, record: Brand) => (
-        <EditOutlined onClick={() => onEditBrand(record)} />
+      render: (_: any, record: Brand, index: number) => (
+        <div style={{ display: "flex" }}>
+          <Button type="link">
+            <EditOutlined onClick={() => onEditBrand(record)} />
+          </Button>
+          <Popconfirm
+            title="Sure to delete?"
+            onConfirm={() => onDeleteBrand(index)}>
+            <Button type="link">
+              <DeleteOutlined />
+            </Button>
+          </Popconfirm>
+        </div>
       ),
     },
   ];
@@ -142,7 +166,7 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
       number: true,
     },
     {
-      title: "Positions",
+      title: "Movments",
       dataIndex: "position",
       render: (positions: Position[] = []) => positions.length,
     },
@@ -150,7 +174,18 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
       title: "actions",
       dataIndex: "actions",
       render: (_: any, record: Tag, index: number) => (
-        <EditOutlined onClick={() => onEditTag(record, index)} />
+        <div style={{ display: "flex" }}>
+          <Button type="link">
+            <EditOutlined onClick={() => onEditTag(record, index)} />
+          </Button>
+          <Popconfirm
+            title="Sure to delete?"
+            onConfirm={() => onDeleteTag(index)}>
+            <Button type="link">
+              <DeleteOutlined />
+            </Button>
+          </Popconfirm>
+        </div>
       ),
     },
   ];
@@ -255,12 +290,12 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
           </Row>
           <Button
             htmlType="button"
-            style={{ margin: "0 8px" }}
+            style={{ margin: "8px 0" }}
             onClick={onAddBrand}>
             Add Brand
           </Button>
+          <Title level={3}>Brands</Title>
           <Form.Item
-            label="Brands"
             shouldUpdate={(prevValues, curValues) =>
               prevValues.brands !== curValues.brands
             }>
@@ -277,28 +312,16 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
                   }
                 />
               );
-              // return brands.length ? (
-              //   <ul>
-              //     {brands.map((brand, index) => (
-              //       <li key={index} className="brand">
-              //         {brand.brandID} - {brand.brandName} - {brand.brandLogoUrl}
-              //         <EditOutlined onClick={() => onEditBrand(brand)} />
-              //       </li>
-              //     ))}
-              //   </ul>
-              // ) : (
-              //   "Add Brand aew"
-              // );
             }}
           </Form.Item>
           <Button
             htmlType="button"
-            style={{ margin: "0 8px" }}
+            style={{ margin: "8px 0" }}
             onClick={onAddTag}>
             Add Tag
           </Button>
+          <Title level={3}>Tags</Title>
           <Form.Item
-            label="Tags"
             shouldUpdate={(prevValues, curValues) =>
               prevValues.tags !== curValues.tags
             }>
@@ -314,18 +337,6 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
                   }
                 />
               );
-              // return tags.length ? (
-              //   <ul>
-              //     {tags.map((tag, index) => (
-              //       <li key={index} className="tag">
-              //         {tag.productName} - {tag.tagId}
-              //         <EditOutlined onClick={() => onEditTag(tag, index)} />
-              //       </li>
-              //     ))}
-              //   </ul>
-              // ) : (
-              //   "Não tem man"
-              // );
             }}
           </Form.Item>
 
@@ -340,7 +351,6 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
           visible={brandModalVisible}
           brand={selectedBrand}
           onCancel={onCancelBrandModal}
-          parentForm={form}
         />
         <ModalTag
           visible={tagModalVisible}
