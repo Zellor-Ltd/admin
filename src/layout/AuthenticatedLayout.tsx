@@ -15,7 +15,12 @@ const AuthenticatedLayout: React.FC = (props) => {
         </h2>
       </Header>
       <Layout className="site-layout">
-        <Sider breakpoint="lg" collapsedWidth="0">
+        <Sider
+          breakpoint="lg"
+          collapsedWidth="0"
+          style={{
+            height: "100vh",
+          }}>
           <div className="logo" />
           <Menu theme="dark" mode="inline" defaultSelectedKeys={["1"]}>
             <Menu.Item key="2" icon={<HeartFilled />}>

@@ -1,4 +1,4 @@
-import { Col, Form, FormInstance, Input, InputNumber, Modal, Row } from "antd";
+import { Col, Form, Input, InputNumber, Modal, Row } from "antd";
 import { Brand } from "interfaces/Brand";
 import { useEffect } from "react";
 import { useResetFormOnCloseModal } from "./useResetFormCloseModal";
@@ -6,21 +6,15 @@ import { useResetFormOnCloseModal } from "./useResetFormCloseModal";
 interface ModalFormProps {
   brand: Brand | undefined;
   visible: boolean;
-  parentForm: FormInstance;
   onCancel: () => void;
 }
 
-const ModalBrand: React.FC<ModalFormProps> = ({
-  brand,
-  visible,
-  parentForm,
-  onCancel,
-}) => {
+const ModalBrand: React.FC<ModalFormProps> = ({ brand, visible, onCancel }) => {
   const [form] = Form.useForm();
 
   useEffect(() => {
     form.resetFields();
-  }, [brand]);
+  }, [brand, form]);
 
   useResetFormOnCloseModal({
     form,
@@ -37,7 +31,8 @@ const ModalBrand: React.FC<ModalFormProps> = ({
       visible={visible}
       onOk={onOk}
       onCancel={onCancel}
-      width={"80%"}>
+      width={"80%"}
+      forceRender>
       <Form form={form} name="brandForm" initialValues={brand}>
         <Input.Group>
           <Row gutter={8}>

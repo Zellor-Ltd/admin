@@ -20,5 +20,5 @@ export const useResetFormOnCloseModal = ({
     if (!visible && prevVisible) {
       form.resetFields();
     }
-  }, [visible]);
+  }, [visible, form, prevVisible]);
 };

@@ -27,7 +27,7 @@ interface ModalFormProps {
   visible: boolean;
   selectedPositions: Position[];
   onCancel: () => void;
-  onDeletePosition: (record: Position) => void;
+  onDeletePosition: (index: number) => void;
   onSavePosition: (row: Position) => void;
   onAddPosition: () => void;
 }
@@ -80,7 +80,7 @@ const EditableCell: React.FC<EditableCellProps> = ({
         inputRef.current!.focus();
       }
     }
-  }, [editing]);
+  }, [editing, number]);
 
   const toggleEdit = () => {
     setEditing(!editing);
@@ -143,7 +143,7 @@ const ModalTag: React.FC<ModalFormProps> = ({
 
   useEffect(() => {
     form.resetFields();
-  }, [tag]);
+  }, [tag, form]);
 
   useResetFormOnCloseModal({
     form,
@@ -195,12 +195,11 @@ const ModalTag: React.FC<ModalFormProps> = ({
     {
       title: "actions",
       dataIndex: "actions",
-      render: (_: any, record: Position) =>
+      render: (_: any, record: Position, index: number) =>
         selectedPositions.length >= 1 ? (
           <Popconfirm
             title="Sure to delete?"
-            onConfirm={() => onDeletePosition(record)}>
-            {JSON.stringify(_)}
+            onConfirm={() => onDeletePosition(index)}>
             <Button type="link" style={{ padding: 0, margin: 6 }}>
               <DeleteOutlined />
             </Button>
@@ -232,7 +231,8 @@ const ModalTag: React.FC<ModalFormProps> = ({
       visible={visible}
       onOk={onOk}
       onCancel={onCancel}
-      width={"80%"}>
+      width={"80%"}
+      forceRender>
       <Form form={form} name="tagForm" initialValues={tag}>
         <Input.Group>
           <Row gutter={8}>
@@ -327,10 +327,16 @@ const ModalTag: React.FC<ModalFormProps> = ({
           </Row>
         </Input.Group>
 
-        <Button type="primary" onClick={() => onAddPosition()}>
-          Add Position
+        <Button
+          type="primary"
+          style={{ margin: "8px 0" }}
+          onClick={() => onAddPosition()}>
+          Add Movments
         </Button>
         <Table
+          rowKey={(position: Position) =>
+            `posotion_${position.x}_${position.z}`
+          }
           title={() => "Tag Motion"}
           components={components}
           rowClassName={() => "editable-row"}
