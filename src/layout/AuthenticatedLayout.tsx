@@ -1,32 +1,30 @@
+import { Link, withRouter } from "react-router-dom";
 import { Layout, Menu } from "antd";
-import { LineChartOutlined, HeartFilled, BookFilled } from "@ant-design/icons";
+import { HeartFilled, BookFilled } from "@ant-design/icons";
 import "./AuthenticatedLayout.scss";
 
 const { Header, Sider, Content } = Layout;
 
-function AuthenticatedLayout() {
+const AuthenticatedLayout: React.FC = (props) => {
+  const { children } = props;
   return (
-    <Layout style={{ height: "100vh" }}>
+    <Layout>
       <Header className="header">
-        <h2>Disco Admin</h2>
+        <h2>
+          <Link to="/"> Disco Admin</Link>
+        </h2>
       </Header>
       <Layout className="site-layout">
         <Sider
           breakpoint="lg"
           collapsedWidth="0"
-          onBreakpoint={(broken) => {
-            console.log(broken);
-          }}
-          onCollapse={(collapsed, type) => {
-            console.log(collapsed, type);
+          style={{
+            height: "100vh",
           }}>
           <div className="logo" />
           <Menu theme="dark" mode="inline" defaultSelectedKeys={["1"]}>
-            <Menu.Item key="1" icon={<LineChartOutlined />}>
-              Dashboard
-            </Menu.Item>
             <Menu.Item key="2" icon={<HeartFilled />}>
-              Videos Feed
+              <Link to="/video-feed">Videos Feed</Link>
             </Menu.Item>
             <Menu.Item key="3" icon={<BookFilled />}>
               Coin Orders
@@ -41,11 +39,11 @@ function AuthenticatedLayout() {
             padding: 24,
             minHeight: 280,
           }}>
-          Content
+          {children}
         </Content>
       </Layout>
     </Layout>
   );
-}
+};
 
-export default AuthenticatedLayout;
+export default withRouter(AuthenticatedLayout);
