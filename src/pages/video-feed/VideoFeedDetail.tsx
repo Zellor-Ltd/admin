@@ -20,6 +20,7 @@ import { RouteComponentProps, withRouter } from "react-router-dom";
 import ModalTag from "./ModalTag";
 import { Brand } from "interfaces/Brand";
 import ModalBrand from "./ModalBrand";
+import { saveVideoFeed } from "services/DiscoClubService";
 const { Option } = Select;
 
 const { Title } = Typography;
@@ -63,11 +64,8 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
     setTagModalVisible(false);
   };
 
-  const onFinish = (values: any) => {
-    console.log("Finish:", {
-      ...values,
-      ...form.getFieldsValue(["tags", "brands"]),
-    });
+  const onFinish = () => {
+    saveVideoFeed(form.getFieldsValue(true));
   };
 
   const onEditTag = (tag: Tag, index: number) => {
@@ -308,7 +306,7 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
                   dataSource={brands}
                   bordered
                   rowKey={(record) =>
-                    `Brand_${record.brandID}_${record.brandLogoUrl}`
+                    `Brand_${record.brandId}_${record.brandLogoUrl}`
                   }
                 />
               );
@@ -366,4 +364,4 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
   );
 };
 
-export default withRouter(VideoFeedDetail);
+export default VideoFeedDetail;
