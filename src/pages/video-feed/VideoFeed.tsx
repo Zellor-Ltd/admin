@@ -21,28 +21,50 @@ const deleteItem = (id: string) => {
 };
 
 const columns: ColumnsType<FeedItem> = [
-  { title: "title", dataIndex: ["video", "title"], width: "15%" },
-  { title: "Image URL", dataIndex: ["video", "thumbnailUrl"], width: "25%" },
-  { title: "Video URL", dataIndex: ["video", "videoUrl"], width: "25%" },
-  { title: "Tags", dataIndex: ["tags", "length"], width: "5%" },
-  { title: "Brands", dataIndex: ["brands", "length"], width: "5%" },
+  { title: "Title", dataIndex: ["video", "title"], width: "15%" },
+  {
+    title: "Image URL",
+    dataIndex: ["video", "thumbnailUrl"],
+    width: "25%",
+    align: "center",
+  },
+  {
+    title: "Video URL",
+    dataIndex: ["video", "videoUrl"],
+    width: "25%",
+    align: "center",
+  },
+  {
+    title: "Tags",
+    dataIndex: ["tags", "length"],
+    width: "5%",
+    align: "center",
+  },
+  {
+    title: "Brands",
+    dataIndex: ["brands", "length"],
+    width: "5%",
+    align: "center",
+  },
   {
     title: "Dollars",
     dataIndex: "tags",
-    render: (tags: Array<Tag>) =>
+    render: (tags: Array<Tag> = []) =>
       tags.map((tag, index) => (
         <AntTag key={`dolar_${index}`}>{tag.discoDollars}</AntTag>
       )),
     width: "10%",
+    align: "center",
   },
   {
     title: "Gold",
     dataIndex: "tags",
-    render: (tags: Array<Tag>) =>
+    render: (tags: Array<Tag> = []) =>
       tags.map((tag, index) => (
         <AntTag key={`dolar_${index}`}>{tag.discoGold}</AntTag>
       )),
     width: "10%",
+    align: "center",
   },
   {
     title: "actions",
