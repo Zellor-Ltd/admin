@@ -1,4 +1,12 @@
 import React, { useState } from "react";
+import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import { Tag } from "interfaces/Tag";
+import { Position } from "interfaces/Position";
+import { RouteComponentProps } from "react-router-dom";
+import ModalTag from "./ModalTag";
+import { Brand } from "interfaces/Brand";
+import ModalBrand from "./ModalBrand";
+import { saveVideoFeed } from "services/DiscoClubService";
 import {
   Button,
   Col,
@@ -13,14 +21,6 @@ import {
   Typography,
 } from "antd";
 
-import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
-import { Tag } from "interfaces/Tag";
-import { Position } from "interfaces/Position";
-import { RouteComponentProps, withRouter } from "react-router-dom";
-import ModalTag from "./ModalTag";
-import { Brand } from "interfaces/Brand";
-import ModalBrand from "./ModalBrand";
-import { saveVideoFeed } from "services/DiscoClubService";
 const { Option } = Select;
 
 const { Title } = Typography;
@@ -93,9 +93,8 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
     form.setFieldsValue({ tags: [...tags] });
   };
 
-  const onSavePosition = (row: Position) => {
+  const onSavePosition = (row: Position, index: number) => {
     const newData = [...selectedPositions];
-    const index = newData.findIndex((item) => row.key === item.key);
     const item = newData[index];
     newData.splice(index, 1, {
       ...item,

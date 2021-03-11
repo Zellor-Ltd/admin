@@ -29,6 +29,9 @@ const AuthenticatedLayout: React.FC = (props) => {
             <Menu.Item key="products" icon={<TagOutlined />}>
               <Link to="/products">Products</Link>
             </Menu.Item>
+            <Menu.Item key="tags" icon={<TagOutlined />}>
+              <Link to="/tags">Tags</Link>
+            </Menu.Item>
           </Menu>
         </Sider>
 

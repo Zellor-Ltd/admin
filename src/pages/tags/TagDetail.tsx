@@ -1,63 +1,67 @@
-import React, { useEffect } from "react";
+import { EditableCell, EditableRow } from "components";
+import { DeleteOutlined } from "@ant-design/icons";
+import { Position } from "interfaces/Position";
+import { ColumnTypes } from "components/editable-context";
+import { RouteComponentProps } from "react-router";
+import Title from "antd/lib/typography/Title";
 import {
   Button,
   Col,
   Form,
   Input,
   InputNumber,
-  Modal,
+  PageHeader,
   Popconfirm,
   Row,
   Select,
   Table,
 } from "antd";
-import { Position } from "interfaces/Position";
-import { Tag } from "interfaces/Tag";
-import { useResetFormOnCloseModal } from "./useResetFormCloseModal";
-import { EditableCell, EditableRow } from "components";
-import { DeleteOutlined } from "@ant-design/icons";
-import { ColumnTypes } from "components/editable-context";
+
 const { Option } = Select;
 
-interface ModalFormProps {
-  tag: Tag | undefined;
-  visible: boolean;
-  selectedPositions: Position[];
-  onCancel: () => void;
-  onDeletePosition: (index: number) => void;
-  onSavePosition: (row: Position, index: number) => void;
-  onAddPosition: () => void;
-}
+const components = {
+  body: {
+    row: EditableRow,
+    cell: EditableCell,
+  },
+};
 
-const ModalTag: React.FC<ModalFormProps> = ({
-  tag,
-  visible,
-  selectedPositions,
-  onCancel,
-  onDeletePosition,
-  onSavePosition,
-  onAddPosition,
-}) => {
+const TagDetail: React.FC<RouteComponentProps> = (props) => {
+  const { history, location } = props;
+  const initial: any = location.state;
+
   const [form] = Form.useForm();
 
-  useEffect(() => {
-    form.resetFields();
-  }, [tag, form]);
-
-  useResetFormOnCloseModal({
-    form,
-    visible,
-  });
-
-  const onOk = () => {
-    form.submit();
+  const onDeletePosition = (index: number) => {
+    const positions = form.getFieldValue("position").slice();
+    positions.splice(index, 1);
+    form.setFieldsValue({ position: positions });
   };
 
-  const components = {
-    body: {
-      row: EditableRow,
-      cell: EditableCell,
-    },
+  const onSavePosition = (row: Position, index: number) => {
+    const positions = form.getFieldValue("position").slice();
+    const item = positions[index];
+    positions.splice(index, 1, {
+      ...item,
+      ...row,
+    });
+    form.setFieldsValue({ position: positions });
+  };
+
+  const onAddMoviments = () => {
+    const positions = form.getFieldValue("position");
+    form.setFieldsValue({
+      position: [
+        ...positions,
+        {
+          startTime: 0,
+          opacity: 0,
+          x: 0,
+          y: 0,
+          z: 0,
+        },
+      ],
+    });
   };
 
   const columns = [
@@ -94,16 +98,15 @@ const ModalTag: React.FC<ModalFormProps> = ({
     {
       title: "actions",
       dataIndex: "actions",
-      render: (_: any, record: Position, index: number) =>
-        selectedPositions.length >= 1 ? (
-          <Popconfirm
-            title="Sure to delete?"
-            onConfirm={() => onDeletePosition(index)}>
-            <Button type="link" style={{ padding: 0, margin: 6 }}>
-              <DeleteOutlined />
-            </Button>
-          </Popconfirm>
-        ) : null,
+      render: (_: any, record: Position, index: number) => (
+        <Popconfirm
+          title="Sure to delete?"
+          onConfirm={() => onDeletePosition(index)}>
+          <Button type="link" style={{ padding: 0, margin: 6 }}>
+            <DeleteOutlined />
+          </Button>
+        </Popconfirm>
+      ),
     },
   ];
 
@@ -125,14 +128,9 @@ const ModalTag: React.FC<ModalFormProps> = ({
   });
 
   return (
-    <Modal
-      title="Tag"
-      visible={visible}
-      onOk={onOk}
-      onCancel={onCancel}
-      width={"80%"}
-      forceRender>
-      <Form form={form} name="tagForm" initialValues={tag}>
+    <>
+      <PageHeader title="Tag Update" subTitle="Tag" />
+      <Form form={form} name="tagForm" initialValues={initial}>
         <Input.Group>
           <Row gutter={8}>
             <Col lg={8} xs={24}>
@@ -229,23 +227,42 @@ const ModalTag: React.FC<ModalFormProps> = ({
         <Button
           type="primary"
           style={{ margin: "8px 0" }}
-          onClick={() => onAddPosition()}>
-          Add Movments
+          onClick={onAddMoviments}>
+          Add Moviments
         </Button>
-        <Table
-          rowKey={(position: Position) =>
-            `posotion_${position.x}_${position.z}_${Math.random()}`
-          }
-          title={() => "Tag Motion"}
-          components={components}
-          rowClassName={() => "editable-row"}
-          bordered
-          dataSource={selectedPositions}
-          columns={configuredColumns as ColumnTypes}
-        />
+        <Title level={3}>Moviment</Title>
+        <Form.Item
+          shouldUpdate={(prevValues, curValues) =>
+            prevValues.position !== curValues.position
+          }>
+          {({ getFieldValue }) => {
+            const positions: Position[] = getFieldValue("position") || [];
+
+            return (
+              <Table
+                rowKey={(position: Position) =>
+                  `position_${position.x}_${position.z}_${Math.random()}`
+                }
+                title={() => "Tag Motion"}
+                components={components}
+                rowClassName={() => "editable-row"}
+                bordered
+                dataSource={positions}
+                columns={configuredColumns as ColumnTypes}
+              />
+            );
+          }}
+        </Form.Item>
+
+        <Button type="default" onClick={() => history.push("/tags")}>
+          Cancel
+        </Button>
+        <Button type="primary" htmlType="submit">
+          Save Changes
+        </Button>
       </Form>
-    </Modal>
+    </>
   );
 };
 
-export default ModalTag;
+export default TagDetail;
