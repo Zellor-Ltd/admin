@@ -15,11 +15,11 @@ export const fetchStartupVideo = () => instance.get("GetStartupVideo");
 
 export const fetchVideoFeed = () => instance.get("GetVideoFeed");
 
-export const deleteVideoFeed = (id: string) => instance.delete("GetVideoFeed");
-
 export const fetchProducts = () => instance.get("GetProducts");
 
 export const fetchBrands = () => instance.get("SearchBrands");
+
+export const fetchTags = () => instance.get("GetTags");
 
 export const saveVideoFeed = (params: FeedItem) => {
   if (params.id) {
@@ -36,3 +36,5 @@ export const saveProduct = (params: Product) => {
     return instance.put("AddProduct", params);
   }
 };
+
+export const deleteVideoFeed = (id: string) => instance.delete("GetVideoFeed");

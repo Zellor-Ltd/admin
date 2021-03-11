@@ -1,4 +1,4 @@
-import { RouteComponentProps, useHistory } from "react-router";
+import { RouteComponentProps } from "react-router";
 import { Button, PageHeader, Popconfirm, Table, Tag } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import { Product } from "interfaces/Product";
@@ -54,10 +54,9 @@ const columns: ColumnsType<Product> = [
   },
 ];
 
-const ProductsList: React.FC<RouteComponentProps> = () => {
+const Products: React.FC<RouteComponentProps> = ({ history }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [products, setProducts] = useState<Product[] | undefined>();
-  const history = useHistory();
 
   useEffect(() => {
     let mounted = true;
@@ -74,7 +73,7 @@ const ProductsList: React.FC<RouteComponentProps> = () => {
   }, []);
 
   return (
-    <div className="video-feed">
+    <div className="products">
       <PageHeader
         title="Products"
         subTitle="List of Products"
@@ -94,4 +93,4 @@ const ProductsList: React.FC<RouteComponentProps> = () => {
   );
 };
 
-export default ProductsList;
+export default Products;
