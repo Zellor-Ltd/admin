@@ -1,6 +1,7 @@
 import { Position } from "./Position";
 
 export interface Tag {
+  id: string;
   tagId?: string;
   productId?: string;
   productName?: string;
