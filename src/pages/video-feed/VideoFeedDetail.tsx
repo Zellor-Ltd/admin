@@ -222,7 +222,8 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
           form={form}
           onFinish={onFinish}
           name="feedForm"
-          initialValues={initial}>
+          initialValues={initial}
+          layout="vertical">
           <Row gutter={8}>
             <Col lg={12} xs={24}>
               <Form.Item name={["video", "title"]} label="Title">

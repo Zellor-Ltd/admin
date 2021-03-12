@@ -36,3 +36,5 @@ export const saveProduct = (params: Product) => {
     return instance.put("AddProduct", params);
   }
 };
+
+export const fetchCreators = () => instance.get("GetCreators");
