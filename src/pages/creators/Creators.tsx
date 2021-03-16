@@ -10,7 +10,8 @@ import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 const deleteCreator = (id: any) => {};
 
 const columns: ColumnsType<Creator> = [
-  { title: "Name", dataIndex: "name", width: "15%" },
+  { title: "Name", dataIndex: "firstName", width: "15%" },
+  { title: "Last Name", dataIndex: "lastName", width: "15%" },
   {
     title: "actions",
     key: "action",

@@ -1,5 +1,6 @@
 import axios from "axios";
 import snakeToCamelCase from "helpers/snakeToCamelCase";
+import { Creator } from "interfaces/Creator";
 import { FeedItem } from "interfaces/FeedItem";
 import { Product } from "interfaces/Product";
 
@@ -37,4 +38,12 @@ export const saveProduct = (params: Product) => {
   }
 };
 
-export const fetchCreators = () => instance.get("GetCreators");
+export const saveCreator = (params: Creator) => {
+  if (params.id) {
+    return instance.post("UpdateCreator", params);
+  } else {
+    return instance.put("AddCreator", params);
+  }
+};
+
+export const fetchCreators = () => instance.get("ListCreators");

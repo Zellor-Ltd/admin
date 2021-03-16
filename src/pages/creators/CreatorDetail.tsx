@@ -8,13 +8,26 @@ import {
   Select,
   Typography,
 } from "antd";
+import { RouteComponentProps } from "react-router";
+import { saveCreator } from "services/DiscoClubService";
 
-const CreatorDetail: React.FC = () => {
+const CreatorDetail: React.FC<RouteComponentProps> = (props) => {
+  const { history, location } = props;
+  const initial: any = location.state;
   const [form] = Form.useForm();
+
+  const onFinish = () => {
+    saveCreator(form.getFieldsValue(true));
+  };
+
   return (
     <>
       <PageHeader title="Creator Update" subTitle="Creator" />
-      <Form form={form} layout="vertical">
+      <Form
+        form={form}
+        layout="vertical"
+        onFinish={onFinish}
+        initialValues={initial}>
         <Row gutter={8}>
           <Col lg={12} xs={24}>
             <Form.Item label="First Name" name="firstName">
@@ -71,6 +84,12 @@ const CreatorDetail: React.FC = () => {
             </Form.Item>
           </Col>
         </Row>
+        <Button type="default" onClick={() => history.push("/creators")}>
+          Cancel
+        </Button>
+        <Button type="primary" htmlType="submit">
+          Save Changes
+        </Button>
       </Form>
     </>
   );
