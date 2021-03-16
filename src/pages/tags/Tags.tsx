@@ -4,7 +4,7 @@ import { Tag } from "interfaces/Tag";
 import { useEffect, useState } from "react";
 import { RouteComponentProps } from "react-router";
 import { Link } from "react-router-dom";
-import { fetchTags, fetchVideoFeed } from "services/DiscoClubService";
+import { fetchTags } from "services/DiscoClubService";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 
 const deleteItem = (id: string | undefined) => {
@@ -12,8 +12,9 @@ const deleteItem = (id: string | undefined) => {
 };
 
 const columns: ColumnsType<Tag> = [
-  { title: "Name", dataIndex: "name", width: "15%" },
-  { title: "Brand Name", dataIndex: "brandName", width: "70%" },
+  { title: "Product", dataIndex: "productName", width: "15%" },
+  { title: "Product Name", dataIndex: "productName", width: "20%" },
+  { title: "Template", dataIndex: "template", width: "20%" },
   {
     title: "actions",
     key: "action",
@@ -42,20 +43,11 @@ const Tags: React.FC<RouteComponentProps> = ({ history }) => {
     let mounted = true;
     const fetchVideos = async () => {
       setLoading(true);
-      const temp: any = await fetchVideoFeed();
-
       const response: any = await fetchTags();
       if (mounted) {
         setLoading(false);
-        const ta = temp.results.reduce((prev: Tag[], curr: any) => {
-          if (curr.tags) {
-            prev.push(...curr.tags);
-          }
-          return prev;
-        }, []);
-        setTags(ta);
         console.log(response);
-        // setTags(response.results);
+        setTags(response.results);
       }
     };
 
