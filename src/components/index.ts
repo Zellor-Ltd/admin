@@ -1,3 +1,3 @@
-import EditableContext from "./editable-context";
+import { EditableContext, EditableRow, EditableCell } from "./editable-context";
 
-export { EditableContext };
+export { EditableContext, EditableRow, EditableCell };

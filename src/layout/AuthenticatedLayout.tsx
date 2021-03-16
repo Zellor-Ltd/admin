@@ -32,6 +32,9 @@ const AuthenticatedLayout: React.FC = (props) => {
             <Menu.Item key="creators" icon={<TeamOutlined />}>
               <Link to="/creators">Creators</Link>
             </Menu.Item>
+            <Menu.Item key="tags" icon={<TagOutlined />}>
+              <Link to="/tags">Tags</Link>
+            </Menu.Item>
           </Menu>
         </Sider>
 

@@ -1,4 +1,12 @@
 import React, { useState } from "react";
+import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import { Tag } from "interfaces/Tag";
+import { Position } from "interfaces/Position";
+import { RouteComponentProps } from "react-router-dom";
+import ModalTag from "./ModalTag";
+import { Brand } from "interfaces/Brand";
+import ModalBrand from "./ModalBrand";
+import { saveVideoFeed } from "services/DiscoClubService";
 import {
   Button,
   Col,
@@ -13,14 +21,6 @@ import {
   Typography,
 } from "antd";
 
-import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
-import { Tag } from "interfaces/Tag";
-import { Position } from "interfaces/Position";
-import { RouteComponentProps, withRouter } from "react-router-dom";
-import ModalTag from "./ModalTag";
-import { Brand } from "interfaces/Brand";
-import ModalBrand from "./ModalBrand";
-import { saveVideoFeed } from "services/DiscoClubService";
 const { Option } = Select;
 
 const { Title } = Typography;
@@ -30,6 +30,7 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
   const initial: any = location.state;
 
   const [form] = Form.useForm();
+  const [loading, setLoading] = useState<boolean>(false);
   const [selectedTag, setSelectedTag] = useState<Tag | undefined>();
   const [selectedTagIndex, setSelectedTagIndex] = useState<number>(0);
   const [tagModalVisible, setTagModalVisible] = useState<boolean>(false);
@@ -64,8 +65,16 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
     setTagModalVisible(false);
   };
 
-  const onFinish = () => {
-    saveVideoFeed(form.getFieldsValue(true));
+  const onFinish = async () => {
+    setLoading(true);
+    try {
+      saveVideoFeed(form.getFieldsValue(true));
+      setLoading(false);
+      history.push("/video-feed");
+    } catch (e) {
+      console.error(e);
+      setLoading(false);
+    }
   };
 
   const onEditTag = (tag: Tag, index: number) => {
@@ -93,9 +102,8 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
     form.setFieldsValue({ tags: [...tags] });
   };
 
-  const onSavePosition = (row: Position) => {
+  const onSavePosition = (row: Position, index: number) => {
     const newData = [...selectedPositions];
-    const index = newData.findIndex((item) => row.key === item.key);
     const item = newData[index];
     newData.splice(index, 1, {
       ...item,
@@ -339,12 +347,20 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
             }}
           </Form.Item>
 
-          <Button type="default" onClick={() => history.push("/video-feed")}>
-            Cancel
-          </Button>
-          <Button type="primary" htmlType="submit">
-            Save Changes
-          </Button>
+          <Row gutter={8}>
+            <Col>
+              <Button
+                type="default"
+                onClick={() => history.push("/video-feed")}>
+                Cancel
+              </Button>
+            </Col>
+            <Col>
+              <Button type="primary" htmlType="submit" loading={loading}>
+                Save Changes
+              </Button>
+            </Col>
+          </Row>
         </Form>
         <ModalBrand
           visible={brandModalVisible}
