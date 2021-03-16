@@ -1,5 +1,6 @@
 import axios, { AxiosRequestConfig } from "axios";
 import snakeToCamelCase from "helpers/snakeToCamelCase";
+import { Creator } from "interfaces/Creator";
 import { FeedItem } from "interfaces/FeedItem";
 import { Product } from "interfaces/Product";
 import { Tag } from "interfaces/Tag";
@@ -23,7 +24,7 @@ instance.interceptors.response.use((response) => {
 
 export const fetchStartupVideo = () => instance.get("GetStartupVideo");
 
-export const fetchVideoFeed = () => instance.get("GetVideoFeed");
+export const fetchVideoFeed = () => instance.get("ListVideoFeed");
 
 export const fetchProducts = () => instance.get("GetProducts");
 
@@ -47,6 +48,15 @@ export const saveProduct = (params: Product) => {
   }
 };
 
+export const saveCreator = (params: Creator) => {
+  if (params.id) {
+    return instance.post("UpdateCreator", params);
+  } else {
+    return instance.put("AddCreator", params);
+  }
+};
+
+export const fetchCreators = () => instance.get("ListCreators");
 export const saveTag = (params: Tag) => {
   if (params.id) {
     return instance.post("UpdateTag", params);

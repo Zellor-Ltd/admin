@@ -67,7 +67,8 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
         form={form}
         name="productForm"
         initialValues={initial}
-        onFinish={onFinish}>
+        onFinish={onFinish}
+        layout="vertical">
         <Row gutter={8}>
           <Col lg={12} xs={24}>
             <Form.Item name="name" label="Name">
