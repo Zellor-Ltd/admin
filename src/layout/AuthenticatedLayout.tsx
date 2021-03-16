@@ -1,6 +1,6 @@
 import { Link, withRouter } from "react-router-dom";
 import { Layout, Menu } from "antd";
-import { HeartFilled, TagOutlined } from "@ant-design/icons";
+import { HeartFilled, TagOutlined, TeamOutlined } from "@ant-design/icons";
 import "./AuthenticatedLayout.scss";
 
 const { Header, Sider, Content } = Layout;
@@ -28,6 +28,9 @@ const AuthenticatedLayout: React.FC = (props) => {
             </Menu.Item>
             <Menu.Item key="products" icon={<TagOutlined />}>
               <Link to="/products">Products</Link>
+            </Menu.Item>
+            <Menu.Item key="creators" icon={<TeamOutlined />}>
+              <Link to="/creators">Creators</Link>
             </Menu.Item>
           </Menu>
         </Sider>
