@@ -19,7 +19,7 @@ const columns: ColumnsType<Creator> = [
     align: "right",
     render: (value, record) => (
       <>
-        <Link to={{ pathname: `/creator/${record.id}`, state: record }}>
+        <Link to={{ pathname: `/creator`, state: record }}>
           <EditOutlined />
         </Link>
         <Popconfirm title="Are you sure？" okText="Yes" cancelText="No">

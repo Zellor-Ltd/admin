@@ -1,3 +1,10 @@
+import { ColumnsType } from "antd/lib/table";
+import { Brand } from "interfaces/Brand";
+import { Video } from "interfaces/Video";
+import { useEffect, useState } from "react";
+import { RouteComponentProps } from "react-router";
+import { fetchBrands, saveProduct } from "services/DiscoClubService";
+import { formatMoment } from "helpers/formatMoment";
 import {
   Button,
   Col,
@@ -11,13 +18,6 @@ import {
   Table,
   Typography,
 } from "antd";
-import { ColumnsType } from "antd/lib/table";
-import { Brand } from "interfaces/Brand";
-import { Video } from "interfaces/Video";
-import { useEffect, useState } from "react";
-import { RouteComponentProps } from "react-router";
-import { fetchBrands, saveProduct } from "services/DiscoClubService";
-import moment from "moment";
 
 const videoColumns: ColumnsType<Video> = [
   {
@@ -56,8 +56,13 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
 
   const onFinish = async () => {
     setLoading(true);
-    await saveProduct(form.getFieldsValue(true));
-    setLoading(false);
+    try {
+      await saveProduct(form.getFieldsValue(true));
+      setLoading(false);
+      history.push("/products");
+    } catch (error) {
+      setLoading(false);
+    }
   };
 
   return (
@@ -127,10 +132,11 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
             </Form.Item>
           </Col>
           <Col lg={8} xs={24}>
-            <Form.Item name="offerExpirationDate" label="Offer Expiration Date">
-              <DatePicker
-                format={(value) => moment(value).format("DD-MM-YYYY")}
-              />
+            <Form.Item
+              name="offerExpirationDate"
+              label="Offer Expiration Date"
+              getValueProps={formatMoment}>
+              <DatePicker format="DD/MM/YYYY" />
             </Form.Item>
           </Col>
           <Col lg={8} xs={24}>
@@ -161,13 +167,17 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
             </Form.Item>
           </Col>
         </Row>
-        <Row>
-          <Button type="default" onClick={() => history.push("/products")}>
-            Cancel
-          </Button>
-          <Button type="primary" htmlType="submit" loading={loading}>
-            Save Changes
-          </Button>
+        <Row gutter={8}>
+          <Col>
+            <Button type="default" onClick={() => history.push("/products")}>
+              Cancel
+            </Button>
+          </Col>
+          <Col>
+            <Button type="primary" htmlType="submit" loading={loading}>
+              Save Changes
+            </Button>
+          </Col>
         </Row>
       </Form>
     </>

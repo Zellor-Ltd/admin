@@ -37,13 +37,13 @@ const ModalBrand: React.FC<ModalFormProps> = ({ brand, visible, onCancel }) => {
         <Input.Group>
           <Row gutter={8}>
             <Col lg={8} xs={24}>
-              <Form.Item name="brandId" label="Brand id">
-                <Input />
+              <Form.Item name="brandId" label="Brand ID">
+                <Input disabled />
               </Form.Item>
             </Col>
             <Col lg={8} xs={24}>
-              <Form.Item name="productId" label="Product Id">
-                <Input />
+              <Form.Item name="productId" label="Product ID">
+                <Input disabled />
               </Form.Item>
             </Col>
             <Col lg={8} xs={24}>

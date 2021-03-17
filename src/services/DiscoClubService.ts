@@ -1,5 +1,6 @@
 import axios, { AxiosRequestConfig } from "axios";
 import snakeToCamelCase from "helpers/snakeToCamelCase";
+import { Brand } from "interfaces/Brand";
 import { Creator } from "interfaces/Creator";
 import { FeedItem } from "interfaces/FeedItem";
 import { Product } from "interfaces/Product";
@@ -15,6 +16,7 @@ instance.interceptors.request.use((config: AxiosRequestConfig) => {
       ...config.data,
       ["_id"]: config.data.id,
     };
+    delete config.data.id;
   }
   return config;
 });
@@ -26,11 +28,13 @@ export const fetchStartupVideo = () => instance.get("GetStartupVideo");
 
 export const fetchVideoFeed = () => instance.get("ListVideoFeed");
 
-export const fetchProducts = () => instance.get("GetProducts");
+export const fetchProducts = () => instance.get("ListProducts");
 
-export const fetchBrands = () => instance.get("SearchBrands");
+export const fetchBrands = () => instance.get("ListBrands");
 
 export const fetchTags = () => instance.get("ListTags");
+
+export const fetchCreators = () => instance.get("ListCreators");
 
 export const saveVideoFeed = (params: FeedItem) => {
   if (params.id) {
@@ -56,7 +60,6 @@ export const saveCreator = (params: Creator) => {
   }
 };
 
-export const fetchCreators = () => instance.get("ListCreators");
 export const saveTag = (params: Tag) => {
   if (params.id) {
     return instance.post("UpdateTag", params);
@@ -65,4 +68,15 @@ export const saveTag = (params: Tag) => {
   }
 };
 
-export const deleteVideoFeed = (id: string) => instance.delete("GetVideoFeed");
+export const saveBrand = (params: Brand) => {
+  if (params.id) {
+    return instance.post("UpdateBrand", params);
+  } else {
+    return instance.put("AddBrand", params);
+  }
+};
+
+export const deleteVideoFeed = (id: string) =>
+  instance.delete(`delete/videofeed/${id}`);
+
+export const deleteTag = (id: string) => instance.delete(`RemoveTag/${id}`);

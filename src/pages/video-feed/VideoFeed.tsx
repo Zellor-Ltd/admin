@@ -9,63 +9,64 @@ import {
 } from "antd";
 import { Link, RouteComponentProps, withRouter } from "react-router-dom";
 import { ColumnsType } from "antd/es/table";
-import { fetchVideoFeed } from "services/DiscoClubService";
+import { deleteVideoFeed, fetchVideoFeed } from "services/DiscoClubService";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { FeedItem } from "interfaces/FeedItem";
-import { Tag } from "interfaces/Tag";
+import { Segment } from "interfaces/Segment";
 
 const { Content } = Layout;
 
 const deleteItem = (id: string) => {
-  // deleteVideoFeed(id);
+  deleteVideoFeed(id);
+};
+
+const reduceSegmentsTags = (packages: Segment[]) => {
+  return packages.reduce((acc: number, curr: Segment) => {
+    return acc + curr.tags?.length;
+  }, 0);
 };
 
 const columns: ColumnsType<FeedItem> = [
-  { title: "Title", dataIndex: ["video", "title"], width: "15%" },
+  { title: "Title", dataIndex: "title", width: "15%" },
   {
-    title: "Image URL",
-    dataIndex: ["video", "thumbnailUrl"],
-    width: "25%",
+    title: "Segments",
+    dataIndex: "package",
+    render: (pack: Array<any> = []) => <AntTag>{pack.length}</AntTag>,
+    width: "5%",
     align: "center",
   },
   {
-    title: "Video URL",
-    dataIndex: ["video", "videoUrl"],
-    width: "25%",
+    title: "Length",
+    dataIndex: "lengthTotal",
+    width: "5%",
+    align: "center",
+  },
+  {
+    title: "Expiration Date",
+    dataIndex: "validity",
+    width: "5%",
+    render: (creationDate: Date) => new Date(creationDate).toLocaleDateString(),
     align: "center",
   },
   {
     title: "Tags",
-    dataIndex: ["tags", "length"],
+    dataIndex: "package",
     width: "5%",
+    render: (pack: Array<any> = []) => (
+      <AntTag>{reduceSegmentsTags(pack)}</AntTag>
+    ),
     align: "center",
   },
-  {
-    title: "Brands",
-    dataIndex: ["brands", "length"],
-    width: "5%",
-    align: "center",
-  },
-  {
-    title: "Dollars",
-    dataIndex: "tags",
-    render: (tags: Array<Tag> = []) =>
-      tags.map((tag, index) => (
-        <AntTag key={`dolar_${index}`}>{tag.discoDollars}</AntTag>
-      )),
-    width: "10%",
-    align: "center",
-  },
-  {
-    title: "Gold",
-    dataIndex: "tags",
-    render: (tags: Array<Tag> = []) =>
-      tags.map((tag, index) => (
-        <AntTag key={`dolar_${index}`}>{tag.discoGold}</AntTag>
-      )),
-    width: "10%",
-    align: "center",
-  },
+  // {
+  //   title: "Gold",
+  //   dataIndex: "tags",
+  //   render: (tags: Array<Tag> = []) =>
+  //     tags.map((tag, index) => (
+  //       <AntTag key={`dolar_${index}`}>{tag.discoGold}</AntTag>
+  //     )),
+  //   width: "10%",
+  //   align: "center",
+  // },
   {
     title: "actions",
     key: "action",
@@ -73,12 +74,16 @@ const columns: ColumnsType<FeedItem> = [
     align: "right",
     render: (value, record) => (
       <>
-        <Link to={{ pathname: `/video-feed/${record.id}`, state: record }}>
+        <Link to={{ pathname: `/video-feed`, state: record }}>
           <EditOutlined />
         </Link>
-        <Popconfirm title="Are you sure？" okText="Yes" cancelText="No">
+        <Popconfirm
+          title="Are you sure？"
+          okText="Yes"
+          cancelText="No"
+          onConfirm={() => deleteItem(record.id)}>
           <Button type="link" style={{ padding: 0, margin: 6 }}>
-            <DeleteOutlined onClick={() => deleteItem(record.id)} />
+            <DeleteOutlined />
           </Button>
         </Popconfirm>
       </>
@@ -114,7 +119,7 @@ const VideoFeed: React.FC<RouteComponentProps> = (props) => {
         title="Video feed update"
         subTitle="List of Feeds"
         extra={[
-          <Button key="1" onClick={() => history.push("/video-feed/0")}>
+          <Button key="1" onClick={() => history.push("/video-feed")}>
             New Item
           </Button>,
         ]}
@@ -123,7 +128,7 @@ const VideoFeed: React.FC<RouteComponentProps> = (props) => {
         <Table
           size="small"
           columns={columns}
-          rowKey={(video: any) => video.id}
+          rowKey="id"
           dataSource={videos}
           loading={loading}
         />

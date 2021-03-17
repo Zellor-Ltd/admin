@@ -7,18 +7,22 @@ import CreatorDetail from "pages/creators/CreatorDetail";
 import Products from "pages/products/Products";
 import TagDetail from "pages/tags/TagDetail";
 import Tags from "pages/tags/Tags";
+import BrandDetail from "pages/brands/BrandDetail";
+import Brands from "pages/brands/Brands";
 
 function Routes() {
   return (
     <Switch>
-      <Route path="/video-feed/:id" component={VideoFeedDetail} />
-      <Route path="/video-feed" component={VideoFeed} />
-      <Route path="/product/:id" component={ProductDetails} />
-      <Route path="/creators" component={Creators} />
-      <Route path="/creator/:id" component={CreatorDetail} />
+      <Route path="/video-feed" component={VideoFeedDetail} />
+      <Route path="/feed" component={VideoFeed} />
+      <Route path="/product" component={ProductDetails} />
       <Route path="/products" component={Products} />
-      <Route path="/tag/:id" component={TagDetail} />
+      <Route path="/creator" component={CreatorDetail} />
+      <Route path="/creators" component={Creators} />
+      <Route path="/tag" component={TagDetail} />
       <Route path="/tags" component={Tags} />
+      <Route path="/brand" component={BrandDetail} />
+      <Route path="/brands" component={Brands} />
     </Switch>
   );
 }

@@ -1,6 +1,11 @@
 import { Link, withRouter } from "react-router-dom";
 import { Layout, Menu } from "antd";
-import { HeartFilled, TagOutlined, TeamOutlined } from "@ant-design/icons";
+import {
+  HeartFilled,
+  TagOutlined,
+  TeamOutlined,
+  FundOutlined,
+} from "@ant-design/icons";
 import "./AuthenticatedLayout.scss";
 
 const { Header, Sider, Content } = Layout;
@@ -19,12 +24,12 @@ const AuthenticatedLayout: React.FC = (props) => {
           breakpoint="lg"
           collapsedWidth="0"
           style={{
-            height: "100vh",
+            minHeight: "calc(100vh - 64px)",
           }}>
           <div className="logo" />
           <Menu theme="dark" mode="inline" defaultSelectedKeys={["1"]}>
             <Menu.Item key="2" icon={<HeartFilled />}>
-              <Link to="/video-feed">Videos Feed</Link>
+              <Link to="/feed">Videos Feed</Link>
             </Menu.Item>
             <Menu.Item key="products" icon={<TagOutlined />}>
               <Link to="/products">Products</Link>
@@ -34,6 +39,9 @@ const AuthenticatedLayout: React.FC = (props) => {
             </Menu.Item>
             <Menu.Item key="tags" icon={<TagOutlined />}>
               <Link to="/tags">Tags</Link>
+            </Menu.Item>
+            <Menu.Item key="brands" icon={<FundOutlined />}>
+              <Link to="/brands">Brands</Link>
             </Menu.Item>
           </Menu>
         </Sider>
