@@ -10,6 +10,7 @@ import {
   Form,
   Input,
   InputNumber,
+  message,
   PageHeader,
   // Popconfirm,
   Row,
@@ -135,6 +136,7 @@ const TagDetail: React.FC<RouteComponentProps> = (props) => {
       try {
         await saveTag(form.getFieldsValue(true));
         setLoading(false);
+        message.success("Register updated with success.");
         history.push("/tags");
       } catch (e) {
         console.error(e);

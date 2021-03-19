@@ -1,4 +1,4 @@
-import { Avatar, Button, PageHeader, Popconfirm, Table } from "antd";
+import { Avatar, Button, PageHeader, Popconfirm, Table, Tag } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import { Brand } from "interfaces/Brand";
 import { useEffect, useState } from "react";
@@ -15,6 +15,12 @@ import {
   fetchBrands,
   saveBrand,
 } from "services/DiscoClubService";
+
+const tagColorByStatus: any = {
+  approved: "green",
+  rejected: "red",
+  pending: "",
+};
 
 const Brands: React.FC<RouteComponentProps> = ({ history }) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -33,16 +39,25 @@ const Brands: React.FC<RouteComponentProps> = ({ history }) => {
   };
 
   const columns: ColumnsType<Brand> = [
-    { title: "Brand Name", dataIndex: "brandName", width: "60%" },
+    { title: "Brand Name", dataIndex: "brandName", width: "50%" },
     {
       title: "Brand Color",
       dataIndex: "brandTxtColor",
-      width: "30%",
+      width: "20%",
       align: "center",
       render: (value) => (
         <Avatar
           style={{ backgroundColor: value, border: "1px solid #9c9c9c" }}
         />
+      ),
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      width: "20%",
+      align: "center",
+      render: (value = "pending") => (
+        <Tag color={tagColorByStatus[value]}>{value}</Tag>
       ),
     },
     {

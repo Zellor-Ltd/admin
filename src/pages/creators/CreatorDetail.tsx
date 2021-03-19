@@ -3,6 +3,7 @@ import {
   Col,
   Form,
   Input,
+  message,
   PageHeader,
   Row,
   Select,
@@ -18,11 +19,12 @@ const CreatorDetail: React.FC<RouteComponentProps> = (props) => {
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
 
-  const onFinish = () => {
+  const onFinish = async () => {
     setLoading(true);
     try {
-      saveCreator(form.getFieldsValue(true));
+      await saveCreator(form.getFieldsValue(true));
       setLoading(false);
+      message.success("Register updated with success.");
       history.push("/creators");
     } catch (error) {
       setLoading(false);

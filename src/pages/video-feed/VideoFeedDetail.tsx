@@ -14,6 +14,7 @@ import {
   Form,
   Input,
   InputNumber,
+  message,
   PageHeader,
   // Popconfirm,
   Row,
@@ -96,6 +97,7 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
       }));
       // item.validity = moment(item.validity).format("DD/MM/YYYY");
       await saveVideoFeed(item);
+      message.success("Register updated with success.");
       setLoading(false);
       history.push("/feed");
     } catch (e) {

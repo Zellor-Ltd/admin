@@ -12,6 +12,7 @@ import {
   Form,
   Input,
   InputNumber,
+  message,
   PageHeader,
   Row,
   Select,
@@ -59,6 +60,7 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
     try {
       await saveProduct(form.getFieldsValue(true));
       setLoading(false);
+      message.success("Register updated with success.");
       history.push("/products");
     } catch (error) {
       setLoading(false);

@@ -1,4 +1,4 @@
-import { Button, Col, Form, Input, PageHeader, Row } from "antd";
+import { Button, Col, Form, Input, message, PageHeader, Row } from "antd";
 import { useState } from "react";
 import { RouteComponentProps } from "react-router";
 import { TwitterPicker } from "react-color";
@@ -15,6 +15,7 @@ const BrandDetail: React.FC<RouteComponentProps> = (props) => {
     try {
       await saveBrand(form.getFieldsValue(true));
       setLoading(false);
+      message.success("Register updated with success.");
       history.push("/brands");
     } catch (error) {
       setLoading(false);
