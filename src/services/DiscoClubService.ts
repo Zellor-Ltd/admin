@@ -80,3 +80,6 @@ export const deleteVideoFeed = (id: string) =>
   instance.delete(`delete/videofeed/${id}`);
 
 export const deleteTag = (id: string) => instance.delete(`RemoveTag/${id}`);
+
+export const deleteCreator = (id: string) =>
+  instance.delete(`RemoveCreator/${id}`);
