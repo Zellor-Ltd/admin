@@ -51,8 +51,13 @@ const BrandDetail: React.FC<RouteComponentProps> = (props) => {
               }}
             </Form.Item>
           </Col>
-          <Col lg={24} xs={24}>
+          <Col lg={12} xs={24}>
             <Form.Item label="Brand Logo URL" name="brandLogoUrl">
+              <Input />
+            </Form.Item>
+          </Col>
+          <Col lg={12} xs={24}>
+            <Form.Item label="Brand Card URL" name="brandCardUrl">
               <Input />
             </Form.Item>
           </Col>

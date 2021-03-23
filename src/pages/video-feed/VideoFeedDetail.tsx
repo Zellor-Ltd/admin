@@ -201,16 +201,17 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
       <Form.Provider
         onFormFinish={(name, { values, forms }) => {
           if (name === "tagForm") {
-            const { segmentForm } = forms;
+            const { segmentForm, tagForm } = forms;
             const tags: any[] = segmentForm.getFieldValue("tags") || [];
 
+            const newValue = tagForm.getFieldsValue(true);
             if (selectedTagIndex > -1) {
-              tags[selectedTagIndex] = values;
+              tags[selectedTagIndex] = newValue;
               tags[selectedTagIndex].position = selectedPositions;
               segmentForm.setFieldsValue({ tags: [...tags] });
             } else {
-              values.position = selectedPositions;
-              segmentForm.setFieldsValue({ tags: [...tags, values] });
+              newValue.position = selectedPositions;
+              segmentForm.setFieldsValue({ tags: [...tags, newValue] });
             }
 
             setSelectedPositions([]);
@@ -218,13 +219,14 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
           }
 
           if (name === "brandForm") {
-            const { segmentForm } = forms;
+            const { segmentForm, brandForm } = forms;
             const brands: any[] = segmentForm.getFieldValue("brands") || [];
+            const newValue = brandForm.getFieldsValue(true);
             if (selectedBrandIndex > -1) {
-              brands[selectedBrandIndex] = values;
+              brands[selectedBrandIndex] = newValue;
               segmentForm.setFieldsValue({ brands: [...brands] });
             } else {
-              segmentForm.setFieldsValue({ brands: [...brands, values] });
+              segmentForm.setFieldsValue({ brands: [...brands, newValue] });
             }
 
             setBrandModalVisible(false);

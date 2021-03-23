@@ -24,8 +24,13 @@ const videoColumns: ColumnsType<Video> = [
   {
     title: "ID",
     dataIndex: "videoFeedId",
-    width: "100%",
+    width: "50%",
     align: "center",
+  },
+  {
+    title: "Thumbnail URL",
+    dataIndex: "thumbnailUrl",
+    width: "50%",
   },
 ];
 
@@ -58,7 +63,9 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
   const onFinish = async () => {
     setLoading(true);
     try {
-      await saveProduct(form.getFieldsValue(true));
+      const product = form.getFieldsValue(true);
+      product.brand = brands.find((brand) => brand.id === product.brand.id);
+      await saveProduct(product);
       setLoading(false);
       message.success("Register updated with success.");
       history.push("/products");
@@ -123,7 +130,7 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
             </Form.Item>
           </Col>
           <Col lg={8} xs={24}>
-            <Form.Item name={["brand", "brandId"]} label="Brand">
+            <Form.Item name={["brand", "id"]} label="Brand">
               <Select>
                 {brands.map((brand) => (
                   <Select.Option key={brand.id} value={brand.id}>

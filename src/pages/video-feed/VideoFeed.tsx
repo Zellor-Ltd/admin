@@ -6,6 +6,7 @@ import {
   Table,
   Tag as AntTag,
   Popconfirm,
+  message,
 } from "antd";
 import { Link, RouteComponentProps, withRouter } from "react-router-dom";
 import { ColumnsType } from "antd/es/table";
@@ -96,21 +97,20 @@ const VideoFeed: React.FC<RouteComponentProps> = (props) => {
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    let mounted = true;
-    const fetchVideos = async () => {
-      setLoading(true);
+  const fetchVideos = async () => {
+    setLoading(true);
+    try {
       const response: any = await fetchVideoFeed();
-      if (mounted) {
-        setLoading(false);
-        setVideos(response.results);
-      }
-    };
+      setLoading(false);
+      setVideos(response.results);
+    } catch (error) {
+      message.error("Error to get feed");
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchVideos();
-    return () => {
-      mounted = false;
-    };
   }, []);
 
   return (

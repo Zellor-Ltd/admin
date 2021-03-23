@@ -1,10 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Button,
   Col,
   Form,
   Input,
-  InputNumber,
   Modal,
   Popconfirm,
   Row,
@@ -17,7 +16,7 @@ import { useResetFormOnCloseModal } from "./useResetFormCloseModal";
 import { EditableCell, EditableRow } from "components";
 import { DeleteOutlined } from "@ant-design/icons";
 import { ColumnTypes } from "components/editable-context";
-const { Option } = Select;
+import { fetchTags } from "services/DiscoClubService";
 
 interface ModalFormProps {
   tag: Tag | undefined;
@@ -38,11 +37,30 @@ const ModalTag: React.FC<ModalFormProps> = ({
   onSavePosition,
   onAddPosition,
 }) => {
+  const [tags, setTags] = useState<Tag[]>([]);
+  const [selectedTag, setSelectedTag] = useState<Tag | undefined>();
+  const [loading, setLoading] = useState<boolean>(false);
   const [form] = Form.useForm();
 
   useEffect(() => {
     form.resetFields();
   }, [tag, form]);
+
+  useEffect(() => {
+    let mounted = true;
+    async function getTags() {
+      const response: any = await fetchTags();
+      if (mounted) {
+        setTags(response.results);
+        setLoading(false);
+      }
+    }
+    setLoading(true);
+    getTags();
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   useResetFormOnCloseModal({
     form,
@@ -50,7 +68,12 @@ const ModalTag: React.FC<ModalFormProps> = ({
   });
 
   const onOk = () => {
+    form.setFieldsValue({ ...selectedTag });
     form.submit();
+  };
+
+  const onChangeTag = (key: string) => {
+    setSelectedTag(tags.find((tag) => tag.id === key));
   };
 
   const components = {
@@ -131,96 +154,20 @@ const ModalTag: React.FC<ModalFormProps> = ({
       onOk={onOk}
       onCancel={onCancel}
       width={"80%"}
-      forceRender>
-      <Form form={form} name="tagForm" initialValues={tag}>
+      forceRender
+      okButtonProps={{ loading: loading }}>
+      <Form form={form} name="tagForm" initialValues={tag} layout="vertical">
         <Input.Group>
           <Row gutter={8}>
-            <Col lg={8} xs={24}>
-              <Form.Item name="tagId" label="Tag ID">
-                <Input disabled />
-              </Form.Item>
-            </Col>
-            <Col lg={8} xs={24}>
-              <Form.Item name="productId" label="Product ID">
-                <Input disabled />
-              </Form.Item>
-            </Col>
-            <Col lg={8} xs={24}>
-              <Form.Item name="productName" label="Product Name">
-                <Input />
-              </Form.Item>
-            </Col>
-          </Row>
-        </Input.Group>
-        <Input.Group>
-          <Row gutter={8}>
-            <Col xxl={16} md={12} xs={24}>
-              <Form.Item name="productImageUrl" label="Product Image URL">
-                <Input />
-              </Form.Item>
-            </Col>
-            <Col xxl={4} md={6} xs={24}>
-              <Form.Item name="productPrice" label="Product Price">
-                <InputNumber style={{ width: "100%" }} />
-              </Form.Item>
-            </Col>
-            <Col xxl={4} md={6}>
-              <Form.Item name="productDiscount" label="Product Discount">
-                <InputNumber style={{ width: "100%" }} />
-              </Form.Item>
-            </Col>
-          </Row>
-        </Input.Group>
-        <Input.Group>
-          <Row gutter={8}>
-            <Col xxl={6} md={12} xs={24}>
-              <Form.Item name="startTime" label="Start Time">
-                <InputNumber style={{ width: "100%" }} />
-              </Form.Item>
-            </Col>
-            <Col xxl={6} md={12} xs={24}>
-              <Form.Item name="duration" label="Duration">
-                <InputNumber style={{ width: "100%" }} />
-              </Form.Item>
-            </Col>
-            <Col xxl={6} md={12} xs={24}>
-              <Form.Item name="template" label="Template">
-                <Select placeholder="Please select a template">
-                  <Option value="product">Product</Option>
-                  <Option value="dollar">Dollar</Option>
-                  <Option value="gold">Gold</Option>
+            <Col lg={8} xs={0}>
+              <Form.Item name="tagName" label="Tag">
+                <Select onChange={onChangeTag}>
+                  {tags.map((tag) => (
+                    <Select.Option key={tag.id} value={tag.id}>
+                      {tag.tagName}
+                    </Select.Option>
+                  ))}
                 </Select>
-              </Form.Item>
-            </Col>
-            <Col xxl={6} md={12} xs={24}>
-              <Form.Item name="clickSound" label="Click Sound">
-                <Select placeholder="Please select a click sound">
-                  <Option value="beep">Beep</Option>
-                  <Option value="bell">Bell</Option>
-                  <Option value="silent">Silent</Option>
-                </Select>
-              </Form.Item>
-            </Col>
-          </Row>
-        </Input.Group>
-        <Input.Group>
-          <Row gutter={8}>
-            <Col xxl={12} md={12} xs={24}>
-              <Form.Item
-                name="discoGold"
-                label="Disco Gold"
-                // rules={[{ required: true }]}
-              >
-                <InputNumber style={{ width: "100%" }} />
-              </Form.Item>
-            </Col>
-            <Col xxl={12} md={12} xs={24}>
-              <Form.Item
-                name="discoDollars"
-                label="Disco Gold"
-                // rules={[{ required: true }]}
-              >
-                <InputNumber style={{ width: "100%" }} />
               </Form.Item>
             </Col>
           </Row>

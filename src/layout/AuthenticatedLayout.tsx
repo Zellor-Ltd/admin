@@ -1,23 +1,42 @@
-import { Link, withRouter } from "react-router-dom";
-import { Layout, Menu } from "antd";
+import { Link, RouteComponentProps, withRouter } from "react-router-dom";
+import { Button, Layout, Menu } from "antd";
 import {
   HeartFilled,
   TagOutlined,
   TeamOutlined,
   FundOutlined,
+  CloudServerOutlined,
+  UserOutlined,
+  SettingOutlined,
+  ApartmentOutlined,
 } from "@ant-design/icons";
 import "./AuthenticatedLayout.scss";
+import jwt from "helpers/jwt";
 
 const { Header, Sider, Content } = Layout;
 
-const AuthenticatedLayout: React.FC = (props) => {
-  const { children } = props;
+const AuthenticatedLayout: React.FC<RouteComponentProps> = (props) => {
+  const { children, history } = props;
+
+  const logout = () => {
+    localStorage.clear();
+    history.push("/login");
+  };
+
+  const getUserName = () => {
+    const user: any = jwt.decode(localStorage.getItem("token") || "");
+    return user.name;
+  };
+
   return (
     <Layout>
       <Header className="header">
         <h2>
           <Link to="/"> Disco Admin</Link>
         </h2>
+        <Button onClick={logout} type="link">
+          {getUserName()}
+        </Button>
       </Header>
       <Layout className="site-layout">
         <Sider
@@ -42,6 +61,18 @@ const AuthenticatedLayout: React.FC = (props) => {
             </Menu.Item>
             <Menu.Item key="brands" icon={<FundOutlined />}>
               <Link to="/brands">Brands</Link>
+            </Menu.Item>
+            <Menu.Item key="endpoints" icon={<CloudServerOutlined />}>
+              <Link to="/endpoints">Endpoints</Link>
+            </Menu.Item>
+            <Menu.Item key="users" icon={<UserOutlined />}>
+              <Link to="/users">Users</Link>
+            </Menu.Item>
+            <Menu.Item key="roles" icon={<ApartmentOutlined />}>
+              <Link to="/roles">Roles</Link>
+            </Menu.Item>
+            <Menu.Item key="settings" icon={<SettingOutlined />}>
+              <Link to="/settings">Settings</Link>
             </Menu.Item>
           </Menu>
         </Sider>

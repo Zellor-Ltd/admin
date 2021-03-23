@@ -22,12 +22,8 @@ const tagColumns = (
   // onDeleteTag: (index: number) => void
 ) => [
   {
-    title: "Product Name",
-    dataIndex: "productName",
-  },
-  {
-    title: "Product Price",
-    dataIndex: "productPrice",
+    title: "Tag",
+    dataIndex: "tagName",
   },
   {
     title: "Start time",
@@ -99,7 +95,6 @@ const SegmentForm: React.FC<FormProps> = ({
   segment,
   onCancel,
   onEditTag,
-  // onDeleteTag,
   onEditBrand,
   onDeleteBrand,
   onAddTag,
@@ -113,13 +108,9 @@ const SegmentForm: React.FC<FormProps> = ({
       initialValues={segment}
       name="segmentForm"
       layout="vertical">
+      <Title level={1}>Edit Segment</Title>
       <Title level={3}>Influencer</Title>
       <Row gutter={8}>
-        <Col lg={12} xs={24}>
-          <Form.Item name={["influencer", "influencerId"]} label="Brand id">
-            <Input disabled />
-          </Form.Item>
-        </Col>
         <Col lg={12} xs={24}>
           <Form.Item
             name={["influencer", "influencerName"]}
@@ -127,26 +118,37 @@ const SegmentForm: React.FC<FormProps> = ({
             <Input />
           </Form.Item>
         </Col>
+        {/* <Col lg={6} xs={0}>
+          <Form.Item name={["brand", "brandId"]} label="Brand">
+            <Select>
+              {creators.map((creator) => (
+                <Select.Option key={creator.id} value={creator.id}>
+                  {creator.id}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+        </Col> */}
       </Row>
 
       <Title level={3}>Video</Title>
       <Row gutter={8}>
-        <Col lg={12} xs={24}>
+        {/* <Col lg={12} xs={24}>
           <Form.Item name={["video", "videoId"]} label="Video ID">
             <Input disabled />
           </Form.Item>
-        </Col>
-        <Col lg={12} xs={24}>
+        </Col> */}
+        <Col lg={8} xs={24}>
           <Form.Item name={["video", "videoUrl"]} label="Video URL">
             <Input />
           </Form.Item>
         </Col>
-        <Col lg={12} xs={24}>
+        <Col lg={8} xs={24}>
           <Form.Item name={["video", "thumbnailUrl"]} label="Thumbnail URL">
             <Input />
           </Form.Item>
         </Col>
-        <Col lg={12} xs={24}>
+        <Col lg={8} xs={24}>
           <Form.Item name={["video", "length"]} label="Video Length">
             <InputNumber />
           </Form.Item>
@@ -171,9 +173,7 @@ const SegmentForm: React.FC<FormProps> = ({
               columns={brandColumns(onEditBrand, onDeleteBrand)}
               dataSource={brands}
               bordered
-              rowKey={(record) =>
-                `Brand_${record.brandId}_${record.brandLogoUrl}`
-              }
+              rowKey={(record) => `Brand_${record.id}_${record.brandLogoUrl}`}
             />
           );
         }}
@@ -193,9 +193,7 @@ const SegmentForm: React.FC<FormProps> = ({
               columns={tagColumns(onEditTag)}
               dataSource={tags}
               bordered
-              rowKey={(record) =>
-                `tag_${record.tagId}_${record.productDiscount}`
-              }
+              rowKey={(record) => `tag_${record.id}_${record.tagName}`}
             />
           );
         }}

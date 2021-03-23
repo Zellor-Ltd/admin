@@ -10,11 +10,7 @@ import {
   CheckOutlined,
   CloseOutlined,
 } from "@ant-design/icons";
-import {
-  deleteCreator,
-  fetchBrands,
-  saveBrand,
-} from "services/DiscoClubService";
+import { deleteBrand, fetchBrands, saveBrand } from "services/DiscoClubService";
 
 const tagColorByStatus: any = {
   approved: "green",
@@ -28,15 +24,32 @@ const Brands: React.FC<RouteComponentProps> = ({ history }) => {
 
   const aproveOrReject = async (aprove: boolean, creator: Brand) => {
     creator.status = aprove ? "approved" : "rejected";
-
+    setLoading(true);
     await saveBrand(creator);
+    fetch();
   };
 
   const deleteItem = async (id: string) => {
     setLoading(true);
-    await deleteCreator(id);
-    setLoading(false);
+    try {
+      await deleteBrand(id);
+      setLoading(false);
+    } catch (err) {
+      console.log(err);
+      setLoading(false);
+    }
   };
+
+  const fetch = async () => {
+    setLoading(true);
+    const response: any = await fetchBrands();
+    setLoading(false);
+    setBrands(response.results);
+  };
+
+  useEffect(() => {
+    fetch();
+  }, []);
 
   const columns: ColumnsType<Brand> = [
     { title: "Brand Name", dataIndex: "brandName", width: "50%" },
@@ -69,10 +82,12 @@ const Brands: React.FC<RouteComponentProps> = ({ history }) => {
         <>
           {!record.status && [
             <CheckOutlined
+              key="approve"
               style={{ color: "green" }}
               onClick={() => aproveOrReject(true, record)}
             />,
             <CloseOutlined
+              key="reject"
               style={{ color: "red", margin: "6px" }}
               onClick={() => aproveOrReject(false, record)}
             />,
@@ -93,22 +108,6 @@ const Brands: React.FC<RouteComponentProps> = ({ history }) => {
       ),
     },
   ];
-
-  useEffect(() => {
-    let mounted = true;
-    const fetch = async () => {
-      setLoading(true);
-      const response: any = await fetchBrands();
-      if (mounted) {
-        setLoading(false);
-        setBrands(response.results);
-      }
-    };
-    fetch();
-    return () => {
-      mounted = false;
-    };
-  }, []);
 
   return (
     <div className="brands">

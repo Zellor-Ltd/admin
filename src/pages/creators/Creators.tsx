@@ -1,16 +1,11 @@
-import { Button, PageHeader, Popconfirm, Table, Tag } from "antd";
+import { Button, PageHeader, Table, Tag } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import { Creator } from "interfaces/Creator";
 import { useEffect, useState } from "react";
 import { RouteComponentProps } from "react-router";
 import { Link } from "react-router-dom";
 import { fetchCreators, saveCreator } from "services/DiscoClubService";
-import {
-  EditOutlined,
-  DeleteOutlined,
-  CheckOutlined,
-  CloseOutlined,
-} from "@ant-design/icons";
+import { EditOutlined, CheckOutlined, CloseOutlined } from "@ant-design/icons";
 
 const tagColorByStatus: any = {
   approved: "green",
@@ -43,10 +38,12 @@ const Creators: React.FC<RouteComponentProps> = (props) => {
         <>
           {!record.status && [
             <CheckOutlined
+              key="approve"
               style={{ color: "green" }}
               onClick={() => aproveOrReject(true, record)}
             />,
             <CloseOutlined
+              key="reject"
               style={{ color: "red", margin: "6px" }}
               onClick={() => aproveOrReject(false, record)}
             />,
@@ -54,48 +51,37 @@ const Creators: React.FC<RouteComponentProps> = (props) => {
           <Link to={{ pathname: `/creator`, state: record }}>
             <EditOutlined />
           </Link>
-          <Popconfirm title="Are you sure？" okText="Yes" cancelText="No">
-            <Button type="link" style={{ padding: 0, margin: 6 }}>
-              <DeleteOutlined onClick={() => deleteCreator(record.id)} />
-            </Button>
-          </Popconfirm>
         </>
       ),
     },
   ];
 
-  const deleteCreator = async (id: any) => {
-    setLoading(true);
-    await deleteCreator(id);
-    setLoading(false);
-  };
-
   const aproveOrReject = async (aprove: boolean, creator: Creator) => {
+    setLoading(true);
     creator.status = aprove ? "approved" : "rejected";
 
     await saveCreator(creator);
+    fetchVideos();
+  };
+
+  const fetchVideos = async () => {
+    setLoading(true);
+    const response: any = await fetchCreators();
+    setLoading(false);
+    setCreators(response.results);
   };
 
   useEffect(() => {
-    let mounted = true;
-    const fetchVideos = async () => {
-      setLoading(true);
-      const response: any = await fetchCreators();
-      if (mounted) {
-        setLoading(false);
-        setCreators(response.results);
-      }
-    };
-
     fetchVideos();
   }, []);
+
   return (
     <div className="creators">
       <PageHeader
         title="Creators"
         subTitle="List of Creators"
         extra={[
-          <Button key="1" onClick={() => history.push("/creator/0")}>
+          <Button key="1" onClick={() => history.push("/creator")}>
             New Item
           </Button>,
         ]}
