@@ -1,146 +1,86 @@
-// import { EditableCell, EditableRow } from "components";
-// import { DeleteOutlined } from "@ant-design/icons";
-// import { Position } from "interfaces/Position";
-// import { ColumnTypes } from "components/editable-context";
 import { RouteComponentProps } from "react-router";
-// import Title from "antd/lib/typography/Title";
 import {
   Button,
   Col,
   Form,
   Input,
   InputNumber,
+  message,
   PageHeader,
-  // Popconfirm,
   Row,
   Select,
-  // Table,
 } from "antd";
-import { useState } from "react";
-import { saveTag } from "services/DiscoClubService";
+import { useEffect, useState } from "react";
+import { saveTag, fetchProducts, fetchBrands } from "services/DiscoClubService";
+import { Product } from "interfaces/Product";
+import { Brand } from "interfaces/Brand";
 
 const { Option } = Select;
-
-// const components = {
-//   body: {
-//     row: EditableRow,
-//     cell: EditableCell,
-//   },
-// };
 
 const TagDetail: React.FC<RouteComponentProps> = (props) => {
   const { history, location } = props;
   const initial: any = location.state;
   const [loading, setLoading] = useState(false);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [brands, setBrands] = useState<Brand[]>([]);
+  const [selectedBrand, setSelectedBrand] = useState<string>(
+    initial?.brand?.id
+  );
   const [form] = Form.useForm();
 
-  // const onDeletePosition = (index: number) => {
-  //   const positions = form.getFieldValue("position").slice();
-  //   positions.splice(index, 1);
-  //   form.setFieldsValue({ position: positions });
-  // };
-
-  // const onSavePosition = (row: Position, index: number) => {
-  //   const positions = form.getFieldValue("position").slice();
-  //   const item = positions[index];
-  //   positions.splice(index, 1, {
-  //     ...item,
-  //     ...row,
-  //   });
-  //   form.setFieldsValue({ position: positions });
-  // };
-
-  // const onAddMoviments = () => {
-  //   const positions = form.getFieldValue("position");
-  //   form.setFieldsValue({
-  //     position: [
-  //       ...positions,
-  //       {
-  //         startTime: 0,
-  //         opacity: 0,
-  //         x: 0,
-  //         y: 0,
-  //         z: 0,
-  //       },
-  //     ],
-  //   });
-  // };
-
-  // const columns = [
-  //   {
-  //     title: "Start time",
-  //     dataIndex: "startTime",
-  //     editable: true,
-  //     number: true,
-  //   },
-  //   {
-  //     title: "Opacity",
-  //     dataIndex: "opacity",
-  //     editable: true,
-  //     number: true,
-  //   },
-  //   {
-  //     title: "Position X",
-  //     dataIndex: "x",
-  //     editable: true,
-  //     number: true,
-  //   },
-  //   {
-  //     title: "Position Y",
-  //     dataIndex: "y",
-  //     editable: true,
-  //     number: true,
-  //   },
-  //   {
-  //     title: "Z Index",
-  //     dataIndex: "z",
-  //     editable: true,
-  //     number: true,
-  //   },
-  //   {
-  //     title: "actions",
-  //     dataIndex: "actions",
-  //     render: (_: any, record: Position, index: number) => (
-  //       <Popconfirm
-  //         title="Sure to delete?"
-  //         onConfirm={() => onDeletePosition(index)}>
-  //         <Button type="link" style={{ padding: 0, margin: 6 }}>
-  //           <DeleteOutlined />
-  //         </Button>
-  //       </Popconfirm>
-  //     ),
-  //   },
-  // ];
-
-  // const configuredColumns = columns.map((col) => {
-  //   if (!col.editable) {
-  //     return col;
-  //   }
-  //   return {
-  //     ...col,
-  //     onCell: (record: Position, index: number) => ({
-  //       record,
-  //       editable: col.editable,
-  //       dataIndex: col.dataIndex,
-  //       title: col.title,
-  //       number: col.number,
-  //       onSave: (newPosition: Position) => onSavePosition(newPosition, index),
-  //     }),
-  //   };
-  // });
+  useEffect(() => {
+    let mounted = true;
+    async function getProducts() {
+      const response: any = await fetchProducts();
+      if (mounted) {
+        setProducts(response.results);
+        setLoading(false);
+      }
+    }
+    async function getBrands() {
+      const response: any = await fetchBrands();
+      if (mounted) {
+        setBrands(response.results);
+        setLoading(false);
+      }
+    }
+    setLoading(true);
+    getProducts();
+    getBrands();
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   const onFinish = () => {
     form.validateFields().then(async () => {
       setLoading(true);
       try {
-        await saveTag(form.getFieldsValue(true));
+        const tag = form.getFieldsValue(true);
+        tag.product = products.find((product) => product.id === tag.product.id);
+        tag.brand = brands.find((brand) => brand.id === tag.brand.id);
+        await saveTag(tag);
         setLoading(false);
+        message.success("Register updated with success.");
         history.push("/tags");
       } catch (e) {
         console.error(e);
         setLoading(false);
       }
     });
+  };
+
+  const productsBySelectedBrand = () => {
+    return products.filter((product) => product.brand.id === selectedBrand);
+  };
+
+  const onChangeBrand = (brandKey: string) => {
+    setSelectedBrand(brandKey);
+    form.setFieldsValue({ product: {} });
+  };
+
+  const onChangeTemplate = () => {
+    form.setFieldsValue({ product: {} });
   };
 
   return (
@@ -154,61 +94,23 @@ const TagDetail: React.FC<RouteComponentProps> = (props) => {
         onFinish={onFinish}>
         <Input.Group>
           <Row gutter={8}>
-            <Col lg={12} xs={24}>
+            <Col lg={6} xs={24}>
               <Form.Item
-                name="productName"
-                label="Product Name"
+                name="tagName"
+                label="Tag Name"
                 rules={[{ required: true }]}>
                 <Input />
               </Form.Item>
             </Col>
             <Col lg={6} xs={0}>
-              <Form.Item name="id" label="Tag id">
-                <Input disabled />
-              </Form.Item>
-            </Col>
-            <Col lg={6} xs={0}>
-              <Form.Item name="productId" label="Product Id">
-                <Input disabled />
-              </Form.Item>
-            </Col>
-          </Row>
-        </Input.Group>
-        <Input.Group>
-          <Row gutter={8}>
-            <Col xxl={16} md={12} xs={24}>
-              <Form.Item name="productImageUrl" label="Product Image URL">
-                <Input />
-              </Form.Item>
-            </Col>
-            <Col xxl={4} md={6} xs={24}>
-              <Form.Item name="productPrice" label="Product Price">
-                <InputNumber style={{ width: "100%" }} />
-              </Form.Item>
-            </Col>
-            <Col xxl={4} md={6}>
-              <Form.Item name="productDiscount" label="Product Discount">
-                <InputNumber style={{ width: "100%" }} />
-              </Form.Item>
-            </Col>
-          </Row>
-        </Input.Group>
-        <Input.Group>
-          <Row gutter={8}>
-            <Col xxl={6} md={12} xs={24}>
-              <Form.Item
-                name="startTime"
-                label="Start Time"
-                rules={[{ required: true }]}>
-                <InputNumber style={{ width: "100%" }} />
-              </Form.Item>
-            </Col>
-            <Col xxl={6} md={12} xs={24}>
-              <Form.Item
-                name="duration"
-                label="Duration"
-                rules={[{ required: true }]}>
-                <InputNumber style={{ width: "100%" }} />
+              <Form.Item name={["brand", "id"]} label="Brand">
+                <Select onChange={onChangeBrand}>
+                  {brands.map((brand) => (
+                    <Select.Option key={brand.id} value={brand.id}>
+                      {brand.brandName}
+                    </Select.Option>
+                  ))}
+                </Select>
               </Form.Item>
             </Col>
             <Col xxl={6} md={12} xs={24}>
@@ -216,11 +118,57 @@ const TagDetail: React.FC<RouteComponentProps> = (props) => {
                 name="template"
                 label="Template"
                 rules={[{ required: true }]}>
-                <Select placeholder="Please select a template">
+                <Select
+                  placeholder="Please select a template"
+                  onChange={onChangeTemplate}>
                   <Option value="product">Product</Option>
                   <Option value="dollar">Dollar</Option>
                   <Option value="gold">Gold</Option>
+                  <Option value="gift">Gift</Option>
                 </Select>
+              </Form.Item>
+            </Col>
+            <Col lg={6} xs={0}>
+              <Form.Item shouldUpdate>
+                {() => (
+                  <Form.Item name={["product", "id"]} label="Product">
+                    <Select
+                      disabled={form.getFieldValue("template") === "dollar"}>
+                      {productsBySelectedBrand().map((product) => (
+                        <Select.Option key={product.id} value={product.id}>
+                          {product.name}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
+                )}
+              </Form.Item>
+            </Col>
+            <Col xxl={4} md={12} xs={24}>
+              <Form.Item
+                name="startTime"
+                label="Start Time"
+                rules={[{ required: true }]}>
+                <InputNumber style={{ width: "100%" }} />
+              </Form.Item>
+            </Col>
+            <Col xxl={4} md={12} xs={24}>
+              <Form.Item
+                name="duration"
+                label="Duration"
+                rules={[{ required: true }]}>
+                <InputNumber style={{ width: "100%" }} />
+              </Form.Item>
+            </Col>
+
+            <Col xxl={5} md={12} xs={24}>
+              <Form.Item name="discoGold" label="Disco Gold">
+                <InputNumber style={{ width: "100%" }} />
+              </Form.Item>
+            </Col>
+            <Col xxl={5} md={12} xs={24}>
+              <Form.Item name="discoDollars" label="Disco Dollar">
+                <InputNumber style={{ width: "100%" }} />
               </Form.Item>
             </Col>
             <Col xxl={6} md={12} xs={24}>
@@ -238,49 +186,8 @@ const TagDetail: React.FC<RouteComponentProps> = (props) => {
           </Row>
         </Input.Group>
         <Input.Group>
-          <Row gutter={8}>
-            <Col xxl={12} md={12} xs={24}>
-              <Form.Item name="discoGold" label="Disco Gold">
-                <InputNumber style={{ width: "100%" }} />
-              </Form.Item>
-            </Col>
-            <Col xxl={12} md={12} xs={24}>
-              <Form.Item name="discoDollars" label="Disco Gold">
-                <InputNumber style={{ width: "100%" }} />
-              </Form.Item>
-            </Col>
-          </Row>
+          <Row gutter={8}></Row>
         </Input.Group>
-
-        {/* <Button
-          type="primary"
-          style={{ margin: "8px 0" }}
-          onClick={onAddMoviments}>
-          Add Moviments
-        </Button>
-        <Title level={3}>Moviment</Title>
-        <Form.Item
-          shouldUpdate={(prevValues, curValues) =>
-            prevValues.position !== curValues.position
-          }>
-          {({ getFieldValue }) => {
-            const positions: Position[] = getFieldValue("position") || [];
-
-            return (
-              <Table
-                rowKey={(position: Position) =>
-                  `position_${position.x}_${position.z}_${Math.random()}`
-                }
-                title={() => "Tag Motion"}
-                components={components}
-                rowClassName={() => "editable-row"}
-                bordered
-                dataSource={positions}
-                columns={configuredColumns as ColumnTypes}
-              />
-            );
-          }}
-        </Form.Item> */}
         <Row gutter={8}>
           <Col>
             <Button type="default" onClick={() => history.push("/tags")}>
@@ -288,7 +195,7 @@ const TagDetail: React.FC<RouteComponentProps> = (props) => {
             </Button>
           </Col>
           <Col>
-            <Button type="primary" htmlType="submit">
+            <Button type="primary" htmlType="submit" loading={loading}>
               Save Changes
             </Button>
           </Col>

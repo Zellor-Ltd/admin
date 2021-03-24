@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import { EditOutlined } from "@ant-design/icons";
 import { Tag } from "interfaces/Tag";
 import { Position } from "interfaces/Position";
 import { RouteComponentProps } from "react-router-dom";
@@ -10,16 +10,22 @@ import { saveVideoFeed } from "services/DiscoClubService";
 import {
   Button,
   Col,
+  DatePicker,
   Form,
   Input,
   InputNumber,
+  message,
   PageHeader,
-  Popconfirm,
+  // Popconfirm,
   Row,
   Select,
   Table,
   Typography,
 } from "antd";
+import { Segment } from "interfaces/Segment";
+import { formatMoment } from "helpers/formatMoment";
+import SegmentForm from "./SegmentForm";
+import { FeedItem } from "interfaces/FeedItem";
 
 const { Option } = Select;
 
@@ -39,10 +45,14 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
   );
 
   const [selectedBrand, setSelectedBrand] = useState<Brand | undefined>();
+  const [selectedBrandIndex, setSelectedBrandIndex] = useState<number>(-1);
   const [brandModalVisible, setBrandModalVisible] = useState<boolean>(false);
+  const [selectedSegment, setSelectedSegment] = useState<Segment | undefined>();
+  const [selectedSegmentIndex, setSelectedSegmentIndex] = useState<number>(-1);
 
   const onAddBrand = () => {
     setSelectedBrand(void 0);
+    setSelectedBrandIndex(-1);
     setBrandModalVisible(true);
   };
 
@@ -50,15 +60,26 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
     setBrandModalVisible(false);
   };
 
-  const onEditBrand = (brand: Brand) => {
+  const onCancelSegmentForm = () => {
+    setSelectedSegment(void 0);
+  };
+
+  const onEditBrand = (brand: Brand, index: number) => {
     setSelectedBrand(brand);
+    setSelectedBrandIndex(index);
     setBrandModalVisible(true);
   };
 
   const onAddTag = () => {
     setSelectedTag(void 0);
+    setSelectedTagIndex(-1);
     setSelectedPositions([]);
     setTagModalVisible(true);
+  };
+
+  const onEditSegment = (segment: Segment, index: number) => {
+    setSelectedSegment(segment);
+    setSelectedSegmentIndex(index);
   };
 
   const hideTagModal = () => {
@@ -68,9 +89,17 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
   const onFinish = async () => {
     setLoading(true);
     try {
-      saveVideoFeed(form.getFieldsValue(true));
+      const item: FeedItem = form.getFieldsValue(true);
+      item.package = item.package.map((pack) => ({
+        ...pack,
+        brands: pack.brands ? pack.brands : [],
+        tags: pack.tags ? pack.tags : [],
+      }));
+      // item.validity = moment(item.validity).format("DD/MM/YYYY");
+      await saveVideoFeed(item);
+      message.success("Register updated with success.");
       setLoading(false);
-      history.push("/video-feed");
+      history.push("/feed");
     } catch (e) {
       console.error(e);
       setLoading(false);
@@ -126,71 +155,41 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
     ]);
   };
 
-  const brandColumns = [
-    {
-      title: "Brand Name",
-      dataIndex: "brandName",
-    },
+  const onAddSegment = () => {
+    setSelectedSegment({
+      brands: [],
+      influencer: {},
+      tags: [],
+      video: {},
+    });
+    setSelectedSegmentIndex(-1);
+  };
 
+  const segmentColumns = [
     {
-      title: "Start time",
-      dataIndex: "startTime",
+      title: "Video Length",
+      dataIndex: ["video", "length"],
+    },
+    {
+      title: "Influencer",
+      dataIndex: ["influencer", "influencerName"],
     },
     {
       title: "actions",
       dataIndex: "actions",
-      render: (_: any, record: Brand, index: number) => (
+      width: "5%",
+      render: (_: any, record: Segment, index: number) => (
         <div style={{ display: "flex" }}>
           <Button type="link">
-            <EditOutlined onClick={() => onEditBrand(record)} />
+            <EditOutlined onClick={() => onEditSegment(record, index)} />
           </Button>
-          <Popconfirm
-            title="Sure to delete?"
-            onConfirm={() => onDeleteBrand(index)}>
-            <Button type="link">
-              <DeleteOutlined />
-            </Button>
-          </Popconfirm>
-        </div>
-      ),
-    },
-  ];
-
-  const tagColumns = [
-    {
-      title: "Product Name",
-      dataIndex: "productName",
-    },
-    {
-      title: "Product Id",
-      dataIndex: "productId",
-    },
-    {
-      title: "Start time",
-      dataIndex: "startTime",
-      editable: true,
-      number: true,
-    },
-    {
-      title: "Movments",
-      dataIndex: "position",
-      render: (positions: Position[] = []) => positions.length,
-    },
-    {
-      title: "actions",
-      dataIndex: "actions",
-      render: (_: any, record: Tag, index: number) => (
-        <div style={{ display: "flex" }}>
-          <Button type="link">
-            <EditOutlined onClick={() => onEditTag(record, index)} />
-          </Button>
-          <Popconfirm
+          {/* <Popconfirm
             title="Sure to delete?"
             onConfirm={() => onDeleteTag(index)}>
             <Button type="link">
               <DeleteOutlined />
             </Button>
-          </Popconfirm>
+          </Popconfirm> */}
         </div>
       ),
     },
@@ -202,166 +201,176 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
       <Form.Provider
         onFormFinish={(name, { values, forms }) => {
           if (name === "tagForm") {
-            const { feedForm } = forms;
-            const tags: Tag[] = feedForm.getFieldValue("tags") || [];
-            values.position = selectedPositions;
-            setSelectedPositions([]);
-            if (selectedTag) {
+            const { segmentForm, tagForm } = forms;
+            const tags: any[] = segmentForm.getFieldValue("tags") || [];
+
+            const newValue = tagForm.getFieldsValue(true);
+            if (selectedTagIndex > -1) {
+              tags[selectedTagIndex] = newValue;
               tags[selectedTagIndex].position = selectedPositions;
-              feedForm.setFieldsValue({ tags: [...tags] });
+              segmentForm.setFieldsValue({ tags: [...tags] });
             } else {
-              feedForm.setFieldsValue({ tags: [...tags, values] });
+              newValue.position = selectedPositions;
+              segmentForm.setFieldsValue({ tags: [...tags, newValue] });
             }
+
+            setSelectedPositions([]);
             setTagModalVisible(false);
           }
 
           if (name === "brandForm") {
-            const { feedForm } = forms;
-            const brands: Brand[] = feedForm.getFieldValue("brands") || [];
-            if (selectedBrand) {
-              feedForm.setFieldsValue({ brands: [...brands] });
+            const { segmentForm, brandForm } = forms;
+            const brands: any[] = segmentForm.getFieldValue("brands") || [];
+            const newValue = brandForm.getFieldsValue(true);
+            if (selectedBrandIndex > -1) {
+              brands[selectedBrandIndex] = newValue;
+              segmentForm.setFieldsValue({ brands: [...brands] });
             } else {
-              feedForm.setFieldsValue({ brands: [...brands, values] });
+              segmentForm.setFieldsValue({ brands: [...brands, newValue] });
             }
+
             setBrandModalVisible(false);
           }
+
+          if (name === "segmentForm") {
+            const { feedForm, segmentForm } = forms;
+            const segments: any[] = feedForm.getFieldValue("package") || [];
+            if (selectedSegmentIndex > -1) {
+              segments[selectedSegmentIndex] = segmentForm.getFieldsValue(true);
+              feedForm.setFieldsValue({ package: [...segments] });
+            } else {
+              feedForm.setFieldsValue({
+                package: [...segments, segmentForm.getFieldsValue(true)],
+              });
+            }
+            setSelectedSegment(undefined);
+            setSelectedSegmentIndex(-1);
+          }
         }}>
-        <Form
-          form={form}
-          onFinish={onFinish}
-          name="feedForm"
-          initialValues={initial}
-          layout="vertical">
-          <Row gutter={8}>
-            <Col lg={12} xs={24}>
-              <Form.Item name={["video", "title"]} label="Title">
-                <Input />
-              </Form.Item>
-            </Col>
-            <Col lg={12} xs={24}>
-              <Form.Item name={["video", "category"]} label="Category">
-                <Select placeholder="Please select a category">
-                  <Option value="Category 1">Category 1</Option>
-                  <Option value="Category 2">Category 2</Option>
-                </Select>
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row gutter={8}>
-            <Col lg={24}>
-              <Form.Item name={["video", "videoUrl"]} label="Video Url">
-                <Input />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row gutter={8}>
-            <Col lg={24}>
-              <Form.Item name={["video", "thumbnailUrl"]} label="Thumbnail Url">
-                <Input />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row gutter={8}>
-            <Col lg={8} xs={24}>
-              <Form.Item name={["video", "format"]} label="Format">
-                <Input />
-              </Form.Item>
-            </Col>
-            <Col lg={8} xs={24}>
-              <Form.Item name={["video", "length"]} label="Length">
-                <InputNumber />
-              </Form.Item>
-            </Col>
-            <Col lg={8} xs={24}>
-              <Form.Item name={["video", "language"]} label="Language">
-                <Input />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row gutter={8}>
-            <Col lg={8} xs={24}>
-              <Form.Item name={["video", "target"]} label="Target">
-                <Input />
-              </Form.Item>
-            </Col>
-            <Col lg={8} xs={24}>
-              <Form.Item name={["video", "modelRelease"]} label="Model Release">
-                <InputNumber />
-              </Form.Item>
-            </Col>
-            <Col lg={8} xs={24}>
-              <Form.Item name={["video", "market"]} label="Market">
-                <Input />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Button
-            htmlType="button"
-            style={{ margin: "8px 0" }}
-            onClick={onAddBrand}>
-            Add Brand
-          </Button>
-          <Title level={3}>Brands</Title>
-          <Form.Item
-            shouldUpdate={(prevValues, curValues) =>
-              prevValues.brands !== curValues.brands
-            }>
-            {({ getFieldValue }) => {
-              const brands: Brand[] = getFieldValue("brands") || [];
+        <>
+          <Form
+            form={form}
+            onFinish={onFinish}
+            name="feedForm"
+            initialValues={initial}
+            layout="vertical">
+            {!selectedSegment && (
+              <>
+                <Row gutter={8}>
+                  <Col lg={12} xs={24}>
+                    <Form.Item name="title" label="Title">
+                      <Input />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={12} xs={24}>
+                    <Form.Item name="category" label="Category">
+                      <Select placeholder="Please select a category">
+                        <Option value="Category 1">Category 1</Option>
+                        <Option value="Category 2">Category 2</Option>
+                      </Select>
+                    </Form.Item>
+                  </Col>
+                </Row>
 
-              return (
-                <Table
-                  columns={brandColumns}
-                  dataSource={brands}
-                  bordered
-                  rowKey={(record) =>
-                    `Brand_${record.brandId}_${record.brandLogoUrl}`
-                  }
-                />
-              );
-            }}
-          </Form.Item>
-          <Button
-            htmlType="button"
-            style={{ margin: "8px 0" }}
-            onClick={onAddTag}>
-            Add Tag
-          </Button>
-          <Title level={3}>Tags</Title>
-          <Form.Item
-            shouldUpdate={(prevValues, curValues) =>
-              prevValues.tags !== curValues.tags
-            }>
-            {({ getFieldValue }) => {
-              const tags: Tag[] = getFieldValue("tags") || [];
-              return (
-                <Table
-                  columns={tagColumns}
-                  dataSource={tags}
-                  bordered
-                  rowKey={(record) =>
-                    `tag_${record.tagId}_${record.productDiscount}`
-                  }
-                />
-              );
-            }}
-          </Form.Item>
+                <Row gutter={8}>
+                  <Col lg={8} xs={24}>
+                    <Form.Item name="format" label="Format">
+                      <Input />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={8} xs={24}>
+                    <Form.Item name="lengthTotal" label="Length">
+                      <InputNumber />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={8} xs={24}>
+                    <Form.Item name="language" label="Language">
+                      <Input />
+                    </Form.Item>
+                  </Col>
+                </Row>
+                <Row gutter={8}>
+                  <Col lg={8} xs={24}>
+                    <Form.Item name="target" label="Target">
+                      <Input />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={8} xs={24}>
+                    <Form.Item name="modelRelease" label="Model Release">
+                      <InputNumber />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={8} xs={24}>
+                    <Form.Item name="market" label="Market">
+                      <Input />
+                    </Form.Item>
+                  </Col>
 
-          <Row gutter={8}>
-            <Col>
-              <Button
-                type="default"
-                onClick={() => history.push("/video-feed")}>
-                Cancel
-              </Button>
-            </Col>
-            <Col>
-              <Button type="primary" htmlType="submit" loading={loading}>
-                Save Changes
-              </Button>
-            </Col>
-          </Row>
-        </Form>
+                  <Col lg={8} xs={24}>
+                    <Form.Item
+                      name="validity"
+                      label="Expiration Date"
+                      getValueProps={formatMoment}>
+                      <DatePicker format="DD/MM/YYYY" />
+                    </Form.Item>
+                  </Col>
+                </Row>
+
+                <Button
+                  htmlType="button"
+                  style={{ margin: "8px 0" }}
+                  onClick={onAddSegment}>
+                  Add Segment
+                </Button>
+                <Title level={3}>Segments</Title>
+                <Form.Item
+                  shouldUpdate={(prevValues, curValues) =>
+                    prevValues.package !== curValues.package
+                  }>
+                  {({ getFieldValue }) => {
+                    const segments: Segment[] = getFieldValue("package") || [];
+
+                    return (
+                      <Table
+                        columns={segmentColumns}
+                        dataSource={segments}
+                        bordered
+                        rowKey={() => `Package_${Math.random()}`}
+                      />
+                    );
+                  }}
+                </Form.Item>
+
+                <Row gutter={8}>
+                  <Col>
+                    <Button
+                      type="default"
+                      onClick={() => history.push("/feed")}>
+                      Cancel
+                    </Button>
+                  </Col>
+                  <Col>
+                    <Button type="primary" htmlType="submit" loading={loading}>
+                      Save Changes
+                    </Button>
+                  </Col>
+                </Row>
+              </>
+            )}
+          </Form>
+        </>
+        {selectedSegment && (
+          <SegmentForm
+            segment={selectedSegment}
+            onCancel={onCancelSegmentForm}
+            onEditTag={onEditTag}
+            onDeleteTag={onDeleteTag}
+            onEditBrand={onEditBrand}
+            onDeleteBrand={onDeleteBrand}
+            onAddBrand={onAddBrand}
+            onAddTag={onAddTag}
+          />
+        )}
         <ModalBrand
           visible={brandModalVisible}
           brand={selectedBrand}

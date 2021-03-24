@@ -1,3 +1,10 @@
+import { ColumnsType } from "antd/lib/table";
+import { Brand } from "interfaces/Brand";
+import { Video } from "interfaces/Video";
+import { useEffect, useState } from "react";
+import { RouteComponentProps } from "react-router";
+import { fetchBrands, saveProduct } from "services/DiscoClubService";
+import { formatMoment } from "helpers/formatMoment";
 import {
   Button,
   Col,
@@ -5,26 +12,25 @@ import {
   Form,
   Input,
   InputNumber,
+  message,
   PageHeader,
   Row,
   Select,
   Table,
   Typography,
 } from "antd";
-import { ColumnsType } from "antd/lib/table";
-import { Brand } from "interfaces/Brand";
-import { Video } from "interfaces/Video";
-import { useEffect, useState } from "react";
-import { RouteComponentProps } from "react-router";
-import { fetchBrands, saveProduct } from "services/DiscoClubService";
-import moment from "moment";
 
 const videoColumns: ColumnsType<Video> = [
   {
     title: "ID",
     dataIndex: "videoFeedId",
-    width: "100%",
+    width: "50%",
     align: "center",
+  },
+  {
+    title: "Thumbnail URL",
+    dataIndex: "thumbnailUrl",
+    width: "50%",
   },
 ];
 
@@ -56,8 +62,16 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
 
   const onFinish = async () => {
     setLoading(true);
-    await saveProduct(form.getFieldsValue(true));
-    setLoading(false);
+    try {
+      const product = form.getFieldsValue(true);
+      product.brand = brands.find((brand) => brand.id === product.brand.id);
+      await saveProduct(product);
+      setLoading(false);
+      message.success("Register updated with success.");
+      history.push("/products");
+    } catch (error) {
+      setLoading(false);
+    }
   };
 
   return (
@@ -116,7 +130,7 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
             </Form.Item>
           </Col>
           <Col lg={8} xs={24}>
-            <Form.Item name={["brand", "brandId"]} label="Brand">
+            <Form.Item name={["brand", "id"]} label="Brand">
               <Select>
                 {brands.map((brand) => (
                   <Select.Option key={brand.id} value={brand.id}>
@@ -127,10 +141,11 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
             </Form.Item>
           </Col>
           <Col lg={8} xs={24}>
-            <Form.Item name="offerExpirationDate" label="Offer Expiration Date">
-              <DatePicker
-                format={(value) => moment(value).format("DD-MM-YYYY")}
-              />
+            <Form.Item
+              name="offerExpirationDate"
+              label="Offer Expiration Date"
+              getValueProps={formatMoment}>
+              <DatePicker format="DD/MM/YYYY" />
             </Form.Item>
           </Col>
           <Col lg={8} xs={24}>
@@ -161,13 +176,17 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
             </Form.Item>
           </Col>
         </Row>
-        <Row>
-          <Button type="default" onClick={() => history.push("/products")}>
-            Cancel
-          </Button>
-          <Button type="primary" htmlType="submit" loading={loading}>
-            Save Changes
-          </Button>
+        <Row gutter={8}>
+          <Col>
+            <Button type="default" onClick={() => history.push("/products")}>
+              Cancel
+            </Button>
+          </Col>
+          <Col>
+            <Button type="primary" htmlType="submit" loading={loading}>
+              Save Changes
+            </Button>
+          </Col>
         </Row>
       </Form>
     </>

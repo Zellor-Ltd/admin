@@ -1,6 +1,7 @@
-import { Col, Form, Input, InputNumber, Modal, Row } from "antd";
+import { Col, Form, Input, InputNumber, Modal, Row, Select } from "antd";
 import { Brand } from "interfaces/Brand";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { fetchBrands } from "services/DiscoClubService";
 import { useResetFormOnCloseModal } from "./useResetFormCloseModal";
 
 interface ModalFormProps {
@@ -11,10 +12,29 @@ interface ModalFormProps {
 
 const ModalBrand: React.FC<ModalFormProps> = ({ brand, visible, onCancel }) => {
   const [form] = Form.useForm();
+  const [brands, setBrands] = useState<Brand[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [selectedBrand, setselectedBrand] = useState<Brand | undefined>();
 
   useEffect(() => {
     form.resetFields();
   }, [brand, form]);
+
+  useEffect(() => {
+    let mounted = true;
+    async function getBrands() {
+      const response: any = await fetchBrands();
+      if (mounted) {
+        setBrands(response.results);
+        setLoading(false);
+      }
+    }
+    setLoading(true);
+    getBrands();
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   useResetFormOnCloseModal({
     form,
@@ -22,7 +42,12 @@ const ModalBrand: React.FC<ModalFormProps> = ({ brand, visible, onCancel }) => {
   });
 
   const onOk = () => {
+    form.setFieldsValue({ ...selectedBrand });
     form.submit();
+  };
+
+  const onChangeBrand = (key: string) => {
+    setselectedBrand(brands.find((brand) => brand.id === key));
   };
 
   return (
@@ -32,45 +57,38 @@ const ModalBrand: React.FC<ModalFormProps> = ({ brand, visible, onCancel }) => {
       onOk={onOk}
       onCancel={onCancel}
       width={"80%"}
+      okButtonProps={{ loading: loading }}
       forceRender>
-      <Form form={form} name="brandForm" initialValues={brand}>
+      <Form
+        form={form}
+        name="brandForm"
+        initialValues={brand}
+        layout="vertical">
         <Input.Group>
           <Row gutter={8}>
-            <Col lg={8} xs={24}>
-              <Form.Item name="brandId" label="Brand id">
-                <Input />
+            <Col lg={6} xs={0}>
+              <Form.Item name="brandName" label="Brand">
+                <Select onChange={onChangeBrand}>
+                  {brands.map((brand) => (
+                    <Select.Option key={brand.id} value={brand.id}>
+                      {brand.brandName}
+                    </Select.Option>
+                  ))}
+                </Select>
               </Form.Item>
             </Col>
-            <Col lg={8} xs={24}>
-              <Form.Item name="productId" label="Product Id">
-                <Input />
-              </Form.Item>
-            </Col>
-            <Col lg={8} xs={24}>
-              <Form.Item name="brandName" label="Brand Name">
-                <Input />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row gutter={8}>
-            <Col lg={24}>
-              <Form.Item name="brandLogoUrl" label="Brand Logo Url">
-                <Input />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row gutter={8}>
-            <Col lg={4} xs={24}>
+
+            <Col lg={6} xs={24}>
               <Form.Item name="startTime" label="Start Time">
                 <InputNumber style={{ width: "100%" }} />
               </Form.Item>
             </Col>
-            <Col lg={4} xs={24}>
+            <Col lg={6} xs={24}>
               <Form.Item name="duration" label="Duration">
                 <InputNumber style={{ width: "100%" }} />
               </Form.Item>
             </Col>
-            <Col lg={4} xs={24}>
+            <Col lg={6} xs={24}>
               <Form.Item
                 name="opacity"
                 label="Opacity"
@@ -79,7 +97,7 @@ const ModalBrand: React.FC<ModalFormProps> = ({ brand, visible, onCancel }) => {
                 <InputNumber style={{ width: "100%" }} />
               </Form.Item>
             </Col>
-            <Col lg={4} xs={24}>
+            <Col lg={8} xs={24}>
               <Form.Item
                 name="x"
                 label="Position X"
@@ -88,7 +106,7 @@ const ModalBrand: React.FC<ModalFormProps> = ({ brand, visible, onCancel }) => {
                 <InputNumber style={{ width: "100%" }} />
               </Form.Item>
             </Col>
-            <Col lg={4} xs={24}>
+            <Col lg={8} xs={24}>
               <Form.Item
                 name="y"
                 label="Position Y"
@@ -97,7 +115,7 @@ const ModalBrand: React.FC<ModalFormProps> = ({ brand, visible, onCancel }) => {
                 <InputNumber style={{ width: "100%" }} />
               </Form.Item>
             </Col>
-            <Col lg={4} xs={24}>
+            <Col lg={8} xs={24}>
               <Form.Item
                 name="z"
                 label="Z Index"

@@ -3,21 +3,32 @@ import {
   Col,
   Form,
   Input,
+  message,
   PageHeader,
   Row,
   Select,
   Typography,
 } from "antd";
+import { useState } from "react";
 import { RouteComponentProps } from "react-router";
 import { saveCreator } from "services/DiscoClubService";
 
 const CreatorDetail: React.FC<RouteComponentProps> = (props) => {
   const { history, location } = props;
   const initial: any = location.state;
+  const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
 
-  const onFinish = () => {
-    saveCreator(form.getFieldsValue(true));
+  const onFinish = async () => {
+    setLoading(true);
+    try {
+      await saveCreator(form.getFieldsValue(true));
+      setLoading(false);
+      message.success("Register updated with success.");
+      history.push("/creators");
+    } catch (error) {
+      setLoading(false);
+    }
   };
 
   return (
@@ -84,12 +95,18 @@ const CreatorDetail: React.FC<RouteComponentProps> = (props) => {
             </Form.Item>
           </Col>
         </Row>
-        <Button type="default" onClick={() => history.push("/creators")}>
-          Cancel
-        </Button>
-        <Button type="primary" htmlType="submit">
-          Save Changes
-        </Button>
+        <Row gutter={8}>
+          <Col>
+            <Button type="default" onClick={() => history.push("/creators")}>
+              Cancel
+            </Button>
+          </Col>
+          <Col>
+            <Button loading={loading} type="primary" htmlType="submit">
+              Save Changes
+            </Button>
+          </Col>
+        </Row>
       </Form>
     </>
   );

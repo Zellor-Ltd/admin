@@ -1,6 +1,12 @@
 .header {
   &.ant-layout-header {
     padding: 0 16px;
+    display: flex;
+    justify-content: space-between;
+    button {
+      align-items: center;
+      margin: 16px 0;
+    }
   }
   a {
     color: #fff;
