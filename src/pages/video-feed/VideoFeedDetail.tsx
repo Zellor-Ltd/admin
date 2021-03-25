@@ -26,8 +26,7 @@ import { Segment } from "interfaces/Segment";
 import { formatMoment } from "helpers/formatMoment";
 import SegmentForm from "./SegmentForm";
 import { FeedItem } from "interfaces/FeedItem";
-
-const { Option } = Select;
+import { useSelector } from "react-redux";
 
 const { Title } = Typography;
 
@@ -35,6 +34,9 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
   const { history, location } = props;
   const initial: any = location.state;
 
+  const {
+    settings: { category = [], market = [], language = [] },
+  } = useSelector((state: any) => state.settings);
   const [form] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedTag, setSelectedTag] = useState<Tag | undefined>();
@@ -265,8 +267,13 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
                   <Col lg={12} xs={24}>
                     <Form.Item name="category" label="Category">
                       <Select placeholder="Please select a category">
-                        <Option value="Category 1">Category 1</Option>
-                        <Option value="Category 2">Category 2</Option>
+                        {category.map((category: any) => (
+                          <Select.Option
+                            key={category.value}
+                            value={category.value}>
+                            {category.name}
+                          </Select.Option>
+                        ))}
                       </Select>
                     </Form.Item>
                   </Col>
@@ -285,7 +292,13 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
                   </Col>
                   <Col lg={8} xs={24}>
                     <Form.Item name="language" label="Language">
-                      <Input />
+                      <Select placeholder="Please select a language">
+                        {language.map((lang: any) => (
+                          <Select.Option key={lang.value} value={lang.value}>
+                            {lang.name}
+                          </Select.Option>
+                        ))}
+                      </Select>
                     </Form.Item>
                   </Col>
                 </Row>
@@ -302,7 +315,13 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
                   </Col>
                   <Col lg={8} xs={24}>
                     <Form.Item name="market" label="Market">
-                      <Input />
+                      <Select placeholder="Please select a market">
+                        {market.map((mark: any) => (
+                          <Select.Option key={mark.value} value={mark.value}>
+                            {mark.name}
+                          </Select.Option>
+                        ))}
+                      </Select>
                     </Form.Item>
                   </Col>
 

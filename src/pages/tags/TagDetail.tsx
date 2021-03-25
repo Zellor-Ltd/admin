@@ -14,8 +14,7 @@ import { useEffect, useState } from "react";
 import { saveTag, fetchProducts, fetchBrands } from "services/DiscoClubService";
 import { Product } from "interfaces/Product";
 import { Brand } from "interfaces/Brand";
-
-const { Option } = Select;
+import { useSelector } from "react-redux";
 
 const TagDetail: React.FC<RouteComponentProps> = (props) => {
   const { history, location } = props;
@@ -27,6 +26,10 @@ const TagDetail: React.FC<RouteComponentProps> = (props) => {
     initial?.brand?.id
   );
   const [form] = Form.useForm();
+
+  const {
+    settings: { template = [], clickSound = [] },
+  } = useSelector((state: any) => state.settings);
 
   useEffect(() => {
     let mounted = true;
@@ -121,10 +124,11 @@ const TagDetail: React.FC<RouteComponentProps> = (props) => {
                 <Select
                   placeholder="Please select a template"
                   onChange={onChangeTemplate}>
-                  <Option value="product">Product</Option>
-                  <Option value="dollar">Dollar</Option>
-                  <Option value="gold">Gold</Option>
-                  <Option value="gift">Gift</Option>
+                  {template.map((temp: any) => (
+                    <Select.Option key={temp.value} value={temp.value}>
+                      {temp.name}
+                    </Select.Option>
+                  ))}
                 </Select>
               </Form.Item>
             </Col>
@@ -177,9 +181,11 @@ const TagDetail: React.FC<RouteComponentProps> = (props) => {
                 label="Click Sound"
                 rules={[{ required: true }]}>
                 <Select placeholder="Please select a click sound">
-                  <Option value="beep">Beep</Option>
-                  <Option value="bell">Bell</Option>
-                  <Option value="silent">Silent</Option>
+                  {clickSound.map((click: any) => (
+                    <Select.Option key={click.value} value={click.value}>
+                      {click.name}
+                    </Select.Option>
+                  ))}
                 </Select>
               </Form.Item>
             </Col>

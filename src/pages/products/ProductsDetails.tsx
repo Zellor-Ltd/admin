@@ -19,6 +19,7 @@ import {
   Table,
   Typography,
 } from "antd";
+import { useSelector } from "react-redux";
 
 const videoColumns: ColumnsType<Video> = [
   {
@@ -40,6 +41,10 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [form] = Form.useForm();
+
+  const {
+    settings: { currency = [] },
+  } = useSelector((state: any) => state.settings);
 
   useEffect(() => {
     let mounted = true;
@@ -126,7 +131,13 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
           </Col>
           <Col lg={6} xs={24}>
             <Form.Item name="currencyIsoCode" label="Currency">
-              <Input />
+              <Select placeholder="Please select a currenty">
+                {currency.map((curr: any) => (
+                  <Select.Option key={curr.value} value={curr.value}>
+                    {curr.name}
+                  </Select.Option>
+                ))}
+              </Select>
             </Form.Item>
           </Col>
           <Col lg={8} xs={24}>

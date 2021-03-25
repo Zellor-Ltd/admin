@@ -35,114 +35,110 @@ instance.interceptors.response.use((response) => {
   return snakeToCamelCase(response.data);
 });
 
-export const fetchStartupVideo = () => instance.get("GetStartupVideo");
+export const fetchStartupVideo = () => instance.get("Wi/Ep/GetStartupVideo");
 
-export const fetchVideoFeed = () => instance.get("ListVideoFeed");
+export const fetchVideoFeed = () => instance.get("Wi/Ep/ListVideoFeed");
 
-export const fetchProducts = () => instance.get("ListProducts");
+export const fetchProducts = () => instance.get("Wi/Ep/ListProducts");
 
-export const fetchBrands = () => instance.get("ListBrands");
+export const fetchBrands = () => instance.get("Wi/Ep/ListBrands");
 
-export const fetchTags = () => instance.get("ListTags");
+export const fetchTags = () => instance.get("Wi/Ep/ListTags");
 
-export const fetchCreators = () => instance.get("ListCreators");
+export const fetchCreators = () => instance.get("Wi/Ep/ListCreators");
 
-export const fetchUsers = () => instance.get("ListUsers");
+export const fetchUsers = () => instance.get("Wi/Ep/ListUsers");
 
-export const fetchProfiles = () => instance.get("ListProfiles");
+export const fetchProfiles = () => instance.get("Wi/Ep/ListProfiles");
 
-export const fetchFunctions = () => instance.get("ListFunctions");
+export const fetchFunctions = () => instance.get("Wi/Ep/ListFunctions");
 
-export const fetchEndpoints = () => instance.get("ListEndpoints");
+export const fetchEndpoints = () => instance.get("Wi/Ep/ListEndpoints");
 
-export const fetchSettings = () => instance.get("GetSettings");
+export const fetchSettings = () => instance.get("Wi/Ep/GetSettings");
 
 export const saveVideoFeed = (params: FeedItem) => {
   if (params.id) {
-    return instance.put("UpdateVideoFeed", params);
+    return instance.put("Wi/EP/UpdateVideoFeed", params);
   } else {
-    return instance.put("AddVideoFeed", params);
+    return instance.put("Wi/EP/AddVideoFeed", params);
   }
 };
 
 export const saveProduct = (params: Product) => {
   if (params.id) {
-    return instance.post("UpdateProduct", params);
+    return instance.post("Wi/Ep/UpdateProduct", params);
   } else {
-    return instance.put("AddProduct", params);
+    return instance.put("Wi/EP/AddProduct", params);
   }
 };
 
 export const saveCreator = (params: Creator) => {
   if (params.id) {
-    return instance.post("UpdateCreator", params);
+    return instance.post("Wi/Ep/UpdateCreator", params);
   } else {
-    return instance.put("AddCreator", params);
+    return instance.put("Wi/EP/AddCreator", params);
   }
 };
 
 export const saveTag = (params: Tag) => {
   if (params.id) {
-    return instance.post("UpdateTag", params);
+    return instance.post("Wi/Ep/UpdateTag", params);
   } else {
-    return instance.put("AddTag", params);
+    return instance.put("Wi/EP/AddTag", params);
   }
 };
 
 export const saveBrand = (params: Brand) => {
   if (params.id) {
-    return instance.post("UpdateBrand", params);
+    return instance.post("Wi/Ep/UpdateBrand", params);
   } else {
-    return instance.put("AddBrand", params);
+    return instance.put("Wi/EP/AddBrand", params);
   }
 };
 
 export const saveEndpoint = (params: Function) => {
   params.type = "endpoint";
   if (params.id) {
-    return instance.post("UpdateFunction", params);
+    return instance.post("Wi/Ep/UpdateFunction", params);
   } else {
-    return instance.put("AddFunction", params);
+    return instance.put("Wi/EP/AddFunction", params);
   }
 };
 
 export const saveUser = (params: User) => {
   if (params.id) {
-    return instance.post(
-      "https://jfkb8c943262a68401ca.discoclub.com/Disco/Identity/UpdateUser",
-      params
-    );
+    return instance.post("Disco/Identity/UpdateUser", params);
   } else {
-    return instance.put(
-      "https://jfkb8c943262a68401ca.discoclub.com/Disco/Identity/AddUser",
-      params
-    );
+    return instance.put("Disco/Identity/AddUser", params);
   }
 };
 
 export const saveRole = (params: Role) => {
   if (params.id) {
-    return instance.post("UpdateProfile", params);
+    return instance.post("Wi/Ep/UpdateProfile", params);
   } else {
-    return instance.put("AddProfile", params);
+    return instance.put("Wi/EP/AddProfile", params);
   }
 };
 
-export const deleteVideoFeed = (id: string) =>
-  instance.delete(`delete/videofeed/${id}`);
+export const saveSettings = (params: any) => {
+  return instance.post("Wi/Ep/UpdateSettings", params);
+};
 
-export const deleteTag = (id: string) => instance.delete(`RemoveTag/${id}`);
+export const deleteVideoFeed = (id: string) =>
+  instance.delete(`Wi/Ep/delete/videofeed/${id}`);
+
+export const deleteTag = (id: string) =>
+  instance.delete(`Wi/Ep/RemoveTag/${id}`);
 
 export const deleteCreator = (id: string) =>
-  instance.delete(`RemoveCreator/${id}`);
+  instance.delete(`Wi/Ep/RemoveCreator/${id}`);
 
 export const deleteProduct = (id: string) =>
-  instance.delete(`RemoveProduct/${id}`);
+  instance.delete(`Wi/Ep/RemoveProduct/${id}`);
 
-export const deleteBrand = (id: string) => instance.delete(`RemoveBrand`);
+export const deleteBrand = (id: string) => instance.delete(`Wi/Ep/RemoveBrand`);
 
 export const loginService = (login: Login) =>
-  instance.put(
-    "https://jfkb8c943262a68401ca.hoxwi.com/Auth/GetApiToken",
-    login
-  );
+  instance.put("Auth/GetApiToken", login);
