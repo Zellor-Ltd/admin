@@ -20,6 +20,8 @@ import RoleDetail from "pages/roles/RoleDetail";
 import AuthRoute from "components/auth-route/AuthRoute";
 import AuthenticatedLayout from "layout/AuthenticatedLayout";
 import OpenLayout from "layout/OpenLayout";
+import Interfaces from "pages/interfaces/Interfaces";
+import InterfaceDetail from "pages/interfaces/InterfaceDetail";
 
 function Routes() {
   return (
@@ -85,6 +87,16 @@ function Routes() {
       <AuthRoute
         path="/endpoints"
         component={Endpoints}
+        layout={AuthenticatedLayout}
+      />
+      <AuthRoute
+        path="/interface"
+        component={InterfaceDetail}
+        layout={AuthenticatedLayout}
+      />
+      <AuthRoute
+        path="/interfaces"
+        component={Interfaces}
         layout={AuthenticatedLayout}
       />
       <AuthRoute

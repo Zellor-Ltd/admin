@@ -131,7 +131,7 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
           </Col>
           <Col lg={6} xs={24}>
             <Form.Item name="currencyIsoCode" label="Currency">
-              <Select placeholder="Please select a currenty">
+              <Select placeholder="Please select a currency">
                 {currency.map((curr: any) => (
                   <Select.Option key={curr.value} value={curr.value}>
                     {curr.name}

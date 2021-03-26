@@ -11,9 +11,14 @@ const Settings: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const { settings } = useSelector((state: any) => state.settings);
   const dispatch = useDispatch();
+
   useEffect(() => {
     form.resetFields();
   }, [settings, form]);
+
+  useEffect(() => {
+    dispatch(getSettings());
+  }, []);
 
   const onFinish = async () => {
     setLoading(true);
