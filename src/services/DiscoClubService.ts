@@ -55,7 +55,11 @@ export const fetchFunctions = () => instance.get("Wi/Ep/ListFunctions");
 
 export const fetchEndpoints = () => instance.get("Wi/Ep/ListEndpoints");
 
+export const fetchInterfaces = () => instance.get("Wi/Ep/ListInterfaces");
+
 export const fetchSettings = () => instance.get("Wi/Ep/GetSettings");
+
+export const fetchPrivileges = () => instance.get("Wi/Ep/GetPrivileges");
 
 export const saveVideoFeed = (params: FeedItem) => {
   if (params.id) {
@@ -99,6 +103,15 @@ export const saveBrand = (params: Brand) => {
 
 export const saveEndpoint = (params: Function) => {
   params.type = "endpoint";
+  if (params.id) {
+    return instance.post("Wi/Ep/UpdateFunction", params);
+  } else {
+    return instance.put("Wi/EP/AddFunction", params);
+  }
+};
+
+export const saveInterface = (params: Function) => {
+  params.type = "interface";
   if (params.id) {
     return instance.post("Wi/Ep/UpdateFunction", params);
   } else {
