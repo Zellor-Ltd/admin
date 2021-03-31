@@ -18,7 +18,7 @@ import { Segment } from "interfaces/Segment";
 const { Content } = Layout;
 
 const deleteItem = (id: string) => {
-  deleteVideoFeed(id);
+  deleteVideoFeed({ id });
 };
 
 const reduceSegmentsTags = (packages: Segment[]) => {

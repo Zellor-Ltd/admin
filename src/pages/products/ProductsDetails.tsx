@@ -69,12 +69,13 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
     setLoading(true);
     try {
       const product = form.getFieldsValue(true);
-      product.brand = brands.find((brand) => brand.id === product.brand.id);
+      product.brand = brands?.find((brand) => brand.id === product.brand?.id);
       await saveProduct(product);
       setLoading(false);
       message.success("Register updated with success.");
       history.push("/products");
     } catch (error) {
+      console.error(error);
       setLoading(false);
     }
   };

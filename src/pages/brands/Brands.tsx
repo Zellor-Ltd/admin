@@ -32,8 +32,8 @@ const Brands: React.FC<RouteComponentProps> = ({ history }) => {
   const deleteItem = async (id: string) => {
     setLoading(true);
     try {
-      await deleteBrand(id);
-      setLoading(false);
+      await deleteBrand({ id });
+      fetch();
     } catch (err) {
       console.log(err);
       setLoading(false);

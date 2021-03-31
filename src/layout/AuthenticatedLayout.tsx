@@ -1,5 +1,5 @@
 import { Link, RouteComponentProps, withRouter } from "react-router-dom";
-import { Button, Layout, Menu } from "antd";
+import { Button, Layout, Menu, Typography } from "antd";
 import {
   HeartFilled,
   TagOutlined,
@@ -10,9 +10,11 @@ import {
   SettingOutlined,
   ApartmentOutlined,
   AppstoreAddOutlined,
+  ControlOutlined,
 } from "@ant-design/icons";
 import "./AuthenticatedLayout.scss";
 import jwt from "helpers/jwt";
+import SubMenu from "antd/lib/menu/SubMenu";
 
 const { Header, Sider, Content } = Layout;
 
@@ -35,9 +37,14 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = (props) => {
         <h2>
           <Link to="/"> Disco Admin</Link>
         </h2>
-        <Button onClick={logout} type="link">
-          {getUserName()}
-        </Button>
+        <div>
+          <Typography.Text style={{ color: "white" }}>
+            {getUserName()}
+          </Typography.Text>
+          <Button onClick={logout} type="link">
+            Logout
+          </Button>
+        </div>
       </Header>
       <Layout className="site-layout">
         <Sider
@@ -48,8 +55,8 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = (props) => {
           }}>
           <div className="logo" />
           <Menu theme="dark" mode="inline" defaultSelectedKeys={["1"]}>
-            <Menu.Item key="2" icon={<HeartFilled />}>
-              <Link to="/feed">Videos Feed</Link>
+            <Menu.Item key="brands" icon={<FundOutlined />}>
+              <Link to="/brands">Brands</Link>
             </Menu.Item>
             <Menu.Item key="products" icon={<TagOutlined />}>
               <Link to="/products">Products</Link>
@@ -60,24 +67,33 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = (props) => {
             <Menu.Item key="tags" icon={<TagOutlined />}>
               <Link to="/tags">Tags</Link>
             </Menu.Item>
-            <Menu.Item key="brands" icon={<FundOutlined />}>
-              <Link to="/brands">Brands</Link>
+            <Menu.Item key="2" icon={<HeartFilled />}>
+              <Link to="/feed">Videos Feed</Link>
             </Menu.Item>
-            <Menu.Item key="endpoints" icon={<CloudServerOutlined />}>
-              <Link to="/endpoints">Endpoints</Link>
-            </Menu.Item>
-            <Menu.Item key="interfaces" icon={<AppstoreAddOutlined />}>
-              <Link to="/interfaces">Interfaces</Link>
-            </Menu.Item>
-            <Menu.Item key="users" icon={<UserOutlined />}>
-              <Link to="/users">Users</Link>
-            </Menu.Item>
-            <Menu.Item key="roles" icon={<ApartmentOutlined />}>
-              <Link to="/roles">Roles</Link>
-            </Menu.Item>
-            <Menu.Item key="settings" icon={<SettingOutlined />}>
-              <Link to="/settings">Settings</Link>
-            </Menu.Item>
+
+            <SubMenu
+              key="sub-settings"
+              icon={<SettingOutlined />}
+              title="Settings">
+              <Menu.Item key="endpoints" icon={<CloudServerOutlined />}>
+                <Link to="/endpoints">Endpoints</Link>
+              </Menu.Item>
+              <Menu.Item key="interfaces" icon={<AppstoreAddOutlined />}>
+                <Link to="/interfaces">Interfaces</Link>
+              </Menu.Item>
+              <Menu.Item key="users" icon={<UserOutlined />}>
+                <Link to="/users">Users</Link>
+              </Menu.Item>
+              <Menu.Item key="roles" icon={<ApartmentOutlined />}>
+                <Link to="/roles">Roles</Link>
+              </Menu.Item>
+              <Menu.Item key="settings" icon={<SettingOutlined />}>
+                <Link to="/settings">Settings</Link>
+              </Menu.Item>
+              <Menu.Item key="access-control" icon={<ControlOutlined />}>
+                <Link to="/access-control">Access Control</Link>
+              </Menu.Item>
+            </SubMenu>
           </Menu>
         </Sider>
 

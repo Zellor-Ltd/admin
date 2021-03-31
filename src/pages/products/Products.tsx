@@ -25,7 +25,7 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
   const deleteItem = async (id: string) => {
     try {
       setLoading(true);
-      await deleteProduct(id);
+      await deleteProduct({ id });
       await fetchVideos();
       setLoading(false);
     } catch (err) {

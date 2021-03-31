@@ -92,7 +92,7 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
     setLoading(true);
     try {
       const item: FeedItem = form.getFieldsValue(true);
-      item.package = item.package.map((pack) => ({
+      item.package = item.package?.map((pack) => ({
         ...pack,
         brands: pack.brands ? pack.brands : [],
         tags: pack.tags ? pack.tags : [],

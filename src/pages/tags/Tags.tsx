@@ -25,8 +25,8 @@ const Tags: React.FC<RouteComponentProps> = ({ history }) => {
   const deleteItem = async (id: string) => {
     setLoading(true);
     try {
-      await deleteTag(id);
-      setLoading(false);
+      await deleteTag({ id });
+      fetchVideos();
     } catch (err) {
       console.log(err);
       setLoading(false);

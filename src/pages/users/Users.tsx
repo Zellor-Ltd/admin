@@ -1,11 +1,11 @@
-import { Button, PageHeader, Popconfirm, Table, Tag } from "antd";
+import { Button, PageHeader, Table, Tag } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import { User } from "interfaces/User";
 import { useEffect, useState } from "react";
 import { RouteComponentProps } from "react-router";
 import { Link } from "react-router-dom";
 import { fetchUsers } from "services/DiscoClubService";
-import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import { EditOutlined } from "@ant-design/icons";
 
 const tagColorByPermission: any = {
   Admin: "green",
@@ -32,8 +32,6 @@ const Users: React.FC<RouteComponentProps> = ({ history }) => {
     fetch();
   }, []);
 
-  const deleteItem = (id: string) => {};
-
   const columns: ColumnsType<User> = [
     { title: "Name", dataIndex: "name", width: "15%" },
     {
@@ -55,7 +53,7 @@ const Users: React.FC<RouteComponentProps> = ({ history }) => {
           <Link to={{ pathname: `/user`, state: record }}>
             <EditOutlined />
           </Link>
-          <Popconfirm
+          {/* <Popconfirm
             title="Are you sure？"
             okText="Yes"
             cancelText="No"
@@ -63,7 +61,7 @@ const Users: React.FC<RouteComponentProps> = ({ history }) => {
             <Button type="link" style={{ padding: 0, margin: 6 }}>
               <DeleteOutlined />
             </Button>
-          </Popconfirm>
+          </Popconfirm> */}
         </>
       ),
     },

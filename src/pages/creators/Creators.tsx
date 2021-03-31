@@ -1,11 +1,20 @@
-import { Button, PageHeader, Table, Tag } from "antd";
+import { Button, PageHeader, Popconfirm, Table, Tag } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import { Creator } from "interfaces/Creator";
 import { useEffect, useState } from "react";
 import { RouteComponentProps } from "react-router";
 import { Link } from "react-router-dom";
-import { fetchCreators, saveCreator } from "services/DiscoClubService";
-import { EditOutlined, CheckOutlined, CloseOutlined } from "@ant-design/icons";
+import {
+  deleteCreator,
+  fetchCreators,
+  saveCreator,
+} from "services/DiscoClubService";
+import {
+  EditOutlined,
+  CheckOutlined,
+  CloseOutlined,
+  DeleteOutlined,
+} from "@ant-design/icons";
 
 const tagColorByStatus: any = {
   approved: "green",
@@ -51,6 +60,15 @@ const Creators: React.FC<RouteComponentProps> = (props) => {
           <Link to={{ pathname: `/creator`, state: record }}>
             <EditOutlined />
           </Link>
+          <Popconfirm
+            title="Are you sure？"
+            okText="Yes"
+            cancelText="No"
+            onConfirm={() => deleteItem(record.id)}>
+            <Button type="link" style={{ padding: 0, margin: 6 }}>
+              <DeleteOutlined />
+            </Button>
+          </Popconfirm>
         </>
       ),
     },
@@ -64,6 +82,16 @@ const Creators: React.FC<RouteComponentProps> = (props) => {
     fetchVideos();
   };
 
+  const deleteItem = async (id: string) => {
+    try {
+      setLoading(true);
+      await deleteCreator({ id });
+      await fetchVideos();
+    } catch (err) {
+      console.log(err);
+      setLoading(false);
+    }
+  };
   const fetchVideos = async () => {
     setLoading(true);
     const response: any = await fetchCreators();

@@ -27,6 +27,7 @@ const CreatorDetail: React.FC<RouteComponentProps> = (props) => {
       message.success("Register updated with success.");
       history.push("/creators");
     } catch (error) {
+      console.error(error);
       setLoading(false);
     }
   };
