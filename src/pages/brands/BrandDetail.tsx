@@ -1,7 +1,17 @@
-import { Button, Col, Form, Input, message, PageHeader, Row } from "antd";
 import { useState } from "react";
+import {
+  Button,
+  Col,
+  Form,
+  Input,
+  message,
+  PageHeader,
+  Row,
+  Upload,
+} from "antd";
 import { RouteComponentProps } from "react-router";
 import { TwitterPicker } from "react-color";
+import { UploadOutlined } from "@ant-design/icons";
 import { saveBrand } from "services/DiscoClubService";
 
 const BrandDetail: React.FC<RouteComponentProps> = (props) => {
@@ -9,6 +19,7 @@ const BrandDetail: React.FC<RouteComponentProps> = (props) => {
   const initial: any = location.state;
   const [loading, setLoading] = useState<boolean>(false);
   const [form] = Form.useForm();
+  const urlAction = `http://localhost:8010/proxy/Upload`;
 
   const onFinish = async () => {
     setLoading(true);
@@ -19,6 +30,17 @@ const BrandDetail: React.FC<RouteComponentProps> = (props) => {
       history.push("/brands");
     } catch (error) {
       setLoading(false);
+    }
+  };
+
+  const onChangeBrandLogoUrl = (info: any) => {
+    if (info.file.status !== "uploading") {
+      console.log(info.file, info.fileList);
+    }
+    if (info.file.status === "done") {
+      message.success(`${info.file.name} file uploaded successfully`);
+    } else if (info.file.status === "error") {
+      message.error(`${info.file.name} file upload failed.`);
     }
   };
 
@@ -53,7 +75,14 @@ const BrandDetail: React.FC<RouteComponentProps> = (props) => {
           </Col>
           <Col lg={12} xs={24}>
             <Form.Item label="Brand Logo URL" name="brandLogoUrl">
-              <Input />
+              <Upload
+                action={urlAction}
+                headers={{
+                  Authorization: `Bearer ${localStorage.getItem("token")}`,
+                }}
+                onChange={onChangeBrandLogoUrl}>
+                <Button icon={<UploadOutlined />}>Click to Upload</Button>
+              </Upload>
             </Form.Item>
           </Col>
           <Col lg={12} xs={24}>
