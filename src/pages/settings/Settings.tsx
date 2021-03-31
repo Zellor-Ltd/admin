@@ -18,7 +18,7 @@ const Settings: React.FC = () => {
 
   useEffect(() => {
     dispatch(getSettings());
-  }, []);
+  }, [dispatch]);
 
   const onFinish = async () => {
     setLoading(true);

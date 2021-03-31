@@ -22,6 +22,7 @@ import AuthenticatedLayout from "layout/AuthenticatedLayout";
 import OpenLayout from "layout/OpenLayout";
 import Interfaces from "pages/interfaces/Interfaces";
 import InterfaceDetail from "pages/interfaces/InterfaceDetail";
+import AccessControl from "pages/access-control/AccessControl";
 
 function Routes() {
   return (
@@ -114,6 +115,11 @@ function Routes() {
       <AuthRoute
         path="/settings"
         component={Settings}
+        layout={AuthenticatedLayout}
+      />
+      <AuthRoute
+        path="/access-control"
+        component={AccessControl}
         layout={AuthenticatedLayout}
       />
     </Switch>
