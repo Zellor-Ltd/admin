@@ -56,6 +56,8 @@ const CloneModal: React.FC<CloneModalProps> = ({
         if (response.success) message.success("Profile clone was successfull");
         else message.error(response.error);
       });
+
+      setShowCloneModal(false);
     });
   };
 

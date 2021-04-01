@@ -1,29 +1,43 @@
-import { useState } from "react";
-import {
-  Button,
-  Col,
-  Form,
-  Input,
-  message,
-  PageHeader,
-  Row,
-  Upload,
-} from "antd";
+import { useEffect, useState } from "react";
+import { Button, Col, Form, Input, message, PageHeader, Row } from "antd";
 import { RouteComponentProps } from "react-router";
 import { TwitterPicker } from "react-color";
-import { UploadOutlined } from "@ant-design/icons";
 import { saveBrand } from "services/DiscoClubService";
+import { Upload } from "components";
 
 const BrandDetail: React.FC<RouteComponentProps> = (props) => {
   const { history, location } = props;
   const initial: any = location.state;
   const [loading, setLoading] = useState<boolean>(false);
   const [form] = Form.useForm();
-  const urlAction = `http://localhost:8010/proxy/Upload`;
+  const [logoUrl, setLogoUrl] = useState<any>([]);
+  const [brandCardUrl, setBrandCardUrl] = useState<any>([]);
+  const [newLogo, setNewLogo] = useState<string>("");
+  const [newCard, setNewCard] = useState<string>("");
+
+  useEffect(() => {
+    if (initial) {
+      setNewLogo(initial.brandLogoUrl);
+      setNewCard(initial.brandCardUrl);
+      setLogoUrl([
+        {
+          url: initial.brandLogoUrl,
+        },
+      ]);
+      setBrandCardUrl([
+        {
+          url: initial.brandCardUrl,
+        },
+      ]);
+    }
+  }, [initial]);
 
   const onFinish = async () => {
     setLoading(true);
     try {
+      const brand = form.getFieldsValue(true);
+      brand.brandCardUrl = newCard;
+      brand.brandLogoUrl = newLogo;
       await saveBrand(form.getFieldsValue(true));
       setLoading(false);
       message.success("Register updated with success.");
@@ -33,11 +47,28 @@ const BrandDetail: React.FC<RouteComponentProps> = (props) => {
     }
   };
 
-  const onChangeBrandLogoUrl = (info: any) => {
-    if (info.file.status !== "uploading") {
-      console.log(info.file, info.fileList);
+  const onChangeLogoUrl = (info: any) => {
+    setLogoUrl(info.fileList);
+    if (info.file.status === "removed") {
+      setNewLogo("");
     }
     if (info.file.status === "done") {
+      const response = JSON.parse(info.file.xhr.response);
+      setNewLogo(response.result.replace(";", ""));
+      message.success(`${info.file.name} file uploaded successfully`);
+    } else if (info.file.status === "error") {
+      message.error(`${info.file.name} file upload failed.`);
+    }
+  };
+
+  const onChangeBrandCardUrl = (info: any) => {
+    setBrandCardUrl(info.fileList);
+    if (info.file.status === "removed") {
+      setNewCard("");
+    }
+    if (info.file.status === "done") {
+      const response = JSON.parse(info.file.xhr.response);
+      setNewCard(response.result.replace(";", ""));
       message.success(`${info.file.name} file uploaded successfully`);
     } else if (info.file.status === "error") {
       message.error(`${info.file.name} file upload failed.`);
@@ -74,20 +105,21 @@ const BrandDetail: React.FC<RouteComponentProps> = (props) => {
             </Form.Item>
           </Col>
           <Col lg={12} xs={24}>
-            <Form.Item label="Brand Logo URL" name="brandLogoUrl">
-              <Upload
-                action={urlAction}
-                headers={{
-                  Authorization: `Bearer ${localStorage.getItem("token")}`,
-                }}
-                onChange={onChangeBrandLogoUrl}>
-                <Button icon={<UploadOutlined />}>Click to Upload</Button>
-              </Upload>
+            <Form.Item label="Brand Logo URL">
+              <Upload.ImageUpload
+                onChange={onChangeLogoUrl}
+                fileList={logoUrl}
+                maxCount={1}
+              />
             </Form.Item>
           </Col>
           <Col lg={12} xs={24}>
             <Form.Item label="Brand Card URL" name="brandCardUrl">
-              <Input />
+              <Upload.ImageUpload
+                maxCount={1}
+                onChange={onChangeBrandCardUrl}
+                fileList={brandCardUrl}
+              />
             </Form.Item>
           </Col>
         </Row>
