@@ -12,13 +12,9 @@ const BrandDetail: React.FC<RouteComponentProps> = (props) => {
   const [form] = Form.useForm();
   const [logoUrl, setLogoUrl] = useState<any>([]);
   const [brandCardUrl, setBrandCardUrl] = useState<any>([]);
-  const [newLogo, setNewLogo] = useState<string>("");
-  const [newCard, setNewCard] = useState<string>("");
 
   useEffect(() => {
     if (initial) {
-      setNewLogo(initial.brandLogoUrl);
-      setNewCard(initial.brandCardUrl);
       setLogoUrl([
         {
           url: initial.brandLogoUrl,
@@ -36,8 +32,6 @@ const BrandDetail: React.FC<RouteComponentProps> = (props) => {
     setLoading(true);
     try {
       const brand = form.getFieldsValue(true);
-      brand.brandCardUrl = newCard;
-      brand.brandLogoUrl = newLogo;
       await saveBrand(form.getFieldsValue(true));
       setLoading(false);
       message.success("Register updated with success.");
@@ -49,12 +43,9 @@ const BrandDetail: React.FC<RouteComponentProps> = (props) => {
 
   const onChangeLogoUrl = (info: any) => {
     setLogoUrl(info.fileList);
-    if (info.file.status === "removed") {
-      setNewLogo("");
-    }
     if (info.file.status === "done") {
       const response = JSON.parse(info.file.xhr.response);
-      setNewLogo(response.result.replace(";", ""));
+      form.setFieldsValue({ brandLogoUrl: response.result.replace(";", "") });
       message.success(`${info.file.name} file uploaded successfully`);
     } else if (info.file.status === "error") {
       message.error(`${info.file.name} file upload failed.`);
@@ -63,12 +54,9 @@ const BrandDetail: React.FC<RouteComponentProps> = (props) => {
 
   const onChangeBrandCardUrl = (info: any) => {
     setBrandCardUrl(info.fileList);
-    if (info.file.status === "removed") {
-      setNewCard("");
-    }
     if (info.file.status === "done") {
       const response = JSON.parse(info.file.xhr.response);
-      setNewCard(response.result.replace(";", ""));
+      form.setFieldsValue({ brandCardUrl: response.result.replace(";", "") });
       message.success(`${info.file.name} file uploaded successfully`);
     } else if (info.file.status === "error") {
       message.error(`${info.file.name} file upload failed.`);

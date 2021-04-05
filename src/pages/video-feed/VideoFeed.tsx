@@ -17,80 +17,11 @@ import { Segment } from "interfaces/Segment";
 
 const { Content } = Layout;
 
-const deleteItem = (id: string) => {
-  deleteVideoFeed({ id });
-};
-
 const reduceSegmentsTags = (packages: Segment[]) => {
   return packages.reduce((acc: number, curr: Segment) => {
     return acc + curr.tags?.length;
   }, 0);
 };
-
-const columns: ColumnsType<FeedItem> = [
-  { title: "Title", dataIndex: "title", width: "15%" },
-  {
-    title: "Segments",
-    dataIndex: "package",
-    render: (pack: Array<any> = []) => <AntTag>{pack.length}</AntTag>,
-    width: "5%",
-    align: "center",
-  },
-  {
-    title: "Length",
-    dataIndex: "lengthTotal",
-    width: "5%",
-    align: "center",
-  },
-  {
-    title: "Expiration Date",
-    dataIndex: "validity",
-    width: "5%",
-    render: (creationDate: Date) => new Date(creationDate).toLocaleDateString(),
-    align: "center",
-  },
-  {
-    title: "Tags",
-    dataIndex: "package",
-    width: "5%",
-    render: (pack: Array<any> = []) => (
-      <AntTag>{reduceSegmentsTags(pack)}</AntTag>
-    ),
-    align: "center",
-  },
-  // {
-  //   title: "Gold",
-  //   dataIndex: "tags",
-  //   render: (tags: Array<Tag> = []) =>
-  //     tags.map((tag, index) => (
-  //       <AntTag key={`dolar_${index}`}>{tag.discoGold}</AntTag>
-  //     )),
-  //   width: "10%",
-  //   align: "center",
-  // },
-  {
-    title: "actions",
-    key: "action",
-    width: "5%",
-    align: "right",
-    render: (value, record) => (
-      <>
-        <Link to={{ pathname: `/video-feed`, state: record }}>
-          <EditOutlined />
-        </Link>
-        <Popconfirm
-          title="Are you sure？"
-          okText="Yes"
-          cancelText="No"
-          onConfirm={() => deleteItem(record.id)}>
-          <Button type="link" style={{ padding: 0, margin: 6 }}>
-            <DeleteOutlined />
-          </Button>
-        </Popconfirm>
-      </>
-    ),
-  },
-];
 
 const VideoFeed: React.FC<RouteComponentProps> = (props) => {
   const { history } = props;
@@ -112,6 +43,77 @@ const VideoFeed: React.FC<RouteComponentProps> = (props) => {
   useEffect(() => {
     fetchVideos();
   }, []);
+
+  const deleteItem = async (id: string) => {
+    await deleteVideoFeed({ id });
+    fetchVideos();
+  };
+
+  const columns: ColumnsType<FeedItem> = [
+    { title: "Title", dataIndex: "title", width: "15%" },
+    {
+      title: "Segments",
+      dataIndex: "package",
+      render: (pack: Array<any> = []) => <AntTag>{pack.length}</AntTag>,
+      width: "5%",
+      align: "center",
+    },
+    {
+      title: "Length",
+      dataIndex: "lengthTotal",
+      width: "5%",
+      align: "center",
+    },
+    {
+      title: "Expiration Date",
+      dataIndex: "validity",
+      width: "5%",
+      render: (creationDate: Date) =>
+        new Date(creationDate).toLocaleDateString(),
+      align: "center",
+    },
+    {
+      title: "Tags",
+      dataIndex: "package",
+      width: "5%",
+      render: (pack: Array<any> = []) => (
+        <AntTag>{reduceSegmentsTags(pack)}</AntTag>
+      ),
+      align: "center",
+    },
+    // {
+    //   title: "Gold",
+    //   dataIndex: "tags",
+    //   render: (tags: Array<Tag> = []) =>
+    //     tags.map((tag, index) => (
+    //       <AntTag key={`dolar_${index}`}>{tag.discoGold}</AntTag>
+    //     )),
+    //   width: "10%",
+    //   align: "center",
+    // },
+    {
+      title: "actions",
+      key: "action",
+      width: "5%",
+      align: "right",
+      render: (value, record) => (
+        <>
+          <Link to={{ pathname: `/video-feed`, state: record }}>
+            <EditOutlined />
+          </Link>
+          <Popconfirm
+            title="Are you sure？"
+            okText="Yes"
+            cancelText="No"
+            onConfirm={() => deleteItem(record.id)}>
+            <Button type="link" style={{ padding: 0, margin: 6 }}>
+              <DeleteOutlined />
+            </Button>
+          </Popconfirm>
+        </>
+      ),
+    },
+  ];
 
   return (
     <div className="video-feed">

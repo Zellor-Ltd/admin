@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { EditOutlined } from "@ant-design/icons";
 import { Tag } from "interfaces/Tag";
 import { Position } from "interfaces/Position";
@@ -6,7 +6,11 @@ import { RouteComponentProps } from "react-router-dom";
 import ModalTag from "./ModalTag";
 import { Brand } from "interfaces/Brand";
 import ModalBrand from "./ModalBrand";
-import { saveVideoFeed } from "services/DiscoClubService";
+import {
+  fetchUsers,
+  lockFeedToUser,
+  saveVideoFeed,
+} from "services/DiscoClubService";
 import {
   Button,
   Col,
@@ -15,6 +19,7 @@ import {
   Input,
   InputNumber,
   message,
+  Modal,
   PageHeader,
   // Popconfirm,
   Row,
@@ -27,6 +32,7 @@ import { formatMoment } from "helpers/formatMoment";
 import SegmentForm from "./SegmentForm";
 import { FeedItem } from "interfaces/FeedItem";
 import { useSelector } from "react-redux";
+import { User } from "interfaces/User";
 
 const { Title } = Typography;
 
@@ -37,8 +43,12 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
   const {
     settings: { category = [], market = [], language = [] },
   } = useSelector((state: any) => state.settings);
+
   const [form] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
+  const [modalAddFeedToUser, setModalAddFeedToUser] = useState<boolean>(false);
+  const [users, setUsers] = useState<User[]>([]);
+  const [selectedUser, setSelectedUser] = useState<string>("");
   const [selectedTag, setSelectedTag] = useState<Tag | undefined>();
   const [selectedTagIndex, setSelectedTagIndex] = useState<number>(0);
   const [tagModalVisible, setTagModalVisible] = useState<boolean>(false);
@@ -51,6 +61,15 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
   const [brandModalVisible, setBrandModalVisible] = useState<boolean>(false);
   const [selectedSegment, setSelectedSegment] = useState<Segment | undefined>();
   const [selectedSegmentIndex, setSelectedSegmentIndex] = useState<number>(-1);
+
+  useEffect(() => {
+    async function getUsers() {
+      const response: any = await fetchUsers();
+
+      setUsers(response.results);
+    }
+    getUsers();
+  }, []);
 
   const onAddBrand = () => {
     setSelectedBrand(void 0);
@@ -167,6 +186,25 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
     setSelectedSegmentIndex(-1);
   };
 
+  const onAddFeedToUserClick = () => {
+    setModalAddFeedToUser(true);
+  };
+
+  const onModalAddFeedUserOkClick = async () => {
+    try {
+      await lockFeedToUser(initial.id, selectedUser);
+      setSelectedUser("");
+      setModalAddFeedToUser(false);
+      message.success("Changes saved!");
+    } catch (error) {
+      message.error(error);
+    }
+  };
+
+  const onModalAddFeedUserChange = (value: string) => {
+    setSelectedUser(value);
+  };
+
   const segmentColumns = [
     {
       title: "Video Length",
@@ -199,7 +237,11 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
 
   return (
     <>
-      <PageHeader title="Video feed update" subTitle="Video" />
+      <PageHeader
+        title="Video feed update"
+        subTitle="Video"
+        extra={<Button onClick={onAddFeedToUserClick}>Add feed to User</Button>}
+      />
       <Form.Provider
         onFormFinish={(name, { values, forms }) => {
           if (name === "tagForm") {
@@ -404,6 +446,23 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
           onSavePosition={onSavePosition}
           onAddPosition={onAddPosition}
         />
+        <Modal
+          visible={modalAddFeedToUser}
+          onCancel={() => setModalAddFeedToUser(false)}
+          onOk={() => onModalAddFeedUserOkClick()}
+          okButtonProps={{ disabled: !selectedUser }}
+          title="Lock feed to User">
+          <Select
+            onChange={onModalAddFeedUserChange}
+            placeholder="Please select user"
+            style={{ width: "100%" }}>
+            {users.map((category: any) => (
+              <Select.Option key={category.id} value={category.id}>
+                {category.name}
+              </Select.Option>
+            ))}
+          </Select>
+        </Modal>
       </Form.Provider>
     </>
   );

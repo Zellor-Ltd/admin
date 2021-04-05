@@ -1,3 +1,5 @@
 import ImageUpload from "./ImageUpload";
-const index = { ImageUpload };
+import VideoUpload from "./VideoUpload";
+
+const index = { ImageUpload, VideoUpload };
 export default index;

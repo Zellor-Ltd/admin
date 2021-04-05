@@ -20,6 +20,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
       <div style={{ marginTop: 8 }}>Upload</div>
     </div>
   );
+
   const onPreview = async (file: any) => {
     let src = file.url;
     if (!src) {
@@ -34,7 +35,9 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     const imgWindow = window.open(src);
     imgWindow?.document.write(image.outerHTML);
   };
-  const action = `http://localhost:8010/proxy/Upload`;
+
+  const action = `${process.env.REACT_APP_HOST_ENDPOINT}/Wi/Upload`;
+
   return (
     <>
       <Upload

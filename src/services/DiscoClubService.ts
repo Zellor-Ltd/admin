@@ -177,3 +177,6 @@ export const deleteBrand = (data: IDelete) =>
 
 export const loginService = (login: Login) =>
   instance.put("Auth/GetApiToken", login);
+
+export const lockFeedToUser = (feedId: string, userId: string) =>
+  instance.get(`Disco/Feed/LockToOne/${feedId}/${userId}`);
