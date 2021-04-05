@@ -240,7 +240,11 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
       <PageHeader
         title="Video feed update"
         subTitle="Video"
-        extra={<Button onClick={onAddFeedToUserClick}>Add feed to User</Button>}
+        extra={
+          <Button onClick={onAddFeedToUserClick} type="primary" danger>
+            Lock feed to user
+          </Button>
+        }
       />
       <Form.Provider
         onFormFinish={(name, { values, forms }) => {
