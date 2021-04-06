@@ -47,6 +47,7 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
   const [modalAddFeedToUser, setModalAddFeedToUser] = useState<boolean>(false);
+  const [showPreviewModal, setShowPreviewModal] = useState<boolean>(false);
   const [users, setUsers] = useState<User[]>([]);
   const [selectedUser, setSelectedUser] = useState<string>("");
   const [selectedTag, setSelectedTag] = useState<Tag | undefined>();
@@ -105,6 +106,10 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
 
   const hideTagModal = () => {
     setTagModalVisible(false);
+  };
+
+  const onShowPreviewClick = () => {
+    setShowPreviewModal(true);
   };
 
   const onFinish = async () => {
@@ -240,11 +245,21 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
       <PageHeader
         title="Video feed update"
         subTitle="Video"
-        extra={
-          <Button onClick={onAddFeedToUserClick} type="primary" danger>
+        extra={[
+          <Button
+            onClick={onAddFeedToUserClick}
+            type="primary"
+            danger
+            disabled={!initial?.id}>
             Lock feed to user
-          </Button>
-        }
+          </Button>,
+          <Button
+            onClick={onShowPreviewClick}
+            type="primary"
+            disabled={!initial?.id}>
+            Preview
+          </Button>,
+        ]}
       />
       <Form.Provider
         onFormFinish={(name, { values, forms }) => {
@@ -466,6 +481,20 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
               </Select.Option>
             ))}
           </Select>
+        </Modal>
+        <Modal
+          visible={showPreviewModal}
+          onCancel={() => setShowPreviewModal(false)}
+          width={350}
+          title="Preview"
+          bodyStyle={{
+            height: "585px",
+            display: "flex",
+            justifyContent: "center",
+          }}>
+          <iframe
+            src="https://preview.discoclub.com"
+            style={{ width: "380px", height: "100%" }}></iframe>
         </Modal>
       </Form.Provider>
     </>

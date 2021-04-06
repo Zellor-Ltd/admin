@@ -1,0 +1,14 @@
+.preview {
+  .content-center {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    .content-column {
+      display: flex;
+      flex-direction: column;
+    }
+    iframe {
+      height: 536px;
+    }
+  }
+}

@@ -11,6 +11,7 @@ import {
   ApartmentOutlined,
   AppstoreAddOutlined,
   ControlOutlined,
+  MobileOutlined,
 } from "@ant-design/icons";
 import "./AuthenticatedLayout.scss";
 import jwt from "helpers/jwt";
@@ -57,6 +58,9 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = (props) => {
           <Menu theme="dark" mode="inline" defaultSelectedKeys={["1"]}>
             <Menu.Item key="brands" icon={<FundOutlined />}>
               <Link to="/brands">Brands</Link>
+            </Menu.Item>
+            <Menu.Item key="preview" icon={<MobileOutlined />}>
+              <Link to="/preview">Preview</Link>
             </Menu.Item>
             <Menu.Item key="products" icon={<TagOutlined />}>
               <Link to="/products">Products</Link>

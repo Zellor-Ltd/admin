@@ -94,7 +94,8 @@ const TagDetail: React.FC<RouteComponentProps> = (props) => {
         layout="vertical"
         form={form}
         initialValues={initial}
-        onFinish={onFinish}>
+        onFinish={onFinish}
+        className="tags">
         <Input.Group>
           <Row gutter={8}>
             <Col lg={6} xs={24}>
