@@ -3,8 +3,19 @@ import { Position } from "interfaces/Position";
 import { EditOutlined } from "@ant-design/icons";
 import { Segment } from "interfaces/Segment";
 import { Tag } from "interfaces/Tag";
-import { Button, Col, Form, Input, InputNumber, Row, Table } from "antd";
+import {
+  Button,
+  Col,
+  Form,
+  Input,
+  InputNumber,
+  message,
+  Row,
+  Table,
+} from "antd";
 import { Brand } from "interfaces/Brand";
+import { Upload } from "components";
+import { useEffect, useState } from "react";
 
 interface FormProps {
   segment: Segment | undefined;
@@ -102,6 +113,54 @@ const SegmentForm: React.FC<FormProps> = ({
 }) => {
   const [form] = Form.useForm();
 
+  const [videoList, setVideoList] = useState<any[]>([]);
+  const [thumbList, setThumbList] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (segment) {
+      if (segment.video.videoUrl) {
+        setVideoList([
+          {
+            url: segment.video.videoUrl,
+          },
+        ]);
+      }
+      if (segment.video.thumbnailUrl) {
+        setThumbList([
+          {
+            url: segment.video.thumbnailUrl,
+          },
+        ]);
+      }
+    }
+  }, [segment]);
+
+  const onChangeThumbUrl = (info: any) => {
+    setThumbList(info.fileList);
+    if (info.file.status === "done") {
+      const response = JSON.parse(info.file.xhr.response);
+      form.setFieldsValue({
+        video: { thumbnailUrl: response.result.replace(";", "") },
+      });
+      message.success(`${info.file.name} file uploaded successfully`);
+    } else if (info.file.status === "error") {
+      message.error(`${info.file.name} file upload failed.`);
+    }
+  };
+
+  const onChangeVideoUrl = (info: any) => {
+    setVideoList(info.fileList);
+    if (info.file.status === "done") {
+      const response = JSON.parse(info.file.xhr.response);
+      form.setFieldsValue({
+        video: { videoUrl: response.result.replace(";", "") },
+      });
+      message.success(`${info.file.name} file uploaded successfully`);
+    } else if (info.file.status === "error") {
+      message.error(`${info.file.name} file upload failed.`);
+    }
+  };
+
   return (
     <Form
       form={form}
@@ -139,13 +198,21 @@ const SegmentForm: React.FC<FormProps> = ({
           </Form.Item>
         </Col> */}
         <Col lg={8} xs={24}>
-          <Form.Item name={["video", "videoUrl"]} label="Video URL">
-            <Input />
+          <Form.Item label="Video URL">
+            <Upload.VideoUpload
+              onChange={onChangeVideoUrl}
+              fileList={videoList}
+              maxCount={1}
+            />
           </Form.Item>
         </Col>
         <Col lg={8} xs={24}>
-          <Form.Item name={["video", "thumbnailUrl"]} label="Thumbnail URL">
-            <Input />
+          <Form.Item label="Thumbnail URL">
+            <Upload.ImageUpload
+              onChange={onChangeThumbUrl}
+              fileList={thumbList}
+              maxCount={1}
+            />
           </Form.Item>
         </Col>
         <Col lg={8} xs={24}>

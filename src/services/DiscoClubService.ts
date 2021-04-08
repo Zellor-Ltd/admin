@@ -157,7 +157,7 @@ export const saveSettings = (params: any) => {
 
 export const savePrivileges = (params: Privilege) => {
   if (params.id) return instance.post("Wi/Ep/UpdatePrivileges", params);
-  else return instance.put("Wi/Ep/AddPrivilege", params);
+  else return instance.post("Wi/Ep/AddPrivilege", params);
 };
 
 export const deleteVideoFeed = (data: IDelete) =>
@@ -177,3 +177,6 @@ export const deleteBrand = (data: IDelete) =>
 
 export const loginService = (login: Login) =>
   instance.put("Auth/GetApiToken", login);
+
+export const lockFeedToUser = (feedId: string, userId: string) =>
+  instance.get(`Disco/Feed/LockToOne/${feedId}/${userId}`);
