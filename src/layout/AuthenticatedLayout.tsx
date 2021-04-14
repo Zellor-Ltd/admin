@@ -65,16 +65,9 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = (props) => {
             <Menu.Item key="products" icon={<TagOutlined />}>
               <Link to="/products">Products</Link>
             </Menu.Item>
-            <Menu.Item key="creators" icon={<TeamOutlined />}>
-              <Link to="/creators">Creators</Link>
-            </Menu.Item>
-            <Menu.Item key="tags" icon={<TagOutlined />}>
-              <Link to="/tags">Tags</Link>
-            </Menu.Item>
             <Menu.Item key="2" icon={<HeartFilled />}>
               <Link to="/feed">Videos Feed</Link>
             </Menu.Item>
-
             <SubMenu
               key="sub-settings"
               icon={<SettingOutlined />}
@@ -96,6 +89,12 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = (props) => {
               </Menu.Item>
               <Menu.Item key="access-control" icon={<ControlOutlined />}>
                 <Link to="/access-control">Access Control</Link>
+              </Menu.Item>
+              <Menu.Item key="creators" icon={<TeamOutlined />}>
+                <Link to="/creators">Creators</Link>
+              </Menu.Item>
+              <Menu.Item key="tags" icon={<TagOutlined />}>
+                <Link to="/tags">Tags</Link>
               </Menu.Item>
             </SubMenu>
           </Menu>

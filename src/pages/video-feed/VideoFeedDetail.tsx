@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { EditOutlined } from "@ant-design/icons";
+import { DeleteOutlined } from "@ant-design/icons";
 import { Tag } from "interfaces/Tag";
 import { Position } from "interfaces/Position";
 import { RouteComponentProps } from "react-router-dom";
@@ -7,6 +7,7 @@ import ModalTag from "./ModalTag";
 import { Brand } from "interfaces/Brand";
 import ModalBrand from "./ModalBrand";
 import {
+  fetchCreators,
   fetchUsers,
   lockFeedToUser,
   saveVideoFeed,
@@ -21,10 +22,9 @@ import {
   message,
   Modal,
   PageHeader,
-  // Popconfirm,
+  Radio,
   Row,
   Select,
-  Table,
   Typography,
 } from "antd";
 import { Segment } from "interfaces/Segment";
@@ -33,6 +33,8 @@ import SegmentForm from "./SegmentForm";
 import { FeedItem } from "interfaces/FeedItem";
 import { useSelector } from "react-redux";
 import { User } from "interfaces/User";
+import "./VideoFeed.scss";
+import { Creator } from "interfaces/Creator";
 
 const { Title } = Typography;
 
@@ -41,13 +43,12 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
   const initial: any = location.state;
 
   const {
-    settings: { category = [], market = [], language = [] },
+    settings: { category = [], language = [] },
   } = useSelector((state: any) => state.settings);
 
   const [form] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
   const [modalAddFeedToUser, setModalAddFeedToUser] = useState<boolean>(false);
-  const [showPreviewModal, setShowPreviewModal] = useState<boolean>(false);
   const [users, setUsers] = useState<User[]>([]);
   const [selectedUser, setSelectedUser] = useState<string>("");
   const [selectedTag, setSelectedTag] = useState<Tag | undefined>();
@@ -56,20 +57,25 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
   const [selectedPositions, setSelectedPositions] = useState<Array<Position>>(
     []
   );
-
+  const [influencers, setInfluencers] = useState<Creator[]>([]);
   const [selectedBrand, setSelectedBrand] = useState<Brand | undefined>();
   const [selectedBrandIndex, setSelectedBrandIndex] = useState<number>(-1);
   const [brandModalVisible, setBrandModalVisible] = useState<boolean>(false);
   const [selectedSegment, setSelectedSegment] = useState<Segment | undefined>();
   const [selectedSegmentIndex, setSelectedSegmentIndex] = useState<number>(-1);
-
+  const [segForm, setSegForm] = useState<any>();
   useEffect(() => {
     async function getUsers() {
       const response: any = await fetchUsers();
 
       setUsers(response.results);
     }
+    async function getInfluencers() {
+      const response: any = await fetchCreators();
+      setInfluencers(response.results);
+    }
     getUsers();
+    getInfluencers();
   }, []);
 
   const onAddBrand = () => {
@@ -100,16 +106,18 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
   };
 
   const onEditSegment = (segment: Segment, index: number) => {
-    setSelectedSegment(segment);
-    setSelectedSegmentIndex(index);
+    if (segForm?.isFieldsTouched()) {
+      console.log(segForm.getFieldsValue(true));
+      segForm.submit();
+    }
+    setTimeout(() => {
+      setSelectedSegment(segment);
+      setSelectedSegmentIndex(index);
+    }, 1);
   };
 
   const hideTagModal = () => {
     setTagModalVisible(false);
-  };
-
-  const onShowPreviewClick = () => {
-    setShowPreviewModal(true);
   };
 
   const onFinish = async () => {
@@ -118,7 +126,6 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
       const item: FeedItem = form.getFieldsValue(true);
       item.package = item.package?.map((pack) => ({
         ...pack,
-        brands: pack.brands ? pack.brands : [],
         tags: pack.tags ? pack.tags : [],
       }));
       // item.validity = moment(item.validity).format("DD/MM/YYYY");
@@ -139,22 +146,20 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
     setSelectedPositions(tag.position || []);
   };
 
+  const onDeleteSegment = (evt: any, index: number) => {
+    evt.stopPropagation();
+    const dataSource = [...form.getFieldValue("package")];
+    dataSource.splice(index, 1);
+    form.setFieldsValue({ package: [...dataSource] });
+
+    setSelectedSegment(undefined);
+    setSelectedSegmentIndex(-1);
+  };
+
   const onDeletePosition = (index: number) => {
     const dataSource = [...selectedPositions];
     dataSource.splice(index, 1);
     setSelectedPositions(dataSource);
-  };
-
-  const onDeleteBrand = (index: number) => {
-    const brand: Brand[] = form.getFieldValue("brand") || [];
-    brand.splice(index, 1);
-    form.setFieldsValue({ brand: [...brand] });
-  };
-
-  const onDeleteTag = (index: number) => {
-    const tags: Tag[] = form.getFieldValue("tags") || [];
-    tags.splice(index, 1);
-    form.setFieldsValue({ tags: [...tags] });
   };
 
   const onSavePosition = (row: Position, index: number) => {
@@ -182,11 +187,12 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
   };
 
   const onAddSegment = () => {
+    const packages = form.getFieldValue("package");
     setSelectedSegment({
-      brands: [],
-      influencer: {},
+      sequence: packages ? packages.length + 1 : 1,
       tags: [],
-      video: {},
+      video: [],
+      thumbnail: [],
     });
     setSelectedSegmentIndex(-1);
   };
@@ -210,35 +216,11 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
     setSelectedUser(value);
   };
 
-  const segmentColumns = [
-    {
-      title: "Video Length",
-      dataIndex: ["video", "length"],
-    },
-    {
-      title: "Influencer",
-      dataIndex: ["influencer", "influencerName"],
-    },
-    {
-      title: "actions",
-      dataIndex: "actions",
-      width: "5%",
-      render: (_: any, record: Segment, index: number) => (
-        <div style={{ display: "flex" }}>
-          <Button type="link">
-            <EditOutlined onClick={() => onEditSegment(record, index)} />
-          </Button>
-          {/* <Popconfirm
-            title="Sure to delete?"
-            onConfirm={() => onDeleteTag(index)}>
-            <Button type="link">
-              <DeleteOutlined />
-            </Button>
-          </Popconfirm> */}
-        </div>
-      ),
-    },
-  ];
+  const setChildForm = (form: any) => {
+    setTimeout(() => {
+      setSegForm(form);
+    }, 1);
+  };
 
   return (
     <>
@@ -250,14 +232,9 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
             onClick={onAddFeedToUserClick}
             type="primary"
             danger
-            disabled={!initial?.id}>
+            disabled={!initial?.id}
+            key="lock-button">
             Lock feed to user
-          </Button>,
-          <Button
-            onClick={onShowPreviewClick}
-            type="primary"
-            disabled={!initial?.id}>
-            Preview
           </Button>,
         ]}
       />
@@ -306,6 +283,7 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
                 package: [...segments, segmentForm.getFieldsValue(true)],
               });
             }
+
             setSelectedSegment(undefined);
             setSelectedSegmentIndex(-1);
           }
@@ -316,139 +294,203 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
             onFinish={onFinish}
             name="feedForm"
             initialValues={initial}
-            layout="vertical">
-            {!selectedSegment && (
-              <>
-                <Row gutter={8}>
-                  <Col lg={12} xs={24}>
-                    <Form.Item name="title" label="Title">
+            layout="vertical"
+            className="video-feed">
+            {/* {!selectedSegment && ( */}
+            <>
+              <Row gutter={8}>
+                <Col lg={12} xs={24}>
+                  <Col lg={24} xs={24}>
+                    <Form.Item name="status" label="Status">
+                      <Radio.Group buttonStyle="solid">
+                        <Radio.Button value="live">Live</Radio.Button>
+                        <Radio.Button value="paused">Paused</Radio.Button>
+                        <Radio.Button value="expired">Expired</Radio.Button>
+                        <Radio.Button value="pending">Pending</Radio.Button>
+                      </Radio.Group>
+                    </Form.Item>
+                  </Col>
+                  <Col lg={24} xs={24}>
+                    <Form.Item name="title" label="Short description">
                       <Input />
                     </Form.Item>
                   </Col>
-                  <Col lg={12} xs={24}>
-                    <Form.Item name="category" label="Category">
-                      <Select placeholder="Please select a category">
-                        {category.map((category: any) => (
-                          <Select.Option
-                            key={category.value}
-                            value={category.value}>
-                            {category.name}
-                          </Select.Option>
-                        ))}
-                      </Select>
+                  <Col lg={24} xs={24}>
+                    <Form.Item name="description" label="Long description">
+                      <Input.TextArea rows={5} />
                     </Form.Item>
                   </Col>
-                </Row>
+                </Col>
+                <Col lg={12} xs={24}>
+                  <Row gutter={8}>
+                    <Col lg={24} xs={24}>
+                      <Form.Item name={["creator", "id"]} label="Creator">
+                        <Select
+                          placeholder="Please select a creator"
+                          onChange={(key: string) =>
+                            form.setFieldsValue({
+                              creator: influencers.find(
+                                (influencer) => influencer.id === key
+                              ),
+                            })
+                          }>
+                          {influencers.map((influencer: any) => (
+                            <Select.Option
+                              key={influencer.id}
+                              value={influencer.id}>
+                              {influencer.firstName}
+                            </Select.Option>
+                          ))}
+                        </Select>
+                      </Form.Item>
+                    </Col>
+                    <Col lg={12} xs={24}>
+                      <Form.Item name="category" label="Category">
+                        <Select placeholder="Please select a category">
+                          {category.map((category: any) => (
+                            <Select.Option
+                              key={category.value}
+                              value={category.value}>
+                              {category.name}
+                            </Select.Option>
+                          ))}
+                        </Select>
+                      </Form.Item>
+                    </Col>
 
-                <Row gutter={8}>
-                  <Col lg={8} xs={24}>
-                    <Form.Item name="format" label="Format">
-                      <Input />
-                    </Form.Item>
-                  </Col>
-                  <Col lg={8} xs={24}>
-                    <Form.Item name="lengthTotal" label="Length">
-                      <InputNumber />
-                    </Form.Item>
-                  </Col>
-                  <Col lg={8} xs={24}>
-                    <Form.Item name="language" label="Language">
-                      <Select placeholder="Please select a language">
-                        {language.map((lang: any) => (
-                          <Select.Option key={lang.value} value={lang.value}>
-                            {lang.name}
-                          </Select.Option>
-                        ))}
-                      </Select>
-                    </Form.Item>
-                  </Col>
-                </Row>
-                <Row gutter={8}>
-                  <Col lg={8} xs={24}>
-                    <Form.Item name="target" label="Target">
-                      <Input />
-                    </Form.Item>
-                  </Col>
-                  <Col lg={8} xs={24}>
-                    <Form.Item name="modelRelease" label="Model Release">
-                      <InputNumber />
-                    </Form.Item>
-                  </Col>
-                  <Col lg={8} xs={24}>
-                    <Form.Item name="market" label="Market">
-                      <Select placeholder="Please select a market">
-                        {market.map((mark: any) => (
-                          <Select.Option key={mark.value} value={mark.value}>
-                            {mark.name}
-                          </Select.Option>
-                        ))}
-                      </Select>
-                    </Form.Item>
-                  </Col>
+                    <Col lg={12} xs={24}>
+                      <Form.Item name="lengthTotal" label="Length">
+                        <InputNumber />
+                      </Form.Item>
+                    </Col>
 
-                  <Col lg={8} xs={24}>
-                    <Form.Item
-                      name="validity"
-                      label="Expiration Date"
-                      getValueProps={formatMoment}>
-                      <DatePicker format="DD/MM/YYYY" />
-                    </Form.Item>
-                  </Col>
-                </Row>
+                    <Col lg={12} xs={24}>
+                      <Form.Item name="format" label="Format">
+                        <Input />
+                      </Form.Item>
+                    </Col>
+                    <Col lg={12} xs={24}>
+                      <Form.Item name="language" label="Language">
+                        <Select placeholder="Please select a language">
+                          {language.map((lang: any) => (
+                            <Select.Option key={lang.value} value={lang.value}>
+                              {lang.name}
+                            </Select.Option>
+                          ))}
+                        </Select>
+                      </Form.Item>
+                    </Col>
+                    <Col lg={12} xs={24}>
+                      <Form.Item
+                        name="validity"
+                        label="Expiration Date"
+                        getValueProps={formatMoment}>
+                        <DatePicker format="DD/MM/YYYY" />
+                      </Form.Item>
+                    </Col>
+                    <Col lg={12} xs={24}>
+                      <Form.Item
+                        name="goLiveData"
+                        label="Go Live Date"
+                        getValueProps={formatMoment}>
+                        <DatePicker format="DD/MM/YYYY" />
+                      </Form.Item>
+                    </Col>
+                  </Row>
+                </Col>
+              </Row>
+              <Button
+                htmlType="button"
+                style={{ margin: "8px 0" }}
+                onClick={onAddSegment}>
+                Add Segment
+              </Button>
+              <Title level={3}>Segments</Title>
+              <Form.Item
+                shouldUpdate={(prevValues, curValues) =>
+                  prevValues.package !== curValues.package
+                }>
+                {({ getFieldValue }) => {
+                  const segments: Segment[] = getFieldValue("package") || [];
+                  return (
+                    <div
+                      style={{
+                        display: "flex",
+                      }}>
+                      {segments.map((segment, segmentIndex) => (
+                        <div
+                          key={segment.sequence}
+                          className={`segment-thumbnail ${
+                            (selectedSegmentIndex === segmentIndex &&
+                              "selected") ||
+                            ""
+                          }`}
+                          onClick={() => onEditSegment(segment, segmentIndex)}>
+                          {segment?.thumbnail?.length > 0
+                            ? [
+                                <img
+                                  alt={segment.thumbnail || "Thumbnail"}
+                                  src={segment.thumbnail[0]?.url}
+                                  style={{
+                                    height: "auto",
+                                    width: "100%",
+                                  }}
+                                />,
+                                <Button
+                                  icon={<DeleteOutlined />}
+                                  shape="circle"
+                                  danger
+                                  type="primary"
+                                  className="remove-button"
+                                  onClick={(evt) =>
+                                    onDeleteSegment(evt, segmentIndex)
+                                  }
+                                />,
+                              ]
+                            : [
+                                <Button
+                                  icon={<DeleteOutlined />}
+                                  shape="circle"
+                                  type="primary"
+                                  danger
+                                  onClick={(evt) =>
+                                    onDeleteSegment(evt, segmentIndex)
+                                  }
+                                />,
+                                <div>No Thumbnail</div>,
+                              ]}
+                        </div>
+                      ))}
+                    </div>
+                  );
+                }}
+              </Form.Item>
 
-                <Button
-                  htmlType="button"
-                  style={{ margin: "8px 0" }}
-                  onClick={onAddSegment}>
-                  Add Segment
-                </Button>
-                <Title level={3}>Segments</Title>
-                <Form.Item
-                  shouldUpdate={(prevValues, curValues) =>
-                    prevValues.package !== curValues.package
-                  }>
-                  {({ getFieldValue }) => {
-                    const segments: Segment[] = getFieldValue("package") || [];
-
-                    return (
-                      <Table
-                        columns={segmentColumns}
-                        dataSource={segments}
-                        bordered
-                        rowKey={() => `Package_${Math.random()}`}
-                      />
-                    );
-                  }}
-                </Form.Item>
-
-                <Row gutter={8}>
-                  <Col>
-                    <Button
-                      type="default"
-                      onClick={() => history.push("/feed")}>
-                      Cancel
-                    </Button>
-                  </Col>
-                  <Col>
-                    <Button type="primary" htmlType="submit" loading={loading}>
-                      Save Changes
-                    </Button>
-                  </Col>
-                </Row>
-              </>
-            )}
+              <Row gutter={8} hidden={!!selectedSegment}>
+                <Col>
+                  <Button type="default" onClick={() => history.push("/feed")}>
+                    Cancel
+                  </Button>
+                </Col>
+                <Col>
+                  <Button type="primary" htmlType="submit" loading={loading}>
+                    Save Changes
+                  </Button>
+                </Col>
+              </Row>
+            </>
           </Form>
         </>
+
         {selectedSegment && (
           <SegmentForm
             segment={selectedSegment}
             onCancel={onCancelSegmentForm}
             onEditTag={onEditTag}
-            onDeleteTag={onDeleteTag}
             onEditBrand={onEditBrand}
-            onDeleteBrand={onDeleteBrand}
             onAddBrand={onAddBrand}
             onAddTag={onAddTag}
+            formFn={setChildForm}
           />
         )}
         <ModalBrand
@@ -481,20 +523,6 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
               </Select.Option>
             ))}
           </Select>
-        </Modal>
-        <Modal
-          visible={showPreviewModal}
-          onCancel={() => setShowPreviewModal(false)}
-          width={350}
-          title="Preview"
-          bodyStyle={{
-            height: "585px",
-            display: "flex",
-            justifyContent: "center",
-          }}>
-          <iframe
-            src="https://preview.discoclub.com"
-            style={{ width: "380px", height: "100%" }}></iframe>
         </Modal>
       </Form.Provider>
     </>

@@ -14,12 +14,15 @@ import {
   InputNumber,
   message,
   PageHeader,
+  Radio,
   Row,
   Select,
+  Switch,
   Table,
   Typography,
 } from "antd";
 import { useSelector } from "react-redux";
+import { Upload } from "components";
 
 const videoColumns: ColumnsType<Video> = [
   {
@@ -71,6 +74,7 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
       const product = form.getFieldsValue(true);
       product.brand = brands?.find((brand) => brand.id === product.brand?.id);
       await saveProduct(product);
+      console.log(product);
       setLoading(false);
       message.success("Register updated with success.");
       history.push("/products");
@@ -91,82 +95,156 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
         layout="vertical">
         <Row gutter={8}>
           <Col lg={12} xs={24}>
-            <Form.Item name="name" label="Name">
-              <Input />
-            </Form.Item>
+            <Row gutter={8}>
+              <Col lg={20} xs={24}>
+                <Form.Item name="status" label="Status">
+                  <Radio.Group buttonStyle="solid">
+                    <Radio.Button value="live">Live</Radio.Button>
+                    <Radio.Button value="paused">Paused</Radio.Button>
+                    <Radio.Button value="expired">Expired</Radio.Button>
+                    <Radio.Button value="pending">Pending</Radio.Button>
+                  </Radio.Group>
+                </Form.Item>
+              </Col>
+              <Col lg={4} xs={24}>
+                <Form.Item
+                  name="outOfStock"
+                  label="Out of stock"
+                  valuePropName="checked">
+                  <Switch />
+                </Form.Item>
+              </Col>
+              <Col lg={24} xs={24}>
+                <Form.Item name="name" label="Short description">
+                  <Input />
+                </Form.Item>
+              </Col>
+              <Col lg={24} xs={24}>
+                <Form.Item name="description" label="Long description">
+                  <Input.TextArea rows={5} />
+                </Form.Item>
+              </Col>
+            </Row>
           </Col>
           <Col lg={12} xs={24}>
-            <Form.Item name="image" label="Image">
-              <Input />
+            <Row gutter={8}>
+              <Col lg={12} xs={24}>
+                <Form.Item name="currencyIsoCode" label="Currency">
+                  <Select placeholder="Please select a currency">
+                    {currency.map((curr: any) => (
+                      <Select.Option key={curr.value} value={curr.value}>
+                        {curr.name}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col lg={12} xs={24}>
+                <Form.Item name="maxDiscoDollars" label="Max Discount">
+                  <InputNumber />
+                </Form.Item>
+              </Col>
+              <Col lg={12} xs={24}>
+                <Form.Item name="originalPrice" label="Normal Price">
+                  <InputNumber
+                    formatter={(value) =>
+                      `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                    }
+                    parser={(value = "") => value.replace(/\$\s?|(,*)/g, "")}
+                  />
+                </Form.Item>
+              </Col>
+              <Col lg={12} xs={24}>
+                <Form.Item name="discountedPrice" label="Discounted Price">
+                  <InputNumber
+                    formatter={(value) =>
+                      `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                    }
+                    parser={(value = "") => value.replace(/\$\s?|(,*)/g, "")}
+                  />
+                </Form.Item>
+              </Col>
+
+              <Col lg={24} xs={24}>
+                <Form.Item name="tagText" label="Tag Text">
+                  <Input />
+                </Form.Item>
+              </Col>
+
+              <Col lg={12} xs={24}>
+                <Form.Item
+                  name="validity"
+                  label="Expiration Date"
+                  getValueProps={formatMoment}>
+                  <DatePicker format="DD/MM/YYYY" />
+                </Form.Item>
+              </Col>
+              <Col lg={12} xs={24}>
+                <Form.Item
+                  name="goLiveData"
+                  label="Go Live Date"
+                  getValueProps={formatMoment}>
+                  <DatePicker format="DD/MM/YYYY" />
+                </Form.Item>
+              </Col>
+
+              <Col lg={24} xs={24}>
+                <Form.Item name={["brand", "id"]} label="Brand">
+                  <Select>
+                    {brands.map((brand) => (
+                      <Select.Option key={brand.id} value={brand.id}>
+                        {brand.brandName}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </Col>
+
+              <Col lg={8} xs={24}>
+                <Form.Item name="checkout" label="Checkout">
+                  <Radio.Group buttonStyle="solid">
+                    <Radio.Button value="disco">Disco</Radio.Button>
+                    <Radio.Button value="external">External</Radio.Button>
+                  </Radio.Group>
+                </Form.Item>
+              </Col>
+              <Col lg={16} xs={24}>
+                <Form.Item
+                  shouldUpdate={(prevValues, curValues) =>
+                    prevValues.checkout !== curValues.checkout
+                  }>
+                  {({ getFieldValue }) =>
+                    getFieldValue("checkout") === "external" ? (
+                      <Form.Item
+                        name="externalCheckout"
+                        label="External Checkout">
+                        <Input />
+                      </Form.Item>
+                    ) : null
+                  }
+                </Form.Item>
+              </Col>
+            </Row>
+          </Col>
+          <Col lg={24} xs={24}>
+            <Form.Item label="Thumbnail">
+              <Upload.ImageUpload
+                fileList={initial?.thumbnailUrl}
+                formProp="thumbnailUrl"
+                form={form}
+              />
             </Form.Item>
           </Col>
           <Col lg={24} xs={24}>
-            <Form.Item name="description" label="Description">
-              <Input.TextArea rows={4} />
-            </Form.Item>
-          </Col>
-          <Col lg={6} xs={24}>
-            <Form.Item name="originalPrice" label="Original Price">
-              <InputNumber
-                formatter={(value) =>
-                  `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-                }
-                parser={(value = "") => value.replace(/\$\s?|(,*)/g, "")}
+            <Form.Item label="Image">
+              <Upload.ImageUpload
+                maxCount={20}
+                fileList={initial?.image}
+                formProp="image"
+                form={form}
               />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={24}>
-            <Form.Item name="discountedPrice" label="Discounted Price">
-              <InputNumber
-                formatter={(value) =>
-                  `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-                }
-                parser={(value = "") => value.replace(/\$\s?|(,*)/g, "")}
-              />
-            </Form.Item>
-          </Col>
-          <Col lg={6} xs={24}>
-            <Form.Item name="tagText" label="Tag Text">
-              <Input />
-            </Form.Item>
-          </Col>
-          <Col lg={6} xs={24}>
-            <Form.Item name="currencyIsoCode" label="Currency">
-              <Select placeholder="Please select a currency">
-                {currency.map((curr: any) => (
-                  <Select.Option key={curr.value} value={curr.value}>
-                    {curr.name}
-                  </Select.Option>
-                ))}
-              </Select>
-            </Form.Item>
-          </Col>
-          <Col lg={8} xs={24}>
-            <Form.Item name={["brand", "id"]} label="Brand">
-              <Select>
-                {brands.map((brand) => (
-                  <Select.Option key={brand.id} value={brand.id}>
-                    {brand.brandName}
-                  </Select.Option>
-                ))}
-              </Select>
-            </Form.Item>
-          </Col>
-          <Col lg={8} xs={24}>
-            <Form.Item
-              name="offerExpirationDate"
-              label="Offer Expiration Date"
-              getValueProps={formatMoment}>
-              <DatePicker format="DD/MM/YYYY" />
-            </Form.Item>
-          </Col>
-          <Col lg={8} xs={24}>
-            <Form.Item name="maxDiscount" label="Max Discount">
-              <InputNumber />
-            </Form.Item>
-          </Col>
-        </Row>
-        <Row>
           <Col lg={24}>
             <Typography.Title level={5}>Videos feed</Typography.Title>
             <Form.Item

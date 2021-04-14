@@ -45,6 +45,7 @@ const VideoFeed: React.FC<RouteComponentProps> = (props) => {
   }, []);
 
   const deleteItem = async (id: string) => {
+    setLoading(true);
     await deleteVideoFeed({ id });
     fetchVideos();
   };
@@ -81,16 +82,6 @@ const VideoFeed: React.FC<RouteComponentProps> = (props) => {
       ),
       align: "center",
     },
-    // {
-    //   title: "Gold",
-    //   dataIndex: "tags",
-    //   render: (tags: Array<Tag> = []) =>
-    //     tags.map((tag, index) => (
-    //       <AntTag key={`dolar_${index}`}>{tag.discoGold}</AntTag>
-    //     )),
-    //   width: "10%",
-    //   align: "center",
-    // },
     {
       title: "actions",
       key: "action",

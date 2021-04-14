@@ -8,7 +8,11 @@ const Preview: React.FC = () => {
       <PageHeader title="Preview" />
       <div className="content-center">
         <div className="content-column">
-          <iframe src="https://preview.discoclub.com" id="mobile-preview" />
+          <iframe
+            src="https://preview.discoclub.com"
+            id="mobile-preview"
+            title="mobile-preview"
+          />
           <Typography.Text mark>
             It's interactive! <SmileOutlined />
           </Typography.Text>
