@@ -17,6 +17,7 @@ import {
   Radio,
   Row,
   Select,
+  Slider,
   Switch,
   Table,
   Typography,
@@ -43,6 +44,7 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
   const initial: any = location.state;
   const [loading, setLoading] = useState<boolean>(false);
   const [brands, setBrands] = useState<Brand[]>([]);
+  const [ageRange, setageRange] = useState<[number, number]>([12, 100]);
   const [form] = Form.useForm();
 
   const {
@@ -67,6 +69,20 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
       mounted = false;
     };
   }, []);
+
+  useEffect(() => {
+    if (initial?.ageMin && initial?.ageMax)
+      setageRange([initial?.ageMin, initial?.ageMax]);
+  }, [initial]);
+
+  const onChangeAge = (value: [number, number]) => {
+    form.setFieldsValue({
+      ageMin: value[0],
+      ageMax: value[1],
+    });
+
+    setageRange(value);
+  };
 
   const onFinish = async () => {
     setLoading(true);
@@ -170,7 +186,14 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                   <Input />
                 </Form.Item>
               </Col>
-
+              <Col lg={12} xs={24}>
+                <Form.Item
+                  name="goLiveDate"
+                  label="Go Live Date"
+                  getValueProps={formatMoment}>
+                  <DatePicker format="DD/MM/YYYY" />
+                </Form.Item>
+              </Col>
               <Col lg={12} xs={24}>
                 <Form.Item
                   name="validity"
@@ -179,15 +202,6 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                   <DatePicker format="DD/MM/YYYY" />
                 </Form.Item>
               </Col>
-              <Col lg={12} xs={24}>
-                <Form.Item
-                  name="goLiveData"
-                  label="Go Live Date"
-                  getValueProps={formatMoment}>
-                  <DatePicker format="DD/MM/YYYY" />
-                </Form.Item>
-              </Col>
-
               <Col lg={24} xs={24}>
                 <Form.Item name={["brand", "id"]} label="Brand">
                   <Select>
@@ -199,7 +213,6 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                   </Select>
                 </Form.Item>
               </Col>
-
               <Col lg={8} xs={24}>
                 <Form.Item name="checkout" label="Checkout">
                   <Radio.Group buttonStyle="solid">
@@ -226,6 +239,37 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
               </Col>
             </Row>
           </Col>
+        </Row>
+        <Row gutter={8}>
+          <Col lg={24} xs={24}>
+            <Typography.Title level={4}>Target</Typography.Title>
+          </Col>
+          <Col lg={12} xs={24}>
+            <Form.Item label="Slider">
+              <Slider
+                range
+                marks={{ 12: "12", 100: "100" }}
+                min={12}
+                max={100}
+                value={ageRange}
+                onChange={onChangeAge}
+              />
+            </Form.Item>
+          </Col>
+          <Col lg={12} xs={24}>
+            <Form.Item name="gender" label="Gender">
+              <Select mode="multiple">
+                <Select.Option value="Female">Female</Select.Option>
+                <Select.Option value="Male">Male</Select.Option>
+                <Select.Option value="Other">Other</Select.Option>
+                <Select.Option value="Prefer not to say">
+                  Prefer not to say
+                </Select.Option>
+              </Select>
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row gutter={8}>
           <Col lg={24} xs={24}>
             <Form.Item label="Thumbnail">
               <Upload.ImageUpload

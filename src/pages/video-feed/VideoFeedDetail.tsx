@@ -25,6 +25,7 @@ import {
   Radio,
   Row,
   Select,
+  Slider,
   Typography,
 } from "antd";
 import { Segment } from "interfaces/Segment";
@@ -63,6 +64,7 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
   const [brandModalVisible, setBrandModalVisible] = useState<boolean>(false);
   const [selectedSegment, setSelectedSegment] = useState<Segment | undefined>();
   const [selectedSegmentIndex, setSelectedSegmentIndex] = useState<number>(-1);
+  const [ageRange, setageRange] = useState<[number, number]>([12, 100]);
   const [segForm, setSegForm] = useState<any>();
   useEffect(() => {
     async function getUsers() {
@@ -222,6 +224,20 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
     }, 1);
   };
 
+  useEffect(() => {
+    if (initial?.ageMin && initial?.ageMax)
+      setageRange([initial?.ageMin, initial?.ageMax]);
+  }, [initial]);
+
+  const onChangeAge = (value: [number, number]) => {
+    form.setFieldsValue({
+      ageMin: value[0],
+      ageMax: value[1],
+    });
+
+    setageRange(value);
+  };
+
   return (
     <>
       <PageHeader
@@ -311,7 +327,7 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
                     </Form.Item>
                   </Col>
                   <Col lg={24} xs={24}>
-                    <Form.Item name="title" label="Short description">
+                    <Form.Item name="title" label="Title">
                       <Input />
                     </Form.Item>
                   </Col>
@@ -390,13 +406,42 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
                     </Col>
                     <Col lg={12} xs={24}>
                       <Form.Item
-                        name="goLiveData"
+                        name="goLiveDate"
                         label="Go Live Date"
                         getValueProps={formatMoment}>
                         <DatePicker format="DD/MM/YYYY" />
                       </Form.Item>
                     </Col>
                   </Row>
+                </Col>
+              </Row>
+              <Row gutter={8}>
+                <Col lg={24} xs={24}>
+                  <Typography.Title level={4}>Target</Typography.Title>
+                </Col>
+                <Col lg={12} xs={24}>
+                  <Form.Item label="Slider">
+                    <Slider
+                      range
+                      marks={{ 12: "12", 100: "100" }}
+                      min={12}
+                      max={100}
+                      value={ageRange}
+                      onChange={onChangeAge}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col lg={12} xs={24}>
+                  <Form.Item name="gender" label="Gender">
+                    <Select mode="multiple">
+                      <Select.Option value="Female">Female</Select.Option>
+                      <Select.Option value="Male">Male</Select.Option>
+                      <Select.Option value="Other">Other</Select.Option>
+                      <Select.Option value="Prefer not to say">
+                        Prefer not to say
+                      </Select.Option>
+                    </Select>
+                  </Form.Item>
                 </Col>
               </Row>
               <Button

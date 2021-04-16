@@ -170,7 +170,7 @@ export const deleteCreator = (data: IDelete) =>
   instance.delete(`Wi/Ep/RemoveCreator`, { data });
 
 export const deleteProduct = (data: IDelete) =>
-  instance.delete(`/Disco/Product/Remove`, { data });
+  instance.delete(`Wi/Ep/RemoveProduct`, { data });
 
 export const deleteBrand = (data: IDelete) =>
   instance.delete(`Wi/Ep/RemoveBrand`, { data });
