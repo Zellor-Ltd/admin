@@ -6,6 +6,6 @@ export interface Segment {
   id?: string;
   sequence: number;
   tags: Tag[];
-  video: any;
-  thumbnail: any;
+  video?: any;
+  thumbnail?: any;
 }

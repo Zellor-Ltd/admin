@@ -85,7 +85,7 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
             <Form.Item label="Thumbnail URL">
               <Upload.ImageUpload
                 form={form}
-                formProp={"thumbnail"}
+                formProp="thumbnail"
                 fileList={segment?.thumbnail}
               />
             </Form.Item>

@@ -193,8 +193,6 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
     setSelectedSegment({
       sequence: packages ? packages.length + 1 : 1,
       tags: [],
-      video: [],
-      thumbnail: [],
     });
     setSelectedSegmentIndex(-1);
   };
@@ -398,16 +396,16 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
                     </Col>
                     <Col lg={12} xs={24}>
                       <Form.Item
-                        name="validity"
-                        label="Expiration Date"
+                        name="goLiveDate"
+                        label="Go Live Date"
                         getValueProps={formatMoment}>
                         <DatePicker format="DD/MM/YYYY" />
                       </Form.Item>
                     </Col>
                     <Col lg={12} xs={24}>
                       <Form.Item
-                        name="goLiveDate"
-                        label="Go Live Date"
+                        name="validity"
+                        label="Expiration Date"
                         getValueProps={formatMoment}>
                         <DatePicker format="DD/MM/YYYY" />
                       </Form.Item>
@@ -471,11 +469,11 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
                             ""
                           }`}
                           onClick={() => onEditSegment(segment, segmentIndex)}>
-                          {segment?.thumbnail?.length > 0
+                          {segment?.thumbnail?.url
                             ? [
                                 <img
                                   alt={segment.thumbnail || "Thumbnail"}
-                                  src={segment.thumbnail[0]?.url}
+                                  src={segment.thumbnail?.url}
                                   style={{
                                     height: "auto",
                                     width: "100%",

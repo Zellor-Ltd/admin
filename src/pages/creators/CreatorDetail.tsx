@@ -21,6 +21,7 @@ import {
   GlobalOutlined,
   SoundFilled,
 } from "@ant-design/icons";
+import { Upload } from "components";
 
 const CreatorDetail: React.FC<RouteComponentProps> = (props) => {
   const { history, location } = props;
@@ -33,7 +34,6 @@ const CreatorDetail: React.FC<RouteComponentProps> = (props) => {
     setLoading(true);
     try {
       const creator = form.getFieldsValue(true);
-      console.log(creator);
       await saveCreator(creator);
       setLoading(false);
       message.success("Register updated with success.");
@@ -132,6 +132,17 @@ const CreatorDetail: React.FC<RouteComponentProps> = (props) => {
         </Row>
         <Row gutter={8}>
           <Col lg={24} xs={24}>
+            <Form.Item label="Image">
+              <Upload.ImageUpload
+                fileList={initial?.image}
+                formProp="image"
+                form={form}
+              />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row gutter={8}>
+          <Col lg={24} xs={24}>
             <Typography.Title level={4}>Social Channels</Typography.Title>
           </Col>
         </Row>
@@ -152,7 +163,6 @@ const CreatorDetail: React.FC<RouteComponentProps> = (props) => {
             <Form.Item name="website" label="Website">
               <Input prefix={<GlobalOutlined />} />
             </Form.Item>
-
             <Form.Item name="twitter" label="Twitter">
               <Input prefix={<TwitterCircleFilled />} />
             </Form.Item>
