@@ -3,8 +3,9 @@ import { Tag } from "./Tag";
 import { Video } from "./Video";
 
 export interface Segment {
-  brands: Brand[];
+  id?: string;
+  sequence: number;
   tags: Tag[];
-  video: Video;
-  influencer: any;
+  video?: any;
+  thumbnail?: any;
 }

@@ -5,7 +5,7 @@ export interface Video {
   videoFeedId?: string;
   title?: string;
   videoUrl?: string;
-  thumbnailUrl?: string;
+  thumbnailUrl?: any;
   tags?: Tag[];
   brands?: Brand;
 }

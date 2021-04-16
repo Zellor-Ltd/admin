@@ -98,7 +98,7 @@ const TagDetail: React.FC<RouteComponentProps> = (props) => {
         className="tags">
         <Input.Group>
           <Row gutter={8}>
-            <Col lg={6} xs={24}>
+            <Col lg={12} xs={24}>
               <Form.Item
                 name="tagName"
                 label="Tag Name"
@@ -149,7 +149,7 @@ const TagDetail: React.FC<RouteComponentProps> = (props) => {
                 )}
               </Form.Item>
             </Col>
-            <Col xxl={4} md={12} xs={24}>
+            {/* <Col xxl={4} md={12} xs={24}>
               <Form.Item
                 name="startTime"
                 label="Start Time"
@@ -164,19 +164,19 @@ const TagDetail: React.FC<RouteComponentProps> = (props) => {
                 rules={[{ required: true }]}>
                 <InputNumber style={{ width: "100%" }} />
               </Form.Item>
-            </Col>
+            </Col> */}
 
-            <Col xxl={5} md={12} xs={24}>
+            <Col lg={6} md={12} xs={24}>
               <Form.Item name="discoGold" label="Disco Gold">
                 <InputNumber style={{ width: "100%" }} />
               </Form.Item>
             </Col>
-            <Col xxl={5} md={12} xs={24}>
+            <Col lg={6} md={12} xs={24}>
               <Form.Item name="discoDollars" label="Disco Dollar">
                 <InputNumber style={{ width: "100%" }} />
               </Form.Item>
             </Col>
-            <Col xxl={6} md={12} xs={24}>
+            <Col lg={6} md={12} xs={24}>
               <Form.Item
                 name="clickSound"
                 label="Click Sound"

@@ -81,6 +81,11 @@ const UserDetail: React.FC<RouteComponentProps> = (props) => {
             </Form.Item>
           </Col>
           <Col lg={8} xs={24}>
+            <Form.Item label="Password" name="pwd">
+              <Input.Password />
+            </Form.Item>
+          </Col>
+          <Col lg={8} xs={24}>
             <Form.Item name="profile" label="Profile">
               <Select>
                 {roles.map((role) => (
