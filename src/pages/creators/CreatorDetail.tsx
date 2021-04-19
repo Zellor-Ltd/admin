@@ -67,24 +67,37 @@ const CreatorDetail: React.FC<RouteComponentProps> = (props) => {
         onFinish={onFinish}
         initialValues={initial}>
         <Row gutter={8}>
-          <Col lg={6} xs={24}>
+          <Col lg={12} xs={24}>
             <Form.Item label="First Name" name="firstName">
               <Input />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={24}>
+          <Col lg={12} xs={24}>
             <Form.Item label="Last name" name="lastName">
               <Input />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={24}>
-            <Form.Item label="Email" name="email" rules={[{ type: "email" }]}>
+          <Col lg={12} xs={24}>
+            <Form.Item
+              label="Email"
+              name="user"
+              rules={[{ type: "email", message: "please use an valid email" }]}>
               <Input />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={24}>
+          <Col lg={12} xs={24}>
+            <Form.Item label="Password" name="pwd">
+              <Input.Password />
+            </Form.Item>
+          </Col>
+          <Col lg={12} xs={24}>
             <Form.Item label="Phone" name="phone">
               <Input />
+            </Form.Item>
+          </Col>
+          <Col lg={12} xs={24}>
+            <Form.Item label="Username" name="userName">
+              <Input prefix="@" />
             </Form.Item>
           </Col>
 
