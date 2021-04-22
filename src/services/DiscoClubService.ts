@@ -166,8 +166,8 @@ export const deleteVideoFeed = (data: IDelete) =>
 export const deleteTag = (data: IDelete) =>
   instance.delete(`Wi/Ep/RemoveTag`, { data });
 
-export const deleteCreator = (data: IDelete) =>
-  instance.delete(`Wi/Ep/RemoveCreator`, { data });
+export const deleteCreator = (id: string) =>
+  instance.delete(`Disco/Creator/Delete/${id}`);
 
 export const deleteProduct = (data: IDelete) =>
   instance.delete(`Wi/Ep/RemoveProduct`, { data });

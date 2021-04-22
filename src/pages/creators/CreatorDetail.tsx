@@ -65,7 +65,8 @@ const CreatorDetail: React.FC<RouteComponentProps> = (props) => {
         form={form}
         layout="vertical"
         onFinish={onFinish}
-        initialValues={initial}>
+        initialValues={initial}
+        autoComplete="off">
         <Row gutter={8}>
           <Col lg={12} xs={24}>
             <Form.Item label="First Name" name="firstName">
@@ -87,7 +88,7 @@ const CreatorDetail: React.FC<RouteComponentProps> = (props) => {
           </Col>
           <Col lg={12} xs={24}>
             <Form.Item label="Password" name="pwd">
-              <Input.Password />
+              <Input.Password autoComplete="off" />
             </Form.Item>
           </Col>
           <Col lg={12} xs={24}>
@@ -97,7 +98,7 @@ const CreatorDetail: React.FC<RouteComponentProps> = (props) => {
           </Col>
           <Col lg={12} xs={24}>
             <Form.Item label="Username" name="userName">
-              <Input prefix="@" />
+              <Input prefix="@" autoComplete="off" />
             </Form.Item>
           </Col>
 

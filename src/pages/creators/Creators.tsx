@@ -85,7 +85,7 @@ const Creators: React.FC<RouteComponentProps> = (props) => {
   const deleteItem = async (id: string) => {
     try {
       setLoading(true);
-      await deleteCreator({ id });
+      await deleteCreator(id);
       await fetchVideos();
     } catch (err) {
       console.log(err);

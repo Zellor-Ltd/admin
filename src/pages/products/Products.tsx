@@ -1,15 +1,31 @@
 import { RouteComponentProps } from "react-router";
-import { Button, PageHeader, Popconfirm, Table, Tag } from "antd";
+import {
+  Button,
+  Col,
+  Input,
+  PageHeader,
+  Popconfirm,
+  Row,
+  Table,
+  Tag,
+  Typography,
+} from "antd";
 import { ColumnsType } from "antd/lib/table";
 import { Product } from "interfaces/Product";
 import { useEffect, useState } from "react";
 import { deleteProduct, fetchProducts } from "services/DiscoClubService";
 import { Link } from "react-router-dom";
-import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import {
+  EditOutlined,
+  DeleteOutlined,
+  SearchOutlined,
+} from "@ant-design/icons";
+import "./Products.scss";
 
 const Products: React.FC<RouteComponentProps> = ({ history }) => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [products, setProducts] = useState<Product[] | undefined>();
+  const [products, setProducts] = useState<Product[]>([]);
+  const [filterText, setFilterText] = useState("");
 
   const fetchVideos = async () => {
     setLoading(true);
@@ -32,6 +48,16 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
       console.log(err);
       setLoading(false);
     }
+  };
+
+  const onChangeFilter = (evt: any) => {
+    setFilterText(evt.target.value);
+  };
+
+  const filterProduct = () => {
+    return products.filter((product) =>
+      product.name.toUpperCase().startsWith(filterText.toUpperCase())
+    );
   };
 
   const columns: ColumnsType<Product> = [
@@ -93,10 +119,20 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
           </Button>,
         ]}
       />
+      <div className="filter">
+        <Row>
+          <Col lg={12} xs={24}>
+            <Typography.Title level={5} title="Search">
+              Search
+            </Typography.Title>
+            <Input onChange={onChangeFilter} suffix={<SearchOutlined />} />
+          </Col>
+        </Row>
+      </div>
       <Table
         rowKey="id"
         columns={columns}
-        dataSource={products}
+        dataSource={filterProduct()}
         loading={loading}
       />
     </div>

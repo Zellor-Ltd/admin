@@ -1,4 +1,15 @@
-import { Avatar, Button, PageHeader, Popconfirm, Table, Tag } from "antd";
+import {
+  Avatar,
+  Button,
+  Col,
+  Input,
+  PageHeader,
+  Popconfirm,
+  Row,
+  Table,
+  Tag,
+  Typography,
+} from "antd";
 import { ColumnsType } from "antd/lib/table";
 import { Brand } from "interfaces/Brand";
 import { useEffect, useState } from "react";
@@ -9,8 +20,10 @@ import {
   DeleteOutlined,
   CheckOutlined,
   CloseOutlined,
+  SearchOutlined,
 } from "@ant-design/icons";
 import { deleteBrand, fetchBrands, saveBrand } from "services/DiscoClubService";
+import "./Brands.scss";
 
 const tagColorByStatus: any = {
   approved: "green",
@@ -21,6 +34,7 @@ const tagColorByStatus: any = {
 const Brands: React.FC<RouteComponentProps> = ({ history }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [brands, setBrands] = useState<Brand[]>([]);
+  const [filterText, setFilterText] = useState("");
 
   const aproveOrReject = async (aprove: boolean, creator: Brand) => {
     creator.status = aprove ? "approved" : "rejected";
@@ -50,6 +64,16 @@ const Brands: React.FC<RouteComponentProps> = ({ history }) => {
   useEffect(() => {
     fetch();
   }, []);
+
+  const onChangeFilter = (evt: any) => {
+    setFilterText(evt.target.value);
+  };
+
+  const filterBrand = () => {
+    return brands.filter((brand) =>
+      brand.brandName.toUpperCase().startsWith(filterText.toUpperCase())
+    );
+  };
 
   const columns: ColumnsType<Brand> = [
     { title: "Brand Name", dataIndex: "brandName", width: "50%" },
@@ -120,10 +144,20 @@ const Brands: React.FC<RouteComponentProps> = ({ history }) => {
           </Button>,
         ]}
       />
+      <div className="filter">
+        <Row>
+          <Col lg={12} xs={24}>
+            <Typography.Title level={5} title="Search">
+              Search
+            </Typography.Title>
+            <Input onChange={onChangeFilter} suffix={<SearchOutlined />} />
+          </Col>
+        </Row>
+      </div>
       <Table
         rowKey="id"
         columns={columns}
-        dataSource={brands}
+        dataSource={filterBrand()}
         loading={loading}
       />
     </div>
