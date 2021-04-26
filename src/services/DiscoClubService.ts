@@ -10,6 +10,7 @@ import { Role } from "interfaces/Role";
 import { Tag } from "interfaces/Tag";
 import { User } from "interfaces/User";
 import { Privilege } from "interfaces/Privilege";
+import { Category } from "interfaces/Category";
 
 export const instance = axios.create({
   baseURL: process.env.REACT_APP_HOST_ENDPOINT,
@@ -58,6 +59,8 @@ export const fetchVideoFeed = () => instance.get("Wi/Ep/ListVideoFeed");
 export const fetchProducts = () => instance.get("Wi/Ep/ListProducts");
 
 export const fetchBrands = () => instance.get("Wi/Ep/ListBrands");
+
+export const fetchCategories = () => instance.get("Wi/Ep/GetProductCategories");
 
 export const fetchTags = () => instance.get("Wi/Ep/ListTags");
 
@@ -114,6 +117,14 @@ export const saveBrand = (params: Brand) => {
     return instance.post("Wi/Ep/UpdateBrand", params);
   } else {
     return instance.put("Wi/EP/AddBrand", params);
+  }
+};
+
+export const saveCategory = (params: Category) => {
+  if (params.id) {
+    return instance.post("Wi/Ep/UpdateCategory", params);
+  } else {
+    return instance.put("Wi/EP/AddCategory", params);
   }
 };
 
@@ -174,6 +185,9 @@ export const deleteProduct = (data: IDelete) =>
 
 export const deleteBrand = (data: IDelete) =>
   instance.delete(`Wi/Ep/RemoveBrand`, { data });
+
+export const deleteCategory = (data: IDelete) =>
+  instance.delete(`Wi/Ep/RemoveCategory`, { data });
 
 export const loginService = (login: Login) =>
   instance.put("Auth/GetApiToken", login);
