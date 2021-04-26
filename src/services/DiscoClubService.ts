@@ -95,9 +95,9 @@ export const saveProduct = (params: Product) => {
 
 export const saveCreator = (params: Creator) => {
   if (params.id) {
-    return instance.post("Wi/Ep/UpdateCreator", params);
+    return instance.post("Disco/Creator/Update", params);
   } else {
-    return instance.put("Wi/EP/AddCreator", params);
+    return instance.put("Disco/Creator/Add", params);
   }
 };
 
@@ -166,8 +166,8 @@ export const deleteVideoFeed = (data: IDelete) =>
 export const deleteTag = (data: IDelete) =>
   instance.delete(`Wi/Ep/RemoveTag`, { data });
 
-export const deleteCreator = (data: IDelete) =>
-  instance.delete(`Wi/Ep/RemoveCreator`, { data });
+export const deleteCreator = (id: string) =>
+  instance.delete(`Disco/Creator/Delete/${id}`);
 
 export const deleteProduct = (data: IDelete) =>
   instance.delete(`Wi/Ep/RemoveProduct`, { data });

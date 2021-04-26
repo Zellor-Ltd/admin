@@ -156,7 +156,10 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                 </Form.Item>
               </Col>
               <Col lg={12} xs={24}>
-                <Form.Item name="maxDiscoDollars" label="Max Discount">
+                <Form.Item
+                  name="maxDiscoDollars"
+                  label="Max Discount"
+                  rules={[{ required: true }]}>
                   <InputNumber />
                 </Form.Item>
               </Col>
@@ -230,7 +233,8 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                     getFieldValue("checkout") === "external" ? (
                       <Form.Item
                         name="externalCheckout"
-                        label="External Checkout">
+                        label="External Checkout URL"
+                        rules={[{ required: true }]}>
                         <Input />
                       </Form.Item>
                     ) : null
@@ -257,7 +261,10 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
             </Form.Item>
           </Col>
           <Col lg={12} xs={24}>
-            <Form.Item name="gender" label="Gender">
+            <Form.Item
+              name="gender"
+              label="Gender"
+              rules={[{ required: true }]}>
               <Select mode="multiple">
                 <Select.Option value="Female">Female</Select.Option>
                 <Select.Option value="Male">Male</Select.Option>
@@ -270,6 +277,15 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
           </Col>
         </Row>
         <Row gutter={8}>
+          <Col lg={24} xs={24}>
+            <Form.Item label="Tag Image">
+              <Upload.ImageUpload
+                fileList={initial?.tagImage}
+                formProp="tagImage"
+                form={form}
+              />
+            </Form.Item>
+          </Col>
           <Col lg={24} xs={24}>
             <Form.Item label="Thumbnail">
               <Upload.ImageUpload
