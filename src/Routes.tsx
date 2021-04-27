@@ -24,6 +24,8 @@ import Interfaces from "pages/interfaces/Interfaces";
 import InterfaceDetail from "pages/interfaces/InterfaceDetail";
 import AccessControl from "pages/access-control/AccessControl";
 import Preview from "pages/preview/Preview";
+import Categories from "pages/categories/Categories";
+import CategoryDetail from "pages/categories/CategoryDetail";
 
 function Routes() {
   return (
@@ -63,6 +65,16 @@ function Routes() {
       <AuthRoute
         path="/creators"
         component={Creators}
+        layout={AuthenticatedLayout}
+      />
+      <AuthRoute
+        path="/category"
+        component={CategoryDetail}
+        layout={AuthenticatedLayout}
+      />
+      <AuthRoute
+        path="/categories"
+        component={Categories}
         layout={AuthenticatedLayout}
       />
       <AuthRoute

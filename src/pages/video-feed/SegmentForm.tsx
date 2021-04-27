@@ -143,6 +143,12 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                           label="Brand"
                           rules={[{ required: true }]}>
                           <Select
+                            showSearch
+                            filterOption={(input, option) =>
+                              option?.children
+                                .toLowerCase()
+                                .indexOf(input.toLowerCase()) >= 0
+                            }
                             onChange={(key: string) =>
                               onChangeBrand(key, field.name)
                             }

@@ -12,6 +12,7 @@ import {
   AppstoreAddOutlined,
   ControlOutlined,
   MobileOutlined,
+  SwitcherOutlined,
 } from "@ant-design/icons";
 import "./AuthenticatedLayout.scss";
 import jwt from "helpers/jwt";
@@ -95,6 +96,9 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = (props) => {
               </Menu.Item>
               <Menu.Item key="tags" icon={<TagOutlined />}>
                 <Link to="/tags">Tags</Link>
+              </Menu.Item>
+              <Menu.Item key="categories" icon={<SwitcherOutlined />}>
+                <Link to="/categories">Categories</Link>
               </Menu.Item>
             </SubMenu>
           </Menu>
