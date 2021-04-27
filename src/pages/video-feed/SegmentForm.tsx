@@ -64,10 +64,24 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
 
   const onChangeBrand = (key: string, fieldName: number) => {
     const formBrands = form.getFieldValue("brands");
-    const selectedBran = brands.find((brand: Brand) => brand.id === key);
-    const changedBrand = { ...formBrands[fieldName], ...selectedBran };
+    const selectedBrand: any = brands.find((brand: Brand) => brand.id === key);
+
+    const changedBrand = { ...formBrands[fieldName], ...selectedBrand };
+    if (changedBrand.selectedLogo) {
+      changedBrand.selectedLogoUrl =
+        selectedBrand[changedBrand.selectedLogo].url;
+    }
     formBrands[fieldName] = changedBrand;
 
+    form.setFieldsValue({ brands: formBrands });
+    form.setFields([{ name: "brands", touched: true }]);
+  };
+
+  const onChangeLogo = (key: string, fieldName: number) => {
+    const formBrands = form.getFieldValue("brands");
+    const selectedBrand = formBrands[fieldName];
+
+    formBrands[fieldName].selectedLogoUrl = selectedBrand[key].url;
     form.setFieldsValue({ brands: formBrands });
     form.setFields([{ name: "brands", touched: true }]);
   };
@@ -118,25 +132,56 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
             <Form.List name="brands">
               {(fields, { add, remove }) => (
                 <div>
-                  <Button
-                    onClick={() =>
-                      add({
-                        position: [
-                          {
-                            startTime: 1,
-                            opacity: 1,
-                            duration: 2,
-                            x: 100,
-                            y: 100,
-                            z: 1,
-                          },
-                        ],
-                      })
-                    }>
-                    Add Brand
-                  </Button>
+                  <Row>
+                    <Col
+                      lg={4}
+                      xs={24}
+                      style={{ display: "flex", alignItems: "center" }}>
+                      <Button
+                        onClick={() =>
+                          add({
+                            position: [
+                              {
+                                startTime: 1,
+                                opacity: 1,
+                                duration: 2,
+                                x: 100,
+                                y: 100,
+                                z: 1,
+                              },
+                            ],
+                          })
+                        }>
+                        Add Brand
+                      </Button>
+                    </Col>
+                  </Row>
                   {fields.map((field) => (
                     <Row gutter={8} key={Math.random()}>
+                      <Col lg={6} xs={24}>
+                        <Form.Item
+                          name={[field.name, "selectedLogo"]}
+                          label="Brand logo">
+                          <Select
+                            placeholder="Please select a logo"
+                            onChange={(key: string) =>
+                              onChangeLogo(key, field.name)
+                            }>
+                            <Select.Option value="brandLogo">
+                              Brand
+                            </Select.Option>
+                            <Select.Option value="colourLogo">
+                              Colour
+                            </Select.Option>
+                            <Select.Option value="blackLogo">
+                              Black
+                            </Select.Option>
+                            <Select.Option value="whiteLogo">
+                              White
+                            </Select.Option>
+                          </Select>
+                        </Form.Item>
+                      </Col>
                       <Col lg={4} xs={24}>
                         <Form.Item
                           name={[field.name, "id"]}
