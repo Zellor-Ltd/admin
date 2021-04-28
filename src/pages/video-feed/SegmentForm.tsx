@@ -158,7 +158,31 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                   </Row>
                   {fields.map((field) => (
                     <Row gutter={8} key={Math.random()}>
-                      <Col lg={6} xs={24}>
+                      <Col lg={4} xs={24}>
+                        <Form.Item
+                          name={[field.name, "id"]}
+                          label="Brand"
+                          rules={[{ required: true }]}>
+                          <Select
+                            showSearch
+                            filterOption={(input, option) =>
+                              option?.children
+                                .toLowerCase()
+                                .indexOf(input.toLowerCase()) >= 0
+                            }
+                            onChange={(key: string) =>
+                              onChangeBrand(key, field.name)
+                            }
+                            loading={loading}>
+                            {brands.map((brand) => (
+                              <Select.Option key={brand.id} value={brand.id}>
+                                {brand.brandName}
+                              </Select.Option>
+                            ))}
+                          </Select>
+                        </Form.Item>
+                      </Col>
+                      <Col lg={4} xs={24}>
                         <Form.Item
                           name={[field.name, "selectedLogo"]}
                           label="Brand logo">
@@ -184,30 +208,6 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                       </Col>
                       <Col lg={4} xs={24}>
                         <Form.Item
-                          name={[field.name, "id"]}
-                          label="Brand"
-                          rules={[{ required: true }]}>
-                          <Select
-                            showSearch
-                            filterOption={(input, option) =>
-                              option?.children
-                                .toLowerCase()
-                                .indexOf(input.toLowerCase()) >= 0
-                            }
-                            onChange={(key: string) =>
-                              onChangeBrand(key, field.name)
-                            }
-                            loading={loading}>
-                            {brands.map((brand) => (
-                              <Select.Option key={brand.id} value={brand.id}>
-                                {brand.brandName}
-                              </Select.Option>
-                            ))}
-                          </Select>
-                        </Form.Item>
-                      </Col>
-                      <Col lg={3} xs={24}>
-                        <Form.Item
                           name={[field.name, "position", 0, "startTime"]}
                           fieldKey={[field.fieldKey, "startTime"]}
                           label="Start Time"
@@ -215,7 +215,7 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                           <InputNumber />
                         </Form.Item>
                       </Col>
-                      <Col lg={3} xs={24}>
+                      <Col lg={4} xs={24}>
                         <Form.Item
                           name={[field.name, "position", 0, "opacity"]}
                           fieldKey={[field.fieldKey, "opacity"]}
@@ -224,7 +224,7 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                           <InputNumber />
                         </Form.Item>
                       </Col>
-                      <Col lg={3} xs={24}>
+                      <Col lg={4} xs={24}>
                         <Form.Item
                           name={[field.name, "position", 0, "duration"]}
                           fieldKey={[field.fieldKey, "duration"]}
@@ -233,7 +233,7 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                           <InputNumber />
                         </Form.Item>
                       </Col>
-                      <Col lg={3} xs={24}>
+                      <Col lg={4} xs={24}>
                         <Form.Item
                           name={[field.name, "position", 0, "x"]}
                           fieldKey={[field.fieldKey, "x"]}
@@ -242,7 +242,7 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                           <InputNumber />
                         </Form.Item>
                       </Col>
-                      <Col lg={3} xs={24}>
+                      <Col lg={4} xs={24}>
                         <Form.Item
                           name={[field.name, "position", 0, "y"]}
                           fieldKey={[field.fieldKey, "y"]}
@@ -251,7 +251,7 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                           <InputNumber />
                         </Form.Item>
                       </Col>
-                      <Col lg={3} xs={24}>
+                      <Col lg={4} xs={24}>
                         <Form.Item
                           name={[field.name, "position", 0, "z"]}
                           fieldKey={[field.fieldKey, "z"]}
@@ -260,6 +260,7 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                           <InputNumber />
                         </Form.Item>
                       </Col>
+
                       <Col style={{ display: "flex", alignItems: "center" }}>
                         <MinusCircleOutlined
                           onClick={() => remove(field.name)}

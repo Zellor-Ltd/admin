@@ -371,8 +371,8 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
                         <Select placeholder="Please select a category">
                           {categories.map((category: any) => (
                             <Select.Option
-                              key={category.value}
-                              value={category.value}>
+                              key={category.name}
+                              value={category.name}>
                               {category.name}
                             </Select.Option>
                           ))}
