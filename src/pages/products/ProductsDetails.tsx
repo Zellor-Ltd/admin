@@ -3,7 +3,11 @@ import { Brand } from "interfaces/Brand";
 import { Video } from "interfaces/Video";
 import { useEffect, useState } from "react";
 import { RouteComponentProps } from "react-router";
-import { fetchBrands, saveProduct } from "services/DiscoClubService";
+import {
+  fetchBrands,
+  fetchCategories,
+  saveProduct,
+} from "services/DiscoClubService";
 import { formatMoment } from "helpers/formatMoment";
 import {
   Button,
@@ -24,6 +28,7 @@ import {
 } from "antd";
 import { useSelector } from "react-redux";
 import { Upload } from "components";
+import { Category } from "interfaces/Category";
 
 const videoColumns: ColumnsType<Video> = [
   {
@@ -44,6 +49,7 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
   const initial: any = location.state;
   const [loading, setLoading] = useState<boolean>(false);
   const [brands, setBrands] = useState<Brand[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [ageRange, setageRange] = useState<[number, number]>([12, 100]);
   const [form] = Form.useForm();
 
@@ -62,9 +68,13 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
         setBrands(response.results);
       }
     };
+    async function getCategories() {
+      const response: any = await fetchCategories();
+      setCategories(response.results);
+    }
 
     getBrands();
-
+    getCategories();
     return () => {
       mounted = false;
     };
@@ -89,8 +99,12 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
     try {
       const product = form.getFieldsValue(true);
       product.brand = brands?.find((brand) => brand.id === product.brand?.id);
+
+      product.category = categories?.find(
+        (category) => category.id === product.category?.id
+      );
       await saveProduct(product);
-      console.log(product);
+
       setLoading(false);
       message.success("Register updated with success.");
       history.push("/products");
@@ -205,12 +219,23 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                   <DatePicker format="DD/MM/YYYY" />
                 </Form.Item>
               </Col>
-              <Col lg={24} xs={24}>
+              <Col lg={12} xs={24}>
                 <Form.Item name={["brand", "id"]} label="Brand">
                   <Select>
                     {brands.map((brand) => (
                       <Select.Option key={brand.id} value={brand.id}>
                         {brand.brandName}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col lg={12} xs={24}>
+                <Form.Item name={["category", "id"]} label="Category">
+                  <Select placeholder="Please select a category">
+                    {categories.map((category: any) => (
+                      <Select.Option key={category.id} value={category.id}>
+                        {category.name}
                       </Select.Option>
                     ))}
                   </Select>

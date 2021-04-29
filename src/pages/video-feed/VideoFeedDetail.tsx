@@ -7,6 +7,7 @@ import ModalTag from "./ModalTag";
 import { Brand } from "interfaces/Brand";
 import ModalBrand from "./ModalBrand";
 import {
+  fetchCategories,
   fetchCreators,
   fetchUsers,
   lockFeedToUser,
@@ -37,6 +38,7 @@ import { useSelector } from "react-redux";
 import { User } from "interfaces/User";
 import "./VideoFeed.scss";
 import { Creator } from "interfaces/Creator";
+import { Category } from "interfaces/Category";
 
 const { Title } = Typography;
 
@@ -45,13 +47,14 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
   const initial: any = location.state;
 
   const {
-    settings: { category = [], language = [] },
+    settings: { language = [] },
   } = useSelector((state: any) => state.settings);
 
   const [form] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
   const [modalAddFeedToUser, setModalAddFeedToUser] = useState<boolean>(false);
   const [users, setUsers] = useState<User[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [selectedUser, setSelectedUser] = useState<string>("");
   const [selectedTag, setSelectedTag] = useState<Tag | undefined>();
   const [selectedTagIndex, setSelectedTagIndex] = useState<number>(0);
@@ -77,8 +80,13 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
       const response: any = await fetchCreators();
       setInfluencers(response.results);
     }
+    async function getCategories() {
+      const response: any = await fetchCategories();
+      setCategories(response.results);
+    }
     getUsers();
     getInfluencers();
+    getCategories();
   }, []);
 
   const onAddBrand = () => {
@@ -373,10 +381,10 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
                     <Col lg={12} xs={24}>
                       <Form.Item name="category" label="Category">
                         <Select placeholder="Please select a category">
-                          {category.map((category: any) => (
+                          {categories.map((category: any) => (
                             <Select.Option
-                              key={category.value}
-                              value={category.value}>
+                              key={category.name}
+                              value={category.name}>
                               {category.name}
                             </Select.Option>
                           ))}
