@@ -64,10 +64,24 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
 
   const onChangeBrand = (key: string, fieldName: number) => {
     const formBrands = form.getFieldValue("brands");
-    const selectedBran = brands.find((brand: Brand) => brand.id === key);
-    const changedBrand = { ...formBrands[fieldName], ...selectedBran };
+    const selectedBrand: any = brands.find((brand: Brand) => brand.id === key);
+
+    const changedBrand = { ...formBrands[fieldName], ...selectedBrand };
+    if (changedBrand.selectedLogo) {
+      changedBrand.selectedLogoUrl =
+        selectedBrand[changedBrand.selectedLogo].url;
+    }
     formBrands[fieldName] = changedBrand;
 
+    form.setFieldsValue({ brands: formBrands });
+    form.setFields([{ name: "brands", touched: true }]);
+  };
+
+  const onChangeLogo = (key: string, fieldName: number) => {
+    const formBrands = form.getFieldValue("brands");
+    const selectedBrand = formBrands[fieldName];
+
+    formBrands[fieldName].selectedLogoUrl = selectedBrand[key].url;
     form.setFieldsValue({ brands: formBrands });
     form.setFields([{ name: "brands", touched: true }]);
   };
@@ -118,23 +132,30 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
             <Form.List name="brands">
               {(fields, { add, remove }) => (
                 <div>
-                  <Button
-                    onClick={() =>
-                      add({
-                        position: [
-                          {
-                            startTime: 1,
-                            opacity: 1,
-                            duration: 2,
-                            x: 100,
-                            y: 100,
-                            z: 1,
-                          },
-                        ],
-                      })
-                    }>
-                    Add Brand
-                  </Button>
+                  <Row>
+                    <Col
+                      lg={4}
+                      xs={24}
+                      style={{ display: "flex", alignItems: "center" }}>
+                      <Button
+                        onClick={() =>
+                          add({
+                            position: [
+                              {
+                                startTime: 1,
+                                opacity: 1,
+                                duration: 2,
+                                x: 100,
+                                y: 100,
+                                z: 1,
+                              },
+                            ],
+                          })
+                        }>
+                        Add Brand
+                      </Button>
+                    </Col>
+                  </Row>
                   {fields.map((field) => (
                     <Row gutter={8} key={Math.random()}>
                       <Col lg={4} xs={24}>
@@ -161,7 +182,31 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                           </Select>
                         </Form.Item>
                       </Col>
-                      <Col lg={3} xs={24}>
+                      <Col lg={4} xs={24}>
+                        <Form.Item
+                          name={[field.name, "selectedLogo"]}
+                          label="Brand logo">
+                          <Select
+                            placeholder="Please select a logo"
+                            onChange={(key: string) =>
+                              onChangeLogo(key, field.name)
+                            }>
+                            <Select.Option value="brandLogo">
+                              Brand
+                            </Select.Option>
+                            <Select.Option value="colourLogo">
+                              Colour
+                            </Select.Option>
+                            <Select.Option value="blackLogo">
+                              Black
+                            </Select.Option>
+                            <Select.Option value="whiteLogo">
+                              White
+                            </Select.Option>
+                          </Select>
+                        </Form.Item>
+                      </Col>
+                      <Col lg={4} xs={24}>
                         <Form.Item
                           name={[field.name, "position", 0, "startTime"]}
                           fieldKey={[field.fieldKey, "startTime"]}
@@ -170,7 +215,7 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                           <InputNumber />
                         </Form.Item>
                       </Col>
-                      <Col lg={3} xs={24}>
+                      <Col lg={4} xs={24}>
                         <Form.Item
                           name={[field.name, "position", 0, "opacity"]}
                           fieldKey={[field.fieldKey, "opacity"]}
@@ -179,7 +224,7 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                           <InputNumber />
                         </Form.Item>
                       </Col>
-                      <Col lg={3} xs={24}>
+                      <Col lg={4} xs={24}>
                         <Form.Item
                           name={[field.name, "position", 0, "duration"]}
                           fieldKey={[field.fieldKey, "duration"]}
@@ -188,7 +233,7 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                           <InputNumber />
                         </Form.Item>
                       </Col>
-                      <Col lg={3} xs={24}>
+                      <Col lg={4} xs={24}>
                         <Form.Item
                           name={[field.name, "position", 0, "x"]}
                           fieldKey={[field.fieldKey, "x"]}
@@ -197,7 +242,7 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                           <InputNumber />
                         </Form.Item>
                       </Col>
-                      <Col lg={3} xs={24}>
+                      <Col lg={4} xs={24}>
                         <Form.Item
                           name={[field.name, "position", 0, "y"]}
                           fieldKey={[field.fieldKey, "y"]}
@@ -206,7 +251,7 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                           <InputNumber />
                         </Form.Item>
                       </Col>
-                      <Col lg={3} xs={24}>
+                      <Col lg={4} xs={24}>
                         <Form.Item
                           name={[field.name, "position", 0, "z"]}
                           fieldKey={[field.fieldKey, "z"]}
@@ -215,6 +260,7 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                           <InputNumber />
                         </Form.Item>
                       </Col>
+
                       <Col style={{ display: "flex", alignItems: "center" }}>
                         <MinusCircleOutlined
                           onClick={() => remove(field.name)}
