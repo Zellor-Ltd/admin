@@ -11,6 +11,7 @@ import {
   fetchUsers,
   lockFeedToUser,
   saveVideoFeed,
+  unlockFeed,
 } from "services/DiscoClubService";
 import {
   Button,
@@ -201,6 +202,10 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
     setModalAddFeedToUser(true);
   };
 
+  const onUnlockFeedClick = async () => {
+    await unlockFeed(initial.id);
+  };
+
   const onModalAddFeedUserOkClick = async () => {
     try {
       await lockFeedToUser(initial.id, selectedUser);
@@ -249,6 +254,13 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
             disabled={!initial?.id}
             key="lock-button">
             Lock feed to user
+          </Button>,
+          <Button
+            onClick={onUnlockFeedClick}
+            type="primary"
+            disabled={!initial?.id}
+            key="unlock-button">
+            Unlock feed
           </Button>,
         ]}
       />

@@ -39,6 +39,15 @@ instance.interceptors.request.use((config: AxiosRequestConfig) => {
 
 instance.interceptors.response.use(
   (response) => {
+    if (response?.data?.error) {
+      if (
+        response.data.error.toUpperCase() ===
+        "Unauthorized request".toUpperCase()
+      ) {
+        localStorage.clear();
+        window.location.href = "./";
+      }
+    }
     return snakeToCamelCase(response.data);
   },
   (error) => {
@@ -82,9 +91,9 @@ export const fetchPrivileges = () => instance.get("Wi/Ep/ListPrivileges");
 
 export const saveVideoFeed = (params: FeedItem) => {
   if (params.id) {
-    return instance.put("Wi/EP/UpdateVideoFeed", params);
+    return instance.put("Disco/Feed/Add", params);
   } else {
-    return instance.put("Wi/EP/AddVideoFeed", params);
+    return instance.put("Disco/Feed/Update", params);
   }
 };
 
@@ -172,7 +181,7 @@ export const savePrivileges = (params: Privilege) => {
 };
 
 export const deleteVideoFeed = (data: IDelete) =>
-  instance.delete(`Wi/Ep/RemoveVideoFeed`, { data });
+  instance.delete(`Disco/Feed/Delete/${data}`);
 
 export const deleteTag = (data: IDelete) =>
   instance.delete(`Wi/Ep/RemoveTag`, { data });
@@ -194,3 +203,6 @@ export const loginService = (login: Login) =>
 
 export const lockFeedToUser = (feedId: string, userId: string) =>
   instance.get(`Disco/Feed/LockToOne/${feedId}/${userId}`);
+
+export const unlockFeed = (id: string) =>
+  instance.get(`/Disco/Feed/RebuildOne/${id}`);
