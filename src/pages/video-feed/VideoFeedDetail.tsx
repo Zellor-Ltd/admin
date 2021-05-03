@@ -12,6 +12,7 @@ import {
   fetchUsers,
   lockFeedToUser,
   saveVideoFeed,
+  unlockFeed,
 } from "services/DiscoClubService";
 import {
   Button,
@@ -52,6 +53,10 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
   const [modalAddFeedToUser, setModalAddFeedToUser] = useState<boolean>(false);
+  const [
+    modalRemoveFeedFromUser,
+    setModalRemoveFeedFromUser,
+  ] = useState<boolean>(false);
   const [users, setUsers] = useState<User[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedUser, setSelectedUser] = useState<string>("");
@@ -209,6 +214,21 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
     setModalAddFeedToUser(true);
   };
 
+  const onRemoveFeedFromUserClick = () => {
+    setModalRemoveFeedFromUser(true);
+  };
+
+  const onUnlockFeedClick = async () => {
+    try {
+      await await unlockFeed(selectedUser);
+      setSelectedUser("");
+      setModalRemoveFeedFromUser(false);
+      message.success("Changes saved!");
+    } catch (error) {
+      message.error(error);
+    }
+  };
+
   const onModalAddFeedUserOkClick = async () => {
     try {
       await lockFeedToUser(initial.id, selectedUser);
@@ -256,7 +276,14 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
             danger
             disabled={!initial?.id}
             key="lock-button">
-            Lock feed to user
+            Lock user feed
+          </Button>,
+          <Button
+            onClick={onRemoveFeedFromUserClick}
+            type="primary"
+            disabled={!initial?.id}
+            key="unlock-button">
+            Unlock user feed
           </Button>,
         ]}
       />
@@ -564,6 +591,23 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
           onOk={() => onModalAddFeedUserOkClick()}
           okButtonProps={{ disabled: !selectedUser }}
           title="Lock feed to User">
+          <Select
+            onChange={onModalAddFeedUserChange}
+            placeholder="Please select user"
+            style={{ width: "100%" }}>
+            {users.map((category: any) => (
+              <Select.Option key={category.id} value={category.id}>
+                {category.name}
+              </Select.Option>
+            ))}
+          </Select>
+        </Modal>
+        <Modal
+          visible={modalRemoveFeedFromUser}
+          onCancel={() => setModalRemoveFeedFromUser(false)}
+          onOk={() => onUnlockFeedClick()}
+          okButtonProps={{ disabled: !selectedUser }}
+          title="Unlock user feed">
           <Select
             onChange={onModalAddFeedUserChange}
             placeholder="Please select user"
