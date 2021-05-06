@@ -91,9 +91,9 @@ export const fetchPrivileges = () => instance.get("Wi/Ep/ListPrivileges");
 
 export const saveVideoFeed = (params: FeedItem) => {
   if (params.id) {
-    return instance.put("Disco/Feed/Add", params);
-  } else {
     return instance.put("Disco/Feed/Update", params);
+  } else {
+    return instance.put("Disco/Feed/Add", params);
   }
 };
 
@@ -206,3 +206,5 @@ export const lockFeedToUser = (feedId: string, userId: string) =>
 
 export const unlockFeed = (id: string) =>
   instance.get(`/Disco/Feed/RebuildOne/${id}`);
+
+export const rebuildAllFeedd = () => instance.get("/Disco/Feed/RebuildAll");

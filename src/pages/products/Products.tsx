@@ -56,7 +56,7 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
 
   const filterProduct = () => {
     return products.filter((product) =>
-      product.name.toUpperCase().startsWith(filterText.toUpperCase())
+      product.name?.toUpperCase().includes(filterText.toUpperCase())
     );
   };
 
@@ -98,7 +98,8 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
             title="Are you sure？"
             okText="Yes"
             cancelText="No"
-            onConfirm={() => deleteItem(record.id)}>
+            onConfirm={() => deleteItem(record.id)}
+          >
             <Button type="link" style={{ padding: 0, margin: 6 }}>
               <DeleteOutlined />
             </Button>

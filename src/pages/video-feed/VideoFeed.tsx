@@ -7,10 +7,15 @@ import {
   Tag as AntTag,
   Popconfirm,
   message,
+  Modal,
 } from "antd";
 import { Link, RouteComponentProps, withRouter } from "react-router-dom";
 import { ColumnsType } from "antd/es/table";
-import { deleteVideoFeed, fetchVideoFeed } from "services/DiscoClubService";
+import {
+  deleteVideoFeed,
+  fetchVideoFeed,
+  rebuildAllFeedd,
+} from "services/DiscoClubService";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { FeedItem } from "interfaces/FeedItem";
 import { Segment } from "interfaces/Segment";
@@ -50,6 +55,23 @@ const VideoFeed: React.FC<RouteComponentProps> = (props) => {
     fetchVideos();
   };
 
+  const onRebuildFeed = async () => {
+    await rebuildAllFeedd();
+    message.success("All feeds was rebuilt");
+  };
+
+  const onRebuildFeedClick = () => {
+    Modal.error({
+      title: "Caution!!",
+      content:
+        "This action can't be undone and will remove and then generate feed for all Disco Fans. Are you sure you want to proceed?",
+      onOk: onRebuildFeed,
+      okText: "Rebuild",
+      okButtonProps: { danger: true },
+      closable: true,
+      onCancel: () => {},
+    });
+  };
   const columns: ColumnsType<FeedItem> = [
     { title: "Title", dataIndex: "title", width: "15%" },
     {
@@ -96,7 +118,8 @@ const VideoFeed: React.FC<RouteComponentProps> = (props) => {
             title="Are you sure？"
             okText="Yes"
             cancelText="No"
-            onConfirm={() => deleteItem(record.id)}>
+            onConfirm={() => deleteItem(record.id)}
+          >
             <Button type="link" style={{ padding: 0, margin: 6 }}>
               <DeleteOutlined />
             </Button>
@@ -112,7 +135,10 @@ const VideoFeed: React.FC<RouteComponentProps> = (props) => {
         title="Video feed update"
         subTitle="List of Feeds"
         extra={[
-          <Button key="1" onClick={() => history.push("/video-feed")}>
+          <Button onClick={onRebuildFeedClick} danger key="1" type="primary">
+            Rebuild all fields
+          </Button>,
+          <Button key="2" onClick={() => history.push("/video-feed")}>
             New Item
           </Button>,
         ]}
