@@ -24,6 +24,8 @@ import {
 } from "@ant-design/icons";
 import { deleteBrand, fetchBrands, saveBrand } from "services/DiscoClubService";
 import "./Brands.scss";
+import { ColumnTypes } from "components/editable-context";
+import { EditableCell, EditableRow } from "components";
 
 const tagColorByStatus: any = {
   approved: "green",
@@ -75,14 +77,19 @@ const Brands: React.FC<RouteComponentProps> = ({ history }) => {
     );
   };
 
-  const columns: ColumnsType<Brand> = [
-    { title: "Brand Name", dataIndex: "brandName", width: "50%" },
+  const columns = [
+    {
+      title: "Brand Name",
+      dataIndex: "brandName",
+      width: "50%",
+      editable: true,
+    },
     {
       title: "Brand Color",
       dataIndex: "brandTxtColor",
       width: "20%",
       align: "center",
-      render: (value) => (
+      render: (value: any) => (
         <Avatar
           style={{ backgroundColor: value, border: "1px solid #9c9c9c" }}
         />
@@ -102,7 +109,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history }) => {
       key: "action",
       width: "10%",
       align: "right",
-      render: (value, record) => (
+      render: (value: any, record: Brand) => (
         <>
           {!record.status && [
             <CheckOutlined
@@ -134,6 +141,35 @@ const Brands: React.FC<RouteComponentProps> = ({ history }) => {
     },
   ];
 
+  const onSaveBrand = async (record: Brand) => {
+    setLoading(true);
+    await saveBrand(record);
+    fetch();
+  };
+
+  const components = {
+    body: {
+      row: EditableRow,
+      cell: EditableCell,
+    },
+  };
+
+  const configuredColumns = columns.map((col) => {
+    if (!col.editable) {
+      return col;
+    }
+    return {
+      ...col,
+      onCell: (record: Brand, index: number) => ({
+        record,
+        editable: col.editable,
+        dataIndex: col.dataIndex,
+        title: col.title,
+        onSave: onSaveBrand,
+      }),
+    };
+  });
+
   return (
     <div className="brands">
       <PageHeader
@@ -157,7 +193,8 @@ const Brands: React.FC<RouteComponentProps> = ({ history }) => {
       </div>
       <Table
         rowKey="id"
-        columns={columns}
+        components={components}
+        columns={configuredColumns as ColumnTypes}
         dataSource={filterBrand()}
         loading={loading}
       />

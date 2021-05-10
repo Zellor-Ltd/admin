@@ -275,14 +275,16 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
             type="primary"
             danger
             disabled={!initial?.id}
-            key="lock-button">
+            key="lock-button"
+          >
             Lock user feed
           </Button>,
           <Button
             onClick={onRemoveFeedFromUserClick}
             type="primary"
             disabled={!initial?.id}
-            key="unlock-button">
+            key="unlock-button"
+          >
             Unlock user feed
           </Button>,
         ]}
@@ -336,7 +338,8 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
             setSelectedSegment(undefined);
             setSelectedSegmentIndex(-1);
           }
-        }}>
+        }}
+      >
         <>
           <Form
             form={form}
@@ -344,7 +347,8 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
             name="feedForm"
             initialValues={initial}
             layout="vertical"
-            className="video-feed">
+            className="video-feed"
+          >
             {/* {!selectedSegment && ( */}
             <>
               <Row gutter={8}>
@@ -382,11 +386,13 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
                                 (influencer) => influencer.id === key
                               ),
                             })
-                          }>
+                          }
+                        >
                           {influencers.map((influencer: any) => (
                             <Select.Option
                               key={influencer.id}
-                              value={influencer.id}>
+                              value={influencer.id}
+                            >
                               {influencer.firstName}
                             </Select.Option>
                           ))}
@@ -399,7 +405,8 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
                           {categories.map((category: any) => (
                             <Select.Option
                               key={category.name}
-                              value={category.name}>
+                              value={category.name}
+                            >
                               {category.name}
                             </Select.Option>
                           ))}
@@ -433,7 +440,8 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
                       <Form.Item
                         name="goLiveDate"
                         label="Go Live Date"
-                        getValueProps={formatMoment}>
+                        getValueProps={formatMoment}
+                      >
                         <DatePicker format="DD/MM/YYYY" />
                       </Form.Item>
                     </Col>
@@ -441,7 +449,8 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
                       <Form.Item
                         name="validity"
                         label="Expiration Date"
-                        getValueProps={formatMoment}>
+                        getValueProps={formatMoment}
+                      >
                         <DatePicker format="DD/MM/YYYY" />
                       </Form.Item>
                     </Col>
@@ -480,21 +489,24 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
               <Button
                 htmlType="button"
                 style={{ margin: "8px 0" }}
-                onClick={onAddSegment}>
+                onClick={onAddSegment}
+              >
                 Add Segment
               </Button>
               <Title level={3}>Segments</Title>
               <Form.Item
                 shouldUpdate={(prevValues, curValues) =>
                   prevValues.package !== curValues.package
-                }>
+                }
+              >
                 {({ getFieldValue }) => {
                   const segments: Segment[] = getFieldValue("package") || [];
                   return (
                     <div
                       style={{
                         display: "flex",
-                      }}>
+                      }}
+                    >
                       {segments.map((segment, segmentIndex) => (
                         <div
                           key={segment.sequence}
@@ -503,7 +515,8 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
                               "selected") ||
                             ""
                           }`}
-                          onClick={() => onEditSegment(segment, segmentIndex)}>
+                          onClick={() => onEditSegment(segment, segmentIndex)}
+                        >
                           {segment?.thumbnail?.url
                             ? [
                                 <img
@@ -590,14 +603,16 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
           onCancel={() => setModalAddFeedToUser(false)}
           onOk={() => onModalAddFeedUserOkClick()}
           okButtonProps={{ disabled: !selectedUser }}
-          title="Lock feed to User">
+          title="Lock feed to User"
+        >
           <Select
             onChange={onModalAddFeedUserChange}
             placeholder="Please select user"
-            style={{ width: "100%" }}>
-            {users.map((category: any) => (
-              <Select.Option key={category.id} value={category.id}>
-                {category.name}
+            style={{ width: "100%" }}
+          >
+            {users.map((user: any) => (
+              <Select.Option key={user.id} value={user.id}>
+                {`${user.name} - ${user.user}`}
               </Select.Option>
             ))}
           </Select>
@@ -607,14 +622,16 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
           onCancel={() => setModalRemoveFeedFromUser(false)}
           onOk={() => onUnlockFeedClick()}
           okButtonProps={{ disabled: !selectedUser }}
-          title="Unlock user feed">
+          title="Unlock user feed"
+        >
           <Select
             onChange={onModalAddFeedUserChange}
             placeholder="Please select user"
-            style={{ width: "100%" }}>
-            {users.map((category: any) => (
-              <Select.Option key={category.id} value={category.id}>
-                {category.name}
+            style={{ width: "100%" }}
+          >
+            {users.map((user: any) => (
+              <Select.Option key={user.id} value={user.id}>
+                {`${user.name} - ${user.user}`}
               </Select.Option>
             ))}
           </Select>

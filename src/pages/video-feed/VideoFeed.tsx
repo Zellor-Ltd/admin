@@ -10,15 +10,17 @@ import {
   Modal,
 } from "antd";
 import { Link, RouteComponentProps, withRouter } from "react-router-dom";
-import { ColumnsType } from "antd/es/table";
 import {
   deleteVideoFeed,
   fetchVideoFeed,
   rebuildAllFeedd,
+  saveVideoFeed,
 } from "services/DiscoClubService";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { FeedItem } from "interfaces/FeedItem";
 import { Segment } from "interfaces/Segment";
+import { EditableCell, EditableRow } from "components";
+import { ColumnTypes } from "components/editable-context";
 
 const { Content } = Layout;
 
@@ -33,7 +35,7 @@ const VideoFeed: React.FC<RouteComponentProps> = (props) => {
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const fetchVideos = async () => {
+  const fetch = async () => {
     setLoading(true);
     try {
       const response: any = await fetchVideoFeed();
@@ -46,13 +48,13 @@ const VideoFeed: React.FC<RouteComponentProps> = (props) => {
   };
 
   useEffect(() => {
-    fetchVideos();
+    fetch();
   }, []);
 
   const deleteItem = async (id: string) => {
     setLoading(true);
     await deleteVideoFeed({ id });
-    fetchVideos();
+    fetch();
   };
 
   const onRebuildFeed = async () => {
@@ -72,8 +74,8 @@ const VideoFeed: React.FC<RouteComponentProps> = (props) => {
       onCancel: () => {},
     });
   };
-  const columns: ColumnsType<FeedItem> = [
-    { title: "Title", dataIndex: "title", width: "15%" },
+  const columns = [
+    { title: "Title", dataIndex: "title", width: "15%", editable: true },
     {
       title: "Segments",
       dataIndex: "package",
@@ -109,7 +111,7 @@ const VideoFeed: React.FC<RouteComponentProps> = (props) => {
       key: "action",
       width: "5%",
       align: "right",
-      render: (value, record) => (
+      render: (value: any, record: FeedItem) => (
         <>
           <Link to={{ pathname: `/video-feed`, state: record }}>
             <EditOutlined />
@@ -129,6 +131,35 @@ const VideoFeed: React.FC<RouteComponentProps> = (props) => {
     },
   ];
 
+  const onSaveFeed = async (record: FeedItem) => {
+    setLoading(true);
+    await saveVideoFeed(record);
+    fetch();
+  };
+
+  const components = {
+    body: {
+      row: EditableRow,
+      cell: EditableCell,
+    },
+  };
+
+  const configuredColumns = columns.map((col) => {
+    if (!col.editable) {
+      return col;
+    }
+    return {
+      ...col,
+      onCell: (record: FeedItem, index: number) => ({
+        record,
+        editable: col.editable,
+        dataIndex: col.dataIndex,
+        title: col.title,
+        onSave: onSaveFeed,
+      }),
+    };
+  });
+
   return (
     <div className="video-feed">
       <PageHeader
@@ -146,7 +177,8 @@ const VideoFeed: React.FC<RouteComponentProps> = (props) => {
       <Content>
         <Table
           size="small"
-          columns={columns}
+          components={components}
+          columns={configuredColumns as ColumnTypes}
           rowKey="id"
           dataSource={videos}
           loading={loading}

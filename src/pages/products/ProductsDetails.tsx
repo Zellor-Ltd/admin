@@ -122,7 +122,8 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
         name="productForm"
         initialValues={initial}
         onFinish={onFinish}
-        layout="vertical">
+        layout="vertical"
+      >
         <Row gutter={8}>
           <Col lg={12} xs={24}>
             <Row gutter={8}>
@@ -140,7 +141,8 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                 <Form.Item
                   name="outOfStock"
                   label="Out of stock"
-                  valuePropName="checked">
+                  valuePropName="checked"
+                >
                   <Switch />
                 </Form.Item>
               </Col>
@@ -173,7 +175,8 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                 <Form.Item
                   name="maxDiscoDollars"
                   label="Max Discount"
-                  rules={[{ required: true }]}>
+                  rules={[{ required: true }]}
+                >
                   <InputNumber />
                 </Form.Item>
               </Col>
@@ -207,7 +210,8 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                 <Form.Item
                   name="goLiveDate"
                   label="Go Live Date"
-                  getValueProps={formatMoment}>
+                  getValueProps={formatMoment}
+                >
                   <DatePicker format="DD/MM/YYYY" />
                 </Form.Item>
               </Col>
@@ -215,7 +219,8 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                 <Form.Item
                   name="validity"
                   label="Expiration Date"
-                  getValueProps={formatMoment}>
+                  getValueProps={formatMoment}
+                >
                   <DatePicker format="DD/MM/YYYY" />
                 </Form.Item>
               </Col>
@@ -231,7 +236,11 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                 </Form.Item>
               </Col>
               <Col lg={12} xs={24}>
-                <Form.Item name={["category", "id"]} label="Category">
+                <Form.Item
+                  name={["category", "id"]}
+                  label="Category"
+                  rules={[{ required: true }]}
+                >
                   <Select placeholder="Please select a category">
                     {categories.map((category: any) => (
                       <Select.Option key={category.id} value={category.id}>
@@ -253,13 +262,15 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                 <Form.Item
                   shouldUpdate={(prevValues, curValues) =>
                     prevValues.checkout !== curValues.checkout
-                  }>
+                  }
+                >
                   {({ getFieldValue }) =>
                     getFieldValue("checkout") === "external" ? (
                       <Form.Item
                         name="externalCheckout"
                         label="External Checkout URL"
-                        rules={[{ required: true }]}>
+                        rules={[{ required: true }]}
+                      >
                         <Input />
                       </Form.Item>
                     ) : null
@@ -289,7 +300,8 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
             <Form.Item
               name="gender"
               label="Gender"
-              rules={[{ required: true }]}>
+              rules={[{ required: true }]}
+            >
               <Select mode="multiple">
                 <Select.Option value="Female">Female</Select.Option>
                 <Select.Option value="Male">Male</Select.Option>
@@ -335,7 +347,8 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
             <Form.Item
               shouldUpdate={(prevValues, curValues) =>
                 prevValues.relatedVideoFeed !== curValues.relatedVideoFeed
-              }>
+              }
+            >
               {({ getFieldValue }) => {
                 const relatedVideoFeed: Video[] =
                   getFieldValue("relatedVideoFeed") || [];

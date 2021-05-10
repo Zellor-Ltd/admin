@@ -123,7 +123,7 @@ export const saveTag = (params: Tag) => {
 
 export const saveBrand = (params: Brand) => {
   if (params.id) {
-    return instance.post("Wi/Ep/UpdateBrand", params);
+    return instance.post("Disco/Brand/Update", params);
   } else {
     return instance.put("Wi/EP/AddBrand", params);
   }

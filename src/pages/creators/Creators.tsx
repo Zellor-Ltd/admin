@@ -64,7 +64,8 @@ const Creators: React.FC<RouteComponentProps> = (props) => {
             title="Are you sure？"
             okText="Yes"
             cancelText="No"
-            onConfirm={() => deleteItem(record.id)}>
+            onConfirm={() => deleteItem(record.id)}
+          >
             <Button type="link" style={{ padding: 0, margin: 6 }}>
               <DeleteOutlined />
             </Button>
@@ -79,20 +80,20 @@ const Creators: React.FC<RouteComponentProps> = (props) => {
     creator.status = aprove ? "approved" : "rejected";
 
     await saveCreator(creator);
-    fetchVideos();
+    fetch();
   };
 
   const deleteItem = async (id: string) => {
     try {
       setLoading(true);
       await deleteCreator(id);
-      await fetchVideos();
+      await fetch();
     } catch (err) {
       console.log(err);
       setLoading(false);
     }
   };
-  const fetchVideos = async () => {
+  const fetch = async () => {
     setLoading(true);
     const response: any = await fetchCreators();
     setLoading(false);
@@ -100,7 +101,7 @@ const Creators: React.FC<RouteComponentProps> = (props) => {
   };
 
   useEffect(() => {
-    fetchVideos();
+    fetch();
   }, []);
 
   return (
