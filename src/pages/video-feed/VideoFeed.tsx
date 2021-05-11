@@ -7,13 +7,20 @@ import {
   Tag as AntTag,
   Popconfirm,
   message,
+  Modal,
 } from "antd";
 import { Link, RouteComponentProps, withRouter } from "react-router-dom";
-import { ColumnsType } from "antd/es/table";
-import { deleteVideoFeed, fetchVideoFeed } from "services/DiscoClubService";
+import {
+  deleteVideoFeed,
+  fetchVideoFeed,
+  rebuildAllFeedd,
+  saveVideoFeed,
+} from "services/DiscoClubService";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { FeedItem } from "interfaces/FeedItem";
 import { Segment } from "interfaces/Segment";
+import { EditableCell, EditableRow } from "components";
+import { ColumnTypes } from "components/editable-context";
 
 const { Content } = Layout;
 
@@ -28,7 +35,7 @@ const VideoFeed: React.FC<RouteComponentProps> = (props) => {
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const fetchVideos = async () => {
+  const fetch = async () => {
     setLoading(true);
     try {
       const response: any = await fetchVideoFeed();
@@ -41,17 +48,34 @@ const VideoFeed: React.FC<RouteComponentProps> = (props) => {
   };
 
   useEffect(() => {
-    fetchVideos();
+    fetch();
   }, []);
 
   const deleteItem = async (id: string) => {
     setLoading(true);
     await deleteVideoFeed({ id });
-    fetchVideos();
+    fetch();
   };
 
-  const columns: ColumnsType<FeedItem> = [
-    { title: "Title", dataIndex: "title", width: "15%" },
+  const onRebuildFeed = async () => {
+    await rebuildAllFeedd();
+    message.success("All feeds was rebuilt");
+  };
+
+  const onRebuildFeedClick = () => {
+    Modal.error({
+      title: "Caution!!",
+      content:
+        "This action can't be undone and will remove and then generate feed for all Disco Fans. Are you sure you want to proceed?",
+      onOk: onRebuildFeed,
+      okText: "Rebuild",
+      okButtonProps: { danger: true },
+      closable: true,
+      onCancel: () => {},
+    });
+  };
+  const columns = [
+    { title: "Title", dataIndex: "title", width: "15%", editable: true },
     {
       title: "Segments",
       dataIndex: "package",
@@ -87,7 +111,7 @@ const VideoFeed: React.FC<RouteComponentProps> = (props) => {
       key: "action",
       width: "5%",
       align: "right",
-      render: (value, record) => (
+      render: (value: any, record: FeedItem) => (
         <>
           <Link to={{ pathname: `/video-feed`, state: record }}>
             <EditOutlined />
@@ -96,7 +120,8 @@ const VideoFeed: React.FC<RouteComponentProps> = (props) => {
             title="Are you sure？"
             okText="Yes"
             cancelText="No"
-            onConfirm={() => deleteItem(record.id)}>
+            onConfirm={() => deleteItem(record.id)}
+          >
             <Button type="link" style={{ padding: 0, margin: 6 }}>
               <DeleteOutlined />
             </Button>
@@ -106,13 +131,45 @@ const VideoFeed: React.FC<RouteComponentProps> = (props) => {
     },
   ];
 
+  const onSaveFeed = async (record: FeedItem) => {
+    setLoading(true);
+    await saveVideoFeed(record);
+    fetch();
+  };
+
+  const components = {
+    body: {
+      row: EditableRow,
+      cell: EditableCell,
+    },
+  };
+
+  const configuredColumns = columns.map((col) => {
+    if (!col.editable) {
+      return col;
+    }
+    return {
+      ...col,
+      onCell: (record: FeedItem, index: number) => ({
+        record,
+        editable: col.editable,
+        dataIndex: col.dataIndex,
+        title: col.title,
+        onSave: onSaveFeed,
+      }),
+    };
+  });
+
   return (
     <div className="video-feed">
       <PageHeader
         title="Video feed update"
         subTitle="List of Feeds"
         extra={[
-          <Button key="1" onClick={() => history.push("/video-feed")}>
+          <Button onClick={onRebuildFeedClick} danger key="1" type="primary">
+            Publish to Public
+          </Button>,
+          <Button key="2" onClick={() => history.push("/video-feed")}>
             New Item
           </Button>,
         ]}
@@ -120,7 +177,8 @@ const VideoFeed: React.FC<RouteComponentProps> = (props) => {
       <Content>
         <Table
           size="small"
-          columns={columns}
+          components={components}
+          columns={configuredColumns as ColumnTypes}
           rowKey="id"
           dataSource={videos}
           loading={loading}

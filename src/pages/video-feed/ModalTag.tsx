@@ -121,7 +121,8 @@ const ModalTag: React.FC<ModalFormProps> = ({
         selectedPositions.length >= 1 ? (
           <Popconfirm
             title="Sure to delete?"
-            onConfirm={() => onDeletePosition(index)}>
+            onConfirm={() => onDeletePosition(index)}
+          >
             <Button type="link" style={{ padding: 0, margin: 6 }}>
               <DeleteOutlined />
             </Button>
@@ -155,7 +156,8 @@ const ModalTag: React.FC<ModalFormProps> = ({
       onCancel={onCancel}
       width={"80%"}
       forceRender
-      okButtonProps={{ loading: loading }}>
+      okButtonProps={{ loading: loading }}
+    >
       <Form form={form} name="tagForm" initialValues={tag} layout="vertical">
         <Input.Group>
           <Row gutter={8}>
@@ -176,8 +178,9 @@ const ModalTag: React.FC<ModalFormProps> = ({
         <Button
           type="primary"
           style={{ margin: "8px 0" }}
-          onClick={() => onAddPosition()}>
-          Add Movments
+          onClick={() => onAddPosition()}
+        >
+          Add Movements
         </Button>
         <Table
           rowKey={(position: Position) =>

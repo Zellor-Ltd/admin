@@ -10,10 +10,13 @@ import {
   Tag,
   Typography,
 } from "antd";
-import { ColumnsType } from "antd/lib/table";
 import { Product } from "interfaces/Product";
 import { useEffect, useState } from "react";
-import { deleteProduct, fetchProducts } from "services/DiscoClubService";
+import {
+  deleteProduct,
+  fetchProducts,
+  saveProduct,
+} from "services/DiscoClubService";
 import { Link } from "react-router-dom";
 import {
   EditOutlined,
@@ -21,13 +24,15 @@ import {
   SearchOutlined,
 } from "@ant-design/icons";
 import "./Products.scss";
+import { EditableCell, EditableRow } from "components";
+import { ColumnTypes } from "components/editable-context";
 
 const Products: React.FC<RouteComponentProps> = ({ history }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [products, setProducts] = useState<Product[]>([]);
   const [filterText, setFilterText] = useState("");
 
-  const fetchVideos = async () => {
+  const fetch = async () => {
     setLoading(true);
     const response: any = await fetchProducts();
     setLoading(false);
@@ -35,14 +40,14 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
   };
 
   useEffect(() => {
-    fetchVideos();
+    fetch();
   }, []);
 
   const deleteItem = async (id: string) => {
     try {
       setLoading(true);
       await deleteProduct({ id });
-      await fetchVideos();
+      await fetch();
       setLoading(false);
     } catch (err) {
       console.log(err);
@@ -56,12 +61,12 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
 
   const filterProduct = () => {
     return products.filter((product) =>
-      product.name.toUpperCase().startsWith(filterText.toUpperCase())
+      product.name?.toUpperCase().includes(filterText.toUpperCase())
     );
   };
 
-  const columns: ColumnsType<Product> = [
-    { title: "Name", dataIndex: "name", width: "15%" },
+  const columns = [
+    { title: "Name", dataIndex: "name", width: "15%", editable: true },
     {
       title: "Brand",
       dataIndex: ["brand", "brandName"],
@@ -89,7 +94,7 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
       key: "action",
       width: "5%",
       align: "right",
-      render: (value, record) => (
+      render: (value: any, record: Product) => (
         <>
           <Link to={{ pathname: `/product`, state: record }}>
             <EditOutlined />
@@ -98,7 +103,8 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
             title="Are you sure？"
             okText="Yes"
             cancelText="No"
-            onConfirm={() => deleteItem(record.id)}>
+            onConfirm={() => deleteItem(record.id)}
+          >
             <Button type="link" style={{ padding: 0, margin: 6 }}>
               <DeleteOutlined />
             </Button>
@@ -107,6 +113,35 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
       ),
     },
   ];
+
+  const onSaveProduct = async (record: Product) => {
+    setLoading(true);
+    await saveProduct(record);
+    fetch();
+  };
+
+  const components = {
+    body: {
+      row: EditableRow,
+      cell: EditableCell,
+    },
+  };
+
+  const configuredColumns = columns.map((col) => {
+    if (!col.editable) {
+      return col;
+    }
+    return {
+      ...col,
+      onCell: (record: Product, index: number) => ({
+        record,
+        editable: col.editable,
+        dataIndex: col.dataIndex,
+        title: col.title,
+        onSave: onSaveProduct,
+      }),
+    };
+  });
 
   return (
     <div className="products">
@@ -131,7 +166,8 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
       </div>
       <Table
         rowKey="id"
-        columns={columns}
+        components={components}
+        columns={configuredColumns as ColumnTypes}
         dataSource={filterProduct()}
         loading={loading}
       />

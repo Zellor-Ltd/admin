@@ -34,6 +34,7 @@ const Users: React.FC<RouteComponentProps> = ({ history }) => {
 
   const columns: ColumnsType<User> = [
     { title: "Name", dataIndex: "name", width: "15%" },
+    { title: "E-mail", dataIndex: "user", width: "15%" },
     {
       title: "Profile",
       dataIndex: "profile",
