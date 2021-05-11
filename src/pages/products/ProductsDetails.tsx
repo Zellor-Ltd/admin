@@ -68,6 +68,7 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
         setBrands(response.results);
       }
     };
+
     async function getCategories() {
       const response: any = await fetchCategories();
       setCategories(response.results);

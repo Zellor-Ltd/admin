@@ -167,7 +167,7 @@ const VideoFeed: React.FC<RouteComponentProps> = (props) => {
         subTitle="List of Feeds"
         extra={[
           <Button onClick={onRebuildFeedClick} danger key="1" type="primary">
-            Rebuild all fields
+            Publish to Public
           </Button>,
           <Button key="2" onClick={() => history.push("/video-feed")}>
             New Item

@@ -10,7 +10,6 @@ import {
   Tag,
   Typography,
 } from "antd";
-import { ColumnsType } from "antd/lib/table";
 import { Brand } from "interfaces/Brand";
 import { useEffect, useState } from "react";
 import { RouteComponentProps } from "react-router";

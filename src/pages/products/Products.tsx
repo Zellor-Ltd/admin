@@ -10,7 +10,6 @@ import {
   Tag,
   Typography,
 } from "antd";
-import { ColumnsType } from "antd/lib/table";
 import { Product } from "interfaces/Product";
 import { useEffect, useState } from "react";
 import {
