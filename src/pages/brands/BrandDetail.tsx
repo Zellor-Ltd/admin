@@ -32,7 +32,8 @@ const BrandDetail: React.FC<RouteComponentProps> = (props) => {
         layout="vertical"
         form={form}
         initialValues={initial}
-        onFinish={onFinish}>
+        onFinish={onFinish}
+      >
         <Row gutter={8}>
           <Col lg={12} xs={24}>
             <Form.Item label="Brand Name" name="brandName">
@@ -73,7 +74,11 @@ const BrandDetail: React.FC<RouteComponentProps> = (props) => {
                 </Form.Item>
               </Col>
               <Col lg={6} xs={24}>
-                <Form.Item label="Logo Round">
+                <Form.Item
+                  label="Logo Round"
+                  rules={[{ required: true }]}
+                  name="brandLogo"
+                >
                   <Upload.ImageUpload
                     fileList={initial?.brandLogo}
                     maxCount={1}
@@ -83,7 +88,11 @@ const BrandDetail: React.FC<RouteComponentProps> = (props) => {
                 </Form.Item>
               </Col>
               <Col lg={24} xs={24}>
-                <Form.Item label="Upload Card">
+                <Form.Item
+                  label="Upload Card"
+                  name="brandCard"
+                  rules={[{ required: true }]}
+                >
                   <Upload.ImageUpload
                     maxCount={1}
                     fileList={initial?.brandCard}
@@ -93,17 +102,13 @@ const BrandDetail: React.FC<RouteComponentProps> = (props) => {
                 </Form.Item>
               </Col>
               <Col lg={24} xs={24}>
-                <Form.Item label="Brand Color" shouldUpdate>
-                  {({ getFieldValue, setFieldsValue }) => {
-                    return (
-                      <TwitterPicker
-                        color={getFieldValue("brandTxtColor")}
-                        onChange={(value: any) =>
-                          setFieldsValue({ brandTxtColor: value.hex })
-                        }
-                      />
-                    );
-                  }}
+                <Form.Item
+                  label="Brand Color"
+                  name="brandTxtColor"
+                  rules={[{ required: true }]}
+                  valuePropName="color"
+                >
+                  <ColorPicker />
                 </Form.Item>
               </Col>
             </Row>
@@ -127,3 +132,10 @@ const BrandDetail: React.FC<RouteComponentProps> = (props) => {
 };
 
 export default BrandDetail;
+
+const ColorPicker: React.FC<any> = (props) => {
+  const { onChange } = props;
+  return (
+    <TwitterPicker onChangeComplete={(value: any) => onChange(value.hex)} />
+  );
+};

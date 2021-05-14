@@ -71,8 +71,10 @@ const Brands: React.FC<RouteComponentProps> = ({ history }) => {
   };
 
   const filterBrand = () => {
-    return brands.filter((brand) =>
-      brand.brandName.toUpperCase().includes(filterText.toUpperCase())
+    return brands.filter(
+      (brand) =>
+        brand.brandName?.toUpperCase().includes(filterText.toUpperCase()) ||
+        true
     );
   };
 
