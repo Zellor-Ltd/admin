@@ -165,7 +165,7 @@ const UserDetail: React.FC<RouteComponentProps> = (props) => {
     setLoading(true);
     try {
       const user = form.getFieldsValue(true);
-      user.birthday = user.birthday?.format("YYYY/MM/DD");
+      user.birthday = user.birthday?.format("YYYY-MM-DD");
       await saveUser(user);
       setLoading(false);
       message.success("Register updated with success.");
