@@ -53,10 +53,8 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
   const [modalAddFeedToUser, setModalAddFeedToUser] = useState<boolean>(false);
-  const [
-    modalRemoveFeedFromUser,
-    setModalRemoveFeedFromUser,
-  ] = useState<boolean>(false);
+  const [modalRemoveFeedFromUser, setModalRemoveFeedFromUser] =
+    useState<boolean>(false);
   const [users, setUsers] = useState<User[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedUser, setSelectedUser] = useState<string>("");
@@ -522,6 +520,7 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
                                 <img
                                   alt={segment.thumbnail || "Thumbnail"}
                                   src={segment.thumbnail?.url}
+                                  key={segment.thumbnail?.url}
                                   style={{
                                     height: "auto",
                                     width: "100%",
@@ -533,6 +532,7 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
                                   danger
                                   type="primary"
                                   className="remove-button"
+                                  key={`botao_${segment.thumbnail?.url}`}
                                   onClick={(evt) =>
                                     onDeleteSegment(evt, segmentIndex)
                                   }

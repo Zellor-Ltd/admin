@@ -26,6 +26,7 @@ import {
 import "./Products.scss";
 import { EditableCell, EditableRow } from "components";
 import { ColumnTypes } from "components/editable-context";
+import moment from "moment";
 
 const Products: React.FC<RouteComponentProps> = ({ history }) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -86,8 +87,7 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
       dataIndex: "offerExpirationDate",
       width: "15%",
       align: "center",
-      render: (creationDate: Date) =>
-        new Date(creationDate).toLocaleDateString(),
+      render: (creationDate: Date) => moment(creationDate).format("DD/MM/YYYY"),
     },
     {
       title: "actions",

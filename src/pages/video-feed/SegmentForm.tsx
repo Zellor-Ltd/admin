@@ -66,7 +66,7 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
     const formBrands = form.getFieldValue("brands");
     const selectedBrand: any = brands.find((brand: Brand) => brand.id === key);
 
-    const changedBrand = { ...formBrands[fieldName], ...selectedBrand };
+    const changedBrand = { ...selectedBrand };
     if (changedBrand.selectedLogo) {
       changedBrand.selectedLogoUrl =
         selectedBrand[changedBrand.selectedLogo].url;
@@ -91,13 +91,15 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
       form={form}
       initialValues={segment}
       name="segmentForm"
-      layout="vertical">
+      layout="vertical"
+    >
       <Row gutter={8}>
         <Col lg={4} xs={24}>
           <Form.Item
             name="sequence"
             label="Sequence"
-            rules={[{ required: true }]}>
+            rules={[{ required: true }]}
+          >
             <InputNumber />
           </Form.Item>
         </Col>
@@ -136,7 +138,8 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                     <Col
                       lg={4}
                       xs={24}
-                      style={{ display: "flex", alignItems: "center" }}>
+                      style={{ display: "flex", alignItems: "center" }}
+                    >
                       <Button
                         onClick={() =>
                           add({
@@ -151,7 +154,8 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                               },
                             ],
                           })
-                        }>
+                        }
+                      >
                         Add Brand
                       </Button>
                     </Col>
@@ -162,7 +166,8 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                         <Form.Item
                           name={[field.name, "id"]}
                           label="Brand"
-                          rules={[{ required: true }]}>
+                          rules={[{ required: true }]}
+                        >
                           <Select
                             showSearch
                             filterOption={(input, option) =>
@@ -173,7 +178,8 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                             onChange={(key: string) =>
                               onChangeBrand(key, field.name)
                             }
-                            loading={loading}>
+                            loading={loading}
+                          >
                             {brands.map((brand) => (
                               <Select.Option key={brand.id} value={brand.id}>
                                 {brand.brandName}
@@ -184,26 +190,49 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                       </Col>
                       <Col lg={4} xs={24}>
                         <Form.Item
-                          name={[field.name, "selectedLogo"]}
-                          label="Brand logo">
-                          <Select
-                            placeholder="Please select a logo"
-                            onChange={(key: string) =>
-                              onChangeLogo(key, field.name)
-                            }>
-                            <Select.Option value="brandLogo">
-                              Brand
-                            </Select.Option>
-                            <Select.Option value="colourLogo">
-                              Colour
-                            </Select.Option>
-                            <Select.Option value="blackLogo">
-                              Black
-                            </Select.Option>
-                            <Select.Option value="whiteLogo">
-                              White
-                            </Select.Option>
-                          </Select>
+                          shouldUpdate={(prevValues, curValues) =>
+                            prevValues.brands[field.name]?.id !==
+                            curValues.brands[field.name]?.id
+                          }
+                        >
+                          {({ getFieldValue }) => {
+                            const bra = getFieldValue("brands")[field.name];
+                            return (
+                              <Form.Item
+                                name={[field.name, "selectedLogo"]}
+                                label="Brand logo"
+                              >
+                                <Select
+                                  placeholder="Please select a logo"
+                                  onChange={(key: string) =>
+                                    onChangeLogo(key, field.name)
+                                  }
+                                >
+                                  {bra.brandLogo?.url && (
+                                    <Select.Option value="brandLogo">
+                                      Brand
+                                    </Select.Option>
+                                  )}
+
+                                  {bra.colourLogo?.url && (
+                                    <Select.Option value="colourLogo">
+                                      Colour
+                                    </Select.Option>
+                                  )}
+                                  {bra.blackLogo?.url && (
+                                    <Select.Option value="blackLogo">
+                                      Black
+                                    </Select.Option>
+                                  )}
+                                  {bra.whiteLogo?.url && (
+                                    <Select.Option value="whiteLogo">
+                                      White
+                                    </Select.Option>
+                                  )}
+                                </Select>
+                              </Form.Item>
+                            );
+                          }}
                         </Form.Item>
                       </Col>
                       <Col lg={4} xs={24}>
@@ -211,7 +240,8 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                           name={[field.name, "position", 0, "startTime"]}
                           fieldKey={[field.fieldKey, "startTime"]}
                           label="Start Time"
-                          rules={[{ required: true }]}>
+                          rules={[{ required: true }]}
+                        >
                           <InputNumber />
                         </Form.Item>
                       </Col>
@@ -220,7 +250,8 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                           name={[field.name, "position", 0, "opacity"]}
                           fieldKey={[field.fieldKey, "opacity"]}
                           label="Opacity"
-                          rules={[{ required: true }]}>
+                          rules={[{ required: true }]}
+                        >
                           <InputNumber />
                         </Form.Item>
                       </Col>
@@ -229,7 +260,8 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                           name={[field.name, "position", 0, "duration"]}
                           fieldKey={[field.fieldKey, "duration"]}
                           label="duration"
-                          rules={[{ required: true }]}>
+                          rules={[{ required: true }]}
+                        >
                           <InputNumber />
                         </Form.Item>
                       </Col>
@@ -238,7 +270,8 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                           name={[field.name, "position", 0, "x"]}
                           fieldKey={[field.fieldKey, "x"]}
                           label="Position X"
-                          rules={[{ required: true }]}>
+                          rules={[{ required: true }]}
+                        >
                           <InputNumber />
                         </Form.Item>
                       </Col>
@@ -247,7 +280,8 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                           name={[field.name, "position", 0, "y"]}
                           fieldKey={[field.fieldKey, "y"]}
                           label="position Y"
-                          rules={[{ required: true }]}>
+                          rules={[{ required: true }]}
+                        >
                           <InputNumber />
                         </Form.Item>
                       </Col>
@@ -256,7 +290,8 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                           name={[field.name, "position", 0, "z"]}
                           fieldKey={[field.fieldKey, "z"]}
                           label="Z Index"
-                          rules={[{ required: true }]}>
+                          rules={[{ required: true }]}
+                        >
                           <InputNumber />
                         </Form.Item>
                       </Col>
@@ -293,7 +328,8 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                           },
                         ],
                       })
-                    }>
+                    }
+                  >
                     Add Tag
                   </Button>
                   {fields.map((field) => (
@@ -302,12 +338,14 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                         <Form.Item
                           name={[field.name, "id"]}
                           label="Tag"
-                          rules={[{ required: true }]}>
+                          rules={[{ required: true }]}
+                        >
                           <Select
                             onChange={(key: string) =>
                               onChangeTag(key, field.name)
                             }
-                            loading={loading}>
+                            loading={loading}
+                          >
                             {tags.map((tag) => (
                               <Select.Option key={tag.id} value={tag.id}>
                                 {tag.tagName}
@@ -321,7 +359,8 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                           name={[field.name, "position", 0, "startTime"]}
                           fieldKey={[field.fieldKey, "startTime"]}
                           label="Start Time"
-                          rules={[{ required: true }]}>
+                          rules={[{ required: true }]}
+                        >
                           <InputNumber />
                         </Form.Item>
                       </Col>
@@ -330,7 +369,8 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                           name={[field.name, "position", 0, "opacity"]}
                           fieldKey={[field.fieldKey, "opacity"]}
                           label="Opacity"
-                          rules={[{ required: true }]}>
+                          rules={[{ required: true }]}
+                        >
                           <InputNumber />
                         </Form.Item>
                       </Col>
@@ -339,7 +379,8 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                           name={[field.name, "position", 0, "duration"]}
                           fieldKey={[field.fieldKey, "duration"]}
                           label="duration"
-                          rules={[{ required: true }]}>
+                          rules={[{ required: true }]}
+                        >
                           <InputNumber />
                         </Form.Item>
                       </Col>
@@ -348,7 +389,8 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                           name={[field.name, "position", 0, "x"]}
                           fieldKey={[field.fieldKey, "x"]}
                           label="Position X"
-                          rules={[{ required: true }]}>
+                          rules={[{ required: true }]}
+                        >
                           <InputNumber />
                         </Form.Item>
                       </Col>
@@ -357,7 +399,8 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                           name={[field.name, "position", 0, "y"]}
                           fieldKey={[field.fieldKey, "y"]}
                           label="position Y"
-                          rules={[{ required: true }]}>
+                          rules={[{ required: true }]}
+                        >
                           <InputNumber />
                         </Form.Item>
                       </Col>
@@ -366,7 +409,8 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                           name={[field.name, "position", 0, "z"]}
                           fieldKey={[field.fieldKey, "z"]}
                           label="Z Index"
-                          rules={[{ required: true }]}>
+                          rules={[{ required: true }]}
+                        >
                           <InputNumber />
                         </Form.Item>
                       </Col>
