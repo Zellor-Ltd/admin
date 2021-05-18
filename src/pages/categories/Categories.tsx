@@ -42,7 +42,7 @@ const Categories: React.FC<RouteComponentProps> = (props) => {
       title: "Image",
       dataIndex: "image",
       width: "15%",
-      render: (image: Image) => <AntImage src={image.url} width={70} />,
+      render: (image: Image) => <AntImage src={image?.url} width={70} />,
     },
     {
       title: "actions",
