@@ -142,8 +142,7 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                 <Form.Item
                   name="outOfStock"
                   label="Out of stock"
-                  valuePropName="checked"
-                >
+                  valuePropName="checked">
                   <Switch />
                 </Form.Item>
               </Col>
@@ -258,6 +257,22 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                     <Radio.Button value="external">External</Radio.Button>
                   </Radio.Group>
                 </Form.Item>
+                </Col>
+              <Col lg={8} xs={24}>
+                <Form.Item
+                  name="requireMobilePurchaseStatus"
+                  label="Log Completed Purchases?"
+                  valuePropName="checked">
+                  <Switch />
+                </Form.Item>                 
+              </Col>
+              <Col lg={8} xs={24}>
+                <Form.Item
+                  name="displayDiscountPage"
+                  label="Allow Use of D-Dollars?"
+                  valuePropName="checked">
+                  <Switch />
+                </Form.Item>                 
               </Col>
               <Col lg={16} xs={24}>
                 <Form.Item
@@ -277,6 +292,22 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                     ) : null
                   }
                 </Form.Item>
+              </Col>
+              <Col lg={16} xs={24}>    
+                      <Form.Item
+                        name="confirmationUrl"
+                        label="External Payment Confirmation URL"
+                        rules={[{ required: true }]}>
+                        <Input />
+                      </Form.Item>
+              </Col>
+              <Col lg={16} xs={24}>                
+                      <Form.Item
+                        name="cancelationUrl"
+                        label="External Payment Cancelation URL"
+                        rules={[{ required: true }]}>
+                        <Input />
+                      </Form.Item>
               </Col>
             </Row>
           </Col>
