@@ -74,7 +74,7 @@ const TagDetail: React.FC<RouteComponentProps> = (props) => {
   };
 
   const productsBySelectedBrand = () => {
-    return products.filter((product) => product.brand.id === selectedBrand);
+    return products.filter((product) => product.brand?.id === selectedBrand);
   };
 
   const onChangeBrand = (brandKey: string) => {
@@ -95,14 +95,16 @@ const TagDetail: React.FC<RouteComponentProps> = (props) => {
         form={form}
         initialValues={initial}
         onFinish={onFinish}
-        className="tags">
+        className="tags"
+      >
         <Input.Group>
           <Row gutter={8}>
             <Col lg={12} xs={24}>
               <Form.Item
                 name="tagName"
                 label="Tag Name"
-                rules={[{ required: true }]}>
+                rules={[{ required: true }]}
+              >
                 <Input />
               </Form.Item>
             </Col>
@@ -121,10 +123,12 @@ const TagDetail: React.FC<RouteComponentProps> = (props) => {
               <Form.Item
                 name="template"
                 label="Template"
-                rules={[{ required: true }]}>
+                rules={[{ required: true }]}
+              >
                 <Select
                   placeholder="Please select a template"
-                  onChange={onChangeTemplate}>
+                  onChange={onChangeTemplate}
+                >
                   {template.map((temp: any) => (
                     <Select.Option key={temp.value} value={temp.value}>
                       {temp.name}
@@ -138,7 +142,8 @@ const TagDetail: React.FC<RouteComponentProps> = (props) => {
                 {() => (
                   <Form.Item name={["product", "id"]} label="Product">
                     <Select
-                      disabled={form.getFieldValue("template") === "dollar"}>
+                      disabled={form.getFieldValue("template") === "dollar"}
+                    >
                       {productsBySelectedBrand().map((product) => (
                         <Select.Option key={product.id} value={product.id}>
                           {product.name}
@@ -180,7 +185,8 @@ const TagDetail: React.FC<RouteComponentProps> = (props) => {
               <Form.Item
                 name="clickSound"
                 label="Click Sound"
-                rules={[{ required: true }]}>
+                rules={[{ required: true }]}
+              >
                 <Select placeholder="Please select a click sound">
                   {clickSound.map((click: any) => (
                     <Select.Option key={click.value} value={click.value}>
