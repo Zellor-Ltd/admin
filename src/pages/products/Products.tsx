@@ -1,4 +1,8 @@
-import { RouteComponentProps } from "react-router";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  SearchOutlined,
+} from "@ant-design/icons";
 import {
   Button,
   Col,
@@ -10,23 +14,14 @@ import {
   Tag,
   Typography,
 } from "antd";
+import { ColumnsType } from "antd/lib/table";
 import { Product } from "interfaces/Product";
-import { useEffect, useState } from "react";
-import {
-  deleteProduct,
-  fetchProducts,
-  saveProduct,
-} from "services/DiscoClubService";
-import { Link } from "react-router-dom";
-import {
-  EditOutlined,
-  DeleteOutlined,
-  SearchOutlined,
-} from "@ant-design/icons";
-import "./Products.scss";
-import { EditableCell, EditableRow } from "components";
-import { ColumnTypes } from "components/editable-context";
 import moment from "moment";
+import { useEffect, useState } from "react";
+import { RouteComponentProps } from "react-router";
+import { Link } from "react-router-dom";
+import { deleteProduct, fetchProducts } from "services/DiscoClubService";
+import "./Products.scss";
 
 const Products: React.FC<RouteComponentProps> = ({ history }) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -66,8 +61,15 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
     );
   };
 
-  const columns = [
-    { title: "Name", dataIndex: "name", width: "15%", editable: true },
+  const columns: ColumnsType<Product> = [
+    {
+      title: "Name",
+      dataIndex: "name",
+      width: "15%",
+      render: (value: string, record: Product) => (
+        <Link to={{ pathname: `/product`, state: record }}>{value}</Link>
+      ),
+    },
     {
       title: "Brand",
       dataIndex: ["brand", "brandName"],
@@ -94,7 +96,7 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
       key: "action",
       width: "5%",
       align: "right",
-      render: (value: any, record: Product) => (
+      render: (_, record: Product) => (
         <>
           <Link to={{ pathname: `/product`, state: record }}>
             <EditOutlined />
@@ -113,35 +115,6 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
       ),
     },
   ];
-
-  const onSaveProduct = async (record: Product) => {
-    setLoading(true);
-    await saveProduct(record);
-    fetch();
-  };
-
-  const components = {
-    body: {
-      row: EditableRow,
-      cell: EditableCell,
-    },
-  };
-
-  const configuredColumns = columns.map((col) => {
-    if (!col.editable) {
-      return col;
-    }
-    return {
-      ...col,
-      onCell: (record: Product, index: number) => ({
-        record,
-        editable: col.editable,
-        dataIndex: col.dataIndex,
-        title: col.title,
-        onSave: onSaveProduct,
-      }),
-    };
-  });
 
   return (
     <div className="products">
@@ -166,8 +139,7 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
       </div>
       <Table
         rowKey="id"
-        components={components}
-        columns={configuredColumns as ColumnTypes}
+        columns={columns}
         dataSource={filterProduct()}
         loading={loading}
       />

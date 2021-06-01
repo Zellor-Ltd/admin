@@ -1,4 +1,11 @@
 import {
+  CheckOutlined,
+  CloseOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  SearchOutlined,
+} from "@ant-design/icons";
+import {
   Avatar,
   Button,
   Col,
@@ -10,21 +17,13 @@ import {
   Tag,
   Typography,
 } from "antd";
+import { ColumnsType } from "antd/lib/table";
 import { Brand } from "interfaces/Brand";
 import { useEffect, useState } from "react";
 import { RouteComponentProps } from "react-router";
 import { Link } from "react-router-dom";
-import {
-  EditOutlined,
-  DeleteOutlined,
-  CheckOutlined,
-  CloseOutlined,
-  SearchOutlined,
-} from "@ant-design/icons";
 import { deleteBrand, fetchBrands, saveBrand } from "services/DiscoClubService";
 import "./Brands.scss";
-import { ColumnTypes } from "components/editable-context";
-import { EditableCell, EditableRow } from "components";
 
 const tagColorByStatus: any = {
   approved: "green",
@@ -78,12 +77,14 @@ const Brands: React.FC<RouteComponentProps> = ({ history }) => {
     );
   };
 
-  const columns = [
+  const columns: ColumnsType<Brand> = [
     {
       title: "Brand Name",
       dataIndex: "brandName",
       width: "50%",
-      editable: true,
+      render: (value: string, record: Brand) => (
+        <Link to={{ pathname: `/brand`, state: record }}>{value}</Link>
+      ),
     },
     {
       title: "Brand Color",
@@ -110,7 +111,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history }) => {
       key: "action",
       width: "10%",
       align: "right",
-      render: (value: any, record: Brand) => (
+      render: (_, record: Brand) => (
         <>
           {!record.status && [
             <CheckOutlined
@@ -142,35 +143,6 @@ const Brands: React.FC<RouteComponentProps> = ({ history }) => {
     },
   ];
 
-  const onSaveBrand = async (record: Brand) => {
-    setLoading(true);
-    await saveBrand(record);
-    fetch();
-  };
-
-  const components = {
-    body: {
-      row: EditableRow,
-      cell: EditableCell,
-    },
-  };
-
-  const configuredColumns = columns.map((col) => {
-    if (!col.editable) {
-      return col;
-    }
-    return {
-      ...col,
-      onCell: (record: Brand, index: number) => ({
-        record,
-        editable: col.editable,
-        dataIndex: col.dataIndex,
-        title: col.title,
-        onSave: onSaveBrand,
-      }),
-    };
-  });
-
   return (
     <div className="brands">
       <PageHeader
@@ -194,8 +166,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history }) => {
       </div>
       <Table
         rowKey="id"
-        components={components}
-        columns={configuredColumns as ColumnTypes}
+        columns={columns}
         dataSource={filterBrand()}
         loading={loading}
       />
