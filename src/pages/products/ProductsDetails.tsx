@@ -1,7 +1,7 @@
 import { ColumnsType } from "antd/lib/table";
 import { Brand } from "interfaces/Brand";
 import { Video } from "interfaces/Video";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { RouteComponentProps } from "react-router";
 import {
   fetchBrands,
@@ -56,6 +56,37 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
   const {
     settings: { currency = [] },
   } = useSelector((state: any) => state.settings);
+
+  const setPaymentUrlsByBrand = useCallback(
+    (useInitialValue: boolean) => {
+      const product = form.getFieldsValue(true);
+      const selectedBrand = brands?.find(
+        (brand: Brand) => brand.id === product.brand?.id
+      );
+
+      let confirmationUrl, cancelationUrl;
+
+      if (useInitialValue) {
+        confirmationUrl =
+          initial.confirmationUrl || selectedBrand?.confirmationUrl;
+        cancelationUrl =
+          initial.cancelationUrl || selectedBrand?.cancelationUrl;
+      } else {
+        confirmationUrl = selectedBrand?.confirmationUrl;
+        cancelationUrl = selectedBrand?.cancelationUrl;
+      }
+
+      form.setFieldsValue({
+        confirmationUrl,
+        cancelationUrl,
+      });
+    },
+    [brands, form, initial]
+  );
+
+  useEffect(() => {
+    setPaymentUrlsByBrand(true);
+  }, [brands, setPaymentUrlsByBrand]);
 
   useEffect(() => {
     let mounted = true;
@@ -142,7 +173,8 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                 <Form.Item
                   name="outOfStock"
                   label="Out of stock"
-                  valuePropName="checked">
+                  valuePropName="checked"
+                >
                   <Switch />
                 </Form.Item>
               </Col>
@@ -154,6 +186,35 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
               <Col lg={24} xs={24}>
                 <Form.Item name="description" label="Long description">
                   <Input.TextArea rows={5} />
+                </Form.Item>
+              </Col>
+              <Col lg={12} xs={24}>
+                <Form.Item name={["brand", "id"]} label="Brand">
+                  <Select onChange={() => setPaymentUrlsByBrand(false)}>
+                    {brands.map((brand) => (
+                      <Select.Option key={brand.id} value={brand.id}>
+                        {brand.brandName}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col lg={16} xs={24}>
+                <Form.Item
+                  name="confirmationUrl"
+                  label="External Payment Confirmation URL"
+                  rules={[{ required: true }]}
+                >
+                  <Input />
+                </Form.Item>
+              </Col>
+              <Col lg={16} xs={24}>
+                <Form.Item
+                  name="cancelationUrl"
+                  label="External Payment Cancelation URL"
+                  rules={[{ required: true }]}
+                >
+                  <Input />
                 </Form.Item>
               </Col>
             </Row>
@@ -224,17 +285,7 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                   <DatePicker format="DD/MM/YYYY" />
                 </Form.Item>
               </Col>
-              <Col lg={12} xs={24}>
-                <Form.Item name={["brand", "id"]} label="Brand">
-                  <Select>
-                    {brands.map((brand) => (
-                      <Select.Option key={brand.id} value={brand.id}>
-                        {brand.brandName}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </Form.Item>
-              </Col>
+
               <Col lg={12} xs={24}>
                 <Form.Item
                   name={["category", "id"]}
@@ -257,22 +308,24 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                     <Radio.Button value="external">External</Radio.Button>
                   </Radio.Group>
                 </Form.Item>
-                </Col>
+              </Col>
               <Col lg={8} xs={24}>
                 <Form.Item
                   name="requireMobilePurchaseStatus"
                   label="Log Completed Purchases?"
-                  valuePropName="checked">
+                  valuePropName="checked"
+                >
                   <Switch />
-                </Form.Item>                 
+                </Form.Item>
               </Col>
               <Col lg={8} xs={24}>
                 <Form.Item
                   name="displayDiscountPage"
                   label="Allow Use of D-Dollars?"
-                  valuePropName="checked">
+                  valuePropName="checked"
+                >
                   <Switch />
-                </Form.Item>                 
+                </Form.Item>
               </Col>
               <Col lg={16} xs={24}>
                 <Form.Item
@@ -292,22 +345,6 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                     ) : null
                   }
                 </Form.Item>
-              </Col>
-              <Col lg={16} xs={24}>    
-                      <Form.Item
-                        name="confirmationUrl"
-                        label="External Payment Confirmation URL"
-                        rules={[{ required: true }]}>
-                        <Input />
-                      </Form.Item>
-              </Col>
-              <Col lg={16} xs={24}>                
-                      <Form.Item
-                        name="cancelationUrl"
-                        label="External Payment Cancelation URL"
-                        rules={[{ required: true }]}>
-                        <Input />
-                      </Form.Item>
               </Col>
             </Row>
           </Col>

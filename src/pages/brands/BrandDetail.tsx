@@ -36,9 +36,29 @@ const BrandDetail: React.FC<RouteComponentProps> = (props) => {
       >
         <Row gutter={8}>
           <Col lg={12} xs={24}>
-            <Form.Item label="Brand Name" name="brandName">
-              <Input />
-            </Form.Item>
+            <Col lg={16} xs={24}>
+              <Form.Item label="Brand Name" name="brandName">
+                <Input />
+              </Form.Item>
+            </Col>
+            <Col lg={16} xs={24}>
+              <Form.Item
+                name="confirmationUrl"
+                label="External Payment Confirmation URL"
+                rules={[{ required: true }]}
+              >
+                <Input />
+              </Form.Item>
+            </Col>
+            <Col lg={16} xs={24}>
+              <Form.Item
+                name="cancelationUrl"
+                label="External Payment Cancelation URL"
+                rules={[{ required: true }]}
+              >
+                <Input />
+              </Form.Item>
+            </Col>
           </Col>
 
           <Col lg={12} xs={24}>
@@ -87,7 +107,7 @@ const BrandDetail: React.FC<RouteComponentProps> = (props) => {
                   />
                 </Form.Item>
               </Col>
-              <Col lg={24} xs={24}>
+              <Col lg={6} xs={24}>
                 <Form.Item
                   label="Upload Card"
                   name="brandCard"
@@ -98,6 +118,20 @@ const BrandDetail: React.FC<RouteComponentProps> = (props) => {
                     fileList={initial?.brandCard}
                     form={form}
                     formProp="brandCard"
+                  />
+                </Form.Item>
+              </Col>
+              <Col lg={6} xs={24}>
+                <Form.Item
+                  label="Thumbnail"
+                  name="thumbnaiil"
+                  rules={[{ required: false }]}
+                >
+                  <Upload.ImageUpload
+                    maxCount={1}
+                    fileList={initial?.thumbnail}
+                    form={form}
+                    formProp="thumbnail"
                   />
                 </Form.Item>
               </Col>
