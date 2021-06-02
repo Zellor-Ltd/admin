@@ -39,6 +39,25 @@ const prefixSelector = (
   </Form.Item>
 );
 
+const gendersList = [
+  {
+    label: "Male",
+    value: "male",
+  },
+  {
+    label: "Female",
+    value: "female",
+  },
+  {
+    label: "Other",
+    value: "other",
+  },
+  {
+    label: "Prefer not to say",
+    value: "prefer not to say",
+  },
+];
+
 const UserDetail: React.FC<RouteComponentProps> = (props) => {
   const { history, location } = props;
   const [loading, setLoading] = useState(false);
@@ -232,14 +251,13 @@ const UserDetail: React.FC<RouteComponentProps> = (props) => {
             </Form.Item>
           </Col>
           <Col lg={8} xs={24}>
-            <Form.Item label="Gender">
+            <Form.Item name="gender" label="Gender">
               <Select>
-                <Select.Option value="Female">Female</Select.Option>
-                <Select.Option value="Male">Male</Select.Option>
-                <Select.Option value="Other">Other</Select.Option>
-                <Select.Option value="Prefer not to say">
-                  Prefer not to say
-                </Select.Option>
+                {gendersList.map((gender, index) => (
+                  <Select.Option key={index} value={gender.value}>
+                    {gender.label}
+                  </Select.Option>
+                ))}
               </Select>
             </Form.Item>
           </Col>
