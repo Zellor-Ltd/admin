@@ -1,4 +1,6 @@
 export interface Brand {
+  cancelationUrl: string;
+  confirmationUrl: string;
   id: string;
   status: string;
   brandId: string;
