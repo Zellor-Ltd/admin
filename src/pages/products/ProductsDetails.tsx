@@ -66,7 +66,7 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
 
       let confirmationUrl, cancelationUrl;
 
-      if (useInitialValue) {
+      if (useInitialValue && initial) {
         confirmationUrl =
           initial.confirmationUrl || selectedBrand?.confirmationUrl;
         cancelationUrl =
