@@ -54,7 +54,8 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = (props) => {
           collapsedWidth="0"
           style={{
             minHeight: "calc(100vh - 64px)",
-          }}>
+          }}
+        >
           <div className="logo" />
           <Menu theme="dark" mode="inline" defaultSelectedKeys={["1"]}>
             <Menu.Item key="brands" icon={<FundOutlined />}>
@@ -72,15 +73,16 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = (props) => {
             <SubMenu
               key="sub-settings"
               icon={<SettingOutlined />}
-              title="Settings">
+              title="Settings"
+            >
               <Menu.Item key="endpoints" icon={<CloudServerOutlined />}>
                 <Link to="/endpoints">Endpoints</Link>
               </Menu.Item>
               <Menu.Item key="interfaces" icon={<AppstoreAddOutlined />}>
                 <Link to="/interfaces">Interfaces</Link>
               </Menu.Item>
-              <Menu.Item key="users" icon={<UserOutlined />}>
-                <Link to="/users">Users</Link>
+              <Menu.Item key="fans" icon={<UserOutlined />}>
+                <Link to="/fans">Fans</Link>
               </Menu.Item>
               <Menu.Item key="roles" icon={<ApartmentOutlined />}>
                 <Link to="/roles">Roles</Link>
@@ -110,7 +112,8 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = (props) => {
             margin: "24px 16px",
             padding: 24,
             minHeight: 280,
-          }}>
+          }}
+        >
           {children}
         </Content>
       </Layout>

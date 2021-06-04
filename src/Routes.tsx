@@ -12,8 +12,8 @@ import BrandDetail from "pages/brands/BrandDetail";
 import Brands from "pages/brands/Brands";
 import EndpointDetail from "pages/endpoints/EndpointDetail";
 import Endpoints from "pages/endpoints/Endpoints";
-import UserDetail from "pages/users/UserDetail";
-import Users from "pages/users/Users";
+import FanDetail from "pages/fans/FanDetail";
+import Fans from "pages/fans/Fans";
 import Settings from "pages/settings/Settings";
 import Roles from "pages/roles/Roles";
 import RoleDetail from "pages/roles/RoleDetail";
@@ -114,11 +114,11 @@ function Routes() {
         layout={AuthenticatedLayout}
       />
       <AuthRoute
-        path="/user"
-        component={UserDetail}
+        path="/fan"
+        component={FanDetail}
         layout={AuthenticatedLayout}
       />
-      <AuthRoute path="/users" component={Users} layout={AuthenticatedLayout} />
+      <AuthRoute path="/fans" component={Fans} layout={AuthenticatedLayout} />
       <AuthRoute
         path="/role"
         component={RoleDetail}

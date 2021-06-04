@@ -51,7 +51,7 @@ instance.interceptors.response.use(
     return snakeToCamelCase(response.data);
   },
   (error) => {
-    switch (error.response.status) {
+    switch (error.response?.status) {
       case 404:
       case 401: {
         localStorage.clear();
@@ -76,6 +76,8 @@ export const fetchTags = () => instance.get("Wi/Ep/ListTags");
 export const fetchCreators = () => instance.get("Wi/Ep/ListCreators");
 
 export const fetchUsers = () => instance.get("Wi/Ep/ListUsers");
+
+export const fetchFans = () => instance.get("Wi/Ep/ListFans");
 
 export const fetchProfiles = () => instance.get("Wi/Ep/ListProfiles");
 
