@@ -1,10 +1,10 @@
+import { DeleteOutlined } from "@ant-design/icons";
 import {
   Button,
   Col,
   DatePicker,
   Form,
   Input,
-  InputNumber,
   message,
   PageHeader,
   Row,
@@ -12,53 +12,33 @@ import {
   Table,
   Typography,
 } from "antd";
-import { RouteComponentProps } from "react-router";
+import { formatMoment } from "helpers/formatMoment";
+import { Category } from "interfaces/Category";
+import { Creator } from "interfaces/Creator";
+import { Role } from "interfaces/Role";
 import { useEffect, useState } from "react";
+import { RouteComponentProps } from "react-router";
 import {
   fetchCategories,
   fetchCreators,
   fetchProfiles,
   saveUser,
 } from "services/DiscoClubService";
-import { Role } from "interfaces/Role";
-import { Creator } from "interfaces/Creator";
-import { DeleteOutlined } from "@ant-design/icons";
-import { Category } from "interfaces/Category";
-import { formatMoment } from "helpers/formatMoment";
 
 const { Option } = Select;
 
-const prefixSelector = (
-  <Form.Item name="prefix" noStyle>
-    <Select defaultValue="353" style={{ width: 80 }}>
-      <Option value="353">+353</Option>
-      <Option value="55">+55</Option>
-      <Option value="86">+86</Option>
-      <Option value="87">+87</Option>
+const prefixSelector = (prefix: string) => (
+  <Form.Item name="dialCode" noStyle>
+    <Select defaultValue={prefix || "+353"} style={{ width: 80 }}>
+      <Option value="+353">+353</Option>
+      <Option value="+55">+55</Option>
+      <Option value="+86">+86</Option>
+      <Option value="+87">+87</Option>
     </Select>
   </Form.Item>
 );
 
-const gendersList = [
-  {
-    label: "Male",
-    value: "male",
-  },
-  {
-    label: "Female",
-    value: "female",
-  },
-  {
-    label: "Other",
-    value: "other",
-  },
-  {
-    label: "Prefer not to say",
-    value: "prefer not to say",
-  },
-];
-
-const UserDetail: React.FC<RouteComponentProps> = (props) => {
+const FanDetail: React.FC<RouteComponentProps> = (props) => {
   const { history, location } = props;
   const [loading, setLoading] = useState(false);
   const [roles, setRoles] = useState<Role[]>([]);
@@ -90,10 +70,11 @@ const UserDetail: React.FC<RouteComponentProps> = (props) => {
     getRoles();
     getCreatores();
     getCategories();
+
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [form]);
 
   const onChangeCreator = (key: string) => {
     if (key) {
@@ -180,15 +161,36 @@ const UserDetail: React.FC<RouteComponentProps> = (props) => {
     },
   ];
 
+  const formatUserData = (formUser: any) => {
+    const formattedUser = { ...formUser };
+    formattedUser.birthday = formUser.birthday?.format("YYYY-MM-DD");
+
+    formattedUser.personalDetails.phone.number = formUser.phoneNumber;
+
+    formattedUser.addresses = [
+      {
+        line1: formUser.line1,
+        line2: "",
+        city: formUser.city,
+        stateOrCounty: "",
+        country: formUser.country,
+        postalCode: formUser.postalCode,
+        isDefault: true,
+      },
+    ];
+
+    return formattedUser;
+  };
+
   const onFinish = async () => {
     setLoading(true);
     try {
       const user = form.getFieldsValue(true);
-      user.birthday = user.birthday?.format("YYYY-MM-DD");
-      await saveUser(user);
+      const formattedUserData = formatUserData(user);
+      await saveUser(formattedUserData);
       setLoading(false);
       message.success("Register updated with success.");
-      history.push("/users");
+      history.push("/fans");
     } catch (error) {
       setLoading(false);
     }
@@ -196,17 +198,24 @@ const UserDetail: React.FC<RouteComponentProps> = (props) => {
 
   return (
     <>
-      <PageHeader title="User Update" subTitle="User" />
+      <PageHeader title="Fan Update" subTitle="Fan" />
       <Form
         name="userForm"
         layout="vertical"
         form={form}
-        initialValues={initial}
+        initialValues={{
+          ...initial,
+          phoneNumber: initial.personalDetails?.phone?.number,
+          line1: initial.addresses[0]?.line1,
+          city: initial.addresses[0]?.city,
+          country: initial.addresses[0]?.country,
+          postalCode: initial.addresses[0]?.postalCode,
+        }}
         onFinish={onFinish}
       >
         <Row gutter={8}>
           <Col lg={8} xs={24}>
-            <Form.Item label="Name" name="name">
+            <Form.Item label="Name" name="userName">
               <Input />
             </Form.Item>
           </Col>
@@ -232,16 +241,6 @@ const UserDetail: React.FC<RouteComponentProps> = (props) => {
             </Form.Item>
           </Col>
           <Col lg={8} xs={24}>
-            <Form.Item label="Phone" name="phone">
-              <Input addonBefore={prefixSelector} />
-            </Form.Item>
-          </Col>
-          <Col lg={8} xs={24}>
-            <Form.Item label="Address" name="address">
-              <Input />
-            </Form.Item>
-          </Col>
-          <Col lg={8} xs={24}>
             <Form.Item
               label="Birthday"
               name="birthday"
@@ -251,30 +250,44 @@ const UserDetail: React.FC<RouteComponentProps> = (props) => {
             </Form.Item>
           </Col>
           <Col lg={8} xs={24}>
-            <Form.Item name="gender" label="Gender">
+            <Form.Item label="Gender">
               <Select>
-                {gendersList.map((gender, index) => (
-                  <Select.Option key={index} value={gender.value}>
-                    {gender.label}
-                  </Select.Option>
-                ))}
+                <Select.Option value="Female">Female</Select.Option>
+                <Select.Option value="Male">Male</Select.Option>
+                <Select.Option value="Other">Other</Select.Option>
+                <Select.Option value="Prefer not to say">
+                  Prefer not to say
+                </Select.Option>
               </Select>
             </Form.Item>
           </Col>
-
           <Col lg={8} xs={24}>
-            <Form.Item label="Email" name="user">
-              <Input type="email" />
+            <Form.Item label="Phone" name="phoneNumber">
+              <Input
+                addonBefore={prefixSelector(
+                  initial.personalDetails?.phone?.dialCode
+                )}
+              />
             </Form.Item>
           </Col>
-          <Col lg={4} xs={24}>
-            <Form.Item label="Dollars" name="discoDollars">
-              <InputNumber />
+          <Col lg={8} xs={24}>
+            <Form.Item label="Address" name="line1">
+              <Input />
             </Form.Item>
           </Col>
-          <Col lg={4} xs={24}>
-            <Form.Item label="Gold" name="discoGold">
-              <InputNumber />
+          <Col lg={8} xs={24}>
+            <Form.Item label="City" name="city">
+              <Input />
+            </Form.Item>
+          </Col>
+          <Col lg={8} xs={24}>
+            <Form.Item label="Country" name="country">
+              <Input />
+            </Form.Item>
+          </Col>
+          <Col lg={8} xs={24}>
+            <Form.Item label="Postal Code" name="postalCode">
+              <Input />
             </Form.Item>
           </Col>
         </Row>
@@ -386,7 +399,7 @@ const UserDetail: React.FC<RouteComponentProps> = (props) => {
         </Row>
         <Row gutter={8}>
           <Col>
-            <Button type="default" onClick={() => history.push("/users")}>
+            <Button type="default" onClick={() => history.push("/fans")}>
               Cancel
             </Button>
           </Col>
@@ -401,4 +414,4 @@ const UserDetail: React.FC<RouteComponentProps> = (props) => {
   );
 };
 
-export default UserDetail;
+export default FanDetail;
