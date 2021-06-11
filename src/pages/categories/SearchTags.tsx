@@ -45,7 +45,7 @@ const SearchTags = ({
       }
     >
       {({ getFieldValue }) =>
-        getFieldValue("searchTags").map((_: SearchTag, index: number) => (
+        getFieldValue("searchTags")?.map((_: SearchTag, index: number) => (
           <Row gutter={8} key={index}>
             <Col xs={10}>
               <Form.Item label="Tag Name" name={["searchTags", index, "name"]}>

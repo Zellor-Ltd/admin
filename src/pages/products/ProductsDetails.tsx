@@ -84,9 +84,32 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
     [brands, form, initial]
   );
 
+  const setSearchTagsByCategory = useCallback(
+    (useInitialValue: boolean) => {
+      const product = form.getFieldsValue(true);
+      const selectedCategory = categories?.find(
+        (category: Category) => category.id === product.category?.id
+      );
+
+      let searchTags;
+
+      if (useInitialValue && initial) {
+        searchTags = initial.searchTags || selectedCategory?.searchTags;
+      } else {
+        searchTags = selectedCategory?.searchTags;
+      }
+
+      form.setFieldsValue({
+        searchTags,
+      });
+    },
+    [categories, form, initial]
+  );
+
   useEffect(() => {
     setPaymentUrlsByBrand(true);
-  }, [brands, setPaymentUrlsByBrand]);
+    setSearchTagsByCategory(true);
+  }, [categories, setSearchTagsByCategory, brands, setPaymentUrlsByBrand]);
 
   useEffect(() => {
     let mounted = true;
@@ -292,7 +315,10 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                   label="Category"
                   rules={[{ required: true }]}
                 >
-                  <Select placeholder="Please select a category">
+                  <Select
+                    placeholder="Please select a category"
+                    onChange={() => setSearchTagsByCategory(false)}
+                  >
                     {categories.map((category: any) => (
                       <Select.Option key={category.id} value={category.id}>
                         {category.name}
@@ -334,16 +360,36 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                   }
                 >
                   {({ getFieldValue }) =>
-                    getFieldValue("checkout") === "external" ? (
+                    getFieldValue("checkout") === "external" && (
                       <Form.Item
                         name="externalCheckout"
                         label="External Checkout URL"
                         rules={[{ required: true }]}
+                        style={{ marginBottom: "0px" }}
                       >
                         <Input />
                       </Form.Item>
-                    ) : null
+                    )
                   }
+                </Form.Item>
+              </Col>
+              <Col lg={16} xs={24}>
+                <Form.Item
+                  shouldUpdate={(prevValues, curValues) =>
+                    prevValues.category !== curValues.category
+                  }
+                >
+                  {({ getFieldValue }) => (
+                    <Form.Item name={"searchTags"} label="Search Tags">
+                      <Select mode="tags">
+                        {getFieldValue("searchTags")?.map((searchTag: any) => (
+                          <Select.Option key={searchTag} value={searchTag}>
+                            {searchTag}
+                          </Select.Option>
+                        ))}
+                      </Select>
+                    </Form.Item>
+                  )}
                 </Form.Item>
               </Col>
             </Row>
@@ -365,6 +411,8 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
               />
             </Form.Item>
           </Col>
+        </Row>
+        <Row gutter={8}>
           <Col lg={12} xs={24}>
             <Form.Item
               name="gender"
