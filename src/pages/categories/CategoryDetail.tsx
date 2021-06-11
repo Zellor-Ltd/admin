@@ -1,8 +1,11 @@
 import { Button, Col, Form, Input, message, PageHeader, Row } from "antd";
 import { Upload } from "components";
-import { useState } from "react";
+import React, { useState } from "react";
 import { RouteComponentProps } from "react-router";
 import { saveCategory } from "services/DiscoClubService";
+
+import { SearchTag } from "interfaces/SearchTag";
+import SearchTags from "./SearchTags";
 
 const CategoryDetail: React.FC<RouteComponentProps> = (props) => {
   const { history, location } = props;
@@ -10,10 +13,20 @@ const CategoryDetail: React.FC<RouteComponentProps> = (props) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [form] = Form.useForm();
 
+  const convertTagsIntoStrings = (searchTag: SearchTag): string => {
+    return `${searchTag.name}:${searchTag.value}`;
+  };
+
   const onFinish = async () => {
+    const brand = {
+      ...form.getFieldsValue(true),
+      searchTags: form
+        .getFieldValue("searchTags")
+        .map(convertTagsIntoStrings)
+        .filter((str: string) => str.length > 1),
+    };
     setLoading(true);
     try {
-      const brand = form.getFieldsValue(true);
       const response: any = await saveCategory(brand);
       if (response.success) {
         message.success("Register updated with success.");
@@ -35,12 +48,13 @@ const CategoryDetail: React.FC<RouteComponentProps> = (props) => {
         layout="vertical"
         form={form}
         initialValues={initial}
-        onFinish={onFinish}>
+      >
         <Row gutter={8}>
           <Col lg={12} xs={24}>
             <Form.Item label="Name" name="name">
               <Input />
             </Form.Item>
+            <SearchTags form={form} tagsAsStrings={initial?.searchTags} />
           </Col>
           <Col lg={12} xs={24}>
             <Form.Item label="Image">
@@ -60,7 +74,7 @@ const CategoryDetail: React.FC<RouteComponentProps> = (props) => {
             </Button>
           </Col>
           <Col>
-            <Button loading={loading} type="primary" htmlType="submit">
+            <Button loading={loading} type="primary" onClick={onFinish}>
               Save Changes
             </Button>
           </Col>
