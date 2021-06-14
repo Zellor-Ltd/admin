@@ -71,8 +71,10 @@ const TagDetail: React.FC<RouteComponentProps> = (props) => {
       setLoading(true);
       try {
         const tag = form.getFieldsValue(true);
-        tag.product = products.find((product) => product.id === tag.product.id);
-        tag.brand = brands.find((brand) => brand.id === tag.brand.id);
+        tag.product = products.find(
+          (product) => product.id === tag.product?.id
+        );
+        tag.brand = brands.find((brand) => brand.id === tag.brand?.id);
         await saveTag(tag);
         setLoading(false);
         message.success("Register updated with success.");
