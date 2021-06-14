@@ -1,4 +1,3 @@
-import { RouteComponentProps } from "react-router";
 import {
   Button,
   Col,
@@ -9,12 +8,14 @@ import {
   PageHeader,
   Row,
   Select,
+  Slider,
 } from "antd";
-import { useEffect, useState } from "react";
-import { saveTag, fetchProducts, fetchBrands } from "services/DiscoClubService";
-import { Product } from "interfaces/Product";
 import { Brand } from "interfaces/Brand";
+import { Product } from "interfaces/Product";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { RouteComponentProps } from "react-router";
+import { fetchBrands, fetchProducts, saveTag } from "services/DiscoClubService";
 
 const TagDetail: React.FC<RouteComponentProps> = (props) => {
   const { history, location } = props;
@@ -33,6 +34,16 @@ const TagDetail: React.FC<RouteComponentProps> = (props) => {
 
   useEffect(() => {
     let mounted = true;
+
+    form.setFieldsValue({
+      position: [
+        {
+          x: initial.position?.[0]?.x || 50,
+          y: initial.position?.[0]?.y || 50,
+        },
+      ],
+    });
+
     async function getProducts() {
       const response: any = await fetchProducts();
       if (mounted) {
@@ -53,7 +64,7 @@ const TagDetail: React.FC<RouteComponentProps> = (props) => {
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [initial, form]);
 
   const onFinish = () => {
     form.validateFields().then(async () => {
@@ -154,47 +165,52 @@ const TagDetail: React.FC<RouteComponentProps> = (props) => {
                 )}
               </Form.Item>
             </Col>
-            {/* <Col xxl={4} md={12} xs={24}>
-              <Form.Item
-                name="startTime"
-                label="Start Time"
-                rules={[{ required: true }]}>
-                <InputNumber style={{ width: "100%" }} />
-              </Form.Item>
-            </Col>
-            <Col xxl={4} md={12} xs={24}>
-              <Form.Item
-                name="duration"
-                label="Duration"
-                rules={[{ required: true }]}>
-                <InputNumber style={{ width: "100%" }} />
-              </Form.Item>
-            </Col> */}
-
-            <Col lg={6} md={12} xs={24}>
-              <Form.Item name="discoGold" label="Disco Gold">
-                <InputNumber style={{ width: "100%" }} />
-              </Form.Item>
-            </Col>
-            <Col lg={6} md={12} xs={24}>
-              <Form.Item name="discoDollars" label="Disco Dollar">
-                <InputNumber style={{ width: "100%" }} />
-              </Form.Item>
-            </Col>
-            <Col lg={6} md={12} xs={24}>
-              <Form.Item
-                name="clickSound"
-                label="Click Sound"
-                rules={[{ required: true }]}
-              >
-                <Select placeholder="Please select a click sound">
-                  {clickSound.map((click: any) => (
-                    <Select.Option key={click.value} value={click.value}>
-                      {click.name}
-                    </Select.Option>
-                  ))}
-                </Select>
-              </Form.Item>
+            <Col lg={12} xs={24}>
+              <Row gutter={8}>
+                <Col lg={12} xs={24}>
+                  <Form.Item name="discoGold" label="Disco Gold">
+                    <InputNumber style={{ width: "100%" }} />
+                  </Form.Item>
+                </Col>
+                <Col lg={12} xs={24}>
+                  <Form.Item name="discoDollars" label="Disco Dollar">
+                    <InputNumber style={{ width: "100%" }} />
+                  </Form.Item>
+                </Col>
+              </Row>
+              <Row gutter={8}>
+                <Col lg={12} xs={24}>
+                  <Form.Item
+                    name={["position", 0, "x"]}
+                    label="Disco Dollar Position X"
+                  >
+                    <Slider tipFormatter={(v) => `${v}%`} min={0} max={100} />
+                  </Form.Item>
+                </Col>
+                <Col lg={12} xs={24}>
+                  <Form.Item
+                    name={["position", 0, "y"]}
+                    label="Disco Dollar Position Y"
+                  >
+                    <Slider tipFormatter={(v) => `${v}%`} min={0} max={100} />
+                  </Form.Item>
+                </Col>
+              </Row>
+              <Col lg={12} xs={24}>
+                <Form.Item
+                  name="clickSound"
+                  label="Click Sound"
+                  rules={[{ required: true }]}
+                >
+                  <Select placeholder="Please select a click sound">
+                    {clickSound.map((click: any) => (
+                      <Select.Option key={click.value} value={click.value}>
+                        {click.name}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </Col>
             </Col>
           </Row>
         </Input.Group>
