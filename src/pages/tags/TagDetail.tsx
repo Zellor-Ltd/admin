@@ -38,8 +38,8 @@ const TagDetail: React.FC<RouteComponentProps> = (props) => {
     form.setFieldsValue({
       position: [
         {
-          x: initial.position?.[0]?.x || 50,
-          y: initial.position?.[0]?.y || 50,
+          x: initial?.position?.[0]?.x || 50,
+          y: initial?.position?.[0]?.y || 50,
         },
       ],
     });
