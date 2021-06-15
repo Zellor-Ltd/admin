@@ -2,6 +2,7 @@ import axios, { AxiosRequestConfig } from "axios";
 import snakeToCamelCase from "helpers/snakeToCamelCase";
 import { Brand } from "interfaces/Brand";
 import { Creator } from "interfaces/Creator";
+import { Endpoint } from "interfaces/Endpoint";
 import { Function } from "interfaces/Function";
 import { FeedItem } from "interfaces/FeedItem";
 import { Login } from "interfaces/Login";
@@ -139,12 +140,11 @@ export const saveCategory = (params: Category) => {
   }
 };
 
-export const saveEndpoint = (params: Function) => {
-  params.type = "endpoint";
+export const saveEndpoint = (params: Endpoint) => {
   if (params.id) {
-    return instance.post("Wi/Ep/UpdateFunction", params);
+    return instance.post("Wi/Ep/UpdateEndpoint", params);
   } else {
-    return instance.put("Wi/EP/AddFunction", params);
+    return instance.put("Wi/EP/AddEndpoint", params);
   }
 };
 

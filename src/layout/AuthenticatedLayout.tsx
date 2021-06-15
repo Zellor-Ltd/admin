@@ -9,7 +9,7 @@ import {
   UserOutlined,
   SettingOutlined,
   ApartmentOutlined,
-  AppstoreAddOutlined,
+  // AppstoreAddOutlined,
   ControlOutlined,
   MobileOutlined,
   SwitcherOutlined,
@@ -78,9 +78,9 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = (props) => {
               <Menu.Item key="endpoints" icon={<CloudServerOutlined />}>
                 <Link to="/endpoints">Endpoints</Link>
               </Menu.Item>
-              <Menu.Item key="interfaces" icon={<AppstoreAddOutlined />}>
+              {/* <Menu.Item key="interfaces" icon={<AppstoreAddOutlined />}>
                 <Link to="/interfaces">Interfaces</Link>
-              </Menu.Item>
+              </Menu.Item> */}
               <Menu.Item key="fans" icon={<UserOutlined />}>
                 <Link to="/fans">Fans</Link>
               </Menu.Item>

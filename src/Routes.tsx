@@ -20,7 +20,7 @@ import RoleDetail from "pages/roles/RoleDetail";
 import AuthRoute from "components/auth-route/AuthRoute";
 import AuthenticatedLayout from "layout/AuthenticatedLayout";
 import OpenLayout from "layout/OpenLayout";
-import Interfaces from "pages/interfaces/Interfaces";
+// import Interfaces from "pages/interfaces/Interfaces";
 import InterfaceDetail from "pages/interfaces/InterfaceDetail";
 import AccessControl from "pages/access-control/AccessControl";
 import Preview from "pages/preview/Preview";
@@ -108,11 +108,11 @@ function Routes() {
         component={InterfaceDetail}
         layout={AuthenticatedLayout}
       />
-      <AuthRoute
+      {/* <AuthRoute
         path="/interfaces"
         component={Interfaces}
         layout={AuthenticatedLayout}
-      />
+      /> */}
       <AuthRoute
         path="/fan"
         component={FanDetail}
