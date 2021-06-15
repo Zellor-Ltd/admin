@@ -6,23 +6,42 @@ import {
   Input,
   message,
   PageHeader,
+  Radio,
   Row,
 } from "antd";
-import { Function } from "interfaces/Function";
-import { useState } from "react";
+import { Endpoint } from "interfaces/Endpoint";
+import { useEffect, useState } from "react";
 import { RouteComponentProps } from "react-router";
 import { saveEndpoint } from "services/DiscoClubService";
 
-const EndpointDetail: React.FC<RouteComponentProps> = (props) => {
-  const { history, location } = props;
-  const initial: any = location.state;
+const EndpointDetail: React.FC<RouteComponentProps> = ({
+  history,
+  location,
+}) => {
+  const initial = location.state as Endpoint;
   const [loading, setLoading] = useState(false);
+
   const [form] = Form.useForm();
+
+  useEffect(() => {
+    if (initial?.id) {
+      form.setFieldsValue({ ...initial });
+    } else {
+      form.setFieldsValue({
+        name: "",
+        description: "",
+        container: "",
+        action: "Search",
+        application: "Custom",
+        isActive: false,
+      });
+    }
+  }, [form, initial]);
 
   const onFinish = async () => {
     setLoading(true);
     try {
-      const endpoint: Function = form.getFieldsValue(true);
+      const endpoint: Endpoint = form.getFieldsValue(true);
 
       await saveEndpoint(endpoint);
       setLoading(false);
@@ -41,40 +60,43 @@ const EndpointDetail: React.FC<RouteComponentProps> = (props) => {
         layout="vertical"
         form={form}
         initialValues={initial}
-        onFinish={onFinish}>
+        onFinish={onFinish}
+      >
         <Row gutter={8}>
-          <Col lg={6} xs={24}>
-            <Form.Item label="Http Endpoint" name="httpEndpoint">
-              <Input />
-            </Form.Item>
-          </Col>
           <Col lg={6} xs={24}>
             <Form.Item label="Name" name="name">
               <Input />
             </Form.Item>
           </Col>
-
           <Col lg={6} xs={24}>
-            <Form.Item label=" " name="verbs">
-              <Checkbox.Group>
-                <Checkbox value="GET" style={{ lineHeight: "32px" }}>
-                  GET
-                </Checkbox>
-                <Checkbox value="POST" style={{ lineHeight: "32px" }}>
-                  POST
-                </Checkbox>
-                <Checkbox value="PUT" style={{ lineHeight: "32px" }}>
-                  PUT
-                </Checkbox>
-                <Checkbox value="DELETE" style={{ lineHeight: "32px" }}>
-                  DELETE
-                </Checkbox>
-              </Checkbox.Group>
+            <Form.Item label="Description" name="description">
+              <Input />
             </Form.Item>
           </Col>
           <Col lg={6} xs={24}>
-            <Form.Item label=" " name="active" valuePropName="checked">
-              <Checkbox>Active?</Checkbox>
+            <Form.Item label="Container" name="container">
+              <Input />
+            </Form.Item>
+          </Col>
+          <Col lg={6} xs={24}>
+            <Form.Item label="Application" name="application">
+              <Input disabled />
+            </Form.Item>
+          </Col>
+
+          <Col lg={12} xs={24}>
+            <Form.Item name="action">
+              <Radio.Group>
+                <Radio value="Search">Search</Radio>
+                <Radio value="Insert">Insert</Radio>
+                <Radio value="Update">Update</Radio>
+                <Radio value="Delete">Delete</Radio>
+              </Radio.Group>
+            </Form.Item>
+          </Col>
+          <Col lg={6} xs={24}>
+            <Form.Item name="isActive">
+              <Checkbox disabled>isActive</Checkbox>
             </Form.Item>
           </Col>
         </Row>

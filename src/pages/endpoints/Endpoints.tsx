@@ -1,6 +1,6 @@
 import { Button, PageHeader, Table } from "antd";
 import { ColumnsType } from "antd/lib/table";
-import { Function } from "interfaces/Function";
+import { Endpoint } from "interfaces/Endpoint";
 import { useEffect, useState } from "react";
 import { RouteComponentProps } from "react-router";
 import { Link } from "react-router-dom";
@@ -8,21 +8,24 @@ import { fetchEndpoints } from "services/DiscoClubService";
 import { EditOutlined } from "@ant-design/icons";
 
 const Endpoints: React.FC<RouteComponentProps> = ({ history }) => {
-  const [endpoints, setEndpoints] = useState<Function[]>([]);
+  const [endpoints, setEndpoints] = useState<Endpoint[]>([]);
   const [loading, setLoading] = useState(false);
-  const columns: ColumnsType<Function> = [
+  const columns: ColumnsType<Endpoint> = [
     { title: "Name", dataIndex: "name", width: "15%" },
-    { title: "HTTP Endpoint", dataIndex: "httpEndpoint", width: "15%" },
+    { title: "Container", dataIndex: "container", width: "15%" },
+    { title: "Method", dataIndex: "action", width: "10%" },
     {
       title: "actions",
       key: "action",
       width: "5%",
       align: "right",
-      render: (value, record) => (
+      render: (_, record: Endpoint) => (
         <>
-          <Link to={{ pathname: `/endpoint`, state: record }}>
-            <EditOutlined />
-          </Link>
+          {!record.isActive && (
+            <Link to={{ pathname: `/endpoint`, state: record }}>
+              <EditOutlined />
+            </Link>
+          )}
         </>
       ),
     },
