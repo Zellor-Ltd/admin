@@ -6,15 +6,8 @@ import moment from "moment";
 import { useEffect, useState } from "react";
 import { RouteComponentProps } from "react-router";
 import { Link } from "react-router-dom";
-import { fetchOrders } from "services/DiscoClubService";
+import { fetchOrders, saveOrder } from "services/DiscoClubService";
 import { useSelector } from "react-redux";
-
-const sleep = (ms: number) =>
-  new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(true);
-    }, ms);
-  });
 
 const Orders: React.FC<RouteComponentProps> = (props) => {
   const { history } = props;
@@ -26,11 +19,14 @@ const Orders: React.FC<RouteComponentProps> = (props) => {
     settings: { order: ordersSettings = [] },
   } = useSelector((state: any) => state.settings);
 
-  const handleSelectChange = async (orderIndex: number) => {
+  const handleSelectChange = async (value: string, orderIndex: number) => {
     const currentOrderUpdateList = [...orderUpdateList];
     currentOrderUpdateList[orderIndex] = true;
     setOrderUpdateList(currentOrderUpdateList);
-    await sleep(5000);
+    await saveOrder({
+      ...orders[orderIndex],
+      stage: value,
+    });
     setOrderUpdateList((prev) => {
       prev[orderIndex] = false;
       return [...prev];
@@ -87,7 +83,7 @@ const Orders: React.FC<RouteComponentProps> = (props) => {
           disabled={orderUpdateList[index]}
           defaultValue={value}
           style={{ width: "175px" }}
-          onChange={() => handleSelectChange(index)}
+          onChange={(value) => handleSelectChange(value, index)}
         >
           {ordersSettings.map((ordersSetting: any) => (
             <Select.Option
