@@ -178,9 +178,11 @@ export const saveSettings = (params: any) => {
 };
 
 export const savePrivileges = (params: Privilege) => {
-  if (params.id) return instance.post("Wi/Ep/UpdatePrivileges", params);
-  else return instance.post("Wi/Ep/AddPrivilege", params);
+  return instance.post("Wi/Ep/AddPrivilege", params);
 };
+
+export const deletePrivileges = (data: Privilege) =>
+  instance.delete("Wi/Ep/RemovePrivilege", { data });
 
 export const deleteVideoFeed = (data: IDelete) =>
   instance.delete(`Disco/Feed/Delete/${data}`);

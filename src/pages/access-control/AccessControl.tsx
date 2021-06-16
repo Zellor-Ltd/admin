@@ -16,8 +16,9 @@ import { useEffect, useState } from "react";
 import {
   fetchPrivileges,
   fetchProfiles,
-  savePrivileges,
   fetchEndpoints,
+  savePrivileges,
+  deletePrivileges,
 } from "services/DiscoClubService";
 import CloneModal from "./CloneModal";
 import { Privilege } from "interfaces/Privilege";
@@ -220,9 +221,15 @@ const FunctionPrivilege: React.FC<FunctionPrivilegeProps> = ({
 
   const onChangePermission = async (value: CheckboxChangeEvent) => {
     setLoading(true);
-    privilege.privileges = value.target.checked ? "ADULM" : ""
-    await savePrivileges(privilege);
-    setPrevilege(privilege);
+    if (value.target.checked) {
+      const _privilege = { ...privilege, privileges: "ADULM" };
+      await savePrivileges(_privilege);
+      setPrevilege(_privilege);
+    } else {
+      await deletePrivileges(privilege);
+      const _privilege = { ...privilege, privileges: "" };
+      setPrevilege(_privilege);
+    }
     message.success("Changes saved!");
     setLoading(false);
   };
