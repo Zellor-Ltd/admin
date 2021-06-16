@@ -40,7 +40,8 @@ const Settings: React.FC = () => {
         name="settingsForm"
         layout="vertical"
         onFinish={onFinish}
-        initialValues={settings}>
+        initialValues={settings}
+      >
         <Tabs defaultActiveKey="template">
           <TabPane tab="Template" key="template">
             <ItemList name="template" />
@@ -59,6 +60,9 @@ const Settings: React.FC = () => {
           </TabPane>
           <TabPane tab="Language" key="language">
             <ItemList name="language" />
+          </TabPane>
+          <TabPane tab="Status (Orders)" key="orders">
+            <ItemList name="order" />
           </TabPane>
         </Tabs>
         <Row gutter={8}>
@@ -90,7 +94,8 @@ const ItemList: React.FC<ItemListProp> = ({ name }) => (
               <Form.Item
                 name={[field.name, "name"]}
                 fieldKey={[field.fieldKey, "name"]}
-                label="Name">
+                label="Name"
+              >
                 <Input />
               </Form.Item>
             </Col>
@@ -98,7 +103,8 @@ const ItemList: React.FC<ItemListProp> = ({ name }) => (
               <Form.Item
                 name={[field.name, "value"]}
                 fieldKey={[field.fieldKey, "value"]}
-                label="Value">
+                label="Value"
+              >
                 <Input />
               </Form.Item>
             </Col>
