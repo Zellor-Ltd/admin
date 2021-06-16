@@ -1,17 +1,22 @@
-import { Button, PageHeader, Table } from "antd";
+import { EditOutlined } from "@ant-design/icons";
+import { Button, PageHeader, Select, Table } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import { Order } from "interfaces/Order";
+import moment from "moment";
 import { useEffect, useState } from "react";
 import { RouteComponentProps } from "react-router";
 import { Link } from "react-router-dom";
 import { fetchOrders } from "services/DiscoClubService";
-import { EditOutlined } from "@ant-design/icons";
-import moment from "moment";
+import { useSelector } from "react-redux";
 
 const Orders: React.FC<RouteComponentProps> = (props) => {
   const { history } = props;
   const [loading, setLoading] = useState<boolean>(false);
   const [orders, setOrders] = useState<Order[]>([]);
+
+  const {
+    settings: { order: ordersSettings = [] },
+  } = useSelector((state: any) => state.settings);
 
   const columns: ColumnsType<Order> = [
     {
@@ -57,6 +62,18 @@ const Orders: React.FC<RouteComponentProps> = (props) => {
       dataIndex: "stage",
       width: "15%",
       align: "center",
+      render: (value: string) => (
+        <Select defaultValue={value} style={{ width: "175px" }}>
+          {ordersSettings.map((ordersSetting: any) => (
+            <Select.Option
+              key={ordersSetting.value}
+              value={ordersSetting.value}
+            >
+              {ordersSetting.name}
+            </Select.Option>
+          ))}
+        </Select>
+      ),
     },
     {
       title: "Last Update",
@@ -76,7 +93,7 @@ const Orders: React.FC<RouteComponentProps> = (props) => {
       key: "action",
       width: "5%",
       align: "right",
-      render: (value, record) => (
+      render: (_, record) => (
         <Link to={{ pathname: `/order`, state: record }}>
           <EditOutlined />
         </Link>
