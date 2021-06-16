@@ -8,78 +8,110 @@ import {
   Row,
   Select,
   Spin,
-  Switch,
   Tabs,
   Typography,
 } from "antd";
 import { Role } from "interfaces/Role";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
   fetchPrivileges,
   fetchProfiles,
+  fetchEndpoints,
   savePrivileges,
+  deletePrivileges,
 } from "services/DiscoClubService";
-import {
-  PlusCircleOutlined,
-  SearchOutlined,
-  SyncOutlined,
-  StopOutlined,
-  DeleteOutlined,
-  UnorderedListOutlined,
-} from "@ant-design/icons";
 import CloneModal from "./CloneModal";
 import { Privilege } from "interfaces/Privilege";
+import { Endpoint } from "interfaces/Endpoint";
+import { CheckboxChangeEvent } from "antd/lib/checkbox";
 
 const { TabPane } = Tabs;
-const { Title, Text } = Typography;
+const { Text } = Typography;
+
+const methodsList = ["All", "Search", "GetById", "Insert", "Update", "Delete"];
+
+interface endpointPrivilege {
+  privilege: Privilege | undefined;
+  endpoint: Endpoint;
+}
+
 const AccessControl: React.FC = () => {
-  const [profileLoading, setProfileLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
+
   const [profiles, setProfiles] = useState<string[]>([]);
-  const [selectedProfile, setSelectedProfile] = useState<string>();
+
+  const [selectedProfile, setSelectedProfile] = useState<string>("");
+  const [selectedMethod, setSelectedMethod] = useState<string>("All");
+
+  const [endpoints, setEndpoints] = useState<Endpoint[]>([]);
   const [privileges, setPrivileges] = useState<Privilege[]>([]);
+  const [endpointPrivileges, setEndpointPrivileges] = useState<
+    endpointPrivilege[]
+  >([]);
+
   const [showCloneModal, setShowCloneModal] = useState<boolean>(false);
+
   const [form] = Form.useForm();
 
-  const fetchAccessControl = async () => {
+  const getPrivileges = async (selectedProfile: string) => {
     try {
-      const response: any = await fetchPrivileges();
+      const response: any = await fetchPrivileges(selectedProfile);
       setPrivileges(response.results);
+      setLoading(false);
     } catch (error) {
       console.log(error);
     }
   };
 
-  const getProfiles = async () => {
+  const getEndpoints = useCallback(async () => {
     try {
-      setProfileLoading(true);
+      const response: any = await fetchEndpoints();
+      setEndpoints(response.results);
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
+
+  const getProfiles = useCallback(async () => {
+    try {
       const response: any = await fetchProfiles();
       const prof = response.results.map((profile: Role) => profile.name);
       setProfiles(prof);
       setSelectedProfile(prof[1]);
-      setProfileLoading(false);
+      getPrivileges(prof[1]);
     } catch (error) {
-      setProfileLoading(false);
       console.log(error);
     }
-  };
-
-  useEffect(() => {
-    getProfiles();
-    fetchAccessControl();
   }, []);
 
-  const endpointPrivileges = () => {
-    return privileges.filter(
-      (privilege) =>
-        selectedProfile === privilege.profile && privilege.isEndpoint
-    );
-  };
+  useEffect(() => {
+    const getResources = async () => {
+      await Promise.all([getEndpoints(), getProfiles()]);
+    };
+    getResources();
+  }, [getProfiles, getEndpoints]);
 
-  const screenPrivileges = () =>
-    privileges.filter(
-      (privilege) =>
-        selectedProfile === privilege.profile && !privilege.isEndpoint
+  useEffect(() => {
+    const filteredEndpoints =
+      selectedMethod === "All"
+        ? endpoints
+        : endpoints.filter((endpoint) => endpoint.action === selectedMethod);
+
+    const filteredPrivileges = privileges.filter(
+      (privilege) => privilege.isEndpoint
     );
+
+    setEndpointPrivileges(
+      filteredEndpoints.map((endpoint) => {
+        return {
+          endpoint,
+          privilege: filteredPrivileges.find(
+            (privilege) => privilege.app === endpoint.name
+          ),
+        };
+      })
+    );
+  }, [endpoints, privileges, selectedMethod, setEndpointPrivileges]);
 
   const onFinish = () => {
     console.log("finish");
@@ -90,6 +122,8 @@ const AccessControl: React.FC = () => {
   };
 
   const onChangeProfile = (value: string) => {
+    setLoading(true);
+    getPrivileges(value);
     setSelectedProfile(value);
   };
 
@@ -103,7 +137,7 @@ const AccessControl: React.FC = () => {
             style={{ width: "100%" }}
             onChange={onChangeProfile}
             value={selectedProfile}
-            loading={profileLoading}>
+          >
             {profiles.map((profie: any) => (
               <Select.Option key={profie} value={profie}>
                 {profie}
@@ -115,52 +149,40 @@ const AccessControl: React.FC = () => {
           <Button
             type="primary"
             onClick={onCloneClick}
-            disabled={!selectedProfile}>
+            disabled={!selectedProfile}
+          >
             Clone
           </Button>
         </Col>
       </Row>
       <Form
         form={form}
-        name="accessContorlForm"
+        name="accessControlForm"
         layout="vertical"
-        onFinish={onFinish}>
-        <Tabs defaultActiveKey="template" style={{ width: "100%" }}>
-          <TabPane tab="Endpoints" key="endpoints">
-            <Row gutter={24}>
-              {endpointPrivileges().map((privilege, index) => (
-                <FunctionPrivilege
-                  privilege={privilege}
-                  position={index}
-                  key={`position_${index}`}
-                />
-              ))}
-            </Row>
-          </TabPane>
-          <TabPane tab="Screens" key="screens">
-            <Row gutter={24}>
-              {screenPrivileges().map((privilege, index) => (
-                <FunctionPrivilege
-                  privilege={privilege}
-                  position={index}
-                  key={`position_${index}`}
-                />
-              ))}
-            </Row>
-          </TabPane>
-          <TabPane tab="All" key="all">
-            <Row gutter={24}>
-              {privileges
-                .filter((privilege) => selectedProfile === privilege.profile)
-                .map((privilege, index) => (
-                  <FunctionPrivilege
-                    privilege={privilege}
-                    position={index}
-                    key={`position_${index}`}
-                  />
-                ))}
-            </Row>
-          </TabPane>
+        onFinish={onFinish}
+      >
+        <Tabs
+          defaultActiveKey="template"
+          style={{ width: "100%" }}
+          onChange={setSelectedMethod}
+        >
+          {methodsList.map((method, index) => (
+            <TabPane tab={method} key={method}>
+              <Row gutter={24}>
+                {loading ? (
+                  <Spin style={{ margin: "0 auto" }} />
+                ) : (
+                  endpointPrivileges.map((data, _index) => (
+                    <FunctionPrivilege
+                      endpointPrivilege={data}
+                      profile={selectedProfile}
+                      key={`position_${_index}`}
+                    />
+                  ))
+                )}
+              </Row>
+            </TabPane>
+          ))}
         </Tabs>
       </Form>
       <CloneModal
@@ -175,190 +197,50 @@ const AccessControl: React.FC = () => {
 };
 
 interface FunctionPrivilegeProps {
-  privilege: Privilege;
-  position: number;
+  endpointPrivilege: endpointPrivilege;
+  profile: string;
 }
 
-const getAdulObject = (privileges: string) => {
-  let add = false;
-  let delet = false;
-  let update = false;
-  let list = false;
-  let menu = false;
+const FunctionPrivilege: React.FC<FunctionPrivilegeProps> = ({
+  endpointPrivilege,
+  profile,
+}) => {
+  const { privilege: initialPrivilege, endpoint } = endpointPrivilege;
 
-  privileges.split("").forEach((privilege) => {
-    switch (privilege) {
-      case "A":
-        add = true;
-        break;
-      case "D":
-        delet = true;
-        break;
-      case "U":
-        update = true;
-        break;
-      case "L":
-        list = true;
-        break;
-      case "M":
-        menu = true;
-        break;
+  const [privilege, setPrevilege] = useState<Privilege>(
+    initialPrivilege || {
+      app: endpoint.name,
+      privileges: "",
+      profile: profile,
+      isEndpoint: true,
     }
-  });
-  return { add, delet, update, list, menu };
-};
-
-const FunctionPrivilege: React.FC<FunctionPrivilegeProps> = (props) => {
-  const { privilege, position } = props;
-  const { app, privileges } = privilege;
-  const { add, delet, update, list, menu } = getAdulObject(privileges);
-  const [allChecked, setAllChecked] = useState<boolean>(
-    add && delet && update && list && menu
   );
-
-  const [localAdd, setLocalAdd] = useState<boolean>(add);
-  const [localDelete, setLocalDelete] = useState<boolean>(delet);
-  const [localUpdate, setLocalUpdate] = useState<boolean>(update);
-  const [localList, setLocalList] = useState<boolean>(list);
-  const [localMenu, setLocalMenu] = useState<boolean>(menu);
   const [loading, setLoading] = useState<boolean>(false);
 
-  useEffect(() => {
-    setLocalAdd(add);
-  }, [add]);
-
-  useEffect(() => {
-    setLocalDelete(delet);
-  }, [delet]);
-
-  useEffect(() => {
-    setLocalUpdate(update);
-  }, [update]);
-
-  useEffect(() => {
-    setLocalList(list);
-  }, [list]);
-
-  useEffect(() => {
-    setLocalMenu(menu);
-  }, [menu]);
-
-  useEffect(() => {
-    setAllChecked(add && delet && update && list && menu);
-  }, [add, delet, update, list, menu]);
-
-  useEffect(() => {
-    setAllChecked(
-      localAdd && localDelete && localUpdate && localList && localMenu
-    );
-  }, [localAdd, localDelete, localUpdate, localList, localMenu]);
-
-  const onChangeAll = async () => {
+  const onChangePermission = async (value: CheckboxChangeEvent) => {
     setLoading(true);
-    if (allChecked) privilege.privileges = "";
-    else privilege.privileges = "ADULM";
-    await savePrivileges(privilege);
-
+    if (value.target.checked) {
+      const _privilege = { ...privilege, privileges: "ADULM" };
+      await savePrivileges(_privilege);
+      setPrevilege(_privilege);
+    } else {
+      await deletePrivileges(privilege);
+      const _privilege = { ...privilege, privileges: "" };
+      setPrevilege(_privilege);
+    }
     message.success("Changes saved!");
-    setLocalAdd(!allChecked);
-    setLocalDelete(!allChecked);
-    setLocalUpdate(!allChecked);
-    setLocalMenu(!allChecked);
-    setLocalList(!allChecked);
-    setAllChecked(!allChecked);
-    setLoading(false);
-  };
-
-  const stringPermissionFromBooleans = (): string => {
-    let perm = "";
-    if (add) perm = "A";
-    if (delet) perm += "D";
-    if (update) perm += "U";
-    if (list) perm += "L";
-    if (menu) perm += "M";
-    return perm;
-  };
-
-  const onChangePermission = async (
-    permissionCheck: boolean,
-    setFunction: (state: boolean) => void,
-    permissionLetter: string
-  ) => {
-    setLoading(true);
-    const priv = { ...privilege };
-    priv.privileges = stringPermissionFromBooleans();
-    if (permissionCheck)
-      priv.privileges = priv.privileges.replace(permissionLetter, "");
-    else priv.privileges += permissionLetter;
-    await savePrivileges(priv);
-    message.success("Changes saved!");
-    setFunction(!permissionCheck);
     setLoading(false);
   };
 
   return (
-    <Col span={8} style={{ margin: "8px 0" }}>
-      {position < 3 && (
-        <Row gutter={8}>
-          <Col span={12}>
-            <Title level={5}>Function</Title>
-          </Col>
-          <Col span={12}>
-            <Title level={5}>Privilege</Title>
-          </Col>
-        </Row>
-      )}
-
+    <Col lg={8} md={12} xs={24} style={{ margin: "8px 0" }}>
       <Spin spinning={loading}>
-        <Row gutter={8}>
-          <Col span={12}>
-            <Checkbox onChange={onChangeAll} checked={allChecked}>
-              <Text>{app}</Text>
-            </Checkbox>
-          </Col>
-          <Col span={12}>
-            <Row justify="space-between">
-              <Switch
-                checkedChildren={<PlusCircleOutlined />}
-                unCheckedChildren={<StopOutlined />}
-                checked={localAdd}
-                onChange={() => onChangePermission(localAdd, setLocalAdd, "A")}
-              />
-              <Switch
-                checkedChildren={<SyncOutlined />}
-                unCheckedChildren={<StopOutlined />}
-                checked={localDelete}
-                onChange={() =>
-                  onChangePermission(localDelete, setLocalDelete, "D")
-                }
-              />
-              <Switch
-                checkedChildren={<DeleteOutlined />}
-                unCheckedChildren={<StopOutlined />}
-                checked={localUpdate}
-                onChange={() =>
-                  onChangePermission(localUpdate, setLocalUpdate, "U")
-                }
-              />
-              <Switch
-                checkedChildren={<SearchOutlined />}
-                unCheckedChildren={<StopOutlined />}
-                checked={localList}
-                onChange={() =>
-                  onChangePermission(localList, setLocalList, "L")
-                }
-              />
-              <Switch
-                checkedChildren={<UnorderedListOutlined />}
-                unCheckedChildren={<StopOutlined />}
-                checked={localMenu}
-                onChange={() =>
-                  onChangePermission(localMenu, setLocalMenu, "M")
-                }
-              />
-            </Row>
-          </Col>
-        </Row>
+        <Checkbox
+          checked={privilege.privileges === "ADULM"}
+          onChange={onChangePermission}
+        >
+          <Text>{endpoint.name}</Text>
+        </Checkbox>
       </Spin>
     </Col>
   );
