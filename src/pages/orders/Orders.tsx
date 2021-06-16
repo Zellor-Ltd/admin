@@ -6,6 +6,7 @@ import { RouteComponentProps } from "react-router";
 import { Link } from "react-router-dom";
 import { fetchOrders } from "services/DiscoClubService";
 import { EditOutlined } from "@ant-design/icons";
+import moment from "moment";
 
 const Orders: React.FC<RouteComponentProps> = (props) => {
   const { history } = props;
@@ -13,10 +14,65 @@ const Orders: React.FC<RouteComponentProps> = (props) => {
   const [orders, setOrders] = useState<Order[]>([]);
 
   const columns: ColumnsType<Order> = [
-    { title: "Name", dataIndex: "firstName", width: "15%" },
-    { title: "Last Name", dataIndex: "lastName", width: "15%" },
     {
-      title: "actions",
+      title: "Paid",
+      dataIndex: "paid",
+      width: "5%",
+      align: "center",
+      render: (value: boolean) => <b>{value ? "Yes" : "No"}</b>,
+    },
+    {
+      title: "Amount / 100",
+      dataIndex: "amount",
+      width: "5%",
+      align: "center",
+      render: (value: number) => `${value / 100}x`,
+    },
+    {
+      title: "Name",
+      dataIndex: ["product", "name"],
+      width: "12%",
+      align: "center",
+    },
+    {
+      title: "Creation",
+      dataIndex: "hCreationDate",
+      width: "10%",
+      align: "center",
+      render: (value: Date) => (
+        <>
+          <div>{moment(value).format("DD/MM/YYYY")}</div>
+          <div>{moment(value).format("HH:MM:SS")}</div>
+        </>
+      ),
+    },
+    {
+      title: "Disco Dollars",
+      dataIndex: "discoDollars",
+      width: "5%",
+      align: "center",
+    },
+    {
+      title: "Stage",
+      dataIndex: "stage",
+      width: "15%",
+      align: "center",
+    },
+    {
+      title: "Last Update",
+      dataIndex: "hLastUpdate",
+      width: "10%",
+      align: "center",
+      render: (value: Date) => (
+        <>
+          <div>{moment(value).format("DD/MM/YYYY")}</div>
+          <div>{moment(value).format("HH:MM:SS")}</div>
+          {/* <div style={{ color: "grey" }}>({moment(value).fromNow()})</div> */}
+        </>
+      ),
+    },
+    {
+      title: "Actions",
       key: "action",
       width: "5%",
       align: "right",
