@@ -9,14 +9,33 @@ import { Link } from "react-router-dom";
 import { fetchOrders } from "services/DiscoClubService";
 import { useSelector } from "react-redux";
 
+const sleep = (ms: number) =>
+  new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(true);
+    }, ms);
+  });
+
 const Orders: React.FC<RouteComponentProps> = (props) => {
   const { history } = props;
-  const [loading, setLoading] = useState<boolean>(false);
+  const [tableloading, setTableLoading] = useState<boolean>(false);
+  const [orderUpdateList, setOrderUpdateList] = useState<boolean[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
 
   const {
     settings: { order: ordersSettings = [] },
   } = useSelector((state: any) => state.settings);
+
+  const handleSelectChange = async (orderIndex: number) => {
+    const currentOrderUpdateList = [...orderUpdateList];
+    currentOrderUpdateList[orderIndex] = true;
+    setOrderUpdateList(currentOrderUpdateList);
+    await sleep(5000);
+    setOrderUpdateList((prev) => {
+      prev[orderIndex] = false;
+      return [...prev];
+    });
+  };
 
   const columns: ColumnsType<Order> = [
     {
@@ -62,8 +81,14 @@ const Orders: React.FC<RouteComponentProps> = (props) => {
       dataIndex: "stage",
       width: "15%",
       align: "center",
-      render: (value: string) => (
-        <Select defaultValue={value} style={{ width: "175px" }}>
+      render: (value: string, _, index) => (
+        <Select
+          loading={orderUpdateList[index]}
+          disabled={orderUpdateList[index]}
+          defaultValue={value}
+          style={{ width: "175px" }}
+          onChange={() => handleSelectChange(index)}
+        >
           {ordersSettings.map((ordersSetting: any) => (
             <Select.Option
               key={ordersSetting.value}
@@ -108,9 +133,9 @@ const Orders: React.FC<RouteComponentProps> = (props) => {
 
   useEffect(() => {
     const getResources = async () => {
-      setLoading(true);
+      setTableLoading(true);
       await getOrders();
-      setLoading(false);
+      setTableLoading(false);
     };
     getResources();
   }, []);
@@ -130,7 +155,7 @@ const Orders: React.FC<RouteComponentProps> = (props) => {
         rowKey="id"
         columns={columns}
         dataSource={orders}
-        loading={loading}
+        loading={tableloading}
       />
     </div>
   );
