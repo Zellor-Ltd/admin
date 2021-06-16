@@ -12,7 +12,7 @@ import {
   Typography,
 } from "antd";
 import { Role } from "interfaces/Role";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
   fetchPrivileges,
   fetchProfiles,
@@ -53,42 +53,43 @@ const AccessControl: React.FC = () => {
 
   const [form] = Form.useForm();
 
-  const fetchAccessControl = async () => {
+  const getPrivileges = async (selectedProfile: string) => {
     try {
-      const response: any = await fetchPrivileges();
+      const response: any = await fetchPrivileges(selectedProfile);
       setPrivileges(response.results);
+      setLoading(false);
     } catch (error) {
       console.log(error);
     }
   };
 
-  const getEndpoints = async () => {
+  const getEndpoints = useCallback(async () => {
     try {
       const response: any = await fetchEndpoints();
       setEndpoints(response.results);
     } catch (error) {
       console.log(error);
     }
-  };
+  }, []);
 
-  const getProfiles = async () => {
+  const getProfiles = useCallback(async () => {
     try {
       const response: any = await fetchProfiles();
       const prof = response.results.map((profile: Role) => profile.name);
       setProfiles(prof);
       setSelectedProfile(prof[1]);
+      getPrivileges(prof[1]);
     } catch (error) {
       console.log(error);
     }
-  };
+  }, []);
 
   useEffect(() => {
     const getResources = async () => {
-      await Promise.all([getProfiles(), getEndpoints(), fetchAccessControl()]);
-      setLoading(false);
+      await Promise.all([getEndpoints(), getProfiles()]);
     };
     getResources();
-  }, []);
+  }, [getProfiles, getEndpoints]);
 
   useEffect(() => {
     const filteredEndpoints =
@@ -97,8 +98,7 @@ const AccessControl: React.FC = () => {
         : endpoints.filter((endpoint) => endpoint.action === selectedMethod);
 
     const filteredPrivileges = privileges.filter(
-      (privilege) =>
-        selectedProfile === privilege.profile && privilege.isEndpoint
+      (privilege) => privilege.isEndpoint
     );
 
     setEndpointPrivileges(
@@ -111,7 +111,7 @@ const AccessControl: React.FC = () => {
         };
       })
     );
-  }, [endpoints, privileges, selectedMethod, selectedProfile]);
+  }, [endpoints, privileges, selectedMethod, setEndpointPrivileges]);
 
   const onFinish = () => {
     console.log("finish");
@@ -122,78 +122,76 @@ const AccessControl: React.FC = () => {
   };
 
   const onChangeProfile = (value: string) => {
+    setLoading(true);
+    getPrivileges(value);
     setSelectedProfile(value);
   };
 
   return (
     <>
       <PageHeader title="Access Control" />
-      {loading ? (
-        <Row justify="center">
-          <Spin />
-        </Row>
-      ) : (
-        <>
-          <Row gutter={8}>
-            <Col xxl={4} lg={6} xs={18}>
-              <Select
-                placeholder="please select a profile"
-                style={{ width: "100%" }}
-                onChange={onChangeProfile}
-                value={selectedProfile}
-              >
-                {profiles.map((profie: any) => (
-                  <Select.Option key={profie} value={profie}>
-                    {profie}
-                  </Select.Option>
-                ))}
-              </Select>
-            </Col>
-            <Col xs={6}>
-              <Button
-                type="primary"
-                onClick={onCloneClick}
-                disabled={!selectedProfile}
-              >
-                Clone
-              </Button>
-            </Col>
-          </Row>
-          <Form
-            form={form}
-            name="accessControlForm"
-            layout="vertical"
-            onFinish={onFinish}
+      <Row gutter={8}>
+        <Col xxl={4} lg={6} xs={18}>
+          <Select
+            placeholder="please select a profile"
+            style={{ width: "100%" }}
+            onChange={onChangeProfile}
+            value={selectedProfile}
           >
-            <Tabs
-              defaultActiveKey="template"
-              style={{ width: "100%" }}
-              onChange={setSelectedMethod}
-            >
-              {methodsList.map((method, index) => (
-                <TabPane tab={method} key={method}>
-                  <Row gutter={24}>
-                    {endpointPrivileges.map((data, _index) => (
-                      <FunctionPrivilege
-                        endpointPrivilege={data}
-                        profile={selectedProfile}
-                        key={`position_${_index}`}
-                      />
-                    ))}
-                  </Row>
-                </TabPane>
-              ))}
-            </Tabs>
-          </Form>
-          <CloneModal
-            showCloneModal={showCloneModal}
-            setShowCloneModal={setShowCloneModal}
-            selectedProfile={selectedProfile}
-            profiles={profiles}
-            privileges={privileges}
-          />
-        </>
-      )}
+            {profiles.map((profie: any) => (
+              <Select.Option key={profie} value={profie}>
+                {profie}
+              </Select.Option>
+            ))}
+          </Select>
+        </Col>
+        <Col xs={6}>
+          <Button
+            type="primary"
+            onClick={onCloneClick}
+            disabled={!selectedProfile}
+          >
+            Clone
+          </Button>
+        </Col>
+      </Row>
+      <Form
+        form={form}
+        name="accessControlForm"
+        layout="vertical"
+        onFinish={onFinish}
+      >
+        <Tabs
+          defaultActiveKey="template"
+          style={{ width: "100%" }}
+          onChange={setSelectedMethod}
+        >
+          {methodsList.map((method, index) => (
+            <TabPane tab={method} key={method}>
+              <Row gutter={24}>
+                {loading ? (
+                  <Spin style={{ margin: "0 auto" }} />
+                ) : (
+                  endpointPrivileges.map((data, _index) => (
+                    <FunctionPrivilege
+                      endpointPrivilege={data}
+                      profile={selectedProfile}
+                      key={`position_${_index}`}
+                    />
+                  ))
+                )}
+              </Row>
+            </TabPane>
+          ))}
+        </Tabs>
+      </Form>
+      <CloneModal
+        showCloneModal={showCloneModal}
+        setShowCloneModal={setShowCloneModal}
+        selectedProfile={selectedProfile}
+        profiles={profiles}
+        privileges={privileges}
+      />
     </>
   );
 };

@@ -90,7 +90,8 @@ export const fetchInterfaces = () => instance.get("Wi/Ep/ListInterfaces");
 
 export const fetchSettings = () => instance.get("Wi/Ep/GetSettings");
 
-export const fetchPrivileges = () => instance.get("Wi/Ep/ListPrivileges");
+export const fetchPrivileges = (profile: string) =>
+  instance.put("Wi/Ep/ListPrivileges", { profile });
 
 export const saveVideoFeed = (params: FeedItem) => {
   if (params.id) {
