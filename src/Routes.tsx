@@ -21,11 +21,13 @@ import AuthRoute from "components/auth-route/AuthRoute";
 import AuthenticatedLayout from "layout/AuthenticatedLayout";
 import OpenLayout from "layout/OpenLayout";
 // import Interfaces from "pages/interfaces/Interfaces";
-import InterfaceDetail from "pages/interfaces/InterfaceDetail";
+// import InterfaceDetail from "pages/interfaces/InterfaceDetail";
 import AccessControl from "pages/access-control/AccessControl";
 import Preview from "pages/preview/Preview";
 import Categories from "pages/categories/Categories";
 import CategoryDetail from "pages/categories/CategoryDetail";
+import Orders from "pages/orders/Orders";
+import OrderDetail from "pages/orders/OrderDetail";
 
 function Routes() {
   return (
@@ -103,11 +105,11 @@ function Routes() {
         component={Endpoints}
         layout={AuthenticatedLayout}
       />
-      <AuthRoute
+      {/* <AuthRoute
         path="/interface"
         component={InterfaceDetail}
         layout={AuthenticatedLayout}
-      />
+      /> */}
       {/* <AuthRoute
         path="/interfaces"
         component={Interfaces}
@@ -138,6 +140,16 @@ function Routes() {
       <AuthRoute
         path="/preview"
         component={Preview}
+        layout={AuthenticatedLayout}
+      />
+      <AuthRoute
+        path="/order"
+        component={OrderDetail}
+        layout={AuthenticatedLayout}
+      />
+      <AuthRoute
+        path="/orders"
+        component={Orders}
         layout={AuthenticatedLayout}
       />
     </Switch>

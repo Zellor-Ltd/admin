@@ -93,6 +93,8 @@ export const fetchSettings = () => instance.get("Wi/Ep/GetSettings");
 export const fetchPrivileges = (profile: string) =>
   instance.put("Wi/Ep/ListPrivileges", { profile });
 
+export const fetchOrders = () => instance.get("Wi/Ep/ListOrders");
+
 export const saveVideoFeed = (params: FeedItem) => {
   if (params.id) {
     return instance.put("Disco/Feed/Update", params);
@@ -180,6 +182,14 @@ export const saveSettings = (params: any) => {
 
 export const savePrivileges = (params: Privilege) => {
   return instance.post("Wi/Ep/AddPrivilege", params);
+};
+
+export const saveOrder = (params: any) => {
+  if (params.id) {
+    return instance.post("Wi/Ep/UpdateOrder", params);
+  } else {
+    return instance.put("Wi/EP/AddOrder", params);
+  }
 };
 
 export const deletePrivileges = (data: Privilege) =>

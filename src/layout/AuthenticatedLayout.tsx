@@ -10,6 +10,7 @@ import {
   SettingOutlined,
   ApartmentOutlined,
   // AppstoreAddOutlined,
+  ShoppingCartOutlined,
   ControlOutlined,
   MobileOutlined,
   SwitcherOutlined,
@@ -69,6 +70,9 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = (props) => {
             </Menu.Item>
             <Menu.Item key="2" icon={<HeartFilled />}>
               <Link to="/feed">Videos Feed</Link>
+            </Menu.Item>
+            <Menu.Item key="orders" icon={<ShoppingCartOutlined />}>
+              <Link to="/orders">Orders</Link>
             </Menu.Item>
             <SubMenu
               key="sub-settings"
