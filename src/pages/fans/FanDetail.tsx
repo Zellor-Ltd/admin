@@ -206,10 +206,10 @@ const FanDetail: React.FC<RouteComponentProps> = (props) => {
         initialValues={{
           ...initial,
           phoneNumber: initial.personalDetails?.phone?.number,
-          line1: initial.addresses[0]?.line1,
-          city: initial.addresses[0]?.city,
-          country: initial.addresses[0]?.country,
-          postalCode: initial.addresses[0]?.postalCode,
+          line1: initial.addresses?.[0]?.line1,
+          city: initial.addresses?.[0]?.city,
+          country: initial.addresses?.[0]?.country,
+          postalCode: initial.addresses?.[0]?.postalCode,
         }}
         onFinish={onFinish}
       >
