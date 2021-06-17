@@ -74,7 +74,7 @@ const Fans: React.FC<RouteComponentProps> = ({ history }) => {
       key: "action",
       width: "5%",
       align: "right",
-      render: (value, record) => (
+      render: (_, record) => (
         <>
           <Link to={{ pathname: `/fan`, state: record }}>
             <EditOutlined />
