@@ -105,7 +105,7 @@ const FanDetail: React.FC<RouteComponentProps> = (props) => {
       title: "actions",
       key: "action",
       width: "5%",
-      render: (value: any, record: Creator, index: number) => (
+      render: (_: any, record: Creator) => (
         <>
           <Button
             type="link"
