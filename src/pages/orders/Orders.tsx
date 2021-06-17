@@ -1,5 +1,5 @@
 import { EditOutlined } from "@ant-design/icons";
-import { Button, PageHeader, Select, Table } from "antd";
+import { message, Button, PageHeader, Select, Table } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import { Order } from "interfaces/Order";
 import moment from "moment";
@@ -27,6 +27,12 @@ const Orders: React.FC<RouteComponentProps> = (props) => {
       ...orders[orderIndex],
       stage: value,
     });
+    const _orders = [...orders];
+    _orders[orderIndex].hLastUpdate = moment
+      .utc()
+      .format("YYYY-MM-DDTHH:mm:ss.SSSSSSSZ");
+    setOrders(_orders);
+    message.success("Changes saved!");
     setOrderUpdateList((prev) => {
       prev[orderIndex] = false;
       return [...prev];
@@ -62,7 +68,7 @@ const Orders: React.FC<RouteComponentProps> = (props) => {
       render: (value: Date) => (
         <>
           <div>{moment(value).format("DD/MM/YYYY")}</div>
-          <div>{moment(value).format("HH:MM:SS")}</div>
+          <div>{moment(value).format("HH:mm")}</div>
         </>
       ),
     },
@@ -104,7 +110,7 @@ const Orders: React.FC<RouteComponentProps> = (props) => {
       render: (value: Date) => (
         <>
           <div>{moment(value).format("DD/MM/YYYY")}</div>
-          <div>{moment(value).format("HH:MM:SS")}</div>
+          <div>{moment(value).format("HH:mm")}</div>
           {/* <div style={{ color: "grey" }}>({moment(value).fromNow()})</div> */}
         </>
       ),

@@ -2,12 +2,18 @@ import { Button, Col, Form, Input, message, PageHeader, Row } from "antd";
 import { useState } from "react";
 import { RouteComponentProps } from "react-router";
 import { saveOrder } from "services/DiscoClubService";
+import { useSelector } from "react-redux";
 
 const OrderDetail: React.FC<RouteComponentProps> = (props) => {
   const { history, location } = props;
   const initial: any = location.state;
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
+
+  const {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    settings: { order: ordersSettings = [] },
+  } = useSelector((state: any) => state.settings);
 
   const onFinish = async () => {
     setLoading(true);
