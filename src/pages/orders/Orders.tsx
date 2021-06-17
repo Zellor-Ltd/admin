@@ -147,11 +147,6 @@ const Orders: React.FC<RouteComponentProps> = (props) => {
       <PageHeader
         title="Orders"
         subTitle="List of Orders"
-        extra={[
-          <Button key="1" onClick={() => history.push("/order")}>
-            New Item
-          </Button>,
-        ]}
       />
       <Table
         rowKey="id"
