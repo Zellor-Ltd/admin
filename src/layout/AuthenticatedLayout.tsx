@@ -14,6 +14,7 @@ import {
   ControlOutlined,
   MobileOutlined,
   SwitcherOutlined,
+  DollarOutlined,
 } from "@ant-design/icons";
 import "./AuthenticatedLayout.scss";
 import jwt from "helpers/jwt";
@@ -73,6 +74,9 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = (props) => {
             </Menu.Item>
             <Menu.Item key="orders" icon={<ShoppingCartOutlined />}>
               <Link to="/orders">Orders</Link>
+            </Menu.Item>
+            <Menu.Item key="transactions" icon={<DollarOutlined />}>
+              <Link to="/transactions">Transactions</Link>
             </Menu.Item>
             <SubMenu
               key="sub-settings"

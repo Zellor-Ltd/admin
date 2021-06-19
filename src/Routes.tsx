@@ -28,6 +28,7 @@ import Categories from "pages/categories/Categories";
 import CategoryDetail from "pages/categories/CategoryDetail";
 import Orders from "pages/orders/Orders";
 import OrderDetail from "pages/orders/OrderDetail";
+import Transactions from "pages/transactions/Transactions";
 
 function Routes() {
   return (
@@ -150,6 +151,11 @@ function Routes() {
       <AuthRoute
         path="/orders"
         component={Orders}
+        layout={AuthenticatedLayout}
+      />
+      <AuthRoute
+        path="/transactions"
+        component={Transactions}
         layout={AuthenticatedLayout}
       />
     </Switch>

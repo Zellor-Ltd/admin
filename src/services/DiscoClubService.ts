@@ -15,6 +15,7 @@ import { Category } from "interfaces/Category";
 
 export const instance = axios.create({
   baseURL: process.env.REACT_APP_HOST_ENDPOINT,
+  headers: { "Content-Type": "application/json" },
 });
 
 interface IDelete {
@@ -94,6 +95,9 @@ export const fetchPrivileges = (profile: string) =>
   instance.put("Wi/Ep/ListPrivileges", { profile });
 
 export const fetchOrders = () => instance.get("Wi/Ep/ListOrders");
+
+export const fetchWalletTransactions = (userId: string) =>
+  instance.put("Wi/Ep/GetWalletTransactions", { userId });
 
 export const saveVideoFeed = (params: FeedItem) => {
   if (params.id) {

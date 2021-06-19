@@ -1,5 +1,5 @@
 import { EditOutlined } from "@ant-design/icons";
-import { message, Button, PageHeader, Select, Table } from "antd";
+import { message, PageHeader, Select, Table } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import { Order } from "interfaces/Order";
 import moment from "moment";
@@ -9,8 +9,7 @@ import { Link } from "react-router-dom";
 import { fetchOrders, saveOrder } from "services/DiscoClubService";
 import { useSelector } from "react-redux";
 
-const Orders: React.FC<RouteComponentProps> = (props) => {
-  const { history } = props;
+const Orders: React.FC<RouteComponentProps> = () => {
   const [tableloading, setTableLoading] = useState<boolean>(false);
   const [orderUpdateList, setOrderUpdateList] = useState<boolean[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
@@ -144,10 +143,7 @@ const Orders: React.FC<RouteComponentProps> = (props) => {
 
   return (
     <div className="orders">
-      <PageHeader
-        title="Orders"
-        subTitle="List of Orders"
-      />
+      <PageHeader title="Orders" subTitle="List of Orders" />
       <Table
         rowKey="id"
         columns={columns}
