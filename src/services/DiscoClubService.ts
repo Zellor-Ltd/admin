@@ -15,7 +15,7 @@ import { Category } from "interfaces/Category";
 
 export const instance = axios.create({
   baseURL: process.env.REACT_APP_HOST_ENDPOINT,
-  headers: { "Content-Type": "Application/JSON" },
+  headers: { "Content-Type": "application/json" },
 });
 
 interface IDelete {
