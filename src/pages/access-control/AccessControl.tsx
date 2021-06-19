@@ -28,7 +28,7 @@ import { CheckboxChangeEvent } from "antd/lib/checkbox";
 const { TabPane } = Tabs;
 const { Text } = Typography;
 
-const methodsList = ["All", "Search", "GetById", "Insert", "Update", "Delete"];
+const methodsList = ["All", "Search", "GetById", "Insert", "Update", "Remove"];
 
 interface endpointPrivilege {
   privilege: Privilege | undefined;
