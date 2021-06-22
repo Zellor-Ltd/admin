@@ -1,21 +1,17 @@
-import { CalendarOutlined, EditOutlined } from "@ant-design/icons";
-import {
-  DatePicker,
-  Col,
-  PageHeader,
-  Row,
-  Select,
-  Table,
-  Tag as AntTag,
-} from "antd";
+import { EditOutlined } from "@ant-design/icons";
+import { Col, PageHeader, Row, Select, Table, Tabs, Tag as AntTag } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import { Fan } from "interfaces/Fan";
-import React, { useEffect, useState } from "react";
-import { RouteComponentProps } from "react-router";
 import { FeedItem } from "interfaces/FeedItem";
 import { Segment } from "interfaces/Segment";
+import React, { useEffect, useState } from "react";
+import { RouteComponentProps } from "react-router";
 import { Link } from "react-router-dom";
-import { fetchFans, fetchVideoFeed } from "services/DiscoClubService";
+import {
+  fetchFans,
+  fetchUserFeed,
+  fetchVideoFeed,
+} from "services/DiscoClubService";
 
 const reduceSegmentsTags = (packages: Segment[]) => {
   return packages.reduce((acc: number, curr: Segment) => {
@@ -23,10 +19,11 @@ const reduceSegmentsTags = (packages: Segment[]) => {
   }, 0);
 };
 const FeedMixer: React.FC<RouteComponentProps> = () => {
-  const [tableLoading, setTableLoading] = useState<boolean>(false);
+  const [userFeedLoading, setUserFeedLoading] = useState<boolean>(false);
 
   const [fans, setFans] = useState<Fan[]>([]);
-  const [videos, setVideos] = useState([]);
+  const [userFeed, setUserFeed] = useState([]);
+  const [templateFeed, setTemplateFeed] = useState([]);
 
   const [searchList, setSearchList] = useState<string[]>([]);
   const [selectedFan, setSelectedFan] = useState<string>();
@@ -85,13 +82,21 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
 
   const onChangeFan = async (value: string) => {
     setSelectedFan(value);
-    const { id: fanId } = fans.find(
+    const { id: userId } = fans.find(
       (fan) => fan.name === value || fan.email === value
     ) as Fan;
-    setTableLoading(true);
-    const { results }: any = await fetchVideoFeed();
-    setTableLoading(false);
-    setVideos(results);
+    setUserFeedLoading(true);
+
+    if (!templateFeed.length) {
+      const [{ results: _userFeed }, { results: _templateFeed }]: [any, any] =
+        await Promise.all([fetchUserFeed(userId), fetchVideoFeed()]);
+      setUserFeed(_userFeed);
+      setTemplateFeed(_templateFeed);
+    } else {
+      const { results }: any = await fetchUserFeed(userId);
+      setUserFeed(results);
+    }
+    setUserFeedLoading(false);
   };
 
   useEffect(() => {
@@ -130,12 +135,24 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
           </Select>
         </Col>
       </Row>
-      <Table
-        rowKey="id"
-        columns={columns}
-        dataSource={videos}
-        loading={tableLoading}
-      />
+      <Tabs defaultActiveKey="1">
+        <Tabs.TabPane tab="User Feed" key="1">
+          <Table
+            rowKey="id"
+            columns={columns}
+            dataSource={userFeed}
+            loading={userFeedLoading}
+          />
+        </Tabs.TabPane>
+        <Tabs.TabPane tab="Template Feed" key="2">
+          <Table
+            rowKey="id"
+            columns={columns}
+            dataSource={templateFeed}
+            loading={userFeedLoading}
+          />
+        </Tabs.TabPane>
+      </Tabs>
     </div>
   );
 };
