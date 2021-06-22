@@ -1,11 +1,21 @@
-import { EditOutlined } from "@ant-design/icons";
-import { Col, PageHeader, Row, Select, Table, Tabs, Tag as AntTag } from "antd";
+import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
+import {
+  Button,
+  Col,
+  message,
+  PageHeader,
+  Row,
+  Select,
+  Table,
+  Tabs,
+  Tag as AntTag,
+} from "antd";
 import { ColumnsType } from "antd/lib/table";
 import { SortableTable } from "components";
 import { Fan } from "interfaces/Fan";
 import { FeedItem } from "interfaces/FeedItem";
 import { Segment } from "interfaces/Segment";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { RouteComponentProps } from "react-router";
 import { Link } from "react-router-dom";
 import {
@@ -28,6 +38,21 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
 
   const [searchList, setSearchList] = useState<string[]>([]);
   const [selectedFan, setSelectedFan] = useState<string>();
+
+  const addVideo = (index: number) => {
+    message.success("Video added into user feed.");
+  };
+  const removeVideo = (index: number) => {};
+
+  const addObj = { icon: <PlusOutlined />, fn: addVideo };
+  const removeObj = { icon: <MinusOutlined />, fn: removeVideo };
+
+  const [actionObj, setActionObj] =
+    useState<{ icon: any; fn: Function }>(removeObj);
+
+  const handleTabChange = (tab: string) => {
+    setActionObj(tab === "User Feed" ? removeObj : addObj);
+  };
 
   const columns: ColumnsType<FeedItem> = [
     {
@@ -74,11 +99,17 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
       key: "action",
       width: "5%",
       align: "right",
-      render: (_, record: FeedItem) => (
-        <>
-          <EditOutlined />
-        </>
-      ),
+      render: (_, record: FeedItem, index) => {
+        return (
+          <Button
+            onClick={() => actionObj.fn(index)}
+            type="link"
+            style={{ padding: 0, margin: 6 }}
+          >
+            {actionObj.icon}
+          </Button>
+        );
+      },
     },
   ];
 
@@ -137,15 +168,15 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
           </Select>
         </Col>
       </Row>
-      <Tabs defaultActiveKey="1">
-        <Tabs.TabPane tab="User Feed" key="1">
+      <Tabs defaultActiveKey="User Feed" onChange={handleTabChange}>
+        <Tabs.TabPane tab="User Feed" key="User Feed">
           <SortableTable
             columns={columns}
             dataSource={userFeed}
             loading={userFeedLoading}
           />
         </Tabs.TabPane>
-        <Tabs.TabPane tab="Template Feed" key="2">
+        <Tabs.TabPane tab="Template Feed" key="Template Feed">
           <Table
             rowKey="id"
             columns={columns}
