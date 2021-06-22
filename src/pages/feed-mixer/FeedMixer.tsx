@@ -15,7 +15,7 @@ import { SortableTable } from "components";
 import { Fan } from "interfaces/Fan";
 import { FeedItem } from "interfaces/FeedItem";
 import { Segment } from "interfaces/Segment";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { RouteComponentProps } from "react-router";
 import { Link } from "react-router-dom";
 import {
@@ -40,9 +40,13 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
   const [selectedFan, setSelectedFan] = useState<string>();
 
   const addVideo = (index: number) => {
+    setUserFeed([templateFeed[index], ...userFeed]);
     message.success("Video added into user feed.");
   };
-  const removeVideo = (index: number) => {};
+
+  const removeVideo = (index: number) => {
+    setUserFeed((prev) => [...prev.slice(0, index), ...prev.slice(index + 1)]);
+  };
 
   const addObj = { icon: <PlusOutlined />, fn: addVideo };
   const removeObj = { icon: <MinusOutlined />, fn: removeVideo };
@@ -171,6 +175,7 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
       <Tabs defaultActiveKey="User Feed" onChange={handleTabChange}>
         <Tabs.TabPane tab="User Feed" key="User Feed">
           <SortableTable
+            rowKey="id"
             columns={columns}
             dataSource={userFeed}
             loading={userFeedLoading}

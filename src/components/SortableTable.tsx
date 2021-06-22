@@ -78,7 +78,6 @@ const SortableTable: React.FC<any> = (props: TableProps<any>) => {
       pagination={false}
       dataSource={_dataSource}
       columns={sortableColumns}
-      rowKey="index"
       components={{
         body: {
           wrapper: DraggableContainer,
