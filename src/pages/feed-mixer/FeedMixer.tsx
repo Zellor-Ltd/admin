@@ -1,6 +1,7 @@
 import { EditOutlined } from "@ant-design/icons";
 import { Col, PageHeader, Row, Select, Table, Tabs, Tag as AntTag } from "antd";
 import { ColumnsType } from "antd/lib/table";
+import { SortableTable } from "components";
 import { Fan } from "interfaces/Fan";
 import { FeedItem } from "interfaces/FeedItem";
 import { Segment } from "interfaces/Segment";
@@ -36,6 +37,7 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
       render: (value: string, record: FeedItem) => (
         <Link to={{ pathname: `/video-feed`, state: record }}>{value}</Link>
       ),
+      align: "center",
     },
     {
       title: "Segments",
@@ -137,8 +139,7 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
       </Row>
       <Tabs defaultActiveKey="1">
         <Tabs.TabPane tab="User Feed" key="1">
-          <Table
-            rowKey="id"
+          <SortableTable
             columns={columns}
             dataSource={userFeed}
             loading={userFeedLoading}
