@@ -22,6 +22,7 @@ import {
   fetchFans,
   fetchUserFeed,
   fetchVideoFeed,
+  saveUserFeed,
 } from "services/DiscoClubService";
 
 const reduceSegmentsTags = (packages: Segment[]) => {
@@ -37,7 +38,7 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
   const [templateFeed, setTemplateFeed] = useState([]);
 
   const [searchList, setSearchList] = useState<string[]>([]);
-  const [selectedFan, setSelectedFan] = useState<string>();
+  const [selectedFan, setSelectedFan] = useState<string>("");
 
   const addVideo = (index: number) => {
     setUserFeed([templateFeed[index], ...userFeed]);
@@ -117,20 +118,25 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
     },
   ];
 
-  const onChangeFan = async (value: string) => {
-    setSelectedFan(value);
-    const { id: userId } = fans.find(
+  const getFanId = (value: string) => {
+    const { id: fanId } = fans.find(
       (fan) => fan.name === value || fan.email === value
     ) as Fan;
+    return fanId;
+  };
+
+  const onChangeFan = async (value: string) => {
+    const fanId = getFanId(value);
+    setSelectedFan(value);
     setUserFeedLoading(true);
 
     if (!templateFeed.length) {
       const [{ results: _userFeed }, { results: _templateFeed }]: [any, any] =
-        await Promise.all([fetchUserFeed(userId), fetchVideoFeed()]);
+        await Promise.all([fetchUserFeed(fanId), fetchVideoFeed()]);
       setUserFeed(_userFeed);
       setTemplateFeed(_templateFeed);
     } else {
-      const { results }: any = await fetchUserFeed(userId);
+      const { results }: any = await fetchUserFeed(fanId);
       setUserFeed(results);
     }
     setUserFeedLoading(false);
@@ -152,9 +158,23 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
     getFans();
   }, []);
 
+  const saveChanges = async () => {
+    setUserFeedLoading(true);
+    await saveUserFeed(getFanId(selectedFan), userFeed);
+    message.success("User feed updated.");
+    setUserFeedLoading(false);
+  };
+
   return (
     <div className="feed-mixer">
-      <PageHeader title="Feed Mixer" />
+      <PageHeader
+        title="Feed Mixer"
+        extra={[
+          <Button key="1" onClick={saveChanges}>
+            Save Changes
+          </Button>,
+        ]}
+      />
       <Row gutter={8} style={{ marginBottom: "20px" }}>
         <Col xxl={40} lg={6} xs={18}>
           <Select

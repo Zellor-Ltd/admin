@@ -199,8 +199,8 @@ export const saveOrder = (params: any) => {
   }
 };
 
-export const saveUserFeed = () => (params: any) =>
-  instance.put(`Disco/Feed/UpdateUserFeed/${params.userId}`, params);
+export const saveUserFeed = (userId: string, payload: any) =>
+  instance.put(`Disco/Feed/UpdateUserFeed/${userId}`, payload);
 
 export const deletePrivileges = (data: Privilege) =>
   instance.delete("Wi/Ep/RemovePrivilege", { data });
