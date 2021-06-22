@@ -34,14 +34,14 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
   const [userFeedLoading, setUserFeedLoading] = useState<boolean>(false);
 
   const [fans, setFans] = useState<Fan[]>([]);
-  const [userFeed, setUserFeed] = useState([]);
+  const [userFeed, setUserFeed] = useState<any[]>([]);
   const [templateFeed, setTemplateFeed] = useState([]);
 
   const [searchList, setSearchList] = useState<string[]>([]);
   const [selectedFan, setSelectedFan] = useState<string>("");
 
   const addVideo = (index: number) => {
-    setUserFeed([templateFeed[index], ...userFeed]);
+    setUserFeed((prev) => [templateFeed[index], ...prev]);
     message.success("Video added into user feed.");
   };
 
@@ -104,7 +104,7 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
       key: "action",
       width: "5%",
       align: "right",
-      render: (_, record: FeedItem, index) => {
+      render: (_, __, index) => {
         return (
           <Button
             onClick={() => actionObj.fn(index)}
@@ -198,6 +198,7 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
             rowKey="id"
             columns={columns}
             dataSource={userFeed}
+            setDataSource={setUserFeed}
             loading={userFeedLoading}
           />
         </Tabs.TabPane>
