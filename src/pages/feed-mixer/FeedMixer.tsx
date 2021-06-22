@@ -1,11 +1,13 @@
-import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
+import { MinusOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import {
   Button,
   Col,
+  Input,
   message,
   PageHeader,
   Row,
   Select,
+  Space,
   Table,
   Tabs,
   Tag as AntTag,
@@ -15,15 +17,16 @@ import { SortableTable } from "components";
 import { Fan } from "interfaces/Fan";
 import { FeedItem } from "interfaces/FeedItem";
 import { Segment } from "interfaces/Segment";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { RouteComponentProps } from "react-router";
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 import {
   fetchFans,
   fetchUserFeed,
   fetchVideoFeed,
   saveUserFeed,
 } from "services/DiscoClubService";
+import Highlighter from "react-highlight-words";
 
 const reduceSegmentsTags = (packages: Segment[]) => {
   return packages.reduce((acc: number, curr: Segment) => {
@@ -39,6 +42,105 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
 
   const [searchList, setSearchList] = useState<string[]>([]);
   const [selectedFan, setSelectedFan] = useState<string>("");
+  const [selectedTab, setSelectedTab] = useState<string>("");
+
+  const [searchText, setSearchText] = useState<string>("");
+  const [searchedColumn, setSearchedColumn] = useState<string>("");
+
+  const searchInput = useRef<Input>(null);
+
+  const handleSearch = (selectedKeys: any, confirm: any, dataIndex: any) => {
+    confirm();
+    setSearchText(selectedKeys[0]);
+    setSearchedColumn(dataIndex);
+  };
+
+  const handleReset = (clearFilters: any) => {
+    clearFilters();
+    setSearchText("");
+  };
+
+  const getColumnSearchProps = (dataIndex: any) => ({
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+    }: {
+      setSelectedKeys: any;
+      selectedKeys: any;
+      confirm: any;
+      clearFilters: any;
+    }) => (
+      <div style={{ padding: 8 }}>
+        <Input
+          ref={searchInput}
+          placeholder={`Search ${dataIndex}`}
+          value={selectedKeys[0]}
+          onChange={(e) =>
+            setSelectedKeys(e.target.value ? [e.target.value] : [])
+          }
+          onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+          style={{ marginBottom: 8, display: "block" }}
+        />
+        <Space>
+          <Button
+            type="primary"
+            onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+            icon={<SearchOutlined />}
+            size="small"
+            style={{ width: 90 }}
+          >
+            Search
+          </Button>
+          <Button
+            onClick={() => handleReset(clearFilters)}
+            size="small"
+            style={{ width: 90 }}
+          >
+            Reset
+          </Button>
+          <Button
+            type="link"
+            size="small"
+            onClick={() => {
+              confirm({ closeDropdown: false });
+              setSearchText(selectedKeys[0]);
+              setSearchedColumn(dataIndex);
+            }}
+          >
+            Filter
+          </Button>
+        </Space>
+      </div>
+    ),
+    filterIcon: (filtered: any) => (
+      <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
+    ),
+    onFilter: (value: any, record: any) =>
+      record[dataIndex]
+        ? record[dataIndex]
+            .toString()
+            .toLowerCase()
+            .includes(value.toLowerCase())
+        : "",
+    onFilterDropdownVisibleChange: (visible: any) => {
+      if (visible) {
+        setTimeout(() => searchInput.current!.select(), 100);
+      }
+    },
+    render: (text: any) =>
+      searchedColumn === dataIndex ? (
+        <Highlighter
+          highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
+          searchWords={[searchText]}
+          autoEscape
+          textToHighlight={text ? text.toString() : ""}
+        />
+      ) : (
+        text
+      ),
+  });
 
   const addVideo = (index: number) => {
     setUserFeed((prev) => [templateFeed[index], ...prev]);
@@ -56,6 +158,7 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
     useState<{ icon: any; fn: Function }>(removeObj);
 
   const handleTabChange = (tab: string) => {
+    setSelectedTab(tab);
     setActionObj(tab === "User Feed" ? removeObj : addObj);
   };
 
@@ -64,10 +167,12 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
       title: "Title",
       dataIndex: "title",
       width: "15%",
-      render: (value: string, record: FeedItem) => (
-        <Link to={{ pathname: `/video-feed`, state: record }}>{value}</Link>
-      ),
+      // render: (value: string, record: FeedItem) => (
+      //   <Link to={{ pathname: `/video-feed`, state: record }}>{value}</Link>
+      // ),
       align: "center",
+      ...(() =>
+        selectedTab === "Template Feed" ? getColumnSearchProps("title") : {})(),
     },
     {
       title: "Segments",

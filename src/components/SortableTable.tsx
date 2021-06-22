@@ -51,7 +51,6 @@ const SortableTable: React.FC<SortableTableProps> = (
       const newData = arrayMove([...dataSource], oldIndex, newIndex).filter(
         (el) => !!el
       );
-      console.log("Sorted items: ", newData);
       setDataSource(newData);
     }
   };
