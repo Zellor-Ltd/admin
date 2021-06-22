@@ -124,7 +124,7 @@ const BrandDetail: React.FC<RouteComponentProps> = (props) => {
               <Col lg={6} xs={24}>
                 <Form.Item
                   label="Thumbnail"
-                  name="thumbnaiil"
+                  name="thumbnail"
                   rules={[{ required: false }]}
                 >
                   <Upload.ImageUpload
