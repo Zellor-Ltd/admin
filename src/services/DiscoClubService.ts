@@ -99,6 +99,9 @@ export const fetchOrders = () => instance.get("Wi/Ep/ListOrders");
 export const fetchWalletTransactions = (userId: string) =>
   instance.put("Wi/Ep/GetWalletTransactions", { userId });
 
+export const fetchUserFeed = (userId: string) =>
+  instance.get(`Disco/Feed/GetUserFeed/${userId}`);
+
 export const saveVideoFeed = (params: FeedItem) => {
   if (params.id) {
     return instance.put("Disco/Feed/Update", params);
@@ -195,6 +198,9 @@ export const saveOrder = (params: any) => {
     return instance.put("Wi/EP/AddOrder", params);
   }
 };
+
+export const saveUserFeed = (userId: string, payload: any) =>
+  instance.put(`Disco/Feed/UpdateUserFeed/${userId}`, payload);
 
 export const deletePrivileges = (data: Privilege) =>
   instance.delete("Wi/Ep/RemovePrivilege", { data });

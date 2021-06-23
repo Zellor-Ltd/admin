@@ -15,6 +15,7 @@ import {
   MobileOutlined,
   SwitcherOutlined,
   DollarOutlined,
+  OrderedListOutlined,
 } from "@ant-design/icons";
 import "./AuthenticatedLayout.scss";
 import jwt from "helpers/jwt";
@@ -71,6 +72,9 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = (props) => {
             </Menu.Item>
             <Menu.Item key="2" icon={<HeartFilled />}>
               <Link to="/feed">Videos Feed</Link>
+            </Menu.Item>
+            <Menu.Item key="feed-mixer" icon={<OrderedListOutlined />}>
+              <Link to="/feed-mixer">Feed Mixer</Link>
             </Menu.Item>
             <Menu.Item key="orders" icon={<ShoppingCartOutlined />}>
               <Link to="/orders">Orders</Link>
