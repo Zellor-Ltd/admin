@@ -39,7 +39,7 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = (props) => {
     <Layout>
       <Header className="header">
         <h2>
-          <Link to="/"> Disco Admin</Link>
+          <Link to="/"> Disco Admin <small style={{ fontSize: 10 }}>v 1.22.06.1756</small></Link>
         </h2>
         <div>
           <Typography.Text style={{ color: "white" }}>
