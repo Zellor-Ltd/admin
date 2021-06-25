@@ -29,6 +29,7 @@ import CategoryDetail from "pages/categories/CategoryDetail";
 import Orders from "pages/orders/Orders";
 import OrderDetail from "pages/orders/OrderDetail";
 import Transactions from "pages/transactions/Transactions";
+import FeedMixer from "pages/feed-mixer/FeedMixer";
 
 function Routes() {
   return (
@@ -156,6 +157,11 @@ function Routes() {
       <AuthRoute
         path="/transactions"
         component={Transactions}
+        layout={AuthenticatedLayout}
+      />
+      <AuthRoute
+        path="/feed-mixer"
+        component={FeedMixer}
         layout={AuthenticatedLayout}
       />
     </Switch>
