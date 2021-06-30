@@ -6,7 +6,6 @@ import {
   message,
   PageHeader,
   Row,
-  Select,
   Space,
   Table,
   Tabs,
@@ -17,16 +16,16 @@ import { SortableTable } from "components";
 import { Fan } from "interfaces/Fan";
 import { FeedItem } from "interfaces/FeedItem";
 import { Segment } from "interfaces/Segment";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { RouteComponentProps } from "react-router";
-// import { Link } from "react-router-dom";
 import {
-  fetchFans,
   fetchUserFeed,
   fetchVideoFeed,
   saveUserFeed,
 } from "services/DiscoClubService";
 import Highlighter from "react-highlight-words";
+
+import { SelectFan } from "components/SelectFan";
 
 const reduceSegmentsTags = (packages: Segment[]) => {
   return packages.reduce((acc: number, curr: Segment) => {
@@ -36,12 +35,10 @@ const reduceSegmentsTags = (packages: Segment[]) => {
 const FeedMixer: React.FC<RouteComponentProps> = () => {
   const [userFeedLoading, setUserFeedLoading] = useState<boolean>(false);
 
-  const [fans, setFans] = useState<Fan[]>([]);
   const [userFeed, setUserFeed] = useState<any[]>([]);
   const [templateFeed, setTemplateFeed] = useState([]);
 
-  const [searchList, setSearchList] = useState<string[]>([]);
-  const [selectedFan, setSelectedFan] = useState<string>("");
+  const [selectedFan, setSelectedFan] = useState<Fan>();
   const [selectedTab, setSelectedTab] = useState<string>("");
 
   const [searchText, setSearchText] = useState<string>("");
@@ -223,51 +220,25 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
     },
   ];
 
-  const getFanId = (value: string) => {
-    const { id: fanId } = fans.find(
-      // (fan) => fan.name === value || fan.email === value
-      (fan) => fan.user === value
-    ) as Fan;
-    return fanId;
-  };
-
-  const onChangeFan = async (value: string) => {
-    const fanId = getFanId(value);
-    setSelectedFan(value);
+  const onChangeFan = async (_selectedFan: Fan) => {
+    setSelectedFan(_selectedFan);
     setUserFeedLoading(true);
 
     if (!templateFeed.length) {
       const [{ results: _userFeed }, { results: _templateFeed }]: [any, any] =
-        await Promise.all([fetchUserFeed(fanId), fetchVideoFeed()]);
+        await Promise.all([fetchUserFeed(_selectedFan.id), fetchVideoFeed()]);
       setUserFeed(_userFeed);
       setTemplateFeed(_templateFeed);
     } else {
-      const { results }: any = await fetchUserFeed(fanId);
+      const { results }: any = await fetchUserFeed(_selectedFan.id);
       setUserFeed(results);
     }
     setUserFeedLoading(false);
   };
 
-  useEffect(() => {
-    const getFans = async () => {
-      try {
-        const { results }: any = await fetchFans();
-        const _searchList: string[] = [];
-        results.forEach((fan: Fan) => {
-          // if (fan.name) _searchList.unshift(fan.name);
-          // if (fan.email) _searchList.push(fan.email);
-          if (fan.user) _searchList.push(fan.user);
-        });
-        setSearchList(_searchList);
-        setFans(results);
-      } catch (e) {}
-    };
-    getFans();
-  }, []);
-
   const saveChanges = async () => {
     setUserFeedLoading(true);
-    await saveUserFeed(getFanId(selectedFan), userFeed);
+    await saveUserFeed(selectedFan!.id, userFeed);
     message.success("User feed updated.");
     setUserFeedLoading(false);
   };
@@ -284,19 +255,10 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
       />
       <Row gutter={8} style={{ marginBottom: "20px" }}>
         <Col xxl={40} lg={6} xs={18}>
-          <Select
-            showSearch
-            placeholder="Select a fan"
+          <SelectFan
             style={{ width: "100%" }}
             onChange={onChangeFan}
-            value={selectedFan}
-          >
-            {searchList.map((value) => (
-              <Select.Option key={value} value={value}>
-                {value}
-              </Select.Option>
-            ))}
-          </Select>
+          ></SelectFan>
         </Col>
       </Row>
       <Tabs defaultActiveKey="User Feed" onChange={handleTabChange}>
