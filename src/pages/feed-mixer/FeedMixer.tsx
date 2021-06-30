@@ -225,7 +225,8 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
 
   const getFanId = (value: string) => {
     const { id: fanId } = fans.find(
-      (fan) => fan.name === value || fan.email === value
+      // (fan) => fan.name === value || fan.email === value
+      (fan) => fan.user === value
     ) as Fan;
     return fanId;
   };
@@ -253,8 +254,9 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
         const { results }: any = await fetchFans();
         const _searchList: string[] = [];
         results.forEach((fan: Fan) => {
-          if (fan.name) _searchList.unshift(fan.name);
-          if (fan.email) _searchList.push(fan.email);
+          // if (fan.name) _searchList.unshift(fan.name);
+          // if (fan.email) _searchList.push(fan.email);
+          if (fan.user) _searchList.push(fan.user);
         });
         setSearchList(_searchList);
         setFans(results);
