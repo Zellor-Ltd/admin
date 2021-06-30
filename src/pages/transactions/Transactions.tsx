@@ -1,20 +1,17 @@
 import { CalendarOutlined, EditOutlined } from "@ant-design/icons";
-import { DatePicker, Col, PageHeader, Row, Select, Table } from "antd";
+import { DatePicker, Col, PageHeader, Row, Table } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import { Transaction } from "interfaces/Transaction";
 import { Fan } from "interfaces/Fan";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { RouteComponentProps } from "react-router";
 import { Link } from "react-router-dom";
-import { fetchFans, fetchWalletTransactions } from "services/DiscoClubService";
+import { fetchWalletTransactions } from "services/DiscoClubService";
 import moment from "moment";
+import { SelectFan } from "components/SelectFan";
 
 const Transactions: React.FC<RouteComponentProps> = () => {
   const [tableLoading, setTableLoading] = useState<boolean>(false);
-
-  const [fans, setFans] = useState<Fan[]>([]);
-  const [searchList, setSearchList] = useState<string[]>([]);
-  const [selectedFan, setSelectedFan] = useState<string>();
 
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [filteredTransactions, setFilteredTransactions] = useState<
@@ -72,35 +69,13 @@ const Transactions: React.FC<RouteComponentProps> = () => {
     },
   ];
 
-  const onChangeFan = async (value: string) => {
-    setSelectedFan(value);
-    const { id: fanId } = fans.find(
-      // (fan) => fan.name === value || fan.email === value
-      (fan) => fan.user === value
-    ) as Fan;
+  const onChangeFan = async (_selectedFan: Fan) => {
     setTableLoading(true);
-    const { results }: any = await fetchWalletTransactions(fanId);
+    const { results }: any = await fetchWalletTransactions(_selectedFan.id);
     setTableLoading(false);
     setTransactions(results);
     setFilteredTransactions(results);
   };
-
-  useEffect(() => {
-    const getFans = async () => {
-      try {
-        const { results }: any = await fetchFans();
-        const _searchList: string[] = [];
-        results.forEach((fan: Fan) => {
-          // if (fan.name) _searchList.unshift(fan.name);
-          // if (fan.email) _searchList.push(fan.email);
-          if (fan.user) _searchList.push(fan.user);
-        });
-        setSearchList(_searchList);
-        setFans(results);
-      } catch (e) {}
-    };
-    getFans();
-  }, []);
 
   const handleDateChange = (values: any) => {
     if (!values) {
@@ -121,19 +96,10 @@ const Transactions: React.FC<RouteComponentProps> = () => {
       <PageHeader title="Transactions" subTitle="List of Transactions" />
       <Row gutter={8} style={{ marginBottom: "20px" }}>
         <Col xxl={40} lg={6} xs={18}>
-          <Select
-            showSearch
-            placeholder="Select a fan"
+          <SelectFan
             style={{ width: "100%" }}
             onChange={onChangeFan}
-            value={selectedFan}
-          >
-            {searchList.map((value) => (
-              <Select.Option key={value} value={value}>
-                {value}
-              </Select.Option>
-            ))}
-          </Select>
+          ></SelectFan>
         </Col>
       </Row>
       <Table
