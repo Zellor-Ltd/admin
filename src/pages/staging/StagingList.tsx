@@ -70,6 +70,7 @@ const StagingList: React.FC<RouteComponentProps> = ({ history }) => {
   const handleStage = async (productId: string) => {
     try {
       await transferStageProduct(productId);
+      fetch();
       message.success("Product sent to stage");
     } catch (err) {
       message.success("Error at staging product");
@@ -100,7 +101,6 @@ const StagingList: React.FC<RouteComponentProps> = ({ history }) => {
       align: "center",
       render: (videos = []) => <Tag>{videos.length}</Tag>,
     },
-
     {
       title: "Expiration Date",
       dataIndex: "offerExpirationDate",
@@ -109,9 +109,17 @@ const StagingList: React.FC<RouteComponentProps> = ({ history }) => {
       render: (creationDate: Date) => moment(creationDate).format("DD/MM/YYYY"),
     },
     {
+      title: "Last Import",
+      dataIndex: "lastImportDate",
+      width: "15%",
+      align: "center",
+      render: (lastImportDate: Date | null | undefined) =>
+        lastImportDate ? moment(lastImportDate).format("DD/MM/YYYY") : "",
+    },
+    {
       title: "actions",
       key: "action",
-      width: "8%",
+      width: "12%",
       align: "right",
       render: (_, record: Product) => (
         <>
@@ -124,7 +132,7 @@ const StagingList: React.FC<RouteComponentProps> = ({ history }) => {
             cancelText="No"
             onConfirm={() => deleteItem(record.id)}
           >
-            <Button type="link" style={{ padding: 0, margin: 6 }}>
+            <Button type="link" style={{ padding: 0, marginLeft: 8 }}>
               <DeleteOutlined />
             </Button>
           </Popconfirm>
@@ -134,7 +142,10 @@ const StagingList: React.FC<RouteComponentProps> = ({ history }) => {
             cancelText="No"
             onConfirm={() => handleStage(record.id)}
           >
-            <Button type="link" style={{ color: "red", padding: 0, margin: 6 }}>
+            <Button
+              type="link"
+              style={{ color: "green", padding: 0, margin: 6 }}
+            >
               <ArrowRightOutlined />
             </Button>
           </Popconfirm>
