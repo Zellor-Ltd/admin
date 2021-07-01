@@ -114,7 +114,14 @@ const StagingList: React.FC<RouteComponentProps> = ({ history }) => {
       width: "15%",
       align: "center",
       render: (lastImportDate: Date | null | undefined) =>
-        lastImportDate ? moment(lastImportDate).format("DD/MM/YYYY") : "",
+        lastImportDate ? (
+          <>
+            <div>{moment(lastImportDate).format("DD/MM/YYYY")}</div>
+            <div>{moment(lastImportDate).format("HH:mm")}</div>
+          </>
+        ) : (
+          ""
+        ),
     },
     {
       title: "actions",
@@ -136,19 +143,13 @@ const StagingList: React.FC<RouteComponentProps> = ({ history }) => {
               <DeleteOutlined />
             </Button>
           </Popconfirm>
-          <Popconfirm
-            title="Are you sure？"
-            okText="Yes"
-            cancelText="No"
-            onConfirm={() => handleStage(record.id)}
+          <Button
+            onClick={() => handleStage(record.id)}
+            type="link"
+            style={{ color: "green", padding: 0, margin: 6 }}
           >
-            <Button
-              type="link"
-              style={{ color: "green", padding: 0, margin: 6 }}
-            >
-              <ArrowRightOutlined />
-            </Button>
-          </Popconfirm>
+            <ArrowRightOutlined />
+          </Button>
         </>
       ),
     },
