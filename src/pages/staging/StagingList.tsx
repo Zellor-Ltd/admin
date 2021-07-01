@@ -23,7 +23,7 @@ import { useEffect, useState } from "react";
 import { RouteComponentProps } from "react-router";
 import { Link } from "react-router-dom";
 import {
-  deleteProduct,
+  deleteStagingProduct,
   fetchStagingProducts,
   transferStageProduct,
 } from "services/DiscoClubService";
@@ -48,7 +48,7 @@ const StagingList: React.FC<RouteComponentProps> = ({ history }) => {
   const deleteItem = async (id: string) => {
     try {
       setLoading(true);
-      await deleteProduct({ id });
+      await deleteStagingProduct(id);
       await fetch();
       setLoading(false);
     } catch (err) {

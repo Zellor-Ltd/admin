@@ -121,9 +121,8 @@ export const saveProduct = (params: Product) => {
   }
 };
 
-export const saveStagingProduct = (params: Product) => {
+export const saveStagingProduct = (params: Product) =>
   instance.post("Disco/Staging/Product/Update", params);
-};
 
 export const saveCreator = (params: Creator) => {
   if (params.id) {
@@ -224,8 +223,8 @@ export const deleteCreator = (id: string) =>
 export const deleteProduct = (data: IDelete) =>
   instance.delete(`Wi/Ep/RemoveProduct`, { data });
 
-export const deleteStagingProduct = (data: IDelete) =>
-  instance.delete(`Disco/Staging/Product/Remove`, { data });
+export const deleteStagingProduct = (id: string) =>
+  instance.delete(`Disco/Staging/Product/Remove/${id}`);
 
 export const deleteBrand = (data: IDelete) =>
   instance.delete(`Wi/Ep/RemoveBrand`, { data });
