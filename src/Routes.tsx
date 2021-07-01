@@ -30,6 +30,8 @@ import Orders from "pages/orders/Orders";
 import OrderDetail from "pages/orders/OrderDetail";
 import Transactions from "pages/transactions/Transactions";
 import FeedMixer from "pages/feed-mixer/FeedMixer";
+import StagingList from "pages/staging/StagingList";
+import StagingProductDetail from "pages/staging/StagingProductDetail";
 
 function Routes() {
   return (
@@ -162,6 +164,16 @@ function Routes() {
       <AuthRoute
         path="/feed-mixer"
         component={FeedMixer}
+        layout={AuthenticatedLayout}
+      />
+      <AuthRoute
+        path="/staging-product"
+        component={StagingProductDetail}
+        layout={AuthenticatedLayout}
+      />
+      <AuthRoute
+        path="/staging-list"
+        component={StagingList}
         layout={AuthenticatedLayout}
       />
     </Switch>
