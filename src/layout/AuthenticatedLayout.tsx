@@ -40,7 +40,10 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = (props) => {
     <Layout>
       <Header className="header">
         <h2>
-          <Link to="/"> Disco Admin <small style={{ fontSize: 10 }}>v 1.22.06.1756</small></Link>
+          <Link to="/">
+            {" "}
+            Disco Admin <small style={{ fontSize: 10 }}>v 1.22.06.1756</small>
+          </Link>
         </h2>
         <div>
           <Typography.Text style={{ color: "white" }}>
@@ -69,6 +72,9 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = (props) => {
             </Menu.Item>
             <Menu.Item key="products" icon={<TagOutlined />}>
               <Link to="/products">Products</Link>
+            </Menu.Item>
+            <Menu.Item key="staging-list" icon={<TagOutlined />}>
+              <Link to="/staging-list">Staging</Link>
             </Menu.Item>
             <Menu.Item key="2" icon={<HeartFilled />}>
               <Link to="/feed">Videos Feed</Link>
