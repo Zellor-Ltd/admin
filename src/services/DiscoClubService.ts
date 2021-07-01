@@ -69,6 +69,9 @@ export const fetchVideoFeed = () => instance.get("Wi/Ep/ListVideoFeed");
 
 export const fetchProducts = () => instance.get("Wi/Ep/ListProducts");
 
+export const fetchStagingProducts = () =>
+  instance.put("Disco/Staging/Product/List", {});
+
 export const fetchBrands = () => instance.get("Wi/Ep/ListBrands");
 
 export const fetchCategories = () => instance.get("Wi/Ep/GetProductCategories");
@@ -117,6 +120,9 @@ export const saveProduct = (params: Product) => {
     return instance.put("/Disco/Product/Add", params);
   }
 };
+
+export const saveStagingProduct = (params: Product) =>
+  instance.post("Disco/Staging/Product/Update", params);
 
 export const saveCreator = (params: Creator) => {
   if (params.id) {
@@ -217,6 +223,9 @@ export const deleteCreator = (id: string) =>
 export const deleteProduct = (data: IDelete) =>
   instance.delete(`Wi/Ep/RemoveProduct`, { data });
 
+export const deleteStagingProduct = (id: string) =>
+  instance.delete(`Disco/Staging/Product/Remove/${id}`);
+
 export const deleteBrand = (data: IDelete) =>
   instance.delete(`Wi/Ep/RemoveBrand`, { data });
 
@@ -233,3 +242,6 @@ export const unlockFeed = (id: string) =>
   instance.get(`/Disco/Feed/RebuildOne/${id}`);
 
 export const rebuildAllFeedd = () => instance.get("/Disco/Feed/RebuildAll");
+
+export const transferStageProduct = (productId: string) =>
+  instance.get(`Disco/Staging/Product/Transfer/${productId}`);
