@@ -4,3 +4,10 @@ export const sleep = (ms: number) =>
       resolve(true);
     }, ms);
   });
+
+export const categoriesKeys = [
+  "Super Category",
+  "Category",
+  "Sub Category",
+  "Sub Sub Category",
+];

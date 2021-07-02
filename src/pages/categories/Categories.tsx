@@ -5,6 +5,8 @@ import {
   Table,
   Image as AntImage,
   Tabs,
+  Menu,
+  Dropdown,
 } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import { ProductCategory } from "interfaces/Category";
@@ -20,13 +22,7 @@ import {
   fetchProductSubCategories,
   fetchProductSubSubCategories,
 } from "services/DiscoClubService";
-
-const categoriesKeys = [
-  "Super Category",
-  "Category",
-  "Sub Category",
-  "Sub Sub Category",
-];
+import { categoriesKeys } from "helpers/utils";
 
 type AllCategories =
   | {
@@ -116,9 +112,31 @@ const Categories: React.FC<RouteComponentProps> = (props) => {
         title="Categories"
         subTitle="List of categories"
         extra={[
-          <Button key="1" onClick={() => history.push("/category")}>
-            New Item
-          </Button>,
+          <Dropdown
+            overlay={
+              <Menu>
+                {categoriesKeys.map((key, index) => (
+                  <Menu.Item>
+                    <Link
+                      to={{
+                        pathname: `/category`,
+                        search: `?category-level=${index}`,
+                      }}
+                    >
+                      {key}
+                    </Link>
+                  </Menu.Item>
+                ))}
+              </Menu>
+            }
+            trigger={["click"]}
+          >
+            <Button>New Item</Button>
+          </Dropdown>,
+
+          // <Button key="1" onClick={() => history.push("/category")}>
+          //   New Item
+          // </Button>,
         ]}
       />
       <Tabs onChange={handleTabChange}>
