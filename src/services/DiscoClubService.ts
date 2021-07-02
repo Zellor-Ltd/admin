@@ -76,6 +76,15 @@ export const fetchBrands = () => instance.get("Wi/Ep/ListBrands");
 
 export const fetchCategories = () => instance.get("Wi/Ep/GetProductCategories");
 
+export const fetchProductSuperCategories = () =>
+  instance.get("Wi/Ep/GetProductCategories"); // instance.put("Wi/Ep/ListProductSuperCategories", {});
+export const fetchProductCategories = () =>
+  instance.get("Wi/Ep/GetProductCategories"); // instance.put("Wi/Ep/ListProductCategories", {});
+export const fetchProductSubCategories = () =>
+  instance.get("Wi/Ep/GetProductCategories"); // instance.put("Wi/Ep/ListProductSubCategories", {});
+export const fetchProductSubSubCategories = () =>
+  instance.get("Wi/Ep/GetProductCategories"); // instance.put("Wi/Ep/ListProductSubSubCategories", {});
+
 export const fetchTags = () => instance.get("Wi/Ep/ListTags");
 
 export const fetchCreators = () => instance.get("Wi/Ep/ListCreators");

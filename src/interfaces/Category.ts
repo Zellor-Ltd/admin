@@ -6,3 +6,13 @@ export interface Category {
   image: Image;
   searchTags?: string[];
 }
+
+export interface ProductCategory {
+  id: string;
+  supercategory?: string;
+  category?: string;
+  subcategory?: string;
+  subsubcategory?: string;
+  image: Image;
+  searchTags?: string[];
+}
