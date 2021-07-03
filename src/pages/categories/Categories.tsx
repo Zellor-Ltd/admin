@@ -17,13 +17,13 @@ import { useEffect, useState } from "react";
 import { Image } from "interfaces/Image";
 import { deleteCategory } from "services/DiscoClubService";
 import { categoriesSettings } from "helpers/utils";
-import useFetchAllCategories from "hooks/useFetchAllCategories";
+import useAllCategories from "hooks/useAllCategories";
 
 const { categoriesKeys } = categoriesSettings;
 
 const Categories: React.FC<RouteComponentProps> = () => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [fetchAllCategories, allCategories] = useFetchAllCategories(setLoading);
+  const { fetchAllCategories, allCategories } = useAllCategories(setLoading);
 
   useEffect(() => {
     fetchAllCategories();

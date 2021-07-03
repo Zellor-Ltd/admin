@@ -16,7 +16,7 @@ import { saveCategory } from "services/DiscoClubService";
 import { SearchTag } from "interfaces/SearchTag";
 import SearchTags from "./SearchTags";
 import { categoriesSettings } from "helpers/utils";
-import useFetchAllCategories from "hooks/useFetchAllCategories";
+import useAllCategories from "hooks/useAllCategories";
 import { AllCategories, ProductCategory } from "interfaces/Category";
 
 const { categoriesKeys, categoriesArray } = categoriesSettings;
@@ -30,8 +30,8 @@ const CategoryDetail: React.FC<RouteComponentProps> = (props) => {
   const categoryUpdateName = categoriesKeys[categoryLevel];
 
   const [loading, setLoading] = useState<boolean>(false);
-  const [fetchAllCategories, _, filteredCategories, filterCategory] =
-    useFetchAllCategories(setLoading);
+  const { fetchAllCategories, filteredCategories, filterCategory } =
+    useAllCategories(setLoading);
 
   const [form] = Form.useForm();
 

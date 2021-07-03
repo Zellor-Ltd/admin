@@ -11,29 +11,34 @@ import { FormInstance } from "antd";
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 
-const useFetchAllCategories = (
+const useAllCategories = (
   setLoading?: React.Dispatch<React.SetStateAction<boolean>>
-): [() => Promise<void>, AllCategories, AllCategories, Function, boolean] => {
+): {
+  fetchAllCategories: () => Promise<void>;
+  allCategories: AllCategories;
+  filteredCategories: AllCategories;
+  filterCategory: Function;
+  _loading: boolean;
+} => {
   const [allCategories, setAllCategories] = useState<AllCategories>({
     "Super Category": [],
     Category: [],
     "Sub Category": [],
     "Sub Sub Category": [],
   });
-  const [filteredAllCategories, setFilteredAllCategories] =
-    useState<AllCategories>({
-      "Super Category": [],
-      Category: [],
-      "Sub Category": [],
-      "Sub Sub Category": [],
-    });
+  const [filteredCategories, setFilteredCategories] = useState<AllCategories>({
+    "Super Category": [],
+    Category: [],
+    "Sub Category": [],
+    "Sub Sub Category": [],
+  });
 
   useEffect(() => {
-    setFilteredAllCategories((prev) => ({
+    setFilteredCategories((prev) => ({
       ...prev,
       "Super Category": allCategories["Super Category"],
     }));
-  }, [allCategories, setFilteredAllCategories]);
+  }, [allCategories, setFilteredCategories]);
 
   const [_loading, _setLoading] = useState<boolean>(false);
 
@@ -42,7 +47,7 @@ const useFetchAllCategories = (
     value: string,
     form: FormInstance<any>
   ) => {
-    const newFilteredCategories = { ...filteredAllCategories };
+    const newFilteredCategories = { ...filteredCategories };
 
     const index = categoriesKeys.indexOf(key);
 
@@ -57,7 +62,7 @@ const useFetchAllCategories = (
       }
       form.setFieldsValue({ [categoriesFields[i]]: "" });
     }
-    setFilteredAllCategories(newFilteredCategories);
+    setFilteredCategories(newFilteredCategories);
   };
 
   const fetchAllCategories = useCallback(async () => {
@@ -90,13 +95,13 @@ const useFetchAllCategories = (
     }
   }, [setLoading]);
 
-  return [
+  return {
     fetchAllCategories,
     allCategories,
-    filteredAllCategories,
+    filteredCategories,
     filterCategory,
     _loading,
-  ];
+  };
 };
 
-export default useFetchAllCategories;
+export default useAllCategories;
