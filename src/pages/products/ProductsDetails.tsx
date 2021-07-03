@@ -95,6 +95,7 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
           };
           return filteredCategories[key as keyof AllCategories].find(
             (category: any) =>
+              // @TODO: filterbycategoryfield
               // category[field as keyof ProductCategory] === selectedCategoryName
               category.name === selectedCategoryName
           );
@@ -125,8 +126,8 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
     [form, initial, filteredCategories]
   );
 
-  const handleCategoryChange = (key: string, value: string) => {
-    filterCategory(key, value, form);
+  const handleCategoryChange = (key: string) => {
+    filterCategory(key, form);
     setSearchTagsByCategory(false);
   };
 
@@ -362,9 +363,7 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                         !filteredCategories[key as keyof AllCategories].length
                       }
                       placeholder="Please select a category"
-                      onChange={(value) =>
-                        handleCategoryChange(key, String(value))
-                      }
+                      onChange={() => handleCategoryChange(key)}
                     >
                       {(
                         filteredCategories[

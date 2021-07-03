@@ -42,11 +42,7 @@ const useAllCategories = (
 
   const [_loading, _setLoading] = useState<boolean>(false);
 
-  const filterCategory = (
-    key: string,
-    value: string,
-    form: FormInstance<any>
-  ) => {
+  const filterCategory = (key: string, form: FormInstance<any>) => {
     const newFilteredCategories = { ...filteredCategories };
 
     const index = categoriesKeys.indexOf(key);
@@ -55,6 +51,7 @@ const useAllCategories = (
       const iteratorKey = categoriesKeys[i] as keyof AllCategories;
       if (i === index + 1) {
         newFilteredCategories[iteratorKey] = allCategories[iteratorKey].filter(
+          // @TODO: filterbycategoryfield
           () => true
         );
       } else {

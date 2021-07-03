@@ -93,7 +93,7 @@ const CategoryDetail: React.FC<RouteComponentProps> = (props) => {
                         !filteredCategories[key as keyof AllCategories].length
                       }
                       placeholder="Please select a category"
-                      onChange={(value) => filterCategory(key, value, form)}
+                      onChange={(value) => filterCategory(key, form)}
                     >
                       {(
                         filteredCategories[
