@@ -24,6 +24,7 @@ const { categoriesKeys } = categoriesSettings;
 const Categories: React.FC<RouteComponentProps> = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const { fetchAllCategories, allCategories } = useAllCategories(setLoading);
+  const [selectedTab, setSelectedTab] = useState<string>("Super Category");
 
   useEffect(() => {
     fetchAllCategories();
@@ -54,9 +55,15 @@ const Categories: React.FC<RouteComponentProps> = () => {
       key: "action",
       width: "5%",
       align: "right",
-      render: (value, record) => (
+      render: (_, record) => (
         <>
-          <Link to={{ pathname: `/category`, state: record }}>
+          <Link
+            to={{
+              pathname: `/category`,
+              search: `?category-level=${categoriesKeys.indexOf(selectedTab)}`,
+              state: record,
+            }}
+          >
             <EditOutlined />
           </Link>
           <Popconfirm
@@ -74,7 +81,9 @@ const Categories: React.FC<RouteComponentProps> = () => {
     },
   ];
 
-  const handleTabChange = () => {};
+  const handleTabChange = (value: string) => {
+    setSelectedTab(value);
+  };
 
   return (
     <div className="categories">
@@ -103,10 +112,6 @@ const Categories: React.FC<RouteComponentProps> = () => {
           >
             <Button>New Item</Button>
           </Dropdown>,
-
-          // <Button key="1" onClick={() => history.push("/category")}>
-          //   New Item
-          // </Button>,
         ]}
       />
       <Tabs onChange={handleTabChange}>
