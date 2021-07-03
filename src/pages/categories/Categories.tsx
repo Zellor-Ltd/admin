@@ -9,61 +9,32 @@ import {
   Dropdown,
 } from "antd";
 import { ColumnsType } from "antd/lib/table";
-import { ProductCategory } from "interfaces/Category";
+import { ProductCategory, AllCategories } from "interfaces/Category";
 import { RouteComponentProps } from "react-router";
 import { Link } from "react-router-dom";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { Image } from "interfaces/Image";
-import {
-  deleteCategory,
-  fetchProductSuperCategories,
-  fetchProductCategories,
-  fetchProductSubCategories,
-  fetchProductSubSubCategories,
-} from "services/DiscoClubService";
-import { categoriesKeys } from "helpers/utils";
+import { deleteCategory } from "services/DiscoClubService";
+import { categoriesSettings } from "helpers/utils";
+import useFetchAllCategories from "hooks/useFetchAllCategories";
 
-type AllCategories =
-  | {
-      "Super Category": ProductCategory[];
-      Category: ProductCategory[];
-      "Sub Category": ProductCategory[];
-      "Sub Sub Category": ProductCategory[];
-    }
-  | {};
+const { categoriesKeys } = categoriesSettings;
 
 const Categories: React.FC<RouteComponentProps> = (props) => {
   const { history } = props;
   const [loading, setLoading] = useState<boolean>(false);
-  const [allCategories, setAllCategories] = useState<AllCategories>({});
-
-  const fetch = async () => {
-    setLoading(true);
-    const responses: any[] = await Promise.all([
-      fetchProductSuperCategories(),
-      fetchProductCategories(),
-      fetchProductSubCategories(),
-      fetchProductSubSubCategories(),
-    ]);
-    setLoading(false);
-    setAllCategories({
-      "Super Category": responses[0].results,
-      Category: responses[1].results,
-      "Sub Category": responses[2].results,
-      "Sub Sub Category": responses[3].results,
-    });
-  };
+  const [fetchAllCategories, allCategories] = useFetchAllCategories(setLoading);
 
   useEffect(() => {
-    fetch();
-  }, []);
+    fetchAllCategories();
+  }, [fetchAllCategories]);
 
   const deleteItem = async (id: string) => {
     try {
       setLoading(true);
       await deleteCategory({ id });
-      fetch();
+      fetchAllCategories();
     } catch (err) {
       console.log(err);
     } finally {

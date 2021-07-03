@@ -1,17 +1,42 @@
-import { Button, Col, Form, Input, message, PageHeader, Row } from "antd";
+import {
+  Button,
+  Col,
+  Form,
+  Input,
+  message,
+  PageHeader,
+  Row,
+  Select,
+} from "antd";
 import { Upload } from "components";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { RouteComponentProps } from "react-router";
 import { saveCategory } from "services/DiscoClubService";
 
 import { SearchTag } from "interfaces/SearchTag";
 import SearchTags from "./SearchTags";
+import { categoriesSettings } from "helpers/utils";
+import useFetchAllCategories from "hooks/useFetchAllCategories";
+import { AllCategories, ProductCategory } from "interfaces/Category";
+
+const { categoriesKeys, categoriesArray } = categoriesSettings;
 
 const CategoryDetail: React.FC<RouteComponentProps> = (props) => {
   const { history, location } = props;
   const initial: any = location.state;
+  const params = new URLSearchParams(location.search);
+
+  const categoryLevel = Number(params.get("category-level"));
+  const categoryUpdateName = categoriesKeys[categoryLevel];
+
   const [loading, setLoading] = useState<boolean>(false);
+  const [fetchAllCategories, allCategories] = useFetchAllCategories(setLoading);
+
   const [form] = Form.useForm();
+
+  useEffect(() => {
+    fetchAllCategories();
+  }, [fetchAllCategories]);
 
   const convertTagsIntoStrings = (searchTag: SearchTag): string => {
     return `${searchTag.name}:${searchTag.value}`;
@@ -40,20 +65,44 @@ const CategoryDetail: React.FC<RouteComponentProps> = (props) => {
       setLoading(false);
     }
   };
+
   return (
     <>
-      <PageHeader title="Category Update" subTitle="Category" />
+      <PageHeader title={`${categoryUpdateName} Update`} subTitle="Category" />
       <Form
         name="categoryForm"
         layout="vertical"
         form={form}
+        onFinish={onFinish}
         initialValues={initial}
       >
         <Row gutter={8}>
           <Col lg={12} xs={24}>
-            <Form.Item label="Name" name="name">
-              <Input />
-            </Form.Item>
+            {categoriesArray
+              .filter((_, index) => index < categoryLevel + 1)
+              .map(({ key, field }, _index) => (
+                <Form.Item
+                  label={key}
+                  name={field}
+                  rules={[{ required: true }]}
+                >
+                  {_index < categoryLevel ? (
+                    <Select placeholder="Please select a category">
+                      {(
+                        allCategories[
+                          key as keyof AllCategories
+                        ] as unknown as ProductCategory[]
+                      ).map((category: any) => (
+                        <Select.Option key={category.id} value={category.id}>
+                          {category.name}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  ) : (
+                    <Input></Input>
+                  )}
+                </Form.Item>
+              ))}
             <SearchTags form={form} tagsAsStrings={initial?.searchTags} />
           </Col>
           <Col lg={12} xs={24}>
@@ -74,7 +123,7 @@ const CategoryDetail: React.FC<RouteComponentProps> = (props) => {
             </Button>
           </Col>
           <Col>
-            <Button loading={loading} type="primary" onClick={onFinish}>
+            <Button loading={loading} type="primary" htmlType="submit">
               Save Changes
             </Button>
           </Col>

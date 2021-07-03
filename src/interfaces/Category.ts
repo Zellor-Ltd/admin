@@ -16,3 +16,12 @@ export interface ProductCategory {
   image: Image;
   searchTags?: string[];
 }
+
+export type AllCategories =
+  | {
+      "Super Category": ProductCategory[];
+      Category: ProductCategory[];
+      "Sub Category": ProductCategory[];
+      "Sub Sub Category": ProductCategory[];
+    }
+  | {};
