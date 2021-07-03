@@ -30,7 +30,8 @@ const CategoryDetail: React.FC<RouteComponentProps> = (props) => {
   const categoryUpdateName = categoriesKeys[categoryLevel];
 
   const [loading, setLoading] = useState<boolean>(false);
-  const [fetchAllCategories, allCategories] = useFetchAllCategories(setLoading);
+  const [fetchAllCategories, _, filteredCategories, filterCategory] =
+    useFetchAllCategories(setLoading);
 
   const [form] = Form.useForm();
 
@@ -87,13 +88,19 @@ const CategoryDetail: React.FC<RouteComponentProps> = (props) => {
                   rules={[{ required: true }]}
                 >
                   {_index < categoryLevel ? (
-                    <Select placeholder="Please select a category">
+                    <Select
+                      disabled={
+                        !filteredCategories[key as keyof AllCategories].length
+                      }
+                      placeholder="Please select a category"
+                      onChange={(value) => filterCategory(key, value, form)}
+                    >
                       {(
-                        allCategories[
+                        filteredCategories[
                           key as keyof AllCategories
                         ] as unknown as ProductCategory[]
                       ).map((category: any) => (
-                        <Select.Option key={category.id} value={category.id}>
+                        <Select.Option key={category.id} value={category.name}>
                           {category.name}
                         </Select.Option>
                       ))}

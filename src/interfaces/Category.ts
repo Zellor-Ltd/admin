@@ -17,11 +17,9 @@ export interface ProductCategory {
   searchTags?: string[];
 }
 
-export type AllCategories =
-  | {
-      "Super Category": ProductCategory[];
-      Category: ProductCategory[];
-      "Sub Category": ProductCategory[];
-      "Sub Sub Category": ProductCategory[];
-    }
-  | {};
+export interface AllCategories {
+  "Super Category": ProductCategory[];
+  Category: ProductCategory[];
+  "Sub Category": ProductCategory[];
+  "Sub Sub Category": ProductCategory[];
+}

@@ -21,8 +21,7 @@ import useFetchAllCategories from "hooks/useFetchAllCategories";
 
 const { categoriesKeys } = categoriesSettings;
 
-const Categories: React.FC<RouteComponentProps> = (props) => {
-  const { history } = props;
+const Categories: React.FC<RouteComponentProps> = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [fetchAllCategories, allCategories] = useFetchAllCategories(setLoading);
 
