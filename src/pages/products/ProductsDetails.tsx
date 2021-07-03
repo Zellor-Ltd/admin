@@ -1,14 +1,3 @@
-import { ColumnsType } from "antd/lib/table";
-import { Brand } from "interfaces/Brand";
-import { Video } from "interfaces/Video";
-import { useCallback, useEffect, useState } from "react";
-import { RouteComponentProps } from "react-router";
-import {
-  fetchBrands,
-  fetchCategories,
-  saveProduct,
-} from "services/DiscoClubService";
-import { formatMoment } from "helpers/formatMoment";
 import {
   Button,
   Col,
@@ -26,9 +15,20 @@ import {
   Table,
   Typography,
 } from "antd";
-import { useSelector } from "react-redux";
+import { ColumnsType } from "antd/lib/table";
 import { Upload } from "components";
-import { Category } from "interfaces/Category";
+import { formatMoment } from "helpers/formatMoment";
+import { categoriesSettings } from "helpers/utils";
+import useAllCategories from "hooks/useAllCategories";
+import { Brand } from "interfaces/Brand";
+import { AllCategories, ProductCategory } from "interfaces/Category";
+import { Video } from "interfaces/Video";
+import { useCallback, useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { RouteComponentProps } from "react-router";
+import { fetchBrands, saveProduct } from "services/DiscoClubService";
+
+const { categoriesArray } = categoriesSettings;
 
 const videoColumns: ColumnsType<Video> = [
   {
@@ -49,9 +49,11 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
   const initial: any = location.state;
   const [loading, setLoading] = useState<boolean>(false);
   const [brands, setBrands] = useState<Brand[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
   const [ageRange, setageRange] = useState<[number, number]>([12, 100]);
   const [form] = Form.useForm();
+
+  const { fetchAllCategories, filteredCategories, filterCategory } =
+    useAllCategories(setLoading);
 
   const {
     settings: { currency = [] },
@@ -86,30 +88,52 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
 
   const setSearchTagsByCategory = useCallback(
     (useInitialValue: boolean) => {
-      const product = form.getFieldsValue(true);
-      const selectedCategory = categories?.find(
-        (category: Category) => category.id === product.category?.id
+      const selectedCategories = categoriesArray
+        .map(({ key, field }) => {
+          const { id: selectedCategoryName } = form.getFieldValue(field) || {
+            id: "",
+          };
+          return filteredCategories[key as keyof AllCategories].find(
+            (category: any) =>
+              // category[field as keyof ProductCategory] === selectedCategoryName
+              category.name === selectedCategoryName
+          );
+        })
+        .filter((v) => v && v.searchTags);
+
+      const selectedCategoriesSearchTags = Array.from(
+        new Set(
+          selectedCategories
+            .map((category) => category!.searchTags)
+            .reduce((prev, curr) => {
+              return prev?.concat(curr || []);
+            }, [])
+        )
       );
 
       let searchTags;
-
       if (useInitialValue && initial) {
-        searchTags = initial.searchTags || selectedCategory?.searchTags;
+        searchTags = initial.searchTags || selectedCategoriesSearchTags;
       } else {
-        searchTags = selectedCategory?.searchTags;
+        searchTags = selectedCategoriesSearchTags;
       }
 
       form.setFieldsValue({
         searchTags,
       });
     },
-    [categories, form, initial]
+    [form, initial, filteredCategories]
   );
+
+  const handleCategoryChange = (key: string, value: string) => {
+    filterCategory(key, value, form);
+    setSearchTagsByCategory(false);
+  };
 
   useEffect(() => {
     setPaymentUrlsByBrand(true);
     setSearchTagsByCategory(true);
-  }, [categories, setSearchTagsByCategory, brands, setPaymentUrlsByBrand]);
+  }, [brands, setPaymentUrlsByBrand, setSearchTagsByCategory]);
 
   useEffect(() => {
     let mounted = true;
@@ -123,17 +147,12 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
       }
     };
 
-    async function getCategories() {
-      const response: any = await fetchCategories();
-      setCategories(response.results);
-    }
-
     getBrands();
-    getCategories();
+    fetchAllCategories();
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [fetchAllCategories]);
 
   useEffect(() => {
     if (initial?.ageMin && initial?.ageMax)
@@ -155,9 +174,6 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
       const product = form.getFieldsValue(true);
       product.brand = brands?.find((brand) => brand.id === product.brand?.id);
 
-      product.category = categories?.find(
-        (category) => category.id === product.category?.id
-      );
       await saveProduct(product);
 
       setLoading(false);
@@ -308,25 +324,6 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                   <DatePicker format="DD/MM/YYYY" />
                 </Form.Item>
               </Col>
-
-              <Col lg={12} xs={24}>
-                <Form.Item
-                  name={["category", "id"]}
-                  label="Category"
-                  rules={[{ required: true }]}
-                >
-                  <Select
-                    placeholder="Please select a category"
-                    onChange={() => setSearchTagsByCategory(false)}
-                  >
-                    {categories.map((category: any) => (
-                      <Select.Option key={category.id} value={category.id}>
-                        {category.name}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </Form.Item>
-              </Col>
               <Col lg={8} xs={24}>
                 <Form.Item name="checkout" label="Checkout">
                   <Radio.Group buttonStyle="solid">
@@ -352,6 +349,35 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                 >
                   <Switch />
                 </Form.Item>
+              </Col>
+              <Col lg={12} xs={24}>
+                {categoriesArray.map(({ key, field }, index) => (
+                  <Form.Item
+                    label={key}
+                    name={[field, "id"]}
+                    rules={[{ required: index < 2 }]}
+                  >
+                    <Select
+                      disabled={
+                        !filteredCategories[key as keyof AllCategories].length
+                      }
+                      placeholder="Please select a category"
+                      onChange={(value) =>
+                        handleCategoryChange(key, String(value))
+                      }
+                    >
+                      {(
+                        filteredCategories[
+                          key as keyof AllCategories
+                        ] as unknown as ProductCategory[]
+                      ).map((category: any) => (
+                        <Select.Option key={category.id} value={category.name}>
+                          {category.name}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
+                ))}
               </Col>
               <Col lg={16} xs={24}>
                 <Form.Item
