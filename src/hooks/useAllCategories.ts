@@ -111,23 +111,6 @@ const useAllCategories = (
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allCategories, setFilteredCategories]);
 
-  // useEffect(() => {
-  //   setFilteredCategories((prev) => {
-  //     return {
-  //       "Super Category": allCategories["Super Category"],
-  //       Category: selectedCategories?.category
-  //         ? [selectedCategories?.category]
-  //         : [],
-  //       "Sub Category": selectedCategories?.subcategory
-  //         ? [selectedCategories?.subcategory]
-  //         : [],
-  //       "Sub Sub Category": selectedCategories?.subsubcategory
-  //         ? [selectedCategories?.subsubcategory]
-  //         : [],
-  //     };
-  //   });
-  // }, [allCategories, selectedCategories, setFilteredCategories]);
-
   const fetchAllCategories = useCallback(async () => {
     try {
       _setLoading(true);
