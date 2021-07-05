@@ -37,7 +37,17 @@ const CategoryDetail: React.FC<RouteComponentProps> = (props) => {
 
   const [loading, setLoading] = useState<boolean>(false);
   const { fetchAllCategories, filteredCategories, filterCategory } =
-    useAllCategories(setLoading);
+    useAllCategories(
+      setLoading,
+      initial
+        ? {
+            supercategory: initial.supercategory,
+            category: initial.category,
+            subcategory: initial.subcategory,
+            subsubcategory: initial.subsubcategory,
+          }
+        : undefined
+    );
 
   const [form] = Form.useForm();
 
@@ -100,14 +110,17 @@ const CategoryDetail: React.FC<RouteComponentProps> = (props) => {
                       disabled={
                         !filteredCategories[key as keyof AllCategories].length
                       }
-                      allowClear={true}
+                      // allowClear={true}
                       placeholder="Please select a category"
                       onChange={(_, option: any) =>
                         filterCategory(
                           option?.children as string,
                           key,
                           (_field) => {
-                            form.setFieldsValue({ [_field]: "" });
+                            if (
+                              categoriesFields.indexOf(_field) < categoryLevel
+                            )
+                              form.setFieldsValue({ [_field]: "" });
                           }
                         )
                       }

@@ -24,6 +24,12 @@ export interface SelectedProductCategories {
   subsubcategory: ProductCategory;
 }
 
+export interface SelectedCategories {
+  supercategory: string;
+  category?: string;
+  subcategory?: string;
+  subsubcategory?: string;
+}
 export interface AllCategories {
   "Super Category": ProductCategory[];
   Category: ProductCategory[];

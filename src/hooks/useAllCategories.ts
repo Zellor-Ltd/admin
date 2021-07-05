@@ -1,17 +1,27 @@
 import {
   AllCategories,
   ProductCategory,
+  SelectedCategories,
   SelectedProductCategories,
 } from "interfaces/Category";
 import { useCallback, useEffect, useState } from "react";
 import { productCategoriesAPI } from "services/DiscoClubService";
 import { categoriesSettings } from "helpers/utils";
 
-const { categoriesKeys, categoriesFields } = categoriesSettings;
+const { categoriesKeys, categoriesFields, categoriesArray } =
+  categoriesSettings;
+
+const allCategoriesFactory = (): AllCategories => ({
+  "Super Category": [],
+  Category: [],
+  "Sub Category": [],
+  "Sub Sub Category": [],
+});
 
 const useAllCategories = (
   setLoading?: React.Dispatch<React.SetStateAction<boolean>>,
-  selectedCategories?: SelectedProductCategories
+  selectedCategories?: SelectedCategories,
+  selectedProductCategories?: SelectedProductCategories
 ): {
   fetchAllCategories: () => Promise<void>;
   allCategories: AllCategories;
@@ -19,36 +29,12 @@ const useAllCategories = (
   filterCategory: typeof filterCategory;
   _loading: boolean;
 } => {
-  const [allCategories, setAllCategories] = useState<AllCategories>({
-    "Super Category": [],
-    Category: [],
-    "Sub Category": [],
-    "Sub Sub Category": [],
-  });
-  const [filteredCategories, setFilteredCategories] = useState<AllCategories>({
-    "Super Category": [],
-    Category: [],
-    "Sub Category": [],
-    "Sub Sub Category": [],
-  });
-
-  useEffect(() => {
-    setFilteredCategories((prev) => {
-      return {
-        "Super Category": allCategories["Super Category"],
-        Category: selectedCategories?.category
-          ? [selectedCategories?.category]
-          : [],
-        "Sub Category": selectedCategories?.subcategory
-          ? [selectedCategories?.subcategory]
-          : [],
-        "Sub Sub Category": selectedCategories?.subsubcategory
-          ? [selectedCategories?.subsubcategory]
-          : [],
-      };
-    });
-  }, [allCategories, selectedCategories, setFilteredCategories]);
-
+  const [allCategories, setAllCategories] = useState<AllCategories>(
+    allCategoriesFactory()
+  );
+  const [filteredCategories, setFilteredCategories] = useState<AllCategories>(
+    allCategoriesFactory()
+  );
   const [_loading, _setLoading] = useState<boolean>(false);
 
   const filterCategory = (
@@ -78,6 +64,69 @@ const useAllCategories = (
     }
     setFilteredCategories(newFilteredCategories);
   };
+
+  useEffect(() => {
+    if (
+      (selectedCategories || selectedProductCategories) &&
+      allCategories["Super Category"].length
+    ) {
+      const newFilteredCategories = allCategoriesFactory();
+      categoriesArray.forEach(({ key: currKey, field: currField }, index) => {
+        if (index === 0) return;
+        const prevField = categoriesFields[index - 1];
+
+        let selectedValue: string | undefined;
+        if (selectedProductCategories) {
+          selectedValue =
+            selectedProductCategories?.[
+              prevField as keyof SelectedProductCategories
+            ]?.[prevField as keyof SelectedProductCategories];
+        } else if (selectedCategories) {
+          selectedValue =
+            selectedCategories[prevField as keyof SelectedCategories];
+        }
+
+        if (selectedValue) {
+          newFilteredCategories[currKey as keyof AllCategories] = allCategories[
+            currKey as keyof AllCategories
+          ].filter((category) => {
+            return (
+              category[prevField as keyof ProductCategory] === selectedValue
+            );
+          });
+        }
+      });
+      setFilteredCategories({
+        ...newFilteredCategories,
+        "Super Category": allCategories["Super Category"],
+      });
+    } else {
+      setFilteredCategories((prev) => {
+        return {
+          ...prev,
+          "Super Category": allCategories["Super Category"],
+        };
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allCategories, setFilteredCategories]);
+
+  // useEffect(() => {
+  //   setFilteredCategories((prev) => {
+  //     return {
+  //       "Super Category": allCategories["Super Category"],
+  //       Category: selectedCategories?.category
+  //         ? [selectedCategories?.category]
+  //         : [],
+  //       "Sub Category": selectedCategories?.subcategory
+  //         ? [selectedCategories?.subcategory]
+  //         : [],
+  //       "Sub Sub Category": selectedCategories?.subsubcategory
+  //         ? [selectedCategories?.subsubcategory]
+  //         : [],
+  //     };
+  //   });
+  // }, [allCategories, selectedCategories, setFilteredCategories]);
 
   const fetchAllCategories = useCallback(async () => {
     try {

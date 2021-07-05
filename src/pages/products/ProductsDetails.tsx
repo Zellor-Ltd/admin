@@ -54,7 +54,7 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
   const [form] = Form.useForm();
 
   const { fetchAllCategories, filteredCategories, filterCategory } =
-    useAllCategories(setLoading, initial?.categories);
+    useAllCategories(setLoading, undefined, initial?.categories);
 
   const {
     settings: { currency = [] },
