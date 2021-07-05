@@ -15,7 +15,7 @@ const categoriesArray = [
   { key: "Sub Category", field: "subcategory", ep: "ProductSubCategories" },
   {
     key: "Sub Sub Category",
-    field: "subsubCategory",
+    field: "subsubcategory",
     ep: "ProductSubSubCategories",
   },
 ];

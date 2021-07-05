@@ -11,7 +11,11 @@ import { Role } from "interfaces/Role";
 import { Tag } from "interfaces/Tag";
 import { User } from "interfaces/User";
 import { Privilege } from "interfaces/Privilege";
-import { Category } from "interfaces/Category";
+import {
+  AllCategoriesAPI,
+  Category,
+  ProductCategory,
+} from "interfaces/Category";
 
 export const instance = axios.create({
   baseURL: process.env.REACT_APP_HOST_ENDPOINT,
@@ -76,14 +80,48 @@ export const fetchBrands = () => instance.get("Wi/Ep/ListBrands");
 
 export const fetchCategories = () => instance.get("Wi/Ep/GetProductCategories");
 
-export const fetchProductSuperCategories = () =>
-  instance.get("Wi/Ep/GetProductCategories"); // instance.put("Wi/Ep/ListProductSuperCategories", {});
-export const fetchProductCategories = () =>
-  instance.get("Wi/Ep/GetProductCategories"); // instance.put("Wi/Ep/ListProductCategories", {});
-export const fetchProductSubCategories = () =>
-  instance.get("Wi/Ep/GetProductCategories"); // instance.put("Wi/Ep/ListProductSubCategories", {});
-export const fetchProductSubSubCategories = () =>
-  instance.get("Wi/Ep/GetProductCategories"); // instance.put("Wi/Ep/ListProductSubSubCategories", {});
+export const productCategoriesAPI: AllCategoriesAPI = {
+  supercategory: {
+    fetch: () => instance.get(`Wi/Ep/ListProductSuperCategories`),
+    save: (params: ProductCategory) => {
+      if (params.id) {
+        return instance.post("Wi/Ep/UpdateProductSuperCategories", params);
+      } else {
+        return instance.put("Wi/EP/AddProductSuperCategories", params);
+      }
+    },
+  },
+  category: {
+    fetch: () => instance.get(`Wi/Ep/ListProductCategories`),
+    save: (params: ProductCategory) => {
+      if (params.id) {
+        return instance.post("Wi/Ep/UpdateProductCategories", params);
+      } else {
+        return instance.put("Wi/EP/AddProductCategories", params);
+      }
+    },
+  },
+  subcategory: {
+    fetch: () => instance.get(`Wi/Ep/ListProductSubCategories`),
+    save: (params: ProductCategory) => {
+      if (params.id) {
+        return instance.post("Wi/Ep/UpdateProductSubCategories", params);
+      } else {
+        return instance.put("Wi/EP/AddProductSubCategories", params);
+      }
+    },
+  },
+  subsubcategory: {
+    fetch: () => instance.get(`Wi/Ep/ListProductSubSubCategories`),
+    save: (params: ProductCategory) => {
+      if (params.id) {
+        return instance.post("Wi/Ep/UpdateProductSubSubCategories", params);
+      } else {
+        return instance.put("Wi/EP/AddProductSubSubCategories", params);
+      }
+    },
+  },
+};
 
 export const fetchTags = () => instance.get("Wi/Ep/ListTags");
 

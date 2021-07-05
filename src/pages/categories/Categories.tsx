@@ -19,7 +19,7 @@ import { deleteCategory } from "services/DiscoClubService";
 import { categoriesSettings } from "helpers/utils";
 import useAllCategories from "hooks/useAllCategories";
 
-const { categoriesKeys } = categoriesSettings;
+const { categoriesKeys, categoriesFields } = categoriesSettings;
 
 const Categories: React.FC<RouteComponentProps> = () => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -43,7 +43,21 @@ const Categories: React.FC<RouteComponentProps> = () => {
   };
 
   const columns: ColumnsType<ProductCategory> = [
-    { title: "Name", dataIndex: "name", width: "15%" },
+    {
+      title: "Name",
+      width: "15%",
+      render: (_, record) => (
+        <>
+          {
+            record[
+              categoriesFields[
+                categoriesKeys.indexOf(selectedTab)
+              ] as keyof ProductCategory
+            ]
+          }
+        </>
+      ),
+    },
     {
       title: "Image",
       dataIndex: "image",

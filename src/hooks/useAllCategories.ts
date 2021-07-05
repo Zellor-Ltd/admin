@@ -1,11 +1,6 @@
 import { AllCategories } from "interfaces/Category";
 import { useCallback, useEffect, useState } from "react";
-import {
-  fetchProductSuperCategories,
-  fetchProductCategories,
-  fetchProductSubCategories,
-  fetchProductSubSubCategories,
-} from "services/DiscoClubService";
+import { productCategoriesAPI } from "services/DiscoClubService";
 import { categoriesSettings } from "helpers/utils";
 import { FormInstance } from "antd";
 
@@ -69,10 +64,10 @@ const useAllCategories = (
         setLoading(true);
       }
       const responses: any[] = await Promise.all([
-        fetchProductSuperCategories(),
-        fetchProductCategories(),
-        fetchProductSubCategories(),
-        fetchProductSubSubCategories(),
+        productCategoriesAPI.supercategory.fetch(),
+        productCategoriesAPI.category.fetch(),
+        productCategoriesAPI.subcategory.fetch(),
+        productCategoriesAPI.subsubcategory.fetch(),
       ]);
       _setLoading(false);
       if (setLoading) {

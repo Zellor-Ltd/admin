@@ -23,3 +23,16 @@ export interface AllCategories {
   "Sub Category": ProductCategory[];
   "Sub Sub Category": ProductCategory[];
 }
+
+export interface CategoryAPI {
+  fetch: Function;
+  save: Function;
+  delete?: Function;
+}
+
+export interface AllCategoriesAPI {
+  category: CategoryAPI;
+  supercategory: CategoryAPI;
+  subcategory: CategoryAPI;
+  subsubcategory: CategoryAPI;
+}

@@ -11,15 +11,20 @@ import {
 import { Upload } from "components";
 import React, { useEffect, useState } from "react";
 import { RouteComponentProps } from "react-router";
-import { saveCategory } from "services/DiscoClubService";
+import { productCategoriesAPI } from "services/DiscoClubService";
 
 import { SearchTag } from "interfaces/SearchTag";
 import SearchTags from "./SearchTags";
 import { categoriesSettings } from "helpers/utils";
 import useAllCategories from "hooks/useAllCategories";
-import { AllCategories, ProductCategory } from "interfaces/Category";
+import {
+  AllCategories,
+  AllCategoriesAPI,
+  ProductCategory,
+} from "interfaces/Category";
 
-const { categoriesKeys, categoriesArray } = categoriesSettings;
+const { categoriesKeys, categoriesArray, categoriesFields } =
+  categoriesSettings;
 
 const CategoryDetail: React.FC<RouteComponentProps> = (props) => {
   const { history, location } = props;
@@ -28,6 +33,7 @@ const CategoryDetail: React.FC<RouteComponentProps> = (props) => {
 
   const categoryLevel = Number(params.get("category-level"));
   const categoryUpdateName = categoriesKeys[categoryLevel];
+  const categoryField = categoriesFields[categoryLevel];
 
   const [loading, setLoading] = useState<boolean>(false);
   const { fetchAllCategories, filteredCategories, filterCategory } =
@@ -44,7 +50,7 @@ const CategoryDetail: React.FC<RouteComponentProps> = (props) => {
   };
 
   const onFinish = async () => {
-    const brand = {
+    const category = {
       ...form.getFieldsValue(true),
       searchTags: form
         .getFieldValue("searchTags")
@@ -53,7 +59,9 @@ const CategoryDetail: React.FC<RouteComponentProps> = (props) => {
     };
     setLoading(true);
     try {
-      const response: any = await saveCategory(brand);
+      const response: any = await productCategoriesAPI[
+        categoryField as keyof AllCategoriesAPI
+      ].save(category);
       if (response.success) {
         message.success("Register updated with success.");
         history.push("/categories");
@@ -99,9 +107,9 @@ const CategoryDetail: React.FC<RouteComponentProps> = (props) => {
                         filteredCategories[
                           key as keyof AllCategories
                         ] as unknown as ProductCategory[]
-                      ).map((category: any) => (
-                        <Select.Option key={category.id} value={category.name}>
-                          {category.name}
+                      ).map((category) => (
+                        <Select.Option key={category.id} value={category.id}>
+                          {category[field as keyof ProductCategory]}
                         </Select.Option>
                       ))}
                     </Select>
