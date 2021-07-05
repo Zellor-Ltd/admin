@@ -27,7 +27,7 @@ export interface AllCategories {
 export interface CategoryAPI {
   fetch: Function;
   save: Function;
-  delete?: Function;
+  delete: Function;
 }
 
 export interface AllCategoriesAPI {

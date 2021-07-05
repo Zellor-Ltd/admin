@@ -90,6 +90,8 @@ export const productCategoriesAPI: AllCategoriesAPI = {
         return instance.put("Wi/EP/AddProductSuperCategories", params);
       }
     },
+    delete: (data: IDelete) =>
+      instance.delete(`Wi/Ep/RemoveProductSuperCategories`, { data }),
   },
   category: {
     fetch: () => instance.get(`Wi/Ep/ListProductCategories`),
@@ -100,6 +102,8 @@ export const productCategoriesAPI: AllCategoriesAPI = {
         return instance.put("Wi/EP/AddProductCategories", params);
       }
     },
+    delete: (data: IDelete) =>
+      instance.delete(`Wi/Ep/RemoveProductCategories`, { data }),
   },
   subcategory: {
     fetch: () => instance.get(`Wi/Ep/ListProductSubCategories`),
@@ -110,6 +114,8 @@ export const productCategoriesAPI: AllCategoriesAPI = {
         return instance.put("Wi/EP/AddProductSubCategories", params);
       }
     },
+    delete: (data: IDelete) =>
+      instance.delete(`Wi/Ep/RemoveProductSubCategories`, { data }),
   },
   subsubcategory: {
     fetch: () => instance.get(`Wi/Ep/ListProductSubSubCategories`),
@@ -120,6 +126,8 @@ export const productCategoriesAPI: AllCategoriesAPI = {
         return instance.put("Wi/EP/AddProductSubSubCategories", params);
       }
     },
+    delete: (data: IDelete) =>
+      instance.delete(`Wi/Ep/RemoveProductSubSubCategories`, { data }),
   },
 };
 

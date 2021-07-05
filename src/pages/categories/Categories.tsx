@@ -9,13 +9,17 @@ import {
   Dropdown,
 } from "antd";
 import { ColumnsType } from "antd/lib/table";
-import { ProductCategory, AllCategories } from "interfaces/Category";
+import {
+  ProductCategory,
+  AllCategories,
+  AllCategoriesAPI,
+} from "interfaces/Category";
 import { RouteComponentProps } from "react-router";
 import { Link } from "react-router-dom";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { Image } from "interfaces/Image";
-import { deleteCategory } from "services/DiscoClubService";
+import { productCategoriesAPI } from "services/DiscoClubService";
 import { categoriesSettings } from "helpers/utils";
 import useAllCategories from "hooks/useAllCategories";
 
@@ -33,7 +37,14 @@ const Categories: React.FC<RouteComponentProps> = () => {
   const deleteItem = async (id: string) => {
     try {
       setLoading(true);
-      await deleteCategory({ id });
+      const selectedField = categoriesFields[
+        categoriesKeys.indexOf(selectedTab)
+      ] as keyof AllCategoriesAPI;
+      await productCategoriesAPI[
+        selectedField as keyof AllCategoriesAPI
+      ].delete({
+        id,
+      });
       fetchAllCategories();
     } catch (err) {
       console.log(err);
