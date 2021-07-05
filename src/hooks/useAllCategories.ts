@@ -1,18 +1,22 @@
-import { AllCategories } from "interfaces/Category";
+import {
+  AllCategories,
+  ProductCategory,
+  SelectedProductCategories,
+} from "interfaces/Category";
 import { useCallback, useEffect, useState } from "react";
 import { productCategoriesAPI } from "services/DiscoClubService";
 import { categoriesSettings } from "helpers/utils";
-import { FormInstance } from "antd";
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 
 const useAllCategories = (
-  setLoading?: React.Dispatch<React.SetStateAction<boolean>>
+  setLoading?: React.Dispatch<React.SetStateAction<boolean>>,
+  selectedCategories?: SelectedProductCategories
 ): {
   fetchAllCategories: () => Promise<void>;
   allCategories: AllCategories;
   filteredCategories: AllCategories;
-  filterCategory: Function;
+  filterCategory: typeof filterCategory;
   _loading: boolean;
 } => {
   const [allCategories, setAllCategories] = useState<AllCategories>({
@@ -29,15 +33,29 @@ const useAllCategories = (
   });
 
   useEffect(() => {
-    setFilteredCategories((prev) => ({
-      ...prev,
-      "Super Category": allCategories["Super Category"],
-    }));
-  }, [allCategories, setFilteredCategories]);
+    setFilteredCategories((prev) => {
+      return {
+        "Super Category": allCategories["Super Category"],
+        Category: selectedCategories?.category
+          ? [selectedCategories?.category]
+          : [],
+        "Sub Category": selectedCategories?.subcategory
+          ? [selectedCategories?.subcategory]
+          : [],
+        "Sub Sub Category": selectedCategories?.subsubcategory
+          ? [selectedCategories?.subsubcategory]
+          : [],
+      };
+    });
+  }, [allCategories, selectedCategories, setFilteredCategories]);
 
   const [_loading, _setLoading] = useState<boolean>(false);
 
-  const filterCategory = (key: string, form: FormInstance<any>) => {
+  const filterCategory = (
+    selectedValue: string,
+    key: string,
+    setFormField: (field: string) => void
+  ) => {
     const newFilteredCategories = { ...filteredCategories };
 
     const index = categoriesKeys.indexOf(key);
@@ -46,13 +64,17 @@ const useAllCategories = (
       const iteratorKey = categoriesKeys[i] as keyof AllCategories;
       if (i === index + 1) {
         newFilteredCategories[iteratorKey] = allCategories[iteratorKey].filter(
-          // @TODO: filterbycategoryfield
-          () => true
+          (category) => {
+            return (
+              category[categoriesFields[i - 1] as keyof ProductCategory] ===
+              selectedValue
+            );
+          }
         );
       } else {
         newFilteredCategories[iteratorKey] = [];
       }
-      form.setFieldsValue({ [categoriesFields[i]]: "" });
+      setFormField(categoriesFields[i]);
     }
     setFilteredCategories(newFilteredCategories);
   };

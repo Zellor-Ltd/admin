@@ -100,15 +100,29 @@ const CategoryDetail: React.FC<RouteComponentProps> = (props) => {
                       disabled={
                         !filteredCategories[key as keyof AllCategories].length
                       }
+                      allowClear={true}
                       placeholder="Please select a category"
-                      onChange={(value) => filterCategory(key, form)}
+                      onChange={(_, option: any) =>
+                        filterCategory(
+                          option?.children as string,
+                          key,
+                          (_field) => {
+                            form.setFieldsValue({ [_field]: "" });
+                          }
+                        )
+                      }
                     >
                       {(
                         filteredCategories[
                           key as keyof AllCategories
                         ] as unknown as ProductCategory[]
                       ).map((category) => (
-                        <Select.Option key={category.id} value={category.id}>
+                        <Select.Option
+                          key={category.id}
+                          value={
+                            category[field as keyof ProductCategory] as string
+                          }
+                        >
                           {category[field as keyof ProductCategory]}
                         </Select.Option>
                       ))}

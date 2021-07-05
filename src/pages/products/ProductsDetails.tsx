@@ -28,7 +28,8 @@ import { useSelector } from "react-redux";
 import { RouteComponentProps } from "react-router";
 import { fetchBrands, saveProduct } from "services/DiscoClubService";
 
-const { categoriesArray } = categoriesSettings;
+const { categoriesArray, categoriesKeys, categoriesFields } =
+  categoriesSettings;
 
 const videoColumns: ColumnsType<Video> = [
   {
@@ -53,7 +54,7 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
   const [form] = Form.useForm();
 
   const { fetchAllCategories, filteredCategories, filterCategory } =
-    useAllCategories(setLoading);
+    useAllCategories(setLoading, initial?.categories);
 
   const {
     settings: { currency = [] },
@@ -94,10 +95,8 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
             id: "",
           };
           return filteredCategories[key as keyof AllCategories].find(
-            (category: any) =>
-              // @TODO: filterbycategoryfield
-              // category[field as keyof ProductCategory] === selectedCategoryName
-              category.name === selectedCategoryName
+            (category) =>
+              category[field as keyof ProductCategory] === selectedCategoryName
           );
         })
         .filter((v) => v && v.searchTags);
@@ -126,8 +125,10 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
     [form, initial, filteredCategories]
   );
 
-  const handleCategoryChange = (key: string) => {
-    filterCategory(key, form);
+  const handleCategoryChange = (value: string, key: string) => {
+    filterCategory(value, key, (_field) => {
+      form.setFieldsValue({ categories: { [_field]: undefined } });
+    });
     setSearchTagsByCategory(false);
   };
 
@@ -174,6 +175,12 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
     try {
       const product = form.getFieldsValue(true);
       product.brand = brands?.find((brand) => brand.id === product.brand?.id);
+
+      categoriesFields.forEach((field, index) => {
+        product.categories[field] = filteredCategories[
+          categoriesKeys[index] as keyof AllCategories
+        ].find((category) => category.id === product.categories[field]?.id);
+      });
 
       await saveProduct(product);
 
@@ -355,23 +362,26 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                 {categoriesArray.map(({ key, field }, index) => (
                   <Form.Item
                     label={key}
-                    name={[field, "id"]}
+                    name={["categories", field, "id"]}
                     rules={[{ required: index < 2 }]}
                   >
                     <Select
                       disabled={
                         !filteredCategories[key as keyof AllCategories].length
                       }
+                      allowClear={index >= 2}
                       placeholder="Please select a category"
-                      onChange={() => handleCategoryChange(key)}
+                      onChange={(_, option: any) =>
+                        handleCategoryChange(option?.children as string, key)
+                      }
                     >
                       {(
                         filteredCategories[
                           key as keyof AllCategories
                         ] as unknown as ProductCategory[]
-                      ).map((category: any) => (
-                        <Select.Option key={category.id} value={category.name}>
-                          {category.name}
+                      ).map((category) => (
+                        <Select.Option key={category.id} value={category.id}>
+                          {category[field as keyof ProductCategory]}
                         </Select.Option>
                       ))}
                     </Select>

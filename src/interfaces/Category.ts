@@ -17,6 +17,13 @@ export interface ProductCategory {
   searchTags?: string[];
 }
 
+export interface SelectedProductCategories {
+  supercategory: ProductCategory;
+  category: ProductCategory;
+  subcategory: ProductCategory;
+  subsubcategory: ProductCategory;
+}
+
 export interface AllCategories {
   "Super Category": ProductCategory[];
   Category: ProductCategory[];
