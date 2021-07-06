@@ -1,4 +1,4 @@
-import { PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined, MinusOutlined } from "@ant-design/icons";
 import {
   Button,
   Col,
@@ -189,6 +189,17 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
       console.error(error);
       setLoading(false);
     }
+  };
+
+  const addCategoryTree = () => {
+    setCategories(prev => [...prev, {}])
+  };
+
+  const delCategoryTree = (index: number) => {
+    setCategories(prev => [
+      ...prev.slice(0, index),
+      ...prev.slice(index + 1),
+    ]);
   };
 
   return (
@@ -391,16 +402,25 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                   allCategories={allCategories}
                   handleCategoryChange={handleCategoryChange}
                 />
-                {index === categories.length - 1 && (
-                  <Button
-                    onClick={() => setCategories((prev) => [...prev, {}])}
-                    type="link"
-                    style={{ padding: 0, margin: 6 }}
-                  >
-                    Add Category Tree
-                    <PlusOutlined />
-                  </Button>
-                )}
+                  {index === categories.length - 1 ? (
+                    <Button
+                      onClick={addCategoryTree}
+                      type="link"
+                      style={{ padding: 0, margin: 6 }}
+                    >
+                      Add Category Tree
+                      <PlusOutlined />
+                    </Button>
+                  ) : (
+                    <Button
+                      onClick={() => delCategoryTree(index)}
+                      type="link"
+                      style={{ padding: 0, margin: 6 }}
+                    >
+                      Remove Category Tree
+                      <MinusOutlined />
+                    </Button>
+                  )}
               </>
             ))}
           </Row>
