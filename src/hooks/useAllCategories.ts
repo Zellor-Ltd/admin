@@ -21,15 +21,16 @@ const allCategoriesFactory = (): AllCategories => ({
 const useAllCategories = (
   setLoading?: React.Dispatch<React.SetStateAction<boolean>>,
   selectedCategories?: SelectedCategories,
-  selectedProductCategories?: SelectedProductCategories
+  selectedProductCategories?: SelectedProductCategories,
+  allCategories?: AllCategories
 ): {
   fetchAllCategories: () => Promise<void>;
-  allCategories: AllCategories;
+  _allCategories: AllCategories;
   filteredCategories: AllCategories;
   filterCategory: typeof filterCategory;
   _loading: boolean;
 } => {
-  const [allCategories, setAllCategories] = useState<AllCategories>(
+  const [_allCategories, _setAllCategories] = useState<AllCategories>(
     allCategoriesFactory()
   );
   const [filteredCategories, setFilteredCategories] = useState<AllCategories>(
@@ -49,7 +50,7 @@ const useAllCategories = (
     for (let i = index + 1; i < categoriesKeys.length; i++) {
       const iteratorKey = categoriesKeys[i] as keyof AllCategories;
       if (i === index + 1) {
-        newFilteredCategories[iteratorKey] = allCategories[iteratorKey].filter(
+        newFilteredCategories[iteratorKey] = _allCategories[iteratorKey].filter(
           (category) => {
             return (
               category[categoriesFields[i - 1] as keyof ProductCategory] ===
@@ -66,9 +67,13 @@ const useAllCategories = (
   };
 
   useEffect(() => {
+    if (allCategories) _setAllCategories(allCategories);
+  }, [allCategories]);
+
+  useEffect(() => {
     if (
       (selectedCategories || selectedProductCategories) &&
-      allCategories["Super Category"].length
+      _allCategories["Super Category"].length
     ) {
       const newFilteredCategories = allCategoriesFactory();
       categoriesArray.forEach(({ key: currKey, field: currField }, index) => {
@@ -87,29 +92,30 @@ const useAllCategories = (
         }
 
         if (selectedValue) {
-          newFilteredCategories[currKey as keyof AllCategories] = allCategories[
-            currKey as keyof AllCategories
-          ].filter((category) => {
-            return (
-              category[prevField as keyof ProductCategory] === selectedValue
+          newFilteredCategories[currKey as keyof AllCategories] =
+            _allCategories[currKey as keyof AllCategories].filter(
+              (category) => {
+                return (
+                  category[prevField as keyof ProductCategory] === selectedValue
+                );
+              }
             );
-          });
         }
       });
       setFilteredCategories({
         ...newFilteredCategories,
-        "Super Category": allCategories["Super Category"],
+        "Super Category": _allCategories["Super Category"],
       });
     } else {
       setFilteredCategories((prev) => {
         return {
           ...prev,
-          "Super Category": allCategories["Super Category"],
+          "Super Category": _allCategories["Super Category"],
         };
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [allCategories, setFilteredCategories]);
+  }, [_allCategories, setFilteredCategories]);
 
   const fetchAllCategories = useCallback(async () => {
     try {
@@ -127,7 +133,7 @@ const useAllCategories = (
       if (setLoading) {
         setLoading(false);
       }
-      setAllCategories({
+      _setAllCategories({
         "Super Category": responses[0].results,
         Category: responses[1].results,
         "Sub Category": responses[2].results,
@@ -143,7 +149,7 @@ const useAllCategories = (
 
   return {
     fetchAllCategories,
-    allCategories,
+    _allCategories,
     filteredCategories,
     filterCategory,
     _loading,
