@@ -6,13 +6,15 @@ import moment from "moment";
 import { useEffect, useState } from "react";
 import { RouteComponentProps } from "react-router";
 import { Link } from "react-router-dom";
-import { fetchOrders, saveOrder } from "services/DiscoClubService";
+import { fetchOrders, saveOrder, fetchFans } from "services/DiscoClubService";
 import { useSelector } from "react-redux";
+import { Fan } from "interfaces/Fan";
 
 const Orders: React.FC<RouteComponentProps> = () => {
   const [tableloading, setTableLoading] = useState<boolean>(false);
   const [orderUpdateList, setOrderUpdateList] = useState<boolean[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
+  const [fans, setFans] = useState<Fan[]>([]);
 
   const {
     settings: { order: ordersSettings = [] },
@@ -38,7 +40,18 @@ const Orders: React.FC<RouteComponentProps> = () => {
     });
   };
 
+  const getFan = (fanId: string) => fans.find((fan) => fan.id === fanId);
+
   const columns: ColumnsType<Order> = [
+    {
+      title: "User",
+      dataIndex: "userId",
+      width: "10%",
+      align: "left",
+      render: (value: string) => (
+        <Link to={{ pathname: `/fan`, state: getFan(value) }}>{value}</Link>
+      ),
+    },
     {
       title: "Paid",
       dataIndex: "paid",
@@ -132,10 +145,16 @@ const Orders: React.FC<RouteComponentProps> = () => {
     setOrders(response.results.filter((order: Order) => !!order.product));
   };
 
+  const getFans = async () => {
+    const response: any = await fetchFans();
+    setFans(response.results);
+  };
+
   useEffect(() => {
     const getResources = async () => {
       setTableLoading(true);
       await getOrders();
+      await getFans();
       setTableLoading(false);
     };
     getResources();
