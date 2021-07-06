@@ -55,7 +55,7 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
   const [form] = Form.useForm();
 
   const [categories, setCategories] = useState<any[]>(
-    initial.categories || [{}]
+    initial?.categories || [{}]
   );
 
   const { fetchAllCategories, _allCategories: allCategories } =
@@ -94,22 +94,21 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
 
   const setSearchTagsByCategory = useCallback(
     (useInitialValue: boolean, selectedCategories: any[] = []) => {
-      const selectedCategoriesSearchTags = Array.from(
-        new Set(
-          selectedCategories
-            .filter((v) => v && v.searchTags)
-            .map((v) => v.searchTags)
-            .reduce((prev, curr) => {
-              return prev?.concat(curr || []);
-            }, [])
-        )
-      );
+      const selectedCategoriesSearchTags = selectedCategories
+        .filter((v) => v && v.searchTags)
+        .map((v) => v.searchTags)
+        .reduce((prev, curr) => {
+          return prev?.concat(curr || []);
+        }, []);
 
-      let searchTags;
+      let searchTags = form.getFieldValue("searchTags") || [];
+      const finalValue = Array.from(
+        new Set([...searchTags, ...selectedCategoriesSearchTags])
+      );
       if (useInitialValue && initial) {
-        searchTags = initial.searchTags || selectedCategoriesSearchTags;
+        searchTags = initial.searchTags || finalValue;
       } else {
-        searchTags = selectedCategoriesSearchTags;
+        searchTags = finalValue;
       }
 
       form.setFieldsValue({
