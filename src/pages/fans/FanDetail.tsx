@@ -44,7 +44,7 @@ const FanDetail: React.FC<RouteComponentProps> = (props) => {
   const [roles, setRoles] = useState<Role[]>([]);
   const [creators, setCreators] = useState<Creator[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
-  const initial: any = location.state;
+  const initial: any = location.state || {};
   const [form] = Form.useForm();
 
   useEffect(() => {
