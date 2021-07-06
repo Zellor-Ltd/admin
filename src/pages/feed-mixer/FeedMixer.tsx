@@ -139,12 +139,12 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
       ),
   });
 
-  const addVideo = (index: number) => {
-    setUserFeed((prev) => [templateFeed[index], ...prev]);
+  const addVideo = (record: FeedItem, _: number) => {
+    setUserFeed((prev) => [record, ...prev]);
     message.success("Video added into user feed.");
   };
 
-  const removeVideo = (index: number) => {
+  const removeVideo = (_: FeedItem, index: number) => {
     setUserFeed((prev) => [...prev.slice(0, index), ...prev.slice(index + 1)]);
   };
 
@@ -152,7 +152,9 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
   const removeObj = { icon: <MinusOutlined />, fn: removeVideo };
 
   const [actionObj, setActionObj] =
-    useState<{ icon: any; fn: Function }>(removeObj);
+    useState<{ icon: any; fn: (record: FeedItem, index: number) => void }>(
+      removeObj
+    );
 
   const handleTabChange = (tab: string) => {
     setSelectedTab(tab);
@@ -206,10 +208,10 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
       key: "action",
       width: "5%",
       align: "right",
-      render: (_, __, index) => {
+      render: (_, record, index) => {
         return (
           <Button
-            onClick={() => actionObj.fn(index)}
+            onClick={() => actionObj.fn(record, index)}
             type="link"
             style={{ padding: 0, margin: 6 }}
           >
