@@ -192,11 +192,18 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
   };
 
   const addCategoryTree = () => {
-    setCategories(prev => [...prev, {}])
+    setCategories((prev) => [...prev, {}]);
   };
 
   const delCategoryTree = (index: number) => {
-    setCategories(prev => [
+    const formCategories = form.getFieldValue("categories");
+    form.setFieldsValue({
+      categories: [
+        ...formCategories.slice(0, index),
+        ...formCategories.slice(index + 1),
+      ],
+    });
+    setCategories((prev) => [
       ...prev.slice(0, index),
       ...prev.slice(index + 1),
     ]);
@@ -390,40 +397,39 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
             </Row>
           </Col>
         </Row>
-        <Col>
-          <Row justify="space-between">
-            {categories.map((_, index) => (
-              <>
-                <ProductCategories
-                  productCategoryIndex={index}
-                  selectedProductCategories={
-                    categories as SelectedProductCategories[]
-                  }
-                  allCategories={allCategories}
-                  handleCategoryChange={handleCategoryChange}
-                />
-                  {index === categories.length - 1 ? (
-                    <Button
-                      onClick={addCategoryTree}
-                      type="link"
-                      style={{ padding: 0, margin: 6 }}
-                    >
-                      Add Category Tree
-                      <PlusOutlined />
-                    </Button>
-                  ) : (
-                    <Button
-                      onClick={() => delCategoryTree(index)}
-                      type="link"
-                      style={{ padding: 0, margin: 6 }}
-                    >
-                      Remove Category Tree
-                      <MinusOutlined />
-                    </Button>
-                  )}
-              </>
-            ))}
-          </Row>
+        <Col lg={24} xs={12}>
+          {categories.map((_, index) => (
+            <Row justify="space-between" style={{ maxWidth: "1000px" }}>
+              <ProductCategories
+                productCategoryIndex={index}
+                selectedProductCategories={
+                  categories as SelectedProductCategories[]
+                }
+                allCategories={allCategories}
+                handleCategoryChange={handleCategoryChange}
+              />
+              {categories.length > 1 ? (
+                <Button
+                  onClick={() => delCategoryTree(index)}
+                  type="link"
+                  style={{ padding: 0, marginTop: "30px" }}
+                >
+                  Remove Category Tree
+                  <MinusOutlined />
+                </Button>
+              ) : (
+                <div style={{ width: "168px" }}></div>
+              )}
+            </Row>
+          ))}
+          <Button
+            onClick={addCategoryTree}
+            type="link"
+            style={{ padding: 0, marginTop: "-6px", marginBottom: "16px" }}
+          >
+            Add Category Tree
+            <PlusOutlined />
+          </Button>
         </Col>
         <Col lg={16} xs={24}>
           <Form.Item

@@ -60,12 +60,13 @@ const ProductCategories: React.FC<ProductCategoriesProps> = ({
         <Form.Item
           label={key}
           name={["categories", productCategoryIndex, field, "id"]}
-          rules={[{ required: _index < 2 }]}
+          rules={[{ required: _index < 2, message: `${key} is required` }]}
         >
           <Select
             disabled={!filteredCategories[key as keyof AllCategories].length}
             allowClear={_index >= 2}
             placeholder="Please select a category"
+            style={{ width: "180px" }}
             onChange={(_, option: any) =>
               _handleCategoryChange(option?.children as string, key)
             }
