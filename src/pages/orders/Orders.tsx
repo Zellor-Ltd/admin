@@ -1,28 +1,36 @@
 import {
+  CalendarOutlined,
   EditOutlined,
   SearchOutlined,
-  CalendarOutlined,
 } from "@ant-design/icons";
 import {
   Button,
+  Col,
+  DatePicker,
   Input,
   message,
   PageHeader,
+  Row,
   Select,
   Space,
   Table,
-  DatePicker,
 } from "antd";
 import { ColumnsType } from "antd/lib/table";
+import { SelectBrand } from "components/SelectBrand";
+import { Brand } from "interfaces/Brand";
+import { Fan } from "interfaces/Fan";
 import { Order } from "interfaces/Order";
 import moment from "moment";
 import { useEffect, useRef, useState } from "react";
+import Highlighter from "react-highlight-words";
+import { useSelector } from "react-redux";
 import { RouteComponentProps } from "react-router";
 import { Link } from "react-router-dom";
-import { fetchOrders, saveOrder, fetchFans } from "services/DiscoClubService";
-import { useSelector } from "react-redux";
-import { Fan } from "interfaces/Fan";
-import Highlighter from "react-highlight-words";
+import { fetchFans, fetchOrders, saveOrder } from "services/DiscoClubService";
+
+interface FilterFn {
+  [key: string]: (orders: Order[]) => Order[];
+}
 
 const Orders: React.FC<RouteComponentProps> = () => {
   const [tableloading, setTableLoading] = useState<boolean>(false);
@@ -30,6 +38,7 @@ const Orders: React.FC<RouteComponentProps> = () => {
 
   const [orders, setOrders] = useState<Order[]>([]);
   const [filteredOrders, setFilteredOrders] = useState<Order[]>([]);
+  const [filterFunctions, setFilterFunctions] = useState<FilterFn>({});
 
   const [fans, setFans] = useState<Fan[]>([]);
 
@@ -37,6 +46,17 @@ const Orders: React.FC<RouteComponentProps> = () => {
   const [searchedColumn, setSearchedColumn] = useState<string>("");
 
   const searchInput = useRef<Input>(null);
+
+  useEffect(() => {
+    let _orders = [...orders];
+    for (const key in filterFunctions) {
+      if (Object.prototype.hasOwnProperty.call(filterFunctions, key)) {
+        const filterFn = filterFunctions[key];
+        _orders = [...filterFn(_orders)];
+      }
+    }
+    setFilteredOrders(_orders);
+  }, [filterFunctions, orders]);
 
   const handleSearch = (selectedKeys: any, confirm: any, dataIndex: any) => {
     confirm();
@@ -74,7 +94,6 @@ const Orders: React.FC<RouteComponentProps> = () => {
       .format("YYYY-MM-DDTHH:mm:ss.SSSSSSSZ");
     setFilteredOrders(_filteredOrders);
 
-
     message.success("Changes saved!");
     setOrderUpdateList((prev) => {
       prev[orderIndex] = false;
@@ -84,16 +103,21 @@ const Orders: React.FC<RouteComponentProps> = () => {
 
   const handleDateChange = (values: any) => {
     if (!values) {
-      setFilteredOrders(orders);
+      setFilterFunctions((prev) => {
+        delete prev.creationDate;
+        return { ...prev };
+      });
       return;
     }
     const startDate = moment(values[0], "DD/MM/YYYY").startOf("day").utc();
     const endDate = moment(values[1], "DD/MM/YYYY").endOf("day").utc();
-    setFilteredOrders(
-      orders.filter(({ hCreationDate }) => {
-        return moment(hCreationDate).utc().isBetween(startDate, endDate);
-      })
-    );
+    setFilterFunctions((prev) => {
+      prev.creationDate = (orders) =>
+        orders.filter(({ hCreationDate }) => {
+          return moment(hCreationDate).utc().isBetween(startDate, endDate);
+        });
+      return { ...prev };
+    });
   };
 
   const getFan = (fanId: string) => fans.find((fan) => fan.id === fanId);
@@ -288,7 +312,7 @@ const Orders: React.FC<RouteComponentProps> = () => {
 
   const getOrders = async () => {
     const response: any = await fetchOrders();
-    const _orders = response.results.filter((order: Order) => !!order.product)
+    const _orders = response.results.filter((order: Order) => !!order.product);
     setOrders(_orders);
     setFilteredOrders(_orders);
   };
@@ -308,9 +332,35 @@ const Orders: React.FC<RouteComponentProps> = () => {
     getResources();
   }, []);
 
+  const onChangeBrand = async (_selectedBrand: Brand | undefined) => {
+    if (!_selectedBrand) {
+      setFilterFunctions((prev) => {
+        delete prev.brandName;
+        return { ...prev };
+      });
+      return;
+    }
+    setFilterFunctions((prev) => {
+      prev.brandName = (orders) =>
+        orders.filter(
+          (order) => order.product?.brand.brandName === _selectedBrand.brandName
+        );
+      return { ...prev };
+    });
+  };
+
   return (
     <div className="orders">
       <PageHeader title="Orders" subTitle="List of Orders" />
+      <Row gutter={8} style={{ marginBottom: "20px" }}>
+        <Col xxl={40} lg={6} xs={18}>
+          <SelectBrand
+            style={{ width: "100%" }}
+            allowClear={true}
+            onChange={onChangeBrand}
+          ></SelectBrand>
+        </Col>
+      </Row>
       <Table
         rowKey="id"
         columns={columns}

@@ -1,4 +1,4 @@
-import { Col, Form, Row, Select } from "antd";
+import { Form, Select } from "antd";
 import { FormInstance } from "antd/lib/form";
 import { categoriesSettings } from "helpers/utils";
 import useAllCategories from "hooks/useAllCategories";
