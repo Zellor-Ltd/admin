@@ -1,20 +1,37 @@
-import { EditOutlined } from "@ant-design/icons";
-import { message, PageHeader, Select, Table } from "antd";
+import { EditOutlined, SearchOutlined } from "@ant-design/icons";
+import { Button, Input, message, PageHeader, Select, Space, Table } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import { Order } from "interfaces/Order";
 import moment from "moment";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { RouteComponentProps } from "react-router";
 import { Link } from "react-router-dom";
 import { fetchOrders, saveOrder, fetchFans } from "services/DiscoClubService";
 import { useSelector } from "react-redux";
 import { Fan } from "interfaces/Fan";
+import Highlighter from "react-highlight-words";
 
 const Orders: React.FC<RouteComponentProps> = () => {
   const [tableloading, setTableLoading] = useState<boolean>(false);
   const [orderUpdateList, setOrderUpdateList] = useState<boolean[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [fans, setFans] = useState<Fan[]>([]);
+
+  const [searchText, setSearchText] = useState<string>("");
+  const [searchedColumn, setSearchedColumn] = useState<string>("");
+
+  const searchInput = useRef<Input>(null);
+
+  const handleSearch = (selectedKeys: any, confirm: any, dataIndex: any) => {
+    confirm();
+    setSearchText(selectedKeys[0]);
+    setSearchedColumn(dataIndex);
+  };
+
+  const handleReset = (clearFilters: any) => {
+    clearFilters();
+    setSearchText("");
+  };
 
   const {
     settings: { order: ordersSettings = [] },
@@ -42,15 +59,98 @@ const Orders: React.FC<RouteComponentProps> = () => {
 
   const getFan = (fanId: string) => fans.find((fan) => fan.id === fanId);
 
+  const getColumnSearchProps = (dataIndex: any) => ({
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+    }: {
+      setSelectedKeys: any;
+      selectedKeys: any;
+      confirm: any;
+      clearFilters: any;
+    }) => (
+      <div style={{ padding: 8 }}>
+        <Input
+          ref={searchInput}
+          placeholder={`Search ${dataIndex}`}
+          value={selectedKeys[0]}
+          onChange={(e) =>
+            setSelectedKeys(e.target.value ? [e.target.value] : [])
+          }
+          onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+          style={{ marginBottom: 8, display: "block" }}
+        />
+        <Space>
+          <Button
+            type="primary"
+            onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+            icon={<SearchOutlined />}
+            size="small"
+            style={{ width: 90 }}
+          >
+            Search
+          </Button>
+          <Button
+            onClick={() => handleReset(clearFilters)}
+            size="small"
+            style={{ width: 90 }}
+          >
+            Reset
+          </Button>
+          <Button
+            type="link"
+            size="small"
+            onClick={() => {
+              confirm({ closeDropdown: false });
+              setSearchText(selectedKeys[0]);
+              setSearchedColumn(dataIndex);
+            }}
+          >
+            Filter
+          </Button>
+        </Space>
+      </div>
+    ),
+    filterIcon: (filtered: any) => (
+      <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
+    ),
+    onFilter: (value: any, record: any) =>
+      record[dataIndex]
+        ? record[dataIndex]
+            .toString()
+            .toLowerCase()
+            .includes(value.toLowerCase())
+        : "",
+    onFilterDropdownVisibleChange: (visible: any) => {
+      if (visible) {
+        setTimeout(() => searchInput.current!.select(), 100);
+      }
+    },
+    render: (text: any) => (
+      <Link to={{ pathname: `/fan`, state: getFan(text) }}>
+        {searchedColumn === dataIndex ? (
+          <Highlighter
+            highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
+            searchWords={[searchText]}
+            autoEscape
+            textToHighlight={text ? text.toString() : ""}
+          />
+        ) : (
+          text
+        )}
+      </Link>
+    ),
+  });
+
   const columns: ColumnsType<Order> = [
     {
-      title: "User",
+      title: "User ID",
       dataIndex: "userId",
       width: "10%",
       align: "left",
-      render: (value: string) => (
-        <Link to={{ pathname: `/fan`, state: getFan(value) }}>{value}</Link>
-      ),
+      ...getColumnSearchProps("userId"),
     },
     {
       title: "Paid",
