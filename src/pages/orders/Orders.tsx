@@ -1,5 +1,18 @@
-import { EditOutlined, SearchOutlined } from "@ant-design/icons";
-import { Button, Input, message, PageHeader, Select, Space, Table } from "antd";
+import {
+  EditOutlined,
+  SearchOutlined,
+  CalendarOutlined,
+} from "@ant-design/icons";
+import {
+  Button,
+  Input,
+  message,
+  PageHeader,
+  Select,
+  Space,
+  Table,
+  DatePicker,
+} from "antd";
 import { ColumnsType } from "antd/lib/table";
 import { Order } from "interfaces/Order";
 import moment from "moment";
@@ -14,7 +27,10 @@ import Highlighter from "react-highlight-words";
 const Orders: React.FC<RouteComponentProps> = () => {
   const [tableloading, setTableLoading] = useState<boolean>(false);
   const [orderUpdateList, setOrderUpdateList] = useState<boolean[]>([]);
+
   const [orders, setOrders] = useState<Order[]>([]);
+  const [filteredOrders, setFilteredOrders] = useState<Order[]>([]);
+
   const [fans, setFans] = useState<Fan[]>([]);
 
   const [searchText, setSearchText] = useState<string>("");
@@ -45,16 +61,39 @@ const Orders: React.FC<RouteComponentProps> = () => {
       ...orders[orderIndex],
       stage: value,
     });
+
     const _orders = [...orders];
     _orders[orderIndex].hLastUpdate = moment
       .utc()
       .format("YYYY-MM-DDTHH:mm:ss.SSSSSSSZ");
     setOrders(_orders);
+
+    const _filteredOrders = [...filteredOrders];
+    _filteredOrders[orderIndex].hLastUpdate = moment
+      .utc()
+      .format("YYYY-MM-DDTHH:mm:ss.SSSSSSSZ");
+    setFilteredOrders(_filteredOrders);
+
+
     message.success("Changes saved!");
     setOrderUpdateList((prev) => {
       prev[orderIndex] = false;
       return [...prev];
     });
+  };
+
+  const handleDateChange = (values: any) => {
+    if (!values) {
+      setFilteredOrders(orders);
+      return;
+    }
+    const startDate = moment(values[0], "DD/MM/YYYY").startOf("day").utc();
+    const endDate = moment(values[1], "DD/MM/YYYY").endOf("day").utc();
+    setFilteredOrders(
+      orders.filter(({ hCreationDate }) => {
+        return moment(hCreationDate).utc().isBetween(startDate, endDate);
+      })
+    );
   };
 
   const getFan = (fanId: string) => fans.find((fan) => fan.id === fanId);
@@ -177,6 +216,13 @@ const Orders: React.FC<RouteComponentProps> = () => {
       dataIndex: "hCreationDate",
       width: "10%",
       align: "center",
+      filterIcon: <CalendarOutlined />,
+      filterDropdown: () => (
+        <DatePicker.RangePicker
+          style={{ padding: 8 }}
+          onChange={handleDateChange}
+        />
+      ),
       render: (value: Date) => (
         <>
           <div>{moment(value).format("DD/MM/YYYY")}</div>
@@ -242,7 +288,9 @@ const Orders: React.FC<RouteComponentProps> = () => {
 
   const getOrders = async () => {
     const response: any = await fetchOrders();
-    setOrders(response.results.filter((order: Order) => !!order.product));
+    const _orders = response.results.filter((order: Order) => !!order.product)
+    setOrders(_orders);
+    setFilteredOrders(_orders);
   };
 
   const getFans = async () => {
@@ -266,7 +314,7 @@ const Orders: React.FC<RouteComponentProps> = () => {
       <Table
         rowKey="id"
         columns={columns}
-        dataSource={orders}
+        dataSource={filteredOrders}
         loading={tableloading}
       />
     </div>
