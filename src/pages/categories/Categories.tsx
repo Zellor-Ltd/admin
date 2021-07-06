@@ -1,34 +1,52 @@
-import { Button, PageHeader, Popconfirm, Table, Image as AntImage } from "antd";
+import {
+  Button,
+  PageHeader,
+  Popconfirm,
+  Table,
+  Image as AntImage,
+  Tabs,
+  Menu,
+  Dropdown,
+} from "antd";
 import { ColumnsType } from "antd/lib/table";
-import { Category } from "interfaces/Category";
+import {
+  ProductCategory,
+  AllCategories,
+  AllCategoriesAPI,
+} from "interfaces/Category";
 import { RouteComponentProps } from "react-router";
 import { Link } from "react-router-dom";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { Image } from "interfaces/Image";
-import { deleteCategory, fetchCategories } from "services/DiscoClubService";
+import { productCategoriesAPI } from "services/DiscoClubService";
+import { categoriesSettings } from "helpers/utils";
+import useAllCategories from "hooks/useAllCategories";
 
-const Categories: React.FC<RouteComponentProps> = (props) => {
-  const { history } = props;
+const { categoriesKeys, categoriesFields } = categoriesSettings;
+
+const Categories: React.FC<RouteComponentProps> = () => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [categories, setCategories] = useState<Category[]>([]);
-
-  const fetch = async () => {
-    setLoading(true);
-    const response: any = await fetchCategories();
-    setLoading(false);
-    setCategories(response.results);
-  };
+  const { fetchAllCategories, _allCategories: allCategories } =
+    useAllCategories(setLoading);
+  const [selectedTab, setSelectedTab] = useState<string>("Super Category");
 
   useEffect(() => {
-    fetch();
-  }, []);
+    fetchAllCategories();
+  }, [fetchAllCategories]);
 
   const deleteItem = async (id: string) => {
     try {
       setLoading(true);
-      await deleteCategory({ id });
-      fetch();
+      const selectedField = categoriesFields[
+        categoriesKeys.indexOf(selectedTab)
+      ] as keyof AllCategoriesAPI;
+      await productCategoriesAPI[
+        selectedField as keyof AllCategoriesAPI
+      ].delete({
+        id,
+      });
+      fetchAllCategories();
     } catch (err) {
       console.log(err);
     } finally {
@@ -36,8 +54,22 @@ const Categories: React.FC<RouteComponentProps> = (props) => {
     }
   };
 
-  const columns: ColumnsType<Category> = [
-    { title: "Name", dataIndex: "name", width: "15%" },
+  const columns: ColumnsType<ProductCategory> = [
+    {
+      title: "Name",
+      width: "15%",
+      render: (_, record) => (
+        <>
+          {
+            record[
+              categoriesFields[
+                categoriesKeys.indexOf(selectedTab)
+              ] as keyof ProductCategory
+            ]
+          }
+        </>
+      ),
+    },
     {
       title: "Image",
       dataIndex: "image",
@@ -49,9 +81,15 @@ const Categories: React.FC<RouteComponentProps> = (props) => {
       key: "action",
       width: "5%",
       align: "right",
-      render: (value, record) => (
+      render: (_, record) => (
         <>
-          <Link to={{ pathname: `/category`, state: record }}>
+          <Link
+            to={{
+              pathname: `/category`,
+              search: `?category-level=${categoriesKeys.indexOf(selectedTab)}`,
+              state: record,
+            }}
+          >
             <EditOutlined />
           </Link>
           <Popconfirm
@@ -69,23 +107,51 @@ const Categories: React.FC<RouteComponentProps> = (props) => {
     },
   ];
 
+  const handleTabChange = (value: string) => {
+    setSelectedTab(value);
+  };
+
   return (
     <div className="categories">
       <PageHeader
         title="Categories"
         subTitle="List of categories"
         extra={[
-          <Button key="1" onClick={() => history.push("/category")}>
-            New Item
-          </Button>,
+          <Dropdown
+            overlay={
+              <Menu>
+                {categoriesKeys.map((key, index) => (
+                  <Menu.Item>
+                    <Link
+                      to={{
+                        pathname: `/category`,
+                        search: `?category-level=${index}`,
+                      }}
+                    >
+                      {key}
+                    </Link>
+                  </Menu.Item>
+                ))}
+              </Menu>
+            }
+            trigger={["click"]}
+          >
+            <Button>New Item</Button>
+          </Dropdown>,
         ]}
       />
-      <Table
-        rowKey="id"
-        columns={columns}
-        dataSource={categories}
-        loading={loading}
-      />
+      <Tabs onChange={handleTabChange}>
+        {categoriesKeys.map((key) => (
+          <Tabs.TabPane tab={key} key={key}>
+            <Table
+              rowKey="id"
+              columns={columns}
+              dataSource={allCategories[key as keyof AllCategories]}
+              loading={loading}
+            />
+          </Tabs.TabPane>
+        ))}
+      </Tabs>
     </div>
   );
 };
