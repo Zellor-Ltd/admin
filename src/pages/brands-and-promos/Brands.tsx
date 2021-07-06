@@ -23,7 +23,6 @@ import { useEffect, useState } from "react";
 import { RouteComponentProps } from "react-router";
 import { Link } from "react-router-dom";
 import { deleteBrand, fetchBrands, saveBrand } from "services/DiscoClubService";
-import "./Brands.scss";
 
 const tagColorByStatus: any = {
   approved: "green",
@@ -142,7 +141,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history }) => {
   ];
 
   return (
-    <div className="brands">
+    <>
       <PageHeader
         title="Brands"
         subTitle="List of Brands"
@@ -152,7 +151,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history }) => {
           </Button>,
         ]}
       />
-      <div className="filter">
+      <div style={{ marginBottom: "16px" }}>
         <Row>
           <Col lg={12} xs={24}>
             <Typography.Title level={5} title="Search">
@@ -168,7 +167,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history }) => {
         dataSource={filterBrand()}
         loading={loading}
       />
-    </div>
+    </>
   );
 };
 

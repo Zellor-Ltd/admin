@@ -266,7 +266,7 @@ export const saveOrder = (params: any) => {
 export const saveUserFeed = (userId: string, payload: any) =>
   instance.put(`Disco/Feed/UpdateUserFeed/${userId}`, payload);
 
-export const savePromoCodes = (params: PromoCode) => {
+export const savePromoCode = (params: PromoCode) => {
   if (params.id) {
     return instance.post("Wi/Ep/UpdatePromoCode", params);
   } else {

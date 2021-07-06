@@ -9,7 +9,7 @@ import Products from "pages/products/Products";
 import TagDetail from "pages/tags/TagDetail";
 import Tags from "pages/tags/Tags";
 import BrandDetail from "pages/brands-and-promos/BrandDetail";
-import PromoDetail from "pages/brands-and-promos/PromoDetail";
+import PromoCodesDetail from "pages/brands-and-promos/PromoCodesDetail";
 import BrandsAndPromos from "pages/brands-and-promos/BrandsAndPromos";
 import EndpointDetail from "pages/endpoints/EndpointDetail";
 import Endpoints from "pages/endpoints/Endpoints";
@@ -96,8 +96,8 @@ function Routes() {
         layout={AuthenticatedLayout}
       />
       <AuthRoute
-        path="/promo"
-        component={PromoDetail}
+        path="/promo-code"
+        component={PromoCodesDetail}
         layout={AuthenticatedLayout}
       />
       <AuthRoute
