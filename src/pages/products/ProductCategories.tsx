@@ -1,4 +1,4 @@
-import { Col, Form, Select } from "antd";
+import { Col, Form, Row, Select } from "antd";
 import { FormInstance } from "antd/lib/form";
 import { categoriesSettings } from "helpers/utils";
 import useAllCategories from "hooks/useAllCategories";
@@ -55,7 +55,7 @@ const ProductCategories: React.FC<ProductCategoriesProps> = ({
   };
 
   return (
-    <Col lg={12} xs={24}>
+    <>
       {categoriesArray.map(({ key, field }, _index) => (
         <Form.Item
           label={key}
@@ -82,7 +82,7 @@ const ProductCategories: React.FC<ProductCategoriesProps> = ({
           </Select>
         </Form.Item>
       ))}
-    </Col>
+    </>
   );
 };
 

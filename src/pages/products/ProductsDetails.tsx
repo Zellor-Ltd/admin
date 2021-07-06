@@ -1,3 +1,4 @@
+import { PlusOutlined } from "@ant-design/icons";
 import {
   Button,
   Col,
@@ -21,11 +22,7 @@ import { formatMoment } from "helpers/formatMoment";
 import { categoriesSettings } from "helpers/utils";
 import useAllCategories from "hooks/useAllCategories";
 import { Brand } from "interfaces/Brand";
-import {
-  AllCategories,
-  ProductCategory,
-  SelectedProductCategories,
-} from "interfaces/Category";
+import { AllCategories, SelectedProductCategories } from "interfaces/Category";
 import { Video } from "interfaces/Video";
 import { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
@@ -33,8 +30,7 @@ import { RouteComponentProps } from "react-router";
 import { fetchBrands, saveProduct } from "services/DiscoClubService";
 import ProductCategories from "./ProductCategories";
 
-const { categoriesArray, categoriesKeys, categoriesFields } =
-  categoriesSettings;
+const { categoriesKeys, categoriesFields } = categoriesSettings;
 
 const videoColumns: ColumnsType<Video> = [
   {
@@ -58,7 +54,9 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
   const [ageRange, setageRange] = useState<[number, number]>([12, 100]);
   const [form] = Form.useForm();
 
-  const categories: any[] = initial.categories || [{}];
+  const [categories, setCategories] = useState<any[]>(
+    initial.categories || [{}]
+  );
 
   const { fetchAllCategories, _allCategories: allCategories } =
     useAllCategories(setLoading);
@@ -358,16 +356,6 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                   <Switch />
                 </Form.Item>
               </Col>
-              {categories.map((_, index) => (
-                <ProductCategories
-                  productCategoryIndex={index}
-                  selectedProductCategories={
-                    categories as SelectedProductCategories[]
-                  }
-                  allCategories={allCategories}
-                  handleCategoryChange={handleCategoryChange}
-                />
-              ))}
               <Col lg={16} xs={24}>
                 <Form.Item
                   shouldUpdate={(prevValues, curValues) =>
@@ -388,28 +376,54 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                   }
                 </Form.Item>
               </Col>
-              <Col lg={16} xs={24}>
-                <Form.Item
-                  shouldUpdate={(prevValues, curValues) =>
-                    prevValues.category !== curValues.category
-                  }
-                >
-                  {({ getFieldValue }) => (
-                    <Form.Item name={"searchTags"} label="Search Tags">
-                      <Select mode="tags">
-                        {getFieldValue("searchTags")?.map((searchTag: any) => (
-                          <Select.Option key={searchTag} value={searchTag}>
-                            {searchTag}
-                          </Select.Option>
-                        ))}
-                      </Select>
-                    </Form.Item>
-                  )}
-                </Form.Item>
-              </Col>
             </Row>
           </Col>
         </Row>
+        <Col>
+          <Row justify="space-between">
+            {categories.map((_, index) => (
+              <>
+                <ProductCategories
+                  productCategoryIndex={index}
+                  selectedProductCategories={
+                    categories as SelectedProductCategories[]
+                  }
+                  allCategories={allCategories}
+                  handleCategoryChange={handleCategoryChange}
+                />
+                {index === categories.length - 1 && (
+                  <Button
+                    onClick={() => setCategories((prev) => [...prev, {}])}
+                    type="link"
+                    style={{ padding: 0, margin: 6 }}
+                  >
+                    Add Category Tree
+                    <PlusOutlined />
+                  </Button>
+                )}
+              </>
+            ))}
+          </Row>
+        </Col>
+        <Col lg={16} xs={24}>
+          <Form.Item
+            shouldUpdate={(prevValues, curValues) =>
+              prevValues.category !== curValues.category
+            }
+          >
+            {({ getFieldValue }) => (
+              <Form.Item name={"searchTags"} label="Search Tags">
+                <Select mode="tags">
+                  {getFieldValue("searchTags")?.map((searchTag: any) => (
+                    <Select.Option key={searchTag} value={searchTag}>
+                      {searchTag}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            )}
+          </Form.Item>
+        </Col>
         <Row gutter={8}>
           <Col lg={24} xs={24}>
             <Typography.Title level={4}>Target</Typography.Title>
