@@ -64,8 +64,8 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = (props) => {
         >
           <div className="logo" />
           <Menu theme="dark" mode="inline" defaultSelectedKeys={["1"]}>
-            <Menu.Item key="brands" icon={<FundOutlined />}>
-              <Link to="/brands">Brands</Link>
+            <Menu.Item key="brands-and-promos" icon={<FundOutlined />}>
+              <Link to="/brands-and-promos">Brands</Link>
             </Menu.Item>
             <Menu.Item key="preview" icon={<MobileOutlined />}>
               <Link to="/preview">Preview</Link>
