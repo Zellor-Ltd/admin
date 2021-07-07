@@ -373,6 +373,14 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                   <Switch />
                 </Form.Item>
               </Col>
+              <Col lg={8} xs={24}>
+                <Form.Item
+                  name="weight"
+                  label="Weight"
+                >
+                  <Input type="number" placeholder="Weight in Kg" />
+                </Form.Item>
+              </Col>
               <Col lg={16} xs={24}>
                 <Form.Item
                   shouldUpdate={(prevValues, curValues) =>
