@@ -18,8 +18,6 @@ import {
 } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import { Upload } from "components";
-import { EditorState, ContentState, convertToRaw } from "draft-js";
-import draftToHtml from "draftjs-to-html";
 import { formatMoment } from "helpers/formatMoment";
 import { categoriesSettings } from "helpers/utils";
 import useAllCategories from "hooks/useAllCategories";
@@ -27,8 +25,6 @@ import { Brand } from "interfaces/Brand";
 import { AllCategories, SelectedProductCategories } from "interfaces/Category";
 import { Video } from "interfaces/Video";
 import { useCallback, useEffect, useState } from "react";
-import { Editor } from "react-draft-wysiwyg";
-import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { useSelector } from "react-redux";
 import { RouteComponentProps } from "react-router";
 import { useParams } from "react-router-dom";
@@ -38,7 +34,7 @@ import {
   saveStagingProduct,
 } from "services/DiscoClubService";
 import ProductCategories from "./ProductCategories";
-import htmlToDraft from "html-to-draftjs";
+import { RichTextEditor } from "components/RichTextEditor";
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 
@@ -71,20 +67,6 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
   const [brands, setBrands] = useState<Brand[]>([]);
   const [ageRange, setageRange] = useState<[number, number]>([12, 100]);
   const [form] = Form.useForm();
-
-  const _description = initial.description;
-  let editorInitialValue: EditorState;
-  if (_description) {
-    const contentBlock = htmlToDraft(_description);
-    const contentState = ContentState.createFromBlockArray(
-      contentBlock.contentBlocks
-    );
-    editorInitialValue = EditorState.createWithContent(contentState);
-  } else {
-    editorInitialValue = EditorState.createEmpty();
-  }
-
-  const [editorState, setEditorState] = useState<any>(editorInitialValue);
 
   const [categories, setCategories] = useState<any[]>(
     initial?.categories || [{}]
@@ -240,14 +222,6 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
     ]);
   };
 
-  const handleEditorChange = (newState: any) => {
-    setEditorState(newState);
-    form.setFieldsValue({
-      description: draftToHtml(convertToRaw(editorState.getCurrentContent())),
-    });
-    console.log(newState);
-  };
-
   return (
     <>
       <PageHeader title="Product" subTitle="Form" />
@@ -287,13 +261,7 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
               </Col>
               <Col lg={24} xs={24}>
                 <Form.Item label="Long description">
-                  <Editor
-                    editorState={editorState}
-                    toolbarClassName="toolbarClassName"
-                    wrapperClassName="wrapperClassName"
-                    editorClassName="editorClassName"
-                    onEditorStateChange={handleEditorChange}
-                  />
+                  <RichTextEditor formField="description" form={form} />
                 </Form.Item>
               </Col>
               <Col lg={12} xs={24}>
