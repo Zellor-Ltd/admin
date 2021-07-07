@@ -8,8 +8,9 @@ import CreatorDetail from "pages/creators/CreatorDetail";
 import Products from "pages/products/Products";
 import TagDetail from "pages/tags/TagDetail";
 import Tags from "pages/tags/Tags";
-import BrandDetail from "pages/brands/BrandDetail";
-import Brands from "pages/brands/Brands";
+import BrandDetail from "pages/brands-and-promos/BrandDetail";
+import PromoCodesDetail from "pages/brands-and-promos/PromoCodesDetail";
+import BrandsAndPromos from "pages/brands-and-promos/BrandsAndPromos";
 import EndpointDetail from "pages/endpoints/EndpointDetail";
 import Endpoints from "pages/endpoints/Endpoints";
 import FanDetail from "pages/fans/FanDetail";
@@ -95,8 +96,13 @@ function Routes() {
         layout={AuthenticatedLayout}
       />
       <AuthRoute
-        path="/brands"
-        component={Brands}
+        path="/promo-code"
+        component={PromoCodesDetail}
+        layout={AuthenticatedLayout}
+      />
+      <AuthRoute
+        path="/brands-and-promos"
+        component={BrandsAndPromos}
         layout={AuthenticatedLayout}
       />
       <AuthRoute

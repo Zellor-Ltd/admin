@@ -11,6 +11,7 @@ import { Role } from "interfaces/Role";
 import { Tag } from "interfaces/Tag";
 import { User } from "interfaces/User";
 import { Privilege } from "interfaces/Privilege";
+import { PromoCode } from "interfaces/PromoCode";
 import {
   AllCategoriesAPI,
   Category,
@@ -160,6 +161,8 @@ export const fetchWalletTransactions = (userId: string) =>
 export const fetchUserFeed = (userId: string) =>
   instance.get(`Disco/Feed/GetUserFeed/${userId}`);
 
+export const fetchPromoCodes = () => instance.get("Wi/Ep/ListPromoCodes");
+
 export const saveVideoFeed = (params: FeedItem) => {
   if (params.id) {
     return instance.put("Disco/Feed/Update", params);
@@ -263,6 +266,14 @@ export const saveOrder = (params: any) => {
 export const saveUserFeed = (userId: string, payload: any) =>
   instance.put(`Disco/Feed/UpdateUserFeed/${userId}`, payload);
 
+export const savePromoCode = (params: PromoCode) => {
+  if (params.id) {
+    return instance.post("Wi/Ep/UpdatePromoCode", params);
+  } else {
+    return instance.put("Wi/EP/AddPromoCode", params);
+  }
+};
+
 export const deletePrivileges = (data: Privilege) =>
   instance.delete("Wi/Ep/RemovePrivilege", { data });
 
@@ -286,6 +297,9 @@ export const deleteBrand = (data: IDelete) =>
 
 export const deleteCategory = (data: IDelete) =>
   instance.delete(`Wi/Ep/RemoveCategory`, { data });
+
+export const deletePromoCode = (data: IDelete) =>
+  instance.delete(`Wi/Ep/RemovePromoCode`, { data });
 
 export const loginService = (login: Login) =>
   instance.put("Auth/GetApiToken", login);
