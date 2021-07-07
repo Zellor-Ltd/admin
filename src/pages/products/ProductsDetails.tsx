@@ -1,4 +1,4 @@
-import { PlusOutlined, MinusOutlined } from "@ant-design/icons";
+import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
 import {
   Button,
   Col,
@@ -18,6 +18,8 @@ import {
 } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import { Upload } from "components";
+import { EditorState, ContentState, convertToRaw } from "draft-js";
+import draftToHtml from "draftjs-to-html";
 import { formatMoment } from "helpers/formatMoment";
 import { categoriesSettings } from "helpers/utils";
 import useAllCategories from "hooks/useAllCategories";
@@ -25,6 +27,8 @@ import { Brand } from "interfaces/Brand";
 import { AllCategories, SelectedProductCategories } from "interfaces/Category";
 import { Video } from "interfaces/Video";
 import { useCallback, useEffect, useState } from "react";
+import { Editor } from "react-draft-wysiwyg";
+import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { useSelector } from "react-redux";
 import { RouteComponentProps } from "react-router";
 import { useParams } from "react-router-dom";
@@ -34,6 +38,7 @@ import {
   saveStagingProduct,
 } from "services/DiscoClubService";
 import ProductCategories from "./ProductCategories";
+import htmlToDraft from "html-to-draftjs";
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 
@@ -60,12 +65,26 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
   const { productMode } = useParams<RouteParams>();
   const isStaging = productMode === "staging";
   const saveProductFn = isStaging ? saveStagingProduct : saveProduct;
-  const productsListPathname = isStaging ? "/staging-products": "/products" ;
+  const productsListPathname = isStaging ? "/staging-products" : "/products";
   const initial: any = location.state;
   const [loading, setLoading] = useState<boolean>(false);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [ageRange, setageRange] = useState<[number, number]>([12, 100]);
   const [form] = Form.useForm();
+
+  const _description = initial.description;
+  let editorInitialValue: EditorState;
+  if (_description) {
+    const contentBlock = htmlToDraft(_description);
+    const contentState = ContentState.createFromBlockArray(
+      contentBlock.contentBlocks
+    );
+    editorInitialValue = EditorState.createWithContent(contentState);
+  } else {
+    editorInitialValue = EditorState.createEmpty();
+  }
+
+  const [editorState, setEditorState] = useState<any>(editorInitialValue);
 
   const [categories, setCategories] = useState<any[]>(
     initial?.categories || [{}]
@@ -192,7 +211,7 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
         });
       });
 
-      saveProductFn(product);
+      await saveProductFn(product);
 
       setLoading(false);
       message.success("Register updated with success.");
@@ -219,6 +238,14 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
       ...prev.slice(0, index),
       ...prev.slice(index + 1),
     ]);
+  };
+
+  const handleEditorChange = (newState: any) => {
+    setEditorState(newState);
+    form.setFieldsValue({
+      description: draftToHtml(convertToRaw(editorState.getCurrentContent())),
+    });
+    console.log(newState);
   };
 
   return (
@@ -259,8 +286,14 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                 </Form.Item>
               </Col>
               <Col lg={24} xs={24}>
-                <Form.Item name="description" label="Long description">
-                  <Input.TextArea rows={5} />
+                <Form.Item label="Long description">
+                  <Editor
+                    editorState={editorState}
+                    toolbarClassName="toolbarClassName"
+                    wrapperClassName="wrapperClassName"
+                    editorClassName="editorClassName"
+                    onEditorStateChange={handleEditorChange}
+                  />
                 </Form.Item>
               </Col>
               <Col lg={12} xs={24}>
@@ -387,10 +420,7 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                 </Form.Item>
               </Col>
               <Col lg={8} xs={24}>
-                <Form.Item
-                  name="weight"
-                  label="Weight"
-                >
+                <Form.Item name="weight" label="Weight">
                   <Input type="number" placeholder="Weight in Kg" />
                 </Form.Item>
               </Col>
