@@ -2,6 +2,7 @@ import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Button, PageHeader, Popconfirm, Table } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import { PromoCode } from "interfaces/PromoCode";
+import moment from "moment";
 import { useEffect, useState } from "react";
 import { RouteComponentProps } from "react-router";
 import { Link } from "react-router-dom";
@@ -46,11 +47,25 @@ const PromoCodes: React.FC<RouteComponentProps> = ({ history }) => {
       title: "Dollars",
       dataIndex: "dollars",
       width: "10%",
+      align: "center",
     },
     {
       title: "Discount",
       dataIndex: "discount",
       width: "10%",
+      align: "center",
+    },
+    {
+      title: "Creation",
+      dataIndex: "hCreationDate",
+      width: "15%",
+      align: "center",
+      render: (value: Date) => (
+        <>
+          <div>{moment(value).format("DD/MM/YYYY")}</div>
+          <div>{moment(value).format("HH:mm")}</div>
+        </>
+      ),
     },
     {
       title: "actions",
