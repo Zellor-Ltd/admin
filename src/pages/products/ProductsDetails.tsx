@@ -27,7 +27,12 @@ import { Video } from "interfaces/Video";
 import { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RouteComponentProps } from "react-router";
-import { fetchBrands, saveProduct } from "services/DiscoClubService";
+import { useParams } from "react-router-dom";
+import {
+  fetchBrands,
+  saveProduct,
+  saveStagingProduct,
+} from "services/DiscoClubService";
 import ProductCategories from "./ProductCategories";
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
@@ -46,8 +51,16 @@ const videoColumns: ColumnsType<Video> = [
   },
 ];
 
+interface RouteParams {
+  productMode: "staging" | "commited";
+}
+
 const ProductDetails: React.FC<RouteComponentProps> = (props) => {
   const { history, location } = props;
+  const { productMode } = useParams<RouteParams>();
+  const isStaging = productMode === "staging";
+  const saveProductFn = isStaging ? saveStagingProduct : saveProduct;
+  const productsListPathname = isStaging ? "/staging-products": "/products" ;
   const initial: any = location.state;
   const [loading, setLoading] = useState<boolean>(false);
   const [brands, setBrands] = useState<Brand[]>([]);
@@ -179,11 +192,11 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
         });
       });
 
-      await saveProduct(product);
+      saveProductFn(product);
 
       setLoading(false);
       message.success("Register updated with success.");
-      history.push("/products");
+      history.push(productsListPathname);
     } catch (error) {
       console.error(error);
       setLoading(false);
@@ -537,7 +550,10 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
         </Row>
         <Row gutter={8}>
           <Col>
-            <Button type="default" onClick={() => history.push("/products")}>
+            <Button
+              type="default"
+              onClick={() => history.push(productsListPathname)}
+            >
               Cancel
             </Button>
           </Col>

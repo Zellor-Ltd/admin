@@ -1,22 +1,11 @@
 import {
+  ArrowRightOutlined,
   DeleteOutlined,
   EditOutlined,
-  SearchOutlined,
-  ArrowRightOutlined,
 } from "@ant-design/icons";
-import {
-  Button,
-  Col,
-  Input,
-  message,
-  PageHeader,
-  Popconfirm,
-  Row,
-  Table,
-  Tag,
-  Typography,
-} from "antd";
+import { Button, message, PageHeader, Popconfirm, Table, Tag } from "antd";
 import { ColumnsType } from "antd/lib/table";
+import { SearchFilter } from "components/SearchFilter";
 import { Product } from "interfaces/Product";
 import moment from "moment";
 import { useEffect, useState } from "react";
@@ -27,18 +16,18 @@ import {
   fetchStagingProducts,
   transferStageProduct,
 } from "services/DiscoClubService";
-import "./StagingList.scss";
 
 const StagingList: React.FC<RouteComponentProps> = ({ history }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [products, setProducts] = useState<Product[]>([]);
-  const [filterText, setFilterText] = useState("");
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
 
   const fetch = async () => {
     setLoading(true);
     const response: any = await fetchStagingProducts();
     setLoading(false);
     setProducts(response.results);
+    setFilteredProducts(response.results);
   };
 
   useEffect(() => {
@@ -57,16 +46,6 @@ const StagingList: React.FC<RouteComponentProps> = ({ history }) => {
     }
   };
 
-  const onChangeFilter = (evt: any) => {
-    setFilterText(evt.target.value);
-  };
-
-  const filterProduct = () => {
-    return products.filter((product) =>
-      product.name?.toUpperCase().includes(filterText.toUpperCase())
-    );
-  };
-
   const handleStage = async (productId: string) => {
     try {
       await transferStageProduct(productId);
@@ -83,7 +62,7 @@ const StagingList: React.FC<RouteComponentProps> = ({ history }) => {
       dataIndex: "name",
       width: "15%",
       render: (value: string, record: Product) => (
-        <Link to={{ pathname: `/staging-product`, state: record }}>
+        <Link to={{ pathname: `/product/staging`, state: record }}>
           {value}
         </Link>
       ),
@@ -130,7 +109,7 @@ const StagingList: React.FC<RouteComponentProps> = ({ history }) => {
       align: "right",
       render: (_, record: Product) => (
         <>
-          <Link to={{ pathname: `/staging-product`, state: record }}>
+          <Link to={{ pathname: `/product/staging`, state: record }}>
             <EditOutlined />
           </Link>
           <Popconfirm
@@ -155,26 +134,25 @@ const StagingList: React.FC<RouteComponentProps> = ({ history }) => {
     },
   ];
 
+  const searchFilterFunction = (filterText: string) => {
+    setFilteredProducts(
+      products.filter((product) =>
+        product.name?.toUpperCase().includes(filterText.toUpperCase())
+      )
+    );
+  };
+
   return (
-    <div className="products">
-      <PageHeader title="Staging" subTitle="List of Products to Stage" />
-      <div className="filter">
-        <Row>
-          <Col lg={12} xs={24}>
-            <Typography.Title level={5} title="Search">
-              Search
-            </Typography.Title>
-            <Input onChange={onChangeFilter} suffix={<SearchOutlined />} />
-          </Col>
-        </Row>
-      </div>
+    <>
+      <PageHeader title="Staging" subTitle="List of Staging Products" />
+      <SearchFilter filterFunction={searchFilterFunction} />
       <Table
         rowKey="id"
         columns={columns}
-        dataSource={filterProduct()}
+        dataSource={filteredProducts}
         loading={loading}
       />
-    </div>
+    </>
   );
 };
 
