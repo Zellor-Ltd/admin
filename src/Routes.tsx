@@ -31,8 +31,7 @@ import Orders from "pages/orders/Orders";
 import OrderDetail from "pages/orders/OrderDetail";
 import Transactions from "pages/transactions/Transactions";
 import FeedMixer from "pages/feed-mixer/FeedMixer";
-import StagingList from "pages/staging/StagingList";
-import StagingProductDetail from "pages/staging/StagingProductDetail";
+import StagingList from "pages/products/StagingList";
 
 function Routes() {
   return (
@@ -55,7 +54,7 @@ function Routes() {
         layout={AuthenticatedLayout}
       />
       <AuthRoute
-        path="/product"
+        path="/product/:productMode"
         component={ProductDetails}
         layout={AuthenticatedLayout}
       />
@@ -173,12 +172,7 @@ function Routes() {
         layout={AuthenticatedLayout}
       />
       <AuthRoute
-        path="/staging-product"
-        component={StagingProductDetail}
-        layout={AuthenticatedLayout}
-      />
-      <AuthRoute
-        path="/staging-list"
+        path="/staging-products"
         component={StagingList}
         layout={AuthenticatedLayout}
       />

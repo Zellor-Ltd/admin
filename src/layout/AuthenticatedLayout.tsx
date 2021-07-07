@@ -73,8 +73,8 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = (props) => {
             <Menu.Item key="products" icon={<TagOutlined />}>
               <Link to="/products">Products</Link>
             </Menu.Item>
-            <Menu.Item key="staging-list" icon={<TagOutlined />}>
-              <Link to="/staging-list">Staging</Link>
+            <Menu.Item key="staging-products" icon={<TagOutlined />}>
+              <Link to="/staging-products">Staging</Link>
             </Menu.Item>
             <Menu.Item key="2" icon={<HeartFilled />}>
               <Link to="/feed">Videos Feed</Link>
