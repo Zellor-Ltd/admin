@@ -12,8 +12,8 @@ const PromoCodesDetail: React.FC<RouteComponentProps> = (props) => {
   const onFinish = async () => {
     setLoading(true);
     try {
-      const brand = form.getFieldsValue(true);
-      await savePromoCode(brand);
+      const promoCode = form.getFieldsValue(true);
+      await savePromoCode(promoCode);
       setLoading(false);
       message.success("Register updated with success.");
       history.push("/brands-and-promos?selected-tab=Promos");
@@ -24,9 +24,9 @@ const PromoCodesDetail: React.FC<RouteComponentProps> = (props) => {
 
   return (
     <>
-      <PageHeader title="Brand Update" subTitle="Brand" />
+      <PageHeader title="Promo Code Update" subTitle="Promo Code" />
       <Form
-        name="brandForm"
+        name="promoCodeForm"
         layout="vertical"
         form={form}
         initialValues={initial}
