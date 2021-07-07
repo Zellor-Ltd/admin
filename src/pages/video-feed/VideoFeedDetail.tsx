@@ -39,6 +39,7 @@ import { User } from "interfaces/User";
 import "./VideoFeed.scss";
 import { Creator } from "interfaces/Creator";
 import { Category } from "interfaces/Category";
+import { RichTextEditor } from "components/RichTextEditor";
 
 const { Title } = Typography;
 
@@ -347,7 +348,6 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
             layout="vertical"
             className="video-feed"
           >
-            {/* {!selectedSegment && ( */}
             <>
               <Row gutter={8}>
                 <Col lg={12} xs={24}>
@@ -368,7 +368,7 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
                   </Col>
                   <Col lg={24} xs={24}>
                     <Form.Item name="description" label="Long description">
-                      <Input.TextArea rows={5} />
+                      <RichTextEditor formField="description" form={form} />
                     </Form.Item>
                   </Col>
                 </Col>

@@ -1,4 +1,4 @@
-import { PlusOutlined, MinusOutlined } from "@ant-design/icons";
+import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
 import {
   Button,
   Col,
@@ -34,6 +34,7 @@ import {
   saveStagingProduct,
 } from "services/DiscoClubService";
 import ProductCategories from "./ProductCategories";
+import { RichTextEditor } from "components/RichTextEditor";
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 
@@ -60,7 +61,7 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
   const { productMode } = useParams<RouteParams>();
   const isStaging = productMode === "staging";
   const saveProductFn = isStaging ? saveStagingProduct : saveProduct;
-  const productsListPathname = isStaging ? "/staging-products": "/products" ;
+  const productsListPathname = isStaging ? "/staging-products" : "/products";
   const initial: any = location.state;
   const [loading, setLoading] = useState<boolean>(false);
   const [brands, setBrands] = useState<Brand[]>([]);
@@ -192,7 +193,7 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
         });
       });
 
-      saveProductFn(product);
+      await saveProductFn(product);
 
       setLoading(false);
       message.success("Register updated with success.");
@@ -259,8 +260,8 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                 </Form.Item>
               </Col>
               <Col lg={24} xs={24}>
-                <Form.Item name="description" label="Long description">
-                  <Input.TextArea rows={5} />
+                <Form.Item label="Long description">
+                  <RichTextEditor formField="description" form={form} />
                 </Form.Item>
               </Col>
               <Col lg={12} xs={24}>
@@ -387,10 +388,7 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                 </Form.Item>
               </Col>
               <Col lg={8} xs={24}>
-                <Form.Item
-                  name="weight"
-                  label="Weight"
-                >
+                <Form.Item name="weight" label="Weight">
                   <Input type="number" placeholder="Weight in Kg" />
                 </Form.Item>
               </Col>
