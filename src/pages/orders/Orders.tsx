@@ -1,8 +1,4 @@
-import {
-  CalendarOutlined,
-  EditOutlined,
-  SearchOutlined,
-} from "@ant-design/icons";
+import { CalendarOutlined, SearchOutlined } from "@ant-design/icons";
 import {
   Button,
   Col,
@@ -21,25 +17,25 @@ import { Brand } from "interfaces/Brand";
 import { Fan } from "interfaces/Fan";
 import { Order } from "interfaces/Order";
 import moment from "moment";
-import { SSL_OP_DONT_INSERT_EMPTY_FRAGMENTS } from "node:constants";
 import { useEffect, useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 import { useSelector } from "react-redux";
 import { RouteComponentProps } from "react-router";
 import { Link } from "react-router-dom";
 import { fetchFans, fetchOrders, saveOrder } from "services/DiscoClubService";
-
-interface FilterFn {
-  [key: string]: (orders: Order[]) => Order[];
-}
+import useFilter from "hooks/useFilter";
 
 const Orders: React.FC<RouteComponentProps> = () => {
   const [tableloading, setTableLoading] = useState<boolean>(false);
   const [orderUpdateList, setOrderUpdateList] = useState<boolean[]>([]);
 
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [filteredOrders, setFilteredOrders] = useState<Order[]>([]);
-  const [filterFunctions, setFilterFunctions] = useState<FilterFn>({});
+  const {
+    arrayList: orders,
+    setArrayList: setOrders,
+    filteredArrayList: filteredOrders,
+    addFilterFunction,
+    removeFilterFunction,
+  } = useFilter<Order>([]);
 
   const [fans, setFans] = useState<Fan[]>([]);
 
@@ -47,17 +43,6 @@ const Orders: React.FC<RouteComponentProps> = () => {
   const [searchedColumn, setSearchedColumn] = useState<string>("");
 
   const searchInput = useRef<Input>(null);
-
-  useEffect(() => {
-    let _orders = [...orders];
-    for (const key in filterFunctions) {
-      if (Object.prototype.hasOwnProperty.call(filterFunctions, key)) {
-        const filterFn = filterFunctions[key];
-        _orders = [...filterFn(_orders)];
-      }
-    }
-    setFilteredOrders(_orders);
-  }, [filterFunctions, orders]);
 
   const handleSearch = (selectedKeys: any, confirm: any, dataIndex: any) => {
     confirm();
@@ -89,12 +74,6 @@ const Orders: React.FC<RouteComponentProps> = () => {
       .format("YYYY-MM-DDTHH:mm:ss.SSSSSSSZ");
     setOrders(_orders);
 
-    const _filteredOrders = [...filteredOrders];
-    _filteredOrders[orderIndex].hLastUpdate = moment
-      .utc()
-      .format("YYYY-MM-DDTHH:mm:ss.SSSSSSSZ");
-    setFilteredOrders(_filteredOrders);
-
     message.success("Changes saved!");
     setOrderUpdateList((prev) => {
       prev[orderIndex] = false;
@@ -104,21 +83,16 @@ const Orders: React.FC<RouteComponentProps> = () => {
 
   const handleDateChange = (values: any) => {
     if (!values) {
-      setFilterFunctions((prev) => {
-        delete prev.creationDate;
-        return { ...prev };
-      });
+      removeFilterFunction("creationDate");
       return;
     }
     const startDate = moment(values[0], "DD/MM/YYYY").startOf("day").utc();
     const endDate = moment(values[1], "DD/MM/YYYY").endOf("day").utc();
-    setFilterFunctions((prev) => {
-      prev.creationDate = (orders) =>
-        orders.filter(({ hCreationDate }) => {
-          return moment(hCreationDate).utc().isBetween(startDate, endDate);
-        });
-      return { ...prev };
-    });
+    addFilterFunction("creationDate", (orders: Order[]) =>
+      orders.filter(({ hCreationDate }) => {
+        return moment(hCreationDate).utc().isBetween(startDate, endDate);
+      })
+    );
   };
 
   const getFan = (fanId: string) => fans.find((fan) => fan.id === fanId);
@@ -298,17 +272,17 @@ const Orders: React.FC<RouteComponentProps> = () => {
         </>
       ),
     },
-    {
-      title: "Actions",
-      key: "action",
-      width: "5%",
-      align: "right",
-      render: (_, record) => (
-        <Link to={{ pathname: `/order`, state: record }}>
-          <EditOutlined />
-        </Link>
-      ),
-    },
+    // {
+    //   title: "Actions",
+    //   key: "action",
+    //   width: "5%",
+    //   align: "right",
+    //   render: (_, record) => (
+    //     <Link to={{ pathname: `/order`, state: record }}>
+    //       <EditOutlined />
+    //     </Link>
+    //   ),
+    // },
   ];
 
   const getOrders = async () => {
@@ -333,7 +307,6 @@ const Orders: React.FC<RouteComponentProps> = () => {
         return order;
       });
       setOrders(_ordersWithFanName);
-      setFilteredOrders(_ordersWithFanName);
       setFans(_fans);
       setTableLoading(false);
     };
@@ -342,25 +315,20 @@ const Orders: React.FC<RouteComponentProps> = () => {
 
   const onChangeBrand = async (_selectedBrand: Brand | undefined) => {
     if (!_selectedBrand) {
-      setFilterFunctions((prev) => {
-        delete prev.brandName;
-        return { ...prev };
-      });
+      removeFilterFunction("brandName");
       return;
     }
-    setFilterFunctions((prev) => {
-      prev.brandName = (orders) =>
-        orders.filter(
-          (order) => order.product?.brand.brandName === _selectedBrand.brandName
-        );
-      return { ...prev };
-    });
+    addFilterFunction("brandName", (orders) =>
+      orders.filter(
+        (order) => order.product?.brand.brandName === _selectedBrand.brandName
+      )
+    );
   };
 
   return (
     <div className="orders">
       <PageHeader title="Orders" subTitle="List of Orders" />
-      <Row gutter={8} style={{ marginBottom: "20px" }}>
+      <Row gutter={8}>
         <Col xxl={40} lg={6} xs={18}>
           <SelectBrand
             style={{ width: "100%" }}

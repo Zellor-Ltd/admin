@@ -3,9 +3,21 @@ import {
   DeleteOutlined,
   EditOutlined,
 } from "@ant-design/icons";
-import { Button, message, PageHeader, Popconfirm, Table, Tag } from "antd";
+import {
+  Button,
+  Col,
+  message,
+  PageHeader,
+  Popconfirm,
+  Row,
+  Table,
+  Tag,
+} from "antd";
 import { ColumnsType } from "antd/lib/table";
 import { SearchFilter } from "components/SearchFilter";
+import { SelectBrand } from "components/SelectBrand";
+import useFilter from "hooks/useFilter";
+import { Brand } from "interfaces/Brand";
 import { Product } from "interfaces/Product";
 import moment from "moment";
 import { useEffect, useState } from "react";
@@ -19,15 +31,18 @@ import {
 
 const StagingList: React.FC<RouteComponentProps> = ({ history }) => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [products, setProducts] = useState<Product[]>([]);
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const {
+    setArrayList: setProducts,
+    filteredArrayList: filteredProducts,
+    addFilterFunction,
+    removeFilterFunction,
+  } = useFilter<Product>([]);
 
   const fetch = async () => {
     setLoading(true);
     const response: any = await fetchStagingProducts();
     setLoading(false);
     setProducts(response.results);
-    setFilteredProducts(response.results);
   };
 
   useEffect(() => {
@@ -135,9 +150,21 @@ const StagingList: React.FC<RouteComponentProps> = ({ history }) => {
   ];
 
   const searchFilterFunction = (filterText: string) => {
-    setFilteredProducts(
+    addFilterFunction("productName", (products) =>
       products.filter((product) =>
         product.name?.toUpperCase().includes(filterText.toUpperCase())
+      )
+    );
+  };
+
+  const onChangeBrand = async (_selectedBrand: Brand | undefined) => {
+    if (!_selectedBrand) {
+      removeFilterFunction("brandName");
+      return;
+    }
+    addFilterFunction("brandName", (products) =>
+      products.filter(
+        (product) => product.brand.brandName === _selectedBrand.brandName
       )
     );
   };
@@ -145,7 +172,21 @@ const StagingList: React.FC<RouteComponentProps> = ({ history }) => {
   return (
     <>
       <PageHeader title="Staging" subTitle="List of Staging Products" />
-      <SearchFilter filterFunction={searchFilterFunction} />
+      <Row gutter={8}>
+        <Col xxl={40} lg={6} xs={18}>
+          <SearchFilter
+            filterFunction={searchFilterFunction}
+            label="Search by Name"
+          />
+        </Col>
+        <Col xxl={40} lg={6} xs={18}>
+          <SelectBrand
+            style={{ width: "100%" }}
+            allowClear={true}
+            onChange={onChangeBrand}
+          ></SelectBrand>
+        </Col>
+      </Row>
       <Table
         rowKey="id"
         columns={columns}
