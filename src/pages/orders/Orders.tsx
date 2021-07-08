@@ -21,6 +21,7 @@ import { Brand } from "interfaces/Brand";
 import { Fan } from "interfaces/Fan";
 import { Order } from "interfaces/Order";
 import moment from "moment";
+import { SSL_OP_DONT_INSERT_EMPTY_FRAGMENTS } from "node:constants";
 import { useEffect, useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 import { useSelector } from "react-redux";
@@ -209,8 +210,8 @@ const Orders: React.FC<RouteComponentProps> = () => {
 
   const columns: ColumnsType<Order> = [
     {
-      title: "User ID",
-      dataIndex: "userId",
+      title: "User",
+      dataIndex: "fanName",
       width: "10%",
       align: "left",
       ...getColumnSearchProps("userId"),
@@ -313,20 +314,27 @@ const Orders: React.FC<RouteComponentProps> = () => {
   const getOrders = async () => {
     const response: any = await fetchOrders();
     const _orders = response.results.filter((order: Order) => !!order.product);
-    setOrders(_orders);
-    setFilteredOrders(_orders);
+    return _orders;
   };
 
   const getFans = async () => {
     const response: any = await fetchFans();
-    setFans(response.results);
+    return response.results;
   };
 
   useEffect(() => {
     const getResources = async () => {
       setTableLoading(true);
-      await getOrders();
-      await getFans();
+      const _orders: Order[] = await getOrders();
+      const _fans: Fan[] = await getFans();
+      const _ordersWithFanName = _orders.map((order) => {
+        const fan = fans.find((fan) => fan.id === order.userId);
+        order.fanName = fan?.name;
+        return order;
+      });
+      setOrders(_ordersWithFanName);
+      setFilteredOrders(_ordersWithFanName);
+      setFans(_fans);
       setTableLoading(false);
     };
     getResources();
