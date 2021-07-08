@@ -1,8 +1,4 @@
-import {
-  CalendarOutlined,
-  EditOutlined,
-  SearchOutlined,
-} from "@ant-design/icons";
+import { CalendarOutlined, SearchOutlined } from "@ant-design/icons";
 import {
   Button,
   Col,
@@ -188,8 +184,8 @@ const Orders: React.FC<RouteComponentProps> = () => {
 
   const columns: ColumnsType<Order> = [
     {
-      title: "User ID",
-      dataIndex: "userId",
+      title: "User",
+      dataIndex: "fanName",
       width: "10%",
       align: "left",
       ...getColumnSearchProps("userId"),
@@ -292,19 +288,26 @@ const Orders: React.FC<RouteComponentProps> = () => {
   const getOrders = async () => {
     const response: any = await fetchOrders();
     const _orders = response.results.filter((order: Order) => !!order.product);
-    setOrders(_orders);
+    return _orders;
   };
 
   const getFans = async () => {
     const response: any = await fetchFans();
-    setFans(response.results);
+    return response.results;
   };
 
   useEffect(() => {
     const getResources = async () => {
       setTableLoading(true);
-      await getOrders();
-      await getFans();
+      const _orders: Order[] = await getOrders();
+      const _fans: Fan[] = await getFans();
+      const _ordersWithFanName = _orders.map((order) => {
+        const fan = fans.find((fan) => fan.id === order.userId);
+        order.fanName = fan?.name;
+        return order;
+      });
+      setOrders(_ordersWithFanName);
+      setFans(_fans);
       setTableLoading(false);
     };
     getResources();
