@@ -59,6 +59,15 @@ const BrandDetail: React.FC<RouteComponentProps> = (props) => {
                 <Input />
               </Form.Item>
             </Col>
+            <Col lg={16} xs={24}>
+              <Form.Item
+                name="shopName"
+                label="Shop Name (without https:// or spaces)"
+                rules={[{ required: true }]}
+              >
+                <Input placeholder="casey-temp.myshopify.com" />
+              </Form.Item>
+            </Col>
           </Col>
 
           <Col lg={12} xs={24}>
