@@ -20,7 +20,7 @@ import useFilter from "hooks/useFilter";
 import { Brand } from "interfaces/Brand";
 import { Product } from "interfaces/Product";
 import moment from "moment";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { RouteComponentProps } from "react-router";
 import { Link } from "react-router-dom";
 import {
@@ -38,16 +38,16 @@ const StagingList: React.FC<RouteComponentProps> = ({ history }) => {
     removeFilterFunction,
   } = useFilter<Product>([]);
 
-  const fetch = async () => {
+  const fetch = useCallback(async () => {
     setLoading(true);
     const response: any = await fetchStagingProducts();
     setLoading(false);
     setProducts(response.results);
-  };
+  }, [setProducts]);
 
   useEffect(() => {
     fetch();
-  }, []);
+  }, [fetch]);
 
   const deleteItem = async (id: string) => {
     try {
