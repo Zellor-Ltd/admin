@@ -287,8 +287,8 @@ const Orders: React.FC<RouteComponentProps> = () => {
 
   const getOrders = async () => {
     const response: any = await fetchOrders();
-    const _orders = response.results.filter((order: Order) => !!order.product);
-    return _orders;
+    const orders = response.results.filter((order: Order) => !!order.product);
+    return orders;
   };
 
   const getFans = async () => {
@@ -299,19 +299,19 @@ const Orders: React.FC<RouteComponentProps> = () => {
   useEffect(() => {
     const getResources = async () => {
       setTableLoading(true);
-      const _orders: Order[] = await getOrders();
-      const _fans: Fan[] = await getFans();
-      const _ordersWithFanName = _orders.map((order) => {
+      const orders: Order[] = await getOrders();
+      const fans: Fan[] = await getFans();
+      const ordersWithFanName = orders.map((order) => {
         const fan = fans.find((fan) => fan.id === order.userId);
         order.fanName = fan?.name;
         return order;
       });
-      setOrders(_ordersWithFanName);
-      setFans(_fans);
+      setOrders(ordersWithFanName);
+      setFans(fans);
       setTableLoading(false);
     };
     getResources();
-  }, []);
+  }, [setOrders]);
 
   const onChangeBrand = async (_selectedBrand: Brand | undefined) => {
     if (!_selectedBrand) {
