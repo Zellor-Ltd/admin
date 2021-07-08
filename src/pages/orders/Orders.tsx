@@ -276,17 +276,17 @@ const Orders: React.FC<RouteComponentProps> = () => {
         </>
       ),
     },
-    {
-      title: "Actions",
-      key: "action",
-      width: "5%",
-      align: "right",
-      render: (_, record) => (
-        <Link to={{ pathname: `/order`, state: record }}>
-          <EditOutlined />
-        </Link>
-      ),
-    },
+    // {
+    //   title: "Actions",
+    //   key: "action",
+    //   width: "5%",
+    //   align: "right",
+    //   render: (_, record) => (
+    //     <Link to={{ pathname: `/order`, state: record }}>
+    //       <EditOutlined />
+    //     </Link>
+    //   ),
+    // },
   ];
 
   const getOrders = async () => {
