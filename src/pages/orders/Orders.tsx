@@ -33,11 +33,13 @@ const Orders: React.FC<RouteComponentProps> = () => {
   const [tableloading, setTableLoading] = useState<boolean>(false);
   const [orderUpdateList, setOrderUpdateList] = useState<boolean[]>([]);
 
-  const [filterState, filterDispatch] = useFilter();
-  const orders: Order[] = filterState.arrayList;
-  const filteredOrders: Order[] = filterState.filteredArrayList;
-  const setOrders = (_orders: any) =>
-    filterDispatch({ type: "SET_ARRAY_LIST", payload: _orders });
+  const {
+    arrayList: orders,
+    setArrayList: setOrders,
+    filteredArrayList: filteredOrders,
+    addFilterFunction,
+    removeFilterFunction,
+  } = useFilter<Order>([]);
 
   const [fans, setFans] = useState<Fan[]>([]);
 
@@ -85,24 +87,16 @@ const Orders: React.FC<RouteComponentProps> = () => {
 
   const handleDateChange = (values: any) => {
     if (!values) {
-      filterDispatch({
-        type: "REMOVE_FILTER_FUNCTION",
-        payload: { key: "creationDate" },
-      });
+      removeFilterFunction("creationDate");
       return;
     }
     const startDate = moment(values[0], "DD/MM/YYYY").startOf("day").utc();
     const endDate = moment(values[1], "DD/MM/YYYY").endOf("day").utc();
-    filterDispatch({
-      type: "ADD_FILTER_FUNCTION",
-      payload: {
-        key: "creationDate",
-        fn: (orders: Order[]) =>
-          orders.filter(({ hCreationDate }) => {
-            return moment(hCreationDate).utc().isBetween(startDate, endDate);
-          }),
-      },
-    });
+    addFilterFunction("creationDate", (orders: Order[]) =>
+      orders.filter(({ hCreationDate }) => {
+        return moment(hCreationDate).utc().isBetween(startDate, endDate);
+      })
+    );
   };
 
   const getFan = (fanId: string) => fans.find((fan) => fan.id === fanId);
@@ -318,23 +312,14 @@ const Orders: React.FC<RouteComponentProps> = () => {
 
   const onChangeBrand = async (_selectedBrand: Brand | undefined) => {
     if (!_selectedBrand) {
-      filterDispatch({
-        type: "REMOVE_FILTER_FUNCTION",
-        payload: { key: "brandName" },
-      });
+      removeFilterFunction("brandName");
       return;
     }
-    filterDispatch({
-      type: "ADD_FILTER_FUNCTION",
-      payload: {
-        key: "brandName",
-        fn: (orders: Order[]) =>
-          orders.filter(
-            (order) =>
-              order.product?.brand.brandName === _selectedBrand.brandName
-          ),
-      },
-    });
+    addFilterFunction("brandName", (orders) =>
+      orders.filter(
+        (order) => order.product?.brand.brandName === _selectedBrand.brandName
+      )
+    );
   };
 
   return (

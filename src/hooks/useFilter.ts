@@ -1,54 +1,48 @@
-import { useReducer } from "react";
+import { useState, useEffect } from "react";
 
-interface FilterFnPayload {
-  key: string;
+type FilterFn<T> = (arrayList: T[]) => T[];
+
+interface FilterFnObject<T> {
+  [key: string]: FilterFn<T>;
 }
 
-interface AddFilterFnPayload extends FilterFnPayload {
-  fn: (arrayList: any[]) => any[];
-}
+const useFilter = <T>(initialArrayListValue: T[]) => {
+  const [arrayList, setArrayList] = useState<T[]>(initialArrayListValue);
+  const [filteredArrayList, setFilteredArrayList] = useState<T[]>([]);
+  const [filterFunctions, setFilterFunctions] = useState<FilterFnObject<T>>({});
 
-const useFilter = () => {
-  const reducer = (state: any, action: any) => {
-    const getNewState = (state: any, action: any) => {
-      switch (action.type) {
-        case "SET_ARRAY_LIST":
-          return { ...state, arrayList: action.payload };
-        case "ADD_FILTER_FUNCTION": {
-          const { key, fn }: AddFilterFnPayload = action.payload;
-          state.filterFunctions[key] = fn;
-          return { ...state };
-        }
-        case "REMOVE_FILTER_FUNCTION": {
-          const { key }: FilterFnPayload = action.payload;
-          delete state.filterFunctions[key];
-          return { ...state };
-        }
-        default:
-          throw new Error();
-      }
-    };
-
-    const newState = getNewState(state, action);
-
-    let filteredArrayList = [...newState.arrayList];
-    for (const key in newState.filterFunctions) {
-      if (Object.prototype.hasOwnProperty.call(newState.filterFunctions, key)) {
-        const filterFn = newState.filterFunctions[key];
-        filteredArrayList = [...filterFn(filteredArrayList)];
-      }
-    }
-
-    return { ...newState, filteredArrayList };
+  const addFilterFunction = (key: string, fn: FilterFn<T>) => {
+    setFilterFunctions((prev) => {
+      prev[key] = fn;
+      return { ...prev };
+    });
   };
 
-  const [state, dispatch] = useReducer(reducer, {
-    arrayList: [],
-    filteredArrayList: [],
-    filterFunctions: {},
-  });
+  const removeFilterFunction = (key: string) => {
+    setFilterFunctions((prev) => {
+      delete prev[key];
+      return { ...prev };
+    });
+  };
 
-  return [state, dispatch];
+  useEffect(() => {
+    let _filteredArrayList = [...arrayList];
+    for (const key in filterFunctions) {
+      if (Object.prototype.hasOwnProperty.call(filterFunctions, key)) {
+        const filterFn = filterFunctions[key];
+        _filteredArrayList = [...filterFn(_filteredArrayList)];
+      }
+    }
+    setFilteredArrayList(_filteredArrayList);
+  }, [filterFunctions, arrayList]);
+
+  return {
+    arrayList,
+    setArrayList,
+    filteredArrayList,
+    addFilterFunction,
+    removeFilterFunction,
+  };
 };
 
 export default useFilter;
