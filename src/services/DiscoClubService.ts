@@ -163,6 +163,8 @@ export const fetchUserFeed = (userId: string) =>
 
 export const fetchPromoCodes = () => instance.get("Wi/Ep/ListPromoCodes");
 
+export const fetchPromotions = () => instance.get("Wi/Ep/ListPromotions");
+
 export const saveVideoFeed = (params: FeedItem) => {
   if (params.id) {
     return instance.put("Disco/Feed/Update", params);
@@ -274,6 +276,14 @@ export const savePromoCode = (params: PromoCode) => {
   }
 };
 
+export const savePromotion = (params: PromoCode) => {
+  if (params.id) {
+    return instance.post("Wi/Ep/UpdatePromotion", params);
+  } else {
+    return instance.put("Wi/EP/AddPromotion", params);
+  }
+};
+
 export const deletePrivileges = (data: Privilege) =>
   instance.delete("Wi/Ep/RemovePrivilege", { data });
 
@@ -300,6 +310,9 @@ export const deleteCategory = (data: IDelete) =>
 
 export const deletePromoCode = (data: IDelete) =>
   instance.delete(`Wi/Ep/RemovePromoCode`, { data });
+
+export const deletePromotion = (data: IDelete) =>
+  instance.delete(`Wi/Ep/RemovePromotion`, { data });
 
 export const loginService = (login: Login) =>
   instance.put("Auth/GetApiToken", login);

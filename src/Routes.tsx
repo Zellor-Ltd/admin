@@ -32,6 +32,8 @@ import OrderDetail from "pages/orders/OrderDetail";
 import Transactions from "pages/transactions/Transactions";
 import FeedMixer from "pages/feed-mixer/FeedMixer";
 import StagingList from "pages/products/StagingList";
+import Promotions from "pages/promotions/Promotions";
+import PromotionDetail from "pages/promotions/PromotionDetail";
 
 function Routes() {
   return (
@@ -174,6 +176,16 @@ function Routes() {
       <AuthRoute
         path="/staging-products"
         component={StagingList}
+        layout={AuthenticatedLayout}
+      />
+      <AuthRoute
+        path="/promotion"
+        component={PromotionDetail}
+        layout={AuthenticatedLayout}
+      />
+      <AuthRoute
+        path="/promotions"
+        component={Promotions}
         layout={AuthenticatedLayout}
       />
     </Switch>
