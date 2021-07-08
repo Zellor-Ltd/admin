@@ -40,7 +40,7 @@ export const SelectBrand: React.FC<SelectBrandProps> = ({
       value={selectedBrand}
       onChange={_onChange}
       showSearch
-      allowClear
+      allowClear={allowClear}
       style={style}
       placeholder={placeholder}
     >
