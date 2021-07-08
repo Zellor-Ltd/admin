@@ -2,18 +2,21 @@ import Select from "antd/lib/select";
 import React, { useEffect, useState } from "react";
 import { fetchFans } from "../services/DiscoClubService";
 import { Fan } from "../interfaces/Fan";
+import { Typography } from "antd";
 
 type SelectFanProps = Omit<
   React.SelectHTMLAttributes<HTMLSelectElement>,
   "onChange"
 > & {
   onChange: (selectedFan: Fan) => {};
+  label?: string;
 };
 
 export const SelectFan: React.FC<SelectFanProps> = ({
   onChange,
   placeholder = "Select a fan",
   style,
+  label = "Fan Filter",
 }) => {
   const [fans, setFans] = useState<Fan[]>([]);
   const [searchList, setSearchList] = useState<string[]>([]);
@@ -47,18 +50,23 @@ export const SelectFan: React.FC<SelectFanProps> = ({
   };
 
   return (
-    <Select
-      value={selectedFan}
-      onChange={_onChange}
-      showSearch
-      style={style}
-      placeholder={placeholder}
-    >
-      {searchList.map((value) => (
-        <Select.Option key={value} value={value}>
-          {value}
-        </Select.Option>
-      ))}
-    </Select>
+    <div style={{ marginBottom: "16px" }}>
+      <Typography.Title level={5} title={label}>
+        {label}
+      </Typography.Title>
+      <Select
+        value={selectedFan}
+        onChange={_onChange}
+        showSearch
+        style={style}
+        placeholder={placeholder}
+      >
+        {searchList.map((value) => (
+          <Select.Option key={value} value={value}>
+            {value}
+          </Select.Option>
+        ))}
+      </Select>
+    </div>
   );
 };

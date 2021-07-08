@@ -1,5 +1,5 @@
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { Button, PageHeader, Popconfirm, Table, Tag } from "antd";
+import { Button, Col, PageHeader, Popconfirm, Row, Table, Tag } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import { SearchFilter } from "components/SearchFilter";
 import { Product } from "interfaces/Product";
@@ -114,7 +114,11 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
           </Button>,
         ]}
       />
-      <SearchFilter filterFunction={searchFilterFunction} />
+      <Row>
+        <Col lg={12} xs={24}>
+          <SearchFilter filterFunction={searchFilterFunction} />
+        </Col>
+      </Row>
       <Table
         rowKey="id"
         columns={columns}
