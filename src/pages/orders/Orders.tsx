@@ -325,7 +325,7 @@ const Orders: React.FC<RouteComponentProps> = () => {
   return (
     <div className="orders">
       <PageHeader title="Orders" subTitle="List of Orders" />
-      <Row gutter={8} style={{ marginBottom: "20px" }}>
+      <Row gutter={8}>
         <Col xxl={40} lg={6} xs={18}>
           <SelectBrand
             style={{ width: "100%" }}
