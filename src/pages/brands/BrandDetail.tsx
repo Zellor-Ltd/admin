@@ -18,7 +18,7 @@ const BrandDetail: React.FC<RouteComponentProps> = (props) => {
       await saveBrand(brand);
       setLoading(false);
       message.success("Register updated with success.");
-      history.push("/brands-and-promos");
+      history.push("/brands");
     } catch (error) {
       setLoading(false);
     }
@@ -159,10 +159,7 @@ const BrandDetail: React.FC<RouteComponentProps> = (props) => {
         </Row>
         <Row gutter={8}>
           <Col>
-            <Button
-              type="default"
-              onClick={() => history.push("/brands-and-promos")}
-            >
+            <Button type="default" onClick={() => history.push("/brands")}>
               Cancel
             </Button>
           </Col>
