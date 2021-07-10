@@ -37,17 +37,17 @@ const CategoryDetail: React.FC<RouteComponentProps> = (props) => {
 
   const [loading, setLoading] = useState<boolean>(false);
   const { fetchAllCategories, filteredCategories, filterCategory } =
-    useAllCategories(
+    useAllCategories({
       setLoading,
-      initial
+      initialValues: initial
         ? {
             supercategory: initial.supercategory,
             category: initial.category,
             subcategory: initial.subcategory,
             subsubcategory: initial.subsubcategory,
           }
-        : undefined
-    );
+        : undefined,
+    });
 
   const [form] = Form.useForm();
 

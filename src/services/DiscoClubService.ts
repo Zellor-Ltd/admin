@@ -88,7 +88,7 @@ export const productCategoriesAPI: AllCategoriesAPI = {
       if (params.id) {
         return instance.post("Wi/Ep/UpdateProductSuperCategories", params);
       } else {
-        return instance.put("Wi/EP/AddProductSuperCategories", params);
+        return instance.put("Wi/Ep/AddProductSuperCategories", params);
       }
     },
     delete: (data: IDelete) =>
@@ -100,7 +100,7 @@ export const productCategoriesAPI: AllCategoriesAPI = {
       if (params.id) {
         return instance.post("Wi/Ep/UpdateProductCategories", params);
       } else {
-        return instance.put("Wi/EP/AddProductCategories", params);
+        return instance.put("Wi/Ep/AddProductCategories", params);
       }
     },
     delete: (data: IDelete) =>
@@ -112,7 +112,7 @@ export const productCategoriesAPI: AllCategoriesAPI = {
       if (params.id) {
         return instance.post("Wi/Ep/UpdateProductSubCategories", params);
       } else {
-        return instance.put("Wi/EP/AddProductSubCategories", params);
+        return instance.put("Wi/Ep/AddProductSubCategories", params);
       }
     },
     delete: (data: IDelete) =>
@@ -124,7 +124,7 @@ export const productCategoriesAPI: AllCategoriesAPI = {
       if (params.id) {
         return instance.post("Wi/Ep/UpdateProductSubSubCategories", params);
       } else {
-        return instance.put("Wi/EP/AddProductSubSubCategories", params);
+        return instance.put("Wi/Ep/AddProductSubSubCategories", params);
       }
     },
     delete: (data: IDelete) =>
@@ -194,7 +194,7 @@ export const saveTag = (params: Tag) => {
   if (params.id) {
     return instance.post("Wi/Ep/UpdateTag", params);
   } else {
-    return instance.put("Wi/EP/AddTag", params);
+    return instance.put("Wi/Ep/AddTag", params);
   }
 };
 
@@ -202,7 +202,7 @@ export const saveBrand = (params: Brand) => {
   if (params.id) {
     return instance.post("Disco/Brand/Update", params);
   } else {
-    return instance.put("Wi/EP/AddBrand", params);
+    return instance.put("Wi/Ep/AddBrand", params);
   }
 };
 
@@ -210,7 +210,7 @@ export const saveCategory = (params: Category) => {
   if (params.id) {
     return instance.post("Wi/Ep/UpdateCategory", params);
   } else {
-    return instance.put("Wi/EP/AddCategory", params);
+    return instance.put("Wi/Ep/AddCategory", params);
   }
 };
 
@@ -218,7 +218,7 @@ export const saveEndpoint = (params: Endpoint) => {
   if (params.id) {
     return instance.post("Wi/Ep/UpdateEndpoint", params);
   } else {
-    return instance.put("Wi/EP/AddEndpoint", params);
+    return instance.put("Wi/Ep/AddEndpoint", params);
   }
 };
 
@@ -227,7 +227,7 @@ export const saveInterface = (params: Function) => {
   if (params.id) {
     return instance.post("Wi/Ep/UpdateFunction", params);
   } else {
-    return instance.put("Wi/EP/AddFunction", params);
+    return instance.put("Wi/Ep/AddFunction", params);
   }
 };
 
@@ -243,7 +243,7 @@ export const saveRole = (params: Role) => {
   if (params.id) {
     return instance.post("Wi/Ep/UpdateProfile", params);
   } else {
-    return instance.put("Wi/EP/AddProfile", params);
+    return instance.put("Wi/Ep/AddProfile", params);
   }
 };
 
@@ -259,7 +259,7 @@ export const saveOrder = (params: any) => {
   if (params.id) {
     return instance.post("Wi/Ep/UpdateOrder", params);
   } else {
-    return instance.put("Wi/EP/AddOrder", params);
+    return instance.put("Wi/Ep/AddOrder", params);
   }
 };
 
@@ -270,7 +270,7 @@ export const savePromoCode = (params: PromoCode) => {
   if (params.id) {
     return instance.post("Wi/Ep/UpdatePromoCode", params);
   } else {
-    return instance.put("Wi/EP/AddPromoCode", params);
+    return instance.put("Wi/Ep/AddPromoCode", params);
   }
 };
 

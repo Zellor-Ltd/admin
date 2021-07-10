@@ -28,7 +28,7 @@ const { categoriesKeys, categoriesFields } = categoriesSettings;
 const Categories: React.FC<RouteComponentProps> = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const { fetchAllCategories, _allCategories: allCategories } =
-    useAllCategories(setLoading);
+    useAllCategories({ setLoading });
   const [selectedTab, setSelectedTab] = useState<string>("Super Category");
 
   useEffect(() => {

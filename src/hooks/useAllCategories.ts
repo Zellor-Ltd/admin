@@ -18,12 +18,15 @@ const allCategoriesFactory = (): AllCategories => ({
   "Sub Sub Category": [],
 });
 
-const useAllCategories = (
-  setLoading?: React.Dispatch<React.SetStateAction<boolean>>,
-  selectedCategories?: SelectedCategories,
-  selectedProductCategories?: SelectedProductCategories,
-  allCategories?: AllCategories
-): {
+const useAllCategories = ({
+  initialValues,
+  setLoading,
+  allCategories,
+}: {
+  initialValues?: SelectedCategories;
+  setLoading?: React.Dispatch<React.SetStateAction<boolean>>;
+  allCategories?: AllCategories;
+}): {
   fetchAllCategories: () => Promise<void>;
   _allCategories: AllCategories;
   filteredCategories: AllCategories;
@@ -37,6 +40,40 @@ const useAllCategories = (
     allCategoriesFactory()
   );
   const [_loading, _setLoading] = useState<boolean>(false);
+  const [selectedCategories, setSelectedCategories] =
+    useState<SelectedCategories>(initialValues || {});
+
+  const filterByCheckingTree = (
+    selectedValue: string,
+    selectedKey: string,
+    newFilteredCategories: AllCategories
+  ) => {
+    const selectedIndex = categoriesKeys.indexOf(selectedKey);
+    const selectedField = categoriesFields[selectedIndex];
+    const nextKey = categoriesKeys[selectedIndex + 1] as keyof AllCategories;
+    if (nextKey) {
+      newFilteredCategories[nextKey] = _allCategories[nextKey].filter(
+        (category) => {
+          const categoryName = category[selectedField as keyof ProductCategory];
+          const isPresent = categoryName === selectedValue;
+          if (!isPresent) return false;
+          for (let i = selectedIndex; i > 0; i--) {
+            const fieldToInspect = categoriesFields[
+              i - 1
+            ] as keyof SelectedCategories;
+            const foundInTree =
+              selectedCategories[fieldToInspect] === category[fieldToInspect];
+            if (!foundInTree) return false;
+          }
+          return true;
+        }
+      );
+    }
+    setSelectedCategories((prev) => {
+      prev[selectedField as keyof SelectedCategories] = selectedValue;
+      return prev;
+    });
+  };
 
   const filterCategory = (
     selectedValue: string,
@@ -50,13 +87,10 @@ const useAllCategories = (
     for (let i = index + 1; i < categoriesKeys.length; i++) {
       const iteratorKey = categoriesKeys[i] as keyof AllCategories;
       if (i === index + 1) {
-        newFilteredCategories[iteratorKey] = _allCategories[iteratorKey].filter(
-          (category) => {
-            return (
-              category[categoriesFields[i - 1] as keyof ProductCategory] ===
-              selectedValue
-            );
-          }
+        filterByCheckingTree(
+          selectedValue,
+          categoriesKeys[index],
+          newFilteredCategories
         );
       } else {
         newFilteredCategories[iteratorKey] = [];
@@ -71,35 +105,14 @@ const useAllCategories = (
   }, [allCategories]);
 
   useEffect(() => {
-    if (
-      (selectedCategories || selectedProductCategories) &&
-      _allCategories["Super Category"].length
-    ) {
+    if (initialValues && _allCategories["Super Category"].length) {
       const newFilteredCategories = allCategoriesFactory();
-      categoriesArray.forEach(({ key: currKey, field: currField }, index) => {
-        if (index === 0) return;
-        const prevField = categoriesFields[index - 1];
-
-        let selectedValue: string | undefined;
-        if (selectedProductCategories) {
-          selectedValue =
-            selectedProductCategories?.[
-              prevField as keyof SelectedProductCategories
-            ]?.[prevField as keyof SelectedProductCategories];
-        } else if (selectedCategories) {
-          selectedValue =
-            selectedCategories[prevField as keyof SelectedCategories];
-        }
+      categoriesArray.forEach(({ key, field }) => {
+        const iteratorField = field as keyof SelectedProductCategories;
+        const selectedValue = initialValues[iteratorField];
 
         if (selectedValue) {
-          newFilteredCategories[currKey as keyof AllCategories] =
-            _allCategories[currKey as keyof AllCategories].filter(
-              (category) => {
-                return (
-                  category[prevField as keyof ProductCategory] === selectedValue
-                );
-              }
-            );
+          filterByCheckingTree(selectedValue, key, newFilteredCategories);
         }
       });
       setFilteredCategories({
