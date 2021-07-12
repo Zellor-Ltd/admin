@@ -1,6 +1,8 @@
 import { message } from "antd";
 import React, { useState } from "react";
 
+type action = () => Promise<any>;
+
 export const useRequest = ({
   setLoading = () => {},
   successMsg = "Register updated with success.",
@@ -15,11 +17,11 @@ export const useRequest = ({
     setLoading(v);
   };
 
-  const doRequest = async (action: () => Promise<any>) => {
+  const request = async (action: action, displayMessage: boolean) => {
     _setLoadingHandler(true);
     try {
       const { results }: { results: any[] } = await action();
-      message.success(successMsg);
+      if (displayMessage) message.success(successMsg);
       _setLoadingHandler(false);
       return results;
     } catch (error) {
@@ -28,5 +30,8 @@ export const useRequest = ({
     }
   };
 
-  return { doRequest, loading: _loading };
+  const doFetch = (action: action) => request(action, false);
+  const doRequest = (action: action) => request(action, true);
+
+  return { doFetch, doRequest, loading: _loading };
 };

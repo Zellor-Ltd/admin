@@ -13,11 +13,16 @@ import { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RouteComponentProps } from "react-router";
 import { Link } from "react-router-dom";
-import { deletePromotion, fetchPromotions } from "services/DiscoClubService";
+import {
+  deletePromotion,
+  fetchPromoStatus,
+  fetchPromotions,
+} from "services/DiscoClubService";
 
 const Promotions: React.FC<RouteComponentProps> = ({ history }) => {
   const [tableloading, setTableLoading] = useState<boolean>(false);
-  const { doRequest } = useRequest({ setLoading: setTableLoading });
+  const { doRequest, doFetch } = useRequest({ setLoading: setTableLoading });
+  const [promoStatusList, setPromoStatusList] = useState<any>();
   const [promotionUpdateList, setPromotionUpdateList] = useState<boolean[]>([]);
 
   const {
@@ -27,10 +32,6 @@ const Promotions: React.FC<RouteComponentProps> = ({ history }) => {
     addFilterFunction,
     removeFilterFunction,
   } = useFilter<Promotion>([]);
-
-  const {
-    settings: { promotion: promotionsSettings = [] },
-  } = useSelector((state: any) => state.settings);
 
   const handleDateChange = (values: any) => {
     if (!values) {
@@ -103,10 +104,22 @@ const Promotions: React.FC<RouteComponentProps> = ({ history }) => {
     },
   ];
 
+  const getPromotions = useCallback(async () => {
+    const promoStatus = await doFetch(fetchPromotions);
+    setPromotions(promoStatus);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const getPromoStatus = useCallback(async () => {
+    const results = await doFetch(fetchPromoStatus);
+    setPromoStatusList(results[0]?.promoStatus);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const getResources = useCallback(async () => {
-    const { results }: any = await fetchPromotions();
-    setPromotions(results);
-  }, [setPromotions]);
+    await Promise.all([getPromotions(), getPromoStatus()]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const deleteItem = async (id: string) => {
     await doRequest(() => deletePromotion({ id }));
