@@ -291,6 +291,14 @@ export const savePromotion = (params: PromoCode) => {
   }
 };
 
+export const savePromotion = (params: PromoCode) => {
+  if (params.id) {
+    return instance.post("Wi/Ep/UpdatePromotion", params);
+  } else {
+    return instance.put("Wi/EP/AddPromotion", params);
+  }
+};
+
 export const deletePrivileges = (data: Privilege) =>
   instance.delete("Wi/Ep/RemovePrivilege", { data });
 
