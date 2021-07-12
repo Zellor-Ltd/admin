@@ -170,7 +170,11 @@ const TagDetail: React.FC<RouteComponentProps> = (props) => {
             <Col lg={12} xs={24}>
               <Row gutter={8}>
                 <Col lg={12} xs={24}>
-                  <Form.Item name="discoGold" label="Disco Gold">
+                  <Form.Item
+                    name="discoGold"
+                    label="Disco Gold"
+                    rules={[{ required: true }]}
+                  >
                     <InputNumber style={{ width: "100%" }} />
                   </Form.Item>
                 </Col>
