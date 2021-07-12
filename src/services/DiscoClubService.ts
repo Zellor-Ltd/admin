@@ -17,6 +17,7 @@ import {
   Category,
   ProductCategory,
 } from "interfaces/Category";
+import { message } from "antd";
 
 export const instance = axios.create({
   baseURL: process.env.REACT_APP_HOST_ENDPOINT,
@@ -44,6 +45,11 @@ instance.interceptors.request.use((config: AxiosRequestConfig) => {
   return config;
 });
 
+const errorHandler = (error: any) => {
+  message.error("Something went wrong.");
+  throw error;
+};
+
 instance.interceptors.response.use(
   (response) => {
     if (response?.data?.error) {
@@ -51,8 +57,7 @@ instance.interceptors.response.use(
         response.data.error.toUpperCase() ===
         "Unauthorized request".toUpperCase()
       ) {
-        localStorage.clear();
-        window.location.href = "./";
+        errorHandler(response.data.error);
       }
     }
     return snakeToCamelCase(response.data);
@@ -61,8 +66,7 @@ instance.interceptors.response.use(
     switch (error.response?.status) {
       case 404:
       case 401: {
-        localStorage.clear();
-        window.location.href = "./";
+        errorHandler(error);
       }
     }
   }

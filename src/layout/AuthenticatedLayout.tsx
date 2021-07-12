@@ -20,6 +20,8 @@ import {
 import "./AuthenticatedLayout.scss";
 import jwt from "helpers/jwt";
 import SubMenu from "antd/lib/menu/SubMenu";
+import ErrorBoundary from "components/ErrorBoundary";
+import ErrorPage from "pages/error/ErrorPage";
 
 const { Header, Sider, Content } = Layout;
 
@@ -129,7 +131,6 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = (props) => {
             </SubMenu>
           </Menu>
         </Sider>
-
         <Content
           className="site-layout-background"
           style={{
@@ -138,7 +139,9 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = (props) => {
             minHeight: 280,
           }}
         >
-          {children}
+          <ErrorBoundary fallbackComponent={ErrorPage()}>
+            {children}
+          </ErrorBoundary>
         </Content>
       </Layout>
     </Layout>
