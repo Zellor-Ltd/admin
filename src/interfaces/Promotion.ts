@@ -7,6 +7,7 @@ export interface Promotion {
   [key: string]: any;
 }
 
-export type PromotionWithStatusList = Promotion & {
+export type PromotionAndStatusList = {
+  promotion: Promotion;
   promoStatusList?: Setting[];
 };

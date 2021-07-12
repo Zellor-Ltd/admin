@@ -1,17 +1,19 @@
-import { Button, Col, Form, Input, PageHeader, Row } from "antd";
+import { Button, Col, Form, Input, PageHeader, Row, Select } from "antd";
 import { RichTextEditor } from "components/RichTextEditor";
 import { useRequest } from "hooks/useRequest";
-import { PromotionWithStatusList } from "interfaces/Promotion";
+import { PromotionAndStatusList } from "interfaces/Promotion";
 import { useCallback, useEffect, useState } from "react";
 import { RouteComponentProps } from "react-router";
 import { fetchVideoFeed2, savePromotion } from "services/DiscoClubService";
 
 const PromotionDetail: React.FC<RouteComponentProps> = (props) => {
   const { history, location } = props;
-  const initial = location.state as undefined | PromotionWithStatusList;
+  const _state = location.state as undefined | PromotionAndStatusList;
+  const promoStatusList = _state?.promoStatusList;
+  const initial = _state?.promotion;
   const [form] = Form.useForm();
   const { doRequest, doFetch, loading } = useRequest();
-  const [packages, setPackages] = useState<any>();
+  const [packages, setPackages] = useState<any[]>([]);
 
   const onFinish = async () => {
     const promotion = form.getFieldsValue(true);
@@ -27,7 +29,7 @@ const PromotionDetail: React.FC<RouteComponentProps> = (props) => {
 
   const getResources = useCallback(async () => {
     await getPackages();
-    console.log(initial?.promoStatusList);
+    console.log(promoStatusList);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -54,6 +56,17 @@ const PromotionDetail: React.FC<RouteComponentProps> = (props) => {
           <Col lg={12} xs={24}>
             <Form.Item label="Brief" name="brief">
               <RichTextEditor formField="brief" form={form} />
+            </Form.Item>
+          </Col>
+          <Col lg={12} xs={24}>
+            <Form.Item name="packages" label="Packages">
+              <Select mode="tags">
+                {packages.map((_package: any) => (
+                  <Select.Option key={_package.id} value={_package.title}>
+                    {_package.title}
+                  </Select.Option>
+                ))}
+              </Select>
             </Form.Item>
           </Col>
         </Row>
