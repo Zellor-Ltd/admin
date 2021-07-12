@@ -277,8 +277,8 @@ export const savePromoCode = (params: PromoCode) => {
 export const deletePrivileges = (data: Privilege) =>
   instance.delete("Wi/Ep/RemovePrivilege", { data });
 
-export const deleteVideoFeed = (data: IDelete) =>
-  instance.delete(`Disco/Feed/Delete/${data}`);
+export const deleteVideoFeed = (id: string) =>
+  instance.delete(`Disco/Feed/Delete/${id}`);
 
 export const deleteTag = (data: IDelete) =>
   instance.delete(`Wi/Ep/RemoveTag`, { data });

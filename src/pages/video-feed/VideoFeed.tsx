@@ -51,7 +51,7 @@ const VideoFeed: React.FC<RouteComponentProps> = (props) => {
 
   const deleteItem = async (id: string) => {
     setLoading(true);
-    await deleteVideoFeed({ id });
+    await deleteVideoFeed(id);
     fetch();
   };
 
