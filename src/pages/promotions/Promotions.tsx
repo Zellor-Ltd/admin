@@ -7,10 +7,9 @@ import { Button, DatePicker, PageHeader, Popconfirm, Table } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import useFilter from "hooks/useFilter";
 import { useRequest } from "hooks/useRequest";
-import { Promotion } from "interfaces/Promotion";
+import { Promotion, PromotionWithStatusList } from "interfaces/Promotion";
 import moment from "moment";
 import { useCallback, useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import { RouteComponentProps } from "react-router";
 import { Link } from "react-router-dom";
 import {
@@ -86,7 +85,15 @@ const Promotions: React.FC<RouteComponentProps> = ({ history }) => {
       align: "right",
       render: (_, record) => (
         <>
-          <Link to={{ pathname: `/promotion`, state: record }}>
+          <Link
+            to={{
+              pathname: `/promotion`,
+              state: {
+                ...record,
+                promoStatusList: promoStatusList,
+              } as PromotionWithStatusList,
+            }}
+          >
             <EditOutlined />
           </Link>
           <Popconfirm
