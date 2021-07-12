@@ -16,7 +16,7 @@ const PromoCodesDetail: React.FC<RouteComponentProps> = (props) => {
       await savePromoCode(promoCode);
       setLoading(false);
       message.success("Register updated with success.");
-      history.push("/brands-and-promos?selected-tab=Promos");
+      history.push("/promo-codes");
     } catch (error) {
       setLoading(false);
     }
@@ -65,12 +65,7 @@ const PromoCodesDetail: React.FC<RouteComponentProps> = (props) => {
         </Row>
         <Row gutter={8}>
           <Col>
-            <Button
-              type="default"
-              onClick={() =>
-                history.push("/brands-and-promos?selected-tab=Promos")
-              }
-            >
+            <Button type="default" onClick={() => history.push("/promo-codes")}>
               Cancel
             </Button>
           </Col>
