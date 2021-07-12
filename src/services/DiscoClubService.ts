@@ -75,6 +75,7 @@ instance.interceptors.response.use(
 export const fetchStartupVideo = () => instance.get("Wi/Ep/GetStartupVideo");
 
 export const fetchVideoFeed = () => instance.get("Wi/Ep/ListVideoFeed");
+export const fetchVideoFeed2 = () => instance.get("Wi/Ep/GetVideoFeed");
 
 export const fetchProducts = () => instance.get("Wi/Ep/ListProducts");
 
@@ -168,6 +169,8 @@ export const fetchUserFeed = (userId: string) =>
 export const fetchPromoCodes = () => instance.get("Wi/Ep/ListPromoCodes");
 
 export const fetchPromotions = () => instance.get("Wi/Ep/ListPromotions");
+
+export const fetchPromoStatus = () => instance.get("Wi/Ep/ListPromoStatus");
 
 export const saveVideoFeed = (params: FeedItem) => {
   if (params.id) {

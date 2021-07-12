@@ -9,7 +9,7 @@ export const useRequest = ({
 }: {
   setLoading?: React.Dispatch<React.SetStateAction<boolean>>;
   successMsg?: string;
-}) => {
+} = {}) => {
   const [_loading, _setLoading] = useState<boolean>(false);
 
   const _setLoadingHandler = (v: boolean) => {

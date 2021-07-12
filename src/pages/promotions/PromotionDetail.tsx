@@ -1,26 +1,39 @@
 import { Button, Col, Form, Input, PageHeader, Row } from "antd";
-import { RouteComponentProps } from "react-router";
-import { savePromotion } from "services/DiscoClubService";
-import { useSelector } from "react-redux";
 import { RichTextEditor } from "components/RichTextEditor";
 import { useRequest } from "hooks/useRequest";
+import { PromotionWithStatusList } from "interfaces/Promotion";
+import { useCallback, useEffect, useState } from "react";
+import { RouteComponentProps } from "react-router";
+import { fetchVideoFeed2, savePromotion } from "services/DiscoClubService";
 
 const PromotionDetail: React.FC<RouteComponentProps> = (props) => {
   const { history, location } = props;
-  const initial: any = location.state;
+  const initial = location.state as undefined | PromotionWithStatusList;
   const [form] = Form.useForm();
-  const { doRequest, loading } = useRequest({});
-
-  const {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    settings: { promotion: promotionsSettings = [] },
-  } = useSelector((state: any) => state.settings);
+  const { doRequest, doFetch, loading } = useRequest();
+  const [packages, setPackages] = useState<any>();
 
   const onFinish = async () => {
     const promotion = form.getFieldsValue(true);
     await doRequest(() => savePromotion(promotion));
     history.push("/promotions");
   };
+
+  const getPackages = useCallback(async () => {
+    const packages = await doFetch(fetchVideoFeed2);
+    setPackages(packages);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const getResources = useCallback(async () => {
+    await getPackages();
+    console.log(initial?.promoStatusList);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    getResources();
+  }, [getResources]);
 
   return (
     <>
