@@ -1,18 +1,23 @@
-import { CalendarOutlined, EditOutlined } from "@ant-design/icons";
-import { Button, DatePicker, PageHeader, Table } from "antd";
+import {
+  CalendarOutlined,
+  DeleteOutlined,
+  EditOutlined,
+} from "@ant-design/icons";
+import { Button, DatePicker, PageHeader, Popconfirm, Table } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import useFilter from "hooks/useFilter";
-import { Fan } from "interfaces/Fan";
+import { useRequest } from "hooks/useRequest";
 import { Promotion } from "interfaces/Promotion";
 import moment from "moment";
 import { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RouteComponentProps } from "react-router";
 import { Link } from "react-router-dom";
-import { fetchPromotions } from "services/DiscoClubService";
+import { deletePromotion, fetchPromotions } from "services/DiscoClubService";
 
 const Promotions: React.FC<RouteComponentProps> = ({ history }) => {
   const [tableloading, setTableLoading] = useState<boolean>(false);
+  const { doRequest } = useRequest({ setLoading: setTableLoading });
   const [promotionUpdateList, setPromotionUpdateList] = useState<boolean[]>([]);
 
   const {
@@ -79,26 +84,38 @@ const Promotions: React.FC<RouteComponentProps> = ({ history }) => {
       width: "5%",
       align: "right",
       render: (_, record) => (
-        <Link to={{ pathname: `/promotion`, state: record }}>
-          <EditOutlined />
-        </Link>
+        <>
+          <Link to={{ pathname: `/promotion`, state: record }}>
+            <EditOutlined />
+          </Link>
+          <Popconfirm
+            title="Are you sure？"
+            okText="Yes"
+            cancelText="No"
+            onConfirm={() => deleteItem(record.id)}
+          >
+            <Button type="link" style={{ padding: 0, margin: 6 }}>
+              <DeleteOutlined />
+            </Button>
+          </Popconfirm>
+        </>
       ),
     },
   ];
 
-  const getPromotions = useCallback(async () => {
-    const response: any = await fetchPromotions();
-    setPromotions(response.results);
+  const getResources = useCallback(async () => {
+    const { results }: any = await fetchPromotions();
+    setPromotions(results);
   }, [setPromotions]);
 
+  const deleteItem = async (id: string) => {
+    await doRequest(() => deletePromotion({ id }));
+    await getResources();
+  };
+
   useEffect(() => {
-    const getResources = async () => {
-      setTableLoading(true);
-      getPromotions();
-      setTableLoading(false);
-    };
     getResources();
-  }, [getPromotions]);
+  }, [getResources]);
 
   return (
     <div className="promotions">
