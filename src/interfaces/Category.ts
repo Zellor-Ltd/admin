@@ -25,7 +25,7 @@ export interface SelectedProductCategories {
 }
 
 export interface SelectedCategories {
-  supercategory: string;
+  supercategory?: string;
   category?: string;
   subcategory?: string;
   subsubcategory?: string;

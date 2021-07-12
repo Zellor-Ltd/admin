@@ -73,7 +73,7 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
   );
 
   const { fetchAllCategories, _allCategories: allCategories } =
-    useAllCategories(setLoading);
+    useAllCategories({ setLoading });
 
   const {
     settings: { currency = [] },
@@ -420,9 +420,7 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
             <Row justify="space-between" style={{ maxWidth: "1000px" }}>
               <ProductCategories
                 productCategoryIndex={index}
-                selectedProductCategories={
-                  categories as SelectedProductCategories[]
-                }
+                initialValues={categories as SelectedProductCategories[]}
                 allCategories={allCategories}
                 handleCategoryChange={handleCategoryChange}
               />

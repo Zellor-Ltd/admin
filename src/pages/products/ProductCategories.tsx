@@ -5,6 +5,7 @@ import useAllCategories from "hooks/useAllCategories";
 import {
   AllCategories,
   ProductCategory,
+  SelectedCategories,
   SelectedProductCategories,
 } from "interfaces/Category";
 
@@ -13,22 +14,33 @@ const { categoriesArray } = categoriesSettings;
 interface ProductCategoriesProps {
   allCategories: AllCategories;
   productCategoryIndex: number;
-  selectedProductCategories: SelectedProductCategories[];
+  initialValues: SelectedProductCategories[];
   handleCategoryChange: Function;
 }
+
+const formatProductCategories: (
+  initialProductCategories: SelectedProductCategories
+) => SelectedCategories = (selectedProductCategories) => {
+  const initialCategories: SelectedCategories = {
+    supercategory: "",
+  };
+  Object.keys(selectedProductCategories).forEach((key) => {
+    const _key = key as keyof SelectedCategories;
+    initialCategories[_key] = selectedProductCategories[_key][_key];
+  });
+  return initialCategories;
+};
 
 const ProductCategories: React.FC<ProductCategoriesProps> = ({
   allCategories,
   productCategoryIndex,
-  selectedProductCategories,
+  initialValues,
   handleCategoryChange,
 }) => {
-  const { filteredCategories, filterCategory } = useAllCategories(
-    undefined,
-    undefined,
-    selectedProductCategories[productCategoryIndex],
-    allCategories
-  );
+  const { filteredCategories, filterCategory } = useAllCategories({
+    initialValues: formatProductCategories(initialValues[productCategoryIndex]),
+    allCategories,
+  });
 
   const _handleCategoryChange = (value: string, key: string) => {
     const selectedCategories = categoriesArray
