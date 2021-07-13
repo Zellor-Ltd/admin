@@ -72,8 +72,9 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
     initial?.categories || [{}]
   );
 
-  const { fetchAllCategories, _allCategories: allCategories } =
-    useAllCategories({ setLoading });
+  const { fetchAllCategories, allCategories } = useAllCategories({
+    setLoading,
+  });
 
   const {
     settings: { currency = [] },

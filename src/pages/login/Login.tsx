@@ -1,4 +1,4 @@
-import { Button, Card, Form, Input, message } from "antd";
+import { Button, Card, Form, Input } from "antd";
 import { useState } from "react";
 import { RouteComponentProps } from "react-router";
 import { loginService } from "services/DiscoClubService";
@@ -8,14 +8,14 @@ const Login: React.FC<RouteComponentProps> = (props) => {
   const [loading, setLoading] = useState(false);
   const onFinish = async (values: any) => {
     setLoading(true);
-    const response: any = await loginService(values);
+    try {
+      const response: any = await loginService(values);
+      if (response.success) {
+        localStorage.setItem("token", response.token);
+        history.push("/");
+      }
+    } catch (e) {}
     setLoading(false);
-    if (response.success) {
-      localStorage.setItem("token", response.token);
-      history.push("/");
-    } else {
-      message.error(response.error);
-    }
   };
 
   const onFinishFailed = (errorInfo: any) => {
@@ -28,17 +28,20 @@ const Login: React.FC<RouteComponentProps> = (props) => {
         name="auth"
         initialValues={{ remember: true }}
         onFinish={onFinish}
-        onFinishFailed={onFinishFailed}>
+        onFinishFailed={onFinishFailed}
+      >
         <Form.Item
           label="Username"
           name="user"
-          rules={[{ required: true, message: "Please input your username!" }]}>
+          rules={[{ required: true, message: "Please input your username!" }]}
+        >
           <Input />
         </Form.Item>
         <Form.Item
           label="Password"
           name="pwd"
-          rules={[{ required: true, message: "Please input your password!" }]}>
+          rules={[{ required: true, message: "Please input your password!" }]}
+        >
           <Input.Password />
         </Form.Item>
         <Form.Item>

@@ -1,4 +1,5 @@
 import { Brand } from "./Brand";
+import { SelectedProductCategories } from "./Category";
 import { Video } from "./Video";
 
 export interface Product {
@@ -14,4 +15,5 @@ export interface Product {
   mainRelatedVideo: Video;
   brand: Brand;
   offerExpirationDate: Date;
+  categories?: SelectedProductCategories[];
 }

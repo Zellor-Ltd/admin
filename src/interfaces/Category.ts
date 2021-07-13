@@ -38,9 +38,9 @@ export interface AllCategories {
 }
 
 export interface CategoryAPI {
-  fetch: Function;
-  save: Function;
-  delete: Function;
+  fetch: () => Promise<any>;
+  save: (params: any) => Promise<any>;
+  delete: (params: any) => Promise<any>;
 }
 
 export interface AllCategoriesAPI {

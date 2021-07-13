@@ -4,6 +4,7 @@ import { EditableCell, EditableRow } from ".";
 
 export type EditableColumnType<T> = ColumnType<T> & {
   editable?: boolean;
+  number?: boolean;
 };
 
 export type ColumnTypesEscapeColumns = Exclude<
@@ -29,6 +30,7 @@ const EditableTable: React.FC<EditableTableProps<any>> = (
       onCell: (record: any) => ({
         record,
         editable: col.editable,
+        number: col.number,
         dataIndex: col.dataIndex,
         title: col.title,
         onSave: onSave,
