@@ -7,7 +7,13 @@ import moment from "moment";
 import { useEffect, useState } from "react";
 import { RouteComponentProps } from "react-router";
 import { Link } from "react-router-dom";
-import { deleteProduct, fetchProducts } from "services/DiscoClubService";
+import {
+  deleteProduct,
+  fetchProducts,
+  saveProduct,
+} from "services/DiscoClubService";
+import { EditableCell, EditableRow } from "components";
+import { ColumnTypes } from "components/editable-context";
 
 const Products: React.FC<RouteComponentProps> = ({ history }) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -38,7 +44,7 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
     }
   };
 
-  const columns: ColumnsType<Product> = [
+  const columns = [
     {
       title: "Name",
       dataIndex: "name",
@@ -54,6 +60,13 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
       dataIndex: ["brand", "brandName"],
       width: "15%",
       align: "center",
+    },
+    {
+      title: "Max Disco Dollars",
+      dataIndex: "maxDiscoDollars",
+      width: "12%",
+      align: "center",
+      editable: true,
     },
     {
       title: "Related Videos",
@@ -75,7 +88,7 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
       key: "action",
       width: "5%",
       align: "right",
-      render: (_, record: Product) => (
+      render: (_: any, record: Product) => (
         <>
           <Link to={{ pathname: `/product/commited`, state: record }}>
             <EditOutlined />
@@ -103,6 +116,35 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
     );
   };
 
+  const onSaveProduct = async (record: Product) => {
+    setLoading(true);
+    await saveProduct(record);
+    fetch();
+  };
+
+  const components = {
+    body: {
+      row: EditableRow,
+      cell: EditableCell,
+    },
+  };
+
+  const configuredColumns = columns.map((col) => {
+    if (!col.editable) {
+      return col;
+    }
+    return {
+      ...col,
+      onCell: (record: Product, index: number) => ({
+        record,
+        editable: col.editable,
+        dataIndex: col.dataIndex,
+        title: col.title,
+        onSave: onSaveProduct,
+      }),
+    };
+  });
+
   return (
     <div className="products">
       <PageHeader
@@ -121,8 +163,9 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
       </Row>
       <Table
         rowKey="id"
-        columns={columns}
+        columns={configuredColumns as ColumnTypes}
         dataSource={filteredProducts}
+        components={components}
         loading={loading}
       />
     </div>
