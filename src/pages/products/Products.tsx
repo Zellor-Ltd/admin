@@ -1,6 +1,5 @@
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { Button, Col, PageHeader, Popconfirm, Row, Table, Tag } from "antd";
-import { ColumnsType } from "antd/lib/table";
+import { Button, Col, PageHeader, Popconfirm, Row, Tag } from "antd";
 import { SearchFilter } from "components/SearchFilter";
 import { Product } from "interfaces/Product";
 import moment from "moment";
@@ -12,8 +11,7 @@ import {
   fetchProducts,
   saveProduct,
 } from "services/DiscoClubService";
-import { EditableCell, EditableRow } from "components";
-import { ColumnTypes } from "components/editable-context";
+import EditableTable, { EditableColumnType } from "components/EditableTable";
 
 const Products: React.FC<RouteComponentProps> = ({ history }) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -44,12 +42,12 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
     }
   };
 
-  const columns = [
+  const columns: EditableColumnType<Product>[] = [
     {
       title: "Name",
       dataIndex: "name",
       width: "15%",
-      render: (value: string, record: Product) => (
+      render: (value: string, record) => (
         <Link to={{ pathname: `/product/commited`, state: record }}>
           {value}
         </Link>
@@ -88,7 +86,7 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
       key: "action",
       width: "5%",
       align: "right",
-      render: (_: any, record: Product) => (
+      render: (_: any, record) => (
         <>
           <Link to={{ pathname: `/product/commited`, state: record }}>
             <EditOutlined />
@@ -122,29 +120,6 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
     fetch();
   };
 
-  const components = {
-    body: {
-      row: EditableRow,
-      cell: EditableCell,
-    },
-  };
-
-  const configuredColumns = columns.map((col) => {
-    if (!col.editable) {
-      return col;
-    }
-    return {
-      ...col,
-      onCell: (record: Product, index: number) => ({
-        record,
-        editable: col.editable,
-        dataIndex: col.dataIndex,
-        title: col.title,
-        onSave: onSaveProduct,
-      }),
-    };
-  });
-
   return (
     <div className="products">
       <PageHeader
@@ -161,12 +136,12 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
           <SearchFilter filterFunction={searchFilterFunction} />
         </Col>
       </Row>
-      <Table
+      <EditableTable
         rowKey="id"
-        columns={configuredColumns as ColumnTypes}
+        columns={columns}
         dataSource={filteredProducts}
-        components={components}
         loading={loading}
+        onSave={onSaveProduct}
       />
     </div>
   );
