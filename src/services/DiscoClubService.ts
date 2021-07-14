@@ -43,7 +43,7 @@ instance.interceptors.request.use((config: AxiosRequestConfig) => {
     replaceIdRecursively(data);
   }
   config.headers["Authorization"] = `Bearer ${localStorage.getItem("token")}`;
-  config.data = data
+  config.data = data;
   return config;
 });
 
@@ -89,7 +89,7 @@ export const fetchBrands = () => instance.get("Wi/Ep/ListBrands");
 export const fetchCategories = () => instance.get("Wi/Ep/GetProductCategories");
 
 export const productCategoriesAPI: AllCategoriesAPI = {
-  supercategory: {
+  superCategory: {
     fetch: () => instance.get(`Wi/Ep/ListProductSuperCategories`),
     save: (params: ProductCategory) => {
       if (params.id) {
@@ -113,7 +113,7 @@ export const productCategoriesAPI: AllCategoriesAPI = {
     delete: (data: IDelete) =>
       instance.delete(`Wi/Ep/RemoveProductCategories`, { data }),
   },
-  subcategory: {
+  subCategory: {
     fetch: () => instance.get(`Wi/Ep/ListProductSubCategories`),
     save: (params: ProductCategory) => {
       if (params.id) {
@@ -125,7 +125,7 @@ export const productCategoriesAPI: AllCategoriesAPI = {
     delete: (data: IDelete) =>
       instance.delete(`Wi/Ep/RemoveProductSubCategories`, { data }),
   },
-  subsubcategory: {
+  subSubCategory: {
     fetch: () => instance.get(`Wi/Ep/ListProductSubSubCategories`),
     save: (params: ProductCategory) => {
       if (params.id) {

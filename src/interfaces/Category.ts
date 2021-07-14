@@ -9,26 +9,26 @@ export interface Category {
 
 export interface ProductCategory {
   id: string;
-  supercategory?: string;
+  superCategory?: string;
   category?: string;
-  subcategory?: string;
-  subsubcategory?: string;
+  subCategory?: string;
+  subSubCategory?: string;
   image: Image;
   searchTags?: string[];
 }
 
 export interface SelectedProductCategories {
-  supercategory?: ProductCategory;
+  superCategory?: ProductCategory;
   category?: ProductCategory;
-  subcategory?: ProductCategory;
-  subsubcategory?: ProductCategory;
+  subCategory?: ProductCategory;
+  subSubCategory?: ProductCategory;
 }
 
 export interface SelectedCategories {
-  supercategory?: string;
+  superCategory?: string;
   category?: string;
-  subcategory?: string;
-  subsubcategory?: string;
+  subCategory?: string;
+  subSubCategory?: string;
 }
 export interface AllCategories {
   "Super Category": ProductCategory[];
@@ -44,8 +44,8 @@ export interface CategoryAPI {
 }
 
 export interface AllCategoriesAPI {
+  superCategory: CategoryAPI;
   category: CategoryAPI;
-  supercategory: CategoryAPI;
-  subcategory: CategoryAPI;
-  subsubcategory: CategoryAPI;
+  subCategory: CategoryAPI;
+  subSubCategory: CategoryAPI;
 }

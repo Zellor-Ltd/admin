@@ -8,14 +8,14 @@ export const sleep = (ms: number) =>
 const categoriesArray = [
   {
     key: "Super Category",
-    field: "supercategory",
+    field: "superCategory",
     ep: "ProductSuperCategories",
   },
   { key: "Category", field: "category", ep: "ProductCategories" },
-  { key: "Sub Category", field: "subcategory", ep: "ProductSubCategories" },
+  { key: "Sub Category", field: "subCategory", ep: "ProductSubCategories" },
   {
     key: "Sub Sub Category",
-    field: "subsubcategory",
+    field: "subSubCategory",
     ep: "ProductSubSubCategories",
   },
 ];

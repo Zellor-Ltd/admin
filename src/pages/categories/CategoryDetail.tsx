@@ -41,10 +41,10 @@ const CategoryDetail: React.FC<RouteComponentProps> = (props) => {
       setLoading,
       initialValues: initial
         ? {
-            supercategory: initial.supercategory,
+            superCategory: initial.superCategory,
             category: initial.category,
-            subcategory: initial.subcategory,
-            subsubcategory: initial.subsubcategory,
+            subCategory: initial.subCategory,
+            subSubCategory: initial.subSubCategory,
           }
         : undefined,
     });
