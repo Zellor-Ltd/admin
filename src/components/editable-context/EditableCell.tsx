@@ -67,7 +67,8 @@ const EditableCell: React.FC<EditableCellProps> = ({
             required: true,
             message: `${title} is required.`,
           },
-        ]}>
+        ]}
+      >
         {number ? (
           <InputNumber ref={inputNumberRef} onPressEnter={save} onBlur={save} />
         ) : (
@@ -77,8 +78,10 @@ const EditableCell: React.FC<EditableCellProps> = ({
     ) : (
       <div
         className="editable-cell-value-wrap"
-        style={{ paddingRight: 24 }}
-        onClick={toggleEdit}>
+        // I believe this paddingRight only makes sense when the column is aligned at left.
+        // style={{ paddingRight: 24 }}
+        onClick={toggleEdit}
+      >
         {children}
       </div>
     );

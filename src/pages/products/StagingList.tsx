@@ -3,20 +3,14 @@ import {
   DeleteOutlined,
   EditOutlined,
 } from "@ant-design/icons";
-import {
-  Button,
-  Col,
-  message,
-  PageHeader,
-  Popconfirm,
-  Row,
-  Table,
-  Tag,
-} from "antd";
+import { Button, Col, PageHeader, Popconfirm, Row, Tag } from "antd";
 import { ColumnsType } from "antd/lib/table";
+import EditableTable, { EditableColumnType } from "components/EditableTable";
 import { SearchFilter } from "components/SearchFilter";
 import { SelectBrand } from "components/SelectBrand";
+import useAllCategories from "hooks/useAllCategories";
 import useFilter from "hooks/useFilter";
+import { useRequest } from "hooks/useRequest";
 import { Brand } from "interfaces/Brand";
 import { Product } from "interfaces/Product";
 import moment from "moment";
@@ -26,10 +20,12 @@ import { Link } from "react-router-dom";
 import {
   deleteStagingProduct,
   fetchStagingProducts,
+  saveStagingProduct,
   transferStageProduct,
 } from "services/DiscoClubService";
+import ProductExpandedRow from "./ProductExpandedRow";
 
-const StagingList: React.FC<RouteComponentProps> = ({ history }) => {
+const StagingList: React.FC<RouteComponentProps> = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const {
     setArrayList: setProducts,
@@ -38,44 +34,55 @@ const StagingList: React.FC<RouteComponentProps> = ({ history }) => {
     removeFilterFunction,
   } = useFilter<Product>([]);
 
-  const fetch = useCallback(async () => {
-    setLoading(true);
-    const response: any = await fetchStagingProducts();
-    setLoading(false);
-    setProducts(response.results);
-  }, [setProducts]);
+  const { doFetch, doRequest } = useRequest({ setLoading });
+  const { doRequest: saveCategories, loading: loadingCategories } =
+    useRequest();
+  const { fetchAllCategories, allCategories } = useAllCategories({
+    setLoading,
+  });
+
+  const getResources = useCallback(async () => {
+    const [products] = await Promise.all([
+      doFetch(fetchStagingProducts),
+      fetchAllCategories(),
+    ]);
+    setProducts(products);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const getProducts = async () => {
+    const products = await doFetch(fetchStagingProducts);
+    setProducts(products);
+  };
 
   useEffect(() => {
-    fetch();
-  }, [fetch]);
+    getResources();
+  }, [getResources]);
 
   const deleteItem = async (id: string) => {
-    try {
-      setLoading(true);
-      await deleteStagingProduct(id);
-      await fetch();
-      setLoading(false);
-    } catch (err) {
-      console.log(err);
-      setLoading(false);
-    }
+    await doRequest(() => deleteStagingProduct(id));
+    await getProducts();
+  };
+
+  const onSaveCategories = async (record: Product) => {
+    await saveCategories(() => saveStagingProduct(record));
+    await getProducts();
+  };
+
+  const onSaveProduct = async (record: Product) => {
+    await doRequest(() => saveStagingProduct(record));
+    await getProducts();
   };
 
   const handleStage = async (productId: string) => {
-    try {
-      await transferStageProduct(productId);
-      fetch();
-      message.success("Product sent to stage");
-    } catch (err) {
-      message.success("Error at staging product");
-    }
+    await doRequest(() => transferStageProduct(productId), "Product commited.");
   };
 
-  const columns: ColumnsType<Product> = [
+  const columns: EditableColumnType<Product>[] = [
     {
       title: "Name",
       dataIndex: "name",
-      width: "15%",
+      width: "17%",
       render: (value: string, record: Product) => (
         <Link to={{ pathname: `/product/staging`, state: record }}>
           {value}
@@ -87,6 +94,14 @@ const StagingList: React.FC<RouteComponentProps> = ({ history }) => {
       dataIndex: ["brand", "brandName"],
       width: "15%",
       align: "center",
+    },
+    {
+      title: "Max Disco Dollars",
+      dataIndex: "maxDiscoDollars",
+      width: "10%",
+      align: "center",
+      editable: true,
+      number: true,
     },
     {
       title: "Related Videos",
@@ -187,11 +202,23 @@ const StagingList: React.FC<RouteComponentProps> = ({ history }) => {
           ></SelectBrand>
         </Col>
       </Row>
-      <Table
+      <EditableTable
         rowKey="id"
         columns={columns}
         dataSource={filteredProducts}
         loading={loading}
+        onSave={onSaveProduct}
+        expandable={{
+          expandedRowRender: (record: Product) => (
+            <ProductExpandedRow
+              key={record.id}
+              record={record}
+              allCategories={allCategories}
+              onSaveProduct={onSaveCategories}
+              loading={loadingCategories}
+            ></ProductExpandedRow>
+          ),
+        }}
       />
     </>
   );
