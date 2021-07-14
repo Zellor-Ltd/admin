@@ -18,10 +18,10 @@ export interface ProductCategory {
 }
 
 export interface SelectedProductCategories {
-  supercategory: ProductCategory;
-  category: ProductCategory;
-  subcategory: ProductCategory;
-  subsubcategory: ProductCategory;
+  supercategory?: ProductCategory;
+  category?: ProductCategory;
+  subcategory?: ProductCategory;
+  subsubcategory?: ProductCategory;
 }
 
 export interface SelectedCategories {
@@ -38,9 +38,9 @@ export interface AllCategories {
 }
 
 export interface CategoryAPI {
-  fetch: Function;
-  save: Function;
-  delete: Function;
+  fetch: () => Promise<any>;
+  save: (params: any) => Promise<any>;
+  delete: (params: any) => Promise<any>;
 }
 
 export interface AllCategoriesAPI {

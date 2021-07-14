@@ -1,49 +1,77 @@
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { Button, Col, PageHeader, Popconfirm, Row, Table, Tag } from "antd";
-import { ColumnsType } from "antd/lib/table";
+import { Button, Col, PageHeader, Popconfirm, Row, Tag } from "antd";
 import { SearchFilter } from "components/SearchFilter";
 import { Product } from "interfaces/Product";
 import moment from "moment";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { RouteComponentProps } from "react-router";
 import { Link } from "react-router-dom";
-import { deleteProduct, fetchProducts } from "services/DiscoClubService";
+import {
+  deleteProduct,
+  fetchProducts,
+  saveProduct,
+} from "services/DiscoClubService";
+import EditableTable, { EditableColumnType } from "components/EditableTable";
+import ProductExpandedRow from "./ProductExpandedRow";
+import useAllCategories from "hooks/useAllCategories";
+import useFilter from "hooks/useFilter";
+import { useRequest } from "hooks/useRequest";
 
 const Products: React.FC<RouteComponentProps> = ({ history }) => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [products, setProducts] = useState<Product[]>([]);
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const { doFetch, doRequest } = useRequest({ setLoading });
+  const { doRequest: saveCategories, loading: loadingCategories } =
+    useRequest();
 
-  const fetch = async () => {
-    setLoading(true);
-    const response: any = await fetchProducts();
-    setLoading(false);
-    setProducts(response.results);
-    setFilteredProducts(response.results);
+  const {
+    setArrayList: setProducts,
+    filteredArrayList: filteredProducts,
+    addFilterFunction,
+  } = useFilter<Product>([]);
+
+  const { fetchAllCategories, allCategories } = useAllCategories({
+    setLoading,
+  });
+
+  const getResources = useCallback(async () => {
+    const [products] = await Promise.all([
+      doFetch(fetchProducts),
+      fetchAllCategories(),
+    ]);
+    setProducts(products);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const getProducts = async () => {
+    const products = await doFetch(fetchProducts);
+    setProducts(products);
   };
 
   useEffect(() => {
-    fetch();
-  }, []);
+    getResources();
+  }, [getResources]);
 
   const deleteItem = async (id: string) => {
-    try {
-      setLoading(true);
-      await deleteProduct({ id });
-      await fetch();
-      setLoading(false);
-    } catch (err) {
-      console.log(err);
-      setLoading(false);
-    }
+    await doRequest(() => deleteProduct({ id }));
+    await getProducts();
   };
 
-  const columns: ColumnsType<Product> = [
+  const onSaveCategories = async (record: Product) => {
+    await saveCategories(() => saveProduct(record));
+    await getProducts();
+  };
+
+  const onSaveProduct = async (record: Product) => {
+    await doRequest(() => saveProduct(record));
+    await getProducts();
+  };
+
+  const columns: EditableColumnType<Product>[] = [
     {
       title: "Name",
       dataIndex: "name",
-      width: "15%",
-      render: (value: string, record: Product) => (
+      width: "25%",
+      render: (value: string, record) => (
         <Link to={{ pathname: `/product/commited`, state: record }}>
           {value}
         </Link>
@@ -52,8 +80,16 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
     {
       title: "Brand",
       dataIndex: ["brand", "brandName"],
-      width: "15%",
+      width: "20%",
       align: "center",
+    },
+    {
+      title: "Max Disco Dollars",
+      dataIndex: "maxDiscoDollars",
+      width: "12%",
+      align: "center",
+      editable: true,
+      number: true,
     },
     {
       title: "Related Videos",
@@ -75,7 +111,7 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
       key: "action",
       width: "5%",
       align: "right",
-      render: (_, record: Product) => (
+      render: (_: any, record) => (
         <>
           <Link to={{ pathname: `/product/commited`, state: record }}>
             <EditOutlined />
@@ -96,7 +132,7 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
   ];
 
   const searchFilterFunction = (filterText: string) => {
-    setFilteredProducts(
+    addFilterFunction("productName", (products) =>
       products.filter((product) =>
         product.name?.toUpperCase().includes(filterText.toUpperCase())
       )
@@ -119,11 +155,23 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
           <SearchFilter filterFunction={searchFilterFunction} />
         </Col>
       </Row>
-      <Table
+      <EditableTable
         rowKey="id"
         columns={columns}
         dataSource={filteredProducts}
         loading={loading}
+        onSave={onSaveProduct}
+        expandable={{
+          expandedRowRender: (record: Product) => (
+            <ProductExpandedRow
+              key={record.id}
+              record={record}
+              allCategories={allCategories}
+              onSaveProduct={onSaveCategories}
+              loading={loadingCategories}
+            ></ProductExpandedRow>
+          ),
+        }}
       />
     </div>
   );

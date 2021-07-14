@@ -38,10 +38,12 @@ function replaceIdRecursively(obj: any) {
 }
 
 instance.interceptors.request.use((config: AxiosRequestConfig) => {
-  if (config.data) {
-    replaceIdRecursively(config.data);
+  const data = JSON.parse(JSON.stringify(config.data || {}));
+  if (data) {
+    replaceIdRecursively(data);
   }
   config.headers["Authorization"] = `Bearer ${localStorage.getItem("token")}`;
+  config.data = data
   return config;
 });
 

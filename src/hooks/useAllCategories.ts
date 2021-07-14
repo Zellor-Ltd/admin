@@ -7,6 +7,7 @@ import {
 import { useCallback, useEffect, useState } from "react";
 import { productCategoriesAPI } from "services/DiscoClubService";
 import { categoriesSettings } from "helpers/utils";
+import { useRequest } from "./useRequest";
 
 const { categoriesKeys, categoriesFields, categoriesArray } =
   categoriesSettings;
@@ -28,10 +29,9 @@ const useAllCategories = ({
   allCategories?: AllCategories;
 }): {
   fetchAllCategories: () => Promise<void>;
-  _allCategories: AllCategories;
+  allCategories: AllCategories;
   filteredCategories: AllCategories;
   filterCategory: typeof filterCategory;
-  _loading: boolean;
 } => {
   const [_allCategories, _setAllCategories] = useState<AllCategories>(
     allCategoriesFactory()
@@ -39,7 +39,7 @@ const useAllCategories = ({
   const [filteredCategories, setFilteredCategories] = useState<AllCategories>(
     allCategoriesFactory()
   );
-  const [_loading, _setLoading] = useState<boolean>(false);
+  const { doFetch } = useRequest({ setLoading });
   const [selectedCategories, setSelectedCategories] =
     useState<SelectedCategories>(initialValues || {});
 
@@ -131,41 +131,27 @@ const useAllCategories = ({
   }, [_allCategories, setFilteredCategories]);
 
   const fetchAllCategories = useCallback(async () => {
-    try {
-      _setLoading(true);
-      if (setLoading) {
-        setLoading(true);
-      }
-      const responses: any[] = await Promise.all([
-        productCategoriesAPI.supercategory.fetch(),
-        productCategoriesAPI.category.fetch(),
-        productCategoriesAPI.subcategory.fetch(),
-        productCategoriesAPI.subsubcategory.fetch(),
-      ]);
-      _setLoading(false);
-      if (setLoading) {
-        setLoading(false);
-      }
-      _setAllCategories({
-        "Super Category": responses[0].results,
-        Category: responses[1].results,
-        "Sub Category": responses[2].results,
-        "Sub Sub Category": responses[3].results,
-      });
-    } catch (err) {
-      _setLoading(false);
-      if (setLoading) {
-        setLoading(false);
-      }
-    }
-  }, [setLoading]);
+    const responses = await Promise.all([
+      doFetch(productCategoriesAPI.supercategory.fetch),
+      doFetch(productCategoriesAPI.category.fetch),
+      doFetch(productCategoriesAPI.subcategory.fetch),
+      doFetch(productCategoriesAPI.subsubcategory.fetch),
+    ]);
+
+    _setAllCategories({
+      "Super Category": responses[0],
+      Category: responses[1],
+      "Sub Category": responses[2],
+      "Sub Sub Category": responses[3],
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return {
     fetchAllCategories,
-    _allCategories,
+    allCategories: _allCategories,
     filteredCategories,
     filterCategory,
-    _loading,
   };
 };
 
