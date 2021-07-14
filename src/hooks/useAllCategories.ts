@@ -32,7 +32,6 @@ const useAllCategories = ({
   allCategories: AllCategories;
   filteredCategories: AllCategories;
   filterCategory: typeof filterCategory;
-  loading: boolean;
 } => {
   const [_allCategories, _setAllCategories] = useState<AllCategories>(
     allCategoriesFactory()
@@ -40,7 +39,7 @@ const useAllCategories = ({
   const [filteredCategories, setFilteredCategories] = useState<AllCategories>(
     allCategoriesFactory()
   );
-  const { doFetch, loading } = useRequest({ setLoading });
+  const { doFetch } = useRequest({ setLoading });
   const [selectedCategories, setSelectedCategories] =
     useState<SelectedCategories>(initialValues || {});
 
@@ -153,7 +152,6 @@ const useAllCategories = ({
     allCategories: _allCategories,
     filteredCategories,
     filterCategory,
-    loading,
   };
 };
 

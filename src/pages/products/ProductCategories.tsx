@@ -26,7 +26,11 @@ const formatProductCategories: (
   };
   Object.keys(initialProductCategories).forEach((key) => {
     const _key = key as keyof SelectedCategories;
-    initialCategories[_key] = initialProductCategories[_key]?.[_key];
+    if (initialProductCategories[_key]) {
+      initialCategories[_key] = initialProductCategories[_key][_key];
+    } else {
+      delete initialCategories[_key];
+    }
   });
   return initialCategories;
 };
@@ -70,6 +74,7 @@ const ProductCategories: React.FC<ProductCategoriesProps> = ({
     <>
       {categoriesArray.map(({ key, field }, _index) => (
         <Form.Item
+          key={_index}
           label={key}
           name={["categories", productCategoryIndex, field, "id"]}
           rules={[{ required: _index < 2, message: `${key} is required` }]}

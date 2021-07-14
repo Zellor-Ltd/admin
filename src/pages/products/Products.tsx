@@ -1,9 +1,4 @@
-import {
-  DeleteOutlined,
-  EditOutlined,
-  PlusOutlined,
-  MinusOutlined,
-} from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Button, Col, PageHeader, Popconfirm, Row, Tag } from "antd";
 import { SearchFilter } from "components/SearchFilter";
 import { Product } from "interfaces/Product";
@@ -17,8 +12,7 @@ import {
   saveProduct,
 } from "services/DiscoClubService";
 import EditableTable, { EditableColumnType } from "components/EditableTable";
-import { SelectedProductCategories } from "interfaces/Category";
-import ProductCategories from "./ProductCategories";
+import ProductExpandedRow from "./ProductExpandedRow";
 import useAllCategories from "hooks/useAllCategories";
 import useFilter from "hooks/useFilter";
 import { useRequest } from "hooks/useRequest";
@@ -26,6 +20,8 @@ import { useRequest } from "hooks/useRequest";
 const Products: React.FC<RouteComponentProps> = ({ history }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const { doFetch, doRequest } = useRequest({ setLoading });
+  const { doRequest: saveCategories, loading: loadingCategories } =
+    useRequest();
 
   const {
     setArrayList: setProducts,
@@ -37,22 +33,48 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
     setLoading,
   });
 
-  const fetch = useCallback(async () => {
+  const getResources = useCallback(async () => {
     const [products] = await Promise.all([
       doFetch(fetchProducts),
-      fetchAllCategories,
+      fetchAllCategories(),
     ]);
     setProducts(products);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const getProducts = async () => {
+    const products = await doFetch(fetchProducts);
+    setProducts(products);
+  };
+
   useEffect(() => {
-    fetch();
-  }, [fetch]);
+    getResources();
+  }, [getResources]);
 
   const deleteItem = async (id: string) => {
     await doRequest(() => deleteProduct({ id }));
-    await fetch();
+    await getProducts();
+  };
+
+  const onSaveCategories = async (record: Product) => {
+    await saveCategories(() => saveProduct({ ...record }));
+  };
+
+  const onSaveProduct = async (record: Product) => {
+    await doRequest(() => saveProduct(record));
+    await getProducts();
+  };
+
+  const expandedRowRender = (record: Product) => {
+    return (
+      <ProductExpandedRow
+        key={record.id}
+        record={record}
+        allCategories={allCategories}
+        onSaveProduct={onSaveCategories}
+        loading={loadingCategories}
+      ></ProductExpandedRow>
+    );
   };
 
   const columns: EditableColumnType<Product>[] = [
@@ -125,76 +147,6 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
       products.filter((product) =>
         product.name?.toUpperCase().includes(filterText.toUpperCase())
       )
-    );
-  };
-
-  const onSaveProduct = async (record: Product) => {
-    setLoading(true);
-    await saveProduct(record);
-    fetch();
-  };
-
-  const handleCategoryChange = (
-    selectedCategories: any,
-    productCategoryIndex: number,
-    filterCategory: Function
-  ) => {
-    filterCategory();
-  };
-
-  // const addCategoryTree = () => {
-  //   setCategories((prev) => [...prev, {}]);
-  // };
-
-  // const delCategoryTree = (index: number) => {
-  //   const formCategories = form.getFieldValue("categories");
-  //   form.setFieldsValue({
-  //     categories: [
-  //       ...formCategories.slice(0, index),
-  //       ...formCategories.slice(index + 1),
-  //     ],
-  //   });
-  //   setCategories((prev) => [
-  //     ...prev.slice(0, index),
-  //     ...prev.slice(index + 1),
-  //   ]);
-  // };
-
-  const expandedRowRender = (record: Product) => {
-    const productCategories = record.categories || [{}];
-    return (
-      <Col lg={24} xs={12}>
-        {productCategories.map((_: any, index: number) => (
-          <Row justify="space-between" style={{ maxWidth: "1000px" }}>
-            <ProductCategories
-              productCategoryIndex={index}
-              initialValues={productCategories as SelectedProductCategories[]}
-              allCategories={allCategories}
-              handleCategoryChange={handleCategoryChange}
-            />
-            {/* {productCategories.length > 1 ? (
-              <Button
-                onClick={() => delCategoryTree(index)}
-                type="link"
-                style={{ padding: 0, marginTop: "30px" }}
-              >
-                Remove Category Tree
-                <MinusOutlined />
-              </Button>
-            ) : (
-              <div style={{ width: "168px" }}></div>
-            )} */}
-          </Row>
-        ))}
-        {/* <Button
-          onClick={addCategoryTree}
-          type="link"
-          style={{ padding: 0, marginTop: "-6px", marginBottom: "16px" }}
-        >
-          Add Category Tree
-          <PlusOutlined />
-        </Button> */}
-      </Col>
     );
   };
 
