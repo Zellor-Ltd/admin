@@ -58,23 +58,12 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
 
   const onSaveCategories = async (record: Product) => {
     await saveCategories(() => saveProduct(record));
+    await getProducts();
   };
 
   const onSaveProduct = async (record: Product) => {
     await doRequest(() => saveProduct(record));
     await getProducts();
-  };
-
-  const expandedRowRender = (record: Product) => {
-    return (
-      <ProductExpandedRow
-        key={record.id}
-        record={record}
-        allCategories={allCategories}
-        onSaveProduct={onSaveCategories}
-        loading={loadingCategories}
-      ></ProductExpandedRow>
-    );
   };
 
   const columns: EditableColumnType<Product>[] = [
@@ -172,7 +161,17 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
         dataSource={filteredProducts}
         loading={loading}
         onSave={onSaveProduct}
-        expandable={{ expandedRowRender }}
+        expandable={{
+          expandedRowRender: (record: Product) => (
+            <ProductExpandedRow
+              key={record.id}
+              record={record}
+              allCategories={allCategories}
+              onSaveProduct={onSaveCategories}
+              loading={loadingCategories}
+            ></ProductExpandedRow>
+          ),
+        }}
       />
     </div>
   );
