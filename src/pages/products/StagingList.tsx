@@ -118,7 +118,7 @@ const StagingList: React.FC<RouteComponentProps> = ({ history }) => {
         ),
     },
     {
-      title: "actions",
+      title: "Actions",
       key: "action",
       width: "12%",
       align: "right",

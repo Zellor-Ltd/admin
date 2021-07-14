@@ -14,7 +14,7 @@ const Interfaces: React.FC<RouteComponentProps> = ({ history }) => {
     { title: "Name", dataIndex: "name", width: "15%" },
     { title: "HTTP Endpoint", dataIndex: "httpEndpoint", width: "15%" },
     {
-      title: "actions",
+      title: "Actions",
       key: "action",
       width: "5%",
       align: "right",

@@ -68,7 +68,7 @@ const PromoCodes: React.FC<RouteComponentProps> = ({ history }) => {
       ),
     },
     {
-      title: "actions",
+      title: "Actions",
       key: "action",
       width: "10%",
       align: "right",

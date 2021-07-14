@@ -45,7 +45,7 @@ const Users: React.FC<RouteComponentProps> = ({ history }) => {
       align: "center",
     },
     {
-      title: "actions",
+      title: "Actions",
       key: "action",
       width: "5%",
       align: "right",

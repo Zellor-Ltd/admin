@@ -39,7 +39,7 @@ const Creators: React.FC<RouteComponentProps> = (props) => {
       ),
     },
     {
-      title: "actions",
+      title: "Actions",
       key: "action",
       width: "5%",
       align: "right",

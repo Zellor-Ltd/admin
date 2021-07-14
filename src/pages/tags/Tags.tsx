@@ -43,7 +43,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history }) => {
     { title: "Brand", dataIndex: ["brand", "brandName"], width: "20%" },
     { title: "Template", dataIndex: "template", width: "20%" },
     {
-      title: "actions",
+      title: "Actions",
       key: "action",
       width: "5%",
       align: "right",
@@ -56,7 +56,8 @@ const Tags: React.FC<RouteComponentProps> = ({ history }) => {
             title="Are you sure？"
             okText="Yes"
             cancelText="No"
-            onConfirm={() => deleteItem(record.id)}>
+            onConfirm={() => deleteItem(record.id)}
+          >
             <Button type="link" style={{ padding: 0, margin: 6 }}>
               <DeleteOutlined />
             </Button>

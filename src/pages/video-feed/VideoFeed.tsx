@@ -113,7 +113,7 @@ const VideoFeed: React.FC<RouteComponentProps> = (props) => {
       align: "center",
     },
     {
-      title: "actions",
+      title: "Actions",
       key: "action",
       width: "5%",
       align: "right",
