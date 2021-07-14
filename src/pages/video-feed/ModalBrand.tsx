@@ -2,7 +2,7 @@ import { Col, Form, Input, InputNumber, Modal, Row, Select } from "antd";
 import { Brand } from "interfaces/Brand";
 import { useEffect, useState } from "react";
 import { fetchBrands } from "services/DiscoClubService";
-import { useResetFormOnCloseModal } from "./useResetFormCloseModal";
+import { useResetFormOnCloseModal } from "hooks/useResetFormCloseModal";
 
 interface ModalFormProps {
   brand: Brand | undefined;
@@ -58,12 +58,14 @@ const ModalBrand: React.FC<ModalFormProps> = ({ brand, visible, onCancel }) => {
       onCancel={onCancel}
       width={"80%"}
       okButtonProps={{ loading: loading }}
-      forceRender>
+      forceRender
+    >
       <Form
         form={form}
         name="brandForm"
         initialValues={brand}
-        layout="vertical">
+        layout="vertical"
+      >
         <Input.Group>
           <Row gutter={8}>
             <Col lg={6} xs={0}>
