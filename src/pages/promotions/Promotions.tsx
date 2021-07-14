@@ -22,10 +22,10 @@ const Promotions: React.FC<RouteComponentProps> = ({ history }) => {
   const [tableloading, setTableLoading] = useState<boolean>(false);
   const { doRequest, doFetch } = useRequest({ setLoading: setTableLoading });
   const [promoStatusList, setPromoStatusList] = useState<any>();
-  const [promotionUpdateList, setPromotionUpdateList] = useState<boolean[]>([]);
+  // const [promotionUpdateList, setPromotionUpdateList] = useState<boolean[]>([]);
 
   const {
-    arrayList: promotions,
+    // arrayList: promotions,
     setArrayList: setPromotions,
     filteredArrayList: filteredPromotions,
     addFilterFunction,
