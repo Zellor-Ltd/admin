@@ -367,6 +367,14 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
                     </Form.Item>
                   </Col>
                   <Col lg={24} xs={24}>
+                    <Form.Item
+                      name="shortDescription"
+                      label="Short description"
+                    >
+                      <Input />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={24} xs={24}>
                     <Form.Item name="description" label="Long description">
                       <RichTextEditor formField="description" form={form} />
                     </Form.Item>
