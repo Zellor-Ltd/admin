@@ -6,6 +6,13 @@ import draftToHtml from "draftjs-to-html";
 import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 
+/*
+The package "react-draft-wysiwyg" is throwing this warning to console:
+Warning: Can't call setState on a component that is not yet mounted. This is a no-op, but it might indicate a bug in your application. Instead, assign to `this.state` directly or define a `state = {};` class property with the desired state in the r component.
+
+It seems this package is not compatible with react strictMode yet.
+*/
+
 interface RichTextEditorProps {
   formField: string;
   form: FormInstance;

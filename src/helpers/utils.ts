@@ -26,3 +26,7 @@ export const categoriesSettings = {
   categoriesFields: categoriesArray.map((item) => item.field),
   categoriesEps: categoriesArray.map((item) => item.ep),
 };
+
+export const __prod__ = process.env.SERVER_ENV === "production";
+export const __isDev__ = process.env.SERVER_ENV === "development";
+export const __isDemo__ = process.env.SERVER_ENV === "demo";

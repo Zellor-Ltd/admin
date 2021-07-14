@@ -17,6 +17,7 @@ import {
   Category,
   ProductCategory,
 } from "interfaces/Category";
+import { message } from "antd";
 
 export const instance = axios.create({
   baseURL: process.env.REACT_APP_HOST_ENDPOINT,
@@ -44,6 +45,11 @@ instance.interceptors.request.use((config: AxiosRequestConfig) => {
   return config;
 });
 
+const errorHandler = (error: any) => {
+  message.error("Something went wrong.");
+  throw error;
+};
+
 instance.interceptors.response.use(
   (response) => {
     if (response?.data?.error) {
@@ -51,8 +57,7 @@ instance.interceptors.response.use(
         response.data.error.toUpperCase() ===
         "Unauthorized request".toUpperCase()
       ) {
-        localStorage.clear();
-        window.location.href = "./";
+        errorHandler(response.data.error);
       }
     }
     return snakeToCamelCase(response.data);
@@ -61,8 +66,7 @@ instance.interceptors.response.use(
     switch (error.response?.status) {
       case 404:
       case 401: {
-        localStorage.clear();
-        window.location.href = "./";
+        errorHandler(error);
       }
     }
   }
@@ -71,6 +75,7 @@ instance.interceptors.response.use(
 export const fetchStartupVideo = () => instance.get("Wi/Ep/GetStartupVideo");
 
 export const fetchVideoFeed = () => instance.get("Wi/Ep/ListVideoFeed");
+export const fetchVideoFeed2 = () => instance.get("Wi/Ep/GetVideoFeed");
 
 export const fetchProducts = () => instance.get("Wi/Ep/ListProducts");
 
@@ -162,6 +167,10 @@ export const fetchUserFeed = (userId: string) =>
   instance.get(`Disco/Feed/GetUserFeed/${userId}`);
 
 export const fetchPromoCodes = () => instance.get("Wi/Ep/ListPromoCodes");
+
+export const fetchPromotions = () => instance.get("Wi/Ep/ListPromotions");
+
+export const fetchPromoStatus = () => instance.get("Wi/Ep/ListPromoStatus");
 
 export const saveVideoFeed = (params: FeedItem) => {
   if (params.id) {
@@ -274,6 +283,14 @@ export const savePromoCode = (params: PromoCode) => {
   }
 };
 
+export const savePromotion = (params: PromoCode) => {
+  if (params.id) {
+    return instance.post("Wi/Ep/UpdatePromotion", params);
+  } else {
+    return instance.put("Wi/EP/AddPromotion", params);
+  }
+};
+
 export const deletePrivileges = (data: Privilege) =>
   instance.delete("Wi/Ep/RemovePrivilege", { data });
 
@@ -300,6 +317,9 @@ export const deleteCategory = (data: IDelete) =>
 
 export const deletePromoCode = (data: IDelete) =>
   instance.delete(`Wi/Ep/RemovePromoCode`, { data });
+
+export const deletePromotion = (data: IDelete) =>
+  instance.delete(`Wi/Ep/RemovePromotion`, { data });
 
 export const loginService = (login: Login) =>
   instance.put("Auth/GetApiToken", login);

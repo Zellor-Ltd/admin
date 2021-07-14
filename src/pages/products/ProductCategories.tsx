@@ -20,13 +20,13 @@ interface ProductCategoriesProps {
 
 const formatProductCategories: (
   initialProductCategories: SelectedProductCategories
-) => SelectedCategories = (selectedProductCategories) => {
+) => SelectedCategories = (initialProductCategories) => {
   const initialCategories: SelectedCategories = {
     supercategory: "",
   };
-  Object.keys(selectedProductCategories).forEach((key) => {
+  Object.keys(initialProductCategories).forEach((key) => {
     const _key = key as keyof SelectedCategories;
-    initialCategories[_key] = selectedProductCategories[_key][_key];
+    initialCategories[_key] = initialProductCategories[_key]?.[_key];
   });
   return initialCategories;
 };
