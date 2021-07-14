@@ -57,7 +57,7 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
   };
 
   const onSaveCategories = async (record: Product) => {
-    await saveCategories(() => saveProduct({ ...record }));
+    await saveCategories(() => saveProduct(record));
   };
 
   const onSaveProduct = async (record: Product) => {
