@@ -12,7 +12,7 @@ import {
 } from "antd";
 import { Position } from "interfaces/Position";
 import { Tag } from "interfaces/Tag";
-import { useResetFormOnCloseModal } from "./useResetFormCloseModal";
+import { useResetFormOnCloseModal } from "hooks/useResetFormCloseModal";
 import { EditableCell, EditableRow } from "components";
 import { DeleteOutlined } from "@ant-design/icons";
 import { ColumnTypes } from "components/editable-context";

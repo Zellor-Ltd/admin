@@ -22,7 +22,7 @@ const formatProductCategories: (
   initialProductCategories: SelectedProductCategories
 ) => SelectedCategories = (initialProductCategories) => {
   const initialCategories: SelectedCategories = {
-    supercategory: "",
+    superCategory: "",
   };
   Object.keys(initialProductCategories).forEach((key) => {
     const _key = key as keyof SelectedCategories;

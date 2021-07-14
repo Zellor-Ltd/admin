@@ -5,10 +5,8 @@ type action = () => Promise<any>;
 
 export const useRequest = ({
   setLoading = () => {},
-  successMsg = "Register updated with success.",
 }: {
   setLoading?: React.Dispatch<React.SetStateAction<boolean>>;
-  successMsg?: string;
 } = {}) => {
   const [_loading, _setLoading] = useState<boolean>(false);
 
@@ -17,11 +15,11 @@ export const useRequest = ({
     setLoading(v);
   };
 
-  const request = async (action: action, displayMessage: boolean) => {
+  const request = async (action: action, successMsg?: string) => {
     _setLoadingHandler(true);
     try {
       const { results }: { results: any[] } = await action();
-      if (displayMessage) message.success(successMsg);
+      if (successMsg) message.success(successMsg);
       _setLoadingHandler(false);
       return results;
     } catch (error) {
@@ -30,8 +28,11 @@ export const useRequest = ({
     }
   };
 
-  const doFetch = (action: action) => request(action, false);
-  const doRequest = (action: action) => request(action, true);
+  const doFetch = (action: action) => request(action);
+  const doRequest = (
+    action: action,
+    successMsg: string = "Register updated with success."
+  ) => request(action, successMsg);
 
   return { doFetch, doRequest, loading: _loading };
 };

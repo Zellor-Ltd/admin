@@ -132,10 +132,10 @@ const useAllCategories = ({
 
   const fetchAllCategories = useCallback(async () => {
     const responses = await Promise.all([
-      doFetch(productCategoriesAPI.supercategory.fetch),
+      doFetch(productCategoriesAPI.superCategory.fetch),
       doFetch(productCategoriesAPI.category.fetch),
-      doFetch(productCategoriesAPI.subcategory.fetch),
-      doFetch(productCategoriesAPI.subsubcategory.fetch),
+      doFetch(productCategoriesAPI.subCategory.fetch),
+      doFetch(productCategoriesAPI.subSubCategory.fetch),
     ]);
 
     _setAllCategories({
