@@ -1,10 +1,7 @@
-import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
-import { Button, Col, Form, Row } from "antd";
+import { Button, Col, Form } from "antd";
 import { categoriesSettings } from "helpers/utils";
-import { AllCategories, SelectedProductCategories } from "interfaces/Category";
+import { AllCategories } from "interfaces/Category";
 import { Product } from "interfaces/Product";
-import { useEffect, useState } from "react";
-import ProductCategories from "./ProductCategories";
 import ProductCategoriesTrees from "./ProductCategoriesTrees";
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 
@@ -35,12 +32,21 @@ const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
     await onSaveProduct({ ...record, categories: _categories });
   };
 
+  const handleCategoryChange = (
+    selectedCategories: any,
+    productCategoryIndex: number,
+    filterCategory: Function
+  ) => {
+    filterCategory(form);
+  };
+
   return (
     <Form layout="vertical" initialValues={record} form={form}>
       <ProductCategoriesTrees
-        record={record}
+        categories={record.categories}
         allCategories={allCategories}
         form={form}
+        handleCategoryChange={handleCategoryChange}
       />
       <Col lg={24} xs={12}>
         <Button type="primary" onClick={onFinish} loading={loading}>

@@ -1,29 +1,28 @@
 import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
-import { Button, Col, Form, FormInstance, Row } from "antd";
+import { Button, Col, FormInstance, Row } from "antd";
 import { AllCategories, SelectedProductCategories } from "interfaces/Category";
-import { Product } from "interfaces/Product";
 import { useState } from "react";
 import ProductCategories from "./ProductCategories";
 
 interface ProductCategoriesTreesProps {
-  record: Product;
+  categories: SelectedProductCategories[] | undefined;
   allCategories: AllCategories;
   form: FormInstance;
+  handleCategoryChange: Function;
 }
 
 const ProductCategoriesTrees: React.FC<ProductCategoriesTreesProps> = ({
-  record,
+  categories,
   allCategories,
   form,
+  handleCategoryChange,
 }) => {
-  console.log("render Trees");
-
-  const [categories, setCategories] = useState<any[]>(
-    record.categories || [{}]
+  const [_categories, _setCategories] = useState<SelectedProductCategories[]>(
+    categories || [{}]
   );
 
   const addCategoryTree = () => {
-    setCategories((prev) => [...prev, {}]);
+    _setCategories((prev) => [...prev, {}]);
   };
 
   const delCategoryTree = (index: number) => {
@@ -34,24 +33,16 @@ const ProductCategoriesTrees: React.FC<ProductCategoriesTreesProps> = ({
         ...formCategories.slice(index + 1),
       ],
     });
-    setCategories((prev) => [
+    _setCategories((prev) => [
       ...prev.slice(0, index),
       ...prev.slice(index + 1),
     ]);
   };
 
-  const handleCategoryChange = (
-    selectedCategories: any,
-    productCategoryIndex: number,
-    filterCategory: Function
-  ) => {
-    filterCategory(form);
-  };
-
   return (
     <>
       <Col lg={24} xs={12}>
-        {categories.map((_: any, index: number) => (
+        {_categories.map((_: any, index: number) => (
           <Row
             key={index}
             justify="space-between"
@@ -59,11 +50,11 @@ const ProductCategoriesTrees: React.FC<ProductCategoriesTreesProps> = ({
           >
             <ProductCategories
               productCategoryIndex={index}
-              initialValues={categories as SelectedProductCategories[]}
+              initialValues={_categories}
               allCategories={allCategories}
               handleCategoryChange={handleCategoryChange}
             />
-            {categories.length > 1 ? (
+            {_categories.length > 1 ? (
               <Button
                 onClick={() => delCategoryTree(index)}
                 type="link"

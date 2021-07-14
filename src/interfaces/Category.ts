@@ -18,10 +18,10 @@ export interface ProductCategory {
 }
 
 export interface SelectedProductCategories {
-  supercategory: ProductCategory;
-  category: ProductCategory;
-  subcategory: ProductCategory;
-  subsubcategory: ProductCategory;
+  supercategory?: ProductCategory;
+  category?: ProductCategory;
+  subcategory?: ProductCategory;
+  subsubcategory?: ProductCategory;
 }
 
 export interface SelectedCategories {

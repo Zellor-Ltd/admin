@@ -1,4 +1,3 @@
-import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
 import {
   Button,
   Col,
@@ -22,7 +21,7 @@ import { formatMoment } from "helpers/formatMoment";
 import { categoriesSettings } from "helpers/utils";
 import useAllCategories from "hooks/useAllCategories";
 import { Brand } from "interfaces/Brand";
-import { AllCategories, SelectedProductCategories } from "interfaces/Category";
+import { AllCategories } from "interfaces/Category";
 import { Video } from "interfaces/Video";
 import { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
@@ -33,8 +32,8 @@ import {
   saveProduct,
   saveStagingProduct,
 } from "services/DiscoClubService";
-import ProductCategories from "./ProductCategories";
 import { RichTextEditor } from "components/RichTextEditor";
+import ProductCategoriesTrees from "./ProductCategoriesTrees";
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 
@@ -67,10 +66,6 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
   const [brands, setBrands] = useState<Brand[]>([]);
   const [ageRange, setageRange] = useState<[number, number]>([12, 100]);
   const [form] = Form.useForm();
-
-  const [categories, setCategories] = useState<any[]>(
-    initial?.categories || [{}]
-  );
 
   const { fetchAllCategories, allCategories } = useAllCategories({
     setLoading,
@@ -203,24 +198,6 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
       console.error(error);
       setLoading(false);
     }
-  };
-
-  const addCategoryTree = () => {
-    setCategories((prev) => [...prev, {}]);
-  };
-
-  const delCategoryTree = (index: number) => {
-    const formCategories = form.getFieldValue("categories");
-    form.setFieldsValue({
-      categories: [
-        ...formCategories.slice(0, index),
-        ...formCategories.slice(index + 1),
-      ],
-    });
-    setCategories((prev) => [
-      ...prev.slice(0, index),
-      ...prev.slice(index + 1),
-    ]);
   };
 
   return (
@@ -416,38 +393,12 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
             </Row>
           </Col>
         </Row>
-        <Col lg={24} xs={12}>
-          {categories.map((_, index) => (
-            <Row justify="space-between" style={{ maxWidth: "1000px" }}>
-              <ProductCategories
-                productCategoryIndex={index}
-                initialValues={categories as SelectedProductCategories[]}
-                allCategories={allCategories}
-                handleCategoryChange={handleCategoryChange}
-              />
-              {categories.length > 1 ? (
-                <Button
-                  onClick={() => delCategoryTree(index)}
-                  type="link"
-                  style={{ padding: 0, marginTop: "30px" }}
-                >
-                  Remove Category Tree
-                  <MinusOutlined />
-                </Button>
-              ) : (
-                <div style={{ width: "168px" }}></div>
-              )}
-            </Row>
-          ))}
-          <Button
-            onClick={addCategoryTree}
-            type="link"
-            style={{ padding: 0, marginTop: "-6px", marginBottom: "16px" }}
-          >
-            Add Category Tree
-            <PlusOutlined />
-          </Button>
-        </Col>
+        <ProductCategoriesTrees
+          categories={initial?.categories}
+          allCategories={allCategories}
+          form={form}
+          handleCategoryChange={handleCategoryChange}
+        />
         <Col lg={16} xs={24}>
           <Form.Item
             shouldUpdate={(prevValues, curValues) =>

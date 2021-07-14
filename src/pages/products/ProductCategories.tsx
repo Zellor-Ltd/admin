@@ -27,7 +27,7 @@ const formatProductCategories: (
   Object.keys(initialProductCategories).forEach((key) => {
     const _key = key as keyof SelectedCategories;
     if (initialProductCategories[_key]) {
-      initialCategories[_key] = initialProductCategories[_key][_key];
+      initialCategories[_key] = initialProductCategories[_key]![_key];
     } else {
       delete initialCategories[_key];
     }
