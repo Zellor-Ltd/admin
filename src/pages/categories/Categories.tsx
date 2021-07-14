@@ -77,7 +77,7 @@ const Categories: React.FC<RouteComponentProps> = () => {
       render: (image: Image) => <AntImage src={image?.url} width={70} />,
     },
     {
-      title: "actions",
+      title: "Actions",
       key: "action",
       width: "5%",
       align: "right",

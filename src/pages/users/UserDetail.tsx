@@ -121,7 +121,7 @@ const UserDetail: React.FC<RouteComponentProps> = (props) => {
   const creatorColumns = [
     { title: "UserName", dataIndex: "userName", width: "15%" },
     {
-      title: "actions",
+      title: "Actions",
       key: "action",
       width: "5%",
       render: (value: any, record: Creator, index: number) => (
@@ -163,7 +163,7 @@ const UserDetail: React.FC<RouteComponentProps> = (props) => {
   const categoryColumns = [
     { title: "Name", dataIndex: "name", width: "15%" },
     {
-      title: "actions",
+      title: "Actions",
       key: "action",
       width: "5%",
       render: (value: any, record: Category, index: number) => (

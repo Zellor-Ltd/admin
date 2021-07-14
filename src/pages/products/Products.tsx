@@ -71,7 +71,7 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
       render: (creationDate: Date) => moment(creationDate).format("DD/MM/YYYY"),
     },
     {
-      title: "actions",
+      title: "Actions",
       key: "action",
       width: "5%",
       align: "right",

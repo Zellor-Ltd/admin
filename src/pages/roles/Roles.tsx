@@ -30,7 +30,7 @@ const Roles: React.FC<RouteComponentProps> = ({ history }) => {
     { title: "Name", dataIndex: "name", width: "15%" },
     { title: "Description", dataIndex: "description", width: "15%" },
     {
-      title: "actions",
+      title: "Actions",
       key: "action",
       width: "5%",
       align: "right",

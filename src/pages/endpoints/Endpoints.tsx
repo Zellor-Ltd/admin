@@ -15,7 +15,7 @@ const Endpoints: React.FC<RouteComponentProps> = ({ history }) => {
     { title: "Container", dataIndex: "container", width: "15%" },
     { title: "Method", dataIndex: "action", width: "10%" },
     {
-      title: "actions",
+      title: "Actions",
       key: "action",
       width: "5%",
       align: "right",

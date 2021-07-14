@@ -204,7 +204,7 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
       align: "center",
     },
     {
-      title: "actions",
+      title: "Actions",
       key: "action",
       width: "5%",
       align: "right",
