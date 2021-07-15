@@ -41,7 +41,12 @@ const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
   };
 
   return (
-    <Form layout="vertical" initialValues={record} form={form}>
+    <Form
+      layout="vertical"
+      initialValues={record}
+      onFinish={onFinish}
+      form={form}
+    >
       <ProductCategoriesTrees
         categories={record.categories}
         allCategories={allCategories}
@@ -49,7 +54,7 @@ const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
         handleCategoryChange={handleCategoryChange}
       />
       <Col lg={24} xs={12}>
-        <Button type="primary" onClick={onFinish} loading={loading}>
+        <Button type="primary" htmlType="submit" loading={loading}>
           Save
         </Button>
       </Col>
