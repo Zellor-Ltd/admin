@@ -1,22 +1,34 @@
 import { Button } from "antd";
-import React, { useState } from "react";
+import { Product } from "interfaces/Product";
+import React, { useEffect, useState } from "react";
 import EditProductModal from "./EditProductModal";
 
 interface EditProductsButtonProps {
+  products: Product[];
   selectedRowKeys: any[];
   loading: boolean;
+  onOk: Function;
 }
 
 const EditProductsButton: React.FC<EditProductsButtonProps> = ({
+  products,
   selectedRowKeys,
   loading,
+  onOk,
 }) => {
   const [showEditProductModal, setShowEditProductModal] =
     useState<boolean>(false);
+  const [selectedProducts, setSelectedProducts] = useState<Product[]>([]);
 
-  const onOk = () => {
-    console.log(selectedRowKeys);
+  useEffect(() => {
+    setSelectedProducts(
+      products.filter((product) => selectedRowKeys.includes(product.id))
+    );
+  }, [products, selectedRowKeys]);
+
+  const _onOk = () => {
     setShowEditProductModal(false);
+    onOk();
   };
 
   const onCancel = () => {
@@ -28,16 +40,16 @@ const EditProductsButton: React.FC<EditProductsButtonProps> = ({
       <Button
         type="primary"
         onClick={() => setShowEditProductModal(true)}
-        disabled={selectedRowKeys.length === 0}
+        disabled={selectedProducts.length === 0}
         loading={loading}
       >
         Edit Products
       </Button>
       <EditProductModal
         visible={showEditProductModal}
-        selectedItems={selectedRowKeys}
+        selectedProducts={selectedProducts}
         onCancel={onCancel}
-        onOk={onOk}
+        onOk={_onOk}
       />
     </div>
   );

@@ -1,23 +1,24 @@
 import { Col, Form, Input, InputNumber, Modal, Row } from "antd";
+import { sleep } from "helpers/utils";
 import { useResetFormOnCloseModal } from "hooks/useResetFormCloseModal";
+import { Product } from "interfaces/Product";
 import { useEffect, useState } from "react";
 
 interface EditProductModalProps {
-  selectedItems: any[];
+  selectedProducts: Product[];
   visible: boolean;
   onCancel: () => void;
-  onOk: () => void;
+  onOk: Function;
 }
 
 const EditProductModal: React.FC<EditProductModalProps> = ({
-  selectedItems,
+  selectedProducts,
   visible,
   onCancel,
   onOk,
 }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
-
   useEffect(() => {
     form.resetFields();
   }, [form]);
@@ -28,14 +29,20 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
   });
 
   const _onOk = () => {
-    onOk();
-    // form.submit();
+    form.validateFields().then(async (values) => {
+      setLoading(true);
+      await sleep(1000);
+      setLoading(false);
+      onOk();
+      form.resetFields();
+    });
   };
 
   return (
     <Modal
       title="Update Products"
       visible={visible}
+      okText="Save"
       onOk={_onOk}
       onCancel={onCancel}
       width="300px"

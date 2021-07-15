@@ -145,10 +145,6 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
     );
   };
 
-  const handleRowsSelected = (selectedRowKeys: any[]) => {
-    setSelectedRowKeys(selectedRowKeys);
-  };
-
   const onChangeBrand = async (_selectedBrand: Brand | undefined) => {
     if (!_selectedBrand) {
       removeFilterFunction("brandName");
@@ -159,6 +155,11 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
         (product) => product.brand.brandName === _selectedBrand.brandName
       )
     );
+  };
+
+  const handleEditProducts = async () => {
+    await fetchProducts();
+    setSelectedRowKeys([]);
   };
 
   return (
@@ -191,8 +192,10 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
           </Row>
         </Col>
         <EditProductsButton
+          products={filteredProducts}
           selectedRowKeys={selectedRowKeys}
           loading={loading}
+          onOk={handleEditProducts}
         />
       </Row>
       <EditableTable
@@ -203,7 +206,7 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
         onSave={onSaveProduct}
         rowSelection={{
           selectedRowKeys,
-          onChange: handleRowsSelected,
+          onChange: setSelectedRowKeys,
         }}
         expandable={{
           expandedRowRender: (record: Product) => (
