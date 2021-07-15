@@ -1,30 +1,37 @@
 import { Button } from "antd";
-import { Product } from "interfaces/Product";
 import React, { useEffect, useState } from "react";
-import EditProductModal from "./EditProductModal";
 
-interface EditProductsButtonProps {
-  products: Product[];
-  selectedRowKeys: any[];
-  loading: boolean;
+export interface EditMultipleModalProps<T> {
+  selectedItems: T[];
+  visible: boolean;
+  onCancel: () => void;
   onOk: Function;
 }
 
-const EditProductsButton: React.FC<EditProductsButtonProps> = ({
-  products,
+interface EditProductsButtonProps {
+  arrayList: any[];
+  selectedRowKeys: any[];
+  loading: boolean;
+  onOk: Function;
+  ModalComponent: React.FC<EditMultipleModalProps<any>>;
+}
+
+const EditMultipleButton: React.FC<EditProductsButtonProps> = ({
+  arrayList,
   selectedRowKeys,
   loading,
   onOk,
+  ModalComponent,
 }) => {
   const [showEditProductModal, setShowEditProductModal] =
     useState<boolean>(false);
-  const [selectedProducts, setSelectedProducts] = useState<Product[]>([]);
+  const [selectedItems, setSelectedItems] = useState<any[]>([]);
 
   useEffect(() => {
-    setSelectedProducts(
-      products.filter((product) => selectedRowKeys.includes(product.id))
+    setSelectedItems(
+      arrayList.filter((item) => selectedRowKeys.includes(item.id))
     );
-  }, [products, selectedRowKeys]);
+  }, [arrayList, selectedRowKeys]);
 
   const _onOk = () => {
     setShowEditProductModal(false);
@@ -40,14 +47,14 @@ const EditProductsButton: React.FC<EditProductsButtonProps> = ({
       <Button
         type="primary"
         onClick={() => setShowEditProductModal(true)}
-        disabled={selectedProducts.length === 0}
+        disabled={selectedItems.length === 0}
         loading={loading}
       >
         Edit Products
       </Button>
-      <EditProductModal
+      <ModalComponent
+        selectedItems={selectedItems}
         visible={showEditProductModal}
-        selectedProducts={selectedProducts}
         onCancel={onCancel}
         onOk={_onOk}
       />
@@ -55,4 +62,4 @@ const EditProductsButton: React.FC<EditProductsButtonProps> = ({
   );
 };
 
-export default EditProductsButton;
+export default EditMultipleButton;

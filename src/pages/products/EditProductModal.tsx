@@ -4,20 +4,14 @@ import { Product } from "interfaces/Product";
 import { useEffect, useState } from "react";
 import { useRequest } from "hooks/useRequest";
 import { updateManyProducts } from "services/DiscoClubService";
-
-interface EditProductModalProps {
-  selectedProducts: Product[];
-  visible: boolean;
-  onCancel: () => void;
-  onOk: Function;
-}
+import { EditMultipleModalProps } from "components/EditMultipleButton";
 
 interface formValues {
   maxDiscoDollars: number;
 }
 
-const EditProductModal: React.FC<EditProductModalProps> = ({
-  selectedProducts,
+const EditProductModal: React.FC<EditMultipleModalProps<Product>> = ({
+  selectedItems: selectedProducts,
   visible,
   onCancel,
   onOk,

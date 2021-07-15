@@ -16,9 +16,10 @@ import ProductExpandedRow from "./ProductExpandedRow";
 import useAllCategories from "hooks/useAllCategories";
 import useFilter from "hooks/useFilter";
 import { useRequest } from "hooks/useRequest";
-import EditProductsButton from "./EditProductsButton";
+import EditMultipleButton from "components/EditMultipleButton";
 import { SelectBrand } from "components/SelectBrand";
 import { Brand } from "interfaces/Brand";
+import EditProductModal from "./EditProductModal";
 
 const Products: React.FC<RouteComponentProps> = ({ history }) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -191,8 +192,9 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
             </Col>
           </Row>
         </Col>
-        <EditProductsButton
-          products={filteredProducts}
+        <EditMultipleButton
+          arrayList={filteredProducts}
+          ModalComponent={EditProductModal}
           selectedRowKeys={selectedRowKeys}
           loading={loading}
           onOk={handleEditProducts}
