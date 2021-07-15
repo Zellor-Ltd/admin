@@ -1,14 +1,19 @@
 import { Col, Form, Input, InputNumber, Modal, Row } from "antd";
-import { sleep } from "helpers/utils";
 import { useResetFormOnCloseModal } from "hooks/useResetFormCloseModal";
 import { Product } from "interfaces/Product";
 import { useEffect, useState } from "react";
+import { useRequest } from "hooks/useRequest";
+import { updateManyProducts } from "services/DiscoClubService";
 
 interface EditProductModalProps {
   selectedProducts: Product[];
   visible: boolean;
   onCancel: () => void;
   onOk: Function;
+}
+
+interface formValues {
+  maxDiscoDollars: number;
 }
 
 const EditProductModal: React.FC<EditProductModalProps> = ({
@@ -19,6 +24,8 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
 }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
+  const { doRequest } = useRequest({ setLoading });
+
   useEffect(() => {
     form.resetFields();
   }, [form]);
@@ -29,10 +36,15 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
   });
 
   const _onOk = () => {
-    form.validateFields().then(async (values) => {
-      setLoading(true);
-      await sleep(1000);
-      setLoading(false);
+    form.validateFields().then(async ({ maxDiscoDollars }: formValues) => {
+      const updatedProducts = selectedProducts.map((product) => {
+        product.maxDiscoDollars = maxDiscoDollars;
+        return product;
+      });
+      await doRequest(
+        () => updateManyProducts(updatedProducts),
+        "Products updated."
+      );
       onOk();
       form.resetFields();
     });
