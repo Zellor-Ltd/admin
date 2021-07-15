@@ -193,10 +193,10 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
           </Row>
         </Col>
         <EditMultipleButton
+          text="Edit Products"
           arrayList={filteredProducts}
           ModalComponent={EditProductModal}
           selectedRowKeys={selectedRowKeys}
-          loading={loading}
           onOk={handleEditProducts}
         />
       </Row>

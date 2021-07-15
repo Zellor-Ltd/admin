@@ -9,17 +9,17 @@ export interface EditMultipleModalProps<T> {
 }
 
 interface EditProductsButtonProps {
+  text?: string;
   arrayList: any[];
   selectedRowKeys: any[];
-  loading: boolean;
   onOk: Function;
   ModalComponent: React.FC<EditMultipleModalProps<any>>;
 }
 
 const EditMultipleButton: React.FC<EditProductsButtonProps> = ({
+  text = "Edit",
   arrayList,
   selectedRowKeys,
-  loading,
   onOk,
   ModalComponent,
 }) => {
@@ -48,9 +48,8 @@ const EditMultipleButton: React.FC<EditProductsButtonProps> = ({
         type="primary"
         onClick={() => setShowEditProductModal(true)}
         disabled={selectedItems.length === 0}
-        loading={loading}
       >
-        Edit Products
+        {text}
       </Button>
       <ModalComponent
         selectedItems={selectedItems}
