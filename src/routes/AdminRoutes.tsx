@@ -37,7 +37,7 @@ import Promotions from "pages/promotions/Promotions";
 import PromotionDetail from "pages/promotions/PromotionDetail";
 import Dashboard from "pages/dashboard/Dashboard";
 
-function Routes() {
+function AdminRoutes() {
   return (
     <Switch>
       <AuthRoute
@@ -200,4 +200,4 @@ function Routes() {
   );
 }
 
-export default Routes;
+export default AdminRoutes;
