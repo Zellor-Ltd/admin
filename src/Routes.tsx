@@ -35,6 +35,8 @@ import FeedMixer from "pages/feed-mixer/FeedMixer";
 import StagingList from "pages/products/StagingList";
 import Promotions from "pages/promotions/Promotions";
 import PromotionDetail from "pages/promotions/PromotionDetail";
+import DdTemplates from "pages/dd-templates/DdTemplates";
+import DdTemplateDetail from "pages/dd-templates/DdTemplateDetail";
 
 function Routes() {
   return (
@@ -192,6 +194,16 @@ function Routes() {
       <AuthRoute
         path="/promotions"
         component={Promotions}
+        layout={AuthenticatedLayout}
+      />
+      <AuthRoute
+        path="/dd-template"
+        component={DdTemplateDetail}
+        layout={AuthenticatedLayout}
+      />
+      <AuthRoute
+        path="/dd-templates"
+        component={DdTemplates}
         layout={AuthenticatedLayout}
       />
     </Switch>
