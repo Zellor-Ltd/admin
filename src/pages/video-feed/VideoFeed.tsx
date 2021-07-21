@@ -6,6 +6,7 @@ import {
   Modal,
   PageHeader,
   Popconfirm,
+  Spin,
   Table,
   Tag as AntTag,
 } from "antd";
@@ -19,6 +20,7 @@ import {
   fetchVideoFeed,
   rebuildAllFeedd,
 } from "services/DiscoClubService";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 const { Content } = Layout;
 
@@ -44,10 +46,6 @@ const VideoFeed: React.FC<RouteComponentProps> = (props) => {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    fetch();
-  }, []);
 
   const deleteItem = async (id: string) => {
     setLoading(true);
@@ -137,6 +135,36 @@ const VideoFeed: React.FC<RouteComponentProps> = (props) => {
     },
   ];
 
+  const [fetchedVideos, setFetchedVideos] = useState<any[]>([]);
+  const [page, setPage] = useState<number>(0);
+  const LIMIT = 10;
+
+  const fetchData = () => {
+    const setNewData = () => {
+      setFetchedVideos((prev) => [
+        ...prev.concat(videos.slice(page * LIMIT, page * LIMIT + LIMIT)),
+      ]);
+      setPage((prev) => prev + 1);
+    };
+    if (!videos.length) {
+      return;
+    }
+    if (!fetchedVideos.length) {
+      setNewData();
+      return;
+    }
+    setTimeout(setNewData, 1000);
+  };
+
+  useEffect(() => {
+    fetch();
+  }, []);
+
+  useEffect(() => {
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [videos]);
+
   return (
     <div className="video-feed">
       <PageHeader
@@ -152,13 +180,32 @@ const VideoFeed: React.FC<RouteComponentProps> = (props) => {
         ]}
       />
       <Content>
-        <Table
-          size="small"
-          columns={columns}
-          rowKey="id"
-          dataSource={videos}
-          loading={loading}
-        />
+        <InfiniteScroll
+          dataLength={fetchedVideos.length}
+          next={fetchData}
+          hasMore={loading || fetchedVideos.length !== videos.length}
+          loader={
+            !loading && (
+              <div className="scroll-message">
+                <Spin />
+              </div>
+            )
+          }
+          endMessage={
+            <div className="scroll-message">
+              <b>End of results.</b>
+            </div>
+          }
+        >
+          <Table
+            size="small"
+            columns={columns}
+            rowKey="id"
+            dataSource={fetchedVideos}
+            loading={loading}
+            pagination={false}
+          />
+        </InfiniteScroll>
       </Content>
     </div>
   );
