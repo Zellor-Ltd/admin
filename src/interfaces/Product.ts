@@ -7,8 +7,9 @@ export interface Product {
   image: string;
   name: string;
   description: string;
-  originalPrice: string;
-  discountedPrice: string;
+  maxDiscoDollars: number;
+  originalPrice: number;
+  discountedPrice: number;
   currencyIsoCode: string;
   tagText: string;
   relatedVideos: Video[];

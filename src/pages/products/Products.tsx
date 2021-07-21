@@ -16,9 +16,15 @@ import ProductExpandedRow from "./ProductExpandedRow";
 import useAllCategories from "hooks/useAllCategories";
 import useFilter from "hooks/useFilter";
 import { useRequest } from "hooks/useRequest";
+import EditMultipleButton from "components/EditMultipleButton";
+import { SelectBrand } from "components/SelectBrand";
+import { Brand } from "interfaces/Brand";
+import EditProductModal from "./EditProductModal";
 
 const Products: React.FC<RouteComponentProps> = ({ history }) => {
   const [loading, setLoading] = useState<boolean>(false);
+  const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
+
   const { doFetch, doRequest } = useRequest({ setLoading });
   const { doRequest: saveCategories, loading: loadingCategories } =
     useRequest();
@@ -27,6 +33,7 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
     setArrayList: setProducts,
     filteredArrayList: filteredProducts,
     addFilterFunction,
+    removeFilterFunction,
   } = useFilter<Product>([]);
 
   const { fetchAllCategories, allCategories } = useAllCategories({
@@ -139,8 +146,25 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
     );
   };
 
+  const onChangeBrand = async (_selectedBrand: Brand | undefined) => {
+    if (!_selectedBrand) {
+      removeFilterFunction("brandName");
+      return;
+    }
+    addFilterFunction("brandName", (products) =>
+      products.filter(
+        (product) => product.brand.brandName === _selectedBrand.brandName
+      )
+    );
+  };
+
+  const handleEditProducts = async () => {
+    await fetchProducts();
+    setSelectedRowKeys([]);
+  };
+
   return (
-    <div className="products">
+    <>
       <PageHeader
         title="Products"
         subTitle="List of Products"
@@ -150,10 +174,31 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
           </Button>,
         ]}
       />
-      <Row>
-        <Col lg={12} xs={24}>
-          <SearchFilter filterFunction={searchFilterFunction} />
+      <Row align="bottom" justify="space-between">
+        <Col lg={16} xs={24}>
+          <Row gutter={8}>
+            <Col lg={8} xs={16}>
+              <SearchFilter
+                filterFunction={searchFilterFunction}
+                label="Search by Name"
+              />
+            </Col>
+            <Col lg={8} xs={16}>
+              <SelectBrand
+                style={{ width: "100%" }}
+                allowClear={true}
+                onChange={onChangeBrand}
+              ></SelectBrand>
+            </Col>
+          </Row>
         </Col>
+        <EditMultipleButton
+          text="Edit Products"
+          arrayList={filteredProducts}
+          ModalComponent={EditProductModal}
+          selectedRowKeys={selectedRowKeys}
+          onOk={handleEditProducts}
+        />
       </Row>
       <EditableTable
         rowKey="id"
@@ -161,6 +206,10 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
         dataSource={filteredProducts}
         loading={loading}
         onSave={onSaveProduct}
+        rowSelection={{
+          selectedRowKeys,
+          onChange: setSelectedRowKeys,
+        }}
         expandable={{
           expandedRowRender: (record: Product) => (
             <ProductExpandedRow
@@ -173,7 +222,7 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
           ),
         }}
       />
-    </div>
+    </>
   );
 };
 
