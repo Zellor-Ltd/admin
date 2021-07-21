@@ -1,27 +1,18 @@
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { Button, PageHeader, Popconfirm, Table } from "antd";
+import { Button, PageHeader, Popconfirm, Spin, Table } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import { PromoCode } from "interfaces/PromoCode";
 import moment from "moment";
 import { useEffect, useState } from "react";
+import InfiniteScroll from "react-infinite-scroll-component";
 import { RouteComponentProps } from "react-router";
 import { Link } from "react-router-dom";
 import { deletePromoCode, fetchPromoCodes } from "services/DiscoClubService";
+import "./PromoCodes.scss";
 
 const PromoCodes: React.FC<RouteComponentProps> = ({ history }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [promoCodes, setPromoCodes] = useState<PromoCode[]>([]);
-
-  const deleteItem = async (id: string) => {
-    setLoading(true);
-    try {
-      await deletePromoCode({ id });
-      fetch();
-    } catch (err) {
-      console.log(err);
-      setLoading(false);
-    }
-  };
 
   const fetch = async () => {
     setLoading(true);
@@ -30,9 +21,11 @@ const PromoCodes: React.FC<RouteComponentProps> = ({ history }) => {
     setPromoCodes(response.results);
   };
 
-  useEffect(() => {
+  const deleteItem = async (id: string) => {
+    setLoading(true);
+    await deletePromoCode({ id });
     fetch();
-  }, []);
+  };
 
   const columns: ColumnsType<PromoCode> = [
     {
@@ -92,8 +85,38 @@ const PromoCodes: React.FC<RouteComponentProps> = ({ history }) => {
     },
   ];
 
+  const [fetchedPromoCodes, setFetchedPromoCodes] = useState<any[]>([]);
+  const [page, setPage] = useState<number>(0);
+  const LIMIT = 10;
+
+  const fetchData = () => {
+    const setNewData = () => {
+      setFetchedPromoCodes((prev) => [
+        ...prev.concat(promoCodes.slice(page * LIMIT, page * LIMIT + LIMIT)),
+      ]);
+      setPage((prev) => prev + 1);
+    };
+    if (!promoCodes.length) {
+      return;
+    }
+    if (!fetchedPromoCodes.length) {
+      setNewData();
+      return;
+    }
+    setTimeout(setNewData, 1000);
+  };
+
+  useEffect(() => {
+    fetch();
+  }, []);
+
+  useEffect(() => {
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [promoCodes]);
+
   return (
-    <div>
+    <div className="promo-codes">
       <PageHeader
         title="PromoCodes"
         subTitle="List of PromoCodes"
@@ -103,12 +126,31 @@ const PromoCodes: React.FC<RouteComponentProps> = ({ history }) => {
           </Button>,
         ]}
       />
-      <Table
-        rowKey="id"
-        columns={columns}
-        dataSource={promoCodes}
-        loading={loading}
-      />
+      <InfiniteScroll
+        dataLength={fetchedPromoCodes.length}
+        next={fetchData}
+        hasMore={loading || fetchedPromoCodes.length !== promoCodes.length}
+        loader={
+          !loading && (
+            <div className="scroll-message">
+              <Spin />
+            </div>
+          )
+        }
+        endMessage={
+          <div className="scroll-message">
+            <b>End of results.</b>
+          </div>
+        }
+      >
+        <Table
+          rowKey="id"
+          pagination={false}
+          columns={columns}
+          dataSource={fetchedPromoCodes}
+          loading={loading}
+        />
+      </InfiniteScroll>
     </div>
   );
 };
