@@ -35,6 +35,7 @@ import FeedMixer from "pages/feed-mixer/FeedMixer";
 import StagingList from "pages/products/StagingList";
 import Promotions from "pages/promotions/Promotions";
 import PromotionDetail from "pages/promotions/PromotionDetail";
+import Dashboard from "pages/dashboard/Dashboard";
 
 function Routes() {
   return (
@@ -194,6 +195,7 @@ function Routes() {
         component={Promotions}
         layout={AuthenticatedLayout}
       />
+      <AuthRoute path="/" component={Dashboard} layout={AuthenticatedLayout} />
     </Switch>
   );
 }
