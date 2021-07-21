@@ -89,12 +89,14 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
       dataIndex: ["brand", "brandName"],
       width: "20%",
       align: "center",
+      responsive: ["sm"],
     },
     {
       title: "Max Disco Dollars",
       dataIndex: "maxDiscoDollars",
       width: "12%",
       align: "center",
+      responsive: ["sm"],
       editable: true,
       number: true,
     },
@@ -103,6 +105,7 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
       dataIndex: "relatedVideoFeed",
       width: "15%",
       align: "center",
+      responsive: ["sm"],
       render: (videos = []) => <Tag>{videos.length}</Tag>,
     },
 
@@ -111,6 +114,7 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
       dataIndex: "offerExpirationDate",
       width: "15%",
       align: "center",
+      responsive: ["sm"],
       render: (creationDate: Date) => moment(creationDate).format("DD/MM/YYYY"),
     },
     {
