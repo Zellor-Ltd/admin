@@ -1,32 +1,30 @@
-import { Button, Col, Form, Input, message, PageHeader, Row } from "antd";
+import { Button, Col, Form, Input, PageHeader, Row } from "antd";
+import { useRequest } from "hooks/useRequest";
 import { useState } from "react";
 import { RouteComponentProps } from "react-router";
-import { savePromoCode } from "services/DiscoClubService";
+import { saveDdTemplate } from "services/DiscoClubService";
 
-const PromoCodesDetail: React.FC<RouteComponentProps> = (props) => {
+const DdTemplatesDetail: React.FC<RouteComponentProps> = (props) => {
   const { history, location } = props;
   const initial: any = location.state;
   const [loading, setLoading] = useState<boolean>(false);
   const [form] = Form.useForm();
+  const { doRequest } = useRequest({ setLoading });
 
   const onFinish = async () => {
-    setLoading(true);
-    try {
-      const promoCode = form.getFieldsValue(true);
-      await savePromoCode(promoCode);
-      setLoading(false);
-      message.success("Register updated with success.");
-      history.push("/promo-codes");
-    } catch (error) {
-      setLoading(false);
-    }
+    const ddTemplate = form.getFieldsValue(true);
+    await doRequest(() => saveDdTemplate(ddTemplate));
+    history.push("/dd-templates");
   };
 
   return (
     <>
-      <PageHeader title="Promo Code Update" subTitle="Promo Code" />
+      <PageHeader
+        title="Disco Dollar Template Update"
+        subTitle="Disco Dollar Template "
+      />
       <Form
-        name="promoCodeForm"
+        name="ddTemplateForm"
         layout="vertical"
         form={form}
         initialValues={initial}
@@ -36,8 +34,8 @@ const PromoCodesDetail: React.FC<RouteComponentProps> = (props) => {
           <Col lg={12} xs={24}>
             <Col lg={16} xs={24}>
               <Form.Item
-                label="Promo Code"
-                name="code"
+                label="Tag Name"
+                name="tagName"
                 rules={[{ required: true }]}
               >
                 <Input />
@@ -45,8 +43,17 @@ const PromoCodesDetail: React.FC<RouteComponentProps> = (props) => {
             </Col>
             <Col lg={16} xs={24}>
               <Form.Item
-                label="Discount"
-                name="discount"
+                label="Template"
+                name="template"
+                rules={[{ required: true }]}
+              >
+                <Input />
+              </Form.Item>
+            </Col>
+            <Col lg={16} xs={24}>
+              <Form.Item
+                label="Disco Gold"
+                name="discoGold"
                 rules={[{ required: true }]}
               >
                 <Input type="number" />
@@ -55,7 +62,7 @@ const PromoCodesDetail: React.FC<RouteComponentProps> = (props) => {
             <Col lg={16} xs={24}>
               <Form.Item
                 label="Disco Dollars"
-                name="dollars"
+                name="discoDollars"
                 rules={[{ required: true }]}
               >
                 <Input type="number" />
@@ -65,7 +72,10 @@ const PromoCodesDetail: React.FC<RouteComponentProps> = (props) => {
         </Row>
         <Row gutter={8}>
           <Col>
-            <Button type="default" onClick={() => history.push("/promo-codes")}>
+            <Button
+              type="default"
+              onClick={() => history.push("/dd-templates")}
+            >
               Cancel
             </Button>
           </Col>
@@ -80,4 +90,4 @@ const PromoCodesDetail: React.FC<RouteComponentProps> = (props) => {
   );
 };
 
-export default PromoCodesDetail;
+export default DdTemplatesDetail;

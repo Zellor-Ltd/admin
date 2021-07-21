@@ -1,3 +1,10 @@
 export interface DdTemplate {
-  [key: string]: any;
+  id: string;
+  tagName: string;
+  template: string;
+  discoGold: number;
+  discoDollars: number;
+  clickSound: string;
+  hCreationDate?: string;
+  hLastUpdate?: string;
 }

@@ -40,22 +40,28 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ history }) => {
 
   const columns: ColumnsType<DdTemplate> = [
     {
-      title: "Code",
-      dataIndex: "code",
-      width: "30%",
+      title: "Tag Name",
+      dataIndex: "tagName",
+      width: "20%",
       render: (value: string, record: DdTemplate) => (
-        <Link to={{ pathname: `promo-code`, state: record }}>{value}</Link>
+        <Link to={{ pathname: `dd-template`, state: record }}>{value}</Link>
       ),
     },
     {
-      title: "Dollars",
-      dataIndex: "dollars",
+      title: "Template",
+      dataIndex: "template",
+      width: "12%",
+      align: "center",
+    },
+    {
+      title: "Disco Gold",
+      dataIndex: "discoGold",
       width: "10%",
       align: "center",
     },
     {
-      title: "Discount",
-      dataIndex: "discount",
+      title: "Disco Dollars",
+      dataIndex: "discoDollars",
       width: "10%",
       align: "center",
     },
@@ -78,7 +84,7 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ history }) => {
       align: "right",
       render: (_, record: DdTemplate) => (
         <>
-          <Link to={{ pathname: `promo-code`, state: record }}>
+          <Link to={{ pathname: `dd-template`, state: record }}>
             <EditOutlined />
           </Link>
           <Popconfirm
