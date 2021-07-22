@@ -1,6 +1,14 @@
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { Button, Col, PageHeader, Popconfirm, Row, Tag } from "antd";
+import { Button, Checkbox, Col, PageHeader, Popconfirm, Row, Tag } from "antd";
+import { CheckboxChangeEvent } from "antd/lib/checkbox";
+import EditableTable, { EditableColumnType } from "components/EditableTable";
+import EditMultipleButton from "components/EditMultipleButton";
 import { SearchFilter } from "components/SearchFilter";
+import { SelectBrand } from "components/SelectBrand";
+import useAllCategories from "hooks/useAllCategories";
+import useFilter from "hooks/useFilter";
+import { useRequest } from "hooks/useRequest";
+import { Brand } from "interfaces/Brand";
 import { Product } from "interfaces/Product";
 import moment from "moment";
 import { useCallback, useEffect, useState } from "react";
@@ -11,15 +19,8 @@ import {
   fetchProducts,
   saveProduct,
 } from "services/DiscoClubService";
-import EditableTable, { EditableColumnType } from "components/EditableTable";
-import ProductExpandedRow from "./ProductExpandedRow";
-import useAllCategories from "hooks/useAllCategories";
-import useFilter from "hooks/useFilter";
-import { useRequest } from "hooks/useRequest";
-import EditMultipleButton from "components/EditMultipleButton";
-import { SelectBrand } from "components/SelectBrand";
-import { Brand } from "interfaces/Brand";
 import EditProductModal from "./EditProductModal";
+import ProductExpandedRow from "./ProductExpandedRow";
 
 const Products: React.FC<RouteComponentProps> = ({ history }) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -167,6 +168,16 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
     setSelectedRowKeys([]);
   };
 
+  const handleFilterClassified = (e: CheckboxChangeEvent) => {
+    if (!e.target.checked) {
+      removeFilterFunction("categorized");
+      return;
+    }
+    addFilterFunction("categorized", (products) =>
+      products.filter((product) => !product.categories?.length)
+    );
+  };
+
   return (
     <>
       <PageHeader
@@ -193,6 +204,14 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
                 allowClear={true}
                 onChange={onChangeBrand}
               ></SelectBrand>
+            </Col>
+            <Col lg={8} xs={16}>
+              <Checkbox
+                onChange={handleFilterClassified}
+                style={{ margin: "42px 0 16px 8px" }}
+              >
+                Unclassified only
+              </Checkbox>
             </Col>
           </Row>
         </Col>

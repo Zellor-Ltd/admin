@@ -4,6 +4,7 @@ import {
   EditOutlined,
 } from "@ant-design/icons";
 import { Button, Col, PageHeader, Popconfirm, Row } from "antd";
+import { CheckboxChangeEvent } from "antd/lib/checkbox";
 import EditableTable, { EditableColumnType } from "components/EditableTable";
 import { SearchFilter } from "components/SearchFilter";
 import { SelectBrand } from "components/SelectBrand";
@@ -205,6 +206,16 @@ const StagingList: React.FC<RouteComponentProps> = () => {
     );
   };
 
+  const handleFilterClassified = (e: CheckboxChangeEvent) => {
+    if (!e.target.checked) {
+      removeFilterFunction("categorized");
+      return;
+    }
+    addFilterFunction("categorized", (products) =>
+      products.filter((product) => !product.categories?.length)
+    );
+  };
+
   return (
     <>
       <PageHeader title="Staging" subTitle="List of Staging Products" />
@@ -221,6 +232,8 @@ const StagingList: React.FC<RouteComponentProps> = () => {
             allowClear={true}
             onChange={onChangeBrand}
           ></SelectBrand>
+        </Col>
+        <Col lg={8} xs={16}>
         </Col>
       </Row>
       <EditableTable

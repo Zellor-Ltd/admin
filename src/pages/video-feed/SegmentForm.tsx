@@ -21,6 +21,10 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
   const [form] = Form.useForm();
   formFn(form);
   const [tags, setTags] = useState<Tag[]>([]);
+  const [filteredTags, setFilteredTags] = useState<Tag[][]>([]);
+  const [selectedFilterBrands, setSelectedFilterBrands] = useState<string[]>(
+    []
+  );
   const [brands, setBrands] = useState<Brand[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -84,6 +88,26 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
     formBrands[fieldName].selectedLogoUrl = selectedBrand[key].url;
     form.setFieldsValue({ brands: formBrands });
     form.setFields([{ name: "brands", touched: true }]);
+  };
+
+  const handleBrandFilter = (value: any, index: number) => {
+    setFilteredTags((prev) => {
+      if (value) {
+        prev[index] = tags.filter((tag) => tag.brand.id === value);
+      } else {
+        prev[index] = tags;
+      }
+      return [...prev];
+    });
+    setSelectedFilterBrands((prev) => {
+      prev[index] = value;
+      return [...prev];
+    });
+    if (value) {
+      const formTags = form.getFieldValue("tags");
+      formTags[index].id = "";
+      form.setFieldsValue({ tags: formTags });
+    }
   };
 
   return (
@@ -332,9 +356,31 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                   >
                     Add Tag
                   </Button>
-                  {fields.map((field) => (
+                  {fields.map((field, index) => (
                     <Row gutter={8} key={Math.random()}>
-                      <Col lg={4} xs={24}>
+                      <Col lg={12} xs={24}>
+                        <Form.Item label="Brand">
+                          <Select
+                            showSearch
+                            allowClear
+                            filterOption={(input, option) =>
+                              option?.children
+                                .toLowerCase()
+                                .indexOf(input.toLowerCase()) >= 0
+                            }
+                            loading={loading}
+                            onChange={(v) => handleBrandFilter(v, index)}
+                            value={selectedFilterBrands[index]}
+                          >
+                            {brands.map((brand) => (
+                              <Select.Option key={brand.id} value={brand.id}>
+                                {brand.brandName}
+                              </Select.Option>
+                            ))}
+                          </Select>
+                        </Form.Item>
+                      </Col>
+                      <Col lg={12} xs={24}>
                         <Form.Item
                           name={[field.name, "id"]}
                           label="Tag"
@@ -346,7 +392,10 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                             }
                             loading={loading}
                           >
-                            {tags.map((tag) => (
+                            {(filteredTags[index]
+                              ? filteredTags[index]
+                              : tags
+                            ).map((tag) => (
                               <Select.Option key={tag.id} value={tag.id}>
                                 {tag.tagName}
                               </Select.Option>
@@ -398,7 +447,7 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                         <Form.Item
                           name={[field.name, "position", 0, "y"]}
                           fieldKey={[field.fieldKey, "y"]}
-                          label="position Y"
+                          label="Position Y"
                           rules={[{ required: true }]}
                         >
                           <InputNumber />

@@ -1,7 +1,9 @@
+import { Brand } from "./Brand";
 import { Position } from "./Position";
 
 export interface Tag {
   id: string;
+  brand: Brand;
   tagName: string;
   tagId?: string;
   productId?: string;
