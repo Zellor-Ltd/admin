@@ -3,7 +3,8 @@ import {
   DeleteOutlined,
   EditOutlined,
 } from "@ant-design/icons";
-import { Button, Col, PageHeader, Popconfirm, Row, Tag } from "antd";
+import { Button, Checkbox, Col, PageHeader, Popconfirm, Row } from "antd";
+import { CheckboxChangeEvent } from "antd/lib/checkbox";
 import EditableTable, { EditableColumnType } from "components/EditableTable";
 import { SearchFilter } from "components/SearchFilter";
 import { SelectBrand } from "components/SelectBrand";
@@ -108,9 +109,12 @@ const StagingList: React.FC<RouteComponentProps> = () => {
       width: "12.5%",
       align: "center",
       render: (hCreationDate: Date | null | undefined) =>
-      hCreationDate ? (
+        hCreationDate ? (
           <>
-            <div>{moment(hCreationDate).format("DD/MM/YY")} {moment(hCreationDate).format("HH:mm")}</div>
+            <div>
+              {moment(hCreationDate).format("DD/MM/YY")}{" "}
+              {moment(hCreationDate).format("HH:mm")}
+            </div>
           </>
         ) : (
           ""
@@ -122,9 +126,12 @@ const StagingList: React.FC<RouteComponentProps> = () => {
       width: "12.5%",
       align: "center",
       render: (lastImportDate: Date | null | undefined) =>
-      lastImportDate ? (
+        lastImportDate ? (
           <>
-            <div>{moment(lastImportDate).format("DD/MM/YY")} {moment(lastImportDate).format("HH:mm")}</div>
+            <div>
+              {moment(lastImportDate).format("DD/MM/YY")}{" "}
+              {moment(lastImportDate).format("HH:mm")}
+            </div>
           </>
         ) : (
           ""
@@ -136,9 +143,12 @@ const StagingList: React.FC<RouteComponentProps> = () => {
       width: "12.5%",
       align: "center",
       render: (lastGoLiveDate: Date | null | undefined) =>
-      lastGoLiveDate ? (
+        lastGoLiveDate ? (
           <>
-            <div>{moment(lastGoLiveDate).format("DD/MM/YY")} {moment(lastGoLiveDate).format("HH:mm")}</div>
+            <div>
+              {moment(lastGoLiveDate).format("DD/MM/YY")}{" "}
+              {moment(lastGoLiveDate).format("HH:mm")}
+            </div>
           </>
         ) : (
           ""
@@ -196,6 +206,16 @@ const StagingList: React.FC<RouteComponentProps> = () => {
     );
   };
 
+  const handleFilterClassified = (e: CheckboxChangeEvent) => {
+    if (!e.target.checked) {
+      removeFilterFunction("categorized");
+      return;
+    }
+    addFilterFunction("categorized", (products) =>
+      products.filter((product) => !product.categories?.length)
+    );
+  };
+
   return (
     <>
       <PageHeader title="Staging" subTitle="List of Staging Products" />
@@ -212,6 +232,14 @@ const StagingList: React.FC<RouteComponentProps> = () => {
             allowClear={true}
             onChange={onChangeBrand}
           ></SelectBrand>
+        </Col>
+        <Col lg={8} xs={16}>
+          <Checkbox
+            onChange={handleFilterClassified}
+            style={{ margin: "42px 0 16px 8px" }}
+          >
+            Unclassified only
+          </Checkbox>
         </Col>
       </Row>
       <EditableTable
