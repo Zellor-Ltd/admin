@@ -31,23 +31,25 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = (props) => {
   return (
     <Layout>
       <Header className="header">
-        <h2>
+        <h2 style={{ width: "65%" }}>
           <Link to="/">
             {" "}
             {appName} <small style={{ fontSize: 10 }}>v 1.22.06.1756</small>
           </Link>
         </h2>
-        <Row>
-          <Col xs={0} md={18}>
-            <Typography.Text style={{ color: "white" }}>
-              {getUserName()}
-            </Typography.Text>
-          </Col>
-          <Col xs={24} md={6}>
+        <Row style={{ width: "35%" }} justify="end" wrap={false}>
+          <div>
+            <Col xs={0} md={24} style={{ textAlign: "end" }}>
+              <Typography.Text style={{ color: "white" }}>
+                {getUserName()}
+              </Typography.Text>
+            </Col>
+          </div>
+          <div>
             <Button onClick={logout} type="link">
               Logout
             </Button>
-          </Col>
+          </div>
         </Row>
       </Header>
       <Layout className="site-layout">
