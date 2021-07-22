@@ -3,7 +3,7 @@ import {
   DeleteOutlined,
   EditOutlined,
 } from "@ant-design/icons";
-import { Button, Col, PageHeader, Popconfirm, Row, Tag } from "antd";
+import { Button, Col, PageHeader, Popconfirm, Row } from "antd";
 import EditableTable, { EditableColumnType } from "components/EditableTable";
 import { SearchFilter } from "components/SearchFilter";
 import { SelectBrand } from "components/SelectBrand";
@@ -108,9 +108,12 @@ const StagingList: React.FC<RouteComponentProps> = () => {
       width: "12.5%",
       align: "center",
       render: (hCreationDate: Date | null | undefined) =>
-      hCreationDate ? (
+        hCreationDate ? (
           <>
-            <div>{moment(hCreationDate).format("DD/MM/YY")} {moment(hCreationDate).format("HH:mm")}</div>
+            <div>
+              {moment(hCreationDate).format("DD/MM/YY")}{" "}
+              {moment(hCreationDate).format("HH:mm")}
+            </div>
           </>
         ) : (
           ""
@@ -122,9 +125,12 @@ const StagingList: React.FC<RouteComponentProps> = () => {
       width: "12.5%",
       align: "center",
       render: (lastImportDate: Date | null | undefined) =>
-      lastImportDate ? (
+        lastImportDate ? (
           <>
-            <div>{moment(lastImportDate).format("DD/MM/YY")} {moment(lastImportDate).format("HH:mm")}</div>
+            <div>
+              {moment(lastImportDate).format("DD/MM/YY")}{" "}
+              {moment(lastImportDate).format("HH:mm")}
+            </div>
           </>
         ) : (
           ""
@@ -136,9 +142,12 @@ const StagingList: React.FC<RouteComponentProps> = () => {
       width: "12.5%",
       align: "center",
       render: (lastGoLiveDate: Date | null | undefined) =>
-      lastGoLiveDate ? (
+        lastGoLiveDate ? (
           <>
-            <div>{moment(lastGoLiveDate).format("DD/MM/YY")} {moment(lastGoLiveDate).format("HH:mm")}</div>
+            <div>
+              {moment(lastGoLiveDate).format("DD/MM/YY")}{" "}
+              {moment(lastGoLiveDate).format("HH:mm")}
+            </div>
           </>
         ) : (
           ""
