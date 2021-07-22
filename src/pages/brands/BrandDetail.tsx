@@ -4,6 +4,7 @@ import { RouteComponentProps } from "react-router";
 import { TwitterPicker } from "react-color";
 import { saveBrand } from "services/DiscoClubService";
 import { Upload } from "components";
+import { RichTextEditor } from "components/RichTextEditor";
 
 const BrandDetail: React.FC<RouteComponentProps> = (props) => {
   const { history, location } = props;
@@ -66,6 +67,11 @@ const BrandDetail: React.FC<RouteComponentProps> = (props) => {
                 rules={[{ required: true }]}
               >
                 <Input placeholder="casey-temp.myshopify.com" />
+              </Form.Item>
+            </Col>
+            <Col lg={24} xs={24}>
+              <Form.Item label="Pre-Checkout Message (Overlay)">
+                <RichTextEditor formField="overlayHtml" form={form} />
               </Form.Item>
             </Col>
           </Col>
