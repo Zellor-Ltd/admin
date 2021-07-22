@@ -289,14 +289,14 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
               <Col lg={12} xs={24}>
                 <Form.Item
                   name="maxDiscoDollars"
-                  label="Max Discount"
+                  label="Max Discount in DD"
                   rules={[{ required: true }]}
                 >
                   <InputNumber />
                 </Form.Item>
               </Col>
               <Col lg={12} xs={24}>
-                <Form.Item name="originalPrice" label="Normal Price">
+                <Form.Item name="originalPrice" label="Price">
                   <InputNumber
                     formatter={(value) =>
                       `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
@@ -305,17 +305,6 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                   />
                 </Form.Item>
               </Col>
-              <Col lg={12} xs={24}>
-                <Form.Item name="discountedPrice" label="Discounted Price">
-                  <InputNumber
-                    formatter={(value) =>
-                      `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-                    }
-                    parser={(value = "") => value.replace(/\$\s?|(,*)/g, "")}
-                  />
-                </Form.Item>
-              </Col>
-
               <Col lg={24} xs={24}>
                 <Form.Item name="tagText" label="Tag Text">
                   <Input />
