@@ -37,6 +37,7 @@ import Promotions from "pages/promotions/Promotions";
 import PromotionDetail from "pages/promotions/PromotionDetail";
 import DdTemplates from "pages/dd-templates/DdTemplates";
 import DdTemplateDetail from "pages/dd-templates/DdTemplateDetail";
+import Dashboard from "pages/dashboard/Dashboard";
 
 function Routes() {
   return (
@@ -206,6 +207,7 @@ function Routes() {
         component={DdTemplates}
         layout={AuthenticatedLayout}
       />
+      <AuthRoute path="/" component={Dashboard} layout={AuthenticatedLayout} />
     </Switch>
   );
 }

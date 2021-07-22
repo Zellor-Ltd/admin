@@ -4,7 +4,6 @@ import {
   EditOutlined,
 } from "@ant-design/icons";
 import { Button, Col, PageHeader, Popconfirm, Row, Tag } from "antd";
-import { ColumnsType } from "antd/lib/table";
 import EditableTable, { EditableColumnType } from "components/EditableTable";
 import { SearchFilter } from "components/SearchFilter";
 import { SelectBrand } from "components/SelectBrand";
