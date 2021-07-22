@@ -38,6 +38,7 @@ import PromotionDetail from "pages/promotions/PromotionDetail";
 import DdTemplates from "pages/dd-templates/DdTemplates";
 import DdTemplateDetail from "pages/dd-templates/DdTemplateDetail";
 import Dashboard from "pages/dashboard/Dashboard";
+import { Redirect } from "react-router";
 
 function AdminRoutes() {
   return (
@@ -45,7 +46,12 @@ function AdminRoutes() {
       <AuthRoute
         exact
         path="/"
-        component={() => <></>}
+        returnComponent
+        component={<Redirect to="/dashboard" />}
+      />
+      <AuthRoute
+        path="/dashboard"
+        component={Dashboard}
         layout={AuthenticatedLayout}
       />
       <AuthRoute path="/login" component={Login} layout={OpenLayout} />
@@ -207,7 +213,6 @@ function AdminRoutes() {
         component={DdTemplates}
         layout={AuthenticatedLayout}
       />
-      <AuthRoute path="/" component={Dashboard} layout={AuthenticatedLayout} />
     </Switch>
   );
 }

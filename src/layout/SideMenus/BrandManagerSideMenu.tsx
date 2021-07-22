@@ -4,9 +4,9 @@ import { Link } from "react-router-dom";
 
 const AdminSideMenu = () => {
   return (
-    <Menu theme="dark" mode="inline" defaultSelectedKeys={["1"]}>
-      <Menu.Item key="products" icon={<TagOutlined />}>
-        <Link to="/products">Products</Link>
+    <Menu theme="dark" mode="inline" defaultSelectedKeys={["staging-list"]}>
+      <Menu.Item key="staging-list" icon={<TagOutlined />}>
+        <Link to="/staging-list">Products</Link>
       </Menu.Item>
     </Menu>
   );
