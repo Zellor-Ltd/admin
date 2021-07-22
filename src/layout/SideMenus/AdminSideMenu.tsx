@@ -83,6 +83,9 @@ const AdminSideMenu = () => {
         <Menu.Item key="promo-codes" icon={<SwitcherOutlined />}>
           <Link to="/promo-codes">Promo Codes</Link>
         </Menu.Item>
+        <Menu.Item key="dd-templates" icon={<SwitcherOutlined />}>
+          <Link to="/dd-templates">DD Templates</Link>
+        </Menu.Item>
       </SubMenu>
     </Menu>
   );

@@ -18,6 +18,7 @@ import {
   ProductCategory,
 } from "interfaces/Category";
 import { message } from "antd";
+import { DdTemplate } from "interfaces/DdTemplate";
 
 export const instance = axios.create({
   baseURL: process.env.REACT_APP_HOST_ENDPOINT,
@@ -174,6 +175,8 @@ export const fetchPromotions = () => instance.get("Wi/Ep/ListPromotions");
 
 export const fetchPromoStatus = () => instance.get("Wi/Ep/ListPromoStatus");
 
+export const fetchDdTemplates = () => instance.get("Wi/Ep/ListDdTemplate");
+
 export const saveVideoFeed = (params: FeedItem) => {
   if (params.id) {
     return instance.put("Disco/Feed/Update", params);
@@ -297,6 +300,14 @@ export const savePromotion = (params: PromoCode) => {
   }
 };
 
+export const saveDdTemplate = (params: DdTemplate) => {
+  if (params.id) {
+    return instance.post("Wi/Ep/UpdateDdTemplate", params);
+  } else {
+    return instance.put("Wi/EP/AddDdTemplate", params);
+  }
+};
+
 export const deletePrivileges = (data: Privilege) =>
   instance.delete("Wi/Ep/RemovePrivilege", { data });
 
@@ -326,6 +337,9 @@ export const deletePromoCode = (data: IDelete) =>
 
 export const deletePromotion = (data: IDelete) =>
   instance.delete(`Wi/Ep/RemovePromotion`, { data });
+
+export const deleteDdTemplate = (data: IDelete) =>
+  instance.delete(`Wi/Ep/RemoveDdTemplate`, { data });
 
 export const loginService = (login: Login) =>
   instance.put("Auth/GetApiToken", login);
