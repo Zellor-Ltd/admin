@@ -118,27 +118,27 @@ const StagingList: React.FC<RouteComponentProps> = () => {
     },
     {
       title: "Last Import",
-      dataIndex: "hLastUpdate",
+      dataIndex: "lastImportDate",
       width: "12.5%",
       align: "center",
-      render: (hLastUpdate: Date | null | undefined) =>
-      hLastUpdate ? (
+      render: (lastImportDate: Date | null | undefined) =>
+      lastImportDate ? (
           <>
-            <div>{moment(hLastUpdate).format("DD/MM/YY")} {moment(hLastUpdate).format("HH:mm")}</div>
+            <div>{moment(lastImportDate).format("DD/MM/YY")} {moment(lastImportDate).format("HH:mm")}</div>
           </>
         ) : (
           ""
         ),
     },
     {
-      title: "Last Export",
-      dataIndex: "lastImportDate",
+      title: "Last Go-Live",
+      dataIndex: "lastGoLiveDate",
       width: "12.5%",
       align: "center",
-      render: (lastImportDate: Date | null | undefined) =>
-        lastImportDate ? (
+      render: (lastGoLiveDate: Date | null | undefined) =>
+      lastGoLiveDate ? (
           <>
-            <div>{moment(lastImportDate).format("DD/MM/YY")} {moment(lastImportDate).format("HH:mm")}</div>
+            <div>{moment(lastGoLiveDate).format("DD/MM/YY")} {moment(lastGoLiveDate).format("HH:mm")}</div>
           </>
         ) : (
           ""
