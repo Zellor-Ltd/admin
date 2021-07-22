@@ -81,7 +81,7 @@ const StagingList: React.FC<RouteComponentProps> = () => {
     {
       title: "Name",
       dataIndex: "name",
-      width: "17%",
+      width: "25.5%",
       render: (value: string, record: Product) => (
         <Link to={{ pathname: `/product/staging`, state: record }}>
           {value}
@@ -91,41 +91,54 @@ const StagingList: React.FC<RouteComponentProps> = () => {
     {
       title: "Brand",
       dataIndex: ["brand", "brandName"],
-      width: "15%",
+      width: "18%",
       align: "center",
     },
     {
-      title: "Max Disco Dollars",
+      title: "Max DD",
       dataIndex: "maxDiscoDollars",
-      width: "10%",
+      width: "7%",
       align: "center",
       editable: true,
       number: true,
     },
     {
-      title: "Related Videos",
-      dataIndex: "relatedVideoFeed",
-      width: "15%",
+      title: "First Import",
+      dataIndex: "hCreationDate",
+      width: "12.5%",
       align: "center",
-      render: (videos = []) => <Tag>{videos.length}</Tag>,
-    },
-    {
-      title: "Expiration Date",
-      dataIndex: "offerExpirationDate",
-      width: "15%",
-      align: "center",
-      render: (creationDate: Date) => moment(creationDate).format("DD/MM/YYYY"),
+      render: (hCreationDate: Date | null | undefined) =>
+      hCreationDate ? (
+          <>
+            <div>{moment(hCreationDate).format("DD/MM/YY")} {moment(hCreationDate).format("HH:mm")}</div>
+          </>
+        ) : (
+          ""
+        ),
     },
     {
       title: "Last Import",
+      dataIndex: "hLastUpdate",
+      width: "12.5%",
+      align: "center",
+      render: (hLastUpdate: Date | null | undefined) =>
+      hLastUpdate ? (
+          <>
+            <div>{moment(hLastUpdate).format("DD/MM/YY")} {moment(hLastUpdate).format("HH:mm")}</div>
+          </>
+        ) : (
+          ""
+        ),
+    },
+    {
+      title: "Last Export",
       dataIndex: "lastImportDate",
-      width: "15%",
+      width: "12.5%",
       align: "center",
       render: (lastImportDate: Date | null | undefined) =>
         lastImportDate ? (
           <>
-            <div>{moment(lastImportDate).format("DD/MM/YYYY")}</div>
-            <div>{moment(lastImportDate).format("HH:mm")}</div>
+            <div>{moment(lastImportDate).format("DD/MM/YY")} {moment(lastImportDate).format("HH:mm")}</div>
           </>
         ) : (
           ""
