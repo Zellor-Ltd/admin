@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
 import { getSettings } from "reducers/settings";
-import Routes from "./Routes";
+import Routes from "./routes/Routes";
 
 function App() {
   const dispatch = useDispatch();

@@ -17,7 +17,7 @@ import Radar from "./Radar";
 
 interface DashboardProps {}
 
-const Dashboard: React.FC<DashboardProps> = ({}) => {
+const Dashboard: React.FC<DashboardProps> = () => {
   const data = [
     {
       name: "Page A",

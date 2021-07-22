@@ -3,7 +3,7 @@ import {
   DeleteOutlined,
   EditOutlined,
 } from "@ant-design/icons";
-import { Button, Checkbox, Col, PageHeader, Popconfirm, Row } from "antd";
+import { Button, Col, PageHeader, Popconfirm, Row } from "antd";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
 import EditableTable, { EditableColumnType } from "components/EditableTable";
 import { SearchFilter } from "components/SearchFilter";
@@ -234,12 +234,6 @@ const StagingList: React.FC<RouteComponentProps> = () => {
           ></SelectBrand>
         </Col>
         <Col lg={8} xs={16}>
-          <Checkbox
-            onChange={handleFilterClassified}
-            style={{ margin: "42px 0 16px 8px" }}
-          >
-            Unclassified only
-          </Checkbox>
         </Col>
       </Row>
       <EditableTable

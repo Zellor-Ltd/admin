@@ -7,10 +7,12 @@ const AuthRoute: React.FC<any> = (props) => {
     component: Component,
     layout: Layout,
     path,
+    returnComponent,
     ...rest
   } = props;
   const authenticated = isAuthenticated();
   if (!authenticated && path !== "/login") return <Redirect to="login" />;
+  if (returnComponent) return Component;
   return (
     <Route
       {...rest}
@@ -18,7 +20,8 @@ const AuthRoute: React.FC<any> = (props) => {
         <Layout>
           <Component {...rest} path={path} {...routeProps} />
         </Layout>
-      )}></Route>
+      )}
+    ></Route>
   );
 };
 

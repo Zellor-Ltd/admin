@@ -13,6 +13,7 @@ import {
   Slider,
   Switch,
   Table,
+  Tabs,
   Typography,
 } from "antd";
 import { ColumnsType } from "antd/lib/table";
@@ -210,289 +211,300 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
         onFinish={onFinish}
         layout="vertical"
       >
-        <Row gutter={8}>
-          <Col lg={12} xs={24}>
+        <Tabs defaultActiveKey="Details">
+          <Tabs.TabPane tab="Details" key="Details">
             <Row gutter={8}>
-              <Col lg={20} xs={24}>
-                <Form.Item name="status" label="Status">
-                  <Radio.Group buttonStyle="solid">
-                    <Radio.Button value="live">Live</Radio.Button>
-                    <Radio.Button value="paused">Paused</Radio.Button>
-                    <Radio.Button value="expired">Expired</Radio.Button>
-                    <Radio.Button value="pending">Pending</Radio.Button>
-                  </Radio.Group>
-                </Form.Item>
-              </Col>
-              <Col lg={4} xs={24}>
-                <Form.Item
-                  name="outOfStock"
-                  label="Out of stock"
-                  valuePropName="checked"
-                >
-                  <Switch />
-                </Form.Item>
-              </Col>
-              <Col lg={24} xs={24}>
-                <Form.Item name="name" label="Short description">
-                  <Input />
-                </Form.Item>
-              </Col>
-              <Col lg={24} xs={24}>
-                <Form.Item label="Long description">
-                  <RichTextEditor formField="description" form={form} />
-                </Form.Item>
+              <Col lg={12} xs={24}>
+                <Row gutter={8}>
+                  <Col lg={20} xs={24}>
+                    <Form.Item name="status" label="Status">
+                      <Radio.Group buttonStyle="solid">
+                        <Radio.Button value="live">Live</Radio.Button>
+                        <Radio.Button value="paused">Paused</Radio.Button>
+                        <Radio.Button value="expired">Expired</Radio.Button>
+                        <Radio.Button value="pending">Pending</Radio.Button>
+                      </Radio.Group>
+                    </Form.Item>
+                  </Col>
+                  <Col lg={4} xs={24}>
+                    <Form.Item
+                      name="outOfStock"
+                      label="Out of stock"
+                      valuePropName="checked"
+                    >
+                      <Switch />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={24} xs={24}>
+                    <Form.Item name="name" label="Short description">
+                      <Input />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={24} xs={24}>
+                    <Form.Item label="Long description">
+                      <RichTextEditor formField="description" form={form} />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={12} xs={24}>
+                    <Form.Item name={["brand", "id"]} label="Brand">
+                      <Select onChange={() => setPaymentUrlsByBrand(false)}>
+                        {brands.map((brand) => (
+                          <Select.Option key={brand.id} value={brand.id}>
+                            {brand.brandName}
+                          </Select.Option>
+                        ))}
+                      </Select>
+                    </Form.Item>
+                  </Col>
+                  <Col lg={16} xs={24}>
+                    <Form.Item
+                      name="confirmationUrl"
+                      label="External Payment Confirmation URL"
+                      rules={[{ required: true }]}
+                    >
+                      <Input />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={16} xs={24}>
+                    <Form.Item
+                      name="cancelationUrl"
+                      label="External Payment Cancelation URL"
+                      rules={[{ required: true }]}
+                    >
+                      <Input />
+                    </Form.Item>
+                  </Col>
+                </Row>
               </Col>
               <Col lg={12} xs={24}>
-                <Form.Item name={["brand", "id"]} label="Brand">
-                  <Select onChange={() => setPaymentUrlsByBrand(false)}>
-                    {brands.map((brand) => (
-                      <Select.Option key={brand.id} value={brand.id}>
-                        {brand.brandName}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </Form.Item>
+                <Row gutter={8}>
+                  <Col lg={12} xs={24}>
+                    <Form.Item name="currencyIsoCode" label="Currency">
+                      <Select placeholder="Please select a currency">
+                        {currency.map((curr: any) => (
+                          <Select.Option key={curr.value} value={curr.value}>
+                            {curr.name}
+                          </Select.Option>
+                        ))}
+                      </Select>
+                    </Form.Item>
+                  </Col>
+                  <Col lg={12} xs={24}>
+                    <Form.Item
+                      name="maxDiscoDollars"
+                      label="Max Discount in DD"
+                      rules={[{ required: true }]}
+                    >
+                      <InputNumber />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={12} xs={24}>
+                    <Form.Item name="originalPrice" label="Price">
+                      <InputNumber
+                        formatter={(value) =>
+                          `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                        }
+                        parser={(value = "") =>
+                          value.replace(/\$\s?|(,*)/g, "")
+                        }
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={24} xs={24}>
+                    <Form.Item name="tagText" label="Tag Text">
+                      <Input />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={12} xs={24}>
+                    <Form.Item
+                      name="goLiveDate"
+                      label="Go Live Date"
+                      getValueProps={formatMoment}
+                    >
+                      <DatePicker format="DD/MM/YYYY" />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={12} xs={24}>
+                    <Form.Item
+                      name="validity"
+                      label="Expiration Date"
+                      getValueProps={formatMoment}
+                    >
+                      <DatePicker format="DD/MM/YYYY" />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={8} xs={24}>
+                    <Form.Item name="checkout" label="Checkout">
+                      <Radio.Group buttonStyle="solid">
+                        <Radio.Button value="disco">Disco</Radio.Button>
+                        <Radio.Button value="external">External</Radio.Button>
+                      </Radio.Group>
+                    </Form.Item>
+                  </Col>
+                  <Col lg={8} xs={24}>
+                    <Form.Item
+                      name="requireMobilePurchaseStatus"
+                      label="Log Completed Purchases?"
+                      valuePropName="checked"
+                    >
+                      <Switch />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={8} xs={24}>
+                    <Form.Item
+                      name="displayDiscountPage"
+                      label="Allow Use of D-Dollars?"
+                      valuePropName="checked"
+                    >
+                      <Switch />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={8} xs={24}>
+                    <Form.Item name="weight" label="Weight">
+                      <Input type="number" placeholder="Weight in Kg" />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={16} xs={24}>
+                    <Form.Item
+                      shouldUpdate={(prevValues, curValues) =>
+                        prevValues.checkout !== curValues.checkout
+                      }
+                    >
+                      {({ getFieldValue }) =>
+                        getFieldValue("checkout") === "external" && (
+                          <Form.Item
+                            name="externalCheckout"
+                            label="External Checkout URL"
+                            rules={[{ required: true }]}
+                            style={{ marginBottom: "0px" }}
+                          >
+                            <Input />
+                          </Form.Item>
+                        )
+                      }
+                    </Form.Item>
+                  </Col>
+                </Row>
               </Col>
-              <Col lg={16} xs={24}>
-                <Form.Item
-                  name="confirmationUrl"
-                  label="External Payment Confirmation URL"
-                  rules={[{ required: true }]}
-                >
-                  <Input />
-                </Form.Item>
+            </Row>
+          </Tabs.TabPane>
+          <Tabs.TabPane tab="Categories" key="Categories">
+            <ProductCategoriesTrees
+              categories={initial?.categories}
+              allCategories={allCategories}
+              form={form}
+              handleCategoryChange={handleCategoryChange}
+            />
+            <Col lg={16} xs={24}>
+              <Form.Item
+                shouldUpdate={(prevValues, curValues) =>
+                  prevValues.category !== curValues.category
+                }
+              >
+                {({ getFieldValue }) => (
+                  <Form.Item name={"searchTags"} label="Search Tags">
+                    <Select mode="tags">
+                      {getFieldValue("searchTags")?.map((searchTag: any) => (
+                        <Select.Option key={searchTag} value={searchTag}>
+                          {searchTag}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
+                )}
+              </Form.Item>
+            </Col>
+            <Row gutter={8}>
+              <Col lg={24} xs={24}>
+                <Typography.Title level={4}>Target</Typography.Title>
               </Col>
-              <Col lg={16} xs={24}>
-                <Form.Item
-                  name="cancelationUrl"
-                  label="External Payment Cancelation URL"
-                  rules={[{ required: true }]}
-                >
-                  <Input />
+              <Col lg={12} xs={24}>
+                <Form.Item label="Age Range">
+                  <Slider
+                    range
+                    marks={{ 12: "12", 100: "100" }}
+                    min={12}
+                    max={100}
+                    value={ageRange}
+                    onChange={onChangeAge}
+                  />
                 </Form.Item>
               </Col>
             </Row>
-          </Col>
-          <Col lg={12} xs={24}>
             <Row gutter={8}>
               <Col lg={12} xs={24}>
-                <Form.Item name="currencyIsoCode" label="Currency">
-                  <Select placeholder="Please select a currency">
-                    {currency.map((curr: any) => (
-                      <Select.Option key={curr.value} value={curr.value}>
-                        {curr.name}
-                      </Select.Option>
-                    ))}
+                <Form.Item
+                  name="gender"
+                  label="Gender"
+                  rules={[{ required: true }]}
+                >
+                  <Select mode="multiple">
+                    <Select.Option value="Female">Female</Select.Option>
+                    <Select.Option value="Male">Male</Select.Option>
+                    <Select.Option value="Other">Other</Select.Option>
+                    <Select.Option value="Prefer not to say">
+                      Prefer not to say
+                    </Select.Option>
                   </Select>
                 </Form.Item>
               </Col>
-              <Col lg={12} xs={24}>
-                <Form.Item
-                  name="maxDiscoDollars"
-                  label="Max Discount in DD"
-                  rules={[{ required: true }]}
-                >
-                  <InputNumber />
-                </Form.Item>
-              </Col>
-              <Col lg={12} xs={24}>
-                <Form.Item name="originalPrice" label="Price">
-                  <InputNumber
-                    formatter={(value) =>
-                      `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-                    }
-                    parser={(value = "") => value.replace(/\$\s?|(,*)/g, "")}
+            </Row>
+          </Tabs.TabPane>
+          <Tabs.TabPane tab="Images" key="Images">
+            <Row gutter={8}>
+              <Col lg={24} xs={24}>
+                <Form.Item label="Tag Image">
+                  <Upload.ImageUpload
+                    fileList={initial?.tagImage}
+                    formProp="tagImage"
+                    form={form}
                   />
                 </Form.Item>
               </Col>
               <Col lg={24} xs={24}>
-                <Form.Item name="tagText" label="Tag Text">
-                  <Input />
+                <Form.Item label="Thumbnail">
+                  <Upload.ImageUpload
+                    fileList={initial?.thumbnailUrl}
+                    formProp="thumbnailUrl"
+                    form={form}
+                  />
                 </Form.Item>
               </Col>
-              <Col lg={12} xs={24}>
-                <Form.Item
-                  name="goLiveDate"
-                  label="Go Live Date"
-                  getValueProps={formatMoment}
-                >
-                  <DatePicker format="DD/MM/YYYY" />
+              <Col lg={24} xs={24}>
+                <Form.Item label="Image">
+                  <Upload.ImageUpload
+                    maxCount={20}
+                    fileList={initial?.image}
+                    formProp="image"
+                    form={form}
+                  />
                 </Form.Item>
               </Col>
-              <Col lg={12} xs={24}>
-                <Form.Item
-                  name="validity"
-                  label="Expiration Date"
-                  getValueProps={formatMoment}
-                >
-                  <DatePicker format="DD/MM/YYYY" />
-                </Form.Item>
-              </Col>
-              <Col lg={8} xs={24}>
-                <Form.Item name="checkout" label="Checkout">
-                  <Radio.Group buttonStyle="solid">
-                    <Radio.Button value="disco">Disco</Radio.Button>
-                    <Radio.Button value="external">External</Radio.Button>
-                  </Radio.Group>
-                </Form.Item>
-              </Col>
-              <Col lg={8} xs={24}>
-                <Form.Item
-                  name="requireMobilePurchaseStatus"
-                  label="Log Completed Purchases?"
-                  valuePropName="checked"
-                >
-                  <Switch />
-                </Form.Item>
-              </Col>
-              <Col lg={8} xs={24}>
-                <Form.Item
-                  name="displayDiscountPage"
-                  label="Allow Use of D-Dollars?"
-                  valuePropName="checked"
-                >
-                  <Switch />
-                </Form.Item>
-              </Col>
-              <Col lg={8} xs={24}>
-                <Form.Item name="weight" label="Weight">
-                  <Input type="number" placeholder="Weight in Kg" />
-                </Form.Item>
-              </Col>
-              <Col lg={16} xs={24}>
+              <Col lg={24}>
+                <Typography.Title level={5}>Videos feed</Typography.Title>
                 <Form.Item
                   shouldUpdate={(prevValues, curValues) =>
-                    prevValues.checkout !== curValues.checkout
+                    prevValues.relatedVideoFeed !== curValues.relatedVideoFeed
                   }
                 >
-                  {({ getFieldValue }) =>
-                    getFieldValue("checkout") === "external" && (
-                      <Form.Item
-                        name="externalCheckout"
-                        label="External Checkout URL"
-                        rules={[{ required: true }]}
-                        style={{ marginBottom: "0px" }}
-                      >
-                        <Input />
-                      </Form.Item>
-                    )
-                  }
+                  {({ getFieldValue }) => {
+                    const relatedVideoFeed: Video[] =
+                      getFieldValue("relatedVideoFeed") || [];
+                    return (
+                      <Table
+                        columns={videoColumns}
+                        dataSource={relatedVideoFeed}
+                        bordered
+                        rowKey={(record) => `video_${record.videoFeedId}`}
+                      />
+                    );
+                  }}
                 </Form.Item>
               </Col>
             </Row>
-          </Col>
-        </Row>
-        <ProductCategoriesTrees
-          categories={initial?.categories}
-          allCategories={allCategories}
-          form={form}
-          handleCategoryChange={handleCategoryChange}
-        />
-        <Col lg={16} xs={24}>
-          <Form.Item
-            shouldUpdate={(prevValues, curValues) =>
-              prevValues.category !== curValues.category
-            }
-          >
-            {({ getFieldValue }) => (
-              <Form.Item name={"searchTags"} label="Search Tags">
-                <Select mode="tags">
-                  {getFieldValue("searchTags")?.map((searchTag: any) => (
-                    <Select.Option key={searchTag} value={searchTag}>
-                      {searchTag}
-                    </Select.Option>
-                  ))}
-                </Select>
-              </Form.Item>
-            )}
-          </Form.Item>
-        </Col>
-        <Row gutter={8}>
-          <Col lg={24} xs={24}>
-            <Typography.Title level={4}>Target</Typography.Title>
-          </Col>
-          <Col lg={12} xs={24}>
-            <Form.Item label="Slider">
-              <Slider
-                range
-                marks={{ 12: "12", 100: "100" }}
-                min={12}
-                max={100}
-                value={ageRange}
-                onChange={onChangeAge}
-              />
-            </Form.Item>
-          </Col>
-        </Row>
-        <Row gutter={8}>
-          <Col lg={12} xs={24}>
-            <Form.Item
-              name="gender"
-              label="Gender"
-              rules={[{ required: true }]}
-            >
-              <Select mode="multiple">
-                <Select.Option value="Female">Female</Select.Option>
-                <Select.Option value="Male">Male</Select.Option>
-                <Select.Option value="Other">Other</Select.Option>
-                <Select.Option value="Prefer not to say">
-                  Prefer not to say
-                </Select.Option>
-              </Select>
-            </Form.Item>
-          </Col>
-        </Row>
-        <Row gutter={8}>
-          <Col lg={24} xs={24}>
-            <Form.Item label="Tag Image">
-              <Upload.ImageUpload
-                fileList={initial?.tagImage}
-                formProp="tagImage"
-                form={form}
-              />
-            </Form.Item>
-          </Col>
-          <Col lg={24} xs={24}>
-            <Form.Item label="Thumbnail">
-              <Upload.ImageUpload
-                fileList={initial?.thumbnailUrl}
-                formProp="thumbnailUrl"
-                form={form}
-              />
-            </Form.Item>
-          </Col>
-          <Col lg={24} xs={24}>
-            <Form.Item label="Image">
-              <Upload.ImageUpload
-                maxCount={20}
-                fileList={initial?.image}
-                formProp="image"
-                form={form}
-              />
-            </Form.Item>
-          </Col>
-          <Col lg={24}>
-            <Typography.Title level={5}>Videos feed</Typography.Title>
-            <Form.Item
-              shouldUpdate={(prevValues, curValues) =>
-                prevValues.relatedVideoFeed !== curValues.relatedVideoFeed
-              }
-            >
-              {({ getFieldValue }) => {
-                const relatedVideoFeed: Video[] =
-                  getFieldValue("relatedVideoFeed") || [];
-                return (
-                  <Table
-                    columns={videoColumns}
-                    dataSource={relatedVideoFeed}
-                    bordered
-                    rowKey={(record) => `video_${record.videoFeedId}`}
-                  />
-                );
-              }}
-            </Form.Item>
-          </Col>
-        </Row>
+          </Tabs.TabPane>
+        </Tabs>
+
         <Row gutter={8}>
           <Col>
             <Button

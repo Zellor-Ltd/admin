@@ -27,6 +27,6 @@ export const categoriesSettings = {
   categoriesEps: categoriesArray.map((item) => item.ep),
 };
 
-export const __prod__ = process.env.SERVER_ENV === "production";
-export const __isDev__ = process.env.SERVER_ENV === "development";
-export const __isDemo__ = process.env.SERVER_ENV === "demo";
+export const __prod__ = process.env.REACT_APP_SERVER_ENV === "production";
+export const __isDev__ = process.env.REACT_APP_SERVER_ENV === "development";
+export const __isDemo__ = process.env.REACT_APP_SERVER_ENV === "demo";
