@@ -48,20 +48,18 @@ instance.interceptors.request.use((config: AxiosRequestConfig) => {
   return config;
 });
 
-const errorHandler = (error: any) => {
-  message.error("Something went wrong.");
+const errorHandler = (error: any, errorMsg = "Something went wrong.") => {
+  message.error(errorMsg);
   throw error;
 };
 
 instance.interceptors.response.use(
   (response) => {
     if (response?.data?.error) {
-      if (
-        response.data.error.toUpperCase() ===
-        "Unauthorized request".toUpperCase()
-      ) {
-        errorHandler(response.data.error);
-      }
+      errorHandler(response.data.error);
+    }
+    if (response.data.success === false) {
+      errorHandler(new Error("Request failed"), "Request failed.");
     }
     return snakeToCamelCase(response.data);
   },
