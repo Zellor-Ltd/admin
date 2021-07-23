@@ -16,6 +16,7 @@ import EndpointDetail from "pages/endpoints/EndpointDetail";
 import Endpoints from "pages/endpoints/Endpoints";
 import FanDetail from "pages/fans/FanDetail";
 import Fans from "pages/fans/Fans";
+import BrandManagers from "pages/brand-managers/BrandManagers";
 import Settings from "pages/settings/Settings";
 import Roles from "pages/roles/Roles";
 import RoleDetail from "pages/roles/RoleDetail";
@@ -25,7 +26,7 @@ import OpenLayout from "layout/OpenLayout";
 // import Interfaces from "pages/interfaces/Interfaces";
 // import InterfaceDetail from "pages/interfaces/InterfaceDetail";
 import AccessControl from "pages/access-control/AccessControl";
-import Preview from "pages/preview/Preview";
+// import Preview from "pages/preview/Preview";
 import Categories from "pages/categories/Categories";
 import CategoryDetail from "pages/categories/CategoryDetail";
 import Orders from "pages/orders/Orders";
@@ -37,6 +38,8 @@ import Promotions from "pages/promotions/Promotions";
 import PromotionDetail from "pages/promotions/PromotionDetail";
 import DdTemplates from "pages/dd-templates/DdTemplates";
 import DdTemplateDetail from "pages/dd-templates/DdTemplateDetail";
+import PromoDisplay from "pages/promo-display/PromoDisplay";
+import PromoDisplayDetail from "pages/promo-display/PromoDisplayDetail";
 import Dashboard from "pages/dashboard/Dashboard";
 import { Redirect } from "react-router";
 
@@ -148,6 +151,11 @@ function AdminRoutes() {
       />
       <AuthRoute path="/fans" component={Fans} layout={AuthenticatedLayout} />
       <AuthRoute
+        path="/brand-managers"
+        component={BrandManagers}
+        layout={AuthenticatedLayout}
+      />
+      <AuthRoute
         path="/role"
         component={RoleDetail}
         layout={AuthenticatedLayout}
@@ -163,11 +171,11 @@ function AdminRoutes() {
         component={AccessControl}
         layout={AuthenticatedLayout}
       />
-      <AuthRoute
+      {/* <AuthRoute
         path="/preview"
         component={Preview}
         layout={AuthenticatedLayout}
-      />
+      /> */}
       <AuthRoute
         path="/order"
         component={OrderDetail}
@@ -211,6 +219,16 @@ function AdminRoutes() {
       <AuthRoute
         path="/dd-templates"
         component={DdTemplates}
+        layout={AuthenticatedLayout}
+      />
+      <AuthRoute
+        path="/promo-display"
+        component={PromoDisplayDetail}
+        layout={AuthenticatedLayout}
+      />
+      <AuthRoute
+        path="/promo-displays"
+        component={PromoDisplay}
         layout={AuthenticatedLayout}
       />
     </Switch>
