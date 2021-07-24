@@ -1,5 +1,5 @@
 import axios, { AxiosRequestConfig } from "axios";
-import snakeToCamelCase from "helpers/snakeToCamelCase";
+// import snakeToCamelCase from "helpers/snakeToCamelCase";
 import { Brand } from "interfaces/Brand";
 import { Creator } from "interfaces/Creator";
 import { Endpoint } from "interfaces/Endpoint";
@@ -19,6 +19,7 @@ import {
 } from "interfaces/Category";
 import { message } from "antd";
 import { DdTemplate } from "interfaces/DdTemplate";
+import { PromoDisplay } from "interfaces/PromoDisplay";
 
 export const instance = axios.create({
   baseURL: process.env.REACT_APP_HOST_ENDPOINT,
@@ -29,7 +30,7 @@ interface IDelete {
   id: string;
 }
 
-function replaceIdRecursively(obj: any) {
+function reverseIdRecursively(obj: any) {
   for (let prop in obj) {
     if (prop === "id") {
       obj["_id"] = obj[prop];
@@ -38,32 +39,42 @@ function replaceIdRecursively(obj: any) {
   }
 }
 
+function replaceIdRecursively(obj: any) {
+  for (let prop in obj) {
+    if (prop === "_id") {
+      obj["id"] = obj[prop];
+      delete obj[prop];
+    } else if (typeof obj[prop] === "object") {
+      replaceIdRecursively(obj[prop]);
+    }
+  }
+  return obj;
+}
+
 instance.interceptors.request.use((config: AxiosRequestConfig) => {
   const data = JSON.parse(JSON.stringify(config.data || {}));
   if (data) {
-    replaceIdRecursively(data);
+    reverseIdRecursively(data);
   }
   config.headers["Authorization"] = `Bearer ${localStorage.getItem("token")}`;
   config.data = data;
   return config;
 });
 
-const errorHandler = (error: any) => {
-  message.error("Something went wrong.");
+const errorHandler = (error: any, errorMsg = "Something went wrong.") => {
+  message.error(errorMsg);
   throw error;
 };
 
 instance.interceptors.response.use(
   (response) => {
     if (response?.data?.error) {
-      if (
-        response.data.error.toUpperCase() ===
-        "Unauthorized request".toUpperCase()
-      ) {
-        errorHandler(response.data.error);
-      }
+      errorHandler(response.data.error);
     }
-    return snakeToCamelCase(response.data);
+    if (response.data.success === false) {
+      errorHandler(new Error("Request failed"), "Request failed.");
+    }
+    return replaceIdRecursively(response.data);
   },
   (error) => {
     switch (error.response?.status) {
@@ -176,6 +187,8 @@ export const fetchPromotions = () => instance.get("Wi/Ep/ListPromotions");
 export const fetchPromoStatus = () => instance.get("Wi/Ep/ListPromoStatus");
 
 export const fetchDdTemplates = () => instance.get("Wi/Ep/ListDdTemplate");
+
+export const fetchPromoDisplays = () => instance.get("Wi/Ep/ListPromoDisplay");
 
 export const saveVideoFeed = (params: FeedItem) => {
   if (params.id) {
@@ -308,6 +321,14 @@ export const saveDdTemplate = (params: DdTemplate) => {
   }
 };
 
+export const savePromoDisplay = (params: PromoDisplay) => {
+  if (params.id) {
+    return instance.post("Wi/Ep/UpdatePromoDisplay", params);
+  } else {
+    return instance.put("Wi/EP/AddPromoDisplay", params);
+  }
+};
+
 export const deletePrivileges = (data: Privilege) =>
   instance.delete("Wi/Ep/RemovePrivilege", { data });
 
@@ -340,6 +361,9 @@ export const deletePromotion = (data: IDelete) =>
 
 export const deleteDdTemplate = (data: IDelete) =>
   instance.delete(`Wi/Ep/RemoveDdTemplate`, { data });
+
+export const deletePromoDisplay = (data: IDelete) =>
+  instance.delete(`Wi/Ep/RemovePromoDisplay`, { data });
 
 export const loginService = (login: Login) =>
   instance.put("Auth/GetApiToken", login);

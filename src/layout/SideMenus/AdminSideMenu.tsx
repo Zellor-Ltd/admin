@@ -3,13 +3,15 @@ import {
   CloudServerOutlined,
   ControlOutlined,
   DollarOutlined,
+  FireOutlined,
   FundOutlined,
+  GiftOutlined,
   HeartFilled,
-  MobileOutlined,
   OrderedListOutlined,
   SettingOutlined,
   // AppstoreAddOutlined,
   ShoppingCartOutlined,
+  SoundOutlined,
   SwitcherOutlined,
   TagOutlined,
   TeamOutlined,
@@ -28,9 +30,6 @@ const AdminSideMenu = () => {
       <Menu.Item key="brands" icon={<FundOutlined />}>
         <Link to="/brands">Brands</Link>
       </Menu.Item>
-      <Menu.Item key="preview" icon={<MobileOutlined />}>
-        <Link to="/preview">Preview</Link>
-      </Menu.Item>
       <Menu.Item key="products" icon={<TagOutlined />}>
         <Link to="/products">Products</Link>
       </Menu.Item>
@@ -46,12 +45,28 @@ const AdminSideMenu = () => {
       <Menu.Item key="orders" icon={<ShoppingCartOutlined />}>
         <Link to="/orders">Orders</Link>
       </Menu.Item>
-      <Menu.Item key="promotions" icon={<DollarOutlined />}>
-        <Link to="/promotions">Promotions</Link>
-      </Menu.Item>
       <Menu.Item key="transactions" icon={<DollarOutlined />}>
         <Link to="/transactions">Transactions</Link>
       </Menu.Item>
+      <SubMenu key="marketing" icon={<FireOutlined />} title="Marketing">
+        <Menu.Item key="promotions" icon={<SoundOutlined />}>
+          <Link to="/promotions">Promotions</Link>
+        </Menu.Item>
+        <Menu.Item key="promo-displays" icon={<GiftOutlined />}>
+          <Link to="/promo-displays">Shop Display</Link>
+        </Menu.Item>
+      </SubMenu>
+      <SubMenu key="users" icon={<TeamOutlined />} title="Users">
+        <Menu.Item key="fans" icon={<UserOutlined />}>
+          <Link to="/fans">Fans</Link>
+        </Menu.Item>
+        <Menu.Item key="creators" icon={<UserOutlined />}>
+          <Link to="/creators">Creators</Link>
+        </Menu.Item>
+        {/* <Menu.Item key="brand-managers" icon={<UserOutlined />}>
+          <Link to="/brand-managers">Brand Managers</Link>
+        </Menu.Item> */}
+      </SubMenu>
       <SubMenu key="sub-settings" icon={<SettingOutlined />} title="Settings">
         <Menu.Item key="endpoints" icon={<CloudServerOutlined />}>
           <Link to="/endpoints">Endpoints</Link>
@@ -59,9 +74,6 @@ const AdminSideMenu = () => {
         {/* <Menu.Item key="interfaces" icon={<AppstoreAddOutlined />}>
         <Link to="/interfaces">Interfaces</Link>
       </Menu.Item> */}
-        <Menu.Item key="fans" icon={<UserOutlined />}>
-          <Link to="/fans">Fans</Link>
-        </Menu.Item>
         <Menu.Item key="roles" icon={<ApartmentOutlined />}>
           <Link to="/roles">Roles</Link>
         </Menu.Item>
@@ -70,9 +82,6 @@ const AdminSideMenu = () => {
         </Menu.Item>
         <Menu.Item key="access-control" icon={<ControlOutlined />}>
           <Link to="/access-control">Access Control</Link>
-        </Menu.Item>
-        <Menu.Item key="creators" icon={<TeamOutlined />}>
-          <Link to="/creators">Creators</Link>
         </Menu.Item>
         <Menu.Item key="tags" icon={<TagOutlined />}>
           <Link to="/tags">Tags</Link>
