@@ -1,6 +1,6 @@
 export interface PromoDisplay {
   id: string;
-  displayHTML: string;
+  displayHtml: string;
   displayStartDate: string;
   displayExpireDate: string;
 }

@@ -32,7 +32,7 @@ const PromoDisplaysDetail: React.FC<RouteComponentProps> = (props) => {
         <Row>
           <Col lg={24} xs={24}>
             <Form.Item label="Display HTML">
-              <RichTextEditor formField="displayHTML" form={form} />
+              <RichTextEditor formField="displayHtml" form={form} />
             </Form.Item>
           </Col>
         </Row>
