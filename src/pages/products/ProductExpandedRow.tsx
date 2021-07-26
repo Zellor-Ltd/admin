@@ -1,4 +1,4 @@
-import { Button, Col, Form } from "antd";
+import { Button, Col, Form, Radio } from "antd";
 import { categoriesSettings } from "helpers/utils";
 import { AllCategories } from "interfaces/Category";
 import { Product } from "interfaces/Product";
@@ -47,6 +47,16 @@ const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
       onFinish={onFinish}
       form={form}
     >
+      <Col lg={20} xs={24}>
+        <Form.Item name="status" label="Status">
+          <Radio.Group buttonStyle="solid">
+            <Radio.Button value="live">Live</Radio.Button>
+            <Radio.Button value="paused">Paused</Radio.Button>
+            <Radio.Button value="expired">Expired</Radio.Button>
+            <Radio.Button value="pending">Pending</Radio.Button>
+          </Radio.Group>
+        </Form.Item>
+      </Col>
       <ProductCategoriesTrees
         categories={record.categories}
         allCategories={allCategories}

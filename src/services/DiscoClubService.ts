@@ -20,6 +20,7 @@ import {
 import { message } from "antd";
 import { DdTemplate } from "interfaces/DdTemplate";
 import { PromoDisplay } from "interfaces/PromoDisplay";
+import snakeToCamelCase from "helpers/snakeToCamelCase";
 
 export const instance = axios.create({
   baseURL: process.env.REACT_APP_HOST_ENDPOINT,
@@ -35,21 +36,21 @@ function reverseIdRecursively(obj: any) {
     if (prop === "id") {
       obj["_id"] = obj[prop];
       delete obj[prop];
-    } else if (typeof obj[prop] === "object") replaceIdRecursively(obj[prop]);
+    } else if (typeof obj[prop] === "object") reverseIdRecursively(obj[prop]);
   }
 }
 
-function replaceIdRecursively(obj: any) {
-  for (let prop in obj) {
-    if (prop === "_id") {
-      obj["id"] = obj[prop];
-      delete obj[prop];
-    } else if (typeof obj[prop] === "object") {
-      replaceIdRecursively(obj[prop]);
-    }
-  }
-  return obj;
-}
+// function replaceIdRecursively(obj: any) {
+//   for (let prop in obj) {
+//     if (prop === "_id") {
+//       obj["id"] = obj[prop];
+//       delete obj[prop];
+//     } else if (typeof obj[prop] === "object") {
+//       replaceIdRecursively(obj[prop]);
+//     }
+//   }
+//   return obj;
+// }
 
 instance.interceptors.request.use((config: AxiosRequestConfig) => {
   const data = JSON.parse(JSON.stringify(config.data || {}));
@@ -68,18 +69,19 @@ const errorHandler = (error: any, errorMsg = "Something went wrong.") => {
 
 instance.interceptors.response.use(
   (response) => {
-    if (response?.data?.error) {
-      errorHandler(response.data.error);
-    }
-    if (response.data.success === false) {
+    const { error, message, success, results } = response?.data;
+    if (error) {
+      errorHandler(error, message || error);
+    } else if (success === false && !(results && !results.length)) {
       errorHandler(new Error("Request failed"), "Request failed.");
     }
-    return replaceIdRecursively(response.data);
+    return snakeToCamelCase(response.data);
   },
   (error) => {
     switch (error.response?.status) {
       case 404:
-      case 401: {
+      case 401:
+      default: {
         errorHandler(error);
       }
     }
