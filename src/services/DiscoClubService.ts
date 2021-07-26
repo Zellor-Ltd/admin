@@ -68,10 +68,10 @@ const errorHandler = (error: any, errorMsg = "Something went wrong.") => {
 
 instance.interceptors.response.use(
   (response) => {
-    if (response?.data?.error) {
-      errorHandler(response.data.error);
-    }
-    if (response.data.success === false) {
+    const { error, message, success, result, results } = response?.data;
+    if (error) {
+      errorHandler(error, message || error);
+    } else if (success === false && !result && (!results || !results.length)) {
       errorHandler(new Error("Request failed"), "Request failed.");
     }
     return replaceIdRecursively(response.data);
@@ -79,7 +79,8 @@ instance.interceptors.response.use(
   (error) => {
     switch (error.response?.status) {
       case 404:
-      case 401: {
+      case 401:
+      default: {
         errorHandler(error);
       }
     }
