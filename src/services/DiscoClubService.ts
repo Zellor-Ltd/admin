@@ -72,7 +72,7 @@ instance.interceptors.response.use(
     const { error, message, success, results } = response?.data;
     if (error) {
       errorHandler(error, message || error);
-    } else if (success === false && !(response.config.method === 'get' && (results && !results.length))) {
+    } else if (success === false && !(results && !results.length)) {
       errorHandler(new Error("Request failed"), "Request failed.");
     }
     return snakeToCamelCase(response.data);
