@@ -209,6 +209,11 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
         name="productForm"
         initialValues={initial}
         onFinish={onFinish}
+        onFinishFailed={({ errorFields }) => {
+          errorFields.forEach(errorField => {
+            message.error(errorField.errors[0])
+          })
+        }}
         layout="vertical"
       >
         <Tabs defaultActiveKey="Details">
