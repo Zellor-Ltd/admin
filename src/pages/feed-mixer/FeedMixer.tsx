@@ -1,12 +1,19 @@
-import { MinusOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
+import {
+  StopOutlined,
+  MinusOutlined,
+  PlusOutlined,
+  SearchOutlined,
+} from "@ant-design/icons";
 import {
   Button,
   Col,
+  Form,
   Input,
   message,
   PageHeader,
   Row,
   Space,
+  Switch,
   Table,
   Tabs,
   Tag as AntTag,
@@ -21,11 +28,15 @@ import { RouteComponentProps } from "react-router";
 import {
   fetchUserFeed,
   fetchVideoFeed,
+  lockFeedMixer,
   saveUserFeed,
+  unlockFeedMixer,
 } from "services/DiscoClubService";
 import Highlighter from "react-highlight-words";
 
 import { SelectFan } from "components/SelectFan";
+import { SwitchChangeEventHandler } from "antd/lib/switch";
+import { useRequest } from "hooks/useRequest";
 
 const reduceSegmentsTags = (packages: Segment[]) => {
   return packages.reduce((acc: number, curr: Segment) => {
@@ -33,16 +44,19 @@ const reduceSegmentsTags = (packages: Segment[]) => {
   }, 0);
 };
 const FeedMixer: React.FC<RouteComponentProps> = () => {
-  const [userFeedLoading, setUserFeedLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const { doFetch, doRequest } = useRequest({ setLoading });
 
   const [userFeed, setUserFeed] = useState<any[]>([]);
-  const [templateFeed, setTemplateFeed] = useState([]);
+  const [templateFeed, setTemplateFeed] = useState<any[]>([]);
 
   const [selectedFan, setSelectedFan] = useState<Fan>();
   const [selectedTab, setSelectedTab] = useState<string>("");
 
   const [searchText, setSearchText] = useState<string>("");
   const [searchedColumn, setSearchedColumn] = useState<string>("");
+
+  const [lockedFeed, setLockedFeed] = useState<boolean>(false);
 
   const searchInput = useRef<Input>(null);
 
@@ -208,41 +222,54 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
       key: "action",
       width: "5%",
       align: "right",
-      render: (_, record, index) => {
-        return (
+      render: (_, record, index) =>
+        !lockedFeed ? (
           <Button
             onClick={() => actionObj.fn(record, index)}
             type="link"
-            style={{ padding: 0, margin: 6 }}
+            style={{ padding: 0, margin: "0 6px" }}
           >
             {actionObj.icon}
           </Button>
-        );
-      },
+        ) : (
+          <StopOutlined
+            style={{ color: "rgba(0, 0, 0, 0.25)", margin: "9px" }}
+          />
+        ),
     },
   ];
 
   const onChangeFan = async (_selectedFan: Fan) => {
     setSelectedFan(_selectedFan);
-    setUserFeedLoading(true);
 
     if (!templateFeed.length) {
-      const [{ results: _userFeed }, { results: _templateFeed }]: [any, any] =
-        await Promise.all([fetchUserFeed(_selectedFan.id), fetchVideoFeed()]);
+      const [_userFeed, _templateFeed]: [any[], any[]] = await Promise.all([
+        doFetch(() => fetchUserFeed(_selectedFan.id)),
+        doFetch(() => fetchVideoFeed()),
+      ]);
       setUserFeed(_userFeed);
       setTemplateFeed(_templateFeed);
     } else {
-      const { results }: any = await fetchUserFeed(_selectedFan.id);
+      const results = await doFetch(() => fetchUserFeed(_selectedFan.id));
       setUserFeed(results);
     }
-    setUserFeedLoading(false);
+    setLockedFeed(Boolean(_selectedFan.specialLock));
   };
 
   const saveChanges = async () => {
-    setUserFeedLoading(true);
-    await saveUserFeed(selectedFan!.id, userFeed);
-    message.success("User feed updated.");
-    setUserFeedLoading(false);
+    await doRequest(
+      () => saveUserFeed(selectedFan!.id, userFeed),
+      "User feed updated."
+    );
+  };
+
+  const handleLockChange: SwitchChangeEventHandler = async (checked) => {
+    await doRequest(() =>
+      checked
+        ? lockFeedMixer(selectedFan!.id)
+        : unlockFeedMixer(selectedFan!.id)
+    );
+    setLockedFeed(checked);
   };
 
   return (
@@ -262,23 +289,42 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
             onChange={onChangeFan}
           ></SelectFan>
         </Col>
+        <Col xxl={40} lg={6} xs={18}>
+          <Form.Item label="Lock Feed" style={{ margin: "32px 0 16px 16px" }}>
+            <Switch
+              disabled={!selectedFan}
+              loading={loading}
+              onChange={handleLockChange}
+              checked={lockedFeed}
+            ></Switch>
+          </Form.Item>
+        </Col>
       </Row>
       <Tabs defaultActiveKey="User Feed" onChange={handleTabChange}>
         <Tabs.TabPane tab="User Feed" key="User Feed">
-          <SortableTable
-            rowKey="id"
-            columns={columns}
-            dataSource={userFeed}
-            setDataSource={setUserFeed}
-            loading={userFeedLoading}
-          />
+          {!lockedFeed ? (
+            <SortableTable
+              rowKey="id"
+              columns={columns}
+              dataSource={userFeed}
+              setDataSource={setUserFeed}
+              loading={loading}
+            />
+          ) : (
+            <Table
+              rowKey="id"
+              columns={columns}
+              dataSource={userFeed}
+              loading={loading}
+            />
+          )}
         </Tabs.TabPane>
         <Tabs.TabPane tab="Template Feed" key="Template Feed">
           <Table
             rowKey="id"
             columns={columns}
             dataSource={templateFeed}
-            loading={userFeedLoading}
+            loading={loading}
           />
         </Tabs.TabPane>
       </Tabs>

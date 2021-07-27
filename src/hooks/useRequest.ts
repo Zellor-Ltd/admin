@@ -18,7 +18,7 @@ export const useRequest = ({
   const request = async (action: action, successMsg?: string) => {
     _setLoadingHandler(true);
     try {
-      const { results }: { results: any[] } = await action();
+      const { results = [] } = await action();
       if (successMsg) message.success(successMsg);
       _setLoadingHandler(false);
       return results;

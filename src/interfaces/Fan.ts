@@ -6,4 +6,5 @@ export interface Fan {
   phone: string;
   address: string;
   profile: string;
+  specialLock: boolean;
 }
