@@ -93,7 +93,7 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
   const handleBrandFilter = (value: any, index: number) => {
     setFilteredTags((prev) => {
       if (value) {
-        prev[index] = tags.filter((tag) => tag.brand.id === value);
+        prev[index] = tags.filter((tag) => tag.brand?.id === value);
       } else {
         prev[index] = tags;
       }
