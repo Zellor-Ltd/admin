@@ -30,7 +30,20 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
 
   useEffect(() => {
     form.resetFields();
-  }, [segment, form]);
+    const selectedTags = form.getFieldValue("tags");
+    setSelectedFilterBrands((prev) => {
+      selectedTags.forEach((tag: Tag, index: number) => {
+        prev[index] = tag.brand?.id || "";
+      });
+      return [...prev];
+    });
+    setFilteredTags((prev) => {
+      selectedTags.forEach((tag: Tag, index: number) => {
+        prev[index] = tags.filter((_tag) => _tag.brand?.id === tag.brand?.id);
+      });
+      return [...prev];
+    });
+  }, [segment, form, tags]);
 
   useEffect(() => {
     let mounted = true;
@@ -56,12 +69,16 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
     };
   }, []);
 
-  const onChangeTag = (key: string, fieldName: number) => {
+  const onChangeTag = (key: string, fieldName: number, index: number) => {
     const formTags = form.getFieldValue("tags");
     const selectedTag = tags.find((tag: Tag) => tag.id === key);
     const changedTag = { ...formTags[fieldName], ...selectedTag };
     formTags[fieldName] = changedTag;
 
+    setSelectedFilterBrands((prev) => {
+      prev[index] = selectedTag?.brand?.id || "";
+      return prev;
+    });
     form.setFieldsValue({ tags: formTags });
     form.setFields([{ name: "tags", touched: true }]);
   };
@@ -388,7 +405,7 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                         >
                           <Select
                             onChange={(key: string) =>
-                              onChangeTag(key, field.name)
+                              onChangeTag(key, field.name, index)
                             }
                             loading={loading}
                           >
