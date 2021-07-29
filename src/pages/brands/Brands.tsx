@@ -18,6 +18,7 @@ import {
   Typography,
 } from "antd";
 import { ColumnsType } from "antd/lib/table";
+import { discoBrandId } from "helpers/constants";
 import { Brand } from "interfaces/Brand";
 import { useEffect, useState } from "react";
 import { RouteComponentProps } from "react-router";
@@ -80,7 +81,13 @@ const Brands: React.FC<RouteComponentProps> = ({ history }) => {
       dataIndex: "brandName",
       width: "50%",
       render: (value: string, record: Brand) => (
-        <Link to={{ pathname: `/brand`, state: record }}>{value}</Link>
+        <Link to={{ pathname: `/brand`, state: record }}>
+          {record.id !== discoBrandId ? (
+            value
+          ) : (
+            <b style={{ color: "lightcoral" }}>{value}</b>
+          )}
+        </Link>
       ),
     },
     {
@@ -125,16 +132,18 @@ const Brands: React.FC<RouteComponentProps> = ({ history }) => {
           <Link to={{ pathname: `/brand`, state: record }}>
             <EditOutlined />
           </Link>
-          <Popconfirm
-            title="Are you sure？"
-            okText="Yes"
-            cancelText="No"
-            onConfirm={() => deleteItem(record.id)}
-          >
-            <Button type="link" style={{ padding: 0, margin: 6 }}>
-              <DeleteOutlined />
-            </Button>
-          </Popconfirm>
+          {record.id !== discoBrandId && (
+            <Popconfirm
+              title="Are you sure？"
+              okText="Yes"
+              cancelText="No"
+              onConfirm={() => deleteItem(record.id)}
+            >
+              <Button type="link" style={{ padding: 0, margin: 6 }}>
+                <DeleteOutlined />
+              </Button>
+            </Popconfirm>
+          )}
         </>
       ),
     },
