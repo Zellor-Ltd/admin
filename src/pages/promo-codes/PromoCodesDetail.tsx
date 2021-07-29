@@ -45,6 +45,15 @@ const PromoCodesDetail: React.FC<RouteComponentProps> = (props) => {
             </Col>
             <Col lg={16} xs={24}>
               <Form.Item
+                label="Shop Name"
+                name="shopName"
+                rules={[{ required: true }]}
+              >
+                <Input />
+              </Form.Item>
+            </Col>
+            <Col lg={16} xs={24}>
+              <Form.Item
                 label="Discount"
                 name="discount"
                 rules={[{ required: true }]}

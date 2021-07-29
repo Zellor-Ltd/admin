@@ -1,6 +1,7 @@
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Button, PageHeader, Popconfirm, Spin, Table } from "antd";
 import { ColumnsType } from "antd/lib/table";
+import { useRequest } from "hooks/useRequest";
 import { PromoCode } from "interfaces/PromoCode";
 import moment from "moment";
 import { useEffect, useState } from "react";
@@ -13,28 +14,32 @@ import "./PromoCodes.scss";
 const PromoCodes: React.FC<RouteComponentProps> = ({ history }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [promoCodes, setPromoCodes] = useState<PromoCode[]>([]);
+  const { doFetch, doRequest } = useRequest({ setLoading });
 
   const fetch = async () => {
-    setLoading(true);
-    const response: any = await fetchPromoCodes();
-    setLoading(false);
-    setPromoCodes(response.results);
+    const _promoCodes = await doFetch(() => fetchPromoCodes());
+    setPromoCodes(_promoCodes);
   };
 
   const deleteItem = async (id: string) => {
-    setLoading(true);
-    await deletePromoCode({ id });
-    fetch();
+    await doRequest(() => deletePromoCode({ id }));
+    await doFetch(() => fetchPromoCodes());
   };
 
   const columns: ColumnsType<PromoCode> = [
     {
       title: "Code",
       dataIndex: "code",
-      width: "30%",
+      width: "20%",
       render: (value: string, record: PromoCode) => (
         <Link to={{ pathname: `promo-code`, state: record }}>{value}</Link>
       ),
+    },
+    {
+      title: "Shop Name",
+      dataIndex: "shopName",
+      width: "20%",
+      align: "center",
     },
     {
       title: "Dollars",
@@ -51,7 +56,7 @@ const PromoCodes: React.FC<RouteComponentProps> = ({ history }) => {
     {
       title: "Creation",
       dataIndex: "hCreationDate",
-      width: "15%",
+      width: "12%",
       align: "center",
       render: (value: Date) => (
         <>
