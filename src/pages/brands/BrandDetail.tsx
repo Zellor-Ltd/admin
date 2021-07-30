@@ -70,8 +70,13 @@ const BrandDetail: React.FC<RouteComponentProps> = (props) => {
               </Form.Item>
             </Col>
             <Col lg={24} xs={24}>
-              <Form.Item label="Pre-Checkout Message (Overlay)">
-                <RichTextEditor formField="overlayHtml" form={form} />
+              <Form.Item label="Pre-Checkout Message (With Discount)">
+                <RichTextEditor formField="overlayHtmlWithDiscount" form={form} />
+              </Form.Item>
+            </Col>
+            <Col lg={24} xs={24}>
+              <Form.Item label="Pre-Checkout Message (WithOUT Discount)">
+                <RichTextEditor formField="overlayHtmlWithoutDiscount" form={form} />
               </Form.Item>
             </Col>
           </Col>
