@@ -139,10 +139,10 @@ const useAllCategories = ({
     ]);
 
     _setAllCategories({
-      "Super Category": responses[0],
-      Category: responses[1],
-      "Sub Category": responses[2],
-      "Sub Sub Category": responses[3],
+      "Super Category": responses[0].results,
+      Category: responses[1].results,
+      "Sub Category": responses[2].results,
+      "Sub Sub Category": responses[3].results,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

@@ -9,7 +9,7 @@ import { fetchVideoFeed2, savePromotion } from "services/DiscoClubService";
 const PromotionDetail: React.FC<RouteComponentProps> = (props) => {
   const { history, location } = props;
   const _state = location.state as undefined | PromotionAndStatusList;
-  const promoStatusList = _state?.promoStatusList;
+  // const promoStatusList = _state?.promoStatusList;
   const initial = _state?.promotion;
   const [form] = Form.useForm();
   const { doRequest, doFetch, loading } = useRequest();
@@ -22,14 +22,13 @@ const PromotionDetail: React.FC<RouteComponentProps> = (props) => {
   };
 
   const getPackages = useCallback(async () => {
-    const packages = await doFetch(fetchVideoFeed2);
-    setPackages(packages);
+    const { results } = await doFetch(fetchVideoFeed2);
+    setPackages(results);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const getResources = useCallback(async () => {
     await getPackages();
-    console.log(promoStatusList);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

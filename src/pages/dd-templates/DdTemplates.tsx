@@ -24,8 +24,8 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ history }) => {
   };
 
   const getDdTemplates = async () => {
-    const ddTemplates = await doFetch(fetchDdTemplates);
-    setDdTemplates(ddTemplates);
+    const { results } = await doFetch(fetchDdTemplates);
+    setDdTemplates(results);
   };
 
   useEffect(() => {

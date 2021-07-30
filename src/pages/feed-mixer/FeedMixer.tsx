@@ -243,14 +243,15 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
     setSelectedFan(_selectedFan);
 
     if (!templateFeed.length) {
-      const [_userFeed, _templateFeed]: [any[], any[]] = await Promise.all([
-        doFetch(() => fetchUserFeed(_selectedFan.id)),
-        doFetch(() => fetchVideoFeed()),
-      ]);
+      const [{ results: _userFeed }, { results: _templateFeed }] =
+        await Promise.all([
+          doFetch(() => fetchUserFeed(_selectedFan.id)),
+          doFetch(() => fetchVideoFeed()),
+        ]);
       setUserFeed(_userFeed);
       setTemplateFeed(_templateFeed);
     } else {
-      const results = await doFetch(() => fetchUserFeed(_selectedFan.id));
+      const { results } = await doFetch(() => fetchUserFeed(_selectedFan.id));
       setUserFeed(results);
     }
     setLockedFeed(Boolean(_selectedFan.specialLock));

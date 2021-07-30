@@ -15,15 +15,25 @@ export const useRequest = ({
     setLoading(v);
   };
 
-  const request = async (action: action, successMsg?: string) => {
+  const request: (
+    action: action,
+    successMsg?: string,
+    completeResponse?: boolean
+  ) => Promise<{ results: any[]; result: any }> = async (
+    action,
+    successMsg,
+    completeResponse
+  ) => {
     _setLoadingHandler(true);
     try {
-      const { results = [] } = await action();
+      const response = await action();
+      const { results = [], result } = response;
       if (successMsg) message.success(successMsg);
       _setLoadingHandler(false);
-      return results;
+      return completeResponse ? response : { results, result };
     } catch (error) {
       _setLoadingHandler(false);
+      if (completeResponse) return error;
       throw error;
     }
   };
@@ -33,6 +43,7 @@ export const useRequest = ({
     action: action,
     successMsg: string = "Register updated with success."
   ) => request(action, successMsg);
+  const doAPITest = (action: action) => request(action, "Test Passed.", true);
 
-  return { doFetch, doRequest, loading: _loading };
+  return { doFetch, doRequest, doAPITest, loading: _loading };
 };

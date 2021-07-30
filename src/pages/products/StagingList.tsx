@@ -47,17 +47,17 @@ const StagingList: React.FC<RouteComponentProps> = () => {
   });
 
   const getResources = useCallback(async () => {
-    const [products] = await Promise.all([
+    const [{ results }] = await Promise.all([
       doFetch(fetchStagingProducts),
       fetchAllCategories(),
     ]);
-    setProducts(products);
+    setProducts(results);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const getProducts = async () => {
-    const products = await doFetch(fetchStagingProducts);
-    setProducts(products);
+    const { results } = await doFetch(fetchStagingProducts);
+    setProducts(results);
   };
 
   useEffect(() => {

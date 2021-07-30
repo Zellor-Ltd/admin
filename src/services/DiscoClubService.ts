@@ -62,16 +62,25 @@ instance.interceptors.request.use((config: AxiosRequestConfig) => {
   return config;
 });
 
-const errorHandler = (error: any, errorMsg = "Something went wrong.") => {
+const errorHandler = (
+  error: any,
+  errorMsg = "Something went wrong.",
+  responseData?: any
+) => {
   message.error(errorMsg);
-  throw error;
+  if (responseData) {
+    // eslint-disable-next-line no-throw-literal
+    throw { error, ...responseData };
+  } else {
+    throw error;
+  }
 };
 
 instance.interceptors.response.use(
   (response) => {
     const { error, message, success, results } = response?.data;
     if (error) {
-      errorHandler(error, message || error);
+      errorHandler(error, message || error, response.data);
     } else if (success === false && !(results && !results.length)) {
       errorHandler(new Error("Request failed"), "Request failed.");
     }
@@ -385,4 +394,9 @@ export const lockFeedMixer = (userId: string) =>
   instance.get(`Wi/Ep/FeedLockUnlockUser/${userId}/y`);
 
 export const unlockFeedMixer = (userId: string) =>
-  instance.get(`Wi/Ep/FeedLockUnlockUser/${userId}/n`);
+  instance.get(`Disco/Feed/LockUnlockUser/${userId}/n`);
+
+export const preCheckout: (productId: string, DdQuantity?: number) => any = (
+  productId,
+  DdQuantity = 0
+) => instance.get(`Disco/Product/PreCheckout/${productId}/${DdQuantity}`);
