@@ -6,6 +6,7 @@ import {
 import { Button, Checkbox, Col, PageHeader, Popconfirm, Row } from "antd";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
 import EditableTable, { EditableColumnType } from "components/EditableTable";
+import EditMultipleButton from "components/EditMultipleButton";
 import { SearchFilter } from "components/SearchFilter";
 import { SelectBrand } from "components/SelectBrand";
 import useAllCategories from "hooks/useAllCategories";
@@ -19,14 +20,18 @@ import { RouteComponentProps } from "react-router";
 import { Link } from "react-router-dom";
 import {
   deleteStagingProduct,
+  fetchProducts,
   fetchStagingProducts,
   saveStagingProduct,
   transferStageProduct,
 } from "services/DiscoClubService";
+import EditProductModal from "./EditProductModal";
 import ProductExpandedRow from "./ProductExpandedRow";
 
 const StagingList: React.FC<RouteComponentProps> = () => {
   const [loading, setLoading] = useState<boolean>(false);
+  const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
+
   const {
     setArrayList: setProducts,
     filteredArrayList: filteredProducts,
@@ -207,6 +212,11 @@ const StagingList: React.FC<RouteComponentProps> = () => {
     );
   };
 
+  const handleEditProducts = async () => {
+    await fetchProducts();
+    setSelectedRowKeys([]);
+  };
+
   const handleFilterClassified = (e: CheckboxChangeEvent) => {
     if (!e.target.checked) {
       removeFilterFunction("categorized");
@@ -220,28 +230,39 @@ const StagingList: React.FC<RouteComponentProps> = () => {
   return (
     <>
       <PageHeader title="Staging" subTitle="List of Staging Products" />
-      <Row gutter={8}>
-        <Col xxl={40} lg={6} xs={18}>
-          <SearchFilter
-            filterFunction={searchFilterFunction}
-            label="Search by Name"
-          />
+      <Row align="bottom" justify="space-between">
+        <Col lg={16} xs={24}>
+          <Row gutter={8}>
+            <Col lg={8} xs={16}>
+              <SearchFilter
+                filterFunction={searchFilterFunction}
+                label="Search by Name"
+              />
+            </Col>
+            <Col lg={8} xs={16}>
+              <SelectBrand
+                style={{ width: "100%" }}
+                allowClear={true}
+                onChange={onChangeBrand}
+              ></SelectBrand>
+            </Col>
+            <Col lg={8} xs={16}>
+              <Checkbox
+                onChange={handleFilterClassified}
+                style={{ margin: "42px 0 16px 8px" }}
+              >
+                Unclassified only
+              </Checkbox>
+            </Col>
+          </Row>
         </Col>
-        <Col xxl={40} lg={6} xs={18}>
-          <SelectBrand
-            style={{ width: "100%" }}
-            allowClear={true}
-            onChange={onChangeBrand}
-          ></SelectBrand>
-        </Col>
-        <Col lg={8} xs={16}>
-          <Checkbox
-            onChange={handleFilterClassified}
-            style={{ margin: "42px 0 16px 8px" }}
-          >
-            Unclassified only
-          </Checkbox>
-        </Col>
+        <EditMultipleButton
+          text="Edit Products"
+          arrayList={filteredProducts}
+          ModalComponent={EditProductModal}
+          selectedRowKeys={selectedRowKeys}
+          onOk={handleEditProducts}
+        />
       </Row>
       <EditableTable
         rowKey="id"
@@ -249,6 +270,10 @@ const StagingList: React.FC<RouteComponentProps> = () => {
         dataSource={filteredProducts}
         loading={loading}
         onSave={onSaveProduct}
+        rowSelection={{
+          selectedRowKeys,
+          onChange: setSelectedRowKeys,
+        }}
         expandable={{
           expandedRowRender: (record: Product) => (
             <ProductExpandedRow
