@@ -79,7 +79,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history }) => {
     {
       title: "Brand Name",
       dataIndex: "brandName",
-      width: "50%",
+      width: "35%",
       render: (value: string, record: Brand) => (
         <Link to={{ pathname: `/brand`, state: record }}>
           {record.id !== discoBrandId ? (
@@ -89,6 +89,13 @@ const Brands: React.FC<RouteComponentProps> = ({ history }) => {
           )}
         </Link>
       ),
+    },
+    {
+      title: "Automated",
+      dataIndex: "automated",
+      width: "15%",
+      align: "center",
+      render: (value: any) => (<b>{value ? 'Yes' : 'No'}</b>)
     },
     {
       title: "Brand Color",

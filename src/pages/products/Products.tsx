@@ -131,20 +131,25 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
           <Link to={{ pathname: `/product/commited`, state: record }}>
             <EditOutlined />
           </Link>
-          <Popconfirm
-            title="Are you sure？"
-            okText="Yes"
-            cancelText="No"
-            onConfirm={() => deleteItem(record.id)}
-          >
-            <Button type="link" style={{ padding: 0, margin: 6 }}>
-              <DeleteOutlined />
-            </Button>
-          </Popconfirm>
+          {record.brand.automated !== true && (
+            <Popconfirm
+              title="Are you sure？"
+              okText="Yes"
+              cancelText="No"
+              onConfirm={() => deleteItem(record.id)}
+            >
+              <Button
+                type="link"
+                style={{ padding: 0, margin: "6px 0 6px 6px" }}
+              >
+                <DeleteOutlined />
+              </Button>
+            </Popconfirm>
+          )}
           <Button
             onClick={() => setProductAPITest(record)}
             type="link"
-            style={{ padding: 0, margin: 0 }}
+            style={{ padding: 0, margin: "6px 0 6px 6px" }}
           >
             <SettingOutlined />
           </Button>

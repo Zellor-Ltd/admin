@@ -17,4 +17,11 @@ export interface Product {
   brand: Brand;
   offerExpirationDate: Date;
   categories?: SelectedProductCategories[];
+  confirmationUrl: string;
+  cancelationUrl: string;
+  searchTags: string;
+  ageMin: number;
+  ageMax: number;
+  tagImage: string;
+  thumbnailUrl: string;
 }

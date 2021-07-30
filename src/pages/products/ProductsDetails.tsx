@@ -35,6 +35,7 @@ import {
 } from "services/DiscoClubService";
 import { RichTextEditor } from "components/RichTextEditor";
 import ProductCategoriesTrees from "./ProductCategoriesTrees";
+import { Product } from "interfaces/Product";
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 
@@ -62,7 +63,7 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
   const isStaging = productMode === "staging";
   const saveProductFn = isStaging ? saveStagingProduct : saveProduct;
   const productsListPathname = isStaging ? "/staging-products" : "/products";
-  const initial: any = location.state;
+  const initial = location.state as unknown as Product | undefined;
   const [loading, setLoading] = useState<boolean>(false);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [ageRange, setageRange] = useState<[number, number]>([12, 100]);
@@ -210,9 +211,9 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
         initialValues={initial}
         onFinish={onFinish}
         onFinishFailed={({ errorFields }) => {
-          errorFields.forEach(errorField => {
-            message.error(errorField.errors[0])
-          })
+          errorFields.forEach((errorField) => {
+            message.error(errorField.errors[0]);
+          });
         }}
         layout="vertical"
       >
@@ -520,7 +521,12 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
             </Button>
           </Col>
           <Col>
-            <Button type="primary" htmlType="submit" loading={loading}>
+            <Button
+              disabled={initial?.brand.automated === true}
+              type="primary"
+              htmlType="submit"
+              loading={loading}
+            >
               Save Changes
             </Button>
           </Col>

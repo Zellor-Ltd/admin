@@ -7,11 +7,12 @@ export interface Brand {
   brandLogoUrl: string;
   brandName: string;
   overlayHtmlWithDiscount: string;
-  overlayHtmlWithoutDiscount:string;
+  overlayHtmlWithoutDiscount: string;
   duration: number;
   opacity: number;
   startTime: number;
   x: number;
   y: number;
   z: number;
+  automated?: boolean;
 }
