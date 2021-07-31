@@ -1,5 +1,14 @@
 import { useState } from "react";
-import { Button, Col, Form, Input, message, PageHeader, Row } from "antd";
+import {
+  Button,
+  Col,
+  Form,
+  Input,
+  message,
+  PageHeader,
+  Row,
+  Switch,
+} from "antd";
 import { RouteComponentProps } from "react-router";
 import { TwitterPicker } from "react-color";
 import { saveBrand } from "services/DiscoClubService";
@@ -71,12 +80,18 @@ const BrandDetail: React.FC<RouteComponentProps> = (props) => {
             </Col>
             <Col lg={24} xs={24}>
               <Form.Item label="Pre-Checkout Message (With Discount)">
-                <RichTextEditor formField="overlayHtmlWithDiscount" form={form} />
+                <RichTextEditor
+                  formField="overlayHtmlWithDiscount"
+                  form={form}
+                />
               </Form.Item>
             </Col>
             <Col lg={24} xs={24}>
               <Form.Item label="Pre-Checkout Message (WithOUT Discount)">
-                <RichTextEditor formField="overlayHtmlWithoutDiscount" form={form} />
+                <RichTextEditor
+                  formField="overlayHtmlWithoutDiscount"
+                  form={form}
+                />
               </Form.Item>
             </Col>
           </Col>
@@ -163,6 +178,15 @@ const BrandDetail: React.FC<RouteComponentProps> = (props) => {
                   valuePropName="color"
                 >
                   <ColorPicker />
+                </Form.Item>
+              </Col>
+              <Col lg={24} xs={24}>
+                <Form.Item
+                  name="automated"
+                  label="Automated"
+                  valuePropName="checked"
+                >
+                  <Switch />
                 </Form.Item>
               </Col>
             </Row>

@@ -17,8 +17,8 @@ const PromoCodes: React.FC<RouteComponentProps> = ({ history }) => {
   const { doFetch, doRequest } = useRequest({ setLoading });
 
   const fetch = async () => {
-    const _promoCodes = await doFetch(() => fetchPromoCodes());
-    setPromoCodes(_promoCodes);
+    const { results } = await doFetch(() => fetchPromoCodes());
+    setPromoCodes(results);
   };
 
   const deleteItem = async (id: string) => {

@@ -112,13 +112,13 @@ const Promotions: React.FC<RouteComponentProps> = ({ history }) => {
   ];
 
   const getPromotions = useCallback(async () => {
-    const promoStatus = await doFetch(fetchPromotions);
-    setPromotions(promoStatus);
+    const { results } = await doFetch(fetchPromotions);
+    setPromotions(results);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const getPromoStatus = useCallback(async () => {
-    const results = await doFetch(fetchPromoStatus);
+    const { results } = await doFetch(fetchPromoStatus);
     setPromoStatusList(results[0]?.promoStatus);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

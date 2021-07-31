@@ -27,8 +27,8 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ history }) => {
   };
 
   const getPromoDisplays = async () => {
-    const promoDisplays = await doFetch(fetchPromoDisplays);
-    setPromoDisplays(promoDisplays);
+    const { results } = await doFetch(fetchPromoDisplays);
+    setPromoDisplays(results);
   };
 
   useEffect(() => {

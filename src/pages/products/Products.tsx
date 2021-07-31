@@ -1,3 +1,4 @@
+import { SettingOutlined } from "@ant-design/icons";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Button, Checkbox, Col, PageHeader, Popconfirm, Row, Tag } from "antd";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
@@ -21,10 +22,12 @@ import {
 } from "services/DiscoClubService";
 import EditProductModal from "./EditProductModal";
 import ProductExpandedRow from "./ProductExpandedRow";
+import ProductAPITestModal from "./ProductAPITestModal";
 
 const Products: React.FC<RouteComponentProps> = ({ history }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
+  const [productAPITest, setProductAPITest] = useState<Product | null>(null);
 
   const { doFetch, doRequest } = useRequest({ setLoading });
   const { doRequest: saveCategories, loading: loadingCategories } =
@@ -42,17 +45,17 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
   });
 
   const getResources = useCallback(async () => {
-    const [products] = await Promise.all([
+    const [{ results }] = await Promise.all([
       doFetch(fetchProducts),
       fetchAllCategories(),
     ]);
-    setProducts(products);
+    setProducts(results);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const getProducts = async () => {
-    const products = await doFetch(fetchProducts);
-    setProducts(products);
+    const { results } = await doFetch(fetchProducts);
+    setProducts(results);
   };
 
   useEffect(() => {
@@ -78,7 +81,7 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
     {
       title: "Name",
       dataIndex: "name",
-      width: "25%",
+      width: "22%",
       render: (value: string, record) => (
         <Link to={{ pathname: `/product/commited`, state: record }}>
           {value}
@@ -121,23 +124,35 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
     {
       title: "Actions",
       key: "action",
-      width: "5%",
+      width: "10%",
       align: "right",
       render: (_: any, record) => (
         <>
           <Link to={{ pathname: `/product/commited`, state: record }}>
             <EditOutlined />
           </Link>
-          <Popconfirm
-            title="Are you sure？"
-            okText="Yes"
-            cancelText="No"
-            onConfirm={() => deleteItem(record.id)}
+          {record.brand.automated !== true && (
+            <Popconfirm
+              title="Are you sure？"
+              okText="Yes"
+              cancelText="No"
+              onConfirm={() => deleteItem(record.id)}
+            >
+              <Button
+                type="link"
+                style={{ padding: 0, margin: "6px 0 6px 6px" }}
+              >
+                <DeleteOutlined />
+              </Button>
+            </Popconfirm>
+          )}
+          <Button
+            onClick={() => setProductAPITest(record)}
+            type="link"
+            style={{ padding: 0, margin: "6px 0 6px 6px" }}
           >
-            <Button type="link" style={{ padding: 0, margin: 6 }}>
-              <DeleteOutlined />
-            </Button>
-          </Popconfirm>
+            <SettingOutlined />
+          </Button>
         </>
       ),
     },
@@ -223,6 +238,10 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
           onOk={handleEditProducts}
         />
       </Row>
+      <ProductAPITestModal
+        selectedProduct={productAPITest}
+        setSelectedProduct={setProductAPITest}
+      />
       <EditableTable
         rowKey="id"
         columns={columns}
