@@ -41,7 +41,8 @@ const Tags: React.FC<RouteComponentProps> = ({ history }) => {
       width: "20%",
     },
     { title: "Brand", dataIndex: ["brand", "brandName"], width: "20%" },
-    { title: "Template", dataIndex: "template", width: "20%" },
+    { title: "Template", dataIndex: "template", width: "15%" },
+    { title: "DD's", dataIndex: "discoDollars", width: "5%" },
     {
       title: "Actions",
       key: "action",
@@ -49,9 +50,6 @@ const Tags: React.FC<RouteComponentProps> = ({ history }) => {
       align: "right",
       render: (value, record) => (
         <>
-          <Link to={{ pathname: `/tag`, state: record }}>
-            <EditOutlined />
-          </Link>
           <Popconfirm
             title="Are you sure？"
             okText="Yes"
