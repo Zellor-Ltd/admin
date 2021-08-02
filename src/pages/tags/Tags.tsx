@@ -1,3 +1,4 @@
+import { EyeOutlined, DeleteOutlined } from "@ant-design/icons";
 import { Button, PageHeader, Popconfirm, Table } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import { Tag } from "interfaces/Tag";
@@ -5,7 +6,6 @@ import { useEffect, useState } from "react";
 import { RouteComponentProps } from "react-router";
 import { Link } from "react-router-dom";
 import { deleteTag, fetchTags } from "services/DiscoClubService";
-import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 
 const Tags: React.FC<RouteComponentProps> = ({ history }) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -50,6 +50,9 @@ const Tags: React.FC<RouteComponentProps> = ({ history }) => {
       align: "right",
       render: (value, record) => (
         <>
+          <Link to={{ pathname: `/tag`, state: record }}>
+            <EyeOutlined />
+          </Link>
           <Popconfirm
             title="Are you sure？"
             okText="Yes"
