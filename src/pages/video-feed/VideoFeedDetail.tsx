@@ -40,6 +40,7 @@ import "./VideoFeed.scss";
 import { Creator } from "interfaces/Creator";
 import { Category } from "interfaces/Category";
 import { RichTextEditor } from "components/RichTextEditor";
+import "./VideoFeedDetail.scss";
 
 const { Title } = Typography;
 
@@ -264,7 +265,7 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
   };
 
   return (
-    <>
+    <div className="video-feed-detail">
       <PageHeader
         title="Video feed update"
         subTitle="Video"
@@ -645,7 +646,7 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
           </Select>
         </Modal>
       </Form.Provider>
-    </>
+    </div>
   );
 };
 
