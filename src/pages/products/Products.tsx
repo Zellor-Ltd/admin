@@ -101,8 +101,8 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
       width: "12%",
       align: "center",
       responsive: ["sm"],
-      editable: true,
-      number: true,
+      // editable: true,
+      // number: true,
     },
     {
       title: "Related Videos",
@@ -193,6 +193,17 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
     );
   };
 
+  const handleRowSelection = (preSelectedRows: any[]) => {
+    const selectedRows: any[] = [];
+    preSelectedRows.forEach((productId) => {
+      const product = filteredProducts.find(
+        (product) => product.id === productId
+      );
+      if (product!.brand.automated !== true) selectedRows.push(productId);
+    });
+    setSelectedRowKeys(selectedRows);
+  };
+
   return (
     <>
       <PageHeader
@@ -250,7 +261,7 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
         onSave={onSaveProduct}
         rowSelection={{
           selectedRowKeys,
-          onChange: setSelectedRowKeys,
+          onChange: handleRowSelection,
         }}
         expandable={{
           expandedRowRender: (record: Product) => (

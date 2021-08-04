@@ -2,6 +2,7 @@ import { Button, Col, Form, Radio } from "antd";
 import { categoriesSettings } from "helpers/utils";
 import { AllCategories } from "interfaces/Category";
 import { Product } from "interfaces/Product";
+import { useLocation } from "react-router-dom";
 import ProductCategoriesTrees from "./ProductCategoriesTrees";
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 
@@ -20,6 +21,9 @@ const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
 }) => {
   const [form] = Form.useForm();
 
+  const { pathname } = useLocation();
+  const isStaging = pathname === "/staging-list"
+
   const onFinish = async () => {
     const _categories = [...form.getFieldValue("categories")];
     categoriesFields.forEach((field, index) => {
@@ -33,8 +37,8 @@ const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
   };
 
   const handleCategoryChange = (
-    selectedCategories: any,
-    productCategoryIndex: number,
+    _: any,
+    __: number,
     filterCategory: Function
   ) => {
     filterCategory(form);
@@ -64,7 +68,12 @@ const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
         handleCategoryChange={handleCategoryChange}
       />
       <Col lg={24} xs={12}>
-        <Button type="primary" htmlType="submit" loading={loading}>
+        <Button
+          disabled={record.brand.automated === true && !isStaging}
+          type="primary"
+          htmlType="submit"
+          loading={loading}
+        >
           Save
         </Button>
       </Col>

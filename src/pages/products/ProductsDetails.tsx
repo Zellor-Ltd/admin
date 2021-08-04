@@ -522,7 +522,7 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
           </Col>
           <Col>
             <Button
-              disabled={initial?.brand.automated === true}
+              disabled={initial?.brand.automated === true && !isStaging}
               type="primary"
               htmlType="submit"
               loading={loading}

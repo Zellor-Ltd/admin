@@ -12,6 +12,7 @@ import {
 } from "antd";
 import { Brand } from "interfaces/Brand";
 import { Product } from "interfaces/Product";
+import { Tag } from "interfaces/Tag";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RouteComponentProps } from "react-router";
@@ -19,12 +20,13 @@ import { fetchBrands, fetchProducts, saveTag } from "services/DiscoClubService";
 
 const TagDetail: React.FC<RouteComponentProps> = (props) => {
   const { history, location } = props;
-  const initial: any = location.state;
+  const initial = location.state as unknown as Tag | undefined;
   const [loading, setLoading] = useState(false);
+
   const [products, setProducts] = useState<Product[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [selectedBrand, setSelectedBrand] = useState<string>(
-    initial?.brand?.id
+    initial?.brand?.id || ""
   );
   const [form] = Form.useForm();
 
@@ -230,7 +232,12 @@ const TagDetail: React.FC<RouteComponentProps> = (props) => {
             </Button>
           </Col>
           <Col>
-            <Button type="primary" htmlType="submit" loading={loading}>
+            <Button
+              type="primary"
+              htmlType="submit"
+              disabled={!!initial}
+              loading={loading}
+            >
               Save Changes
             </Button>
           </Col>
