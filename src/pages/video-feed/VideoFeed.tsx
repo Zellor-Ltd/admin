@@ -137,7 +137,7 @@ const VideoFeed: React.FC<RouteComponentProps> = (props) => {
 
   const [fetchedVideos, setFetchedVideos] = useState<any[]>([]);
   const [page, setPage] = useState<number>(0);
-  const LIMIT = 10;
+  const LIMIT = 20;
 
   const fetchData = () => {
     const setNewData = () => {
