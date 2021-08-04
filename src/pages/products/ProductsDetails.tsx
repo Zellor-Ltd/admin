@@ -36,7 +36,6 @@ import {
 import { RichTextEditor } from "components/RichTextEditor";
 import ProductCategoriesTrees from "./ProductCategoriesTrees";
 import { Product } from "interfaces/Product";
-import "./ProductsDetails.scss";
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 
