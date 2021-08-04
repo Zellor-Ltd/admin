@@ -252,7 +252,11 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                     </Form.Item>
                   </Col>
                   <Col lg={12} xs={24}>
-                    <Form.Item name={["brand", "id"]} label="Brand">
+                    <Form.Item
+                      name={["brand", "id"]}
+                      label="Brand"
+                      rules={[{ required: true }]}
+                    >
                       <Select onChange={() => setPaymentUrlsByBrand(false)}>
                         {brands.map((brand) => (
                           <Select.Option key={brand.id} value={brand.id}>
@@ -265,7 +269,7 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                   <Col lg={16} xs={24}>
                     <Form.Item
                       name="confirmationUrl"
-                      label="External Payment Confirmation URL"
+                      label="Payment Confirmation URL"
                       rules={[{ required: true }]}
                     >
                       <Input />
@@ -274,7 +278,7 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                   <Col lg={16} xs={24}>
                     <Form.Item
                       name="cancelationUrl"
-                      label="External Payment Cancelation URL"
+                      label="Payment Cancelation URL"
                       rules={[{ required: true }]}
                     >
                       <Input />

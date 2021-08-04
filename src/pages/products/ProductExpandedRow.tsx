@@ -22,7 +22,7 @@ const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
   const [form] = Form.useForm();
 
   const { pathname } = useLocation();
-  const isStaging = pathname === "/staging-list"
+  const isStaging = pathname === "/staging-list";
 
   const onFinish = async () => {
     const _categories = [...form.getFieldValue("categories")];
