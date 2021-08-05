@@ -40,14 +40,12 @@ const Orders: React.FC<RouteComponentProps> = () => {
   const [fans, setFans] = useState<Fan[]>([]);
 
   const [searchText, setSearchText] = useState<string>("");
-  const [searchedColumn, setSearchedColumn] = useState<string>("");
 
   const searchInput = useRef<Input>(null);
 
   const handleSearch = (selectedKeys: any, confirm: any, dataIndex: any) => {
     confirm();
     setSearchText(selectedKeys[0]);
-    setSearchedColumn(dataIndex);
   };
 
   const handleReset = (clearFilters: any) => {
@@ -143,7 +141,6 @@ const Orders: React.FC<RouteComponentProps> = () => {
             onClick={() => {
               confirm({ closeDropdown: false });
               setSearchText(selectedKeys[0]);
-              setSearchedColumn(dataIndex);
             }}
           >
             Filter
