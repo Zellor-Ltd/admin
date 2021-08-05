@@ -59,7 +59,7 @@ const Fans: React.FC<RouteComponentProps> = ({ history }) => {
 
   const columns: ColumnsType<Fan> = [
     { title: "Name", dataIndex: "userName", width: "15%" },
-    { title: "E-mail", dataIndex: "email", width: "15%" },
+    { title: "E-mail", dataIndex: "user", width: "15%" },
     {
       title: "Profile",
       dataIndex: "profile",

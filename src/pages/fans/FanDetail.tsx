@@ -250,7 +250,7 @@ const FanDetail: React.FC<RouteComponentProps> = (props) => {
             </Form.Item>
           </Col>
           <Col lg={8} xs={24}>
-            <Form.Item label="Gender">
+            <Form.Item name="gender" label="Gender">
               <Select>
                 <Select.Option value="Female">Female</Select.Option>
                 <Select.Option value="Male">Male</Select.Option>
