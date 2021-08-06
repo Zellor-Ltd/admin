@@ -40,14 +40,12 @@ const Orders: React.FC<RouteComponentProps> = () => {
   const [fans, setFans] = useState<Fan[]>([]);
 
   const [searchText, setSearchText] = useState<string>("");
-  const [searchedColumn, setSearchedColumn] = useState<string>("");
 
   const searchInput = useRef<Input>(null);
 
   const handleSearch = (selectedKeys: any, confirm: any, dataIndex: any) => {
     confirm();
     setSearchText(selectedKeys[0]);
-    setSearchedColumn(dataIndex);
   };
 
   const handleReset = (clearFilters: any) => {
@@ -143,7 +141,6 @@ const Orders: React.FC<RouteComponentProps> = () => {
             onClick={() => {
               confirm({ closeDropdown: false });
               setSearchText(selectedKeys[0]);
-              setSearchedColumn(dataIndex);
             }}
           >
             Filter
@@ -154,41 +151,37 @@ const Orders: React.FC<RouteComponentProps> = () => {
     filterIcon: (filtered: any) => (
       <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
     ),
-    onFilter: (value: any, record: any) =>
-      record[dataIndex]
-        ? record[dataIndex]
-            .toString()
-            .toLowerCase()
-            .includes(value.toLowerCase())
-        : "",
+    onFilter: (value: any, record: any) => {
+      const fan = getFan(record.userid);
+      return fan?.user.includes(value.toLowerCase()) || false;
+    },
     onFilterDropdownVisibleChange: (visible: any) => {
       if (visible) {
         setTimeout(() => searchInput.current!.select(), 100);
       }
     },
-    render: (text: any) => (
-      <Link to={{ pathname: `/fan`, state: getFan(text) }}>
-        {searchedColumn === dataIndex ? (
+    render: (userId: any) => {
+      const fan = getFan(userId);
+      return (
+        <Link to={{ pathname: `/fan`, state: fan }}>
           <Highlighter
             highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
             searchWords={[searchText]}
             autoEscape
-            textToHighlight={text ? text.toString() : ""}
+            textToHighlight={fan?.user || ""}
           />
-        ) : (
-          text
-        )}
-      </Link>
-    ),
+        </Link>
+      );
+    },
   });
 
   const columns: ColumnsType<Order> = [
     {
       title: "User",
-      dataIndex: "fanName",
+      dataIndex: "userid",
       width: "10%",
       align: "left",
-      ...getColumnSearchProps("userId"),
+      ...getColumnSearchProps("userid"),
     },
     {
       title: "Paid",
