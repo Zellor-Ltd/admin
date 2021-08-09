@@ -400,3 +400,9 @@ export const preCheckout: (productId: string, DdQuantity?: number) => any = (
   productId,
   DdQuantity = 0
 ) => instance.get(`Disco/Product/PreCheckout/${productId}/${DdQuantity}`);
+
+export const updateMultipleUsersFeed = (params: any) =>
+  instance.put(`Disco/Feed/UpdateMultipleUsersFeed`, {
+    query: {},
+    feeds: params,
+  });
