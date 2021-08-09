@@ -391,7 +391,7 @@ export const transferStageProduct = (productId: string) =>
   instance.get(`Disco/Staging/Product/Transfer/${productId}`);
 
 export const lockFeedMixer = (userId: string) =>
-  instance.get(`Wi/Ep/FeedLockUnlockUser/${userId}/y`);
+  instance.get(`Disco/Feed/LockUnlockUser/${userId}/y`);
 
 export const unlockFeedMixer = (userId: string) =>
   instance.get(`Disco/Feed/LockUnlockUser/${userId}/n`);
