@@ -70,6 +70,8 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
   const [ageRange, setageRange] = useState<[number, number]>([12, 100]);
   const [form] = Form.useForm();
 
+  const [maxDiscountAlert, setMaxDiscountAlert] = useState<boolean>(false);
+
   const { fetchAllCategories, allCategories } = useAllCategories({
     setLoading,
   });
@@ -293,13 +295,54 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                     <Form.Item
                       name="maxDiscoDollars"
                       label="Max Discount in DD"
-                      rules={[{ required: true }]}
+                      dependencies={["originalPrice"]}
+                      rules={[
+                        {
+                          required: true,
+                          message: "Max Discount is required.",
+                        },
+                        ({ getFieldValue }) => ({
+                          validator(_, maxDiscount) {
+                            // 30% of the price
+                            const maxPossibleDiscount =
+                              Math.round(
+                                Number(getFieldValue("originalPrice")) *
+                                  0.3 *
+                                  100
+                              ) / 100;
+                            if (
+                              maxDiscount &&
+                              maxDiscount > maxPossibleDiscount
+                            ) {
+                              if (!maxDiscountAlert) {
+                                setTimeout(
+                                  () =>
+                                    alert(
+                                      `The largest amount of DD you can apply for this price is ${maxPossibleDiscount}`
+                                    ),
+                                  100
+                                );
+                              }
+                              setMaxDiscountAlert(true);
+                              return Promise.reject(
+                                new Error("Max discount not allowed.")
+                              );
+                            }
+                            setMaxDiscountAlert(false);
+                            return Promise.resolve();
+                          },
+                        }),
+                      ]}
                     >
                       <InputNumber />
                     </Form.Item>
                   </Col>
                   <Col lg={12} xs={24}>
-                    <Form.Item name="originalPrice" label="Price">
+                    <Form.Item
+                      name="originalPrice"
+                      label="Price"
+                      rules={[{ required: true }]}
+                    >
                       <InputNumber
                         formatter={(value) =>
                           `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
