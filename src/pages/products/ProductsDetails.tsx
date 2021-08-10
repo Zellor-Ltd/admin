@@ -8,6 +8,7 @@ import {
   message,
   PageHeader,
   Radio,
+  RadioChangeEvent,
   Row,
   Select,
   Slider,
@@ -202,6 +203,13 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
     }
   };
 
+  const handleCheckoutTypeChange = (e: RadioChangeEvent) => {
+    const type = e.target.value;
+    form.setFieldsValue({
+      requireMobilePurchaseStatus: type === "external",
+    });
+  };
+
   return (
     <div className="products-details">
       <PageHeader title="Product" subTitle="Form" />
@@ -266,24 +274,6 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                       </Select>
                     </Form.Item>
                   </Col>
-                  <Col lg={16} xs={24}>
-                    <Form.Item
-                      name="confirmationUrl"
-                      label="Payment Confirmation URL"
-                      rules={[{ required: true }]}
-                    >
-                      <Input />
-                    </Form.Item>
-                  </Col>
-                  <Col lg={16} xs={24}>
-                    <Form.Item
-                      name="cancelationUrl"
-                      label="Payment Cancelation URL"
-                      rules={[{ required: true }]}
-                    >
-                      <Input />
-                    </Form.Item>
-                  </Col>
                 </Row>
               </Col>
               <Col lg={12} xs={24}>
@@ -345,7 +335,10 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                   </Col>
                   <Col lg={8} xs={24}>
                     <Form.Item name="checkout" label="Checkout">
-                      <Radio.Group buttonStyle="solid">
+                      <Radio.Group
+                        buttonStyle="solid"
+                        onChange={handleCheckoutTypeChange}
+                      >
                         <Radio.Button value="disco">Disco</Radio.Button>
                         <Radio.Button value="external">External</Radio.Button>
                       </Radio.Group>
@@ -353,11 +346,21 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                   </Col>
                   <Col lg={8} xs={24}>
                     <Form.Item
-                      name="requireMobilePurchaseStatus"
-                      label="Log Completed Purchases?"
-                      valuePropName="checked"
+                      shouldUpdate={(prevValues, curValues) =>
+                        prevValues.checkout !== curValues.checkout
+                      }
                     >
-                      <Switch />
+                      {({ getFieldValue }) => (
+                        <Form.Item
+                          name="requireMobilePurchaseStatus"
+                          label="Log Completed Purchases?"
+                          valuePropName="checked"
+                        >
+                          <Switch
+                            disabled={getFieldValue("checkout") === "disco"}
+                          />
+                        </Form.Item>
+                      )}
                     </Form.Item>
                   </Col>
                   <Col lg={8} xs={24}>
@@ -382,14 +385,36 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                     >
                       {({ getFieldValue }) =>
                         getFieldValue("checkout") === "external" && (
-                          <Form.Item
-                            name="externalCheckout"
-                            label="External Checkout URL"
-                            rules={[{ required: true }]}
-                            style={{ marginBottom: "0px" }}
-                          >
-                            <Input />
-                          </Form.Item>
+                          <>
+                            <Col lg={24} xs={24}>
+                              <Form.Item
+                                name="externalCheckout"
+                                label="External Checkout URL"
+                                rules={[{ required: true }]}
+                                style={{ marginBottom: "0px" }}
+                              >
+                                <Input />
+                              </Form.Item>
+                            </Col>
+                            <Col lg={24} xs={24}>
+                              <Form.Item
+                                name="confirmationUrl"
+                                label="Payment Confirmation URL"
+                                rules={[{ required: true }]}
+                              >
+                                <Input />
+                              </Form.Item>
+                            </Col>
+                            <Col lg={24} xs={24}>
+                              <Form.Item
+                                name="cancelationUrl"
+                                label="Payment Cancelation URL"
+                                rules={[{ required: true }]}
+                              >
+                                <Input />
+                              </Form.Item>
+                            </Col>
+                          </>
                         )
                       }
                     </Form.Item>
