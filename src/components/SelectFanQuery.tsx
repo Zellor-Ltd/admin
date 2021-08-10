@@ -15,7 +15,7 @@ type SelectFanQueryProps = Omit<
 
 const fansQueryFilters: FanFilter[] = [
   {
-    id: "allFans",
+    id: "allfans",
     user: "All Disco Fans",
     isFilter: true,
   },
@@ -32,24 +32,26 @@ export const SelectFanQuery: React.FC<SelectFanQueryProps> = ({
   const [selectedFan, setSelectedFan] = useState<string>("");
   const { doFetch } = useRequest();
 
+  const getFans = async () => {
+    const { results } = await doFetch(() => fetchFans());
+    const _searchList: string[] = [];
+    results.unshift(...fansQueryFilters);
+    results.forEach((fan: FanFilter) => {
+      if (fan.user) _searchList.push(fan.user);
+    });
+    setSearchList(_searchList);
+    setFans([...results]);
+  };
+
   useEffect(() => {
-    const getFans = async () => {
-      const { results } = await doFetch(() => fetchFans());
-      const _searchList: string[] = [];
-      results.unshift(...fansQueryFilters);
-      results.forEach((fan: FanFilter) => {
-        if (fan.user) _searchList.push(fan.user);
-      });
-      setSearchList(_searchList);
-      setFans(results);
-    };
     getFans();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const _onChange = (value: string) => {
+  const _onChange = async (value: string) => {
     setSelectedFan(value);
     onChange(fans.find((fan) => fan.user === value) as FanFilter);
+    getFans();
   };
 
   return (

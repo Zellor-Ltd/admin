@@ -261,7 +261,7 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
       const { results } = await doFetch(() => fetchUserFeed(_selectedFan.id));
       setUserFeed(results);
     }
-    setLockedFeed(Boolean(_selectedFan.specialLock));
+    setLockedFeed(_selectedFan.specialLock === "y");
   };
 
   const saveChanges = async () => {
@@ -285,15 +285,18 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
     <div className="feed-mixer">
       <PageHeader title="Feed Mixer" />
       <Row gutter={8} style={{ marginBottom: "20px" }}>
-        <Col xxl={40} lg={6} xs={18}>
+        <Col>
           <SelectFanQuery
-            style={{ width: "100%" }}
+            style={{ width: "250px" }}
             onChange={onChangeFan}
           ></SelectFanQuery>
         </Col>
         {selectedFan && !selectedFan.isFilter && (
-          <Col xxl={40} lg={6} xs={18}>
-            <Form.Item label="Lock Feed" style={{ margin: "32px 0 16px 16px" }}>
+          <Col>
+            <Form.Item
+              label="Lock Feed"
+              style={{ margin: "32px 12px 16px 16px" }}
+            >
               <Switch
                 loading={loading}
                 onChange={handleLockChange}
@@ -302,57 +305,55 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
             </Form.Item>
           </Col>
         )}
+        {selectedFan && (
+          <Col>
+            <Button
+              onClick={saveChanges}
+              style={{
+                marginTop: "32px",
+                color: "white",
+                borderColor: "white",
+                backgroundColor: selectedFan.isFilter
+                  ? "rgb(255, 77, 79)"
+                  : "#4CAF50",
+              }}
+            >
+              {selectedFan.isFilter
+                ? `Deploy Feed to ${selectedFan.user}`
+                : "Deploy Feed"}
+            </Button>
+          </Col>
+        )}
       </Row>
       {selectedFan && (
-        <>
-          <Row>
-            <Col xxl={40} lg={6} xs={18}>
-              <Button
-                onClick={saveChanges}
-                style={{
-                  marginBottom: "16px",
-                  color: "white",
-                  borderColor: "white",
-                  backgroundColor: selectedFan.isFilter
-                    ? "rgb(255, 77, 79)"
-                    : "#4CAF50",
-                }}
-              >
-                {selectedFan.isFilter
-                  ? `Deploy Feed to ${selectedFan.user}`
-                  : "Deploy Feed"}
-              </Button>
-            </Col>
-          </Row>
-          <Tabs defaultActiveKey="User Feed" onChange={handleTabChange}>
-            <Tabs.TabPane tab={displayFeedName} key="User Feed">
-              {!lockedFeed ? (
-                <SortableTable
-                  rowKey="id"
-                  columns={columns}
-                  dataSource={userFeed}
-                  setDataSource={setUserFeed}
-                  loading={loading}
-                />
-              ) : (
-                <Table
-                  rowKey="id"
-                  columns={columns}
-                  dataSource={userFeed}
-                  loading={loading}
-                />
-              )}
-            </Tabs.TabPane>
-            <Tabs.TabPane tab="Template Feed" key="Template Feed">
+        <Tabs defaultActiveKey="User Feed" onChange={handleTabChange}>
+          <Tabs.TabPane tab={displayFeedName} key="User Feed">
+            {!lockedFeed ? (
+              <SortableTable
+                rowKey="id"
+                columns={columns}
+                dataSource={userFeed}
+                setDataSource={setUserFeed}
+                loading={loading}
+              />
+            ) : (
               <Table
                 rowKey="id"
                 columns={columns}
-                dataSource={templateFeed}
+                dataSource={userFeed}
                 loading={loading}
               />
-            </Tabs.TabPane>
-          </Tabs>
-        </>
+            )}
+          </Tabs.TabPane>
+          <Tabs.TabPane tab="Template Feed" key="Template Feed">
+            <Table
+              rowKey="id"
+              columns={columns}
+              dataSource={templateFeed}
+              loading={loading}
+            />
+          </Tabs.TabPane>
+        </Tabs>
       )}
     </div>
   );
