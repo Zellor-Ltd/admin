@@ -163,7 +163,12 @@ const FanDetail: React.FC<RouteComponentProps> = (props) => {
 
   const formatUserData = (formUser: any) => {
     const formattedUser = { ...formUser };
-    formattedUser.birthday = formUser.birthday?.format("YYYY-MM-DD");
+    if (typeof formUser.birthday === "string") {
+      formattedUser.birthday = formUser.birthday;
+    }
+    if (typeof formUser.birthday === "object") {
+      formattedUser.birthday = formUser.birthday.format("YYYY-MM-DD");
+    }
 
     formattedUser.personalDetails = formattedUser.personalDetails || {};
     formattedUser.personalDetails.phone =
