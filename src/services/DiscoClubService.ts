@@ -391,7 +391,7 @@ export const transferStageProduct = (productId: string) =>
   instance.get(`Disco/Staging/Product/Transfer/${productId}`);
 
 export const lockFeedMixer = (userId: string) =>
-  instance.get(`Wi/Ep/FeedLockUnlockUser/${userId}/y`);
+  instance.get(`Disco/Feed/LockUnlockUser/${userId}/y`);
 
 export const unlockFeedMixer = (userId: string) =>
   instance.get(`Disco/Feed/LockUnlockUser/${userId}/n`);
@@ -400,3 +400,9 @@ export const preCheckout: (productId: string, DdQuantity?: number) => any = (
   productId,
   DdQuantity = 0
 ) => instance.get(`Disco/Product/PreCheckout/${productId}/${DdQuantity}`);
+
+export const updateMultipleUsersFeed = (params: any) =>
+  instance.put(`Disco/Feed/UpdateMultipleUsersFeed`, {
+    query: {},
+    feeds: params,
+  });

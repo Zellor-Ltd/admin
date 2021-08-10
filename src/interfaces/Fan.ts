@@ -1,3 +1,14 @@
+export interface FanFilter {
+  id: string;
+  user: string;
+  isFilter?: boolean;
+  name?: string;
+  email?: string;
+  phone?: string;
+  address?: string;
+  profile?: string;
+  specialLock?: boolean;
+}
 export interface Fan {
   id: string;
   name: string;
