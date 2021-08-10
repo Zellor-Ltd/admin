@@ -7,7 +7,7 @@ export interface FanFilter {
   phone?: string;
   address?: string;
   profile?: string;
-  specialLock?: boolean;
+  specialLock?: "y" | "n";
 }
 export interface Fan {
   id: string;
