@@ -303,12 +303,10 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                         },
                         ({ getFieldValue }) => ({
                           validator(_, maxDiscount) {
-                            // 30% of the price
+                            // 3x the price
                             const maxPossibleDiscount =
                               Math.round(
-                                Number(getFieldValue("originalPrice")) *
-                                  0.3 *
-                                  100
+                                Number(getFieldValue("originalPrice")) * 3 * 100
                               ) / 100;
                             if (
                               maxDiscount &&
@@ -318,7 +316,7 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                                 setTimeout(
                                   () =>
                                     alert(
-                                      `The largest amount of DD you can apply for this price is ${maxPossibleDiscount}`
+                                      `The largest amount of DD you can apply for this price is ${maxPossibleDiscount}.`
                                     ),
                                   100
                                 );
