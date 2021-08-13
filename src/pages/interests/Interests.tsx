@@ -43,8 +43,6 @@ const Interests: React.FC<InterestsProps> = () => {
     const getCategoryParams = (category: ProductCategory) => ({
       searchTags: category.searchTags,
       image: category.image,
-      hCreationDate: category.hCreationDate,
-      hLastUpdate: category.hLastUpdate,
     });
 
     const _mergedCategories: any[] = [];
@@ -197,7 +195,12 @@ const Interests: React.FC<InterestsProps> = () => {
         doFetch(fetchInterests),
         fetchAllCategories(),
       ]);
-      setInterests(_interests);
+      setInterests(
+        _interests.map((interest) => ({
+          id: interest.id,
+          ...interest.description,
+        }))
+      );
     };
     getResources();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -237,7 +240,15 @@ const Interests: React.FC<InterestsProps> = () => {
   ];
 
   const saveChanges = async () => {
-    await doRequest(() => saveInterests(interests), 'Interests updated.');
+    await doRequest(
+      () =>
+        saveInterests(
+          interests.map((interest) => ({
+            description: interest,
+          }))
+        ),
+      "Interests updated."
+    );
   };
 
   return (

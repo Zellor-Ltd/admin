@@ -410,5 +410,5 @@ export const updateMultipleUsersFeed = (params: any) =>
   });
 
 export const saveInterests = (params: any) => {
-  return instance.put("Wi/Ep/UpdateInterests", params);
+  return instance.put("Disco/Fan/UpdateInterests", params);
 };
