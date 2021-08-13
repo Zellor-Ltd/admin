@@ -5,6 +5,7 @@ import {
   Input,
   message,
   PageHeader,
+  Row,
   Space,
   Tabs,
 } from "antd";
@@ -17,7 +18,7 @@ import { FeedItem } from "interfaces/FeedItem";
 import { Image } from "interfaces/Image";
 import React, { useEffect, useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
-import { fetchInterests } from "services/DiscoClubService";
+import { fetchInterests, saveInterests } from "services/DiscoClubService";
 
 interface InterestsProps {}
 
@@ -235,9 +236,26 @@ const Interests: React.FC<InterestsProps> = () => {
     },
   ];
 
+  const saveChanges = async () => {
+    await doRequest(() => saveInterests(interests), 'Interests updated.');
+  };
+
   return (
     <div className="interests">
       <PageHeader title="Interests" />
+      <Row>
+        <Button
+          onClick={saveChanges}
+          style={{
+            marginBottom: "16px",
+            color: "white",
+            borderColor: "#4CAF50",
+            backgroundColor: "#4CAF50",
+          }}
+        >
+          Save Changes
+        </Button>
+      </Row>
       <Tabs defaultActiveKey="Interests" onChange={handleTabChange}>
         <Tabs.TabPane tab="Interests" key="Interests">
           <SortableTable
