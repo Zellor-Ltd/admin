@@ -15,6 +15,8 @@ export interface ProductCategory {
   subSubCategory?: string;
   image: Image;
   searchTags?: string[];
+  hCreationDate?: string;
+  hLastUpdate?: string;
 }
 
 export interface SelectedProductCategories {

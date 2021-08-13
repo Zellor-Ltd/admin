@@ -41,6 +41,7 @@ import DdTemplateDetail from "pages/dd-templates/DdTemplateDetail";
 import PromoDisplay from "pages/promo-display/PromoDisplay";
 import PromoDisplayDetail from "pages/promo-display/PromoDisplayDetail";
 import Dashboard from "pages/dashboard/Dashboard";
+import Interests from "pages/interests/Interests";
 import { Redirect } from "react-router";
 
 function AdminRoutes() {
@@ -229,6 +230,11 @@ function AdminRoutes() {
       <AuthRoute
         path="/promo-displays"
         component={PromoDisplay}
+        layout={AuthenticatedLayout}
+      />
+      <AuthRoute
+        path="/interests"
+        component={Interests}
         layout={AuthenticatedLayout}
       />
     </Switch>
