@@ -204,11 +204,11 @@ const Interests: React.FC<InterestsProps> = () => {
   const columns: ColumnsType<FeedItem> = [
     {
       title: "Title",
-      dataIndex: "category",
+      dataIndex: "description",
       width: "15%",
       ...(() =>
         selectedTab === "All Categories"
-          ? getColumnSearchProps("category")
+          ? getColumnSearchProps("description")
           : {})(),
     },
     {
