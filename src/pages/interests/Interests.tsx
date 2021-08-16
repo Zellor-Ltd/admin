@@ -49,21 +49,21 @@ const Interests: React.FC<InterestsProps> = () => {
 
     allCategories["Category"].forEach((category) => {
       _mergedCategories.push({
-        category: category.category,
+        description: category.category,
         categoryId: category.id,
         ...getCategoryParams(category),
       });
     });
     allCategories["Sub Category"].forEach((category) => {
       _mergedCategories.push({
-        category: category.subCategory,
+        description: category.subCategory,
         subCategoryId: category.id,
         ...getCategoryParams(category),
       });
     });
     allCategories["Sub Sub Category"].forEach((category) => {
       _mergedCategories.push({
-        category: category.subSubCategory,
+        description: category.subSubCategory,
         subSubCategoryId: category.id,
         ...getCategoryParams(category),
       });
@@ -195,12 +195,7 @@ const Interests: React.FC<InterestsProps> = () => {
         doFetch(fetchInterests),
         fetchAllCategories(),
       ]);
-      setInterests(
-        _interests.map((interest) => ({
-          id: interest.id,
-          ...interest.description,
-        }))
-      );
+      setInterests(_interests);
     };
     getResources();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -240,15 +235,7 @@ const Interests: React.FC<InterestsProps> = () => {
   ];
 
   const saveChanges = async () => {
-    await doRequest(
-      () =>
-        saveInterests(
-          interests.map((interest) => ({
-            description: interest,
-          }))
-        ),
-      "Interests updated."
-    );
+    await doRequest(() => saveInterests(interests), "Interests updated.");
   };
 
   return (
