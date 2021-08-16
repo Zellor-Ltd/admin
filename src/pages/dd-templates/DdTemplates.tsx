@@ -1,6 +1,7 @@
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { Button, PageHeader, Popconfirm, Table } from "antd";
+import { Button, Col, PageHeader, Popconfirm, Row, Table } from "antd";
 import { ColumnsType } from "antd/lib/table";
+import { SearchFilter } from "components/SearchFilter";
 import useFilter from "hooks/useFilter";
 import { useRequest } from "hooks/useRequest";
 import { DdTemplate } from "interfaces/DdTemplate";
@@ -17,6 +18,7 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ history }) => {
   const {
     setArrayList: setDdTemplates,
     filteredArrayList: filteredDdTemplates,
+    addFilterFunction,
   } = useFilter<DdTemplate>([]);
 
   const getResources = async () => {
@@ -102,6 +104,14 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ history }) => {
     },
   ];
 
+  const searchFilterFunction = (filterText: string) => {
+    addFilterFunction("ddTagName", (dds) =>
+      dds.filter((dd) =>
+        dd.tagName.toUpperCase().includes(filterText.toUpperCase())
+      )
+    );
+  };
+
   return (
     <div>
       <PageHeader
@@ -113,6 +123,14 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ history }) => {
           </Button>,
         ]}
       />
+      <Row gutter={8}>
+        <Col lg={8} xs={16}>
+          <SearchFilter
+            filterFunction={searchFilterFunction}
+            label="Search by Tag Name"
+          />
+        </Col>
+      </Row>
       <Table
         rowKey="id"
         columns={columns}

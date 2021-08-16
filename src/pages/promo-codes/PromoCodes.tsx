@@ -124,8 +124,8 @@ const PromoCodes: React.FC<RouteComponentProps> = ({ history }) => {
   return (
     <div className="promo-codes">
       <PageHeader
-        title="PromoCodes"
-        subTitle="List of PromoCodes"
+        title="Promo Codes"
+        subTitle="List of Promo Codes"
         extra={[
           <Button key="1" onClick={() => history.push("promo-code")}>
             New Item

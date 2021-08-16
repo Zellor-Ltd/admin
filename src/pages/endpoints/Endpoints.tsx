@@ -1,4 +1,4 @@
-import { Button, PageHeader, Table } from "antd";
+import { Button, Col, PageHeader, Row, Table } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import { Endpoint } from "interfaces/Endpoint";
 import { useEffect, useState } from "react";
@@ -6,10 +6,18 @@ import { RouteComponentProps } from "react-router";
 import { Link } from "react-router-dom";
 import { fetchEndpoints } from "services/DiscoClubService";
 import { EditOutlined } from "@ant-design/icons";
+import useFilter from "hooks/useFilter";
+import { SearchFilter } from "components/SearchFilter";
 
 const Endpoints: React.FC<RouteComponentProps> = ({ history }) => {
-  const [endpoints, setEndpoints] = useState<Endpoint[]>([]);
   const [loading, setLoading] = useState(false);
+
+  const {
+    setArrayList: setEndpoints,
+    filteredArrayList: filteredEndpoints,
+    addFilterFunction,
+  } = useFilter<Endpoint>([]);
+
   const columns: ColumnsType<Endpoint> = [
     { title: "Name", dataIndex: "name", width: "15%" },
     { title: "Container", dataIndex: "container", width: "15%" },
@@ -44,7 +52,16 @@ const Endpoints: React.FC<RouteComponentProps> = ({ history }) => {
 
   useEffect(() => {
     fetch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const searchFilterFunction = (filterText: string) => {
+    addFilterFunction("endpointName", (endpoints) =>
+      endpoints.filter((endpoint) =>
+        endpoint.name.toUpperCase().includes(filterText.toUpperCase())
+      )
+    );
+  };
 
   return (
     <div className="endpoints">
@@ -57,10 +74,18 @@ const Endpoints: React.FC<RouteComponentProps> = ({ history }) => {
           </Button>,
         ]}
       />
+      <Row gutter={8}>
+        <Col lg={8} xs={16}>
+          <SearchFilter
+            filterFunction={searchFilterFunction}
+            label="Search by Name"
+          />
+        </Col>
+      </Row>
       <Table
         rowKey="id"
         columns={columns}
-        dataSource={endpoints}
+        dataSource={filteredEndpoints}
         loading={loading}
       />
     </div>

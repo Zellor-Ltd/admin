@@ -1,6 +1,7 @@
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { Button, PageHeader, Popconfirm, Table } from "antd";
+import { Button, Col, PageHeader, Popconfirm, Row, Table } from "antd";
 import { ColumnsType } from "antd/lib/table";
+import { SearchFilter } from "components/SearchFilter";
 import useFilter from "hooks/useFilter";
 import { useRequest } from "hooks/useRequest";
 import { PromoDisplay } from "interfaces/PromoDisplay";
@@ -20,6 +21,7 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ history }) => {
   const {
     setArrayList: setPromoDisplays,
     filteredArrayList: filteredPromoDisplays,
+    addFilterFunction,
   } = useFilter<PromoDisplay>([]);
 
   const getResources = async () => {
@@ -97,6 +99,14 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ history }) => {
     },
   ];
 
+  const searchFilterFunction = (filterText: string) => {
+    addFilterFunction("promoId", (promoDisplays) =>
+      promoDisplays.filter((promoDisplay) =>
+        promoDisplay.id.toUpperCase().includes(filterText.toUpperCase())
+      )
+    );
+  };
+
   return (
     <div>
       <PageHeader
@@ -108,6 +118,14 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ history }) => {
           </Button>,
         ]}
       />
+      <Row gutter={8}>
+        <Col lg={8} xs={16}>
+          <SearchFilter
+            filterFunction={searchFilterFunction}
+            label="Search by ID"
+          />
+        </Col>
+      </Row>
       <Table
         rowKey="id"
         columns={columns}

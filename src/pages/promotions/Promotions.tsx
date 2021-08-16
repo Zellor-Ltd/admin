@@ -3,8 +3,17 @@ import {
   DeleteOutlined,
   EditOutlined,
 } from "@ant-design/icons";
-import { Button, DatePicker, PageHeader, Popconfirm, Table } from "antd";
+import {
+  Button,
+  Col,
+  DatePicker,
+  PageHeader,
+  Popconfirm,
+  Row,
+  Table,
+} from "antd";
 import { ColumnsType } from "antd/lib/table";
+import { SearchFilter } from "components/SearchFilter";
 import useFilter from "hooks/useFilter";
 import { useRequest } from "hooks/useRequest";
 import { Promotion, PromotionAndStatusList } from "interfaces/Promotion";
@@ -51,7 +60,9 @@ const Promotions: React.FC<RouteComponentProps> = ({ history }) => {
       title: "Promo ID",
       dataIndex: "id",
       width: "10%",
-      align: "left",
+      render: (value: string, record: Promotion) => (
+        <Link to={{ pathname: `promotion`, state: record }}>{value}</Link>
+      ),
     },
     {
       title: "Brand",
@@ -137,6 +148,14 @@ const Promotions: React.FC<RouteComponentProps> = ({ history }) => {
     getResources();
   }, [getResources]);
 
+  const searchFilterFunction = (filterText: string) => {
+    addFilterFunction("promoId", (promotions) =>
+      promotions.filter((promotion) =>
+        promotion.id.toUpperCase().includes(filterText.toUpperCase())
+      )
+    );
+  };
+
   return (
     <div className="promotions">
       <PageHeader
@@ -148,6 +167,14 @@ const Promotions: React.FC<RouteComponentProps> = ({ history }) => {
           </Button>,
         ]}
       />
+      <Row gutter={8}>
+        <Col lg={8} xs={16}>
+          <SearchFilter
+            filterFunction={searchFilterFunction}
+            label="Search by ID"
+          />
+        </Col>
+      </Row>
       <Table
         rowKey="id"
         columns={columns}
