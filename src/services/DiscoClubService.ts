@@ -201,6 +201,8 @@ export const fetchDdTemplates = () => instance.get("Wi/Ep/ListDdTemplate");
 
 export const fetchPromoDisplays = () => instance.get("Wi/Ep/ListPromoDisplay");
 
+export const fetchInterests = () => instance.get("Wi/Ep/ListInterest");
+
 export const saveVideoFeed = (params: FeedItem) => {
   if (params.id) {
     return instance.put("Disco/Feed/Update", params);
@@ -406,3 +408,7 @@ export const updateMultipleUsersFeed = (params: any) =>
     query: {},
     feeds: params,
   });
+
+export const saveInterests = (params: any) => {
+  return instance.put("Disco/Fan/UpdateInterests", params);
+};

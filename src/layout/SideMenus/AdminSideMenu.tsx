@@ -89,6 +89,9 @@ const AdminSideMenu = () => {
         <Menu.Item key="categories" icon={<SwitcherOutlined />}>
           <Link to="/categories">Categories</Link>
         </Menu.Item>
+        <Menu.Item key="interests" icon={<SwitcherOutlined />}>
+          <Link to="/interests">Interests</Link>
+        </Menu.Item>
         <Menu.Item key="promo-codes" icon={<SwitcherOutlined />}>
           <Link to="/promo-codes">Promo Codes</Link>
         </Menu.Item>
