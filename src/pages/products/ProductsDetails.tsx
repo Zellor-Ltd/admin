@@ -280,77 +280,6 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
               </Col>
               <Col lg={12} xs={24}>
                 <Row gutter={8}>
-                  <Col lg={12} xs={24}>
-                    <Form.Item name="currencyIsoCode" label="Currency">
-                      <Select placeholder="Please select a currency">
-                        {currency.map((curr: any) => (
-                          <Select.Option key={curr.value} value={curr.value}>
-                            {curr.name}
-                          </Select.Option>
-                        ))}
-                      </Select>
-                    </Form.Item>
-                  </Col>
-                  <Col lg={12} xs={24}>
-                    <Form.Item
-                      name="maxDiscoDollars"
-                      label="Max Discount in DD"
-                      dependencies={["originalPrice"]}
-                      rules={[
-                        {
-                          required: true,
-                          message: "Max Discount is required.",
-                        },
-                        ({ getFieldValue }) => ({
-                          validator(_, maxDiscount) {
-                            // 3x the price
-                            const maxPossibleDiscount =
-                              Math.round(
-                                Number(getFieldValue("originalPrice")) * 3 * 100
-                              ) / 100;
-                            if (
-                              maxDiscount &&
-                              maxDiscount > maxPossibleDiscount
-                            ) {
-                              if (!maxDiscountAlert) {
-                                setTimeout(
-                                  () =>
-                                    alert(
-                                      `The largest amount of DD you can apply for this price is ${maxPossibleDiscount}.`
-                                    ),
-                                  100
-                                );
-                              }
-                              setMaxDiscountAlert(true);
-                              return Promise.reject(
-                                new Error("Max discount not allowed.")
-                              );
-                            }
-                            setMaxDiscountAlert(false);
-                            return Promise.resolve();
-                          },
-                        }),
-                      ]}
-                    >
-                      <InputNumber />
-                    </Form.Item>
-                  </Col>
-                  <Col lg={12} xs={24}>
-                    <Form.Item
-                      name="originalPrice"
-                      label="Price"
-                      rules={[{ required: true }]}
-                    >
-                      <InputNumber
-                        formatter={(value) =>
-                          `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-                        }
-                        parser={(value = "") =>
-                          value.replace(/\$\s?|(,*)/g, "")
-                        }
-                      />
-                    </Form.Item>
-                  </Col>
                   <Col lg={24} xs={24}>
                     <Form.Item name="tagText" label="Tag Text">
                       <Input />
@@ -372,92 +301,6 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                       getValueProps={formatMoment}
                     >
                       <DatePicker format="DD/MM/YYYY" />
-                    </Form.Item>
-                  </Col>
-                  <Col lg={8} xs={24}>
-                    <Form.Item name="checkout" label="Checkout">
-                      <Radio.Group
-                        buttonStyle="solid"
-                        onChange={handleCheckoutTypeChange}
-                      >
-                        <Radio.Button value="disco">Disco</Radio.Button>
-                        <Radio.Button value="external">External</Radio.Button>
-                      </Radio.Group>
-                    </Form.Item>
-                  </Col>
-                  <Col lg={8} xs={24}>
-                    <Form.Item
-                      shouldUpdate={(prevValues, curValues) =>
-                        prevValues.checkout !== curValues.checkout
-                      }
-                    >
-                      {({ getFieldValue }) => (
-                        <Form.Item
-                          name="requireMobilePurchaseStatus"
-                          label="Log Completed Purchases?"
-                          valuePropName="checked"
-                        >
-                          <Switch
-                            disabled={getFieldValue("checkout") === "disco"}
-                          />
-                        </Form.Item>
-                      )}
-                    </Form.Item>
-                  </Col>
-                  <Col lg={8} xs={24}>
-                    <Form.Item
-                      name="displayDiscountPage"
-                      label="Allow Use of D-Dollars?"
-                      valuePropName="checked"
-                    >
-                      <Switch />
-                    </Form.Item>
-                  </Col>
-                  <Col lg={8} xs={24}>
-                    <Form.Item name="weight" label="Weight">
-                      <Input type="number" placeholder="Weight in Kg" />
-                    </Form.Item>
-                  </Col>
-                  <Col lg={16} xs={24}>
-                    <Form.Item
-                      shouldUpdate={(prevValues, curValues) =>
-                        prevValues.checkout !== curValues.checkout
-                      }
-                    >
-                      {({ getFieldValue }) =>
-                        getFieldValue("checkout") === "external" && (
-                          <>
-                            <Col lg={24} xs={24}>
-                              <Form.Item
-                                name="externalCheckout"
-                                label="External Checkout URL"
-                                rules={[{ required: true }]}
-                                style={{ marginBottom: "0px" }}
-                              >
-                                <Input />
-                              </Form.Item>
-                            </Col>
-                            <Col lg={24} xs={24}>
-                              <Form.Item
-                                name="confirmationUrl"
-                                label="Payment Confirmation URL"
-                                rules={[{ required: true }]}
-                              >
-                                <Input />
-                              </Form.Item>
-                            </Col>
-                            <Col lg={24} xs={24}>
-                              <Form.Item
-                                name="cancelationUrl"
-                                label="Payment Cancelation URL"
-                                rules={[{ required: true }]}
-                              >
-                                <Input />
-                              </Form.Item>
-                            </Col>
-                          </>
-                        )
-                      }
                     </Form.Item>
                   </Col>
                 </Row>
@@ -522,6 +365,165 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                       Prefer not to say
                     </Select.Option>
                   </Select>
+                </Form.Item>
+              </Col>
+            </Row>
+          </Tabs.TabPane>
+          <Tabs.TabPane tab="Checkout" key="Checkout">
+            <Row gutter={8}>
+              <Col lg={8} xs={24}>
+                <Form.Item name="currencyIsoCode" label="Currency">
+                  <Select placeholder="Please select a currency">
+                    {currency.map((curr: any) => (
+                      <Select.Option key={curr.value} value={curr.value}>
+                        {curr.name}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col lg={8} xs={24}>
+                <Form.Item
+                  name="originalPrice"
+                  label="Price"
+                  rules={[{ required: true }]}
+                >
+                  <InputNumber />
+                </Form.Item>
+              </Col>
+              <Col lg={8} xs={24}>
+                <Form.Item
+                  name="maxDiscoDollars"
+                  label="Max Discount in DD"
+                  dependencies={["originalPrice"]}
+                  rules={[
+                    {
+                      required: true,
+                      message: "Max Discount is required.",
+                    },
+                    ({ getFieldValue }) => ({
+                      validator(_, maxDiscount) {
+                        // 3x the price
+                        const maxPossibleDiscount = Math.trunc(
+                          Number(getFieldValue("originalPrice")) * 3
+                        );
+                        if (maxDiscount && maxDiscount > maxPossibleDiscount) {
+                          if (!maxDiscountAlert) {
+                            setTimeout(
+                              () =>
+                                alert(
+                                  `The largest amount of DD you can apply for this price is ${maxPossibleDiscount}.`
+                                ),
+                              100
+                            );
+                          }
+                          setMaxDiscountAlert(true);
+                          return Promise.reject(
+                            new Error("Max discount not allowed.")
+                          );
+                        }
+                        setMaxDiscountAlert(false);
+                        return Promise.resolve();
+                      },
+                    }),
+                  ]}
+                >
+                  <InputNumber
+                    parser={(value) => (value || "").replace(/-/g, "")}
+                    precision={0}
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row>
+              <Col lg={8} xs={24}>
+                <Form.Item name="checkout" label="Checkout">
+                  <Radio.Group
+                    buttonStyle="solid"
+                    onChange={handleCheckoutTypeChange}
+                  >
+                    <Radio.Button value="disco">Disco</Radio.Button>
+                    <Radio.Button value="external">External</Radio.Button>
+                  </Radio.Group>
+                </Form.Item>
+              </Col>
+              <Col lg={8} xs={24}>
+                <Form.Item
+                  shouldUpdate={(prevValues, curValues) =>
+                    prevValues.checkout !== curValues.checkout
+                  }
+                >
+                  {({ getFieldValue }) => (
+                    <Form.Item
+                      name="requireMobilePurchaseStatus"
+                      label="Log Completed Purchases?"
+                      valuePropName="checked"
+                    >
+                      <Switch
+                        disabled={getFieldValue("checkout") === "disco"}
+                      />
+                    </Form.Item>
+                  )}
+                </Form.Item>
+              </Col>
+              <Col lg={8} xs={24}>
+                <Form.Item
+                  name="displayDiscountPage"
+                  label="Allow Use of D-Dollars?"
+                  valuePropName="checked"
+                >
+                  <Switch />
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row>
+              <Col lg={8} xs={24}>
+                <Form.Item name="weight" label="Weight">
+                  <Input type="number" placeholder="Weight in Kg" />
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row>
+              <Col lg={16} xs={24}>
+                <Form.Item
+                  shouldUpdate={(prevValues, curValues) =>
+                    prevValues.checkout !== curValues.checkout
+                  }
+                >
+                  {({ getFieldValue }) =>
+                    getFieldValue("checkout") === "external" && (
+                      <>
+                        <Col lg={24} xs={24}>
+                          <Form.Item
+                            name="externalCheckout"
+                            label="External Checkout URL"
+                            rules={[{ required: true }]}
+                            style={{ marginBottom: "0px" }}
+                          >
+                            <Input />
+                          </Form.Item>
+                        </Col>
+                        <Col lg={24} xs={24}>
+                          <Form.Item
+                            name="confirmationUrl"
+                            label="Payment Confirmation URL"
+                            rules={[{ required: true }]}
+                          >
+                            <Input />
+                          </Form.Item>
+                        </Col>
+                        <Col lg={24} xs={24}>
+                          <Form.Item
+                            name="cancelationUrl"
+                            label="Payment Cancelation URL"
+                            rules={[{ required: true }]}
+                          >
+                            <Input />
+                          </Form.Item>
+                        </Col>
+                      </>
+                    )
+                  }
                 </Form.Item>
               </Col>
             </Row>
