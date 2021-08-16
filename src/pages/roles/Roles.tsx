@@ -1,4 +1,4 @@
-import { Button, PageHeader, Table } from "antd";
+import { Button, Col, PageHeader, Row, Table } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import { Role } from "interfaces/Role";
 import { useEffect, useState } from "react";
@@ -6,10 +6,17 @@ import { RouteComponentProps } from "react-router";
 import { Link } from "react-router-dom";
 import { fetchProfiles } from "services/DiscoClubService";
 import { EditOutlined } from "@ant-design/icons";
+import useFilter from "hooks/useFilter";
+import { SearchFilter } from "components/SearchFilter";
 
 const Roles: React.FC<RouteComponentProps> = ({ history }) => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [roles, setRoles] = useState<Role[]>([]);
+
+  const {
+    setArrayList: setRoles,
+    filteredArrayList: filteredRoles,
+    addFilterFunction,
+  } = useFilter<Role>([]);
 
   async function fetch() {
     setLoading(true);
@@ -24,6 +31,7 @@ const Roles: React.FC<RouteComponentProps> = ({ history }) => {
 
   useEffect(() => {
     fetch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const columns: ColumnsType<Role> = [
@@ -44,6 +52,14 @@ const Roles: React.FC<RouteComponentProps> = ({ history }) => {
     },
   ];
 
+  const searchFilterFunction = (filterText: string) => {
+    addFilterFunction("roleName", (roles) =>
+      roles.filter((role) =>
+        role.name.toUpperCase().includes(filterText.toUpperCase())
+      )
+    );
+  };
+
   return (
     <div className="roles">
       <PageHeader
@@ -55,10 +71,18 @@ const Roles: React.FC<RouteComponentProps> = ({ history }) => {
           </Button>,
         ]}
       />
+      <Row gutter={8}>
+        <Col lg={8} xs={16}>
+          <SearchFilter
+            filterFunction={searchFilterFunction}
+            label="Search by Name"
+          />
+        </Col>
+      </Row>
       <Table
         rowKey="id"
         columns={columns}
-        dataSource={roles}
+        dataSource={filteredRoles}
         loading={loading}
       />
     </div>

@@ -1,6 +1,8 @@
 import { EyeOutlined, DeleteOutlined } from "@ant-design/icons";
-import { Button, PageHeader, Popconfirm, Table } from "antd";
+import { Button, Col, PageHeader, Popconfirm, Row, Table } from "antd";
 import { ColumnsType } from "antd/lib/table";
+import { SearchFilter } from "components/SearchFilter";
+import useFilter from "hooks/useFilter";
 import { Tag } from "interfaces/Tag";
 import { useEffect, useState } from "react";
 import { RouteComponentProps } from "react-router";
@@ -9,7 +11,12 @@ import { deleteTag, fetchTags } from "services/DiscoClubService";
 
 const Tags: React.FC<RouteComponentProps> = ({ history }) => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [tags, setTags] = useState<Tag[]>();
+
+  const {
+    setArrayList: setTags,
+    filteredArrayList: filteredTags,
+    addFilterFunction,
+  } = useFilter<Tag>([]);
 
   const fetchVideos = async () => {
     setLoading(true);
@@ -20,6 +27,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history }) => {
 
   useEffect(() => {
     fetchVideos();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const deleteItem = async (id: string) => {
@@ -68,6 +76,14 @@ const Tags: React.FC<RouteComponentProps> = ({ history }) => {
     },
   ];
 
+  const searchFilterFunction = (filterText: string) => {
+    addFilterFunction("tagName", (tags) =>
+      tags.filter((tag) =>
+        tag.tagName.toUpperCase().includes(filterText.toUpperCase())
+      )
+    );
+  };
+
   return (
     <div className="tags">
       <PageHeader
@@ -79,10 +95,18 @@ const Tags: React.FC<RouteComponentProps> = ({ history }) => {
           </Button>,
         ]}
       />
+      <Row gutter={8}>
+        <Col lg={8} xs={16}>
+          <SearchFilter
+            filterFunction={searchFilterFunction}
+            label="Search by Name"
+          />
+        </Col>
+      </Row>
       <Table
         rowKey="id"
         columns={columns}
-        dataSource={tags}
+        dataSource={filteredTags}
         loading={loading}
       />
     </div>

@@ -1,4 +1,4 @@
-import { Button, PageHeader, Popconfirm, Table, Tag } from "antd";
+import { Button, Col, PageHeader, Popconfirm, Row, Table, Tag } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import { Creator } from "interfaces/Creator";
 import { useEffect, useState } from "react";
@@ -15,6 +15,8 @@ import {
   CloseOutlined,
   DeleteOutlined,
 } from "@ant-design/icons";
+import useFilter from "hooks/useFilter";
+import { SearchFilter } from "components/SearchFilter";
 
 const tagColorByStatus: any = {
   approved: "green",
@@ -25,7 +27,12 @@ const tagColorByStatus: any = {
 const Creators: React.FC<RouteComponentProps> = (props) => {
   const { history } = props;
   const [loading, setLoading] = useState<boolean>(false);
-  const [creators, setCreators] = useState<Creator[]>([]);
+
+  const {
+    setArrayList: setCreators,
+    filteredArrayList: filteredCreators,
+    addFilterFunction,
+  } = useFilter<Creator>([]);
 
   const columns: ColumnsType<Creator> = [
     { title: "Name", dataIndex: "firstName", width: "15%" },
@@ -102,7 +109,18 @@ const Creators: React.FC<RouteComponentProps> = (props) => {
 
   useEffect(() => {
     fetch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const searchFilterFunction = (filterText: string) => {
+    addFilterFunction("creatorFirstName", (creators) =>
+      creators.filter((creator) =>
+        (creator.firstName || "")
+          .toUpperCase()
+          .includes(filterText.toUpperCase())
+      )
+    );
+  };
 
   return (
     <div className="creators">
@@ -115,10 +133,18 @@ const Creators: React.FC<RouteComponentProps> = (props) => {
           </Button>,
         ]}
       />
+      <Row gutter={8}>
+        <Col lg={8} xs={16}>
+          <SearchFilter
+            filterFunction={searchFilterFunction}
+            label="Search by First Name"
+          />
+        </Col>
+      </Row>
       <Table
         rowKey="id"
         columns={columns}
-        dataSource={creators}
+        dataSource={filteredCreators}
         loading={loading}
       />
     </div>

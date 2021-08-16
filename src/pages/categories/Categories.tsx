@@ -1,27 +1,34 @@
 import {
+  DeleteOutlined,
+  EditOutlined,
+  SearchOutlined,
+} from "@ant-design/icons";
+import {
   Button,
+  Dropdown,
+  Image as AntImage,
+  Input,
+  Menu,
   PageHeader,
   Popconfirm,
+  Space,
   Table,
-  Image as AntImage,
   Tabs,
-  Menu,
-  Dropdown,
 } from "antd";
 import { ColumnsType } from "antd/lib/table";
-import {
-  ProductCategory,
-  AllCategories,
-  AllCategoriesAPI,
-} from "interfaces/Category";
-import { RouteComponentProps } from "react-router";
-import { Link } from "react-router-dom";
-import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
-import { useEffect, useState } from "react";
-import { Image } from "interfaces/Image";
-import { productCategoriesAPI } from "services/DiscoClubService";
 import { categoriesSettings } from "helpers/utils";
 import useAllCategories from "hooks/useAllCategories";
+import {
+  AllCategories,
+  AllCategoriesAPI,
+  ProductCategory,
+} from "interfaces/Category";
+import { Image } from "interfaces/Image";
+import { useEffect, useRef, useState } from "react";
+import Highlighter from "react-highlight-words";
+import { RouteComponentProps } from "react-router";
+import { Link } from "react-router-dom";
+import { productCategoriesAPI } from "services/DiscoClubService";
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 
@@ -31,6 +38,10 @@ const Categories: React.FC<RouteComponentProps> = () => {
     setLoading,
   });
   const [selectedTab, setSelectedTab] = useState<string>("Super Category");
+
+  const [searchText, setSearchText] = useState<string>("");
+  const [searchedColumn, setSearchedColumn] = useState<string>("");
+  const searchInput = useRef<Input>(null);
 
   useEffect(() => {
     fetchAllCategories();
@@ -55,10 +66,108 @@ const Categories: React.FC<RouteComponentProps> = () => {
     }
   };
 
+  const handleSearch = (selectedKeys: any, confirm: any, dataIndex: any) => {
+    confirm();
+    setSearchText(selectedKeys[0]);
+    setSearchedColumn(dataIndex);
+  };
+
+  const handleReset = (clearFilters: any) => {
+    clearFilters();
+    setSearchText("");
+  };
+
+  const getColumnSearchProps = (dataIndex: string) => ({
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+    }: {
+      setSelectedKeys: any;
+      selectedKeys: any;
+      confirm: any;
+      clearFilters: any;
+    }) => (
+      <div style={{ padding: 8 }}>
+        <Input
+          ref={searchInput}
+          placeholder={`Search ${dataIndex}`}
+          value={selectedKeys[0]}
+          onChange={(e) =>
+            setSelectedKeys(e.target.value ? [e.target.value] : [])
+          }
+          onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+          style={{ marginBottom: 8, display: "block" }}
+        />
+        <Space>
+          <Button
+            type="primary"
+            onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+            icon={<SearchOutlined />}
+            size="small"
+            style={{ width: 90 }}
+          >
+            Search
+          </Button>
+          <Button
+            onClick={() => handleReset(clearFilters)}
+            size="small"
+            style={{ width: 90 }}
+          >
+            Reset
+          </Button>
+          <Button
+            type="link"
+            size="small"
+            onClick={() => {
+              confirm({ closeDropdown: false });
+              setSearchText(selectedKeys[0]);
+              setSearchedColumn(dataIndex);
+            }}
+          >
+            Filter
+          </Button>
+        </Space>
+      </div>
+    ),
+    filterIcon: (filtered: any) => (
+      <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
+    ),
+    onFilter: (value: any, record: any) =>
+      record[dataIndex]
+        ? record[dataIndex]
+            .toString()
+            .toLowerCase()
+            .includes(value.toLowerCase())
+        : "",
+    onFilterDropdownVisibleChange: (visible: any) => {
+      if (visible) {
+        setTimeout(() => searchInput.current!.select(), 100);
+      }
+    },
+    render: (text: any) =>
+      searchedColumn === dataIndex ? (
+        <Highlighter
+          highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
+          searchWords={[searchText]}
+          autoEscape
+          textToHighlight={text ? text.toString() : ""}
+        />
+      ) : (
+        text
+      ),
+  });
+
   const columns: ColumnsType<ProductCategory> = [
     {
       title: "Name",
       width: "15%",
+      ...getColumnSearchProps(
+        categoriesFields[
+          categoriesKeys.indexOf(selectedTab)
+        ] as keyof ProductCategory
+      ),
       render: (_, record) => (
         <>
           {
