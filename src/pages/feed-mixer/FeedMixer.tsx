@@ -231,7 +231,7 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
       width: "5%",
       align: "right",
       render: (_, record, index) =>
-        !lockedFeed ? (
+        !lockedFeed || selectedTab === "User Feed" ? (
           <Button
             onClick={() => actionObj.fn(record, index)}
             type="link"
@@ -328,22 +328,13 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
       {selectedFan && (
         <Tabs defaultActiveKey="User Feed" onChange={handleTabChange}>
           <Tabs.TabPane tab={displayFeedName} key="User Feed">
-            {!lockedFeed ? (
-              <SortableTable
-                rowKey="id"
-                columns={columns}
-                dataSource={userFeed}
-                setDataSource={setUserFeed}
-                loading={loading}
-              />
-            ) : (
-              <Table
-                rowKey="id"
-                columns={columns}
-                dataSource={userFeed}
-                loading={loading}
-              />
-            )}
+            <SortableTable
+              rowKey="id"
+              columns={columns}
+              dataSource={userFeed}
+              setDataSource={setUserFeed}
+              loading={loading}
+            />
           </Tabs.TabPane>
           <Tabs.TabPane tab="Template Feed" key="Template Feed">
             <Table
