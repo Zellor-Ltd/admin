@@ -1,9 +1,4 @@
-import {
-  MinusOutlined,
-  PlusOutlined,
-  SearchOutlined,
-  StopOutlined,
-} from "@ant-design/icons";
+import { MinusOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import {
   Button,
   Col,
@@ -230,20 +225,15 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
       key: "action",
       width: "5%",
       align: "right",
-      render: (_, record, index) =>
-        !lockedFeed || selectedTab === "User Feed" ? (
-          <Button
-            onClick={() => actionObj.fn(record, index)}
-            type="link"
-            style={{ padding: 0, margin: "0 6px" }}
-          >
-            {actionObj.icon}
-          </Button>
-        ) : (
-          <StopOutlined
-            style={{ color: "rgba(0, 0, 0, 0.25)", margin: "9px" }}
-          />
-        ),
+      render: (_, record, index) => (
+        <Button
+          onClick={() => actionObj.fn(record, index)}
+          type="link"
+          style={{ padding: 0, margin: "0 6px" }}
+        >
+          {actionObj.icon}
+        </Button>
+      ),
     },
   ];
 
