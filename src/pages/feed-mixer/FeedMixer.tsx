@@ -1,9 +1,4 @@
-import {
-  MinusOutlined,
-  PlusOutlined,
-  SearchOutlined,
-  StopOutlined,
-} from "@ant-design/icons";
+import { MinusOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import {
   Button,
   Col,
@@ -230,20 +225,15 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
       key: "action",
       width: "5%",
       align: "right",
-      render: (_, record, index) =>
-        !lockedFeed ? (
-          <Button
-            onClick={() => actionObj.fn(record, index)}
-            type="link"
-            style={{ padding: 0, margin: "0 6px" }}
-          >
-            {actionObj.icon}
-          </Button>
-        ) : (
-          <StopOutlined
-            style={{ color: "rgba(0, 0, 0, 0.25)", margin: "9px" }}
-          />
-        ),
+      render: (_, record, index) => (
+        <Button
+          onClick={() => actionObj.fn(record, index)}
+          type="link"
+          style={{ padding: 0, margin: "0 6px" }}
+        >
+          {actionObj.icon}
+        </Button>
+      ),
     },
   ];
 
@@ -328,22 +318,13 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
       {selectedFan && (
         <Tabs defaultActiveKey="User Feed" onChange={handleTabChange}>
           <Tabs.TabPane tab={displayFeedName} key="User Feed">
-            {!lockedFeed ? (
-              <SortableTable
-                rowKey="id"
-                columns={columns}
-                dataSource={userFeed}
-                setDataSource={setUserFeed}
-                loading={loading}
-              />
-            ) : (
-              <Table
-                rowKey="id"
-                columns={columns}
-                dataSource={userFeed}
-                loading={loading}
-              />
-            )}
+            <SortableTable
+              rowKey="id"
+              columns={columns}
+              dataSource={userFeed}
+              setDataSource={setUserFeed}
+              loading={loading}
+            />
           </Tabs.TabPane>
           <Tabs.TabPane tab="Template Feed" key="Template Feed">
             <Table
