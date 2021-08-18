@@ -1,26 +1,27 @@
+import { message } from "antd";
 import axios, { AxiosRequestConfig } from "axios";
+import snakeToCamelCase from "helpers/snakeToCamelCase";
 // import snakeToCamelCase from "helpers/snakeToCamelCase";
 import { Brand } from "interfaces/Brand";
-import { Creator } from "interfaces/Creator";
-import { Endpoint } from "interfaces/Endpoint";
-import { Function } from "interfaces/Function";
-import { FeedItem } from "interfaces/FeedItem";
-import { Login } from "interfaces/Login";
-import { Product } from "interfaces/Product";
-import { Role } from "interfaces/Role";
-import { Tag } from "interfaces/Tag";
-import { User } from "interfaces/User";
-import { Privilege } from "interfaces/Privilege";
-import { PromoCode } from "interfaces/PromoCode";
 import {
   AllCategoriesAPI,
   Category,
   ProductCategory,
 } from "interfaces/Category";
-import { message } from "antd";
+import { Creator } from "interfaces/Creator";
 import { DdTemplate } from "interfaces/DdTemplate";
+import { Endpoint } from "interfaces/Endpoint";
+import { FanGroup } from "interfaces/FanGroup";
+import { FeedItem } from "interfaces/FeedItem";
+import { Function } from "interfaces/Function";
+import { Login } from "interfaces/Login";
+import { Privilege } from "interfaces/Privilege";
+import { Product } from "interfaces/Product";
+import { PromoCode } from "interfaces/PromoCode";
 import { PromoDisplay } from "interfaces/PromoDisplay";
-import snakeToCamelCase from "helpers/snakeToCamelCase";
+import { Role } from "interfaces/Role";
+import { Tag } from "interfaces/Tag";
+import { User } from "interfaces/User";
 
 export const instance = axios.create({
   baseURL: process.env.REACT_APP_HOST_ENDPOINT,
@@ -203,6 +204,8 @@ export const fetchPromoDisplays = () => instance.get("Wi/Ep/ListPromoDisplay");
 
 export const fetchInterests = () => instance.get("Wi/Ep/ListInterest");
 
+export const fetchFanGroups = () => instance.get("Wi/Ep/ListFanGroup");
+
 export const saveVideoFeed = (params: FeedItem) => {
   if (params.id) {
     return instance.put("Disco/Feed/Update", params);
@@ -342,6 +345,14 @@ export const savePromoDisplay = (params: PromoDisplay) => {
   }
 };
 
+export const saveFanGroup = (params: FanGroup) => {
+  if (params.id) {
+    return instance.post("Wi/Ep/UpdateFanGroup", params);
+  } else {
+    return instance.put("Wi/EP/AddFanGroup", params);
+  }
+};
+
 export const deletePrivileges = (data: Privilege) =>
   instance.delete("Wi/Ep/RemovePrivilege", { data });
 
@@ -377,6 +388,9 @@ export const deleteDdTemplate = (data: IDelete) =>
 
 export const deletePromoDisplay = (data: IDelete) =>
   instance.delete(`Wi/Ep/RemovePromoDisplay`, { data });
+
+export const deleteFanGroup = (data: IDelete) =>
+  instance.delete(`Wi/Ep/RemoveFanGroup`, { data });
 
 export const loginService = (login: Login) =>
   instance.put("Auth/GetApiToken", login);

@@ -42,6 +42,8 @@ import PromoDisplay from "pages/promo-display/PromoDisplay";
 import PromoDisplayDetail from "pages/promo-display/PromoDisplayDetail";
 import Dashboard from "pages/dashboard/Dashboard";
 import Interests from "pages/interests/Interests";
+import FanGroups from "pages/fan-groups/FanGroups";
+import FanGroupDetail from "pages/fan-groups/FanGroupDetail";
 import { Redirect } from "react-router";
 
 function AdminRoutes() {
@@ -235,6 +237,16 @@ function AdminRoutes() {
       <AuthRoute
         path="/interests"
         component={Interests}
+        layout={AuthenticatedLayout}
+      />
+      <AuthRoute
+        path="/fans-group"
+        component={FanGroupDetail}
+        layout={AuthenticatedLayout}
+      />
+      <AuthRoute
+        path="/fan-groups"
+        component={FanGroups}
         layout={AuthenticatedLayout}
       />
     </Switch>
