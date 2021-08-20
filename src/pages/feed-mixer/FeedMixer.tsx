@@ -273,7 +273,10 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
 
   return (
     <div className="feed-mixer">
-      <PageHeader title="Feed Mixer" />
+      <PageHeader
+        title="Feed Mixer"
+        subTitle="Define feed for users. The feed will be played in the reverse order to what you see here."
+      />
       <Row gutter={8} style={{ marginBottom: "20px" }}>
         <Col>
           <SelectFanQuery
