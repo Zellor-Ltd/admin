@@ -114,7 +114,16 @@ const APITestModal: React.FC<APITestModalProps<any>> = ({
           ))}
         </Col>
         <Col xs={12}>
-          <h3>Response</h3>
+          <Row justify="space-between">
+            <Col>
+              <h3>Response</h3>
+            </Col>
+            <Col>
+              {responseBody && (
+                <h4 style={{ color: "grey" }}>Use Ctrl + F to search.</h4>
+              )}
+            </Col>
+          </Row>
           <pre>{responseBody}</pre>
         </Col>
       </Row>
