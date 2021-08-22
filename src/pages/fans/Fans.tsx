@@ -1,4 +1,8 @@
-import { EditOutlined, SearchOutlined } from "@ant-design/icons";
+import {
+  EditOutlined,
+  SearchOutlined,
+  SettingOutlined,
+} from "@ant-design/icons";
 import {
   Button,
   Col,
@@ -15,6 +19,7 @@ import React, { useEffect, useState } from "react";
 import { RouteComponentProps } from "react-router";
 import { Link } from "react-router-dom";
 import { fetchFans } from "services/DiscoClubService";
+import FanAPITestModal from "./FanAPITestModal";
 
 const tagColorByPermission: any = {
   Admin: "green",
@@ -26,6 +31,8 @@ const Fans: React.FC<RouteComponentProps> = ({ history }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [fans, setFans] = useState<Fan[]>([]);
   const [filterText, setFilterText] = useState("");
+
+  const [fanAPITest, setFanAPITest] = useState<Fan | null>(null);
 
   async function fetch() {
     setLoading(true);
@@ -79,6 +86,13 @@ const Fans: React.FC<RouteComponentProps> = ({ history }) => {
           <Link to={{ pathname: `/fan`, state: record }}>
             <EditOutlined />
           </Link>
+          <Button
+            onClick={() => setFanAPITest(record)}
+            type="link"
+            style={{ padding: 0, margin: "6px 0 6px 6px" }}
+          >
+            <SettingOutlined />
+          </Button>
           {/* <Popconfirm
             title="Are you sure？"
             okText="Yes"
@@ -114,6 +128,10 @@ const Fans: React.FC<RouteComponentProps> = ({ history }) => {
           </Col>
         </Row>
       </div>
+      <FanAPITestModal
+        selectedRecord={fanAPITest}
+        setSelectedRecord={setFanAPITest}
+      />
       <Table
         rowKey="id"
         columns={columns}
