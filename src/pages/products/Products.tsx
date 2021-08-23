@@ -1,5 +1,8 @@
-import { SettingOutlined } from "@ant-design/icons";
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  SettingOutlined,
+} from "@ant-design/icons";
 import { Button, Checkbox, Col, PageHeader, Popconfirm, Row, Tag } from "antd";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
 import EditableTable, { EditableColumnType } from "components/EditableTable";
@@ -250,8 +253,8 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
         />
       </Row>
       <ProductAPITestModal
-        selectedProduct={productAPITest}
-        setSelectedProduct={setProductAPITest}
+        selectedRecord={productAPITest}
+        setSelectedRecord={setProductAPITest}
       />
       <EditableTable
         rowKey="id"

@@ -426,3 +426,6 @@ export const updateMultipleUsersFeed = (params: any) =>
 export const saveInterests = (params: any) => {
   return instance.put("Disco/Fan/UpdateInterests", params);
 };
+
+export const fetchFanFeed = (userId: string) =>
+  instance.get(`Disco/Feed/GetOne/${userId}`);
