@@ -251,6 +251,11 @@ const FanDetail: React.FC<RouteComponentProps> = (props) => {
       >
         <Row gutter={8}>
           <Col lg={8} xs={24}>
+            <Form.Item label="_id" name="id">
+              <Input disabled />
+            </Form.Item>
+          </Col>
+          <Col lg={8} xs={24}>
             <Form.Item label="Name" name="userName">
               <Input />
             </Form.Item>

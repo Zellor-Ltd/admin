@@ -65,6 +65,14 @@ const Fans: React.FC<RouteComponentProps> = ({ history }) => {
   };
 
   const columns: ColumnsType<Fan> = [
+    {
+      title: "_id",
+      dataIndex: "id",
+      width: "15%",
+      render: (value: string, record) => (
+        <Link to={{ pathname: `/fan`, state: record }}>{value}</Link>
+      ),
+    },
     { title: "Name", dataIndex: "userName", width: "15%" },
     { title: "E-mail", dataIndex: "user", width: "15%" },
     {
