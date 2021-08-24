@@ -207,6 +207,18 @@ export const fetchInterests = () => instance.get("Wi/Ep/ListInterest");
 
 export const fetchFanGroups = () => instance.get("Wi/Ep/ListFanGroup");
 
+export const fetchWallets = (params: any) =>
+  new Promise((resolve) =>
+    resolve({
+      results: [
+        {
+          brand: { brandName: "Peelo" },
+          ddBalance: 130,
+        },
+      ],
+    })
+  );
+
 export const saveVideoFeed = (params: FeedItem) => {
   if (params.id) {
     return instance.put("Disco/Feed/Update", params);
