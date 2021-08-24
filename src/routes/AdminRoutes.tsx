@@ -44,6 +44,7 @@ import Dashboard from "pages/dashboard/Dashboard";
 import Interests from "pages/interests/Interests";
 import FanGroups from "pages/fan-groups/FanGroups";
 import FanGroupDetail from "pages/fan-groups/FanGroupDetail";
+import Wallets from "pages/wallets/Wallets";
 import { Redirect } from "react-router";
 
 function AdminRoutes() {
@@ -247,6 +248,11 @@ function AdminRoutes() {
       <AuthRoute
         path="/fan-groups"
         component={FanGroups}
+        layout={AuthenticatedLayout}
+      />
+      <AuthRoute
+        path="/wallets"
+        component={Wallets}
         layout={AuthenticatedLayout}
       />
     </Switch>
