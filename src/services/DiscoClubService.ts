@@ -1,7 +1,5 @@
 import { message } from "antd";
 import axios, { AxiosRequestConfig } from "axios";
-import snakeToCamelCase from "helpers/snakeToCamelCase";
-// import snakeToCamelCase from "helpers/snakeToCamelCase";
 import { Brand } from "interfaces/Brand";
 import {
   AllCategoriesAPI,
@@ -41,17 +39,17 @@ function reverseIdRecursively(obj: any) {
   }
 }
 
-// function replaceIdRecursively(obj: any) {
-//   for (let prop in obj) {
-//     if (prop === "_id") {
-//       obj["id"] = obj[prop];
-//       delete obj[prop];
-//     } else if (typeof obj[prop] === "object") {
-//       replaceIdRecursively(obj[prop]);
-//     }
-//   }
-//   return obj;
-// }
+function replaceIdRecursively(obj: any) {
+  for (let prop in obj) {
+    if (prop === "_id") {
+      obj["id"] = obj[prop];
+      delete obj[prop];
+    } else if (typeof obj[prop] === "object") {
+      replaceIdRecursively(obj[prop]);
+    }
+  }
+  return obj;
+}
 
 instance.interceptors.request.use((config: AxiosRequestConfig) => {
   const data = JSON.parse(JSON.stringify(config.data || {}));
@@ -85,7 +83,7 @@ instance.interceptors.response.use(
     } else if (success === false && !(results && !results.length)) {
       errorHandler(new Error("Request failed"), "Request failed.");
     }
-    return snakeToCamelCase(response.data);
+    return replaceIdRecursively(response.data);
   },
   (error) => {
     switch (error.response?.status) {
