@@ -1,24 +1,17 @@
-import {
-  EditOutlined,
-  SearchOutlined,
-  SettingOutlined,
-} from "@ant-design/icons";
-import {
-  Button,
-  Col,
-  Input,
-  PageHeader,
-  Row,
-  Table,
-  Tag,
-  Typography,
-} from "antd";
+import { EditOutlined, SettingOutlined } from "@ant-design/icons";
+import { Button, Col, PageHeader, Row, Table, Tag } from "antd";
 import { ColumnsType } from "antd/lib/table";
+import EditMultipleButton from "components/EditMultipleButton";
+import { SearchFilter } from "components/SearchFilter";
+import useFilter from "hooks/useFilter";
+import { useRequest } from "hooks/useRequest";
 import { Fan } from "interfaces/Fan";
+import { FanGroup } from "interfaces/FanGroup";
+import EditFanModal from "pages/fans/EditFanModal";
 import React, { useEffect, useState } from "react";
 import { RouteComponentProps } from "react-router";
 import { Link } from "react-router-dom";
-import { fetchFans } from "services/DiscoClubService";
+import { fetchFanGroups, fetchFans } from "services/DiscoClubService";
 import FanAPITestModal from "./FanAPITestModal";
 
 const tagColorByPermission: any = {
@@ -29,52 +22,58 @@ const tagColorByPermission: any = {
 
 const Fans: React.FC<RouteComponentProps> = ({ history }) => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [fans, setFans] = useState<Fan[]>([]);
-  const [filterText, setFilterText] = useState("");
-
+  const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
   const [fanAPITest, setFanAPITest] = useState<Fan | null>(null);
+  const [fanGroups, setFanGroups] = useState<FanGroup[]>([]);
 
-  async function fetch() {
-    setLoading(true);
-    try {
-      const response: any = await fetchFans();
-      setFans(response.results);
-      setLoading(false);
-    } catch (error) {
-      setLoading(false);
-    }
-  }
+  const { doFetch } = useRequest({ setLoading });
 
-  useEffect(() => {
-    fetch();
-  }, []);
+  const {
+    setArrayList: setFans,
+    filteredArrayList: filteredFans,
+    addFilterFunction,
+  } = useFilter<Fan>([]);
 
-  const onChangeFilter = (evt: any) => {
-    setFilterText(evt.target.value);
+  const getFansGroups = async () => {
+    const { results } = await doFetch(() => fetchFanGroups());
+    setFanGroups(results);
   };
 
-  const filterFan = () => {
-    return fans.filter((fan) => {
-      fan.name = fan.name || "";
-      const searchText = filterText.toUpperCase();
-      return (
-        fan.name.toUpperCase().includes(searchText) ||
-        fan.user.toUpperCase().includes(searchText)
-      );
-    });
+  const getFans = async () => {
+    const { results } = await doFetch(() => fetchFans());
+    setFans(results);
+  };
+
+  const getResources = async () => {
+    await Promise.all([getFans(), getFansGroups()]);
+  };
+
+  useEffect(() => {
+    getResources();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const searchFilterFunction = (filterText: string) => {
+    addFilterFunction("fanName", (fans) =>
+      fans.filter((fan) => {
+        fan.name = fan.name || "";
+        const searchText = filterText.toUpperCase();
+        return (
+          fan.name.toUpperCase().includes(searchText) ||
+          fan.user.toUpperCase().includes(searchText)
+        );
+      })
+    );
   };
 
   const columns: ColumnsType<Fan> = [
     {
       title: "_id",
       dataIndex: "id",
-      width: "15%",
-      render: (value: string, record) => (
-        <Link to={{ pathname: `/fan`, state: record }}>{value}</Link>
-      ),
+      width: "30%",
     },
-    { title: "Name", dataIndex: "userName", width: "15%" },
-    { title: "E-mail", dataIndex: "user", width: "15%" },
+    { title: "Name", dataIndex: "userName", width: "20%" },
+    { title: "E-mail", dataIndex: "user", width: "20%" },
     {
       title: "Profile",
       dataIndex: "profile",
@@ -82,6 +81,20 @@ const Fans: React.FC<RouteComponentProps> = ({ history }) => {
       render: (profile = "Fan") => (
         <Tag color={tagColorByPermission[profile]}>{profile}</Tag>
       ),
+      align: "center",
+    },
+    {
+      title: "Group",
+      dataIndex: "fanGroup",
+      width: "10%",
+      render: (_, record) => {
+        const fanGroupName =
+          fanGroups.find((fanGroup) => fanGroup.id === record.fanGroup)?.name ||
+          "";
+        return (
+          <Tag color={tagColorByPermission[record.profile]}>{fanGroupName}</Tag>
+        );
+      },
       align: "center",
     },
     {
@@ -101,19 +114,15 @@ const Fans: React.FC<RouteComponentProps> = ({ history }) => {
           >
             <SettingOutlined />
           </Button>
-          {/* <Popconfirm
-            title="Are you sure？"
-            okText="Yes"
-            cancelText="No"
-            onConfirm={() => deleteItem(record.id)}>
-            <Button type="link" style={{ padding: 0, margin: 6 }}>
-              <DeleteOutlined />
-            </Button>
-          </Popconfirm> */}
         </>
       ),
     },
   ];
+
+  const handleEditFans = async () => {
+    await getResources();
+    setSelectedRowKeys([]);
+  };
 
   return (
     <div className="fans">
@@ -126,16 +135,25 @@ const Fans: React.FC<RouteComponentProps> = ({ history }) => {
           </Button>,
         ]}
       />
-      <div className="filter">
-        <Row>
-          <Col lg={12} xs={24}>
-            <Typography.Title level={5} title="Search">
-              Search
-            </Typography.Title>
-            <Input onChange={onChangeFilter} suffix={<SearchOutlined />} />
-          </Col>
-        </Row>
-      </div>
+      <Row align="bottom" justify="space-between">
+        <Col lg={16} xs={24}>
+          <Row gutter={8}>
+            <Col lg={8} xs={16}>
+              <SearchFilter
+                filterFunction={searchFilterFunction}
+                label="Search by Email"
+              />
+            </Col>
+          </Row>
+        </Col>
+        <EditMultipleButton
+          text="Edit Fans"
+          arrayList={filteredFans}
+          ModalComponent={EditFanModal}
+          selectedRowKeys={selectedRowKeys}
+          onOk={handleEditFans}
+        />
+      </Row>
       <FanAPITestModal
         selectedRecord={fanAPITest}
         setSelectedRecord={setFanAPITest}
@@ -143,8 +161,12 @@ const Fans: React.FC<RouteComponentProps> = ({ history }) => {
       <Table
         rowKey="id"
         columns={columns}
-        dataSource={filterFan()}
+        dataSource={filteredFans}
         loading={loading}
+        rowSelection={{
+          selectedRowKeys,
+          onChange: setSelectedRowKeys,
+        }}
       />
     </div>
   );
