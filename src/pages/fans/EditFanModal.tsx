@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useRequest } from "hooks/useRequest";
 import { updateManyFans } from "services/DiscoClubService";
 import { EditMultipleModalProps } from "components/EditMultipleButton";
+import FanGroupDropdown from "./FanGroupDropdown";
 
 interface formValues {
   fanGroup: string;
@@ -56,13 +57,11 @@ const EditFanModal: React.FC<EditMultipleModalProps<Fan>> = ({
         <Input.Group>
           <Row gutter={8} justify="center">
             <Col>
-              <Form.Item
-                name="fanGroups"
-                label="Fan Group"
-                rules={[{ required: true }]}
-              >
-                <Input />
-              </Form.Item>
+              <FanGroupDropdown
+                form={form}
+                loading={loading}
+                setLoading={setLoading}
+              />
             </Col>
           </Row>
         </Input.Group>
