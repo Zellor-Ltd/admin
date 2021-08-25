@@ -41,7 +41,7 @@ export const SelectFanQuery: React.FC<SelectFanQueryProps> = ({
     const _fansQueryFilters: FanFilter[] = [
       ...fansQueryFilters,
       ...fanGroupsResults.map((fanGroup) => ({
-        id: fanGroup.name,
+        id: fanGroup.id,
         user: fanGroup.name,
         isFilter: true,
       })),
