@@ -1,9 +1,10 @@
 import Select from "antd/lib/select";
 import React, { useEffect, useState } from "react";
-import { fetchFans } from "../services/DiscoClubService";
+import { fetchFanGroups, fetchFans } from "../services/DiscoClubService";
 import { FanFilter } from "../interfaces/Fan";
 import { Typography } from "antd";
 import { useRequest } from "hooks/useRequest";
+import { FanGroup } from "interfaces/FanGroup";
 
 type SelectFanQueryProps = Omit<
   React.SelectHTMLAttributes<HTMLSelectElement>,
@@ -32,26 +33,36 @@ export const SelectFanQuery: React.FC<SelectFanQueryProps> = ({
   const [selectedFan, setSelectedFan] = useState<string>("");
   const { doFetch } = useRequest();
 
-  const getFans = async () => {
-    const { results } = await doFetch(() => fetchFans());
+  const getResources = async () => {
+    const { results: fansResults } = await doFetch(() => fetchFans());
+    const { results: fanGroupsResults }: { results: FanGroup[] } =
+      await doFetch(() => fetchFanGroups());
     const _searchList: string[] = [];
-    results.unshift(...fansQueryFilters);
-    results.forEach((fan: FanFilter) => {
+    const _fansQueryFilters: FanFilter[] = [
+      ...fansQueryFilters,
+      ...fanGroupsResults.map((fanGroup) => ({
+        id: fanGroup.name,
+        user: fanGroup.name,
+        isFilter: true,
+      })),
+    ];
+    fansResults.unshift(..._fansQueryFilters);
+    fansResults.forEach((fan: FanFilter) => {
       if (fan.user) _searchList.push(fan.user);
     });
     setSearchList(_searchList);
-    setFans([...results]);
+    setFans([...fansResults]);
   };
 
   useEffect(() => {
-    getFans();
+    getResources();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const _onChange = async (value: string) => {
     setSelectedFan(value);
     onChange(fans.find((fan) => fan.user === value) as FanFilter);
-    getFans();
+    getResources();
   };
 
   return (

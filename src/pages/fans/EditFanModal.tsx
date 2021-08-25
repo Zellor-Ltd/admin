@@ -7,10 +7,6 @@ import { updateManyFans } from "services/DiscoClubService";
 import { EditMultipleModalProps } from "components/EditMultipleButton";
 import FanGroupDropdown from "./FanGroupDropdown";
 
-interface formValues {
-  fanGroup: string;
-}
-
 const EditFanModal: React.FC<EditMultipleModalProps<Fan>> = ({
   selectedItems: selectedFans,
   visible,
@@ -31,7 +27,8 @@ const EditFanModal: React.FC<EditMultipleModalProps<Fan>> = ({
   });
 
   const _onOk = () => {
-    form.validateFields().then(async ({ fanGroup }: formValues) => {
+    form.validateFields().then(async () => {
+      const fanGroup = form.getFieldValue("fanGroup");
       const fansToUpdateIds = selectedFans.map((fan) => fan.id);
       await doRequest(
         () => updateManyFans(fanGroup, fansToUpdateIds),
