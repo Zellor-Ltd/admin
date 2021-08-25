@@ -8,6 +8,7 @@ export interface FanFilter {
   address?: string;
   profile?: string;
   specialLock?: "y" | "n";
+  fanGroup?: string;
 }
 export interface Fan {
   id: string;
@@ -18,4 +19,5 @@ export interface Fan {
   address: string;
   profile: string;
   specialLock: boolean;
+  fanGroup?: string;
 }

@@ -3,7 +3,6 @@ import {
   Button,
   Col,
   DatePicker,
-  Divider,
   Form,
   Input,
   message,
@@ -14,21 +13,18 @@ import {
   Typography,
 } from "antd";
 import { formatMoment } from "helpers/formatMoment";
-import { useRequest } from "hooks/useRequest";
 import { Category } from "interfaces/Category";
 import { Creator } from "interfaces/Creator";
-import { FanGroup } from "interfaces/FanGroup";
 import { Role } from "interfaces/Role";
-import { ChangeEventHandler, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { RouteComponentProps } from "react-router";
 import {
   fetchCategories,
   fetchCreators,
-  fetchFanGroups,
   fetchProfiles,
-  saveFanGroup,
   saveUser,
 } from "services/DiscoClubService";
+import FanGroupDropdown from "./FanGroupDropdown";
 
 const { Option } = Select;
 
@@ -46,13 +42,9 @@ const prefixSelector = (prefix: string) => (
 const FanDetail: React.FC<RouteComponentProps> = (props) => {
   const { history, location } = props;
   const [loading, setLoading] = useState(false);
-  const { doFetch, doRequest } = useRequest({ setLoading });
-
   const [roles, setRoles] = useState<Role[]>([]);
   const [creators, setCreators] = useState<Creator[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [fanGroups, setFanGroups] = useState<FanGroup[]>([]);
-  const [addFanGroupField, setAddFanGroupField] = useState<string>("");
   const initial: any = location.state || {};
   const [form] = Form.useForm();
 
@@ -74,17 +66,10 @@ const FanDetail: React.FC<RouteComponentProps> = (props) => {
       const response: any = await fetchCategories();
       setCategories(response.results);
     };
-    const getFanGroups = async () => {
-      const response: any = await fetchFanGroups();
-      setFanGroups(response.results);
-    };
-
     setLoading(true);
     getRoles();
     getCreatores();
     getCategories();
-    getFanGroups();
-
     return () => {
       mounted = false;
     };
@@ -218,20 +203,6 @@ const FanDetail: React.FC<RouteComponentProps> = (props) => {
     }
   };
 
-  const addFanGroup = async () => {
-    await doRequest(
-      () => saveFanGroup({ name: addFanGroupField }),
-      "Fan Group Created."
-    );
-    const response = await doFetch(() => fetchFanGroups());
-    setFanGroups(response.results);
-    setAddFanGroupField("");
-  };
-
-  const onFanGroupChange: ChangeEventHandler<HTMLInputElement> = (event) => {
-    setAddFanGroupField(event.target.value);
-  };
-
   return (
     <>
       <PageHeader title="Fan Update" subTitle="Fan" />
@@ -332,46 +303,11 @@ const FanDetail: React.FC<RouteComponentProps> = (props) => {
             </Form.Item>
           </Col>
           <Col lg={8} xs={24}>
-            <Form.Item label="Fan Group" name="fanGroup">
-              <Select
-                style={{ width: 240 }}
-                placeholder="Fan Group"
-                allowClear
-                dropdownRender={(menu) => (
-                  <div>
-                    {menu}
-                    <Divider style={{ margin: "4px 0" }} />
-                    <div
-                      style={{
-                        display: "flex",
-                        flexWrap: "nowrap",
-                        justifyContent: "space-between",
-                        padding: 8,
-                      }}
-                    >
-                      <Input
-                        style={{ flex: "auto", marginRight: "6px" }}
-                        value={addFanGroupField}
-                        onChange={onFanGroupChange}
-                      />
-                      <Button
-                        onClick={addFanGroup}
-                        loading={loading}
-                        type="primary"
-                      >
-                        Add item
-                      </Button>
-                    </div>
-                  </div>
-                )}
-              >
-                {fanGroups.map((fanGroup) => (
-                  <Select.Option key={fanGroup.id} value={fanGroup.id}>
-                    {fanGroup.name}
-                  </Select.Option>
-                ))}
-              </Select>
-            </Form.Item>
+            <FanGroupDropdown
+              form={form}
+              loading={loading}
+              setLoading={setLoading}
+            />
           </Col>
         </Row>
         <Row>

@@ -216,6 +216,10 @@ export const updateManyProducts = (params: Product[]) => {
   return instance.post("/Disco/Product/UpdateMany", params);
 };
 
+export const updateManyFans = (groupName: string, fansIds: string[]) => {
+  return instance.post(`/Disco/Fan/SetUsersGroup/${groupName}`, fansIds);
+};
+
 export const saveProduct = (params: Product) => {
   if (params.id) {
     return instance.post("/Disco/Product/Update", params);
