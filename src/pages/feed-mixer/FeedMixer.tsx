@@ -275,7 +275,7 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
     <div className="feed-mixer">
       <PageHeader
         title="Feed Mixer"
-        subTitle="Define feed for users. The feed will be played in the reverse order to what you see here."
+        subTitle="Define feed for users."
       />
       <Row gutter={8} style={{ marginBottom: "20px" }}>
         <Col>
