@@ -25,6 +25,7 @@ import React, { useEffect, useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 import { RouteComponentProps } from "react-router";
 import {
+  fetchGroupFeed,
   fetchUserFeed,
   fetchVideoFeed,
   lockFeedMixer,
@@ -239,17 +240,26 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
   ];
 
   const onChangeFan = async (_selectedFan: FanFilter) => {
+    const fetchFeed = async (_selectedFan: FanFilter) => {
+      const response = await doFetch(() =>
+        _selectedFan.isGroup
+          ? fetchGroupFeed(_selectedFan.id)
+          : fetchUserFeed(_selectedFan.id)
+      );
+      return response;
+    };
+
     setSelectedFan(_selectedFan);
     if (!templateFeed.length) {
       const [{ results: _userFeed }, { results: _templateFeed }] =
         await Promise.all([
-          doFetch(() => fetchUserFeed(_selectedFan.id)),
+          fetchFeed(_selectedFan),
           doFetch(() => fetchVideoFeed()),
         ]);
       setUserFeed(_userFeed);
       setTemplateFeed(_templateFeed);
     } else {
-      const { results } = await doFetch(() => fetchUserFeed(_selectedFan.id));
+      const { results } = await fetchFeed(_selectedFan);
       setUserFeed(results);
     }
     setLockedFeed(_selectedFan.specialLock === "y");
@@ -276,10 +286,7 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
 
   return (
     <div className="feed-mixer">
-      <PageHeader
-        title="Feed Mixer"
-        subTitle="Define feed for users."
-      />
+      <PageHeader title="Feed Mixer" subTitle="Define feed for users." />
       <Row gutter={8} style={{ marginBottom: "20px" }}>
         <Col>
           <SelectFanQuery

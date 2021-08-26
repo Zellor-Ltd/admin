@@ -190,6 +190,9 @@ export const fetchWalletTransactions = (userId: string) =>
 export const fetchUserFeed = (userId: string) =>
   instance.get(`Disco/Feed/GetUserFeed/${userId}`);
 
+export const fetchGroupFeed = (groupId: string) =>
+  instance.get(`Disco/Feed/GetGroup/${groupId}`);
+
 export const fetchPromoCodes = () => instance.get("Wi/Ep/ListPromoCodes");
 
 export const fetchPromotions = () => instance.get("Wi/Ep/ListPromotions");
@@ -425,12 +428,14 @@ export const updateMultipleUsersFeed = (params: any) =>
     feeds: params,
   });
 
+export const updateUsersFeedByGroup = (groupName: string, params: any) =>
+  instance.put(`Disco/Feed/UpdateUsersFeedByGroup/${groupName}`, {
+    feeds: params,
+  });
+
 export const saveInterests = (params: any) => {
   return instance.put("Disco/Fan/UpdateInterests", params);
 };
 
 export const fetchFanFeed = (userId: string) =>
   instance.get(`Disco/Feed/GetOne/${userId}`);
-
-export const updateUsersFeedByGroup = (groupName: string, params: any) =>
-  instance.put(`Disco/Feed/UpdateUsersFeedByGroup/${groupName}`, params);
