@@ -431,3 +431,6 @@ export const saveInterests = (params: any) => {
 
 export const fetchFanFeed = (userId: string) =>
   instance.get(`Disco/Feed/GetOne/${userId}`);
+
+export const updateUsersFeedByGroup = (groupName: string, params: any) =>
+  instance.put(`Disco/Feed/UpdateUsersFeedByGroup/${groupName}`, params);

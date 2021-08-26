@@ -31,6 +31,7 @@ import {
   saveUserFeed,
   unlockFeedMixer,
   updateMultipleUsersFeed,
+  updateUsersFeedByGroup,
 } from "services/DiscoClubService";
 
 const reduceSegmentsTags = (packages: Segment[]) => {
@@ -257,7 +258,9 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
   const saveChanges = async () => {
     const action = () =>
       selectedFan!.isFilter
-        ? updateMultipleUsersFeed(userFeed)
+        ? selectedFan!.id === "allfans"
+          ? updateMultipleUsersFeed(userFeed)
+          : updateUsersFeedByGroup(selectedFan!.id, userFeed)
         : saveUserFeed(selectedFan!.id, userFeed);
     await doRequest(action, `${displayFeedName} updated.`);
   };
