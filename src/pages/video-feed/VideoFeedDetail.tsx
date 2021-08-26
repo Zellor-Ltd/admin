@@ -461,6 +461,15 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
                         <DatePicker format="DD/MM/YYYY" />
                       </Form.Item>
                     </Col>
+                    <Col lg={12} xs={24}>
+                      <Form.Item name="videoType" label="Video Type">
+                        <Select mode="multiple">
+                          <Select.Option value="Feed">Feed</Select.Option>
+                          <Select.Option value="Brand">Brand</Select.Option>
+                          <Select.Option value="Review">Review</Select.Option>
+                        </Select>
+                      </Form.Item>
+                    </Col>
                   </Row>
                 </Col>
               </Row>
