@@ -2,6 +2,7 @@ export interface FanFilter {
   id: string;
   user: string;
   isFilter?: boolean;
+  isGroup?: boolean;
   name?: string;
   email?: string;
   phone?: string;

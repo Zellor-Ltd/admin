@@ -19,6 +19,7 @@ const fansQueryFilters: FanFilter[] = [
     id: "allfans",
     user: "All Disco Fans",
     isFilter: true,
+    isGroup: false,
   },
 ];
 
@@ -44,6 +45,7 @@ export const SelectFanQuery: React.FC<SelectFanQueryProps> = ({
         id: fanGroup.id,
         user: fanGroup.name,
         isFilter: true,
+        isGroup: true,
       })),
     ];
     fansResults.unshift(..._fansQueryFilters);
