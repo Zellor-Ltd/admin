@@ -425,12 +425,14 @@ export const updateMultipleUsersFeed = (params: any) =>
     feeds: params,
   });
 
+export const updateUsersFeedByGroup = (groupName: string, params: any) =>
+  instance.put(`Disco/Feed/UpdateUsersFeedByGroup/${groupName}`, {
+    feeds: params,
+  });
+
 export const saveInterests = (params: any) => {
   return instance.put("Disco/Fan/UpdateInterests", params);
 };
 
 export const fetchFanFeed = (userId: string) =>
   instance.get(`Disco/Feed/GetOne/${userId}`);
-
-export const updateUsersFeedByGroup = (groupName: string, params: any) =>
-  instance.put(`Disco/Feed/UpdateUsersFeedByGroup/${groupName}`, params);
