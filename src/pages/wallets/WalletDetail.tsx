@@ -1,19 +1,21 @@
 import { CalendarOutlined } from "@ant-design/icons";
-import { Col, DatePicker, PageHeader, Row, Table } from "antd";
+import { Col, DatePicker, PageHeader, Row, Table, Typography } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import useFilter from "hooks/useFilter";
 import { useRequest } from "hooks/useRequest";
-import { Order } from "interfaces/Order";
-import { Wallet } from "interfaces/Wallet";
+import {
+  WalletDetailParams,
+  WalletTransaction,
+} from "interfaces/WalletTransactions";
 import moment from "moment";
 import { useEffect, useState } from "react";
 import { RouteComponentProps } from "react-router";
 import { fetchTransactionsPerBrand } from "services/DiscoClubService";
 
 const WalletDetail: React.FC<RouteComponentProps> = ({ location }) => {
-  const params = new URLSearchParams(location.search);
   const [loading, setLoading] = useState<boolean>(false);
   const { doFetch } = useRequest({ setLoading: setLoading });
+  const initial = location.state as unknown as WalletDetailParams;
 
   const {
     // arrayList: wallets,
@@ -21,15 +23,12 @@ const WalletDetail: React.FC<RouteComponentProps> = ({ location }) => {
     filteredArrayList: filteredTransactions,
     addFilterFunction,
     removeFilterFunction,
-  } = useFilter<Wallet>([]);
+  } = useFilter<WalletTransaction>([]);
 
   useEffect(() => {
     const getResources = async () => {
       const { results } = await doFetch(() =>
-        fetchTransactionsPerBrand(
-          params.get("fanId") as string,
-          params.get("brandId") as string
-        )
+        fetchTransactionsPerBrand(initial.fan.id, initial.brand.id)
       );
       setTransactions(results);
     };
@@ -37,7 +36,7 @@ const WalletDetail: React.FC<RouteComponentProps> = ({ location }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const columns: ColumnsType<Wallet> = [
+  const columns: ColumnsType<WalletTransaction> = [
     {
       title: "Date Time",
       dataIndex: "hCreationDate",
@@ -81,8 +80,8 @@ const WalletDetail: React.FC<RouteComponentProps> = ({ location }) => {
     }
     const startDate = moment(values[0], "DD/MM/YYYY").startOf("day").utc();
     const endDate = moment(values[1], "DD/MM/YYYY").endOf("day").utc();
-    addFilterFunction("creationDate", (orders: Order[]) =>
-      orders.filter(({ hCreationDate }) => {
+    addFilterFunction("creationDate", (transactions: WalletTransaction[]) =>
+      transactions.filter(({ hCreationDate }) => {
         return moment(hCreationDate).utc().isBetween(startDate, endDate);
       })
     );
@@ -95,10 +94,12 @@ const WalletDetail: React.FC<RouteComponentProps> = ({ location }) => {
         <Col lg={16} xs={24}>
           <Row gutter={8}>
             <Col lg={8} xs={16}>
-              Text1
+              <Typography.Text strong>Fan: {initial.fan.user}</Typography.Text>
             </Col>
             <Col lg={8} xs={16}>
-              Text2
+              <Typography.Text strong>
+                Brand: {initial.brand.name}
+              </Typography.Text>
             </Col>
           </Row>
         </Col>

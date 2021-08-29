@@ -5,6 +5,7 @@ import useFilter from "hooks/useFilter";
 import { useRequest } from "hooks/useRequest";
 import { Fan } from "interfaces/Fan";
 import { Wallet } from "interfaces/Wallet";
+import { WalletDetailParams } from "interfaces/WalletTransactions";
 import { useState } from "react";
 import { RouteComponentProps } from "react-router";
 import { Link } from "react-router-dom";
@@ -12,7 +13,7 @@ import { fetchBalancePerBrand } from "services/DiscoClubService";
 
 const Wallets: React.FC<RouteComponentProps> = () => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [selectedFanId, setSelectedFanId] = useState<string>();
+  const [selectedFan, setSelectedFan] = useState<Fan>();
   const { doFetch } = useRequest({ setLoading: setLoading });
 
   const {
@@ -29,7 +30,16 @@ const Wallets: React.FC<RouteComponentProps> = () => {
       render: (value: string, record: Wallet) => (
         <Link
           to={{
-            pathname: `wallet?fanId=${selectedFanId}&brandId=${record.brandId}`,
+            pathname: "wallet",
+            state: {
+              fan: selectedFan,
+              brand: {
+                id: record.brandId,
+                discoDollars: record.discoDollars,
+                discoGold: record.discoGold,
+                name: record.brandName,
+              },
+            } as WalletDetailParams,
           }}
         >
           {value}
@@ -50,7 +60,7 @@ const Wallets: React.FC<RouteComponentProps> = () => {
       true
     );
     setWallets(balance);
-    setSelectedFanId(_selectedFan.id);
+    setSelectedFan(_selectedFan);
   };
 
   return (
