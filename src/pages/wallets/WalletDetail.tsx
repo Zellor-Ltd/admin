@@ -1,5 +1,15 @@
 import { CalendarOutlined } from "@ant-design/icons";
-import { Col, DatePicker, PageHeader, Row, Table, Typography } from "antd";
+import {
+  Button,
+  Col,
+  DatePicker,
+  InputNumber,
+  PageHeader,
+  Popconfirm,
+  Row,
+  Table,
+  Typography,
+} from "antd";
 import { ColumnsType } from "antd/lib/table";
 import useFilter from "hooks/useFilter";
 import { useRequest } from "hooks/useRequest";
@@ -91,15 +101,32 @@ const WalletDetail: React.FC<RouteComponentProps> = ({ location }) => {
     <div className="walletdetail">
       <PageHeader title="Wallet Fan/Brand Transactions" />
       <Row align="bottom" justify="space-between">
-        <Col lg={16} xs={24}>
+        <Col lg={24} xs={24}>
           <Row gutter={8}>
-            <Col lg={8} xs={16}>
+            <Col lg={6} xs={12}>
               <Typography.Text strong>Fan: {initial.fan.user}</Typography.Text>
             </Col>
-            <Col lg={8} xs={16}>
+            <Col lg={6} xs={12}>
               <Typography.Text strong>
                 Brand: {initial.brand.name}
               </Typography.Text>
+            </Col>
+            <Col lg={6} xs={12}>
+              <Row gutter={2}>
+                <Col lg={16} xs={16}>
+                  <InputNumber></InputNumber>
+                </Col>
+                <Col lg={8} xs={8}>
+                  <Button type="primary">Add</Button>
+                </Col>
+              </Row>
+            </Col>
+            <Col lg={4} xs={8}>
+              <Row justify="end">
+                <Popconfirm title="Are you sure？" okText="Yes" cancelText="No">
+                  <Button danger>Reset</Button>
+                </Popconfirm>
+              </Row>
             </Col>
           </Row>
         </Col>
