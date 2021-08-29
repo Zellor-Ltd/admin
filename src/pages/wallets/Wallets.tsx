@@ -8,7 +8,7 @@ import { Wallet } from "interfaces/Wallet";
 import { useState } from "react";
 import { RouteComponentProps } from "react-router";
 import { Link } from "react-router-dom";
-import { fetchWallets } from "services/DiscoClubService";
+import { fetchBalancePerBrand } from "services/DiscoClubService";
 
 const Wallets: React.FC<RouteComponentProps> = () => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -23,7 +23,7 @@ const Wallets: React.FC<RouteComponentProps> = () => {
   const columns: ColumnsType<Wallet> = [
     {
       title: "Brand",
-      dataIndex: ["brand", "brandName"],
+      dataIndex: "brandName",
       width: "40%",
       render: (value: string, record: Wallet) => (
         <Link to={{ pathname: `wallet`, state: record }}>{value}</Link>
@@ -31,15 +31,18 @@ const Wallets: React.FC<RouteComponentProps> = () => {
     },
     {
       title: "DD Balance",
-      dataIndex: "ddBalance",
+      dataIndex: "discoDollars",
       width: "15%",
       align: "right",
     },
   ];
 
   const onChangeFan = async (_selectedFan: Fan) => {
-    const { results }: any = await doFetch(() => fetchWallets(_selectedFan.id));
-    setWallets(results);
+    const { balance }: any = await doFetch(
+      () => fetchBalancePerBrand(_selectedFan.id),
+      true
+    );
+    setWallets(balance);
   };
 
   return (
