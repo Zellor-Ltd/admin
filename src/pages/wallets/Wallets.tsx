@@ -12,6 +12,7 @@ import { fetchBalancePerBrand } from "services/DiscoClubService";
 
 const Wallets: React.FC<RouteComponentProps> = () => {
   const [loading, setLoading] = useState<boolean>(false);
+  const [selectedFanId, setSelectedFanId] = useState<string>();
   const { doFetch } = useRequest({ setLoading: setLoading });
 
   const {
@@ -26,7 +27,13 @@ const Wallets: React.FC<RouteComponentProps> = () => {
       dataIndex: "brandName",
       width: "40%",
       render: (value: string, record: Wallet) => (
-        <Link to={{ pathname: `wallet`, state: record }}>{value}</Link>
+        <Link
+          to={{
+            pathname: `wallet?fanId=${selectedFanId}&brandId=${record.brandId}`,
+          }}
+        >
+          {value}
+        </Link>
       ),
     },
     {
@@ -43,6 +50,7 @@ const Wallets: React.FC<RouteComponentProps> = () => {
       true
     );
     setWallets(balance);
+    setSelectedFanId(_selectedFan.id);
   };
 
   return (
