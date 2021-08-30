@@ -13,6 +13,7 @@ import {
   Tabs,
   Tag as AntTag,
 } from "antd";
+import Checkbox, { CheckboxChangeEvent } from "antd/lib/checkbox/Checkbox";
 import { SwitchChangeEventHandler } from "antd/lib/switch";
 import { ColumnsType } from "antd/lib/table";
 import { SortableTable } from "components";
@@ -30,7 +31,9 @@ import {
   fetchVideoFeed,
   lockFeedMixer,
   saveUserFeed,
+  setPreserveDdTags,
   unlockFeedMixer,
+  unsetPreserveDdTags,
   updateMultipleUsersFeed,
   updateUsersFeedByGroup,
 } from "services/DiscoClubService";
@@ -284,6 +287,11 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
     setLockedFeed(checked);
   };
 
+  const handleCheckboxChange = async (e: CheckboxChangeEvent) => {
+    const fnToCall = e.target.checked ? setPreserveDdTags : unsetPreserveDdTags;
+    await doRequest(() => fnToCall(selectedFan!.id));
+  };
+
   return (
     <div className="feed-mixer">
       <PageHeader title="Feed Mixer" subTitle="Define feed for users." />
@@ -295,18 +303,32 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
           ></SelectFanQuery>
         </Col>
         {selectedFan && !selectedFan.isFilter && (
-          <Col>
-            <Form.Item
-              label="Lock Feed"
-              style={{ margin: "32px 12px 16px 16px" }}
-            >
-              <Switch
-                loading={loading}
-                onChange={handleLockChange}
-                checked={lockedFeed}
-              ></Switch>
-            </Form.Item>
-          </Col>
+          <>
+            <Col>
+              <Form.Item
+                label="Lock Feed"
+                style={{ margin: "32px 12px 16px 16px" }}
+              >
+                <Switch
+                  loading={loading}
+                  onChange={handleLockChange}
+                  checked={lockedFeed}
+                ></Switch>
+              </Form.Item>
+            </Col>
+            <Col>
+              <Form.Item
+                name="preserveDdTags"
+                label="Preserve DD Tags"
+                style={{ margin: "32px 16px 16px 16px" }}
+              >
+                <Checkbox
+                  onChange={handleCheckboxChange}
+                  disabled={loading}
+                ></Checkbox>
+              </Form.Item>
+            </Col>
+          </>
         )}
         {selectedFan && (
           <Col>
