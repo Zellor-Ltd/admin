@@ -423,6 +423,12 @@ export const lockFeedMixer = (userId: string) =>
 export const unlockFeedMixer = (userId: string) =>
   instance.get(`Disco/Feed/LockUnlockUser/${userId}/n`);
 
+export const setPreserveDdTags = (userId: string) =>
+  instance.get(`Disco/Wallet/PreserveDdTagsToUser/${userId}/y`);
+
+export const unsetPreserveDdTags = (userId: string) =>
+  instance.get(`Disco/Wallet/PreserveDdTagsToUser/${userId}/n`);
+
 export const preCheckout: (productId: string, DdQuantity?: number) => any = (
   productId,
   DdQuantity = 0
