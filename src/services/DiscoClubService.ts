@@ -207,6 +207,12 @@ export const fetchInterests = () => instance.get("Wi/Ep/ListInterest");
 
 export const fetchFanGroups = () => instance.get("Wi/Ep/ListFanGroup");
 
+export const fetchBalancePerBrand = (userId: string) =>
+  instance.get(`Disco/Wallet/GetBalancePerBrand/${userId}`);
+
+export const fetchTransactionsPerBrand = (userId: string, brandId: string) =>
+  instance.get(`Disco/Wallet/GetTransactionsPerBrand/${userId}/${brandId}`);
+
 export const saveVideoFeed = (params: FeedItem) => {
   if (params.id) {
     return instance.put("Disco/Feed/Update", params);

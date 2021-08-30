@@ -38,7 +38,8 @@ export const useRequest = ({
     }
   };
 
-  const doFetch = (action: action) => request(action);
+  const doFetch = (action: action, completeResponse?: boolean) =>
+    request(action, undefined, completeResponse);
   const doRequest = (
     action: action,
     successMsg: string = "Register updated with success."

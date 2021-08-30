@@ -45,6 +45,9 @@ const AdminSideMenu = () => {
       <Menu.Item key="orders" icon={<ShoppingCartOutlined />}>
         <Link to="/orders">Orders</Link>
       </Menu.Item>
+      <Menu.Item key="wallets" icon={<DollarOutlined />}>
+        <Link to="/wallets">Wallets</Link>
+      </Menu.Item>
       <Menu.Item key="transactions" icon={<DollarOutlined />}>
         <Link to="/transactions">Transactions</Link>
       </Menu.Item>
