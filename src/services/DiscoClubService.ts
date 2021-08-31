@@ -451,3 +451,17 @@ export const saveInterests = (params: any) => {
 
 export const fetchFanFeed = (userId: string) =>
   instance.get(`Disco/Feed/GetOne/${userId}`);
+
+export const addBalanceToUser = (
+  userId: string,
+  brandId: string,
+  discoDollars: number
+) =>
+  instance.get(
+    `Disco/Wallet/AddBalanceToUser/${userId}/${brandId}/${discoDollars}`
+  );
+
+export const resetUserBalance = (
+  userId: string,
+  brandId: string,
+) => instance.get(`Disco/Wallet/ResetUserBalance/${userId}/${brandId}`);
