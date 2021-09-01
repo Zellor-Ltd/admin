@@ -596,7 +596,7 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
             <Button
               disabled={initial?.brand.automated === true && !isStaging}
               type="primary"
-              htmlType="submit"
+              onClick={onFinish}
               loading={loading}
             >
               Save Changes
