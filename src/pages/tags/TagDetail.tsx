@@ -234,7 +234,7 @@ const TagDetail: React.FC<RouteComponentProps> = (props) => {
           <Col>
             <Button
               type="primary"
-              htmlType="submit"
+              onClick={onFinish}
               disabled={!!initial}
               loading={loading}
             >

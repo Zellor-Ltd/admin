@@ -199,7 +199,7 @@ const BrandDetail: React.FC<RouteComponentProps> = (props) => {
             </Button>
           </Col>
           <Col>
-            <Button loading={loading} type="primary" htmlType="submit">
+            <Button loading={loading} type="primary" onClick={onFinish}>
               Save Changes
             </Button>
           </Col>

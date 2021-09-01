@@ -30,7 +30,8 @@ const RoleDetail: React.FC<RouteComponentProps> = (props) => {
         layout="vertical"
         form={form}
         initialValues={initial}
-        onFinish={onFinish}>
+        onFinish={onFinish}
+      >
         <Row gutter={8}>
           <Col lg={8} xs={24}>
             <Form.Item label="Name" name="name">
@@ -50,7 +51,7 @@ const RoleDetail: React.FC<RouteComponentProps> = (props) => {
             </Button>
           </Col>
           <Col>
-            <Button type="primary" htmlType="submit" loading={loading}>
+            <Button type="primary" onClick={onFinish} loading={loading}>
               Save Changes
             </Button>
           </Col>

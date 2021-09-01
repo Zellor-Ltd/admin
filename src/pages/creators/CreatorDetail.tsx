@@ -66,7 +66,8 @@ const CreatorDetail: React.FC<RouteComponentProps> = (props) => {
         layout="vertical"
         onFinish={onFinish}
         initialValues={initial}
-        autoComplete="off">
+        autoComplete="off"
+      >
         <Row gutter={8}>
           <Col lg={12} xs={24}>
             <Form.Item label="First Name" name="firstName">
@@ -82,7 +83,8 @@ const CreatorDetail: React.FC<RouteComponentProps> = (props) => {
             <Form.Item
               label="Email"
               name="user"
-              rules={[{ type: "email", message: "please use an valid email" }]}>
+              rules={[{ type: "email", message: "please use an valid email" }]}
+            >
               <Input />
             </Form.Item>
           </Col>
@@ -110,7 +112,8 @@ const CreatorDetail: React.FC<RouteComponentProps> = (props) => {
           <Col lg={24} xs={24}>
             <Form.Item
               label="Top Brand collaborations you have completed"
-              name="topBrands">
+              name="topBrands"
+            >
               <Input.TextArea rows={4} />
             </Form.Item>
           </Col>
@@ -189,7 +192,7 @@ const CreatorDetail: React.FC<RouteComponentProps> = (props) => {
             </Button>
           </Col>
           <Col>
-            <Button loading={loading} type="primary" htmlType="submit">
+            <Button loading={loading} type="primary" onClick={onFinish}>
               Save Changes
             </Button>
           </Col>

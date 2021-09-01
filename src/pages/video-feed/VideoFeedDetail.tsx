@@ -608,7 +608,7 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
                 </Button>
               </Col>
               <Col>
-                <Button type="primary" htmlType="submit" loading={loading}>
+                <Button type="primary" onClick={onFinish} loading={loading}>
                   Save Changes
                 </Button>
               </Col>
