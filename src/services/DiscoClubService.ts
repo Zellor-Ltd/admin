@@ -30,6 +30,11 @@ interface IDelete {
   id: string;
 }
 
+type Pagination = {
+  page?: number;
+  limit?: number;
+};
+
 function reverseIdRecursively(obj: any) {
   for (let prop in obj) {
     if (prop === "id") {
@@ -101,7 +106,22 @@ export const fetchStartupVideo = () => instance.get("Wi/Ep/GetStartupVideo");
 export const fetchVideoFeed = () => instance.get("Wi/Ep/ListVideoFeed");
 export const fetchVideoFeed2 = () => instance.get("Wi/Ep/GetVideoFeed");
 
-export const fetchProducts = () => instance.get("Wi/Ep/ListProducts");
+export const fetchProducts = ({
+  brandId,
+  query,
+  unclassified,
+  page = 0,
+  limit = 0,
+}: {
+  brandId?: string;
+  query?: string;
+  unclassified?: boolean;
+} & Pagination) =>
+  instance.put(`Disco/Product/Adm/List/${page}/${limit}`, {
+    brandId,
+    query,
+    unclassified,
+  });
 
 export const fetchStagingProducts = () =>
   instance.put("Disco/Staging/Product/List", {});
@@ -461,7 +481,5 @@ export const addBalanceToUser = (
     `Disco/Wallet/AddBalanceToUser/${userId}/${brandId}/${discoDollars}`
   );
 
-export const resetUserBalance = (
-  userId: string,
-  brandId: string,
-) => instance.get(`Disco/Wallet/ResetUserBalance/${userId}/${brandId}`);
+export const resetUserBalance = (userId: string, brandId: string) =>
+  instance.get(`Disco/Wallet/ResetUserBalance/${userId}/${brandId}`);

@@ -213,7 +213,7 @@ const StagingList: React.FC<RouteComponentProps> = () => {
   };
 
   const handleEditProducts = async () => {
-    await fetchProducts();
+    await fetchProducts({});
     setSelectedRowKeys([]);
   };
 
