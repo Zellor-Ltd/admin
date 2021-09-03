@@ -16,7 +16,7 @@ import {
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
 import EditableTable, { EditableColumnType } from "components/EditableTable";
 import EditMultipleButton from "components/EditMultipleButton";
-import { SearchFilter } from "components/SearchFilter";
+import { SearchFilterDebounce } from "components/SearchFilterDebounce";
 import { SelectBrand } from "components/SelectBrand";
 import useAllCategories from "hooks/useAllCategories";
 import { useRequest } from "hooks/useRequest";
@@ -38,6 +38,7 @@ import ProductExpandedRow from "./ProductExpandedRow";
 
 const Products: React.FC<RouteComponentProps> = ({ history }) => {
   const [loading, setLoading] = useState<boolean>(false);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
   const [productAPITest, setProductAPITest] = useState<Product | null>(null);
 
@@ -45,8 +46,8 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
   const { doRequest: saveCategories, loading: loadingCategories } =
     useRequest();
 
-  const [brandIdFilter, setBrandIdFilter] = useState<string>("");
   const [searchFilter, setSearchFilter] = useState<string>("");
+  const [brandIdFilter, setBrandIdFilter] = useState<string>("");
   const [unclassifiedFilter, setUnclassifiedFilter] = useState<boolean>(false);
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
@@ -57,16 +58,21 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
     setLoading,
   });
 
-  const _fetchProducts = () =>
-    doFetch(() =>
+  const _fetchProducts = async () => {
+    const pageToUse = refreshing ? 0 : page;
+    const response = await doFetch(() =>
       fetchProducts({
         limit: 30,
-        page,
+        page: pageToUse,
         brandId: brandIdFilter,
         query: searchFilter,
         unclassified: unclassifiedFilter,
       })
     );
+    setPage(pageToUse + 1);
+    if (response.results.length < 30) setEof(true);
+    return response;
+  };
 
   const getResources = async () => {
     const [{ results }] = await Promise.all([
@@ -76,24 +82,35 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
     setProducts(results);
   };
 
-  const getProducts = async () => {
-    const { results } = await _fetchProducts();
-    setProducts(results);
-  };
-
   const refreshProducts = async () => {
     setSelectedRowKeys([]);
     setPage(0);
-    await getProducts();
+    setRefreshing(true);
   };
 
   const fetchData = async () => {
     if (!products.length) return;
     const { results } = await _fetchProducts();
     setProducts((prev) => [...prev.concat(results)]);
-    setPage((prev) => prev + 1);
-    if (!results.length) setEof(true);
   };
+
+  useEffect(() => {
+    const getProducts = async () => {
+      const { results } = await _fetchProducts();
+      setProducts(results);
+      setRefreshing(false);
+    };
+    if (refreshing) {
+      setEof(false);
+      getProducts();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [refreshing]);
+
+  useEffect(() => {
+    if (allCategories["Super Category"].length) refreshProducts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchFilter, brandIdFilter, unclassifiedFilter]);
 
   useEffect(() => {
     getResources();
@@ -228,7 +245,7 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
         <Col lg={16} xs={24}>
           <Row gutter={8}>
             <Col lg={8} xs={16}>
-              <SearchFilter
+              <SearchFilterDebounce
                 filterFunction={setSearchFilter}
                 label="Search by Name"
               />
@@ -283,7 +300,7 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
           rowKey="id"
           columns={columns}
           dataSource={products}
-          loading={loading && !products.length}
+          loading={refreshing || (!products.length && loading)}
           onSave={onSaveProduct}
           pagination={false}
           rowSelection={{
