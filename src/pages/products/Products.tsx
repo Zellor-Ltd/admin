@@ -284,7 +284,7 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
         next={fetchData}
         hasMore={!eof}
         loader={
-          !loading && (
+          page !== 0 && (
             <div className="scroll-message">
               <Spin />
             </div>
