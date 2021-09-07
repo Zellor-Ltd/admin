@@ -21,6 +21,7 @@ import {
   rebuildAllFeedd,
 } from "services/DiscoClubService";
 import InfiniteScroll from "react-infinite-scroll-component";
+import CopyIdToClipboard from "components/CopyIdToClipboard";
 
 const { Content } = Layout;
 
@@ -73,12 +74,20 @@ const VideoFeed: React.FC<RouteComponentProps> = (props) => {
 
   const columns: ColumnsType<FeedItem> = [
     {
+      title: "_id",
+      dataIndex: "id",
+      width: "3%",
+      render: (id) => <CopyIdToClipboard id={id} />,
+      align: "center",
+    },
+    {
       title: "Title",
       dataIndex: "title",
-      width: "15%",
+      width: "18%",
       render: (value: string, record: FeedItem) => (
         <Link to={{ pathname: `/video-feed`, state: record }}>{value}</Link>
       ),
+      align: "center",
     },
     {
       title: "Segments",

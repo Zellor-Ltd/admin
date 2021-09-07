@@ -17,6 +17,7 @@ import {
 } from "@ant-design/icons";
 import useFilter from "hooks/useFilter";
 import { SearchFilter } from "components/SearchFilter";
+import CopyIdToClipboard from "components/CopyIdToClipboard";
 
 const tagColorByStatus: any = {
   approved: "green",
@@ -35,6 +36,13 @@ const Creators: React.FC<RouteComponentProps> = (props) => {
   } = useFilter<Creator>([]);
 
   const columns: ColumnsType<Creator> = [
+    {
+      title: "_id",
+      dataIndex: "id",
+      width: "3%",
+      render: (id) => <CopyIdToClipboard id={id} />,
+      align: "center",
+    },
     { title: "Name", dataIndex: "firstName", width: "15%" },
     { title: "Last Name", dataIndex: "lastName", width: "15%" },
     {
