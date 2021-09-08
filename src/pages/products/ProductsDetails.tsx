@@ -37,6 +37,7 @@ import {
 import { RichTextEditor } from "components/RichTextEditor";
 import ProductCategoriesTrees from "./ProductCategoriesTrees";
 import { Product } from "interfaces/Product";
+import './Products.scss'
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 
@@ -322,7 +323,7 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
               >
                 {({ getFieldValue }) => (
                   <Form.Item name={"searchTags"} label="Search Tags">
-                    <Select mode="tags">
+                    <Select mode="tags" className="product-search-tags">
                       {getFieldValue("searchTags")?.map((searchTag: any) => (
                         <Select.Option key={searchTag} value={searchTag}>
                           {searchTag}
