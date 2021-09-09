@@ -1,4 +1,5 @@
 export interface Brand {
+  checkout: string;
   cancelationUrl: string;
   confirmationUrl: string;
   id: string;
@@ -15,4 +16,5 @@ export interface Brand {
   y: number;
   z: number;
   automated?: boolean;
+  paused?: boolean;
 }

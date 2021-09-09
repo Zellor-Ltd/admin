@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   Button,
   Col,
@@ -7,19 +6,26 @@ import {
   message,
   PageHeader,
   Row,
+  Select,
   Switch,
 } from "antd";
-import { RouteComponentProps } from "react-router";
-import { TwitterPicker } from "react-color";
-import { saveBrand } from "services/DiscoClubService";
 import { Upload } from "components";
 import { RichTextEditor } from "components/RichTextEditor";
+import { useState } from "react";
+import { TwitterPicker } from "react-color";
+import { useSelector } from "react-redux";
+import { RouteComponentProps } from "react-router";
+import { saveBrand } from "services/DiscoClubService";
 
 const BrandDetail: React.FC<RouteComponentProps> = (props) => {
   const { history, location } = props;
   const initial: any = location.state;
   const [loading, setLoading] = useState<boolean>(false);
   const [form] = Form.useForm();
+
+  const {
+    settings: { checkoutType = [] },
+  } = useSelector((state: any) => state.settings);
 
   const onFinish = async () => {
     setLoading(true);
@@ -32,6 +38,12 @@ const BrandDetail: React.FC<RouteComponentProps> = (props) => {
     } catch (error) {
       setLoading(false);
     }
+  };
+
+  const handleCheckoutTypeChange = (value: string) => {
+    form.setFieldsValue({
+      requireMobilePurchaseStatus: value !== "Disco",
+    });
   };
 
   return (
@@ -53,6 +65,24 @@ const BrandDetail: React.FC<RouteComponentProps> = (props) => {
             </Col>
             <Col lg={16} xs={24}>
               <Form.Item
+                name="checkout"
+                label="Checkout Type"
+                rules={[{ required: true }]}
+              >
+                <Select
+                  placeholder="Select a checkout type"
+                  onChange={handleCheckoutTypeChange}
+                >
+                  {checkoutType.map((curr: any) => (
+                    <Select.Option key={curr.value} value={curr.value}>
+                      {curr.name}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col lg={16} xs={24}>
+              <Form.Item
                 name="confirmationUrl"
                 label="External Payment Confirmation URL"
                 rules={[{ required: true }]}
@@ -67,6 +97,23 @@ const BrandDetail: React.FC<RouteComponentProps> = (props) => {
                 rules={[{ required: true }]}
               >
                 <Input />
+              </Form.Item>
+            </Col>
+            <Col lg={16} xs={24}>
+              <Form.Item
+                shouldUpdate={(prevValues, curValues) =>
+                  prevValues.checkout !== curValues.checkout
+                }
+              >
+                {({ getFieldValue }) => (
+                  <Form.Item
+                    name="requireMobilePurchaseStatus"
+                    label="Log Completed Purchases?"
+                    valuePropName="checked"
+                  >
+                    <Switch disabled={getFieldValue("checkout") === "Disco"} />
+                  </Form.Item>
+                )}
               </Form.Item>
             </Col>
             <Col lg={16} xs={24}>
@@ -181,13 +228,26 @@ const BrandDetail: React.FC<RouteComponentProps> = (props) => {
                 </Form.Item>
               </Col>
               <Col lg={24} xs={24}>
-                <Form.Item
-                  name="automated"
-                  label="Automated"
-                  valuePropName="checked"
-                >
-                  <Switch />
-                </Form.Item>
+                <Row gutter={8}>
+                  <Col lg={12} xs={12}>
+                    <Form.Item
+                      name="automated"
+                      label="Automated"
+                      valuePropName="checked"
+                    >
+                      <Switch />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={12} xs={12}>
+                    <Form.Item
+                      name="paused"
+                      label="Paused"
+                      valuePropName="checked"
+                    >
+                      <Switch />
+                    </Form.Item>
+                  </Col>
+                </Row>
               </Col>
             </Row>
           </Col>
