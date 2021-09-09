@@ -1,4 +1,4 @@
-import { EditOutlined, SettingOutlined } from "@ant-design/icons";
+import { EditOutlined, SettingOutlined, OrderedListOutlined, } from "@ant-design/icons";
 import { Button, Col, PageHeader, Row, Table, Tag } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import EditMultipleButton from "components/EditMultipleButton";
@@ -13,6 +13,7 @@ import { RouteComponentProps } from "react-router";
 import { Link } from "react-router-dom";
 import { fetchFanGroups, fetchFans } from "services/DiscoClubService";
 import FanAPITestModal from "./FanAPITestModal";
+import FanFeedModal from "./FanFeedModal";
 
 const tagColorByPermission: any = {
   Admin: "green",
@@ -24,6 +25,7 @@ const Fans: React.FC<RouteComponentProps> = ({ history }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
   const [fanAPITest, setFanAPITest] = useState<Fan | null>(null);
+  const [fanFeedModal, setFanFeedModal] = useState<Fan | null>(null);
   const [fanGroups, setFanGroups] = useState<FanGroup[]>([]);
 
   const { doFetch } = useRequest({ setLoading });
@@ -114,6 +116,13 @@ const Fans: React.FC<RouteComponentProps> = ({ history }) => {
           >
             <SettingOutlined />
           </Button>
+          <Button
+            onClick={() => setFanFeedModal(record)}
+            type="link"
+            style={{ padding: 0, margin: "6px 0 6px 6px" }}
+          >
+            <OrderedListOutlined />
+          </Button>
         </>
       ),
     },
@@ -157,6 +166,10 @@ const Fans: React.FC<RouteComponentProps> = ({ history }) => {
       <FanAPITestModal
         selectedRecord={fanAPITest}
         setSelectedRecord={setFanAPITest}
+      />
+      <FanFeedModal
+        selectedRecord={fanFeedModal}
+        setSelectedRecord={setFanFeedModal}
       />
       <Table
         rowKey="id"
