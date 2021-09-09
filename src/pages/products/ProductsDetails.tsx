@@ -77,38 +77,8 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
   });
 
   const {
-    settings: { currency = [], checkoutType = [] },
+    settings: { currency = [] },
   } = useSelector((state: any) => state.settings);
-
-  const setCheckoutByBrand = useCallback(
-    (useInitialValue: boolean) => {
-      const product = form.getFieldsValue(true);
-      const selectedBrand = brands?.find(
-        (brand: Brand) => brand.id === product.brand?.id
-      );
-
-      let checkout, confirmationUrl, cancelationUrl;
-
-      if (useInitialValue && initial) {
-        confirmationUrl =
-          initial.confirmationUrl || selectedBrand?.confirmationUrl;
-        cancelationUrl =
-          initial.cancelationUrl || selectedBrand?.cancelationUrl;
-        checkout = initial.checkout || selectedBrand?.checkout;
-      } else {
-        confirmationUrl = selectedBrand?.confirmationUrl;
-        cancelationUrl = selectedBrand?.cancelationUrl;
-        checkout = selectedBrand?.checkout;
-      }
-
-      form.setFieldsValue({
-        confirmationUrl,
-        cancelationUrl,
-        checkout,
-      });
-    },
-    [brands, form, initial]
-  );
 
   const setSearchTagsByCategory = useCallback(
     (useInitialValue: boolean, selectedCategories: any[] = []) => {
@@ -146,9 +116,8 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
   };
 
   useEffect(() => {
-    setCheckoutByBrand(true);
     setSearchTagsByCategory(true);
-  }, [brands, setCheckoutByBrand, setSearchTagsByCategory]);
+  }, [brands, setSearchTagsByCategory]);
 
   useEffect(() => {
     let mounted = true;
@@ -206,12 +175,6 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
       console.error(error);
       setLoading(false);
     }
-  };
-
-  const handleCheckoutTypeChange = (value: string) => {
-    form.setFieldsValue({
-      requireMobilePurchaseStatus: value !== "Dusci",
-    });
   };
 
   return (
@@ -273,7 +236,7 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                       label="Brand"
                       rules={[{ required: true }]}
                     >
-                      <Select onChange={() => setCheckoutByBrand(false)}>
+                      <Select>
                         {brands.map((brand) => (
                           <Select.Option key={brand.id} value={brand.id}>
                             {brand.brandName}
@@ -440,43 +403,6 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
             <Row gutter={8}>
               <Col lg={8} xs={24}>
                 <Form.Item
-                  name="checkout"
-                  label="Checkout Type"
-                  rules={[{ required: true }]}
-                >
-                  <Select
-                    placeholder="Select a checkout type"
-                    onChange={handleCheckoutTypeChange}
-                  >
-                    {checkoutType.map((curr: any) => (
-                      <Select.Option key={curr.value} value={curr.value}>
-                        {curr.name}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </Form.Item>
-              </Col>
-              <Col lg={8} xs={24}>
-                <Form.Item
-                  shouldUpdate={(prevValues, curValues) =>
-                    prevValues.checkout !== curValues.checkout
-                  }
-                >
-                  {({ getFieldValue }) => (
-                    <Form.Item
-                      name="requireMobilePurchaseStatus"
-                      label="Log Completed Purchases?"
-                      valuePropName="checked"
-                    >
-                      <Switch
-                        disabled={getFieldValue("checkout") === "disco"}
-                      />
-                    </Form.Item>
-                  )}
-                </Form.Item>
-              </Col>
-              <Col lg={8} xs={24}>
-                <Form.Item
                   name="displayDiscountPage"
                   label="Allow Use of D-Dollars?"
                   valuePropName="checked"
@@ -489,50 +415,6 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
               <Col lg={8} xs={24}>
                 <Form.Item name="weight" label="Weight">
                   <Input type="number" placeholder="Weight in Kg" />
-                </Form.Item>
-              </Col>
-            </Row>
-            <Row>
-              <Col lg={16} xs={24}>
-                <Form.Item
-                  shouldUpdate={(prevValues, curValues) =>
-                    prevValues.checkout !== curValues.checkout
-                  }
-                >
-                  {({ getFieldValue }) =>
-                    getFieldValue("checkout") === "external" && (
-                      <>
-                        <Col lg={24} xs={24}>
-                          <Form.Item
-                            name="externalCheckout"
-                            label="External Checkout URL"
-                            rules={[{ required: true }]}
-                            style={{ marginBottom: "0px" }}
-                          >
-                            <Input />
-                          </Form.Item>
-                        </Col>
-                        <Col lg={24} xs={24}>
-                          <Form.Item
-                            name="confirmationUrl"
-                            label="Payment Confirmation URL"
-                            rules={[{ required: true }]}
-                          >
-                            <Input />
-                          </Form.Item>
-                        </Col>
-                        <Col lg={24} xs={24}>
-                          <Form.Item
-                            name="cancelationUrl"
-                            label="Payment Cancelation URL"
-                            rules={[{ required: true }]}
-                          >
-                            <Input />
-                          </Form.Item>
-                        </Col>
-                      </>
-                    )
-                  }
                 </Form.Item>
               </Col>
             </Row>

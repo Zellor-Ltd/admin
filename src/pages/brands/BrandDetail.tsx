@@ -40,6 +40,12 @@ const BrandDetail: React.FC<RouteComponentProps> = (props) => {
     }
   };
 
+  const handleCheckoutTypeChange = (value: string) => {
+    form.setFieldsValue({
+      requireMobilePurchaseStatus: value !== "Disco",
+    });
+  };
+
   return (
     <>
       <PageHeader title="Brand Update" subTitle="Brand" />
@@ -63,7 +69,10 @@ const BrandDetail: React.FC<RouteComponentProps> = (props) => {
                 label="Checkout Type"
                 rules={[{ required: true }]}
               >
-                <Select placeholder="Select a checkout type">
+                <Select
+                  placeholder="Select a checkout type"
+                  onChange={handleCheckoutTypeChange}
+                >
                   {checkoutType.map((curr: any) => (
                     <Select.Option key={curr.value} value={curr.value}>
                       {curr.name}
@@ -88,6 +97,23 @@ const BrandDetail: React.FC<RouteComponentProps> = (props) => {
                 rules={[{ required: true }]}
               >
                 <Input />
+              </Form.Item>
+            </Col>
+            <Col lg={16} xs={24}>
+              <Form.Item
+                shouldUpdate={(prevValues, curValues) =>
+                  prevValues.checkout !== curValues.checkout
+                }
+              >
+                {({ getFieldValue }) => (
+                  <Form.Item
+                    name="requireMobilePurchaseStatus"
+                    label="Log Completed Purchases?"
+                    valuePropName="checked"
+                  >
+                    <Switch disabled={getFieldValue("checkout") === "Disco"} />
+                  </Form.Item>
+                )}
               </Form.Item>
             </Col>
             <Col lg={16} xs={24}>
@@ -202,13 +228,26 @@ const BrandDetail: React.FC<RouteComponentProps> = (props) => {
                 </Form.Item>
               </Col>
               <Col lg={24} xs={24}>
-                <Form.Item
-                  name="automated"
-                  label="Automated"
-                  valuePropName="checked"
-                >
-                  <Switch />
-                </Form.Item>
+                <Row gutter={8}>
+                  <Col lg={12} xs={12}>
+                    <Form.Item
+                      name="automated"
+                      label="Automated"
+                      valuePropName="checked"
+                    >
+                      <Switch />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={12} xs={12}>
+                    <Form.Item
+                      name="paused"
+                      label="Paused"
+                      valuePropName="checked"
+                    >
+                      <Switch />
+                    </Form.Item>
+                  </Col>
+                </Row>
               </Col>
             </Row>
           </Col>

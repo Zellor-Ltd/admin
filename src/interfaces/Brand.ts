@@ -16,4 +16,5 @@ export interface Brand {
   y: number;
   z: number;
   automated?: boolean;
+  paused?: boolean;
 }
