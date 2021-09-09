@@ -8,7 +8,6 @@ import {
   message,
   PageHeader,
   Radio,
-  RadioChangeEvent,
   Row,
   Select,
   Slider,
@@ -19,11 +18,13 @@ import {
 } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import { Upload } from "components";
+import { RichTextEditor } from "components/RichTextEditor";
 import { formatMoment } from "helpers/formatMoment";
 import { categoriesSettings } from "helpers/utils";
 import useAllCategories from "hooks/useAllCategories";
 import { Brand } from "interfaces/Brand";
 import { AllCategories } from "interfaces/Category";
+import { Product } from "interfaces/Product";
 import { Video } from "interfaces/Video";
 import { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
@@ -34,10 +35,8 @@ import {
   saveProduct,
   saveStagingProduct,
 } from "services/DiscoClubService";
-import { RichTextEditor } from "components/RichTextEditor";
 import ProductCategoriesTrees from "./ProductCategoriesTrees";
-import { Product } from "interfaces/Product";
-import './Products.scss'
+import "./Products.scss";
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 
@@ -78,31 +77,34 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
   });
 
   const {
-    settings: { currency = [] },
+    settings: { currency = [], checkoutType = [] },
   } = useSelector((state: any) => state.settings);
 
-  const setPaymentUrlsByBrand = useCallback(
+  const setCheckoutByBrand = useCallback(
     (useInitialValue: boolean) => {
       const product = form.getFieldsValue(true);
       const selectedBrand = brands?.find(
         (brand: Brand) => brand.id === product.brand?.id
       );
 
-      let confirmationUrl, cancelationUrl;
+      let checkout, confirmationUrl, cancelationUrl;
 
       if (useInitialValue && initial) {
         confirmationUrl =
           initial.confirmationUrl || selectedBrand?.confirmationUrl;
         cancelationUrl =
           initial.cancelationUrl || selectedBrand?.cancelationUrl;
+        checkout = initial.checkout || selectedBrand?.checkout;
       } else {
         confirmationUrl = selectedBrand?.confirmationUrl;
         cancelationUrl = selectedBrand?.cancelationUrl;
+        checkout = selectedBrand?.checkout;
       }
 
       form.setFieldsValue({
         confirmationUrl,
         cancelationUrl,
+        checkout,
       });
     },
     [brands, form, initial]
@@ -144,9 +146,9 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
   };
 
   useEffect(() => {
-    setPaymentUrlsByBrand(true);
+    setCheckoutByBrand(true);
     setSearchTagsByCategory(true);
-  }, [brands, setPaymentUrlsByBrand, setSearchTagsByCategory]);
+  }, [brands, setCheckoutByBrand, setSearchTagsByCategory]);
 
   useEffect(() => {
     let mounted = true;
@@ -206,10 +208,9 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
     }
   };
 
-  const handleCheckoutTypeChange = (e: RadioChangeEvent) => {
-    const type = e.target.value;
+  const handleCheckoutTypeChange = (value: string) => {
     form.setFieldsValue({
-      requireMobilePurchaseStatus: type === "external",
+      requireMobilePurchaseStatus: value !== "Dusci",
     });
   };
 
@@ -262,13 +263,17 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                       <RichTextEditor formField="description" form={form} />
                     </Form.Item>
                   </Col>
-                  <Col lg={12} xs={24}>
+                </Row>
+              </Col>
+              <Col lg={12} xs={24}>
+                <Row gutter={8}>
+                  <Col lg={24} xs={24}>
                     <Form.Item
                       name={["brand", "id"]}
                       label="Brand"
                       rules={[{ required: true }]}
                     >
-                      <Select onChange={() => setPaymentUrlsByBrand(false)}>
+                      <Select onChange={() => setCheckoutByBrand(false)}>
                         {brands.map((brand) => (
                           <Select.Option key={brand.id} value={brand.id}>
                             {brand.brandName}
@@ -277,10 +282,6 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                       </Select>
                     </Form.Item>
                   </Col>
-                </Row>
-              </Col>
-              <Col lg={12} xs={24}>
-                <Row gutter={8}>
                   <Col lg={24} xs={24}>
                     <Form.Item name="tagText" label="Tag Text">
                       <Input />
@@ -436,16 +437,23 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                 </Form.Item>
               </Col>
             </Row>
-            <Row>
+            <Row gutter={8}>
               <Col lg={8} xs={24}>
-                <Form.Item name="checkout" label="Checkout">
-                  <Radio.Group
-                    buttonStyle="solid"
+                <Form.Item
+                  name="checkout"
+                  label="Checkout Type"
+                  rules={[{ required: true }]}
+                >
+                  <Select
+                    placeholder="Select a checkout type"
                     onChange={handleCheckoutTypeChange}
                   >
-                    <Radio.Button value="disco">Disco</Radio.Button>
-                    <Radio.Button value="external">External</Radio.Button>
-                  </Radio.Group>
+                    {checkoutType.map((curr: any) => (
+                      <Select.Option key={curr.value} value={curr.value}>
+                        {curr.name}
+                      </Select.Option>
+                    ))}
+                  </Select>
                 </Form.Item>
               </Col>
               <Col lg={8} xs={24}>

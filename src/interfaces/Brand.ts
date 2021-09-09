@@ -1,4 +1,5 @@
 export interface Brand {
+  checkout: string;
   cancelationUrl: string;
   confirmationUrl: string;
   id: string;
