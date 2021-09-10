@@ -68,7 +68,7 @@ const BrandDetail: React.FC<RouteComponentProps> = (props) => {
             </Col>
             <Col lg={16} xs={24}>
               <Form.Item
-                name="checkout"
+                name="checkoutType"
                 label="Checkout Type"
                 rules={[{ required: true }]}
               >
@@ -76,14 +76,14 @@ const BrandDetail: React.FC<RouteComponentProps> = (props) => {
                   buttonStyle="solid"
                   onChange={handleCheckoutTypeChange}
                 >
-                  <Radio.Button value="disco">Disco</Radio.Button>
+                  <Radio.Button value="internal">Internal</Radio.Button>
                   <Radio.Button value="external">External</Radio.Button>
                 </Radio.Group>
               </Form.Item>
             </Col>
             <Col lg={16} xs={24}>
               <Form.Item
-                name="checkoutValue"
+                name="checkout"
                 label="Checkout"
                 rules={[{ required: true }]}
               >
