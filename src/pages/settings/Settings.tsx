@@ -67,6 +67,9 @@ const Settings: React.FC = () => {
           <TabPane tab="Status (Promotions)" key="promoStatus">
             <ItemList name="promoStatus" />
           </TabPane>
+          <TabPane tab="Checkout Type" key="checkoutType">
+            <ItemList name="checkoutType" />
+          </TabPane>
         </Tabs>
         <Row gutter={8}>
           <Col>

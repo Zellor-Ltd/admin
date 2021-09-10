@@ -1,6 +1,7 @@
 import { EditOutlined, SettingOutlined, OrderedListOutlined, } from "@ant-design/icons";
 import { Button, Col, PageHeader, Row, Table, Tag } from "antd";
 import { ColumnsType } from "antd/lib/table";
+import CopyIdToClipboard from "components/CopyIdToClipboard";
 import EditMultipleButton from "components/EditMultipleButton";
 import { SearchFilter } from "components/SearchFilter";
 import useFilter from "hooks/useFilter";
@@ -72,14 +73,16 @@ const Fans: React.FC<RouteComponentProps> = ({ history }) => {
     {
       title: "_id",
       dataIndex: "id",
-      width: "30%",
+      width: "10%",
+      render: (id) => <CopyIdToClipboard id={id} />,
+      align: "center",
     },
-    { title: "Name", dataIndex: "userName", width: "20%" },
-    { title: "E-mail", dataIndex: "user", width: "20%" },
+    { title: "Name", dataIndex: "userName", width: "25%", align: "center" },
+    { title: "E-mail", dataIndex: "user", width: "25%", align: "center" },
     {
       title: "Profile",
       dataIndex: "profile",
-      width: "5%",
+      width: "10%",
       render: (profile = "Fan") => (
         <Tag color={tagColorByPermission[profile]}>{profile}</Tag>
       ),
@@ -102,7 +105,7 @@ const Fans: React.FC<RouteComponentProps> = ({ history }) => {
     {
       title: "Actions",
       key: "action",
-      width: "5%",
+      width: "10%",
       align: "right",
       render: (_, record) => (
         <>

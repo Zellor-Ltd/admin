@@ -3,19 +3,29 @@ import {
   EditOutlined,
   SettingOutlined,
 } from "@ant-design/icons";
-import { Button, Checkbox, Col, PageHeader, Popconfirm, Row, Tag } from "antd";
+import {
+  Button,
+  Checkbox,
+  Col,
+  PageHeader,
+  Popconfirm,
+  Row,
+  Spin,
+  Tag,
+} from "antd";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
+import CopyIdToClipboard from "components/CopyIdToClipboard";
 import EditableTable, { EditableColumnType } from "components/EditableTable";
 import EditMultipleButton from "components/EditMultipleButton";
-import { SearchFilter } from "components/SearchFilter";
+import { SearchFilterDebounce } from "components/SearchFilterDebounce";
 import { SelectBrand } from "components/SelectBrand";
 import useAllCategories from "hooks/useAllCategories";
-import useFilter from "hooks/useFilter";
 import { useRequest } from "hooks/useRequest";
 import { Brand } from "interfaces/Brand";
 import { Product } from "interfaces/Product";
 import moment from "moment";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import InfiniteScroll from "react-infinite-scroll-component";
 import { RouteComponentProps } from "react-router";
 import { Link } from "react-router-dom";
 import {
@@ -24,11 +34,12 @@ import {
   saveProduct,
 } from "services/DiscoClubService";
 import EditProductModal from "./EditProductModal";
-import ProductExpandedRow from "./ProductExpandedRow";
 import ProductAPITestModal from "./ProductAPITestModal";
+import ProductExpandedRow from "./ProductExpandedRow";
 
 const Products: React.FC<RouteComponentProps> = ({ history }) => {
   const [loading, setLoading] = useState<boolean>(false);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
   const [productAPITest, setProductAPITest] = useState<Product | null>(null);
 
@@ -36,51 +47,100 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
   const { doRequest: saveCategories, loading: loadingCategories } =
     useRequest();
 
-  const {
-    setArrayList: setProducts,
-    filteredArrayList: filteredProducts,
-    addFilterFunction,
-    removeFilterFunction,
-  } = useFilter<Product>([]);
+  const [searchFilter, setSearchFilter] = useState<string>("");
+  const [brandIdFilter, setBrandIdFilter] = useState<string>("");
+  const [unclassifiedFilter, setUnclassifiedFilter] = useState<boolean>(false);
+  const [page, setPage] = useState<number>(0);
+  const [eof, setEof] = useState<boolean>(false);
+
+  const [products, setProducts] = useState<Product[]>([]);
 
   const { fetchAllCategories, allCategories } = useAllCategories({
     setLoading,
   });
 
-  const getResources = useCallback(async () => {
+  const _fetchProducts = async () => {
+    const pageToUse = refreshing ? 0 : page;
+    const response = await doFetch(() =>
+      fetchProducts({
+        limit: 30,
+        page: pageToUse,
+        brandId: brandIdFilter,
+        query: searchFilter,
+        unclassified: unclassifiedFilter,
+      })
+    );
+    setPage(pageToUse + 1);
+    if (response.results.length < 30) setEof(true);
+    return response;
+  };
+
+  const getResources = async () => {
     const [{ results }] = await Promise.all([
-      doFetch(fetchProducts),
+      _fetchProducts(),
       fetchAllCategories(),
     ]);
     setProducts(results);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  };
 
-  const getProducts = async () => {
-    const { results } = await doFetch(fetchProducts);
-    setProducts(results);
+  const refreshProducts = async () => {
+    setSelectedRowKeys([]);
+    setPage(0);
+    setRefreshing(true);
+  };
+
+  const fetchData = async () => {
+    if (!products.length) return;
+    const { results } = await _fetchProducts();
+    setProducts((prev) => [...prev.concat(results)]);
   };
 
   useEffect(() => {
+    const getProducts = async () => {
+      const { results } = await _fetchProducts();
+      setProducts(results);
+      setRefreshing(false);
+    };
+    if (refreshing) {
+      setEof(false);
+      getProducts();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [refreshing]);
+
+  useEffect(() => {
+    if (allCategories["Super Category"].length) refreshProducts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchFilter, brandIdFilter, unclassifiedFilter]);
+
+  useEffect(() => {
     getResources();
-  }, [getResources]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const deleteItem = async (id: string) => {
     await doRequest(() => deleteProduct({ id }));
-    await getProducts();
+    await refreshProducts();
   };
 
   const onSaveCategories = async (record: Product) => {
     await saveCategories(() => saveProduct(record));
-    await getProducts();
+    await refreshProducts();
   };
 
   const onSaveProduct = async (record: Product) => {
     await doRequest(() => saveProduct(record));
-    await getProducts();
+    await refreshProducts();
   };
 
   const columns: EditableColumnType<Product>[] = [
+    {
+      title: "_id",
+      dataIndex: "id",
+      width: "6%",
+      render: (id) => <CopyIdToClipboard id={id} />,
+      align: "center",
+    },
     {
       title: "Name",
       dataIndex: "name",
@@ -119,7 +179,7 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
     {
       title: "Expiration Date",
       dataIndex: "offerExpirationDate",
-      width: "15%",
+      width: "13%",
       align: "center",
       responsive: ["sm"],
       render: (creationDate: Date) => moment(creationDate).format("DD/MM/YYYY"),
@@ -127,7 +187,7 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
     {
       title: "Actions",
       key: "action",
-      width: "10%",
+      width: "12%",
       align: "right",
       render: (_: any, record) => (
         <>
@@ -161,47 +221,18 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
     },
   ];
 
-  const searchFilterFunction = (filterText: string) => {
-    addFilterFunction("productName", (products) =>
-      products.filter((product) =>
-        product.name?.toUpperCase().includes(filterText.toUpperCase())
-      )
-    );
-  };
-
   const onChangeBrand = async (_selectedBrand: Brand | undefined) => {
-    if (!_selectedBrand) {
-      removeFilterFunction("brandName");
-      return;
-    }
-    addFilterFunction("brandName", (products) =>
-      products.filter(
-        (product) => product.brand.brandName === _selectedBrand.brandName
-      )
-    );
-  };
-
-  const handleEditProducts = async () => {
-    await fetchProducts();
-    setSelectedRowKeys([]);
+    setBrandIdFilter(_selectedBrand?.id || "");
   };
 
   const handleFilterClassified = (e: CheckboxChangeEvent) => {
-    if (!e.target.checked) {
-      removeFilterFunction("categorized");
-      return;
-    }
-    addFilterFunction("categorized", (products) =>
-      products.filter((product) => !product.categories?.length)
-    );
+    setUnclassifiedFilter(e.target.checked);
   };
 
   const handleRowSelection = (preSelectedRows: any[]) => {
     const selectedRows: any[] = [];
     preSelectedRows.forEach((productId) => {
-      const product = filteredProducts.find(
-        (product) => product.id === productId
-      );
+      const product = products.find((product) => product.id === productId);
       if (product!.brand.automated !== true) selectedRows.push(productId);
     });
     setSelectedRowKeys(selectedRows);
@@ -222,8 +253,8 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
         <Col lg={16} xs={24}>
           <Row gutter={8}>
             <Col lg={8} xs={16}>
-              <SearchFilter
-                filterFunction={searchFilterFunction}
+              <SearchFilterDebounce
+                filterFunction={setSearchFilter}
                 label="Search by Name"
               />
             </Col>
@@ -246,38 +277,57 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
         </Col>
         <EditMultipleButton
           text="Edit Products"
-          arrayList={filteredProducts}
+          arrayList={products}
           ModalComponent={EditProductModal}
           selectedRowKeys={selectedRowKeys}
-          onOk={handleEditProducts}
+          onOk={refreshProducts}
         />
       </Row>
       <ProductAPITestModal
         selectedRecord={productAPITest}
         setSelectedRecord={setProductAPITest}
       />
-      <EditableTable
-        rowKey="id"
-        columns={columns}
-        dataSource={filteredProducts}
-        loading={loading}
-        onSave={onSaveProduct}
-        rowSelection={{
-          selectedRowKeys,
-          onChange: handleRowSelection,
-        }}
-        expandable={{
-          expandedRowRender: (record: Product) => (
-            <ProductExpandedRow
-              key={record.id}
-              record={record}
-              allCategories={allCategories}
-              onSaveProduct={onSaveCategories}
-              loading={loadingCategories}
-            ></ProductExpandedRow>
-          ),
-        }}
-      />
+      <InfiniteScroll
+        dataLength={products.length}
+        next={fetchData}
+        hasMore={!eof}
+        loader={
+          page !== 0 && (
+            <div className="scroll-message">
+              <Spin />
+            </div>
+          )
+        }
+        endMessage={
+          <div className="scroll-message">
+            <b>End of results.</b>
+          </div>
+        }
+      >
+        <EditableTable
+          rowKey="id"
+          columns={columns}
+          dataSource={products}
+          loading={refreshing || (!products.length && loading)}
+          onSave={onSaveProduct}
+          pagination={false}
+          rowSelection={{
+            selectedRowKeys,
+            onChange: handleRowSelection,
+          }}
+          expandable={{
+            expandedRowRender: (record: Product) => (
+              <ProductExpandedRow
+                key={record.id}
+                record={record}
+                allCategories={allCategories}
+                onSaveProduct={onSaveCategories}
+                loading={loadingCategories}
+              ></ProductExpandedRow>
+            ),
+          }}
+        />
+      </InfiniteScroll>
     </>
   );
 };

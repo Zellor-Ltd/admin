@@ -47,7 +47,7 @@ const TagDetail: React.FC<RouteComponentProps> = (props) => {
     });
 
     async function getProducts() {
-      const response: any = await fetchProducts();
+      const response: any = await fetchProducts({});
       if (mounted) {
         setProducts(response.results);
         setLoading(false);
