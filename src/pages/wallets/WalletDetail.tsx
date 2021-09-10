@@ -1,17 +1,13 @@
 import { CalendarOutlined } from "@ant-design/icons";
 import {
-  Button,
   Col,
   DatePicker,
   Form,
-  InputNumber,
   PageHeader,
-  Popconfirm,
   Row,
   Table,
   Typography,
 } from "antd";
-import { useForm } from "antd/lib/form/Form";
 import { ColumnsType } from "antd/lib/table";
 import useFilter from "hooks/useFilter";
 import { useRequest } from "hooks/useRequest";
@@ -22,17 +18,13 @@ import {
 import moment from "moment";
 import { useEffect, useState } from "react";
 import { RouteComponentProps } from "react-router";
-import {
-  addBalanceToUser,
-  fetchTransactionsPerBrand,
-  resetUserBalance,
-} from "services/DiscoClubService";
+import { fetchTransactionsPerBrand } from "services/DiscoClubService";
+import WalletEdit from "./WalletEdit";
 
 const WalletDetail: React.FC<RouteComponentProps> = ({ location }) => {
   const [loading, setLoading] = useState<boolean>(false);
-  const { doFetch, doRequest } = useRequest({ setLoading: setLoading });
+  const { doFetch } = useRequest({ setLoading: setLoading });
   const initial = location.state as unknown as WalletDetailParams;
-  const [form] = useForm();
 
   const {
     // arrayList: wallets,
@@ -105,19 +97,6 @@ const WalletDetail: React.FC<RouteComponentProps> = ({ location }) => {
     );
   };
 
-  const addBalance = async ({ balanceToAdd }: { balanceToAdd: number }) => {
-    await doRequest(() =>
-      addBalanceToUser(initial.fan.id, initial.brand.id, balanceToAdd)
-    );
-    form.resetFields();
-    await getResources();
-  };
-
-  const resetBalance = async () => {
-    await doRequest(() => resetUserBalance(initial.fan.id, initial.brand.id));
-    await getResources();
-  };
-
   return (
     <div className="walletdetail">
       <PageHeader title="Wallet Fan/Brand Transactions" />
@@ -132,34 +111,11 @@ const WalletDetail: React.FC<RouteComponentProps> = ({ location }) => {
                 Brand: {initial.brand.name}
               </Typography.Text>
             </Col>
-            <Col lg={6} xs={12}>
-              <Form form={form} onFinish={addBalance}>
-                <Row gutter={2}>
-                  <Col lg={16} xs={16}>
-                    <Form.Item name="balanceToAdd">
-                      <InputNumber></InputNumber>
-                    </Form.Item>
-                  </Col>
-                  <Col lg={8} xs={8}>
-                    <Button htmlType="submit" loading={loading} type="primary">
-                      Add
-                    </Button>
-                  </Col>
-                </Row>
-              </Form>
-            </Col>
-            <Col lg={4} xs={8}>
-              <Row justify="end">
-                <Popconfirm
-                  title="Are you sure？"
-                  okText="Yes"
-                  cancelText="No"
-                  onConfirm={resetBalance}
-                >
-                  <Button danger>Reset</Button>
-                </Popconfirm>
-              </Row>
-            </Col>
+            <WalletEdit
+              fanId={initial.fan.id}
+              brandId={initial.brand.id}
+              getResources={getResources}
+            />
           </Row>
         </Col>
       </Row>
