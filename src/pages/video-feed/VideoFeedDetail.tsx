@@ -551,8 +551,8 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
                                     src={segment.thumbnail?.url}
                                     key={segment.thumbnail?.url}
                                     style={{
-                                      height: "auto",
-                                      width: "100%",
+                                      height: "256px",
+                                      width: "auto",
                                     }}
                                   />,
                                   <Button
