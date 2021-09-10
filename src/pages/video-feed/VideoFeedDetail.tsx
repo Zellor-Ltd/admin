@@ -42,6 +42,7 @@ import { Creator } from "interfaces/Creator";
 import { Category } from "interfaces/Category";
 import { RichTextEditor } from "components/RichTextEditor";
 import "./VideoFeedDetail.scss";
+import { useRequest } from "hooks/useRequest";
 
 const { Title } = Typography;
 
@@ -75,6 +76,9 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
   const [selectedSegmentIndex, setSelectedSegmentIndex] = useState<number>(-1);
   const [ageRange, setageRange] = useState<[number, number]>([12, 100]);
   const [segForm, setSegForm] = useState<any>();
+
+  const { doRequest } = useRequest({ setLoading });
+
   useEffect(() => {
     async function getUsers() {
       const response: any = await fetchUsers();
@@ -137,22 +141,14 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
   };
 
   const onFinish = async () => {
-    setLoading(true);
-    try {
-      const item: FeedItem = form.getFieldsValue(true);
-      item.package = item.package?.map((pack) => ({
-        ...pack,
-        tags: pack.tags ? pack.tags : [],
-      }));
-      // item.validity = moment(item.validity).format("DD/MM/YYYY");
-      await saveVideoFeed(item);
-      message.success("Register updated with success.");
-      setLoading(false);
-      history.push("/feed");
-    } catch (e) {
-      console.error(e);
-      setLoading(false);
-    }
+    const item: FeedItem = form.getFieldsValue(true);
+    item.package = item.package?.map((pack) => ({
+      ...pack,
+      tags: pack.tags ? pack.tags : [],
+    }));
+    // item.validity = moment(item.validity).format("DD/MM/YYYY");
+    await doRequest(() => saveVideoFeed(item));
+    history.push("/feed");
   };
 
   const onEditTag = (tag: Tag, index: number) => {
@@ -220,25 +216,15 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
   };
 
   const onUnlockFeedClick = async () => {
-    try {
-      await await unlockFeed(selectedUser);
-      setSelectedUser("");
-      setModalRemoveFeedFromUser(false);
-      message.success("Changes saved!");
-    } catch (error) {
-      message.error(error);
-    }
+    await doRequest(() => unlockFeed(selectedUser));
+    setSelectedUser("");
+    setModalRemoveFeedFromUser(false);
   };
 
   const onModalAddFeedUserOkClick = async () => {
-    try {
-      await lockFeedToUser(initial.id, selectedUser);
-      setSelectedUser("");
-      setModalAddFeedToUser(false);
-      message.success("Changes saved!");
-    } catch (error) {
-      message.error(error);
-    }
+    await doRequest(() => lockFeedToUser(initial.id, selectedUser));
+    setSelectedUser("");
+    setModalAddFeedToUser(false);
   };
 
   const onModalAddFeedUserChange = (value: string) => {

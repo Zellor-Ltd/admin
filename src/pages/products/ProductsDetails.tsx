@@ -245,11 +245,10 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                       </Select>
                     </Form.Item>
                   </Col>
-                  <Col lg={24} xs={24}>
-                    <Form.Item name="tagText" label="Tag Text">
-                      <Input />
-                    </Form.Item>
-                  </Col>
+                </Row>
+              </Col>
+              <Col lg={12} xs={24}>
+                <Row gutter={8}>
                   <Col lg={12} xs={24}>
                     <Form.Item
                       name="goLiveDate"
