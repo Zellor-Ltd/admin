@@ -14,6 +14,7 @@ import {
   Tag,
 } from "antd";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
+import CopyIdToClipboard from "components/CopyIdToClipboard";
 import EditableTable, { EditableColumnType } from "components/EditableTable";
 import EditMultipleButton from "components/EditMultipleButton";
 import { SearchFilterDebounce } from "components/SearchFilterDebounce";
@@ -134,6 +135,13 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
 
   const columns: EditableColumnType<Product>[] = [
     {
+      title: "_id",
+      dataIndex: "id",
+      width: "6%",
+      render: (id) => <CopyIdToClipboard id={id} />,
+      align: "center",
+    },
+    {
       title: "Name",
       dataIndex: "name",
       width: "22%",
@@ -171,7 +179,7 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
     {
       title: "Expiration Date",
       dataIndex: "offerExpirationDate",
-      width: "15%",
+      width: "13%",
       align: "center",
       responsive: ["sm"],
       render: (creationDate: Date) => moment(creationDate).format("DD/MM/YYYY"),
@@ -179,7 +187,7 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
     {
       title: "Actions",
       key: "action",
-      width: "10%",
+      width: "12%",
       align: "right",
       render: (_: any, record) => (
         <>
