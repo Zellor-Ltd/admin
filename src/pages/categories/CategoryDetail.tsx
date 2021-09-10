@@ -1,13 +1,4 @@
-import {
-  Button,
-  Col,
-  Form,
-  Input,
-  message,
-  PageHeader,
-  Row,
-  Select,
-} from "antd";
+import { Button, Col, Form, Input, PageHeader, Row, Select } from "antd";
 import { Upload } from "components";
 import React, { useEffect, useState } from "react";
 import { RouteComponentProps } from "react-router";
@@ -22,20 +13,22 @@ import {
   AllCategoriesAPI,
   ProductCategory,
 } from "interfaces/Category";
+import { useRequest } from "hooks/useRequest";
 
 const { categoriesKeys, categoriesArray, categoriesFields } =
   categoriesSettings;
 
 const CategoryDetail: React.FC<RouteComponentProps> = (props) => {
   const { history, location } = props;
+  const [loading, setLoading] = useState<boolean>(false);
   const initial: any = location.state;
   const params = new URLSearchParams(location.search);
+  const { doRequest } = useRequest({ setLoading });
 
   const categoryLevel = Number(params.get("category-level"));
   const categoryUpdateName = categoriesKeys[categoryLevel];
   const categoryField = categoriesFields[categoryLevel];
 
-  const [loading, setLoading] = useState<boolean>(false);
   const { fetchAllCategories, filteredCategories, filterCategory } =
     useAllCategories({
       setLoading,
@@ -67,22 +60,12 @@ const CategoryDetail: React.FC<RouteComponentProps> = (props) => {
         .map(convertTagsIntoStrings)
         .filter((str: string) => str.length > 1),
     };
-    setLoading(true);
-    try {
-      const response: any = await productCategoriesAPI[
-        categoryField as keyof AllCategoriesAPI
-      ].save(category);
-      if (response.success) {
-        message.success("Register updated with success.");
-        history.push("/categories");
-      } else {
-        message.error(response.error);
-      }
-    } catch (error) {
-      message.error(error);
-    } finally {
-      setLoading(false);
-    }
+    await doRequest(() =>
+      productCategoriesAPI[categoryField as keyof AllCategoriesAPI].save(
+        category
+      )
+    );
+    history.push("/categories");
   };
 
   return (
