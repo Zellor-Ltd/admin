@@ -1,16 +1,11 @@
-import {
-  Modal, Table,
-  Tag as AntTag
-} from "antd";
+import { Modal, Table, Tag as AntTag } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import { useRequest } from "hooks/useRequest";
 import { Fan } from "interfaces/Fan";
 import { FeedItem } from "interfaces/FeedItem";
 import { Segment } from "interfaces/Segment";
 import React, { useEffect, useState } from "react";
-import {
-  fetchUserFeed
-} from "services/DiscoClubService";
+import { fetchUserFeed } from "services/DiscoClubService";
 
 interface FanFeedModalProps {
   selectedRecord: Fan | null;
@@ -23,27 +18,29 @@ const reduceSegmentsTags = (packages: Segment[]) => {
   }, 0);
 };
 
-const FanFeedModal: React.FC<FanFeedModalProps> = (props) => {
+const FanFeedModal: React.FC<FanFeedModalProps> = ({
+  selectedRecord,
+  setSelectedRecord,
+}) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [userFeed, setUserFeed] = useState<any[]>([]);
+  const { doFetch } = useRequest({ setLoading });
 
   const getResources = async () => {
-    await fetchUserFeed(props.selectedRecord!.id);
+    setUserFeed([]);
+    const { results } = await doFetch(() => fetchUserFeed(selectedRecord!.id));
+    setUserFeed(results);
   };
 
   useEffect(() => {
-    if (props.selectedRecord !== null) {
-      getResources()
+    if (selectedRecord !== null) {
+      getResources();
     }
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedRecord]);
 
-  
-  const _onOk = () => {
-    props.setSelectedRecord(null);
-  };
-
-  const onCancel = () => {
-    props.setSelectedRecord(null);    
+  const onClose = () => {
+    setSelectedRecord(null);
   };
 
   const columns: ColumnsType<FeedItem> = [
@@ -54,7 +51,7 @@ const FanFeedModal: React.FC<FanFeedModalProps> = (props) => {
       // render: (value: string, record: FeedItem) => (
       //   <Link to={{ pathname: `/video-feed`, state: record }}>{value}</Link>
       // ),
-      align: "center"
+      align: "center",
     },
     {
       title: "Segments",
@@ -91,18 +88,21 @@ const FanFeedModal: React.FC<FanFeedModalProps> = (props) => {
   return (
     <Modal
       title="Video Feed"
-      visible={!!props.selectedRecord}
+      visible={!!selectedRecord}
       footer={null}
-      width="300px"
+      width="800px"
+      onOk={onClose}
+      onCancel={onClose}
       okButtonProps={{ loading: loading }}
-      forceRender>
+      forceRender
+    >
       <div className="feed-mixer">
-          <Table
-            rowKey="id"
-            columns={columns}
-            dataSource={userFeed}
-            loading={loading}
-          />
+        <Table
+          rowKey="id"
+          columns={columns}
+          dataSource={userFeed}
+          loading={loading}
+        />
       </div>
     </Modal>
   );
