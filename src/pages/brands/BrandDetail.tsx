@@ -5,6 +5,8 @@ import {
   Input,
   message,
   PageHeader,
+  Radio,
+  RadioChangeEvent,
   Row,
   Select,
   Switch,
@@ -40,9 +42,10 @@ const BrandDetail: React.FC<RouteComponentProps> = (props) => {
     }
   };
 
-  const handleCheckoutTypeChange = (value: string) => {
+  const handleCheckoutTypeChange = (e: RadioChangeEvent) => {
+    const type = e.target.value;
     form.setFieldsValue({
-      requireMobilePurchaseStatus: value !== "Disco",
+      requireMobilePurchaseStatus: type === "external",
     });
   };
 
@@ -65,14 +68,26 @@ const BrandDetail: React.FC<RouteComponentProps> = (props) => {
             </Col>
             <Col lg={16} xs={24}>
               <Form.Item
-                name="checkout"
+                name="checkoutType"
                 label="Checkout Type"
                 rules={[{ required: true }]}
               >
-                <Select
-                  placeholder="Select a checkout type"
+                <Radio.Group
+                  buttonStyle="solid"
                   onChange={handleCheckoutTypeChange}
                 >
+                  <Radio.Button value="internal">Internal</Radio.Button>
+                  <Radio.Button value="external">External</Radio.Button>
+                </Radio.Group>
+              </Form.Item>
+            </Col>
+            <Col lg={16} xs={24}>
+              <Form.Item
+                name="checkout"
+                label="Checkout"
+                rules={[{ required: true }]}
+              >
+                <Select placeholder="Select a checkout type">
                   {checkoutType.map((curr: any) => (
                     <Select.Option key={curr.value} value={curr.value}>
                       {curr.name}
