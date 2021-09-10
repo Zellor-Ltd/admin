@@ -1,4 +1,4 @@
-import { Button, Col, PageHeader, Row, Table, Typography } from "antd";
+import { Col, PageHeader, Row, Table } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import { SelectBrand } from "components/SelectBrand";
 import { SelectFan } from "components/SelectFan";
@@ -8,7 +8,6 @@ import { Brand } from "interfaces/Brand";
 import { Fan } from "interfaces/Fan";
 import { Wallet } from "interfaces/Wallet";
 import { WalletDetailParams } from "interfaces/WalletTransactions";
-import { initial } from "lodash";
 import { useState } from "react";
 import { RouteComponentProps } from "react-router";
 import { Link } from "react-router-dom";
