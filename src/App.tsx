@@ -1,3 +1,4 @@
+import { AppProvider } from "contexts/AppContext";
 import { isAuthenticated } from "helpers/authFunctions";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
@@ -13,9 +14,11 @@ function App() {
   }, [dispatch]);
 
   return (
-    <BrowserRouter>
-      <Routes />
-    </BrowserRouter>
+    <AppProvider>
+      <BrowserRouter>
+        <Routes />
+      </BrowserRouter>
+    </AppProvider>
   );
 }
 

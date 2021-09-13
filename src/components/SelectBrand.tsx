@@ -1,8 +1,9 @@
 import Select from "antd/lib/select";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { fetchBrands } from "../services/DiscoClubService";
 import { Brand } from "../interfaces/Brand";
 import { Typography } from "antd";
+import { AppContext } from "contexts/AppContext";
 
 type SelectBrandProps = Omit<
   React.SelectHTMLAttributes<HTMLSelectElement>,
@@ -20,8 +21,11 @@ export const SelectBrand: React.FC<SelectBrandProps> = ({
   allowClear,
   label = "Brand Filter",
 }) => {
+  const { filterValues, setFilterValues } = useContext(AppContext);
   const [brands, setBrands] = useState<Brand[]>([]);
-  const [selectedBrand, setSelectedBrand] = useState<string>("");
+  const [selectedBrand, setSelectedBrand] = useState<string>(
+    filterValues[label]
+  );
 
   useEffect(() => {
     const getBrands = async () => {
@@ -35,6 +39,7 @@ export const SelectBrand: React.FC<SelectBrandProps> = ({
 
   const _onChange = (value: string) => {
     setSelectedBrand(value);
+    setFilterValues((prev) => ({ ...prev, [label]: value }));
     onChange(brands.find((brand) => brand.brandName === value) as Brand);
   };
 

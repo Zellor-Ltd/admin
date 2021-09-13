@@ -1,4 +1,4 @@
-import { Switch } from "react-router-dom";
+import { Switch, Redirect } from "react-router-dom";
 import Login from "pages/login/Login";
 import VideoFeed from "pages/video-feed/VideoFeed";
 import VideoFeedDetail from "pages/video-feed/VideoFeedDetail";
@@ -46,7 +46,6 @@ import FanGroups from "pages/fan-groups/FanGroups";
 import FanGroupDetail from "pages/fan-groups/FanGroupDetail";
 import Wallets from "pages/wallets/Wallets";
 import WalletDetail from "pages/wallets/WalletDetail";
-import { Redirect } from "react-router";
 
 function AdminRoutes() {
   return (

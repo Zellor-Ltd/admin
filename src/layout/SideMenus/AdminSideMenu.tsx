@@ -20,6 +20,19 @@ import {
 import { Menu } from "antd";
 import SubMenu from "antd/lib/menu/SubMenu";
 import { Link } from "react-router-dom";
+import React, { useContext, useEffect } from "react";
+import { AppContext } from "contexts/AppContext";
+
+const RefreshState: React.FC<{ to: string }> = ({ to, children }) => {
+  const { setFilterValues } = useContext(AppContext);
+
+  useEffect(() => {
+    setFilterValues({});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [to]);
+
+  return <Link to={to}>{children}</Link>;
+};
 
 const AdminSideMenu = () => {
   return (
@@ -31,10 +44,10 @@ const AdminSideMenu = () => {
         <Link to="/brands">Brands</Link>
       </Menu.Item>
       <Menu.Item key="products" icon={<TagOutlined />}>
-        <Link to="/products">Products</Link>
+        <RefreshState to="/products">Products</RefreshState>
       </Menu.Item>
       <Menu.Item key="staging-products" icon={<TagOutlined />}>
-        <Link to="/staging-products">Staging</Link>
+        <RefreshState to="/staging-products">Staging</RefreshState>
       </Menu.Item>
       <Menu.Item key="2" icon={<HeartFilled />}>
         <Link to="/feed">Videos Feed</Link>
