@@ -512,14 +512,6 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
                     </Row>
                   </Col>
                 </Row>
-
-                <Button
-                  htmlType="button"
-                  style={{ margin: "8px 0" }}
-                  onClick={onAddSegment}
-                >
-                  Add Segment
-                </Button>
                 <Title level={3}>Segments</Title>
                 <Form.Item
                   shouldUpdate={(prevValues, curValues) =>
@@ -585,6 +577,13 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
                     );
                   }}
                 </Form.Item>
+                <Button
+                  htmlType="button"
+                  style={{ margin: "8px 0px 80px 8px" }}
+                  onClick={onAddSegment}
+                >
+                  Add Segment
+                </Button>
               </Tabs.TabPane>
             </Tabs>
             <Row gutter={8} hidden={!!selectedSegment}>
