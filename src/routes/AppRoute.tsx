@@ -1,7 +1,7 @@
 import { isAuthenticated } from "helpers/authFunctions";
 import { Redirect, Route } from "react-router-dom";
 
-const AuthRoute: React.FC<any> = (props) => {
+const AppRoute: React.FC<any> = (props) => {
   const {
     children,
     component: Component,
@@ -25,4 +25,4 @@ const AuthRoute: React.FC<any> = (props) => {
   );
 };
 
-export default AuthRoute;
+export default AppRoute;
