@@ -66,12 +66,22 @@ instance.interceptors.request.use((config: AxiosRequestConfig) => {
   return config;
 });
 
+const MAX_STACKED_ERRORS = 3;
+const ERROR_MESSAGE_DURATION = 3000;
+let errorCounter = 0;
+
 const errorHandler = (
   error: any,
   errorMsg = "Something went wrong.",
   responseData?: any
 ) => {
-  message.error(errorMsg);
+  if (errorCounter < MAX_STACKED_ERRORS) {
+    message.error(errorMsg);
+    errorCounter++;
+    setTimeout(() => {
+      errorCounter--;
+    }, ERROR_MESSAGE_DURATION);
+  }
   if (responseData) {
     // eslint-disable-next-line no-throw-literal
     throw { error, ...responseData };
