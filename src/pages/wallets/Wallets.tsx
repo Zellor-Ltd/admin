@@ -9,8 +9,7 @@ import { Fan } from "interfaces/Fan";
 import { Wallet } from "interfaces/Wallet";
 import { WalletDetailParams } from "interfaces/WalletTransactions";
 import { useState } from "react";
-import { RouteComponentProps } from "react-router";
-import { Link } from "react-router-dom";
+import { Link, RouteComponentProps } from "react-router-dom";
 import { fetchBalancePerBrand } from "services/DiscoClubService";
 import WalletEdit from "./WalletEdit";
 

@@ -1,4 +1,12 @@
 import {
+  FacebookFilled,
+  GlobalOutlined,
+  InstagramFilled,
+  SoundFilled,
+  TwitterCircleFilled,
+  YoutubeFilled,
+} from "@ant-design/icons";
+import {
   Button,
   Col,
   Form,
@@ -10,18 +18,10 @@ import {
   Slider,
   Typography,
 } from "antd";
-import { useEffect, useState } from "react";
-import { RouteComponentProps } from "react-router";
-import { saveCreator } from "services/DiscoClubService";
-import {
-  InstagramFilled,
-  FacebookFilled,
-  YoutubeFilled,
-  TwitterCircleFilled,
-  GlobalOutlined,
-  SoundFilled,
-} from "@ant-design/icons";
 import { Upload } from "components";
+import { useEffect, useState } from "react";
+import { RouteComponentProps } from "react-router-dom";
+import { saveCreator } from "services/DiscoClubService";
 
 const CreatorDetail: React.FC<RouteComponentProps> = (props) => {
   const { history, location } = props;

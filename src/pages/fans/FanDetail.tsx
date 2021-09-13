@@ -17,7 +17,7 @@ import { Category } from "interfaces/Category";
 import { Creator } from "interfaces/Creator";
 import { Role } from "interfaces/Role";
 import { useEffect, useState } from "react";
-import { RouteComponentProps } from "react-router";
+import { RouteComponentProps } from "react-router-dom";
 import {
   fetchCategories,
   fetchCreators,

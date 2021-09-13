@@ -1,23 +1,22 @@
+import {
+  CheckOutlined,
+  CloseOutlined,
+  DeleteOutlined,
+  EditOutlined,
+} from "@ant-design/icons";
 import { Button, Col, PageHeader, Popconfirm, Row, Table, Tag } from "antd";
 import { ColumnsType } from "antd/lib/table";
+import CopyIdToClipboard from "components/CopyIdToClipboard";
+import { SearchFilter } from "components/SearchFilter";
+import useFilter from "hooks/useFilter";
 import { Creator } from "interfaces/Creator";
 import { useEffect, useState } from "react";
-import { RouteComponentProps } from "react-router";
-import { Link } from "react-router-dom";
+import { Link, RouteComponentProps } from "react-router-dom";
 import {
   deleteCreator,
   fetchCreators,
   saveCreator,
 } from "services/DiscoClubService";
-import {
-  EditOutlined,
-  CheckOutlined,
-  CloseOutlined,
-  DeleteOutlined,
-} from "@ant-design/icons";
-import useFilter from "hooks/useFilter";
-import { SearchFilter } from "components/SearchFilter";
-import CopyIdToClipboard from "components/CopyIdToClipboard";
 
 const tagColorByStatus: any = {
   approved: "green",

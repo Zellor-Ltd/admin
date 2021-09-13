@@ -2,10 +2,9 @@ import AuthRoute from "components/auth-route/AuthRoute";
 import AuthenticatedLayout from "layout/AuthenticatedLayout";
 import OpenLayout from "layout/OpenLayout";
 import Login from "pages/login/Login";
-import StagingList from "pages/products/StagingList";
 import ProductDetails from "pages/products/ProductsDetails";
-import { Switch } from "react-router-dom";
-import { Redirect } from "react-router";
+import StagingList from "pages/products/StagingList";
+import { Redirect, Switch } from "react-router-dom";
 
 function BrandManagerRoutes() {
   return (

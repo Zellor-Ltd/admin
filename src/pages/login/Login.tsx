@@ -1,6 +1,6 @@
 import { Button, Card, Form, Input } from "antd";
 import { useState } from "react";
-import { RouteComponentProps } from "react-router";
+import { RouteComponentProps } from "react-router-dom";
 import { loginService } from "services/DiscoClubService";
 
 const Login: React.FC<RouteComponentProps> = (props) => {

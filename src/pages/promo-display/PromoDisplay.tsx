@@ -7,8 +7,7 @@ import { useRequest } from "hooks/useRequest";
 import { PromoDisplay } from "interfaces/PromoDisplay";
 import moment from "moment";
 import { useEffect, useState } from "react";
-import { RouteComponentProps } from "react-router";
-import { Link } from "react-router-dom";
+import { Link, RouteComponentProps } from "react-router-dom";
 import {
   deletePromoDisplay,
   fetchPromoDisplays,

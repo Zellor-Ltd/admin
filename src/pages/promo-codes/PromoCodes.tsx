@@ -6,8 +6,7 @@ import { PromoCode } from "interfaces/PromoCode";
 import moment from "moment";
 import { useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { RouteComponentProps } from "react-router";
-import { Link } from "react-router-dom";
+import { Link, RouteComponentProps } from "react-router-dom";
 import { deletePromoCode, fetchPromoCodes } from "services/DiscoClubService";
 import "./PromoCodes.scss";
 

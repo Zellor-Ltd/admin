@@ -24,7 +24,7 @@ import { FeedItem } from "interfaces/FeedItem";
 import { Segment } from "interfaces/Segment";
 import React, { useEffect, useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
-import { RouteComponentProps } from "react-router";
+import { RouteComponentProps } from "react-router-dom";
 import {
   fetchGroupFeed,
   fetchUserFeed,

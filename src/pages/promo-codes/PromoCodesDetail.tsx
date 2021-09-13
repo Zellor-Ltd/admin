@@ -1,6 +1,6 @@
 import { Button, Col, Form, Input, message, PageHeader, Row } from "antd";
 import { useState } from "react";
-import { RouteComponentProps } from "react-router";
+import { RouteComponentProps } from "react-router-dom";
 import { savePromoCode } from "services/DiscoClubService";
 
 const PromoCodesDetail: React.FC<RouteComponentProps> = (props) => {

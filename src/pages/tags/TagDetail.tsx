@@ -15,7 +15,7 @@ import { Product } from "interfaces/Product";
 import { Tag } from "interfaces/Tag";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { RouteComponentProps } from "react-router";
+import { RouteComponentProps } from "react-router-dom";
 import { fetchBrands, fetchProducts, saveTag } from "services/DiscoClubService";
 
 const TagDetail: React.FC<RouteComponentProps> = (props) => {

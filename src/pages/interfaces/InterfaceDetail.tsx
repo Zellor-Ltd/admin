@@ -10,7 +10,7 @@ import {
 } from "antd";
 import { Function } from "interfaces/Function";
 import { useState } from "react";
-import { RouteComponentProps } from "react-router";
+import { RouteComponentProps } from "react-router-dom";
 import { saveInterface } from "services/DiscoClubService";
 
 const InterfaceDetail: React.FC<RouteComponentProps> = (props) => {

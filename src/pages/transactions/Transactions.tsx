@@ -1,14 +1,13 @@
 import { CalendarOutlined, EditOutlined } from "@ant-design/icons";
-import { DatePicker, Col, PageHeader, Row, Table } from "antd";
+import { Col, DatePicker, PageHeader, Row, Table } from "antd";
 import { ColumnsType } from "antd/lib/table";
-import { Transaction } from "interfaces/Transaction";
-import { Fan } from "interfaces/Fan";
-import { useState } from "react";
-import { RouteComponentProps } from "react-router";
-import { Link } from "react-router-dom";
-import { fetchWalletTransactions } from "services/DiscoClubService";
-import moment from "moment";
 import { SelectFan } from "components/SelectFan";
+import { Fan } from "interfaces/Fan";
+import { Transaction } from "interfaces/Transaction";
+import moment from "moment";
+import { useState } from "react";
+import { Link, RouteComponentProps } from "react-router-dom";
+import { fetchWalletTransactions } from "services/DiscoClubService";
 
 const Transactions: React.FC<RouteComponentProps> = () => {
   const [tableLoading, setTableLoading] = useState<boolean>(false);

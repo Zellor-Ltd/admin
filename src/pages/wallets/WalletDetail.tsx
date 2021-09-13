@@ -9,7 +9,7 @@ import {
 } from "interfaces/WalletTransactions";
 import moment from "moment";
 import { useEffect, useState } from "react";
-import { RouteComponentProps } from "react-router";
+import { RouteComponentProps } from "react-router-dom";
 import { fetchTransactionsPerBrand } from "services/DiscoClubService";
 import WalletEdit from "./WalletEdit";
 

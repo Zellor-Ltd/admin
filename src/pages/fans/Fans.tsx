@@ -1,4 +1,8 @@
-import { EditOutlined, SettingOutlined, OrderedListOutlined, } from "@ant-design/icons";
+import {
+  EditOutlined,
+  OrderedListOutlined,
+  SettingOutlined,
+} from "@ant-design/icons";
 import { Button, Col, PageHeader, Row, Table, Tag } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import CopyIdToClipboard from "components/CopyIdToClipboard";
@@ -10,8 +14,7 @@ import { Fan } from "interfaces/Fan";
 import { FanGroup } from "interfaces/FanGroup";
 import EditFanModal from "pages/fans/EditFanModal";
 import React, { useEffect, useState } from "react";
-import { RouteComponentProps } from "react-router";
-import { Link } from "react-router-dom";
+import { Link, RouteComponentProps } from "react-router-dom";
 import { fetchFanGroups, fetchFans } from "services/DiscoClubService";
 import FanAPITestModal from "./FanAPITestModal";
 import FanFeedModal from "./FanFeedModal";

@@ -7,8 +7,7 @@ import { useRequest } from "hooks/useRequest";
 import { FanGroup } from "interfaces/FanGroup";
 import moment from "moment";
 import { useEffect, useState } from "react";
-import { RouteComponentProps } from "react-router";
-import { Link } from "react-router-dom";
+import { Link, RouteComponentProps } from "react-router-dom";
 import { deleteFanGroup, fetchFanGroups } from "services/DiscoClubService";
 
 const FanGroups: React.FC<RouteComponentProps> = ({ history }) => {

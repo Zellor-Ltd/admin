@@ -26,8 +26,7 @@ import {
 import { Image } from "interfaces/Image";
 import { useEffect, useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
-import { RouteComponentProps } from "react-router";
-import { Link } from "react-router-dom";
+import { Link, RouteComponentProps } from "react-router-dom";
 import { productCategoriesAPI } from "services/DiscoClubService";
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;

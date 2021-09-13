@@ -1,13 +1,12 @@
+import { EditOutlined } from "@ant-design/icons";
 import { Button, Col, PageHeader, Row, Table } from "antd";
 import { ColumnsType } from "antd/lib/table";
+import { SearchFilter } from "components/SearchFilter";
+import useFilter from "hooks/useFilter";
 import { Role } from "interfaces/Role";
 import { useEffect, useState } from "react";
-import { RouteComponentProps } from "react-router";
-import { Link } from "react-router-dom";
+import { Link, RouteComponentProps } from "react-router-dom";
 import { fetchProfiles } from "services/DiscoClubService";
-import { EditOutlined } from "@ant-design/icons";
-import useFilter from "hooks/useFilter";
-import { SearchFilter } from "components/SearchFilter";
 
 const Roles: React.FC<RouteComponentProps> = ({ history }) => {
   const [loading, setLoading] = useState<boolean>(false);

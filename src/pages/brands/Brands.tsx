@@ -21,8 +21,7 @@ import { ColumnsType } from "antd/lib/table";
 import { discoBrandId } from "helpers/constants";
 import { Brand } from "interfaces/Brand";
 import { useEffect, useState } from "react";
-import { RouteComponentProps } from "react-router";
-import { Link } from "react-router-dom";
+import { Link, RouteComponentProps } from "react-router-dom";
 import { deleteBrand, fetchBrands, saveBrand } from "services/DiscoClubService";
 
 const tagColorByStatus: any = {
@@ -95,7 +94,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history }) => {
       dataIndex: "automated",
       width: "15%",
       align: "center",
-      render: (value: any) => (<b>{value ? 'Yes' : 'No'}</b>)
+      render: (value: any) => <b>{value ? "Yes" : "No"}</b>,
     },
     {
       title: "Brand Color",

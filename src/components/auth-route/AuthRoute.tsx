@@ -1,5 +1,5 @@
 import { isAuthenticated } from "helpers/authFunctions";
-import { Redirect, Route } from "react-router";
+import { Redirect, Route } from "react-router-dom";
 
 const AuthRoute: React.FC<any> = (props) => {
   const {

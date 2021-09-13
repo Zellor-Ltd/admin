@@ -3,7 +3,7 @@ import { RichTextEditor } from "components/RichTextEditor";
 import { useRequest } from "hooks/useRequest";
 import { PromotionAndStatusList } from "interfaces/Promotion";
 import { useCallback, useEffect, useState } from "react";
-import { RouteComponentProps } from "react-router";
+import { RouteComponentProps } from "react-router-dom";
 import { fetchVideoFeed2, savePromotion } from "services/DiscoClubService";
 
 const PromotionDetail: React.FC<RouteComponentProps> = (props) => {

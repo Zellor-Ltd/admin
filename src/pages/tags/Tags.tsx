@@ -1,12 +1,11 @@
-import { EyeOutlined, DeleteOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EyeOutlined } from "@ant-design/icons";
 import { Button, Col, PageHeader, Popconfirm, Row, Table } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import { SearchFilter } from "components/SearchFilter";
 import useFilter from "hooks/useFilter";
 import { Tag } from "interfaces/Tag";
 import { useEffect, useState } from "react";
-import { RouteComponentProps } from "react-router";
-import { Link } from "react-router-dom";
+import { Link, RouteComponentProps } from "react-router-dom";
 import { deleteTag, fetchTags } from "services/DiscoClubService";
 
 const Tags: React.FC<RouteComponentProps> = ({ history }) => {

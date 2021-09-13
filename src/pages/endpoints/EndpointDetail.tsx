@@ -11,7 +11,7 @@ import {
 } from "antd";
 import { Endpoint } from "interfaces/Endpoint";
 import { useEffect, useState } from "react";
-import { RouteComponentProps } from "react-router";
+import { RouteComponentProps } from "react-router-dom";
 import { saveEndpoint } from "services/DiscoClubService";
 
 const EndpointDetail: React.FC<RouteComponentProps> = ({

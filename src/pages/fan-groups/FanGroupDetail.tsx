@@ -1,7 +1,7 @@
 import { Button, Col, Form, Input, PageHeader, Row } from "antd";
 import { useRequest } from "hooks/useRequest";
 import { useState } from "react";
-import { RouteComponentProps } from "react-router";
+import { RouteComponentProps } from "react-router-dom";
 import { saveFanGroup } from "services/DiscoClubService";
 
 const FanGroupsDetail: React.FC<RouteComponentProps> = (props) => {

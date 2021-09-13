@@ -1,8 +1,8 @@
 import { Button, Col, Form, Input, message, PageHeader, Row } from "antd";
 import { useState } from "react";
-import { RouteComponentProps } from "react-router";
-import { saveOrder } from "services/DiscoClubService";
 import { useSelector } from "react-redux";
+import { RouteComponentProps } from "react-router-dom";
+import { saveOrder } from "services/DiscoClubService";
 
 const OrderDetail: React.FC<RouteComponentProps> = (props) => {
   const { history, location } = props;

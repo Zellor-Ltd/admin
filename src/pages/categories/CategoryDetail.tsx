@@ -1,19 +1,18 @@
 import { Button, Col, Form, Input, PageHeader, Row, Select } from "antd";
 import { Upload } from "components";
-import React, { useEffect, useState } from "react";
-import { RouteComponentProps } from "react-router";
-import { productCategoriesAPI } from "services/DiscoClubService";
-
-import { SearchTag } from "interfaces/SearchTag";
-import SearchTags from "./SearchTags";
 import { categoriesSettings } from "helpers/utils";
 import useAllCategories from "hooks/useAllCategories";
+import { useRequest } from "hooks/useRequest";
 import {
   AllCategories,
   AllCategoriesAPI,
   ProductCategory,
 } from "interfaces/Category";
-import { useRequest } from "hooks/useRequest";
+import { SearchTag } from "interfaces/SearchTag";
+import React, { useEffect, useState } from "react";
+import { RouteComponentProps } from "react-router-dom";
+import { productCategoriesAPI } from "services/DiscoClubService";
+import SearchTags from "./SearchTags";
 
 const { categoriesKeys, categoriesArray, categoriesFields } =
   categoriesSettings;

@@ -19,8 +19,7 @@ import { useRequest } from "hooks/useRequest";
 import { Promotion, PromotionAndStatusList } from "interfaces/Promotion";
 import moment from "moment";
 import { useCallback, useEffect, useState } from "react";
-import { RouteComponentProps } from "react-router";
-import { Link } from "react-router-dom";
+import { Link, RouteComponentProps } from "react-router-dom";
 import {
   deletePromotion,
   fetchPromoStatus,
