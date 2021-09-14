@@ -8,7 +8,8 @@ import { useEffect, useState } from "react";
 import { Link, RouteComponentProps } from "react-router-dom";
 import { deleteTag, fetchTags } from "services/DiscoClubService";
 
-const Tags: React.FC<RouteComponentProps> = ({ history }) => {
+const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
+  const detailsPathname = `${location.pathname}/tag`;
   const [loading, setLoading] = useState<boolean>(false);
 
   const {
@@ -57,7 +58,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history }) => {
       align: "right",
       render: (value, record) => (
         <>
-          <Link to={{ pathname: `/tag`, state: record }}>
+          <Link to={{ pathname: detailsPathname, state: record }}>
             <EyeOutlined />
           </Link>
           <Popconfirm
@@ -89,7 +90,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history }) => {
         title="Tags"
         subTitle="List of Tags"
         extra={[
-          <Button key="1" onClick={() => history.push("/settings_tags/tag")}>
+          <Button key="1" onClick={() => history.push(detailsPathname)}>
             New Item
           </Button>,
         ]}

@@ -24,8 +24,8 @@ const tagColorByStatus: any = {
   pending: "",
 };
 
-const Creators: React.FC<RouteComponentProps> = (props) => {
-  const { history } = props;
+const Creators: React.FC<RouteComponentProps> = ({ history, location }) => {
+  const detailsPathname = `${location.pathname}/creator`;
   const [loading, setLoading] = useState<boolean>(false);
 
   const {
@@ -71,7 +71,7 @@ const Creators: React.FC<RouteComponentProps> = (props) => {
               onClick={() => aproveOrReject(false, record)}
             />,
           ]}
-          <Link to={{ pathname: `/creator`, state: record }}>
+          <Link to={{ pathname: detailsPathname, state: record }}>
             <EditOutlined />
           </Link>
           <Popconfirm
@@ -135,10 +135,7 @@ const Creators: React.FC<RouteComponentProps> = (props) => {
         title="Creators"
         subTitle="List of Creators"
         extra={[
-          <Button
-            key="1"
-            onClick={() => history.push("/users_creators/creator")}
-          >
+          <Button key="1" onClick={() => history.push(detailsPathname)}>
             New Item
           </Button>,
         ]}

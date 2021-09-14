@@ -27,10 +27,10 @@ import {
 } from "services/DiscoClubService";
 
 const Promotions: React.FC<RouteComponentProps> = ({ history, location }) => {
+  const detailsPathname = `${location.pathname}/promotion`;
   const [tableloading, setTableLoading] = useState<boolean>(false);
   const { doRequest, doFetch } = useRequest({ setLoading: setTableLoading });
   const [promoStatusList, setPromoStatusList] = useState<any>();
-  const detailsPathname = `${location.pathname}/promotion`;
   // const [promotionUpdateList, setPromotionUpdateList] = useState<boolean[]>([]);
 
   const {

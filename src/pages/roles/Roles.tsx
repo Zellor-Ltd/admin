@@ -8,7 +8,8 @@ import { useEffect, useState } from "react";
 import { Link, RouteComponentProps } from "react-router-dom";
 import { fetchProfiles } from "services/DiscoClubService";
 
-const Roles: React.FC<RouteComponentProps> = ({ history }) => {
+const Roles: React.FC<RouteComponentProps> = ({ history, location }) => {
+  const detailsPathname = `${location.pathname}/role`;
   const [loading, setLoading] = useState<boolean>(false);
 
   const {
@@ -43,7 +44,7 @@ const Roles: React.FC<RouteComponentProps> = ({ history }) => {
       align: "right",
       render: (value, record) => (
         <>
-          <Link to={{ pathname: `/role`, state: record }}>
+          <Link to={{ pathname: detailsPathname, state: record }}>
             <EditOutlined />
           </Link>
         </>
@@ -65,7 +66,7 @@ const Roles: React.FC<RouteComponentProps> = ({ history }) => {
         title="Roles"
         subTitle="List of Roles"
         extra={[
-          <Button key="1" onClick={() => history.push("/settings_roles/role")}>
+          <Button key="1" onClick={() => history.push(detailsPathname)}>
             New Item
           </Button>,
         ]}

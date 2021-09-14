@@ -73,6 +73,11 @@ function AdminRoutes() {
         layout={AuthenticatedLayout}
       />
       <AppRoute
+        path="/staging-products/product/:productMode"
+        component={ProductDetails}
+        layout={AuthenticatedLayout}
+      />
+      <AppRoute
         path="/products/product/:productMode"
         component={ProductDetails}
         layout={AuthenticatedLayout}
@@ -243,7 +248,7 @@ function AdminRoutes() {
         layout={AuthenticatedLayout}
       />
       <AppRoute
-        path="/settings_fans-groups/fan-group"
+        path="/settings_fan-groups/fan-group"
         component={FanGroupDetail}
         layout={AuthenticatedLayout}
       />

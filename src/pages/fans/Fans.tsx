@@ -25,7 +25,8 @@ const tagColorByPermission: any = {
   Fan: "",
 };
 
-const Fans: React.FC<RouteComponentProps> = ({ history }) => {
+const Fans: React.FC<RouteComponentProps> = ({ history, location }) => {
+  const detailsPathname = `${location.pathname}/fan`;
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
   const [fanAPITest, setFanAPITest] = useState<Fan | null>(null);
@@ -112,7 +113,7 @@ const Fans: React.FC<RouteComponentProps> = ({ history }) => {
       align: "right",
       render: (_, record) => (
         <>
-          <Link to={{ pathname: `/fan`, state: record }}>
+          <Link to={{ pathname: detailsPathname, state: record }}>
             <EditOutlined />
           </Link>
           <Button
@@ -145,7 +146,7 @@ const Fans: React.FC<RouteComponentProps> = ({ history }) => {
         title="Fans"
         subTitle="List of Fans"
         extra={[
-          <Button key="1" onClick={() => history.push("/users_fans/fan")}>
+          <Button key="1" onClick={() => history.push(detailsPathname)}>
             New Item
           </Button>,
         ]}

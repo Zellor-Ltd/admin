@@ -162,7 +162,7 @@ const Orders: React.FC<RouteComponentProps> = () => {
     render: (userId: any) => {
       const fan = getFan(userId);
       return (
-        <Link to={{ pathname: `/fan`, state: fan }}>
+        <Link to={{ pathname: `/users_fans/fan`, state: fan }}>
           <Highlighter
             highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
             searchWords={[searchText]}

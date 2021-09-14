@@ -18,7 +18,12 @@ function BrandManagerRoutes() {
 
       <AppRoute path="/login" component={Login} layout={OpenLayout} />
       <AppRoute
-        path="/product/:productMode"
+        path="/products/product/:productMode"
+        component={ProductDetails}
+        layout={AuthenticatedLayout}
+      />
+      <AppRoute
+        path="/staging-list/product/:productMode"
         component={ProductDetails}
         layout={AuthenticatedLayout}
       />

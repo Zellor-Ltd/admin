@@ -8,7 +8,8 @@ import { useEffect, useState } from "react";
 import { Link, RouteComponentProps } from "react-router-dom";
 import { fetchEndpoints } from "services/DiscoClubService";
 
-const Endpoints: React.FC<RouteComponentProps> = ({ history }) => {
+const Endpoints: React.FC<RouteComponentProps> = ({ history, location }) => {
+  const detailsPathname = `${location.pathname}/endpoint`;
   const [loading, setLoading] = useState(false);
 
   const {
@@ -29,7 +30,7 @@ const Endpoints: React.FC<RouteComponentProps> = ({ history }) => {
       render: (_, record: Endpoint) => (
         <>
           {!record.isActive && (
-            <Link to={{ pathname: `/endpoint`, state: record }}>
+            <Link to={{ pathname: detailsPathname, state: record }}>
               <EditOutlined />
             </Link>
           )}
@@ -68,10 +69,7 @@ const Endpoints: React.FC<RouteComponentProps> = ({ history }) => {
         title="Endpoints"
         subTitle="List of Endpoints"
         extra={[
-          <Button
-            key="1"
-            onClick={() => history.push("/settings_endpoints/endpoint")}
-          >
+          <Button key="1" onClick={() => history.push(detailsPathname)}>
             New Endpoint
           </Button>,
         ]}
