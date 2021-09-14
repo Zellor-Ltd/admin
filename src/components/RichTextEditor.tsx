@@ -78,9 +78,9 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
       />
       {editableHtml && (
         <>
-          <Button onClick={() => setShowModal(true)}>Show HTML</Button>
+          <Button onClick={() => setShowModal(true)}>Edit HTML</Button>
           <Modal
-            title="HTML"
+            title="Edit HTML"
             visible={showModal}
             width="800px"
             onOk={onOk}
