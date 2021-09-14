@@ -92,6 +92,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
               onChange={(event) => {
                 setHtmlValue(event.target.value);
               }}
+              style={{ height: "300px" }}
             />
           </Modal>
         </>
