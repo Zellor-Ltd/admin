@@ -18,6 +18,7 @@ import {
   Typography,
 } from "antd";
 import { ColumnsType } from "antd/lib/table";
+import CopyIdToClipboard from "components/CopyIdToClipboard";
 import { discoBrandId } from "helpers/constants";
 import { Brand } from "interfaces/Brand";
 import { useEffect, useState } from "react";
@@ -77,6 +78,13 @@ const Brands: React.FC<RouteComponentProps> = ({ history }) => {
 
   const columns: ColumnsType<Brand> = [
     {
+      title: "_id",
+      dataIndex: "id",
+      width: "6%",
+      render: (id) => <CopyIdToClipboard id={id} />,
+      align: "center",
+    },
+    {
       title: "Brand Name",
       dataIndex: "brandName",
       width: "35%",
@@ -95,7 +103,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history }) => {
       dataIndex: "automated",
       width: "15%",
       align: "center",
-      render: (value: any) => (<b>{value ? 'Yes' : 'No'}</b>)
+      render: (value: any) => <b>{value ? "Yes" : "No"}</b>,
     },
     {
       title: "Brand Color",
