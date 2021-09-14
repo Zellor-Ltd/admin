@@ -145,7 +145,7 @@ const Fans: React.FC<RouteComponentProps> = ({ history }) => {
         title="Fans"
         subTitle="List of Fans"
         extra={[
-          <Button key="1" onClick={() => history.push("/fan")}>
+          <Button key="1" onClick={() => history.push("/users_fans/fan")}>
             New Item
           </Button>,
         ]}

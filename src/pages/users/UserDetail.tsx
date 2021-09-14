@@ -188,7 +188,7 @@ const UserDetail: React.FC<RouteComponentProps> = (props) => {
       await saveUser(user);
       setLoading(false);
       message.success("Register updated with success.");
-      history.push("/users");
+      history.goBack();
     } catch (error) {
       setLoading(false);
     }
@@ -386,7 +386,7 @@ const UserDetail: React.FC<RouteComponentProps> = (props) => {
         </Row>
         <Row gutter={8}>
           <Col>
-            <Button type="default" onClick={() => history.push("/users")}>
+            <Button type="default" onClick={() => history.goBack()}>
               Cancel
             </Button>
           </Col>

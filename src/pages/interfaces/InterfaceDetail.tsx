@@ -27,7 +27,7 @@ const InterfaceDetail: React.FC<RouteComponentProps> = (props) => {
       await saveInterface(endpoint);
       setLoading(false);
       message.success("Register updated with success.");
-      history.push("/interface");
+      history.goBack();
     } catch (error) {
       setLoading(false);
     }
@@ -68,7 +68,7 @@ const InterfaceDetail: React.FC<RouteComponentProps> = (props) => {
         </Row>
         <Row gutter={8}>
           <Col>
-            <Button type="default" onClick={() => history.push("/endpoints")}>
+            <Button type="default" onClick={() => history.goBack()}>
               Cancel
             </Button>
           </Col>

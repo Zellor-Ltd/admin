@@ -37,7 +37,7 @@ const CreatorDetail: React.FC<RouteComponentProps> = (props) => {
       await saveCreator(creator);
       setLoading(false);
       message.success("Register updated with success.");
-      history.push("/creators");
+      history.goBack();
     } catch (error) {
       console.error(error);
       setLoading(false);
@@ -187,7 +187,7 @@ const CreatorDetail: React.FC<RouteComponentProps> = (props) => {
         </Row>
         <Row gutter={8}>
           <Col>
-            <Button type="default" onClick={() => history.push("/creators")}>
+            <Button type="default" onClick={() => history.goBack()}>
               Cancel
             </Button>
           </Col>

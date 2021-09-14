@@ -31,7 +31,8 @@ import { productCategoriesAPI } from "services/DiscoClubService";
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 
-const Categories: React.FC<RouteComponentProps> = () => {
+const Categories: React.FC<RouteComponentProps> = ({ location }) => {
+  const detailsPathname = `${location.pathname}/category`;
   const [loading, setLoading] = useState<boolean>(false);
   const { fetchAllCategories, allCategories } = useAllCategories({
     setLoading,
@@ -194,7 +195,7 @@ const Categories: React.FC<RouteComponentProps> = () => {
         <>
           <Link
             to={{
-              pathname: `/category`,
+              pathname: detailsPathname,
               search: `?category-level=${categoriesKeys.indexOf(selectedTab)}`,
               state: record,
             }}
@@ -233,7 +234,7 @@ const Categories: React.FC<RouteComponentProps> = () => {
                   <Menu.Item>
                     <Link
                       to={{
-                        pathname: `/category`,
+                        pathname: detailsPathname,
                         search: `?category-level=${index}`,
                       }}
                     >

@@ -89,7 +89,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history }) => {
         title="Tags"
         subTitle="List of Tags"
         extra={[
-          <Button key="1" onClick={() => history.push("/tag")}>
+          <Button key="1" onClick={() => history.push("/settings_tags/tag")}>
             New Item
           </Button>,
         ]}

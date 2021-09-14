@@ -36,7 +36,8 @@ import EditProductModal from "./EditProductModal";
 import ProductAPITestModal from "./ProductAPITestModal";
 import ProductExpandedRow from "./ProductExpandedRow";
 
-const Products: React.FC<RouteComponentProps> = ({ history }) => {
+const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
+  const detailsPathname = `${location.pathname}/product/commited`;
   const [loading, setLoading] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
@@ -145,9 +146,7 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
       dataIndex: "name",
       width: "22%",
       render: (value: string, record) => (
-        <Link to={{ pathname: `/product/commited`, state: record }}>
-          {value}
-        </Link>
+        <Link to={{ pathname: detailsPathname, state: record }}>{value}</Link>
       ),
     },
     {
@@ -190,7 +189,7 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
       align: "right",
       render: (_: any, record) => (
         <>
-          <Link to={{ pathname: `/product/commited`, state: record }}>
+          <Link to={{ pathname: detailsPathname, state: record }}>
             <EditOutlined />
           </Link>
           {record.brand.automated !== true && (
@@ -243,7 +242,7 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
         title="Products"
         subTitle="List of Products"
         extra={[
-          <Button key="1" onClick={() => history.push("/product/commited/0")}>
+          <Button key="1" onClick={() => history.push(detailsPathname)}>
             New Item
           </Button>,
         ]}

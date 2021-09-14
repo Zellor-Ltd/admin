@@ -135,7 +135,10 @@ const Creators: React.FC<RouteComponentProps> = (props) => {
         title="Creators"
         subTitle="List of Creators"
         extra={[
-          <Button key="1" onClick={() => history.push("/creator")}>
+          <Button
+            key="1"
+            onClick={() => history.push("/users_creators/creator")}
+          >
             New Item
           </Button>,
         ]}

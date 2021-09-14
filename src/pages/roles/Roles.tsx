@@ -65,7 +65,7 @@ const Roles: React.FC<RouteComponentProps> = ({ history }) => {
         title="Roles"
         subTitle="List of Roles"
         extra={[
-          <Button key="1" onClick={() => history.push("/role")}>
+          <Button key="1" onClick={() => history.push("/settings_roles/role")}>
             New Item
           </Button>,
         ]}

@@ -14,7 +14,7 @@ const DdTemplatesDetail: React.FC<RouteComponentProps> = (props) => {
   const onFinish = async () => {
     const ddTemplate = form.getFieldsValue(true);
     await doRequest(() => saveDdTemplate(ddTemplate));
-    history.push("/dd-templates");
+    history.goBack();
   };
 
   return (
@@ -72,10 +72,7 @@ const DdTemplatesDetail: React.FC<RouteComponentProps> = (props) => {
         </Row>
         <Row gutter={8}>
           <Col>
-            <Button
-              type="default"
-              onClick={() => history.push("/dd-templates")}
-            >
+            <Button type="default" onClick={() => history.goBack()}>
               Cancel
             </Button>
           </Col>

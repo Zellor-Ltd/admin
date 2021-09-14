@@ -99,7 +99,10 @@ const FanGroups: React.FC<RouteComponentProps> = ({ history }) => {
         title="Fan Groups"
         subTitle="List of Fan Groups"
         extra={[
-          <Button key="1" onClick={() => history.push("fans-group")}>
+          <Button
+            key="1"
+            onClick={() => history.push("/settings_fan-groups/fans-group")}
+          >
             New Item
           </Button>,
         ]}

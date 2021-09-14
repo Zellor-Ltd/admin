@@ -16,7 +16,7 @@ const PromoDisplaysDetail: React.FC<RouteComponentProps> = (props) => {
   const onFinish = async () => {
     const promoDisplay = form.getFieldsValue(true);
     await doRequest(() => savePromoDisplay(promoDisplay));
-    history.push("/promo-displays");
+    history.goBack();
   };
 
   return (
@@ -60,10 +60,7 @@ const PromoDisplaysDetail: React.FC<RouteComponentProps> = (props) => {
         </Row>
         <Row gutter={8}>
           <Col>
-            <Button
-              type="default"
-              onClick={() => history.push("/promo-displays")}
-            >
+            <Button type="default" onClick={() => history.goBack()}>
               Cancel
             </Button>
           </Col>

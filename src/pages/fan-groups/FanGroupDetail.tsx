@@ -14,7 +14,7 @@ const FanGroupsDetail: React.FC<RouteComponentProps> = (props) => {
   const onFinish = async () => {
     const fanGroup = form.getFieldsValue(true);
     await doRequest(() => saveFanGroup(fanGroup));
-    history.push("/fan-groups");
+    history.goBack();
   };
 
   return (
@@ -38,7 +38,7 @@ const FanGroupsDetail: React.FC<RouteComponentProps> = (props) => {
         </Row>
         <Row gutter={8}>
           <Col>
-            <Button type="default" onClick={() => history.push("/fan-groups")}>
+            <Button type="default" onClick={() => history.goBack()}>
               Cancel
             </Button>
           </Col>

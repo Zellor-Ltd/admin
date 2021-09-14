@@ -112,7 +112,12 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ history }) => {
         title="Shop Display"
         subTitle="List of Shop Display"
         extra={[
-          <Button key="1" onClick={() => history.push("promo-display")}>
+          <Button
+            key="1"
+            onClick={() =>
+              history.push("marketing_promo-displays/promo-display")
+            }
+          >
             New Item
           </Button>,
         ]}

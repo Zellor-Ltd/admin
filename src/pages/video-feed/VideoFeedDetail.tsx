@@ -148,7 +148,7 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
     }));
     // item.validity = moment(item.validity).format("DD/MM/YYYY");
     await doRequest(() => saveVideoFeed(item));
-    history.push("/feed");
+    history.goBack();
   };
 
   const onEditTag = (tag: Tag, index: number) => {
@@ -588,7 +588,7 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
             </Tabs>
             <Row gutter={8} hidden={!!selectedSegment}>
               <Col>
-                <Button type="default" onClick={() => history.push("/feed")}>
+                <Button type="default" onClick={() => history.goBack()}>
                   Cancel
                 </Button>
               </Col>

@@ -117,7 +117,10 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ history }) => {
         title="Disco Dollars Templates"
         subTitle="List of Disco Dollars Templates"
         extra={[
-          <Button key="1" onClick={() => history.push("dd-template")}>
+          <Button
+            key="1"
+            onClick={() => history.push("settings_dd-templates/dd-template")}
+          >
             New Item
           </Button>,
         ]}

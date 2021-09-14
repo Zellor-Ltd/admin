@@ -17,8 +17,10 @@ import SearchTags from "./SearchTags";
 const { categoriesKeys, categoriesArray, categoriesFields } =
   categoriesSettings;
 
-const CategoryDetail: React.FC<RouteComponentProps> = (props) => {
-  const { history, location } = props;
+const CategoryDetail: React.FC<RouteComponentProps> = ({
+  history,
+  location,
+}) => {
   const [loading, setLoading] = useState<boolean>(false);
   const initial: any = location.state;
   const params = new URLSearchParams(location.search);
@@ -64,7 +66,7 @@ const CategoryDetail: React.FC<RouteComponentProps> = (props) => {
         category
       )
     );
-    history.push("/categories");
+    history.goBack();
   };
 
   return (
@@ -142,7 +144,7 @@ const CategoryDetail: React.FC<RouteComponentProps> = (props) => {
         </Row>
         <Row gutter={8}>
           <Col>
-            <Button type="default" onClick={() => history.push("/categories")}>
+            <Button type="default" onClick={() => history.goBack()}>
               Cancel
             </Button>
           </Col>
