@@ -1,7 +1,19 @@
+import { AppContext } from "contexts/AppContext";
 import { isAuthenticated } from "helpers/authFunctions";
-import { Redirect, Route } from "react-router-dom";
+import { useContext } from "react";
+import { Redirect, Route, useHistory } from "react-router-dom";
 
 const AppRoute: React.FC<any> = (props) => {
+  const { setFilterValues, lastVisitedPage, setLastVisitedPage } =
+    useContext(AppContext);
+  const pathname = useHistory().location.pathname;
+  const dirName = pathname.split("/")[1];
+  if (dirName !== lastVisitedPage) {
+    setFilterValues({});
+  }
+
+  setLastVisitedPage(dirName);
+
   const {
     children,
     component: Component,

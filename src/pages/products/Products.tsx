@@ -19,12 +19,13 @@ import EditableTable, { EditableColumnType } from "components/EditableTable";
 import EditMultipleButton from "components/EditMultipleButton";
 import { SearchFilterDebounce } from "components/SearchFilterDebounce";
 import { SelectBrand } from "components/SelectBrand";
+import { AppContext } from "contexts/AppContext";
 import useAllCategories from "hooks/useAllCategories";
 import { useRequest } from "hooks/useRequest";
 import { Brand } from "interfaces/Brand";
 import { Product } from "interfaces/Product";
 import moment from "moment";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { Link, RouteComponentProps } from "react-router-dom";
 import {
@@ -38,6 +39,8 @@ import ProductExpandedRow from "./ProductExpandedRow";
 
 const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
   const detailsPathname = `${location.pathname}/product/commited`;
+  const { usePageFilter } = useContext(AppContext);
+
   const [loading, setLoading] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
@@ -47,8 +50,10 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
   const { doRequest: saveCategories, loading: loadingCategories } =
     useRequest();
 
-  const [searchFilter, setSearchFilter] = useState<string>("");
-  const [brandIdFilter, setBrandIdFilter] = useState<string>("");
+  const [searchFilter, setSearchFilter] = usePageFilter<string>("search");
+  const [brandFilter, setBrandFilter] = usePageFilter<Brand | undefined>(
+    "brand"
+  );
   const [unclassifiedFilter, setUnclassifiedFilter] = useState<boolean>(false);
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
@@ -65,7 +70,7 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
       fetchProducts({
         limit: 30,
         page: pageToUse,
-        brandId: brandIdFilter,
+        brandId: brandFilter?.id,
         query: searchFilter,
         unclassified: unclassifiedFilter,
       })
@@ -111,7 +116,7 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
   useEffect(() => {
     if (allCategories["Super Category"].length) refreshProducts();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchFilter, brandIdFilter, unclassifiedFilter]);
+  }, [searchFilter, brandFilter, unclassifiedFilter]);
 
   useEffect(() => {
     getResources();
@@ -220,7 +225,7 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
   ];
 
   const onChangeBrand = async (_selectedBrand: Brand | undefined) => {
-    setBrandIdFilter(_selectedBrand?.id || "");
+    setBrandFilter(_selectedBrand);
   };
 
   const handleFilterClassified = (e: CheckboxChangeEvent) => {
@@ -252,6 +257,7 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
           <Row gutter={8}>
             <Col lg={8} xs={16}>
               <SearchFilterDebounce
+                initialValue={searchFilter}
                 filterFunction={setSearchFilter}
                 label="Search by Name"
               />
@@ -261,6 +267,7 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
                 style={{ width: "100%" }}
                 allowClear={true}
                 onChange={onChangeBrand}
+                initialBrandName={brandFilter?.brandName}
               ></SelectBrand>
             </Col>
             <Col lg={8} xs={16}>
