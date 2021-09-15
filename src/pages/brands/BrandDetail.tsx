@@ -3,6 +3,7 @@ import {
   Col,
   Form,
   Input,
+  InputNumber,
   message,
   PageHeader,
   Radio,
@@ -129,6 +130,15 @@ const BrandDetail: React.FC<RouteComponentProps> = (props) => {
                     <Switch disabled={getFieldValue("checkout") === "Disco"} />
                   </Form.Item>
                 )}
+              </Form.Item>
+            </Col>
+            <Col lg={8} xs={8}>
+              <Form.Item
+                name="discoPercentage"
+                label="Disco Percentage %"
+                rules={[{ required: true }]}
+              >
+                <InputNumber />
               </Form.Item>
             </Col>
             <Col lg={16} xs={24}>

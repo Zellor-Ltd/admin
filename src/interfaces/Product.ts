@@ -10,6 +10,7 @@ export interface Product {
   maxDiscoDollars: number;
   originalPrice: number;
   discountedPrice: number;
+  discoPercentage: number;
   currencyIsoCode: string;
   tagText: string;
   relatedVideos: Video[];
