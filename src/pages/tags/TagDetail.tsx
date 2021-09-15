@@ -15,7 +15,7 @@ import { Product } from "interfaces/Product";
 import { Tag } from "interfaces/Tag";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { RouteComponentProps } from "react-router";
+import { RouteComponentProps } from "react-router-dom";
 import { fetchBrands, fetchProducts, saveTag } from "services/DiscoClubService";
 
 const TagDetail: React.FC<RouteComponentProps> = (props) => {
@@ -80,7 +80,7 @@ const TagDetail: React.FC<RouteComponentProps> = (props) => {
         await saveTag(tag);
         setLoading(false);
         message.success("Register updated with success.");
-        history.push("/tags");
+        history.goBack();
       } catch (e) {
         console.error(e);
         setLoading(false);
@@ -227,7 +227,7 @@ const TagDetail: React.FC<RouteComponentProps> = (props) => {
         </Input.Group>
         <Row gutter={8}>
           <Col>
-            <Button type="default" onClick={() => history.push("/tags")}>
+            <Button type="default" onClick={() => history.goBack()}>
               Cancel
             </Button>
           </Col>

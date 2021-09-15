@@ -1,7 +1,7 @@
 import { Button, Col, Form, Input, PageHeader, Row } from "antd";
 import { useRequest } from "hooks/useRequest";
 import { useState } from "react";
-import { RouteComponentProps } from "react-router";
+import { RouteComponentProps } from "react-router-dom";
 import { saveFanGroup } from "services/DiscoClubService";
 
 const FanGroupsDetail: React.FC<RouteComponentProps> = (props) => {
@@ -14,7 +14,7 @@ const FanGroupsDetail: React.FC<RouteComponentProps> = (props) => {
   const onFinish = async () => {
     const fanGroup = form.getFieldsValue(true);
     await doRequest(() => saveFanGroup(fanGroup));
-    history.push("/fan-groups");
+    history.goBack();
   };
 
   return (
@@ -38,7 +38,7 @@ const FanGroupsDetail: React.FC<RouteComponentProps> = (props) => {
         </Row>
         <Row gutter={8}>
           <Col>
-            <Button type="default" onClick={() => history.push("/fan-groups")}>
+            <Button type="default" onClick={() => history.goBack()}>
               Cancel
             </Button>
           </Col>

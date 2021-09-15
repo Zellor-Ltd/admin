@@ -16,7 +16,7 @@ import { RichTextEditor } from "components/RichTextEditor";
 import { useState } from "react";
 import { TwitterPicker } from "react-color";
 import { useSelector } from "react-redux";
-import { RouteComponentProps } from "react-router";
+import { RouteComponentProps } from "react-router-dom";
 import { saveBrand } from "services/DiscoClubService";
 
 const BrandDetail: React.FC<RouteComponentProps> = (props) => {
@@ -36,7 +36,7 @@ const BrandDetail: React.FC<RouteComponentProps> = (props) => {
       await saveBrand(brand);
       setLoading(false);
       message.success("Register updated with success.");
-      history.push("/brands");
+      history.goBack();
     } catch (error) {
       setLoading(false);
     }
@@ -269,7 +269,7 @@ const BrandDetail: React.FC<RouteComponentProps> = (props) => {
         </Row>
         <Row gutter={8}>
           <Col>
-            <Button type="default" onClick={() => history.push("/brands")}>
+            <Button type="default" onClick={() => history.goBack()}>
               Cancel
             </Button>
           </Col>

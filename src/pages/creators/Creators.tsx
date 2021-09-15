@@ -1,23 +1,22 @@
+import {
+  CheckOutlined,
+  CloseOutlined,
+  DeleteOutlined,
+  EditOutlined,
+} from "@ant-design/icons";
 import { Button, Col, PageHeader, Popconfirm, Row, Table, Tag } from "antd";
 import { ColumnsType } from "antd/lib/table";
+import CopyIdToClipboard from "components/CopyIdToClipboard";
+import { SearchFilter } from "components/SearchFilter";
+import useFilter from "hooks/useFilter";
 import { Creator } from "interfaces/Creator";
 import { useEffect, useState } from "react";
-import { RouteComponentProps } from "react-router";
-import { Link } from "react-router-dom";
+import { Link, RouteComponentProps } from "react-router-dom";
 import {
   deleteCreator,
   fetchCreators,
   saveCreator,
 } from "services/DiscoClubService";
-import {
-  EditOutlined,
-  CheckOutlined,
-  CloseOutlined,
-  DeleteOutlined,
-} from "@ant-design/icons";
-import useFilter from "hooks/useFilter";
-import { SearchFilter } from "components/SearchFilter";
-import CopyIdToClipboard from "components/CopyIdToClipboard";
 
 const tagColorByStatus: any = {
   approved: "green",
@@ -25,8 +24,8 @@ const tagColorByStatus: any = {
   pending: "",
 };
 
-const Creators: React.FC<RouteComponentProps> = (props) => {
-  const { history } = props;
+const Creators: React.FC<RouteComponentProps> = ({ history, location }) => {
+  const detailsPathname = `${location.pathname}/creator`;
   const [loading, setLoading] = useState<boolean>(false);
 
   const {
@@ -72,7 +71,7 @@ const Creators: React.FC<RouteComponentProps> = (props) => {
               onClick={() => aproveOrReject(false, record)}
             />,
           ]}
-          <Link to={{ pathname: `/creator`, state: record }}>
+          <Link to={{ pathname: detailsPathname, state: record }}>
             <EditOutlined />
           </Link>
           <Popconfirm
@@ -136,7 +135,7 @@ const Creators: React.FC<RouteComponentProps> = (props) => {
         title="Creators"
         subTitle="List of Creators"
         extra={[
-          <Button key="1" onClick={() => history.push("/creator")}>
+          <Button key="1" onClick={() => history.push(detailsPathname)}>
             New Item
           </Button>,
         ]}

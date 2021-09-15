@@ -1,8 +1,8 @@
 import { Button, Col, Form, Input, message, PageHeader, Row } from "antd";
 import { useState } from "react";
-import { RouteComponentProps } from "react-router";
-import { saveOrder } from "services/DiscoClubService";
 import { useSelector } from "react-redux";
+import { RouteComponentProps } from "react-router-dom";
+import { saveOrder } from "services/DiscoClubService";
 
 const OrderDetail: React.FC<RouteComponentProps> = (props) => {
   const { history, location } = props;
@@ -22,7 +22,7 @@ const OrderDetail: React.FC<RouteComponentProps> = (props) => {
       await saveOrder(order);
       setLoading(false);
       message.success("Register updated with success.");
-      history.push("/orders");
+      history.goBack();
     } catch (error) {
       console.error(error);
       setLoading(false);
@@ -53,7 +53,7 @@ const OrderDetail: React.FC<RouteComponentProps> = (props) => {
         </Row>
         <Row gutter={8}>
           <Col>
-            <Button type="default" onClick={() => history.push("/orders")}>
+            <Button type="default" onClick={() => history.goBack()}>
               Cancel
             </Button>
           </Col>

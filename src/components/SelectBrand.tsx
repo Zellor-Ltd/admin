@@ -1,8 +1,8 @@
+import { Typography } from "antd";
 import Select from "antd/lib/select";
 import React, { useEffect, useState } from "react";
-import { fetchBrands } from "../services/DiscoClubService";
 import { Brand } from "../interfaces/Brand";
-import { Typography } from "antd";
+import { fetchBrands } from "../services/DiscoClubService";
 
 type SelectBrandProps = Omit<
   React.SelectHTMLAttributes<HTMLSelectElement>,
@@ -10,6 +10,7 @@ type SelectBrandProps = Omit<
 > & {
   onChange: (selectedBrand: Brand) => {};
   allowClear: boolean;
+  initialBrandName?: string;
   label?: string;
 };
 
@@ -18,10 +19,17 @@ export const SelectBrand: React.FC<SelectBrandProps> = ({
   placeholder = "Select a brand",
   style,
   allowClear,
+  initialBrandName = "",
   label = "Brand Filter",
 }) => {
   const [brands, setBrands] = useState<Brand[]>([]);
-  const [selectedBrand, setSelectedBrand] = useState<string>("");
+  const [selectedBrandName, setSelectedBrandName] =
+    useState<string>(initialBrandName);
+
+  const _onChange = (value: string) => {
+    setSelectedBrandName(value);
+    onChange(brands.find((brand) => brand.brandName === value) as Brand);
+  };
 
   useEffect(() => {
     const getBrands = async () => {
@@ -31,12 +39,8 @@ export const SelectBrand: React.FC<SelectBrandProps> = ({
       } catch (e) {}
     };
     getBrands();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const _onChange = (value: string) => {
-    setSelectedBrand(value);
-    onChange(brands.find((brand) => brand.brandName === value) as Brand);
-  };
 
   return (
     <div style={{ marginBottom: "16px" }}>
@@ -44,7 +48,7 @@ export const SelectBrand: React.FC<SelectBrandProps> = ({
         {label}
       </Typography.Title>
       <Select
-        value={selectedBrand}
+        value={selectedBrandName}
         onChange={_onChange}
         showSearch
         allowClear={allowClear}

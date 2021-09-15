@@ -28,8 +28,7 @@ import { Product } from "interfaces/Product";
 import { Video } from "interfaces/Video";
 import { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { RouteComponentProps } from "react-router";
-import { useParams } from "react-router-dom";
+import { RouteComponentProps, useParams } from "react-router-dom";
 import {
   fetchBrands,
   saveProduct,

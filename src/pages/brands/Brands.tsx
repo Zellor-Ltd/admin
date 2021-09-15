@@ -22,8 +22,7 @@ import CopyIdToClipboard from "components/CopyIdToClipboard";
 import { discoBrandId } from "helpers/constants";
 import { Brand } from "interfaces/Brand";
 import { useEffect, useState } from "react";
-import { RouteComponentProps } from "react-router";
-import { Link } from "react-router-dom";
+import { Link, RouteComponentProps } from "react-router-dom";
 import { deleteBrand, fetchBrands, saveBrand } from "services/DiscoClubService";
 
 const tagColorByStatus: any = {
@@ -32,7 +31,8 @@ const tagColorByStatus: any = {
   pending: "",
 };
 
-const Brands: React.FC<RouteComponentProps> = ({ history }) => {
+const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
+  const detailsPathname = `${location.pathname}/brand`;
   const [loading, setLoading] = useState<boolean>(false);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [filterText, setFilterText] = useState("");
@@ -89,7 +89,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history }) => {
       dataIndex: "brandName",
       width: "35%",
       render: (value: string, record: Brand) => (
-        <Link to={{ pathname: `/brand`, state: record }}>
+        <Link to={{ pathname: detailsPathname, state: record }}>
           {record.id !== discoBrandId ? (
             value
           ) : (
@@ -144,7 +144,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history }) => {
               onClick={() => aproveOrReject(false, record)}
             />,
           ]}
-          <Link to={{ pathname: `/brand`, state: record }}>
+          <Link to={{ pathname: detailsPathname, state: record }}>
             <EditOutlined />
           </Link>
           {record.id !== discoBrandId && (
@@ -170,7 +170,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history }) => {
         title="Brands"
         subTitle="List of Brands"
         extra={[
-          <Button key="1" onClick={() => history.push("/brand")}>
+          <Button key="1" onClick={() => history.push(detailsPathname)}>
             New Item
           </Button>,
         ]}

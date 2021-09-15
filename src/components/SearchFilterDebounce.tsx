@@ -5,17 +5,21 @@ import React, { useEffect, useRef, useState } from "react";
 
 interface SearchFilterDebounceProps {
   filterFunction: (filterText: string) => void;
+  initialValue?: string;
   label?: string;
 }
 
 export const SearchFilterDebounce: React.FC<SearchFilterDebounceProps> = ({
   filterFunction,
+  initialValue = "",
   label = "Search",
 }) => {
-  const [text, setText] = useState<string>("");
+  const [text, setText] = useState<string>(initialValue);
 
   const debounced = useRef(
-    debounce((newText) => filterFunction(newText), 1000)
+    debounce((newText) => {
+      filterFunction(newText);
+    }, 1000)
   );
 
   useEffect(() => debounced.current(text), [text]);
@@ -29,6 +33,7 @@ export const SearchFilterDebounce: React.FC<SearchFilterDebounceProps> = ({
         onChange={(evt) => {
           setText(evt.target.value);
         }}
+        value={text}
         suffix={<SearchOutlined />}
       />
     </div>

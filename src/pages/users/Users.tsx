@@ -1,11 +1,10 @@
+import { EditOutlined } from "@ant-design/icons";
 import { Button, PageHeader, Table, Tag } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import { User } from "interfaces/User";
 import { useEffect, useState } from "react";
-import { RouteComponentProps } from "react-router";
-import { Link } from "react-router-dom";
+import { Link, RouteComponentProps } from "react-router-dom";
 import { fetchUsers } from "services/DiscoClubService";
-import { EditOutlined } from "@ant-design/icons";
 
 const tagColorByPermission: any = {
   Admin: "green",

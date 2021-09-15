@@ -7,14 +7,17 @@ import { useRequest } from "hooks/useRequest";
 import { PromoDisplay } from "interfaces/PromoDisplay";
 import moment from "moment";
 import { useEffect, useState } from "react";
-import { RouteComponentProps } from "react-router";
-import { Link } from "react-router-dom";
+import { Link, RouteComponentProps } from "react-router-dom";
 import {
   deletePromoDisplay,
   fetchPromoDisplays,
 } from "services/DiscoClubService";
 
-const PromoDisplays: React.FC<RouteComponentProps> = ({ history }) => {
+const PromoDisplays: React.FC<RouteComponentProps> = ({
+  history,
+  location,
+}) => {
+  const detailsPathname = `${location.pathname}/promo-display`;
   const [loading, setLoading] = useState<boolean>(false);
   const { doFetch, doRequest } = useRequest({ setLoading });
 
@@ -49,7 +52,7 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ history }) => {
       dataIndex: "id",
       width: "20%",
       render: (value: string, record: PromoDisplay) => (
-        <Link to={{ pathname: `promo-display`, state: record }}>{value}</Link>
+        <Link to={{ pathname: detailsPathname, state: record }}>{value}</Link>
       ),
     },
     {
@@ -81,7 +84,7 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ history }) => {
       align: "right",
       render: (_, record: PromoDisplay) => (
         <>
-          <Link to={{ pathname: `promo-display`, state: record }}>
+          <Link to={{ pathname: detailsPathname, state: record }}>
             <EditOutlined />
           </Link>
           <Popconfirm
@@ -113,7 +116,7 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ history }) => {
         title="Shop Display"
         subTitle="List of Shop Display"
         extra={[
-          <Button key="1" onClick={() => history.push("promo-display")}>
+          <Button key="1" onClick={() => history.push(detailsPathname)}>
             New Item
           </Button>,
         ]}

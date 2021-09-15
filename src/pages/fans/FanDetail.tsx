@@ -17,7 +17,7 @@ import { Category } from "interfaces/Category";
 import { Creator } from "interfaces/Creator";
 import { Role } from "interfaces/Role";
 import { useEffect, useState } from "react";
-import { RouteComponentProps } from "react-router";
+import { RouteComponentProps } from "react-router-dom";
 import {
   fetchCategories,
   fetchCreators,
@@ -197,7 +197,7 @@ const FanDetail: React.FC<RouteComponentProps> = (props) => {
       await saveUser(formattedUserData);
       setLoading(false);
       message.success("Register updated with success.");
-      history.push("/fans");
+      history.goBack();
     } catch (error) {
       setLoading(false);
     }
@@ -420,7 +420,7 @@ const FanDetail: React.FC<RouteComponentProps> = (props) => {
         </Row>
         <Row gutter={8}>
           <Col>
-            <Button type="default" onClick={() => history.push("/fans")}>
+            <Button type="default" onClick={() => history.goBack()}>
               Cancel
             </Button>
           </Col>

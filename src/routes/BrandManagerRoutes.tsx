@@ -1,29 +1,33 @@
-import AuthRoute from "components/auth-route/AuthRoute";
+import AppRoute from "./AppRoute";
 import AuthenticatedLayout from "layout/AuthenticatedLayout";
 import OpenLayout from "layout/OpenLayout";
 import Login from "pages/login/Login";
-import StagingList from "pages/products/StagingList";
 import ProductDetails from "pages/products/ProductsDetails";
-import { Switch } from "react-router-dom";
-import { Redirect } from "react-router";
+import StagingList from "pages/products/StagingList";
+import { Redirect, Switch } from "react-router-dom";
 
 function BrandManagerRoutes() {
   return (
     <Switch>
-      <AuthRoute
+      <AppRoute
         exact
         path="/"
         returnComponent
         component={<Redirect to="/staging-list" />}
       />
 
-      <AuthRoute path="/login" component={Login} layout={OpenLayout} />
-      <AuthRoute
-        path="/product/:productMode"
+      <AppRoute path="/login" component={Login} layout={OpenLayout} />
+      <AppRoute
+        path="/products/product/:productMode"
         component={ProductDetails}
         layout={AuthenticatedLayout}
       />
-      <AuthRoute
+      <AppRoute
+        path="/staging-list/product/:productMode"
+        component={ProductDetails}
+        layout={AuthenticatedLayout}
+      />
+      <AppRoute
         path="/staging-list"
         component={StagingList}
         layout={AuthenticatedLayout}

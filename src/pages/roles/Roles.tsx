@@ -1,15 +1,15 @@
+import { EditOutlined } from "@ant-design/icons";
 import { Button, Col, PageHeader, Row, Table } from "antd";
 import { ColumnsType } from "antd/lib/table";
+import { SearchFilter } from "components/SearchFilter";
+import useFilter from "hooks/useFilter";
 import { Role } from "interfaces/Role";
 import { useEffect, useState } from "react";
-import { RouteComponentProps } from "react-router";
-import { Link } from "react-router-dom";
+import { Link, RouteComponentProps } from "react-router-dom";
 import { fetchProfiles } from "services/DiscoClubService";
-import { EditOutlined } from "@ant-design/icons";
-import useFilter from "hooks/useFilter";
-import { SearchFilter } from "components/SearchFilter";
 
-const Roles: React.FC<RouteComponentProps> = ({ history }) => {
+const Roles: React.FC<RouteComponentProps> = ({ history, location }) => {
+  const detailsPathname = `${location.pathname}/role`;
   const [loading, setLoading] = useState<boolean>(false);
 
   const {
@@ -44,7 +44,7 @@ const Roles: React.FC<RouteComponentProps> = ({ history }) => {
       align: "right",
       render: (value, record) => (
         <>
-          <Link to={{ pathname: `/role`, state: record }}>
+          <Link to={{ pathname: detailsPathname, state: record }}>
             <EditOutlined />
           </Link>
         </>
@@ -66,7 +66,7 @@ const Roles: React.FC<RouteComponentProps> = ({ history }) => {
         title="Roles"
         subTitle="List of Roles"
         extra={[
-          <Button key="1" onClick={() => history.push("/role")}>
+          <Button key="1" onClick={() => history.push(detailsPathname)}>
             New Item
           </Button>,
         ]}

@@ -19,15 +19,15 @@ import EditableTable, { EditableColumnType } from "components/EditableTable";
 import EditMultipleButton from "components/EditMultipleButton";
 import { SearchFilterDebounce } from "components/SearchFilterDebounce";
 import { SelectBrand } from "components/SelectBrand";
+import { AppContext } from "contexts/AppContext";
 import useAllCategories from "hooks/useAllCategories";
 import { useRequest } from "hooks/useRequest";
 import { Brand } from "interfaces/Brand";
 import { Product } from "interfaces/Product";
 import moment from "moment";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { RouteComponentProps } from "react-router";
-import { Link } from "react-router-dom";
+import { Link, RouteComponentProps } from "react-router-dom";
 import {
   deleteProduct,
   fetchProducts,
@@ -37,7 +37,10 @@ import EditProductModal from "./EditProductModal";
 import ProductAPITestModal from "./ProductAPITestModal";
 import ProductExpandedRow from "./ProductExpandedRow";
 
-const Products: React.FC<RouteComponentProps> = ({ history }) => {
+const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
+  const detailsPathname = `${location.pathname}/product/commited`;
+  const { usePageFilter } = useContext(AppContext);
+
   const [loading, setLoading] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
@@ -47,8 +50,10 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
   const { doRequest: saveCategories, loading: loadingCategories } =
     useRequest();
 
-  const [searchFilter, setSearchFilter] = useState<string>("");
-  const [brandIdFilter, setBrandIdFilter] = useState<string>("");
+  const [searchFilter, setSearchFilter] = usePageFilter<string>("search");
+  const [brandFilter, setBrandFilter] = usePageFilter<Brand | undefined>(
+    "brand"
+  );
   const [unclassifiedFilter, setUnclassifiedFilter] = useState<boolean>(false);
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
@@ -65,7 +70,7 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
       fetchProducts({
         limit: 30,
         page: pageToUse,
-        brandId: brandIdFilter,
+        brandId: brandFilter?.id,
         query: searchFilter,
         unclassified: unclassifiedFilter,
       })
@@ -111,7 +116,7 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
   useEffect(() => {
     if (allCategories["Super Category"].length) refreshProducts();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchFilter, brandIdFilter, unclassifiedFilter]);
+  }, [searchFilter, brandFilter, unclassifiedFilter]);
 
   useEffect(() => {
     getResources();
@@ -146,9 +151,7 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
       dataIndex: "name",
       width: "22%",
       render: (value: string, record) => (
-        <Link to={{ pathname: `/product/commited`, state: record }}>
-          {value}
-        </Link>
+        <Link to={{ pathname: detailsPathname, state: record }}>{value}</Link>
       ),
     },
     {
@@ -191,7 +194,7 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
       align: "right",
       render: (_: any, record) => (
         <>
-          <Link to={{ pathname: `/product/commited`, state: record }}>
+          <Link to={{ pathname: detailsPathname, state: record }}>
             <EditOutlined />
           </Link>
           {record.brand.automated !== true && (
@@ -222,7 +225,7 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
   ];
 
   const onChangeBrand = async (_selectedBrand: Brand | undefined) => {
-    setBrandIdFilter(_selectedBrand?.id || "");
+    setBrandFilter(_selectedBrand);
   };
 
   const handleFilterClassified = (e: CheckboxChangeEvent) => {
@@ -244,7 +247,7 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
         title="Products"
         subTitle="List of Products"
         extra={[
-          <Button key="1" onClick={() => history.push("/product/commited/0")}>
+          <Button key="1" onClick={() => history.push(detailsPathname)}>
             New Item
           </Button>,
         ]}
@@ -254,6 +257,7 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
           <Row gutter={8}>
             <Col lg={8} xs={16}>
               <SearchFilterDebounce
+                initialValue={searchFilter}
                 filterFunction={setSearchFilter}
                 label="Search by Name"
               />
@@ -263,6 +267,7 @@ const Products: React.FC<RouteComponentProps> = ({ history }) => {
                 style={{ width: "100%" }}
                 allowClear={true}
                 onChange={onChangeBrand}
+                initialBrandName={brandFilter?.brandName}
               ></SelectBrand>
             </Col>
             <Col lg={8} xs={16}>

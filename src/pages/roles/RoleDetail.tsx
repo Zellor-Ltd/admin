@@ -1,6 +1,6 @@
 import { Button, Col, Form, Input, message, PageHeader, Row } from "antd";
 import { useState } from "react";
-import { RouteComponentProps } from "react-router";
+import { RouteComponentProps } from "react-router-dom";
 import { saveRole } from "services/DiscoClubService";
 
 const RoleDetail: React.FC<RouteComponentProps> = (props) => {
@@ -16,7 +16,7 @@ const RoleDetail: React.FC<RouteComponentProps> = (props) => {
       await saveRole(role);
       setLoading(false);
       message.success("Register updated with success.");
-      history.push("/roles");
+      history.goBack();
     } catch (error) {
       setLoading(false);
     }
@@ -46,7 +46,7 @@ const RoleDetail: React.FC<RouteComponentProps> = (props) => {
         </Row>
         <Row gutter={8}>
           <Col>
-            <Button type="default" onClick={() => history.push("/roles")}>
+            <Button type="default" onClick={() => history.goBack()}>
               Cancel
             </Button>
           </Col>

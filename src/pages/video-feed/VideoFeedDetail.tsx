@@ -148,7 +148,7 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
     }));
     // item.validity = moment(item.validity).format("DD/MM/YYYY");
     await doRequest(() => saveVideoFeed(item));
-    history.push("/feed");
+    history.goBack();
   };
 
   const onEditTag = (tag: Tag, index: number) => {
@@ -512,14 +512,6 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
                     </Row>
                   </Col>
                 </Row>
-
-                <Button
-                  htmlType="button"
-                  style={{ margin: "8px 0" }}
-                  onClick={onAddSegment}
-                >
-                  Add Segment
-                </Button>
                 <Title level={3}>Segments</Title>
                 <Form.Item
                   shouldUpdate={(prevValues, curValues) =>
@@ -551,8 +543,8 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
                                     src={segment.thumbnail?.url}
                                     key={segment.thumbnail?.url}
                                     style={{
-                                      height: "auto",
-                                      width: "100%",
+                                      height: "256px",
+                                      width: "auto",
                                     }}
                                   />,
                                   <Button
@@ -585,11 +577,18 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
                     );
                   }}
                 </Form.Item>
+                <Button
+                  htmlType="button"
+                  style={{ margin: "8px 0px 80px 8px" }}
+                  onClick={onAddSegment}
+                >
+                  Add Segment
+                </Button>
               </Tabs.TabPane>
             </Tabs>
             <Row gutter={8} hidden={!!selectedSegment}>
               <Col>
-                <Button type="default" onClick={() => history.push("/feed")}>
+                <Button type="default" onClick={() => history.goBack()}>
                   Cancel
                 </Button>
               </Col>

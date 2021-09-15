@@ -16,8 +16,7 @@ import { Brand } from "interfaces/Brand";
 import { Product } from "interfaces/Product";
 import moment from "moment";
 import { useCallback, useEffect, useState } from "react";
-import { RouteComponentProps } from "react-router";
-import { Link } from "react-router-dom";
+import { Link, RouteComponentProps } from "react-router-dom";
 import {
   deleteStagingProduct,
   fetchProducts,
@@ -28,7 +27,8 @@ import {
 import EditProductModal from "./EditProductModal";
 import ProductExpandedRow from "./ProductExpandedRow";
 
-const StagingList: React.FC<RouteComponentProps> = () => {
+const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
+  const detailsPathname = `${location.pathname}/product/staging`;
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
 
@@ -90,9 +90,7 @@ const StagingList: React.FC<RouteComponentProps> = () => {
       dataIndex: "name",
       width: "25.5%",
       render: (value: string, record: Product) => (
-        <Link to={{ pathname: `/product/staging`, state: record }}>
-          {value}
-        </Link>
+        <Link to={{ pathname: detailsPathname, state: record }}>{value}</Link>
       ),
     },
     {
@@ -167,7 +165,7 @@ const StagingList: React.FC<RouteComponentProps> = () => {
       align: "right",
       render: (_, record: Product) => (
         <>
-          <Link to={{ pathname: `/product/staging`, state: record }}>
+          <Link to={{ pathname: detailsPathname, state: record }}>
             <EditOutlined />
           </Link>
           <Popconfirm

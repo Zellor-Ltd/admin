@@ -31,8 +31,8 @@ const reduceSegmentsTags = (packages: Segment[]) => {
   }, 0);
 };
 
-const VideoFeed: React.FC<RouteComponentProps> = (props) => {
-  const { history } = props;
+const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
+  const detailsPathname = `${location.pathname}/video-feed`;
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -85,7 +85,7 @@ const VideoFeed: React.FC<RouteComponentProps> = (props) => {
       dataIndex: "title",
       width: "18%",
       render: (value: string, record: FeedItem) => (
-        <Link to={{ pathname: `/video-feed`, state: record }}>{value}</Link>
+        <Link to={{ pathname: detailsPathname, state: record }}>{value}</Link>
       ),
       align: "center",
     },
@@ -126,7 +126,7 @@ const VideoFeed: React.FC<RouteComponentProps> = (props) => {
       align: "right",
       render: (_, record: FeedItem) => (
         <>
-          <Link to={{ pathname: `/video-feed`, state: record }}>
+          <Link to={{ pathname: detailsPathname, state: record }}>
             <EditOutlined />
           </Link>
           <Popconfirm
@@ -189,7 +189,7 @@ const VideoFeed: React.FC<RouteComponentProps> = (props) => {
           >
             Publish to Public
           </Button>,
-          <Button key="2" onClick={() => history.push("/video-feed")}>
+          <Button key="2" onClick={() => history.push(detailsPathname)}>
             New Item
           </Button>,
         ]}

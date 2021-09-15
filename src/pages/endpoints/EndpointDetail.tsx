@@ -11,7 +11,7 @@ import {
 } from "antd";
 import { Endpoint } from "interfaces/Endpoint";
 import { useEffect, useState } from "react";
-import { RouteComponentProps } from "react-router";
+import { RouteComponentProps } from "react-router-dom";
 import { saveEndpoint } from "services/DiscoClubService";
 
 const EndpointDetail: React.FC<RouteComponentProps> = ({
@@ -46,7 +46,7 @@ const EndpointDetail: React.FC<RouteComponentProps> = ({
       await saveEndpoint(endpoint);
       setLoading(false);
       message.success("Register updated with success.");
-      history.push("/endpoints");
+      history.goBack();
     } catch (error) {
       setLoading(false);
     }
@@ -102,7 +102,7 @@ const EndpointDetail: React.FC<RouteComponentProps> = ({
         </Row>
         <Row gutter={8}>
           <Col>
-            <Button type="default" onClick={() => history.push("/endpoints")}>
+            <Button type="default" onClick={() => history.goBack()}>
               Cancel
             </Button>
           </Col>

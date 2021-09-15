@@ -1,4 +1,12 @@
 import {
+  FacebookFilled,
+  GlobalOutlined,
+  InstagramFilled,
+  SoundFilled,
+  TwitterCircleFilled,
+  YoutubeFilled,
+} from "@ant-design/icons";
+import {
   Button,
   Col,
   Form,
@@ -10,18 +18,10 @@ import {
   Slider,
   Typography,
 } from "antd";
-import { useEffect, useState } from "react";
-import { RouteComponentProps } from "react-router";
-import { saveCreator } from "services/DiscoClubService";
-import {
-  InstagramFilled,
-  FacebookFilled,
-  YoutubeFilled,
-  TwitterCircleFilled,
-  GlobalOutlined,
-  SoundFilled,
-} from "@ant-design/icons";
 import { Upload } from "components";
+import { useEffect, useState } from "react";
+import { RouteComponentProps } from "react-router-dom";
+import { saveCreator } from "services/DiscoClubService";
 
 const CreatorDetail: React.FC<RouteComponentProps> = (props) => {
   const { history, location } = props;
@@ -37,7 +37,7 @@ const CreatorDetail: React.FC<RouteComponentProps> = (props) => {
       await saveCreator(creator);
       setLoading(false);
       message.success("Register updated with success.");
-      history.push("/creators");
+      history.goBack();
     } catch (error) {
       console.error(error);
       setLoading(false);
@@ -187,7 +187,7 @@ const CreatorDetail: React.FC<RouteComponentProps> = (props) => {
         </Row>
         <Row gutter={8}>
           <Col>
-            <Button type="default" onClick={() => history.push("/creators")}>
+            <Button type="default" onClick={() => history.goBack()}>
               Cancel
             </Button>
           </Col>

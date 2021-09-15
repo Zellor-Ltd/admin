@@ -1,8 +1,9 @@
 import Select from "antd/lib/select";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { fetchFans } from "../services/DiscoClubService";
 import { Fan } from "../interfaces/Fan";
 import { Typography } from "antd";
+import { AppContext } from "contexts/AppContext";
 
 type SelectFanProps = Omit<
   React.SelectHTMLAttributes<HTMLSelectElement>,
@@ -18,9 +19,14 @@ export const SelectFan: React.FC<SelectFanProps> = ({
   style,
   label = "Fan Filter",
 }) => {
+  const { filterValues, setFilterValues } = useContext(AppContext);
   const [fans, setFans] = useState<Fan[]>([]);
   const [searchList, setSearchList] = useState<string[]>([]);
-  const [selectedFan, setSelectedFan] = useState<string>("");
+  const [selectedFan, setSelectedFan] = useState<string>(filterValues[label]);
+
+  useEffect(() => {
+    setSelectedFan(filterValues[label]);
+  }, [filterValues, label]);
 
   useEffect(() => {
     const getFans = async () => {
@@ -41,6 +47,7 @@ export const SelectFan: React.FC<SelectFanProps> = ({
 
   const _onChange = (value: string) => {
     setSelectedFan(value);
+    setFilterValues((prev) => ({ ...prev, [label]: value }));
     onChange(
       fans.find(
         // (fan) => fan.name === value || fan.email === value

@@ -7,11 +7,11 @@ import { useRequest } from "hooks/useRequest";
 import { DdTemplate } from "interfaces/DdTemplate";
 import moment from "moment";
 import { useEffect, useState } from "react";
-import { RouteComponentProps } from "react-router";
-import { Link } from "react-router-dom";
+import { Link, RouteComponentProps } from "react-router-dom";
 import { deleteDdTemplate, fetchDdTemplates } from "services/DiscoClubService";
 
-const DdTemplates: React.FC<RouteComponentProps> = ({ history }) => {
+const DdTemplates: React.FC<RouteComponentProps> = ({ history, location }) => {
+  const detailsPathname = `${location.pathname}/dd-template`;
   const [loading, setLoading] = useState<boolean>(false);
   const { doFetch, doRequest } = useRequest({ setLoading });
 
@@ -46,7 +46,7 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ history }) => {
       dataIndex: "tagName",
       width: "20%",
       render: (value: string, record: DdTemplate) => (
-        <Link to={{ pathname: `dd-template`, state: record }}>{value}</Link>
+        <Link to={{ pathname: detailsPathname, state: record }}>{value}</Link>
       ),
     },
     {
@@ -86,7 +86,7 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ history }) => {
       align: "right",
       render: (_, record: DdTemplate) => (
         <>
-          <Link to={{ pathname: `dd-template`, state: record }}>
+          <Link to={{ pathname: detailsPathname, state: record }}>
             <EditOutlined />
           </Link>
           <Popconfirm
@@ -118,7 +118,7 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ history }) => {
         title="Disco Dollars Templates"
         subTitle="List of Disco Dollars Templates"
         extra={[
-          <Button key="1" onClick={() => history.push("dd-template")}>
+          <Button key="1" onClick={() => history.push(detailsPathname)}>
             New Item
           </Button>,
         ]}

@@ -13,6 +13,7 @@ import {
 } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import { SelectBrand } from "components/SelectBrand";
+import useFilter from "hooks/useFilter";
 import { Brand } from "interfaces/Brand";
 import { Fan } from "interfaces/Fan";
 import { Order } from "interfaces/Order";
@@ -20,10 +21,8 @@ import moment from "moment";
 import { useEffect, useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 import { useSelector } from "react-redux";
-import { RouteComponentProps } from "react-router";
-import { Link } from "react-router-dom";
+import { Link, RouteComponentProps } from "react-router-dom";
 import { fetchFans, fetchOrders, saveOrder } from "services/DiscoClubService";
-import useFilter from "hooks/useFilter";
 
 const Orders: React.FC<RouteComponentProps> = () => {
   const [tableloading, setTableLoading] = useState<boolean>(false);
@@ -163,7 +162,7 @@ const Orders: React.FC<RouteComponentProps> = () => {
     render: (userId: any) => {
       const fan = getFan(userId);
       return (
-        <Link to={{ pathname: `/fan`, state: fan }}>
+        <Link to={{ pathname: `/users_fans/fan`, state: fan }}>
           <Highlighter
             highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
             searchWords={[searchText]}

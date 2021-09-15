@@ -1,15 +1,15 @@
+import { EditOutlined } from "@ant-design/icons";
 import { Button, Col, PageHeader, Row, Table } from "antd";
 import { ColumnsType } from "antd/lib/table";
+import { SearchFilter } from "components/SearchFilter";
+import useFilter from "hooks/useFilter";
 import { Endpoint } from "interfaces/Endpoint";
 import { useEffect, useState } from "react";
-import { RouteComponentProps } from "react-router";
-import { Link } from "react-router-dom";
+import { Link, RouteComponentProps } from "react-router-dom";
 import { fetchEndpoints } from "services/DiscoClubService";
-import { EditOutlined } from "@ant-design/icons";
-import useFilter from "hooks/useFilter";
-import { SearchFilter } from "components/SearchFilter";
 
-const Endpoints: React.FC<RouteComponentProps> = ({ history }) => {
+const Endpoints: React.FC<RouteComponentProps> = ({ history, location }) => {
+  const detailsPathname = `${location.pathname}/endpoint`;
   const [loading, setLoading] = useState(false);
 
   const {
@@ -30,7 +30,7 @@ const Endpoints: React.FC<RouteComponentProps> = ({ history }) => {
       render: (_, record: Endpoint) => (
         <>
           {!record.isActive && (
-            <Link to={{ pathname: `/endpoint`, state: record }}>
+            <Link to={{ pathname: detailsPathname, state: record }}>
               <EditOutlined />
             </Link>
           )}
@@ -69,7 +69,7 @@ const Endpoints: React.FC<RouteComponentProps> = ({ history }) => {
         title="Endpoints"
         subTitle="List of Endpoints"
         extra={[
-          <Button key="1" onClick={() => history.push("/endpoint")}>
+          <Button key="1" onClick={() => history.push(detailsPathname)}>
             New Endpoint
           </Button>,
         ]}

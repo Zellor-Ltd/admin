@@ -2,7 +2,7 @@ import { Button, PageHeader, Table } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import { Function } from "interfaces/Function";
 import { useEffect, useState } from "react";
-import { RouteComponentProps } from "react-router";
+import { RouteComponentProps } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { fetchInterfaces } from "services/DiscoClubService";
 import { EditOutlined } from "@ant-design/icons";

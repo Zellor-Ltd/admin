@@ -1,3 +1,4 @@
+import { DeleteOutlined } from "@ant-design/icons";
 import {
   Button,
   Col,
@@ -12,19 +13,18 @@ import {
   Table,
   Typography,
 } from "antd";
-import { RouteComponentProps } from "react-router";
+import { formatMoment } from "helpers/formatMoment";
+import { Category } from "interfaces/Category";
+import { Creator } from "interfaces/Creator";
+import { Role } from "interfaces/Role";
 import { useEffect, useState } from "react";
+import { RouteComponentProps } from "react-router-dom";
 import {
   fetchCategories,
   fetchCreators,
   fetchProfiles,
   saveUser,
 } from "services/DiscoClubService";
-import { Role } from "interfaces/Role";
-import { Creator } from "interfaces/Creator";
-import { DeleteOutlined } from "@ant-design/icons";
-import { Category } from "interfaces/Category";
-import { formatMoment } from "helpers/formatMoment";
 
 const { Option } = Select;
 
@@ -188,7 +188,7 @@ const UserDetail: React.FC<RouteComponentProps> = (props) => {
       await saveUser(user);
       setLoading(false);
       message.success("Register updated with success.");
-      history.push("/users");
+      history.goBack();
     } catch (error) {
       setLoading(false);
     }
@@ -386,7 +386,7 @@ const UserDetail: React.FC<RouteComponentProps> = (props) => {
         </Row>
         <Row gutter={8}>
           <Col>
-            <Button type="default" onClick={() => history.push("/users")}>
+            <Button type="default" onClick={() => history.goBack()}>
               Cancel
             </Button>
           </Col>

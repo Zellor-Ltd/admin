@@ -1,4 +1,4 @@
-import { Switch } from "react-router-dom";
+import { Switch, Redirect } from "react-router-dom";
 import Login from "pages/login/Login";
 import VideoFeed from "pages/video-feed/VideoFeed";
 import VideoFeedDetail from "pages/video-feed/VideoFeedDetail";
@@ -20,7 +20,7 @@ import BrandManagers from "pages/brand-managers/BrandManagers";
 import Settings from "pages/settings/Settings";
 import Roles from "pages/roles/Roles";
 import RoleDetail from "pages/roles/RoleDetail";
-import AuthRoute from "components/auth-route/AuthRoute";
+import AppRoute from "./AppRoute";
 import AuthenticatedLayout from "layout/AuthenticatedLayout";
 import OpenLayout from "layout/OpenLayout";
 // import Interfaces from "pages/interfaces/Interfaces";
@@ -46,133 +46,139 @@ import FanGroups from "pages/fan-groups/FanGroups";
 import FanGroupDetail from "pages/fan-groups/FanGroupDetail";
 import Wallets from "pages/wallets/Wallets";
 import WalletDetail from "pages/wallets/WalletDetail";
-import { Redirect } from "react-router";
 
 function AdminRoutes() {
   return (
     <Switch>
-      <AuthRoute
+      <AppRoute
         exact
         path="/"
         returnComponent
         component={<Redirect to="/dashboard" />}
       />
-      <AuthRoute
+      <AppRoute
         path="/dashboard"
         component={Dashboard}
         layout={AuthenticatedLayout}
       />
-      <AuthRoute path="/login" component={Login} layout={OpenLayout} />
-      <AuthRoute
-        path="/video-feed"
+      <AppRoute path="/login" component={Login} layout={OpenLayout} />
+      <AppRoute
+        path="/feed/video-feed"
         component={VideoFeedDetail}
         layout={AuthenticatedLayout}
       />
-      <AuthRoute
+      <AppRoute
         path="/feed"
         component={VideoFeed}
         layout={AuthenticatedLayout}
       />
-      <AuthRoute
-        path="/product/:productMode"
+      <AppRoute
+        path="/staging-products/product/:productMode"
         component={ProductDetails}
         layout={AuthenticatedLayout}
       />
-      <AuthRoute
+      <AppRoute
+        path="/products/product/:productMode"
+        component={ProductDetails}
+        layout={AuthenticatedLayout}
+      />
+      <AppRoute
         path="/products"
         component={Products}
         layout={AuthenticatedLayout}
       />
-      <AuthRoute
-        path="/creator"
+      <AppRoute
+        path="/users_creators/creator"
         component={CreatorDetail}
         layout={AuthenticatedLayout}
       />
-      <AuthRoute
-        path="/creators"
+      <AppRoute
+        path="/users_creators"
         component={Creators}
         layout={AuthenticatedLayout}
       />
-      <AuthRoute
-        path="/category"
+      <AppRoute
+        path="/settings_categories/category"
         component={CategoryDetail}
         layout={AuthenticatedLayout}
       />
-      <AuthRoute
-        path="/categories"
+      <AppRoute
+        path="/settings_categories"
         component={Categories}
         layout={AuthenticatedLayout}
       />
-      <AuthRoute
-        path="/tag"
+      <AppRoute
+        path="/settings_tags/tag"
         component={TagDetail}
         layout={AuthenticatedLayout}
       />
-      <AuthRoute path="/tags" component={Tags} layout={AuthenticatedLayout} />
-      <AuthRoute
-        path="/brand"
+      <AppRoute
+        path="/settings_tags"
+        component={Tags}
+        layout={AuthenticatedLayout}
+      />
+      <AppRoute
+        path="/brands/brand"
         component={BrandDetail}
         layout={AuthenticatedLayout}
       />
-      <AuthRoute
+      <AppRoute
         path="/brands"
         component={Brands}
         layout={AuthenticatedLayout}
       />
-      <AuthRoute
-        path="/promo-code"
+      <AppRoute
+        path="/settings_promo-codes/promo-code"
         component={PromoCodesDetail}
         layout={AuthenticatedLayout}
       />
-      <AuthRoute
-        path="/promo-codes"
+      <AppRoute
+        path="/settings_promo-codes"
         component={PromoCodes}
         layout={AuthenticatedLayout}
       />
-      <AuthRoute
-        path="/endpoint"
+      <AppRoute
+        path="/settings_endpoints/endpoint"
         component={EndpointDetail}
         layout={AuthenticatedLayout}
       />
-      <AuthRoute
-        path="/endpoints"
+      <AppRoute
+        path="/settings_endpoints"
         component={Endpoints}
         layout={AuthenticatedLayout}
       />
-      {/* <AuthRoute
-        path="/interface"
-        component={InterfaceDetail}
-        layout={AuthenticatedLayout}
-      /> */}
-      {/* <AuthRoute
-        path="/interfaces"
-        component={Interfaces}
-        layout={AuthenticatedLayout}
-      /> */}
-      <AuthRoute
-        path="/fan"
+      <AppRoute
+        path="/users_fans/fan"
         component={FanDetail}
         layout={AuthenticatedLayout}
       />
-      <AuthRoute path="/fans" component={Fans} layout={AuthenticatedLayout} />
-      <AuthRoute
-        path="/brand-managers"
+      <AppRoute
+        path="/users_fans"
+        component={Fans}
+        layout={AuthenticatedLayout}
+      />
+      <AppRoute
+        path="/users_brand-managers"
         component={BrandManagers}
         layout={AuthenticatedLayout}
       />
-      <AuthRoute
-        path="/role"
+      <AppRoute
+        path="/settings_roles/role"
         component={RoleDetail}
         layout={AuthenticatedLayout}
       />
-      <AuthRoute path="/roles" component={Roles} layout={AuthenticatedLayout} />
-      <AuthRoute
-        path="/settings"
+      <AppRoute
+        path="/settings_roles"
+        component={Roles}
+        layout={AuthenticatedLayout}
+      />
+      <AppRoute
+        path="/settings_settings"
         component={Settings}
         layout={AuthenticatedLayout}
       />
-      <AuthRoute
-        path="/access-control"
+      <AppRoute
+        path="/settings_access-control"
         component={AccessControl}
         layout={AuthenticatedLayout}
       />
@@ -181,82 +187,82 @@ function AdminRoutes() {
         component={Preview}
         layout={AuthenticatedLayout}
       /> */}
-      <AuthRoute
-        path="/order"
+      <AppRoute
+        path="/orders/order"
         component={OrderDetail}
         layout={AuthenticatedLayout}
       />
-      <AuthRoute
+      <AppRoute
         path="/orders"
         component={Orders}
         layout={AuthenticatedLayout}
       />
-      <AuthRoute
+      <AppRoute
         path="/transactions"
         component={Transactions}
         layout={AuthenticatedLayout}
       />
-      <AuthRoute
+      <AppRoute
         path="/feed-mixer"
         component={FeedMixer}
         layout={AuthenticatedLayout}
       />
-      <AuthRoute
+      <AppRoute
         path="/staging-products"
         component={StagingList}
         layout={AuthenticatedLayout}
       />
-      <AuthRoute
-        path="/promotion"
+      <AppRoute
+        path="/marketing_promotions/promotion"
         component={PromotionDetail}
         layout={AuthenticatedLayout}
       />
-      <AuthRoute
-        path="/promotions"
+      <AppRoute
+        path="/marketing_promotions"
         component={Promotions}
         layout={AuthenticatedLayout}
       />
-      <AuthRoute
-        path="/dd-template"
+      <AppRoute
+        path="/settings_dd-templates/dd-template"
         component={DdTemplateDetail}
         layout={AuthenticatedLayout}
       />
-      <AuthRoute
-        path="/dd-templates"
+      <AppRoute
+        path="/settings_dd-templates"
         component={DdTemplates}
         layout={AuthenticatedLayout}
       />
-      <AuthRoute
-        path="/promo-display"
+      <AppRoute
+        path="/marketing_promo-displays/promo-display"
         component={PromoDisplayDetail}
         layout={AuthenticatedLayout}
       />
-      <AuthRoute
-        path="/promo-displays"
+      <AppRoute
+        path="/marketing_promo-displays"
         component={PromoDisplay}
         layout={AuthenticatedLayout}
       />
-      <AuthRoute
-        path="/interests"
+      <AppRoute
+        path="/settings_interests"
         component={Interests}
         layout={AuthenticatedLayout}
       />
-      <AuthRoute
-        path="/fans-group"
+      <AppRoute
+        path="/settings_fan-groups/fan-group"
         component={FanGroupDetail}
         layout={AuthenticatedLayout}
       />
-      <AuthRoute
-        path="/fan-groups"
+      <AppRoute
+        path="/settings_fan-groups"
         component={FanGroups}
         layout={AuthenticatedLayout}
       />
-      <AuthRoute
-        path="/wallet"
+      <AppRoute
+        path="/wallets/wallet"
         component={WalletDetail}
         layout={AuthenticatedLayout}
       />
-      <AuthRoute
+      <AppRoute
         path="/wallets"
         component={Wallets}
         layout={AuthenticatedLayout}

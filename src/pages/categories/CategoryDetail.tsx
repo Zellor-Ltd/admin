@@ -1,25 +1,26 @@
 import { Button, Col, Form, Input, PageHeader, Row, Select } from "antd";
 import { Upload } from "components";
-import React, { useEffect, useState } from "react";
-import { RouteComponentProps } from "react-router";
-import { productCategoriesAPI } from "services/DiscoClubService";
-
-import { SearchTag } from "interfaces/SearchTag";
-import SearchTags from "./SearchTags";
 import { categoriesSettings } from "helpers/utils";
 import useAllCategories from "hooks/useAllCategories";
+import { useRequest } from "hooks/useRequest";
 import {
   AllCategories,
   AllCategoriesAPI,
   ProductCategory,
 } from "interfaces/Category";
-import { useRequest } from "hooks/useRequest";
+import { SearchTag } from "interfaces/SearchTag";
+import React, { useEffect, useState } from "react";
+import { RouteComponentProps } from "react-router-dom";
+import { productCategoriesAPI } from "services/DiscoClubService";
+import SearchTags from "./SearchTags";
 
 const { categoriesKeys, categoriesArray, categoriesFields } =
   categoriesSettings;
 
-const CategoryDetail: React.FC<RouteComponentProps> = (props) => {
-  const { history, location } = props;
+const CategoryDetail: React.FC<RouteComponentProps> = ({
+  history,
+  location,
+}) => {
   const [loading, setLoading] = useState<boolean>(false);
   const initial: any = location.state;
   const params = new URLSearchParams(location.search);
@@ -65,7 +66,7 @@ const CategoryDetail: React.FC<RouteComponentProps> = (props) => {
         category
       )
     );
-    history.push("/categories");
+    history.goBack();
   };
 
   return (
@@ -143,7 +144,7 @@ const CategoryDetail: React.FC<RouteComponentProps> = (props) => {
         </Row>
         <Row gutter={8}>
           <Col>
-            <Button type="default" onClick={() => history.push("/categories")}>
+            <Button type="default" onClick={() => history.goBack()}>
               Cancel
             </Button>
           </Col>

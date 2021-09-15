@@ -19,15 +19,15 @@ import { useRequest } from "hooks/useRequest";
 import { Promotion, PromotionAndStatusList } from "interfaces/Promotion";
 import moment from "moment";
 import { useCallback, useEffect, useState } from "react";
-import { RouteComponentProps } from "react-router";
-import { Link } from "react-router-dom";
+import { Link, RouteComponentProps } from "react-router-dom";
 import {
   deletePromotion,
   fetchPromoStatus,
   fetchPromotions,
 } from "services/DiscoClubService";
 
-const Promotions: React.FC<RouteComponentProps> = ({ history }) => {
+const Promotions: React.FC<RouteComponentProps> = ({ history, location }) => {
+  const detailsPathname = `${location.pathname}/promotion`;
   const [tableloading, setTableLoading] = useState<boolean>(false);
   const { doRequest, doFetch } = useRequest({ setLoading: setTableLoading });
   const [promoStatusList, setPromoStatusList] = useState<any>();
@@ -61,7 +61,7 @@ const Promotions: React.FC<RouteComponentProps> = ({ history }) => {
       dataIndex: "id",
       width: "10%",
       render: (value: string, record: Promotion) => (
-        <Link to={{ pathname: `promotion`, state: record }}>{value}</Link>
+        <Link to={{ pathname: detailsPathname, state: record }}>{value}</Link>
       ),
     },
     {
@@ -98,7 +98,7 @@ const Promotions: React.FC<RouteComponentProps> = ({ history }) => {
         <>
           <Link
             to={{
-              pathname: `/promotion`,
+              pathname: detailsPathname,
               state: {
                 promotion: record,
                 promoStatusList: promoStatusList,
@@ -162,7 +162,7 @@ const Promotions: React.FC<RouteComponentProps> = ({ history }) => {
         title="Promotions"
         subTitle="List of Promotions"
         extra={[
-          <Button key="1" onClick={() => history.push("/promotion")}>
+          <Button key="1" onClick={() => history.push(detailsPathname)}>
             New Item
           </Button>,
         ]}

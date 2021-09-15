@@ -6,12 +6,12 @@ import { PromoCode } from "interfaces/PromoCode";
 import moment from "moment";
 import { useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { RouteComponentProps } from "react-router";
-import { Link } from "react-router-dom";
+import { Link, RouteComponentProps } from "react-router-dom";
 import { deletePromoCode, fetchPromoCodes } from "services/DiscoClubService";
 import "./PromoCodes.scss";
 
-const PromoCodes: React.FC<RouteComponentProps> = ({ history }) => {
+const PromoCodes: React.FC<RouteComponentProps> = ({ history, location }) => {
+  const detailsPathname = `${location.pathname}/promo-code`;
   const [loading, setLoading] = useState<boolean>(false);
   const [promoCodes, setPromoCodes] = useState<PromoCode[]>([]);
   const { doFetch, doRequest } = useRequest({ setLoading });
@@ -32,7 +32,7 @@ const PromoCodes: React.FC<RouteComponentProps> = ({ history }) => {
       dataIndex: "code",
       width: "20%",
       render: (value: string, record: PromoCode) => (
-        <Link to={{ pathname: `promo-code`, state: record }}>{value}</Link>
+        <Link to={{ pathname: detailsPathname, state: record }}>{value}</Link>
       ),
     },
     {
@@ -72,7 +72,7 @@ const PromoCodes: React.FC<RouteComponentProps> = ({ history }) => {
       align: "right",
       render: (_, record: PromoCode) => (
         <>
-          <Link to={{ pathname: `promo-code`, state: record }}>
+          <Link to={{ pathname: detailsPathname, state: record }}>
             <EditOutlined />
           </Link>
           <Popconfirm
@@ -127,7 +127,7 @@ const PromoCodes: React.FC<RouteComponentProps> = ({ history }) => {
         title="Promo Codes"
         subTitle="List of Promo Codes"
         extra={[
-          <Button key="1" onClick={() => history.push("promo-code")}>
+          <Button key="1" onClick={() => history.push(detailsPathname)}>
             New Item
           </Button>,
         ]}

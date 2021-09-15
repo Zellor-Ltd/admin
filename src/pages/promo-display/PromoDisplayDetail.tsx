@@ -3,7 +3,7 @@ import { RichTextEditor } from "components/RichTextEditor";
 import { formatMoment } from "helpers/formatMoment";
 import { useRequest } from "hooks/useRequest";
 import { useState } from "react";
-import { RouteComponentProps } from "react-router";
+import { RouteComponentProps } from "react-router-dom";
 import { savePromoDisplay } from "services/DiscoClubService";
 
 const PromoDisplaysDetail: React.FC<RouteComponentProps> = (props) => {
@@ -16,7 +16,7 @@ const PromoDisplaysDetail: React.FC<RouteComponentProps> = (props) => {
   const onFinish = async () => {
     const promoDisplay = form.getFieldsValue(true);
     await doRequest(() => savePromoDisplay(promoDisplay));
-    history.push("/promo-displays");
+    history.goBack();
   };
 
   return (
@@ -64,10 +64,7 @@ const PromoDisplaysDetail: React.FC<RouteComponentProps> = (props) => {
         </Row>
         <Row gutter={8}>
           <Col>
-            <Button
-              type="default"
-              onClick={() => history.push("/promo-displays")}
-            >
+            <Button type="default" onClick={() => history.goBack()}>
               Cancel
             </Button>
           </Col>

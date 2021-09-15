@@ -7,11 +7,11 @@ import { useRequest } from "hooks/useRequest";
 import { FanGroup } from "interfaces/FanGroup";
 import moment from "moment";
 import { useEffect, useState } from "react";
-import { RouteComponentProps } from "react-router";
-import { Link } from "react-router-dom";
+import { Link, RouteComponentProps } from "react-router-dom";
 import { deleteFanGroup, fetchFanGroups } from "services/DiscoClubService";
 
-const FanGroups: React.FC<RouteComponentProps> = ({ history }) => {
+const FanGroups: React.FC<RouteComponentProps> = ({ history, location }) => {
+  const detailsPathname = `${location.pathname}/fan-group`;
   const [loading, setLoading] = useState<boolean>(false);
   const { doFetch, doRequest } = useRequest({ setLoading });
 
@@ -46,7 +46,7 @@ const FanGroups: React.FC<RouteComponentProps> = ({ history }) => {
       dataIndex: "name",
       width: "20%",
       render: (value: string, record: FanGroup) => (
-        <Link to={{ pathname: "fans-group", state: record }}>{value}</Link>
+        <Link to={{ pathname: detailsPathname, state: record }}>{value}</Link>
       ),
     },
     {
@@ -68,7 +68,7 @@ const FanGroups: React.FC<RouteComponentProps> = ({ history }) => {
       align: "right",
       render: (_, record: FanGroup) => (
         <>
-          <Link to={{ pathname: "fans-group", state: record }}>
+          <Link to={{ pathname: detailsPathname, state: record }}>
             <EditOutlined />
           </Link>
           <Popconfirm
@@ -100,7 +100,7 @@ const FanGroups: React.FC<RouteComponentProps> = ({ history }) => {
         title="Fan Groups"
         subTitle="List of Fan Groups"
         extra={[
-          <Button key="1" onClick={() => history.push("fans-group")}>
+          <Button key="1" onClick={() => history.push(detailsPathname)}>
             New Item
           </Button>,
         ]}

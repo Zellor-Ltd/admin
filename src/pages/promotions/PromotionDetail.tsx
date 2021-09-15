@@ -3,7 +3,7 @@ import { RichTextEditor } from "components/RichTextEditor";
 import { useRequest } from "hooks/useRequest";
 import { PromotionAndStatusList } from "interfaces/Promotion";
 import { useCallback, useEffect, useState } from "react";
-import { RouteComponentProps } from "react-router";
+import { RouteComponentProps } from "react-router-dom";
 import { fetchVideoFeed2, savePromotion } from "services/DiscoClubService";
 
 const PromotionDetail: React.FC<RouteComponentProps> = (props) => {
@@ -18,7 +18,7 @@ const PromotionDetail: React.FC<RouteComponentProps> = (props) => {
   const onFinish = async () => {
     const promotion = form.getFieldsValue(true);
     await doRequest(() => savePromotion(promotion));
-    history.push("/promotions");
+    history.goBack();
   };
 
   const getPackages = useCallback(async () => {
@@ -71,7 +71,7 @@ const PromotionDetail: React.FC<RouteComponentProps> = (props) => {
         </Row>
         <Row gutter={8}>
           <Col>
-            <Button type="default" onClick={() => history.push("/promotions")}>
+            <Button type="default" onClick={() => history.goBack()}>
               Cancel
             </Button>
           </Col>

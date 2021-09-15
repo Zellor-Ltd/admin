@@ -1,4 +1,8 @@
-import { EditOutlined, SettingOutlined, OrderedListOutlined, } from "@ant-design/icons";
+import {
+  EditOutlined,
+  OrderedListOutlined,
+  SettingOutlined,
+} from "@ant-design/icons";
 import { Button, Col, PageHeader, Row, Table, Tag } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import CopyIdToClipboard from "components/CopyIdToClipboard";
@@ -10,8 +14,7 @@ import { Fan } from "interfaces/Fan";
 import { FanGroup } from "interfaces/FanGroup";
 import EditFanModal from "pages/fans/EditFanModal";
 import React, { useEffect, useState } from "react";
-import { RouteComponentProps } from "react-router";
-import { Link } from "react-router-dom";
+import { Link, RouteComponentProps } from "react-router-dom";
 import { fetchFanGroups, fetchFans } from "services/DiscoClubService";
 import FanAPITestModal from "./FanAPITestModal";
 import FanFeedModal from "./FanFeedModal";
@@ -22,7 +25,8 @@ const tagColorByPermission: any = {
   Fan: "",
 };
 
-const Fans: React.FC<RouteComponentProps> = ({ history }) => {
+const Fans: React.FC<RouteComponentProps> = ({ history, location }) => {
+  const detailsPathname = `${location.pathname}/fan`;
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
   const [fanAPITest, setFanAPITest] = useState<Fan | null>(null);
@@ -109,7 +113,7 @@ const Fans: React.FC<RouteComponentProps> = ({ history }) => {
       align: "right",
       render: (_, record) => (
         <>
-          <Link to={{ pathname: `/fan`, state: record }}>
+          <Link to={{ pathname: detailsPathname, state: record }}>
             <EditOutlined />
           </Link>
           <Button
@@ -142,7 +146,7 @@ const Fans: React.FC<RouteComponentProps> = ({ history }) => {
         title="Fans"
         subTitle="List of Fans"
         extra={[
-          <Button key="1" onClick={() => history.push("/fan")}>
+          <Button key="1" onClick={() => history.push(detailsPathname)}>
             New Item
           </Button>,
         ]}
