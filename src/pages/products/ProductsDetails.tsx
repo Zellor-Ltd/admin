@@ -105,9 +105,32 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
     [form, initial]
   );
 
+  const setDiscoPercentageByBrand = useCallback(
+    (useInitialValue: boolean) => {
+      const product = form.getFieldsValue(true);
+      const selectedBrand = brands?.find(
+        (brand: Brand) => brand.id === product.brand?.id
+      );
+
+      let discoPercentage;
+
+      if (useInitialValue && initial) {
+        discoPercentage =
+          initial.discoPercentage || selectedBrand?.discoPercentage;
+      } else {
+        discoPercentage = selectedBrand?.discoPercentage;
+      }
+
+      form.setFieldsValue({
+        discoPercentage,
+      });
+    },
+    [brands, form, initial]
+  );
+
   const handleCategoryChange = (
     selectedCategories: any,
-    productCategoryIndex: number,
+    _productCategoryIndex: number,
     filterCategory: Function
   ) => {
     filterCategory(form);
@@ -115,8 +138,9 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
   };
 
   useEffect(() => {
+    setDiscoPercentageByBrand(true);
     setSearchTagsByCategory(true);
-  }, [brands, setSearchTagsByCategory]);
+  }, [brands, setDiscoPercentageByBrand, setSearchTagsByCategory]);
 
   useEffect(() => {
     let mounted = true;
@@ -235,7 +259,7 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                       label="Brand"
                       rules={[{ required: true }]}
                     >
-                      <Select>
+                      <Select onChange={() => setDiscoPercentageByBrand(false)}>
                         {brands.map((brand) => (
                           <Select.Option key={brand.id} value={brand.id}>
                             {brand.brandName}
@@ -406,6 +430,15 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                   valuePropName="checked"
                 >
                   <Switch />
+                </Form.Item>
+              </Col>
+              <Col lg={4} xs={8}>
+                <Form.Item
+                  name="discoPercentage"
+                  label="Disco Percentage %"
+                  rules={[{ required: true }]}
+                >
+                  <InputNumber />
                 </Form.Item>
               </Col>
             </Row>

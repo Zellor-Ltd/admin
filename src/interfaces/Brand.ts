@@ -2,6 +2,7 @@ export interface Brand {
   checkout: string;
   cancelationUrl: string;
   confirmationUrl: string;
+  discoPercentage: number;
   id: string;
   status: string;
   brandId: string;
