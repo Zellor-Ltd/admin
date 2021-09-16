@@ -207,14 +207,6 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
     setSelectedSegmentIndex(-1);
   };
 
-  const onAddFeedToUserClick = () => {
-    setModalAddFeedToUser(true);
-  };
-
-  const onRemoveFeedFromUserClick = () => {
-    setModalRemoveFeedFromUser(true);
-  };
-
   const onUnlockFeedClick = async () => {
     await doRequest(() => unlockFeed(selectedUser));
     setSelectedUser("");
@@ -253,29 +245,7 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
 
   return (
     <div className="video-feed-detail">
-      <PageHeader
-        title="Video feed update"
-        subTitle="Video"
-        extra={[
-          <Button
-            onClick={onAddFeedToUserClick}
-            type="primary"
-            danger
-            disabled={!initial?.id}
-            key="lock-button"
-          >
-            Lock user feed
-          </Button>,
-          <Button
-            onClick={onRemoveFeedFromUserClick}
-            type="primary"
-            disabled={!initial?.id}
-            key="unlock-button"
-          >
-            Unlock user feed
-          </Button>,
-        ]}
-      />
+      <PageHeader title="Video feed update" subTitle="Video" />
       <Form.Provider
         onFormFinish={(name, { values, forms }) => {
           if (name === "tagForm") {
