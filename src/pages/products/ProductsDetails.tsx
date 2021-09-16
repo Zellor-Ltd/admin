@@ -269,8 +269,6 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                     </Form.Item>
                   </Col>
                 </Row>
-              </Col>
-              <Col lg={12} xs={24}>
                 <Row gutter={8}>
                   <Col lg={12} xs={24}>
                     <Form.Item
