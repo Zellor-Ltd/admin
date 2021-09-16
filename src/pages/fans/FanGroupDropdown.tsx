@@ -18,7 +18,7 @@ const FanGroupDropdown: React.FC<FanGroupDropdownProps> = ({
   const { doFetch, doRequest } = useRequest({ setLoading });
   const [fanGroups, setFanGroups] = useState<FanGroup[]>([]);
   const [selectedFanGroup, setSelectedFanGroup] = useState<string>(
-    form.getFieldValue("fanGroup")
+    form.getFieldValue("group")
   );
   const [addFanGroupField, setAddFanGroupField] = useState<string>("");
 
@@ -47,14 +47,14 @@ const FanGroupDropdown: React.FC<FanGroupDropdownProps> = ({
   };
 
   return (
-    <Form.Item label="Fan Group">
+    <Form.Item label="Group">
       <Select
         style={{ width: 240 }}
-        placeholder="Fan Group"
+        placeholder="Group"
         allowClear
         onChange={(value = "") => {
           setSelectedFanGroup(String(value));
-          form.setFieldsValue({ fanGroup: String(value) });
+          form.setFieldsValue({ group: String(value) });
         }}
         value={selectedFanGroup}
         dropdownRender={(menu) => (
@@ -82,7 +82,7 @@ const FanGroupDropdown: React.FC<FanGroupDropdownProps> = ({
         )}
       >
         {fanGroups.map((fanGroup) => (
-          <Select.Option key={fanGroup.id} value={fanGroup.id}>
+          <Select.Option key={fanGroup.id} value={fanGroup.name}>
             {fanGroup.name}
           </Select.Option>
         ))}

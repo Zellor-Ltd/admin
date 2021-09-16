@@ -1,5 +1,4 @@
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { Button, Col, PageHeader, Popconfirm, Row, Table } from "antd";
+import { Button, Col, PageHeader, Row, Table } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import { SearchFilter } from "components/SearchFilter";
 import useFilter from "hooks/useFilter";
@@ -7,13 +6,13 @@ import { useRequest } from "hooks/useRequest";
 import { FanGroup } from "interfaces/FanGroup";
 import moment from "moment";
 import { useEffect, useState } from "react";
-import { Link, RouteComponentProps } from "react-router-dom";
-import { deleteFanGroup, fetchFanGroups } from "services/DiscoClubService";
+import { RouteComponentProps } from "react-router-dom";
+import { fetchFanGroups } from "services/DiscoClubService";
 
 const FanGroups: React.FC<RouteComponentProps> = ({ history, location }) => {
   const detailsPathname = `${location.pathname}/fan-group`;
   const [loading, setLoading] = useState<boolean>(false);
-  const { doFetch, doRequest } = useRequest({ setLoading });
+  const { doFetch } = useRequest({ setLoading });
 
   const {
     setArrayList: setFanGroups,
@@ -35,19 +34,11 @@ const FanGroups: React.FC<RouteComponentProps> = ({ history, location }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const deleteItem = async (id: string) => {
-    await doRequest(() => deleteFanGroup({ id }));
-    await getFanGroups();
-  };
-
   const columns: ColumnsType<FanGroup> = [
     {
       title: "Group Name",
       dataIndex: "name",
       width: "20%",
-      render: (value: string, record: FanGroup) => (
-        <Link to={{ pathname: detailsPathname, state: record }}>{value}</Link>
-      ),
     },
     {
       title: "Creation",
@@ -58,29 +49,6 @@ const FanGroups: React.FC<RouteComponentProps> = ({ history, location }) => {
         <>
           <div>{moment(value).format("DD/MM/YYYY")}</div>
           <div>{moment(value).format("HH:mm")}</div>
-        </>
-      ),
-    },
-    {
-      title: "Actions",
-      key: "action",
-      width: "10%",
-      align: "right",
-      render: (_, record: FanGroup) => (
-        <>
-          <Link to={{ pathname: detailsPathname, state: record }}>
-            <EditOutlined />
-          </Link>
-          <Popconfirm
-            title="Are you sure？"
-            okText="Yes"
-            cancelText="No"
-            onConfirm={() => deleteItem(record.id)}
-          >
-            <Button type="link" style={{ padding: 0, margin: 6 }}>
-              <DeleteOutlined />
-            </Button>
-          </Popconfirm>
         </>
       ),
     },

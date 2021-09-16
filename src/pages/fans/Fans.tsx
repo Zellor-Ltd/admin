@@ -94,11 +94,11 @@ const Fans: React.FC<RouteComponentProps> = ({ history, location }) => {
     },
     {
       title: "Group",
-      dataIndex: "fanGroup",
+      dataIndex: "group",
       width: "10%",
       render: (_, record) => {
         const fanGroupName =
-          fanGroups.find((fanGroup) => fanGroup.id === record.fanGroup)?.name ||
+          fanGroups.find((fanGroup) => fanGroup.id === record.group)?.name ||
           "";
         return (
           <Tag color={tagColorByPermission[record.profile]}>{fanGroupName}</Tag>

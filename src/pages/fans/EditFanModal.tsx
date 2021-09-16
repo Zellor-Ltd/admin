@@ -28,7 +28,7 @@ const EditFanModal: React.FC<EditMultipleModalProps<Fan>> = ({
 
   const _onOk = () => {
     form.validateFields().then(async () => {
-      const fanGroup = form.getFieldValue("fanGroup");
+      const fanGroup = form.getFieldValue("group");
       const fansToUpdateIds = selectedFans.map((fan) => fan.id);
       await doRequest(
         () => updateManyFans(fanGroup, fansToUpdateIds),

@@ -243,6 +243,8 @@ export const fetchBalancePerBrand = (userId: string) =>
 export const fetchTransactionsPerBrand = (userId: string, brandId: string) =>
   instance.get(`Disco/Wallet/GetTransactionsPerBrand/${userId}/${brandId}`);
 
+export const fetchServersList = () => instance.get(`Wi/Ep/GetServersList`);
+
 export const saveVideoFeed = (params: FeedItem) => {
   if (params.id) {
     return instance.put("Disco/Feed/Update", params);
@@ -465,7 +467,7 @@ export const preCheckout: (productId: string, DdQuantity?: number) => any = (
 ) => instance.get(`Disco/Product/PreCheckout/${productId}/${DdQuantity}`);
 
 export const updateMultipleUsersFeed = (params: any) =>
-  instance.put(`Disco/Feed/UpdateMultipleUsersFeed`, {
+  instance.put(`Disco/Feed/UpdateAllFansUsersFeed`, {
     query: {},
     feeds: params,
   });
