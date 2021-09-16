@@ -18,7 +18,7 @@ const FanGroupDropdown: React.FC<FanGroupDropdownProps> = ({
   const { doFetch, doRequest } = useRequest({ setLoading });
   const [fanGroups, setFanGroups] = useState<FanGroup[]>([]);
   const [selectedFanGroup, setSelectedFanGroup] = useState<string>(
-    form.getFieldValue("fanGroup")
+    form.getFieldValue("group")
   );
   const [addFanGroupField, setAddFanGroupField] = useState<string>("");
 
@@ -54,7 +54,7 @@ const FanGroupDropdown: React.FC<FanGroupDropdownProps> = ({
         allowClear
         onChange={(value = "") => {
           setSelectedFanGroup(String(value));
-          form.setFieldsValue({ fanGroup: String(value) });
+          form.setFieldsValue({ group: String(value) });
         }}
         value={selectedFanGroup}
         dropdownRender={(menu) => (
