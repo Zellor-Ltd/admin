@@ -243,6 +243,8 @@ export const fetchBalancePerBrand = (userId: string) =>
 export const fetchTransactionsPerBrand = (userId: string, brandId: string) =>
   instance.get(`Disco/Wallet/GetTransactionsPerBrand/${userId}/${brandId}`);
 
+export const fetchServersList = () => instance.get(`Wi/Ep/GetServersList`);
+
 export const saveVideoFeed = (params: FeedItem) => {
   if (params.id) {
     return instance.put("Disco/Feed/Update", params);

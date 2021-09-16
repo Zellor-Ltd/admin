@@ -16,12 +16,14 @@ import { formatMoment } from "helpers/formatMoment";
 import { Category } from "interfaces/Category";
 import { Creator } from "interfaces/Creator";
 import { Role } from "interfaces/Role";
+import { ServerAlias } from "interfaces/ServerAlias";
 import { useEffect, useState } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import {
   fetchCategories,
   fetchCreators,
   fetchProfiles,
+  fetchServersList,
   saveUser,
 } from "services/DiscoClubService";
 import FanGroupDropdown from "./FanGroupDropdown";
@@ -45,6 +47,7 @@ const FanDetail: React.FC<RouteComponentProps> = (props) => {
   const [roles, setRoles] = useState<Role[]>([]);
   const [creators, setCreators] = useState<Creator[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [serversList, setServersList] = useState<ServerAlias[]>([]);
   const initial: any = location.state || {};
   const [form] = Form.useForm();
 
@@ -66,10 +69,15 @@ const FanDetail: React.FC<RouteComponentProps> = (props) => {
       const response: any = await fetchCategories();
       setCategories(response.results);
     };
+    const getServersList = async () => {
+      const response: any = await fetchServersList();
+      setServersList(response.results);
+    };
     setLoading(true);
     getRoles();
     getCreatores();
     getCategories();
+    getServersList();
     return () => {
       mounted = false;
     };
@@ -310,6 +318,17 @@ const FanDetail: React.FC<RouteComponentProps> = (props) => {
               loading={loading}
               setLoading={setLoading}
             />
+          </Col>
+          <Col lg={8} xs={24}>
+            <Form.Item name={"serverAlias"} label="Server Alias">
+              <Select>
+                {serversList.map((serverAlias) => (
+                  <Select.Option key={serverAlias.id} value={serverAlias.id}>
+                    {serverAlias.name}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Form.Item>
           </Col>
         </Row>
         <Row>

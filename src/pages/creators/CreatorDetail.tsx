@@ -19,15 +19,18 @@ import {
   Typography,
 } from "antd";
 import { Upload } from "components";
+import { ServerAlias } from "interfaces/ServerAlias";
 import { useEffect, useState } from "react";
 import { RouteComponentProps } from "react-router-dom";
-import { saveCreator } from "services/DiscoClubService";
+import { fetchServersList, saveCreator } from "services/DiscoClubService";
 
 const CreatorDetail: React.FC<RouteComponentProps> = (props) => {
   const { history, location } = props;
   const initial: any = location.state;
   const [loading, setLoading] = useState(false);
   const [ageRange, setageRange] = useState<[number, number]>([12, 100]);
+  const [serversList, setServersList] = useState<ServerAlias[]>([]);
+
   const [form] = Form.useForm();
 
   const onFinish = async () => {
@@ -45,8 +48,13 @@ const CreatorDetail: React.FC<RouteComponentProps> = (props) => {
   };
 
   useEffect(() => {
+    const getServersList = async () => {
+      const response: any = await fetchServersList();
+      setServersList(response.results);
+    };
     if (initial?.ageMin && initial?.ageMax)
       setageRange([initial?.ageMin, initial?.ageMax]);
+    getServersList();
   }, [initial]);
 
   const onChangeAge = (value: [number, number]) => {
@@ -101,6 +109,18 @@ const CreatorDetail: React.FC<RouteComponentProps> = (props) => {
           <Col lg={12} xs={24}>
             <Form.Item label="Username" name="userName">
               <Input prefix="@" autoComplete="off" />
+            </Form.Item>
+          </Col>
+
+          <Col lg={8} xs={24}>
+            <Form.Item name={"serverAlias"} label="Server Alias">
+              <Select>
+                {serversList.map((serverAlias) => (
+                  <Select.Option key={serverAlias.id} value={serverAlias.id}>
+                    {serverAlias.name}
+                  </Select.Option>
+                ))}
+              </Select>
             </Form.Item>
           </Col>
 
