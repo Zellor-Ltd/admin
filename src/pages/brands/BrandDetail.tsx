@@ -48,7 +48,7 @@ const BrandDetail: React.FC<RouteComponentProps> = (props) => {
     }
   };
 
-  const onCompletePausedAction = async () => {
+  const onCompletePausedAction = () => {
     form.setFieldsValue({
       paused: !paused,
     });
@@ -324,6 +324,8 @@ const BrandDetail: React.FC<RouteComponentProps> = (props) => {
         <PauseModal
           showPauseModal={showPauseModal}
           setShowPauseModal={setShowPauseModal}
+          brandId={initial.id}
+          isBrandPaused={paused}
           onOk={onCompletePausedAction}
         />
       </Form>
