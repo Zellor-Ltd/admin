@@ -3,30 +3,22 @@ import {
   EditOutlined,
   SettingOutlined,
 } from "@ant-design/icons";
-import {
-  Button,
-  Checkbox,
-  Col,
-  PageHeader,
-  Popconfirm,
-  Row,
-  Spin,
-  Tag,
-} from "antd";
+import { Button, Checkbox, Col, PageHeader, Popconfirm, Row, Tag } from "antd";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
 import CopyIdToClipboard from "components/CopyIdToClipboard";
 import EditableTable, { EditableColumnType } from "components/EditableTable";
 import EditMultipleButton from "components/EditMultipleButton";
+import { PageInfiniteScroll } from "components/PageInfiniteScroll";
 import { SearchFilterDebounce } from "components/SearchFilterDebounce";
 import { SelectBrand } from "components/SelectBrand";
 import { AppContext } from "contexts/AppContext";
 import useAllCategories from "hooks/useAllCategories";
+import { usePageInfiniteScroll } from "hooks/usePageInfiniteScroll";
 import { useRequest } from "hooks/useRequest";
 import { Brand } from "interfaces/Brand";
 import { Product } from "interfaces/Product";
 import moment from "moment";
 import { useContext, useEffect, useState } from "react";
-import InfiniteScroll from "react-infinite-scroll-component";
 import { Link, RouteComponentProps } from "react-router-dom";
 import {
   deleteProduct,
@@ -39,14 +31,20 @@ import ProductExpandedRow from "./ProductExpandedRow";
 
 const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
   const detailsPathname = `${location.pathname}/product/commited`;
-  const { usePageFilter } = useContext(AppContext);
+  const {
+    usePageTable,
+    usePageFilter,
+    loading,
+    setLoading,
+    refreshing,
+    doRequest,
+  } = useContext(AppContext);
 
-  const [loading, setLoading] = useState<boolean>(false);
-  const [refreshing, setRefreshing] = useState<boolean>(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
   const [productAPITest, setProductAPITest] = useState<Product | null>(null);
 
-  const { doFetch, doRequest } = useRequest({ setLoading });
+  console.log("products render");
+
   const { doRequest: saveCategories, loading: loadingCategories } =
     useRequest();
 
@@ -55,34 +53,22 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
     "brand"
   );
   const [unclassifiedFilter, setUnclassifiedFilter] = useState<boolean>(false);
-  const [page, setPage] = useState<number>(0);
-  const [eof, setEof] = useState<boolean>(false);
 
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = usePageTable<Product>([]);
 
   const { fetchAllCategories, allCategories } = useAllCategories({
     setLoading,
   });
 
-  const _fetchProducts = async () => {
-    const pageToUse = refreshing ? 0 : page;
-    const response = await doFetch(() =>
-      fetchProducts({
-        limit: 30,
-        page: pageToUse,
-        brandId: brandFilter?.id,
-        query: searchFilter,
-        unclassified: unclassifiedFilter,
-      })
-    );
-    setPage(pageToUse + 1);
-    if (response.results.length < 30) setEof(true);
-    return response;
-  };
+  const { fetchTableData } = usePageInfiniteScroll(fetchProducts, {
+    brandId: brandFilter?.id,
+    query: searchFilter,
+    unclassified: unclassifiedFilter,
+  });
 
   const getResources = async () => {
     const [{ results }] = await Promise.all([
-      _fetchProducts(),
+      fetchTableData(),
       fetchAllCategories(),
     ]);
     setProducts(results);
@@ -90,33 +76,7 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
 
   const refreshProducts = async () => {
     setSelectedRowKeys([]);
-    setPage(0);
-    setRefreshing(true);
   };
-
-  const fetchData = async () => {
-    if (!products.length) return;
-    const { results } = await _fetchProducts();
-    setProducts((prev) => [...prev.concat(results)]);
-  };
-
-  useEffect(() => {
-    const getProducts = async () => {
-      const { results } = await _fetchProducts();
-      setProducts(results);
-      setRefreshing(false);
-    };
-    if (refreshing) {
-      setEof(false);
-      getProducts();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [refreshing]);
-
-  useEffect(() => {
-    if (allCategories["Super Category"].length) refreshProducts();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchFilter, brandFilter, unclassifiedFilter]);
 
   useEffect(() => {
     getResources();
@@ -292,22 +252,10 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
         selectedRecord={productAPITest}
         setSelectedRecord={setProductAPITest}
       />
-      <InfiniteScroll
-        dataLength={products.length}
-        next={fetchData}
-        hasMore={!eof}
-        loader={
-          page !== 0 && (
-            <div className="scroll-message">
-              <Spin />
-            </div>
-          )
-        }
-        endMessage={
-          <div className="scroll-message">
-            <b>End of results.</b>
-          </div>
-        }
+      <PageInfiniteScroll
+        fetchTableData={fetchTableData}
+        refreshCallback={refreshProducts}
+        dependencies={[brandFilter, searchFilter, unclassifiedFilter]}
       >
         <EditableTable
           rowKey="id"
@@ -332,7 +280,7 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
             ),
           }}
         />
-      </InfiniteScroll>
+      </PageInfiniteScroll>
     </>
   );
 };
