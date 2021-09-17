@@ -1,10 +1,9 @@
 import InfiniteScroll from "react-infinite-scroll-component";
 
-import React, { useRef, useContext, useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { AppContext } from "contexts/AppContext";
 import { PageInfiniteScrollContext } from "contexts/PageInfiniteScrollContext";
 import { Spin } from "antd";
-import { useIsMounted } from "hooks/useIsMounted";
 
 interface PageInfiniteScrollProps {
   refreshCallback: Function;
@@ -19,23 +18,18 @@ export const PageInfiniteScroll: React.FC<PageInfiniteScrollProps> = ({
   children,
 }) => {
   const { setRefreshing, refreshing, usePageTable } = useContext(AppContext);
-  const { page, setPage, eof, setEof } = useContext(PageInfiniteScrollContext);
+  const { page, eof, refreshContext } = useContext(PageInfiniteScrollContext);
   const [tableData, setTableData] = usePageTable<any>([]);
-
-  console.log("infinite render");
 
   const refreshTable = async () => {
     refreshCallback();
-    setPage(0);
-    setEof(false);
+    refreshContext();
     setRefreshing(true);
   };
 
   useEffect(() => {
     return () => {
-      setPage(0);
-      setEof(false);
-      setTableData([]);
+      refreshContext();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -47,7 +41,6 @@ export const PageInfiniteScroll: React.FC<PageInfiniteScrollProps> = ({
       setRefreshing(false);
     };
     if (refreshing) {
-      setEof(false);
       getTableData();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

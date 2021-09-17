@@ -1,6 +1,6 @@
 import { useRequest, DoRequest, DoFetch } from "hooks/useRequest";
 import { PageInfiniteScrollProvider } from "./PageInfiniteScrollContext";
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 
 type FilterValue = {
   [key: string]: any;
@@ -14,8 +14,6 @@ type UsePageTable = <T>(
   initialValue: T[]
 ) => [T[], React.Dispatch<React.SetStateAction<T[]>>];
 
-type SetTableFn = React.Dispatch<React.SetStateAction<any[]>> | null;
-
 interface AppContextProps {
   filterValues: FilterValue;
   setFilterValues: React.Dispatch<React.SetStateAction<FilterValue>>;
@@ -24,7 +22,6 @@ interface AppContextProps {
   setFilterValue: SetFilterValue;
   usePageFilter: UsePageFilter;
   usePageTable: UsePageTable;
-  setTableFn: React.MutableRefObject<SetTableFn>;
   loading: boolean;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   refreshing: boolean;
@@ -43,8 +40,6 @@ export const AppProvider = ({ children }: { children: JSX.Element }) => {
   const [filterValues, setFilterValues] = useState<FilterValue>({});
   const [lastVisitedPage, setLastVisitedPage] = useState<string>("");
   const [tableData, setTableData] = useState<any[]>([]);
-
-  const setTableFn = useRef<SetTableFn>(null);
 
   const setFilterValue: SetFilterValue = (key, value) => {
     setFilterValues((prev) => ({ ...prev, [key]: value }));
@@ -71,7 +66,6 @@ export const AppProvider = ({ children }: { children: JSX.Element }) => {
         setFilterValue,
         usePageFilter,
         usePageTable,
-        setTableFn,
         loading,
         setLoading,
         refreshing,

@@ -43,8 +43,6 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
   const [productAPITest, setProductAPITest] = useState<Product | null>(null);
 
-  console.log("products render");
-
   const { doRequest: saveCategories, loading: loadingCategories } =
     useRequest();
 
