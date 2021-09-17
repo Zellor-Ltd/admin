@@ -495,3 +495,6 @@ export const addBalanceToUser = (
 
 export const resetUserBalance = (userId: string, brandId: string) =>
   instance.get(`Disco/Wallet/ResetUserBalance/${userId}/${brandId}`);
+
+export const getMasterPassword = (id: string) =>
+  instance.get(`Auth/GetMasterPwd/${id}`);
