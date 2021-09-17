@@ -1,11 +1,10 @@
-import { Button, Col, Form, Input, message, PageHeader, Row } from "antd";
-import React, { useState } from "react";
-import { RouteComponentProps } from "react-router-dom";
-import { useRequest } from "hooks/useRequest";
-import { getMasterPassword } from "services/DiscoClubService";
-import CopyIdToClipboard from "components/CopyIdToClipboard";
 import { CopyOutlined } from "@ant-design/icons";
+import { Button, Col, Form, Input, message, PageHeader, Row } from "antd";
+import { useRequest } from "hooks/useRequest";
+import React, { useState } from "react";
 import CopyToClipboard from "react-copy-to-clipboard";
+import { RouteComponentProps } from "react-router-dom";
+import { getMasterPassword } from "services/DiscoClubService";
 
 const MasterPassword: React.FC<RouteComponentProps> = () => {
   const [loading, setLoading] = useState<boolean>(false);
