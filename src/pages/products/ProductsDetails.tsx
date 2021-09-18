@@ -225,8 +225,6 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                       <Radio.Group buttonStyle="solid">
                         <Radio.Button value="live">Live</Radio.Button>
                         <Radio.Button value="paused">Paused</Radio.Button>
-                        <Radio.Button value="expired">Expired</Radio.Button>
-                        <Radio.Button value="pending">Pending</Radio.Button>
                       </Radio.Group>
                     </Form.Item>
                   </Col>

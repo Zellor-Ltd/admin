@@ -146,6 +146,13 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
       render: (creationDate: Date) => moment(creationDate).format("DD/MM/YYYY"),
     },
     {
+      title: "Status",
+      dataIndex: ["status"],
+      width: "12%",
+      align: "center",
+      responsive: ["sm"],
+    },
+    {
       title: "Actions",
       key: "action",
       width: "12%",

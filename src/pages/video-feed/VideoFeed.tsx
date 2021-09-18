@@ -120,6 +120,13 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
       align: "center",
     },
     {
+      title: "Status",
+      dataIndex: "status",
+      width: "12%",
+      align: "center",
+      responsive: ["sm"],
+    },
+    {
       title: "Actions",
       key: "action",
       width: "5%",
