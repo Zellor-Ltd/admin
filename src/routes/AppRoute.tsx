@@ -4,12 +4,12 @@ import { useContext } from "react";
 import { Redirect, Route, useHistory } from "react-router-dom";
 
 const AppRoute: React.FC<any> = (props) => {
-  const { setFilterValues, lastVisitedPage, setLastVisitedPage } =
+  const { refreshContext, lastVisitedPage, setLastVisitedPage } =
     useContext(AppContext);
   const pathname = useHistory().location.pathname;
   const dirName = pathname.split("/")[1];
   if (dirName !== lastVisitedPage) {
-    setFilterValues({});
+    refreshContext();
   }
 
   setLastVisitedPage(dirName);

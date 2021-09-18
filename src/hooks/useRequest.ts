@@ -3,6 +3,22 @@ import React, { useState } from "react";
 
 type action = () => Promise<any>;
 
+export type DoFetch = (
+  action: action,
+  completeResponse?: boolean | undefined
+) => Promise<{
+  results: any[];
+  result: any;
+}>;
+
+export type DoRequest = (
+  action: action,
+  successMsg?: string
+) => Promise<{
+  results: any[];
+  result: any;
+}>;
+
 export const useRequest = ({
   setLoading = () => {},
 }: {
