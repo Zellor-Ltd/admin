@@ -112,6 +112,9 @@ const AdminSideMenu = () => {
         <Menu.Item key="settings_fan-groups" icon={<SwitcherOutlined />}>
           <Link to="/settings_fan-groups">Fans Groups</Link>
         </Menu.Item>
+        <Menu.Item key="settings_master-password" icon={<SwitcherOutlined />}>
+          <Link to="/settings_master-password">Master Password</Link>
+        </Menu.Item>
       </SubMenu>
     </Menu>
   );

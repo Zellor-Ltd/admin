@@ -18,4 +18,10 @@ export interface Brand {
   z: number;
   automated?: boolean;
   paused?: boolean;
+  colourLogo?: any;
+  blackLogo?: any;
+  whiteLogo?: any;
+  brandLogo?: any;
+  brandCard?: any;
+  thumbnail?: any;
 }

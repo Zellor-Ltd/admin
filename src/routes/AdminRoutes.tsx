@@ -46,6 +46,7 @@ import FanGroups from "pages/fan-groups/FanGroups";
 import FanGroupDetail from "pages/fan-groups/FanGroupDetail";
 import Wallets from "pages/wallets/Wallets";
 import WalletDetail from "pages/wallets/WalletDetail";
+import MasterPassword from "pages/master-password/MasterPassword";
 
 function AdminRoutes() {
   return (
@@ -265,6 +266,11 @@ function AdminRoutes() {
       <AppRoute
         path="/wallets"
         component={Wallets}
+        layout={AuthenticatedLayout}
+      />
+      <AppRoute
+        path="/settings_master-password"
+        component={MasterPassword}
         layout={AuthenticatedLayout}
       />
     </Switch>
