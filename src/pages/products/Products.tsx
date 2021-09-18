@@ -6,6 +6,7 @@ import {
 import { Button, Checkbox, Col, PageHeader, Popconfirm, Row, Tag } from "antd";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
 import CopyIdToClipboard from "components/CopyIdToClipboard";
+import CopyTagToClipboard from "components/CopyTagToClipboard";
 import EditableTable, { EditableColumnType } from "components/EditableTable";
 import EditMultipleButton from "components/EditMultipleButton";
 import { PageInfiniteScroll } from "components/PageInfiniteScroll";
@@ -102,6 +103,13 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
       dataIndex: "id",
       width: "6%",
       render: (id) => <CopyIdToClipboard id={id} />,
+      align: "center",
+    },
+    {
+      title: "_tag",
+      dataIndex: "searchTags",
+      width: "6%",
+      render: (searchTags) => <CopyTagToClipboard tag={searchTags} />,
       align: "center",
     },
     {
