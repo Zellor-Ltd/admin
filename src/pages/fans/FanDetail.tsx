@@ -8,6 +8,7 @@ import {
   message,
   PageHeader,
   Row,
+  Tabs,
   Select,
   Table,
   Typography,
@@ -228,215 +229,231 @@ const FanDetail: React.FC<RouteComponentProps> = (props) => {
         }}
         onFinish={onFinish}
       >
-        <Row gutter={8}>
-          {initial.id && (
-            <Col lg={8} xs={24}>
-              <Form.Item label="_id" name="id">
-                <Input disabled />
-              </Form.Item>
-            </Col>
-          )}
-          <Col lg={8} xs={24}>
-            <Form.Item label="Name" name="userName">
-              <Input />
-            </Form.Item>
-          </Col>
-          <Col lg={8} xs={24}>
-            <Form.Item label="Email" name="user">
-              <Input type="email" />
-            </Form.Item>
-          </Col>
-          <Col lg={8} xs={24}>
-            <Form.Item label="Password" name="pwd">
-              <Input.Password />
-            </Form.Item>
-          </Col>
-          <Col lg={8} xs={24}>
-            <Form.Item name="profile" label="Profile">
-              <Select>
-                {roles.map((role) => (
-                  <Select.Option key={role.id} value={role.name}>
-                    {role.name}
-                  </Select.Option>
-                ))}
-              </Select>
-            </Form.Item>
-          </Col>
-          <Col lg={8} xs={24}>
-            <Form.Item
-              label="Birthday"
-              name="birthday"
-              getValueProps={formatMoment}
-            >
-              <DatePicker format="DD/MM/YYYY" />
-            </Form.Item>
-          </Col>
-          <Col lg={8} xs={24}>
-            <Form.Item name="gender" label="Gender">
-              <Select>
-                <Select.Option value="Female">Female</Select.Option>
-                <Select.Option value="Male">Male</Select.Option>
-                <Select.Option value="Other">Other</Select.Option>
-                <Select.Option value="Prefer not to say">
-                  Prefer not to say
-                </Select.Option>
-              </Select>
-            </Form.Item>
-          </Col>
-          <Col lg={8} xs={24}>
-            <Form.Item label="Phone" name="phoneNumber">
-              <Input
-                addonBefore={prefixSelector(
-                  initial.personalDetails?.phone?.dialCode
-                )}
-              />
-            </Form.Item>
-          </Col>
-          <Col lg={8} xs={24}>
-            <Form.Item label="Address" name="line1">
-              <Input />
-            </Form.Item>
-          </Col>
-          <Col lg={8} xs={24}>
-            <Form.Item label="City" name="city">
-              <Input />
-            </Form.Item>
-          </Col>
-          <Col lg={8} xs={24}>
-            <Form.Item label="Country" name="country">
-              <Input />
-            </Form.Item>
-          </Col>
-          <Col lg={8} xs={24}>
-            <Form.Item label="Postal Code" name="postalCode">
-              <Input />
-            </Form.Item>
-          </Col>
-          <Col lg={8} xs={24}>
-            <FanGroupDropdown
-              form={form}
-              loading={loading}
-              setLoading={setLoading}
-            />
-          </Col>
-          <Col lg={8} xs={24}>
-            <Form.Item name={"serverAlias"} label="Server Alias">
-              <Select>
-                {serversList.map((serverAlias) => (
-                  <Select.Option key={serverAlias.id} value={serverAlias.id}>
-                    {serverAlias.name}
-                  </Select.Option>
-                ))}
-              </Select>
-            </Form.Item>
-          </Col>
-        </Row>
-        <Row>
-          <Col lg={24} xs={24}>
-            <Form.Item
-              shouldUpdate={(prevValues, curValues) =>
-                prevValues.followingCreators !== curValues.followingCreators
-              }
-            >
-              {({ getFieldValue }) => {
-                const followingCreators: Creator[] =
-                  getFieldValue("followingCreators") || [];
+        <Tabs defaultActiveKey="Details">
+          <Tabs.TabPane tab="Details" key="Details">
+            <Row gutter={8}>
+            {initial.id && (
+              <Col lg={8} xs={24}>
+                <Form.Item label="_id" name="id">
+                  <Input disabled />
+                </Form.Item>
+              </Col>
+            )}
+              <Col lg={8} xs={24}>
+                <Form.Item label="Name" name="userName">
+                  <Input />
+                </Form.Item>
+              </Col>
+              <Col lg={8} xs={24}>
+                <Form.Item label="Email" name="user">
+                  <Input type="email" />
+                </Form.Item>
+              </Col>
+              <Col lg={8} xs={24}>
+                <Form.Item label="Password" name="pwd">
+                  <Input.Password />
+                </Form.Item>
+              </Col>
+              <Col lg={8} xs={24}>
+                <Form.Item name="profile" label="Profile">
+                  <Select>
+                    {roles.map((role) => (
+                      <Select.Option key={role.id} value={role.name}>
+                        {role.name}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col lg={8} xs={24}>
+                <Form.Item
+                  label="Birthday"
+                  name="birthday"
+                  getValueProps={formatMoment}
+                >
+                  <DatePicker format="DD/MM/YYYY" />
+                </Form.Item>
+              </Col>
+              <Col lg={8} xs={24}>
+                <Form.Item name="gender" label="Gender">
+                  <Select>
+                    <Select.Option value="Female">Female</Select.Option>
+                    <Select.Option value="Male">Male</Select.Option>
+                    <Select.Option value="Other">Other</Select.Option>
+                    <Select.Option value="Prefer not to say">
+                      Prefer not to say
+                    </Select.Option>
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col lg={8} xs={24}>
+                <Form.Item label="Phone" name="phoneNumber">
+                  <Input
+                    addonBefore={prefixSelector(
+                      initial.personalDetails?.phone?.dialCode
+                    )}
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
+          </Tabs.TabPane>
+          <Tabs.TabPane tab="Address" key="Address">
+            <Row gutter={8}>
+              <Col lg={8} xs={24}>
+                <Form.Item label="Address" name="line1">
+                  <Input />
+                </Form.Item>
+              </Col>
+              <Col lg={8} xs={24}>
+                <Form.Item label="City" name="city">
+                  <Input />
+                </Form.Item>
+              </Col>
+              <Col lg={8} xs={24}>
+                <Form.Item label="Country" name="country">
+                  <Input />
+                </Form.Item>
+              </Col>
+              <Col lg={8} xs={24}>
+                <Form.Item label="Postal Code" name="postalCode">
+                  <Input />
+                </Form.Item>
+              </Col>
+            </Row>
+          </Tabs.TabPane>
+          <Tabs.TabPane tab="Settings" key="Settings">
+            <Row gutter={8}>
+              <Col lg={8} xs={24}>
+                <FanGroupDropdown
+                  form={form}
+                  loading={loading}
+                  setLoading={setLoading}
+                />
+              </Col>
+              <Col lg={8} xs={24}>
+                <Form.Item name={"serverAlias"} label="Server Alias">
+                  <Select>
+                    {serversList.map((serverAlias) => (
+                      <Select.Option key={serverAlias.id} value={serverAlias.id}>
+                        {serverAlias.name}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </Col>
+            </Row>
+          </Tabs.TabPane>
+          <Tabs.TabPane tab="Following Creators" key="FollowingCreators">
+            <Row gutter={8}>
+              <Col lg={24} xs={24}>
+                <Form.Item
+                  shouldUpdate={(prevValues, curValues) =>
+                    prevValues.followingCreators !== curValues.followingCreators
+                  }
+                >
+                  {({ getFieldValue }) => {
+                    const followingCreators: Creator[] =
+                      getFieldValue("followingCreators") || [];
 
-                return (
-                  <>
-                    <Col lg={8} xs={24}>
-                      <Typography.Title level={5}>
-                        Following Creators
-                      </Typography.Title>
-                      <Form.Item>
-                        <Select
-                          placeholder="Please select a creator"
-                          onChange={onChangeCreator}
-                          allowClear
-                        >
-                          {creators
-                            .filter(
-                              (creat) =>
-                                !followingCreators
-                                  .map((follow) => follow.userName)
-                                  .includes(creat.userName)
-                            )
-                            .map((creator) => (
-                              <Select.Option
-                                key={creator.id}
-                                value={creator.userName}
-                              >
-                                {creator.userName}
-                              </Select.Option>
-                            ))}
-                        </Select>
-                      </Form.Item>
-                    </Col>
-                    <Col lg={24} xs={24}>
-                      <Table
-                        dataSource={followingCreators}
-                        columns={creatorColumns}
-                      />
-                    </Col>
-                  </>
-                );
-              }}
-            </Form.Item>
-          </Col>
-        </Row>
-        <Row>
-          <Col lg={24} xs={24}>
-            <Form.Item
-              shouldUpdate={(prevValues, curValues) =>
-                prevValues.followingCategories !== curValues.followingCategories
-              }
-            >
-              {({ getFieldValue }) => {
-                const followingCategories: Category[] =
-                  getFieldValue("followingCategories") || [];
+                    return (
+                      <>
+                        <Col lg={8} xs={24}>
+                          <Typography.Title level={5}>
+                            Following Creators
+                          </Typography.Title>
+                          <Form.Item>
+                            <Select
+                              placeholder="Please select a creator"
+                              onChange={onChangeCreator}
+                              allowClear
+                            >
+                              {creators
+                                .filter(
+                                  (creat) =>
+                                    !followingCreators
+                                      .map((follow) => follow.userName)
+                                      .includes(creat.userName)
+                                )
+                                .map((creator) => (
+                                  <Select.Option
+                                    key={creator.id}
+                                    value={creator.userName}
+                                  >
+                                    {creator.userName}
+                                  </Select.Option>
+                                ))}
+                            </Select>
+                          </Form.Item>
+                        </Col>
+                        <Col lg={24} xs={24}>
+                          <Table
+                            dataSource={followingCreators}
+                            columns={creatorColumns}
+                          />
+                        </Col>
+                      </>
+                    );
+                  }}
+                </Form.Item>
+              </Col>
+            </Row>
+          </Tabs.TabPane>
+          <Tabs.TabPane tab="Following Categories" key="FollowingCategories">
+            <Row gutter={8}>
+              <Col lg={24} xs={24}>
+                <Form.Item
+                  shouldUpdate={(prevValues, curValues) =>
+                    prevValues.followingCategories !== curValues.followingCategories
+                  }
+                >
+                  {({ getFieldValue }) => {
+                    const followingCategories: Category[] =
+                      getFieldValue("followingCategories") || [];
 
-                return (
-                  <>
-                    <Col lg={8} xs={24}>
-                      <Typography.Title level={5}>
-                        Following Categories
-                      </Typography.Title>
-                      <Form.Item>
-                        <Select
-                          placeholder="Please select a categories"
-                          onChange={onChangeCategories}
-                          allowClear
-                        >
-                          {categories
-                            .filter(
-                              (creat) =>
-                                !followingCategories
-                                  .map((follow) => follow.id)
-                                  .includes(creat.id)
-                            )
-                            .map((category) => (
-                              <Select.Option
-                                key={category.id}
-                                value={category.name}
-                              >
-                                {category.name}
-                              </Select.Option>
-                            ))}
-                        </Select>
-                      </Form.Item>
-                    </Col>
-                    <Col lg={24} xs={24}>
-                      <Table
-                        dataSource={followingCategories}
-                        columns={categoryColumns}
-                      />
-                    </Col>
-                  </>
-                );
-              }}
-            </Form.Item>
-          </Col>
-        </Row>
+                    return (
+                      <>
+                        <Col lg={8} xs={24}>
+                          <Typography.Title level={5}>
+                            Following Categories
+                          </Typography.Title>
+                          <Form.Item>
+                            <Select
+                              placeholder="Please select a categories"
+                              onChange={onChangeCategories}
+                              allowClear
+                            >
+                              {categories
+                                .filter(
+                                  (creat) =>
+                                    !followingCategories
+                                      .map((follow) => follow.id)
+                                      .includes(creat.id)
+                                )
+                                .map((category) => (
+                                  <Select.Option
+                                    key={category.id}
+                                    value={category.name}
+                                  >
+                                    {category.name}
+                                  </Select.Option>
+                                ))}
+                            </Select>
+                          </Form.Item>
+                        </Col>
+                        <Col lg={24} xs={24}>
+                          <Table
+                            dataSource={followingCategories}
+                            columns={categoryColumns}
+                          />
+                        </Col>
+                      </>
+                    );
+                  }}
+                </Form.Item>
+              </Col>
+            </Row>
+          </Tabs.TabPane>
+        </Tabs>
         <Row gutter={8}>
           <Col>
             <Button type="default" onClick={() => history.goBack()}>
