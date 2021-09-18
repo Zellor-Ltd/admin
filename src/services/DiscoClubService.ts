@@ -8,6 +8,7 @@ import {
 } from "interfaces/Category";
 import { Creator } from "interfaces/Creator";
 import { DdTemplate } from "interfaces/DdTemplate";
+import { BrandVault } from "interfaces/BrandVault";
 import { Endpoint } from "interfaces/Endpoint";
 import { FanGroup } from "interfaces/FanGroup";
 import { FeedItem } from "interfaces/FeedItem";
@@ -377,6 +378,20 @@ export const saveDdTemplate = (params: DdTemplate) => {
     return instance.post("Wi/Ep/UpdateDdTemplate", params);
   } else {
     return instance.put("Wi/EP/AddDdTemplate", params);
+  }
+};
+
+export const saveBrandVault = (params: BrandVault) => {
+  if (params.id) {
+    return instance.post("Disco/Wallet/UpdateBrandVault", params);
+  } else {
+    return instance.put("Disco/Wallet/AddBrandVault", params);
+  }
+};
+
+export const deleteBrandVault = (params: BrandVault) => {
+  if (params.id) {
+    return instance.put("Disco/Wallet/RemoveBrandVault", params);
   }
 };
 
