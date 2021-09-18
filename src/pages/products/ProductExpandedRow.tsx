@@ -4,6 +4,7 @@ import { AllCategories } from "interfaces/Category";
 import { Product } from "interfaces/Product";
 import { useLocation } from "react-router-dom";
 import ProductCategoriesTrees from "./ProductCategoriesTrees";
+import { useCallback, useEffect } from "react";
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 
 interface ProductExpandedRowProps {
@@ -23,6 +24,8 @@ const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
 
   const { pathname } = useLocation();
   const isStaging = pathname === "/staging-list";
+  const initial = location.state as unknown as Product | undefined;
+  const { history, location } = props;
 
   const onFinish = async () => {
     const _categories = [...form.getFieldValue("categories")];
@@ -37,12 +40,43 @@ const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
   };
 
   const handleCategoryChange = (
-    _: any,
+    selectedCategories: any,
     __: number,
     filterCategory: Function
   ) => {
     filterCategory(form);
+    setSearchTagsByCategory(false, selectedCategories);
   };
+
+  const setSearchTagsByCategory = useCallback(
+    (useInitialValue: boolean, selectedCategories: any[] = []) => {
+      const selectedCategoriesSearchTags = selectedCategories
+        .filter((v) => v && v.searchTags)
+        .map((v) => v.searchTags)
+        .reduce((prev, curr) => {
+          return prev?.concat(curr || []);
+        }, []);
+
+      let searchTags = form.getFieldValue("searchTags") || [];
+      const finalValue = Array.from(
+        new Set([...searchTags, ...selectedCategoriesSearchTags])
+      );
+      if (useInitialValue && initial) {
+        searchTags = initial.searchTags || finalValue;
+      } else {
+        searchTags = finalValue;
+      }
+
+      form.setFieldsValue({
+        searchTags,
+      });
+    },
+    [form, initial]
+  );
+
+  useEffect(() => {
+    setSearchTagsByCategory(true);
+  }, [setSearchTagsByCategory]);
 
   return (
     <Form
