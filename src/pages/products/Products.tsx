@@ -13,7 +13,7 @@ import { SearchFilterDebounce } from "components/SearchFilterDebounce";
 import { SelectBrand } from "components/SelectBrand";
 import { AppContext } from "contexts/AppContext";
 import useAllCategories from "hooks/useAllCategories";
-import { usePageInfiniteScroll } from "hooks/usePageInfiniteScroll";
+import { usePageInfiniteScroll } from "../../hooks/usePageInfiniteScroll";
 import { useRequest } from "hooks/useRequest";
 import { Brand } from "interfaces/Brand";
 import { Product } from "interfaces/Product";

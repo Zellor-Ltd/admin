@@ -7,6 +7,7 @@ import { Endpoint } from "interfaces/Endpoint";
 import { useEffect, useState } from "react";
 import { Link, RouteComponentProps } from "react-router-dom";
 import { fetchEndpoints } from "services/DiscoClubService";
+import CopyIdToClipboard from "components/CopyIdToClipboard";
 
 const Endpoints: React.FC<RouteComponentProps> = ({ history, location }) => {
   const detailsPathname = `${location.pathname}/endpoint`;
@@ -19,6 +20,13 @@ const Endpoints: React.FC<RouteComponentProps> = ({ history, location }) => {
   } = useFilter<Endpoint>([]);
 
   const columns: ColumnsType<Endpoint> = [
+    {
+      title: "_id",
+      dataIndex: "id",
+      width: "6%",
+      render: (id) => <CopyIdToClipboard id={id} />,
+      align: "center",
+    },
     { title: "Name", dataIndex: "name", width: "15%" },
     { title: "Container", dataIndex: "container", width: "15%" },
     { title: "Method", dataIndex: "action", width: "10%" },

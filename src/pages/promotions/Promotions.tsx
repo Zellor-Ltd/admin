@@ -25,6 +25,7 @@ import {
   fetchPromoStatus,
   fetchPromotions,
 } from "services/DiscoClubService";
+import CopyIdToClipboard from "components/CopyIdToClipboard";
 
 const Promotions: React.FC<RouteComponentProps> = ({ history, location }) => {
   const detailsPathname = `${location.pathname}/promotion`;
@@ -56,6 +57,13 @@ const Promotions: React.FC<RouteComponentProps> = ({ history, location }) => {
   };
 
   const columns: ColumnsType<Promotion> = [
+    {
+      title: "_id",
+      dataIndex: "id",
+      width: "6%",
+      render: (id) => <CopyIdToClipboard id={id} />,
+      align: "center",
+    },
     {
       title: "Promo ID",
       dataIndex: "id",
