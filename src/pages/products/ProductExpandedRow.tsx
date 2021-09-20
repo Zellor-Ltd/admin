@@ -24,8 +24,6 @@ const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
 
   const { pathname } = useLocation();
   const isStaging = pathname === "/staging-list";
-  const initial = location.state as unknown as Product | undefined;
-  const { history, location } = props;
 
   const onFinish = async () => {
     const _categories = [...form.getFieldValue("categories")];
@@ -40,16 +38,17 @@ const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
   };
 
   const handleCategoryChange = (
+    record: any,
     selectedCategories: any,
-    __: number,
+    _productCategoryIndex: number,
     filterCategory: Function
   ) => {
     filterCategory(form);
-    setSearchTagsByCategory(false, selectedCategories);
+    setSearchTagsByCategory(record, false, selectedCategories);
   };
 
   const setSearchTagsByCategory = useCallback(
-    (useInitialValue: boolean, selectedCategories: any[] = []) => {
+    (record, useInitialValue: boolean, selectedCategories: any[] = []) => {
       const selectedCategoriesSearchTags = selectedCategories
         .filter((v) => v && v.searchTags)
         .map((v) => v.searchTags)
@@ -61,8 +60,8 @@ const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
       const finalValue = Array.from(
         new Set([...searchTags, ...selectedCategoriesSearchTags])
       );
-      if (useInitialValue && initial) {
-        searchTags = initial.searchTags || finalValue;
+      if (useInitialValue && record) {
+        searchTags = record.searchTags || finalValue;
       } else {
         searchTags = finalValue;
       }
@@ -71,12 +70,12 @@ const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
         searchTags,
       });
     },
-    [form, initial]
+    [form]
   );
 
   useEffect(() => {
-    setSearchTagsByCategory(true);
-  }, [setSearchTagsByCategory]);
+    setSearchTagsByCategory(record, true);
+  }, [record, setSearchTagsByCategory]);
 
   return (
     <Form
