@@ -28,6 +28,7 @@ import { useEffect, useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 import { Link, RouteComponentProps } from "react-router-dom";
 import { productCategoriesAPI } from "services/DiscoClubService";
+import CopyIdToClipboard from "components/CopyIdToClipboard";
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 
@@ -160,6 +161,13 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
   });
 
   const columns: ColumnsType<ProductCategory> = [
+    {
+      title: "_id",
+      dataIndex: "id",
+      width: "6%",
+      render: (id) => <CopyIdToClipboard id={id} />,
+      align: "center",
+    },
     {
       title: "Name",
       width: "15%",
