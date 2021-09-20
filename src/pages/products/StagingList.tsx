@@ -87,7 +87,7 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
 
   const columns: EditableColumnType<Product>[] = [
     {
-      title: "_id",
+      title: "Id",
       dataIndex: "id",
       width: "6%",
       render: (id) => <CopyIdToClipboard id={id} />,
