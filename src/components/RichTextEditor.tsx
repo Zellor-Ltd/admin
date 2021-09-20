@@ -57,10 +57,14 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
 
   const onOk = () => {
     setShowModal(false);
+    // Envolve htmlValue content with a <p></p> to prevent RichTextEditor from crashing.
+    const formattedHtmlValue =
+      htmlValue.substr(0, 3) === "<p>" ? htmlValue : `<p>${htmlValue}</p>`;
+    setHtmlValue(formattedHtmlValue);
     form.setFieldsValue({
-      [formField]: htmlValue,
+      [formField]: formattedHtmlValue,
     });
-    setEditorState(generateEditorContent(htmlValue));
+    setEditorState(generateEditorContent(formattedHtmlValue));
   };
 
   const onCancel = () => {
