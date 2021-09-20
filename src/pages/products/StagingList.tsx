@@ -26,6 +26,7 @@ import {
 } from "services/DiscoClubService";
 import EditProductModal from "./EditProductModal";
 import ProductExpandedRow from "./ProductExpandedRow";
+import CopyIdToClipboard from "components/CopyIdToClipboard";
 
 const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
   const detailsPathname = `${location.pathname}/product/staging`;
@@ -85,6 +86,13 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   const columns: EditableColumnType<Product>[] = [
+    {
+      title: "_id",
+      dataIndex: "id",
+      width: "6%",
+      render: (id) => <CopyIdToClipboard id={id} />,
+      align: "center",
+    },
     {
       title: "Name",
       dataIndex: "name",

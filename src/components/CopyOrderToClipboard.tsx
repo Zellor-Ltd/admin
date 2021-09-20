@@ -2,15 +2,15 @@ import { CopyOutlined } from "@ant-design/icons";
 import { Button, message } from "antd";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 
-export default function CopyTagToClipboard({ tag }: { tag: string }) {
+export default function CopyOrderToClipboard({ order }: { order: string }) {
   return (
-    <CopyToClipboard text={tag}>
+    <CopyToClipboard text={order}>
       <Button
         onClick={() => {
-          if (tag) {
-            message.success("Copied _tag to Clipboard.");
+          if (order) {
+            message.success("Copied _id to Clipboard.");
           } else {
-            message.warning("Warning: no tag to copy.");
+            message.warning("Warning: no id to copy.");
           }
         }}
         type="link"

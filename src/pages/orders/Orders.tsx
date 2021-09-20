@@ -23,6 +23,7 @@ import Highlighter from "react-highlight-words";
 import { useSelector } from "react-redux";
 import { Link, RouteComponentProps } from "react-router-dom";
 import { fetchFans, fetchOrders, saveOrder } from "services/DiscoClubService";
+import CopyOrderToClipboard from "components/CopyOrderToClipboard";
 
 const Orders: React.FC<RouteComponentProps> = () => {
   const [tableloading, setTableLoading] = useState<boolean>(false);
@@ -175,6 +176,13 @@ const Orders: React.FC<RouteComponentProps> = () => {
   });
 
   const columns: ColumnsType<Order> = [
+    {
+      title: "_id",
+      dataIndex: "id",
+      width: "6%",
+      render: (id) => <CopyOrderToClipboard order={id} />,
+      align: "center",
+    },
     {
       title: "User",
       dataIndex: "userid",

@@ -12,6 +12,7 @@ import {
   deletePromoDisplay,
   fetchPromoDisplays,
 } from "services/DiscoClubService";
+import CopyIdToClipboard from "components/CopyIdToClipboard";
 
 const PromoDisplays: React.FC<RouteComponentProps> = ({
   history,
@@ -47,6 +48,13 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({
   };
 
   const columns: ColumnsType<PromoDisplay> = [
+    {
+      title: "_id",
+      dataIndex: "id",
+      width: "6%",
+      render: (id) => <CopyIdToClipboard id={id} />,
+      align: "center",
+    },
     {
       title: "Shop Display ID",
       dataIndex: "id",
