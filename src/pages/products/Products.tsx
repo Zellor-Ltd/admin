@@ -98,7 +98,7 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
 
   const columns: EditableColumnType<Product>[] = [
     {
-      title: "_id",
+      title: "Id",
       dataIndex: "id",
       width: "6%",
       render: (id) => <CopyIdToClipboard id={id} />,
@@ -120,7 +120,7 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
       responsive: ["sm"],
     },
     {
-      title: "Max Disco Dollars",
+      title: "Max DD",
       dataIndex: "maxDiscoDollars",
       width: "12%",
       align: "center",
@@ -129,12 +129,11 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
       // number: true,
     },
     {
-      title: "Related Videos",
-      dataIndex: "relatedVideoFeed",
+      title: "Shopify Id",
+      dataIndex: "shopifyUniqueId",
       width: "15%",
       align: "center",
-      responsive: ["sm"],
-      render: (videos = []) => <Tag>{videos.length}</Tag>,
+      responsive: ["sm"]      
     },
 
     {
