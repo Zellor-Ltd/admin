@@ -232,13 +232,13 @@ const FanDetail: React.FC<RouteComponentProps> = (props) => {
         <Tabs defaultActiveKey="Details">
           <Tabs.TabPane tab="Details" key="Details">
             <Row gutter={8}>
-            {initial.id && (
-              <Col lg={8} xs={24}>
-                <Form.Item label="_id" name="id">
-                  <Input disabled />
-                </Form.Item>
-              </Col>
-            )}
+              {initial.id && (
+                <Col lg={8} xs={24}>
+                  <Form.Item label="_id" name="id">
+                    <Input disabled />
+                  </Form.Item>
+                </Col>
+              )}
               <Col lg={8} xs={24}>
                 <Form.Item label="Name" name="userName">
                   <Input />
@@ -295,6 +295,15 @@ const FanDetail: React.FC<RouteComponentProps> = (props) => {
                   />
                 </Form.Item>
               </Col>
+              <Col lg={8} xs={24}>
+                <Form.Item label="Default Currency" name="currencyCode">
+                  <Select>
+                    <Select.Option value="EUR">EUR</Select.Option>
+                    <Select.Option value="GBP">GBP</Select.Option>
+                    <Select.Option value="USD">USD</Select.Option>
+                  </Select>
+                </Form.Item>
+              </Col>
             </Row>
           </Tabs.TabPane>
           <Tabs.TabPane tab="Address" key="Address">
@@ -334,7 +343,10 @@ const FanDetail: React.FC<RouteComponentProps> = (props) => {
                 <Form.Item name={"serverAlias"} label="Server Alias">
                   <Select>
                     {serversList.map((serverAlias) => (
-                      <Select.Option key={serverAlias.id} value={serverAlias.id}>
+                      <Select.Option
+                        key={serverAlias.id}
+                        value={serverAlias.id}
+                      >
                         {serverAlias.name}
                       </Select.Option>
                     ))}
@@ -403,7 +415,8 @@ const FanDetail: React.FC<RouteComponentProps> = (props) => {
               <Col lg={24} xs={24}>
                 <Form.Item
                   shouldUpdate={(prevValues, curValues) =>
-                    prevValues.followingCategories !== curValues.followingCategories
+                    prevValues.followingCategories !==
+                    curValues.followingCategories
                   }
                 >
                   {({ getFieldValue }) => {
