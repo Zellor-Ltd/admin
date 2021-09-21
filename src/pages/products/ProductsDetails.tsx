@@ -377,7 +377,7 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
             </Row>
             <Row gutter={8}>
               <Col lg={8} xs={24}>
-                <Form.Item name="currencyIsoCodeUS" label="Currency">
+                <Form.Item name="currencyIsoCodeUS" label="Currency US">
                   <Select placeholder="Please select a currency">
                     {currency.map((curr: any) => (
                       <Select.Option key={curr.value} value={curr.value}>
@@ -390,8 +390,8 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
               <Col lg={8} xs={24}>
                 <Form.Item
                   name="originalPriceUS"
-                  label="Price USD"
-                  rules={[{ required: true }]}
+                  label="Price US"
+                  rules={[{ }]}
                 >
                   <InputNumber />
                 </Form.Item>
@@ -399,7 +399,7 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
             </Row>
             <Row gutter={8}>
               <Col lg={8} xs={24}>
-                <Form.Item name="currencyIsoCodeGB" label="Currency">
+                <Form.Item name="currencyIsoCodeGB" label="Currency UK">
                   <Select placeholder="Please select a currency">
                     {currency.map((curr: any) => (
                       <Select.Option key={curr.value} value={curr.value}>
@@ -412,8 +412,30 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
               <Col lg={8} xs={24}>
                 <Form.Item
                   name="originalPriceGB"
-                  label="Price GBP"
-                  rules={[{ required: true }]}
+                  label="Price UK"
+                  rules={[{ }]}
+                >
+                  <InputNumber />
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row gutter={8}>
+              <Col lg={8} xs={24}>
+                <Form.Item name="currencyIsoCodeIE" label="Currency Europe">
+                  <Select placeholder="Please select a currency">
+                    {currency.map((curr: any) => (
+                      <Select.Option key={curr.value} value={curr.value}>
+                        {curr.name}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col lg={8} xs={24}>
+                <Form.Item
+                  name="originalPriceIE"
+                  label="Price Europe"
+                  rules={[{}]}
                 >
                   <InputNumber />
                 </Form.Item>
