@@ -4,7 +4,7 @@ import { AllCategories } from "interfaces/Category";
 import { Product } from "interfaces/Product";
 import { useLocation } from "react-router-dom";
 import ProductCategoriesTrees from "./ProductCategoriesTrees";
-import { useCallback, useEffect } from "react";
+import { useCallback } from "react";
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 
 interface ProductExpandedRowProps {
@@ -34,21 +34,12 @@ const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
         ].find((category) => category.id === productCategory[field]?.id);
       });
     });
+    console.log(record);
     await onSaveProduct({ ...record, categories: _categories });
   };
 
-  const handleCategoryChange = (
-    record: any,
-    selectedCategories: any,
-    _productCategoryIndex: number,
-    filterCategory: Function
-  ) => {
-    filterCategory(form);
-    setSearchTagsByCategory(record, false, selectedCategories);
-  };
-
   const setSearchTagsByCategory = useCallback(
-    (record, useInitialValue: boolean, selectedCategories: any[] = []) => {
+    (selectedCategories: any[] = []) => {
       const selectedCategoriesSearchTags = selectedCategories
         .filter((v) => v && v.searchTags)
         .map((v) => v.searchTags)
@@ -60,11 +51,7 @@ const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
       const finalValue = Array.from(
         new Set([...searchTags, ...selectedCategoriesSearchTags])
       );
-      if (useInitialValue && record) {
-        searchTags = record.searchTags || finalValue;
-      } else {
-        searchTags = finalValue;
-      }
+      searchTags = finalValue;
 
       form.setFieldsValue({
         searchTags,
@@ -73,9 +60,14 @@ const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
     [form]
   );
 
-  useEffect(() => {
-    setSearchTagsByCategory(record, true);
-  }, [record, setSearchTagsByCategory]);
+  const handleCategoryChange = (
+    selectedCategories: any,
+    _productCategoryIndex: number,
+    filterCategory: Function
+  ) => {
+    filterCategory(form);
+    setSearchTagsByCategory(selectedCategories);
+  };
 
   return (
     <Form
