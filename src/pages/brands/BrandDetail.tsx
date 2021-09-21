@@ -19,12 +19,18 @@ import { Brand } from "interfaces/Brand";
 import { useState } from "react";
 import { TwitterPicker } from "react-color";
 import { useSelector } from "react-redux";
-import { RouteComponentProps } from "react-router-dom";
+import { Link, RouteComponentProps } from "react-router-dom";
 import { saveBrand } from "services/DiscoClubService";
 import { PauseModal } from "./PauseModal";
+import {
+  deleteBrandVault,
+  fetchBrandVault,
+} from "../../services/DiscoClubService";
+import EditableTable, { EditableColumnType } from "components/EditableTable";
 
 const BrandDetail: React.FC<RouteComponentProps> = (props) => {
   const { history, location } = props;
+  const detailsPathname = `${location.pathname}/brandvault`;
   const initial = location.state as unknown as Brand;
   const [loading, setLoading] = useState<boolean>(false);
   const [form] = Form.useForm();
@@ -307,6 +313,26 @@ const BrandDetail: React.FC<RouteComponentProps> = (props) => {
                 </Col>
               </Row>
             </Col>
+          </Tabs.TabPane>
+
+          <Tabs.TabPane tab="Vault" key="Vault">
+            <Row gutter={8}>
+              <Col lg={12} xs={24}>
+                <Col lg={16} xs={24}>
+                  <Form.Item
+                    label="Shop Name"
+                    name="shopName"
+                    rules={[{ required: true }]}
+                  >
+                    <select value="" onselect="fetchBrandVault(brandVault)">
+                      <Link to={{ pathname: detailsPathname, state: record }}>
+                        {value}
+                      </Link>
+                    </select>
+                  </Form.Item>
+                </Col>
+              </Col>
+            </Row>
           </Tabs.TabPane>
         </Tabs>
         <Row gutter={8}>

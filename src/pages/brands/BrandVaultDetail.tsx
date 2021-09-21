@@ -2,12 +2,9 @@ import { Button, Col, Form, Input, PageHeader, Row } from "antd";
 import { useRequest } from "../../hooks/useRequest";
 import { useState } from "react";
 import { RouteComponentProps } from "react-router-dom";
-import {
-  saveBrandVault,
-  deleteBrandVault,
-} from "../../services/DiscoClubService";
+import { saveBrandVault } from "../../services/DiscoClubService";
 
-const BandVaultDetail: React.FC<RouteComponentProps> = (props) => {
+const BrandVaultDetail: React.FC<RouteComponentProps> = (props) => {
   const { history, location } = props;
   const initial: any = location.state;
   const [loading, setLoading] = useState<boolean>(false);
@@ -22,9 +19,7 @@ const BandVaultDetail: React.FC<RouteComponentProps> = (props) => {
 
   return (
     <>
-      <PageHeader title="Brand Vault" />
       <Form
-        name="brandVault"
         layout="vertical"
         form={form}
         initialValues={initial}
@@ -41,7 +36,6 @@ const BandVaultDetail: React.FC<RouteComponentProps> = (props) => {
                 <Input />
               </Form.Item>
             </Col>
-            s
           </Col>
         </Row>
         <Row gutter={8}>
@@ -61,4 +55,4 @@ const BandVaultDetail: React.FC<RouteComponentProps> = (props) => {
   );
 };
 
-export default BandVaultDetail;
+export default BrandVaultDetail;

@@ -381,17 +381,20 @@ export const saveDdTemplate = (params: DdTemplate) => {
   }
 };
 
+export const fetchBrandVault = (params: BrandVault) =>
+  instance.get(`Disco/Brand/Vault/List/${params.id}`);
+
 export const saveBrandVault = (params: BrandVault) => {
-  if (params.id) {
-    return instance.post("Disco/Wallet/UpdateBrandVault", params);
+  if (params) {
+    return instance.post(`Disco/Brand/Vault/Delete/${params.id}`);
   } else {
-    return instance.put("Disco/Wallet/AddBrandVault", params);
+    return instance.put("Disco/Brand/Vault/Add");
   }
 };
 
 export const deleteBrandVault = (params: BrandVault) => {
   if (params.id) {
-    return instance.put("Disco/Wallet/RemoveBrandVault", params);
+    return instance.put(`Disco/Brand/Vault/Delete/${params.id}`);
   }
 };
 
