@@ -245,6 +245,8 @@ export const fetchTransactionsPerBrand = (userId: string, brandId: string) =>
 
 export const fetchServersList = () => instance.get(`Wi/Ep/GetServersList`);
 
+export const fetchCurrencies = () => instance.get(`Wi/Ep/GetCurrencies`);
+
 export const saveVideoFeed = (params: FeedItem) => {
   if (params.id) {
     return instance.put("Disco/Feed/Update", params);

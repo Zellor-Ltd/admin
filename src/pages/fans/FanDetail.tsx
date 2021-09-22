@@ -8,14 +8,15 @@ import {
   message,
   PageHeader,
   Row,
-  Tabs,
   Select,
   Table,
+  Tabs,
   Typography,
 } from "antd";
 import { formatMoment } from "helpers/formatMoment";
 import { Category } from "interfaces/Category";
 import { Creator } from "interfaces/Creator";
+import { Currency } from "interfaces/Currency";
 import { Role } from "interfaces/Role";
 import { ServerAlias } from "interfaces/ServerAlias";
 import { useEffect, useState } from "react";
@@ -23,6 +24,7 @@ import { RouteComponentProps } from "react-router-dom";
 import {
   fetchCategories,
   fetchCreators,
+  fetchCurrencies,
   fetchProfiles,
   fetchServersList,
   saveUser,
@@ -49,6 +51,7 @@ const FanDetail: React.FC<RouteComponentProps> = (props) => {
   const [creators, setCreators] = useState<Creator[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [serversList, setServersList] = useState<ServerAlias[]>([]);
+  const [currencies, setCurrencies] = useState<Currency[]>([]);
   const initial: any = location.state || {};
   const [form] = Form.useForm();
 
@@ -74,11 +77,16 @@ const FanDetail: React.FC<RouteComponentProps> = (props) => {
       const response: any = await fetchServersList();
       setServersList(response.results);
     };
+    const getCurrencies = async () => {
+      const response: any = await fetchCurrencies();
+      setCurrencies(response.results);
+    };
     setLoading(true);
     getRoles();
     getCreatores();
     getCategories();
     getServersList();
+    getCurrencies();
     return () => {
       mounted = false;
     };
@@ -298,9 +306,11 @@ const FanDetail: React.FC<RouteComponentProps> = (props) => {
               <Col lg={8} xs={24}>
                 <Form.Item label="Default Currency" name="currencyCode">
                   <Select>
-                    <Select.Option value="EUR">EUR</Select.Option>
-                    <Select.Option value="GBP">GBP</Select.Option>
-                    <Select.Option value="USD">USD</Select.Option>
+                    {currencies.map((currency) => (
+                      <Select.Option key={currency.id} value={currency.code}>
+                        {currency.code}
+                      </Select.Option>
+                    ))}
                   </Select>
                 </Form.Item>
               </Col>
