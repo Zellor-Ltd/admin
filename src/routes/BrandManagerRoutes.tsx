@@ -5,6 +5,9 @@ import Login from "pages/login/Login";
 import ProductDetails from "pages/products/ProductsDetails";
 import StagingList from "pages/products/StagingList";
 import { Redirect, Switch } from "react-router-dom";
+import Orders from "pages/orders/BrandManager/Orders";
+import VideoFeed from "pages/video-feed/BrandManager/VideoFeed";
+import VideoFeedDetail from "pages/video-feed/BrandManager/VideoFeedDetail";
 
 function BrandManagerRoutes() {
   return (
@@ -30,6 +33,21 @@ function BrandManagerRoutes() {
       <AppRoute
         path="/staging-list"
         component={StagingList}
+        layout={AuthenticatedLayout}
+      />
+      <AppRoute
+        path="/orders"
+        component={Orders}
+        layout={AuthenticatedLayout}
+      />
+      <AppRoute
+        path="/feed/video-feed"
+        component={VideoFeedDetail}
+        layout={AuthenticatedLayout}
+      />
+      <AppRoute
+        path="/feed"
+        component={VideoFeed}
         layout={AuthenticatedLayout}
       />
     </Switch>

@@ -1,0 +1,23 @@
+.video-feed {
+  .segment-thumbnail {
+    border: 1.5px dashed;
+    border-color: #8a8a8a;
+    margin: 0 8px;
+    padding: 2px;
+    text-align: center;
+    &.selected {
+      border-color: blue;
+    }
+  }
+
+  .remove-button {
+    position: absolute;
+    margin-left: -37px;
+    margin-top: 3px;
+  }
+
+  .scroll-message {
+    text-align: center;
+    margin-top: 16px;
+  }
+}
