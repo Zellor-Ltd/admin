@@ -21,15 +21,12 @@ import { TwitterPicker } from "react-color";
 import { useSelector } from "react-redux";
 import { RouteComponentProps } from "react-router-dom";
 import { saveBrand } from "services/DiscoClubService";
-import { PauseModal } from "./PauseModal";
 
 const BrandDetail: React.FC<RouteComponentProps> = (props) => {
   const { history, location } = props;
   const initial = location.state as unknown as Brand;
   const [loading, setLoading] = useState<boolean>(false);
   const [form] = Form.useForm();
-  const [paused, setPaused] = useState<boolean>(initial.paused || false);
-  const [showPauseModal, setShowPauseModal] = useState<boolean>(false);
 
   const {
     settings: { checkoutType = [] },
@@ -46,17 +43,6 @@ const BrandDetail: React.FC<RouteComponentProps> = (props) => {
     } catch (error) {
       setLoading(false);
     }
-  };
-
-  const onCompletePausedAction = () => {
-    form.setFieldsValue({
-      paused: !paused,
-    });
-    setPaused(!paused);
-  };
-
-  const handlePausedChange = () => {
-    setShowPauseModal(true);
   };
 
   const handleCheckoutTypeChange = (e: RadioChangeEvent) => {
@@ -86,11 +72,6 @@ const BrandDetail: React.FC<RouteComponentProps> = (props) => {
                   valuePropName="checked"
                 >
                   <Switch />
-                </Form.Item>
-              </Col>
-              <Col lg={3} xs={3}>
-                <Form.Item label="Paused" valuePropName="checked">
-                  <Switch onChange={handlePausedChange} checked={paused} />
                 </Form.Item>
               </Col>
             </Row>
@@ -321,13 +302,6 @@ const BrandDetail: React.FC<RouteComponentProps> = (props) => {
             </Button>
           </Col>
         </Row>
-        <PauseModal
-          showPauseModal={showPauseModal}
-          setShowPauseModal={setShowPauseModal}
-          brandId={initial.id}
-          isBrandPaused={paused}
-          onOk={onCompletePausedAction}
-        />
       </Form>
     </>
   );

@@ -45,6 +45,7 @@ export const PauseModal: React.FC<PauseModalProps> = ({
       confirmLoading={loading}
       footer={false}
       forceRender
+      onCancel={onClose}
     >
       <Form form={form} onFinish={_onOk}>
         <Form.Item
