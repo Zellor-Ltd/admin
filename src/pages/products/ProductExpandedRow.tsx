@@ -34,8 +34,14 @@ const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
         ].find((category) => category.id === productCategory[field]?.id);
       });
     });
-    console.log(record);
-    await onSaveProduct({ ...record, categories: _categories });
+
+    const searchTags = form.getFieldValue("searchTags");
+
+    await onSaveProduct({
+      ...record,
+      categories: _categories,
+      searchTags: searchTags,
+    });
   };
 
   const setSearchTagsByCategory = useCallback(
@@ -52,10 +58,12 @@ const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
         new Set([...searchTags, ...selectedCategoriesSearchTags])
       );
       searchTags = finalValue;
+      console.log(searchTags);
 
       form.setFieldsValue({
         searchTags,
       });
+      console.log(form.getFieldValue("searchTags"));
     },
     [form]
   );
