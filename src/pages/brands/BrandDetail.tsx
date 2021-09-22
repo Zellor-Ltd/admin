@@ -17,9 +17,10 @@ import { Upload } from "components";
 import { RichTextEditor } from "components/RichTextEditor";
 import { Brand } from "interfaces/Brand";
 import { useState } from "react";
+import useFilter from "hooks/useFilter";
 import { TwitterPicker } from "react-color";
 import { useSelector } from "react-redux";
-import { Link, RouteComponentProps } from "react-router-dom";
+import { RouteComponentProps } from "react-router-dom";
 import { saveBrand } from "services/DiscoClubService";
 import { PauseModal } from "./PauseModal";
 import {
@@ -27,6 +28,7 @@ import {
   fetchBrandVault,
 } from "../../services/DiscoClubService";
 import EditableTable, { EditableColumnType } from "components/EditableTable";
+import { SelectBrand } from "components/SelectBrand";
 
 const BrandDetail: React.FC<RouteComponentProps> = (props) => {
   const { history, location } = props;
@@ -52,6 +54,24 @@ const BrandDetail: React.FC<RouteComponentProps> = (props) => {
     } catch (error) {
       setLoading(false);
     }
+  };
+
+  const {
+    arrayList: orders,
+    setArrayList: setOrders,
+    filteredArrayList: filteredOrders,
+    addFilterFunction,
+    removeFilterFunction,
+  } = useFilter<Brand>([]);
+
+  const onChangeBrand = async (_selectedBrand: Brand | undefined) => {
+    if (!_selectedBrand) {
+      removeFilterFunction("brandName");
+      return;
+    }
+    addFilterFunction("brandName", (brands) =>
+      brands.filter((brand) => brand.brandName === _selectedBrand.brandName)
+    );
   };
 
   const onCompletePausedAction = () => {
@@ -319,16 +339,14 @@ const BrandDetail: React.FC<RouteComponentProps> = (props) => {
             <Row gutter={8}>
               <Col lg={12} xs={24}>
                 <Col lg={16} xs={24}>
-                  <Form.Item
-                    label="Shop Name"
-                    name="shopName"
-                    rules={[{ required: true }]}
-                  >
-                    <select value="" onselect="fetchBrandVault(brandVault)">
-                      <Link to={{ pathname: detailsPathname, state: record }}>
-                        {value}
-                      </Link>
-                    </select>
+                  <Form.Item name="shopName" rules={[{ required: true }]}>
+                    <Row gutter={8}>
+                      <SelectBrand
+                        style={{ width: "100%" }}
+                        allowClear={true}
+                        onChange={onChangeBrand}
+                      ></SelectBrand>
+                    </Row>
                   </Form.Item>
                 </Col>
               </Col>
