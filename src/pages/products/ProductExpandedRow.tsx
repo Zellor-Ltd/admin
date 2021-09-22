@@ -4,6 +4,7 @@ import { AllCategories } from "interfaces/Category";
 import { Product } from "interfaces/Product";
 import { useLocation } from "react-router-dom";
 import ProductCategoriesTrees from "./ProductCategoriesTrees";
+import { useCallback } from "react";
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 
 interface ProductExpandedRowProps {
@@ -33,15 +34,47 @@ const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
         ].find((category) => category.id === productCategory[field]?.id);
       });
     });
-    await onSaveProduct({ ...record, categories: _categories });
+
+    const searchTags = form.getFieldValue("searchTags");
+
+    await onSaveProduct({
+      ...record,
+      categories: _categories,
+      searchTags: searchTags,
+    });
   };
 
+  const setSearchTagsByCategory = useCallback(
+    (selectedCategories: any[] = []) => {
+      const selectedCategoriesSearchTags = selectedCategories
+        .filter((v) => v && v.searchTags)
+        .map((v) => v.searchTags)
+        .reduce((prev, curr) => {
+          return prev?.concat(curr || []);
+        }, []);
+
+      let searchTags = form.getFieldValue("searchTags") || [];
+      const finalValue = Array.from(
+        new Set([...searchTags, ...selectedCategoriesSearchTags])
+      );
+      searchTags = finalValue;
+      console.log(searchTags);
+
+      form.setFieldsValue({
+        searchTags,
+      });
+      console.log(form.getFieldValue("searchTags"));
+    },
+    [form]
+  );
+
   const handleCategoryChange = (
-    _: any,
-    __: number,
+    selectedCategories: any,
+    _productCategoryIndex: number,
     filterCategory: Function
   ) => {
     filterCategory(form);
+    setSearchTagsByCategory(selectedCategories);
   };
 
   return (

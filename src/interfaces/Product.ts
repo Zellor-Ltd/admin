@@ -1,6 +1,7 @@
 import { Brand } from "./Brand";
 import { SelectedProductCategories } from "./Category";
 import { Video } from "./Video";
+import { Tag } from "./Tag";
 
 export interface Product {
   id: string;
@@ -21,6 +22,7 @@ export interface Product {
   checkout: string;
   confirmationUrl: string;
   cancelationUrl: string;
+  tags?: Tag[];
   searchTags: string;
   ageMin: number;
   ageMax: number;
