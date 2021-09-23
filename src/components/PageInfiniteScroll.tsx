@@ -21,12 +21,6 @@ export const PageInfiniteScroll: React.FC<PageInfiniteScrollProps> = ({
   const { page, eof, refreshContext } = useContext(PageInfiniteScrollContext);
   const [tableData, setTableData] = usePageTable<any>([]);
 
-  const refreshTable = async () => {
-    refreshCallback();
-    refreshContext();
-    setRefreshing(true);
-  };
-
   useEffect(() => {
     return () => {
       refreshContext();
@@ -54,7 +48,7 @@ export const PageInfiniteScroll: React.FC<PageInfiniteScrollProps> = ({
 
   useEffect(() => {
     if (tableData.length || eof) {
-      refreshTable();
+      refreshCallback();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, dependencies);
