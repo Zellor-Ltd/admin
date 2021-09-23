@@ -410,8 +410,8 @@ export const deleteTag = (data: IDelete) =>
 export const deleteCreator = (id: string) =>
   instance.delete(`Disco/Creator/Delete/${id}`);
 
-export const deleteProduct = (data: IDelete) =>
-  instance.delete(`Wi/Ep/RemoveProduct`, { data });
+export const deleteProduct = (id: string) =>
+  instance.delete(`Disco/Product/Remove/${id}`);
 
 export const deleteStagingProduct = (id: string) =>
   instance.delete(`Disco/Staging/Product/Remove/${id}`);

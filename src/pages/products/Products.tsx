@@ -82,7 +82,7 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
   }, []);
 
   const deleteItem = async (id: string) => {
-    await doRequest(() => deleteProduct({ id }));
+    await doRequest(() => deleteProduct(id));
     await refreshProducts();
   };
 
