@@ -24,7 +24,7 @@ import { saveBrand } from "services/DiscoClubService";
 
 const BrandDetail: React.FC<RouteComponentProps> = (props) => {
   const { history, location } = props;
-  const initial = location.state as unknown as Brand;
+  const initial = location.state as Brand;
   const [loading, setLoading] = useState<boolean>(false);
   const [form] = Form.useForm();
 

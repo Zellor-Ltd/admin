@@ -35,7 +35,8 @@ export const SelectFanQuery: React.FC<SelectFanQueryProps> = ({
   const { doFetch } = useRequest();
 
   const getResources = async () => {
-    const { results: fansResults } = await doFetch(() => fetchFans());
+    // const { results: fansResults } = await doFetch(() => fetchFans());
+    const initialArray = [];
     const { results: fanGroupsResults }: { results: FanGroup[] } =
       await doFetch(() => fetchFanGroups());
     const _searchList: string[] = [];
@@ -48,12 +49,12 @@ export const SelectFanQuery: React.FC<SelectFanQueryProps> = ({
         isGroup: true,
       })),
     ];
-    fansResults.unshift(..._fansQueryFilters);
-    fansResults.forEach((fan: FanFilter) => {
+    initialArray.unshift(..._fansQueryFilters);
+    initialArray.forEach((fan: FanFilter) => {
       if (fan.user) _searchList.push(fan.user);
     });
     setSearchList(_searchList);
-    setFans([...fansResults]);
+    setFans([...initialArray]);
   };
 
   useEffect(() => {
