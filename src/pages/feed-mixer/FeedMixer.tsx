@@ -273,7 +273,7 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
       selectedFan!.isFilter
         ? selectedFan!.id === "allfans"
           ? updateMultipleUsersFeed(userFeed)
-          : updateUsersFeedByGroup(selectedFan!.id, userFeed)
+          : updateUsersFeedByGroup(selectedFan!.user, userFeed)
         : saveUserFeed(selectedFan!.id, userFeed);
     await doRequest(action, `${displayFeedName} updated.`);
   };
