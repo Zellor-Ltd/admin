@@ -3,7 +3,7 @@ import {
   EditOutlined,
   SettingOutlined,
 } from "@ant-design/icons";
-import { Button, Checkbox, Col, PageHeader, Popconfirm, Row, Tag } from "antd";
+import { Button, Checkbox, Col, PageHeader, Popconfirm, Row } from "antd";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
 import CopyIdToClipboard from "components/CopyIdToClipboard";
 import EditableTable, { EditableColumnType } from "components/EditableTable";
@@ -58,11 +58,14 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
     setLoading,
   });
 
-  const { fetchTableData } = usePageInfiniteScroll(fetchProducts, {
-    brandId: brandFilter?.id,
-    query: searchFilter,
-    unclassified: unclassifiedFilter,
-  });
+  const { fetchTableData, refreshTable } = usePageInfiniteScroll(
+    fetchProducts,
+    {
+      brandId: brandFilter?.id,
+      query: searchFilter,
+      unclassified: unclassifiedFilter,
+    }
+  );
 
   const getResources = async () => {
     const [{ results }] = await Promise.all([
@@ -74,6 +77,7 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
 
   const refreshProducts = async () => {
     setSelectedRowKeys([]);
+    refreshTable();
   };
 
   useEffect(() => {
@@ -133,7 +137,7 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
       dataIndex: "shopifyUniqueId",
       width: "15%",
       align: "center",
-      responsive: ["sm"]      
+      responsive: ["sm"],
     },
 
     {

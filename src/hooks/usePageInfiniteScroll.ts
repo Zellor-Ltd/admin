@@ -3,7 +3,8 @@ import { AppContext } from "contexts/AppContext";
 import { PageInfiniteScrollContext } from "contexts/PageInfiniteScrollContext";
 
 export const usePageInfiniteScroll = (fetchFn: Function, filters: {}) => {
-  const { refreshing, doFetch } = useContext(AppContext);
+  const { refreshing, setRefreshing, doFetch, refreshContext } =
+    useContext(AppContext);
   const { page, setPage, setEof } = useContext(PageInfiniteScrollContext);
 
   const fetchTableData = async () => {
@@ -20,5 +21,10 @@ export const usePageInfiniteScroll = (fetchFn: Function, filters: {}) => {
     return response;
   };
 
-  return { fetchTableData };
+  const refreshTable = () => {
+    refreshContext();
+    setRefreshing(true);
+  };
+
+  return { fetchTableData, refreshTable };
 };
