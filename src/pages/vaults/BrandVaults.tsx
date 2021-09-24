@@ -1,69 +1,56 @@
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Button, Col, PageHeader, Popconfirm, Row, Table } from "antd";
 import { ColumnsType } from "antd/lib/table";
-import { SearchFilter } from "../../components/SearchFilter";
-import useFilter from "../../hooks/useFilter";
-import { useRequest } from "../../hooks/useRequest";
-import { DdTemplate } from "../../interfaces/DdTemplate";
+import useFilter from "hooks/useFilter";
+import { useRequest } from "hooks/useRequest";
 import moment from "moment";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link, RouteComponentProps } from "react-router-dom";
-import { deleteDdTemplate, fetchBrandVaults } from "services/DiscoClubService";
+import { deleteBrandVault } from "services/DiscoClubService";
+import CopyIdToClipboard from "components/CopyIdToClipboard";
+import { BrandVault } from "interfaces/BrandVault";
+import { SelectBrandVault } from "components/SelectBrandVault";
 
 const BrandVaults: React.FC<RouteComponentProps> = ({ history, location }) => {
-  const detailsPathname = `${location.pathname}/dd-template`;
+  const detailsPathname = `${location.pathname}/vault`;
   const [loading, setLoading] = useState<boolean>(false);
   const { doFetch, doRequest } = useRequest({ setLoading });
 
   const {
-    setArrayList: setBrandVaults,
     filteredArrayList: filteredBrandVaults,
     addFilterFunction,
-  } = useFilter<DdTemplate>([]);
+    removeFilterFunction,
+  } = useFilter<BrandVault>([]);
 
-  const getResources = async () => {
-    await getBrandVaults();
-  };
-
-  const getBrandVaults = async () => {
-    const { results } = await doFetch(fetchBrandVaults);
-    setBrandVaults(results);
-  };
-
-  useEffect(() => {
-    getResources();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const deleteItem = async (id: string) => {
-    await doRequest(() => deleteDdTemplate({ id }));
-    await getBrandVaults();
-  };
-
-  const columns: ColumnsType<DdTemplate> = [
+  const columns: ColumnsType<BrandVault> = [
     {
-      title: "Tag Name",
-      dataIndex: "tagName",
-      width: "20%",
-      render: (value: string, record: DdTemplate) => (
-        <Link to={{ pathname: detailsPathname, state: record }}>{value}</Link>
-      ),
+      title: "_id",
+      dataIndex: "id",
+      width: "6%",
+      render: (id) => <CopyIdToClipboard id={id} />,
+      align: "center",
     },
     {
-      title: "Template",
-      dataIndex: "template",
+      title: "Key",
+      dataIndex: "key",
       width: "12%",
       align: "center",
     },
     {
-      title: "Disco Gold",
-      dataIndex: "discoGold",
-      width: "10%",
+      title: "Shop Name",
+      dataIndex: "shopName",
+      width: "20%",
       align: "center",
     },
     {
-      title: "Disco Dollars",
-      dataIndex: "discoDollars",
+      title: "API Shop Name",
+      dataIndex: "apiShopName",
+      width: "20%",
+      align: "center",
+    },
+    {
+      title: "Token",
+      dataIndex: "token",
       width: "10%",
       align: "center",
     },
@@ -84,7 +71,7 @@ const BrandVaults: React.FC<RouteComponentProps> = ({ history, location }) => {
       key: "action",
       width: "10%",
       align: "right",
-      render: (_, record: DdTemplate) => (
+      render: (_, record: BrandVault) => (
         <>
           <Link to={{ pathname: detailsPathname, state: record }}>
             <EditOutlined />
@@ -93,7 +80,7 @@ const BrandVaults: React.FC<RouteComponentProps> = ({ history, location }) => {
             title="Are you sure？"
             okText="Yes"
             cancelText="No"
-            onConfirm={() => deleteItem(record.id)}
+            onConfirm={() => deleteBrandVault(record)}
           >
             <Button type="link" style={{ padding: 0, margin: 6 }}>
               <DeleteOutlined />
@@ -104,19 +91,21 @@ const BrandVaults: React.FC<RouteComponentProps> = ({ history, location }) => {
     },
   ];
 
-  const searchFilterFunction = (filterText: string) => {
-    addFilterFunction("ddTagName", (dds) =>
-      dds.filter((dd) =>
-        dd.tagName.toUpperCase().includes(filterText.toUpperCase())
-      )
+  const onChangeBrand = async (_selectedVault: BrandVault | undefined) => {
+    if (!_selectedVault) {
+      removeFilterFunction("shopName");
+      return;
+    }
+    addFilterFunction("shopName", (vaults) =>
+      vaults.filter((vault) => vault.shopName === _selectedVault.shopName)
     );
   };
 
   return (
     <div>
       <PageHeader
-        title="Disco Dollars Templates"
-        subTitle="List of Disco Dollars Templates"
+        title="Brand Vaults"
+        subTitle="List of Brand Vaults"
         extra={[
           <Button key="1" onClick={() => history.push(detailsPathname)}>
             New Item
@@ -124,11 +113,12 @@ const BrandVaults: React.FC<RouteComponentProps> = ({ history, location }) => {
         ]}
       />
       <Row gutter={8}>
-        <Col lg={8} xs={16}>
-          <SearchFilter
-            filterFunction={searchFilterFunction}
-            label="Search by Tag Name"
-          />
+        <Col xxl={40} lg={6} xs={18}>
+          <SelectBrandVault
+            style={{ width: "100%" }}
+            allowClear={true}
+            onChange={onChangeBrand}
+          ></SelectBrandVault>
         </Col>
       </Row>
       <Table

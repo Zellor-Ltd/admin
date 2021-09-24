@@ -2,7 +2,7 @@ import { Button, Col, Form, Input, PageHeader, Row } from "antd";
 import { useRequest } from "../../hooks/useRequest";
 import { useState } from "react";
 import { RouteComponentProps } from "react-router-dom";
-import { saveBrandVault } from "../../services/DiscoClubService";
+import { saveDdTemplate } from "../../services/DiscoClubService";
 
 const BrandVaultDetail: React.FC<RouteComponentProps> = (props) => {
   const { history, location } = props;
@@ -12,14 +12,19 @@ const BrandVaultDetail: React.FC<RouteComponentProps> = (props) => {
   const { doRequest } = useRequest({ setLoading });
 
   const onFinish = async () => {
-    const brandVault = form.getFieldsValue(true);
-    await doRequest(() => saveBrandVault(brandVault));
+    const ddTemplate = form.getFieldsValue(true);
+    await doRequest(() => saveDdTemplate(ddTemplate));
     history.goBack();
   };
 
   return (
     <>
+      <PageHeader
+        title="Disco Dollar Template Update"
+        subTitle="Disco Dollar Template "
+      />
       <Form
+        name="ddTemplateForm"
         layout="vertical"
         form={form}
         initialValues={initial}
@@ -29,11 +34,38 @@ const BrandVaultDetail: React.FC<RouteComponentProps> = (props) => {
           <Col lg={12} xs={24}>
             <Col lg={16} xs={24}>
               <Form.Item
-                label="Shop Name"
-                name="shopName"
+                label="Tag Name"
+                name="tagName"
                 rules={[{ required: true }]}
               >
                 <Input />
+              </Form.Item>
+            </Col>
+            <Col lg={16} xs={24}>
+              <Form.Item
+                label="Template"
+                name="template"
+                rules={[{ required: true }]}
+              >
+                <Input />
+              </Form.Item>
+            </Col>
+            <Col lg={16} xs={24}>
+              <Form.Item
+                label="Disco Gold"
+                name="discoGold"
+                rules={[{ required: true }]}
+              >
+                <Input type="number" />
+              </Form.Item>
+            </Col>
+            <Col lg={16} xs={24}>
+              <Form.Item
+                label="Disco Dollars"
+                name="discoDollars"
+                rules={[{ required: true }]}
+              >
+                <Input type="number" />
               </Form.Item>
             </Col>
           </Col>
