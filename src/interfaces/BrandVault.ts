@@ -5,5 +5,4 @@ export interface BrandVault {
   shopName: string;
   tokenType: string;
   token: string;
-  record: Brand[];
 }

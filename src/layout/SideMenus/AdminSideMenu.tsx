@@ -16,6 +16,7 @@ import {
   TagOutlined,
   TeamOutlined,
   UserOutlined,
+  DatabaseOutlined,
 } from "@ant-design/icons";
 import { Menu } from "antd";
 import SubMenu from "antd/lib/menu/SubMenu";
@@ -49,6 +50,9 @@ const AdminSideMenu = () => {
       </Menu.Item>
       <Menu.Item key="feed-mixer" icon={<OrderedListOutlined />}>
         <Link to="/feed-mixer">Feed Mixer</Link>
+      </Menu.Item>
+      <Menu.Item key="vaults" icon={<DatabaseOutlined />}>
+        <Link to="/vaults">Vaults</Link>
       </Menu.Item>
       <Menu.Item key="orders" icon={<ShoppingCartOutlined />}>
         <Link to="/orders">Orders</Link>

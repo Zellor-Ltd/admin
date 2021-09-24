@@ -334,24 +334,6 @@ const BrandDetail: React.FC<RouteComponentProps> = (props) => {
               </Row>
             </Col>
           </Tabs.TabPane>
-
-          <Tabs.TabPane tab="Vault" key="Vault">
-            <Row gutter={8}>
-              <Col lg={12} xs={24}>
-                <Col lg={16} xs={24}>
-                  <Form.Item name="shopName" rules={[{ required: true }]}>
-                    <Row gutter={8}>
-                      <SelectBrand
-                        style={{ width: "100%" }}
-                        allowClear={true}
-                        onChange={onChangeBrand}
-                      ></SelectBrand>
-                    </Row>
-                  </Form.Item>
-                </Col>
-              </Col>
-            </Row>
-          </Tabs.TabPane>
         </Tabs>
         <Row gutter={8}>
           <Col>
