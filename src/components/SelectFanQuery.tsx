@@ -1,6 +1,6 @@
 import Select from "antd/lib/select";
 import React, { useEffect, useState } from "react";
-import { fetchFanGroups, fetchFans } from "../services/DiscoClubService";
+import { fetchFanGroups } from "../services/DiscoClubService";
 import { FanFilter } from "../interfaces/Fan";
 import { Typography } from "antd";
 import { useRequest } from "hooks/useRequest";

@@ -12,11 +12,9 @@ import {
   Select,
   Slider,
   Switch,
-  Table,
   Tabs,
   Typography,
 } from "antd";
-import { ColumnsType } from "antd/lib/table";
 import { Upload } from "components";
 import { RichTextEditor } from "components/RichTextEditor";
 import { formatMoment } from "helpers/formatMoment";
@@ -25,7 +23,6 @@ import useAllCategories from "hooks/useAllCategories";
 import { Brand } from "interfaces/Brand";
 import { AllCategories } from "interfaces/Category";
 import { Product } from "interfaces/Product";
-import { Video } from "interfaces/Video";
 import { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RouteComponentProps, useParams } from "react-router-dom";
@@ -38,20 +35,6 @@ import ProductCategoriesTrees from "./ProductCategoriesTrees";
 import "./Products.scss";
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
-
-const videoColumns: ColumnsType<Video> = [
-  {
-    title: "ID",
-    dataIndex: "videoFeedId",
-    width: "50%",
-    align: "center",
-  },
-  {
-    title: "Thumbnail URL",
-    dataIndex: "thumbnailUrl",
-    width: "50%",
-  },
-];
 
 interface RouteParams {
   productMode: "staging" | "commited";
