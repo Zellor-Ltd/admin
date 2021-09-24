@@ -238,7 +238,7 @@ const FanDetail: React.FC<RouteComponentProps> = (props) => {
         onFinish={onFinish}
       >
         <Tabs defaultActiveKey="Details">
-          <Tabs.TabPane tab="Details" key="Details">
+          <Tabs.TabPane forceRender tab="Details" key="Details">
             <Row gutter={8}>
               {initial.id && (
                 <Col lg={8} xs={24}>
@@ -316,7 +316,7 @@ const FanDetail: React.FC<RouteComponentProps> = (props) => {
               </Col>
             </Row>
           </Tabs.TabPane>
-          <Tabs.TabPane tab="Address" key="Address">
+          <Tabs.TabPane forceRender tab="Address" key="Address">
             <Row gutter={8}>
               <Col lg={8} xs={24}>
                 <Form.Item label="Address" name="line1">
@@ -340,7 +340,7 @@ const FanDetail: React.FC<RouteComponentProps> = (props) => {
               </Col>
             </Row>
           </Tabs.TabPane>
-          <Tabs.TabPane tab="Settings" key="Settings">
+          <Tabs.TabPane forceRender tab="Settings" key="Settings">
             <Row gutter={8}>
               <Col lg={8} xs={24}>
                 <FanGroupDropdown
@@ -365,7 +365,11 @@ const FanDetail: React.FC<RouteComponentProps> = (props) => {
               </Col>
             </Row>
           </Tabs.TabPane>
-          <Tabs.TabPane tab="Following Creators" key="FollowingCreators">
+          <Tabs.TabPane
+            forceRender
+            tab="Following Creators"
+            key="FollowingCreators"
+          >
             <Row gutter={8}>
               <Col lg={24} xs={24}>
                 <Form.Item
@@ -420,7 +424,11 @@ const FanDetail: React.FC<RouteComponentProps> = (props) => {
               </Col>
             </Row>
           </Tabs.TabPane>
-          <Tabs.TabPane tab="Following Categories" key="FollowingCategories">
+          <Tabs.TabPane
+            forceRender
+            tab="Following Categories"
+            key="FollowingCategories"
+          >
             <Row gutter={8}>
               <Col lg={24} xs={24}>
                 <Form.Item
@@ -484,7 +492,7 @@ const FanDetail: React.FC<RouteComponentProps> = (props) => {
             </Button>
           </Col>
           <Col>
-            <Button loading={loading} type="primary" onClick={onFinish}>
+            <Button loading={loading} type="primary" htmlType="submit">
               Save Changes
             </Button>
           </Col>
