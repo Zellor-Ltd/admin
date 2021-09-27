@@ -1,24 +1,20 @@
 import { Button, Col, PageHeader, Row, Table } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import { SelectBrand } from "components/SelectBrand";
-import useFilter from "hooks/useFilter";
 import { Brand } from "interfaces/Brand";
 import moment from "moment";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useRequest } from "hooks/useRequest";
 import { Link, RouteComponentProps } from "react-router-dom";
 import CopyIdToClipboard from "components/CopyIdToClipboard";
 import { BrandVault } from "../../interfaces/BrandVault";
+import { fetchBrandVault } from "services/DiscoClubService";
 
 const BrandVaults: React.FC<RouteComponentProps> = ({ history, location }) => {
   const detailsPathname = `${location.pathname}/vault`;
-  const [shopName, setShopName] = useState<string | undefined>("");
-
-  const {
-    arrayList: vaults,
-    setArrayList: setVaults,
-    filteredArrayList: filteredVaults,
-    addFilterFunction,
-  } = useFilter<BrandVault>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const { doFetch } = useRequest({ setLoading });
+  const [vaults, setVaults] = useState<BrandVault[]>([]);
 
   const columns: ColumnsType<BrandVault> = [
     {
@@ -66,21 +62,12 @@ const BrandVaults: React.FC<RouteComponentProps> = ({ history, location }) => {
     },
   ];
 
-  useEffect(() => {
-    const getResources = async () => {
-      const vaultsWithShopName = vaults.filter((vault) => {
-        return vault.shopName === shopName;
-      });
-      setVaults(vaultsWithShopName);
-    };
-    getResources();
-  }, [setVaults]);
-
   const onChangeBrand = async (_selectedBrand: Brand) => {
-    addFilterFunction("shopName", (vaults) =>
-      vaults.filter((vault) => vault.shopName === _selectedBrand.shopName)
+    const { results } = await doFetch(() =>
+      fetchBrandVault(_selectedBrand?.shopName || "")
     );
-    setShopName(_selectedBrand.shopName);
+    setVaults(results);
+    console.log(results);
   };
 
   return (
@@ -98,12 +85,17 @@ const BrandVaults: React.FC<RouteComponentProps> = ({ history, location }) => {
         <Col lg={8} xs={16}>
           <SelectBrand
             style={{ width: "100%" }}
-            allowClear={true}
+            allowClear={false}
             onChange={onChangeBrand}
           ></SelectBrand>
         </Col>
       </Row>
-      <Table rowKey="id" columns={columns} dataSource={filteredVaults} />
+      <Table
+        rowKey="id"
+        columns={columns}
+        dataSource={vaults}
+        loading={loading}
+      />
     </div>
   );
 };
