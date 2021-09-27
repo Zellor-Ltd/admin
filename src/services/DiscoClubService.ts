@@ -381,11 +381,8 @@ export const saveDdTemplate = (params: DdTemplate) => {
   }
 };
 
-export const fetchBrandVault = (params: BrandVault) =>
-  instance.get(`Disco/Brand/Vault/List/${params.id}`);
-
-  export const fetchBrandVaults = () =>
-    instance.get(`Disco/Brand/Vault/List/`);
+export const fetchBrandVault = (id: string) =>
+  instance.get(`Disco/Brand/Vault/List/${id}`);
 
 export const saveBrandVault = (params: BrandVault) => {
   if (params) {

@@ -1,34 +1,46 @@
 import { Typography } from "antd";
 import Select from "antd/lib/select";
 import React, { useEffect, useState } from "react";
-import { BrandVault } from "../interfaces/BrandVault";
-import { fetchBrandVault } from "../services/DiscoClubService";
+import { Brand } from "../interfaces/Brand";
+import { fetchBrands } from "../services/DiscoClubService";
 
-type SelectBrandVaultProps = Omit<
+type SelectBrandProps = Omit<
   React.SelectHTMLAttributes<HTMLSelectElement>,
   "onChange"
 > & {
-  onChange: (selectedVault: BrandVault) => {};
+  onChange: (selectedBrand: Brand) => {};
   allowClear: boolean;
-  initialShopName?: string;
+  initialBrandName?: string;
   label?: string;
 };
 
-export const SelectBrandVault: React.FC<SelectBrandVaultProps> = ({
+export const SelectBrandVault: React.FC<SelectBrandProps> = ({
   onChange,
-  placeholder = "Select a brand vault",
+  placeholder = "Select a brand",
   style,
   allowClear,
-  initialShopName = "",
-  label = "Brand Vault Filter",
+  initialBrandName = "",
+  label = "Brand Filter",
 }) => {
-  const [vault, setVault] = useState<BrandVault[]>([]);
-  const [selectedVault, setselectedVault] = useState<string>(initialShopName);
+  const [brands, setBrands] = useState<Brand[]>([]);
+  const [selectedBrandName, setSelectedBrandName] =
+    useState<string>(initialBrandName);
 
   const _onChange = (value: string) => {
-    setselectedVault(value);
-    onChange(vault.find((brand) => brand.shopName === value) as BrandVault);
+    setSelectedBrandName(value);
+    onChange(brands.find((brand) => brand.brandName === value) as Brand);
   };
+
+  useEffect(() => {
+    const getBrands = async () => {
+      try {
+        const { results }: any = await fetchBrands();
+        setBrands(results);
+      } catch (e) {}
+    };
+    getBrands();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div style={{ marginBottom: "16px" }}>
@@ -36,16 +48,16 @@ export const SelectBrandVault: React.FC<SelectBrandVaultProps> = ({
         {label}
       </Typography.Title>
       <Select
-        value={selectedVault}
+        value={selectedBrandName}
         onChange={_onChange}
         showSearch
         allowClear={allowClear}
         style={style}
         placeholder={placeholder}
       >
-        {vault.map(({ shopName }) => (
-          <Select.Option key={shopName} value={shopName}>
-            {shopName}
+        {brands.map(({ brandName, brandId }) => (
+          <Select.Option key={brandName} value={brandId}>
+            {brandName}
           </Select.Option>
         ))}
       </Select>

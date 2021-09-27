@@ -1,25 +1,23 @@
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { Button, Col, PageHeader, Popconfirm, Row, Table } from "antd";
+import { Button, Col, PageHeader, Row, Table } from "antd";
 import { ColumnsType } from "antd/lib/table";
+import { SelectBrand } from "components/SelectBrand";
 import useFilter from "hooks/useFilter";
-import { useRequest } from "hooks/useRequest";
+import { Brand } from "interfaces/Brand";
 import moment from "moment";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, RouteComponentProps } from "react-router-dom";
-import { deleteBrandVault } from "services/DiscoClubService";
 import CopyIdToClipboard from "components/CopyIdToClipboard";
-import { BrandVault } from "interfaces/BrandVault";
-import { SelectBrandVault } from "components/SelectBrandVault";
+import { BrandVault } from "../../interfaces/BrandVault";
 
 const BrandVaults: React.FC<RouteComponentProps> = ({ history, location }) => {
   const detailsPathname = `${location.pathname}/vault`;
-  const [loading, setLoading] = useState<boolean>(false);
-  const { doFetch, doRequest } = useRequest({ setLoading });
+  const [shopName, setShopName] = useState<string | undefined>("");
 
   const {
-    filteredArrayList: filteredBrandVaults,
+    arrayList: vaults,
+    setArrayList: setVaults,
+    filteredArrayList: filteredVaults,
     addFilterFunction,
-    removeFilterFunction,
   } = useFilter<BrandVault>([]);
 
   const columns: ColumnsType<BrandVault> = [
@@ -66,39 +64,23 @@ const BrandVaults: React.FC<RouteComponentProps> = ({ history, location }) => {
         </>
       ),
     },
-    {
-      title: "Actions",
-      key: "action",
-      width: "10%",
-      align: "right",
-      render: (_, record: BrandVault) => (
-        <>
-          <Link to={{ pathname: detailsPathname, state: record }}>
-            <EditOutlined />
-          </Link>
-          <Popconfirm
-            title="Are you sure？"
-            okText="Yes"
-            cancelText="No"
-            onConfirm={() => deleteBrandVault(record)}
-          >
-            <Button type="link" style={{ padding: 0, margin: 6 }}>
-              <DeleteOutlined />
-            </Button>
-          </Popconfirm>
-        </>
-      ),
-    },
   ];
 
-  const onChangeBrand = async (_selectedVault: BrandVault | undefined) => {
-    if (!_selectedVault) {
-      removeFilterFunction("shopName");
-      return;
-    }
+  useEffect(() => {
+    const getResources = async () => {
+      const vaultsWithShopName = vaults.filter((vault) => {
+        return vault.shopName === shopName;
+      });
+      setVaults(vaultsWithShopName);
+    };
+    getResources();
+  }, [setVaults]);
+
+  const onChangeBrand = async (_selectedBrand: Brand) => {
     addFilterFunction("shopName", (vaults) =>
-      vaults.filter((vault) => vault.shopName === _selectedVault.shopName)
+      vaults.filter((vault) => vault.shopName === _selectedBrand.shopName)
     );
+    setShopName(_selectedBrand.shopName);
   };
 
   return (
@@ -113,20 +95,15 @@ const BrandVaults: React.FC<RouteComponentProps> = ({ history, location }) => {
         ]}
       />
       <Row gutter={8}>
-        <Col xxl={40} lg={6} xs={18}>
-          <SelectBrandVault
+        <Col lg={8} xs={16}>
+          <SelectBrand
             style={{ width: "100%" }}
             allowClear={true}
             onChange={onChangeBrand}
-          ></SelectBrandVault>
+          ></SelectBrand>
         </Col>
       </Row>
-      <Table
-        rowKey="id"
-        columns={columns}
-        dataSource={filteredBrandVaults}
-        loading={loading}
-      />
+      <Table rowKey="id" columns={columns} dataSource={filteredVaults} />
     </div>
   );
 };
