@@ -102,7 +102,7 @@ const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
         <Button
           disabled={record.brand.automated === true && !isStaging}
           type="primary"
-          onClick={onFinish}
+          htmlType="submit"
           loading={loading}
         >
           Save

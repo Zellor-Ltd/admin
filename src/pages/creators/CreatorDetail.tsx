@@ -77,9 +77,8 @@ const CreatorDetail: React.FC<RouteComponentProps> = (props) => {
         initialValues={initial}
         autoComplete="off"
       >
-
         <Tabs defaultActiveKey="Details">
-          <Tabs.TabPane tab="Details" key="Details">
+          <Tabs.TabPane forceRender tab="Details" key="Details">
             <Row gutter={8}>
               <Col lg={12} xs={24}>
                 <Form.Item label="First Name" name="firstName">
@@ -95,7 +94,9 @@ const CreatorDetail: React.FC<RouteComponentProps> = (props) => {
                 <Form.Item
                   label="Email"
                   name="user"
-                  rules={[{ type: "email", message: "please use an valid email" }]}
+                  rules={[
+                    { type: "email", message: "please use an valid email" },
+                  ]}
                 >
                   <Input />
                 </Form.Item>
@@ -120,7 +121,10 @@ const CreatorDetail: React.FC<RouteComponentProps> = (props) => {
                 <Form.Item name={"serverAlias"} label="Server Alias">
                   <Select>
                     {serversList.map((serverAlias) => (
-                      <Select.Option key={serverAlias.id} value={serverAlias.id}>
+                      <Select.Option
+                        key={serverAlias.id}
+                        value={serverAlias.id}
+                      >
                         {serverAlias.name}
                       </Select.Option>
                     ))}
@@ -140,10 +144,13 @@ const CreatorDetail: React.FC<RouteComponentProps> = (props) => {
               </Col>
             </Row>
           </Tabs.TabPane>
-          <Tabs.TabPane tab="Your Work" key="YourWork">
+          <Tabs.TabPane forceRender tab="Your Work" key="YourWork">
             <Row gutter={8}>
               <Col lg={24} xs={24}>
-                <Form.Item label="Describe your content focus" name="contentFocus">
+                <Form.Item
+                  label="Describe your content focus"
+                  name="contentFocus"
+                >
                   <Input.TextArea rows={4} />
                 </Form.Item>
               </Col>
@@ -186,49 +193,49 @@ const CreatorDetail: React.FC<RouteComponentProps> = (props) => {
               </Col>
             </Row>
           </Tabs.TabPane>
-          <Tabs.TabPane tab="Social" key="Social">
-              <Row gutter={8}>
-                <Col lg={24} xs={24}>
-                  <Typography.Title level={4}>Social Channels</Typography.Title>
-                </Col>
-              </Row>
-              <Row>
-                <Col lg={8} xs={24} md={24}>
-                  <Form.Item name="instagram" label="Instagram">
-                    <Input prefix={<InstagramFilled />} />
-                  </Form.Item>
-                  <Form.Item name="facebook" label="Facebook">
-                    <Input prefix={<FacebookFilled />} />
-                  </Form.Item>
-                  <Form.Item name="tiktok" label="TikTok">
-                    <Input prefix={<SoundFilled />} />
-                  </Form.Item>
-                  <Form.Item name="youtube" label="Youtube">
-                    <Input prefix={<YoutubeFilled />} />
-                  </Form.Item>
-                  <Form.Item name="website" label="Website">
-                    <Input prefix={<GlobalOutlined />} />
-                  </Form.Item>
-                  <Form.Item name="twitter" label="Twitter">
-                    <Input prefix={<TwitterCircleFilled />} />
-                  </Form.Item>
-                </Col>
-              </Row>
-            </Tabs.TabPane>
-          </Tabs>
-          <Row gutter={8}>
-            <Col>
-              <Button type="default" onClick={() => history.goBack()}>
-                Cancel
-              </Button>
-            </Col>
-            <Col>
-              <Button loading={loading} type="primary" onClick={onFinish}>
-                Save Changes
-              </Button>
-            </Col>
-          </Row>
-        </Form>
+          <Tabs.TabPane forceRender tab="Social" key="Social">
+            <Row gutter={8}>
+              <Col lg={24} xs={24}>
+                <Typography.Title level={4}>Social Channels</Typography.Title>
+              </Col>
+            </Row>
+            <Row>
+              <Col lg={8} xs={24} md={24}>
+                <Form.Item name="instagram" label="Instagram">
+                  <Input prefix={<InstagramFilled />} />
+                </Form.Item>
+                <Form.Item name="facebook" label="Facebook">
+                  <Input prefix={<FacebookFilled />} />
+                </Form.Item>
+                <Form.Item name="tiktok" label="TikTok">
+                  <Input prefix={<SoundFilled />} />
+                </Form.Item>
+                <Form.Item name="youtube" label="Youtube">
+                  <Input prefix={<YoutubeFilled />} />
+                </Form.Item>
+                <Form.Item name="website" label="Website">
+                  <Input prefix={<GlobalOutlined />} />
+                </Form.Item>
+                <Form.Item name="twitter" label="Twitter">
+                  <Input prefix={<TwitterCircleFilled />} />
+                </Form.Item>
+              </Col>
+            </Row>
+          </Tabs.TabPane>
+        </Tabs>
+        <Row gutter={8}>
+          <Col>
+            <Button type="default" onClick={() => history.goBack()}>
+              Cancel
+            </Button>
+          </Col>
+          <Col>
+            <Button loading={loading} type="primary" htmlType="submit">
+              Save Changes
+            </Button>
+          </Col>
+        </Row>
+      </Form>
     </>
   );
 };

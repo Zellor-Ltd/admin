@@ -73,7 +73,7 @@ const Settings: React.FC = () => {
         </Tabs>
         <Row gutter={8}>
           <Col>
-            <Button type="primary" onClick={onFinish} loading={loading}>
+            <Button type="primary" htmlType="submit" loading={loading}>
               Save Settings
             </Button>
           </Col>
