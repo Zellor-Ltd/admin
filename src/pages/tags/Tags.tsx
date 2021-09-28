@@ -1,45 +1,91 @@
 import { DeleteOutlined, EyeOutlined } from "@ant-design/icons";
-import { Button, Col, PageHeader, Popconfirm, Row, Table } from "antd";
+import { Button, Col, PageHeader, Popconfirm, Row, Spin, Table } from "antd";
 import { ColumnsType } from "antd/lib/table";
-import { SearchFilter } from "components/SearchFilter";
-import useFilter from "hooks/useFilter";
-import { Tag } from "interfaces/Tag";
-import { useEffect, useState } from "react";
-import { Link, RouteComponentProps } from "react-router-dom";
-import { deleteTag, fetchTags } from "services/DiscoClubService";
 import CopyIdToClipboard from "components/CopyIdToClipboard";
+import { SearchFilterDebounce } from "components/SearchFilterDebounce";
+import { AppContext } from "contexts/AppContext";
+import { useRequest } from "hooks/useRequest";
+import { Tag } from "interfaces/Tag";
+import { useContext, useEffect, useState } from "react";
+import InfiniteScroll from "react-infinite-scroll-component";
+import { Link, RouteComponentProps } from "react-router-dom";
+import {
+  deleteTag,
+  fetchTags,
+} from "services/DiscoClubService";
 
 const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
   const detailsPathname = `${location.pathname}/tag`;
+
+  const { usePageFilter } = useContext(AppContext);
+
   const [loading, setLoading] = useState<boolean>(false);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
 
-  const {
-    setArrayList: setTags,
-    filteredArrayList: filteredTags,
-    addFilterFunction,
-  } = useFilter<Tag>([]);
+  const { doFetch, doRequest } = useRequest({ setLoading });
 
-  const fetchVideos = async () => {
-    setLoading(true);
-    const response: any = await fetchTags();
-    setLoading(false);
-    setTags(response.results);
+  const [searchFilter, setSearchFilter] = usePageFilter<string>("search");
+  const [page, setPage] = useState<number>(0);
+  const [eof, setEof] = useState<boolean>(false);
+
+  const [tags, setTags] = useState<Tag[]>([]);
+
+  const _fetchTags = async () => {
+    const pageToUse = refreshing ? 0 : page;
+    const response = await doFetch(() =>
+      fetchTags({
+        limit: 30,
+        page: pageToUse,
+        query: searchFilter,
+      })
+    );
+    setPage(pageToUse + 1);
+    if (response.results.length < 30) setEof(true);
+    return response;
+  };
+
+  const getResources = async () => {
+    const [{ results }] = await Promise.all([_fetchTags()]);
+    setTags(results);
+  };
+
+  const refreshTags = async () => {
+    setPage(0);
+    setRefreshing(true);
+  };
+
+  const fetchData = async () => {
+    if (!tags.length) return;
+    const { results } = await _fetchTags();
+    setTags((prev) => [...prev.concat(results)]);
   };
 
   useEffect(() => {
-    fetchVideos();
+    const getTags = async () => {
+      const { results } = await _fetchTags();
+      setTags(results);
+      setRefreshing(false);
+    };
+    if (refreshing) {
+      setEof(false);
+      getTags();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [refreshing]);
+
+  useEffect(() => {
+    if (tags.length) refreshTags();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchFilter]);
+
+  useEffect(() => {
+    getResources();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const deleteItem = async (id: string) => {
-    setLoading(true);
-    try {
-      await deleteTag({ id });
-      fetchVideos();
-    } catch (err) {
-      console.log(err);
-      setLoading(false);
-    }
+    await doRequest(() => deleteTag({id}));
+    await refreshTags();
   };
 
   const columns: ColumnsType<Tag> = [
@@ -84,16 +130,8 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
     },
   ];
 
-  const searchFilterFunction = (filterText: string) => {
-    addFilterFunction("tagName", (tags) =>
-      tags.filter((tag) =>
-        tag.tagName.toUpperCase().includes(filterText.toUpperCase())
-      )
-    );
-  };
-
   return (
-    <div className="tags">
+    <>
       <PageHeader
         title="Tags"
         subTitle="List of Tags"
@@ -103,21 +141,45 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
           </Button>,
         ]}
       />
-      <Row gutter={8}>
-        <Col lg={8} xs={16}>
-          <SearchFilter
-            filterFunction={searchFilterFunction}
-            label="Search by Name"
-          />
+      <Row align="bottom" justify="space-between">
+        <Col lg={16} xs={24}>
+          <Row gutter={8}>
+            <Col lg={8} xs={16}>
+              <SearchFilterDebounce
+                initialValue={searchFilter}
+                filterFunction={setSearchFilter}
+                label="Search by Name"
+              />
+            </Col>
+          </Row>
         </Col>
       </Row>
-      <Table
-        rowKey="id"
-        columns={columns}
-        dataSource={filteredTags}
-        loading={loading}
-      />
-    </div>
+      <InfiniteScroll
+        dataLength={tags.length}
+        next={fetchData}
+        hasMore={!eof}
+        loader={
+          page !== 0 && (
+            <div className="scroll-message">
+              <Spin />
+            </div>
+          )
+        }
+        endMessage={
+          <div className="scroll-message">
+            <b>End of results.</b>
+          </div>
+        }
+      >
+        <Table
+          rowKey="id"
+          columns={columns}
+          dataSource={tags}
+          loading={refreshing || (!tags.length && loading)}
+          pagination={false}
+        />
+      </InfiniteScroll>
+    </>
   );
 };
 

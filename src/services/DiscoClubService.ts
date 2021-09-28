@@ -133,6 +133,17 @@ export const fetchProducts = ({
     unclassified,
   });
 
+export const fetchTags = ({
+  query,
+  page = 0,
+  limit = 0,
+}: {
+  query?: string;
+} & Pagination) =>
+  instance.put(`Disco/Product/Adm/ListTags/${page}/${limit}`, {
+    query,
+  });
+
 export const fetchStagingProducts = () =>
   instance.put("Disco/Staging/Product/List", {});
 
@@ -190,8 +201,6 @@ export const productCategoriesAPI: AllCategoriesAPI = {
       instance.delete(`Wi/Ep/RemoveProductSubSubCategories`, { data }),
   },
 };
-
-export const fetchTags = () => instance.get("Wi/Ep/ListTags");
 
 export const fetchCreators = () => instance.get("Wi/Ep/ListCreators");
 

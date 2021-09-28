@@ -49,7 +49,7 @@ const ModalTag: React.FC<ModalFormProps> = ({
   useEffect(() => {
     let mounted = true;
     async function getTags() {
-      const response: any = await fetchTags();
+      const response: any = await fetchTags({});
       if (mounted) {
         setTags(response.results);
         setLoading(false);
