@@ -34,7 +34,10 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = (props) => {
         <h2 style={{ width: "65%" }}>
           <Link to="/">
             {" "}
-            {appName} <small style={{ fontSize: 10 }}>v 1.22.06.1756</small>
+            {appName}{" "}
+            <small style={{ fontSize: 10 }}>{`${
+              process.env.REACT_APP_BUILD_DATE || ""
+            } ${process.env.REACT_APP_SERVER_ENV}`}</small>
           </Link>
         </h2>
         <Row style={{ width: "35%" }} justify="end" wrap={false}>
