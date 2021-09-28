@@ -24,6 +24,7 @@ import { useSelector } from "react-redux";
 import { Link, RouteComponentProps } from "react-router-dom";
 import { fetchFans, fetchOrders, saveOrder } from "services/DiscoClubService";
 import CopyOrderToClipboard from "components/CopyOrderToClipboard";
+import { SelectFan } from "components/SelectFan";
 
 const Orders: React.FC<RouteComponentProps> = () => {
   const [tableloading, setTableLoading] = useState<boolean>(false);
@@ -302,8 +303,8 @@ const Orders: React.FC<RouteComponentProps> = () => {
       const orders: Order[] = await getOrders();
       const fans: Fan[] = await getFans();
       const ordersWithFanName = orders.map((order) => {
-        const fan = fans.find((fan) => fan.id === order.userId);
-        order.fanName = fan?.name;
+        const fan = fans.find((fan) => fan.id === order.userid);
+        order.fanName = fan?.user;
         return order;
       });
       setOrders(ordersWithFanName);
@@ -325,16 +326,37 @@ const Orders: React.FC<RouteComponentProps> = () => {
     );
   };
 
+  const onChangeFan = async (_selectedFan: Fan | undefined) => {
+    if (!_selectedFan) {
+      removeFilterFunction("fanName");
+      return;
+    }
+    addFilterFunction("fanName", (orders) =>
+      orders.filter((order) => order.fanName === _selectedFan.user)
+    );
+  };
+
   return (
     <div className="orders">
       <PageHeader title="Orders" subTitle="List of Orders" />
-      <Row gutter={8}>
-        <Col xxl={40} lg={6} xs={18}>
-          <SelectBrand
-            style={{ width: "100%" }}
-            allowClear={true}
-            onChange={onChangeBrand}
-          ></SelectBrand>
+      <Row align="bottom" justify="space-between">
+        <Col lg={16} xs={24}>
+          <Row gutter={8}>
+            <Col lg={8} xs={16}>
+              <SelectBrand
+                style={{ width: "100%" }}
+                allowClear={true}
+                onChange={onChangeBrand}
+              ></SelectBrand>
+            </Col>
+            <Col lg={8} xs={16}>
+              <SelectFan
+                style={{ width: "100%" }}
+                onChange={onChangeFan}
+                allowClear={true}
+              ></SelectFan>
+            </Col>
+          </Row>
         </Col>
       </Row>
       <Table

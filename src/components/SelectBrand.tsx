@@ -9,7 +9,7 @@ type SelectBrandProps = Omit<
   "onChange"
 > & {
   onChange: (selectedBrand: Brand) => {};
-  allowClear: boolean;
+  allowClear?: boolean;
   initialBrandName?: string;
   label?: string;
 };
@@ -18,7 +18,7 @@ export const SelectBrand: React.FC<SelectBrandProps> = ({
   onChange,
   placeholder = "Select a brand",
   style,
-  allowClear,
+  allowClear = true,
   initialBrandName = "",
   label = "Brand Filter",
 }) => {

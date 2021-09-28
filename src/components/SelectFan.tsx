@@ -10,12 +10,14 @@ type SelectFanProps = Omit<
   "onChange"
 > & {
   onChange: (selectedFan: Fan) => {};
+  allowClear?: boolean;
   label?: string;
 };
 
 export const SelectFan: React.FC<SelectFanProps> = ({
   onChange,
   placeholder = "Select a fan",
+  allowClear = true,
   style,
   label = "Fan Filter",
 }) => {
@@ -65,6 +67,7 @@ export const SelectFan: React.FC<SelectFanProps> = ({
         value={selectedFan}
         onChange={_onChange}
         showSearch
+        allowClear={allowClear}
         style={style}
         placeholder={placeholder}
       >
