@@ -71,16 +71,6 @@ function AdminRoutes() {
         layout={AuthenticatedLayout}
       />
       <AppRoute
-        path="/vaults/vault"
-        component={BrandVaultDetail}
-        layout={AuthenticatedLayout}
-      />
-      <AppRoute
-        path="/vaults"
-        component={BrandVaults}
-        layout={AuthenticatedLayout}
-      />
-      <AppRoute
         path="/feed"
         component={VideoFeed}
         layout={AuthenticatedLayout}
@@ -128,6 +118,11 @@ function AdminRoutes() {
       <AppRoute
         path="/settings_tags"
         component={Tags}
+        layout={AuthenticatedLayout}
+      />
+      <AppRoute
+        path="/brands/brand/vaults"
+        component={BrandVaultDetail}
         layout={AuthenticatedLayout}
       />
       <AppRoute

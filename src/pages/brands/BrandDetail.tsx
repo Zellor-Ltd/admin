@@ -1,6 +1,7 @@
 import {
   Button,
   Col,
+  Table,
   Form,
   Input,
   InputNumber,
@@ -12,25 +13,139 @@ import {
   Tabs,
   Select,
   Switch,
+  Popconfirm,
 } from "antd";
 import { Upload } from "components";
 import { RichTextEditor } from "components/RichTextEditor";
 import { Brand } from "interfaces/Brand";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import React from "react";
+import { useRequest } from "hooks/useRequest";
 import { TwitterPicker } from "react-color";
 import { useSelector } from "react-redux";
-import { RouteComponentProps } from "react-router-dom";
+import { RouteComponentProps, Link } from "react-router-dom";
 import { saveBrand } from "services/DiscoClubService";
+import { BrandVault } from "../../interfaces/BrandVault";
+import {
+  fetchBrandVault,
+  deleteBrandVault,
+  saveBrandVault,
+} from "services/DiscoClubService";
+import { ColumnsType } from "antd/lib/table";
+import CopyIdToClipboard from "components/CopyIdToClipboard";
+import moment from "moment";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 
-const BrandDetail: React.FC<RouteComponentProps> = (props) => {
+const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
   const { history, location } = props;
+  const detailsPathname = `${location.pathname}/vault`;
   const initial = location.state as Brand;
   const [loading, setLoading] = useState<boolean>(false);
+  const [vaults, setVaults] = useState<BrandVault[]>([]);
+  const [activeTabKey, setActiveTabKey] = React.useState("Details");
+  const [vaultOptions, setVaultOptions] = useState<boolean>(false);
+  const { doFetch } = useRequest({ setLoading });
+  const { doRequest } = useRequest({ setLoading });
   const [form] = Form.useForm();
 
   const {
     settings: { checkoutType = [] },
   } = useSelector((state: any) => state.settings);
+
+  const fetchVaults = async () => {
+    if (initial.shopName) {
+      const { results } = await doFetch(() =>
+        fetchBrandVault(initial.shopName as string)
+      );
+      setVaults(results);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTabKey === "Secrets") {
+      setVaultOptions(false);
+      fetchVaults();
+    }
+  }, [activeTabKey]);
+
+  const deleteItem = async (vault: BrandVault) => {
+    deleteBrandVault(vault.id);
+    setActiveTabKey("Secrets");
+  };
+
+  const saveItem = async () => {
+    const vaultTemplate = form.getFieldsValue(true);
+    await doRequest(() => saveBrandVault(vaultTemplate));
+  };
+
+  const columns: ColumnsType<BrandVault> = [
+    {
+      title: "_id",
+      dataIndex: "id",
+      width: "6%",
+      render: (id) => <CopyIdToClipboard id={id} />,
+      align: "center",
+    },
+    {
+      title: "Key",
+      dataIndex: "key",
+      width: "12%",
+      align: "center",
+    },
+    {
+      title: "Shop Name",
+      dataIndex: "shopName",
+      width: "20%",
+      align: "center",
+    },
+    {
+      title: "API Shop Name",
+      dataIndex: "apiShopName",
+      width: "20%",
+      align: "center",
+    },
+    {
+      title: "Token",
+      dataIndex: "token",
+      width: "10%",
+      align: "center",
+    },
+    {
+      title: "Creation",
+      dataIndex: "hCreationDate",
+      width: "15%",
+      align: "center",
+      render: (value: Date) => (
+        <>
+          <div>{moment(value).format("DD/MM/YYYY")}</div>
+          <div>{moment(value).format("HH:mm")}</div>
+        </>
+      ),
+    },
+    {
+      title: "Actions",
+      key: "action",
+      width: "10%",
+      align: "right",
+      render: (_, record: BrandVault) => (
+        <>
+          <Link to={{ pathname: detailsPathname, state: record }}>
+            <EditOutlined />
+          </Link>
+          <Popconfirm
+            title="Are you sure？"
+            okText="Yes"
+            cancelText="No"
+            onConfirm={() => deleteItem(record)}
+          >
+            <Button type="link" style={{ padding: 0, margin: 6 }}>
+              <DeleteOutlined />
+            </Button>
+          </Popconfirm>
+        </>
+      ),
+    },
+  ];
 
   const onFinish = async () => {
     setLoading(true);
@@ -52,6 +167,10 @@ const BrandDetail: React.FC<RouteComponentProps> = (props) => {
     });
   };
 
+  const changeTab = (activeKey: string) => {
+    setActiveTabKey(activeKey);
+  };
+
   return (
     <>
       <PageHeader title="Brand Update" subTitle="Brand" />
@@ -62,7 +181,11 @@ const BrandDetail: React.FC<RouteComponentProps> = (props) => {
         initialValues={initial}
         onFinish={onFinish}
       >
-        <Tabs defaultActiveKey="Details">
+        <Tabs
+          defaultActiveKey="Details"
+          activeKey={activeTabKey}
+          onChange={changeTab}
+        >
           <Tabs.TabPane forceRender tab="Details" key="Details">
             <Row gutter={8}>
               <Col lg={3} xs={3}>
@@ -289,19 +412,95 @@ const BrandDetail: React.FC<RouteComponentProps> = (props) => {
               </Row>
             </Col>
           </Tabs.TabPane>
+          <Tabs.TabPane forceRender tab="Secrets" key="Secrets">
+            {!vaultOptions && (
+              <Row gutter={8}>
+                <Col lg={8} xs={16}>
+                  <Button key="1" onClick={() => setVaultOptions(true)}>
+                    New Item
+                  </Button>
+                </Col>
+                <Table
+                  rowKey="id"
+                  columns={columns}
+                  dataSource={vaults}
+                  loading={loading}
+                />
+              </Row>
+            )}
+            {vaultOptions && (
+              <Col>
+                <Col lg={12} xs={24}>
+                  <Col lg={16} xs={24}>
+                    <Form.Item
+                      label="Key"
+                      name="key"
+                      rules={[{ required: true }]}
+                    >
+                      <Input />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={16} xs={24}>
+                    <Form.Item
+                      label="Shop Name"
+                      name="shopName"
+                      rules={[{ required: true }]}
+                    >
+                      <Input />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={16} xs={24}>
+                    <Form.Item
+                      label="API Shop Name"
+                      name="apiShopName"
+                      rules={[{ required: true }]}
+                    >
+                      <Input />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={16} xs={24}>
+                    <Form.Item
+                      label="Token"
+                      name="token"
+                      rules={[{ required: true }]}
+                    >
+                      <Input type="password" />
+                    </Form.Item>
+                  </Col>
+                </Col>
+                <Row gutter={8}>
+                  <Col>
+                    <Button
+                      type="default"
+                      onClick={() => setVaultOptions(false)}
+                    >
+                      Cancel
+                    </Button>
+                  </Col>
+                  <Col>
+                    <Button loading={loading} type="primary" onClick={saveItem}>
+                      Save Changes
+                    </Button>
+                  </Col>
+                </Row>
+              </Col>
+            )}
+          </Tabs.TabPane>
         </Tabs>
-        <Row gutter={8}>
-          <Col>
-            <Button type="default" onClick={() => history.goBack()}>
-              Cancel
-            </Button>
-          </Col>
-          <Col>
-            <Button loading={loading} type="primary" htmlType="submit">
-              Save Changes
-            </Button>
-          </Col>
-        </Row>
+        {!vaultOptions && (
+          <Row gutter={8}>
+            <Col>
+              <Button type="default" onClick={() => history.goBack()}>
+                Cancel
+              </Button>
+            </Col>
+            <Col>
+              <Button loading={loading} type="primary" htmlType="submit">
+                Save Changes
+              </Button>
+            </Col>
+          </Row>
+        )}
       </Form>
     </>
   );
