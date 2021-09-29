@@ -69,17 +69,5 @@
     "@types/react-draft-wysiwyg": "^1.13.3",
     "@types/react-highlight-words": "^0.16.2",
     "@types/react-router-dom": "^5.1.7"
-  },
-  "description": "This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).",
-  "main": "index.js",
-  "repository": {
-    "type": "git",
-    "url": "git+https://beatrizrochelle@bitbucket.org/nialldisco/disco.admin.git"
-  },
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://bitbucket.org/nialldisco/disco.admin/issues"
-  },
-  "homepage": "https://bitbucket.org/nialldisco/disco.admin"
+  }
 }
