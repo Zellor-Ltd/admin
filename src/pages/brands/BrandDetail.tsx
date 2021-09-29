@@ -17,7 +17,6 @@ import { Upload } from "components";
 import { RichTextEditor } from "components/RichTextEditor";
 import { Brand } from "interfaces/Brand";
 import { useState } from "react";
-import useFilter from "hooks/useFilter";
 import { TwitterPicker } from "react-color";
 import { useSelector } from "react-redux";
 import { RouteComponentProps } from "react-router-dom";
