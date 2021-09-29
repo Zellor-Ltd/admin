@@ -1,4 +1,4 @@
-import { Button, Col, PageHeader, Row, Table } from "antd";
+import { Button, Col, PageHeader, Popconfirm, Row, Table } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import { SelectBrand } from "components/SelectBrand";
 import { Brand } from "interfaces/Brand";
@@ -8,13 +8,29 @@ import { useRequest } from "hooks/useRequest";
 import { Link, RouteComponentProps } from "react-router-dom";
 import CopyIdToClipboard from "components/CopyIdToClipboard";
 import { BrandVault } from "../../interfaces/BrandVault";
-import { fetchBrandVault } from "services/DiscoClubService";
+import {
+  fetchBrandVault,
+  deleteBrandVault,
+  fetchBrands,
+} from "services/DiscoClubService";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 
 const BrandVaults: React.FC<RouteComponentProps> = ({ history, location }) => {
   const detailsPathname = `${location.pathname}/vault`;
   const [loading, setLoading] = useState<boolean>(false);
   const { doFetch } = useRequest({ setLoading });
   const [vaults, setVaults] = useState<BrandVault[]>([]);
+
+  const deleteItem = async (vault: BrandVault) => {
+    deleteBrandVault(vault.id);
+    const response: any = await fetchBrands();
+    const selectedBrand = response.results.find(
+      (brand: any) =>
+        brand.shopName === vault.shopName && brand.token === undefined
+    );
+    console.log(selectedBrand);
+    onChangeBrand(selectedBrand);
+  };
 
   const columns: ColumnsType<BrandVault> = [
     {
@@ -60,6 +76,29 @@ const BrandVaults: React.FC<RouteComponentProps> = ({ history, location }) => {
         </>
       ),
     },
+    {
+      title: "Actions",
+      key: "action",
+      width: "10%",
+      align: "right",
+      render: (_, record: BrandVault) => (
+        <>
+          <Link to={{ pathname: detailsPathname, state: record }}>
+            <EditOutlined />
+          </Link>
+          <Popconfirm
+            title="Are you sure？"
+            okText="Yes"
+            cancelText="No"
+            onConfirm={() => deleteItem(record)}
+          >
+            <Button type="link" style={{ padding: 0, margin: 6 }}>
+              <DeleteOutlined />
+            </Button>
+          </Popconfirm>
+        </>
+      ),
+    },
   ];
 
   const onChangeBrand = async (_selectedBrand: Brand) => {
@@ -67,7 +106,6 @@ const BrandVaults: React.FC<RouteComponentProps> = ({ history, location }) => {
       fetchBrandVault(_selectedBrand?.shopName || "")
     );
     setVaults(results);
-    console.log(results);
   };
 
   return (

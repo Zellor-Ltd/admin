@@ -385,16 +385,16 @@ export const fetchBrandVault = (id: string) =>
   instance.get(`Disco/Brand/Vault/List/${id}`);
 
 export const saveBrandVault = (params: BrandVault) => {
-  if (params) {
-    return instance.post(`Disco/Brand/Vault/Delete/${params.id}`);
+  if (params.id) {
+    return instance.post("Disco/Brand/Vault/Update", params);
   } else {
-    return instance.put("Disco/Brand/Vault/Add");
+    return instance.put("Disco/Brand/Vault/Add", params);
   }
 };
 
-export const deleteBrandVault = (params: BrandVault) => {
-  if (params.id) {
-    return instance.put(`Disco/Brand/Vault/Delete/${params.id}`);
+export const deleteBrandVault = (id: string) => {
+  if (id) {
+    return instance.get(`Disco/Brand/Vault/Delete/${id}`);
   }
 };
 

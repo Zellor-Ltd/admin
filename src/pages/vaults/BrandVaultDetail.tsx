@@ -2,7 +2,9 @@ import { Button, Col, Form, Input, PageHeader, Row } from "antd";
 import { useRequest } from "../../hooks/useRequest";
 import { useState } from "react";
 import { RouteComponentProps } from "react-router-dom";
-import { saveDdTemplate } from "../../services/DiscoClubService";
+import { saveBrandVault, fetchBrands } from "../../services/DiscoClubService";
+import { SelectBrand } from "components/SelectBrand";
+import { Brand } from "interfaces/Brand";
 
 const BrandVaultDetail: React.FC<RouteComponentProps> = (props) => {
   const { history, location } = props;
@@ -12,19 +14,16 @@ const BrandVaultDetail: React.FC<RouteComponentProps> = (props) => {
   const { doRequest } = useRequest({ setLoading });
 
   const onFinish = async () => {
-    const ddTemplate = form.getFieldsValue(true);
-    await doRequest(() => saveDdTemplate(ddTemplate));
+    const vaultTemplate = form.getFieldsValue(true);
+    await doRequest(() => saveBrandVault(vaultTemplate));
     history.goBack();
   };
 
   return (
     <>
-      <PageHeader
-        title="Disco Dollar Template Update"
-        subTitle="Disco Dollar Template "
-      />
+      <PageHeader title="Brand Vault" subTitle="Brand Vault Template " />
       <Form
-        name="ddTemplateForm"
+        name="brandVaultForm"
         layout="vertical"
         form={form}
         initialValues={initial}
@@ -33,9 +32,14 @@ const BrandVaultDetail: React.FC<RouteComponentProps> = (props) => {
         <Row gutter={8}>
           <Col lg={12} xs={24}>
             <Col lg={16} xs={24}>
+              <Form.Item label="Key" name="key" rules={[{ required: true }]}>
+                <Input />
+              </Form.Item>
+            </Col>
+            <Col lg={16} xs={24}>
               <Form.Item
-                label="Tag Name"
-                name="tagName"
+                label="Shop Name"
+                name="shopName"
                 rules={[{ required: true }]}
               >
                 <Input />
@@ -43,8 +47,8 @@ const BrandVaultDetail: React.FC<RouteComponentProps> = (props) => {
             </Col>
             <Col lg={16} xs={24}>
               <Form.Item
-                label="Template"
-                name="template"
+                label="API Shop Name"
+                name="apiShopName"
                 rules={[{ required: true }]}
               >
                 <Input />
@@ -52,20 +56,11 @@ const BrandVaultDetail: React.FC<RouteComponentProps> = (props) => {
             </Col>
             <Col lg={16} xs={24}>
               <Form.Item
-                label="Disco Gold"
-                name="discoGold"
+                label="Token"
+                name="token"
                 rules={[{ required: true }]}
               >
-                <Input type="number" />
-              </Form.Item>
-            </Col>
-            <Col lg={16} xs={24}>
-              <Form.Item
-                label="Disco Dollars"
-                name="discoDollars"
-                rules={[{ required: true }]}
-              >
-                <Input type="number" />
+                <Input />
               </Form.Item>
             </Col>
           </Col>
