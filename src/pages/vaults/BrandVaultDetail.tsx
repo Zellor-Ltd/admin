@@ -60,7 +60,7 @@ const BrandVaultDetail: React.FC<RouteComponentProps> = (props) => {
                 name="token"
                 rules={[{ required: true }]}
               >
-                <Input />
+                <Input type="password" />
               </Form.Item>
             </Col>
           </Col>
