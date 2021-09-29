@@ -8,6 +8,7 @@ export interface Brand {
   brandId: string;
   brandLogoUrl: string;
   brandName: string;
+  shopName?: string;
   overlayHtmlWithDiscount: string;
   overlayHtmlWithoutDiscount: string;
   duration: number;

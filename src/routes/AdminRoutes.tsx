@@ -47,6 +47,8 @@ import FanGroupDetail from "pages/fan-groups/FanGroupDetail";
 import Wallets from "pages/wallets/Wallets";
 import WalletDetail from "pages/wallets/WalletDetail";
 import MasterPassword from "pages/master-password/MasterPassword";
+import BrandVaults from "pages/vaults/BrandVaults";
+import BrandVaultDetail from "pages/vaults/BrandVaultDetail";
 
 function AdminRoutes() {
   return (
@@ -66,6 +68,16 @@ function AdminRoutes() {
       <AppRoute
         path="/feed/video-feed"
         component={VideoFeedDetail}
+        layout={AuthenticatedLayout}
+      />
+      <AppRoute
+        path="/vaults/vault"
+        component={BrandVaultDetail}
+        layout={AuthenticatedLayout}
+      />
+      <AppRoute
+        path="/vaults"
+        component={BrandVaults}
         layout={AuthenticatedLayout}
       />
       <AppRoute
