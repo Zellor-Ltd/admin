@@ -7,6 +7,7 @@ import { Tag } from "interfaces/Tag";
 import { useEffect, useState } from "react";
 import { Link, RouteComponentProps } from "react-router-dom";
 import { deleteTag, fetchTags } from "services/DiscoClubService";
+import CopyIdToClipboard from "components/CopyIdToClipboard";
 
 const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
   const detailsPathname = `${location.pathname}/tag`;
@@ -42,6 +43,13 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
   };
 
   const columns: ColumnsType<Tag> = [
+    {
+      title: "_id",
+      dataIndex: "id",
+      width: "6%",
+      render: (id) => <CopyIdToClipboard id={id} />,
+      align: "center",
+    },
     { title: "Tag", dataIndex: "tagName", width: "15%" },
     {
       title: "Product",

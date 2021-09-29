@@ -9,6 +9,7 @@ import moment from "moment";
 import { useEffect, useState } from "react";
 import { Link, RouteComponentProps } from "react-router-dom";
 import { deleteDdTemplate, fetchDdTemplates } from "services/DiscoClubService";
+import CopyIdToClipboard from "components/CopyIdToClipboard";
 
 const DdTemplates: React.FC<RouteComponentProps> = ({ history, location }) => {
   const detailsPathname = `${location.pathname}/dd-template`;
@@ -41,6 +42,13 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ history, location }) => {
   };
 
   const columns: ColumnsType<DdTemplate> = [
+    {
+      title: "_id",
+      dataIndex: "id",
+      width: "6%",
+      render: (id) => <CopyIdToClipboard id={id} />,
+      align: "center",
+    },
     {
       title: "Tag Name",
       dataIndex: "tagName",

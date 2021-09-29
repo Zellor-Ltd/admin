@@ -12,6 +12,7 @@ import {
   Table,
 } from "antd";
 import { ColumnsType } from "antd/lib/table";
+import CopyOrderToClipboard from "components/CopyOrderToClipboard";
 import { SelectBrand } from "components/SelectBrand";
 import useFilter from "hooks/useFilter";
 import { Brand } from "interfaces/Brand";
@@ -21,9 +22,8 @@ import moment from "moment";
 import { useEffect, useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 import { useSelector } from "react-redux";
-import { Link, RouteComponentProps } from "react-router-dom";
+import { RouteComponentProps } from "react-router-dom";
 import { fetchFans, fetchOrders, saveOrder } from "services/DiscoClubService";
-import CopyOrderToClipboard from "components/CopyOrderToClipboard";
 
 const Orders: React.FC<RouteComponentProps> = () => {
   const [tableloading, setTableLoading] = useState<boolean>(false);
@@ -163,14 +163,12 @@ const Orders: React.FC<RouteComponentProps> = () => {
     render: (userId: any) => {
       const fan = getFan(userId);
       return (
-        <Link to={{ pathname: `/users_fans/fan`, state: fan }}>
-          <Highlighter
-            highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
-            searchWords={[searchText]}
-            autoEscape
-            textToHighlight={fan?.user || ""}
-          />
-        </Link>
+        <Highlighter
+          highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
+          searchWords={[searchText]}
+          autoEscape
+          textToHighlight={fan?.user || ""}
+        />
       );
     },
   });
@@ -202,7 +200,7 @@ const Orders: React.FC<RouteComponentProps> = () => {
       dataIndex: "amount",
       width: "5%",
       align: "center",
-      render: (value: number) => `${value / 100}x`,
+      render: (value: number) => value / 100,
     },
     {
       title: "Name",
@@ -243,7 +241,7 @@ const Orders: React.FC<RouteComponentProps> = () => {
       render: (value: string, _, index) => (
         <Select
           loading={orderUpdateList[index]}
-          disabled={orderUpdateList[index]}
+          disabled
           defaultValue={value}
           style={{ width: "175px" }}
           onChange={(value) => handleSelectChange(value, index)}

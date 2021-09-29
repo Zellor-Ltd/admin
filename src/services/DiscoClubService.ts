@@ -246,6 +246,8 @@ export const fetchTransactionsPerBrand = (userId: string, brandId: string) =>
 
 export const fetchServersList = () => instance.get(`Wi/Ep/GetServersList`);
 
+export const fetchCurrencies = () => instance.get(`Wi/Ep/GetCurrencies`);
+
 export const saveVideoFeed = (params: FeedItem) => {
   if (params.id) {
     return instance.put("Disco/Feed/Update", params);
@@ -426,8 +428,8 @@ export const deleteTag = (data: IDelete) =>
 export const deleteCreator = (id: string) =>
   instance.delete(`Disco/Creator/Delete/${id}`);
 
-export const deleteProduct = (data: IDelete) =>
-  instance.delete(`Wi/Ep/RemoveProduct`, { data });
+export const deleteProduct = (id: string) =>
+  instance.delete(`Disco/Product/Remove/${id}`);
 
 export const deleteStagingProduct = (id: string) =>
   instance.delete(`Disco/Staging/Product/Remove/${id}`);

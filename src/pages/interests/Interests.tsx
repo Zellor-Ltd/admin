@@ -19,6 +19,7 @@ import { Image } from "interfaces/Image";
 import React, { useEffect, useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 import { fetchInterests, saveInterests } from "services/DiscoClubService";
+import CopyIdToClipboard from "components/CopyIdToClipboard";
 
 interface InterestsProps {}
 
@@ -202,6 +203,13 @@ const Interests: React.FC<InterestsProps> = () => {
   }, []);
 
   const columns: ColumnsType<FeedItem> = [
+    {
+      title: "_id",
+      dataIndex: "id",
+      width: "6%",
+      render: (id) => <CopyIdToClipboard id={id} />,
+      align: "center",
+    },
     {
       title: "Title",
       dataIndex: "description",

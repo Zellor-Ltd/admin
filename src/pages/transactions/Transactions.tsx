@@ -8,6 +8,7 @@ import moment from "moment";
 import { useState } from "react";
 import { Link, RouteComponentProps } from "react-router-dom";
 import { fetchWalletTransactions } from "services/DiscoClubService";
+import CopyOrderToClipboard from "components/CopyOrderToClipboard";
 
 const Transactions: React.FC<RouteComponentProps> = () => {
   const [tableLoading, setTableLoading] = useState<boolean>(false);
@@ -18,6 +19,13 @@ const Transactions: React.FC<RouteComponentProps> = () => {
   >([]);
 
   const columns: ColumnsType<Transaction> = [
+    {
+      title: "_id",
+      dataIndex: "id",
+      width: "6%",
+      render: (id) => <CopyOrderToClipboard order={id} />,
+      align: "center",
+    },
     {
       title: "Creation Time",
       dataIndex: "hCreationDate",

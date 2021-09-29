@@ -355,7 +355,7 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
           <Tabs.TabPane tab="Checkout" key="Checkout">
             <Row gutter={8}>
               <Col lg={8} xs={24}>
-                <Form.Item name="currencyIsoCode" label="Currency">
+                <Form.Item name="currencyIsoCode" label="Default Currency">
                   <Select placeholder="Please select a currency">
                     {currency.map((curr: any) => (
                       <Select.Option key={curr.value} value={curr.value}>
@@ -368,13 +368,90 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
               <Col lg={8} xs={24}>
                 <Form.Item
                   name="originalPrice"
-                  label="Price"
+                  label="Default Price"
                   rules={[{ required: true }]}
                 >
                   <InputNumber />
                 </Form.Item>
               </Col>
+            </Row>
+            <Row gutter={8}>
               <Col lg={8} xs={24}>
+                <Form.Item name="currencyIsoCodeUS" label="Currency US">
+                  <Select placeholder="Please select a currency">
+                    {currency.map((curr: any) => (
+                      <Select.Option key={curr.value} value={curr.value}>
+                        {curr.name}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col lg={8} xs={24}>
+                <Form.Item
+                  name="originalPriceUS"
+                  label="Price US"
+                  rules={[{ }]}
+                >
+                  <InputNumber />
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row gutter={8}>
+              <Col lg={8} xs={24}>
+                <Form.Item name="currencyIsoCodeGB" label="Currency UK">
+                  <Select placeholder="Please select a currency">
+                    {currency.map((curr: any) => (
+                      <Select.Option key={curr.value} value={curr.value}>
+                        {curr.name}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col lg={8} xs={24}>
+                <Form.Item
+                  name="originalPriceGB"
+                  label="Price UK"
+                  rules={[{ }]}
+                >
+                  <InputNumber />
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row gutter={8}>
+              <Col lg={8} xs={24}>
+                <Form.Item name="currencyIsoCodeIE" label="Currency Europe">
+                  <Select placeholder="Please select a currency">
+                    {currency.map((curr: any) => (
+                      <Select.Option key={curr.value} value={curr.value}>
+                        {curr.name}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col lg={8} xs={24}>
+                <Form.Item
+                  name="originalPriceIE"
+                  label="Price Europe"
+                  rules={[{}]}
+                >
+                  <InputNumber />
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row gutter={8}>
+              <Col lg={4} xs={8}>
+                <Form.Item
+                  name="displayDiscountPage"
+                  label="Allow Use of DD?"
+                  valuePropName="checked"
+                >
+                  <Switch />
+                </Form.Item>
+              </Col>
+              <Col lg={4} xs={8}>
                 <Form.Item
                   name="maxDiscoDollars"
                   label="Max Discount in DD"
@@ -417,17 +494,6 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                   />
                 </Form.Item>
               </Col>
-            </Row>
-            <Row gutter={8}>
-              <Col lg={8} xs={24}>
-                <Form.Item
-                  name="displayDiscountPage"
-                  label="Allow Use of D-Dollars?"
-                  valuePropName="checked"
-                >
-                  <Switch />
-                </Form.Item>
-              </Col>
               <Col lg={4} xs={8}>
                 <Form.Item
                   name="discoPercentage"
@@ -437,9 +503,18 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                   <InputNumber />
                 </Form.Item>
               </Col>
+              <Col lg={4} xs={8}>
+                <Form.Item
+                  name="shopifyUniqueId"
+                  label="Shopify Uid"
+                  rules={[{ }]}
+                >
+                  <InputNumber />
+                </Form.Item>
+              </Col>
             </Row>
             <Row>
-              <Col lg={8} xs={24}>
+              <Col lg={4} xs={8}>
                 <Form.Item name="weight" label="Weight">
                   <Input type="number" placeholder="Weight in Kg" />
                 </Form.Item>
@@ -476,27 +551,7 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                   />
                 </Form.Item>
               </Col>
-              <Col lg={24}>
-                <Typography.Title level={5}>Videos feed</Typography.Title>
-                <Form.Item
-                  shouldUpdate={(prevValues, curValues) =>
-                    prevValues.relatedVideoFeed !== curValues.relatedVideoFeed
-                  }
-                >
-                  {({ getFieldValue }) => {
-                    const relatedVideoFeed: Video[] =
-                      getFieldValue("relatedVideoFeed") || [];
-                    return (
-                      <Table
-                        columns={videoColumns}
-                        dataSource={relatedVideoFeed}
-                        bordered
-                        rowKey={(record) => `video_${record.videoFeedId}`}
-                      />
-                    );
-                  }}
-                </Form.Item>
-              </Col>
+              
             </Row>
           </Tabs.TabPane>
         </Tabs>

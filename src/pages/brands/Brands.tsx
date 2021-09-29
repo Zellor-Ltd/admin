@@ -24,6 +24,7 @@ import { Brand } from "interfaces/Brand";
 import { useEffect, useState } from "react";
 import { Link, RouteComponentProps } from "react-router-dom";
 import { deleteBrand, fetchBrands, saveBrand } from "services/DiscoClubService";
+import { PauseSwitch } from "./PauseSwitch";
 
 const tagColorByStatus: any = {
   approved: "green",
@@ -103,7 +104,9 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
       dataIndex: "paused",
       width: "15%",
       align: "center",
-      render: (value: any) => <b>{value ? "Yes" : "No"}</b>,
+      render: (value: any, record: Brand) => (
+        <PauseSwitch brand={record} reloadFn={fetch} />
+      ),
     },
     {
       title: "Automated",

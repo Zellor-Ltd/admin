@@ -3,7 +3,7 @@ import {
   EditOutlined,
   SettingOutlined,
 } from "@ant-design/icons";
-import { Button, Checkbox, Col, PageHeader, Popconfirm, Row, Tag } from "antd";
+import { Button, Checkbox, Col, PageHeader, Popconfirm, Row } from "antd";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
 import CopyIdToClipboard from "components/CopyIdToClipboard";
 import EditableTable, { EditableColumnType } from "components/EditableTable";
@@ -13,7 +13,7 @@ import { SearchFilterDebounce } from "components/SearchFilterDebounce";
 import { SelectBrand } from "components/SelectBrand";
 import { AppContext } from "contexts/AppContext";
 import useAllCategories from "hooks/useAllCategories";
-import { usePageInfiniteScroll } from "hooks/usePageInfiniteScroll";
+import { usePageInfiniteScroll } from "../../hooks/usePageInfiniteScroll";
 import { useRequest } from "hooks/useRequest";
 import { Brand } from "interfaces/Brand";
 import { Product } from "interfaces/Product";
@@ -58,11 +58,14 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
     setLoading,
   });
 
-  const { fetchTableData } = usePageInfiniteScroll(fetchProducts, {
-    brandId: brandFilter?.id,
-    query: searchFilter,
-    unclassified: unclassifiedFilter,
-  });
+  const { fetchTableData, refreshTable } = usePageInfiniteScroll(
+    fetchProducts,
+    {
+      brandId: brandFilter?.id,
+      query: searchFilter,
+      unclassified: unclassifiedFilter,
+    }
+  );
 
   const getResources = async () => {
     const [{ results }] = await Promise.all([
@@ -74,6 +77,7 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
 
   const refreshProducts = async () => {
     setSelectedRowKeys([]);
+    refreshTable();
   };
 
   useEffect(() => {
@@ -82,7 +86,7 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
   }, []);
 
   const deleteItem = async (id: string) => {
-    await doRequest(() => deleteProduct({ id }));
+    await doRequest(() => deleteProduct(id));
     await refreshProducts();
   };
 
@@ -98,7 +102,7 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
 
   const columns: EditableColumnType<Product>[] = [
     {
-      title: "_id",
+      title: "Id",
       dataIndex: "id",
       width: "6%",
       render: (id) => <CopyIdToClipboard id={id} />,
@@ -120,7 +124,7 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
       responsive: ["sm"],
     },
     {
-      title: "Max Disco Dollars",
+      title: "Max DD",
       dataIndex: "maxDiscoDollars",
       width: "12%",
       align: "center",
@@ -129,12 +133,11 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
       // number: true,
     },
     {
-      title: "Related Videos",
-      dataIndex: "relatedVideoFeed",
+      title: "Shopify Id",
+      dataIndex: "shopifyUniqueId",
       width: "15%",
       align: "center",
       responsive: ["sm"],
-      render: (videos = []) => <Tag>{videos.length}</Tag>,
     },
 
     {

@@ -8,14 +8,15 @@ import {
   message,
   PageHeader,
   Row,
-  Tabs,
   Select,
   Table,
+  Tabs,
   Typography,
 } from "antd";
 import { formatMoment } from "helpers/formatMoment";
 import { Category } from "interfaces/Category";
 import { Creator } from "interfaces/Creator";
+import { Currency } from "interfaces/Currency";
 import { Role } from "interfaces/Role";
 import { ServerAlias } from "interfaces/ServerAlias";
 import { useEffect, useState } from "react";
@@ -23,6 +24,7 @@ import { RouteComponentProps } from "react-router-dom";
 import {
   fetchCategories,
   fetchCreators,
+  fetchCurrencies,
   fetchProfiles,
   fetchServersList,
   saveUser,
@@ -49,6 +51,7 @@ const FanDetail: React.FC<RouteComponentProps> = (props) => {
   const [creators, setCreators] = useState<Creator[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [serversList, setServersList] = useState<ServerAlias[]>([]);
+  const [currencies, setCurrencies] = useState<Currency[]>([]);
   const initial: any = location.state || {};
   const [form] = Form.useForm();
 
@@ -74,11 +77,16 @@ const FanDetail: React.FC<RouteComponentProps> = (props) => {
       const response: any = await fetchServersList();
       setServersList(response.results);
     };
+    const getCurrencies = async () => {
+      const response: any = await fetchCurrencies();
+      setCurrencies(response.results);
+    };
     setLoading(true);
     getRoles();
     getCreatores();
     getCategories();
     getServersList();
+    getCurrencies();
     return () => {
       mounted = false;
     };
@@ -232,13 +240,13 @@ const FanDetail: React.FC<RouteComponentProps> = (props) => {
         <Tabs defaultActiveKey="Details">
           <Tabs.TabPane tab="Details" key="Details">
             <Row gutter={8}>
-            {initial.id && (
-              <Col lg={8} xs={24}>
-                <Form.Item label="_id" name="id">
-                  <Input disabled />
-                </Form.Item>
-              </Col>
-            )}
+              {initial.id && (
+                <Col lg={8} xs={24}>
+                  <Form.Item label="_id" name="id">
+                    <Input disabled />
+                  </Form.Item>
+                </Col>
+              )}
               <Col lg={8} xs={24}>
                 <Form.Item label="Name" name="userName">
                   <Input />
@@ -295,6 +303,17 @@ const FanDetail: React.FC<RouteComponentProps> = (props) => {
                   />
                 </Form.Item>
               </Col>
+              <Col lg={8} xs={24}>
+                <Form.Item label="Default Currency" name="currencyCode">
+                  <Select>
+                    {currencies.map((currency) => (
+                      <Select.Option key={currency.id} value={currency.code}>
+                        {currency.code}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </Col>
             </Row>
           </Tabs.TabPane>
           <Tabs.TabPane tab="Address" key="Address">
@@ -334,7 +353,10 @@ const FanDetail: React.FC<RouteComponentProps> = (props) => {
                 <Form.Item name={"serverAlias"} label="Server Alias">
                   <Select>
                     {serversList.map((serverAlias) => (
-                      <Select.Option key={serverAlias.id} value={serverAlias.id}>
+                      <Select.Option
+                        key={serverAlias.id}
+                        value={serverAlias.id}
+                      >
                         {serverAlias.name}
                       </Select.Option>
                     ))}
@@ -403,7 +425,8 @@ const FanDetail: React.FC<RouteComponentProps> = (props) => {
               <Col lg={24} xs={24}>
                 <Form.Item
                   shouldUpdate={(prevValues, curValues) =>
-                    prevValues.followingCategories !== curValues.followingCategories
+                    prevValues.followingCategories !==
+                    curValues.followingCategories
                   }
                 >
                   {({ getFieldValue }) => {
