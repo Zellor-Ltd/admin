@@ -58,7 +58,7 @@ const OrderDetail: React.FC<RouteComponentProps> = (props) => {
             </Button>
           </Col>
           <Col>
-            <Button loading={loading} type="primary" onClick={onFinish}>
+            <Button loading={loading} type="primary" htmlType="submit">
               Save Changes
             </Button>
           </Col>

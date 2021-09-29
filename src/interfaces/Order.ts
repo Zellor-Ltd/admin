@@ -9,5 +9,6 @@ export interface Order {
   hLastUpdate?: string;
   customerEmail?: string;
   product?: Product;
+  userid: string;
   [key: string]: any;
 }

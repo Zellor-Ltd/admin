@@ -64,7 +64,7 @@ const BrandDetail: React.FC<RouteComponentProps> = (props) => {
         onFinish={onFinish}
       >
         <Tabs defaultActiveKey="Details">
-          <Tabs.TabPane tab="Details" key="Details">
+          <Tabs.TabPane forceRender tab="Details" key="Details">
             <Row gutter={8}>
               <Col lg={3} xs={3}>
                 <Form.Item
@@ -97,7 +97,7 @@ const BrandDetail: React.FC<RouteComponentProps> = (props) => {
             </Row>
           </Tabs.TabPane>
 
-          <Tabs.TabPane tab="Checkout" key="Checkout">
+          <Tabs.TabPane forceRender tab="Checkout" key="Checkout">
             <Row gutter={8}>
               <Col lg={12} xs={24}>
                 <Col lg={16} xs={24}>
@@ -212,7 +212,7 @@ const BrandDetail: React.FC<RouteComponentProps> = (props) => {
             </Row>
           </Tabs.TabPane>
 
-          <Tabs.TabPane tab="Images" key="Images">
+          <Tabs.TabPane forceRender tab="Images" key="Images">
             <Col lg={12} xs={24}>
               <Row>
                 <Col lg={6} xs={24}>
@@ -298,7 +298,7 @@ const BrandDetail: React.FC<RouteComponentProps> = (props) => {
             </Button>
           </Col>
           <Col>
-            <Button loading={loading} type="primary" onClick={onFinish}>
+            <Button loading={loading} type="primary" htmlType="submit">
               Save Changes
             </Button>
           </Col>

@@ -12,11 +12,9 @@ import {
   Select,
   Slider,
   Switch,
-  Table,
   Tabs,
   Typography,
 } from "antd";
-import { ColumnsType } from "antd/lib/table";
 import { Upload } from "components";
 import { RichTextEditor } from "components/RichTextEditor";
 import { formatMoment } from "helpers/formatMoment";
@@ -25,7 +23,6 @@ import useAllCategories from "hooks/useAllCategories";
 import { Brand } from "interfaces/Brand";
 import { AllCategories } from "interfaces/Category";
 import { Product } from "interfaces/Product";
-import { Video } from "interfaces/Video";
 import { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RouteComponentProps, useParams } from "react-router-dom";
@@ -38,20 +35,6 @@ import ProductCategoriesTrees from "./ProductCategoriesTrees";
 import "./Products.scss";
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
-
-const videoColumns: ColumnsType<Video> = [
-  {
-    title: "ID",
-    dataIndex: "videoFeedId",
-    width: "50%",
-    align: "center",
-  },
-  {
-    title: "Thumbnail URL",
-    dataIndex: "thumbnailUrl",
-    width: "50%",
-  },
-];
 
 interface RouteParams {
   productMode: "staging" | "commited";
@@ -216,7 +199,7 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
         layout="vertical"
       >
         <Tabs defaultActiveKey="Details">
-          <Tabs.TabPane tab="Details" key="Details">
+          <Tabs.TabPane forceRender tab="Details" key="Details">
             <Row gutter={8}>
               <Col lg={12} xs={24}>
                 <Row gutter={8}>
@@ -290,7 +273,7 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
               </Col>
             </Row>
           </Tabs.TabPane>
-          <Tabs.TabPane tab="Categories" key="Categories">
+          <Tabs.TabPane forceRender tab="Categories" key="Categories">
             <ProductCategoriesTrees
               categories={initial?.categories}
               allCategories={allCategories}
@@ -352,7 +335,7 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
               </Col>
             </Row>
           </Tabs.TabPane>
-          <Tabs.TabPane tab="Checkout" key="Checkout">
+          <Tabs.TabPane forceRender tab="Checkout" key="Checkout">
             <Row gutter={8}>
               <Col lg={8} xs={24}>
                 <Form.Item name="currencyIsoCode" label="Default Currency">
@@ -388,11 +371,7 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                 </Form.Item>
               </Col>
               <Col lg={8} xs={24}>
-                <Form.Item
-                  name="originalPriceUS"
-                  label="Price US"
-                  rules={[{ }]}
-                >
+                <Form.Item name="originalPriceUS" label="Price US" rules={[{}]}>
                   <InputNumber />
                 </Form.Item>
               </Col>
@@ -410,11 +389,7 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                 </Form.Item>
               </Col>
               <Col lg={8} xs={24}>
-                <Form.Item
-                  name="originalPriceGB"
-                  label="Price UK"
-                  rules={[{ }]}
-                >
+                <Form.Item name="originalPriceGB" label="Price UK" rules={[{}]}>
                   <InputNumber />
                 </Form.Item>
               </Col>
@@ -507,7 +482,7 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                 <Form.Item
                   name="shopifyUniqueId"
                   label="Shopify Uid"
-                  rules={[{ }]}
+                  rules={[{}]}
                 >
                   <InputNumber />
                 </Form.Item>
@@ -521,7 +496,7 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
               </Col>
             </Row>
           </Tabs.TabPane>
-          <Tabs.TabPane tab="Images" key="Images">
+          <Tabs.TabPane forceRender tab="Images" key="Images">
             <Row gutter={8}>
               <Col lg={24} xs={24}>
                 <Form.Item label="Tag Image">
@@ -551,7 +526,6 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                   />
                 </Form.Item>
               </Col>
-              
             </Row>
           </Tabs.TabPane>
         </Tabs>
@@ -569,7 +543,7 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
             <Button
               disabled={initial?.brand.automated === true && !isStaging}
               type="primary"
-              onClick={onFinish}
+              htmlType="submit"
               loading={loading}
             >
               Save Changes

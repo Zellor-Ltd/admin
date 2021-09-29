@@ -312,7 +312,7 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
             className="video-feed"
           >
             <Tabs defaultActiveKey="Video Details">
-              <Tabs.TabPane tab="Video Details" key="Video Details">
+              <Tabs.TabPane forceRender tab="Video Details" key="Video Details">
                 <Row gutter={8}>
                   <Col lg={24} xs={24}>
                     <Form.Item name="status" label="Status">
@@ -374,7 +374,7 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
                   </Col>
                 </Row>
               </Tabs.TabPane>
-              <Tabs.TabPane tab="Descriptors" key="Descriptors">
+              <Tabs.TabPane forceRender tab="Descriptors" key="Descriptors">
                 <Row gutter={8}>
                   <Col lg={24} xs={24}>
                     <Form.Item name="description" label="Long description">
@@ -388,7 +388,7 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
                   </Col>
                 </Row>
               </Tabs.TabPane>
-              <Tabs.TabPane tab="Settings" key="Settings">
+              <Tabs.TabPane forceRender tab="Settings" key="Settings">
                 <Row gutter={8}>
                   <Col lg={12} xs={24}>
                     <Form.Item name="lengthTotal" label="Length">
@@ -455,7 +455,7 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
                   </Col>
                 </Row>
               </Tabs.TabPane>
-              <Tabs.TabPane tab="Segments" key="Segments">
+              <Tabs.TabPane forceRender tab="Segments" key="Segments">
                 <Row gutter={8}>
                   <Col lg={12} xs={24}>
                     <Row gutter={8}>
@@ -561,7 +561,7 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
                 </Button>
               </Col>
               <Col>
-                <Button type="primary" onClick={onFinish} loading={loading}>
+                <Button type="primary" htmlType="submit" loading={loading}>
                   Save Changes
                 </Button>
               </Col>

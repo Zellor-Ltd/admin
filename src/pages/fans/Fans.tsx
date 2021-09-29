@@ -11,11 +11,10 @@ import { SearchFilter } from "components/SearchFilter";
 import useFilter from "hooks/useFilter";
 import { useRequest } from "hooks/useRequest";
 import { Fan } from "interfaces/Fan";
-import { FanGroup } from "interfaces/FanGroup";
 import EditFanModal from "pages/fans/EditFanModal";
 import React, { useEffect, useState } from "react";
 import { Link, RouteComponentProps } from "react-router-dom";
-import { fetchFanGroups, fetchFans } from "services/DiscoClubService";
+import { fetchFans } from "services/DiscoClubService";
 import FanAPITestModal from "./FanAPITestModal";
 import FanFeedModal from "./FanFeedModal";
 
@@ -31,7 +30,6 @@ const Fans: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
   const [fanAPITest, setFanAPITest] = useState<Fan | null>(null);
   const [fanFeedModal, setFanFeedModal] = useState<Fan | null>(null);
-  const [fanGroups, setFanGroups] = useState<FanGroup[]>([]);
 
   const { doFetch } = useRequest({ setLoading });
 
@@ -41,18 +39,13 @@ const Fans: React.FC<RouteComponentProps> = ({ history, location }) => {
     addFilterFunction,
   } = useFilter<Fan>([]);
 
-  const getFansGroups = async () => {
-    const { results } = await doFetch(() => fetchFanGroups());
-    setFanGroups(results);
-  };
-
   const getFans = async () => {
     const { results } = await doFetch(() => fetchFans());
     setFans(results);
   };
 
   const getResources = async () => {
-    await Promise.all([getFans(), getFansGroups()]);
+    await Promise.all([getFans()]);
   };
 
   useEffect(() => {

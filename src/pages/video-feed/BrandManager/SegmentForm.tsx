@@ -48,7 +48,7 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
   useEffect(() => {
     let mounted = true;
     async function getTags() {
-      const response: any = await fetchTags();
+      const response: any = await fetchTags({});
       if (mounted) {
         setTags(response.results);
         setLoading(false);
