@@ -42,6 +42,7 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
   const initial = location.state as Brand;
   const [loading, setLoading] = useState<boolean>(false);
   const [vaults, setVaults] = useState<BrandVault[]>([]);
+  const [currentVault, setCurrentVault] = useState<BrandVault>();
   const [activeTabKey, setActiveTabKey] = React.useState("Details");
   const [vaultOptions, setVaultOptions] = useState<boolean>(false);
   const { doFetch } = useRequest({ setLoading });
@@ -70,12 +71,37 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
 
   const deleteItem = async (vault: BrandVault) => {
     deleteBrandVault(vault.id);
+    setActiveTabKey("Details");
+  };
+
+  const saveItem = async (vault: any) => {
+    const key = form.getFieldValue("key");
+    const shopName = form.getFieldValue("shopName");
+    const apiShopName = form.getFieldValue("apiShopName");
+    const token = form.getFieldValue("token");
+    console.log(vault);
+    if (vault === undefined) {
+      const newVault = {
+        key: key,
+        shopName: shopName,
+        apiShopName: apiShopName,
+        token: token,
+      };
+      await doRequest(() => saveBrandVault(newVault));
+    } else {
+      vault.key = key;
+      vault.shopName = shopName;
+      vault.apiShopName = apiShopName;
+      vault.token = token;
+      await doRequest(() => saveBrandVault(vault));
+    }
+    setActiveTabKey("Details");
     setActiveTabKey("Secrets");
   };
 
-  const saveItem = async () => {
-    const vaultTemplate = form.getFieldsValue(true);
-    await doRequest(() => saveBrandVault(vaultTemplate));
+  const editVault = (vault: any) => {
+    setCurrentVault(vault);
+    setVaultOptions(true);
   };
 
   const columns: ColumnsType<BrandVault> = [
@@ -95,13 +121,13 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
     {
       title: "Shop Name",
       dataIndex: "shopName",
-      width: "20%",
+      width: "15%",
       align: "center",
     },
     {
       title: "API Shop Name",
       dataIndex: "apiShopName",
-      width: "20%",
+      width: "15%",
       align: "center",
     },
     {
@@ -129,7 +155,10 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
       align: "right",
       render: (_, record: BrandVault) => (
         <>
-          <Link to={{ pathname: detailsPathname, state: record }}>
+          <Link
+            to={{ pathname: detailsPathname, state: record }}
+            onClick={() => editVault(record)}
+          >
             <EditOutlined />
           </Link>
           <Popconfirm
@@ -414,19 +443,25 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
           </Tabs.TabPane>
           <Tabs.TabPane forceRender tab="Secrets" key="Secrets">
             {!vaultOptions && (
-              <Row gutter={8}>
-                <Col lg={8} xs={16}>
-                  <Button key="1" onClick={() => setVaultOptions(true)}>
-                    New Item
-                  </Button>
-                </Col>
-                <Table
-                  rowKey="id"
-                  columns={columns}
-                  dataSource={vaults}
-                  loading={loading}
-                />
-              </Row>
+              <Col>
+                <Row gutter={8}>
+                  <Col>
+                    <Button key="1" onClick={() => setVaultOptions(true)}>
+                      New Item
+                    </Button>
+                  </Col>
+                </Row>
+                <Row gutter={8}>
+                  <Col span={24}>
+                    <Table
+                      rowKey="id"
+                      columns={columns}
+                      dataSource={vaults}
+                      loading={loading}
+                    />
+                  </Col>
+                </Row>
+              </Col>
             )}
             {vaultOptions && (
               <Col>
@@ -478,8 +513,12 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
                     </Button>
                   </Col>
                   <Col>
-                    <Button loading={loading} type="primary" onClick={saveItem}>
-                      Save Changes
+                    <Button
+                      loading={loading}
+                      type="primary"
+                      onClick={() => saveItem(currentVault)}
+                    >
+                      Save Vault
                     </Button>
                   </Col>
                 </Row>
