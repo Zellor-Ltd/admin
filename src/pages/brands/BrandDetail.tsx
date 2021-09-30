@@ -104,6 +104,11 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
     setVaultOptions(true);
   };
 
+  const newItem = () => {
+    setCurrentVault(undefined);
+    setVaultOptions(true);
+  };
+
   const columns: ColumnsType<BrandVault> = [
     {
       title: "_id",
@@ -446,7 +451,7 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
               <Col>
                 <Row gutter={8}>
                   <Col>
-                    <Button key="1" onClick={() => setVaultOptions(true)}>
+                    <Button key="1" onClick={() => newItem()}>
                       New Item
                     </Button>
                   </Col>
@@ -472,7 +477,7 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
                       name="key"
                       rules={[{ required: true }]}
                     >
-                      <Input />
+                      <Input value={currentVault ? currentVault.key : ""} />
                     </Form.Item>
                   </Col>
                   <Col lg={16} xs={24}>
@@ -481,7 +486,9 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
                       name="shopName"
                       rules={[{ required: true }]}
                     >
-                      <Input />
+                      <Input
+                        value={currentVault ? currentVault.shopName : ""}
+                      />
                     </Form.Item>
                   </Col>
                   <Col lg={16} xs={24}>
@@ -490,7 +497,9 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
                       name="apiShopName"
                       rules={[{ required: true }]}
                     >
-                      <Input />
+                      <Input
+                        value={currentVault ? currentVault.apiShopName : ""}
+                      />
                     </Form.Item>
                   </Col>
                   <Col lg={16} xs={24}>
@@ -499,7 +508,10 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
                       name="token"
                       rules={[{ required: true }]}
                     >
-                      <Input type="password" />
+                      <Input
+                        type="password"
+                        value={currentVault ? currentVault.token : ""}
+                      />
                     </Form.Item>
                   </Col>
                 </Col>
