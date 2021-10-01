@@ -137,10 +137,14 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
         reader.onload = () => resolve(reader.result);
       });
     }
-    const image = new Image();
-    image.src = src;
-    const imgWindow = window.open(src);
-    imgWindow?.document.write(image.outerHTML);
+    if (accept === "video/*") {
+      window.open(src);
+    } else {
+      const image = new Image();
+      image.src = src;
+      const imgWindow = window.open(src);
+      imgWindow?.document.write(image.outerHTML);
+    }
   };
 
   const action = `${process.env.REACT_APP_HOST_ENDPOINT}/Wi/Upload`;
@@ -157,7 +161,8 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
         listType="picture-card"
         fileList={fileListLocal}
         maxCount={maxCount}
-        onPreview={onPreview}>
+        onPreview={onPreview}
+      >
         {fileListLocal.length >= maxCount ? null : uploadButton}
       </Upload>
     </>
