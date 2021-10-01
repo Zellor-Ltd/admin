@@ -108,6 +108,13 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
       align: "center",
     },
     {
+      title: "In Stock",
+      dataIndex: "outOfStock",
+      width: "7%",
+      align: "center",
+      render: (outOfStock: boolean) => (outOfStock ? "No" : "Yes"),
+    },
+    {
       title: "Max DD",
       dataIndex: "maxDiscoDollars",
       width: "7%",
