@@ -149,7 +149,7 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
       <Row gutter={8}>
         <Col lg={6} xs={24}>
           <Col lg={24} xs={24}>
-            <Form.Item label="Video URL">
+            <Form.Item label="Video">
               <Upload.VideoUpload
                 fileList={segment?.video}
                 formProp="video"
