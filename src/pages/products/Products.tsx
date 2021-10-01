@@ -153,6 +153,13 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
       responsive: ["sm"],
     },
     {
+      title: "In Stock",
+      dataIndex: "outOfStock",
+      width: "7%",
+      align: "center",
+      render: (outOfStock: boolean) => (outOfStock ? "No" : "Yes"),
+    },
+    {
       title: "Max DD",
       dataIndex: "maxDiscoDollars",
       width: "12%",
