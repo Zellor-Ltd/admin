@@ -48,6 +48,7 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
   const { doFetch } = useRequest({ setLoading });
   const { doRequest } = useRequest({ setLoading });
   const [form] = Form.useForm();
+  const [vaultForm] = Form.useForm();
 
   const {
     settings: { checkoutType = [] },
@@ -75,10 +76,10 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
   };
 
   const saveItem = async (vault: any) => {
-    const key = form.getFieldValue("key");
-    const shopName = form.getFieldValue("shopName");
-    const apiShopName = form.getFieldValue("apiShopName");
-    const token = form.getFieldValue("token");
+    const key = vaultForm.getFieldValue("key");
+    const shopName = vaultForm.getFieldValue("shopName");
+    const apiShopName = vaultForm.getFieldValue("apiShopName");
+    const token = vaultForm.getFieldValue("token");
     if (vault === undefined) {
       const newVault = {
         key: key,
@@ -104,7 +105,14 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
   };
 
   const newItem = () => {
-    setCurrentVault(undefined);
+    const template = {
+      shopName: initial.shopName,
+      id: "",
+      apiShopName: "",
+      tokenType: "",
+      token: "",
+    };
+    setCurrentVault(template as BrandVault);
     setVaultOptions(true);
   };
 
@@ -202,6 +210,102 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
 
   const changeTab = (activeKey: string) => {
     setActiveTabKey(activeKey);
+  };
+
+  const returnFromVault = () => {
+    setVaultOptions(false);
+    if (currentVault?.id) {
+      history.goBack();
+    }
+  };
+
+  const BrandVaultForm: React.FC<any> = () => {
+    return (
+      <>
+        {vaultOptions ? (
+          <Form name="brandVaultForm" layout="vertical" form={vaultForm}>
+            <Col>
+              <Col lg={12} xs={24}>
+                <Col lg={16} xs={24}>
+                  <Form.Item
+                    label="Key"
+                    name="key"
+                    rules={[{ required: true }]}
+                    initialValue={currentVault?.key || ""}
+                  >
+                    <Input />
+                  </Form.Item>
+                </Col>
+                <Col lg={16} xs={24}>
+                  <Form.Item
+                    label="Shop Name"
+                    name="shopName"
+                    rules={[{ required: true }]}
+                    initialValue={initial.shopName}
+                  >
+                    <Input />
+                  </Form.Item>
+                </Col>
+                <Col lg={16} xs={24}>
+                  <Form.Item
+                    label="API Shop Name"
+                    name="apiShopName"
+                    rules={[{ required: true }]}
+                  >
+                    <Input value={currentVault?.apiShopName || ""} />
+                  </Form.Item>
+                </Col>
+                <Col lg={16} xs={24}>
+                  <Form.Item
+                    label="Token"
+                    name="token"
+                    rules={[{ required: true }]}
+                  >
+                    <Input type="password" value={currentVault?.token || ""} />
+                  </Form.Item>
+                </Col>
+              </Col>
+              <Row gutter={8}>
+                <Col>
+                  <Button type="default" onClick={() => returnFromVault()}>
+                    Cancel
+                  </Button>
+                </Col>
+                <Col>
+                  <Button
+                    loading={loading}
+                    type="primary"
+                    onClick={() => saveItem(currentVault)}
+                  >
+                    Save Vault
+                  </Button>
+                </Col>
+              </Row>
+            </Col>
+          </Form>
+        ) : (
+          <Col>
+            <Row gutter={8}>
+              <Col>
+                <Button key="1" onClick={() => newItem()}>
+                  New Item
+                </Button>
+              </Col>
+            </Row>
+            <Row gutter={8}>
+              <Col span={24}>
+                <Table
+                  rowKey="id"
+                  columns={columns}
+                  dataSource={vaults}
+                  loading={loading}
+                />
+              </Col>
+            </Row>
+          </Col>
+        )}
+      </>
+    );
   };
 
   return (
@@ -446,98 +550,10 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
             </Col>
           </Tabs.TabPane>
           <Tabs.TabPane forceRender tab="Secrets" key="Secrets">
-            {!vaultOptions && (
-              <Col>
-                <Row gutter={8}>
-                  <Col>
-                    <Button key="1" onClick={() => newItem()}>
-                      New Item
-                    </Button>
-                  </Col>
-                </Row>
-                <Row gutter={8}>
-                  <Col span={24}>
-                    <Table
-                      rowKey="id"
-                      columns={columns}
-                      dataSource={vaults}
-                      loading={loading}
-                    />
-                  </Col>
-                </Row>
-              </Col>
-            )}
-            {vaultOptions && (
-              <Col>
-                <Col lg={12} xs={24}>
-                  <Col lg={16} xs={24}>
-                    <Form.Item
-                      label="Key"
-                      name="key"
-                      rules={[{ required: true }]}
-                    >
-                      <Input value={currentVault ? currentVault.key : ""} />
-                    </Form.Item>
-                  </Col>
-                  <Col lg={16} xs={24}>
-                    <Form.Item
-                      label="Shop Name"
-                      name="shopName"
-                      rules={[{ required: true }]}
-                    >
-                      <Input
-                        value={currentVault ? currentVault.shopName : ""}
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col lg={16} xs={24}>
-                    <Form.Item
-                      label="API Shop Name"
-                      name="apiShopName"
-                      rules={[{ required: true }]}
-                    >
-                      <Input
-                        value={currentVault ? currentVault.apiShopName : ""}
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col lg={16} xs={24}>
-                    <Form.Item
-                      label="Token"
-                      name="token"
-                      rules={[{ required: true }]}
-                    >
-                      <Input
-                        type="password"
-                        value={currentVault ? currentVault.token : ""}
-                      />
-                    </Form.Item>
-                  </Col>
-                </Col>
-                <Row gutter={8}>
-                  <Col>
-                    <Button
-                      type="default"
-                      onClick={() => setVaultOptions(false)}
-                    >
-                      Cancel
-                    </Button>
-                  </Col>
-                  <Col>
-                    <Button
-                      loading={loading}
-                      type="primary"
-                      onClick={() => saveItem(currentVault)}
-                    >
-                      Save Vault
-                    </Button>
-                  </Col>
-                </Row>
-              </Col>
-            )}
+            <BrandVaultForm />
           </Tabs.TabPane>
         </Tabs>
-        {!vaultOptions && (
+        {activeTabKey !== "Secrets" && (
           <Row gutter={8}>
             <Col>
               <Button type="default" onClick={() => history.goBack()}>
