@@ -47,8 +47,6 @@ import FanGroupDetail from "pages/fan-groups/FanGroupDetail";
 import Wallets from "pages/wallets/Wallets";
 import WalletDetail from "pages/wallets/WalletDetail";
 import MasterPassword from "pages/master-password/MasterPassword";
-import BrandVaults from "pages/vaults/BrandVaults";
-import BrandVaultDetail from "pages/vaults/BrandVaultDetail";
 
 function AdminRoutes() {
   return (
@@ -118,11 +116,6 @@ function AdminRoutes() {
       <AppRoute
         path="/settings_tags"
         component={Tags}
-        layout={AuthenticatedLayout}
-      />
-      <AppRoute
-        path="/brands/brand/vaults"
-        component={BrandVaultDetail}
         layout={AuthenticatedLayout}
       />
       <AppRoute
