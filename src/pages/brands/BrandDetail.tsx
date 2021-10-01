@@ -79,7 +79,6 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
     const shopName = form.getFieldValue("shopName");
     const apiShopName = form.getFieldValue("apiShopName");
     const token = form.getFieldValue("token");
-    console.log(vault);
     if (vault === undefined) {
       const newVault = {
         key: key,

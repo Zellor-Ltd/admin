@@ -396,7 +396,6 @@ export const fetchBrandVault = (id: string) =>
   instance.get(`Disco/Brand/Vault/List/${id}`);
 
 export const saveBrandVault = (params: any) => {
-  console.log(params);
   if (params.id) {
     return instance.post("Disco/Brand/Vault/Update", params);
   } else {
