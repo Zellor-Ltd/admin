@@ -127,6 +127,15 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
       ),
     },
     {
+      title: "Disco %",
+      dataIndex: "discoPercentage",
+      width: "12%",
+      align: "center",
+      responsive: ["sm"],
+      // editable: true,
+      // number: true,
+    },
+    {
       title: "Status",
       dataIndex: "status",
       width: "20%",

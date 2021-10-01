@@ -169,6 +169,15 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
       // number: true,
     },
     {
+      title: "Disco %",
+      dataIndex: "discoPercentage",
+      width: "8%",
+      align: "center",
+      responsive: ["sm"],
+      // editable: true,
+      // number: true,
+    },
+    {
       title: "Shopify Id",
       dataIndex: "shopifyUniqueId",
       width: "15%",
