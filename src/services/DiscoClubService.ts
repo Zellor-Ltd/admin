@@ -102,12 +102,12 @@ instance.interceptors.response.use(
     return replaceIdRecursively(response.data);
   },
   (error) => {
-    switch (error.response?.status) {
-      case 404:
-      case 401:
-      default: {
-        errorHandler(error);
-      }
+    if (error.response?.data === "Invalid Token") {
+      message.error("Your session has expired, please login");
+      localStorage.clear();
+      window.location.replace("/login");
+    } else {
+      errorHandler(error);
     }
   }
 );
