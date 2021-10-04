@@ -12,9 +12,13 @@ import {
   Row,
   Select,
   Slider,
+  Table,
   Tabs,
   Typography,
 } from "antd";
+import { Upload } from "components";
+
+import { ColumnsType } from "antd/lib/table";
 import { RichTextEditor } from "components/RichTextEditor";
 import { formatMoment } from "helpers/formatMoment";
 import { useRequest } from "hooks/useRequest";
@@ -92,11 +96,13 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
 
   const onAddSegment = () => {
     const packages = form.getFieldValue("package");
+    const sequence = packages ? packages.length + 1 : 1;
     setSelectedSegment({
-      sequence: packages ? packages.length + 1 : 1,
+      sequence,
       tags: [],
+      brands: [],
     });
-    setSelectedSegmentIndex(-1);
+    setSelectedSegmentIndex(sequence);
   };
 
   useEffect(() => {
@@ -113,24 +119,14 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
     setageRange(value);
   };
 
-  const onEditSegment = (segment: any, segmentIndex: number) => {};
+  const onEditSegment = (segment: Segment, segmentIndex: number) => {
+    setSelectedSegment(segment);
+    setSelectedSegmentIndex(segmentIndex);
+  };
 
-  return (
-    <div className="video-feed-detail">
-      <PageHeader title="Video feed update" subTitle="Video" />
-      <Form
-        form={form}
-        onFinish={onFinish}
-        name="feedForm"
-        initialValues={initial}
-        onFinishFailed={({ errorFields }) => {
-          errorFields.forEach((errorField) => {
-            message.error(errorField.errors[0]);
-          });
-        }}
-        layout="vertical"
-        className="video-feed"
-      >
+  const VideoUpdatePage = () => {
+    return (
+      <>
         <Tabs defaultActiveKey="Video Details">
           <Tabs.TabPane forceRender tab="Video Details" key="Video Details">
             <Row gutter={8}>
@@ -365,7 +361,7 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
             </Button>
           </Tabs.TabPane>
         </Tabs>
-        <Row gutter={8} hidden={!!selectedSegment}>
+        <Row gutter={8}>
           <Col>
             <Button type="default" onClick={() => history.goBack()}>
               Cancel
@@ -377,6 +373,109 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
             </Button>
           </Col>
         </Row>
+      </>
+    );
+  };
+
+  const brandsColumns: ColumnsType<any> = [
+    {
+      title: "Name",
+      dataIndex: "brandName",
+      width: "15%",
+    },
+    {
+      title: "Start time",
+      dataIndex: ["position", "0", "startTime"],
+      width: "15%",
+    },
+    {
+      title: "Duration",
+      dataIndex: ["position", "0", "duration"],
+      width: "15%",
+    },
+  ];
+
+  const SegmentPage = () => {
+    return (
+      <>
+        <Tabs defaultActiveKey="Video Details">
+          <Tabs.TabPane forceRender tab="Images" key="Images">
+            <Col lg={6} xs={24}>
+              <Col lg={24} xs={24}>
+                <Form.Item label="Video">
+                  <Upload.VideoUpload
+                    fileList={selectedSegment!.video}
+                    formProp={[
+                      "package",
+                      String(selectedSegmentIndex),
+                      "video",
+                    ]}
+                    form={form}
+                  />
+                </Form.Item>
+              </Col>
+              <Col lg={24} xs={24}>
+                <Form.Item label="Thumbnail URL">
+                  <Upload.ImageUpload
+                    form={form}
+                    formProp={[
+                      "package",
+                      String(selectedSegmentIndex),
+                      "thumbnail",
+                    ]}
+                    fileList={selectedSegment!.thumbnail}
+                  />
+                </Form.Item>
+              </Col>
+            </Col>
+          </Tabs.TabPane>
+          <Tabs.TabPane forceRender tab="Brands" key="Brands">
+            <Table
+              rowKey="id"
+              columns={brandsColumns}
+              dataSource={selectedSegment!.brands}
+              loading={loading}
+              pagination={false}
+            />
+          </Tabs.TabPane>
+          <Tabs.TabPane forceRender tab="Tags" key="Tags"></Tabs.TabPane>
+        </Tabs>
+        <Row gutter={8}>
+          <Col>
+            <Button
+              type="default"
+              onClick={() => setSelectedSegment(undefined)}
+            >
+              Back
+            </Button>
+          </Col>
+          <Col>
+            <Button type="primary" onClick={() => {}} loading={loading}>
+              Save Segment
+            </Button>
+          </Col>
+        </Row>
+      </>
+    );
+  };
+
+  return (
+    <div className="video-feed-detail">
+      <PageHeader title="Video feed update" subTitle="Video" />
+      <Form
+        form={form}
+        onFinish={onFinish}
+        name="feedForm"
+        initialValues={initial}
+        onFinishFailed={({ errorFields }) => {
+          errorFields.forEach((errorField) => {
+            message.error(errorField.errors[0]);
+          });
+        }}
+        layout="vertical"
+        className="video-feed"
+      >
+        {selectedSegment ? <SegmentPage /> : <VideoUpdatePage />}
       </Form>
     </div>
   );
