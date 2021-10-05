@@ -104,6 +104,7 @@ const Dashboard: React.FC<DashboardProps> = () => {
               <Line
                 type="monotone"
                 dataKey="registers"
+                name="Registrations per day"
                 stroke="#8884d8"
                 activeDot={{ r: 8 }}
               />
