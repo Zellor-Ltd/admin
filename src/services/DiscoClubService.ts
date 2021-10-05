@@ -8,7 +8,6 @@ import {
 } from "interfaces/Category";
 import { Creator } from "interfaces/Creator";
 import { DdTemplate } from "interfaces/DdTemplate";
-import { BrandVault } from "interfaces/BrandVault";
 import { Endpoint } from "interfaces/Endpoint";
 import { FanGroup } from "interfaces/FanGroup";
 import { FeedItem } from "interfaces/FeedItem";
@@ -533,3 +532,6 @@ export const deactivateBrand = (brandId: string, masterPassword: string) =>
 
 export const reactivateBrand = (brandId: string, masterPassword: string) =>
   instance.get(`Disco/Brand/Reactivate/${brandId}/${masterPassword}`);
+
+export const fetchActiveRegFansPerDay = () =>
+  instance.get(`Disco/Analytics/ActiveRegFansPerDay`);
