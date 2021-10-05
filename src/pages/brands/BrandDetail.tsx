@@ -68,6 +68,7 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
       setVaultOptions(false);
       fetchVaults();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTabKey]);
 
   const deleteItem = async (vault: BrandVault) => {

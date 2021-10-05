@@ -1,5 +1,6 @@
 import { Col, Row } from "antd";
-import React from "react";
+import { useRequest } from "hooks/useRequest";
+import React, { useEffect, useState } from "react";
 import {
   Bar,
   BarChart,
@@ -12,12 +13,28 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { fetchActiveRegFansPerDay } from "services/DiscoClubService";
 import Pie from "./Pie";
 import Radar from "./Radar";
 
 interface DashboardProps {}
 
 const Dashboard: React.FC<DashboardProps> = () => {
+  const [fansPerDay, setFansPerDay] = useState<any[]>([]);
+  const [, setLoading] = useState<boolean>(true);
+  const { doFetch } = useRequest({ setLoading });
+
+  const getResources = async () => {
+    const { results } = await doFetch(fetchActiveRegFansPerDay);
+    console.log(results);
+    setFansPerDay(results);
+  };
+
+  useEffect(() => {
+    getResources();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const data = [
     {
       name: "Page A",
@@ -71,7 +88,7 @@ const Dashboard: React.FC<DashboardProps> = () => {
             <LineChart
               width={500}
               height={300}
-              data={data}
+              data={fansPerDay}
               margin={{
                 top: 5,
                 right: 30,
@@ -80,17 +97,16 @@ const Dashboard: React.FC<DashboardProps> = () => {
               }}
             >
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
+              <XAxis dataKey="date" />
               <YAxis />
               <Tooltip />
               <Legend />
               <Line
                 type="monotone"
-                dataKey="pv"
+                dataKey="registers"
                 stroke="#8884d8"
                 activeDot={{ r: 8 }}
               />
-              <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
             </LineChart>
           </ResponsiveContainer>
         </Col>
