@@ -208,13 +208,12 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
   const handleCheckoutTypeChange = (e: RadioChangeEvent) => {
     const type = e.target.value;
     const isExternal = type === "external";
-    console.log(checkoutType);
     if (!isExternal) {
       setCheckoutTypeList([
         checkoutType.find((item: any) => item.name === "Disco"),
       ]);
       form.setFieldsValue({
-        checkout: 'Disco',
+        checkout: "Disco",
       });
     } else {
       setCheckoutTypeList(checkoutType);
