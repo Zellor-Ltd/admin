@@ -54,6 +54,9 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
     settings: { checkoutType = [] },
   } = useSelector((state: any) => state.settings);
 
+  const [checkoutTypeList, setCheckoutTypeList] =
+    useState<string[]>(checkoutType);
+
   const fetchVaults = async () => {
     if (initial.shopName) {
       const { results } = await doFetch(() =>
@@ -204,8 +207,19 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
 
   const handleCheckoutTypeChange = (e: RadioChangeEvent) => {
     const type = e.target.value;
+    const isExternal = type === "external";
+    if (!isExternal) {
+      setCheckoutTypeList([
+        checkoutType.find((item: any) => item.name === "Disco"),
+      ]);
+      form.setFieldsValue({
+        checkout: "Disco",
+      });
+    } else {
+      setCheckoutTypeList(checkoutType);
+    }
     form.setFieldsValue({
-      requireMobilePurchaseStatus: type === "external",
+      requireMobilePurchaseStatus: isExternal,
     });
   };
 
@@ -387,7 +401,7 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
                     rules={[{ required: true }]}
                   >
                     <Select placeholder="Select a checkout type">
-                      {checkoutType.map((curr: any) => (
+                      {checkoutTypeList.map((curr: any) => (
                         <Select.Option key={curr.value} value={curr.value}>
                           {curr.name}
                         </Select.Option>
