@@ -174,10 +174,14 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
     message.success("Video added into user feed.");
   };
 
-  const addVideos = (records: FeedItem[]) => {
-    for (let i = selectedRowKeys.length; i > 0; i--) {
-      setUserFeed((prev) => [records[i - 1], ...prev]);
-    }
+  const addVideos = (records: string[]) => {
+    setUserFeed((prev) => {
+      return [
+        ...prev,
+        ...templateFeed.filter((item) => records.includes(item.id)),
+      ];
+    });
+
     message.success("Videos added into user feed.");
   };
 
@@ -372,7 +376,7 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
           {selectedTab === "Template Feed" && (
             <Row align="top">
               <Button
-                onClick={() => console.log(selectedRowKeys)} //this is sending ids
+                onClick={() => addVideos(selectedRowKeys)}
                 disabled={!hasSelected}
                 loading={loading}
                 style={{
