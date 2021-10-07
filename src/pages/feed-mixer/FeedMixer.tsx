@@ -60,6 +60,10 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
 
   const [displayFeedName, setDisplayFeedName] = useState<string>();
 
+  const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
+
+  const hasSelected = selectedRowKeys.length > 0;
+
   useEffect(() => {
     setDisplayFeedName(
       selectedFan?.isFilter ? `${selectedFan.user} Feed` : "User Feed"
@@ -77,6 +81,10 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
   const handleReset = (clearFilters: any) => {
     clearFilters();
     setSearchText("");
+  };
+
+  const onSelectChange = (selectedRowKeys: any) => {
+    setSelectedRowKeys(selectedRowKeys);
   };
 
   const getColumnSearchProps = (dataIndex: any) => ({
@@ -166,6 +174,17 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
     message.success("Video added into user feed.");
   };
 
+  const addVideos = (records: string[]) => {
+    setUserFeed((prev) => {
+      return [
+        ...prev,
+        ...templateFeed.filter((item) => records.includes(item.id)),
+      ];
+    });
+
+    message.success("Videos added into user feed.");
+  };
+
   const removeVideo = (_: FeedItem, index: number) => {
     setUserFeed((prev) => [...prev.slice(0, index), ...prev.slice(index + 1)]);
   };
@@ -178,6 +197,10 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
       removeObj
     );
 
+  const rowSelection = {
+    onChange: onSelectChange,
+  };
+
   const handleTabChange = (tab: string) => {
     setSelectedTab(tab);
     setActionObj(tab === "User Feed" ? removeObj : addObj);
@@ -187,7 +210,7 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
     {
       title: "Title",
       dataIndex: "title",
-      width: "15%",
+      width: "30%",
       // render: (value: string, record: FeedItem) => (
       //   <Link to={{ pathname: `/video-feed`, state: record }}>{value}</Link>
       // ),
@@ -205,13 +228,13 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
     {
       title: "Length",
       dataIndex: "lengthTotal",
-      width: "5%",
+      width: "15%",
       align: "center",
     },
     {
       title: "Expiration Date",
       dataIndex: "validity",
-      width: "5%",
+      width: "15%",
       render: (creationDate: Date) =>
         new Date(creationDate).toLocaleDateString(),
       align: "center",
@@ -219,7 +242,7 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
     {
       title: "Tags",
       dataIndex: "package",
-      width: "5%",
+      width: "15%",
       render: (pack: Array<any> = []) => (
         <AntTag>{reduceSegmentsTags(pack)}</AntTag>
       ),
@@ -228,7 +251,7 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
     {
       title: "Actions",
       key: "action",
-      width: "5%",
+      width: "10%",
       align: "right",
       render: (_, record, index) => (
         <Button
@@ -349,27 +372,46 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
             </Button>
           </Col>
         )}
+        <Col>
+          {selectedTab === "Template Feed" && (
+            <Row align="top">
+              <Button
+                onClick={() => addVideos(selectedRowKeys)}
+                disabled={!hasSelected}
+                loading={loading}
+                style={{
+                  marginTop: "32px",
+                }}
+              >
+                {`Send selected videos to ${selectedFan?.user} Feed`}
+              </Button>
+            </Row>
+          )}
+        </Col>
       </Row>
       {selectedFan && (
-        <Tabs defaultActiveKey="User Feed" onChange={handleTabChange}>
-          <Tabs.TabPane tab={displayFeedName} key="User Feed">
-            <SortableTable
-              rowKey="id"
-              columns={columns}
-              dataSource={userFeed}
-              setDataSource={setUserFeed}
-              loading={loading}
-            />
-          </Tabs.TabPane>
-          <Tabs.TabPane tab="Template Feed" key="Template Feed">
-            <Table
-              rowKey="id"
-              columns={columns}
-              dataSource={templateFeed}
-              loading={loading}
-            />
-          </Tabs.TabPane>
-        </Tabs>
+        <Row>
+          <Tabs defaultActiveKey="User Feed" onChange={handleTabChange}>
+            <Tabs.TabPane tab={displayFeedName} key="User Feed">
+              <SortableTable
+                rowKey="id"
+                columns={columns}
+                dataSource={userFeed}
+                setDataSource={setUserFeed}
+                loading={loading}
+              />
+            </Tabs.TabPane>
+            <Tabs.TabPane tab="Template Feed" key="Template Feed">
+              <Table
+                rowSelection={rowSelection}
+                rowKey="id"
+                columns={columns}
+                dataSource={templateFeed}
+                loading={loading}
+              />
+            </Tabs.TabPane>
+          </Tabs>
+        </Row>
       )}
     </div>
   );
