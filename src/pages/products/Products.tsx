@@ -258,7 +258,7 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
     <>
       <PageHeader
         title="Products"
-        subTitle="List of Products"
+        subTitle="List of Live Products"
         extra={[
           <Button key="1" onClick={() => history.push(detailsPathname)}>
             New Item

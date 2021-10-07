@@ -183,11 +183,6 @@ function AdminRoutes() {
         component={AccessControl}
         layout={AuthenticatedLayout}
       />
-      {/* <AuthRoute
-        path="/preview"
-        component={Preview}
-        layout={AuthenticatedLayout}
-      /> */}
       <AppRoute
         path="/orders/order"
         component={OrderDetail}

@@ -16,6 +16,10 @@ import {
   TagOutlined,
   TeamOutlined,
   UserOutlined,
+  IssuesCloseOutlined,
+  DashboardOutlined,
+  DropboxOutlined,
+  CrownOutlined
 } from "@ant-design/icons";
 import { Menu } from "antd";
 import SubMenu from "antd/lib/menu/SubMenu";
@@ -32,17 +36,17 @@ const AdminSideMenu = () => {
       defaultSelectedKeys={[pathname]}
       defaultOpenKeys={[parentMenu]}
     >
-      <Menu.Item key="dashboard" icon={<FundOutlined />}>
+      <Menu.Item key="dashboard" icon={<DashboardOutlined />}>
         <Link to="/dashboard">Dashboard</Link>
       </Menu.Item>
-      <Menu.Item key="brands" icon={<FundOutlined />}>
+      <Menu.Item key="brands" icon={<CrownOutlined />}>
         <Link to="/brands">Brands</Link>
       </Menu.Item>
-      <Menu.Item key="products" icon={<TagOutlined />}>
-        <Link to="/products">Products</Link>
+      <Menu.Item key="products" icon={<DropboxOutlined />}>
+        <Link to="/products">Live Products</Link>
       </Menu.Item>
-      <Menu.Item key="staging-products" icon={<TagOutlined />}>
-        <Link to="/staging-products">Staging</Link>
+      <Menu.Item key="staging-products" icon={<IssuesCloseOutlined />}>
+        <Link to="/staging-products">Preview Products</Link>
       </Menu.Item>
       <Menu.Item key="feed" icon={<HeartFilled />}>
         <Link to="/feed">Videos Feed</Link>

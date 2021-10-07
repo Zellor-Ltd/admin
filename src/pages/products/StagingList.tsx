@@ -242,7 +242,7 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
 
   return (
     <>
-      <PageHeader title="Staging" subTitle="List of Staging Products" />
+      <PageHeader title="Preview Products" subTitle="List of Products in Preview Mode (not live)" />
       <Row align="bottom" justify="space-between">
         <Col lg={16} xs={24}>
           <Row gutter={8}>
