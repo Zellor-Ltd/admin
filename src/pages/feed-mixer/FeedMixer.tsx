@@ -169,9 +169,13 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
       ),
   });
 
-  const addVideo = (record: FeedItem, _: number) => {
+  const addVideo = (record: FeedItem, index: number) => {
     setUserFeed((prev) => [record, ...prev]);
     message.success("Video added into user feed.");
+    setTemplateFeed((prev) => [
+      ...prev.slice(0, index),
+      ...prev.slice(index + 1),
+    ]);
   };
 
   const addVideos = (records: string[]) => {
@@ -181,12 +185,13 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
         ...templateFeed.filter((item) => records.includes(item.id)),
       ];
     });
-
+    setTemplateFeed(templateFeed.filter((item) => !records.includes(item.id)));
     message.success("Videos added into user feed.");
   };
 
-  const removeVideo = (_: FeedItem, index: number) => {
+  const removeVideo = (record: FeedItem, index: number) => {
     setUserFeed((prev) => [...prev.slice(0, index), ...prev.slice(index + 1)]);
+    setTemplateFeed((prev) => [record, ...prev]);
   };
 
   const addObj = { icon: <PlusOutlined />, fn: addVideo };
