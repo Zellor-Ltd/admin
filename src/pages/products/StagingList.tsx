@@ -67,7 +67,6 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
 
   const deleteItem = async (id: string) => {
     await doRequest(() => deleteStagingProduct(id));
-    await getProducts();
   };
 
   const onSaveCategories = async (record: Product) => {
@@ -242,7 +241,10 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
 
   return (
     <>
-      <PageHeader title="Preview Products" subTitle="List of Products in Preview Mode (not live)" />
+      <PageHeader
+        title="Preview Products"
+        subTitle="List of Products in Preview Mode (not live)"
+      />
       <Row align="bottom" justify="space-between">
         <Col lg={16} xs={24}>
           <Row gutter={8}>
