@@ -69,6 +69,7 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
   }, [getResources]);
 
   const deleteItem = async (_id: string) => {
+    await doRequest(() => deleteStagingProduct(_id));
     for (let i = 0; i < content.length; i++) {
       if (content[i].id === _id) {
         const index = i;

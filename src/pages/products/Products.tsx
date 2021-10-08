@@ -50,6 +50,7 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [eof, setEof] = useState<boolean>(false);
 
   const [products, setProducts] = useState<Product[]>([]);
+  const [content, setContent] = useState<any[]>([]);
 
   const { fetchAllCategories, allCategories } = useAllCategories({
     setLoading,
@@ -77,6 +78,7 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
       fetchAllCategories(),
     ]);
     setProducts(results);
+    setContent(results);
   };
 
   const refreshProducts = async () => {
@@ -114,9 +116,17 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const deleteItem = async (id: string) => {
-    await doRequest(() => deleteProduct(id));
-    await refreshProducts();
+  const deleteItem = async (_id: string) => {
+    await doRequest(() => deleteProduct(_id));
+    for (let i = 0; i < content.length; i++) {
+      if (content[i].id === _id) {
+        const index = i;
+        setProducts((prev) => [
+          ...prev.slice(0, index),
+          ...prev.slice(index + 1),
+        ]);
+      }
+    }
   };
 
   const onSaveCategories = async (record: Product) => {
