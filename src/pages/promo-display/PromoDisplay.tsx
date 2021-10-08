@@ -21,6 +21,7 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({
   const detailsPathname = `${location.pathname}/promo-display`;
   const [loading, setLoading] = useState<boolean>(false);
   const { doFetch, doRequest } = useRequest({ setLoading });
+  const [content, setContent] = useState<any[]>([]);
 
   const {
     setArrayList: setPromoDisplays,
@@ -35,6 +36,7 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({
   const getPromoDisplays = async () => {
     const { results } = await doFetch(fetchPromoDisplays);
     setPromoDisplays(results);
+    setContent(results);
   };
 
   useEffect(() => {
@@ -44,7 +46,15 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({
 
   const deleteItem = async (id: string) => {
     await doRequest(() => deletePromoDisplay({ id }));
-    await getPromoDisplays();
+    for (let i = 0; i < content.length; i++) {
+      if (content[i].id === id) {
+        const index = i;
+        setPromoDisplays((prev) => [
+          ...prev.slice(0, index),
+          ...prev.slice(index + 1),
+        ]);
+      }
+    }
   };
 
   const columns: ColumnsType<PromoDisplay> = [
