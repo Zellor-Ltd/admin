@@ -27,11 +27,13 @@ import {
 import EditProductModal from "./EditProductModal";
 import ProductExpandedRow from "./ProductExpandedRow";
 import CopyIdToClipboard from "components/CopyIdToClipboard";
+import Products from "./Products";
 
 const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
   const detailsPathname = `${location.pathname}/product/staging`;
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
+  const [content, setContent] = useState<any[]>([]);
 
   const {
     setArrayList: setProducts,
@@ -53,6 +55,7 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
       fetchAllCategories(),
     ]);
     setProducts(results);
+    setContent(results);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -65,8 +68,16 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
     getResources();
   }, [getResources]);
 
-  const deleteItem = async (id: string) => {
-    await doRequest(() => deleteStagingProduct(id));
+  const deleteItem = async (_id: string) => {
+    for (let i = 0; i < content.length; i++) {
+      if (content[i].id === _id) {
+        const index = i;
+        setProducts((prev) => [
+          ...prev.slice(0, index),
+          ...prev.slice(index + 1),
+        ]);
+      }
+    }
   };
 
   const onSaveCategories = async (record: Product) => {
