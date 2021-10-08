@@ -34,7 +34,7 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
   const [selectedBrand, setSelectedBrand] = useState<Brand>();
   const [filterText, setFilterText] = useState<string>();
-  const [content, setContent] = useState<any[]>();
+  const [content, setContent] = useState<boolean>(false);
 
   const {
     setArrayList: setProducts,
@@ -61,25 +61,15 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
           (product) => product.brand.brandName === selectedBrand.brandName
         )
       );
-      setContent(
-        results.filter(
-          (product) => product.brand.brandName === selectedBrand.brandName
-        )
-      );
     } else if (filterText) {
       setProducts(
         results.filter((product) =>
           product.name?.toUpperCase().includes(filterText.toUpperCase())
         )
       );
-      setContent(
-        results.filter((product) =>
-          product.name?.toUpperCase().includes(filterText.toUpperCase())
-        )
-      );
     } else {
       setProducts(results);
-      setContent(results);
+      setContent(true);
     } // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
