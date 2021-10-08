@@ -32,6 +32,9 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
   const detailsPathname = `${location.pathname}/product/staging`;
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
+  const [selectedBrand, setSelectedBrand] = useState<Brand>();
+  const [filterText, setFilterText] = useState<string>();
+  const [content, setContent] = useState<any[]>();
 
   const {
     setArrayList: setProducts,
@@ -52,18 +55,38 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
       doFetch(fetchStagingProducts),
       fetchAllCategories(),
     ]);
-    setProducts(results);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (selectedBrand) {
+      setProducts(
+        results.filter(
+          (product) => product.brand.brandName === selectedBrand.brandName
+        )
+      );
+      setContent(
+        results.filter(
+          (product) => product.brand.brandName === selectedBrand.brandName
+        )
+      );
+    } else if (filterText) {
+      setProducts(
+        results.filter((product) =>
+          product.name?.toUpperCase().includes(filterText.toUpperCase())
+        )
+      );
+      setContent(
+        results.filter((product) =>
+          product.name?.toUpperCase().includes(filterText.toUpperCase())
+        )
+      );
+    } else {
+      setProducts(results);
+      setContent(results);
+    } // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const getProducts = async () => {
     const { results } = await doFetch(fetchStagingProducts);
     setProducts(results);
   };
-
-  useEffect(() => {
-    getResources();
-  }, [getResources]);
 
   const deleteItem = async (id: string) => {
     await doRequest(() => deleteStagingProduct(id));
@@ -205,24 +228,41 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
     },
   ];
 
-  const searchFilterFunction = (filterText: string) => {
-    addFilterFunction("productName", (products) =>
-      products.filter((product) =>
-        product.name?.toUpperCase().includes(filterText.toUpperCase())
-      )
-    );
+  const searchFilterFunction = (_filterText: string) => {
+    if (content) {
+      addFilterFunction("productName", (products) =>
+        products.filter((product) =>
+          product.name?.toUpperCase().includes(_filterText.toUpperCase())
+        )
+      );
+    } else {
+      setFilterText(_filterText);
+      getResources();
+    }
   };
 
   const onChangeBrand = async (_selectedBrand: Brand | undefined) => {
-    if (!_selectedBrand) {
-      removeFilterFunction("brandName");
-      return;
+    if (content) {
+      console.log("to achando q tem conteudo");
+      if (!_selectedBrand) {
+        removeFilterFunction("brandName");
+        return;
+      }
+      addFilterFunction("brandName", (products) =>
+        products.filter(
+          (product) => product.brand.brandName === _selectedBrand.brandName
+        )
+      );
+    } else {
+      if (_selectedBrand) {
+        console.log(_selectedBrand);
+        setSelectedBrand(_selectedBrand);
+      } else {
+        console.log("nao to reconhecendo brand selecionada");
+        setSelectedBrand(undefined);
+      }
+      getResources();
     }
-    addFilterFunction("brandName", (products) =>
-      products.filter(
-        (product) => product.brand.brandName === _selectedBrand.brandName
-      )
-    );
   };
 
   const handleEditProducts = async () => {
@@ -242,24 +282,38 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
 
   return (
     <>
-      <PageHeader title="Preview Products" subTitle="List of Products in Preview Mode (not live)" />
+      <PageHeader
+        title="Preview Products"
+        subTitle="List of Products in Preview Mode (not live)"
+      />
       <Row align="bottom" justify="space-between">
         <Col lg={16} xs={24}>
           <Row gutter={8}>
-            <Col lg={8} xs={16}>
+            <Col lg={6} xs={16}>
               <SearchFilter
                 filterFunction={searchFilterFunction}
-                label="Search by Name"
+                label="Search by Product"
               />
             </Col>
-            <Col lg={8} xs={16}>
+            <Col lg={6} xs={16}>
               <SelectBrand
                 style={{ width: "100%" }}
                 allowClear={true}
                 onChange={onChangeBrand}
               ></SelectBrand>
             </Col>
-            <Col lg={8} xs={16}>
+            <Col>
+              <Button
+                onClick={() => getResources()}
+                loading={loading}
+                style={{
+                  marginTop: "32px",
+                }}
+              >
+                Load content
+              </Button>
+            </Col>
+            <Col lg={6} xs={16}>
               <Checkbox
                 onChange={handleFilterClassified}
                 style={{ margin: "42px 0 16px 8px" }}
