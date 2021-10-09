@@ -1,4 +1,4 @@
-import { DeleteOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import {
   Button,
   Col,
@@ -8,6 +8,7 @@ import {
   InputNumber,
   message,
   PageHeader,
+  Popconfirm,
   Radio,
   Row,
   Select,
@@ -16,9 +17,8 @@ import {
   Tabs,
   Typography,
 } from "antd";
-import { Upload } from "components";
-
 import { ColumnsType } from "antd/lib/table";
+import { Upload } from "components";
 import { RichTextEditor } from "components/RichTextEditor";
 import { formatMoment } from "helpers/formatMoment";
 import { useRequest } from "hooks/useRequest";
@@ -50,6 +50,7 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
   } = useSelector((state: any) => state.settings);
 
   const [form] = Form.useForm();
+  const [segmentForm] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
 
   const [categories, setCategories] = useState<Category[]>([]);
@@ -393,11 +394,34 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
       dataIndex: ["position", "0", "duration"],
       width: "15%",
     },
+    {
+      title: "Actions",
+      key: "action",
+      width: "5%",
+      align: "right",
+      render: (_, record: FeedItem) => (
+        <>
+          <Button type="link" style={{ padding: 0 }}>
+            <EditOutlined />
+          </Button>
+          <Popconfirm title="Are you sure？" okText="Yes" cancelText="No">
+            <Button type="link" style={{ padding: 0, margin: 6 }}>
+              <DeleteOutlined />
+            </Button>
+          </Popconfirm>
+        </>
+      ),
+    },
   ];
 
   const SegmentPage = () => {
     return (
-      <>
+      <Form
+        form={segmentForm}
+        name="segmentForm"
+        layout="vertical"
+        initialValues={selectedSegment}
+      >
         <Tabs defaultActiveKey="Video Details">
           <Tabs.TabPane forceRender tab="Images" key="Images">
             <Col lg={6} xs={24}>
@@ -405,31 +429,33 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
                 <Form.Item label="Video">
                   <Upload.VideoUpload
                     fileList={selectedSegment!.video}
-                    formProp={[
-                      "package",
-                      String(selectedSegmentIndex),
-                      "video",
-                    ]}
-                    form={form}
+                    formProp={"video"}
+                    form={segmentForm}
                   />
                 </Form.Item>
               </Col>
               <Col lg={24} xs={24}>
                 <Form.Item label="Thumbnail URL">
                   <Upload.ImageUpload
-                    form={form}
-                    formProp={[
-                      "package",
-                      String(selectedSegmentIndex),
-                      "thumbnail",
-                    ]}
                     fileList={selectedSegment!.thumbnail}
+                    formProp={"thumbnail"}
+                    form={segmentForm}
                   />
                 </Form.Item>
               </Col>
             </Col>
           </Tabs.TabPane>
-          <Tabs.TabPane forceRender tab="Brands" key="Brands">
+          <Tabs.TabPane
+            forceRender
+            tab={`Brands (${selectedSegment!.brands?.length || 0})`}
+            key="Brands"
+          >
+            <Button
+              type="default"
+              style={{ float: "right", marginBottom: "12px" }}
+            >
+              New Brand
+            </Button>
             <Table
               rowKey="id"
               columns={brandsColumns}
@@ -440,7 +466,7 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
           </Tabs.TabPane>
           <Tabs.TabPane forceRender tab="Tags" key="Tags"></Tabs.TabPane>
         </Tabs>
-        <Row gutter={8}>
+        <Row gutter={8} style={{ marginTop: "20px" }}>
           <Col>
             <Button
               type="default"
@@ -450,33 +476,53 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
             </Button>
           </Col>
           <Col>
-            <Button type="primary" onClick={() => {}} loading={loading}>
+            <Button type="primary" htmlType="submit" loading={loading}>
               Save Segment
             </Button>
           </Col>
         </Row>
-      </>
+      </Form>
     );
   };
 
   return (
     <div className="video-feed-detail">
       <PageHeader title="Video feed update" subTitle="Video" />
-      <Form
-        form={form}
-        onFinish={onFinish}
-        name="feedForm"
-        initialValues={initial}
-        onFinishFailed={({ errorFields }) => {
-          errorFields.forEach((errorField) => {
-            message.error(errorField.errors[0]);
-          });
+      <Form.Provider
+        onFormFinish={(name, { values, forms }) => {
+          if (name === "segmentForm") {
+            const { feedForm, segmentForm } = forms;
+            const segments: any[] = feedForm.getFieldValue("package") || [];
+            if (selectedSegmentIndex > -1) {
+              segments[selectedSegmentIndex] = segmentForm.getFieldsValue(true);
+              feedForm.setFieldsValue({ package: [...segments] });
+            } else {
+              feedForm.setFieldsValue({
+                package: [...segments, segmentForm.getFieldsValue(true)],
+              });
+            }
+            setSelectedSegment(undefined);
+            setSelectedSegmentIndex(-1);
+          }
         }}
-        layout="vertical"
-        className="video-feed"
       >
-        {selectedSegment ? <SegmentPage /> : <VideoUpdatePage />}
-      </Form>
+        {selectedSegment && <SegmentPage />}
+        <Form
+          form={form}
+          onFinish={onFinish}
+          name="feedForm"
+          initialValues={initial}
+          onFinishFailed={({ errorFields }) => {
+            errorFields.forEach((errorField) => {
+              message.error(errorField.errors[0]);
+            });
+          }}
+          layout="vertical"
+          className="video-feed"
+        >
+          {!selectedSegment && <VideoUpdatePage />}
+        </Form>
+      </Form.Provider>
     </div>
   );
 };
