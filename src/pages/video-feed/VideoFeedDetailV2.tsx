@@ -22,6 +22,7 @@ import { Upload } from "components";
 import { RichTextEditor } from "components/RichTextEditor";
 import { formatMoment } from "helpers/formatMoment";
 import { useRequest } from "hooks/useRequest";
+import { Brand } from "interfaces/Brand";
 import { Category } from "interfaces/Category";
 import { Creator } from "interfaces/Creator";
 import { FeedItem } from "interfaces/FeedItem";
@@ -34,6 +35,7 @@ import {
   fetchCreators,
   saveVideoFeed,
 } from "services/DiscoClubService";
+import BrandForm from "./BrandForm";
 import "./VideoFeed.scss";
 import "./VideoFeedDetail.scss";
 
@@ -49,7 +51,7 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
     settings: { language = [] },
   } = useSelector((state: any) => state.settings);
 
-  const [form] = Form.useForm();
+  const [feedForm] = Form.useForm();
   const [segmentForm] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -58,6 +60,10 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
   const [selectedSegment, setSelectedSegment] = useState<Segment | undefined>();
   const [selectedSegmentIndex, setSelectedSegmentIndex] = useState<number>(-1);
   const [ageRange, setageRange] = useState<[number, number]>([12, 100]);
+
+  const [selectedBrand, setSelectedBrand] = useState<Brand | undefined>();
+  const [selectedBrandIndex, setSelectedBrandIndex] = useState<number>(-1);
+  const [showBrandForm, setShowBrandForm] = useState<boolean>(false);
 
   const { doRequest } = useRequest({ setLoading });
 
@@ -75,7 +81,7 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
   }, []);
 
   const onFinish = async () => {
-    const item: FeedItem = form.getFieldsValue(true);
+    const item: FeedItem = feedForm.getFieldsValue(true);
     item.package = item.package?.map((pack) => ({
       ...pack,
       tags: pack.tags ? pack.tags : [],
@@ -87,16 +93,16 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
 
   const onDeleteSegment = (evt: any, index: number) => {
     evt.stopPropagation();
-    const dataSource = [...form.getFieldValue("package")];
+    const dataSource = [...feedForm.getFieldValue("package")];
     dataSource.splice(index, 1);
-    form.setFieldsValue({ package: [...dataSource] });
+    feedForm.setFieldsValue({ package: [...dataSource] });
 
     setSelectedSegment(undefined);
     setSelectedSegmentIndex(-1);
   };
 
   const onAddSegment = () => {
-    const packages = form.getFieldValue("package");
+    const packages = feedForm.getFieldValue("package");
     const sequence = packages ? packages.length + 1 : 1;
     setSelectedSegment({
       sequence,
@@ -112,7 +118,7 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
   }, [initial]);
 
   const onChangeAge = (value: [number, number]) => {
-    form.setFieldsValue({
+    feedForm.setFieldsValue({
       ageMin: value[0],
       ageMax: value[1],
     });
@@ -165,7 +171,7 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
                   <Select
                     placeholder="Please select a creator"
                     onChange={(key: string) =>
-                      form.setFieldsValue({
+                      feedForm.setFieldsValue({
                         creator: influencers.find(
                           (influencer) => influencer.id === key
                         ),
@@ -186,12 +192,12 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
             <Row gutter={8}>
               <Col lg={24} xs={24}>
                 <Form.Item name="description" label="Long description">
-                  <RichTextEditor formField="description" form={form} />
+                  <RichTextEditor formField="description" form={feedForm} />
                 </Form.Item>
               </Col>
               <Col lg={24} xs={24}>
                 <Form.Item name="creatorHtml" label="Creator Descriptor">
-                  <RichTextEditor formField="creatorHtml" form={form} />
+                  <RichTextEditor formField="creatorHtml" form={feedForm} />
                 </Form.Item>
               </Col>
             </Row>
@@ -399,9 +405,18 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
       key: "action",
       width: "5%",
       align: "right",
-      render: (_, record: FeedItem) => (
+      render: (_, __, index) => (
         <>
-          <Button type="link" style={{ padding: 0 }}>
+          <Button
+            type="link"
+            style={{ padding: 0 }}
+            onClick={() => {
+              const brands: any[] = segmentForm.getFieldValue("brands") || [];
+              setSelectedBrand(brands[index]);
+              setSelectedBrandIndex(index);
+              setShowBrandForm(true);
+            }}
+          >
             <EditOutlined />
           </Button>
           <Popconfirm title="Are you sure？" okText="Yes" cancelText="No">
@@ -416,72 +431,89 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
 
   const SegmentPage = () => {
     return (
-      <Form
-        form={segmentForm}
-        name="segmentForm"
-        layout="vertical"
-        initialValues={selectedSegment}
-      >
-        <Tabs defaultActiveKey="Video Details">
-          <Tabs.TabPane forceRender tab="Images" key="Images">
-            <Col lg={6} xs={24}>
-              <Col lg={24} xs={24}>
-                <Form.Item label="Video">
-                  <Upload.VideoUpload
-                    fileList={selectedSegment!.video}
-                    formProp={"video"}
-                    form={segmentForm}
+      <>
+        {showBrandForm && (
+          <BrandForm
+            setShowBrandForm={setShowBrandForm}
+            brand={selectedBrand}
+          />
+        )}
+        <Form
+          form={segmentForm}
+          name="segmentForm"
+          layout="vertical"
+          initialValues={selectedSegment}
+        >
+          {!showBrandForm && (
+            <>
+              <Tabs defaultActiveKey="Video Details">
+                <Tabs.TabPane forceRender tab="Images" key="Images">
+                  <Col lg={6} xs={24}>
+                    <Col lg={24} xs={24}>
+                      <Form.Item label="Video">
+                        <Upload.VideoUpload
+                          fileList={selectedSegment!.video}
+                          formProp={"video"}
+                          form={segmentForm}
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col lg={24} xs={24}>
+                      <Form.Item label="Thumbnail URL">
+                        <Upload.ImageUpload
+                          fileList={selectedSegment!.thumbnail}
+                          formProp={"thumbnail"}
+                          form={segmentForm}
+                        />
+                      </Form.Item>
+                    </Col>
+                  </Col>
+                </Tabs.TabPane>
+                <Tabs.TabPane
+                  forceRender
+                  tab={`Brands (${selectedSegment!.brands?.length || 0})`}
+                  key="Brands"
+                >
+                  <Button
+                    type="default"
+                    style={{ float: "right", marginBottom: "12px" }}
+                    onClick={() => {
+                      setSelectedBrand(undefined);
+                      setSelectedBrandIndex(-1);
+                      setShowBrandForm(true);
+                    }}
+                  >
+                    New Brand
+                  </Button>
+                  <Table
+                    rowKey="id"
+                    columns={brandsColumns}
+                    dataSource={selectedSegment!.brands}
+                    loading={loading}
+                    pagination={false}
                   />
-                </Form.Item>
-              </Col>
-              <Col lg={24} xs={24}>
-                <Form.Item label="Thumbnail URL">
-                  <Upload.ImageUpload
-                    fileList={selectedSegment!.thumbnail}
-                    formProp={"thumbnail"}
-                    form={segmentForm}
-                  />
-                </Form.Item>
-              </Col>
-            </Col>
-          </Tabs.TabPane>
-          <Tabs.TabPane
-            forceRender
-            tab={`Brands (${selectedSegment!.brands?.length || 0})`}
-            key="Brands"
-          >
-            <Button
-              type="default"
-              style={{ float: "right", marginBottom: "12px" }}
-            >
-              New Brand
-            </Button>
-            <Table
-              rowKey="id"
-              columns={brandsColumns}
-              dataSource={selectedSegment!.brands}
-              loading={loading}
-              pagination={false}
-            />
-          </Tabs.TabPane>
-          <Tabs.TabPane forceRender tab="Tags" key="Tags"></Tabs.TabPane>
-        </Tabs>
-        <Row gutter={8} style={{ marginTop: "20px" }}>
-          <Col>
-            <Button
-              type="default"
-              onClick={() => setSelectedSegment(undefined)}
-            >
-              Back
-            </Button>
-          </Col>
-          <Col>
-            <Button type="primary" htmlType="submit" loading={loading}>
-              Save Segment
-            </Button>
-          </Col>
-        </Row>
-      </Form>
+                </Tabs.TabPane>
+                <Tabs.TabPane forceRender tab="Tags" key="Tags"></Tabs.TabPane>
+              </Tabs>
+              <Row gutter={8} style={{ marginTop: "20px" }}>
+                <Col>
+                  <Button
+                    type="default"
+                    onClick={() => setSelectedSegment(undefined)}
+                  >
+                    Back
+                  </Button>
+                </Col>
+                <Col>
+                  <Button type="primary" htmlType="submit" loading={loading}>
+                    Save Segment
+                  </Button>
+                </Col>
+              </Row>
+            </>
+          )}
+        </Form>
+      </>
     );
   };
 
@@ -490,8 +522,8 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
       <PageHeader title="Video feed update" subTitle="Video" />
       <Form.Provider
         onFormFinish={(name, { values, forms }) => {
+          const { feedForm, segmentForm } = forms;
           if (name === "segmentForm") {
-            const { feedForm, segmentForm } = forms;
             const segments: any[] = feedForm.getFieldValue("package") || [];
             if (selectedSegmentIndex > -1) {
               segments[selectedSegmentIndex] = segmentForm.getFieldsValue(true);
@@ -504,11 +536,31 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
             setSelectedSegment(undefined);
             setSelectedSegmentIndex(-1);
           }
+          if (name === "brandForm") {
+            const { segmentForm, brandForm } = forms;
+            const brands: any[] = segmentForm.getFieldValue("brands") || [];
+            const newValue = brandForm.getFieldsValue(true);
+            if (selectedBrandIndex > -1) {
+              brands[selectedBrandIndex] = newValue;
+              segmentForm.setFieldsValue({ brands: [...brands] });
+            } else {
+              segmentForm.setFieldsValue({
+                brands: [
+                  ...brands,
+                  { ...newValue.brands, position: newValue.position },
+                ],
+              });
+            }
+            setSelectedBrand(undefined);
+            setSelectedBrandIndex(-1);
+            setShowBrandForm(false);
+          }
+          setSelectedSegment(segmentForm.getFieldsValue(true));
         }}
       >
         {selectedSegment && <SegmentPage />}
         <Form
-          form={form}
+          form={feedForm}
           onFinish={onFinish}
           name="feedForm"
           initialValues={initial}
