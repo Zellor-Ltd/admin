@@ -27,6 +27,7 @@ import { Category } from "interfaces/Category";
 import { Creator } from "interfaces/Creator";
 import { FeedItem } from "interfaces/FeedItem";
 import { Segment } from "interfaces/Segment";
+import { Tag } from "interfaces/Tag";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RouteComponentProps } from "react-router-dom";
@@ -64,6 +65,10 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
   const [selectedBrand, setSelectedBrand] = useState<Brand | undefined>();
   const [selectedBrandIndex, setSelectedBrandIndex] = useState<number>(-1);
   const [showBrandForm, setShowBrandForm] = useState<boolean>(false);
+
+  const [selectedTag, setSelectedTag] = useState<Tag | undefined>();
+  const [selectedTagIndex, setSelectedTagIndex] = useState<number>(-1);
+  const [showTagForm, setShowTagForm] = useState<boolean>(false);
 
   const { doRequest } = useRequest({ setLoading });
 
@@ -440,6 +445,67 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
     },
   ];
 
+  const tagsColumns: ColumnsType<any> = [
+    {
+      title: "Brand Name",
+      dataIndex: ["brand", "brandName"],
+      width: "15%",
+    },
+    {
+      title: "Tag Name",
+      dataIndex: "tagName",
+      width: "15%",
+    },
+    {
+      title: "Start time",
+      dataIndex: ["position", "0", "startTime"],
+      width: "15%",
+    },
+    {
+      title: "Duration",
+      dataIndex: ["position", "0", "duration"],
+      width: "15%",
+    },
+    {
+      title: "Actions",
+      key: "action",
+      width: "5%",
+      align: "right",
+      render: (_, __, index) => (
+        <>
+          <Button
+            type="link"
+            style={{ padding: 0 }}
+            onClick={() => {
+              const tags: any[] = segmentForm.getFieldValue("tags") || [];
+              setSelectedTag(tags[index]);
+              setSelectedTagIndex(index);
+              setShowBrandForm(true);
+            }}
+          >
+            <EditOutlined />
+          </Button>
+          <Popconfirm title="Are you sure？" okText="Yes" cancelText="No">
+            <Button
+              type="link"
+              style={{ padding: 0, margin: 6 }}
+              onClick={() => {
+                const tags: any[] = segmentForm.getFieldValue("tags") || [];
+                tags.splice(index, 1);
+                segmentForm.setFieldsValue({
+                  tags,
+                });
+                setSelectedSegment(segmentForm.getFieldsValue(true));
+              }}
+            >
+              <DeleteOutlined />
+            </Button>
+          </Popconfirm>
+        </>
+      ),
+    },
+  ];
+
   const SegmentPage = () => {
     return (
       <>
@@ -504,7 +570,30 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
                     pagination={false}
                   />
                 </Tabs.TabPane>
-                <Tabs.TabPane forceRender tab="Tags" key="Tags"></Tabs.TabPane>
+                <Tabs.TabPane
+                  forceRender
+                  tab={`Tags (${selectedSegment!.tags?.length || 0})`}
+                  key="Tags"
+                >
+                  <Button
+                    type="default"
+                    style={{ float: "right", marginBottom: "12px" }}
+                    onClick={() => {
+                      setSelectedTag(undefined);
+                      setSelectedTagIndex(-1);
+                      setShowTagForm(true);
+                    }}
+                  >
+                    New Tag
+                  </Button>
+                  <Table
+                    rowKey="id"
+                    columns={tagsColumns}
+                    dataSource={selectedSegment!.tags}
+                    loading={loading}
+                    pagination={false}
+                  />
+                </Tabs.TabPane>
               </Tabs>
               <Row gutter={8} style={{ marginTop: "20px" }}>
                 <Col>
