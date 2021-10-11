@@ -420,7 +420,18 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
             <EditOutlined />
           </Button>
           <Popconfirm title="Are you sure？" okText="Yes" cancelText="No">
-            <Button type="link" style={{ padding: 0, margin: 6 }}>
+            <Button
+              type="link"
+              style={{ padding: 0, margin: 6 }}
+              onClick={() => {
+                const brands: any[] = segmentForm.getFieldValue("brands") || [];
+                brands.splice(index, 1);
+                segmentForm.setFieldsValue({
+                  brands,
+                });
+                setSelectedSegment(segmentForm.getFieldsValue(true));
+              }}
+            >
               <DeleteOutlined />
             </Button>
           </Popconfirm>
