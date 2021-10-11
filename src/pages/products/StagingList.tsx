@@ -27,6 +27,7 @@ import {
 import EditProductModal from "./EditProductModal";
 import ProductExpandedRow from "./ProductExpandedRow";
 import CopyIdToClipboard from "components/CopyIdToClipboard";
+import Products from "./Products";
 
 const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
   const detailsPathname = `${location.pathname}/product/staging`;
@@ -34,7 +35,7 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
   const [selectedBrand, setSelectedBrand] = useState<Brand>();
   const [filterText, setFilterText] = useState<string>();
-  const [content, setContent] = useState<boolean>(false);
+  const [content, setContent] = useState<any>(false);
 
   const {
     setArrayList: setProducts,
@@ -69,7 +70,7 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
       );
     } else {
       setProducts(results);
-      setContent(true);
+      setContent(results);
     } // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -78,9 +79,21 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
     setProducts(results);
   };
 
-  const deleteItem = async (id: string) => {
-    await doRequest(() => deleteStagingProduct(id));
-    await getProducts();
+  useEffect(() => {
+    getResources();
+  }, [getResources]);
+
+  const deleteItem = async (_id: string) => {
+    await doRequest(() => deleteStagingProduct(_id));
+    for (let i = 0; i < content.length; i++) {
+      if (content[i].id === _id) {
+        const index = i;
+        setProducts((prev) => [
+          ...prev.slice(0, index),
+          ...prev.slice(index + 1),
+        ]);
+      }
+    }
   };
 
   const onSaveCategories = async (record: Product) => {
@@ -233,7 +246,6 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
 
   const onChangeBrand = async (_selectedBrand: Brand | undefined) => {
     if (content) {
-      console.log("to achando q tem conteudo");
       if (!_selectedBrand) {
         removeFilterFunction("brandName");
         return;
@@ -245,10 +257,8 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
       );
     } else {
       if (_selectedBrand) {
-        console.log(_selectedBrand);
         setSelectedBrand(_selectedBrand);
       } else {
-        console.log("nao to reconhecendo brand selecionada");
         setSelectedBrand(undefined);
       }
       getResources();
