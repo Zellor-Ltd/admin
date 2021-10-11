@@ -32,6 +32,7 @@ const Promotions: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [tableloading, setTableLoading] = useState<boolean>(false);
   const { doRequest, doFetch } = useRequest({ setLoading: setTableLoading });
   const [promoStatusList, setPromoStatusList] = useState<any>();
+  const [content, setContent] = useState<any[]>([]);
   // const [promotionUpdateList, setPromotionUpdateList] = useState<boolean[]>([]);
 
   const {
@@ -133,6 +134,7 @@ const Promotions: React.FC<RouteComponentProps> = ({ history, location }) => {
   const getPromotions = useCallback(async () => {
     const { results } = await doFetch(fetchPromotions);
     setPromotions(results);
+    setContent(results);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -149,7 +151,15 @@ const Promotions: React.FC<RouteComponentProps> = ({ history, location }) => {
 
   const deleteItem = async (id: string) => {
     await doRequest(() => deletePromotion({ id }));
-    await getResources();
+    for (let i = 0; i < content.length; i++) {
+      if (content[i].id === id) {
+        const index = i;
+        setPromotions((prev) => [
+          ...prev.slice(0, index),
+          ...prev.slice(index + 1),
+        ]);
+      }
+    }
   };
 
   useEffect(() => {

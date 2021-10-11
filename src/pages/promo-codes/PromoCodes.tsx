@@ -15,15 +15,26 @@ const PromoCodes: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [promoCodes, setPromoCodes] = useState<PromoCode[]>([]);
   const { doFetch, doRequest } = useRequest({ setLoading });
+  const [content, setContent] = useState<any[]>([]);
 
   const fetch = async () => {
     const { results } = await doFetch(() => fetchPromoCodes());
     setPromoCodes(results);
+    setContent(results);
   };
 
   const deleteItem = async (id: string) => {
     await doRequest(() => deletePromoCode({ id }));
-    await doFetch(() => fetchPromoCodes());
+    for (let i = 0; i < content.length; i++) {
+      if (content[i].id === id) {
+        const index = i;
+        setPromoCodes((prev) => [
+          ...prev.slice(0, index),
+          ...prev.slice(index + 1),
+        ]);
+      }
+    }
+    setLoading(false);
   };
 
   const columns: ColumnsType<PromoCode> = [

@@ -27,6 +27,7 @@ const tagColorByStatus: any = {
 const Creators: React.FC<RouteComponentProps> = ({ history, location }) => {
   const detailsPathname = `${location.pathname}/creator`;
   const [loading, setLoading] = useState<boolean>(false);
+  const [content, setContent] = useState<any[]>([]);
 
   const {
     setArrayList: setCreators,
@@ -101,17 +102,28 @@ const Creators: React.FC<RouteComponentProps> = ({ history, location }) => {
     try {
       setLoading(true);
       await deleteCreator(id);
-      await fetch();
+      for (let i = 0; i < content.length; i++) {
+        if (content[i].id === id) {
+          const index = i;
+          setCreators((prev) => [
+            ...prev.slice(0, index),
+            ...prev.slice(index + 1),
+          ]);
+        }
+      }
     } catch (err) {
       console.log(err);
-      setLoading(false);
     }
+
+    setLoading(false);
   };
+
   const fetch = async () => {
     setLoading(true);
     const response: any = await fetchCreators();
     setLoading(false);
     setCreators(response.results);
+    setContent(response.results);
   };
 
   useEffect(() => {

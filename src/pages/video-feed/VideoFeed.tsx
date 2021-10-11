@@ -42,6 +42,7 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [videos, setVideos] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [filterText, setFilterText] = useState("");
+  const [content, setContent] = useState<any[]>([]);
 
   const fetch = async () => {
     setLoading(true);
@@ -49,6 +50,7 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
       const response: any = await fetchVideoFeed();
       setLoading(false);
       setVideos(response.results);
+      setContent(response.results);
     } catch (error) {
       message.error("Error to get feed");
       setLoading(false);
@@ -59,10 +61,19 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
     fetch();
   }, []);
 
-  const deleteItem = async (id: string) => {
+  const deleteItem = async (_id: string) => {
     setLoading(true);
-    await deleteVideoFeed(id);
-    fetch();
+    await deleteVideoFeed(_id);
+    for (let i = 0; i < content.length; i++) {
+      if (content[i].id === _id) {
+        const index = i;
+        setVideos((prev) => [
+          ...prev.slice(0, index),
+          ...prev.slice(index + 1),
+        ]);
+      }
+    }
+    setLoading(false);
   };
 
   const onRebuildFeed = async () => {
