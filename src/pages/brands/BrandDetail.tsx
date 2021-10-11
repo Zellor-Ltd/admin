@@ -58,11 +58,13 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
     useState<string[]>(checkoutType);
 
   const fetchVaults = async () => {
-    if (initial.shopName) {
-      const { results } = await doFetch(() =>
-        fetchBrandVault(initial.shopName as string)
-      );
-      setVaults(results);
+    if (initial) {
+      if (initial.shopName) {
+        const { results } = await doFetch(() =>
+          fetchBrandVault(initial.shopName as string)
+        );
+        setVaults(results);
+      }
     }
   };
 

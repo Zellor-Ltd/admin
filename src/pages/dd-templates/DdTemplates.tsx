@@ -15,6 +15,7 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ history, location }) => {
   const detailsPathname = `${location.pathname}/dd-template`;
   const [loading, setLoading] = useState<boolean>(false);
   const { doFetch, doRequest } = useRequest({ setLoading });
+  const [content, setContent] = useState<any[]>([]);
 
   const {
     setArrayList: setDdTemplates,
@@ -29,6 +30,7 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ history, location }) => {
   const getDdTemplates = async () => {
     const { results } = await doFetch(fetchDdTemplates);
     setDdTemplates(results);
+    setContent(results);
   };
 
   useEffect(() => {
@@ -38,7 +40,15 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ history, location }) => {
 
   const deleteItem = async (id: string) => {
     await doRequest(() => deleteDdTemplate({ id }));
-    await getDdTemplates();
+    for (let i = 0; i < content.length; i++) {
+      if (content[i].id === id) {
+        const index = i;
+        setDdTemplates((prev) => [
+          ...prev.slice(0, index),
+          ...prev.slice(index + 1),
+        ]);
+      }
+    }
   };
 
   const columns: ColumnsType<DdTemplate> = [
