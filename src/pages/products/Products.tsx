@@ -267,16 +267,6 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
         title="Products"
         subTitle="List of Live Products"
         extra={[
-          <Button
-            type="primary"
-            onClick={() => getResources()}
-            loading={loading}
-            style={{
-              marginTop: "32px",
-            }}
-          >
-            Load all
-          </Button>,
           <Button key="1" onClick={() => history.push(detailsPathname)}>
             New Item
           </Button>,
@@ -310,13 +300,18 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
             </Col>
           </Row>
         </Col>
-        <EditMultipleButton
-          text="Edit Products"
-          arrayList={products}
-          ModalComponent={EditProductModal}
-          selectedRowKeys={selectedRowKeys}
-          onOk={refreshProducts}
-        />
+
+        <Button
+          type="primary"
+          onClick={() => getResources()}
+          loading={loading}
+          style={{
+            marginBottom: "20px",
+            marginRight: "25px",
+          }}
+        >
+          Load all
+        </Button>
       </Row>
       <ProductAPITestModal
         selectedRecord={productAPITest}

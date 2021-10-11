@@ -281,36 +281,24 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
       <PageHeader
         title="Preview Products"
         subTitle="List of Products in Preview Mode (not live)"
-        extra={[
-          <Button
-            type="primary"
-            onClick={() => getResources()}
-            loading={loading}
-            style={{
-              marginTop: "32px",
-            }}
-          >
-            Load all
-          </Button>,
-        ]}
       />
       <Row align="bottom" justify="space-between">
         <Col lg={16} xs={24}>
           <Row gutter={8}>
-            <Col lg={6} xs={16}>
+            <Col lg={8} xs={24}>
               <SearchFilter
                 filterFunction={searchFilterFunction}
                 label="Search by Product"
               />
             </Col>
-            <Col lg={6} xs={16}>
+            <Col lg={8} xs={24}>
               <SelectBrand
                 style={{ width: "100%" }}
                 allowClear={true}
                 onChange={onChangeBrand}
               ></SelectBrand>
             </Col>
-            <Col lg={6} xs={16}>
+            <Col lg={8} xs={24}>
               <Checkbox
                 onChange={handleFilterClassified}
                 style={{ margin: "42px 0 16px 8px" }}
@@ -320,14 +308,17 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
             </Col>
           </Row>
         </Col>
-
-        <EditMultipleButton
-          text="Edit Products"
-          arrayList={filteredProducts}
-          ModalComponent={EditProductModal}
-          selectedRowKeys={selectedRowKeys}
-          onOk={handleEditProducts}
-        />
+        <Button
+          type="primary"
+          onClick={() => getResources()}
+          loading={loading}
+          style={{
+            marginBottom: "20px",
+            marginRight: "25px",
+          }}
+        >
+          Load all
+        </Button>
       </Row>
       <EditableTable
         rowKey="id"
