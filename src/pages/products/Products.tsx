@@ -2,6 +2,7 @@ import {
   DeleteOutlined,
   EditOutlined,
   SettingOutlined,
+  SearchOutlined,
 } from "@ant-design/icons";
 import { Button, Checkbox, Col, PageHeader, Popconfirm, Row, Spin } from "antd";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
@@ -300,18 +301,20 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
             </Col>
           </Row>
         </Col>
-
-        <Button
-          type="primary"
-          onClick={() => getResources()}
-          loading={loading}
-          style={{
-            marginBottom: "20px",
-            marginRight: "25px",
-          }}
-        >
-          Load all
-        </Button>
+        <Col>
+          <Button
+            type="primary"
+            onClick={() => getResources()}
+            loading={loading}
+            style={{
+              marginBottom: "20px",
+              marginRight: "25px",
+            }}
+          >
+            Search
+            <SearchOutlined style={{ color: "white" }} />
+          </Button>
+        </Col>
       </Row>
       <ProductAPITestModal
         selectedRecord={productAPITest}

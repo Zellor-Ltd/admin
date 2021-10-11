@@ -2,6 +2,7 @@ import {
   ArrowRightOutlined,
   DeleteOutlined,
   EditOutlined,
+  SearchOutlined,
 } from "@ant-design/icons";
 import { Button, Checkbox, Col, PageHeader, Popconfirm, Row } from "antd";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
@@ -308,17 +309,20 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
             </Col>
           </Row>
         </Col>
-        <Button
-          type="primary"
-          onClick={() => getResources()}
-          loading={loading}
-          style={{
-            marginBottom: "20px",
-            marginRight: "25px",
-          }}
-        >
-          Load all
-        </Button>
+        <Col>
+          <Button
+            type="primary"
+            onClick={() => getResources()}
+            loading={loading}
+            style={{
+              marginBottom: "20px",
+              marginRight: "25px",
+            }}
+          >
+            Search
+            <SearchOutlined style={{ color: "white" }} />
+          </Button>
+        </Col>
       </Row>
       <EditableTable
         rowKey="id"
