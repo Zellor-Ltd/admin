@@ -545,17 +545,14 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
               segmentForm.setFieldsValue({ brands: [...brands] });
             } else {
               segmentForm.setFieldsValue({
-                brands: [
-                  ...brands,
-                  { ...newValue.brands, position: newValue.position },
-                ],
+                brands: [...brands, newValue],
               });
             }
             setSelectedBrand(undefined);
             setSelectedBrandIndex(-1);
             setShowBrandForm(false);
+            setSelectedSegment(segmentForm.getFieldsValue(true));
           }
-          setSelectedSegment(segmentForm.getFieldsValue(true));
         }}
       >
         {selectedSegment && <SegmentPage />}

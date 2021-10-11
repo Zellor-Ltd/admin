@@ -30,6 +30,7 @@ const BrandForm: React.FC<FormProps> = ({ brand, setShowBrandForm }) => {
   }, []);
 
   const onChangeBrand = (key: string) => {
+    const currentValues = form.getFieldsValue(true);
     const selectedBrand: any = brands.find((brand: Brand) => brand.id === key);
 
     const changedBrand = { ...selectedBrand };
@@ -38,17 +39,17 @@ const BrandForm: React.FC<FormProps> = ({ brand, setShowBrandForm }) => {
         selectedBrand[changedBrand.selectedLogo].url;
     }
 
-    form.setFieldsValue({ brands: changedBrand });
-    form.setFields([{ name: "brands", touched: true }]);
+    form.setFieldsValue({ ...changedBrand, position: currentValues.position });
   };
 
-  const onChangeLogo = (key: string, fieldName: number) => {
-    const formBrands = form.getFieldValue("brands");
-    const selectedBrand = formBrands[fieldName];
+  const onChangeLogo = (key: string) => {
+    const currentValues = form.getFieldsValue(true);
+    const selectedBrand: any = brands.find(
+      (brand: Brand) => brand.id === currentValues.id
+    );
 
-    formBrands[fieldName].selectedLogoUrl = selectedBrand[key].url;
-    form.setFieldsValue({ brands: formBrands });
-    form.setFields([{ name: "brands", touched: true }]);
+    currentValues.selectedLogoUrl = selectedBrand[key].url;
+    form.setFieldsValue({ ...currentValues });
   };
 
   return (
@@ -75,16 +76,20 @@ const BrandForm: React.FC<FormProps> = ({ brand, setShowBrandForm }) => {
         <Col lg={4} xs={24}>
           <Form.Item
             shouldUpdate={(prevValues, curValues) =>
-              prevValues.brand?.id !== curValues.brand?.id
+              prevValues.id !== curValues.id
             }
           >
             {({ getFieldValue }) => {
               const bra: any = brands.find(
                 (brand: Brand) => brand.id === getFieldValue("id")
               );
+              console.log(bra);
               return (
                 <Form.Item name="selectedLogo" label="Brand logo">
-                  <Select placeholder="Please select a logo">
+                  <Select
+                    placeholder="Please select a logo"
+                    onChange={onChangeLogo}
+                  >
                     {bra?.brandLogo?.url && (
                       <Select.Option value="brandLogo">Brand</Select.Option>
                     )}
