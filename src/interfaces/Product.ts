@@ -28,4 +28,5 @@ export interface Product {
   ageMax: number;
   tagImage: string;
   thumbnailUrl: string;
+  lastGoLiveDate?: Date;
 }

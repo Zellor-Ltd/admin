@@ -200,7 +200,11 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
             cancelText="No"
             onConfirm={() => deleteItem(record.id)}
           >
-            <Button type="link" style={{ padding: 0, marginLeft: 8 }}>
+            <Button
+              type="link"
+              style={{ padding: 0, marginLeft: 8 }}
+              disabled={record.lastGoLiveDate != null}
+            >
               <DeleteOutlined />
             </Button>
           </Popconfirm>
