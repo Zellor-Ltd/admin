@@ -51,6 +51,7 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
 
   const [products, setProducts] = useState<Product[]>([]);
   const [content, setContent] = useState<any[]>([]);
+  const [preLoaded, setPreLoaded] = useState<boolean>(false);
 
   const { fetchAllCategories, allCategories } = useAllCategories({
     setLoading,
@@ -77,6 +78,7 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
       _fetchProducts(),
       fetchAllCategories(),
     ]);
+    setPreLoaded(true);
     setProducts(results);
     setContent(results);
   };
@@ -110,11 +112,6 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
     if (allCategories["Super Category"].length) refreshProducts();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchFilter, brandFilter, unclassifiedFilter]);
-
-  useEffect(() => {
-    getResources();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const deleteItem = async (_id: string) => {
     await doRequest(() => deleteProduct(_id));
@@ -270,6 +267,16 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
         title="Products"
         subTitle="List of Live Products"
         extra={[
+          <Button
+            type="primary"
+            onClick={() => getResources()}
+            loading={loading}
+            style={{
+              marginTop: "32px",
+            }}
+          >
+            Load all
+          </Button>,
           <Button key="1" onClick={() => history.push(detailsPathname)}>
             New Item
           </Button>,

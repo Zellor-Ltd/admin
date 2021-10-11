@@ -33,9 +33,8 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
   const detailsPathname = `${location.pathname}/product/staging`;
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
-  const [selectedBrand, setSelectedBrand] = useState<Brand>();
-  const [filterText, setFilterText] = useState<string>();
-  const [content, setContent] = useState<any>(false);
+  const [content, setContent] = useState<any>();
+  const [preLoaded, setPreLoaded] = useState<boolean>(false);
 
   const {
     setArrayList: setProducts,
@@ -51,23 +50,26 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
     setLoading,
   });
 
-  const getResources = useCallback(async () => {
+  const getResources = useCallback(async (_brand?, _text?) => {
     const [{ results }] = await Promise.all([
       doFetch(fetchStagingProducts),
       fetchAllCategories(),
     ]);
-    if (selectedBrand) {
-      setProducts(
-        results.filter(
-          (product) => product.brand.brandName === selectedBrand.brandName
-        )
-      );
-    } else if (filterText) {
-      setProducts(
-        results.filter((product) =>
-          product.name?.toUpperCase().includes(filterText.toUpperCase())
-        )
-      );
+    setPreLoaded(true);
+    if (_brand || _text) {
+      if (_brand) {
+        setProducts(
+          results.filter(
+            (product) => product.brand.brandName === _brand.brandName
+          )
+        );
+      } else if (_text) {
+        setProducts(
+          results.filter((product) =>
+            product.name?.toUpperCase().includes(_text.toUpperCase())
+          )
+        );
+      }
     } else {
       setProducts(results);
       setContent(results);
@@ -78,10 +80,6 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
     const { results } = await doFetch(fetchStagingProducts);
     setProducts(results);
   };
-
-  useEffect(() => {
-    getResources();
-  }, [getResources]);
 
   const deleteItem = async (_id: string) => {
     await doRequest(() => deleteStagingProduct(_id));
@@ -232,20 +230,19 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
   ];
 
   const searchFilterFunction = (_filterText: string) => {
-    if (content) {
+    if (preLoaded) {
       addFilterFunction("productName", (products) =>
         products.filter((product) =>
           product.name?.toUpperCase().includes(_filterText.toUpperCase())
         )
       );
     } else {
-      setFilterText(_filterText);
-      getResources();
+      getResources(_filterText);
     }
   };
 
   const onChangeBrand = async (_selectedBrand: Brand | undefined) => {
-    if (content) {
+    if (preLoaded) {
       if (!_selectedBrand) {
         removeFilterFunction("brandName");
         return;
@@ -257,11 +254,10 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
       );
     } else {
       if (_selectedBrand) {
-        setSelectedBrand(_selectedBrand);
+        getResources(_selectedBrand);
       } else {
-        setSelectedBrand(undefined);
+        getResources();
       }
-      getResources();
     }
   };
 
@@ -285,6 +281,18 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
       <PageHeader
         title="Preview Products"
         subTitle="List of Products in Preview Mode (not live)"
+        extra={[
+          <Button
+            type="primary"
+            onClick={() => getResources()}
+            loading={loading}
+            style={{
+              marginTop: "32px",
+            }}
+          >
+            Load all
+          </Button>,
+        ]}
       />
       <Row align="bottom" justify="space-between">
         <Col lg={16} xs={24}>
@@ -302,17 +310,6 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
                 onChange={onChangeBrand}
               ></SelectBrand>
             </Col>
-            <Col>
-              <Button
-                onClick={() => getResources()}
-                loading={loading}
-                style={{
-                  marginTop: "32px",
-                }}
-              >
-                Load content
-              </Button>
-            </Col>
             <Col lg={6} xs={16}>
               <Checkbox
                 onChange={handleFilterClassified}
@@ -323,6 +320,7 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
             </Col>
           </Row>
         </Col>
+
         <EditMultipleButton
           text="Edit Products"
           arrayList={filteredProducts}
