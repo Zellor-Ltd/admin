@@ -32,8 +32,10 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RouteComponentProps } from "react-router-dom";
 import {
+  fetchBrands,
   fetchCategories,
   fetchCreators,
+  fetchTags,
   saveVideoFeed,
 } from "services/DiscoClubService";
 import BrandForm from "./BrandForm";
@@ -63,17 +65,27 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
   const [selectedSegmentIndex, setSelectedSegmentIndex] = useState<number>(-1);
   const [ageRange, setageRange] = useState<[number, number]>([12, 100]);
 
+  const [brands, setBrands] = useState<Brand[]>([]);
   const [selectedBrand, setSelectedBrand] = useState<Brand | undefined>();
   const [selectedBrandIndex, setSelectedBrandIndex] = useState<number>(-1);
   const [showBrandForm, setShowBrandForm] = useState<boolean>(false);
 
+  const [tags, setTags] = useState<Tag[]>([]);
   const [selectedTag, setSelectedTag] = useState<Tag | undefined>();
   const [selectedTagIndex, setSelectedTagIndex] = useState<number>(-1);
   const [showTagForm, setShowTagForm] = useState<boolean>(false);
 
+  const defaultVideoTab = "Video Details";
+  const defaultSegmentTab = "Images";
+
+  const [videoTab, setVideoTab] = useState<string>("Video Details");
+  const [segmentTab, setSegmentTab] = useState<string>("Images");
+
+  const [pageTitle, setPageTitle] = useState<string>("Video Update");
+
   const { doRequest } = useRequest({ setLoading });
 
-  useEffect(() => {
+  const getResources = async () => {
     async function getInfluencers() {
       const response: any = await fetchCreators();
       setInfluencers(response.results);
@@ -82,9 +94,55 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
       const response: any = await fetchCategories();
       setCategories(response.results);
     }
-    getInfluencers();
-    getCategories();
+    async function getBrands() {
+      const response: any = await fetchBrands();
+      setBrands(response.results);
+    }
+    async function getTags() {
+      const response: any = await fetchTags({});
+      setTags(response.results);
+    }
+    // setLoading(true);
+    await Promise.all([
+      getInfluencers(),
+      getCategories(),
+      getBrands(),
+      getTags(),
+    ]);
+    // setLoading(false);
+  };
+
+  useEffect(() => {
+    getResources();
   }, []);
+
+  useEffect(() => {
+    if (showBrandForm)
+      setPageTitle(
+        `Brand ${
+          selectedBrandIndex > -1
+            ? `${selectedBrandIndex + 1} Update`
+            : "Creation"
+        }`
+      );
+    else if (showTagForm)
+      setPageTitle(
+        `Tag ${
+          selectedTagIndex > -1 ? `${selectedTagIndex + 1} Update` : "Creation"
+        }`
+      );
+    else if (selectedSegment) {
+      const packages = feedForm.getFieldValue("package");
+      setPageTitle(
+        `Segment ${
+          selectedSegmentIndex > -1 && packages.length !== selectedSegmentIndex
+            ? `${selectedSegmentIndex + 1} Update`
+            : "Creation"
+        }`
+      );
+    } else setPageTitle("Video Update");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedSegment, showBrandForm, showTagForm]);
 
   const onFinish = async () => {
     const item: FeedItem = feedForm.getFieldsValue(true);
@@ -115,7 +173,7 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
       tags: [],
       brands: [],
     });
-    setSelectedSegmentIndex(sequence);
+    setSelectedSegmentIndex(sequence - 1);
   };
 
   useEffect(() => {
@@ -140,8 +198,8 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
   const VideoUpdatePage = () => {
     return (
       <>
-        <Tabs defaultActiveKey="Video Details">
-          <Tabs.TabPane forceRender tab="Video Details" key="Video Details">
+        <Tabs activeKey={videoTab} onChange={setVideoTab}>
+          <Tabs.TabPane forceRender tab="Video Details" key={defaultVideoTab}>
             <Row gutter={8}>
               <Col lg={24} xs={24}>
                 <Form.Item name="status" label="Status">
@@ -514,10 +572,16 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
           <BrandForm
             setShowBrandForm={setShowBrandForm}
             brand={selectedBrand}
+            brands={brands}
           />
         )}
         {showTagForm && (
-          <TagForm setShowTagForm={setShowTagForm} tag={selectedTag} />
+          <TagForm
+            setShowTagForm={setShowTagForm}
+            tag={selectedTag}
+            brands={brands}
+            tags={tags}
+          />
         )}
         <Form
           form={segmentForm}
@@ -527,8 +591,8 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
         >
           {!showBrandForm && !showTagForm && (
             <>
-              <Tabs defaultActiveKey="Video Details">
-                <Tabs.TabPane forceRender tab="Images" key="Images">
+              <Tabs activeKey={segmentTab} onChange={setSegmentTab}>
+                <Tabs.TabPane forceRender tab="Images" key={defaultSegmentTab}>
                   <Col lg={6} xs={24}>
                     <Col lg={24} xs={24}>
                       <Form.Item label="Video">
@@ -603,7 +667,10 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
                 <Col>
                   <Button
                     type="default"
-                    onClick={() => setSelectedSegment(undefined)}
+                    onClick={() => {
+                      setSelectedSegment(undefined);
+                      setSegmentTab(defaultSegmentTab);
+                    }}
                   >
                     Back
                   </Button>
@@ -623,7 +690,7 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
 
   return (
     <div className="video-feed-detail">
-      <PageHeader title="Video feed update" subTitle="Video" />
+      <PageHeader title={pageTitle} subTitle="Video Update" />
       <Form.Provider
         onFormFinish={(name, { values, forms }) => {
           const { feedForm, segmentForm } = forms;

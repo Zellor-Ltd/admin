@@ -1,50 +1,32 @@
 import { Button, Col, Form, InputNumber, Row, Select } from "antd";
 import { Brand } from "interfaces/Brand";
 import { Tag } from "interfaces/Tag";
-import { useEffect, useState } from "react";
-import { fetchBrands, fetchTags } from "services/DiscoClubService";
+import { useState } from "react";
 
 interface FormProps {
+  brands: Brand[];
+  tags: Tag[];
   tag: Tag | undefined;
   setShowTagForm: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const TagForm: React.FC<FormProps> = ({ tag, setShowTagForm }) => {
-  const [brands, setBrands] = useState<Brand[]>([]);
-  const [tags, setTags] = useState<Tag[]>([]);
-  const [filteredTags, setFilteredTags] = useState<Tag[]>([]);
+const TagForm: React.FC<FormProps> = ({
+  tag,
+  setShowTagForm,
+  brands,
+  tags,
+}) => {
+  const [filteredTags, setFilteredTags] = useState<Tag[]>(
+    tag?.brand?.id
+      ? tags.filter((tag) => tag.brand?.id === tag?.brand?.id)
+      : tags
+  );
   const [selectedBrand, setSelectedBrand] = useState<string>(
     tag?.brand?.id || ""
   );
-  const [loading, setLoading] = useState<boolean>(false);
   const [form] = Form.useForm();
 
-  useEffect(() => {
-    let mounted = true;
-    async function getTags() {
-      const response: any = await fetchTags({});
-      if (mounted) {
-        setTags(response.results);
-        setLoading(false);
-      }
-    }
-    async function getBrands() {
-      const response: any = await fetchBrands();
-      if (mounted) {
-        setBrands(response.results);
-        setLoading(false);
-      }
-    }
-    setLoading(true);
-    getTags();
-    getBrands();
-    return () => {
-      mounted = false;
-    };
-  }, []);
-
   const onChangeTag = (key: string) => {
-    const currentValues = form.getFieldsValue(true);
     const selectedTag = tags.find((tag: Tag) => tag.id === key);
 
     setSelectedBrand((prev) => {
@@ -81,7 +63,6 @@ const TagForm: React.FC<FormProps> = ({ tag, setShowTagForm }) => {
               filterOption={(input, option) =>
                 option?.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
               }
-              loading={loading}
               onChange={(v) => handleBrandFilter(v)}
               value={selectedBrand}
             >
@@ -95,10 +76,7 @@ const TagForm: React.FC<FormProps> = ({ tag, setShowTagForm }) => {
         </Col>
         <Col lg={12} xs={24}>
           <Form.Item name={"id"} label="Tag" rules={[{ required: true }]}>
-            <Select
-              onChange={(key: string) => onChangeTag(key)}
-              loading={loading}
-            >
+            <Select onChange={(key: string) => onChangeTag(key)}>
               {filteredTags.map((tag) => (
                 <Select.Option key={tag.id} value={tag.id}>
                   {tag.tagName}
@@ -174,7 +152,7 @@ const TagForm: React.FC<FormProps> = ({ tag, setShowTagForm }) => {
           <Button onClick={() => setShowTagForm(false)}>Cancel</Button>
         </Col>
         <Col>
-          <Button type="primary" htmlType="submit" loading={loading}>
+          <Button type="primary" htmlType="submit">
             Save Tag
           </Button>
         </Col>

@@ -1,34 +1,18 @@
 import { Button, Col, Form, InputNumber, Row, Select } from "antd";
 import { Brand } from "interfaces/Brand";
-import { useEffect, useState } from "react";
-import { fetchBrands } from "services/DiscoClubService";
 
 interface FormProps {
+  brands: Brand[];
   brand: Brand | undefined;
   setShowBrandForm: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const BrandForm: React.FC<FormProps> = ({ brand, setShowBrandForm }) => {
-  const [brands, setBrands] = useState<Brand[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
+const BrandForm: React.FC<FormProps> = ({
+  brand,
+  setShowBrandForm,
+  brands,
+}) => {
   const [form] = Form.useForm();
-
-  useEffect(() => {
-    let mounted = true;
-    async function getBrands() {
-      const response: any = await fetchBrands();
-      if (mounted) {
-        setBrands(response.results);
-        setLoading(false);
-      }
-    }
-    setLoading(true);
-    getBrands();
-    return () => {
-      mounted = false;
-    };
-  }, []);
-
   const onChangeBrand = (key: string) => {
     const currentValues = form.getFieldsValue(true);
     const selectedBrand: any = brands.find((brand: Brand) => brand.id === key);
@@ -63,7 +47,6 @@ const BrandForm: React.FC<FormProps> = ({ brand, setShowBrandForm }) => {
                 option?.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
               }
               onChange={(key: string) => onChangeBrand(key)}
-              loading={loading}
             >
               {brands.map((brand) => (
                 <Select.Option key={brand.id} value={brand.id}>
@@ -83,7 +66,6 @@ const BrandForm: React.FC<FormProps> = ({ brand, setShowBrandForm }) => {
               const bra: any = brands.find(
                 (brand: Brand) => brand.id === getFieldValue("id")
               );
-              console.log(bra);
               return (
                 <Form.Item name="selectedLogo" label="Brand logo">
                   <Select
@@ -170,7 +152,7 @@ const BrandForm: React.FC<FormProps> = ({ brand, setShowBrandForm }) => {
           <Button onClick={() => setShowBrandForm(false)}>Cancel</Button>
         </Col>
         <Col>
-          <Button type="primary" htmlType="submit" loading={loading}>
+          <Button type="primary" htmlType="submit">
             Save Brand
           </Button>
         </Col>
