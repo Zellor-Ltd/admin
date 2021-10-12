@@ -657,6 +657,23 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
             setShowBrandForm(false);
             setSelectedSegment(segmentForm.getFieldsValue(true));
           }
+          if (name === "tagForm") {
+            const { segmentForm, tagForm } = forms;
+            const tags: any[] = segmentForm.getFieldValue("tags") || [];
+            const newValue = tagForm.getFieldsValue(true);
+            if (selectedTagIndex > -1) {
+              tags[selectedTagIndex] = newValue;
+              segmentForm.setFieldsValue({ tags: [...tags] });
+            } else {
+              segmentForm.setFieldsValue({
+                tags: [...tags, newValue],
+              });
+            }
+            setSelectedTag(undefined);
+            setSelectedTagIndex(-1);
+            setShowTagForm(false);
+            setSelectedSegment(segmentForm.getFieldsValue(true));
+          }
         }}
       >
         {selectedSegment && <SegmentPage />}

@@ -13,7 +13,9 @@ const TagForm: React.FC<FormProps> = ({ tag, setShowTagForm }) => {
   const [brands, setBrands] = useState<Brand[]>([]);
   const [tags, setTags] = useState<Tag[]>([]);
   const [filteredTags, setFilteredTags] = useState<Tag[]>([]);
-  const [selectedBrand, setSelectedBrand] = useState<string>("");
+  const [selectedBrand, setSelectedBrand] = useState<string>(
+    tag?.brand?.id || ""
+  );
   const [loading, setLoading] = useState<boolean>(false);
   const [form] = Form.useForm();
 
@@ -97,7 +99,7 @@ const TagForm: React.FC<FormProps> = ({ tag, setShowTagForm }) => {
               onChange={(key: string) => onChangeTag(key)}
               loading={loading}
             >
-              {tags.map((tag) => (
+              {filteredTags.map((tag) => (
                 <Select.Option key={tag.id} value={tag.id}>
                   {tag.tagName}
                 </Select.Option>
