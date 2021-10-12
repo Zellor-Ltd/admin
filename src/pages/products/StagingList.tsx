@@ -2,6 +2,7 @@ import {
   ArrowRightOutlined,
   DeleteOutlined,
   EditOutlined,
+  SearchOutlined,
 } from "@ant-design/icons";
 import { Button, Checkbox, Col, PageHeader, Popconfirm, Row } from "antd";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
@@ -33,7 +34,8 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
   const detailsPathname = `${location.pathname}/product/staging`;
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
-  const [content, setContent] = useState<any[]>([]);
+  const [content, setContent] = useState<any>();
+  const [preLoaded, setPreLoaded] = useState<boolean>(false);
 
   const {
     setArrayList: setProducts,
@@ -49,24 +51,36 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
     setLoading,
   });
 
-  const getResources = useCallback(async () => {
+  const getResources = useCallback(async (_brand?, _text?) => {
     const [{ results }] = await Promise.all([
       doFetch(fetchStagingProducts),
       fetchAllCategories(),
     ]);
-    setProducts(results);
-    setContent(results);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    setPreLoaded(true);
+    if (_brand || _text) {
+      if (_brand) {
+        setProducts(
+          results.filter(
+            (product) => product.brand.brandName === _brand.brandName
+          )
+        );
+      } else if (_text) {
+        setProducts(
+          results.filter((product) =>
+            product.name?.toUpperCase().includes(_text.toUpperCase())
+          )
+        );
+      }
+    } else {
+      setProducts(results);
+      setContent(results);
+    } // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const getProducts = async () => {
     const { results } = await doFetch(fetchStagingProducts);
     setProducts(results);
   };
-
-  useEffect(() => {
-    getResources();
-  }, [getResources]);
 
   const deleteItem = async (_id: string) => {
     await doRequest(() => deleteStagingProduct(_id));
@@ -216,24 +230,36 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
     },
   ];
 
-  const searchFilterFunction = (filterText: string) => {
-    addFilterFunction("productName", (products) =>
-      products.filter((product) =>
-        product.name?.toUpperCase().includes(filterText.toUpperCase())
-      )
-    );
+  const searchFilterFunction = (_filterText: string) => {
+    if (preLoaded) {
+      addFilterFunction("productName", (products) =>
+        products.filter((product) =>
+          product.name?.toUpperCase().includes(_filterText.toUpperCase())
+        )
+      );
+    } else {
+      getResources(_filterText);
+    }
   };
 
   const onChangeBrand = async (_selectedBrand: Brand | undefined) => {
-    if (!_selectedBrand) {
-      removeFilterFunction("brandName");
-      return;
+    if (preLoaded) {
+      if (!_selectedBrand) {
+        removeFilterFunction("brandName");
+        return;
+      }
+      addFilterFunction("brandName", (products) =>
+        products.filter(
+          (product) => product.brand.brandName === _selectedBrand.brandName
+        )
+      );
+    } else {
+      if (_selectedBrand) {
+        getResources(_selectedBrand);
+      } else {
+        getResources();
+      }
     }
-    addFilterFunction("brandName", (products) =>
-      products.filter(
-        (product) => product.brand.brandName === _selectedBrand.brandName
-      )
-    );
   };
 
   const handleEditProducts = async () => {
@@ -260,20 +286,20 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
       <Row align="bottom" justify="space-between">
         <Col lg={16} xs={24}>
           <Row gutter={8}>
-            <Col lg={8} xs={16}>
+            <Col lg={8} xs={24}>
               <SearchFilter
                 filterFunction={searchFilterFunction}
-                label="Search by Name"
+                label="Search by Product"
               />
             </Col>
-            <Col lg={8} xs={16}>
+            <Col lg={8} xs={24}>
               <SelectBrand
                 style={{ width: "100%" }}
                 allowClear={true}
                 onChange={onChangeBrand}
               ></SelectBrand>
             </Col>
-            <Col lg={8} xs={16}>
+            <Col lg={8} xs={24}>
               <Checkbox
                 onChange={handleFilterClassified}
                 style={{ margin: "42px 0 16px 8px" }}
@@ -283,13 +309,20 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
             </Col>
           </Row>
         </Col>
-        <EditMultipleButton
-          text="Edit Products"
-          arrayList={filteredProducts}
-          ModalComponent={EditProductModal}
-          selectedRowKeys={selectedRowKeys}
-          onOk={handleEditProducts}
-        />
+        <Col>
+          <Button
+            type="primary"
+            onClick={() => getResources()}
+            loading={loading}
+            style={{
+              marginBottom: "20px",
+              marginRight: "25px",
+            }}
+          >
+            Search
+            <SearchOutlined style={{ color: "white" }} />
+          </Button>
+        </Col>
       </Row>
       <EditableTable
         rowKey="id"
