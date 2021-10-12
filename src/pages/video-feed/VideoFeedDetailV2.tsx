@@ -37,6 +37,7 @@ import {
   saveVideoFeed,
 } from "services/DiscoClubService";
 import BrandForm from "./BrandForm";
+import TagForm from "./TagForm";
 import "./VideoFeed.scss";
 import "./VideoFeedDetail.scss";
 
@@ -480,7 +481,7 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
               const tags: any[] = segmentForm.getFieldValue("tags") || [];
               setSelectedTag(tags[index]);
               setSelectedTagIndex(index);
-              setShowBrandForm(true);
+              setShowTagForm(true);
             }}
           >
             <EditOutlined />
@@ -515,13 +516,16 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
             brand={selectedBrand}
           />
         )}
+        {showTagForm && (
+          <TagForm setShowTagForm={setShowTagForm} tag={selectedTag} />
+        )}
         <Form
           form={segmentForm}
           name="segmentForm"
           layout="vertical"
           initialValues={selectedSegment}
         >
-          {!showBrandForm && (
+          {!showBrandForm && !showTagForm && (
             <>
               <Tabs defaultActiveKey="Video Details">
                 <Tabs.TabPane forceRender tab="Images" key="Images">
