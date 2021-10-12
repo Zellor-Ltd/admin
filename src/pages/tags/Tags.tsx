@@ -9,10 +9,7 @@ import { Tag } from "interfaces/Tag";
 import { useContext, useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { Link, RouteComponentProps } from "react-router-dom";
-import {
-  deleteTag,
-  fetchTags,
-} from "services/DiscoClubService";
+import { deleteTag, fetchTags } from "services/DiscoClubService";
 
 const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
   const detailsPathname = `${location.pathname}/tag`;
@@ -27,6 +24,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [searchFilter, setSearchFilter] = usePageFilter<string>("search");
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
+  const [content, setContent] = useState<any[]>([]);
 
   const [tags, setTags] = useState<Tag[]>([]);
 
@@ -64,6 +62,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
     const getTags = async () => {
       const { results } = await _fetchTags();
       setTags(results);
+      setContent(results);
       setRefreshing(false);
     };
     if (refreshing) {
@@ -84,8 +83,13 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
   }, []);
 
   const deleteItem = async (id: string) => {
-    await doRequest(() => deleteTag({id}));
-    await refreshTags();
+    await doRequest(() => deleteTag({ id }));
+    for (let i = 0; i < content.length; i++) {
+      if (content[i].id === id) {
+        const index = i;
+        setTags((prev) => [...prev.slice(0, index), ...prev.slice(index + 1)]);
+      }
+    }
   };
 
   const columns: ColumnsType<Tag> = [

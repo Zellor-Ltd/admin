@@ -43,10 +43,20 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
   const [searchText, setSearchText] = useState<string>("");
   const [searchedColumn, setSearchedColumn] = useState<string>("");
   const searchInput = useRef<Input>(null);
+  const [content, setContent] = useState<any>({
+    "Super Category": [],
+    Category: [],
+    "Sub Category": [],
+    "Sub Sub Category": [],
+  });
 
   useEffect(() => {
     fetchAllCategories();
   }, [fetchAllCategories]);
+
+  useEffect(() => {
+    setContent(allCategories);
+  }, [allCategories]);
 
   const deleteItem = async (id: string) => {
     try {
@@ -59,7 +69,46 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
       ].delete({
         id,
       });
-      fetchAllCategories();
+
+      const selectedKey = categoriesKeys[
+        categoriesKeys.indexOf(selectedTab)
+      ] as keyof AllCategoriesAPI;
+
+      let selectedKeyIndex = -1;
+      let index = -1;
+
+      switch (selectedKey.toString) {
+        case () => "Super Category":
+          selectedKeyIndex = 0;
+          break;
+        case () => "Category":
+          selectedKeyIndex = 1;
+          break;
+        case () => "Sub Category":
+          selectedKeyIndex = 2;
+          break;
+        case () => "Sub Sub Category":
+          selectedKeyIndex = 3;
+          break;
+      }
+
+      const contentArray: any[] = Object.values(content);
+
+      for (let i = 0; i < contentArray.length; i++) {
+        for (let j = 0; j < contentArray[i].length; j++) {
+          if (contentArray[i][j].id === id) {
+            index = j;
+          }
+        }
+      }
+
+      setContent((prev: any) => {
+        prev[selectedKey] = [
+          ...prev[selectedKey].slice(0, index),
+          ...prev[selectedKey].slice(index + 1),
+        ];
+        return prev;
+      });
     } catch (err) {
       console.log(err);
     } finally {
@@ -264,7 +313,7 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
             <Table
               rowKey="id"
               columns={columns}
-              dataSource={allCategories[key as keyof AllCategories]}
+              dataSource={content[key as keyof AllCategories]}
               loading={loading}
             />
           </Tabs.TabPane>
