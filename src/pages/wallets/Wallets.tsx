@@ -87,7 +87,11 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
         <Col lg={24} xs={24}>
           <Row gutter={8}>
             <Col lg={6} xs={12}>
-              <SelectFan onChange={onChangeFan} style={{ width: "100%" }} />
+              <SelectFan
+                onChange={onChangeFan}
+                style={{ width: "100%" }}
+                allowClear={false}
+              />
             </Col>
             <Col lg={6} xs={12}>
               <SelectBrand
