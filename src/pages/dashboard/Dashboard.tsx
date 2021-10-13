@@ -26,7 +26,6 @@ const Dashboard: React.FC<DashboardProps> = () => {
 
   const getResources = async () => {
     const { results } = await doFetch(fetchActiveRegFansPerDay);
-    console.log(results);
     setFansPerDay(results);
   };
 
