@@ -1,4 +1,4 @@
-import { Button, Col, Layout, Row, Typography } from "antd";
+import { Button, Col, Dropdown, Layout, Menu, Row, Typography } from "antd";
 import ErrorBoundary from "components/ErrorBoundary";
 import jwt from "helpers/jwt";
 import { useBuildTarget } from "hooks/useBuildTarget";
@@ -7,6 +7,8 @@ import { Link, RouteComponentProps, withRouter } from "react-router-dom";
 import "./AuthenticatedLayout.scss";
 import AdminSideMenu from "./SideMenus/AdminSideMenu";
 import BrandManagerSideMenu from "./SideMenus/BrandManagerSideMenu";
+import { BellOutlined, CloseOutlined } from "@ant-design/icons";
+import { useState } from "react";
 
 const { Header, Sider, Content } = Layout;
 
@@ -28,6 +30,70 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = (props) => {
     return user.name;
   };
 
+  const [showAlerts, setShowAlerts] = useState<boolean>(false);
+  const [messages, setMessages] = useState<string[]>([
+    "Error Error Error Error Error Error Error Error Error ErrorError 1",
+    "Error 2",
+    "Error 3",
+    "Error 4",
+    "Error 5",
+    "Error 6",
+    "Error 7",
+    "Error 8",
+    "Error 9",
+  ]);
+
+  const removeMessage = (index: number) => {
+    setMessages([...messages.slice(0, index), ...messages.slice(index + 1)]);
+  };
+
+  const menu = (
+    <Menu
+      style={{
+        width: "220px",
+        maxHeight: "320px",
+        overflowY: messages.length ? "scroll" : "initial",
+      }}
+    >
+      {messages.length ? (
+        messages.map((message, index) => (
+          <>
+            <Menu.Item>
+              <Row>
+                <Col xs={20}>
+                  <div
+                    style={{
+                      padding: "8px 0 0 0",
+                      whiteSpace: "initial",
+                      wordWrap: "break-word",
+                    }}
+                  >
+                    {message}
+                  </div>
+                </Col>
+                <Col xs={4}>
+                  <Button
+                    type="link"
+                    size="large"
+                    onClick={() => removeMessage(index)}
+                    icon={<CloseOutlined />}
+                  />
+                </Col>
+              </Row>
+            </Menu.Item>
+            <Menu.Divider />
+          </>
+        ))
+      ) : (
+        <Menu.Item>There are no messages.</Menu.Item>
+      )}
+    </Menu>
+  );
+
+  const handleVisibleChange = (flag: boolean) => {
+    setShowAlerts(flag);
+  };
+
   return (
     <Layout>
       <Header className="header">
@@ -41,6 +107,29 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = (props) => {
           </Link>
         </h2>
         <Row style={{ width: "35%" }} justify="end" wrap={false}>
+          <div>
+            <Col xs={0} md={24} style={{ textAlign: "end" }}>
+              <Dropdown
+                overlay={menu}
+                trigger={["click"]}
+                onVisibleChange={handleVisibleChange}
+                visible={showAlerts}
+              >
+                <Button
+                  style={{
+                    height: "100%",
+                    backgroundColor: "rgb(0 21 41)",
+                    borderColor: "rgb(0 21 41)",
+                    marginRight: "20px",
+                  }}
+                  shape="circle"
+                  size="large"
+                  onClick={(e) => e.preventDefault()}
+                  icon={<BellOutlined style={{ color: "white" }} />}
+                />
+              </Dropdown>
+            </Col>
+          </div>
           <div>
             <Col xs={0} md={24} style={{ textAlign: "end" }}>
               <Typography.Text style={{ color: "white" }}>
