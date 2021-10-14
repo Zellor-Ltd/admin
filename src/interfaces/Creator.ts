@@ -5,4 +5,5 @@ export interface Creator {
   creatorId: string;
   firstName: string;
   lastName: string;
+  coverPictureUrl?: string;
 }

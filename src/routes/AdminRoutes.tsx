@@ -1,7 +1,8 @@
 import { Switch, Redirect } from "react-router-dom";
 import Login from "pages/login/Login";
 import VideoFeed from "pages/video-feed/VideoFeed";
-import VideoFeedDetail from "pages/video-feed/VideoFeedDetail";
+// import VideoFeedDetail from "pages/video-feed/VideoFeedDetail";
+import VideoFeedDetail from "pages/video-feed/VideoFeedDetailV2";
 import ProductDetails from "pages/products/ProductsDetails";
 import Creators from "pages/creators/Creators";
 import CreatorDetail from "pages/creators/CreatorDetail";

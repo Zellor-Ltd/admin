@@ -1,4 +1,4 @@
-import { DeleteOutlined, EyeOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EyeOutlined, SearchOutlined } from "@ant-design/icons";
 import { Button, Col, PageHeader, Popconfirm, Row, Spin, Table } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import CopyIdToClipboard from "components/CopyIdToClipboard";
@@ -77,11 +77,6 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchFilter]);
 
-  useEffect(() => {
-    getResources();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   const deleteItem = async (id: string) => {
     await doRequest(() => deleteTag({ id }));
     for (let i = 0; i < content.length; i++) {
@@ -156,6 +151,20 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
               />
             </Col>
           </Row>
+        </Col>
+        <Col>
+          <Button
+            type="primary"
+            onClick={() => getResources()}
+            loading={loading}
+            style={{
+              marginBottom: "20px",
+              marginRight: "25px",
+            }}
+          >
+            Search
+            <SearchOutlined style={{ color: "white" }} />
+          </Button>
         </Col>
       </Row>
       <InfiniteScroll

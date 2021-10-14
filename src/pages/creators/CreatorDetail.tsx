@@ -134,10 +134,10 @@ const CreatorDetail: React.FC<RouteComponentProps> = (props) => {
             </Row>
             <Row gutter={8}>
               <Col lg={4} xs={24}>
-                <Form.Item label="Image">
+                <Form.Item label="Cover Picture">
                   <Upload.ImageUpload
-                    fileList={initial?.image}
-                    formProp="image"
+                    fileList={initial?.coverPictureUrl}
+                    formProp="coverPictureUrl"
                     form={form}
                   />
                 </Form.Item>

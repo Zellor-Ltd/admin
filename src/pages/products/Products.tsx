@@ -2,6 +2,7 @@ import {
   DeleteOutlined,
   EditOutlined,
   SettingOutlined,
+  SearchOutlined,
 } from "@ant-design/icons";
 import { Button, Checkbox, Col, PageHeader, Popconfirm, Row, Spin } from "antd";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
@@ -51,6 +52,7 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
 
   const [products, setProducts] = useState<Product[]>([]);
   const [content, setContent] = useState<any[]>([]);
+  const [preLoaded, setPreLoaded] = useState<boolean>(false);
 
   const { fetchAllCategories, allCategories } = useAllCategories({
     setLoading,
@@ -77,6 +79,7 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
       _fetchProducts(),
       fetchAllCategories(),
     ]);
+    setPreLoaded(true);
     setProducts(results);
     setContent(results);
   };
@@ -110,11 +113,6 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
     if (allCategories["Super Category"].length) refreshProducts();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchFilter, brandFilter, unclassifiedFilter]);
-
-  useEffect(() => {
-    getResources();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const deleteItem = async (_id: string) => {
     await doRequest(() => deleteProduct(_id));
@@ -303,13 +301,20 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
             </Col>
           </Row>
         </Col>
-        <EditMultipleButton
-          text="Edit Products"
-          arrayList={products}
-          ModalComponent={EditProductModal}
-          selectedRowKeys={selectedRowKeys}
-          onOk={refreshProducts}
-        />
+        <Col>
+          <Button
+            type="primary"
+            onClick={() => getResources()}
+            loading={loading}
+            style={{
+              marginBottom: "20px",
+              marginRight: "25px",
+            }}
+          >
+            Search
+            <SearchOutlined style={{ color: "white" }} />
+          </Button>
+        </Col>
       </Row>
       <ProductAPITestModal
         selectedRecord={productAPITest}
