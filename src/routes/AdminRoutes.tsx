@@ -47,6 +47,7 @@ import FanGroupDetail from "pages/fan-groups/FanGroupDetail";
 import Wallets from "pages/wallets/Wallets";
 import WalletDetail from "pages/wallets/WalletDetail";
 import MasterPassword from "pages/master-password/MasterPassword";
+import Stomp from "pages/stomp/Stomp";
 
 function AdminRoutes() {
   return (
@@ -268,6 +269,7 @@ function AdminRoutes() {
         component={MasterPassword}
         layout={AuthenticatedLayout}
       />
+      <AppRoute path="/stomp" component={Stomp} layout={AuthenticatedLayout} />
     </Switch>
   );
 }
