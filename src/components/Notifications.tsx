@@ -6,6 +6,9 @@ import React, { useEffect, useState } from "react";
 interface NotificationsProps {}
 
 export const Notifications: React.FC<NotificationsProps> = () => {
+  const [showAlerts, setShowAlerts] = useState<boolean>(false);
+  const [messages, setMessages] = useState<string[]>([]);
+
   useEffect(() => {
     const [brokerURL, login, passcode] =
       process.env.REACT_APP_STOMP_SERVER?.split("|") || [];
@@ -15,14 +18,11 @@ export const Notifications: React.FC<NotificationsProps> = () => {
         login,
         passcode,
       },
-      debug: function (str) {
-        console.log(str);
-      },
     });
     client.onConnect = function () {
-      console.log("connected");
-      client.subscribe("/topic/bunny", function (d) {
-        console.log(d);
+      console.log(`Connected to stomp server: ${brokerURL}`);
+      client.subscribe("/topic/Error", function (data) {
+        setMessages((prev) => [...prev, data?.body]);
       });
     };
     client.activate();
@@ -30,19 +30,6 @@ export const Notifications: React.FC<NotificationsProps> = () => {
       client.deactivate();
     };
   }, []);
-
-  const [showAlerts, setShowAlerts] = useState<boolean>(false);
-  const [messages, setMessages] = useState<string[]>([
-    "Error Error Error Error Error Error Error Error Error ErrorError 1",
-    "Error 2",
-    "Error 3",
-    "Error 4",
-    "Error 5",
-    "Error 6",
-    "Error 7",
-    "Error 8",
-    "Error 9",
-  ]);
 
   const removeMessage = (index: number) => {
     setMessages([...messages.slice(0, index), ...messages.slice(index + 1)]);
