@@ -10,7 +10,7 @@ export const Notifications: React.FC<NotificationsProps> = () => {
   const [messages, setMessages] = useState<string[]>([]);
 
   useEffect(() => {
-    const [brokerURL, login, passcode] =
+    const [brokerURL, login, passcode, exchange] =
       process.env.REACT_APP_STOMP_SERVER?.split("|") || [];
     const client = new Client({
       brokerURL,
@@ -20,8 +20,8 @@ export const Notifications: React.FC<NotificationsProps> = () => {
       },
     });
     client.onConnect = function () {
-      console.log(`Connected to stomp server: ${brokerURL}`);
-      client.subscribe("/topic/Error", function (data) {
+      //console.log(`Connected to stomp server: ${brokerURL}`);
+      client.subscribe(exchange, function (data) {
         setMessages((prev) => [...prev, data?.body]);
       });
     };
