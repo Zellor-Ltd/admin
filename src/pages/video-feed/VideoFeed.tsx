@@ -57,9 +57,9 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
     }
   };
 
-  useEffect(() => {
+  const getResources = () => {
     fetch();
-  }, []);
+  };
 
   const deleteItem = async (_id: string) => {
     setLoading(true);
@@ -197,12 +197,25 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
         ]}
       />
       <div style={{ marginBottom: "16px" }}>
-        <Row>
+        <Row align="bottom" justify="space-between">
           <Col lg={8} xs={24}>
             <Typography.Title level={5} title="Search">
               Search
             </Typography.Title>
             <Input onChange={onChangeFilter} suffix={<SearchOutlined />} />
+          </Col>
+          <Col>
+            <Button
+              type="primary"
+              onClick={() => getResources()}
+              loading={loading}
+              style={{
+                marginRight: "25px",
+              }}
+            >
+              Search
+              <SearchOutlined style={{ color: "white" }} />
+            </Button>
           </Col>
         </Row>
       </div>

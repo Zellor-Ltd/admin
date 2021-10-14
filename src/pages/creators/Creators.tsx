@@ -3,6 +3,7 @@ import {
   CloseOutlined,
   DeleteOutlined,
   EditOutlined,
+  SearchOutlined,
 } from "@ant-design/icons";
 import { Button, Col, PageHeader, Popconfirm, Row, Table, Tag } from "antd";
 import { ColumnsType } from "antd/lib/table";
@@ -126,11 +127,6 @@ const Creators: React.FC<RouteComponentProps> = ({ history, location }) => {
     setContent(response.results);
   };
 
-  useEffect(() => {
-    fetch();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   const searchFilterFunction = (filterText: string) => {
     addFilterFunction("creatorFirstName", (creators) =>
       creators.filter((creator) =>
@@ -152,13 +148,25 @@ const Creators: React.FC<RouteComponentProps> = ({ history, location }) => {
           </Button>,
         ]}
       />
-      <Row gutter={8}>
+      <Row gutter={8} align="bottom" justify="space-between">
         <Col lg={8} xs={16}>
           <SearchFilter
             filterFunction={searchFilterFunction}
             label="Search by First Name"
           />
         </Col>
+        <Button
+          type="primary"
+          onClick={() => fetch()}
+          loading={loading}
+          style={{
+            marginBottom: "16px",
+            marginRight: "25px",
+          }}
+        >
+          Search
+          <SearchOutlined style={{ color: "white" }} />
+        </Button>
       </Row>
       <Table
         rowKey="id"
