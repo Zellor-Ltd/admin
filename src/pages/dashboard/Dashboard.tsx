@@ -98,7 +98,7 @@ const Dashboard: React.FC<DashboardProps> = () => {
               <YAxis />
               <Tooltip />
               <Legend />
-              <Bar dataKey="products" fill="#8884d8" />
+              <Bar dataKey="products" fill="#8884d8" name="Added products" />
             </BarChart>
           </ResponsiveContainer>
         </Col>
