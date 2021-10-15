@@ -237,7 +237,7 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                   <Col lg={24} xs={24}>
                     <Form.Item
                       name={["brand", "id"]}
-                      label="Brand"
+                      label="Store"
                       rules={[{ required: true }]}
                     >
                       <Select onChange={() => setDiscoPercentageByBrand(false)}>

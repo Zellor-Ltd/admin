@@ -16,11 +16,11 @@ type SelectBrandProps = Omit<
 
 export const SelectBrand: React.FC<SelectBrandProps> = ({
   onChange,
-  placeholder = "Select a brand",
+  placeholder = "Select a store",
   style,
   allowClear = true,
   initialBrandName = "",
-  label = "Brand Filter",
+  label = "Store Filter",
 }) => {
   const [brands, setBrands] = useState<Brand[]>([]);
   const [selectedBrandName, setSelectedBrandName] =

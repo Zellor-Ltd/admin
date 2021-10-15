@@ -119,7 +119,7 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
   useEffect(() => {
     if (showBrandForm)
       setPageTitle(
-        `Brand ${
+        `Store ${
           selectedBrandIndex > -1
             ? `${selectedBrandIndex + 1} Update`
             : "Creation"
@@ -297,7 +297,7 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
                 >
                   <Select mode="multiple">
                     <Select.Option value="Feed">Feed</Select.Option>
-                    <Select.Option value="Brand">Brand</Select.Option>
+                    <Select.Option value="Brand">Store</Select.Option>
                     <Select.Option value="Review">Review</Select.Option>
                   </Select>
                 </Form.Item>
@@ -506,7 +506,7 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
 
   const tagsColumns: ColumnsType<any> = [
     {
-      title: "Brand Name",
+      title: "Store Name",
       dataIndex: ["brand", "brandName"],
       width: "15%",
     },
@@ -616,7 +616,7 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
                 </Tabs.TabPane>
                 <Tabs.TabPane
                   forceRender
-                  tab={`Brands (${selectedSegment!.brands?.length || 0})`}
+                  tab={`Stores (${selectedSegment!.brands?.length || 0})`}
                   key="Brands"
                 >
                   <Button
@@ -628,7 +628,7 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
                       setShowBrandForm(true);
                     }}
                   >
-                    New Brand
+                    New Store
                   </Button>
                   <Table
                     rowKey="id"

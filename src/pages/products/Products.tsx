@@ -8,7 +8,6 @@ import { Button, Checkbox, Col, PageHeader, Popconfirm, Row, Spin } from "antd";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
 import CopyIdToClipboard from "components/CopyIdToClipboard";
 import EditableTable, { EditableColumnType } from "components/EditableTable";
-import EditMultipleButton from "components/EditMultipleButton";
 import { SearchFilterDebounce } from "components/SearchFilterDebounce";
 import { SelectBrand } from "components/SelectBrand";
 import { AppContext } from "contexts/AppContext";
@@ -154,7 +153,7 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
       ),
     },
     {
-      title: "Brand",
+      title: "Store",
       dataIndex: ["brand", "brandName"],
       width: "20%",
       align: "center",

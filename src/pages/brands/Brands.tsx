@@ -96,7 +96,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
       align: "center",
     },
     {
-      title: "Brand Name",
+      title: "Store Name",
       dataIndex: "brandName",
       width: "30%",
       render: (value: string, record: Brand) => (
@@ -126,7 +126,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
       render: (value: any) => <b>{value ? "Yes" : "No"}</b>,
     },
     {
-      title: "Brand Color",
+      title: "Store Color",
       dataIndex: "brandTxtColor",
       width: "20%",
       align: "center",
@@ -196,8 +196,8 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
   return (
     <>
       <PageHeader
-        title="Brands"
-        subTitle="List of Brands"
+        title="Stores"
+        subTitle="List of Stores"
         extra={[
           <Button key="1" onClick={() => history.push(detailsPathname)}>
             New Item

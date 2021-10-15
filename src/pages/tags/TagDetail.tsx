@@ -124,7 +124,7 @@ const TagDetail: React.FC<RouteComponentProps> = (props) => {
               </Form.Item>
             </Col>
             <Col lg={6} xs={0}>
-              <Form.Item name={["brand", "id"]} label="Brand">
+              <Form.Item name={["brand", "id"]} label="Store">
                 <Select onChange={onChangeBrand}>
                   {brands.map((brand) => (
                     <Select.Option key={brand.id} value={brand.id}>

@@ -30,7 +30,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
 
   const columns: ColumnsType<Wallet> = [
     {
-      title: "Brand",
+      title: "Store",
       dataIndex: "brandName",
       width: "40%",
       render: (value: string, record: Wallet) => (

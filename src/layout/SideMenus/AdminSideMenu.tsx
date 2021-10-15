@@ -19,7 +19,7 @@ import {
   IssuesCloseOutlined,
   DashboardOutlined,
   DropboxOutlined,
-  CrownOutlined
+  CrownOutlined,
 } from "@ant-design/icons";
 import { Menu } from "antd";
 import SubMenu from "antd/lib/menu/SubMenu";
@@ -40,7 +40,7 @@ const AdminSideMenu = () => {
         <Link to="/dashboard">Dashboard</Link>
       </Menu.Item>
       <Menu.Item key="brands" icon={<CrownOutlined />}>
-        <Link to="/brands">Brands</Link>
+        <Link to="/brands">Stores</Link>
       </Menu.Item>
       <Menu.Item key="products" icon={<DropboxOutlined />}>
         <Link to="/products">Live Products</Link>

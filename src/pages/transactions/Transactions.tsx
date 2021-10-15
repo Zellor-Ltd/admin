@@ -46,7 +46,7 @@ const Transactions: React.FC<RouteComponentProps> = () => {
       ),
     },
     {
-      title: "Brand",
+      title: "Store",
       dataIndex: "brandName",
       width: "15%",
       align: "center",
