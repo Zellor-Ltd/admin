@@ -31,7 +31,7 @@ export const SearchFilterDebounce: React.FC<SearchFilterDebounceProps> = ({
       </Typography.Title>
       <Input
         onChange={(evt) => {
-          setText(evt.target.value);
+          setText(evt.target.value.toUpperCase);
         }}
         value={text}
         suffix={<SearchOutlined />}

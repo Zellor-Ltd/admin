@@ -532,7 +532,10 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
 
         <Row gutter={8}>
           <Col>
-            <Button type="default" onClick={() => history.goBack}>
+            <Button
+              type="default"
+              onClick={() => history.push(productsListPathname)}
+            >
               Cancel
             </Button>
           </Col>
