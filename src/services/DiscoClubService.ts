@@ -535,3 +535,6 @@ export const reactivateBrand = (brandId: string, masterPassword: string) =>
 
 export const fetchActiveRegFansPerDay = () =>
   instance.get(`Disco/Analytics/ActiveRegFansPerDay`);
+
+export const fetchProductsPerDay = () =>
+  instance.get(`/Disco/Analytics/ProductsAddedPerDay`);

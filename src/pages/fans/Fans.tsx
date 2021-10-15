@@ -2,6 +2,7 @@ import {
   EditOutlined,
   OrderedListOutlined,
   SettingOutlined,
+  SearchOutlined,
 } from "@ant-design/icons";
 import { Button, Col, PageHeader, Row, Table, Tag } from "antd";
 import { ColumnsType } from "antd/lib/table";
@@ -47,11 +48,6 @@ const Fans: React.FC<RouteComponentProps> = ({ history, location }) => {
   const getResources = async () => {
     await Promise.all([getFans()]);
   };
-
-  useEffect(() => {
-    getResources();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const searchFilterFunction = (filterText: string) => {
     addFilterFunction("fanName", (fans) =>
@@ -157,6 +153,18 @@ const Fans: React.FC<RouteComponentProps> = ({ history, location }) => {
           selectedRowKeys={selectedRowKeys}
           onOk={handleEditFans}
         />
+        <Button
+          type="primary"
+          onClick={() => getResources()}
+          loading={loading}
+          style={{
+            marginBottom: "20px",
+            marginRight: "25px",
+          }}
+        >
+          Search
+          <SearchOutlined style={{ color: "white" }} />
+        </Button>
       </Row>
       <FanAPITestModal
         selectedRecord={fanAPITest}
