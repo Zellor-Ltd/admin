@@ -148,7 +148,7 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
     {
       title: "Name",
       dataIndex: "name",
-      width: "22%",
+      width: "15%",
       render: (value: string, record) => (
         <Link to={{ pathname: detailsPathname, state: record }}>{value}</Link>
       ),
@@ -207,6 +207,23 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
       width: "12%",
       align: "center",
       responsive: ["sm"],
+    },
+    {
+      title: "Last Go-Live",
+      dataIndex: "goLiveDate",
+      width: "12.5%",
+      align: "center",
+      render: (goLiveDate: Date | null | undefined) =>
+        goLiveDate ? (
+          <>
+            <div>
+              {moment(goLiveDate).format("DD/MM/YY")}{" "}
+              {moment(goLiveDate).format("HH:mm")}
+            </div>
+          </>
+        ) : (
+          ""
+        ),
     },
     {
       title: "Actions",
