@@ -616,8 +616,10 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
                 </Tabs.TabPane>
                 <Tabs.TabPane
                   forceRender
-                  tab={`Brands (${selectedSegment!.brands?.length || 0})`}
-                  key="Brands"
+                  tab={`Master Brands (${
+                    selectedSegment!.brands?.length || 0
+                  })`}
+                  key="MasterBrands"
                 >
                   <Button
                     type="default"
@@ -628,7 +630,7 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
                       setShowBrandForm(true);
                     }}
                   >
-                    New Brand
+                    New Master Brand
                   </Button>
                   <Table
                     rowKey="id"
