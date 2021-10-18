@@ -320,13 +320,19 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
             loading={loading}
             style={{
               marginBottom: "20px",
-              marginRight: "25px",
             }}
           >
             Search
             <SearchOutlined style={{ color: "white" }} />
           </Button>
         </Col>
+        <EditMultipleButton
+          text="Edit Products"
+          arrayList={filteredProducts}
+          ModalComponent={EditProductModal}
+          selectedRowKeys={selectedRowKeys}
+          onOk={handleEditProducts}
+        />
       </Row>
       <EditableTable
         rowKey="id"

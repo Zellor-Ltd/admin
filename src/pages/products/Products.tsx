@@ -308,13 +308,19 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
             loading={loading}
             style={{
               marginBottom: "20px",
-              marginRight: "25px",
             }}
           >
             Search
             <SearchOutlined style={{ color: "white" }} />
           </Button>
         </Col>
+        <EditMultipleButton
+          text="Edit Products"
+          arrayList={products}
+          ModalComponent={EditProductModal}
+          selectedRowKeys={selectedRowKeys}
+          onOk={refreshProducts}
+        />
       </Row>
       <ProductAPITestModal
         selectedRecord={productAPITest}
