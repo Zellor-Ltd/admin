@@ -1,13 +1,11 @@
-import { MinusOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
+import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
 import {
   Button,
   Col,
   Form,
-  Input,
   message,
   PageHeader,
   Row,
-  Space,
   Switch,
   Table,
   Tabs,
@@ -17,13 +15,17 @@ import Checkbox, { CheckboxChangeEvent } from "antd/lib/checkbox/Checkbox";
 import { SwitchChangeEventHandler } from "antd/lib/switch";
 import { ColumnsType } from "antd/lib/table";
 import { SortableTable } from "components";
+import { SearchFilter } from "components/SearchFilter";
+import { SelectCategory } from "components/SelectCategory";
+import { SelectStatus } from "components/SelectStatus";
+import { SelectVideoType } from "components/SelectVideoType";
 import { SelectFanQuery } from "components/SelectFanQuery";
+import useFilter from "hooks/useFilter";
 import { useRequest } from "hooks/useRequest";
 import { FanFilter } from "interfaces/Fan";
 import { FeedItem } from "interfaces/FeedItem";
 import { Segment } from "interfaces/Segment";
-import React, { useEffect, useRef, useState } from "react";
-import Highlighter from "react-highlight-words";
+import React, { useEffect, useMemo, useState } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import {
   fetchGroupFeed,
@@ -37,6 +39,7 @@ import {
   updateMultipleUsersFeed,
   updateUsersFeedByGroup,
 } from "services/DiscoClubService";
+import { Category } from "interfaces/Category";
 
 const reduceSegmentsTags = (packages: Segment[]) => {
   return packages.reduce((acc: number, curr: Segment) => {
@@ -47,19 +50,26 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const { doFetch, doRequest } = useRequest({ setLoading });
 
-  const [userFeed, setUserFeed] = useState<any[]>([]);
-  const [templateFeed, setTemplateFeed] = useState<any[]>([]);
+  const {
+    arrayList: userFeed,
+    setArrayList: setUserFeed,
+    filteredArrayList: filteredUserFeed,
+    addFilterFunction: addUserFeedFilter,
+    removeFilterFunction: removeUserFeedFilter,
+  } = useFilter<any>([]);
+
+  const {
+    arrayList: templateFeed,
+    setArrayList: setTemplateFeed,
+    filteredArrayList: filteredTemplateFeed,
+    addFilterFunction: addTemplateFeedFilter,
+    removeFilterFunction: removeTemplateFeedFilter,
+  } = useFilter<any>([]);
 
   const [selectedFan, setSelectedFan] = useState<FanFilter>();
   const [selectedTab, setSelectedTab] = useState<string>("");
-
-  const [searchText, setSearchText] = useState<string>("");
-  const [searchedColumn, setSearchedColumn] = useState<string>("");
-
   const [lockedFeed, setLockedFeed] = useState<boolean>(false);
-
   const [displayFeedName, setDisplayFeedName] = useState<string>();
-
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
 
   const hasSelected = selectedRowKeys.length > 0;
@@ -70,104 +80,9 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
     );
   }, [selectedFan]);
 
-  const searchInput = useRef<Input>(null);
-
-  const handleSearch = (selectedKeys: any, confirm: any, dataIndex: any) => {
-    confirm();
-    setSearchText(selectedKeys[0]);
-    setSearchedColumn(dataIndex);
-  };
-
-  const handleReset = (clearFilters: any) => {
-    clearFilters();
-    setSearchText("");
-  };
-
   const onSelectChange = (selectedRowKeys: any) => {
     setSelectedRowKeys(selectedRowKeys);
   };
-
-  const getColumnSearchProps = (dataIndex: any) => ({
-    filterDropdown: ({
-      setSelectedKeys,
-      selectedKeys,
-      confirm,
-      clearFilters,
-    }: {
-      setSelectedKeys: any;
-      selectedKeys: any;
-      confirm: any;
-      clearFilters: any;
-    }) => (
-      <div style={{ padding: 8 }}>
-        <Input
-          ref={searchInput}
-          placeholder={`Search ${dataIndex}`}
-          value={selectedKeys[0]}
-          onChange={(e) =>
-            setSelectedKeys(e.target.value ? [e.target.value] : [])
-          }
-          onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
-          style={{ marginBottom: 8, display: "block" }}
-        />
-        <Space>
-          <Button
-            type="primary"
-            onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
-            icon={<SearchOutlined />}
-            size="small"
-            style={{ width: 90 }}
-          >
-            Search
-          </Button>
-          <Button
-            onClick={() => handleReset(clearFilters)}
-            size="small"
-            style={{ width: 90 }}
-          >
-            Reset
-          </Button>
-          <Button
-            type="link"
-            size="small"
-            onClick={() => {
-              confirm({ closeDropdown: false });
-              setSearchText(selectedKeys[0]);
-              setSearchedColumn(dataIndex);
-            }}
-          >
-            Filter
-          </Button>
-        </Space>
-      </div>
-    ),
-    filterIcon: (filtered: any) => (
-      <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
-    ),
-    onFilter: (value: any, record: any) =>
-      record[dataIndex]
-        ? record[dataIndex]
-            .toString()
-            .toLowerCase()
-            .includes(value.toLowerCase())
-        : "",
-    onFilterDropdownVisibleChange: (visible: any) => {
-      if (visible) {
-        setTimeout(() => searchInput.current!.select(), 100);
-      }
-    },
-    render: (text: any) =>
-      searchedColumn === dataIndex ? (
-        <Highlighter
-          highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
-          searchWords={[searchText]}
-          autoEscape
-          textToHighlight={text ? text.toString() : ""}
-        />
-      ) : (
-        text
-      ),
-  });
 
   const addVideo = (record: FeedItem, index: number) => {
     setUserFeed((prev) => [record, ...prev]);
@@ -216,12 +131,7 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
       title: "Title",
       dataIndex: "title",
       width: "30%",
-      // render: (value: string, record: FeedItem) => (
-      //   <Link to={{ pathname: `/video-feed`, state: record }}>{value}</Link>
-      // ),
       align: "center",
-      ...(() =>
-        selectedTab === "Template Feed" ? getColumnSearchProps("title") : {})(),
     },
     {
       title: "Segments",
@@ -320,10 +230,132 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
     await doRequest(() => fnToCall(selectedFan!.id));
   };
 
+  const titleFilterFunction = (filterText: string, filterFeedFn: Function) => {
+    filterFeedFn("name", (feed: any[]) =>
+      feed.filter((feedVideo) =>
+        feedVideo.title.toUpperCase().includes(filterText.toUpperCase())
+      )
+    );
+  };
+
+  const onChangeStatus = async (
+    _selectedStatus: string | undefined,
+    filterFeedFn: Function,
+    removeFilterFeedFn: Function
+  ) => {
+    if (!_selectedStatus) {
+      removeFilterFeedFn("status");
+      return;
+    }
+    filterFeedFn("status", (feed: any[]) =>
+      feed.filter(
+        (feedVideo) =>
+          feedVideo.status.toUpperCase() === _selectedStatus.toUpperCase()
+      )
+    );
+  };
+
+  const onChangeCategory = async (
+    _selectedCategory: Category | undefined,
+    filterFeedFn: Function,
+    removeFilterFeedFn: Function
+  ) => {
+    if (!_selectedCategory) {
+      removeFilterFeedFn("category");
+      return;
+    }
+    filterFeedFn("category", (feed: any[]) =>
+      feed.filter((feedVideo) => {
+        return feedVideo.category === _selectedCategory.name;
+      })
+    );
+  };
+
+  const onChangeVideoType = async (
+    _selectedVideoType: string | undefined,
+    filterFeedFn: Function,
+    removeFilterFeedFn: Function
+  ) => {
+    if (!_selectedVideoType) {
+      removeFilterFeedFn("videoType");
+      return;
+    }
+    filterFeedFn("videoType", (feed: any[]) =>
+      feed.filter(
+        (feedVideo) =>
+          typeof feedVideo.videoType === "object" &&
+          feedVideo.videoType.includes(_selectedVideoType)
+      )
+    );
+  };
+
+  const FiltersRow = useMemo(
+    () =>
+      ({
+        filterFeedFn,
+        removeFilterFeedFn,
+      }: {
+        filterFeedFn: Function;
+        removeFilterFeedFn: Function;
+      }) =>
+        (
+          <Row gutter={8}>
+            <Col lg={6} xs={16}>
+              <SearchFilter
+                filterFunction={(text) =>
+                  titleFilterFunction(text, filterFeedFn)
+                }
+                label="Title"
+              />
+            </Col>
+            <Col lg={6} xs={16}>
+              <SelectStatus
+                label="Status"
+                style={{ width: "100%" }}
+                onChange={(_selectedStatus) =>
+                  onChangeStatus(
+                    _selectedStatus,
+                    filterFeedFn,
+                    removeFilterFeedFn
+                  )
+                }
+              />
+            </Col>
+            <Col lg={6} xs={16}>
+              <SelectCategory
+                label="Category"
+                style={{ width: "100%" }}
+                onChange={(_selectedCategory) =>
+                  onChangeCategory(
+                    _selectedCategory,
+                    filterFeedFn,
+                    removeFilterFeedFn
+                  )
+                }
+              />
+            </Col>
+            <Col lg={6} xs={16}>
+              <SelectVideoType
+                label="Video Type"
+                style={{ width: "100%" }}
+                onChange={(_selectedVideoType) =>
+                  onChangeVideoType(
+                    _selectedVideoType,
+                    filterFeedFn,
+                    removeFilterFeedFn
+                  )
+                }
+              />
+            </Col>
+          </Row>
+        ),
+    []
+  );
+
   return (
     <div className="feed-mixer">
       <PageHeader title="Feed Mixer" subTitle="Define feed for users." />
-      <Row gutter={8} style={{ marginBottom: "20px" }}>
+      <Row gutter={8} style={{ marginBottom: "20px", width: "100%" }}>
         <Col>
           <SelectFanQuery
             style={{ width: "250px" }}
@@ -395,28 +427,40 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
         </Col>
       </Row>
       {selectedFan && (
-        <Row>
-          <Tabs defaultActiveKey="User Feed" onChange={handleTabChange}>
-            <Tabs.TabPane tab={displayFeedName} key="User Feed">
+        <Tabs defaultActiveKey="User Feed" onChange={handleTabChange}>
+          <Tabs.TabPane forceRender tab={displayFeedName} key="User Feed">
+            <FiltersRow
+              filterFeedFn={addUserFeedFilter}
+              removeFilterFeedFn={removeUserFeedFilter}
+            />
+            <div style={{ maxHeight: 400, overflowY: "scroll" }}>
               <SortableTable
                 rowKey="id"
                 columns={columns}
-                dataSource={userFeed}
+                dataSource={filteredUserFeed}
                 setDataSource={setUserFeed}
                 loading={loading}
+                pagination={false}
               />
-            </Tabs.TabPane>
-            <Tabs.TabPane tab="Template Feed" key="Template Feed">
+            </div>
+          </Tabs.TabPane>
+          <Tabs.TabPane forceRender tab="Template Feed" key="Template Feed">
+            <FiltersRow
+              filterFeedFn={addTemplateFeedFilter}
+              removeFilterFeedFn={removeTemplateFeedFilter}
+            />
+            <div style={{ maxHeight: 400, overflowY: "scroll" }}>
               <Table
                 rowSelection={rowSelection}
                 rowKey="id"
                 columns={columns}
-                dataSource={templateFeed}
+                dataSource={filteredTemplateFeed}
                 loading={loading}
+                pagination={false}
               />
-            </Tabs.TabPane>
-          </Tabs>
-        </Row>
+            </div>
+          </Tabs.TabPane>
+        </Tabs>
       )}
     </div>
   );
