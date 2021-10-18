@@ -154,7 +154,7 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
       ),
     },
     {
-      title: "Brand",
+      title: "Master Brand",
       dataIndex: ["brand", "brandName"],
       width: "20%",
       align: "center",
