@@ -1,7 +1,8 @@
 import { Switch, Redirect } from "react-router-dom";
 import Login from "pages/login/Login";
 import VideoFeed from "pages/video-feed/VideoFeed";
-import VideoFeedDetail from "pages/video-feed/VideoFeedDetail";
+// import VideoFeedDetail from "pages/video-feed/VideoFeedDetail";
+import VideoFeedDetail from "pages/video-feed/VideoFeedDetailV2";
 import ProductDetails from "pages/products/ProductsDetails";
 import Creators from "pages/creators/Creators";
 import CreatorDetail from "pages/creators/CreatorDetail";
@@ -47,8 +48,6 @@ import FanGroupDetail from "pages/fan-groups/FanGroupDetail";
 import Wallets from "pages/wallets/Wallets";
 import WalletDetail from "pages/wallets/WalletDetail";
 import MasterPassword from "pages/master-password/MasterPassword";
-import BrandVaults from "pages/vaults/BrandVaults";
-import BrandVaultDetail from "pages/vaults/BrandVaultDetail";
 
 function AdminRoutes() {
   return (
@@ -68,16 +67,6 @@ function AdminRoutes() {
       <AppRoute
         path="/feed/video-feed"
         component={VideoFeedDetail}
-        layout={AuthenticatedLayout}
-      />
-      <AppRoute
-        path="/vaults/vault"
-        component={BrandVaultDetail}
-        layout={AuthenticatedLayout}
-      />
-      <AppRoute
-        path="/vaults"
-        component={BrandVaults}
         layout={AuthenticatedLayout}
       />
       <AppRoute
@@ -195,11 +184,6 @@ function AdminRoutes() {
         component={AccessControl}
         layout={AuthenticatedLayout}
       />
-      {/* <AuthRoute
-        path="/preview"
-        component={Preview}
-        layout={AuthenticatedLayout}
-      /> */}
       <AppRoute
         path="/orders/order"
         component={OrderDetail}

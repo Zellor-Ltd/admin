@@ -2,6 +2,7 @@ import {
   DeleteOutlined,
   EditOutlined,
   SettingOutlined,
+  SearchOutlined,
 } from "@ant-design/icons";
 import { Button, Checkbox, Col, PageHeader, Popconfirm, Row, Spin } from "antd";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
@@ -50,6 +51,8 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [eof, setEof] = useState<boolean>(false);
 
   const [products, setProducts] = useState<Product[]>([]);
+  const [content, setContent] = useState<any[]>([]);
+  const [preLoaded, setPreLoaded] = useState<boolean>(false);
 
   const { fetchAllCategories, allCategories } = useAllCategories({
     setLoading,
@@ -76,7 +79,9 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
       _fetchProducts(),
       fetchAllCategories(),
     ]);
+    setPreLoaded(true);
     setProducts(results);
+    setContent(results);
   };
 
   const refreshProducts = async () => {
@@ -109,14 +114,17 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchFilter, brandFilter, unclassifiedFilter]);
 
-  useEffect(() => {
-    getResources();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const deleteItem = async (id: string) => {
-    await doRequest(() => deleteProduct(id));
-    await refreshProducts();
+  const deleteItem = async (_id: string) => {
+    await doRequest(() => deleteProduct(_id));
+    for (let i = 0; i < content.length; i++) {
+      if (content[i].id === _id) {
+        const index = i;
+        setProducts((prev) => [
+          ...prev.slice(0, index),
+          ...prev.slice(index + 1),
+        ]);
+      }
+    }
   };
 
   const onSaveCategories = async (record: Product) => {
@@ -153,9 +161,25 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
       responsive: ["sm"],
     },
     {
+      title: "In Stock",
+      dataIndex: "outOfStock",
+      width: "7%",
+      align: "center",
+      render: (outOfStock: boolean) => (outOfStock ? "No" : "Yes"),
+    },
+    {
       title: "Max DD",
       dataIndex: "maxDiscoDollars",
       width: "12%",
+      align: "center",
+      responsive: ["sm"],
+      // editable: true,
+      // number: true,
+    },
+    {
+      title: "Disco %",
+      dataIndex: "discoPercentage",
+      width: "8%",
       align: "center",
       responsive: ["sm"],
       // editable: true,
@@ -242,7 +266,7 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
     <>
       <PageHeader
         title="Products"
-        subTitle="List of Products"
+        subTitle="List of Live Products"
         extra={[
           <Button key="1" onClick={() => history.push(detailsPathname)}>
             New Item
@@ -277,13 +301,20 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
             </Col>
           </Row>
         </Col>
-        <EditMultipleButton
-          text="Edit Products"
-          arrayList={products}
-          ModalComponent={EditProductModal}
-          selectedRowKeys={selectedRowKeys}
-          onOk={refreshProducts}
-        />
+        <Col>
+          <Button
+            type="primary"
+            onClick={() => getResources()}
+            loading={loading}
+            style={{
+              marginBottom: "20px",
+              marginRight: "25px",
+            }}
+          >
+            Search
+            <SearchOutlined style={{ color: "white" }} />
+          </Button>
+        </Col>
       </Row>
       <ProductAPITestModal
         selectedRecord={productAPITest}

@@ -8,7 +8,6 @@ import {
 } from "interfaces/Category";
 import { Creator } from "interfaces/Creator";
 import { DdTemplate } from "interfaces/DdTemplate";
-import { BrandVault } from "interfaces/BrandVault";
 import { Endpoint } from "interfaces/Endpoint";
 import { FanGroup } from "interfaces/FanGroup";
 import { FeedItem } from "interfaces/FeedItem";
@@ -102,12 +101,12 @@ instance.interceptors.response.use(
     return replaceIdRecursively(response.data);
   },
   (error) => {
-    switch (error.response?.status) {
-      case 404:
-      case 401:
-      default: {
-        errorHandler(error);
-      }
+    if (error.response?.data === "Invalid Token") {
+      message.error("Your session has expired, please login");
+      localStorage.clear();
+      window.location.replace("/login");
+    } else {
+      errorHandler(error);
     }
   }
 );
@@ -395,7 +394,7 @@ export const saveDdTemplate = (params: DdTemplate) => {
 export const fetchBrandVault = (id: string) =>
   instance.get(`Disco/Brand/Vault/List/${id}`);
 
-export const saveBrandVault = (params: BrandVault) => {
+export const saveBrandVault = (params: any) => {
   if (params.id) {
     return instance.post("Disco/Brand/Vault/Update", params);
   } else {
@@ -533,3 +532,9 @@ export const deactivateBrand = (brandId: string, masterPassword: string) =>
 
 export const reactivateBrand = (brandId: string, masterPassword: string) =>
   instance.get(`Disco/Brand/Reactivate/${brandId}/${masterPassword}`);
+
+export const fetchActiveRegFansPerDay = () =>
+  instance.get(`Disco/Analytics/ActiveRegFansPerDay`);
+
+export const fetchProductsPerDay = () =>
+  instance.get(`/Disco/Analytics/ProductsAddedPerDay`);

@@ -354,8 +354,8 @@ const FanDetail: React.FC<RouteComponentProps> = (props) => {
                   <Select>
                     {serversList.map((serverAlias) => (
                       <Select.Option
-                        key={serverAlias.id}
-                        value={serverAlias.id}
+                        key={serverAlias.alias}
+                        value={serverAlias.alias}
                       >
                         {serverAlias.name}
                       </Select.Option>

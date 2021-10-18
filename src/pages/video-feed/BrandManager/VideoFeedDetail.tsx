@@ -203,6 +203,7 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
     setSelectedSegment({
       sequence: packages ? packages.length + 1 : 1,
       tags: [],
+      brands: [],
     });
     setSelectedSegmentIndex(-1);
   };

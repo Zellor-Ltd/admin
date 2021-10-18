@@ -1,5 +1,6 @@
 import { Button, Col, Layout, Row, Typography } from "antd";
 import ErrorBoundary from "components/ErrorBoundary";
+import { Notifications } from "components/Notifications";
 import jwt from "helpers/jwt";
 import { useBuildTarget } from "hooks/useBuildTarget";
 import ErrorPage from "pages/error/ErrorPage";
@@ -41,6 +42,11 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = (props) => {
           </Link>
         </h2>
         <Row style={{ width: "35%" }} justify="end" wrap={false}>
+          <div>
+            <Col xs={0} md={24} style={{ textAlign: "end" }}>
+              <Notifications />
+            </Col>
+          </div>
           <div>
             <Col xs={0} md={24} style={{ textAlign: "end" }}>
               <Typography.Text style={{ color: "white" }}>

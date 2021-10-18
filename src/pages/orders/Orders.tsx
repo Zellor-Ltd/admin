@@ -29,6 +29,7 @@ import { SelectFan } from "components/SelectFan";
 const Orders: React.FC<RouteComponentProps> = () => {
   const [tableloading, setTableLoading] = useState<boolean>(false);
   const [orderUpdateList, setOrderUpdateList] = useState<boolean[]>([]);
+  const [loaded, setLoaded] = useState<boolean>(false);
 
   const {
     arrayList: orders,
@@ -297,21 +298,25 @@ const Orders: React.FC<RouteComponentProps> = () => {
     return response.results;
   };
 
+  const getResources = async () => {
+    setTableLoading(true);
+    const orders: Order[] = await getOrders();
+    const fans: Fan[] = await getFans();
+    const ordersWithFanName = orders.map((order) => {
+      const fan = fans.find((fan) => fan.id === order.userid);
+      order.fanName = fan?.user;
+      return order;
+    });
+    setOrders(ordersWithFanName);
+    setFans(fans);
+    setLoaded(true);
+    setTableLoading(false);
+  };
+
   useEffect(() => {
-    const getResources = async () => {
-      setTableLoading(true);
-      const orders: Order[] = await getOrders();
-      const fans: Fan[] = await getFans();
-      const ordersWithFanName = orders.map((order) => {
-        const fan = fans.find((fan) => fan.id === order.userid);
-        order.fanName = fan?.user;
-        return order;
-      });
-      setOrders(ordersWithFanName);
-      setFans(fans);
-      setTableLoading(false);
-    };
-    getResources();
+    if (loaded) {
+      getResources();
+    }
   }, [setOrders]);
 
   const onChangeBrand = async (_selectedBrand: Brand | undefined) => {
@@ -357,6 +362,19 @@ const Orders: React.FC<RouteComponentProps> = () => {
               ></SelectFan>
             </Col>
           </Row>
+        </Col>
+        <Col>
+          <Button
+            type="primary"
+            onClick={() => getResources()}
+            style={{
+              marginBottom: "20px",
+              marginRight: "25px",
+            }}
+          >
+            Search
+            <SearchOutlined style={{ color: "white" }} />
+          </Button>
         </Col>
       </Row>
       <Table

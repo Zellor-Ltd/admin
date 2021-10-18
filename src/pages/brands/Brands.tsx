@@ -37,6 +37,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [filterText, setFilterText] = useState("");
+  const [content, setContent] = useState<any[]>([]);
 
   const aproveOrReject = async (aprove: boolean, creator: Brand) => {
     creator.status = aprove ? "approved" : "rejected";
@@ -49,11 +50,19 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
     setLoading(true);
     try {
       await deleteBrand({ id });
-      fetch();
+      for (let i = 0; i < content.length; i++) {
+        if (content[i].id === id) {
+          const index = i;
+          setBrands((prev) => [
+            ...prev.slice(0, index),
+            ...prev.slice(index + 1),
+          ]);
+        }
+      }
     } catch (err) {
       console.log(err);
-      setLoading(false);
     }
+    setLoading(false);
   };
 
   const fetch = async () => {
@@ -61,6 +70,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
     const response: any = await fetchBrands();
     setLoading(false);
     setBrands(response.results);
+    setContent(response.results);
   };
 
   useEffect(() => {
@@ -125,6 +135,15 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
           style={{ backgroundColor: value, border: "1px solid #9c9c9c" }}
         />
       ),
+    },
+    {
+      title: "Disco %",
+      dataIndex: "discoPercentage",
+      width: "12%",
+      align: "center",
+      responsive: ["sm"],
+      // editable: true,
+      // number: true,
     },
     {
       title: "Status",

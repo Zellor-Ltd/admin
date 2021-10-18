@@ -8,6 +8,7 @@ import { Redirect, Switch } from "react-router-dom";
 import Orders from "pages/orders/BrandManager/Orders";
 import VideoFeed from "pages/video-feed/BrandManager/VideoFeed";
 import VideoFeedDetail from "pages/video-feed/BrandManager/VideoFeedDetail";
+import BrandDashboard from "pages/dashboard/BrandDashboard";
 
 function BrandManagerRoutes() {
   return (
@@ -16,7 +17,7 @@ function BrandManagerRoutes() {
         exact
         path="/"
         returnComponent
-        component={<Redirect to="/staging-list" />}
+        component={<Redirect to="/brand-dashboard" />}
       />
 
       <AppRoute path="/login" component={Login} layout={OpenLayout} />
@@ -28,6 +29,11 @@ function BrandManagerRoutes() {
       <AppRoute
         path="/staging-list/product/:productMode"
         component={ProductDetails}
+        layout={AuthenticatedLayout}
+      />
+      <AppRoute
+        path="/brand-dashboard"
+        component={BrandDashboard}
         layout={AuthenticatedLayout}
       />
       <AppRoute

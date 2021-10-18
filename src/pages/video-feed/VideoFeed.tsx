@@ -1,16 +1,24 @@
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  SearchOutlined,
+} from "@ant-design/icons";
 import {
   Button,
+  Col,
+  Input,
   Layout,
   message,
   Modal,
   PageHeader,
   Popconfirm,
-  Spin,
+  Row,
   Table,
   Tag as AntTag,
+  Typography,
 } from "antd";
 import { ColumnsType } from "antd/lib/table";
+import CopyIdToClipboard from "components/CopyIdToClipboard";
 import { FeedItem } from "interfaces/FeedItem";
 import { Segment } from "interfaces/Segment";
 import React, { useEffect, useState } from "react";
@@ -20,8 +28,6 @@ import {
   fetchVideoFeed,
   rebuildAllFeedd,
 } from "services/DiscoClubService";
-import InfiniteScroll from "react-infinite-scroll-component";
-import CopyIdToClipboard from "components/CopyIdToClipboard";
 
 const { Content } = Layout;
 
@@ -33,8 +39,10 @@ const reduceSegmentsTags = (packages: Segment[]) => {
 
 const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
   const detailsPathname = `${location.pathname}/video-feed`;
-  const [videos, setVideos] = useState([]);
+  const [videos, setVideos] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const [filterText, setFilterText] = useState("");
+  const [content, setContent] = useState<any[]>([]);
 
   const fetch = async () => {
     setLoading(true);
@@ -42,16 +50,30 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
       const response: any = await fetchVideoFeed();
       setLoading(false);
       setVideos(response.results);
+      setContent(response.results);
     } catch (error) {
       message.error("Error to get feed");
       setLoading(false);
     }
   };
 
-  const deleteItem = async (id: string) => {
-    setLoading(true);
-    await deleteVideoFeed(id);
+  const getResources = () => {
     fetch();
+  };
+
+  const deleteItem = async (_id: string) => {
+    setLoading(true);
+    await deleteVideoFeed(_id);
+    for (let i = 0; i < content.length; i++) {
+      if (content[i].id === _id) {
+        const index = i;
+        setVideos((prev) => [
+          ...prev.slice(0, index),
+          ...prev.slice(index + 1),
+        ]);
+      }
+    }
+    setLoading(false);
   };
 
   const onRebuildFeed = async () => {
@@ -72,6 +94,16 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
     });
   };
 
+  const onChangeFilter = (evt: any) => {
+    setFilterText(evt.target.value);
+  };
+
+  const filterFeed = () => {
+    return videos.filter((video) =>
+      video.title?.toUpperCase().includes(filterText.toUpperCase())
+    );
+  };
+
   const columns: ColumnsType<FeedItem> = [
     {
       title: "_id",
@@ -87,7 +119,6 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
       render: (value: string, record: FeedItem) => (
         <Link to={{ pathname: detailsPathname, state: record }}>{value}</Link>
       ),
-      align: "center",
     },
     {
       title: "Segments",
@@ -151,49 +182,13 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
     },
   ];
 
-  const [fetchedVideos, setFetchedVideos] = useState<any[]>([]);
-  const [page, setPage] = useState<number>(0);
-  const LIMIT = 20;
-
-  const fetchData = () => {
-    const setNewData = () => {
-      setFetchedVideos((prev) => [
-        ...prev.concat(videos.slice(page * LIMIT, page * LIMIT + LIMIT)),
-      ]);
-      setPage((prev) => prev + 1);
-    };
-    if (!videos.length) {
-      return;
-    }
-    if (!fetchedVideos.length) {
-      setNewData();
-      return;
-    }
-    setTimeout(setNewData, 1000);
-  };
-
-  useEffect(() => {
-    fetch();
-  }, []);
-
-  useEffect(() => {
-    fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [videos]);
-
   return (
     <div className="video-feed">
       <PageHeader
         title="Video feed update"
         subTitle="List of Feeds"
         extra={[
-          <Button
-            disabled
-            onClick={onRebuildFeedClick}
-            danger
-            key="1"
-            type="primary"
-          >
+          <Button onClick={onRebuildFeedClick} danger key="1" type="primary">
             Publish to Public
           </Button>,
           <Button key="2" onClick={() => history.push(detailsPathname)}>
@@ -201,33 +196,37 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
           </Button>,
         ]}
       />
+      <div style={{ marginBottom: "16px" }}>
+        <Row align="bottom" justify="space-between">
+          <Col lg={8} xs={24}>
+            <Typography.Title level={5} title="Search">
+              Search
+            </Typography.Title>
+            <Input onChange={onChangeFilter} suffix={<SearchOutlined />} />
+          </Col>
+          <Col>
+            <Button
+              type="primary"
+              onClick={() => getResources()}
+              loading={loading}
+              style={{
+                marginRight: "25px",
+              }}
+            >
+              Search
+              <SearchOutlined style={{ color: "white" }} />
+            </Button>
+          </Col>
+        </Row>
+      </div>
       <Content>
-        <InfiniteScroll
-          dataLength={fetchedVideos.length}
-          next={fetchData}
-          hasMore={loading || fetchedVideos.length !== videos.length}
-          loader={
-            !loading && (
-              <div className="scroll-message">
-                <Spin />
-              </div>
-            )
-          }
-          endMessage={
-            <div className="scroll-message">
-              <b>End of results.</b>
-            </div>
-          }
-        >
-          <Table
-            size="small"
-            columns={columns}
-            rowKey="id"
-            dataSource={fetchedVideos}
-            loading={loading}
-            pagination={false}
-          />
-        </InfiniteScroll>
+        <Table
+          size="small"
+          columns={columns}
+          rowKey="id"
+          dataSource={filterFeed()}
+          loading={loading}
+        />
       </Content>
     </div>
   );

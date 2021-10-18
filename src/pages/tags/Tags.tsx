@@ -1,4 +1,4 @@
-import { DeleteOutlined, EyeOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EyeOutlined, SearchOutlined } from "@ant-design/icons";
 import { Button, Col, PageHeader, Popconfirm, Row, Spin, Table } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import CopyIdToClipboard from "components/CopyIdToClipboard";
@@ -9,10 +9,7 @@ import { Tag } from "interfaces/Tag";
 import { useContext, useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { Link, RouteComponentProps } from "react-router-dom";
-import {
-  deleteTag,
-  fetchTags,
-} from "services/DiscoClubService";
+import { deleteTag, fetchTags } from "services/DiscoClubService";
 
 const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
   const detailsPathname = `${location.pathname}/tag`;
@@ -27,6 +24,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [searchFilter, setSearchFilter] = usePageFilter<string>("search");
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
+  const [content, setContent] = useState<any[]>([]);
 
   const [tags, setTags] = useState<Tag[]>([]);
 
@@ -64,6 +62,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
     const getTags = async () => {
       const { results } = await _fetchTags();
       setTags(results);
+      setContent(results);
       setRefreshing(false);
     };
     if (refreshing) {
@@ -78,14 +77,14 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchFilter]);
 
-  useEffect(() => {
-    getResources();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   const deleteItem = async (id: string) => {
-    await doRequest(() => deleteTag({id}));
-    await refreshTags();
+    await doRequest(() => deleteTag({ id }));
+    for (let i = 0; i < content.length; i++) {
+      if (content[i].id === id) {
+        const index = i;
+        setTags((prev) => [...prev.slice(0, index), ...prev.slice(index + 1)]);
+      }
+    }
   };
 
   const columns: ColumnsType<Tag> = [
@@ -152,6 +151,20 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
               />
             </Col>
           </Row>
+        </Col>
+        <Col>
+          <Button
+            type="primary"
+            onClick={() => getResources()}
+            loading={loading}
+            style={{
+              marginBottom: "20px",
+              marginRight: "25px",
+            }}
+          >
+            Search
+            <SearchOutlined style={{ color: "white" }} />
+          </Button>
         </Col>
       </Row>
       <InfiniteScroll
