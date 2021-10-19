@@ -74,7 +74,11 @@ const Promotions: React.FC<RouteComponentProps> = ({ history, location }) => {
       ),
     },
     {
+<<<<<<< HEAD
+      title: "Store",
+=======
       title: "Master Brand",
+>>>>>>> master
       dataIndex: ["brand", "brandName"],
       width: "10%",
       align: "center",

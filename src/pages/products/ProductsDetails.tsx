@@ -470,10 +470,7 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                 </Form.Item>
               </Col>
               <Col lg={4} xs={8}>
-                <Form.Item
-                  name="discoPercentage"
-                  label="Disco Percentage %"
-                >
+                <Form.Item name="discoPercentage" label="Disco Percentage %">
                   <InputNumber />
                 </Form.Item>
               </Col>

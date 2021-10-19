@@ -420,7 +420,7 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = (props) => {
                     >
                       <Select mode="multiple">
                         <Select.Option value="Feed">Feed</Select.Option>
-                        <Select.Option value="Brand">Brand</Select.Option>
+                        <Select.Option value="Brand">Store</Select.Option>
                         <Select.Option value="Review">Review</Select.Option>
                       </Select>
                     </Form.Item>
