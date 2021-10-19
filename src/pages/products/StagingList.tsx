@@ -148,23 +148,6 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
       number: true,
     },
     {
-      title: "First Import",
-      dataIndex: "hCreationDate",
-      width: "12.5%",
-      align: "center",
-      render: (hCreationDate: Date | null | undefined) =>
-        hCreationDate ? (
-          <>
-            <div>
-              {moment(hCreationDate).format("DD/MM/YY")}{" "}
-              {moment(hCreationDate).format("HH:mm")}
-            </div>
-          </>
-        ) : (
-          ""
-        ),
-    },
-    {
       title: "Last Import",
       dataIndex: "lastImportDate",
       width: "12.5%",
