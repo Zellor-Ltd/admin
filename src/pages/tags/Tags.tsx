@@ -101,7 +101,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
       dataIndex: ["product", "name"],
       width: "20%",
     },
-    { title: "Brand", dataIndex: ["brand", "brandName"], width: "20%" },
+    { title: "Master Brand", dataIndex: ["brand", "brandName"], width: "20%" },
     { title: "Template", dataIndex: "template", width: "15%" },
     { title: "DD's", dataIndex: "discoDollars", width: "5%" },
     {
