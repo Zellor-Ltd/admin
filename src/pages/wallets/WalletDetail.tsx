@@ -91,7 +91,11 @@ const WalletDetail: React.FC<RouteComponentProps> = ({ location }) => {
 
   return (
     <div className="walletdetail">
+<<<<<<< HEAD
       <PageHeader title="Wallet Fan/Store Transactions" />
+=======
+      <PageHeader title="Wallet Fan/Master Brand Transactions" />
+>>>>>>> master
       <Row align="bottom" justify="space-between">
         <Col lg={24} xs={24}>
           <Row gutter={8}>
@@ -100,7 +104,7 @@ const WalletDetail: React.FC<RouteComponentProps> = ({ location }) => {
             </Col>
             <Col lg={6} xs={12}>
               <Typography.Text strong>
-                Brand: {initial.brand.name}
+                Master Brand: {initial.brand.name}
               </Typography.Text>
             </Col>
             <WalletEdit

@@ -327,7 +327,7 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
 
   return (
     <>
-      <PageHeader title="Store Update" subTitle="Store" />
+      <PageHeader title="Master Brand Update" subTitle="Master Brand" />
       <Form
         name="brandForm"
         layout="vertical"
@@ -355,14 +355,14 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
             <Row gutter={8}>
               <Col lg={12} xs={24}>
                 <Col lg={16} xs={24}>
-                  <Form.Item label="Store Name" name="brandName">
+                  <Form.Item label="Master Brand Name" name="brandName">
                     <Input />
                   </Form.Item>
                 </Col>
               </Col>
               <Col lg={24} xs={24}>
                 <Form.Item
-                  label="Store Color"
+                  label="Master Brand Color"
                   name="brandTxtColor"
                   rules={[{ required: true }]}
                   valuePropName="color"
@@ -377,7 +377,7 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
             <Row gutter={8}>
               <Col lg={12} xs={24}>
                 <Col lg={16} xs={24}>
-                  <Form.Item label="Store Name" name="brandName">
+                  <Form.Item label="Master Brand Name" name="brandName">
                     <Input />
                   </Form.Item>
                 </Col>

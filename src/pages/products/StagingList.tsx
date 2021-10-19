@@ -127,7 +127,7 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
       ),
     },
     {
-      title: "Store",
+      title: "Master Brand",
       dataIndex: ["brand", "brandName"],
       width: "18%",
       align: "center",
@@ -146,23 +146,6 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
       align: "center",
       editable: true,
       number: true,
-    },
-    {
-      title: "First Import",
-      dataIndex: "hCreationDate",
-      width: "12.5%",
-      align: "center",
-      render: (hCreationDate: Date | null | undefined) =>
-        hCreationDate ? (
-          <>
-            <div>
-              {moment(hCreationDate).format("DD/MM/YY")}{" "}
-              {moment(hCreationDate).format("HH:mm")}
-            </div>
-          </>
-        ) : (
-          ""
-        ),
     },
     {
       title: "Last Import",
@@ -320,13 +303,19 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
             loading={loading}
             style={{
               marginBottom: "20px",
-              marginRight: "25px",
             }}
           >
             Search
             <SearchOutlined style={{ color: "white" }} />
           </Button>
         </Col>
+        <EditMultipleButton
+          text="Edit Products"
+          arrayList={filteredProducts}
+          ModalComponent={EditProductModal}
+          selectedRowKeys={selectedRowKeys}
+          onOk={handleEditProducts}
+        />
       </Row>
       <EditableTable
         rowKey="id"

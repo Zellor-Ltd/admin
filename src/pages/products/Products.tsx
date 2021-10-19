@@ -5,6 +5,7 @@ import {
   SearchOutlined,
 } from "@ant-design/icons";
 import { Button, Checkbox, Col, PageHeader, Popconfirm, Row, Spin } from "antd";
+import EditMultipleButton from "components/EditMultipleButton";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
 import CopyIdToClipboard from "components/CopyIdToClipboard";
 import EditableTable, { EditableColumnType } from "components/EditableTable";
@@ -147,13 +148,13 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
     {
       title: "Name",
       dataIndex: "name",
-      width: "22%",
+      width: "15%",
       render: (value: string, record) => (
         <Link to={{ pathname: detailsPathname, state: record }}>{value}</Link>
       ),
     },
     {
-      title: "Store",
+      title: "Master Brand",
       dataIndex: ["brand", "brandName"],
       width: "20%",
       align: "center",
@@ -206,6 +207,23 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
       width: "12%",
       align: "center",
       responsive: ["sm"],
+    },
+    {
+      title: "Last Go-Live",
+      dataIndex: "goLiveDate",
+      width: "12.5%",
+      align: "center",
+      render: (goLiveDate: Date | null | undefined) =>
+        goLiveDate ? (
+          <>
+            <div>
+              {moment(goLiveDate).format("DD/MM/YY")}{" "}
+              {moment(goLiveDate).format("HH:mm")}
+            </div>
+          </>
+        ) : (
+          ""
+        ),
     },
     {
       title: "Actions",
@@ -307,13 +325,19 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
             loading={loading}
             style={{
               marginBottom: "20px",
-              marginRight: "25px",
             }}
           >
             Search
             <SearchOutlined style={{ color: "white" }} />
           </Button>
         </Col>
+        <EditMultipleButton
+          text="Edit Products"
+          arrayList={products}
+          ModalComponent={EditProductModal}
+          selectedRowKeys={selectedRowKeys}
+          onOk={refreshProducts}
+        />
       </Row>
       <ProductAPITestModal
         selectedRecord={productAPITest}

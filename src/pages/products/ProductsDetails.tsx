@@ -237,7 +237,7 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                   <Col lg={24} xs={24}>
                     <Form.Item
                       name={["brand", "id"]}
-                      label="Store"
+                      label="Master Brand"
                       rules={[{ required: true }]}
                     >
                       <Select onChange={() => setDiscoPercentageByBrand(false)}>
@@ -470,11 +470,7 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                 </Form.Item>
               </Col>
               <Col lg={4} xs={8}>
-                <Form.Item
-                  name="discoPercentage"
-                  label="Disco Percentage %"
-                  rules={[{ required: true }]}
-                >
+                <Form.Item name="discoPercentage" label="Disco Percentage %">
                   <InputNumber />
                 </Form.Item>
               </Col>
@@ -532,7 +528,10 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
 
         <Row gutter={8}>
           <Col>
-            <Button type="default" onClick={() => history.goBack}>
+            <Button
+              type="default"
+              onClick={() => history.push(productsListPathname)}
+            >
               Cancel
             </Button>
           </Col>
