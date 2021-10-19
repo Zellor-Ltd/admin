@@ -1,6 +1,8 @@
-import { FormInstance, message, Upload } from "antd";
+import { FormInstance, message, Upload, Tooltip } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+import { DndProvider, useDrag, useDrop } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 
 interface ImageUploadProps {
   fileList: any;
@@ -149,22 +151,98 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 
   const action = `${process.env.REACT_APP_HOST_ENDPOINT}/Wi/Upload`;
 
+  const type = "DragableUploadList";
+
+  const DragableUploadListItem = ({
+    originNode,
+    moveRow,
+    file,
+    fileListLocal,
+  }) => {
+    const ref = React.useRef();
+    const index = fileListLocal.indexOf(file);
+    const [{ isOver, dropClassName }, drop] = useDrop({
+      accept: type,
+      collect: (monitor) => {
+        const { index: dragIndex } = monitor.getItem() || {};
+        if (dragIndex === index) {
+          return {};
+        }
+        return {
+          isOver: monitor.isOver(),
+          dropClassName:
+            dragIndex < index ? " drop-over-downward" : " drop-over-upward",
+        };
+      },
+      drop: (item) => {
+        moveRow(item.index, index);
+      },
+    });
+    const [, drag] = useDrag({
+      type,
+      item: { index },
+      collect: (monitor) => ({
+        isDragging: monitor.isDragging(),
+      }),
+    });
+    drop(drag(ref));
+    const errorNode = (
+      <Tooltip title="Upload Error">{originNode.props.children}</Tooltip>
+    );
+    return (
+      <div
+        ref={ref}
+        className={`ant-upload-draggable-list-item ${
+          isOver ? dropClassName : ""
+        }`}
+        style={{ cursor: "move" }}
+      >
+        {file.status === "error" ? errorNode : originNode}
+      </div>
+    );
+  };
+
+  const moveRow = useCallback(
+    (dragIndex, hoverIndex) => {
+      const dragRow = fileListLocal[dragIndex];
+      setfileListLocal(
+        update(fileListLocal, {
+          $splice: [
+            [dragIndex, 1],
+            [hoverIndex, 0, dragRow],
+          ],
+        })
+      );
+    },
+    [fileListLocal]
+  );
+
   return (
     <>
-      <Upload
-        action={action}
-        headers={{
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        }}
-        onChange={onChangeImage}
-        accept={accept}
-        listType="picture-card"
-        fileList={fileListLocal}
-        maxCount={maxCount}
-        onPreview={onPreview}
-      >
-        {fileListLocal.length >= maxCount ? null : uploadButton}
-      </Upload>
+      <DndProvider backend={HTML5Backend}>
+        <Upload
+          action={action}
+          headers={{
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          }}
+          onChange={onChangeImage}
+          accept={accept}
+          listType="picture-card"
+          fileList={fileListLocal}
+          maxCount={maxCount}
+          onPreview={onPreview}
+          itemRender={(originNode, file, currfileListLocal) => (
+            <DragableUploadListItem
+              originNode={originNode}
+              file={file}
+              fileListLocal={currfileListLocal}
+              moveRow={moveRow}
+            />
+          )}
+        >
+          {fileListLocal.length >= maxCount ? null : uploadButton}
+        </Upload>
+      </DndProvider>
     </>
   );
 };
