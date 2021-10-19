@@ -473,7 +473,6 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                 <Form.Item
                   name="discoPercentage"
                   label="Disco Percentage %"
-                  rules={[{ required: true }]}
                 >
                   <InputNumber />
                 </Form.Item>
