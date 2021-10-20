@@ -4,6 +4,7 @@ import { Position } from "./Position";
 export interface Tag {
   id: string;
   brand?: Brand;
+  product?: any;
   tagName: string;
   tagId?: string;
   productId?: string;
