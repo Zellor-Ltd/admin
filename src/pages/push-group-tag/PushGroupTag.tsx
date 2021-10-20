@@ -24,7 +24,10 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
   } = useFilter<Tag>([]);
 
   const handleNext = () => {
-    history.push(detailsPathname, { selectedRowKeys });
+    history.push(
+      detailsPathname,
+      filteredTags.filter((tag) => selectedRowKeys.includes(tag.id))
+    );
   };
 
   const getTags = async () => {
