@@ -40,7 +40,10 @@ const AdminSideMenu = () => {
         <Link to="/dashboard">Dashboard</Link>
       </Menu.Item>
       <Menu.Item key="brands" icon={<CrownOutlined />}>
-        <Link to="/brands">Brands</Link>
+        <Link to="/brands">Master Brands</Link>
+      </Menu.Item>
+      <Menu.Item key="product-brands" icon={<CrownOutlined />}>
+        <Link to="/product-brands">Product Brands</Link>
       </Menu.Item>
       <Menu.Item key="products" icon={<DropboxOutlined />}>
         <Link to="/products">Live Products</Link>

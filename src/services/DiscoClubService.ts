@@ -15,6 +15,7 @@ import { Function } from "interfaces/Function";
 import { Login } from "interfaces/Login";
 import { Privilege } from "interfaces/Privilege";
 import { Product } from "interfaces/Product";
+import { ProductBrand } from "interfaces/ProductBrand";
 import { PromoCode } from "interfaces/PromoCode";
 import { PromoDisplay } from "interfaces/PromoDisplay";
 import { Role } from "interfaces/Role";
@@ -132,6 +133,9 @@ export const fetchProducts = ({
     query,
     unclassified,
   });
+
+export const fetchProductBrands = () =>
+  instance.get(`Disco/Brand/ProductBrandList`);
 
 export const fetchTags = ({
   query,
@@ -277,6 +281,14 @@ export const saveProduct = (params: Product) => {
     return instance.post("/Disco/Product/Update", params);
   } else {
     return instance.put("/Disco/Product/Add", params);
+  }
+};
+
+export const saveProductBrand = (params: ProductBrand) => {
+  if (params.id) {
+    return instance.put("Disco/Brand/ProductBrandUpdate", params);
+  } else {
+    return instance.put("Disco/Brand/ProductBrandAdd", params);
   }
 };
 
@@ -438,6 +450,9 @@ export const deleteCreator = (id: string) =>
 
 export const deleteProduct = (id: string) =>
   instance.delete(`Disco/Product/Remove/${id}`);
+
+export const deleteProductBrand = (id: string) =>
+  instance.delete(`Disco/Product/ProductBrandDelete/${id}`);
 
 export const deleteStagingProduct = (id: string) =>
   instance.delete(`Disco/Staging/Product/Remove/${id}`);

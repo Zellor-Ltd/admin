@@ -40,7 +40,7 @@ const BrandForm: React.FC<FormProps> = ({
     <Form name="brandForm" form={form} initialValues={brand} layout="vertical">
       <Row gutter={8}>
         <Col lg={24} xs={24}>
-          <Form.Item name="id" label="Brand" rules={[{ required: true }]}>
+          <Form.Item name="id" label="Store" rules={[{ required: true }]}>
             <Select
               showSearch
               filterOption={(input, option) =>
@@ -67,7 +67,7 @@ const BrandForm: React.FC<FormProps> = ({
                 (brand: Brand) => brand.id === getFieldValue("id")
               );
               return (
-                <Form.Item name="selectedLogo" label="Brand logo">
+                <Form.Item name="selectedLogo" label="Store logo">
                   <Select
                     placeholder="Please select a logo"
                     onChange={onChangeLogo}
@@ -153,7 +153,7 @@ const BrandForm: React.FC<FormProps> = ({
         </Col>
         <Col>
           <Button type="primary" htmlType="submit">
-            Save Brand
+            Save Store
           </Button>
         </Col>
       </Row>
