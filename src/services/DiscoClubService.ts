@@ -538,3 +538,6 @@ export const fetchActiveRegFansPerDay = () =>
 
 export const fetchProductsPerDay = () =>
   instance.get(`/Disco/Analytics/ProductsAddedPerDay`);
+
+export const pushGroupTag = (tagId: string, groupId: string) =>
+  instance.get(`/Disco/Feed/PushGroupTag/${tagId}/${groupId}`);
