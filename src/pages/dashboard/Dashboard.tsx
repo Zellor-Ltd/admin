@@ -1,5 +1,8 @@
-import { Col, Row } from "antd";
+import { Col, Row, Popconfirm, Button, Table, Typography } from "antd";
 import { useRequest } from "hooks/useRequest";
+import { DeleteOutlined } from "@ant-design/icons";
+import moment from "moment";
+import CopyIdToClipboard from "components/CopyIdToClipboard";
 import React, { useEffect, useState } from "react";
 import {
   Bar,
@@ -16,9 +19,13 @@ import {
 import {
   fetchActiveRegFansPerDay,
   fetchProductsPerDay,
+  fetchPreRegs,
+  deletePreReg,
 } from "services/DiscoClubService";
 import Pie from "./Pie";
 import Radar from "./Radar";
+import { PreReg } from "interfaces/PreReg";
+import { ColumnsType } from "antd/lib/table";
 
 interface DashboardProps {}
 
@@ -27,6 +34,7 @@ const Dashboard: React.FC<DashboardProps> = () => {
   const [, setLoading] = useState<boolean>(true);
   const { doFetch } = useRequest({ setLoading });
   const [productsPerDay, setProductsPerDay] = useState<any[]>([]);
+  const [preRegs, setPreRegs] = useState<PreReg[]>([]);
 
   const getFans = async () => {
     const { results } = await doFetch(fetchActiveRegFansPerDay);
@@ -38,15 +46,61 @@ const Dashboard: React.FC<DashboardProps> = () => {
     setProductsPerDay(results);
   };
 
+  const getPreRegs = async () => {
+    const { results } = await doFetch(fetchPreRegs);
+    setPreRegs(results);
+  };
+
   useEffect(() => {
     getFans();
     getProducts();
+    getPreRegs();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const preRegistered: ColumnsType<PreReg> = [
+    {
+      title: "_id",
+      dataIndex: "id",
+      width: "5%",
+      render: (id: any) => <CopyIdToClipboard id={id} />,
+      align: "center",
+    },
+    { title: "Email", dataIndex: "email", width: "15%" },
+    {
+      title: "Creation Date",
+      dataIndex: "hCreationDate",
+      width: "65%",
+      align: "center",
+      responsive: ["sm"],
+      render: (hCreationDate: Date) =>
+        moment(hCreationDate).format("DD/MM/YYYY"),
+    },
+    {
+      title: "Actions",
+      key: "action",
+      width: "15%",
+      align: "right",
+      render: (record: PreReg) => (
+        <>
+          <Popconfirm
+            title="Are you sure？"
+            okText="Yes"
+            cancelText="No"
+            onConfirm={() => deletePreReg(record)}
+          >
+            <Button type="link" style={{ padding: 0, margin: 6 }}>
+              <DeleteOutlined />
+            </Button>
+          </Popconfirm>
+        </>
+      ),
+    },
+  ];
+
   return (
     <>
-      <Row style={{ height: "50%" }}>
+      <Row style={{ height: "300px" }}>
         <Col style={{ width: "75%" }}>
           <ResponsiveContainer>
             <LineChart
@@ -79,7 +133,7 @@ const Dashboard: React.FC<DashboardProps> = () => {
           <Pie></Pie>
         </Col>
       </Row>
-      <Row style={{ height: "50%" }}>
+      <Row style={{ height: "300px", marginTop: "40px" }}>
         <Col style={{ width: "60%" }}>
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
@@ -106,6 +160,14 @@ const Dashboard: React.FC<DashboardProps> = () => {
           <Radar></Radar>
         </Col>
       </Row>
+      <div style={{ marginBottom: "16px", marginTop: "40px" }}>
+        <Row>
+          <Col lg={12} xs={24}>
+            <Typography.Title level={3}>Pre Registered Users</Typography.Title>
+          </Col>
+        </Row>
+      </div>
+      <Table rowKey="id" columns={preRegistered} dataSource={preRegs} />
     </>
   );
 };
