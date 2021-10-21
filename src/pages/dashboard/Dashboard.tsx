@@ -1,5 +1,6 @@
 import { Col, Row, Popconfirm, Button, Table, Typography } from "antd";
 import { useRequest } from "hooks/useRequest";
+import EditableTable from "components/EditableTable";
 import { DeleteOutlined } from "@ant-design/icons";
 import moment from "moment";
 import CopyIdToClipboard from "components/CopyIdToClipboard";
@@ -21,10 +22,12 @@ import {
   fetchProductsPerDay,
   fetchPreRegs,
   deletePreReg,
+  fetchFanActivity,
 } from "services/DiscoClubService";
 import Pie from "./Pie";
 import Radar from "./Radar";
 import { PreReg } from "interfaces/PreReg";
+import { FanActivity } from "interfaces/FanActivity";
 import { ColumnsType } from "antd/lib/table";
 
 interface DashboardProps {}
@@ -35,6 +38,7 @@ const Dashboard: React.FC<DashboardProps> = () => {
   const { doFetch } = useRequest({ setLoading });
   const [productsPerDay, setProductsPerDay] = useState<any[]>([]);
   const [preRegs, setPreRegs] = useState<PreReg[]>([]);
+  const [fanActivity, setFanActivity] = useState<FanActivity[]>([]);
 
   const getFans = async () => {
     const { results } = await doFetch(fetchActiveRegFansPerDay);
@@ -51,10 +55,16 @@ const Dashboard: React.FC<DashboardProps> = () => {
     setPreRegs(results);
   };
 
+  const getFanActivity = async () => {
+    const { results } = await doFetch(fetchFanActivity);
+    setFanActivity(results);
+  };
+
   useEffect(() => {
     getFans();
     getProducts();
     getPreRegs();
+    getFanActivity();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -95,6 +105,31 @@ const Dashboard: React.FC<DashboardProps> = () => {
           </Popconfirm>
         </>
       ),
+    },
+  ];
+
+  const fanActs: ColumnsType<PreReg> = [
+    {
+      title: "_id",
+      dataIndex: "id",
+      width: "5%",
+      render: (id: any) => <CopyIdToClipboard id={id} />,
+      align: "center",
+    },
+    { title: "User", dataIndex: "user", width: "30%" },
+    { title: "Total DD", dataIndex: "totalDiscoDollars", width: "10%" },
+    { title: "Wishlist Items", dataIndex: "wishListItems", width: "10%" },
+    {
+      title: "Logins in the last 10 days",
+      dataIndex: "last10dayslogins",
+      width: "15%",
+    },
+    { title: "Total Ordered", dataIndex: "totalOrdered", width: "10%" },
+    { title: "Items Ordered", dataIndex: "itemsOrdered", width: "10%" },
+    {
+      title: "Videos watched this month",
+      dataIndex: "feedsWatchedThisMonth",
+      width: "10%",
     },
   ];
 
@@ -167,7 +202,24 @@ const Dashboard: React.FC<DashboardProps> = () => {
           </Col>
         </Row>
       </div>
-      <Table rowKey="id" columns={preRegistered} dataSource={preRegs} />
+      <div>
+        <Table rowKey="id" columns={preRegistered} dataSource={preRegs} />
+      </div>
+      <div style={{ marginBottom: "16px" }}>
+        <Row>
+          <Col lg={12} xs={24}>
+            <Typography.Title level={3}>Fan Activities</Typography.Title>
+          </Col>
+        </Row>
+      </div>
+      <div>
+        <EditableTable
+          rowKey="id"
+          columns={fanActs}
+          dataSource={fanActivity}
+          onSave={() => console.log("saved")}
+        />
+      </div>
     </>
   );
 };

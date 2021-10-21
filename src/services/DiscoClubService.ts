@@ -562,3 +562,6 @@ export const fetchPreRegs = () => instance.get(`Wi/Ep/GetPreRegs`);
 
 export const deletePreReg = (params: PreReg) =>
   instance.put(`Wi/Ep/SetPreRegs`, params);
+
+export const fetchFanActivity = () =>
+  instance.get(`Disco/Analytics/GetFanActivitives`);
