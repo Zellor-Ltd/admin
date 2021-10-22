@@ -13,6 +13,7 @@ import { FanGroup } from "interfaces/FanGroup";
 import { FeedItem } from "interfaces/FeedItem";
 import { Function } from "interfaces/Function";
 import { Login } from "interfaces/Login";
+import { PreReg } from "interfaces/PreReg";
 import { Privilege } from "interfaces/Privilege";
 import { Product } from "interfaces/Product";
 import { ProductBrand } from "interfaces/ProductBrand";
@@ -556,3 +557,11 @@ export const fetchProductsPerDay = () =>
 
 export const pushGroupTag = (tagId: string, groupId: string) =>
   instance.get(`/Disco/Feed/PushGroupTag/${tagId}/${groupId}`);
+
+export const fetchPreRegs = () => instance.get(`Wi/Ep/GetPreRegs`);
+
+export const deletePreReg = (params: PreReg) =>
+  instance.put(`Wi/Ep/SetPreRegs`, params);
+
+export const fetchFanActivity = () =>
+  instance.get(`Disco/Analytics/GetFanActivitives`);
