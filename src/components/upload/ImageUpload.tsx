@@ -114,6 +114,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
             ),
           });
         } else {
+          console.log(formProp);
           form.setFieldsValue({
             [formProp]: [
               ...imageValue,
