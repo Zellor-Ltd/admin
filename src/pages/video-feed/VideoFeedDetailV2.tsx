@@ -135,7 +135,8 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
       const packages = feedForm.getFieldValue("package");
       setPageTitle(
         `Segment ${
-          selectedSegmentIndex > -1 && packages.length !== selectedSegmentIndex
+          selectedSegmentIndex > -1 &&
+          (packages ? packages.length !== selectedSegmentIndex : true)
             ? `${selectedSegmentIndex + 1} Update`
             : "Creation"
         }`
