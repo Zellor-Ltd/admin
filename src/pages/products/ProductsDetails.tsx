@@ -21,6 +21,7 @@ import { formatMoment } from "helpers/formatMoment";
 import { categoriesSettings } from "helpers/utils";
 import useAllCategories from "hooks/useAllCategories";
 import { Brand } from "interfaces/Brand";
+import { ProductBrand } from "interfaces/ProductBrand";
 import { AllCategories } from "interfaces/Category";
 import { Product } from "interfaces/Product";
 import { useCallback, useEffect, useState } from "react";
@@ -28,6 +29,7 @@ import { useSelector } from "react-redux";
 import { RouteComponentProps, useParams } from "react-router-dom";
 import {
   fetchBrands,
+  fetchProductBrands,
   saveProduct,
   saveStagingProduct,
 } from "services/DiscoClubService";
@@ -49,6 +51,7 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
   const initial = location.state as unknown as Product | undefined;
   const [loading, setLoading] = useState<boolean>(false);
   const [brands, setBrands] = useState<Brand[]>([]);
+  const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
   const [ageRange, setageRange] = useState<[number, number]>([12, 100]);
   const [form] = Form.useForm();
 
@@ -137,7 +140,13 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
       }
     };
 
+    const getProductBrands = async () => {
+      const response: any = await fetchProductBrands();
+      setProductBrands(response.results);
+    };
+
     getBrands();
+    getProductBrands();
     fetchAllCategories();
     return () => {
       mounted = false;
@@ -243,6 +252,23 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                       <Select onChange={() => setDiscoPercentageByBrand(false)}>
                         {brands.map((brand) => (
                           <Select.Option key={brand.id} value={brand.id}>
+                            {brand.brandName}
+                          </Select.Option>
+                        ))}
+                      </Select>
+                    </Form.Item>
+                  </Col>
+                </Row>
+                <Row gutter={8}>
+                  <Col lg={12} xs={24}>
+                    <Form.Item
+                      name="productBrand"
+                      label="Product Brand"
+                      rules={[{ required: true }]}
+                    >
+                      <Select>
+                        {productBrands.map((brand) => (
+                          <Select.Option key={brand.id} value={brand.brandName}>
                             {brand.brandName}
                           </Select.Option>
                         ))}

@@ -229,6 +229,13 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
       responsive: ["sm"],
     },
     {
+      title: "Product Brand",
+      dataIndex: "productBrand",
+      width: "12%",
+      align: "center",
+      responsive: ["sm"],
+    },
+    {
       title: "Last Go-Live",
       dataIndex: "goLiveDate",
       width: "12.5%",
