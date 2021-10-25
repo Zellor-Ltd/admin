@@ -252,10 +252,7 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
       align: "right",
       render: (_: any, record) => (
         <>
-          <Link
-            onClick={() => console.log(record.categories)}
-            to={{ pathname: detailsPathname, state: record }}
-          >
+          <Link to={{ pathname: detailsPathname, state: record }}>
             <EditOutlined />
           </Link>
           {record.brand?.automated !== true && (
