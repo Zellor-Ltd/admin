@@ -19,6 +19,7 @@
     "moment": "^2.29.1",
     "node-sass": "^5.0.0",
     "react": "^17.0.1",
+    "react-beautiful-dnd": "^13.1.0",
     "react-color": "^2.19.3",
     "react-copy-to-clipboard": "^5.0.4",
     "react-dnd": "^14.0.4",

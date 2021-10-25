@@ -33,6 +33,7 @@ import {
 } from "services/DiscoClubService";
 import ProductCategoriesTrees from "./ProductCategoriesTrees";
 import "./Products.scss";
+import { DragDropContext } from "react-beautiful-dnd";
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 
@@ -518,12 +519,14 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
               </Col>
               <Col lg={24} xs={24}>
                 <Form.Item label="Image">
-                  <Upload.ImageUpload
-                    maxCount={20}
-                    fileList={initial?.image}
-                    formProp="image"
-                    form={form}
-                  />
+                  <DragDropContext>
+                    <Upload.ImageUpload
+                      maxCount={20}
+                      fileList={initial?.image}
+                      formProp="image"
+                      form={form}
+                    />
+                  </DragDropContext>
                 </Form.Item>
               </Col>
             </Row>
