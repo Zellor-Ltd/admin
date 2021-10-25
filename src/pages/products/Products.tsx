@@ -150,7 +150,27 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
       dataIndex: "name",
       width: "15%",
       render: (value: string, record) => (
-        <Link to={{ pathname: detailsPathname, state: record }}>{value}</Link>
+        <>
+          <Link to={{ pathname: detailsPathname, state: record }}>{value}</Link>
+          <span style={{ fontSize: "12px" }}>
+            <br />
+            {record.categories
+              ? [
+                  record.categories[0].superCategory?.superCategory +
+                    " / " +
+                    record.categories[0].category?.category +
+                    (record.categories[0].subCategory
+                      ? " / " + record.categories[0].subCategory?.subCategory
+                      : ""),
+                  record.categories[0].subSubCategory
+                    ? " / " +
+                      record.categories[0].subSubCategory?.subSubCategory
+                    : "",
+                  record.categories[1] ? " (...)" : "",
+                ]
+              : ""}
+          </span>
+        </>
       ),
     },
     {
@@ -232,7 +252,10 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
       align: "right",
       render: (_: any, record) => (
         <>
-          <Link to={{ pathname: detailsPathname, state: record }}>
+          <Link
+            onClick={() => console.log(record.categories)}
+            to={{ pathname: detailsPathname, state: record }}
+          >
             <EditOutlined />
           </Link>
           {record.brand?.automated !== true && (
