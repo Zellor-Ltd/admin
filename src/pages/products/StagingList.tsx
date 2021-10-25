@@ -165,6 +165,13 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
         ),
     },
     {
+      title: "Product Brand",
+      dataIndex: ["productBrand"],
+      width: "12%",
+      align: "center",
+      responsive: ["sm"],
+    },
+    {
       title: "Last Go-Live",
       dataIndex: "lastGoLiveDate",
       width: "12.5%",
