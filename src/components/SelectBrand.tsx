@@ -35,7 +35,7 @@ export const SelectBrand: React.FC<SelectBrandProps> = ({
     const getBrands = async () => {
       try {
         const { results }: any = await fetchBrands();
-        setBrands(results);
+        setBrands(results.filter((brand: any) => brand.brandName));
       } catch (e) {}
     };
     getBrands();

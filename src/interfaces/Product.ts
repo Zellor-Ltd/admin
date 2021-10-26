@@ -2,6 +2,7 @@ import { Brand } from "./Brand";
 import { SelectedProductCategories } from "./Category";
 import { Video } from "./Video";
 import { Tag } from "./Tag";
+import { ProductBrand } from "./ProductBrand";
 
 export interface Product {
   id: string;
@@ -13,6 +14,7 @@ export interface Product {
   discountedPrice: number;
   discoPercentage: number;
   currencyIsoCode: string;
+  productBrand?: string;
   tagText: string;
   relatedVideos: Video[];
   mainRelatedVideo: Video;

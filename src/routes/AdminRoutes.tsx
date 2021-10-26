@@ -48,6 +48,10 @@ import FanGroupDetail from "pages/fan-groups/FanGroupDetail";
 import Wallets from "pages/wallets/Wallets";
 import WalletDetail from "pages/wallets/WalletDetail";
 import MasterPassword from "pages/master-password/MasterPassword";
+import PushGroupTag from "pages/push-group-tag/PushGroupTag";
+import PushGroupTagStep2 from "pages/push-group-tag/Step2";
+import ProductBrands from "pages/product-brands/ProductBrands";
+import ProductBrandDetail from "pages/product-brands/ProductBrandDetail";
 
 function AdminRoutes() {
   return (
@@ -72,6 +76,16 @@ function AdminRoutes() {
       <AppRoute
         path="/feed"
         component={VideoFeed}
+        layout={AuthenticatedLayout}
+      />
+      <AppRoute
+        path="/product-brands/product-brand"
+        component={ProductBrandDetail}
+        layout={AuthenticatedLayout}
+      />
+      <AppRoute
+        path="/product-brands"
+        component={ProductBrands}
         layout={AuthenticatedLayout}
       />
       <AppRoute
@@ -267,6 +281,16 @@ function AdminRoutes() {
       <AppRoute
         path="/settings_master-password"
         component={MasterPassword}
+        layout={AuthenticatedLayout}
+      />
+      <AppRoute
+        path="/settings_push-group-tag/step2"
+        component={PushGroupTagStep2}
+        layout={AuthenticatedLayout}
+      />
+      <AppRoute
+        path="/settings_push-group-tag"
+        component={PushGroupTag}
         layout={AuthenticatedLayout}
       />
     </Switch>

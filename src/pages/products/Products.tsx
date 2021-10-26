@@ -5,10 +5,10 @@ import {
   SearchOutlined,
 } from "@ant-design/icons";
 import { Button, Checkbox, Col, PageHeader, Popconfirm, Row, Spin } from "antd";
+import EditMultipleButton from "components/EditMultipleButton";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
 import CopyIdToClipboard from "components/CopyIdToClipboard";
 import EditableTable, { EditableColumnType } from "components/EditableTable";
-import EditMultipleButton from "components/EditMultipleButton";
 import { SearchFilterDebounce } from "components/SearchFilterDebounce";
 import { SelectBrand } from "components/SelectBrand";
 import { AppContext } from "contexts/AppContext";
@@ -150,7 +150,27 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
       dataIndex: "name",
       width: "15%",
       render: (value: string, record) => (
-        <Link to={{ pathname: detailsPathname, state: record }}>{value}</Link>
+        <>
+          <Link to={{ pathname: detailsPathname, state: record }}>{value}</Link>
+          <span style={{ fontSize: "12px" }}>
+            <br />
+            {record.categories
+              ? [
+                  record.categories[0].superCategory?.superCategory +
+                    " / " +
+                    record.categories[0].category?.category +
+                    (record.categories[0].subCategory
+                      ? " / " + record.categories[0].subCategory?.subCategory
+                      : ""),
+                  record.categories[0].subSubCategory
+                    ? " / " +
+                      record.categories[0].subSubCategory?.subSubCategory
+                    : "",
+                  record.categories[1] ? " (...)" : "",
+                ]
+              : ""}
+          </span>
+        </>
       ),
     },
     {
@@ -204,6 +224,13 @@ const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
     {
       title: "Status",
       dataIndex: ["status"],
+      width: "12%",
+      align: "center",
+      responsive: ["sm"],
+    },
+    {
+      title: "Product Brand",
+      dataIndex: "productBrand",
       width: "12%",
       align: "center",
       responsive: ["sm"],

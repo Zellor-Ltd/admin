@@ -45,7 +45,6 @@ const Creators: React.FC<RouteComponentProps> = ({ history, location }) => {
       align: "center",
     },
     { title: "Name", dataIndex: "firstName", width: "15%" },
-    { title: "Last Name", dataIndex: "lastName", width: "15%" },
     {
       title: "Status",
       dataIndex: "status",

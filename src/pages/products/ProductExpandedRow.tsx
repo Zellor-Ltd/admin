@@ -1,10 +1,12 @@
-import { Button, Col, Form, Radio } from "antd";
+import { Button, Col, Form, Radio, Select, Row } from "antd";
 import { categoriesSettings } from "helpers/utils";
 import { AllCategories } from "interfaces/Category";
 import { Product } from "interfaces/Product";
+import { ProductBrand } from "interfaces/ProductBrand";
 import { useLocation } from "react-router-dom";
 import ProductCategoriesTrees from "./ProductCategoriesTrees";
-import { useCallback } from "react";
+import { useCallback, useState, useEffect } from "react";
+import { fetchProductBrands } from "services/DiscoClubService";
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 
 interface ProductExpandedRowProps {
@@ -21,9 +23,19 @@ const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
   loading,
 }) => {
   const [form] = Form.useForm();
+  const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
 
   const { pathname } = useLocation();
   const isStaging = pathname === "/staging-list";
+
+  useEffect(() => {
+    const getProductBrands = async () => {
+      const response: any = await fetchProductBrands();
+      setProductBrands(response.results);
+    };
+
+    getProductBrands();
+  }, []);
 
   const onFinish = async () => {
     const _categories = [...form.getFieldValue("categories")];
@@ -36,11 +48,13 @@ const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
     });
 
     const searchTags = form.getFieldValue("searchTags");
+    const productBrand = form.getFieldValue("productBrand");
 
     await onSaveProduct({
       ...record,
       categories: _categories,
       searchTags: searchTags,
+      productBrand: productBrand,
     });
   };
 
@@ -84,14 +98,27 @@ const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
       onFinish={onFinish}
       form={form}
     >
-      <Col lg={20} xs={24}>
-        <Form.Item name="status" label="Status">
-          <Radio.Group buttonStyle="solid">
-            <Radio.Button value="live">Live</Radio.Button>
-            <Radio.Button value="paused">Paused</Radio.Button>
-          </Radio.Group>
-        </Form.Item>
-      </Col>
+      <Row gutter={8}>
+        <Col lg={4} xs={8}>
+          <Form.Item name="status" label="Status">
+            <Radio.Group buttonStyle="solid">
+              <Radio.Button value="live">Live</Radio.Button>
+              <Radio.Button value="paused">Paused</Radio.Button>
+            </Radio.Group>
+          </Form.Item>
+        </Col>
+        <Col lg={4} xs={8}>
+          <Form.Item name="productBrand" label="Product Brand">
+            <Select>
+              {productBrands.map((brand: ProductBrand) => (
+                <Select.Option key={brand.id} value={brand.brandName}>
+                  {brand.brandName}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+        </Col>
+      </Row>
       <ProductCategoriesTrees
         categories={record.categories}
         allCategories={allCategories}
