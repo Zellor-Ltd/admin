@@ -80,15 +80,6 @@ const ProductBrands: React.FC<RouteComponentProps> = ({
       ),
     },
     {
-      title: "Status",
-      dataIndex: "status",
-      width: "20%",
-      align: "center",
-      render: (value = "pending") => (
-        <Tag color={tagColorByStatus[value]}>{value}</Tag>
-      ),
-    },
-    {
       title: "Creation",
       dataIndex: "hCreationDate",
       width: "15%",
