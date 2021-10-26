@@ -21,7 +21,7 @@ import { formatMoment } from "helpers/formatMoment";
 import { categoriesSettings } from "helpers/utils";
 import useAllCategories from "hooks/useAllCategories";
 import { Brand } from "interfaces/Brand";
-import { ProductBrand } from "interfaces/ProductBrand";
+import { ProductBrand } from "../../interfaces/ProductBrand";
 import { AllCategories } from "interfaces/Category";
 import { Product } from "interfaces/Product";
 import { useCallback, useEffect, useState } from "react";
@@ -61,6 +61,10 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
   const { fetchAllCategories, allCategories } = useAllCategories({
     setLoading,
   });
+
+  const onDragEnd = (result: any) => {
+    console.log(result);
+  };
 
   const {
     settings: { currency = [] },
@@ -541,7 +545,7 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
               </Col>
               <Col lg={24} xs={24}>
                 <Form.Item label="Image">
-                  <DragDropContext>
+                  <DragDropContext onDragEnd={onDragEnd}>
                     <Upload.ImageUpload
                       maxCount={20}
                       fileList={initial?.image}
