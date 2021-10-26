@@ -35,7 +35,6 @@ import {
 } from "services/DiscoClubService";
 import ProductCategoriesTrees from "./ProductCategoriesTrees";
 import "./Products.scss";
-import { DragDropContext } from "react-beautiful-dnd";
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 
@@ -61,10 +60,6 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
   const { fetchAllCategories, allCategories } = useAllCategories({
     setLoading,
   });
-
-  const onDragEnd = (result: any) => {
-    console.log(result);
-  };
 
   const {
     settings: { currency = [] },
@@ -545,14 +540,12 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
               </Col>
               <Col lg={24} xs={24}>
                 <Form.Item label="Image">
-                  <DragDropContext onDragEnd={onDragEnd}>
-                    <Upload.ImageUpload
-                      maxCount={20}
-                      fileList={initial?.image}
-                      formProp="image"
-                      form={form}
-                    />
-                  </DragDropContext>
+                  <Upload.ImageUpload
+                    maxCount={20}
+                    fileList={initial?.image}
+                    formProp="image"
+                    form={form}
+                  />
                 </Form.Item>
               </Col>
             </Row>
