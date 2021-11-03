@@ -29,6 +29,7 @@ import EditProductModal from "./EditProductModal";
 import ProductExpandedRow from "./ProductExpandedRow";
 import CopyIdToClipboard from "components/CopyIdToClipboard";
 import { useLastLocation } from "react-router-last-location";
+import localForage from "localforage";
 
 const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
   const lastLocation = useLastLocation();
@@ -53,11 +54,15 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
   });
 
   useEffect(() => {
-    const content = localStorage.getItem("content");
-
-    if (lastLocation?.pathname === "/products/product/commited" && content) {
-      const prods = JSON.parse(content);
-      setProducts(prods);
+    if (lastLocation?.pathname === "/products/product/commited") {
+      localForage.getItem("stagingContent", function (err, value) {
+        if (err) {
+          console.error("localForage error.");
+        } else {
+          const content = value;
+          setProducts(content as Product[]);
+        }
+      });
     }
   });
 
@@ -84,7 +89,7 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
     } else {
       setProducts(results);
       setContent(results);
-      localStorage.setItem("content", JSON.stringify(results));
+      localForage.setItem("stagingContent", results);
     } // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

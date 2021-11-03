@@ -29,6 +29,7 @@ import EditProductModal from "./EditProductModal";
 import ProductAPITestModal from "./ProductAPITestModal";
 import ProductExpandedRow from "./ProductExpandedRow";
 import { useLastLocation } from "react-router-last-location";
+import localForage from "localforage";
 
 const Products: React.FC<RouteComponentProps> = React.memo(
   ({ history, location }) => {
@@ -56,7 +57,6 @@ const Products: React.FC<RouteComponentProps> = React.memo(
 
     const [products, setProducts] = useState<Product[]>([]);
     const [content, setContent] = useState<any[]>([]);
-    const [preLoaded, setPreLoaded] = useState<boolean>(false);
 
     const { fetchAllCategories, allCategories } = useAllCategories({
       setLoading,
@@ -79,11 +79,15 @@ const Products: React.FC<RouteComponentProps> = React.memo(
     };
 
     useEffect(() => {
-      const content = localStorage.getItem("content");
-
-      if (lastLocation?.pathname === "/products/product/commited" && content) {
-        const prods = JSON.parse(content);
-        setProducts(prods);
+      if (lastLocation?.pathname === "/products/product/commited") {
+        localForage.getItem("liveContent", function (err, value) {
+          if (err) {
+            console.error("localForage error.");
+          } else {
+            const content = value;
+            setProducts(content as Product[]);
+          }
+        });
       }
     });
 
@@ -92,9 +96,12 @@ const Products: React.FC<RouteComponentProps> = React.memo(
         _fetchProducts(),
         fetchAllCategories(),
       ]);
+      localForage.setItem("liveContent", results);
       setProducts(results);
       setContent(results);
-      localStorage.setItem("content", JSON.stringify(results));
+      if (brandFilter) {
+        onChangeBrand(brandFilter);
+      } //todo fix this, fix staging
     };
 
     const refreshProducts = async () => {
@@ -148,6 +155,23 @@ const Products: React.FC<RouteComponentProps> = React.memo(
     const onSaveProduct = async (record: Product) => {
       await doRequest(() => saveProduct(record));
       await refreshProducts();
+    };
+
+    const onChangeBrand = async (_selectedBrand: Brand | undefined) => {
+      setBrandFilter(_selectedBrand);
+    };
+
+    const handleFilterClassified = (e: CheckboxChangeEvent) => {
+      setUnclassifiedFilter(e.target.checked);
+    };
+
+    const handleRowSelection = (preSelectedRows: any[]) => {
+      const selectedRows: any[] = [];
+      preSelectedRows.forEach((productId) => {
+        const product = products.find((product) => product.id === productId);
+        if (product!.brand?.automated !== true) selectedRows.push(productId);
+      });
+      setSelectedRowKeys(selectedRows);
     };
 
     const columns: EditableColumnType<Product>[] = [
@@ -305,38 +329,13 @@ const Products: React.FC<RouteComponentProps> = React.memo(
       },
     ];
 
-    const onChangeBrand = async (_selectedBrand: Brand | undefined) => {
-      setBrandFilter(_selectedBrand);
-    };
-
-    const handleFilterClassified = (e: CheckboxChangeEvent) => {
-      setUnclassifiedFilter(e.target.checked);
-    };
-
-    const handleRowSelection = (preSelectedRows: any[]) => {
-      const selectedRows: any[] = [];
-      preSelectedRows.forEach((productId) => {
-        const product = products.find((product) => product.id === productId);
-        if (product!.brand?.automated !== true) selectedRows.push(productId);
-      });
-      setSelectedRowKeys(selectedRows);
-    };
-
-    const newItem = () => {
-      history.push(detailsPathname);
-    };
-
-    const search = () => {
-      getResources();
-    };
-
     return (
       <>
         <PageHeader
           title="Products"
           subTitle="List of Live Products"
           extra={[
-            <Button key="1" onClick={() => newItem()}>
+            <Button key="1" onClick={() => history.push(detailsPathname)}>
               New Item
             </Button>,
           ]}
@@ -372,7 +371,7 @@ const Products: React.FC<RouteComponentProps> = React.memo(
           <Col>
             <Button
               type="primary"
-              onClick={() => search()}
+              onClick={() => getResources()}
               loading={loading}
               style={{
                 marginBottom: "20px",
