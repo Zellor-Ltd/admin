@@ -17,7 +17,7 @@ import { useRequest } from "hooks/useRequest";
 import { Brand } from "interfaces/Brand";
 import { Product } from "interfaces/Product";
 import moment from "moment";
-import { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { Link, RouteComponentProps } from "react-router-dom";
 import {
@@ -28,391 +28,415 @@ import {
 import EditProductModal from "./EditProductModal";
 import ProductAPITestModal from "./ProductAPITestModal";
 import ProductExpandedRow from "./ProductExpandedRow";
+import { useLastLocation } from "react-router-last-location";
 
-const Products: React.FC<RouteComponentProps> = ({ history, location }) => {
-  const detailsPathname = `${location.pathname}/product/commited`;
-  const { usePageFilter } = useContext(AppContext);
+const Products: React.FC<RouteComponentProps> = React.memo(
+  ({ history, location }) => {
+    const lastLocation = useLastLocation();
+    const detailsPathname = `${location.pathname}/product/commited`;
+    const { usePageFilter } = useContext(AppContext);
 
-  const [loading, setLoading] = useState<boolean>(false);
-  const [refreshing, setRefreshing] = useState<boolean>(false);
-  const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
-  const [productAPITest, setProductAPITest] = useState<Product | null>(null);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [refreshing, setRefreshing] = useState<boolean>(false);
+    const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
+    const [productAPITest, setProductAPITest] = useState<Product | null>(null);
 
-  const { doFetch, doRequest } = useRequest({ setLoading });
-  const { doRequest: saveCategories, loading: loadingCategories } =
-    useRequest();
+    const { doFetch, doRequest } = useRequest({ setLoading });
+    const { doRequest: saveCategories, loading: loadingCategories } =
+      useRequest();
 
-  const [searchFilter, setSearchFilter] = usePageFilter<string>("search");
-  const [brandFilter, setBrandFilter] = usePageFilter<Brand | undefined>(
-    "brand"
-  );
-  const [unclassifiedFilter, setUnclassifiedFilter] = useState<boolean>(false);
-  const [page, setPage] = useState<number>(0);
-  const [eof, setEof] = useState<boolean>(false);
-
-  const [products, setProducts] = useState<Product[]>([]);
-  const [content, setContent] = useState<any[]>([]);
-  const [preLoaded, setPreLoaded] = useState<boolean>(false);
-
-  const { fetchAllCategories, allCategories } = useAllCategories({
-    setLoading,
-  });
-
-  const _fetchProducts = async () => {
-    const pageToUse = refreshing ? 0 : page;
-    const response = await doFetch(() =>
-      fetchProducts({
-        limit: 30,
-        page: pageToUse,
-        brandId: brandFilter?.id,
-        query: searchFilter,
-        unclassified: unclassifiedFilter,
-      })
+    const [searchFilter, setSearchFilter] = usePageFilter<string>("search");
+    const [brandFilter, setBrandFilter] = usePageFilter<Brand | undefined>(
+      "brand"
     );
-    setPage(pageToUse + 1);
-    if (response.results.length < 30) setEof(true);
-    return response;
-  };
+    const [unclassifiedFilter, setUnclassifiedFilter] =
+      useState<boolean>(false);
+    const [page, setPage] = useState<number>(0);
+    const [eof, setEof] = useState<boolean>(false);
 
-  const getResources = async () => {
-    const [{ results }] = await Promise.all([
-      _fetchProducts(),
-      fetchAllCategories(),
-    ]);
-    setPreLoaded(true);
-    setProducts(results);
-    setContent(results);
-  };
+    const [products, setProducts] = useState<Product[]>([]);
+    const [content, setContent] = useState<any[]>([]);
+    const [preLoaded, setPreLoaded] = useState<boolean>(false);
 
-  const refreshProducts = async () => {
-    setSelectedRowKeys([]);
-    setPage(0);
-    setRefreshing(true);
-  };
-
-  const fetchData = async () => {
-    if (!products.length) return;
-    const { results } = await _fetchProducts();
-    setProducts((prev) => [...prev.concat(results)]);
-  };
-
-  useEffect(() => {
-    const getProducts = async () => {
-      const { results } = await _fetchProducts();
-      setProducts(results);
-      setRefreshing(false);
-    };
-    if (refreshing) {
-      setEof(false);
-      getProducts();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [refreshing]);
-
-  useEffect(() => {
-    if (allCategories["Super Category"].length) refreshProducts();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchFilter, brandFilter, unclassifiedFilter]);
-
-  const deleteItem = async (_id: string) => {
-    await doRequest(() => deleteProduct(_id));
-    for (let i = 0; i < content.length; i++) {
-      if (content[i].id === _id) {
-        const index = i;
-        setProducts((prev) => [
-          ...prev.slice(0, index),
-          ...prev.slice(index + 1),
-        ]);
-      }
-    }
-  };
-
-  const onSaveCategories = async (record: Product) => {
-    await saveCategories(() => saveProduct(record));
-    await refreshProducts();
-  };
-
-  const onSaveProduct = async (record: Product) => {
-    await doRequest(() => saveProduct(record));
-    await refreshProducts();
-  };
-
-  const columns: EditableColumnType<Product>[] = [
-    {
-      title: "Id",
-      dataIndex: "id",
-      width: "6%",
-      render: (id) => <CopyIdToClipboard id={id} />,
-      align: "center",
-    },
-    {
-      title: "Name",
-      dataIndex: "name",
-      width: "15%",
-      render: (value: string, record) => (
-        <>
-          <Link to={{ pathname: detailsPathname, state: record }}>{value}</Link>
-          <span style={{ fontSize: "12px" }}>
-            <br />
-            {record.categories
-              ? [
-                  record.categories[0].superCategory?.superCategory +
-                    " / " +
-                    record.categories[0].category?.category +
-                    (record.categories[0].subCategory
-                      ? " / " + record.categories[0].subCategory?.subCategory
-                      : ""),
-                  record.categories[0].subSubCategory
-                    ? " / " +
-                      record.categories[0].subSubCategory?.subSubCategory
-                    : "",
-                  record.categories[1] ? " (...)" : "",
-                ]
-              : ""}
-          </span>
-        </>
-      ),
-    },
-    {
-      title: "Master Brand",
-      dataIndex: ["brand", "brandName"],
-      width: "20%",
-      align: "center",
-      responsive: ["sm"],
-    },
-    {
-      title: "In Stock",
-      dataIndex: "outOfStock",
-      width: "7%",
-      align: "center",
-      render: (outOfStock: boolean) => (outOfStock ? "No" : "Yes"),
-    },
-    {
-      title: "Max DD",
-      dataIndex: "maxDiscoDollars",
-      width: "12%",
-      align: "center",
-      responsive: ["sm"],
-      // editable: true,
-      // number: true,
-    },
-    {
-      title: "Disco %",
-      dataIndex: "discoPercentage",
-      width: "8%",
-      align: "center",
-      responsive: ["sm"],
-      // editable: true,
-      // number: true,
-    },
-    {
-      title: "Shopify Id",
-      dataIndex: "shopifyUniqueId",
-      width: "15%",
-      align: "center",
-      responsive: ["sm"],
-    },
-
-    {
-      title: "Expiration Date",
-      dataIndex: "offerExpirationDate",
-      width: "13%",
-      align: "center",
-      responsive: ["sm"],
-      render: (creationDate: Date) => moment(creationDate).format("DD/MM/YYYY"),
-    },
-    {
-      title: "Status",
-      dataIndex: ["status"],
-      width: "12%",
-      align: "center",
-      responsive: ["sm"],
-    },
-    {
-      title: "Product Brand",
-      dataIndex: "productBrand",
-      width: "12%",
-      align: "center",
-      responsive: ["sm"],
-    },
-    {
-      title: "Last Go-Live",
-      dataIndex: "goLiveDate",
-      width: "12.5%",
-      align: "center",
-      render: (goLiveDate: Date | null | undefined) =>
-        goLiveDate ? (
-          <>
-            <div>
-              {moment(goLiveDate).format("DD/MM/YY")}{" "}
-              {moment(goLiveDate).format("HH:mm")}
-            </div>
-          </>
-        ) : (
-          ""
-        ),
-    },
-    {
-      title: "Actions",
-      key: "action",
-      width: "12%",
-      align: "right",
-      render: (_: any, record) => (
-        <>
-          <Link to={{ pathname: detailsPathname, state: record }}>
-            <EditOutlined />
-          </Link>
-          {record.brand?.automated !== true && (
-            <Popconfirm
-              title="Are you sure？"
-              okText="Yes"
-              cancelText="No"
-              onConfirm={() => deleteItem(record.id)}
-            >
-              <Button
-                type="link"
-                style={{ padding: 0, margin: "6px 0 6px 6px" }}
-              >
-                <DeleteOutlined />
-              </Button>
-            </Popconfirm>
-          )}
-          <Button
-            onClick={() => setProductAPITest(record)}
-            type="link"
-            style={{ padding: 0, margin: "6px 0 6px 6px" }}
-          >
-            <SettingOutlined />
-          </Button>
-        </>
-      ),
-    },
-  ];
-
-  const onChangeBrand = async (_selectedBrand: Brand | undefined) => {
-    setBrandFilter(_selectedBrand);
-  };
-
-  const handleFilterClassified = (e: CheckboxChangeEvent) => {
-    setUnclassifiedFilter(e.target.checked);
-  };
-
-  const handleRowSelection = (preSelectedRows: any[]) => {
-    const selectedRows: any[] = [];
-    preSelectedRows.forEach((productId) => {
-      const product = products.find((product) => product.id === productId);
-      if (product!.brand?.automated !== true) selectedRows.push(productId);
+    const { fetchAllCategories, allCategories } = useAllCategories({
+      setLoading,
     });
-    setSelectedRowKeys(selectedRows);
-  };
 
-  return (
-    <>
-      <PageHeader
-        title="Products"
-        subTitle="List of Live Products"
-        extra={[
-          <Button key="1" onClick={() => history.push(detailsPathname)}>
-            New Item
-          </Button>,
-        ]}
-      />
-      <Row align="bottom" justify="space-between">
-        <Col lg={16} xs={24}>
-          <Row gutter={8}>
-            <Col lg={8} xs={16}>
-              <SearchFilterDebounce
-                initialValue={searchFilter}
-                filterFunction={setSearchFilter}
-                label="Search by Name"
-              />
-            </Col>
-            <Col lg={8} xs={16}>
-              <SelectBrand
-                style={{ width: "100%" }}
-                allowClear={true}
-                onChange={onChangeBrand}
-                initialBrandName={brandFilter?.brandName}
-              ></SelectBrand>
-            </Col>
-            <Col lg={8} xs={16}>
-              <Checkbox
-                onChange={handleFilterClassified}
-                style={{ margin: "42px 0 16px 8px" }}
+    const _fetchProducts = async () => {
+      const pageToUse = refreshing ? 0 : page;
+      const response = await doFetch(() =>
+        fetchProducts({
+          limit: 30,
+          page: pageToUse,
+          brandId: brandFilter?.id,
+          query: searchFilter,
+          unclassified: unclassifiedFilter,
+        })
+      );
+      setPage(pageToUse + 1);
+      if (response.results.length < 30) setEof(true);
+      return response;
+    };
+
+    useEffect(() => {
+      const content = localStorage.getItem("content");
+
+      if (lastLocation?.pathname === "/products/product/commited" && content) {
+        const prods = JSON.parse(content);
+        setProducts(prods);
+      }
+    });
+
+    const getResources = async () => {
+      const [{ results }] = await Promise.all([
+        _fetchProducts(),
+        fetchAllCategories(),
+      ]);
+      setProducts(results);
+      setContent(results);
+      localStorage.setItem("content", JSON.stringify(results));
+    };
+
+    const refreshProducts = async () => {
+      setSelectedRowKeys([]);
+      setPage(0);
+      setRefreshing(true);
+    };
+
+    const fetchData = async () => {
+      if (!products.length) return;
+      const { results } = await _fetchProducts();
+      setProducts((prev) => [...prev.concat(results)]);
+    };
+
+    useEffect(() => {
+      const getProducts = async () => {
+        const { results } = await _fetchProducts();
+        setProducts(results);
+        setRefreshing(false);
+      };
+      if (refreshing) {
+        setEof(false);
+        getProducts();
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [refreshing]);
+
+    useEffect(() => {
+      if (allCategories["Super Category"].length) refreshProducts();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [searchFilter, brandFilter, unclassifiedFilter]);
+
+    const deleteItem = async (_id: string) => {
+      await doRequest(() => deleteProduct(_id));
+      for (let i = 0; i < content.length; i++) {
+        if (content[i].id === _id) {
+          const index = i;
+          setProducts((prev) => [
+            ...prev.slice(0, index),
+            ...prev.slice(index + 1),
+          ]);
+        }
+      }
+    };
+
+    const onSaveCategories = async (record: Product) => {
+      await saveCategories(() => saveProduct(record));
+      await refreshProducts();
+    };
+
+    const onSaveProduct = async (record: Product) => {
+      await doRequest(() => saveProduct(record));
+      await refreshProducts();
+    };
+
+    const columns: EditableColumnType<Product>[] = [
+      {
+        title: "Id",
+        dataIndex: "id",
+        width: "6%",
+        render: (id) => <CopyIdToClipboard id={id} />,
+        align: "center",
+      },
+      {
+        title: "Name",
+        dataIndex: "name",
+        width: "15%",
+        render: (value: string, record) => (
+          <>
+            <Link to={{ pathname: detailsPathname, state: record }}>
+              {value}
+            </Link>
+            <span style={{ fontSize: "12px" }}>
+              <br />
+              {record.categories
+                ? [
+                    record.categories[0].superCategory?.superCategory +
+                      " / " +
+                      record.categories[0].category?.category +
+                      (record.categories[0].subCategory
+                        ? " / " + record.categories[0].subCategory?.subCategory
+                        : ""),
+                    record.categories[0].subSubCategory
+                      ? " / " +
+                        record.categories[0].subSubCategory?.subSubCategory
+                      : "",
+                    record.categories[1] ? " (...)" : "",
+                  ]
+                : ""}
+            </span>
+          </>
+        ),
+      },
+      {
+        title: "Master Brand",
+        dataIndex: ["brand", "brandName"],
+        width: "20%",
+        align: "center",
+        responsive: ["sm"],
+      },
+      {
+        title: "In Stock",
+        dataIndex: "outOfStock",
+        width: "7%",
+        align: "center",
+        render: (outOfStock: boolean) => (outOfStock ? "No" : "Yes"),
+      },
+      {
+        title: "Max DD",
+        dataIndex: "maxDiscoDollars",
+        width: "12%",
+        align: "center",
+        responsive: ["sm"],
+        // editable: true,
+        // number: true,
+      },
+      {
+        title: "Disco %",
+        dataIndex: "discoPercentage",
+        width: "8%",
+        align: "center",
+        responsive: ["sm"],
+        // editable: true,
+        // number: true,
+      },
+      {
+        title: "Shopify Id",
+        dataIndex: "shopifyUniqueId",
+        width: "15%",
+        align: "center",
+        responsive: ["sm"],
+      },
+
+      {
+        title: "Expiration Date",
+        dataIndex: "offerExpirationDate",
+        width: "13%",
+        align: "center",
+        responsive: ["sm"],
+        render: (creationDate: Date) =>
+          moment(creationDate).format("DD/MM/YYYY"),
+      },
+      {
+        title: "Status",
+        dataIndex: ["status"],
+        width: "12%",
+        align: "center",
+        responsive: ["sm"],
+      },
+      {
+        title: "Product Brand",
+        dataIndex: "productBrand",
+        width: "12%",
+        align: "center",
+        responsive: ["sm"],
+      },
+      {
+        title: "Last Go-Live",
+        dataIndex: "goLiveDate",
+        width: "12.5%",
+        align: "center",
+        render: (goLiveDate: Date | null | undefined) =>
+          goLiveDate ? (
+            <>
+              <div>
+                {moment(goLiveDate).format("DD/MM/YY")}{" "}
+                {moment(goLiveDate).format("HH:mm")}
+              </div>
+            </>
+          ) : (
+            ""
+          ),
+      },
+      {
+        title: "Actions",
+        key: "action",
+        width: "12%",
+        align: "right",
+        render: (_: any, record) => (
+          <>
+            <Link to={{ pathname: detailsPathname, state: record }}>
+              <EditOutlined />
+            </Link>
+            {record.brand?.automated !== true && (
+              <Popconfirm
+                title="Are you sure？"
+                okText="Yes"
+                cancelText="No"
+                onConfirm={() => deleteItem(record.id)}
               >
-                Unclassified only
-              </Checkbox>
-            </Col>
-          </Row>
-        </Col>
-        <Col>
-          <Button
-            type="primary"
-            onClick={() => getResources()}
-            loading={loading}
-            style={{
-              marginBottom: "20px",
-            }}
-          >
-            Search
-            <SearchOutlined style={{ color: "white" }} />
-          </Button>
-        </Col>
-        <EditMultipleButton
-          text="Edit Products"
-          arrayList={products}
-          ModalComponent={EditProductModal}
-          selectedRowKeys={selectedRowKeys}
-          onOk={refreshProducts}
-        />
-      </Row>
-      <ProductAPITestModal
-        selectedRecord={productAPITest}
-        setSelectedRecord={setProductAPITest}
-      />
-      <InfiniteScroll
-        dataLength={products.length}
-        next={fetchData}
-        hasMore={!eof}
-        loader={
-          page !== 0 && (
-            <div className="scroll-message">
-              <Spin />
-            </div>
-          )
-        }
-        endMessage={
-          <div className="scroll-message">
-            <b>End of results.</b>
-          </div>
-        }
-      >
-        <EditableTable
-          rowKey="id"
-          columns={columns}
-          dataSource={products}
-          loading={refreshing || (!products.length && loading)}
-          onSave={onSaveProduct}
-          pagination={false}
-          rowSelection={{
-            selectedRowKeys,
-            onChange: handleRowSelection,
-          }}
-          expandable={{
-            expandedRowRender: (record: Product) => (
-              <ProductExpandedRow
-                key={record.id}
-                record={record}
-                allCategories={allCategories}
-                onSaveProduct={onSaveCategories}
-                loading={loadingCategories}
-              ></ProductExpandedRow>
-            ),
-          }}
-        />
-      </InfiniteScroll>
-    </>
-  );
-};
+                <Button
+                  type="link"
+                  style={{ padding: 0, margin: "6px 0 6px 6px" }}
+                >
+                  <DeleteOutlined />
+                </Button>
+              </Popconfirm>
+            )}
+            <Button
+              onClick={() => setProductAPITest(record)}
+              type="link"
+              style={{ padding: 0, margin: "6px 0 6px 6px" }}
+            >
+              <SettingOutlined />
+            </Button>
+          </>
+        ),
+      },
+    ];
 
+    const onChangeBrand = async (_selectedBrand: Brand | undefined) => {
+      setBrandFilter(_selectedBrand);
+    };
+
+    const handleFilterClassified = (e: CheckboxChangeEvent) => {
+      setUnclassifiedFilter(e.target.checked);
+    };
+
+    const handleRowSelection = (preSelectedRows: any[]) => {
+      const selectedRows: any[] = [];
+      preSelectedRows.forEach((productId) => {
+        const product = products.find((product) => product.id === productId);
+        if (product!.brand?.automated !== true) selectedRows.push(productId);
+      });
+      setSelectedRowKeys(selectedRows);
+    };
+
+    const newItem = () => {
+      history.push(detailsPathname);
+    };
+
+    const search = () => {
+      getResources();
+    };
+
+    return (
+      <>
+        <PageHeader
+          title="Products"
+          subTitle="List of Live Products"
+          extra={[
+            <Button key="1" onClick={() => newItem()}>
+              New Item
+            </Button>,
+          ]}
+        />
+        <Row align="bottom" justify="space-between">
+          <Col lg={16} xs={24}>
+            <Row gutter={8}>
+              <Col lg={8} xs={16}>
+                <SearchFilterDebounce
+                  initialValue={searchFilter}
+                  filterFunction={setSearchFilter}
+                  label="Search by Name"
+                />
+              </Col>
+              <Col lg={8} xs={16}>
+                <SelectBrand
+                  style={{ width: "100%" }}
+                  allowClear={true}
+                  onChange={onChangeBrand}
+                  initialBrandName={brandFilter?.brandName}
+                ></SelectBrand>
+              </Col>
+              <Col lg={8} xs={16}>
+                <Checkbox
+                  onChange={handleFilterClassified}
+                  style={{ margin: "42px 0 16px 8px" }}
+                >
+                  Unclassified only
+                </Checkbox>
+              </Col>
+            </Row>
+          </Col>
+          <Col>
+            <Button
+              type="primary"
+              onClick={() => search()}
+              loading={loading}
+              style={{
+                marginBottom: "20px",
+              }}
+            >
+              Search
+              <SearchOutlined style={{ color: "white" }} />
+            </Button>
+          </Col>
+          <EditMultipleButton
+            text="Edit Products"
+            arrayList={products}
+            ModalComponent={EditProductModal}
+            selectedRowKeys={selectedRowKeys}
+            onOk={refreshProducts}
+          />
+        </Row>
+        <ProductAPITestModal
+          selectedRecord={productAPITest}
+          setSelectedRecord={setProductAPITest}
+        />
+        <InfiniteScroll
+          dataLength={products.length}
+          next={fetchData}
+          hasMore={!eof}
+          loader={
+            page !== 0 && (
+              <div className="scroll-message">
+                <Spin />
+              </div>
+            )
+          }
+          endMessage={
+            <div className="scroll-message">
+              <b>End of results.</b>
+            </div>
+          }
+        >
+          <EditableTable
+            rowKey="id"
+            columns={columns}
+            dataSource={products}
+            loading={refreshing || (!products.length && loading)}
+            onSave={onSaveProduct}
+            pagination={false}
+            rowSelection={{
+              selectedRowKeys,
+              onChange: handleRowSelection,
+            }}
+            expandable={{
+              expandedRowRender: (record: Product) => (
+                <ProductExpandedRow
+                  key={record.id}
+                  record={record}
+                  allCategories={allCategories}
+                  onSaveProduct={onSaveCategories}
+                  loading={loadingCategories}
+                ></ProductExpandedRow>
+              ),
+            }}
+          />
+        </InfiniteScroll>
+      </>
+    );
+  }
+);
 export default Products;

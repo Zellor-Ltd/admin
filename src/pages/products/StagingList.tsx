@@ -28,9 +28,10 @@ import {
 import EditProductModal from "./EditProductModal";
 import ProductExpandedRow from "./ProductExpandedRow";
 import CopyIdToClipboard from "components/CopyIdToClipboard";
-import Products from "./Products";
+import { useLastLocation } from "react-router-last-location";
 
 const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
+  const lastLocation = useLastLocation();
   const detailsPathname = `${location.pathname}/product/staging`;
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
@@ -49,6 +50,15 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
     useRequest();
   const { fetchAllCategories, allCategories } = useAllCategories({
     setLoading,
+  });
+
+  useEffect(() => {
+    const content = localStorage.getItem("content");
+
+    if (lastLocation?.pathname === "/products/product/commited" && content) {
+      const prods = JSON.parse(content);
+      setProducts(prods);
+    }
   });
 
   const getResources = useCallback(async (_brand?, _text?) => {
@@ -74,6 +84,7 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
     } else {
       setProducts(results);
       setContent(results);
+      localStorage.setItem("content", JSON.stringify(results));
     } // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
