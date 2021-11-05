@@ -60,6 +60,7 @@ import {
 import EditProductModal from "./EditProductModal";
 import ProductAPITestModal from "./ProductAPITestModal";
 import ProductExpandedRow from "./ProductExpandedRow";
+import scrollIntoView from "scroll-into-view";
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 
@@ -99,7 +100,10 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
 
+  const [loaded, setLoaded] = useState<boolean>(false);
+  const [isViewing, setIsViewing] = useState<boolean>(false);
   const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [isCreating, setIsCreating] = useState<boolean>(false);
   const [currentProduct, setCurrentProduct] = useState<Product>();
 
   const [products, setProducts] = useState<Product[]>([]);
@@ -108,6 +112,14 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
   const {
     settings: { currency = [] },
   } = useSelector((state: any) => state.settings);
+
+  const handleScroll = () => {
+    scrollIntoView(document.querySelector(".scroll-row") as HTMLElement, {
+      align: {
+        top: 0,
+      },
+    });
+  };
 
   const setSearchTagsByCategory = useCallback(
     (useInitialValue: boolean, selectedCategories: any[] = []) => {
@@ -229,7 +241,7 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
 
       setLoading(false);
       message.success("Register updated with success.");
-      setIsEditing(false);
+      setIsViewing(false);
     } catch (error) {
       console.error(error);
       setLoading(false);
@@ -259,6 +271,8 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
     ]);
     setProducts(results);
     setContent(results);
+    setLoaded(true);
+    handleScroll();
   };
 
   const refreshProducts = async () => {
@@ -287,7 +301,9 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
   }, [refreshing]);
 
   useEffect(() => {
-    if (allCategories["Super Category"].length) refreshProducts();
+    if (loaded) {
+      refreshProducts();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchFilter, brandFilter, unclassifiedFilter]);
 
@@ -316,12 +332,12 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
 
   const editProduct = (record: Product) => {
     setCurrentProduct(record);
-    setIsEditing(true);
+    setIsViewing(true);
   };
 
   const newProduct = () => {
     setCurrentProduct(undefined);
-    setIsEditing(true);
+    setIsViewing(true);
   };
 
   const columns: EditableColumnType<Product>[] = [
@@ -339,7 +355,7 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
       render: (value: string, record) => (
         <>
           <Link
-            onClick={() => setIsEditing(true)}
+            onClick={() => setIsViewing(true)}
             to={{ pathname: window.location.pathname, state: record }}
           >
             {value}
@@ -503,7 +519,7 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
 
   return (
     <>
-      {!isEditing && (
+      {!isViewing && (
         <>
           <PageHeader
             title="Products"
@@ -585,6 +601,9 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
             }
           >
             <EditableTable
+              rowClassName={(record, index) =>
+                index === 20 ? "scroll-row" : ""
+              }
               rowKey="id"
               columns={columns}
               dataSource={products}
@@ -610,7 +629,7 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
           </InfiniteScroll>
         </>
       )}
-      {isEditing && (
+      {isViewing && (
         <div className="products-details">
           <PageHeader title="Product" subTitle="Form" />
           <Form
@@ -993,7 +1012,7 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
 
             <Row gutter={8}>
               <Col>
-                <Button type="default" onClick={() => setIsEditing(false)}>
+                <Button type="default" onClick={() => setIsViewing(false)}>
                   Cancel
                 </Button>
               </Col>
