@@ -21,7 +21,7 @@ import { formatMoment } from "helpers/formatMoment";
 import { categoriesSettings } from "helpers/utils";
 import useAllCategories from "hooks/useAllCategories";
 import { Brand } from "interfaces/Brand";
-import { ProductBrand } from "interfaces/ProductBrand";
+import { ProductBrand } from "../../interfaces/ProductBrand";
 import { AllCategories } from "interfaces/Category";
 import { Product } from "interfaces/Product";
 import { useCallback, useEffect, useState } from "react";
@@ -554,10 +554,7 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
 
         <Row gutter={8}>
           <Col>
-            <Button
-              type="default"
-              onClick={() => history.push(productsListPathname)}
-            >
+            <Button type="default" onClick={() => history.goBack()}>
               Cancel
             </Button>
           </Col>

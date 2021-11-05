@@ -2,6 +2,7 @@ import { AppContext } from "contexts/AppContext";
 import { isAuthenticated } from "helpers/authFunctions";
 import { useContext } from "react";
 import { Redirect, Route, useHistory } from "react-router-dom";
+import { LastLocationProvider } from "react-router-last-location";
 
 const AppRoute: React.FC<any> = (props) => {
   const { refreshContext, lastVisitedPage, setLastVisitedPage } =
@@ -26,14 +27,16 @@ const AppRoute: React.FC<any> = (props) => {
   if (!authenticated && path !== "/login") return <Redirect to="login" />;
   if (returnComponent) return Component;
   return (
-    <Route
-      {...rest}
-      render={(routeProps) => (
-        <Layout>
-          <Component {...rest} path={path} {...routeProps} />
-        </Layout>
-      )}
-    ></Route>
+    <LastLocationProvider>
+      <Route
+        {...rest}
+        render={(routeProps) => (
+          <Layout>
+            <Component {...rest} path={path} {...routeProps} />
+          </Layout>
+        )}
+      ></Route>
+    </LastLocationProvider>
   );
 };
 
