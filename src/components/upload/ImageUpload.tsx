@@ -1,7 +1,6 @@
 import { FormInstance, message, Upload } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
-import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { UploadFile } from "antd/lib/upload/interface";
 
 interface ImageUploadProps {
@@ -80,10 +79,6 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     }
   };
 
-  const onDragEnd = (result: any) => {
-    console.log(result);
-  };
-
   const onChangeImage = (info: any) => {
     setfileListLocal(info.fileList);
     console.log(fileListLocal);
@@ -159,43 +154,20 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 
   return (
     <>
-      <DragDropContext onDragEnd={onDragEnd}>
-        <Droppable droppableId="id">
-          {(provided) => (
-            <Upload
-              ref={provided.innerRef}
-              {...provided.droppableProps}
-              action={action}
-              headers={{
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-              }}
-              onChange={onChangeImage}
-              accept={accept}
-              listType="picture-card"
-              fileList={fileListLocal}
-              maxCount={maxCount}
-              onPreview={onPreview}
-              itemRender={(originNode, file: UploadFile, currFileList) => (
-                <Draggable
-                  draggableId={file.uid}
-                  index={currFileList.indexOf(file)}
-                >
-                  {(provided) => (
-                    <div
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
-                    ></div>
-                  )}
-                </Draggable>
-              )}
-            >
-              {fileListLocal.length >= maxCount ? null : uploadButton}
-              {provided.placeholder}
-            </Upload>
-          )}
-        </Droppable>
-      </DragDropContext>
+      <Upload
+        action={action}
+        headers={{
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        }}
+        onChange={onChangeImage}
+        accept={accept}
+        listType="picture-card"
+        fileList={fileListLocal}
+        maxCount={maxCount}
+        onPreview={onPreview}
+      >
+        {fileListLocal.length >= maxCount ? null : uploadButton}
+      </Upload>
     </>
   );
 };
