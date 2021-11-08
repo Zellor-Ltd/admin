@@ -105,6 +105,7 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [isCreating, setIsCreating] = useState<boolean>(false);
   const [currentProduct, setCurrentProduct] = useState<Product>();
+  const [lastViewedIndex, setLastViewedIndex] = useState<number>(0);
 
   const [products, setProducts] = useState<Product[]>([]);
   const [content, setContent] = useState<any[]>([]);
@@ -120,6 +121,13 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
       },
     });
   };
+
+  useEffect(() => {
+    console.log(lastViewedIndex);
+    if (loaded && !isViewing) {
+      handleScroll();
+    }
+  }, [lastViewedIndex, loaded, isViewing]);
 
   const setSearchTagsByCategory = useCallback(
     (useInitialValue: boolean, selectedCategories: any[] = []) => {
@@ -241,6 +249,8 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
 
       setLoading(false);
       message.success("Register updated with success.");
+      setIsCreating(false);
+      setIsEditing(false);
       setIsViewing(false);
     } catch (error) {
       console.error(error);
@@ -330,14 +340,26 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
     await refreshProducts();
   };
 
-  const editProduct = (record: Product) => {
+  const editProduct = (record: Product, index: number) => {
     setCurrentProduct(record);
+    setLastViewedIndex(index);
     setIsViewing(true);
+    setIsEditing(true);
   };
 
   const newProduct = () => {
     setCurrentProduct(undefined);
+    if (loaded) {
+      setLastViewedIndex(content.length - 1);
+    } //else + content ta carregndo 30 por vez
     setIsViewing(true);
+    setIsCreating(true);
+  };
+
+  const cancel = () => {
+    setIsEditing(false);
+    setIsCreating(false);
+    setIsViewing(false);
   };
 
   const columns: EditableColumnType<Product>[] = [
@@ -465,11 +487,11 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
       key: "action",
       width: "12%",
       align: "right",
-      render: (_: any, record) => (
+      render: (_: any, record, index) => (
         <>
           <Link
             to={{ pathname: window.location.pathname, state: record }}
-            onClick={() => editProduct(record)}
+            onClick={() => editProduct(record, index)}
           >
             <EditOutlined />
           </Link>
@@ -601,8 +623,8 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
             }
           >
             <EditableTable
-              rowClassName={(record, index) =>
-                index === 20 ? "scroll-row" : ""
+              rowClassName={(index) =>
+                index === lastViewedIndex ? "scroll-row" : ""
               }
               rowKey="id"
               columns={columns}
@@ -1012,7 +1034,7 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
 
             <Row gutter={8}>
               <Col>
-                <Button type="default" onClick={() => setIsViewing(false)}>
+                <Button type="default" onClick={() => cancel()}>
                   Cancel
                 </Button>
               </Col>
