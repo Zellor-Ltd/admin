@@ -55,12 +55,13 @@ import {
   saveStagingProduct,
   deleteProduct,
   fetchProducts,
+  fetchAllProducts,
   saveProduct,
 } from "services/DiscoClubService";
 import EditProductModal from "./EditProductModal";
 import ProductAPITestModal from "./ProductAPITestModal";
 import ProductExpandedRow from "./ProductExpandedRow";
-import scrollIntoView from "scroll-into-view";
+import { convertToObject } from "typescript";
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 
@@ -102,10 +103,8 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
 
   const [loaded, setLoaded] = useState<boolean>(false);
   const [isViewing, setIsViewing] = useState<boolean>(false);
-  const [isEditing, setIsEditing] = useState<boolean>(false);
-  const [isCreating, setIsCreating] = useState<boolean>(false);
   const [currentProduct, setCurrentProduct] = useState<Product>();
-  const [lastViewedIndex, setLastViewedIndex] = useState<number>(0);
+  const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
 
   const [products, setProducts] = useState<Product[]>([]);
   const [content, setContent] = useState<any[]>([]);
@@ -115,19 +114,20 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
   } = useSelector((state: any) => state.settings);
 
   const handleScroll = () => {
-    scrollIntoView(document.querySelector(".scroll-row") as HTMLElement, {
-      align: {
-        top: 0,
-      },
-    });
+    window.scroll(0, 210 * lastViewedIndex + 415);
   };
 
   useEffect(() => {
-    console.log(lastViewedIndex);
-    if (loaded && !isViewing) {
-      handleScroll();
+    form.setFieldsValue(currentProduct);
+  }, [form, currentProduct]);
+
+  useEffect(() => {
+    if (!isViewing && loaded) {
+      if (lastViewedIndex !== 1) {
+        handleScroll();
+      }
     }
-  }, [lastViewedIndex, loaded, isViewing]);
+  }, [isViewing]);
 
   const setSearchTagsByCategory = useCallback(
     (useInitialValue: boolean, selectedCategories: any[] = []) => {
@@ -249,8 +249,6 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
 
       setLoading(false);
       message.success("Register updated with success.");
-      setIsCreating(false);
-      setIsEditing(false);
       setIsViewing(false);
     } catch (error) {
       console.error(error);
@@ -274,15 +272,19 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
     return response;
   };
 
+  const _fetchAllProducts = async () => {
+    const response = await doFetch(() => fetchAllProducts());
+    setContent(response.results);
+  };
+
   const getResources = async () => {
     const [{ results }] = await Promise.all([
       _fetchProducts(),
       fetchAllCategories(),
     ]);
     setProducts(results);
-    setContent(results);
-    setLoaded(true);
-    handleScroll();
+    _fetchAllProducts();
+    await setLoaded(true);
   };
 
   const refreshProducts = async () => {
@@ -342,24 +344,16 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
 
   const editProduct = (record: Product, index: number) => {
     setCurrentProduct(record);
-    setLastViewedIndex(index);
+    setLastViewedIndex(index - 1);
     setIsViewing(true);
-    setIsEditing(true);
   };
 
   const newProduct = () => {
     setCurrentProduct(undefined);
     if (loaded) {
-      setLastViewedIndex(content.length - 1);
-    } //else + content ta carregndo 30 por vez
+      setLastViewedIndex(content.length);
+    }
     setIsViewing(true);
-    setIsCreating(true);
-  };
-
-  const cancel = () => {
-    setIsEditing(false);
-    setIsCreating(false);
-    setIsViewing(false);
   };
 
   const columns: EditableColumnType<Product>[] = [
@@ -374,6 +368,8 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
       title: "Name",
       dataIndex: "name",
       width: "15%",
+      shouldCellUpdate: (prevRecord, nextRecord) =>
+        prevRecord.name != nextRecord.name,
       render: (value: string, record) => (
         <>
           <Link
@@ -409,12 +405,16 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
       width: "20%",
       align: "center",
       responsive: ["sm"],
+      shouldCellUpdate: (prevRecord, nextRecord) =>
+        prevRecord.brand != nextRecord.brand,
     },
     {
       title: "In Stock",
       dataIndex: "outOfStock",
       width: "7%",
       align: "center",
+      shouldCellUpdate: (prevRecord, nextRecord) =>
+        prevRecord.outOfStock != nextRecord.outOfStock,
       render: (outOfStock: boolean) => (outOfStock ? "No" : "Yes"),
     },
     {
@@ -423,6 +423,8 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
       width: "12%",
       align: "center",
       responsive: ["sm"],
+      shouldCellUpdate: (prevRecord, nextRecord) =>
+        prevRecord.maxDiscoDollars != nextRecord.maxDiscoDollars,
       // editable: true,
       // number: true,
     },
@@ -432,6 +434,9 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
       width: "8%",
       align: "center",
       responsive: ["sm"],
+      shouldCellUpdate: (prevRecord, nextRecord) =>
+        prevRecord.discoPercentage != nextRecord.discoPercentage,
+
       // editable: true,
       // number: true,
     },
@@ -449,6 +454,9 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
       width: "13%",
       align: "center",
       responsive: ["sm"],
+      shouldCellUpdate: (prevRecord, nextRecord) =>
+        prevRecord.offerExpirationDate != nextRecord.offerExpirationDate,
+
       render: (creationDate: Date) => moment(creationDate).format("DD/MM/YYYY"),
     },
     {
@@ -457,6 +465,8 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
       width: "12%",
       align: "center",
       responsive: ["sm"],
+      shouldCellUpdate: (prevRecord, nextRecord) =>
+        prevRecord.status != nextRecord.status,
     },
     {
       title: "Product Brand",
@@ -464,12 +474,17 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
       width: "12%",
       align: "center",
       responsive: ["sm"],
+      shouldCellUpdate: (prevRecord, nextRecord) =>
+        prevRecord.productBrand != nextRecord.productBrand,
     },
     {
       title: "Last Go-Live",
       dataIndex: "goLiveDate",
       width: "12.5%",
       align: "center",
+      shouldCellUpdate: (prevRecord, nextRecord) =>
+        prevRecord.goLiveDate != nextRecord.goLiveDate,
+
       render: (goLiveDate: Date | null | undefined) =>
         goLiveDate ? (
           <>
@@ -623,9 +638,7 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
             }
           >
             <EditableTable
-              rowClassName={(index) =>
-                index === lastViewedIndex ? "scroll-row" : ""
-              }
+              rowClassName={(index) => (index === 0 ? "" : "styled-row")}
               rowKey="id"
               columns={columns}
               dataSource={products}
@@ -1034,7 +1047,7 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
 
             <Row gutter={8}>
               <Col>
-                <Button type="default" onClick={() => cancel()}>
+                <Button type="default" onClick={() => setIsViewing(false)}>
                   Cancel
                 </Button>
               </Col>
