@@ -31,4 +31,7 @@ export interface Product {
   tagImage: string;
   thumbnailUrl: string;
   lastGoLiveDate?: Date;
+  goLiveDate?: Date;
+  outOfStock?: boolean;
+  status?: string;
 }

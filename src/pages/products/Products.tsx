@@ -55,11 +55,13 @@ import {
   saveStagingProduct,
   deleteProduct,
   fetchProducts,
+  fetchAllProducts,
   saveProduct,
 } from "services/DiscoClubService";
 import EditProductModal from "./EditProductModal";
 import ProductAPITestModal from "./ProductAPITestModal";
 import ProductExpandedRow from "./ProductExpandedRow";
+import { convertToObject } from "typescript";
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 
@@ -99,8 +101,10 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
 
-  const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [loaded, setLoaded] = useState<boolean>(false);
+  const [isViewing, setIsViewing] = useState<boolean>(false);
   const [currentProduct, setCurrentProduct] = useState<Product>();
+  const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
 
   const [products, setProducts] = useState<Product[]>([]);
   const [content, setContent] = useState<any[]>([]);
@@ -108,6 +112,22 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
   const {
     settings: { currency = [] },
   } = useSelector((state: any) => state.settings);
+
+  const handleScroll = () => {
+    window.scroll(0, 210 * lastViewedIndex + 415);
+  };
+
+  useEffect(() => {
+    form.setFieldsValue(currentProduct);
+  }, [form, currentProduct]);
+
+  useEffect(() => {
+    if (!isViewing && loaded) {
+      if (lastViewedIndex !== 1) {
+        handleScroll();
+      }
+    }
+  }, [isViewing]);
 
   const setSearchTagsByCategory = useCallback(
     (useInitialValue: boolean, selectedCategories: any[] = []) => {
@@ -229,7 +249,7 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
 
       setLoading(false);
       message.success("Register updated with success.");
-      setIsEditing(false);
+      setIsViewing(false);
     } catch (error) {
       console.error(error);
       setLoading(false);
@@ -252,13 +272,19 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
     return response;
   };
 
+  const _fetchAllProducts = async () => {
+    const response = await doFetch(() => fetchAllProducts());
+    setContent(response.results);
+  };
+
   const getResources = async () => {
     const [{ results }] = await Promise.all([
       _fetchProducts(),
       fetchAllCategories(),
     ]);
     setProducts(results);
-    setContent(results);
+    _fetchAllProducts();
+    await setLoaded(true);
   };
 
   const refreshProducts = async () => {
@@ -287,7 +313,9 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
   }, [refreshing]);
 
   useEffect(() => {
-    if (allCategories["Super Category"].length) refreshProducts();
+    if (loaded) {
+      refreshProducts();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchFilter, brandFilter, unclassifiedFilter]);
 
@@ -314,14 +342,18 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
     await refreshProducts();
   };
 
-  const editProduct = (record: Product) => {
+  const editProduct = (record: Product, index: number) => {
     setCurrentProduct(record);
-    setIsEditing(true);
+    setLastViewedIndex(index - 1);
+    setIsViewing(true);
   };
 
   const newProduct = () => {
     setCurrentProduct(undefined);
-    setIsEditing(true);
+    if (loaded) {
+      setLastViewedIndex(content.length);
+    }
+    setIsViewing(true);
   };
 
   const columns: EditableColumnType<Product>[] = [
@@ -336,10 +368,12 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
       title: "Name",
       dataIndex: "name",
       width: "15%",
+      shouldCellUpdate: (prevRecord, nextRecord) =>
+        prevRecord.name != nextRecord.name,
       render: (value: string, record) => (
         <>
           <Link
-            onClick={() => setIsEditing(true)}
+            onClick={() => setIsViewing(true)}
             to={{ pathname: window.location.pathname, state: record }}
           >
             {value}
@@ -371,12 +405,16 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
       width: "20%",
       align: "center",
       responsive: ["sm"],
+      shouldCellUpdate: (prevRecord, nextRecord) =>
+        prevRecord.brand != nextRecord.brand,
     },
     {
       title: "In Stock",
       dataIndex: "outOfStock",
       width: "7%",
       align: "center",
+      shouldCellUpdate: (prevRecord, nextRecord) =>
+        prevRecord.outOfStock != nextRecord.outOfStock,
       render: (outOfStock: boolean) => (outOfStock ? "No" : "Yes"),
     },
     {
@@ -385,6 +423,8 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
       width: "12%",
       align: "center",
       responsive: ["sm"],
+      shouldCellUpdate: (prevRecord, nextRecord) =>
+        prevRecord.maxDiscoDollars != nextRecord.maxDiscoDollars,
       // editable: true,
       // number: true,
     },
@@ -394,6 +434,9 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
       width: "8%",
       align: "center",
       responsive: ["sm"],
+      shouldCellUpdate: (prevRecord, nextRecord) =>
+        prevRecord.discoPercentage != nextRecord.discoPercentage,
+
       // editable: true,
       // number: true,
     },
@@ -411,6 +454,9 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
       width: "13%",
       align: "center",
       responsive: ["sm"],
+      shouldCellUpdate: (prevRecord, nextRecord) =>
+        prevRecord.offerExpirationDate != nextRecord.offerExpirationDate,
+
       render: (creationDate: Date) => moment(creationDate).format("DD/MM/YYYY"),
     },
     {
@@ -419,6 +465,8 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
       width: "12%",
       align: "center",
       responsive: ["sm"],
+      shouldCellUpdate: (prevRecord, nextRecord) =>
+        prevRecord.status != nextRecord.status,
     },
     {
       title: "Product Brand",
@@ -426,12 +474,17 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
       width: "12%",
       align: "center",
       responsive: ["sm"],
+      shouldCellUpdate: (prevRecord, nextRecord) =>
+        prevRecord.productBrand != nextRecord.productBrand,
     },
     {
       title: "Last Go-Live",
       dataIndex: "goLiveDate",
       width: "12.5%",
       align: "center",
+      shouldCellUpdate: (prevRecord, nextRecord) =>
+        prevRecord.goLiveDate != nextRecord.goLiveDate,
+
       render: (goLiveDate: Date | null | undefined) =>
         goLiveDate ? (
           <>
@@ -449,11 +502,11 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
       key: "action",
       width: "12%",
       align: "right",
-      render: (_: any, record) => (
+      render: (_: any, record, index) => (
         <>
           <Link
             to={{ pathname: window.location.pathname, state: record }}
-            onClick={() => editProduct(record)}
+            onClick={() => editProduct(record, index)}
           >
             <EditOutlined />
           </Link>
@@ -503,7 +556,7 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
 
   return (
     <>
-      {!isEditing && (
+      {!isViewing && (
         <>
           <PageHeader
             title="Products"
@@ -585,6 +638,7 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
             }
           >
             <EditableTable
+              rowClassName={(index) => (index === 0 ? "" : "styled-row")}
               rowKey="id"
               columns={columns}
               dataSource={products}
@@ -610,7 +664,7 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
           </InfiniteScroll>
         </>
       )}
-      {isEditing && (
+      {isViewing && (
         <div className="products-details">
           <PageHeader title="Product" subTitle="Form" />
           <Form
@@ -993,7 +1047,7 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
 
             <Row gutter={8}>
               <Col>
-                <Button type="default" onClick={() => setIsEditing(false)}>
+                <Button type="default" onClick={() => setIsViewing(false)}>
                   Cancel
                 </Button>
               </Col>
