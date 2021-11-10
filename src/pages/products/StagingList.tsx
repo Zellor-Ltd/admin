@@ -867,12 +867,24 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
                       <InputNumber />
                     </Form.Item>
                   </Col>
+                </Row>
+                <Row gutter={8}>
                   <Col lg={4} xs={8}>
                     <Form.Item
                       name="shopifyUniqueId"
                       label="Shopify Uid"
                       rules={[{}]}
                     >
+                      <InputNumber />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={4} xs={8}>
+                    <Form.Item name="magentoId" label="Magento Id">
+                      <InputNumber />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={4} xs={8}>
+                    <Form.Item name="sku" label="SKU">
                       <InputNumber />
                     </Form.Item>
                   </Col>
