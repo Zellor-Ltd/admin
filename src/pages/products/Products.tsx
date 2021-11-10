@@ -370,10 +370,10 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
       width: "15%",
       shouldCellUpdate: (prevRecord, nextRecord) =>
         prevRecord.name != nextRecord.name,
-      render: (value: string, record) => (
+      render: (value: string, record, index) => (
         <>
           <Link
-            onClick={() => setIsViewing(true)}
+            onClick={() => editProduct(record, index)}
             to={{ pathname: window.location.pathname, state: record }}
           >
             {value}
