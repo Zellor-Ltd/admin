@@ -16,6 +16,7 @@ type EditableTableProps<T> = Omit<TableProps<any>, "columns"> & {
   columns: EditableColumnType<T>[];
   onSave: Function;
 };
+
 const EditableTable: React.FC<EditableTableProps<any>> = (
   props: EditableTableProps<any>
 ) => {

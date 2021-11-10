@@ -61,7 +61,6 @@ import {
 import EditProductModal from "./EditProductModal";
 import ProductAPITestModal from "./ProductAPITestModal";
 import ProductExpandedRow from "./ProductExpandedRow";
-import { convertToObject } from "typescript";
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 
