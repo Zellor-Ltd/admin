@@ -1,4 +1,4 @@
-import { Table } from "antd";
+import { Table } from "ant-table-extensions";
 import { ColumnType, TableProps } from "antd/lib/table";
 import { EditableCell, EditableRow } from ".";
 
@@ -41,6 +41,8 @@ const EditableTable: React.FC<EditableTableProps<any>> = (
   return (
     <Table
       {...props}
+      exportable
+      exportableProps={{ showColumnPicker: true }}
       columns={configuredColumns as ColumnTypesEscapeColumns}
       components={{
         body: {

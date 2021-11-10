@@ -58,6 +58,7 @@ import { categoriesSettings } from "helpers/utils";
 import { ProductBrand } from "../../interfaces/ProductBrand";
 import { AllCategories } from "interfaces/Category";
 import { useSelector } from "react-redux";
+import { ExportTableButton } from "ant-table-extensions";
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 
@@ -320,6 +321,12 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
       render: (outOfStock: boolean) => (outOfStock ? "No" : "Yes"),
     },
     {
+      title: "Default Price",
+      dataIndex: "originalPrice",
+      width: "7%",
+      align: "center",
+    },
+    {
       title: "Max DD",
       dataIndex: "maxDiscoDollars",
       width: "7%",
@@ -494,25 +501,35 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
               </Row>
             </Col>
             <Col>
-              <Button
-                type="primary"
-                onClick={() => getResources()}
-                loading={loading}
+              <Col>
+                <Button
+                  type="primary"
+                  onClick={() => getResources()}
+                  loading={loading}
+                  style={{
+                    position: "relative",
+                    bottom: "-33px",
+                  }}
+                >
+                  Search
+                  <SearchOutlined style={{ color: "white" }} />
+                </Button>
+              </Col>
+              <div
                 style={{
-                  marginBottom: "20px",
+                  position: "relative",
+                  bottom: "-49px",
                 }}
               >
-                Search
-                <SearchOutlined style={{ color: "white" }} />
-              </Button>
+                <EditMultipleButton
+                  text="Edit Products"
+                  arrayList={filteredProducts}
+                  ModalComponent={EditProductModal}
+                  selectedRowKeys={selectedRowKeys}
+                  onOk={handleEditProducts}
+                />
+              </div>
             </Col>
-            <EditMultipleButton
-              text="Edit Products"
-              arrayList={filteredProducts}
-              ModalComponent={EditProductModal}
-              selectedRowKeys={selectedRowKeys}
-              onOk={handleEditProducts}
-            />
           </Row>
           <EditableTable
             rowKey="id"
