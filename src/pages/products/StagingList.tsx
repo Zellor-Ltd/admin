@@ -316,7 +316,19 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
     {
       title: "SKU",
       dataIndex: "sku",
-      width: "18%",
+      width: "5%",
+      align: "center",
+    },
+    {
+      title: "Magento Status",
+      dataIndex: "magentoStatus",
+      width: "7%",
+      align: "center",
+    },
+    {
+      title: "Magento Supply Discontinued",
+      dataIndex: "magentoSupplyDiscountinued",
+      width: "5%",
       align: "center",
     },
     {
