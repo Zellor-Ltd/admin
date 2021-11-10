@@ -370,10 +370,10 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
       width: "15%",
       shouldCellUpdate: (prevRecord, nextRecord) =>
         prevRecord.name != nextRecord.name,
-      render: (value: string, record) => (
+      render: (value: string, record, index) => (
         <>
           <Link
-            onClick={() => setIsViewing(true)}
+            onClick={() => editProduct(record, index)}
             to={{ pathname: window.location.pathname, state: record }}
           >
             {value}
@@ -993,12 +993,24 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
                       <InputNumber />
                     </Form.Item>
                   </Col>
+                </Row>
+                <Row gutter={8}>
                   <Col lg={4} xs={8}>
                     <Form.Item
                       name="shopifyUniqueId"
                       label="Shopify Uid"
                       rules={[{}]}
                     >
+                      <InputNumber />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={4} xs={8}>
+                    <Form.Item name="magentoId" label="Magento Id">
+                      <InputNumber />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={4} xs={8}>
+                    <Form.Item name="sku" label="SKU">
                       <InputNumber />
                     </Form.Item>
                   </Col>
