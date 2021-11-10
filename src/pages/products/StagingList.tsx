@@ -359,7 +359,7 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
     },
     {
       title: "Product Brand",
-      dataIndex: ["productBrand"],
+      dataIndex: "productBrand",
       width: "12%",
       align: "center",
       responsive: ["sm"],
@@ -507,34 +507,35 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
               </Row>
             </Col>
             <Col>
-              <Col>
+              <Row justify="end">
                 <Button
                   type="primary"
                   onClick={() => getResources()}
                   loading={loading}
                   style={{
                     position: "relative",
-                    bottom: "-33px",
+                    bottom: "-49px",
                   }}
                 >
                   Search
                   <SearchOutlined style={{ color: "white" }} />
                 </Button>
-              </Col>
-              <div
-                style={{
-                  position: "relative",
-                  bottom: "-49px",
-                }}
-              >
-                <EditMultipleButton
-                  text="Edit Products"
-                  arrayList={filteredProducts}
-                  ModalComponent={EditProductModal}
-                  selectedRowKeys={selectedRowKeys}
-                  onOk={handleEditProducts}
-                />
-              </div>
+                <div
+                  style={{
+                    position: "relative",
+                    bottom: "-49px",
+                    marginLeft: "8px",
+                  }}
+                >
+                  <EditMultipleButton
+                    text="Edit Products"
+                    arrayList={filteredProducts}
+                    ModalComponent={EditProductModal}
+                    selectedRowKeys={selectedRowKeys}
+                    onOk={handleEditProducts}
+                  />
+                </div>
+              </Row>
             </Col>
           </Row>
           <EditableTable
