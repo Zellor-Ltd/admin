@@ -21,13 +21,16 @@ import { ColumnsType } from "antd/lib/table";
 import CopyIdToClipboard from "components/CopyIdToClipboard";
 import { FeedItem } from "interfaces/FeedItem";
 import { Segment } from "interfaces/Segment";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link, RouteComponentProps, withRouter } from "react-router-dom";
 import {
   deleteVideoFeed,
   fetchVideoFeed,
   rebuildAllFeedd,
 } from "services/DiscoClubService";
+import { SelectBrand } from "components/SelectBrand";
+import { AppContext } from "contexts/AppContext";
+import { Brand } from "interfaces/Brand";
 
 const { Content } = Layout;
 
@@ -43,6 +46,11 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [loading, setLoading] = useState(false);
   const [filterText, setFilterText] = useState("");
   const [content, setContent] = useState<any[]>([]);
+  const { usePageFilter } = useContext(AppContext);
+  const [brandFilter, setBrandFilter] = usePageFilter<Brand | undefined>(
+    "brand"
+  );
+  const [loaded, setLoaded] = useState<boolean>(false);
 
   const fetch = async () => {
     setLoading(true);
@@ -59,7 +67,15 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
 
   const getResources = () => {
     fetch();
+    setLoaded(true);
   };
+
+  useEffect(() => {
+    if (loaded) {
+      fetch();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [brandFilter]);
 
   const deleteItem = async (_id: string) => {
     setLoading(true);
@@ -102,6 +118,10 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
     return videos.filter((video) =>
       video.title?.toUpperCase().includes(filterText.toUpperCase())
     );
+  };
+
+  const onChangeBrand = async (_selectedBrand: Brand | undefined) => {
+    setBrandFilter(_selectedBrand);
   };
 
   const columns: ColumnsType<FeedItem> = [
@@ -198,11 +218,26 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
       />
       <div style={{ marginBottom: "16px" }}>
         <Row align="bottom" justify="space-between">
-          <Col lg={8} xs={24}>
-            <Typography.Title level={5} title="Search">
-              Search
-            </Typography.Title>
-            <Input onChange={onChangeFilter} suffix={<SearchOutlined />} />
+          <Col lg={16} xs={24}>
+            <Row gutter={8}>
+              <Col lg={8} xs={24}>
+                <Typography.Title level={5} title="Search">
+                  Search
+                </Typography.Title>
+                <Input onChange={onChangeFilter} suffix={<SearchOutlined />} />
+              </Col>
+              <Col lg={8} xs={16}>
+                <SelectBrand
+                  style={{
+                    width: "100%",
+                    marginLeft: "8px",
+                  }}
+                  allowClear={true}
+                  onChange={onChangeBrand}
+                  initialBrandName={brandFilter?.brandName}
+                ></SelectBrand>
+              </Col>
+            </Row>
           </Col>
           <Col>
             <Button
