@@ -155,18 +155,18 @@ export const fetchTags = ({
 export const fetchStagingProducts = ({
   brandId,
   query,
-  unclassified,
+  categories,
   page = 0,
   limit = 0,
 }: {
   brandId?: string;
   query?: string;
-  unclassified?: boolean;
+  categories?: boolean | null;
 } & Pagination) =>
   instance.put(`Disco/Staging/Product/List/${page}/${limit}`, {
     brandId,
     query,
-    unclassified,
+    categories,
   });
 
 export const fetchBrands = () => instance.get("Wi/Ep/ListBrands");
