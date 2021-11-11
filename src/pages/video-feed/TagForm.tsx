@@ -121,6 +121,7 @@ const TagForm: React.FC<FormProps> = ({
             fieldKey={"x"}
             label="Position X"
             rules={[{ required: true }]}
+            initialValue="0"
           >
             <InputNumber />
           </Form.Item>
@@ -131,6 +132,7 @@ const TagForm: React.FC<FormProps> = ({
             fieldKey={"y"}
             label="Position Y"
             rules={[{ required: true }]}
+            initialValue="0"
           >
             <InputNumber />
           </Form.Item>
@@ -141,6 +143,7 @@ const TagForm: React.FC<FormProps> = ({
             fieldKey={"z"}
             label="Z Index"
             rules={[{ required: true }]}
+            initialValue="1"
           >
             <InputNumber />
           </Form.Item>
