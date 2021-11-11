@@ -29,8 +29,6 @@ import { FeedItem } from "interfaces/FeedItem";
 import { Segment } from "interfaces/Segment";
 import { Tag } from "interfaces/Tag";
 import React, { useEffect, useState } from "react";
-import ReactDOM from "react-dom";
-import { WithContext as ReactTags } from "react-tag-input";
 import { useSelector } from "react-redux";
 import { RouteComponentProps } from "react-router-dom";
 import {
@@ -44,50 +42,16 @@ import BrandForm from "./BrandForm";
 import TagForm from "./TagForm";
 import "./VideoFeed.scss";
 import "./VideoFeedDetail.scss";
-import { useConstructor } from "@toolz/use-constructor";
+import ReactTagInput from "@pathofdev/react-tag-input";
+import "@pathofdev/react-tag-input/build/index.css";
 
 const { Title } = Typography;
-
-const KeyCodes = {
-  comma: 188,
-  enter: [10, 13],
-};
-
-const delimiters = [...KeyCodes.enter, KeyCodes.comma];
 
 const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
   history,
   location,
 }) => {
   const initial: any = location.state;
-
-  const handleDelete = (i) => {
-    const { tags } = initial.state;
-    initial.setState({
-      tags: tags.filter((tag, index) => index !== i),
-    });
-  };
-
-  const handleAddition = (tag) => {
-    initial.setState((state) => ({ tags: [...state.tags, tag] }));
-  };
-
-  const handleDrag = (tag, currPos, newPos) => {
-    const tags = [...initial.state.tags];
-    const newTags = tags.slice();
-
-    newTags.splice(currPos, 1);
-    newTags.splice(newPos, 0, tag);
-
-    // re-render
-    initial.setState({ tags: newTags });
-  };
-
-  useConstructor(() => {
-    initial.handleDelete = handleDelete.bind(initial);
-    initial.handleAddition = handleAddition.bind(initial);
-    initial.handleDrag = handleDrag.bind(initial);
-  });
 
   const {
     settings: { language = [] },
@@ -112,6 +76,8 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
   const [selectedTag, setSelectedTag] = useState<Tag | undefined>();
   const [selectedTagIndex, setSelectedTagIndex] = useState<number>(-1);
   const [showTagForm, setShowTagForm] = useState<boolean>(false);
+
+  const [hashtags, setHashtags] = useState<string[]>([]);
 
   const defaultVideoTab = "Video Details";
   const defaultSegmentTab = "Images";
@@ -287,6 +253,17 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
                       </Select.Option>
                     ))}
                   </Select>
+                </Form.Item>
+              </Col>
+              <Col lg={24} xs={24}>
+                <Form.Item name="hashtags" label="Hashtags">
+                  <ReactTagInput
+                    tags={initial.hashtags}
+                    placeholder="Type and press enter"
+                    removeOnBackspace={true}
+                    editable={true}
+                    onChange={(newTags) => setHashtags(newTags)}
+                  />
                 </Form.Item>
               </Col>
             </Row>
