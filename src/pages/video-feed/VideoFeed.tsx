@@ -28,6 +28,9 @@ import {
   fetchVideoFeed,
   rebuildAllFeedd,
 } from "services/DiscoClubService";
+import { SelectBrand } from "components/SelectBrand";
+import useFilter from "hooks/useFilter";
+import { Brand } from "interfaces/Brand";
 
 const { Content } = Layout;
 
@@ -39,26 +42,52 @@ const reduceSegmentsTags = (packages: Segment[]) => {
 
 const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
   const detailsPathname = `${location.pathname}/video-feed`;
-  const [videos, setVideos] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [filterText, setFilterText] = useState("");
   const [content, setContent] = useState<any[]>([]);
+  const [loaded, setLoaded] = useState<boolean>(false);
 
-  const fetch = async () => {
+  const {
+    setArrayList: setFilteredItems,
+    filteredArrayList: filteredItems,
+    addFilterFunction,
+    removeFilterFunction,
+  } = useFilter<FeedItem>([]);
+
+  const fetch = async (_brand?: Brand) => {
     setLoading(true);
     try {
       const response: any = await fetchVideoFeed();
       setLoading(false);
-      setVideos(response.results);
+      setFilteredItems(response.results);
       setContent(response.results);
     } catch (error) {
       message.error("Error to get feed");
       setLoading(false);
     }
+
+    if (_brand) {
+      addFilterFunction("brandName", (feedItems) =>
+        feedItems.filter((feedItem) => {
+          for (let i = 0; i < feedItem.package.length; i++) {
+            if (feedItem.package[i].brands) {
+              for (let j = 0; j < feedItem.package[i].brands.length; j++) {
+                return (
+                  feedItem.package[i].brands[j].brandName === _brand.brandName
+                );
+              }
+            } else {
+              return null;
+            }
+          }
+        })
+      );
+    }
   };
 
-  const getResources = () => {
-    fetch();
+  const getResources = (_brand?: Brand) => {
+    fetch(_brand);
+    setLoaded(true);
   };
 
   const deleteItem = async (_id: string) => {
@@ -67,7 +96,7 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
     for (let i = 0; i < content.length; i++) {
       if (content[i].id === _id) {
         const index = i;
-        setVideos((prev) => [
+        setFilteredItems((prev) => [
           ...prev.slice(0, index),
           ...prev.slice(index + 1),
         ]);
@@ -94,13 +123,44 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
     });
   };
 
+  const onChangeBrand = async (_selectedBrand: Brand | undefined) => {
+    if (loaded) {
+      if (!_selectedBrand) {
+        removeFilterFunction("brandName");
+        return;
+      }
+      addFilterFunction("brandName", (feedItems) =>
+        feedItems.filter((feedItem) => {
+          for (let i = 0; i < feedItem.package.length; i++) {
+            if (feedItem.package[i].brands) {
+              for (let j = 0; j < feedItem.package[i].brands.length; j++) {
+                return (
+                  feedItem.package[i].brands[j].brandName ===
+                  _selectedBrand.brandName
+                );
+              }
+            } else {
+              return null;
+            }
+          }
+        })
+      );
+    } else {
+      if (_selectedBrand) {
+        getResources(_selectedBrand);
+      } else {
+        getResources();
+      }
+    }
+  };
+
   const onChangeFilter = (evt: any) => {
     setFilterText(evt.target.value);
   };
 
   const filterFeed = () => {
-    return videos.filter((video) =>
-      video.title?.toUpperCase().includes(filterText.toUpperCase())
+    return filteredItems.filter((item) =>
+      item.title?.toUpperCase().includes(filterText.toUpperCase())
     );
   };
 
@@ -198,11 +258,22 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
       />
       <div style={{ marginBottom: "16px" }}>
         <Row align="bottom" justify="space-between">
-          <Col lg={8} xs={24}>
-            <Typography.Title level={5} title="Search">
-              Search
-            </Typography.Title>
-            <Input onChange={onChangeFilter} suffix={<SearchOutlined />} />
+          <Col lg={16} xs={24}>
+            <Row gutter={8}>
+              <Col lg={8} xs={16}>
+                <Typography.Title level={5} title="Search">
+                  Search
+                </Typography.Title>
+                <Input onChange={onChangeFilter} suffix={<SearchOutlined />} />
+              </Col>
+              <Col lg={8} xs={16}>
+                <SelectBrand
+                  style={{ width: "100%" }}
+                  allowClear={true}
+                  onChange={onChangeBrand}
+                ></SelectBrand>
+              </Col>
+            </Row>
           </Col>
           <Col>
             <Button
