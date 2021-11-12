@@ -460,8 +460,8 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
     },
     {
       title: "Status",
-      dataIndex: ["status"],
-      width: "7%",
+      dataIndex: "status",
+      width: "12%",
       align: "center",
       responsive: ["sm"],
       shouldCellUpdate: (prevRecord, nextRecord) =>
@@ -595,25 +595,36 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
               </Row>
             </Col>
             <Col>
-              <Button
-                type="primary"
-                onClick={() => getResources()}
-                loading={loading}
-                style={{
-                  marginBottom: "20px",
-                }}
-              >
-                Search
-                <SearchOutlined style={{ color: "white" }} />
-              </Button>
+              <Row justify="end">
+                <Button
+                  type="primary"
+                  onClick={() => getResources()}
+                  loading={loading}
+                  style={{
+                    position: "relative",
+                    bottom: "-49px",
+                  }}
+                >
+                  Search
+                  <SearchOutlined style={{ color: "white" }} />
+                </Button>
+                <div
+                  style={{
+                    position: "relative",
+                    bottom: "-49px",
+                    marginLeft: "8px",
+                  }}
+                >
+                  <EditMultipleButton
+                    text="Edit Products"
+                    arrayList={products}
+                    ModalComponent={EditProductModal}
+                    selectedRowKeys={selectedRowKeys}
+                    onOk={refreshProducts}
+                  />
+                </div>
+              </Row>
             </Col>
-            <EditMultipleButton
-              text="Edit Products"
-              arrayList={products}
-              ModalComponent={EditProductModal}
-              selectedRowKeys={selectedRowKeys}
-              onOk={refreshProducts}
-            />
           </Row>
           <ProductAPITestModal
             selectedRecord={productAPITest}

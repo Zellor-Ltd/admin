@@ -1,4 +1,4 @@
-import { Table } from "ant-table-extensions";
+import { Table, ITableExportFields } from "ant-table-extensions";
 import { ColumnType, TableProps } from "antd/lib/table";
 import { EditableCell, EditableRow } from ".";
 
@@ -16,6 +16,7 @@ type EditableTableProps<T> = Omit<TableProps<any>, "columns"> & {
   columns: EditableColumnType<T>[];
   onSave: Function;
 };
+
 const EditableTable: React.FC<EditableTableProps<any>> = (
   props: EditableTableProps<any>
 ) => {
@@ -38,11 +39,42 @@ const EditableTable: React.FC<EditableTableProps<any>> = (
     };
   });
 
+  const fields: ITableExportFields = {
+    id: "Id",
+    name: "Name",
+    masterBrand: {
+      header: "Master Brand",
+      formatter: (_fieldValue: any, record: any) => {
+        if (typeof _fieldValue === "string") {
+          return _fieldValue;
+        }
+        return record.brand.brandName;
+      },
+    },
+    sku: "SKU",
+    outOfStock: {
+      header: "In Stock",
+      formatter: (_fieldValue: any, record: any) => {
+        if (_fieldValue) return "No";
+        else return "Yes";
+      },
+    },
+    originalPrice: "Original Price",
+    maxDiscoDollars: "Max Disco Dollars",
+    lastImportDate: "Last Import Date",
+    productBrand: "Product Brand",
+    lastGoLiveDate: "Last Go Live Date",
+  };
+
   return (
     <Table
       {...props}
       exportable
-      exportableProps={{ showColumnPicker: true }}
+      exportableProps={{
+        fields,
+        fileName: "Disco Products",
+        showColumnPicker: true,
+      }}
       columns={configuredColumns as ColumnTypesEscapeColumns}
       components={{
         body: {
