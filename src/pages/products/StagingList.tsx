@@ -83,6 +83,7 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
   const [preLoaded, setPreLoaded] = useState<boolean>(false);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [currentProduct, setCurrentProduct] = useState<Product>();
+  const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
 
   const {
     setArrayList: setProducts,
@@ -297,9 +298,9 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
       title: "Name",
       dataIndex: "name",
       width: "25.5%",
-      render: (value: string, record: Product) => (
+      render: (value: string, record: Product, index: number) => (
         <Link
-          onClick={() => editProduct(record)}
+          onClick={() => editProduct(record, index)}
           to={{ pathname: window.location.pathname, state: record }}
         >
           {value}
@@ -373,10 +374,10 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
       key: "action",
       width: "12%",
       align: "right",
-      render: (_, record: Product) => (
+      render: (_, record: Product, index: number) => (
         <>
           <Link
-            onClick={() => editProduct(record)}
+            onClick={() => editProduct(record, index)}
             to={{ pathname: window.location.pathname, state: record }}
           >
             <EditOutlined />
@@ -419,6 +420,18 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
     }
   };
 
+  useEffect(() => {
+    if (!isEditing && preLoaded) {
+      if (lastViewedIndex !== 1) {
+        handleScroll();
+      }
+    }
+  }, [isEditing]);
+
+  const handleScroll = () => {
+    window.scroll(0, 300 * lastViewedIndex + 415);
+  };
+
   const onChangeBrand = async (_selectedBrand: Brand | undefined) => {
     if (preLoaded) {
       if (!_selectedBrand) {
@@ -454,8 +467,9 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
     );
   };
 
-  const editProduct = (record: Product) => {
+  const editProduct = (record: Product, index: number) => {
     setCurrentProduct(record);
+    setLastViewedIndex(index - 1);
     setIsEditing(true);
   };
 
