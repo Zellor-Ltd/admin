@@ -138,6 +138,9 @@ export const fetchProducts = ({
 export const fetchAllProducts = () =>
   instance.put("Disco/Product/Adm/List/0/0");
 
+export const fetchAllStagingProducts = () =>
+  instance.put("Disco/Staging/Product/List/0/0");
+
 export const fetchProductBrands = () =>
   instance.get(`Disco/Brand/ProductBrandList`);
 
