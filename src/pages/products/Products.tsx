@@ -61,7 +61,6 @@ import {
 import EditProductModal from "./EditProductModal";
 import ProductAPITestModal from "./ProductAPITestModal";
 import ProductExpandedRow from "./ProductExpandedRow";
-import { convertToObject } from "typescript";
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 
@@ -993,12 +992,24 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
                       <InputNumber />
                     </Form.Item>
                   </Col>
+                </Row>
+                <Row gutter={8}>
                   <Col lg={4} xs={8}>
                     <Form.Item
                       name="shopifyUniqueId"
                       label="Shopify Uid"
                       rules={[{}]}
                     >
+                      <InputNumber />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={4} xs={8}>
+                    <Form.Item name="magentoId" label="Magento Id">
+                      <InputNumber />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={4} xs={8}>
+                    <Form.Item name="sku" label="SKU">
                       <InputNumber />
                     </Form.Item>
                   </Col>

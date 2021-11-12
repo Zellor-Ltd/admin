@@ -36,7 +36,7 @@ export const SelectFanQuery: React.FC<SelectFanQueryProps> = ({
 
   const getResources = async () => {
     // const { results: fansResults } = await doFetch(() => fetchFans());
-    const initialArray = [];
+    const initialArray: FanFilter[] = [];
     const { results: fanGroupsResults }: { results: FanGroup[] } =
       await doFetch(() => fetchFanGroups());
     const _searchList: string[] = [];

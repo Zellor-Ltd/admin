@@ -8,4 +8,5 @@ export interface Video {
   thumbnailUrl?: any;
   tags?: Tag[];
   brands?: Brand;
+  hashtags?: string[];
 }
