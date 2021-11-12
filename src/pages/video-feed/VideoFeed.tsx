@@ -59,15 +59,29 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
     try {
       const response: any = await fetchVideoFeed();
       setLoading(false);
-      if (_brand) {
-        //filtrar de novo no fetch
-      } else {
-        setFilteredItems(response.results);
-        setContent(response.results);
-      }
+      setFilteredItems(response.results);
+      setContent(response.results);
     } catch (error) {
       message.error("Error to get feed");
       setLoading(false);
+    }
+
+    if (_brand) {
+      addFilterFunction("brandName", (feedItems) =>
+        feedItems.filter((feedItem) => {
+          for (let i = 0; i < feedItem.package.length; i++) {
+            if (feedItem.package[i].brands) {
+              for (let j = 0; j < feedItem.package[i].brands.length; j++) {
+                return (
+                  feedItem.package[i].brands[j].brandName === _brand.brandName
+                );
+              }
+            } else {
+              return null;
+            }
+          }
+        })
+      );
     }
   };
 
