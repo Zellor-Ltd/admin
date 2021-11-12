@@ -322,6 +322,18 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
     await getProducts();
   };
 
+  useEffect(() => {
+    if (!isEditing && loaded) {
+      if (lastViewedIndex !== 1) {
+        handleScroll();
+      }
+    }
+  }, [isEditing]);
+
+  const handleScroll = () => {
+    window.scroll(0, 300 * lastViewedIndex + 415);
+  };
+
   const columns: EditableColumnType<Product>[] = [
     {
       title: "Id",
@@ -568,6 +580,7 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
             }
           >
             <EditableTable
+              rowClassName={(index) => (index === 0 ? "" : "styled-row")}
               rowKey="id"
               columns={columns}
               dataSource={products}
