@@ -113,7 +113,7 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
   } = useSelector((state: any) => state.settings);
 
   const handleScroll = () => {
-    window.scroll(0, 210 * lastViewedIndex + 415);
+    window.scroll(0, 300 * lastViewedIndex + 415);
   };
 
   useEffect(() => {
@@ -366,7 +366,7 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
     {
       title: "Name",
       dataIndex: "name",
-      width: "15%",
+      width: "17%",
       shouldCellUpdate: (prevRecord, nextRecord) =>
         prevRecord.name != nextRecord.name,
       render: (value: string, record, index) => (
@@ -401,7 +401,7 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
     {
       title: "Master Brand",
       dataIndex: ["brand", "brandName"],
-      width: "20%",
+      width: "10%",
       align: "center",
       responsive: ["sm"],
       shouldCellUpdate: (prevRecord, nextRecord) =>
@@ -419,7 +419,7 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
     {
       title: "Max DD",
       dataIndex: "maxDiscoDollars",
-      width: "12%",
+      width: "7%",
       align: "center",
       responsive: ["sm"],
       shouldCellUpdate: (prevRecord, nextRecord) =>
@@ -442,7 +442,7 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
     {
       title: "Shopify Id",
       dataIndex: "shopifyUniqueId",
-      width: "15%",
+      width: "7%",
       align: "center",
       responsive: ["sm"],
     },
@@ -450,7 +450,7 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
     {
       title: "Expiration Date",
       dataIndex: "offerExpirationDate",
-      width: "13%",
+      width: "10%",
       align: "center",
       responsive: ["sm"],
       shouldCellUpdate: (prevRecord, nextRecord) =>
@@ -470,7 +470,7 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
     {
       title: "Product Brand",
       dataIndex: "productBrand",
-      width: "12%",
+      width: "10%",
       align: "center",
       responsive: ["sm"],
       shouldCellUpdate: (prevRecord, nextRecord) =>
@@ -479,7 +479,7 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
     {
       title: "Last Go-Live",
       dataIndex: "goLiveDate",
-      width: "12.5%",
+      width: "10%",
       align: "center",
       shouldCellUpdate: (prevRecord, nextRecord) =>
         prevRecord.goLiveDate != nextRecord.goLiveDate,
