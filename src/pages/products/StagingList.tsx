@@ -85,6 +85,7 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
   const [loaded, setLoaded] = useState<boolean>(false);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [currentProduct, setCurrentProduct] = useState<Product>();
+  const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
 
   const { usePageFilter } = useContext(AppContext);
   const [searchFilter, setSearchFilter] = usePageFilter<string>("search");
@@ -321,6 +322,18 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
     await getProducts();
   };
 
+  useEffect(() => {
+    if (!isEditing && loaded) {
+      if (lastViewedIndex !== 1) {
+        handleScroll();
+      }
+    }
+  }, [isEditing]);
+
+  const handleScroll = () => {
+    window.scroll(0, 300 * lastViewedIndex + 415);
+  };
+
   const columns: EditableColumnType<Product>[] = [
     {
       title: "Id",
@@ -333,9 +346,9 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
       title: "Name",
       dataIndex: "name",
       width: "15%",
-      render: (value: string, record: Product) => (
+      render: (value: string, record: Product, index: number) => (
         <Link
-          onClick={() => editProduct(record)}
+          onClick={() => editProduct(record, index)}
           to={{ pathname: window.location.pathname, state: record }}
         >
           {value}
@@ -433,10 +446,10 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
       key: "action",
       width: "12%",
       align: "right",
-      render: (_, record: Product) => (
+      render: (_, record: Product, index: number) => (
         <>
           <Link
-            onClick={() => editProduct(record)}
+            onClick={() => editProduct(record, index)}
             to={{ pathname: window.location.pathname, state: record }}
           >
             <EditOutlined />
@@ -476,8 +489,9 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
     setSelectedRowKeys([]);
   };
 
-  const editProduct = (record: Product) => {
+  const editProduct = (record: Product, index) => {
     setCurrentProduct(record);
+    setLastViewedIndex(index - 1);
     setIsEditing(true);
   };
 
@@ -566,6 +580,7 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
             }
           >
             <EditableTable
+              rowClassName={(index) => (index === 0 ? "" : "styled-row")}
               rowKey="id"
               columns={columns}
               dataSource={products}
