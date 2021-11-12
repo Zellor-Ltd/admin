@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@pathofdev/react-tag-input": "^1.0.7",
     "@reduxjs/toolkit": "^1.5.0",
     "@stomp/stompjs": "^6.1.2",
     "@testing-library/jest-dom": "^5.11.4",

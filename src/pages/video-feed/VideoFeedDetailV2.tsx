@@ -42,6 +42,8 @@ import BrandForm from "./BrandForm";
 import TagForm from "./TagForm";
 import "./VideoFeed.scss";
 import "./VideoFeedDetail.scss";
+import ReactTagInput from "@pathofdev/react-tag-input";
+import "@pathofdev/react-tag-input/build/index.css";
 
 const { Title } = Typography;
 
@@ -74,6 +76,8 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
   const [selectedTag, setSelectedTag] = useState<Tag | undefined>();
   const [selectedTagIndex, setSelectedTagIndex] = useState<number>(-1);
   const [showTagForm, setShowTagForm] = useState<boolean>(false);
+
+  const [hashtags, setHashtags] = useState<string[]>([]);
 
   const defaultVideoTab = "Video Details";
   const defaultSegmentTab = "Images";
@@ -249,6 +253,17 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
                       </Select.Option>
                     ))}
                   </Select>
+                </Form.Item>
+              </Col>
+              <Col lg={24} xs={24}>
+                <Form.Item name="hashtags" label="Hashtags">
+                  <ReactTagInput
+                    tags={initial.hashtags}
+                    placeholder="Type and press enter"
+                    removeOnBackspace={true}
+                    editable={true}
+                    onChange={(newTags) => setHashtags(newTags)}
+                  />
                 </Form.Item>
               </Col>
             </Row>
