@@ -118,6 +118,11 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
 
   useEffect(() => {
     getResources();
+    if (initial && initial.hashtags) {
+      setHashtags(initial.hashtags);
+    } else {
+      setHashtags([]);
+    }
   }, []);
 
   useEffect(() => {
@@ -258,7 +263,7 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
               <Col lg={24} xs={24}>
                 <Form.Item name="hashtags" label="Hashtags">
                   <ReactTagInput
-                    tags={initial.hashtags}
+                    tags={hashtags}
                     placeholder="Type and press enter"
                     removeOnBackspace={true}
                     editable={true}
