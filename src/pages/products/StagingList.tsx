@@ -266,7 +266,7 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
         page: pageToUse,
         brandId: brandFilter?.id,
         query: searchFilter,
-        unclassified: unclassifiedFilter,
+        categories: unclassifiedFilter,
       })
     );
     setPage(pageToUse + 1);
