@@ -66,7 +66,7 @@ const { categoriesKeys, categoriesFields } = categoriesSettings;
 interface RouteParams {
   productMode: "staging" | "commited";
 }
-const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
+const PreviewList: React.FC<RouteComponentProps> = ({ location }) => {
   const { productMode } = useParams<RouteParams>();
   const isStaging = productMode === "staging";
   const saveProductFn = saveStagingProduct;
@@ -175,7 +175,7 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
       refreshProducts();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchFilter, brandFilter, unclassifiedFilter]);
+  }, [searchFilter, brandFilter]);
 
   useEffect(() => {
     setDiscoPercentageByBrand(true);
@@ -1010,9 +1010,7 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
               </Col>
               <Col>
                 <Button
-                  disabled={
-                    currentProduct?.brand.automated === true && !isStaging
-                  }
+                  disabled={currentProduct?.brand.automated === true}
                   type="primary"
                   htmlType="submit"
                   loading={loading}
@@ -1028,4 +1026,4 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
   );
 };
 
-export default StagingList;
+export default PreviewList;

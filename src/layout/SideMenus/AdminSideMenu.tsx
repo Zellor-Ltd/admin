@@ -48,8 +48,8 @@ const AdminSideMenu = () => {
       <Menu.Item key="products" icon={<DropboxOutlined />}>
         <Link to="/products">Live Products</Link>
       </Menu.Item>
-      <Menu.Item key="staging-products" icon={<IssuesCloseOutlined />}>
-        <Link to="/staging-products">Preview Products</Link>
+      <Menu.Item key="preview-products" icon={<IssuesCloseOutlined />}>
+        <Link to="/preview-products">Preview Products</Link>
       </Menu.Item>
       <Menu.Item key="feed" icon={<HeartFilled />}>
         <Link to="/feed">Videos Feed</Link>
