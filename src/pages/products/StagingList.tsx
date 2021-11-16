@@ -280,6 +280,7 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
       fetchAllCategories(),
     ]);
     await setLoaded(true);
+    setPage(0);
     setProducts(results);
     setContent(results);
   };
