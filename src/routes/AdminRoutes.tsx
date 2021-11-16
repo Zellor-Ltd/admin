@@ -34,7 +34,7 @@ import Orders from "pages/orders/Orders";
 import OrderDetail from "pages/orders/OrderDetail";
 import Transactions from "pages/transactions/Transactions";
 import FeedMixer from "pages/feed-mixer/FeedMixer";
-import StagingList from "pages/products/StagingList";
+import PreviewList from "pages/products/PreviewList";
 import Promotions from "pages/promotions/Promotions";
 import PromotionDetail from "pages/promotions/PromotionDetail";
 import DdTemplates from "pages/dd-templates/DdTemplates";
@@ -89,7 +89,7 @@ function AdminRoutes() {
         layout={AuthenticatedLayout}
       />
       <AppRoute
-        path="/staging-products/product/:productMode"
+        path="/preview-products/product/:productMode"
         component={ProductDetails}
         layout={AuthenticatedLayout}
       />
@@ -219,8 +219,8 @@ function AdminRoutes() {
         layout={AuthenticatedLayout}
       />
       <AppRoute
-        path="/staging-products"
-        component={StagingList}
+        path="/preview-products"
+        component={PreviewList}
         layout={AuthenticatedLayout}
       />
       <AppRoute
