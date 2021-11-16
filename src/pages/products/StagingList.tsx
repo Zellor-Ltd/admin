@@ -175,7 +175,7 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
       refreshProducts();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchFilter, brandFilter, unclassifiedFilter]);
+  }, [searchFilter, brandFilter]);
 
   useEffect(() => {
     setDiscoPercentageByBrand(true);
