@@ -92,9 +92,7 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
   const [brandFilter, setBrandFilter] = usePageFilter<Brand | undefined>(
     "brand"
   );
-  const [unclassifiedFilter, setUnclassifiedFilter] = useState<boolean | null>(
-    true
-  );
+  const [unclassifiedFilter, setUnclassifiedFilter] = useState<boolean>(false);
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
@@ -258,13 +256,8 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   const handleFilterClassified = (e: CheckboxChangeEvent) => {
-    if (e.target.checked) {
-      setUnclassifiedFilter(null);
-    } else {
-      setUnclassifiedFilter(true);
-    }
+    setUnclassifiedFilter(e.target.checked);
   };
-
   const _fetchStagingProducts = async () => {
     const pageToUse = refreshing ? 0 : page;
     const response = await doFetch(() =>
@@ -273,7 +266,7 @@ const StagingList: React.FC<RouteComponentProps> = ({ location }) => {
         page: pageToUse,
         brandId: brandFilter?.id,
         query: searchFilter,
-        categories: unclassifiedFilter,
+        unclassified: unclassifiedFilter,
       })
     );
     setPage(pageToUse + 1);
