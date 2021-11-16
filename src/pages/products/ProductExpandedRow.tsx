@@ -26,7 +26,7 @@ const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
   const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
 
   const { pathname } = useLocation();
-  const isStaging = pathname === "/staging-list";
+  const isStaging = pathname === "/preview-list";
 
   useEffect(() => {
     const getProductBrands = async () => {

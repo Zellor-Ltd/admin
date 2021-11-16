@@ -47,7 +47,6 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
   const { productMode } = useParams<RouteParams>();
   const isStaging = productMode === "staging";
   const saveProductFn = isStaging ? saveStagingProduct : saveProduct;
-  const productsListPathname = isStaging ? "/staging-products" : "/products";
   const initial = location.state as unknown as Product | undefined;
   const [loading, setLoading] = useState<boolean>(false);
   const [brands, setBrands] = useState<Brand[]>([]);

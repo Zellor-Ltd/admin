@@ -13,8 +13,8 @@ const AdminSideMenu = () => {
       <Menu.Item key="brand-dashboard" icon={<FundOutlined />}>
         <Link to="/brand-dashboard">Dashboard</Link>
       </Menu.Item>
-      <Menu.Item key="staging-list" icon={<TagOutlined />}>
-        <Link to="/staging-list">Products</Link>
+      <Menu.Item key="preview-list" icon={<TagOutlined />}>
+        <Link to="/preview-list">Products</Link>
       </Menu.Item>
       <Menu.Item key="feed" icon={<HeartFilled />}>
         <Link to="/feed">Videos Feed</Link>

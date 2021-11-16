@@ -3,7 +3,7 @@ import AuthenticatedLayout from "layout/AuthenticatedLayout";
 import OpenLayout from "layout/OpenLayout";
 import Login from "pages/login/Login";
 import ProductDetails from "pages/products/ProductsDetails";
-import StagingList from "pages/products/StagingList";
+import PreviewList from "pages/products/PreviewList";
 import { Redirect, Switch } from "react-router-dom";
 import Orders from "pages/orders/BrandManager/Orders";
 import VideoFeed from "pages/video-feed/BrandManager/VideoFeed";
@@ -27,7 +27,7 @@ function BrandManagerRoutes() {
         layout={AuthenticatedLayout}
       />
       <AppRoute
-        path="/staging-list/product/:productMode"
+        path="/preview-list/product/:productMode"
         component={ProductDetails}
         layout={AuthenticatedLayout}
       />
@@ -37,8 +37,8 @@ function BrandManagerRoutes() {
         layout={AuthenticatedLayout}
       />
       <AppRoute
-        path="/staging-list"
-        component={StagingList}
+        path="/preview-list"
+        component={PreviewList}
         layout={AuthenticatedLayout}
       />
       <AppRoute

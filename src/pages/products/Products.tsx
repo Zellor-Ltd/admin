@@ -52,7 +52,6 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import {
   fetchBrands,
   fetchProductBrands,
-  saveStagingProduct,
   deleteProduct,
   fetchProducts,
   fetchAllProducts,
@@ -65,12 +64,11 @@ import ProductExpandedRow from "./ProductExpandedRow";
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 
 interface RouteParams {
-  productMode: "staging" | "commited";
+  productMode: "preview" | "commited";
 }
 
 const Products: React.FC<RouteComponentProps> = ({ location }) => {
   const { productMode } = useParams<RouteParams>();
-  const isStaging = productMode === "staging";
   const saveProductFn = saveProduct;
   const [brands, setBrands] = useState<Brand[]>([]);
   const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
@@ -1075,9 +1073,7 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
               </Col>
               <Col>
                 <Button
-                  disabled={
-                    currentProduct?.brand.automated === true && !isStaging
-                  }
+                  disabled={currentProduct?.brand.automated === true}
                   type="primary"
                   htmlType="submit"
                   loading={loading}
