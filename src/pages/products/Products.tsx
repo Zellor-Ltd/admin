@@ -71,7 +71,7 @@ interface RouteParams {
 const Products: React.FC<RouteComponentProps> = ({ location }) => {
   const { productMode } = useParams<RouteParams>();
   const isStaging = productMode === "staging";
-  const saveProductFn = isStaging ? saveStagingProduct : saveProduct;
+  const saveProductFn = saveProduct;
   const [brands, setBrands] = useState<Brand[]>([]);
   const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
   const [ageRange, setageRange] = useState<[number, number]>([12, 100]);
