@@ -35,14 +35,13 @@ import { Brand } from "interfaces/Brand";
 import { Product } from "interfaces/Product";
 import moment from "moment";
 import { useCallback, useContext, useEffect, useState } from "react";
-import { Link, RouteComponentProps, useParams } from "react-router-dom";
+import { Link, RouteComponentProps } from "react-router-dom";
 import {
   deleteStagingProduct,
   fetchProducts,
   fetchStagingProducts,
   transferStageProduct,
   fetchBrands,
-  fetchProductBrands,
   saveStagingProduct,
 } from "services/DiscoClubService";
 import EditProductModal from "./EditProductModal";
@@ -54,12 +53,12 @@ import { Upload } from "components";
 import { RichTextEditor } from "components/RichTextEditor";
 import { formatMoment } from "helpers/formatMoment";
 import { categoriesSettings } from "helpers/utils";
-import { ProductBrand } from "../../interfaces/ProductBrand";
 import { AllCategories } from "interfaces/Category";
 import { useSelector } from "react-redux";
 import { SearchFilterDebounce } from "components/SearchFilterDebounce";
 import { AppContext } from "contexts/AppContext";
 import { SelectProductBrand } from "components/SelectProductBrand";
+import { SelectBrandSmartSearch } from "components/SelectBrandSmartSearch";
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 
@@ -91,6 +90,9 @@ const PreviewList: React.FC<RouteComponentProps> = ({ location }) => {
   const [eof, setEof] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [products, setProducts] = useState<Product[]>([]);
+
+  const [currentMasterBrand, setCurrentMasterBrand] = useState<string>("");
+  const [currentProductBrand, setCurrentProductBrand] = useState<string>("");
 
   const { doFetch, doRequest } = useRequest({ setLoading });
   const { doRequest: saveCategories, loading: loadingCategories } =
@@ -482,6 +484,11 @@ const PreviewList: React.FC<RouteComponentProps> = ({ location }) => {
   const editProduct = (record: Product, index) => {
     setCurrentProduct(record);
     setLastViewedIndex(index - 1);
+    setCurrentMasterBrand(record.brand.brandName);
+    console.log(record.brand.brandName);
+    if (record.productBrand) {
+      setCurrentProductBrand(record.productBrand);
+    }
     setIsEditing(true);
   };
 
@@ -654,15 +661,11 @@ const PreviewList: React.FC<RouteComponentProps> = ({ location }) => {
                           label="Master Brand"
                           rules={[{ required: true }]}
                         >
-                          <Select
+                          <SelectBrandSmartSearch
                             onChange={() => setDiscoPercentageByBrand(false)}
-                          >
-                            {brands.map((brand) => (
-                              <Select.Option key={brand.id} value={brand.id}>
-                                {brand.brandName}
-                              </Select.Option>
-                            ))}
-                          </Select>
+                            allowClear={true}
+                            initialBrandName={currentMasterBrand}
+                          ></SelectBrandSmartSearch>
                         </Form.Item>
                       </Col>
                     </Row>
@@ -675,7 +678,7 @@ const PreviewList: React.FC<RouteComponentProps> = ({ location }) => {
                         >
                           <SelectProductBrand
                             allowClear={true}
-                            initialProductBrandName={""}
+                            initialProductBrandName={currentProductBrand}
                           ></SelectProductBrand>
                         </Form.Item>
                       </Col>

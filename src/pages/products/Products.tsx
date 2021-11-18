@@ -714,6 +714,7 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
                           rules={[{ required: true }]}
                         >
                           <SelectBrandSmartSearch
+                            onChange={() => setDiscoPercentageByBrand(false)}
                             allowClear={true}
                             initialBrandName={currentMasterBrand}
                           ></SelectBrandSmartSearch>
