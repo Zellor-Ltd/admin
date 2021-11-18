@@ -84,6 +84,8 @@ const ProductCategories: React.FC<ProductCategoriesProps> = ({
             allowClear={_index >= 2}
             placeholder="Please select a category"
             style={{ width: "180px" }}
+            showSearch
+            filterOption={true}
             onChange={(_, option: any) =>
               _handleCategoryChange(option?.children as string, key)
             }

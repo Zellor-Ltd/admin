@@ -27,11 +27,10 @@ import { Upload } from "components";
 import { RichTextEditor } from "components/RichTextEditor";
 import { formatMoment } from "helpers/formatMoment";
 import { categoriesSettings } from "helpers/utils";
-import { ProductBrand } from "interfaces/ProductBrand";
 import { AllCategories } from "interfaces/Category";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { RouteComponentProps, Link, useParams } from "react-router-dom";
+import { RouteComponentProps, Link } from "react-router-dom";
 import {} from "services/DiscoClubService";
 import ProductCategoriesTrees from "./ProductCategoriesTrees";
 import "./Products.scss";
@@ -41,6 +40,7 @@ import EditableTable, { EditableColumnType } from "components/EditableTable";
 import { SearchFilterDebounce } from "components/SearchFilterDebounce";
 import { SelectBrand } from "components/SelectBrand";
 import { SelectProductBrand } from "components/SelectProductBrand";
+import { SelectBrandSmartSearch } from "components/SelectBrandSmartSearch";
 import { AppContext } from "contexts/AppContext";
 import useAllCategories from "hooks/useAllCategories";
 import { useRequest } from "hooks/useRequest";
@@ -50,7 +50,6 @@ import moment from "moment";
 import InfiniteScroll from "react-infinite-scroll-component";
 import {
   fetchBrands,
-  fetchProductBrands,
   deleteProduct,
   fetchProducts,
   fetchAllProducts,
@@ -87,6 +86,10 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
   const [brandFilter, setBrandFilter] = usePageFilter<Brand | undefined>(
     "brand"
   );
+
+  const [currentMasterBrand, setCurrentMasterBrand] = useState<string>("");
+  const [currentProductBrand, setCurrentProductBrand] = useState<string>("");
+
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
 
@@ -328,11 +331,18 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
   const editProduct = (record: Product, index: number) => {
     setCurrentProduct(record);
     setLastViewedIndex(index - 1);
+    setCurrentMasterBrand(record.brand.brandName);
+    console.log(record.brand.brandName);
+    if (record.productBrand) {
+      setCurrentProductBrand(record.productBrand);
+    }
     setIsViewing(true);
   };
 
   const newProduct = () => {
     setCurrentProduct(undefined);
+    setCurrentMasterBrand("");
+    setCurrentProductBrand("");
     if (loaded) {
       setLastViewedIndex(content.length);
     }
@@ -703,18 +713,10 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
                           label="Master Brand"
                           rules={[{ required: true }]}
                         >
-                          <Select
-                            onChange={() => setDiscoPercentageByBrand(false)}
-                            showSearch
+                          <SelectBrandSmartSearch
                             allowClear={true}
-                            placeholder={"Select a master brand"}
-                          >
-                            {brands.map((brand) => (
-                              <Select.Option key={brand.id} value={brand.id}>
-                                {brand.brandName}
-                              </Select.Option>
-                            ))}
-                          </Select>
+                            initialBrandName={currentMasterBrand}
+                          ></SelectBrandSmartSearch>
                         </Form.Item>
                       </Col>
                     </Row>
@@ -727,7 +729,7 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
                         >
                           <SelectProductBrand
                             allowClear={true}
-                            initialProductBrandName={""}
+                            initialProductBrandName={currentProductBrand}
                           ></SelectProductBrand>
                         </Form.Item>
                       </Col>

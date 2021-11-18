@@ -13,6 +13,7 @@ export const SelectProductBrand: React.FC<SelectProductBrandProps> = ({
   placeholder = "Select a Brand",
   style,
   allowClear = true,
+  initialProductBrandName = "",
 }) => {
   const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
 
@@ -30,6 +31,7 @@ export const SelectProductBrand: React.FC<SelectProductBrandProps> = ({
 
   return (
     <Select
+      value={initialProductBrandName}
       showSearch
       allowClear={allowClear}
       style={style}
