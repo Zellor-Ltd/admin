@@ -6,7 +6,6 @@ import {
 } from "@ant-design/icons";
 import {
   Button,
-  Checkbox,
   Col,
   PageHeader,
   Popconfirm,
@@ -37,7 +36,6 @@ import {} from "services/DiscoClubService";
 import ProductCategoriesTrees from "./ProductCategoriesTrees";
 import "./Products.scss";
 import EditMultipleButton from "components/EditMultipleButton";
-import { CheckboxChangeEvent } from "antd/lib/checkbox";
 import CopyIdToClipboard from "components/CopyIdToClipboard";
 import EditableTable, { EditableColumnType } from "components/EditableTable";
 import { SearchFilterDebounce } from "components/SearchFilterDebounce";
@@ -64,15 +62,9 @@ import ProductExpandedRow from "./ProductExpandedRow";
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 
-interface RouteParams {
-  productMode: "preview" | "commited";
-}
-
 const Products: React.FC<RouteComponentProps> = ({ location }) => {
-  const { productMode } = useParams<RouteParams>();
   const saveProductFn = saveProduct;
   const [brands, setBrands] = useState<Brand[]>([]);
-  const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
   const [ageRange, setageRange] = useState<[number, number]>([12, 100]);
   const [form] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
@@ -201,13 +193,7 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
       }
     };
 
-    const getProductBrands = async () => {
-      const response: any = await fetchProductBrands();
-      setProductBrands(response.results);
-    };
-
     getBrands();
-    getProductBrands();
     fetchAllCategories();
     return () => {
       mounted = false;
@@ -719,6 +705,9 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
                         >
                           <Select
                             onChange={() => setDiscoPercentageByBrand(false)}
+                            showSearch
+                            allowClear={true}
+                            placeholder={"Select a master brand"}
                           >
                             {brands.map((brand) => (
                               <Select.Option key={brand.id} value={brand.id}>

@@ -8,7 +8,7 @@ type SelectBrandProps = Omit<
   React.SelectHTMLAttributes<HTMLSelectElement>,
   "onChange"
 > & {
-  onChange: (selectedBrand: Brand) => {};
+  onChange: (selectedBrand: Brand) => {} | void;
   allowClear?: boolean;
   initialBrandName?: string;
   label?: string;

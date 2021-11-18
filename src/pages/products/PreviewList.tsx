@@ -63,15 +63,9 @@ import { SelectProductBrand } from "components/SelectProductBrand";
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 
-interface RouteParams {
-  productMode: "staging" | "commited";
-}
 const PreviewList: React.FC<RouteComponentProps> = ({ location }) => {
-  const { productMode } = useParams<RouteParams>();
-  const isStaging = productMode === "staging";
   const saveProductFn = saveStagingProduct;
   const [brands, setBrands] = useState<Brand[]>([]);
-  const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
   const [ageRange, setageRange] = useState<[number, number]>([12, 100]);
   const [form] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
@@ -192,13 +186,7 @@ const PreviewList: React.FC<RouteComponentProps> = ({ location }) => {
       }
     };
 
-    const getProductBrands = async () => {
-      const response: any = await fetchProductBrands();
-      setProductBrands(response.results);
-    };
-
     getBrands();
-    getProductBrands();
     fetchAllCategories();
     return () => {
       mounted = false;
