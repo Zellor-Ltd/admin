@@ -42,6 +42,7 @@ import CopyIdToClipboard from "components/CopyIdToClipboard";
 import EditableTable, { EditableColumnType } from "components/EditableTable";
 import { SearchFilterDebounce } from "components/SearchFilterDebounce";
 import { SelectBrand } from "components/SelectBrand";
+import { SelectProductBrand } from "components/SelectProductBrand";
 import { AppContext } from "contexts/AppContext";
 import useAllCategories from "hooks/useAllCategories";
 import { useRequest } from "hooks/useRequest";
@@ -748,16 +749,10 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
                           label="Product Brand"
                           rules={[{ required: true }]}
                         >
-                          <Select>
-                            {productBrands.map((brand) => (
-                              <Select.Option
-                                key={brand.id}
-                                value={brand.brandName}
-                              >
-                                {brand.brandName}
-                              </Select.Option>
-                            ))}
-                          </Select>
+                          <SelectProductBrand
+                            allowClear={true}
+                            initialProductBrandName={""}
+                          ></SelectProductBrand>
                         </Form.Item>
                       </Col>
                     </Row>

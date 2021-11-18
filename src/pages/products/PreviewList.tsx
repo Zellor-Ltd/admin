@@ -43,7 +43,6 @@ import {
   transferStageProduct,
   fetchBrands,
   fetchProductBrands,
-  saveProduct,
   saveStagingProduct,
 } from "services/DiscoClubService";
 import EditProductModal from "./EditProductModal";
@@ -60,6 +59,7 @@ import { AllCategories } from "interfaces/Category";
 import { useSelector } from "react-redux";
 import { SearchFilterDebounce } from "components/SearchFilterDebounce";
 import { AppContext } from "contexts/AppContext";
+import { SelectProductBrand } from "components/SelectProductBrand";
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 
@@ -685,16 +685,10 @@ const PreviewList: React.FC<RouteComponentProps> = ({ location }) => {
                           label="Product Brand"
                           rules={[{ required: true }]}
                         >
-                          <Select>
-                            {productBrands.map((brand) => (
-                              <Select.Option
-                                key={brand.id}
-                                value={brand.brandName}
-                              >
-                                {brand.brandName}
-                              </Select.Option>
-                            ))}
-                          </Select>
+                          <SelectProductBrand
+                            allowClear={true}
+                            initialProductBrandName={""}
+                          ></SelectProductBrand>
                         </Form.Item>
                       </Col>
                     </Row>

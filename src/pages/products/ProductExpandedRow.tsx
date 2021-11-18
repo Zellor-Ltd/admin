@@ -7,6 +7,7 @@ import { useLocation } from "react-router-dom";
 import ProductCategoriesTrees from "./ProductCategoriesTrees";
 import { useCallback, useState, useEffect } from "react";
 import { fetchProductBrands } from "services/DiscoClubService";
+import { SelectProductBrand } from "components/SelectProductBrand";
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 
 interface ProductExpandedRowProps {
@@ -109,13 +110,10 @@ const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
         </Col>
         <Col lg={4} xs={8}>
           <Form.Item name="productBrand" label="Product Brand">
-            <Select>
-              {productBrands.map((brand: ProductBrand) => (
-                <Select.Option key={brand.id} value={brand.brandName}>
-                  {brand.brandName}
-                </Select.Option>
-              ))}
-            </Select>
+            <SelectProductBrand
+              allowClear={true}
+              initialProductBrandName={""}
+            ></SelectProductBrand>
           </Form.Item>
         </Col>
       </Row>
