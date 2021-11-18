@@ -208,7 +208,7 @@ const PreviewList: React.FC<RouteComponentProps> = ({ location }) => {
   useEffect(() => {
     if (refreshing) {
       setEof(false);
-      getProducts();
+      getProducts(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refreshing]);
@@ -243,7 +243,7 @@ const PreviewList: React.FC<RouteComponentProps> = ({ location }) => {
 
       await saveProductFn(product);
 
-      await getResources();
+      await getResources(false);
       setLoading(false);
       message.success("Register updated with success.");
       setIsEditing(false);
@@ -256,7 +256,7 @@ const PreviewList: React.FC<RouteComponentProps> = ({ location }) => {
   const handleFilterClassified = (e: CheckboxChangeEvent) => {
     setUnclassifiedFilter(e.target.checked);
   };
-  const _fetchStagingProducts = async () => {
+  const _fetchStagingProducts = async (searchButton) => {
     const pageToUse = refreshing ? 0 : page;
     const response = await doFetch(() =>
       fetchStagingProducts({
@@ -267,26 +267,31 @@ const PreviewList: React.FC<RouteComponentProps> = ({ location }) => {
         unclassified: unclassifiedFilter,
       })
     );
-    setPage(pageToUse + 1);
+    if (searchButton) {
+      setPage(0);
+    } else {
+      setPage(pageToUse + 1);
+    }
     if (response.results.length < 30) setEof(true);
     return response;
   };
 
-  const getResources = async () => {
+  const getResources = async (searchButton) => {
     setLoading(true);
     const [{ results }] = await Promise.all([
-      _fetchStagingProducts(),
+      _fetchStagingProducts(searchButton),
       fetchAllCategories(),
     ]);
     setLoaded(true);
-    setPage(0);
     setProducts(results);
     setContent(results);
     setLoading(false);
   };
 
-  const getProducts = async () => {
-    const { results } = await doFetch(_fetchStagingProducts);
+  const getProducts = async (searchButton) => {
+    const { results } = await doFetch(() =>
+      _fetchStagingProducts(searchButton)
+    );
     setProducts(results);
   };
 
@@ -303,25 +308,25 @@ const PreviewList: React.FC<RouteComponentProps> = ({ location }) => {
     }
   };
 
-  const fetchData = async () => {
+  const fetchData = async (searchButton) => {
     if (!products.length) return;
-    const { results } = await _fetchStagingProducts();
+    const { results } = await _fetchStagingProducts(searchButton);
     setProducts((prev) => [...prev.concat(results)]);
   };
 
   const onSaveCategories = async (record: Product) => {
     await saveCategories(() => saveStagingProduct(record));
-    await getProducts();
+    await getProducts(true);
   };
 
   const onSaveProduct = async (record: Product) => {
     await doRequest(() => saveStagingProduct(record));
-    await getProducts();
+    await getProducts(true);
   };
 
   const handleStage = async (productId: string) => {
     await doRequest(() => transferStageProduct(productId), "Product commited.");
-    await getProducts();
+    await getProducts(true);
   };
 
   useEffect(() => {
@@ -537,7 +542,7 @@ const PreviewList: React.FC<RouteComponentProps> = ({ location }) => {
               <Row justify="end">
                 <Button
                   type="primary"
-                  onClick={() => getResources()}
+                  onClick={() => getResources(true)}
                   loading={loading}
                   style={{
                     position: "relative",
@@ -567,7 +572,7 @@ const PreviewList: React.FC<RouteComponentProps> = ({ location }) => {
           </Row>
           <InfiniteScroll
             dataLength={products.length}
-            next={fetchData}
+            next={() => fetchData(false)}
             hasMore={!eof}
             loader={
               page !== 0 && (

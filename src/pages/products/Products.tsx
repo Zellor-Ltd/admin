@@ -252,7 +252,7 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
     }
   };
 
-  const _fetchProducts = async () => {
+  const _fetchProducts = async (searchButton) => {
     const pageToUse = refreshing ? 0 : page;
     const response = await doFetch(() =>
       fetchProducts({
@@ -263,7 +263,11 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
         unclassified: false,
       })
     );
-    setPage(pageToUse + 1);
+    if (searchButton) {
+      setPage(0);
+    } else {
+      setPage(pageToUse + 1);
+    }
     if (response.results.length < 30) setEof(true);
     return response;
   };
@@ -273,9 +277,9 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
     setContent(response.results);
   };
 
-  const getResources = async () => {
+  const getResources = async (searchButton) => {
     const [{ results }] = await Promise.all([
-      _fetchProducts(),
+      _fetchProducts(searchButton),
       fetchAllCategories(),
     ]);
     setProducts(results);
@@ -291,13 +295,13 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
 
   const fetchData = async () => {
     if (!products.length) return;
-    const { results } = await _fetchProducts();
+    const { results } = await _fetchProducts(false);
     setProducts((prev) => [...prev.concat(results)]);
   };
 
   useEffect(() => {
     const getProducts = async () => {
-      const { results } = await _fetchProducts();
+      const { results } = await _fetchProducts(true);
       setProducts(results);
       setRefreshing(false);
     };
@@ -583,7 +587,7 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
               <Row justify="end">
                 <Button
                   type="primary"
-                  onClick={() => getResources()}
+                  onClick={() => getResources(true)}
                   loading={loading}
                   style={{
                     position: "relative",
