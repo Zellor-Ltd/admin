@@ -95,7 +95,6 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
   const [brandFilter, setBrandFilter] = usePageFilter<Brand | undefined>(
     "brand"
   );
-  const [unclassifiedFilter, setUnclassifiedFilter] = useState<boolean>(false);
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
 
@@ -262,7 +261,7 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
         page: pageToUse,
         brandId: brandFilter?.id,
         query: searchFilter,
-        unclassified: unclassifiedFilter,
+        unclassified: false,
       })
     );
     setPage(pageToUse + 1);
@@ -315,7 +314,7 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
       refreshProducts();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchFilter, brandFilter, unclassifiedFilter]);
+  }, [searchFilter, brandFilter]);
 
   const deleteItem = async (_id: string) => {
     await doRequest(() => deleteProduct(_id));
@@ -539,10 +538,6 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
     setBrandFilter(_selectedBrand);
   };
 
-  const handleFilterClassified = (e: CheckboxChangeEvent) => {
-    setUnclassifiedFilter(e.target.checked);
-  };
-
   const handleRowSelection = (preSelectedRows: any[]) => {
     const selectedRows: any[] = [];
     preSelectedRows.forEach((productId) => {
@@ -582,14 +577,6 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
                     onChange={onChangeBrand}
                     initialBrandName={brandFilter?.brandName}
                   ></SelectBrand>
-                </Col>
-                <Col lg={8} xs={16}>
-                  <Checkbox
-                    onChange={handleFilterClassified}
-                    style={{ margin: "42px 0 16px 8px" }}
-                  >
-                    Unclassified only
-                  </Checkbox>
                 </Col>
               </Row>
             </Col>

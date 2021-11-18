@@ -186,10 +186,8 @@ const PreviewList: React.FC<RouteComponentProps> = ({ location }) => {
     let mounted = true;
 
     const getBrands = async () => {
-      setLoading(true);
       const response: any = await fetchBrands();
       if (mounted) {
-        setLoading(false);
         setBrands(response.results);
       }
     };
@@ -275,14 +273,16 @@ const PreviewList: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   const getResources = async () => {
+    setLoading(true);
     const [{ results }] = await Promise.all([
       _fetchStagingProducts(),
       fetchAllCategories(),
     ]);
-    await setLoaded(true);
+    setLoaded(true);
     setPage(0);
     setProducts(results);
     setContent(results);
+    setLoading(false);
   };
 
   const getProducts = async () => {
@@ -483,7 +483,7 @@ const PreviewList: React.FC<RouteComponentProps> = ({ location }) => {
   ];
 
   const onChangeBrand = async (_selectedBrand: Brand | undefined) => {
-    await setBrandFilter(_selectedBrand);
+    setBrandFilter(_selectedBrand);
   };
 
   const handleEditProducts = async () => {
