@@ -123,7 +123,7 @@ const BrandForm: React.FC<FormProps> = ({
             name={["position", 0, "x"]}
             label="Position X"
             rules={[{ required: true }]}
-            initialValue="0"
+            initialValue={0}
           >
             <InputNumber />
           </Form.Item>
@@ -133,7 +133,7 @@ const BrandForm: React.FC<FormProps> = ({
             name={["position", 0, "y"]}
             label="position Y"
             rules={[{ required: true }]}
-            initialValue="0"
+            initialValue={0}
           >
             <InputNumber />
           </Form.Item>
@@ -143,7 +143,7 @@ const BrandForm: React.FC<FormProps> = ({
             name={["position", 0, "z"]}
             label="Z Index"
             rules={[{ required: true }]}
-            initialValue="1"
+            initialValue={1}
           >
             <InputNumber />
           </Form.Item>
