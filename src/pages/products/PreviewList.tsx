@@ -485,7 +485,6 @@ const PreviewList: React.FC<RouteComponentProps> = ({ location }) => {
     setCurrentProduct(record);
     setLastViewedIndex(index - 1);
     setCurrentMasterBrand(record.brand.brandName);
-    console.log(record.brand.brandName);
     if (record.productBrand) {
       setCurrentProductBrand(record.productBrand);
     }

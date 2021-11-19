@@ -1,13 +1,12 @@
-import { Form, Select } from "antd";
-import { FormInstance } from "antd/lib/form";
+import { Form } from "antd";
 import { categoriesSettings } from "helpers/utils";
 import useAllCategories from "hooks/useAllCategories";
 import {
   AllCategories,
-  ProductCategory,
   SelectedCategories,
   SelectedProductCategories,
 } from "interfaces/Category";
+import { SelectCategorySmartSearch } from "components/SelectCategorySmartSearch";
 
 const { categoriesArray } = categoriesSettings;
 
@@ -41,34 +40,10 @@ const ProductCategories: React.FC<ProductCategoriesProps> = ({
   initialValues,
   handleCategoryChange,
 }) => {
-  const { filteredCategories, filterCategory } = useAllCategories({
+  const { filteredCategories } = useAllCategories({
     initialValues: formatProductCategories(initialValues[productCategoryIndex]),
     allCategories,
   });
-
-  const _handleCategoryChange = (value: string, key: string) => {
-    const selectedCategories = categoriesArray
-      .map(({ key, field }) => {
-        const selectedCategoryName = value;
-        return filteredCategories[key as keyof AllCategories].find(
-          (category) =>
-            category[field as keyof ProductCategory] === selectedCategoryName
-        );
-      })
-      .filter((v) => v);
-
-    handleCategoryChange(
-      selectedCategories,
-      productCategoryIndex,
-      (form: FormInstance) => {
-        filterCategory(value, key, (_field) => {
-          const formCategories = form.getFieldValue("categories");
-          formCategories[productCategoryIndex][_field] = undefined;
-          form.setFieldsValue({ categories: formCategories });
-        });
-      }
-    );
-  };
 
   return (
     <>
@@ -79,27 +54,17 @@ const ProductCategories: React.FC<ProductCategoriesProps> = ({
           name={["categories", productCategoryIndex, field, "id"]}
           rules={[{ required: _index < 2, message: `${key} is required` }]}
         >
-          <Select
-            disabled={!filteredCategories[key as keyof AllCategories].length}
+          <SelectCategorySmartSearch
+            allCategories={allCategories}
+            productCategoryIndex={productCategoryIndex}
+            initialValues={initialValues}
+            handleCategoryChange={handleCategoryChange}
             allowClear={_index >= 2}
-            placeholder="Please select a category"
             style={{ width: "180px" }}
-            showSearch
-            filterOption={true}
-            onChange={(_, option: any) =>
-              _handleCategoryChange(option?.children as string, key)
-            }
-          >
-            {(
-              filteredCategories[
-                key as keyof AllCategories
-              ] as unknown as ProductCategory[]
-            ).map((category) => (
-              <Select.Option key={category.id} value={category.id}>
-                {category[field as keyof ProductCategory]}
-              </Select.Option>
-            ))}
-          </Select>
+            key={key}
+            index={_index}
+            field={field}
+          ></SelectCategorySmartSearch>
         </Form.Item>
       ))}
     </>
