@@ -142,7 +142,7 @@ export const fetchAllStagingProducts = () =>
   instance.put("Disco/Staging/Product/List/0/0");
 
 export const fetchProductBrands = () =>
-  instance.get(`Disco/Brand/ProductBrandList`);
+  instance.get(`Disco/ProductBrand/List`);
 
 export const fetchTags = ({
   query,
@@ -307,9 +307,9 @@ export const saveProduct = (params: Product) => {
 
 export const saveProductBrand = (params: ProductBrand) => {
   if (params.id) {
-    return instance.put("Disco/Brand/ProductBrandUpdate", params);
+    return instance.put("Disco/ProductBrand/Update", params);
   } else {
-    return instance.put("Disco/Brand/ProductBrandAdd", params);
+    return instance.put("Disco/ProductBrand/Add", params);
   }
 };
 
@@ -473,7 +473,7 @@ export const deleteProduct = (id: string) =>
   instance.delete(`Disco/Product/Remove/${id}`);
 
 export const deleteProductBrand = (id: string) =>
-  instance.delete(`Disco/Product/ProductBrandDelete/${id}`);
+  instance.delete(`Disco/ProductBrand/Delete/${id}`);
 
 export const deleteStagingProduct = (id: string) =>
   instance.delete(`Disco/Staging/Product/Remove/${id}`);
