@@ -28,7 +28,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
 
   const [tags, setTags] = useState<Tag[]>([]);
 
-  const _fetchTags = async () => {
+  const _fetchTags = async (searchButton) => {
     const pageToUse = refreshing ? 0 : page;
     const response = await doFetch(() =>
       fetchTags({
@@ -37,13 +37,17 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
         query: searchFilter,
       })
     );
-    setPage(pageToUse + 1);
+    if (searchButton) {
+      setPage(0);
+    } else {
+      setPage(pageToUse + 1);
+    }
     if (response.results.length < 30) setEof(true);
     return response;
   };
 
-  const getResources = async () => {
-    const [{ results }] = await Promise.all([_fetchTags()]);
+  const getResources = async (searchButton) => {
+    const [{ results }] = await Promise.all([_fetchTags(searchButton)]);
     setTags(results);
   };
 
@@ -54,13 +58,13 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
 
   const fetchData = async () => {
     if (!tags.length) return;
-    const { results } = await _fetchTags();
+    const { results } = await _fetchTags(false);
     setTags((prev) => [...prev.concat(results)]);
   };
 
   useEffect(() => {
     const getTags = async () => {
-      const { results } = await _fetchTags();
+      const { results } = await _fetchTags(true);
       setTags(results);
       setContent(results);
       setRefreshing(false);
@@ -155,7 +159,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
         <Col>
           <Button
             type="primary"
-            onClick={() => getResources()}
+            onClick={() => getResources(true)}
             loading={loading}
             style={{
               marginBottom: "20px",
