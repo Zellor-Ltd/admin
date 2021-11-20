@@ -1,8 +1,6 @@
 import Select from "antd/lib/select";
 import useAllCategories from "../hooks/useAllCategories";
 import React, { useEffect, useState } from "react";
-import { categoriesSettings } from "../helpers/utils";
-import { FormInstance } from "antd/lib/form";
 import {
   AllCategories,
   ProductCategory,
@@ -10,18 +8,18 @@ import {
   SelectedProductCategories,
 } from "../interfaces/Category";
 
-const { categoriesArray } = categoriesSettings;
-
 interface SelectCategorySmartSearchProps {
   allCategories: AllCategories;
   productCategoryIndex: number;
   initialValues: SelectedProductCategories[];
-  handleCategoryChange: Function;
+  _handleCategoryChange: Function;
   style;
   allowClear: boolean;
   key: string;
-  index: number;
+  _index: number;
   field: any;
+  value: any;
+  onChange: (_: any, option: any) => void;
 }
 
 const formatProductCategories: (
@@ -48,10 +46,10 @@ export const SelectCategorySmartSearch: React.FC<SelectCategorySmartSearchProps>
     allCategories,
     productCategoryIndex,
     initialValues,
-    handleCategoryChange,
-    key,
-    index,
+    value,
+    _index,
     field,
+    onChange,
   }) => {
     const [selectedCategoryName, setSelectedCategoryName] =
       useState<string>("");
@@ -61,65 +59,77 @@ export const SelectCategorySmartSearch: React.FC<SelectCategorySmartSearchProps>
       ),
       allCategories,
     });
+    const [disabled, setDisabled] = useState<boolean>(false);
 
     useEffect(() => {
       console.log(filteredCategories);
-    });
-
-    const _handleCategoryChange = (value: string, key: string) => {
-      const selectedCategories = categoriesArray
-        .map(({ key, field }) => {
-          setSelectedCategoryName(value);
-          return filteredCategories[key as keyof AllCategories].find(
-            (category) =>
-              category[field as keyof ProductCategory] === selectedCategoryName
-          );
-        })
-        .filter((v) => v);
-
-      handleCategoryChange(
-        selectedCategories,
-        productCategoryIndex,
-        (form: FormInstance) => {
-          filterCategory(value, key, (_field) => {
-            const formCategories = form.getFieldValue("categories");
-            formCategories[productCategoryIndex][_field] = undefined;
-            form.setFieldsValue({ categories: formCategories });
-          });
-        }
-      );
-    };
+      console.log(filteredCategories["Category"]);
+      if (
+        (_index === 1 && !filteredCategories["Category"].length) ||
+        (_index === 2 && !filteredCategories["Sub Category"].length) ||
+        (_index === 3 && !filteredCategories["Sub Sub Category"].length)
+      ) {
+        setDisabled(true);
+      }
+      if (
+        selectedCategoryName !== "" &&
+        ((_index === 1 && !filteredCategories["Super Category"].length) ||
+          (_index === 2 && !filteredCategories["Category"].length) ||
+          (_index === 3 && !filteredCategories["Sub Category"].length))
+      ) {
+        setDisabled(false);
+      }
+    }, [selectedCategoryName]);
 
     return (
       <div style={{ marginBottom: "16px" }}>
         <Select
-          key={index}
-          value={selectedCategoryName}
-          onChange={(_: any, option: any) =>
-            _handleCategoryChange(option?.children as string, key)
-          }
+          key={_index}
+          defaultValue={value}
+          onChange={onChange}
           showSearch
           allowClear={allowClear}
           style={style}
-          disabled={
-            !filteredCategories[key as unknown as keyof AllCategories]?.length //aqui
-          }
+          disabled={false}
           placeholder="Please select a category"
           filterOption={true}
         >
-          {(
-            filteredCategories[
-              key as unknown as keyof AllCategories
-            ] as unknown as ProductCategory[]
-          )?.map(
+          {_index === 0 &&
             (
-              category //aqui
-            ) => (
+              filteredCategories[
+                "Super Category"
+              ] as unknown as ProductCategory[]
+            )?.map((category) => (
               <Select.Option key={category.id} value={category.id}>
                 {category[field as keyof ProductCategory]}
               </Select.Option>
-            )
-          )}
+            ))}
+          {_index === 1 &&
+            (
+              filteredCategories["Category"] as unknown as ProductCategory[]
+            )?.map((category) => (
+              <Select.Option key={category.id} value={category.id}>
+                {category[field as keyof ProductCategory]}
+              </Select.Option>
+            ))}
+          {_index === 2 &&
+            (
+              filteredCategories["Sub Category"] as unknown as ProductCategory[]
+            )?.map((category) => (
+              <Select.Option key={category.id} value={category.id}>
+                {category[field as keyof ProductCategory]}
+              </Select.Option>
+            ))}
+          {_index === 3 &&
+            (
+              filteredCategories[
+                "Sub Sub Category"
+              ] as unknown as ProductCategory[]
+            )?.map((category) => (
+              <Select.Option key={category.id} value={category.id}>
+                {category[field as keyof ProductCategory]}
+              </Select.Option>
+            ))}
         </Select>
       </div>
     );

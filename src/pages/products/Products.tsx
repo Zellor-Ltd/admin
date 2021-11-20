@@ -179,6 +179,14 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
     setSearchTagsByCategory(false, selectedCategories);
   };
 
+  const handleMasterBrandChange = (filterMasterBrand: Function) => {
+    filterMasterBrand(form);
+  };
+
+  const handleProductBrandChange = (filterProductBrand: Function) => {
+    filterProductBrand(form);
+  };
+
   useEffect(() => {
     setDiscoPercentageByBrand(true);
     setSearchTagsByCategory(true);
@@ -716,6 +724,7 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
                             onChange={() => setDiscoPercentageByBrand(false)}
                             allowClear={true}
                             initialBrandName={currentMasterBrand}
+                            handleMasterBrandChange={handleMasterBrandChange}
                           ></SelectBrandSmartSearch>
                         </Form.Item>
                       </Col>
@@ -730,6 +739,7 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
                           <SelectProductBrand
                             allowClear={true}
                             initialProductBrandName={currentProductBrand}
+                            handleProductBrandChange={handleProductBrandChange}
                           ></SelectProductBrand>
                         </Form.Item>
                       </Col>

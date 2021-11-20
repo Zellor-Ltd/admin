@@ -491,6 +491,14 @@ const PreviewList: React.FC<RouteComponentProps> = ({ location }) => {
     setIsEditing(true);
   };
 
+  const handleMasterBrandChange = (filterMasterBrand: Function) => {
+    filterMasterBrand(form);
+  };
+
+  const handleProductBrandChange = (filterProductBrand: Function) => {
+    filterProductBrand(form);
+  };
+
   return (
     <>
       {!isEditing && (
@@ -664,6 +672,7 @@ const PreviewList: React.FC<RouteComponentProps> = ({ location }) => {
                             onChange={() => setDiscoPercentageByBrand(false)}
                             allowClear={true}
                             initialBrandName={currentMasterBrand}
+                            handleMasterBrandChange={handleMasterBrandChange}
                           ></SelectBrandSmartSearch>
                         </Form.Item>
                       </Col>
@@ -678,6 +687,7 @@ const PreviewList: React.FC<RouteComponentProps> = ({ location }) => {
                           <SelectProductBrand
                             allowClear={true}
                             initialProductBrandName={currentProductBrand}
+                            handleProductBrandChange={handleProductBrandChange}
                           ></SelectProductBrand>
                         </Form.Item>
                       </Col>

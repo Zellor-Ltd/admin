@@ -73,12 +73,10 @@ const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
         new Set([...searchTags, ...selectedCategoriesSearchTags])
       );
       searchTags = finalValue;
-      console.log(searchTags);
 
       form.setFieldsValue({
         searchTags,
       });
-      console.log(form.getFieldValue("searchTags"));
     },
     [form]
   );
@@ -90,6 +88,10 @@ const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
   ) => {
     filterCategory(form);
     setSearchTagsByCategory(selectedCategories);
+  };
+
+  const handleProductBrandChange = (filterProductBrand: Function) => {
+    filterProductBrand(form);
   };
 
   return (
@@ -113,6 +115,7 @@ const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
             <SelectProductBrand
               allowClear={true}
               initialProductBrandName={""}
+              handleProductBrandChange={handleProductBrandChange}
             ></SelectProductBrand>
           </Form.Item>
         </Col>

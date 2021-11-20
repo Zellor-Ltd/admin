@@ -1,7 +1,7 @@
 import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
 import { Button, Col, FormInstance, Row } from "antd";
 import { AllCategories, SelectedProductCategories } from "interfaces/Category";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ProductCategories from "./ProductCategories";
 
 interface ProductCategoriesTreesProps {
