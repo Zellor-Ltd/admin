@@ -11,8 +11,6 @@ import TagDetail from "pages/tags/TagDetail";
 import Tags from "pages/tags/Tags";
 import Brands from "pages/brands/Brands";
 import BrandDetail from "pages/brands/BrandDetail";
-import PromoCodes from "pages/promo-codes/PromoCodes";
-import PromoCodesDetail from "pages/promo-codes/PromoCodesDetail";
 import EndpointDetail from "pages/endpoints/EndpointDetail";
 import Endpoints from "pages/endpoints/Endpoints";
 import FanDetail from "pages/fans/FanDetail";
@@ -141,16 +139,6 @@ function AdminRoutes() {
       <AppRoute
         path="/brands"
         component={Brands}
-        layout={AuthenticatedLayout}
-      />
-      <AppRoute
-        path="/settings_promo-codes/promo-code"
-        component={PromoCodesDetail}
-        layout={AuthenticatedLayout}
-      />
-      <AppRoute
-        path="/settings_promo-codes"
-        component={PromoCodes}
         layout={AuthenticatedLayout}
       />
       <AppRoute
