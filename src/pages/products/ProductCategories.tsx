@@ -1,13 +1,15 @@
-import { Form, Select } from "antd";
-import { FormInstance } from "antd/lib/form";
+import { Form } from "antd";
 import { categoriesSettings } from "helpers/utils";
-import useAllCategories from "hooks/useAllCategories";
+import { SelectCategorySmartSearch } from "components/SelectCategorySmartSearch";
+import React, { useState } from "react";
 import {
   AllCategories,
   ProductCategory,
   SelectedCategories,
   SelectedProductCategories,
 } from "interfaces/Category";
+import useAllCategories from "hooks/useAllCategories";
+import { FormInstance } from "antd/lib/form";
 
 const { categoriesArray } = categoriesSettings;
 
@@ -16,6 +18,7 @@ interface ProductCategoriesProps {
   productCategoryIndex: number;
   initialValues: SelectedProductCategories[];
   handleCategoryChange: Function;
+  treeIndex: number;
 }
 
 const formatProductCategories: (
@@ -40,7 +43,9 @@ const ProductCategories: React.FC<ProductCategoriesProps> = ({
   productCategoryIndex,
   initialValues,
   handleCategoryChange,
+  treeIndex,
 }) => {
+  const [selectedCategoryName, setSelectedCategoryName] = useState<string>("");
   const { filteredCategories, filterCategory } = useAllCategories({
     initialValues: formatProductCategories(initialValues[productCategoryIndex]),
     allCategories,
@@ -49,7 +54,7 @@ const ProductCategories: React.FC<ProductCategoriesProps> = ({
   const _handleCategoryChange = (value: string, key: string) => {
     const selectedCategories = categoriesArray
       .map(({ key, field }) => {
-        const selectedCategoryName = value;
+        setSelectedCategoryName(value);
         return filteredCategories[key as keyof AllCategories].find(
           (category) =>
             category[field as keyof ProductCategory] === selectedCategoryName
@@ -63,7 +68,6 @@ const ProductCategories: React.FC<ProductCategoriesProps> = ({
       (form: FormInstance) => {
         filterCategory(value, key, (_field) => {
           const formCategories = form.getFieldValue("categories");
-          formCategories[productCategoryIndex][_field] = undefined;
           form.setFieldsValue({ categories: formCategories });
         });
       }
@@ -79,25 +83,23 @@ const ProductCategories: React.FC<ProductCategoriesProps> = ({
           name={["categories", productCategoryIndex, field, "id"]}
           rules={[{ required: _index < 2, message: `${key} is required` }]}
         >
-          <Select
-            disabled={!filteredCategories[key as keyof AllCategories].length}
-            allowClear={_index >= 2}
-            placeholder="Please select a category"
-            style={{ width: "180px" }}
-            onChange={(_, option: any) =>
+          <SelectCategorySmartSearch
+            treeIndex={treeIndex}
+            onChange={(_: any, option: any) =>
               _handleCategoryChange(option?.children as string, key)
             }
-          >
-            {(
-              filteredCategories[
-                key as keyof AllCategories
-              ] as unknown as ProductCategory[]
-            ).map((category) => (
-              <Select.Option key={category.id} value={category.id}>
-                {category[field as keyof ProductCategory]}
-              </Select.Option>
-            ))}
-          </Select>
+            allCategories={allCategories}
+            productCategoryIndex={productCategoryIndex}
+            initialValues={initialValues}
+            value={initialValues}
+            _handleCategoryChange={_handleCategoryChange}
+            allowClear={_index >= 2}
+            style={{ width: "180px" }}
+            key={key}
+            _index={_index}
+            disabled={!filteredCategories[key as keyof AllCategories].length}
+            field={field}
+          ></SelectCategorySmartSearch>
         </Form.Item>
       ))}
     </>

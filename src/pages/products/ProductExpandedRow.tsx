@@ -7,6 +7,7 @@ import { useLocation } from "react-router-dom";
 import ProductCategoriesTrees from "./ProductCategoriesTrees";
 import { useCallback, useState, useEffect } from "react";
 import { fetchProductBrands } from "services/DiscoClubService";
+import { SelectProductBrand } from "components/SelectProductBrand";
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 
 interface ProductExpandedRowProps {
@@ -72,12 +73,10 @@ const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
         new Set([...searchTags, ...selectedCategoriesSearchTags])
       );
       searchTags = finalValue;
-      console.log(searchTags);
 
       form.setFieldsValue({
         searchTags,
       });
-      console.log(form.getFieldValue("searchTags"));
     },
     [form]
   );
@@ -89,6 +88,10 @@ const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
   ) => {
     filterCategory(form);
     setSearchTagsByCategory(selectedCategories);
+  };
+
+  const handleProductBrandChange = (filterProductBrand: Function) => {
+    filterProductBrand(form);
   };
 
   return (
@@ -109,13 +112,11 @@ const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
         </Col>
         <Col lg={4} xs={8}>
           <Form.Item name="productBrand" label="Product Brand">
-            <Select>
-              {productBrands.map((brand: ProductBrand) => (
-                <Select.Option key={brand.id} value={brand.brandName}>
-                  {brand.brandName}
-                </Select.Option>
-              ))}
-            </Select>
+            <SelectProductBrand
+              allowClear={true}
+              initialProductBrandName={""}
+              handleProductBrandChange={handleProductBrandChange}
+            ></SelectProductBrand>
           </Form.Item>
         </Col>
       </Row>

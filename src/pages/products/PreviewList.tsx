@@ -35,15 +35,13 @@ import { Brand } from "interfaces/Brand";
 import { Product } from "interfaces/Product";
 import moment from "moment";
 import { useCallback, useContext, useEffect, useState } from "react";
-import { Link, RouteComponentProps, useParams } from "react-router-dom";
+import { Link, RouteComponentProps } from "react-router-dom";
 import {
   deleteStagingProduct,
   fetchProducts,
   fetchStagingProducts,
   transferStageProduct,
   fetchBrands,
-  fetchProductBrands,
-  saveProduct,
   saveStagingProduct,
 } from "services/DiscoClubService";
 import EditProductModal from "./EditProductModal";
@@ -55,23 +53,18 @@ import { Upload } from "components";
 import { RichTextEditor } from "components/RichTextEditor";
 import { formatMoment } from "helpers/formatMoment";
 import { categoriesSettings } from "helpers/utils";
-import { ProductBrand } from "../../interfaces/ProductBrand";
 import { AllCategories } from "interfaces/Category";
 import { useSelector } from "react-redux";
 import { SearchFilterDebounce } from "components/SearchFilterDebounce";
 import { AppContext } from "contexts/AppContext";
+import { SelectProductBrand } from "components/SelectProductBrand";
+import { SelectBrandSmartSearch } from "components/SelectBrandSmartSearch";
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 
-interface RouteParams {
-  productMode: "staging" | "commited";
-}
 const PreviewList: React.FC<RouteComponentProps> = ({ location }) => {
-  const { productMode } = useParams<RouteParams>();
-  const isStaging = productMode === "staging";
   const saveProductFn = saveStagingProduct;
   const [brands, setBrands] = useState<Brand[]>([]);
-  const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
   const [ageRange, setageRange] = useState<[number, number]>([12, 100]);
   const [form] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
@@ -97,6 +90,9 @@ const PreviewList: React.FC<RouteComponentProps> = ({ location }) => {
   const [eof, setEof] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [products, setProducts] = useState<Product[]>([]);
+
+  const [currentMasterBrand, setCurrentMasterBrand] = useState<string>("");
+  const [currentProductBrand, setCurrentProductBrand] = useState<string>("");
 
   const { doFetch, doRequest } = useRequest({ setLoading });
   const { doRequest: saveCategories, loading: loadingCategories } =
@@ -192,13 +188,7 @@ const PreviewList: React.FC<RouteComponentProps> = ({ location }) => {
       }
     };
 
-    const getProductBrands = async () => {
-      const response: any = await fetchProductBrands();
-      setProductBrands(response.results);
-    };
-
     getBrands();
-    getProductBrands();
     fetchAllCategories();
     return () => {
       mounted = false;
@@ -499,7 +489,19 @@ const PreviewList: React.FC<RouteComponentProps> = ({ location }) => {
   const editProduct = (record: Product, index) => {
     setCurrentProduct(record);
     setLastViewedIndex(index - 1);
+    setCurrentMasterBrand(record.brand.brandName);
+    if (record.productBrand) {
+      setCurrentProductBrand(record.productBrand);
+    }
     setIsEditing(true);
+  };
+
+  const handleMasterBrandChange = (filterMasterBrand: Function) => {
+    filterMasterBrand(form);
+  };
+
+  const handleProductBrandChange = (filterProductBrand: Function) => {
+    filterProductBrand(form);
   };
 
   return (
@@ -671,15 +673,12 @@ const PreviewList: React.FC<RouteComponentProps> = ({ location }) => {
                           label="Master Brand"
                           rules={[{ required: true }]}
                         >
-                          <Select
+                          <SelectBrandSmartSearch
                             onChange={() => setDiscoPercentageByBrand(false)}
-                          >
-                            {brands.map((brand) => (
-                              <Select.Option key={brand.id} value={brand.id}>
-                                {brand.brandName}
-                              </Select.Option>
-                            ))}
-                          </Select>
+                            allowClear={true}
+                            initialBrandName={currentMasterBrand}
+                            handleMasterBrandChange={handleMasterBrandChange}
+                          ></SelectBrandSmartSearch>
                         </Form.Item>
                       </Col>
                     </Row>
@@ -690,16 +689,11 @@ const PreviewList: React.FC<RouteComponentProps> = ({ location }) => {
                           label="Product Brand"
                           rules={[{ required: true }]}
                         >
-                          <Select>
-                            {productBrands.map((brand) => (
-                              <Select.Option
-                                key={brand.id}
-                                value={brand.brandName}
-                              >
-                                {brand.brandName}
-                              </Select.Option>
-                            ))}
-                          </Select>
+                          <SelectProductBrand
+                            allowClear={true}
+                            initialProductBrandName={currentProductBrand}
+                            handleProductBrandChange={handleProductBrandChange}
+                          ></SelectProductBrand>
                         </Form.Item>
                       </Col>
                     </Row>

@@ -49,6 +49,7 @@ const ProductCategoriesTrees: React.FC<ProductCategoriesTreesProps> = ({
             style={{ maxWidth: "1000px" }}
           >
             <ProductCategories
+              treeIndex={index}
               productCategoryIndex={index}
               initialValues={_categories}
               allCategories={allCategories}

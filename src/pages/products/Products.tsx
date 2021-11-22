@@ -6,7 +6,6 @@ import {
 } from "@ant-design/icons";
 import {
   Button,
-  Checkbox,
   Col,
   PageHeader,
   Popconfirm,
@@ -28,20 +27,20 @@ import { Upload } from "components";
 import { RichTextEditor } from "components/RichTextEditor";
 import { formatMoment } from "helpers/formatMoment";
 import { categoriesSettings } from "helpers/utils";
-import { ProductBrand } from "interfaces/ProductBrand";
 import { AllCategories } from "interfaces/Category";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { RouteComponentProps, Link, useParams } from "react-router-dom";
+import { RouteComponentProps, Link } from "react-router-dom";
 import {} from "services/DiscoClubService";
 import ProductCategoriesTrees from "./ProductCategoriesTrees";
 import "./Products.scss";
 import EditMultipleButton from "components/EditMultipleButton";
-import { CheckboxChangeEvent } from "antd/lib/checkbox";
 import CopyIdToClipboard from "components/CopyIdToClipboard";
 import EditableTable, { EditableColumnType } from "components/EditableTable";
 import { SearchFilterDebounce } from "components/SearchFilterDebounce";
 import { SelectBrand } from "components/SelectBrand";
+import { SelectProductBrand } from "components/SelectProductBrand";
+import { SelectBrandSmartSearch } from "components/SelectBrandSmartSearch";
 import { AppContext } from "contexts/AppContext";
 import useAllCategories from "hooks/useAllCategories";
 import { useRequest } from "hooks/useRequest";
@@ -51,7 +50,6 @@ import moment from "moment";
 import InfiniteScroll from "react-infinite-scroll-component";
 import {
   fetchBrands,
-  fetchProductBrands,
   deleteProduct,
   fetchProducts,
   fetchAllProducts,
@@ -63,15 +61,9 @@ import ProductExpandedRow from "./ProductExpandedRow";
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 
-interface RouteParams {
-  productMode: "preview" | "commited";
-}
-
 const Products: React.FC<RouteComponentProps> = ({ location }) => {
-  const { productMode } = useParams<RouteParams>();
   const saveProductFn = saveProduct;
   const [brands, setBrands] = useState<Brand[]>([]);
-  const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
   const [ageRange, setageRange] = useState<[number, number]>([12, 100]);
   const [form] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
@@ -94,6 +86,10 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
   const [brandFilter, setBrandFilter] = usePageFilter<Brand | undefined>(
     "brand"
   );
+
+  const [currentMasterBrand, setCurrentMasterBrand] = useState<string>("");
+  const [currentProductBrand, setCurrentProductBrand] = useState<string>("");
+
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
 
@@ -183,6 +179,14 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
     setSearchTagsByCategory(false, selectedCategories);
   };
 
+  const handleMasterBrandChange = (filterMasterBrand: Function) => {
+    filterMasterBrand(form);
+  };
+
+  const handleProductBrandChange = (filterProductBrand: Function) => {
+    filterProductBrand(form);
+  };
+
   useEffect(() => {
     setDiscoPercentageByBrand(true);
     setSearchTagsByCategory(true);
@@ -200,13 +204,7 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
       }
     };
 
-    const getProductBrands = async () => {
-      const response: any = await fetchProductBrands();
-      setProductBrands(response.results);
-    };
-
     getBrands();
-    getProductBrands();
     fetchAllCategories();
     return () => {
       mounted = false;
@@ -345,11 +343,17 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
   const editProduct = (record: Product, index: number) => {
     setCurrentProduct(record);
     setLastViewedIndex(index - 1);
+    setCurrentMasterBrand(record.brand.brandName);
+    if (record.productBrand) {
+      setCurrentProductBrand(record.productBrand);
+    }
     setIsViewing(true);
   };
 
   const newProduct = () => {
     setCurrentProduct(undefined);
+    setCurrentMasterBrand("");
+    setCurrentProductBrand("");
     if (loaded) {
       setLastViewedIndex(content.length);
     }
@@ -720,15 +724,12 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
                           label="Master Brand"
                           rules={[{ required: true }]}
                         >
-                          <Select
+                          <SelectBrandSmartSearch
                             onChange={() => setDiscoPercentageByBrand(false)}
-                          >
-                            {brands.map((brand) => (
-                              <Select.Option key={brand.id} value={brand.id}>
-                                {brand.brandName}
-                              </Select.Option>
-                            ))}
-                          </Select>
+                            allowClear={true}
+                            initialBrandName={currentMasterBrand}
+                            handleMasterBrandChange={handleMasterBrandChange}
+                          ></SelectBrandSmartSearch>
                         </Form.Item>
                       </Col>
                     </Row>
@@ -739,16 +740,11 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
                           label="Product Brand"
                           rules={[{ required: true }]}
                         >
-                          <Select>
-                            {productBrands.map((brand) => (
-                              <Select.Option
-                                key={brand.id}
-                                value={brand.brandName}
-                              >
-                                {brand.brandName}
-                              </Select.Option>
-                            ))}
-                          </Select>
+                          <SelectProductBrand
+                            allowClear={true}
+                            initialProductBrandName={currentProductBrand}
+                            handleProductBrandChange={handleProductBrandChange}
+                          ></SelectProductBrand>
                         </Form.Item>
                       </Col>
                     </Row>
