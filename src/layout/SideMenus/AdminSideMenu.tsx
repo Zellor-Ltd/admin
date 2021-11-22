@@ -110,9 +110,6 @@ const AdminSideMenu = () => {
         <Menu.Item key="settings_interests" icon={<SwitcherOutlined />}>
           <Link to="/settings_interests">Interests</Link>
         </Menu.Item>
-        <Menu.Item key="settings_promo-codes" icon={<SwitcherOutlined />}>
-          <Link to="/settings_promo-codes">Promo Codes</Link>
-        </Menu.Item>
         <Menu.Item key="settings_dd-templates" icon={<SwitcherOutlined />}>
           <Link to="/settings_dd-templates">DD Templates</Link>
         </Menu.Item>
