@@ -1,7 +1,7 @@
 import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
 import { Button, Col, FormInstance, Row } from "antd";
 import { AllCategories, SelectedProductCategories } from "interfaces/Category";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import ProductCategories from "./ProductCategories";
 
 interface ProductCategoriesTreesProps {
@@ -49,6 +49,7 @@ const ProductCategoriesTrees: React.FC<ProductCategoriesTreesProps> = ({
             style={{ maxWidth: "1000px" }}
           >
             <ProductCategories
+              treeIndex={index}
               productCategoryIndex={index}
               initialValues={_categories}
               allCategories={allCategories}

@@ -1,6 +1,6 @@
 import Select from "antd/lib/select";
 import useAllCategories from "../hooks/useAllCategories";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import {
   AllCategories,
   ProductCategory,
@@ -19,6 +19,8 @@ interface SelectCategorySmartSearchProps {
   _index: number;
   field: any;
   value: any;
+  disabled: boolean;
+  treeIndex: number;
   onChange: (_: any, option: any) => void;
 }
 
@@ -44,53 +46,45 @@ export const SelectCategorySmartSearch: React.FC<SelectCategorySmartSearchProps>
     style,
     allowClear = true,
     allCategories,
-    productCategoryIndex,
     initialValues,
-    value,
     _index,
-    field,
+    disabled,
+    treeIndex,
     onChange,
   }) => {
-    const [selectedCategoryName, setSelectedCategoryName] =
-      useState<string>("");
-    const { filteredCategories, filterCategory } = useAllCategories({
-      initialValues: formatProductCategories(
-        initialValues[productCategoryIndex]
-      ),
+    const { filteredCategories } = useAllCategories({
+      initialValues: formatProductCategories(initialValues[0]),
       allCategories,
     });
-    const [disabled, setDisabled] = useState<boolean>(false);
+    const defaultValues = [
+      initialValues[0].superCategory?.superCategory as string,
+      initialValues[0].category?.category as string,
+      initialValues[0].subCategory?.subCategory as string,
+      initialValues[0].subSubCategory?.subSubCategory as string,
+      initialValues[1]?.superCategory?.superCategory as string,
+      initialValues[1]?.category?.category as string,
+      initialValues[1]?.subCategory?.subCategory as string,
+      initialValues[1]?.subSubCategory?.subSubCategory as string,
+    ];
 
-    useEffect(() => {
-      console.log(filteredCategories);
-      console.log(filteredCategories["Category"]);
-      if (
-        (_index === 1 && !filteredCategories["Category"].length) ||
-        (_index === 2 && !filteredCategories["Sub Category"].length) ||
-        (_index === 3 && !filteredCategories["Sub Sub Category"].length)
-      ) {
-        setDisabled(true);
-      }
-      if (
-        selectedCategoryName !== "" &&
-        ((_index === 1 && !filteredCategories["Super Category"].length) ||
-          (_index === 2 && !filteredCategories["Category"].length) ||
-          (_index === 3 && !filteredCategories["Sub Category"].length))
-      ) {
-        setDisabled(false);
-      }
-    }, [selectedCategoryName]);
+    useEffect(() => {});
 
     return (
       <div style={{ marginBottom: "16px" }}>
         <Select
           key={_index}
-          defaultValue={value}
           onChange={onChange}
+          defaultValue={
+            treeIndex === 0
+              ? defaultValues[_index]
+              : treeIndex === 1
+              ? defaultValues[_index + 4]
+              : undefined
+          }
           showSearch
           allowClear={allowClear}
           style={style}
-          disabled={false}
+          disabled={disabled}
           placeholder="Please select a category"
           filterOption={true}
         >
@@ -100,24 +94,33 @@ export const SelectCategorySmartSearch: React.FC<SelectCategorySmartSearchProps>
                 "Super Category"
               ] as unknown as ProductCategory[]
             )?.map((category) => (
-              <Select.Option key={category.id} value={category.id}>
-                {category[field as keyof ProductCategory]}
+              <Select.Option
+                key={category.id}
+                value={category.superCategory as string}
+              >
+                {category.superCategory}
               </Select.Option>
             ))}
           {_index === 1 &&
             (
               filteredCategories["Category"] as unknown as ProductCategory[]
             )?.map((category) => (
-              <Select.Option key={category.id} value={category.id}>
-                {category[field as keyof ProductCategory]}
+              <Select.Option
+                key={category.id}
+                value={category.category as string}
+              >
+                {category.category}
               </Select.Option>
             ))}
           {_index === 2 &&
             (
               filteredCategories["Sub Category"] as unknown as ProductCategory[]
             )?.map((category) => (
-              <Select.Option key={category.id} value={category.id}>
-                {category[field as keyof ProductCategory]}
+              <Select.Option
+                key={category.id}
+                value={category.subCategory as string}
+              >
+                {category.subCategory}
               </Select.Option>
             ))}
           {_index === 3 &&
@@ -126,8 +129,11 @@ export const SelectCategorySmartSearch: React.FC<SelectCategorySmartSearchProps>
                 "Sub Sub Category"
               ] as unknown as ProductCategory[]
             )?.map((category) => (
-              <Select.Option key={category.id} value={category.id}>
-                {category[field as keyof ProductCategory]}
+              <Select.Option
+                key={category.id}
+                value={category.subSubCategory as string}
+              >
+                {category.subSubCategory}
               </Select.Option>
             ))}
         </Select>

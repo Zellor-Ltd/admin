@@ -1,7 +1,7 @@
 import { Form } from "antd";
 import { categoriesSettings } from "helpers/utils";
 import { SelectCategorySmartSearch } from "components/SelectCategorySmartSearch";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   AllCategories,
   ProductCategory,
@@ -18,6 +18,7 @@ interface ProductCategoriesProps {
   productCategoryIndex: number;
   initialValues: SelectedProductCategories[];
   handleCategoryChange: Function;
+  treeIndex: number;
 }
 
 const formatProductCategories: (
@@ -42,6 +43,7 @@ const ProductCategories: React.FC<ProductCategoriesProps> = ({
   productCategoryIndex,
   initialValues,
   handleCategoryChange,
+  treeIndex,
 }) => {
   const [selectedCategoryName, setSelectedCategoryName] = useState<string>("");
   const { filteredCategories, filterCategory } = useAllCategories({
@@ -66,7 +68,6 @@ const ProductCategories: React.FC<ProductCategoriesProps> = ({
       (form: FormInstance) => {
         filterCategory(value, key, (_field) => {
           const formCategories = form.getFieldValue("categories");
-          formCategories[productCategoryIndex][_field] = undefined;
           form.setFieldsValue({ categories: formCategories });
         });
       }
@@ -83,18 +84,20 @@ const ProductCategories: React.FC<ProductCategoriesProps> = ({
           rules={[{ required: _index < 2, message: `${key} is required` }]}
         >
           <SelectCategorySmartSearch
+            treeIndex={treeIndex}
             onChange={(_: any, option: any) =>
               _handleCategoryChange(option?.children as string, key)
             }
             allCategories={allCategories}
             productCategoryIndex={productCategoryIndex}
             initialValues={initialValues}
-            value={selectedCategoryName}
+            value={initialValues}
             _handleCategoryChange={_handleCategoryChange}
             allowClear={_index >= 2}
             style={{ width: "180px" }}
             key={key}
             _index={_index}
+            disabled={!filteredCategories[key as keyof AllCategories].length}
             field={field}
           ></SelectCategorySmartSearch>
         </Form.Item>
