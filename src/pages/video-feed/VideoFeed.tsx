@@ -248,9 +248,6 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
         title="Video feed update"
         subTitle="List of Feeds"
         extra={[
-          <Button onClick={onRebuildFeedClick} danger key="1" type="primary">
-            Publish to Public
-          </Button>,
           <Button key="2" onClick={() => history.push(detailsPathname)}>
             New Item
           </Button>,
