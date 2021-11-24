@@ -106,7 +106,7 @@ const BrandForm: React.FC<FormProps> = ({
             label="Opacity"
             rules={[{ required: true }]}
           >
-            <InputNumber />
+            <InputNumber defaultValue={1} />
           </Form.Item>
         </Col>
         <Col lg={4} xs={24}>
@@ -123,9 +123,8 @@ const BrandForm: React.FC<FormProps> = ({
             name={["position", 0, "x"]}
             label="Position X"
             rules={[{ required: true }]}
-            initialValue={0}
           >
-            <InputNumber />
+            <InputNumber defaultValue={0} />
           </Form.Item>
         </Col>
         <Col lg={4} xs={24}>
@@ -133,9 +132,8 @@ const BrandForm: React.FC<FormProps> = ({
             name={["position", 0, "y"]}
             label="position Y"
             rules={[{ required: true }]}
-            initialValue={0}
           >
-            <InputNumber />
+            <InputNumber defaultValue={0} />
           </Form.Item>
         </Col>
         <Col lg={4} xs={24}>
@@ -143,9 +141,8 @@ const BrandForm: React.FC<FormProps> = ({
             name={["position", 0, "z"]}
             label="Z Index"
             rules={[{ required: true }]}
-            initialValue={1}
           >
-            <InputNumber />
+            <InputNumber defaultValue={1} />
           </Form.Item>
         </Col>
       </Row>
