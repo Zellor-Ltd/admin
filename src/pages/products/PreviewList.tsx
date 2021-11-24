@@ -357,22 +357,17 @@ const PreviewList: React.FC<RouteComponentProps> = ({ location }) => {
       dataIndex: ["brand", "brandName"],
       width: "15%",
       align: "center",
-    },
+      },
+      {
+          title: "Product Brand",
+          dataIndex: ["productBrand"],
+          width: "12%",
+          align: "center",
+          responsive: ["sm"],
+      },
     {
       title: "SKU",
       dataIndex: "sku",
-      width: "5%",
-      align: "center",
-    },
-    {
-      title: "Magento Status",
-      dataIndex: "magentoStatus",
-      width: "7%",
-      align: "center",
-    },
-    {
-      title: "Magento Supply Discontinued",
-      dataIndex: "magentoSupplyDiscountinued",
       width: "5%",
       align: "center",
     },
@@ -384,11 +379,17 @@ const PreviewList: React.FC<RouteComponentProps> = ({ location }) => {
       render: (outOfStock: boolean) => (outOfStock ? "No" : "Yes"),
     },
     {
-      title: "Default Price",
-      dataIndex: "originalPrice",
+      title: "Currency",
+      dataIndex: "currencyIsoCode",
       width: "7%",
       align: "center",
-    },
+      },
+      {
+          title: "Price",
+          dataIndex: "originalPrice",
+          width: "7%",
+          align: "center",
+      },
     {
       title: "Max DD",
       dataIndex: "maxDiscoDollars",
@@ -413,13 +414,6 @@ const PreviewList: React.FC<RouteComponentProps> = ({ location }) => {
         ) : (
           ""
         ),
-    },
-    {
-      title: "Product Brand",
-      dataIndex: ["productBrand"],
-      width: "12%",
-      align: "center",
-      responsive: ["sm"],
     },
     {
       title: "Last Go-Live",
