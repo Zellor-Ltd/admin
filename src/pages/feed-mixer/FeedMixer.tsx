@@ -433,7 +433,6 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
               filterFeedFn={addUserFeedFilter}
               removeFilterFeedFn={removeUserFeedFilter}
             />
-            <div style={{ maxHeight: 400, overflowY: "scroll" }}>
               <SortableTable
                 rowKey="id"
                 columns={columns}
@@ -442,14 +441,13 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
                 loading={loading}
                 pagination={false}
               />
-            </div>
           </Tabs.TabPane>
           <Tabs.TabPane forceRender tab="Template Feed" key="Template Feed">
             <FiltersRow
               filterFeedFn={addTemplateFeedFilter}
               removeFilterFeedFn={removeTemplateFeedFilter}
             />
-            <div style={{ maxHeight: 400, overflowY: "scroll" }}>
+
               <Table
                 rowSelection={rowSelection}
                 rowKey="id"
@@ -458,7 +456,6 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
                 loading={loading}
                 pagination={false}
               />
-            </div>
           </Tabs.TabPane>
         </Tabs>
       )}
