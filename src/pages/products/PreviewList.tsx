@@ -285,6 +285,8 @@ const PreviewList: React.FC<RouteComponentProps> = ({ location }) => {
     setProducts(results);
   };
 
+  useEffect(() => form.resetFields(), [currentProduct]);
+
   const deleteItem = async (_id: string) => {
     await doRequest(() => deleteStagingProduct(_id));
     for (let i = 0; i < content.length; i++) {
@@ -357,14 +359,14 @@ const PreviewList: React.FC<RouteComponentProps> = ({ location }) => {
       dataIndex: ["brand", "brandName"],
       width: "15%",
       align: "center",
-      },
-      {
-          title: "Product Brand",
-          dataIndex: ["productBrand"],
-          width: "12%",
-          align: "center",
-          responsive: ["sm"],
-      },
+    },
+    {
+      title: "Product Brand",
+      dataIndex: ["productBrand"],
+      width: "12%",
+      align: "center",
+      responsive: ["sm"],
+    },
     {
       title: "SKU",
       dataIndex: "sku",
@@ -383,13 +385,13 @@ const PreviewList: React.FC<RouteComponentProps> = ({ location }) => {
       dataIndex: "currencyIsoCode",
       width: "7%",
       align: "center",
-      },
-      {
-          title: "Price",
-          dataIndex: "originalPrice",
-          width: "7%",
-          align: "center",
-      },
+    },
+    {
+      title: "Price",
+      dataIndex: "originalPrice",
+      width: "7%",
+      align: "center",
+    },
     {
       title: "Max DD",
       dataIndex: "maxDiscoDollars",
@@ -520,7 +522,7 @@ const PreviewList: React.FC<RouteComponentProps> = ({ location }) => {
                   <SelectBrand
                     style={{ width: "100%" }}
                     allowClear={true}
-                    onChange={onChangeBrand}
+                    onChange={() => onChangeBrand}
                     initialBrandName={brandFilter?.brandName}
                   ></SelectBrand>
                 </Col>
