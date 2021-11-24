@@ -102,7 +102,7 @@ const TagForm: React.FC<FormProps> = ({
             label="Opacity"
             rules={[{ required: true }]}
           >
-            <InputNumber />
+            <InputNumber defaultValue={1} />
           </Form.Item>
         </Col>
         <Col lg={3} xs={24}>
@@ -121,9 +121,8 @@ const TagForm: React.FC<FormProps> = ({
             fieldKey={"x"}
             label="Position X"
             rules={[{ required: true }]}
-            initialValue="0"
           >
-            <InputNumber />
+            <InputNumber defaultValue={0} />
           </Form.Item>
         </Col>
         <Col lg={3} xs={24}>
@@ -132,9 +131,8 @@ const TagForm: React.FC<FormProps> = ({
             fieldKey={"y"}
             label="Position Y"
             rules={[{ required: true }]}
-            initialValue="0"
           >
-            <InputNumber />
+            <InputNumber defaultValue={0} />
           </Form.Item>
         </Col>
         <Col lg={3} xs={24}>
@@ -143,9 +141,8 @@ const TagForm: React.FC<FormProps> = ({
             fieldKey={"z"}
             label="Z Index"
             rules={[{ required: true }]}
-            initialValue="1"
           >
-            <InputNumber />
+            <InputNumber defaultValue={1} />
           </Form.Item>
         </Col>
       </Row>
