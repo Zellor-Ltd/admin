@@ -289,6 +289,8 @@ const PreviewList: React.FC<RouteComponentProps> = ({location}) => {
     setProducts(results);
   };
 
+  useEffect(() => form.resetFields(), [currentProduct]);
+
   const deleteItem = async (_id: string) => {
     await doRequest(() => deleteStagingProduct(_id));
     for (let i = 0; i < content.length; i++) {
@@ -540,7 +542,7 @@ const PreviewList: React.FC<RouteComponentProps> = ({location}) => {
                   <SelectBrand
                     style={{width: "100%"}}
                     allowClear={true}
-                    onChange={onChangeBrand}
+                    onChange={() => onChangeBrand}
                     initialBrandName={brandFilter?.brandName}
                   ></SelectBrand>
                 </Col>
