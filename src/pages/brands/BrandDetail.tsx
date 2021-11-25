@@ -370,6 +370,26 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
                   <ColorPicker />
                 </Form.Item>
               </Col>
+              <Col lg={12} xs={24}>
+                <Col lg={16} xs={24}>
+                  <Form.Item
+                    name={"imgSize"}
+                    label="Master Brand Default Image Sizing"
+                  >
+                    <Select placeholder="Please select a size">
+                      <Select.Option key={"option1"} value={"option1"}>
+                        AxB
+                      </Select.Option>
+                      <Select.Option key={"option2"} value={"option2"}>
+                        CxD
+                      </Select.Option>
+                      <Select.Option key={"option3"} value={"option3"}>
+                        ExF
+                      </Select.Option>
+                    </Select>
+                  </Form.Item>
+                </Col>
+              </Col>
             </Row>
           </Tabs.TabPane>
 
