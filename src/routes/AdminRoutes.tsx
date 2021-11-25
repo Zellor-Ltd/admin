@@ -50,6 +50,8 @@ import PushGroupTag from "pages/push-group-tag/PushGroupTag";
 import PushGroupTagStep2 from "pages/push-group-tag/Step2";
 import ProductBrands from "pages/product-brands/ProductBrands";
 import ProductBrandDetail from "pages/product-brands/ProductBrandDetail";
+import HomeScreen from "pages/home-screen/HomeScreen";
+import HomeScreenDetail from "pages/home-screen/HomeScreenDetail";
 
 function AdminRoutes() {
   return (
@@ -239,6 +241,16 @@ function AdminRoutes() {
       <AppRoute
         path="/marketing_promo-displays"
         component={PromoDisplay}
+        layout={AuthenticatedLayout}
+      />
+      <AppRoute
+        path="/marketing_home-screen/home-screen"
+        component={HomeScreenDetail}
+        layout={AuthenticatedLayout}
+      />
+      <AppRoute
+        path="/marketing_home-screen"
+        component={HomeScreen}
         layout={AuthenticatedLayout}
       />
       <AppRoute

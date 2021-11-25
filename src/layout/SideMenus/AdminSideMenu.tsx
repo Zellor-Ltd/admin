@@ -4,11 +4,11 @@ import {
   ControlOutlined,
   DollarOutlined,
   FireOutlined,
-  FundOutlined,
   GiftOutlined,
   HeartFilled,
   OrderedListOutlined,
   SettingOutlined,
+  IdcardOutlined,
   // AppstoreAddOutlined,
   ShoppingCartOutlined,
   SoundOutlined,
@@ -67,6 +67,9 @@ const AdminSideMenu = () => {
         <Link to="/transactions">Transactions</Link>
       </Menu.Item>
       <SubMenu key="marketing" icon={<FireOutlined />} title="Marketing">
+        <Menu.Item key="marketing_home-screen" icon={<IdcardOutlined />}>
+          <Link to="/marketing_home-screen">Home Screen</Link>
+        </Menu.Item>
         <Menu.Item key="marketing_promotions" icon={<SoundOutlined />}>
           <Link to="/marketing_promotions">Promotions</Link>
         </Menu.Item>
