@@ -24,29 +24,29 @@ import {
   Tabs,
   Typography,
 } from "antd";
-import {Upload} from "components";
-import {RichTextEditor} from "components/RichTextEditor";
-import {formatMoment} from "helpers/formatMoment";
-import {categoriesSettings} from "helpers/utils";
-import {AllCategories} from "interfaces/Category";
-import {useCallback, useContext, useEffect, useState} from "react";
-import {useSelector} from "react-redux";
-import {RouteComponentProps, Link} from "react-router-dom";
+import { Upload } from "components";
+import { RichTextEditor } from "components/RichTextEditor";
+import { formatMoment } from "helpers/formatMoment";
+import { categoriesSettings } from "helpers/utils";
+import { AllCategories } from "interfaces/Category";
+import { useCallback, useContext, useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { RouteComponentProps, Link } from "react-router-dom";
 import {} from "services/DiscoClubService";
 import ProductCategoriesTrees from "./ProductCategoriesTrees";
 import "./Products.scss";
 import EditMultipleButton from "components/EditMultipleButton";
 import CopyIdToClipboard from "components/CopyIdToClipboard";
-import EditableTable, {EditableColumnType} from "components/EditableTable";
-import {SearchFilterDebounce} from "components/SearchFilterDebounce";
-import {SelectBrand} from "components/SelectBrand";
-import {SelectProductBrand} from "components/SelectProductBrand";
-import {SelectBrandSmartSearch} from "components/SelectBrandSmartSearch";
-import {AppContext} from "contexts/AppContext";
+import EditableTable, { EditableColumnType } from "components/EditableTable";
+import { SearchFilterDebounce } from "components/SearchFilterDebounce";
+import { SelectBrand } from "components/SelectBrand";
+import { SelectProductBrand } from "components/SelectProductBrand";
+import { SelectBrandSmartSearch } from "components/SelectBrandSmartSearch";
+import { AppContext } from "contexts/AppContext";
 import useAllCategories from "hooks/useAllCategories";
-import {useRequest} from "hooks/useRequest";
-import {Brand} from "interfaces/Brand";
-import {Product} from "interfaces/Product";
+import { useRequest } from "hooks/useRequest";
+import { Brand } from "interfaces/Brand";
+import { Product } from "interfaces/Product";
 import moment from "moment";
 import InfiniteScroll from "react-infinite-scroll-component";
 import {
@@ -59,35 +59,38 @@ import {
 import EditProductModal from "./EditProductModal";
 import ProductAPITestModal from "./ProductAPITestModal";
 import ProductExpandedRow from "./ProductExpandedRow";
-import {CheckboxChangeEvent} from "antd/lib/checkbox";
-import {ProductBrandFilter} from "components/ProductBrandFilter";
-import {ProductBrand} from "interfaces/ProductBrand";
+import { CheckboxChangeEvent } from "antd/lib/checkbox";
+import { ProductBrandFilter } from "components/ProductBrandFilter";
+import { ProductBrand } from "interfaces/ProductBrand";
 
-const {categoriesKeys, categoriesFields} = categoriesSettings;
+const { categoriesKeys, categoriesFields } = categoriesSettings;
 
-const Products: React.FC<RouteComponentProps> = ({location}) => {
+const Products: React.FC<RouteComponentProps> = ({ location }) => {
   const saveProductFn = saveProduct;
   const [brands, setBrands] = useState<Brand[]>([]);
   const [ageRange, setageRange] = useState<[number, number]>([12, 100]);
   const [form] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
   const [maxDiscountAlert, setMaxDiscountAlert] = useState<boolean>(false);
-  const {fetchAllCategories, allCategories} = useAllCategories({
+  const { fetchAllCategories, allCategories } = useAllCategories({
     setLoading,
   });
 
-  const {usePageFilter} = useContext(AppContext);
+  const { usePageFilter } = useContext(AppContext);
 
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
   const [productAPITest, setProductAPITest] = useState<Product | null>(null);
 
-  const {doFetch, doRequest} = useRequest({setLoading});
-  const {doRequest: saveCategories, loading: loadingCategories} = useRequest();
+  const { doFetch, doRequest } = useRequest({ setLoading });
+  const { doRequest: saveCategories, loading: loadingCategories } =
+    useRequest();
 
   const [searchFilter, setSearchFilter] = usePageFilter<string>("search");
   const [brandFilter, setBrandFilter] = useState<Brand | undefined>();
-  const [productBrandFilter, setProductBrandFilter] = useState<ProductBrand | undefined>();
+  const [productBrandFilter, setProductBrandFilter] = useState<
+    ProductBrand | undefined
+  >();
   const [outOfStockFilter, setOutOfStockFilter] = useState<boolean>(false);
   const [dateFilter, setDateFilter] = useState<Date>();
 
@@ -106,7 +109,7 @@ const Products: React.FC<RouteComponentProps> = ({location}) => {
   const [content, setContent] = useState<any[]>([]);
 
   const {
-    settings: {currency = []},
+    settings: { currency = [] },
   } = useSelector((state: any) => state.settings);
 
   const handleScroll = () => {
@@ -247,10 +250,11 @@ const Products: React.FC<RouteComponentProps> = ({location}) => {
         product.categories.forEach((productCategory: any) => {
           productCategory[field] = allCategories[
             categoriesKeys[index] as keyof AllCategories
-            ].find((category) => category.id === productCategory[field]?.id);
+          ].find((category) => category.id === productCategory[field]?.id);
         });
       });
 
+      refreshItem(product);
       await saveProductFn(product);
 
       setLoading(false);
@@ -291,7 +295,7 @@ const Products: React.FC<RouteComponentProps> = ({location}) => {
   };
 
   const getResources = async (triggerByButton) => {
-    const [{results}] = await Promise.all([
+    const [{ results }] = await Promise.all([
       _fetchProducts(triggerByButton),
       fetchAllCategories(),
     ]);
@@ -308,13 +312,13 @@ const Products: React.FC<RouteComponentProps> = ({location}) => {
 
   const fetchData = async () => {
     if (!products.length) return;
-    const {results} = await _fetchProducts(false);
+    const { results } = await _fetchProducts(false);
     setProducts((prev) => [...prev.concat(results)]);
   };
 
   useEffect(() => {
     const getProducts = async () => {
-      const {results} = await _fetchProducts(true);
+      const { results } = await _fetchProducts(true);
       setProducts(results);
       setRefreshing(false);
     };
@@ -334,6 +338,15 @@ const Products: React.FC<RouteComponentProps> = ({location}) => {
           ...prev.slice(0, index),
           ...prev.slice(index + 1),
         ]);
+      }
+    }
+  };
+
+  const refreshItem = async (record: Product) => {
+    for (let i = 0; i < content.length; i++) {
+      if (content[i].id === record.id) {
+        content[i] = record;
+        setProducts(content);
       }
     }
   };
@@ -373,7 +386,7 @@ const Products: React.FC<RouteComponentProps> = ({location}) => {
       title: "Id",
       dataIndex: "id",
       width: "6%",
-      render: (id) => <CopyIdToClipboard id={id}/>,
+      render: (id) => <CopyIdToClipboard id={id} />,
       align: "center",
     },
     {
@@ -386,26 +399,26 @@ const Products: React.FC<RouteComponentProps> = ({location}) => {
         <>
           <Link
             onClick={() => editProduct(record, index)}
-            to={{pathname: window.location.pathname, state: record}}
+            to={{ pathname: window.location.pathname, state: record }}
           >
             {value}
           </Link>
-          <span style={{fontSize: "12px"}}>
-            <br/>
+          <span style={{ fontSize: "12px" }}>
+            <br />
             {record.categories
               ? [
-                record.categories[0].superCategory?.superCategory +
-                " / " +
-                record.categories[0].category?.category +
-                (record.categories[0].subCategory
-                  ? " / " + record.categories[0].subCategory?.subCategory
-                  : ""),
-                record.categories[0].subSubCategory
-                  ? " / " +
-                  record.categories[0].subSubCategory?.subSubCategory
-                  : "",
-                record.categories[1] ? " (...)" : "",
-              ]
+                  record.categories[0].superCategory?.superCategory +
+                    " / " +
+                    record.categories[0].category?.category +
+                    (record.categories[0].subCategory
+                      ? " / " + record.categories[0].subCategory?.subCategory
+                      : ""),
+                  record.categories[0].subSubCategory
+                    ? " / " +
+                      record.categories[0].subSubCategory?.subSubCategory
+                    : "",
+                  record.categories[1] ? " (...)" : "",
+                ]
               : ""}
           </span>
         </>
@@ -517,10 +530,10 @@ const Products: React.FC<RouteComponentProps> = ({location}) => {
       render: (_: any, record, index) => (
         <>
           <Link
-            to={{pathname: window.location.pathname, state: record}}
+            to={{ pathname: window.location.pathname, state: record }}
             onClick={() => editProduct(record, index)}
           >
-            <EditOutlined/>
+            <EditOutlined />
           </Link>
           {record.brand?.automated !== true && (
             <Popconfirm
@@ -531,18 +544,18 @@ const Products: React.FC<RouteComponentProps> = ({location}) => {
             >
               <Button
                 type="link"
-                style={{padding: 0, margin: "6px 0 6px 6px"}}
+                style={{ padding: 0, margin: "6px 0 6px 6px" }}
               >
-                <DeleteOutlined/>
+                <DeleteOutlined />
               </Button>
             </Popconfirm>
           )}
           <Button
             onClick={() => setProductAPITest(record)}
             type="link"
-            style={{padding: 0, margin: "6px 0 6px 6px"}}
+            style={{ padding: 0, margin: "6px 0 6px 6px" }}
           >
-            <SettingOutlined/>
+            <SettingOutlined />
           </Button>
         </>
       ),
@@ -593,7 +606,7 @@ const Products: React.FC<RouteComponentProps> = ({location}) => {
                 </Col>
                 <Col lg={6} xs={16}>
                   <SelectBrand
-                    style={{width: "100%"}}
+                    style={{ width: "100%" }}
                     allowClear={true}
                     onChange={onChangeBrand}
                     initialBrandName={brandFilter?.brandName}
@@ -601,7 +614,7 @@ const Products: React.FC<RouteComponentProps> = ({location}) => {
                 </Col>
                 <Col lg={6} xs={16}>
                   <ProductBrandFilter
-                    style={{width: "100%"}}
+                    style={{ width: "100%" }}
                     allowClear={true}
                     onChange={onChangeProductBrand}
                     initialProductBrandName={productBrandFilter?.brandName}
@@ -618,7 +631,7 @@ const Products: React.FC<RouteComponentProps> = ({location}) => {
                 <Col lg={6} xs={24}>
                   <Checkbox
                     onChange={handleFilterOutOfStock}
-                    style={{margin: "42px 0 16px 8px"}}
+                    style={{ margin: "42px 0 16px 8px" }}
                   >
                     Out of Stock only
                   </Checkbox>
@@ -637,7 +650,7 @@ const Products: React.FC<RouteComponentProps> = ({location}) => {
                   }}
                 >
                   Search
-                  <SearchOutlined style={{color: "white"}}/>
+                  <SearchOutlined style={{ color: "white" }} />
                 </Button>
                 <div
                   style={{
@@ -668,7 +681,7 @@ const Products: React.FC<RouteComponentProps> = ({location}) => {
             loader={
               page !== 0 && (
                 <div className="scroll-message">
-                  <Spin/>
+                  <Spin />
                 </div>
               )
             }
@@ -707,13 +720,13 @@ const Products: React.FC<RouteComponentProps> = ({location}) => {
       )}
       {isViewing && (
         <div className="products-details">
-          <PageHeader title="Product" subTitle="Form"/>
+          <PageHeader title="Product" subTitle="Form" />
           <Form
             form={form}
             name="productForm"
             initialValues={currentProduct}
             onFinish={onFinish}
-            onFinishFailed={({errorFields}) => {
+            onFinishFailed={({ errorFields }) => {
               errorFields.forEach((errorField) => {
                 message.error(errorField.errors[0]);
               });
@@ -739,17 +752,17 @@ const Products: React.FC<RouteComponentProps> = ({location}) => {
                           label="Out of stock"
                           valuePropName="checked"
                         >
-                          <Switch/>
+                          <Switch />
                         </Form.Item>
                       </Col>
                       <Col lg={24} xs={24}>
                         <Form.Item name="name" label="Short description">
-                          <Input/>
+                          <Input />
                         </Form.Item>
                       </Col>
                       <Col lg={24} xs={24}>
                         <Form.Item label="Long description">
-                          <RichTextEditor formField="description" form={form}/>
+                          <RichTextEditor formField="description" form={form} />
                         </Form.Item>
                       </Col>
                     </Row>
@@ -760,7 +773,7 @@ const Products: React.FC<RouteComponentProps> = ({location}) => {
                         <Form.Item
                           name={["brand", "id"]}
                           label="Master Brand"
-                          rules={[{required: true}]}
+                          rules={[{ required: true }]}
                         >
                           <SelectBrandSmartSearch
                             onChange={() => setDiscoPercentageByBrand(false)}
@@ -776,7 +789,7 @@ const Products: React.FC<RouteComponentProps> = ({location}) => {
                         <Form.Item
                           name="productBrand"
                           label="Product Brand"
-                          rules={[{required: true}]}
+                          rules={[{ required: true }]}
                         >
                           <SelectProductBrand
                             allowClear={true}
@@ -793,7 +806,7 @@ const Products: React.FC<RouteComponentProps> = ({location}) => {
                           label="Go Live Date"
                           getValueProps={formatMoment}
                         >
-                          <DatePicker format="DD/MM/YYYY"/>
+                          <DatePicker format="DD/MM/YYYY" />
                         </Form.Item>
                       </Col>
                       <Col lg={12} xs={24}>
@@ -802,7 +815,7 @@ const Products: React.FC<RouteComponentProps> = ({location}) => {
                           label="Expiration Date"
                           getValueProps={formatMoment}
                         >
-                          <DatePicker format="DD/MM/YYYY"/>
+                          <DatePicker format="DD/MM/YYYY" />
                         </Form.Item>
                       </Col>
                     </Row>
@@ -822,7 +835,7 @@ const Products: React.FC<RouteComponentProps> = ({location}) => {
                       prevValues.category !== curValues.category
                     }
                   >
-                    {({getFieldValue}) => (
+                    {({ getFieldValue }) => (
                       <Form.Item name={"searchTags"} label="Search Tags">
                         <Select mode="tags" className="product-search-tags">
                           {getFieldValue("searchTags")?.map(
@@ -845,7 +858,7 @@ const Products: React.FC<RouteComponentProps> = ({location}) => {
                     <Form.Item label="Age Range">
                       <Slider
                         range
-                        marks={{12: "12", 100: "100"}}
+                        marks={{ 12: "12", 100: "100" }}
                         min={12}
                         max={100}
                         value={ageRange}
@@ -859,7 +872,7 @@ const Products: React.FC<RouteComponentProps> = ({location}) => {
                     <Form.Item
                       name="gender"
                       label="Gender"
-                      rules={[{required: true}]}
+                      rules={[{ required: true }]}
                     >
                       <Select mode="multiple">
                         <Select.Option value="Female">Female</Select.Option>
@@ -890,9 +903,9 @@ const Products: React.FC<RouteComponentProps> = ({location}) => {
                     <Form.Item
                       name="originalPrice"
                       label="Default Price"
-                      rules={[{required: true}]}
+                      rules={[{ required: true }]}
                     >
-                      <InputNumber/>
+                      <InputNumber />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -914,7 +927,7 @@ const Products: React.FC<RouteComponentProps> = ({location}) => {
                       label="Price US"
                       rules={[{}]}
                     >
-                      <InputNumber/>
+                      <InputNumber />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -936,7 +949,7 @@ const Products: React.FC<RouteComponentProps> = ({location}) => {
                       label="Price UK"
                       rules={[{}]}
                     >
-                      <InputNumber/>
+                      <InputNumber />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -958,7 +971,7 @@ const Products: React.FC<RouteComponentProps> = ({location}) => {
                       label="Price Europe"
                       rules={[{}]}
                     >
-                      <InputNumber/>
+                      <InputNumber />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -969,7 +982,7 @@ const Products: React.FC<RouteComponentProps> = ({location}) => {
                       label="Allow Use of DD?"
                       valuePropName="checked"
                     >
-                      <Switch/>
+                      <Switch />
                     </Form.Item>
                   </Col>
                   <Col lg={4} xs={8}>
@@ -982,7 +995,7 @@ const Products: React.FC<RouteComponentProps> = ({location}) => {
                           required: true,
                           message: "Max Discount is required.",
                         },
-                        ({getFieldValue}) => ({
+                        ({ getFieldValue }) => ({
                           validator(_, maxDiscount) {
                             // 3x the price
                             const maxPossibleDiscount = Math.trunc(
@@ -1023,7 +1036,7 @@ const Products: React.FC<RouteComponentProps> = ({location}) => {
                       name="discoPercentage"
                       label="Disco Percentage %"
                     >
-                      <InputNumber/>
+                      <InputNumber />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -1034,24 +1047,24 @@ const Products: React.FC<RouteComponentProps> = ({location}) => {
                       label="Shopify Uid"
                       rules={[{}]}
                     >
-                      <InputNumber/>
+                      <InputNumber />
                     </Form.Item>
                   </Col>
                   <Col lg={4} xs={8}>
                     <Form.Item name="magentoId" label="Magento Id">
-                      <InputNumber/>
+                      <InputNumber />
                     </Form.Item>
                   </Col>
                   <Col lg={4} xs={8}>
                     <Form.Item name="sku" label="SKU">
-                      <InputNumber/>
+                      <InputNumber />
                     </Form.Item>
                   </Col>
                 </Row>
                 <Row>
                   <Col lg={4} xs={8}>
                     <Form.Item name="weight" label="Weight">
-                      <Input type="number" placeholder="Weight in Kg"/>
+                      <Input type="number" placeholder="Weight in Kg" />
                     </Form.Item>
                   </Col>
                 </Row>

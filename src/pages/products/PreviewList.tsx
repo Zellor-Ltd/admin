@@ -25,18 +25,18 @@ import {
   Typography,
   Space,
 } from "antd";
-import {CheckboxChangeEvent} from "antd/lib/checkbox";
-import EditableTable, {EditableColumnType} from "components/EditableTable";
+import { CheckboxChangeEvent } from "antd/lib/checkbox";
+import EditableTable, { EditableColumnType } from "components/EditableTable";
 import EditMultipleButton from "components/EditMultipleButton";
-import {SelectBrand} from "components/SelectBrand";
+import { SelectBrand } from "components/SelectBrand";
 import useAllCategories from "hooks/useAllCategories";
 import InfiniteScroll from "react-infinite-scroll-component";
-import {useRequest} from "hooks/useRequest";
-import {Brand} from "interfaces/Brand";
-import {Product} from "interfaces/Product";
+import { useRequest } from "hooks/useRequest";
+import { Brand } from "interfaces/Brand";
+import { Product } from "interfaces/Product";
 import moment from "moment";
-import {useCallback, useContext, useEffect, useState} from "react";
-import {Link, RouteComponentProps} from "react-router-dom";
+import { useCallback, useContext, useEffect, useState } from "react";
+import { Link, RouteComponentProps } from "react-router-dom";
 import {
   deleteStagingProduct,
   fetchProducts,
@@ -50,31 +50,31 @@ import ProductExpandedRow from "./ProductExpandedRow";
 import CopyIdToClipboard from "components/CopyIdToClipboard";
 import ProductCategoriesTrees from "./ProductCategoriesTrees";
 import "./Products.scss";
-import {Upload} from "components";
-import {RichTextEditor} from "components/RichTextEditor";
-import {formatMoment} from "helpers/formatMoment";
-import {categoriesSettings} from "helpers/utils";
-import {AllCategories} from "interfaces/Category";
-import {useSelector} from "react-redux";
-import {SearchFilterDebounce} from "components/SearchFilterDebounce";
-import {AppContext} from "contexts/AppContext";
-import {SelectProductBrand} from "components/SelectProductBrand";
-import {SelectBrandSmartSearch} from "components/SelectBrandSmartSearch";
-import {ImagesDnDContainer} from "../../components/image-dnd/ImagesDnDContainer";
+import { Upload } from "components";
+import { RichTextEditor } from "components/RichTextEditor";
+import { formatMoment } from "helpers/formatMoment";
+import { categoriesSettings } from "helpers/utils";
+import { AllCategories } from "interfaces/Category";
+import { useSelector } from "react-redux";
+import { SearchFilterDebounce } from "components/SearchFilterDebounce";
+import { AppContext } from "contexts/AppContext";
+import { SelectProductBrand } from "components/SelectProductBrand";
+import { SelectBrandSmartSearch } from "components/SelectBrandSmartSearch";
+import { ImagesDnDContainer } from "../../components/image-dnd/ImagesDnDContainer";
 import update from "immutability-helper";
-import {ProductBrandFilter} from "components/ProductBrandFilter";
-import {ProductBrand} from "interfaces/ProductBrand";
+import { ProductBrandFilter } from "components/ProductBrandFilter";
+import { ProductBrand } from "interfaces/ProductBrand";
 
-const {categoriesKeys, categoriesFields} = categoriesSettings;
+const { categoriesKeys, categoriesFields } = categoriesSettings;
 
-const PreviewList: React.FC<RouteComponentProps> = ({location}) => {
+const PreviewList: React.FC<RouteComponentProps> = ({ location }) => {
   const saveProductFn = saveStagingProduct;
   const [brands, setBrands] = useState<Brand[]>([]);
   const [ageRange, setageRange] = useState<[number, number]>([12, 100]);
   const [form] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
   const [maxDiscountAlert, setMaxDiscountAlert] = useState<boolean>(false);
-  const {fetchAllCategories, allCategories} = useAllCategories({
+  const { fetchAllCategories, allCategories } = useAllCategories({
     setLoading,
   });
 
@@ -85,10 +85,12 @@ const PreviewList: React.FC<RouteComponentProps> = ({location}) => {
   const [currentProduct, setCurrentProduct] = useState<Product>();
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
 
-  const {usePageFilter} = useContext(AppContext);
+  const { usePageFilter } = useContext(AppContext);
   const [searchFilter, setSearchFilter] = usePageFilter<string>("search");
   const [brandFilter, setBrandFilter] = useState<Brand | undefined>();
-  const [productBrandFilter, setProductBrandFilter] = useState<ProductBrand | undefined>();
+  const [productBrandFilter, setProductBrandFilter] = useState<
+    ProductBrand | undefined
+  >();
   const [outOfStockFilter, setOutOfStockFilter] = useState<boolean>(false);
   const [dateFilter, setDateFilter] = useState<Date>();
   const [unclassifiedFilter, setUnclassifiedFilter] = useState<boolean>(false);
@@ -101,12 +103,12 @@ const PreviewList: React.FC<RouteComponentProps> = ({location}) => {
   const [currentProductBrand, setCurrentProductBrand] = useState<string>("");
   const [isOrderingImages, setIsOrderingImages] = useState(false);
 
-  const {doFetch, doRequest} = useRequest({setLoading});
-  const {doRequest: saveCategories, loading: loadingCategories} =
+  const { doFetch, doRequest } = useRequest({ setLoading });
+  const { doRequest: saveCategories, loading: loadingCategories } =
     useRequest();
 
   const {
-    settings: {currency = []},
+    settings: { currency = [] },
   } = useSelector((state: any) => state.settings);
 
   const setSearchTagsByCategory = useCallback(
@@ -234,10 +236,11 @@ const PreviewList: React.FC<RouteComponentProps> = ({location}) => {
         product.categories.forEach((productCategory: any) => {
           productCategory[field] = allCategories[
             categoriesKeys[index] as keyof AllCategories
-            ].find((category) => category.id === productCategory[field]?.id);
+          ].find((category) => category.id === productCategory[field]?.id);
         });
       });
 
+      refreshItem(product);
       await saveProductFn(product);
 
       await getResources(false);
@@ -279,7 +282,7 @@ const PreviewList: React.FC<RouteComponentProps> = ({location}) => {
 
   const getResources = async (searchButton) => {
     setLoading(true);
-    const [{results}] = await Promise.all([
+    const [{ results }] = await Promise.all([
       _fetchStagingProducts(searchButton),
       fetchAllCategories(),
     ]);
@@ -290,7 +293,7 @@ const PreviewList: React.FC<RouteComponentProps> = ({location}) => {
   };
 
   const getProducts = async (searchButton) => {
-    const {results} = await doFetch(() =>
+    const { results } = await doFetch(() =>
       _fetchStagingProducts(searchButton)
     );
     setProducts(results);
@@ -311,9 +314,18 @@ const PreviewList: React.FC<RouteComponentProps> = ({location}) => {
     }
   };
 
+  const refreshItem = async (record: Product) => {
+    for (let i = 0; i < content.length; i++) {
+      if (content[i].id === record.id) {
+        content[i] = record;
+        setProducts(content);
+      }
+    }
+  };
+
   const fetchData = async (searchButton) => {
     if (!products.length) return;
-    const {results} = await _fetchStagingProducts(searchButton);
+    const { results } = await _fetchStagingProducts(searchButton);
     setProducts((prev) => [...prev.concat(results)]);
   };
 
@@ -357,7 +369,7 @@ const PreviewList: React.FC<RouteComponentProps> = ({location}) => {
       title: "Id",
       dataIndex: "id",
       width: "6%",
-      render: (id) => <CopyIdToClipboard id={id}/>,
+      render: (id) => <CopyIdToClipboard id={id} />,
       align: "center",
     },
     {
@@ -367,7 +379,7 @@ const PreviewList: React.FC<RouteComponentProps> = ({location}) => {
       render: (value: string, record: Product, index: number) => (
         <Link
           onClick={() => editProduct(record, index)}
-          to={{pathname: window.location.pathname, state: record}}
+          to={{ pathname: window.location.pathname, state: record }}
         >
           {value}
         </Link>
@@ -462,9 +474,9 @@ const PreviewList: React.FC<RouteComponentProps> = ({location}) => {
         <>
           <Link
             onClick={() => editProduct(record, index)}
-            to={{pathname: window.location.pathname, state: record}}
+            to={{ pathname: window.location.pathname, state: record }}
           >
-            <EditOutlined/>
+            <EditOutlined />
           </Link>
           <Popconfirm
             title="Are you sure？"
@@ -474,18 +486,18 @@ const PreviewList: React.FC<RouteComponentProps> = ({location}) => {
           >
             <Button
               type="link"
-              style={{padding: 0, marginLeft: 8}}
+              style={{ padding: 0, marginLeft: 8 }}
               disabled={record.lastGoLiveDate != null}
             >
-              <DeleteOutlined/>
+              <DeleteOutlined />
             </Button>
           </Popconfirm>
           <Button
             onClick={() => handleStage(record.id)}
             type="link"
-            style={{color: "green", padding: 0, margin: 6}}
+            style={{ color: "green", padding: 0, margin: 6 }}
           >
-            <ArrowRightOutlined/>
+            <ArrowRightOutlined />
           </Button>
         </>
       ),
@@ -514,6 +526,8 @@ const PreviewList: React.FC<RouteComponentProps> = ({location}) => {
     setCurrentMasterBrand(record.brand.brandName);
     if (record.productBrand) {
       setCurrentProductBrand(record.productBrand);
+    } else {
+      setCurrentProductBrand("");
     }
     setIsEditing(true);
   };
@@ -536,7 +550,7 @@ const PreviewList: React.FC<RouteComponentProps> = ({location}) => {
         ],
       });
 
-      setCurrentProduct({...currentProduct});
+      setCurrentProduct({ ...currentProduct });
     }
   };
 
@@ -560,7 +574,7 @@ const PreviewList: React.FC<RouteComponentProps> = ({location}) => {
                 </Col>
                 <Col lg={6} xs={16}>
                   <SelectBrand
-                    style={{width: "100%"}}
+                    style={{ width: "100%" }}
                     allowClear={true}
                     onChange={onChangeBrand}
                     initialBrandName={brandFilter?.brandName}
@@ -568,7 +582,7 @@ const PreviewList: React.FC<RouteComponentProps> = ({location}) => {
                 </Col>
                 <Col lg={6} xs={16}>
                   <ProductBrandFilter
-                    style={{width: "100%"}}
+                    style={{ width: "100%" }}
                     allowClear={true}
                     onChange={onChangeProductBrand}
                     initialProductBrandName={productBrandFilter?.brandName}
@@ -585,7 +599,7 @@ const PreviewList: React.FC<RouteComponentProps> = ({location}) => {
                 <Col lg={6} xs={24}>
                   <Checkbox
                     onChange={handleFilterOutOfStock}
-                    style={{margin: "42px 0 16px 8px"}}
+                    style={{ margin: "42px 0 16px 8px" }}
                   >
                     Out of Stock only
                   </Checkbox>
@@ -593,7 +607,7 @@ const PreviewList: React.FC<RouteComponentProps> = ({location}) => {
                 <Col lg={6} xs={24}>
                   <Checkbox
                     onChange={handleFilterClassified}
-                    style={{margin: "42px 0 16px 8px"}}
+                    style={{ margin: "42px 0 16px 8px" }}
                   >
                     Unclassified only
                   </Checkbox>
@@ -612,7 +626,7 @@ const PreviewList: React.FC<RouteComponentProps> = ({location}) => {
                   }}
                 >
                   Search
-                  <SearchOutlined style={{color: "white"}}/>
+                  <SearchOutlined style={{ color: "white" }} />
                 </Button>
                 <div
                   style={{
@@ -639,7 +653,7 @@ const PreviewList: React.FC<RouteComponentProps> = ({location}) => {
             loader={
               page !== 0 && (
                 <div className="scroll-message">
-                  <Spin/>
+                  <Spin />
                 </div>
               )
             }
@@ -678,13 +692,13 @@ const PreviewList: React.FC<RouteComponentProps> = ({location}) => {
       )}
       {isEditing && (
         <div className="products-details">
-          <PageHeader title="Product" subTitle="Form"/>
+          <PageHeader title="Product" subTitle="Form" />
           <Form
             form={form}
             name="productForm"
             initialValues={currentProduct}
             onFinish={onFinish}
-            onFinishFailed={({errorFields}) => {
+            onFinishFailed={({ errorFields }) => {
               errorFields.forEach((errorField) => {
                 message.error(errorField.errors[0]);
               });
@@ -710,17 +724,17 @@ const PreviewList: React.FC<RouteComponentProps> = ({location}) => {
                           label="Out of stock"
                           valuePropName="checked"
                         >
-                          <Switch/>
+                          <Switch />
                         </Form.Item>
                       </Col>
                       <Col lg={24} xs={24}>
                         <Form.Item name="name" label="Short description">
-                          <Input/>
+                          <Input />
                         </Form.Item>
                       </Col>
                       <Col lg={24} xs={24}>
                         <Form.Item label="Long description">
-                          <RichTextEditor formField="description" form={form}/>
+                          <RichTextEditor formField="description" form={form} />
                         </Form.Item>
                       </Col>
                     </Row>
@@ -731,7 +745,7 @@ const PreviewList: React.FC<RouteComponentProps> = ({location}) => {
                         <Form.Item
                           name={["brand", "id"]}
                           label="Master Brand"
-                          rules={[{required: true}]}
+                          rules={[{ required: true }]}
                         >
                           <SelectBrandSmartSearch
                             onChange={() => setDiscoPercentageByBrand(false)}
@@ -747,7 +761,7 @@ const PreviewList: React.FC<RouteComponentProps> = ({location}) => {
                         <Form.Item
                           name="productBrand"
                           label="Product Brand"
-                          rules={[{required: true}]}
+                          rules={[{ required: true }]}
                         >
                           <SelectProductBrand
                             allowClear={true}
@@ -764,7 +778,7 @@ const PreviewList: React.FC<RouteComponentProps> = ({location}) => {
                           label="Go Live Date"
                           getValueProps={formatMoment}
                         >
-                          <DatePicker format="DD/MM/YYYY"/>
+                          <DatePicker format="DD/MM/YYYY" />
                         </Form.Item>
                       </Col>
                       <Col lg={12} xs={24}>
@@ -773,7 +787,7 @@ const PreviewList: React.FC<RouteComponentProps> = ({location}) => {
                           label="Expiration Date"
                           getValueProps={formatMoment}
                         >
-                          <DatePicker format="DD/MM/YYYY"/>
+                          <DatePicker format="DD/MM/YYYY" />
                         </Form.Item>
                       </Col>
                     </Row>
@@ -793,7 +807,7 @@ const PreviewList: React.FC<RouteComponentProps> = ({location}) => {
                       prevValues.category !== curValues.category
                     }
                   >
-                    {({getFieldValue}) => (
+                    {({ getFieldValue }) => (
                       <Form.Item name={"searchTags"} label="Search Tags">
                         <Select mode="tags" className="product-search-tags">
                           {getFieldValue("searchTags")?.map(
@@ -816,7 +830,7 @@ const PreviewList: React.FC<RouteComponentProps> = ({location}) => {
                     <Form.Item label="Age Range">
                       <Slider
                         range
-                        marks={{12: "12", 100: "100"}}
+                        marks={{ 12: "12", 100: "100" }}
                         min={12}
                         max={100}
                         value={ageRange}
@@ -830,7 +844,7 @@ const PreviewList: React.FC<RouteComponentProps> = ({location}) => {
                     <Form.Item
                       name="gender"
                       label="Gender"
-                      rules={[{required: true}]}
+                      rules={[{ required: true }]}
                     >
                       <Select mode="multiple">
                         <Select.Option value="Female">Female</Select.Option>
@@ -861,9 +875,9 @@ const PreviewList: React.FC<RouteComponentProps> = ({location}) => {
                     <Form.Item
                       name="originalPrice"
                       label="Default Price"
-                      rules={[{required: true}]}
+                      rules={[{ required: true }]}
                     >
-                      <InputNumber/>
+                      <InputNumber />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -885,7 +899,7 @@ const PreviewList: React.FC<RouteComponentProps> = ({location}) => {
                       label="Price US"
                       rules={[{}]}
                     >
-                      <InputNumber/>
+                      <InputNumber />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -907,7 +921,7 @@ const PreviewList: React.FC<RouteComponentProps> = ({location}) => {
                       label="Price UK"
                       rules={[{}]}
                     >
-                      <InputNumber/>
+                      <InputNumber />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -929,7 +943,7 @@ const PreviewList: React.FC<RouteComponentProps> = ({location}) => {
                       label="Price Europe"
                       rules={[{}]}
                     >
-                      <InputNumber/>
+                      <InputNumber />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -940,7 +954,7 @@ const PreviewList: React.FC<RouteComponentProps> = ({location}) => {
                       label="Allow Use of DD?"
                       valuePropName="checked"
                     >
-                      <Switch/>
+                      <Switch />
                     </Form.Item>
                   </Col>
                   <Col lg={4} xs={8}>
@@ -953,7 +967,7 @@ const PreviewList: React.FC<RouteComponentProps> = ({location}) => {
                           required: true,
                           message: "Max Discount is required.",
                         },
-                        ({getFieldValue}) => ({
+                        ({ getFieldValue }) => ({
                           validator(_, maxDiscount) {
                             // 3x the price
                             const maxPossibleDiscount = Math.trunc(
@@ -994,7 +1008,7 @@ const PreviewList: React.FC<RouteComponentProps> = ({location}) => {
                       name="discoPercentage"
                       label="Disco Percentage %"
                     >
-                      <InputNumber/>
+                      <InputNumber />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -1005,24 +1019,24 @@ const PreviewList: React.FC<RouteComponentProps> = ({location}) => {
                       label="Shopify Uid"
                       rules={[{}]}
                     >
-                      <InputNumber/>
+                      <InputNumber />
                     </Form.Item>
                   </Col>
                   <Col lg={4} xs={8}>
                     <Form.Item name="magentoId" label="Magento Id">
-                      <InputNumber/>
+                      <InputNumber />
                     </Form.Item>
                   </Col>
                   <Col lg={4} xs={8}>
                     <Form.Item name="sku" label="SKU">
-                      <InputNumber/>
+                      <InputNumber />
                     </Form.Item>
                   </Col>
                 </Row>
                 <Row>
                   <Col lg={4} xs={8}>
                     <Form.Item name="weight" label="Weight">
-                      <Input type="number" placeholder="Weight in Kg"/>
+                      <Input type="number" placeholder="Weight in Kg" />
                     </Form.Item>
                   </Col>
                 </Row>
