@@ -34,6 +34,18 @@ const TagForm: React.FC<FormProps> = ({
       return prev;
     });
 
+    if (selectedTag) {
+      selectedTag.position = selectedTag.position?.map(position => {
+        return {
+          x: position.x ?? form.getFieldValue(["position", 0, "x"]),
+          y: position.y ?? form.getFieldValue(["position", 0, "y"]),
+          z: position.z ?? form.getFieldValue(["position", 0, "z"]),
+          opacity: position.opacity ?? form.getFieldValue(["position", 0, "opacity"]),
+          startTime: position.startTime ?? form.getFieldValue(["position", 0, "startTime"]),
+        }
+      })
+    }
+
     form.setFieldsValue({ ...selectedTag });
   };
 
@@ -101,8 +113,9 @@ const TagForm: React.FC<FormProps> = ({
             fieldKey={"opacity"}
             label="Opacity"
             rules={[{ required: true }]}
+            initialValue={1}
           >
-            <InputNumber defaultValue={1} />
+            <InputNumber />
           </Form.Item>
         </Col>
         <Col lg={3} xs={24}>
@@ -121,8 +134,9 @@ const TagForm: React.FC<FormProps> = ({
             fieldKey={"x"}
             label="Position X"
             rules={[{ required: true }]}
+            initialValue={0}
           >
-            <InputNumber defaultValue={0} />
+            <InputNumber />
           </Form.Item>
         </Col>
         <Col lg={3} xs={24}>
@@ -131,8 +145,9 @@ const TagForm: React.FC<FormProps> = ({
             fieldKey={"y"}
             label="Position Y"
             rules={[{ required: true }]}
+            initialValue={0}
           >
-            <InputNumber defaultValue={0} />
+            <InputNumber />
           </Form.Item>
         </Col>
         <Col lg={3} xs={24}>
@@ -141,8 +156,9 @@ const TagForm: React.FC<FormProps> = ({
             fieldKey={"z"}
             label="Z Index"
             rules={[{ required: true }]}
+            initialValue={1}
           >
-            <InputNumber defaultValue={1} />
+            <InputNumber />
           </Form.Item>
         </Col>
       </Row>
