@@ -6,6 +6,7 @@ import {
 } from "@ant-design/icons";
 import {
   Button,
+  Checkbox,
   Col,
   PageHeader,
   Popconfirm,
@@ -58,6 +59,9 @@ import {
 import EditProductModal from "./EditProductModal";
 import ProductAPITestModal from "./ProductAPITestModal";
 import ProductExpandedRow from "./ProductExpandedRow";
+import { CheckboxChangeEvent } from "antd/lib/checkbox";
+import { ProductBrandFilter } from "components/ProductBrandFilter";
+import { ProductBrand } from "interfaces/ProductBrand";
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 
@@ -86,6 +90,11 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
   const [brandFilter, setBrandFilter] = usePageFilter<Brand | undefined>(
     "brand"
   );
+  const [productBrandFilter, setProductBrandFilter] = usePageFilter<
+    ProductBrand | undefined
+  >("productBrand");
+  const [outOfStockFilter, setOutOfStockFilter] = useState<boolean>(false);
+  const [dateFilter, setDateFilter] = useState<Date>();
 
   const [currentMasterBrand, setCurrentMasterBrand] = useState<string>("");
   const [currentProductBrand, setCurrentProductBrand] = useState<string>("");
@@ -107,6 +116,14 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
 
   const handleScroll = () => {
     window.scroll(0, 300 * lastViewedIndex + 415);
+  };
+
+  const handleFilterOutOfStock = (e: CheckboxChangeEvent) => {
+    setOutOfStockFilter(e.target.checked);
+  };
+
+  const handleFilterDate = (date: Date) => {
+    setDateFilter(date);
   };
 
   useEffect(() => {
@@ -259,6 +276,9 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
         brandId: brandFilter?.id,
         query: searchFilter,
         unclassified: false,
+        productBrandName: productBrandFilter?.brandName,
+        date: dateFilter,
+        outOfStock: outOfStockFilter,
       })
     );
     if (searchButton) {
@@ -309,13 +329,6 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refreshing]);
-
-  useEffect(() => {
-    if (loaded) {
-      refreshProducts();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchFilter, brandFilter]);
 
   const deleteItem = async (_id: string) => {
     await doRequest(() => deleteProduct(_id));
@@ -545,6 +558,12 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
     setBrandFilter(_selectedBrand);
   };
 
+  const onChangeProductBrand = async (
+    _selectedBrand: ProductBrand | undefined
+  ) => {
+    setProductBrandFilter(_selectedBrand);
+  };
+
   const handleRowSelection = (preSelectedRows: any[]) => {
     const selectedRows: any[] = [];
     preSelectedRows.forEach((productId) => {
@@ -570,20 +589,44 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
           <Row align="bottom" justify="space-between">
             <Col lg={16} xs={24}>
               <Row gutter={8}>
-                <Col lg={8} xs={16}>
+                <Col lg={6} xs={16}>
                   <SearchFilterDebounce
                     initialValue={searchFilter}
                     filterFunction={setSearchFilter}
                     label="Search by Name"
                   />
                 </Col>
-                <Col lg={8} xs={16}>
+                <Col lg={6} xs={16}>
                   <SelectBrand
                     style={{ width: "100%" }}
                     allowClear={true}
                     onChange={onChangeBrand}
                     initialBrandName={brandFilter?.brandName}
                   ></SelectBrand>
+                </Col>
+                <Col lg={6} xs={16}>
+                  <ProductBrandFilter
+                    style={{ width: "100%" }}
+                    allowClear={true}
+                    onChange={onChangeProductBrand}
+                    initialProductBrandName={productBrandFilter?.brandName}
+                  ></ProductBrandFilter>
+                </Col>
+                <Col lg={6} xs={16}>
+                  <Typography.Title level={5}>Date added</Typography.Title>
+                  <DatePicker
+                    disabled={true}
+                    onChange={() => handleFilterDate}
+                    format="DD/MM/YYYY"
+                  />
+                </Col>
+                <Col lg={6} xs={24}>
+                  <Checkbox
+                    onChange={handleFilterOutOfStock}
+                    style={{ margin: "42px 0 16px 8px" }}
+                  >
+                    Out of Stock only
+                  </Checkbox>
                 </Col>
               </Row>
             </Col>

@@ -125,15 +125,24 @@ export const fetchProducts = ({
   unclassified,
   page = 0,
   limit = 0,
+  productBrandName,
+  date,
+  outOfStock,
 }: {
   brandId?: string;
   query?: string;
   unclassified?: boolean;
+  productBrandName?: string;
+  date?: Date;
+  outOfStock?: boolean;
 } & Pagination) =>
   instance.put(`Disco/Product/Adm/List/${page}/${limit}`, {
     brandId,
     query,
     unclassified,
+    productBrandName,
+    date,
+    outOfStock,
   });
 
 export const fetchAllProducts = () =>
@@ -162,15 +171,24 @@ export const fetchStagingProducts = ({
   unclassified,
   page = 0,
   limit = 0,
+  productBrandName,
+  date,
+  outOfStock,
 }: {
   brandId?: string;
   query?: string;
   unclassified?: boolean;
+  productBrandName?: string;
+  date?: Date;
+  outOfStock?: boolean;
 } & Pagination) =>
   instance.put(`Disco/Staging/Product/List/${page}/${limit}`, {
     brandId,
     query,
     unclassified,
+    productBrandName,
+    date,
+    outOfStock,
   });
 
 export const fetchBrands = () => instance.get("Wi/Ep/ListBrands");
