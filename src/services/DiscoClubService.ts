@@ -22,6 +22,7 @@ import { PromoDisplay } from "interfaces/PromoDisplay";
 import { Role } from "interfaces/Role";
 import { Tag } from "interfaces/Tag";
 import { User } from "interfaces/User";
+import { Banner } from "interfaces/Banner";
 
 export const instance = axios.create({
   baseURL: process.env.REACT_APP_HOST_ENDPOINT,
@@ -124,15 +125,24 @@ export const fetchProducts = ({
   unclassified,
   page = 0,
   limit = 0,
+  productBrandName,
+  date,
+  outOfStock,
 }: {
   brandId?: string;
   query?: string;
   unclassified?: boolean;
+  productBrandName?: string;
+  date?: Date;
+  outOfStock?: boolean;
 } & Pagination) =>
   instance.put(`Disco/Product/Adm/List/${page}/${limit}`, {
     brandId,
     query,
     unclassified,
+    productBrandName,
+    date,
+    outOfStock,
   });
 
 export const fetchAllProducts = () =>
@@ -161,15 +171,24 @@ export const fetchStagingProducts = ({
   unclassified,
   page = 0,
   limit = 0,
+  productBrandName,
+  date,
+  outOfStock,
 }: {
   brandId?: string;
   query?: string;
   unclassified?: boolean;
+  productBrandName?: string;
+  date?: Date;
+  outOfStock?: boolean;
 } & Pagination) =>
   instance.put(`Disco/Staging/Product/List/${page}/${limit}`, {
     brandId,
     query,
     unclassified,
+    productBrandName,
+    date,
+    outOfStock,
   });
 
 export const fetchBrands = () => instance.get("Wi/Ep/ListBrands");
@@ -307,9 +326,9 @@ export const saveProduct = (params: Product) => {
 
 export const saveProductBrand = (params: ProductBrand) => {
   if (params.id) {
-      return instance.put("Disco/ProductBrand/Adm/Update", params);
+    return instance.put("Disco/ProductBrand/Adm/Update", params);
   } else {
-      return instance.put("Disco/ProductBrand/Adm/Add", params);
+    return instance.put("Disco/ProductBrand/Adm/Add", params);
   }
 };
 
@@ -473,7 +492,7 @@ export const deleteProduct = (id: string) =>
   instance.delete(`Disco/Product/Remove/${id}`);
 
 export const deleteProductBrand = (id: string) =>
-    instance.delete(`Disco/ProductBrand/Adm/Delete/${id}`);
+  instance.delete(`Disco/ProductBrand/Adm/Delete/${id}`);
 
 export const deleteStagingProduct = (id: string) =>
   instance.delete(`Disco/Staging/Product/Remove/${id}`);
@@ -585,3 +604,18 @@ export const deletePreReg = (params: PreReg) =>
 
 export const fetchFanActivity = () =>
   instance.get(`Disco/Analytics/GetFanActivitives`);
+
+export const fetchBanners = () => {
+  instance.get(`Wi/Ep/GetFeedBanner`);
+};
+
+export const saveBanner = (params: Banner) => {
+  if (params.id) {
+    return instance.post("Wi/Ep/UpdateFeedBanner", params);
+  } else {
+    return instance.put("Wi/EP/AddFeedBanner", params);
+  }
+};
+
+export const deleteBanner = (params: Banner) =>
+  instance.put(`Wi/Ep/RemoveFeedBanner`, params);
