@@ -373,18 +373,18 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
               <Col lg={12} xs={24}>
                 <Col lg={16} xs={24}>
                   <Form.Item
-                    name={"imgSize"}
+                    name={"fitTo"}
                     label="Master Brand Default Image Sizing"
                   >
-                    <Select placeholder="Please select a size">
-                      <Select.Option key={"option1"} value={"option1"}>
-                        AxB
+                    <Select placeholder="Please select a sizing option">
+                      <Select.Option key={"w"} value={"w"} label={"Width"}>
+                        Width
                       </Select.Option>
-                      <Select.Option key={"option2"} value={"option2"}>
-                        CxD
+                      <Select.Option key={"h"} value={"h"} label={"Height"}>
+                        Height
                       </Select.Option>
-                      <Select.Option key={"option3"} value={"option3"}>
-                        ExF
+                      <Select.Option key={"null"} value={"null"} label={"null"}>
+                        Null
                       </Select.Option>
                     </Select>
                   </Form.Item>
