@@ -22,7 +22,8 @@ import {
   Slider,
   Switch,
   Tabs,
-  Typography, Space,
+  Typography,
+  Space,
 } from "antd";
 import {CheckboxChangeEvent} from "antd/lib/checkbox";
 import EditableTable, {EditableColumnType} from "components/EditableTable";
@@ -60,7 +61,9 @@ import {AppContext} from "contexts/AppContext";
 import {SelectProductBrand} from "components/SelectProductBrand";
 import {SelectBrandSmartSearch} from "components/SelectBrandSmartSearch";
 import {ImagesDnDContainer} from "../../components/image-dnd/ImagesDnDContainer";
-import update from 'immutability-helper'
+import update from "immutability-helper";
+import {ProductBrandFilter} from "components/ProductBrandFilter";
+import {ProductBrand} from "interfaces/ProductBrand";
 
 const {categoriesKeys, categoriesFields} = categoriesSettings;
 
@@ -84,9 +87,10 @@ const PreviewList: React.FC<RouteComponentProps> = ({location}) => {
 
   const {usePageFilter} = useContext(AppContext);
   const [searchFilter, setSearchFilter] = usePageFilter<string>("search");
-  const [brandFilter, setBrandFilter] = usePageFilter<Brand | undefined>(
-    "brand"
-  );
+  const [brandFilter, setBrandFilter] = useState<Brand | undefined>();
+  const [productBrandFilter, setProductBrandFilter] = useState<ProductBrand | undefined>();
+  const [outOfStockFilter, setOutOfStockFilter] = useState<boolean>(false);
+  const [dateFilter, setDateFilter] = useState<Date>();
   const [unclassifiedFilter, setUnclassifiedFilter] = useState<boolean>(false);
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
@@ -259,6 +263,9 @@ const PreviewList: React.FC<RouteComponentProps> = ({location}) => {
         brandId: brandFilter?.id,
         query: searchFilter,
         unclassified: unclassifiedFilter,
+        productBrandName: productBrandFilter?.brandName,
+        date: dateFilter,
+        outOfStock: outOfStockFilter,
       })
     );
     if (searchButton) {
@@ -335,6 +342,14 @@ const PreviewList: React.FC<RouteComponentProps> = ({location}) => {
 
   const handleScroll = () => {
     window.scroll(0, 300 * lastViewedIndex + 415);
+  };
+
+  const handleFilterOutOfStock = (e: CheckboxChangeEvent) => {
+    setOutOfStockFilter(e.target.checked);
+  };
+
+  const handleFilterDate = (date: Date) => {
+    setDateFilter(date);
   };
 
   const columns: EditableColumnType<Product>[] = [
@@ -481,13 +496,19 @@ const PreviewList: React.FC<RouteComponentProps> = ({location}) => {
     setBrandFilter(_selectedBrand);
   };
 
+  const onChangeProductBrand = async (
+    _selectedBrand: ProductBrand | undefined
+  ) => {
+    setProductBrandFilter(_selectedBrand);
+  };
+
   const handleEditProducts = async () => {
     await fetchProducts({});
     setSelectedRowKeys([]);
   };
 
   const editProduct = (record: Product, index) => {
-    console.log('current product - ', record);
+    console.log("current product - ", record);
     setCurrentProduct(record);
     setLastViewedIndex(index - 1);
     setCurrentMasterBrand(record.brand.brandName);
@@ -513,11 +534,10 @@ const PreviewList: React.FC<RouteComponentProps> = ({location}) => {
           [dragIndex, 1],
           [hoverIndex, 0, dragImage],
         ],
-      })
+      });
 
       setCurrentProduct({...currentProduct});
     }
-
   };
 
   return (
@@ -531,22 +551,46 @@ const PreviewList: React.FC<RouteComponentProps> = ({location}) => {
           <Row align="bottom" justify="space-between">
             <Col lg={16} xs={24}>
               <Row gutter={8}>
-                <Col lg={8} xs={24}>
+                <Col lg={6} xs={24}>
                   <SearchFilterDebounce
                     initialValue={searchFilter}
                     filterFunction={setSearchFilter}
                     label="Search by Name"
                   />
                 </Col>
-                <Col lg={8} xs={16}>
+                <Col lg={6} xs={16}>
                   <SelectBrand
                     style={{width: "100%"}}
                     allowClear={true}
-                    onChange={() => onChangeBrand}
+                    onChange={onChangeBrand}
                     initialBrandName={brandFilter?.brandName}
                   ></SelectBrand>
                 </Col>
-                <Col lg={8} xs={24}>
+                <Col lg={6} xs={16}>
+                  <ProductBrandFilter
+                    style={{width: "100%"}}
+                    allowClear={true}
+                    onChange={onChangeProductBrand}
+                    initialProductBrandName={productBrandFilter?.brandName}
+                  ></ProductBrandFilter>
+                </Col>
+                <Col lg={6} xs={16}>
+                  <Typography.Title level={5}>Date added</Typography.Title>
+                  <DatePicker
+                    disabled={true}
+                    onChange={() => handleFilterDate}
+                    format="DD/MM/YYYY"
+                  />
+                </Col>
+                <Col lg={6} xs={24}>
+                  <Checkbox
+                    onChange={handleFilterOutOfStock}
+                    style={{margin: "42px 0 16px 8px"}}
+                  >
+                    Out of Stock only
+                  </Checkbox>
+                </Col>
+                <Col lg={6} xs={24}>
                   <Checkbox
                     onChange={handleFilterClassified}
                     style={{margin: "42px 0 16px 8px"}}
@@ -1013,19 +1057,26 @@ const PreviewList: React.FC<RouteComponentProps> = ({location}) => {
                           form={form}
                         />
                       </Form.Item>
-                      <Button type="default" onClick={() => setIsOrderingImages(!isOrderingImages)}>
+                      <Button
+                        type="default"
+                        onClick={() => setIsOrderingImages(!isOrderingImages)}
+                      >
                         Toggle Image Ordering
                       </Button>
                     </Space>
                   </Col>
-                  {isOrderingImages ?
+                  {isOrderingImages ? (
                     <Col lg={24} xs={24}>
                       <Form.Item label="Image Order">
-                        <ImagesDnDContainer images={currentProduct?.image as any} onOrder={onOrderImages}/>
+                        <ImagesDnDContainer
+                          images={currentProduct?.image as any}
+                          onOrder={onOrderImages}
+                        />
                       </Form.Item>
-                    </Col> :
+                    </Col>
+                  ) : (
                     <></>
-                  }
+                  )}
                 </Row>
               </Tabs.TabPane>
             </Tabs>

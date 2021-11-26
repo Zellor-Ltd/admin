@@ -19,12 +19,12 @@ export const SelectBrand: React.FC<SelectBrandProps> = ({
     placeholder = "Select a master brand",
     style,
     allowClear = true,
-    initialBrandName = "",
-    label = "Master Brand Filter",
+    initialBrandName,
+    label = "Master Brand",
 }) => {
     const [brands, setBrands] = useState<Brand[]>([]);
     const [selectedBrandName, setSelectedBrandName] =
-        useState<string>(initialBrandName);
+        useState<string | undefined>(initialBrandName);
 
     const _onChange = (value: string) => {
         setSelectedBrandName(value);
