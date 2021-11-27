@@ -377,14 +377,14 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
                     label="Master Brand Default Image Sizing"
                   >
                     <Select placeholder="Please select a sizing option">
+                      <Select.Option key={null} value={null} label={"Select"}>
+                        Select
+                      </Select.Option>
                       <Select.Option key={"w"} value={"w"} label={"Width"}>
                         Width
                       </Select.Option>
                       <Select.Option key={"h"} value={"h"} label={"Height"}>
                         Height
-                      </Select.Option>
-                      <Select.Option key={"null"} value={"null"} label={"null"}>
-                        Null
                       </Select.Option>
                     </Select>
                   </Form.Item>
