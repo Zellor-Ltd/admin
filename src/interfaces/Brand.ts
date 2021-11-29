@@ -25,4 +25,6 @@ export interface Brand {
   brandLogo?: any;
   brandCard?: any;
   thumbnail?: any;
+  masterHead?: any;
+  avatar?: any;
 }
