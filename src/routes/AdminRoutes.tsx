@@ -52,10 +52,10 @@ import ProductBrands from "pages/product-brands/ProductBrands";
 import ProductBrandDetail from "pages/product-brands/ProductBrandDetail";
 import HomeScreen from "pages/home-screen/HomeScreen";
 import HomeScreenDetail from "pages/home-screen/HomeScreenDetail";
-import FanActivities from "pages/fan-activities/FanActivities";
-import PreRegisteredUsers from "pages/pre-regs/PreRegs";
-import ProductsPerDay from "pages/products-per-day/ProductsPerDay";
-import RegsPerDay from "pages/regs-per-day/RegsPerDay";
+import RegsPerDay from "pages/reports/RegsPerDay";
+import PreRegisteredUsers from "pages/reports/PreRegisteredUsers";
+import ProductsPerDay from "pages/reports/ProductsPerDay";
+import FanActivities from "pages/reports/FanActivities";
 
 function AdminRoutes() {
   return (
