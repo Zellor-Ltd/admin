@@ -52,6 +52,10 @@ import ProductBrands from "pages/product-brands/ProductBrands";
 import ProductBrandDetail from "pages/product-brands/ProductBrandDetail";
 import HomeScreen from "pages/home-screen/HomeScreen";
 import HomeScreenDetail from "pages/home-screen/HomeScreenDetail";
+import FanActivities from "pages/fan-activities/FanActivities";
+import PreRegisteredUsers from "pages/pre-regs/PreRegs";
+import ProductsPerDay from "pages/products-per-day/ProductsPerDay";
+import RegsPerDay from "pages/regs-per-day/RegsPerDay";
 
 function AdminRoutes() {
   return (
@@ -291,6 +295,26 @@ function AdminRoutes() {
       <AppRoute
         path="/settings_push-group-tag"
         component={PushGroupTag}
+        layout={AuthenticatedLayout}
+      />
+      <AppRoute
+        path="/fan-activities"
+        component={FanActivities}
+        layout={AuthenticatedLayout}
+      />
+      <AppRoute
+        path="/pre-registered"
+        component={PreRegisteredUsers}
+        layout={AuthenticatedLayout}
+      />
+      <AppRoute
+        path="/products-per-day"
+        component={ProductsPerDay}
+        layout={AuthenticatedLayout}
+      />
+      <AppRoute
+        path="/regs-per-day"
+        component={RegsPerDay}
         layout={AuthenticatedLayout}
       />
     </Switch>
