@@ -1,6 +1,5 @@
-import { Col, Row, Popconfirm, Button, Table, Typography } from "antd";
+import { Col, Row, Popconfirm, Button } from "antd";
 import { useRequest } from "hooks/useRequest";
-import EditableTable from "components/EditableTable";
 import { DeleteOutlined } from "@ant-design/icons";
 import moment from "moment";
 import CopyIdToClipboard from "components/CopyIdToClipboard";
@@ -195,31 +194,6 @@ const Dashboard: React.FC<DashboardProps> = () => {
           <Radar></Radar>
         </Col>
       </Row>
-      <div style={{ marginBottom: "16px", marginTop: "40px" }}>
-        <Row>
-          <Col lg={12} xs={24}>
-            <Typography.Title level={3}>Pre Registered Users</Typography.Title>
-          </Col>
-        </Row>
-      </div>
-      <div>
-        <Table rowKey="id" columns={preRegistered} dataSource={preRegs} />
-      </div>
-      <div style={{ marginBottom: "16px" }}>
-        <Row>
-          <Col lg={12} xs={24}>
-            <Typography.Title level={3}>Fan Activities</Typography.Title>
-          </Col>
-        </Row>
-      </div>
-      <div>
-        <EditableTable
-          rowKey="id"
-          columns={fanActs}
-          dataSource={fanActivity}
-          onSave={() => console.log("saved")}
-        />
-      </div>
     </>
   );
 };

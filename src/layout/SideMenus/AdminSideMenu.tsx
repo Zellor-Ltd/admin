@@ -20,6 +20,9 @@ import {
   DashboardOutlined,
   DropboxOutlined,
   CrownOutlined,
+  LineChartOutlined,
+  UserAddOutlined,
+  FolderAddOutlined,
 } from "@ant-design/icons";
 import { Menu } from "antd";
 import SubMenu from "antd/lib/menu/SubMenu";
@@ -39,6 +42,20 @@ const AdminSideMenu = () => {
       <Menu.Item key="dashboard" icon={<DashboardOutlined />}>
         <Link to="/dashboard">Dashboard</Link>
       </Menu.Item>
+      <SubMenu key="reports" icon={<LineChartOutlined />} title="Reports">
+        <Menu.Item key="regs-per-day" icon={<UserAddOutlined />}>
+          <Link to="/regs-per-day">Users per Day</Link>
+        </Menu.Item>
+        <Menu.Item key="products-per-day" icon={<FolderAddOutlined />}>
+          <Link to="/products-per-day">Products per Day</Link>
+        </Menu.Item>
+        <Menu.Item key="pre-registered" icon={<UserOutlined />}>
+          <Link to="/pre-registered">Pre-Registered</Link>
+        </Menu.Item>
+        <Menu.Item key="fan-activities" icon={<IdcardOutlined />}>
+          <Link to="/fan-activities">Fan Activities</Link>
+        </Menu.Item>
+      </SubMenu>
       <Menu.Item key="brands" icon={<CrownOutlined />}>
         <Link to="/brands">Master Brands</Link>
       </Menu.Item>
