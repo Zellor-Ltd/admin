@@ -13,6 +13,7 @@ import {
   Tabs,
   Select,
   Switch,
+  Typography,
   Popconfirm,
 } from "antd";
 import { Upload } from "components";
@@ -377,7 +378,11 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
                     label="Master Brand Default Image Sizing"
                   >
                     <Select placeholder="Please select a sizing option">
-                      <Select.Option key={null} value={null} label={"Select"}>
+                      <Select.Option
+                        key={"null"}
+                        value={"null"}
+                        label={"Select"}
+                      >
                         Select
                       </Select.Option>
                       <Select.Option key={"w"} value={"w"} label={"Width"}>
@@ -580,6 +585,39 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
                       fileList={initial?.thumbnail}
                       form={form}
                       formProp="thumbnail"
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+              <Typography.Title style={{ marginBottom: "20px" }} level={5}>
+                Store Page Display
+              </Typography.Title>
+              <Row>
+                <Col lg={6} xs={24}>
+                  <Form.Item
+                    label="Head Image"
+                    name="masterHead"
+                    rules={[{ required: true }]}
+                  >
+                    <Upload.ImageUpload
+                      maxCount={1}
+                      fileList={initial?.masterHead}
+                      form={form}
+                      formProp="masterHead"
+                    />
+                  </Form.Item>
+                </Col>
+                <Col lg={6} xs={24}>
+                  <Form.Item
+                    label="Avatar"
+                    name="avatar"
+                    rules={[{ required: true }]}
+                  >
+                    <Upload.ImageUpload
+                      maxCount={1}
+                      fileList={initial?.avatar}
+                      form={form}
+                      formProp="avatar"
                     />
                   </Form.Item>
                 </Col>
