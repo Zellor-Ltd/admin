@@ -99,8 +99,8 @@ const PreviewList: React.FC<RouteComponentProps> = ({ location }) => {
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [products, setProducts] = useState<Product[]>([]);
 
-  const [currentMasterBrand, setCurrentMasterBrand] = useState<string>("");
-  const [currentProductBrand, setCurrentProductBrand] = useState<string>("");
+  const [currentMasterBrand, setCurrentMasterBrand] = useState<string>();
+  const [currentProductBrand, setCurrentProductBrand] = useState<string>();
   const [isOrderingImages, setIsOrderingImages] = useState(false);
 
   const { doFetch, doRequest } = useRequest({ setLoading });
@@ -527,7 +527,7 @@ const PreviewList: React.FC<RouteComponentProps> = ({ location }) => {
     if (record.productBrand) {
       setCurrentProductBrand(record.productBrand);
     } else {
-      setCurrentProductBrand("");
+      setCurrentProductBrand(undefined);
     }
     setIsEditing(true);
   };

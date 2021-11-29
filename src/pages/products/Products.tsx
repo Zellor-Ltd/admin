@@ -94,8 +94,8 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
   const [outOfStockFilter, setOutOfStockFilter] = useState<boolean>(false);
   const [dateFilter, setDateFilter] = useState<Date>();
 
-  const [currentMasterBrand, setCurrentMasterBrand] = useState<string>("");
-  const [currentProductBrand, setCurrentProductBrand] = useState<string>("");
+  const [currentMasterBrand, setCurrentMasterBrand] = useState<string>();
+  const [currentProductBrand, setCurrentProductBrand] = useState<string>();
 
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
@@ -373,8 +373,8 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
 
   const newProduct = () => {
     setCurrentProduct(undefined);
-    setCurrentMasterBrand("");
-    setCurrentProductBrand("");
+    setCurrentMasterBrand(undefined);
+    setCurrentProductBrand(undefined);
     if (loaded) {
       setLastViewedIndex(content.length);
     }
