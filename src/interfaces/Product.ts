@@ -3,10 +3,11 @@ import { SelectedProductCategories } from "./Category";
 import { Video } from "./Video";
 import { Tag } from "./Tag";
 import { ProductBrand } from "./ProductBrand";
+import {Image} from "./Image";
 
 export interface Product {
   id: string;
-  image: string;
+  image: Image[];
   name: string;
   description: string;
   maxDiscoDollars: number;
@@ -28,8 +29,8 @@ export interface Product {
   searchTags: string;
   ageMin: number;
   ageMax: number;
-  tagImage: string;
-  thumbnailUrl: string;
+  tagImage: Image;
+  thumbnailUrl: Image;
   lastGoLiveDate?: Date;
   goLiveDate?: Date;
   outOfStock?: boolean;

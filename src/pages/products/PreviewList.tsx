@@ -1,69 +1,62 @@
-import {
-  ArrowRightOutlined,
-  DeleteOutlined,
-  EditOutlined,
-  SearchOutlined,
-} from "@ant-design/icons";
+import {ArrowRightOutlined, DeleteOutlined, EditOutlined, SearchOutlined,} from "@ant-design/icons";
 import {
   Button,
   Checkbox,
   Col,
-  PageHeader,
-  Popconfirm,
-  Row,
-  Spin,
   DatePicker,
   Form,
   Input,
   InputNumber,
   message,
+  PageHeader,
+  Popconfirm,
   Radio,
+  Row,
   Select,
   Slider,
+  Spin,
   Switch,
   Tabs,
   Typography,
-  Space,
 } from "antd";
-import { CheckboxChangeEvent } from "antd/lib/checkbox";
-import EditableTable, { EditableColumnType } from "components/EditableTable";
+import {CheckboxChangeEvent} from "antd/lib/checkbox";
+import EditableTable, {EditableColumnType} from "components/EditableTable";
 import EditMultipleButton from "components/EditMultipleButton";
-import { SelectBrand } from "components/SelectBrand";
+import {SelectBrand} from "components/SelectBrand";
 import useAllCategories from "hooks/useAllCategories";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { useRequest } from "hooks/useRequest";
-import { Brand } from "interfaces/Brand";
-import { Product } from "interfaces/Product";
+import {useRequest} from "hooks/useRequest";
+import {Brand} from "interfaces/Brand";
+import {Product} from "interfaces/Product";
 import moment from "moment";
-import { useCallback, useContext, useEffect, useState } from "react";
-import { Link, RouteComponentProps } from "react-router-dom";
+import {useCallback, useContext, useEffect, useState} from "react";
+import {Link, RouteComponentProps} from "react-router-dom";
 import {
   deleteStagingProduct,
+  fetchBrands,
   fetchProducts,
   fetchStagingProducts,
-  transferStageProduct,
-  fetchBrands,
   saveStagingProduct,
+  transferStageProduct,
 } from "services/DiscoClubService";
 import EditProductModal from "./EditProductModal";
 import ProductExpandedRow from "./ProductExpandedRow";
 import CopyIdToClipboard from "components/CopyIdToClipboard";
 import ProductCategoriesTrees from "./ProductCategoriesTrees";
 import "./Products.scss";
-import { Upload } from "components";
-import { RichTextEditor } from "components/RichTextEditor";
-import { formatMoment } from "helpers/formatMoment";
-import { categoriesSettings } from "helpers/utils";
-import { AllCategories } from "interfaces/Category";
-import { useSelector } from "react-redux";
-import { SearchFilterDebounce } from "components/SearchFilterDebounce";
-import { AppContext } from "contexts/AppContext";
-import { SelectProductBrand } from "components/SelectProductBrand";
-import { SelectBrandSmartSearch } from "components/SelectBrandSmartSearch";
-import { ImagesDnDContainer } from "../../components/image-dnd/ImagesDnDContainer";
+import {Upload} from "components";
+import {RichTextEditor} from "components/RichTextEditor";
+import {formatMoment} from "helpers/formatMoment";
+import {categoriesSettings} from "helpers/utils";
+import {AllCategories} from "interfaces/Category";
+import {useSelector} from "react-redux";
+import {SearchFilterDebounce} from "components/SearchFilterDebounce";
+import {AppContext} from "contexts/AppContext";
+import {SelectProductBrand} from "components/SelectProductBrand";
+import {SelectBrandSmartSearch} from "components/SelectBrandSmartSearch";
 import update from "immutability-helper";
-import { ProductBrandFilter } from "components/ProductBrandFilter";
-import { ProductBrand } from "interfaces/ProductBrand";
+import {ProductBrandFilter} from "components/ProductBrandFilter";
+import {ProductBrand} from "interfaces/ProductBrand";
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 
@@ -99,9 +92,8 @@ const PreviewList: React.FC<RouteComponentProps> = ({ location }) => {
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [products, setProducts] = useState<Product[]>([]);
 
-  const [currentMasterBrand, setCurrentMasterBrand] = useState<string>();
-  const [currentProductBrand, setCurrentProductBrand] = useState<string>();
-  const [isOrderingImages, setIsOrderingImages] = useState(false);
+  const [currentMasterBrand, setCurrentMasterBrand] = useState<string>("");
+  const [currentProductBrand, setCurrentProductBrand] = useState<string>("");
 
   const { doFetch, doRequest } = useRequest({ setLoading });
   const { doRequest: saveCategories, loading: loadingCategories } =
@@ -247,7 +239,6 @@ const PreviewList: React.FC<RouteComponentProps> = ({ location }) => {
       setLoading(false);
       message.success("Register updated with success.");
       setIsEditing(false);
-      setIsOrderingImages(false);
     } catch (error) {
       console.error(error);
       setLoading(false);
@@ -527,7 +518,7 @@ const PreviewList: React.FC<RouteComponentProps> = ({ location }) => {
     if (record.productBrand) {
       setCurrentProductBrand(record.productBrand);
     } else {
-      setCurrentProductBrand(undefined);
+      setCurrentProductBrand("");
     }
     setIsEditing(true);
   };
@@ -550,7 +541,32 @@ const PreviewList: React.FC<RouteComponentProps> = ({ location }) => {
         ],
       });
 
-      setCurrentProduct({ ...currentProduct });
+      setCurrentProduct({...currentProduct});
+    }
+  };
+
+  const onFitTo = (fitTo: 'w' | 'h', sourceProp: 'image' | 'tagImage' | 'thumbnailUrl', imageIndex: number) => {
+    if (!sourceProp) {
+      throw new Error('missing sourceProp parameter');
+    }
+    if (currentProduct) {
+      switch (sourceProp) {
+        case 'image':
+          if (currentProduct[sourceProp][imageIndex].fitTo === fitTo) {
+            currentProduct[sourceProp][imageIndex].fitTo = undefined;
+          } else {
+            currentProduct[sourceProp][imageIndex].fitTo = fitTo;
+          }
+          break;
+        default:
+          if (currentProduct[sourceProp].fitTo === fitTo) {
+            currentProduct[sourceProp].fitTo = undefined;
+          } else {
+            currentProduct[sourceProp].fitTo = fitTo;
+          }
+      }
+
+      setCurrentProduct({...currentProduct});
     }
   };
 
@@ -1043,59 +1059,43 @@ const PreviewList: React.FC<RouteComponentProps> = ({ location }) => {
               </Tabs.TabPane>
               <Tabs.TabPane forceRender tab="Images" key="Images">
                 <Row gutter={8}>
-                  <Col lg={24} xs={24}>
+                  <Col lg={24} xs={24} className="mt-1">
                     <Form.Item label="Tag Image">
                       <Upload.ImageUpload
                         fileList={currentProduct?.tagImage}
                         formProp="tagImage"
                         form={form}
+                        onFitTo={onFitTo}
                       />
                     </Form.Item>
                   </Col>
-                  <Col lg={24} xs={24}>
+                  <Col lg={24} xs={24} className="mt-1">
                     <Form.Item label="Thumbnail">
                       <Upload.ImageUpload
                         fileList={currentProduct?.thumbnailUrl}
                         formProp="thumbnailUrl"
                         form={form}
+                        onFitTo={onFitTo}
                       />
                     </Form.Item>
                   </Col>
-                  <Col lg={24} xs={24}>
-                    <Space>
-                      <Form.Item label="Image">
-                        <Upload.ImageUpload
-                          maxCount={20}
-                          fileList={currentProduct?.image}
-                          formProp="image"
-                          form={form}
-                        />
-                      </Form.Item>
-                      <Button
-                        type="default"
-                        onClick={() => setIsOrderingImages(!isOrderingImages)}
-                      >
-                        Toggle Image Ordering
-                      </Button>
-                    </Space>
+                  <Col lg={24} xs={24} className="mt-1">
+                    <Form.Item label="Image">
+                      <Upload.ImageUpload
+                        maxCount={20}
+                        fileList={currentProduct?.image}
+                        formProp="image"
+                        form={form}
+                        onOrder={onOrderImages}
+                        onFitTo={onFitTo}
+                      />
+                    </Form.Item>
                   </Col>
-                  {isOrderingImages ? (
-                    <Col lg={24} xs={24}>
-                      <Form.Item label="Image Order">
-                        <ImagesDnDContainer
-                          images={currentProduct?.image as any}
-                          onOrder={onOrderImages}
-                        />
-                      </Form.Item>
-                    </Col>
-                  ) : (
-                    <></>
-                  )}
                 </Row>
               </Tabs.TabPane>
             </Tabs>
 
-            <Row gutter={8}>
+            <Row gutter={8} style={{marginTop: '1.5rem'}}>
               <Col>
                 <Button type="default" onClick={() => setIsEditing(false)}>
                   Cancel
