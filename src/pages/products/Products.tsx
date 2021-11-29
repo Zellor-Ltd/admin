@@ -316,6 +316,8 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
     setProducts((prev) => [...prev.concat(results)]);
   };
 
+  useEffect(() => form.resetFields(), [currentProduct]);
+
   useEffect(() => {
     const getProducts = async () => {
       const { results } = await _fetchProducts(true);
