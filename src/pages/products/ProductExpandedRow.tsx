@@ -15,6 +15,7 @@ interface ProductExpandedRowProps {
   allCategories: AllCategories;
   onSaveProduct: Function;
   loading: boolean;
+  isStaging: boolean;
 }
 
 const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
@@ -22,12 +23,12 @@ const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
   allCategories,
   onSaveProduct,
   loading,
+  isStaging,
 }) => {
   const [form] = Form.useForm();
   const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
 
   const { pathname } = useLocation();
-  const isStaging = pathname === "/preview-list";
 
   useEffect(() => {
     const getProductBrands = async () => {

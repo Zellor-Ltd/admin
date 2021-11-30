@@ -713,6 +713,7 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
                     allCategories={allCategories}
                     onSaveProduct={onSaveCategories}
                     loading={loadingCategories}
+                    isStaging={false}
                   ></ProductExpandedRow>
                 ),
               }}
