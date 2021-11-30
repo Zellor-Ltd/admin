@@ -1,14 +1,16 @@
-import { Button, Col, Form, Radio, Select, Row } from "antd";
-import { categoriesSettings } from "helpers/utils";
-import { AllCategories } from "interfaces/Category";
-import { Product } from "interfaces/Product";
-import { ProductBrand } from "interfaces/ProductBrand";
-import { useLocation } from "react-router-dom";
+import {Button, Col, Form, Radio, Select, Row} from "antd";
+import {categoriesSettings} from "helpers/utils";
+import {AllCategories} from "interfaces/Category";
+import {Product} from "interfaces/Product";
+import {ProductBrand} from "interfaces/ProductBrand";
+import {useLocation} from "react-router-dom";
 import ProductCategoriesTrees from "./ProductCategoriesTrees";
-import { useCallback, useState, useEffect } from "react";
-import { fetchProductBrands } from "services/DiscoClubService";
-import { SelectProductBrand } from "components/SelectProductBrand";
-const { categoriesKeys, categoriesFields } = categoriesSettings;
+import {useCallback, useState, useEffect} from "react";
+import {fetchProductBrands} from "services/DiscoClubService";
+import {SelectProductBrand} from "components/SelectProductBrand";
+import {productUtils} from "../../helpers/product-utils";
+
+const {categoriesKeys, categoriesFields} = categoriesSettings;
 
 interface ProductExpandedRowProps {
   record: Product;
@@ -18,17 +20,19 @@ interface ProductExpandedRowProps {
   isStaging: boolean;
 }
 
+const {getPreviousSearchTags, getCurrentCategories} = productUtils;
+
 const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
-  record,
-  allCategories,
-  onSaveProduct,
-  loading,
+ record,
+ allCategories,
+ onSaveProduct,
+ loading,
   isStaging,
 }) => {
   const [form] = Form.useForm();
   const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
 
-  const { pathname } = useLocation();
+  const {pathname} = useLocation();
 
   useEffect(() => {
     const getProductBrands = async () => {
@@ -45,7 +49,7 @@ const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
       _categories.forEach((productCategory: any) => {
         productCategory[field] = allCategories[
           categoriesKeys[index] as keyof AllCategories
-        ].find((category) => category.id === productCategory[field]?.id);
+          ].find((category) => category.id === productCategory[field]?.id);
       });
     });
 
@@ -61,7 +65,15 @@ const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
   };
 
   const setSearchTagsByCategory = useCallback(
-    (selectedCategories: any[] = []) => {
+    (selectedCategories: any[] = [], categoryKey?: string, productCategoryIndex?: number) => {
+
+      const currentCategories = getCurrentCategories(form, allCategories);
+      let previousTags: string[] = [];
+
+      if (productCategoryIndex !== undefined && categoryKey !== undefined && record && record?.categories) {
+        previousTags = getPreviousSearchTags(productCategoryIndex, categoryKey, record.categories);
+      }
+
       const selectedCategoriesSearchTags = selectedCategories
         .filter((v) => v && v.searchTags)
         .map((v) => v.searchTags)
@@ -71,9 +83,13 @@ const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
 
       let searchTags = form.getFieldValue("searchTags") || [];
       const finalValue = Array.from(
-        new Set([...searchTags, ...selectedCategoriesSearchTags])
+        new Set([...searchTags.filter(tag => previousTags.indexOf(tag) === -1), ...selectedCategoriesSearchTags])
       );
       searchTags = finalValue;
+
+      if (!!selectedCategories && !!record && !!record.categories && productCategoryIndex !== undefined) {
+        record.categories[productCategoryIndex] = currentCategories
+      }
 
       form.setFieldsValue({
         searchTags,
@@ -85,10 +101,11 @@ const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
   const handleCategoryChange = (
     selectedCategories: any,
     _productCategoryIndex: number,
-    filterCategory: Function
+    filterCategory: Function,
+    categoryKey: string
   ) => {
     filterCategory(form);
-    setSearchTagsByCategory(selectedCategories);
+    setSearchTagsByCategory(selectedCategories, categoryKey, _productCategoryIndex);
   };
 
   const handleProductBrandChange = (filterProductBrand: Function) => {
