@@ -114,7 +114,7 @@ const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
           <Form.Item name="productBrand" label="Product Brand">
             <SelectProductBrand
               allowClear={true}
-              initialProductBrandName={""}
+              initialProductBrandName={record.productBrand ?? ""}
               handleProductBrandChange={handleProductBrandChange}
             ></SelectProductBrand>
           </Form.Item>
