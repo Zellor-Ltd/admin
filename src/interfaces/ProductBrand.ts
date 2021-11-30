@@ -4,4 +4,5 @@ export interface ProductBrand {
   status: string;
   thumbnail?: any;
   brandLogo?: any;
+  videoLogo?: any;
 }
