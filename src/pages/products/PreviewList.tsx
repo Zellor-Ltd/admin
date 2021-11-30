@@ -1,4 +1,9 @@
-import {ArrowRightOutlined, DeleteOutlined, EditOutlined, SearchOutlined,} from "@ant-design/icons";
+import {
+  ArrowRightOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  SearchOutlined,
+} from "@ant-design/icons";
 import {
   Button,
   Checkbox,
@@ -19,18 +24,18 @@ import {
   Tabs,
   Typography,
 } from "antd";
-import {CheckboxChangeEvent} from "antd/lib/checkbox";
-import EditableTable, {EditableColumnType} from "components/EditableTable";
+import { CheckboxChangeEvent } from "antd/lib/checkbox";
+import EditableTable, { EditableColumnType } from "components/EditableTable";
 import EditMultipleButton from "components/EditMultipleButton";
-import {SelectBrand} from "components/SelectBrand";
+import { SelectBrand } from "components/SelectBrand";
 import useAllCategories from "hooks/useAllCategories";
 import InfiniteScroll from "react-infinite-scroll-component";
-import {useRequest} from "hooks/useRequest";
-import {Brand} from "interfaces/Brand";
-import {Product} from "interfaces/Product";
+import { useRequest } from "hooks/useRequest";
+import { Brand } from "interfaces/Brand";
+import { Product } from "interfaces/Product";
 import moment from "moment";
-import {useCallback, useContext, useEffect, useState} from "react";
-import {Link, RouteComponentProps} from "react-router-dom";
+import { useCallback, useContext, useEffect, useState } from "react";
+import { Link, RouteComponentProps } from "react-router-dom";
 import {
   deleteStagingProduct,
   fetchBrands,
@@ -44,19 +49,19 @@ import ProductExpandedRow from "./ProductExpandedRow";
 import CopyIdToClipboard from "components/CopyIdToClipboard";
 import ProductCategoriesTrees from "./ProductCategoriesTrees";
 import "./Products.scss";
-import {Upload} from "components";
-import {RichTextEditor} from "components/RichTextEditor";
-import {formatMoment} from "helpers/formatMoment";
-import {categoriesSettings} from "helpers/utils";
-import {AllCategories} from "interfaces/Category";
-import {useSelector} from "react-redux";
-import {SearchFilterDebounce} from "components/SearchFilterDebounce";
-import {AppContext} from "contexts/AppContext";
-import {SelectProductBrand} from "components/SelectProductBrand";
-import {SelectBrandSmartSearch} from "components/SelectBrandSmartSearch";
+import { Upload } from "components";
+import { RichTextEditor } from "components/RichTextEditor";
+import { formatMoment } from "helpers/formatMoment";
+import { categoriesSettings } from "helpers/utils";
+import { AllCategories } from "interfaces/Category";
+import { useSelector } from "react-redux";
+import { SearchFilterDebounce } from "components/SearchFilterDebounce";
+import { AppContext } from "contexts/AppContext";
+import { SelectProductBrand } from "components/SelectProductBrand";
+import { SelectBrandSmartSearch } from "components/SelectBrandSmartSearch";
 import update from "immutability-helper";
-import {ProductBrandFilter} from "components/ProductBrandFilter";
-import {ProductBrand} from "interfaces/ProductBrand";
+import { ProductBrandFilter } from "components/ProductBrandFilter";
+import { ProductBrand } from "interfaces/ProductBrand";
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 
@@ -541,17 +546,21 @@ const PreviewList: React.FC<RouteComponentProps> = ({ location }) => {
         ],
       });
 
-      setCurrentProduct({...currentProduct});
+      setCurrentProduct({ ...currentProduct });
     }
   };
 
-  const onFitTo = (fitTo: 'w' | 'h', sourceProp: 'image' | 'tagImage' | 'thumbnailUrl', imageIndex: number) => {
+  const onFitTo = (
+    fitTo: "w" | "h",
+    sourceProp: "image" | "tagImage" | "thumbnailUrl",
+    imageIndex: number
+  ) => {
     if (!sourceProp) {
-      throw new Error('missing sourceProp parameter');
+      throw new Error("missing sourceProp parameter");
     }
     if (currentProduct) {
       switch (sourceProp) {
-        case 'image':
+        case "image":
           if (currentProduct[sourceProp][imageIndex].fitTo === fitTo) {
             currentProduct[sourceProp][imageIndex].fitTo = undefined;
           } else {
@@ -566,7 +575,7 @@ const PreviewList: React.FC<RouteComponentProps> = ({ location }) => {
           }
       }
 
-      setCurrentProduct({...currentProduct});
+      setCurrentProduct({ ...currentProduct });
     }
   };
 
@@ -699,6 +708,7 @@ const PreviewList: React.FC<RouteComponentProps> = ({ location }) => {
                     allCategories={allCategories}
                     onSaveProduct={onSaveCategories}
                     loading={loadingCategories}
+                    isStaging={true}
                   ></ProductExpandedRow>
                 ),
               }}
@@ -1095,18 +1105,14 @@ const PreviewList: React.FC<RouteComponentProps> = ({ location }) => {
               </Tabs.TabPane>
             </Tabs>
 
-            <Row gutter={8} style={{marginTop: '1.5rem'}}>
+            <Row gutter={8} style={{ marginTop: "1.5rem" }}>
               <Col>
                 <Button type="default" onClick={() => setIsEditing(false)}>
                   Cancel
                 </Button>
               </Col>
               <Col>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  loading={loading}
-                >
+                <Button type="primary" htmlType="submit" loading={loading}>
                   Save Changes
                 </Button>
               </Col>
