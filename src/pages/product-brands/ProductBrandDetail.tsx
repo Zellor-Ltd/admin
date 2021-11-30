@@ -70,6 +70,20 @@ const ProductBrandsDetail: React.FC<RouteComponentProps> = (props) => {
                 />
               </Form.Item>
             </Col>
+            <Col lg={12} xs={24}>
+              <Form.Item
+                label="Product Brand Video Logo"
+                name="videoLogo"
+                rules={[{ required: false }]}
+              >
+                <Upload.ImageUpload
+                  maxCount={1}
+                  fileList={initial?.videoLogo}
+                  form={form}
+                  formProp="videoLogo"
+                />
+              </Form.Item>
+            </Col>
           </Col>
         </Row>
         <Row gutter={8}>
