@@ -62,13 +62,15 @@ import ProductExpandedRow from "./ProductExpandedRow";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
 import { ProductBrandFilter } from "components/ProductBrandFilter";
 import { ProductBrand } from "interfaces/ProductBrand";
+import {productUtils} from "../../helpers/product-utils";
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
+const {getPreviousSearchTags, getCurrentCategories} = productUtils;
 
-const Products: React.FC<RouteComponentProps> = ({ location }) => {
+const Products: React.FC<RouteComponentProps> = () => {
   const saveProductFn = saveProduct;
   const [brands, setBrands] = useState<Brand[]>([]);
-  const [ageRange, setageRange] = useState<[number, number]>([12, 100]);
+  const [ageRange, setAgeRange] = useState<[number, number]>([12, 100]);
   const [form] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
   const [maxDiscountAlert, setMaxDiscountAlert] = useState<boolean>(false);
@@ -137,7 +139,15 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
   }, [isViewing]);
 
   const setSearchTagsByCategory = useCallback(
-    (useInitialValue: boolean, selectedCategories: any[] = []) => {
+    (useInitialValue: boolean, selectedCategories: any[] = [], categoryKey?: string, productCategoryIndex?: number) => {
+
+      const currentCategories = getCurrentCategories(form, allCategories);
+      let previousTags: string[] = [];
+
+      if (productCategoryIndex !== undefined && categoryKey !== undefined && currentProduct && currentProduct?.categories) {
+        previousTags = getPreviousSearchTags(productCategoryIndex, categoryKey, currentProduct.categories);
+      }
+
       const selectedCategoriesSearchTags = selectedCategories
         .filter((v) => v && v.searchTags)
         .map((v) => v.searchTags)
@@ -147,12 +157,16 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
 
       let searchTags = form.getFieldValue("searchTags") || [];
       const finalValue = Array.from(
-        new Set([...searchTags, ...selectedCategoriesSearchTags])
+        new Set([...searchTags.filter(tag => previousTags.indexOf(tag) === -1), ...selectedCategoriesSearchTags])
       );
       if (useInitialValue && currentProduct) {
         searchTags = currentProduct.searchTags || finalValue;
       } else {
         searchTags = finalValue;
+      }
+
+      if (!!selectedCategories && !!currentProduct && !!currentProduct.categories && productCategoryIndex !== undefined) {
+        currentProduct.categories[productCategoryIndex] = currentCategories
       }
 
       form.setFieldsValue({
@@ -188,10 +202,11 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
   const handleCategoryChange = (
     selectedCategories: any,
     _productCategoryIndex: number,
-    filterCategory: Function
+    filterCategory: Function,
+    categoryKey: string
   ) => {
     filterCategory(form);
-    setSearchTagsByCategory(false, selectedCategories);
+    setSearchTagsByCategory(false, selectedCategories, categoryKey, _productCategoryIndex);
   };
 
   const handleMasterBrandChange = (filterMasterBrand: Function) => {
@@ -228,7 +243,7 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
 
   useEffect(() => {
     if (currentProduct?.ageMin && currentProduct?.ageMax)
-      setageRange([currentProduct?.ageMin, currentProduct?.ageMax]);
+      setAgeRange([currentProduct?.ageMin, currentProduct?.ageMax]);
   }, [currentProduct]);
 
   const onChangeAge = (value: [number, number]) => {
@@ -237,7 +252,7 @@ const Products: React.FC<RouteComponentProps> = ({ location }) => {
       ageMax: value[1],
     });
 
-    setageRange(value);
+    setAgeRange(value);
   };
 
   const onFinish = async () => {

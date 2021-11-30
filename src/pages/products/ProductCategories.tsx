@@ -48,11 +48,11 @@ const ProductCategories: React.FC<ProductCategoriesProps> = ({
 
     const _handleCategoryChange = (value: string, key: string) => {
         const selectedCategories = categoriesArray
-            .map(({ key, field }) => {
+            .map(({ field: categoryField }) => {
                 const selectedCategoryName = value;
                 return filteredCategories[key as keyof AllCategories].find(
                     (category) =>
-                        category[field as keyof ProductCategory] === selectedCategoryName
+                        category[categoryField as keyof ProductCategory] === selectedCategoryName
                 );
             })
             .filter((v) => v);
@@ -66,7 +66,8 @@ const ProductCategories: React.FC<ProductCategoriesProps> = ({
                     formCategories[productCategoryIndex][_field] = undefined;
                     form.setFieldsValue({ categories: formCategories });
                 });
-            }
+            },
+            key
         );
     };
 
