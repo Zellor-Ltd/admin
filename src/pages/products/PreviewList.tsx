@@ -34,7 +34,7 @@ import { useRequest } from "hooks/useRequest";
 import { Brand } from "interfaces/Brand";
 import { Product } from "interfaces/Product";
 import moment from "moment";
-import { useCallback, useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { Link, RouteComponentProps } from "react-router-dom";
 import {
   deleteStagingProduct,
@@ -96,8 +96,9 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [products, setProducts] = useState<Product[]>([]);
 
-  const [currentMasterBrand, setCurrentMasterBrand] = useState<string>("");
-  const [currentProductBrand, setCurrentProductBrand] = useState<string>("");
+  const [currentMasterBrand, setCurrentMasterBrand] = useState<string>();
+  const [currentProductBrand, setCurrentProductBrand] = useState<string>();
+  const [productStatusFilter, setProductStatusFilter] = useState<string>();
 
   const {doFetch, doRequest} = useRequest({setLoading});
   const {doRequest: saveCategories, loading: loadingCategories} =
@@ -278,6 +279,7 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
         productBrandName: productBrandFilter?.brandName,
         date: dateFilter,
         outOfStock: outOfStockFilter,
+        status: productStatusFilter
       })
     );
     if (searchButton) {
@@ -633,6 +635,17 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
                     onChange={() => handleFilterDate}
                     format="DD/MM/YYYY"
                   />
+                </Col>
+                <Col lg={6} xs={24}>
+                  <Typography.Title level={5}>Status</Typography.Title>
+                  <Select placeholder="Select a Status" style={{ width: "100%" }} onChange={(value: string) => setProductStatusFilter(value)} allowClear={true}>
+                    <Select.Option value="live">
+                      Live
+                    </Select.Option>
+                    <Select.Option value="paused">
+                      Paused
+                    </Select.Option>
+                  </Select>
                 </Col>
                 <Col lg={6} xs={24}>
                   <Checkbox
