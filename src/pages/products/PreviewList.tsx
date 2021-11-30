@@ -65,9 +65,10 @@ import {ProductBrand} from "interfaces/ProductBrand";
 import {productUtils} from "../../helpers/product-utils";
 
 const {categoriesKeys, categoriesFields} = categoriesSettings;
-const {getPreviousSearchTags, getCurrentCategories} = productUtils;
+const {getSearchTags, getCategories, removeSearchTagsByCategory} = productUtils;
 
 const PreviewList: React.FC<RouteComponentProps> = () => {
+  const saveProductFn = saveStagingProduct;
   const [brands, setBrands] = useState<Brand[]>([]);
   const [ageRange, setageRange] = useState<[number, number]>([12, 100]);
   const [form] = Form.useForm();
@@ -110,11 +111,11 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
   const setSearchTagsByCategory = useCallback(
     (useInitialValue: boolean, selectedCategories: any[] = [], categoryKey?: string, productCategoryIndex?: number) => {
 
-      const currentCategories = getCurrentCategories(form, allCategories);
+      const currentCategories = getCategories(form, allCategories);
       let previousTags: string[] = [];
 
       if (productCategoryIndex !== undefined && categoryKey !== undefined && currentProduct && currentProduct?.categories) {
-        previousTags = getPreviousSearchTags(productCategoryIndex, categoryKey, currentProduct.categories);
+        previousTags = getSearchTags(currentProduct.categories[productCategoryIndex], categoryKey);
       }
 
       const selectedCategoriesSearchTags = selectedCategories
@@ -136,6 +137,7 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
 
       if (!!selectedCategories && !!currentProduct && !!currentProduct.categories && productCategoryIndex !== undefined) {
         currentProduct.categories[productCategoryIndex] = currentCategories
+        currentProduct.searchTags = searchTags;
       }
 
       form.setFieldsValue({
@@ -144,6 +146,10 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
     },
     [form, currentProduct]
   );
+
+  const handleCategoryDelete = (productCategoryIndex: number) => {
+    removeSearchTagsByCategory(productCategoryIndex, currentProduct, form);
+  };
 
   const setDiscoPercentageByBrand = useCallback(
     (useInitialValue: boolean) => {
@@ -249,11 +255,10 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
         });
       });
 
-      // refreshItem(product);
-      // await saveProductFn(product);
-      //
-      // await getResources(false);
-      console.log('saved product ->', product);
+      refreshItem(product);
+      await saveProductFn(product);
+
+      await getResources(false);
       setLoading(false);
       message.success("Register updated with success.");
       setIsEditing(false);
@@ -839,6 +844,7 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
                   allCategories={allCategories}
                   form={form}
                   handleCategoryChange={handleCategoryChange}
+                  handleCategoryDelete={handleCategoryDelete}
                 />
                 <Col lg={16} xs={24}>
                   <Form.Item

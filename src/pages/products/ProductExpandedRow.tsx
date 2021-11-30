@@ -9,8 +9,10 @@ import {useCallback, useState, useEffect} from "react";
 import {fetchProductBrands} from "services/DiscoClubService";
 import {SelectProductBrand} from "components/SelectProductBrand";
 import {productUtils} from "../../helpers/product-utils";
+import update from "immutability-helper";
 
 const {categoriesKeys, categoriesFields} = categoriesSettings;
+const {getSearchTags, getCategories, removeSearchTagsByCategory} = productUtils;
 
 interface ProductExpandedRowProps {
   record: Product;
@@ -19,8 +21,6 @@ interface ProductExpandedRowProps {
   loading: boolean;
   isStaging: boolean;
 }
-
-const {getPreviousSearchTags, getCurrentCategories} = productUtils;
 
 const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
  record,
@@ -67,11 +67,11 @@ const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
   const setSearchTagsByCategory = useCallback(
     (selectedCategories: any[] = [], categoryKey?: string, productCategoryIndex?: number) => {
 
-      const currentCategories = getCurrentCategories(form, allCategories);
+      const currentCategories = getCategories(form, allCategories);
       let previousTags: string[] = [];
 
       if (productCategoryIndex !== undefined && categoryKey !== undefined && record && record?.categories) {
-        previousTags = getPreviousSearchTags(productCategoryIndex, categoryKey, record.categories);
+        previousTags = getSearchTags(record.categories[productCategoryIndex], categoryKey);
       }
 
       const selectedCategoriesSearchTags = selectedCategories
@@ -97,6 +97,10 @@ const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
     },
     [form]
   );
+
+  const handleCategoryDelete = (productCategoryIndex: number) => {
+    removeSearchTagsByCategory(productCategoryIndex, record, form);
+  };
 
   const handleCategoryChange = (
     selectedCategories: any,
@@ -143,6 +147,7 @@ const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
         allCategories={allCategories}
         form={form}
         handleCategoryChange={handleCategoryChange}
+        handleCategoryDelete={handleCategoryDelete}
       />
       <Col lg={24} xs={12}>
         <Button
