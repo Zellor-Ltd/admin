@@ -1103,7 +1103,6 @@ const PreviewList: React.FC<RouteComponentProps> = ({ location }) => {
               </Col>
               <Col>
                 <Button
-                  disabled={currentProduct?.brand.automated === true}
                   type="primary"
                   htmlType="submit"
                   loading={loading}
