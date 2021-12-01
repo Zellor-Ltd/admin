@@ -1165,36 +1165,6 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
                     </Form.Item>
                   </Col>
                 </Row>
-                <Row>
-                  <Col lg={6} xs={24}>
-                    <Form.Item
-                      label="Mast Head Image"
-                      name="mastHead"
-                      rules={[{ required: true }]}
-                    >
-                      <Upload.ImageUpload
-                        maxCount={1}
-                        fileList={currentProduct?.mastHead}
-                        form={form}
-                        formProp="mastHead"
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col lg={6} xs={24}>
-                    <Form.Item
-                      label="Avatar"
-                      name="avatar"
-                      rules={[{ required: true }]}
-                    >
-                      <Upload.ImageUpload
-                        maxCount={1}
-                        fileList={currentProduct?.avatar}
-                        form={form}
-                        formProp="avatar"
-                      />
-                    </Form.Item>
-                  </Col>
-                </Row>
               </Tabs.TabPane>
             </Tabs>
 
