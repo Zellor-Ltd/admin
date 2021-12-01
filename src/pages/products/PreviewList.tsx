@@ -24,18 +24,18 @@ import {
   Tabs,
   Typography,
 } from "antd";
-import { CheckboxChangeEvent } from "antd/lib/checkbox";
-import EditableTable, { EditableColumnType } from "components/EditableTable";
+import {CheckboxChangeEvent} from "antd/lib/checkbox";
+import EditableTable, {EditableColumnType} from "components/EditableTable";
 import EditMultipleButton from "components/EditMultipleButton";
-import { SelectBrand } from "components/SelectBrand";
+import {SelectBrand} from "components/SelectBrand";
 import useAllCategories from "hooks/useAllCategories";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { useRequest } from "hooks/useRequest";
-import { Brand } from "interfaces/Brand";
-import { Product } from "interfaces/Product";
+import {useRequest} from "hooks/useRequest";
+import {Brand} from "interfaces/Brand";
+import {Product} from "interfaces/Product";
 import moment from "moment";
-import React, { useCallback, useContext, useEffect, useState } from "react";
-import { Link, RouteComponentProps } from "react-router-dom";
+import React, {useCallback, useContext, useEffect, useState} from "react";
+import {Link, RouteComponentProps} from "react-router-dom";
 import {
   deleteStagingProduct,
   fetchBrands,
@@ -49,16 +49,16 @@ import ProductExpandedRow from "./ProductExpandedRow";
 import CopyIdToClipboard from "components/CopyIdToClipboard";
 import ProductCategoriesTrees from "./ProductCategoriesTrees";
 import "./Products.scss";
-import { Upload } from "components";
-import { RichTextEditor } from "components/RichTextEditor";
-import { formatMoment } from "helpers/formatMoment";
-import { categoriesSettings } from "helpers/utils";
-import { AllCategories } from "interfaces/Category";
-import { useSelector } from "react-redux";
-import { SearchFilterDebounce } from "components/SearchFilterDebounce";
-import { AppContext } from "contexts/AppContext";
-import { SelectProductBrand } from "components/SelectProductBrand";
-import { SelectBrandSmartSearch } from "components/SelectBrandSmartSearch";
+import {Upload} from "components";
+import {RichTextEditor} from "components/RichTextEditor";
+import {formatMoment} from "helpers/formatMoment";
+import {categoriesSettings} from "helpers/utils";
+import {AllCategories} from "interfaces/Category";
+import {useSelector} from "react-redux";
+import {SearchFilterDebounce} from "components/SearchFilterDebounce";
+import {AppContext} from "contexts/AppContext";
+import {SelectProductBrand} from "components/SelectProductBrand";
+import {SelectBrandSmartSearch} from "components/SelectBrandSmartSearch";
 import update from "immutability-helper";
 import {ProductBrandFilter} from "components/ProductBrandFilter";
 import {ProductBrand} from "interfaces/ProductBrand";
@@ -68,6 +68,7 @@ const {categoriesKeys, categoriesFields} = categoriesSettings;
 const {getPreviousSearchTags, getCurrentCategories} = productUtils;
 
 const PreviewList: React.FC<RouteComponentProps> = () => {
+  const saveProductFn = saveStagingProduct;
   const [brands, setBrands] = useState<Brand[]>([]);
   const [ageRange, setageRange] = useState<[number, number]>([12, 100]);
   const [form] = Form.useForm();
@@ -98,7 +99,7 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
 
   const [currentMasterBrand, setCurrentMasterBrand] = useState<string>();
   const [currentProductBrand, setCurrentProductBrand] = useState<string>();
-  const [productStatusFilter, setProductStatusFilter] = useState<string>();
+  const [productStatusFilter, setProductStatusFilter] = useState<string>('paused');
 
   const {doFetch, doRequest} = useRequest({setLoading});
   const {doRequest: saveCategories, loading: loadingCategories} =
@@ -250,11 +251,10 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
         });
       });
 
-      // refreshItem(product);
-      // await saveProductFn(product);
-      //
-      // await getResources(false);
-      console.log('saved product ->', product);
+      refreshItem(product);
+      await saveProductFn(product);
+
+      await getResources(false);
       setLoading(false);
       message.success("Register updated with success.");
       setIsEditing(false);
@@ -561,7 +561,7 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
         ],
       });
 
-      setCurrentProduct({ ...currentProduct });
+      setCurrentProduct({...currentProduct});
     }
   };
 
@@ -590,7 +590,7 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
           }
       }
 
-      setCurrentProduct({ ...currentProduct });
+      setCurrentProduct({...currentProduct});
     }
   };
 
@@ -638,7 +638,9 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
                 </Col>
                 <Col lg={6} xs={24}>
                   <Typography.Title level={5}>Status</Typography.Title>
-                  <Select placeholder="Select a Status" style={{ width: "100%" }} onChange={(value: string) => setProductStatusFilter(value)} allowClear={true}>
+                  <Select placeholder="Select a Status" style={{width: "100%"}}
+                          onChange={(value: string) => setProductStatusFilter(value)} allowClear={true}
+                          defaultValue={productStatusFilter}>
                     <Select.Option value="live">
                       Live
                     </Select.Option>
@@ -1131,7 +1133,7 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
               </Tabs.TabPane>
             </Tabs>
 
-            <Row gutter={8} style={{ marginTop: "1.5rem" }}>
+            <Row gutter={8} style={{marginTop: "1.5rem"}}>
               <Col>
                 <Button type="default" onClick={() => setIsEditing(false)}>
                   Cancel
