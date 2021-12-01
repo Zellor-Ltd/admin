@@ -588,15 +588,15 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
               <Row>
                 <Col lg={6} xs={24}>
                   <Form.Item
-                    label="Head Image"
-                    name="masterHead"
+                    label="Mast Head Image"
+                    name="mastHead"
                     rules={[{ required: true }]}
                   >
                     <Upload.ImageUpload
                       maxCount={1}
-                      fileList={initial?.masterHead}
+                      fileList={initial?.mastHead}
                       form={form}
-                      formProp="masterHead"
+                      formProp="mastHead"
                     />
                   </Form.Item>
                 </Col>

@@ -12,4 +12,5 @@ export interface WalletDetailParams {
 
 export interface WalletTransaction {
   [key: string]: any;
+  type?: string;
 }
