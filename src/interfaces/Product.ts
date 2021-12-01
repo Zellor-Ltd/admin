@@ -35,6 +35,4 @@ export interface Product {
   goLiveDate?: Date;
   outOfStock?: boolean;
   status?: string;
-  mastHead?: any;
-  avatar?: any;
 }
