@@ -9,6 +9,7 @@ interface ProductCategoriesTreesProps {
     allCategories: AllCategories;
     form: FormInstance;
     handleCategoryChange: Function;
+    handleCategoryDelete?: Function;
 }
 
 const ProductCategoriesTrees: React.FC<ProductCategoriesTreesProps> = ({
@@ -16,6 +17,7 @@ const ProductCategoriesTrees: React.FC<ProductCategoriesTreesProps> = ({
     allCategories,
     form,
     handleCategoryChange,
+    handleCategoryDelete,
 }) => {
     const [_categories, _setCategories] = useState<SelectedProductCategories[]>(
         categories || [{}]
@@ -37,6 +39,7 @@ const ProductCategoriesTrees: React.FC<ProductCategoriesTreesProps> = ({
             ...prev.slice(0, index),
             ...prev.slice(index + 1),
         ]);
+        handleCategoryDelete?.(index);
     };
 
     return (

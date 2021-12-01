@@ -26,7 +26,7 @@ export interface Product {
   confirmationUrl: string;
   cancelationUrl: string;
   tags?: Tag[];
-  searchTags: string;
+  searchTags: string[];
   ageMin: number;
   ageMax: number;
   tagImage: Image;
