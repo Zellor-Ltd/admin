@@ -69,9 +69,11 @@ const WalletDetail: React.FC<RouteComponentProps> = ({ location }) => {
     },
     {
       title: "Who",
-      dataIndex: "userId",
       width: "20%",
       align: "right",
+      dataIndex: "type",
+      render: (value: string) =>
+        value === "reset" ? "admin" : initial.fan.user,
     },
   ];
 

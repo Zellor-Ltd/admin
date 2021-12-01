@@ -3,7 +3,7 @@ import { SelectedProductCategories } from "./Category";
 import { Video } from "./Video";
 import { Tag } from "./Tag";
 import { ProductBrand } from "./ProductBrand";
-import {Image} from "./Image";
+import { Image } from "./Image";
 
 export interface Product {
   id: string;
@@ -35,4 +35,6 @@ export interface Product {
   goLiveDate?: Date;
   outOfStock?: boolean;
   status?: string;
+  mastHead?: any;
+  avatar?: any;
 }

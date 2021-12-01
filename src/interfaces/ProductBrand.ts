@@ -5,4 +5,6 @@ export interface ProductBrand {
   thumbnail?: any;
   brandLogo?: any;
   videoLogo?: any;
+  mastHead?: any;
+  avatar?: any;
 }

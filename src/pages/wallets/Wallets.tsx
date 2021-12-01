@@ -93,22 +93,14 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
                 allowClear={false}
               />
             </Col>
-            <Col lg={6} xs={12}>
-              <SelectBrand
-                style={{ width: "100%" }}
-                allowClear={true}
-                onChange={onChangeBrand}
-              ></SelectBrand>
-            </Col>
-            {selectedFan && selectedBrand && (
-              <>
-                <WalletEdit
-                  fanId={selectedFan.id}
-                  brandId={selectedBrand.id}
-                  getResources={() => onChangeFan(selectedFan)}
-                  label="Manage DDs"
-                />
-              </>
+            {selectedFan && (
+              <Col lg={6} xs={12}>
+                <SelectBrand
+                  style={{ width: "100%" }}
+                  allowClear={true}
+                  onChange={onChangeBrand}
+                ></SelectBrand>
+              </Col>
             )}
           </Row>
         </Col>

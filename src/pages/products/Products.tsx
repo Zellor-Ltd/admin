@@ -62,11 +62,12 @@ import ProductExpandedRow from "./ProductExpandedRow";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
 import { ProductBrandFilter } from "components/ProductBrandFilter";
 import { ProductBrand } from "interfaces/ProductBrand";
-import {productUtils} from "../../helpers/product-utils";
+import { productUtils } from "../../helpers/product-utils";
 import update from "immutability-helper";
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
-const {getSearchTags, getCategories, removeSearchTagsByCategory} = productUtils;
+const { getSearchTags, getCategories, removeSearchTagsByCategory } =
+  productUtils;
 
 const Products: React.FC<RouteComponentProps> = () => {
   const saveProductFn = saveProduct;
@@ -140,13 +141,25 @@ const Products: React.FC<RouteComponentProps> = () => {
   }, [isViewing]);
 
   const setSearchTagsByCategory = useCallback(
-    (useInitialValue: boolean, selectedCategories: any[] = [], categoryKey?: string, productCategoryIndex?: number) => {
-
+    (
+      useInitialValue: boolean,
+      selectedCategories: any[] = [],
+      categoryKey?: string,
+      productCategoryIndex?: number
+    ) => {
       const currentCategories = getCategories(form, allCategories);
       let previousTags: string[] = [];
 
-      if (productCategoryIndex !== undefined && categoryKey !== undefined && currentProduct && currentProduct?.categories) {
-        previousTags = getSearchTags(currentProduct.categories[productCategoryIndex], categoryKey);
+      if (
+        productCategoryIndex !== undefined &&
+        categoryKey !== undefined &&
+        currentProduct &&
+        currentProduct?.categories
+      ) {
+        previousTags = getSearchTags(
+          currentProduct.categories[productCategoryIndex],
+          categoryKey
+        );
       }
 
       const selectedCategoriesSearchTags = selectedCategories
@@ -158,7 +171,10 @@ const Products: React.FC<RouteComponentProps> = () => {
 
       let searchTags = form.getFieldValue("searchTags") || [];
       const finalValue = Array.from(
-        new Set([...searchTags.filter(tag => previousTags.indexOf(tag) === -1), ...selectedCategoriesSearchTags])
+        new Set([
+          ...searchTags.filter((tag) => previousTags.indexOf(tag) === -1),
+          ...selectedCategoriesSearchTags,
+        ])
       );
       if (useInitialValue && currentProduct) {
         searchTags = currentProduct.searchTags || finalValue;
@@ -166,8 +182,13 @@ const Products: React.FC<RouteComponentProps> = () => {
         searchTags = finalValue;
       }
 
-      if (!!selectedCategories && !!currentProduct && !!currentProduct.categories && productCategoryIndex !== undefined) {
-        currentProduct.categories[productCategoryIndex] = currentCategories
+      if (
+        !!selectedCategories &&
+        !!currentProduct &&
+        !!currentProduct.categories &&
+        productCategoryIndex !== undefined
+      ) {
+        currentProduct.categories[productCategoryIndex] = currentCategories;
       }
 
       form.setFieldsValue({
@@ -211,7 +232,12 @@ const Products: React.FC<RouteComponentProps> = () => {
     categoryKey: string
   ) => {
     filterCategory(form);
-    setSearchTagsByCategory(false, selectedCategories, categoryKey, _productCategoryIndex);
+    setSearchTagsByCategory(
+      false,
+      selectedCategories,
+      categoryKey,
+      _productCategoryIndex
+    );
   };
 
   const handleMasterBrandChange = (filterMasterBrand: Function) => {
@@ -1120,6 +1146,36 @@ const Products: React.FC<RouteComponentProps> = () => {
                         fileList={currentProduct?.image}
                         formProp="image"
                         form={form}
+                      />
+                    </Form.Item>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col lg={6} xs={24}>
+                    <Form.Item
+                      label="Head Image"
+                      name="mastHead"
+                      rules={[{ required: true }]}
+                    >
+                      <Upload.ImageUpload
+                        maxCount={1}
+                        fileList={currentProduct?.mastHead}
+                        form={form}
+                        formProp="mastHead"
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={6} xs={24}>
+                    <Form.Item
+                      label="Avatar"
+                      name="avatar"
+                      rules={[{ required: true }]}
+                    >
+                      <Upload.ImageUpload
+                        maxCount={1}
+                        fileList={currentProduct?.avatar}
+                        form={form}
+                        formProp="avatar"
                       />
                     </Form.Item>
                   </Col>

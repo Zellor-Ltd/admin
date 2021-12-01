@@ -42,48 +42,80 @@ const ProductBrandsDetail: React.FC<RouteComponentProps> = (props) => {
                 <Input />
               </Form.Item>
             </Col>
-            <Col lg={6} xs={24}>
-              <Form.Item
-                label="Brand Logo"
-                name="brandLogo"
-                rules={[{ required: false }]}
-              >
-                <Upload.ImageUpload
-                  maxCount={1}
-                  fileList={initial?.brandLogo}
-                  form={form}
-                  formProp="brandLogo"
-                />
-              </Form.Item>
-            </Col>
-            <Col lg={6} xs={24}>
-              <Form.Item
-                label="Thumbnail"
-                name="thumbnail"
-                rules={[{ required: false }]}
-              >
-                <Upload.ImageUpload
-                  maxCount={1}
-                  fileList={initial?.thumbnail}
-                  form={form}
-                  formProp="thumbnail"
-                />
-              </Form.Item>
-            </Col>
-            <Col lg={12} xs={24}>
-              <Form.Item
-                label="Product Brand Video Logo"
-                name="videoLogo"
-                rules={[{ required: false }]}
-              >
-                <Upload.ImageUpload
-                  maxCount={1}
-                  fileList={initial?.videoLogo}
-                  form={form}
-                  formProp="videoLogo"
-                />
-              </Form.Item>
-            </Col>
+            <Row>
+              <Col lg={6} xs={24}>
+                <Form.Item
+                  label="Brand Logo"
+                  name="brandLogo"
+                  rules={[{ required: false }]}
+                >
+                  <Upload.ImageUpload
+                    maxCount={1}
+                    fileList={initial?.brandLogo}
+                    form={form}
+                    formProp="brandLogo"
+                  />
+                </Form.Item>
+              </Col>
+              <Col lg={6} xs={24}>
+                <Form.Item
+                  label="Thumbnail"
+                  name="thumbnail"
+                  rules={[{ required: false }]}
+                >
+                  <Upload.ImageUpload
+                    maxCount={1}
+                    fileList={initial?.thumbnail}
+                    form={form}
+                    formProp="thumbnail"
+                  />
+                </Form.Item>
+              </Col>
+              <Col lg={12} xs={24}>
+                <Form.Item
+                  label="Product Brand Video Logo"
+                  name="videoLogo"
+                  rules={[{ required: false }]}
+                >
+                  <Upload.ImageUpload
+                    maxCount={1}
+                    fileList={initial?.videoLogo}
+                    form={form}
+                    formProp="videoLogo"
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row>
+              <Col lg={6} xs={24}>
+                <Form.Item
+                  label="Mast Head Image"
+                  name="mastHead"
+                  rules={[{ required: true }]}
+                >
+                  <Upload.ImageUpload
+                    maxCount={1}
+                    fileList={initial?.mastHead}
+                    form={form}
+                    formProp="mastHead"
+                  />
+                </Form.Item>
+              </Col>
+              <Col lg={6} xs={24}>
+                <Form.Item
+                  label="Avatar"
+                  name="avatar"
+                  rules={[{ required: true }]}
+                >
+                  <Upload.ImageUpload
+                    maxCount={1}
+                    fileList={initial?.avatar}
+                    form={form}
+                    formProp="avatar"
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
           </Col>
         </Row>
         <Row gutter={8}>
