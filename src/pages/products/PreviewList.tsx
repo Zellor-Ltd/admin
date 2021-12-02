@@ -104,7 +104,7 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
   const [currentMasterBrand, setCurrentMasterBrand] = useState<string>();
   const [currentProductBrand, setCurrentProductBrand] = useState<string>();
   const [productStatusFilter, setProductStatusFilter] =
-    useState<string>('paused');
+    useState<string>('live');
 
   const { doFetch, doRequest } = useRequest({ setLoading });
   const { doRequest: saveCategories, loading: loadingCategories } =
