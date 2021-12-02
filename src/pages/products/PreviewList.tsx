@@ -64,6 +64,7 @@ import { ProductBrandFilter } from 'components/ProductBrandFilter';
 import { ProductBrand } from 'interfaces/ProductBrand';
 import { productUtils } from '../../helpers/product-utils';
 import { Image } from '../../interfaces/Image';
+import scrollIntoView from 'scroll-into-view';
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 const { getSearchTags, getCategories, removeSearchTagsByCategory } =
@@ -104,7 +105,7 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
   const [currentMasterBrand, setCurrentMasterBrand] = useState<string>();
   const [currentProductBrand, setCurrentProductBrand] = useState<string>();
   const [productStatusFilter, setProductStatusFilter] =
-    useState<string>('paused');
+    useState<string>('live');
 
   const { doFetch, doRequest } = useRequest({ setLoading });
   const { doRequest: saveCategories, loading: loadingCategories } =
@@ -568,7 +569,7 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
   const editProduct = (record: Product, index) => {
     console.log('current product - ', record);
     setCurrentProduct(record);
-    setLastViewedIndex(index - 1);
+    setLastViewedIndex(index);
     setCurrentMasterBrand(record.brand.brandName);
     if (record.productBrand) {
       setCurrentProductBrand(record.productBrand);
@@ -646,6 +647,16 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
       setCurrentProduct({ ...currentProduct });
     }
   };
+
+  useEffect(() => {
+    if (!isEditing) {
+      scrollIntoView(
+        document.querySelector(
+          `.scrollable-row-${lastViewedIndex}`
+        ) as HTMLElement
+      );
+    }
+  }, [isEditing]);
 
   return (
     <>
@@ -770,7 +781,11 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
             }
           >
             <EditableTable
-              rowClassName={index => (index === 0 ? '' : 'styled-row')}
+              rowClassName={(_, index) =>
+                `scrollable-row-${index} ${
+                  index === lastViewedIndex ? 'selected-row' : ''
+                }`
+              }
               rowKey="id"
               columns={columns}
               dataSource={products}
@@ -799,7 +814,10 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
       )}
       {isEditing && (
         <div className="products-details">
-          <PageHeader title="Product" subTitle="Form" />
+          <PageHeader
+            title={`${currentProduct?.name} Update`}
+            subTitle="Form"
+          />
           <Form
             form={form}
             name="productForm"

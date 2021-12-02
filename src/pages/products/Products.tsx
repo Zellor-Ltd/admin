@@ -63,6 +63,7 @@ import { ProductBrandFilter } from 'components/ProductBrandFilter';
 import { ProductBrand } from 'interfaces/ProductBrand';
 import { productUtils } from '../../helpers/product-utils';
 import { Image } from '../../interfaces/Image';
+import scrollIntoView from 'scroll-into-view';
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 const { getSearchTags, getCategories, removeSearchTagsByCategory } =
@@ -646,6 +647,16 @@ const Products: React.FC<RouteComponentProps> = () => {
     }
   };
 
+  useEffect(() => {
+    if (!isViewing) {
+      scrollIntoView(
+        document.querySelector(
+          `.scrollable-row-${lastViewedIndex}`
+        ) as HTMLElement
+      );
+    }
+  }, [isViewing]);
+
   return (
     <>
       {!isViewing && (
@@ -757,7 +768,11 @@ const Products: React.FC<RouteComponentProps> = () => {
             }
           >
             <EditableTable
-              rowClassName={index => (index === 0 ? '' : 'styled-row')}
+              rowClassName={(_, index) =>
+                `scrollable-row-${index} ${
+                  index === lastViewedIndex ? 'selected-row' : ''
+                }`
+              }
               rowKey="id"
               columns={columns}
               dataSource={products}
@@ -786,7 +801,12 @@ const Products: React.FC<RouteComponentProps> = () => {
       )}
       {isViewing && (
         <div className="products-details">
-          <PageHeader title="Product" subTitle="Form" />
+          <PageHeader
+            title={
+              currentProduct ? `${currentProduct?.name} Update` : 'New Product'
+            }
+            subTitle="Form"
+          />
           <Form
             form={form}
             name="productForm"
