@@ -1,14 +1,14 @@
-import AppRoute from "./AppRoute";
-import AuthenticatedLayout from "layout/AuthenticatedLayout";
-import OpenLayout from "layout/OpenLayout";
-import Login from "pages/login/Login";
-import ProductDetails from "pages/products/ProductsDetails";
-import PreviewList from "pages/products/PreviewList";
-import { Redirect, Switch } from "react-router-dom";
-import Orders from "pages/orders/BrandManager/Orders";
-import VideoFeed from "pages/video-feed/BrandManager/VideoFeed";
-import VideoFeedDetail from "pages/video-feed/BrandManager/VideoFeedDetail";
-import BrandDashboard from "pages/dashboard/BrandDashboard";
+import AppRoute from './AppRoute';
+import AuthenticatedLayout from 'layout/AuthenticatedLayout';
+import OpenLayout from 'layout/OpenLayout';
+import Login from 'pages/login/Login';
+import ProductDetails from 'pages/products/ProductsDetails';
+import PreviewList from 'pages/products/PreviewList';
+import { Redirect, Switch } from 'react-router-dom';
+import Orders from 'pages/orders/BrandManager/Orders';
+import VideoFeed from 'pages/video-feed/BrandManager/VideoFeed';
+import VideoFeedDetail from 'pages/video-feed/BrandManager/VideoFeedDetail';
+import BrandDashboard from 'pages/dashboard/BrandDashboard';
 
 function BrandManagerRoutes() {
   return (

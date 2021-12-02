@@ -1,12 +1,12 @@
-import Select from "antd/lib/select";
-import useAllCategories from "../hooks/useAllCategories";
-import React, { useEffect } from "react";
+import Select from 'antd/lib/select';
+import useAllCategories from '../hooks/useAllCategories';
+import React, { useEffect } from 'react';
 import {
   AllCategories,
   ProductCategory,
   SelectedCategories,
   SelectedProductCategories,
-} from "../interfaces/Category";
+} from '../interfaces/Category';
 
 interface SelectCategorySmartSearchProps {
   allCategories: AllCategories;
@@ -26,11 +26,11 @@ interface SelectCategorySmartSearchProps {
 
 const formatProductCategories: (
   initialProductCategories: SelectedProductCategories
-) => SelectedCategories = (initialProductCategories) => {
+) => SelectedCategories = initialProductCategories => {
   const initialCategories: SelectedCategories = {
-    superCategory: "",
+    superCategory: '',
   };
-  Object.keys(initialProductCategories).forEach((key) => {
+  Object.keys(initialProductCategories).forEach(key => {
     const _key = key as keyof SelectedCategories;
     if (initialProductCategories[_key]) {
       initialCategories[_key] = initialProductCategories[_key]![_key];
@@ -70,7 +70,7 @@ export const SelectCategorySmartSearch: React.FC<SelectCategorySmartSearchProps>
     useEffect(() => {});
 
     return (
-      <div style={{ marginBottom: "16px" }}>
+      <div style={{ marginBottom: '16px' }}>
         <Select
           key={_index}
           onChange={onChange}
@@ -91,9 +91,9 @@ export const SelectCategorySmartSearch: React.FC<SelectCategorySmartSearchProps>
           {_index === 0 &&
             (
               filteredCategories[
-                "Super Category"
+                'Super Category'
               ] as unknown as ProductCategory[]
-            )?.map((category) => (
+            )?.map(category => (
               <Select.Option
                 key={category.id}
                 value={category.superCategory as string}
@@ -103,8 +103,8 @@ export const SelectCategorySmartSearch: React.FC<SelectCategorySmartSearchProps>
             ))}
           {_index === 1 &&
             (
-              filteredCategories["Category"] as unknown as ProductCategory[]
-            )?.map((category) => (
+              filteredCategories['Category'] as unknown as ProductCategory[]
+            )?.map(category => (
               <Select.Option
                 key={category.id}
                 value={category.category as string}
@@ -114,8 +114,8 @@ export const SelectCategorySmartSearch: React.FC<SelectCategorySmartSearchProps>
             ))}
           {_index === 2 &&
             (
-              filteredCategories["Sub Category"] as unknown as ProductCategory[]
-            )?.map((category) => (
+              filteredCategories['Sub Category'] as unknown as ProductCategory[]
+            )?.map(category => (
               <Select.Option
                 key={category.id}
                 value={category.subCategory as string}
@@ -126,9 +126,9 @@ export const SelectCategorySmartSearch: React.FC<SelectCategorySmartSearchProps>
           {_index === 3 &&
             (
               filteredCategories[
-                "Sub Sub Category"
+                'Sub Sub Category'
               ] as unknown as ProductCategory[]
-            )?.map((category) => (
+            )?.map(category => (
               <Select.Option
                 key={category.id}
                 value={category.subSubCategory as string}

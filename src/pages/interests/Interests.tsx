@@ -1,4 +1,4 @@
-import { MinusOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
+import { MinusOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import {
   Button,
   Image as AntImage,
@@ -8,18 +8,18 @@ import {
   Row,
   Space,
   Tabs,
-} from "antd";
-import Table, { ColumnsType } from "antd/lib/table";
-import { SortableTable } from "components";
-import useAllCategories from "hooks/useAllCategories";
-import { useRequest } from "hooks/useRequest";
-import { ProductCategory } from "interfaces/Category";
-import { FeedItem } from "interfaces/FeedItem";
-import { Image } from "interfaces/Image";
-import React, { useEffect, useRef, useState } from "react";
-import Highlighter from "react-highlight-words";
-import { fetchInterests, saveInterests } from "services/DiscoClubService";
-import CopyIdToClipboard from "components/CopyIdToClipboard";
+} from 'antd';
+import Table, { ColumnsType } from 'antd/lib/table';
+import { SortableTable } from 'components';
+import useAllCategories from 'hooks/useAllCategories';
+import { useRequest } from 'hooks/useRequest';
+import { ProductCategory } from 'interfaces/Category';
+import { FeedItem } from 'interfaces/FeedItem';
+import { Image } from 'interfaces/Image';
+import React, { useEffect, useRef, useState } from 'react';
+import Highlighter from 'react-highlight-words';
+import { fetchInterests, saveInterests } from 'services/DiscoClubService';
+import CopyIdToClipboard from 'components/CopyIdToClipboard';
 
 interface InterestsProps {}
 
@@ -30,16 +30,16 @@ const Interests: React.FC<InterestsProps> = () => {
   });
   const { doFetch, doRequest } = useRequest({ setLoading });
 
-  const [searchText, setSearchText] = useState<string>("");
-  const [searchedColumn, setSearchedColumn] = useState<string>("");
+  const [searchText, setSearchText] = useState<string>('');
+  const [searchedColumn, setSearchedColumn] = useState<string>('');
 
-  const [selectedTab, setSelectedTab] = useState<string>("");
+  const [selectedTab, setSelectedTab] = useState<string>('');
 
   const [interests, setInterests] = useState<any[]>([]);
   const [mergedCategories, setMergedCategories] = useState<any[]>([]);
 
   useEffect(() => {
-    if (!allCategories["Super Category"].length) return;
+    if (!allCategories['Super Category'].length) return;
 
     const getCategoryParams = (category: ProductCategory) => ({
       searchTags: category.searchTags,
@@ -48,21 +48,21 @@ const Interests: React.FC<InterestsProps> = () => {
 
     const _mergedCategories: any[] = [];
 
-    allCategories["Category"].forEach((category) => {
+    allCategories['Category'].forEach(category => {
       _mergedCategories.push({
         description: category.category,
         categoryId: category.id,
         ...getCategoryParams(category),
       });
     });
-    allCategories["Sub Category"].forEach((category) => {
+    allCategories['Sub Category'].forEach(category => {
       _mergedCategories.push({
         description: category.subCategory,
         subCategoryId: category.id,
         ...getCategoryParams(category),
       });
     });
-    allCategories["Sub Sub Category"].forEach((category) => {
+    allCategories['Sub Sub Category'].forEach(category => {
       _mergedCategories.push({
         description: category.subSubCategory,
         subSubCategoryId: category.id,
@@ -83,7 +83,7 @@ const Interests: React.FC<InterestsProps> = () => {
 
   const handleReset = (clearFilters: any) => {
     clearFilters();
-    setSearchText("");
+    setSearchText('');
   };
 
   const getColumnSearchProps = (dataIndex: any) => ({
@@ -103,11 +103,11 @@ const Interests: React.FC<InterestsProps> = () => {
           ref={searchInput}
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
-          onChange={(e) =>
+          onChange={e =>
             setSelectedKeys(e.target.value ? [e.target.value] : [])
           }
           onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
-          style={{ marginBottom: 8, display: "block" }}
+          style={{ marginBottom: 8, display: 'block' }}
         />
         <Space>
           <Button
@@ -141,7 +141,7 @@ const Interests: React.FC<InterestsProps> = () => {
       </div>
     ),
     filterIcon: (filtered: any) => (
-      <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
+      <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
     ),
     onFilter: (value: any, record: any) =>
       record[dataIndex]
@@ -149,7 +149,7 @@ const Interests: React.FC<InterestsProps> = () => {
             .toString()
             .toLowerCase()
             .includes(value.toLowerCase())
-        : "",
+        : '',
     onFilterDropdownVisibleChange: (visible: any) => {
       if (visible) {
         setTimeout(() => searchInput.current!.select(), 100);
@@ -158,10 +158,10 @@ const Interests: React.FC<InterestsProps> = () => {
     render: (text: any) =>
       searchedColumn === dataIndex ? (
         <Highlighter
-          highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
+          highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
           searchWords={[searchText]}
           autoEscape
-          textToHighlight={text ? text.toString() : ""}
+          textToHighlight={text ? text.toString() : ''}
         />
       ) : (
         text
@@ -169,12 +169,12 @@ const Interests: React.FC<InterestsProps> = () => {
   });
 
   const addInterest = (record: FeedItem, _: number) => {
-    setInterests((prev) => [record, ...prev]);
-    message.success("Category added into interests.");
+    setInterests(prev => [record, ...prev]);
+    message.success('Category added into interests.');
   };
 
   const removeInterest = (_: FeedItem, index: number) => {
-    setInterests((prev) => [...prev.slice(0, index), ...prev.slice(index + 1)]);
+    setInterests(prev => [...prev.slice(0, index), ...prev.slice(index + 1)]);
   };
 
   const addObj = { icon: <PlusOutlined />, fn: addInterest };
@@ -187,7 +187,7 @@ const Interests: React.FC<InterestsProps> = () => {
 
   const handleTabChange = (tab: string) => {
     setSelectedTab(tab);
-    setActionObj(tab === "Interests" ? removeObj : addObj);
+    setActionObj(tab === 'Interests' ? removeObj : addObj);
   };
 
   useEffect(() => {
@@ -204,37 +204,37 @@ const Interests: React.FC<InterestsProps> = () => {
 
   const columns: ColumnsType<FeedItem> = [
     {
-      title: "_id",
-      dataIndex: "id",
-      width: "6%",
-      render: (id) => <CopyIdToClipboard id={id} />,
-      align: "center",
+      title: '_id',
+      dataIndex: 'id',
+      width: '6%',
+      render: id => <CopyIdToClipboard id={id} />,
+      align: 'center',
     },
     {
-      title: "Title",
-      dataIndex: "description",
-      width: "15%",
+      title: 'Title',
+      dataIndex: 'description',
+      width: '15%',
       ...(() =>
-        selectedTab === "All Categories"
-          ? getColumnSearchProps("description")
+        selectedTab === 'All Categories'
+          ? getColumnSearchProps('description')
           : {})(),
     },
     {
-      title: "Image",
-      dataIndex: "image",
-      width: "15%",
+      title: 'Image',
+      dataIndex: 'image',
+      width: '15%',
       render: (image: Image) => <AntImage src={image?.url} width={70} />,
     },
     {
-      title: "Actions",
-      key: "action",
-      width: "5%",
-      align: "right",
+      title: 'Actions',
+      key: 'action',
+      width: '5%',
+      align: 'right',
       render: (_, record, index) => (
         <Button
           onClick={() => actionObj.fn(record, index)}
           type="link"
-          style={{ padding: 0, margin: "0 6px" }}
+          style={{ padding: 0, margin: '0 6px' }}
         >
           {actionObj.icon}
         </Button>
@@ -243,7 +243,7 @@ const Interests: React.FC<InterestsProps> = () => {
   ];
 
   const saveChanges = async () => {
-    await doRequest(() => saveInterests(interests), "Interests updated.");
+    await doRequest(() => saveInterests(interests), 'Interests updated.');
   };
 
   return (
@@ -253,10 +253,10 @@ const Interests: React.FC<InterestsProps> = () => {
         <Button
           onClick={saveChanges}
           style={{
-            marginBottom: "16px",
-            color: "white",
-            borderColor: "#4CAF50",
-            backgroundColor: "#4CAF50",
+            marginBottom: '16px',
+            color: 'white',
+            borderColor: '#4CAF50',
+            backgroundColor: '#4CAF50',
           }}
         >
           Save Changes

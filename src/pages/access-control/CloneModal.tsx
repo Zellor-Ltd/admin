@@ -1,6 +1,6 @@
-import { Form, message, Modal, Select, Typography } from "antd";
-import { Privilege } from "interfaces/Privilege";
-import { savePrivileges } from "services/DiscoClubService";
+import { Form, message, Modal, Select, Typography } from 'antd';
+import { Privilege } from 'interfaces/Privilege';
+import { savePrivileges } from 'services/DiscoClubService';
 
 interface CloneModalProps {
   showCloneModal: boolean;
@@ -22,16 +22,16 @@ const CloneModal: React.FC<CloneModalProps> = ({
   const onFinish = () => {
     form.validateFields().then(async ({ profile }) => {
       const clonedPrivileges = privileges.filter(
-        (privilege) => privilege.profile === selectedProfile
+        privilege => privilege.profile === selectedProfile
       );
       const profilePrivileges = privileges.filter(
-        (privilege) => privilege.profile === profile
+        privilege => privilege.profile === profile
       );
       const profilesToSave = profilePrivileges.reduce(
         (prev: Privilege[], curr) => {
           const currPrivilege = { ...curr };
           const indexClone = clonedPrivileges.findIndex(
-            (privilege) => privilege.app === currPrivilege.app
+            privilege => privilege.app === currPrivilege.app
           );
           if (indexClone > -1) {
             const [privilegeClone] = clonedPrivileges.splice(indexClone, 1);
@@ -51,9 +51,9 @@ const CloneModal: React.FC<CloneModalProps> = ({
           profile: profile,
         }))
       );
-      profilesToSave.forEach(async (profile) => {
+      profilesToSave.forEach(async profile => {
         const response: any = await savePrivileges(profile);
-        if (response.success) message.success("Profile clone was successfull");
+        if (response.success) message.success('Profile clone was successfull');
         else message.error(response.error);
       });
 
@@ -67,7 +67,8 @@ const CloneModal: React.FC<CloneModalProps> = ({
       onCancel={() => setShowCloneModal(false)}
       title="Clone profile"
       onOk={() => form.submit()}
-      forceRender>
+      forceRender
+    >
       <Form onFinish={onFinish} layout="vertical" form={form}>
         <Typography.Title level={5}>
           {`Cloning `}
@@ -76,10 +77,11 @@ const CloneModal: React.FC<CloneModalProps> = ({
         <Form.Item name="profile" label="Profile" rules={[{ required: true }]}>
           <Select
             placeholder="Select a profile to save"
-            style={{ width: "100%" }}
-            value={selectedProfile}>
+            style={{ width: '100%' }}
+            value={selectedProfile}
+          >
             {profiles
-              .filter((profile) => profile !== selectedProfile)
+              .filter(profile => profile !== selectedProfile)
               .map((profie: any) => (
                 <Select.Option key={profie} value={profie}>
                   {profie}

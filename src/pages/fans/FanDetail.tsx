@@ -1,4 +1,4 @@
-import { DeleteOutlined } from "@ant-design/icons";
+import { DeleteOutlined } from '@ant-design/icons';
 import {
   Button,
   Col,
@@ -12,15 +12,15 @@ import {
   Table,
   Tabs,
   Typography,
-} from "antd";
-import { formatMoment } from "helpers/formatMoment";
-import { Category } from "interfaces/Category";
-import { Creator } from "interfaces/Creator";
-import { Currency } from "interfaces/Currency";
-import { Role } from "interfaces/Role";
-import { ServerAlias } from "interfaces/ServerAlias";
-import { useEffect, useState } from "react";
-import { RouteComponentProps } from "react-router-dom";
+} from 'antd';
+import { formatMoment } from 'helpers/formatMoment';
+import { Category } from 'interfaces/Category';
+import { Creator } from 'interfaces/Creator';
+import { Currency } from 'interfaces/Currency';
+import { Role } from 'interfaces/Role';
+import { ServerAlias } from 'interfaces/ServerAlias';
+import { useEffect, useState } from 'react';
+import { RouteComponentProps } from 'react-router-dom';
 import {
   fetchCategories,
   fetchCreators,
@@ -28,14 +28,14 @@ import {
   fetchProfiles,
   fetchServersList,
   saveUser,
-} from "services/DiscoClubService";
-import FanGroupDropdown from "./FanGroupDropdown";
+} from 'services/DiscoClubService';
+import FanGroupDropdown from './FanGroupDropdown';
 
 const { Option } = Select;
 
 const prefixSelector = (prefix: string) => (
   <Form.Item name="dialCode" noStyle>
-    <Select defaultValue={prefix || "+353"} style={{ width: 80 }}>
+    <Select defaultValue={prefix || '+353'} style={{ width: 80 }}>
       <Option value="+353">+353</Option>
       <Option value="+55">+55</Option>
       <Option value="+86">+86</Option>
@@ -44,7 +44,7 @@ const prefixSelector = (prefix: string) => (
   </Form.Item>
 );
 
-const FanDetail: React.FC<RouteComponentProps> = (props) => {
+const FanDetail: React.FC<RouteComponentProps> = props => {
   const { history, location } = props;
   const [loading, setLoading] = useState(false);
   const [roles, setRoles] = useState<Role[]>([]);
@@ -95,8 +95,8 @@ const FanDetail: React.FC<RouteComponentProps> = (props) => {
   const onChangeCreator = (key: string) => {
     if (key) {
       const { id, firstName, lastName, userName } =
-        creators.find((creator) => creator.userName === key) || {};
-      const followingCreators = form.getFieldValue("followingCreators") || [];
+        creators.find(creator => creator.userName === key) || {};
+      const followingCreators = form.getFieldValue('followingCreators') || [];
       form.setFieldsValue({
         followingCreators: [
           ...followingCreators,
@@ -107,7 +107,7 @@ const FanDetail: React.FC<RouteComponentProps> = (props) => {
   };
 
   const onRemoveCreatorClick = (record: Creator) => {
-    const followingCreators = form.getFieldValue("followingCreators") || [];
+    const followingCreators = form.getFieldValue('followingCreators') || [];
     form.setFieldsValue({
       followingCreators: followingCreators.filter(
         (follow: Creator) => follow.userName !== record.userName
@@ -116,11 +116,11 @@ const FanDetail: React.FC<RouteComponentProps> = (props) => {
   };
 
   const creatorColumns = [
-    { title: "UserName", dataIndex: "userName", width: "15%" },
+    { title: 'UserName', dataIndex: 'userName', width: '15%' },
     {
-      title: "Actions",
-      key: "action",
-      width: "5%",
+      title: 'Actions',
+      key: 'action',
+      width: '5%',
       render: (_: any, record: Creator) => (
         <>
           <Button
@@ -138,9 +138,9 @@ const FanDetail: React.FC<RouteComponentProps> = (props) => {
   const onChangeCategories = (key: string) => {
     if (key) {
       const { id, name } =
-        categories.find((category) => category.name === key) || {};
+        categories.find(category => category.name === key) || {};
       const followingCategories =
-        form.getFieldValue("followingCategories") || [];
+        form.getFieldValue('followingCategories') || [];
       form.setFieldsValue({
         followingCategories: [...followingCategories, { idCategory: id, name }],
       });
@@ -148,7 +148,7 @@ const FanDetail: React.FC<RouteComponentProps> = (props) => {
   };
 
   const onRemoveCategoryClick = (record: Category) => {
-    const followingCategories = form.getFieldValue("followingCategories") || [];
+    const followingCategories = form.getFieldValue('followingCategories') || [];
     followingCategories.splice(record, 1);
     form.setFieldsValue({
       followingCategories: followingCategories.filter(
@@ -158,11 +158,11 @@ const FanDetail: React.FC<RouteComponentProps> = (props) => {
   };
 
   const categoryColumns = [
-    { title: "Name", dataIndex: "name", width: "15%" },
+    { title: 'Name', dataIndex: 'name', width: '15%' },
     {
-      title: "Actions",
-      key: "action",
-      width: "5%",
+      title: 'Actions',
+      key: 'action',
+      width: '5%',
       render: (value: any, record: Category, index: number) => (
         <>
           <Button
@@ -179,11 +179,11 @@ const FanDetail: React.FC<RouteComponentProps> = (props) => {
 
   const formatUserData = (formUser: any) => {
     const formattedUser = { ...formUser };
-    if (typeof formUser.birthday === "string") {
+    if (typeof formUser.birthday === 'string') {
       formattedUser.birthday = formUser.birthday;
     }
-    if (typeof formUser.birthday === "object") {
-      formattedUser.birthday = formUser.birthday.format("DD-MM-YYYY");
+    if (typeof formUser.birthday === 'object') {
+      formattedUser.birthday = formUser.birthday.format('DD-MM-YYYY');
     }
 
     formattedUser.personalDetails = formattedUser.personalDetails || {};
@@ -194,9 +194,9 @@ const FanDetail: React.FC<RouteComponentProps> = (props) => {
     formattedUser.addresses = [
       {
         line1: formUser.line1,
-        line2: "",
+        line2: '',
         city: formUser.city,
-        stateOrCounty: "",
+        stateOrCounty: '',
         country: formUser.country,
         postalCode: formUser.postalCode,
         isDefault: true,
@@ -213,7 +213,7 @@ const FanDetail: React.FC<RouteComponentProps> = (props) => {
       const formattedUserData = formatUserData(user);
       await saveUser(formattedUserData);
       setLoading(false);
-      message.success("Register updated with success.");
+      message.success('Register updated with success.');
       history.goBack();
     } catch (error) {
       setLoading(false);
@@ -265,7 +265,7 @@ const FanDetail: React.FC<RouteComponentProps> = (props) => {
               <Col lg={8} xs={24}>
                 <Form.Item name="profile" label="Profile">
                   <Select>
-                    {roles.map((role) => (
+                    {roles.map(role => (
                       <Select.Option key={role.id} value={role.name}>
                         {role.name}
                       </Select.Option>
@@ -306,7 +306,7 @@ const FanDetail: React.FC<RouteComponentProps> = (props) => {
               <Col lg={8} xs={24}>
                 <Form.Item label="Default Currency" name="currencyCode">
                   <Select>
-                    {currencies.map((currency) => (
+                    {currencies.map(currency => (
                       <Select.Option key={currency.id} value={currency.code}>
                         {currency.code}
                       </Select.Option>
@@ -350,9 +350,9 @@ const FanDetail: React.FC<RouteComponentProps> = (props) => {
                 />
               </Col>
               <Col lg={8} xs={24}>
-                <Form.Item name={"serverAlias"} label="Server Alias">
+                <Form.Item name={'serverAlias'} label="Server Alias">
                   <Select>
-                    {serversList.map((serverAlias) => (
+                    {serversList.map(serverAlias => (
                       <Select.Option
                         key={serverAlias.alias}
                         value={serverAlias.alias}
@@ -379,7 +379,7 @@ const FanDetail: React.FC<RouteComponentProps> = (props) => {
                 >
                   {({ getFieldValue }) => {
                     const followingCreators: Creator[] =
-                      getFieldValue("followingCreators") || [];
+                      getFieldValue('followingCreators') || [];
 
                     return (
                       <>
@@ -395,12 +395,12 @@ const FanDetail: React.FC<RouteComponentProps> = (props) => {
                             >
                               {creators
                                 .filter(
-                                  (creat) =>
+                                  creat =>
                                     !followingCreators
-                                      .map((follow) => follow.userName)
+                                      .map(follow => follow.userName)
                                       .includes(creat.userName)
                                 )
-                                .map((creator) => (
+                                .map(creator => (
                                   <Select.Option
                                     key={creator.id}
                                     value={creator.userName}
@@ -439,7 +439,7 @@ const FanDetail: React.FC<RouteComponentProps> = (props) => {
                 >
                   {({ getFieldValue }) => {
                     const followingCategories: Category[] =
-                      getFieldValue("followingCategories") || [];
+                      getFieldValue('followingCategories') || [];
 
                     return (
                       <>
@@ -455,12 +455,12 @@ const FanDetail: React.FC<RouteComponentProps> = (props) => {
                             >
                               {categories
                                 .filter(
-                                  (creat) =>
+                                  creat =>
                                     !followingCategories
-                                      .map((follow) => follow.id)
+                                      .map(follow => follow.id)
                                       .includes(creat.id)
                                 )
-                                .map((category) => (
+                                .map(category => (
                                   <Select.Option
                                     key={category.id}
                                     value={category.name}

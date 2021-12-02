@@ -1,14 +1,14 @@
-import Select from "antd/lib/select";
-import React, { useEffect, useState } from "react";
-import { fetchFanGroups } from "../services/DiscoClubService";
-import { FanFilter } from "../interfaces/Fan";
-import { Typography } from "antd";
-import { useRequest } from "hooks/useRequest";
-import { FanGroup } from "interfaces/FanGroup";
+import Select from 'antd/lib/select';
+import React, { useEffect, useState } from 'react';
+import { fetchFanGroups } from '../services/DiscoClubService';
+import { FanFilter } from '../interfaces/Fan';
+import { Typography } from 'antd';
+import { useRequest } from 'hooks/useRequest';
+import { FanGroup } from 'interfaces/FanGroup';
 
 type SelectFanQueryProps = Omit<
   React.SelectHTMLAttributes<HTMLSelectElement>,
-  "onChange"
+  'onChange'
 > & {
   onChange: (selectedFan: FanFilter) => {};
   label?: string;
@@ -16,8 +16,8 @@ type SelectFanQueryProps = Omit<
 
 const fansQueryFilters: FanFilter[] = [
   {
-    id: "allfans",
-    user: "All Disco Fans",
+    id: 'allfans',
+    user: 'All Disco Fans',
     isFilter: true,
     isGroup: false,
   },
@@ -25,13 +25,13 @@ const fansQueryFilters: FanFilter[] = [
 
 export const SelectFanQuery: React.FC<SelectFanQueryProps> = ({
   onChange,
-  placeholder = "Select",
+  placeholder = 'Select',
   style,
-  label = "Fan Filter",
+  label = 'Fan Filter',
 }) => {
   const [fans, setFans] = useState<FanFilter[]>([]);
   const [searchList, setSearchList] = useState<string[]>([]);
-  const [selectedFan, setSelectedFan] = useState<string>("");
+  const [selectedFan, setSelectedFan] = useState<string>('');
   const { doFetch } = useRequest();
 
   const getResources = async () => {
@@ -42,7 +42,7 @@ export const SelectFanQuery: React.FC<SelectFanQueryProps> = ({
     const _searchList: string[] = [];
     const _fansQueryFilters: FanFilter[] = [
       ...fansQueryFilters,
-      ...fanGroupsResults.map((fanGroup) => ({
+      ...fanGroupsResults.map(fanGroup => ({
         id: fanGroup.id,
         user: fanGroup.name,
         isFilter: true,
@@ -64,12 +64,12 @@ export const SelectFanQuery: React.FC<SelectFanQueryProps> = ({
 
   const _onChange = async (value: string) => {
     setSelectedFan(value);
-    onChange(fans.find((fan) => fan.user === value) as FanFilter);
+    onChange(fans.find(fan => fan.user === value) as FanFilter);
     getResources();
   };
 
   return (
-    <div style={{ marginBottom: "16px" }}>
+    <div style={{ marginBottom: '16px' }}>
       <Typography.Title level={5} title={label}>
         {label}
       </Typography.Title>
@@ -80,7 +80,7 @@ export const SelectFanQuery: React.FC<SelectFanQueryProps> = ({
         style={style}
         placeholder={placeholder}
       >
-        {searchList.map((value) => (
+        {searchList.map(value => (
           <Select.Option key={value} value={value}>
             {value}
           </Select.Option>

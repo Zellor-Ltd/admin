@@ -5,12 +5,13 @@ import {
   SoundFilled,
   TwitterCircleFilled,
   YoutubeFilled,
-} from "@ant-design/icons";
+} from '@ant-design/icons';
 import {
   Button,
   Col,
   Form,
   Input,
+  InputNumber,
   message,
   PageHeader,
   Row,
@@ -18,14 +19,14 @@ import {
   Select,
   Slider,
   Typography,
-} from "antd";
-import { Upload } from "components";
-import { ServerAlias } from "interfaces/ServerAlias";
-import { useEffect, useState } from "react";
-import { RouteComponentProps } from "react-router-dom";
-import { fetchServersList, saveCreator } from "services/DiscoClubService";
+} from 'antd';
+import { Upload } from 'components';
+import { ServerAlias } from 'interfaces/ServerAlias';
+import { useEffect, useState } from 'react';
+import { RouteComponentProps } from 'react-router-dom';
+import { fetchServersList, saveCreator } from 'services/DiscoClubService';
 
-const CreatorDetail: React.FC<RouteComponentProps> = (props) => {
+const CreatorDetail: React.FC<RouteComponentProps> = props => {
   const { history, location } = props;
   const initial: any = location.state;
   const [loading, setLoading] = useState(false);
@@ -40,7 +41,7 @@ const CreatorDetail: React.FC<RouteComponentProps> = (props) => {
       const creator = form.getFieldsValue(true);
       await saveCreator(creator);
       setLoading(false);
-      message.success("Register updated with success.");
+      message.success('Register updated with success.');
       history.goBack();
     } catch (error) {
       console.error(error);
@@ -95,7 +96,7 @@ const CreatorDetail: React.FC<RouteComponentProps> = (props) => {
                   label="Email"
                   name="user"
                   rules={[
-                    { type: "email", message: "please use an valid email" },
+                    { type: 'email', message: 'please use an valid email' },
                   ]}
                 >
                   <Input />
@@ -117,10 +118,10 @@ const CreatorDetail: React.FC<RouteComponentProps> = (props) => {
                 </Form.Item>
               </Col>
 
-              <Col lg={8} xs={24}>
-                <Form.Item name={"serverAlias"} label="Server Alias">
+              <Col lg={12} xs={24}>
+                <Form.Item name={'serverAlias'} label="Server Alias">
                   <Select>
-                    {serversList.map((serverAlias) => (
+                    {serversList.map(serverAlias => (
                       <Select.Option
                         key={serverAlias.alias}
                         value={serverAlias.alias}
@@ -129,6 +130,11 @@ const CreatorDetail: React.FC<RouteComponentProps> = (props) => {
                       </Select.Option>
                     ))}
                   </Select>
+                </Form.Item>
+              </Col>
+              <Col lg={12} xs={24}>
+                <Form.Item label="Agreed Percentage" name="agreedPercentage">
+                  <InputNumber decimalSeparator="."/>
                 </Form.Item>
               </Col>
             </Row>
@@ -180,7 +186,7 @@ const CreatorDetail: React.FC<RouteComponentProps> = (props) => {
                 <Form.Item label="Slider">
                   <Slider
                     range
-                    marks={{ 12: "12", 100: "100" }}
+                    marks={{ 12: '12', 100: '100' }}
                     min={12}
                     max={100}
                     value={ageRange}

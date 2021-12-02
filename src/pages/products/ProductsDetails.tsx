@@ -14,38 +14,38 @@ import {
   Switch,
   Tabs,
   Typography,
-} from "antd";
-import { Upload } from "components";
-import { RichTextEditor } from "components/RichTextEditor";
-import { formatMoment } from "helpers/formatMoment";
-import { categoriesSettings } from "helpers/utils";
-import useAllCategories from "hooks/useAllCategories";
-import { Brand } from "interfaces/Brand";
-import { ProductBrand } from "../../interfaces/ProductBrand";
-import { AllCategories } from "interfaces/Category";
-import { Product } from "interfaces/Product";
-import { useCallback, useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { RouteComponentProps, useParams } from "react-router-dom";
+} from 'antd';
+import { Upload } from 'components';
+import { RichTextEditor } from 'components/RichTextEditor';
+import { formatMoment } from 'helpers/formatMoment';
+import { categoriesSettings } from 'helpers/utils';
+import useAllCategories from 'hooks/useAllCategories';
+import { Brand } from 'interfaces/Brand';
+import { ProductBrand } from '../../interfaces/ProductBrand';
+import { AllCategories } from 'interfaces/Category';
+import { Product } from 'interfaces/Product';
+import { useCallback, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { RouteComponentProps, useParams } from 'react-router-dom';
 import {
   fetchBrands,
   fetchProductBrands,
   saveProduct,
   saveStagingProduct,
-} from "services/DiscoClubService";
-import ProductCategoriesTrees from "./ProductCategoriesTrees";
-import "./Products.scss";
+} from 'services/DiscoClubService';
+import ProductCategoriesTrees from './ProductCategoriesTrees';
+import './Products.scss';
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 
 interface RouteParams {
-  productMode: "staging" | "commited";
+  productMode: 'staging' | 'commited';
 }
 
-const ProductDetails: React.FC<RouteComponentProps> = (props) => {
+const ProductDetails: React.FC<RouteComponentProps> = props => {
   const { history, location } = props;
   const { productMode } = useParams<RouteParams>();
-  const isStaging = productMode === "staging";
+  const isStaging = productMode === 'staging';
   const saveProductFn = isStaging ? saveStagingProduct : saveProduct;
   const initial = location.state as unknown as Product | undefined;
   const [loading, setLoading] = useState<boolean>(false);
@@ -67,13 +67,13 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
   const setSearchTagsByCategory = useCallback(
     (useInitialValue: boolean, selectedCategories: any[] = []) => {
       const selectedCategoriesSearchTags = selectedCategories
-        .filter((v) => v && v.searchTags)
-        .map((v) => v.searchTags)
+        .filter(v => v && v.searchTags)
+        .map(v => v.searchTags)
         .reduce((prev, curr) => {
           return prev?.concat(curr || []);
         }, []);
 
-      let searchTags = form.getFieldValue("searchTags") || [];
+      let searchTags = form.getFieldValue('searchTags') || [];
       const finalValue = Array.from(
         new Set([...searchTags, ...selectedCategoriesSearchTags])
       );
@@ -170,20 +170,20 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
     setLoading(true);
     try {
       const product = form.getFieldsValue(true);
-      product.brand = brands?.find((brand) => brand.id === product.brand?.id);
+      product.brand = brands?.find(brand => brand.id === product.brand?.id);
 
       categoriesFields.forEach((field, index) => {
         product.categories.forEach((productCategory: any) => {
           productCategory[field] = allCategories[
             categoriesKeys[index] as keyof AllCategories
-          ].find((category) => category.id === productCategory[field]?.id);
+          ].find(category => category.id === productCategory[field]?.id);
         });
       });
 
       await saveProductFn(product);
 
       setLoading(false);
-      message.success("Register updated with success.");
+      message.success('Register updated with success.');
       history.goBack();
     } catch (error) {
       console.error(error);
@@ -200,7 +200,7 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
         initialValues={initial}
         onFinish={onFinish}
         onFinishFailed={({ errorFields }) => {
-          errorFields.forEach((errorField) => {
+          errorFields.forEach(errorField => {
             message.error(errorField.errors[0]);
           });
         }}
@@ -244,12 +244,12 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                 <Row gutter={8}>
                   <Col lg={24} xs={24}>
                     <Form.Item
-                      name={["brand", "id"]}
+                      name={['brand', 'id']}
                       label="Master Brand"
                       rules={[{ required: true }]}
                     >
                       <Select onChange={() => setDiscoPercentageByBrand(false)}>
-                        {brands.map((brand) => (
+                        {brands.map(brand => (
                           <Select.Option key={brand.id} value={brand.id}>
                             {brand.brandName}
                           </Select.Option>
@@ -266,7 +266,7 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                       rules={[{ required: true }]}
                     >
                       <Select>
-                        {productBrands.map((brand) => (
+                        {productBrands.map(brand => (
                           <Select.Option key={brand.id} value={brand.brandName}>
                             {brand.brandName}
                           </Select.Option>
@@ -312,9 +312,9 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                 }
               >
                 {({ getFieldValue }) => (
-                  <Form.Item name={"searchTags"} label="Search Tags">
+                  <Form.Item name={'searchTags'} label="Search Tags">
                     <Select mode="tags" className="product-search-tags">
-                      {getFieldValue("searchTags")?.map((searchTag: any) => (
+                      {getFieldValue('searchTags')?.map((searchTag: any) => (
                         <Select.Option key={searchTag} value={searchTag}>
                           {searchTag}
                         </Select.Option>
@@ -332,7 +332,7 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                 <Form.Item label="Age Range">
                   <Slider
                     range
-                    marks={{ 12: "12", 100: "100" }}
+                    marks={{ 12: '12', 100: '100' }}
                     min={12}
                     max={100}
                     value={ageRange}
@@ -455,17 +455,17 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                 <Form.Item
                   name="maxDiscoDollars"
                   label="Max Discount in DD"
-                  dependencies={["originalPrice"]}
+                  dependencies={['originalPrice']}
                   rules={[
                     {
                       required: true,
-                      message: "Max Discount is required.",
+                      message: 'Max Discount is required.',
                     },
                     ({ getFieldValue }) => ({
                       validator(_, maxDiscount) {
                         // 3x the price
                         const maxPossibleDiscount = Math.trunc(
-                          Number(getFieldValue("originalPrice")) * 3
+                          Number(getFieldValue('originalPrice')) * 3
                         );
                         if (maxDiscount && maxDiscount > maxPossibleDiscount) {
                           if (!maxDiscountAlert) {
@@ -479,7 +479,7 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                           }
                           setMaxDiscountAlert(true);
                           return Promise.reject(
-                            new Error("Max discount not allowed.")
+                            new Error('Max discount not allowed.')
                           );
                         }
                         setMaxDiscountAlert(false);
@@ -489,7 +489,7 @@ const ProductDetails: React.FC<RouteComponentProps> = (props) => {
                   ]}
                 >
                   <InputNumber
-                    parser={(value) => (value || "").replace(/-/g, "")}
+                    parser={value => (value || '').replace(/-/g, '')}
                     precision={0}
                   />
                 </Form.Item>

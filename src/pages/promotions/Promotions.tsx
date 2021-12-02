@@ -2,7 +2,7 @@ import {
   CalendarOutlined,
   DeleteOutlined,
   EditOutlined,
-} from "@ant-design/icons";
+} from '@ant-design/icons';
 import {
   Button,
   Col,
@@ -11,21 +11,21 @@ import {
   Popconfirm,
   Row,
   Table,
-} from "antd";
-import { ColumnsType } from "antd/lib/table";
-import { SearchFilter } from "components/SearchFilter";
-import useFilter from "hooks/useFilter";
-import { useRequest } from "hooks/useRequest";
-import { Promotion, PromotionAndStatusList } from "interfaces/Promotion";
-import moment from "moment";
-import { useCallback, useEffect, useState } from "react";
-import { Link, RouteComponentProps } from "react-router-dom";
+} from 'antd';
+import { ColumnsType } from 'antd/lib/table';
+import { SearchFilter } from 'components/SearchFilter';
+import useFilter from 'hooks/useFilter';
+import { useRequest } from 'hooks/useRequest';
+import { Promotion, PromotionAndStatusList } from 'interfaces/Promotion';
+import moment from 'moment';
+import { useCallback, useEffect, useState } from 'react';
+import { Link, RouteComponentProps } from 'react-router-dom';
 import {
   deletePromotion,
   fetchPromoStatus,
   fetchPromotions,
-} from "services/DiscoClubService";
-import CopyIdToClipboard from "components/CopyIdToClipboard";
+} from 'services/DiscoClubService';
+import CopyIdToClipboard from 'components/CopyIdToClipboard';
 
 const Promotions: React.FC<RouteComponentProps> = ({ history, location }) => {
   const detailsPathname = `${location.pathname}/promotion`;
@@ -45,12 +45,12 @@ const Promotions: React.FC<RouteComponentProps> = ({ history, location }) => {
 
   const handleDateChange = (values: any) => {
     if (!values) {
-      removeFilterFunction("creationDate");
+      removeFilterFunction('creationDate');
       return;
     }
-    const startDate = moment(values[0], "DD/MM/YYYY").startOf("day").utc();
-    const endDate = moment(values[1], "DD/MM/YYYY").endOf("day").utc();
-    addFilterFunction("creationDate", (promotions: Promotion[]) =>
+    const startDate = moment(values[0], 'DD/MM/YYYY').startOf('day').utc();
+    const endDate = moment(values[1], 'DD/MM/YYYY').endOf('day').utc();
+    addFilterFunction('creationDate', (promotions: Promotion[]) =>
       promotions.filter(({ hCreationDate }) => {
         return moment(hCreationDate).utc().isBetween(startDate, endDate);
       })
@@ -59,31 +59,31 @@ const Promotions: React.FC<RouteComponentProps> = ({ history, location }) => {
 
   const columns: ColumnsType<Promotion> = [
     {
-      title: "_id",
-      dataIndex: "id",
-      width: "6%",
-      render: (id) => <CopyIdToClipboard id={id} />,
-      align: "center",
+      title: '_id',
+      dataIndex: 'id',
+      width: '6%',
+      render: id => <CopyIdToClipboard id={id} />,
+      align: 'center',
     },
     {
-      title: "Promo ID",
-      dataIndex: "id",
-      width: "10%",
+      title: 'Promo ID',
+      dataIndex: 'id',
+      width: '10%',
       render: (value: string, record: Promotion) => (
         <Link to={{ pathname: detailsPathname, state: record }}>{value}</Link>
       ),
     },
     {
-      title: "Master Brand",
-      dataIndex: ["brand", "brandName"],
-      width: "10%",
-      align: "center",
+      title: 'Master Brand',
+      dataIndex: ['brand', 'brandName'],
+      width: '10%',
+      align: 'center',
     },
     {
-      title: "Creation",
-      dataIndex: "hCreationDate",
-      width: "10%",
-      align: "center",
+      title: 'Creation',
+      dataIndex: 'hCreationDate',
+      width: '10%',
+      align: 'center',
       filterIcon: <CalendarOutlined />,
       filterDropdown: () => (
         <DatePicker.RangePicker
@@ -93,16 +93,16 @@ const Promotions: React.FC<RouteComponentProps> = ({ history, location }) => {
       ),
       render: (value: Date) => (
         <>
-          <div>{moment(value).format("DD/MM/YYYY")}</div>
-          <div>{moment(value).format("HH:mm")}</div>
+          <div>{moment(value).format('DD/MM/YYYY')}</div>
+          <div>{moment(value).format('HH:mm')}</div>
         </>
       ),
     },
     {
-      title: "Actions",
-      key: "action",
-      width: "5%",
-      align: "right",
+      title: 'Actions',
+      key: 'action',
+      width: '5%',
+      align: 'right',
       render: (_, record) => (
         <>
           <Link
@@ -154,7 +154,7 @@ const Promotions: React.FC<RouteComponentProps> = ({ history, location }) => {
     for (let i = 0; i < content.length; i++) {
       if (content[i].id === id) {
         const index = i;
-        setPromotions((prev) => [
+        setPromotions(prev => [
           ...prev.slice(0, index),
           ...prev.slice(index + 1),
         ]);
@@ -167,8 +167,8 @@ const Promotions: React.FC<RouteComponentProps> = ({ history, location }) => {
   }, [getResources]);
 
   const searchFilterFunction = (filterText: string) => {
-    addFilterFunction("promoId", (promotions) =>
-      promotions.filter((promotion) =>
+    addFilterFunction('promoId', promotions =>
+      promotions.filter(promotion =>
         promotion.id.toUpperCase().includes(filterText.toUpperCase())
       )
     );

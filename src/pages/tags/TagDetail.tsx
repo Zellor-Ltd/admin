@@ -9,16 +9,16 @@ import {
   Row,
   Select,
   Slider,
-} from "antd";
-import { Brand } from "interfaces/Brand";
-import { Product } from "interfaces/Product";
-import { Tag } from "interfaces/Tag";
-import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { RouteComponentProps } from "react-router-dom";
-import { fetchBrands, fetchProducts, saveTag } from "services/DiscoClubService";
+} from 'antd';
+import { Brand } from 'interfaces/Brand';
+import { Product } from 'interfaces/Product';
+import { Tag } from 'interfaces/Tag';
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { RouteComponentProps } from 'react-router-dom';
+import { fetchBrands, fetchProducts, saveTag } from 'services/DiscoClubService';
 
-const TagDetail: React.FC<RouteComponentProps> = (props) => {
+const TagDetail: React.FC<RouteComponentProps> = props => {
   const { history, location } = props;
   const initial = location.state as unknown as Tag | undefined;
   const [loading, setLoading] = useState(false);
@@ -26,7 +26,7 @@ const TagDetail: React.FC<RouteComponentProps> = (props) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [selectedBrand, setSelectedBrand] = useState<string>(
-    initial?.brand?.id || ""
+    initial?.brand?.id || ''
   );
   const [form] = Form.useForm();
 
@@ -73,13 +73,11 @@ const TagDetail: React.FC<RouteComponentProps> = (props) => {
       setLoading(true);
       try {
         const tag = form.getFieldsValue(true);
-        tag.product = products.find(
-          (product) => product.id === tag.product?.id
-        );
-        tag.brand = brands.find((brand) => brand.id === tag.brand?.id);
+        tag.product = products.find(product => product.id === tag.product?.id);
+        tag.brand = brands.find(brand => brand.id === tag.brand?.id);
         await saveTag(tag);
         setLoading(false);
-        message.success("Register updated with success.");
+        message.success('Register updated with success.');
         history.goBack();
       } catch (e) {
         console.error(e);
@@ -89,7 +87,7 @@ const TagDetail: React.FC<RouteComponentProps> = (props) => {
   };
 
   const productsBySelectedBrand = () => {
-    return products.filter((product) => product.brand?.id === selectedBrand);
+    return products.filter(product => product.brand?.id === selectedBrand);
   };
 
   const onChangeBrand = (brandKey: string) => {
@@ -124,9 +122,9 @@ const TagDetail: React.FC<RouteComponentProps> = (props) => {
               </Form.Item>
             </Col>
             <Col lg={6} xs={0}>
-              <Form.Item name={["brand", "id"]} label="Master Brand">
+              <Form.Item name={['brand', 'id']} label="Master Brand">
                 <Select onChange={onChangeBrand}>
-                  {brands.map((brand) => (
+                  {brands.map(brand => (
                     <Select.Option key={brand.id} value={brand.id}>
                       {brand.brandName}
                     </Select.Option>
@@ -155,11 +153,11 @@ const TagDetail: React.FC<RouteComponentProps> = (props) => {
             <Col lg={6} xs={0}>
               <Form.Item shouldUpdate>
                 {() => (
-                  <Form.Item name={["product", "id"]} label="Product">
+                  <Form.Item name={['product', 'id']} label="Product">
                     <Select
-                      disabled={form.getFieldValue("template") === "dollar"}
+                      disabled={form.getFieldValue('template') === 'dollar'}
                     >
-                      {productsBySelectedBrand().map((product) => (
+                      {productsBySelectedBrand().map(product => (
                         <Select.Option key={product.id} value={product.id}>
                           {product.name}
                         </Select.Option>
@@ -177,30 +175,30 @@ const TagDetail: React.FC<RouteComponentProps> = (props) => {
                     label="Disco Gold"
                     rules={[{ required: true }]}
                   >
-                    <InputNumber style={{ width: "100%" }} />
+                    <InputNumber style={{ width: '100%' }} />
                   </Form.Item>
                 </Col>
                 <Col lg={12} xs={24}>
                   <Form.Item name="discoDollars" label="Disco Dollar">
-                    <InputNumber style={{ width: "100%" }} />
+                    <InputNumber style={{ width: '100%' }} />
                   </Form.Item>
                 </Col>
               </Row>
               <Row gutter={8}>
                 <Col lg={12} xs={24}>
                   <Form.Item
-                    name={["position", 0, "x"]}
+                    name={['position', 0, 'x']}
                     label="Disco Dollar Position X"
                   >
-                    <Slider tipFormatter={(v) => `${v}%`} min={0} max={100} />
+                    <Slider tipFormatter={v => `${v}%`} min={0} max={100} />
                   </Form.Item>
                 </Col>
                 <Col lg={12} xs={24}>
                   <Form.Item
-                    name={["position", 0, "y"]}
+                    name={['position', 0, 'y']}
                     label="Disco Dollar Position Y"
                   >
-                    <Slider tipFormatter={(v) => `${v}%`} min={0} max={100} />
+                    <Slider tipFormatter={v => `${v}%`} min={0} max={100} />
                   </Form.Item>
                 </Col>
               </Row>

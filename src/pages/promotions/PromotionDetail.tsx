@@ -1,12 +1,12 @@
-import { Button, Col, Form, Input, PageHeader, Row, Select } from "antd";
-import { RichTextEditor } from "components/RichTextEditor";
-import { useRequest } from "hooks/useRequest";
-import { PromotionAndStatusList } from "interfaces/Promotion";
-import { useCallback, useEffect, useState } from "react";
-import { RouteComponentProps } from "react-router-dom";
-import { fetchVideoFeed2, savePromotion } from "services/DiscoClubService";
+import { Button, Col, Form, Input, PageHeader, Row, Select } from 'antd';
+import { RichTextEditor } from 'components/RichTextEditor';
+import { useRequest } from 'hooks/useRequest';
+import { PromotionAndStatusList } from 'interfaces/Promotion';
+import { useCallback, useEffect, useState } from 'react';
+import { RouteComponentProps } from 'react-router-dom';
+import { fetchVideoFeed2, savePromotion } from 'services/DiscoClubService';
 
-const PromotionDetail: React.FC<RouteComponentProps> = (props) => {
+const PromotionDetail: React.FC<RouteComponentProps> = props => {
   const { history, location } = props;
   const _state = location.state as undefined | PromotionAndStatusList;
   // const promoStatusList = _state?.promoStatusList;

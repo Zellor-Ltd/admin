@@ -1,4 +1,4 @@
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import {
   Button,
   Col,
@@ -16,34 +16,34 @@ import {
   Table,
   Tabs,
   Typography,
-} from "antd";
-import { ColumnsType } from "antd/lib/table";
-import { Upload } from "components";
-import { RichTextEditor } from "components/RichTextEditor";
-import { formatMoment } from "helpers/formatMoment";
-import { useRequest } from "hooks/useRequest";
-import { Brand } from "interfaces/Brand";
-import { Category } from "interfaces/Category";
-import { Creator } from "interfaces/Creator";
-import { FeedItem } from "interfaces/FeedItem";
-import { Segment } from "interfaces/Segment";
-import { Tag } from "interfaces/Tag";
-import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { RouteComponentProps } from "react-router-dom";
+} from 'antd';
+import { ColumnsType } from 'antd/lib/table';
+import { Upload } from 'components';
+import { RichTextEditor } from 'components/RichTextEditor';
+import { formatMoment } from 'helpers/formatMoment';
+import { useRequest } from 'hooks/useRequest';
+import { Brand } from 'interfaces/Brand';
+import { Category } from 'interfaces/Category';
+import { Creator } from 'interfaces/Creator';
+import { FeedItem } from 'interfaces/FeedItem';
+import { Segment } from 'interfaces/Segment';
+import { Tag } from 'interfaces/Tag';
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { RouteComponentProps } from 'react-router-dom';
 import {
   fetchBrands,
   fetchCategories,
   fetchCreators,
   fetchTags,
   saveVideoFeed,
-} from "services/DiscoClubService";
-import BrandForm from "./BrandForm";
-import TagForm from "./TagForm";
-import "./VideoFeed.scss";
-import "./VideoFeedDetail.scss";
-import ReactTagInput from "@pathofdev/react-tag-input";
-import "@pathofdev/react-tag-input/build/index.css";
+} from 'services/DiscoClubService';
+import BrandForm from './BrandForm';
+import TagForm from './TagForm';
+import './VideoFeed.scss';
+import './VideoFeedDetail.scss';
+import ReactTagInput from '@pathofdev/react-tag-input';
+import '@pathofdev/react-tag-input/build/index.css';
 
 const { Title } = Typography;
 
@@ -79,13 +79,13 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
 
   const [hashtags, setHashtags] = useState<string[]>([]);
 
-  const defaultVideoTab = "Video Details";
-  const defaultSegmentTab = "Images";
+  const defaultVideoTab = 'Video Details';
+  const defaultSegmentTab = 'Images';
 
-  const [videoTab, setVideoTab] = useState<string>("Video Details");
-  const [segmentTab, setSegmentTab] = useState<string>("Images");
+  const [videoTab, setVideoTab] = useState<string>('Video Details');
+  const [segmentTab, setSegmentTab] = useState<string>('Images');
 
-  const [pageTitle, setPageTitle] = useState<string>("Video Update");
+  const [pageTitle, setPageTitle] = useState<string>('Video Update');
 
   const { doRequest } = useRequest({ setLoading });
 
@@ -131,32 +131,32 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
         `Store ${
           selectedBrandIndex > -1
             ? `${selectedBrandIndex + 1} Update`
-            : "Creation"
+            : 'Creation'
         }`
       );
     else if (showTagForm)
       setPageTitle(
         `Tag ${
-          selectedTagIndex > -1 ? `${selectedTagIndex + 1} Update` : "Creation"
+          selectedTagIndex > -1 ? `${selectedTagIndex + 1} Update` : 'Creation'
         }`
       );
     else if (selectedSegment) {
-      const packages = feedForm.getFieldValue("package");
+      const packages = feedForm.getFieldValue('package');
       setPageTitle(
         `Segment ${
           selectedSegmentIndex > -1 &&
           (packages ? packages.length !== selectedSegmentIndex : true)
             ? `${selectedSegmentIndex + 1} Update`
-            : "Creation"
+            : 'Creation'
         }`
       );
-    } else setPageTitle("Video Update");
+    } else setPageTitle('Video Update');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedSegment, showBrandForm, showTagForm]);
 
   const onFinish = async () => {
     const item: FeedItem = feedForm.getFieldsValue(true);
-    item.package = item.package?.map((pack) => ({
+    item.package = item.package?.map(pack => ({
       ...pack,
       tags: pack.tags ? pack.tags : [],
     }));
@@ -167,7 +167,7 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
 
   const onDeleteSegment = (evt: any, index: number) => {
     evt.stopPropagation();
-    const dataSource = [...feedForm.getFieldValue("package")];
+    const dataSource = [...feedForm.getFieldValue('package')];
     dataSource.splice(index, 1);
     feedForm.setFieldsValue({ package: [...dataSource] });
 
@@ -176,7 +176,7 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
   };
 
   const onAddSegment = () => {
-    const packages = feedForm.getFieldValue("package");
+    const packages = feedForm.getFieldValue('package');
     const sequence = packages ? packages.length + 1 : 1;
     setSelectedSegment({
       sequence,
@@ -241,13 +241,13 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
                 </Form.Item>
               </Col>
               <Col lg={24} xs={24}>
-                <Form.Item name={["creator", "id"]} label="Creator">
+                <Form.Item name={['creator', 'id']} label="Creator">
                   <Select
                     placeholder="Please select a creator"
                     onChange={(key: string) =>
                       feedForm.setFieldsValue({
                         creator: influencers.find(
-                          (influencer) => influencer.id === key
+                          influencer => influencer.id === key
                         ),
                       })
                     }
@@ -267,7 +267,7 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
                     placeholder="Type and press enter"
                     removeOnBackspace={true}
                     editable={true}
-                    onChange={(newTags) => setHashtags(newTags)}
+                    onChange={newTags => setHashtags(newTags)}
                   />
                 </Form.Item>
               </Col>
@@ -332,7 +332,7 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
                 <Form.Item label="Slider">
                   <Slider
                     range
-                    marks={{ 12: "12", 100: "100" }}
+                    marks={{ 12: '12', 100: '100' }}
                     min={12}
                     max={100}
                     value={ageRange}
@@ -386,11 +386,11 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
               }
             >
               {({ getFieldValue }) => {
-                const segments: Segment[] = getFieldValue("package") || [];
+                const segments: Segment[] = getFieldValue('package') || [];
                 return (
                   <div
                     style={{
-                      display: "flex",
+                      display: 'flex',
                     }}
                   >
                     {segments.map((segment, segmentIndex) => (
@@ -398,20 +398,20 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
                         key={segment.sequence}
                         className={`segment-thumbnail ${
                           (selectedSegmentIndex === segmentIndex &&
-                            "selected") ||
-                          ""
+                            'selected') ||
+                          ''
                         }`}
                         onClick={() => onEditSegment(segment, segmentIndex)}
                       >
                         {segment?.thumbnail?.url
                           ? [
                               <img
-                                alt={segment.thumbnail || "Thumbnail"}
+                                alt={segment.thumbnail || 'Thumbnail'}
                                 src={segment.thumbnail?.url}
                                 key={segment.thumbnail?.url}
                                 style={{
-                                  height: "256px",
-                                  width: "auto",
+                                  height: '256px',
+                                  width: 'auto',
                                 }}
                               />,
                               <Button
@@ -421,7 +421,7 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
                                 type="primary"
                                 className="remove-button"
                                 key={`botao_${segment.thumbnail?.url}`}
-                                onClick={(evt) =>
+                                onClick={evt =>
                                   onDeleteSegment(evt, segmentIndex)
                                 }
                               />,
@@ -432,7 +432,7 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
                                 shape="circle"
                                 type="primary"
                                 danger
-                                onClick={(evt) =>
+                                onClick={evt =>
                                   onDeleteSegment(evt, segmentIndex)
                                 }
                               />,
@@ -446,7 +446,7 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
             </Form.Item>
             <Button
               htmlType="button"
-              style={{ margin: "8px 0px 80px 8px" }}
+              style={{ margin: '8px 0px 80px 8px' }}
               onClick={onAddSegment}
             >
               Add Segment
@@ -471,32 +471,32 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
 
   const brandsColumns: ColumnsType<any> = [
     {
-      title: "Name",
-      dataIndex: "brandName",
-      width: "15%",
+      title: 'Name',
+      dataIndex: 'brandName',
+      width: '15%',
     },
     {
-      title: "Start time",
-      dataIndex: ["position", "0", "startTime"],
-      width: "15%",
+      title: 'Start time',
+      dataIndex: ['position', '0', 'startTime'],
+      width: '15%',
     },
     {
-      title: "Duration",
-      dataIndex: ["position", "0", "duration"],
-      width: "15%",
+      title: 'Duration',
+      dataIndex: ['position', '0', 'duration'],
+      width: '15%',
     },
     {
-      title: "Actions",
-      key: "action",
-      width: "5%",
-      align: "right",
+      title: 'Actions',
+      key: 'action',
+      width: '5%',
+      align: 'right',
       render: (_, __, index) => (
         <>
           <Button
             type="link"
             style={{ padding: 0 }}
             onClick={() => {
-              const brands: any[] = segmentForm.getFieldValue("brands") || [];
+              const brands: any[] = segmentForm.getFieldValue('brands') || [];
               setSelectedBrand(brands[index]);
               setSelectedBrandIndex(index);
               setShowBrandForm(true);
@@ -509,7 +509,7 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
               type="link"
               style={{ padding: 0, margin: 6 }}
               onClick={() => {
-                const brands: any[] = segmentForm.getFieldValue("brands") || [];
+                const brands: any[] = segmentForm.getFieldValue('brands') || [];
                 brands.splice(index, 1);
                 segmentForm.setFieldsValue({
                   brands,
@@ -527,37 +527,37 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
 
   const tagsColumns: ColumnsType<any> = [
     {
-      title: "Store Name",
-      dataIndex: ["brand", "brandName"],
-      width: "15%",
+      title: 'Store Name',
+      dataIndex: ['brand', 'brandName'],
+      width: '15%',
     },
     {
-      title: "Tag Name",
-      dataIndex: "tagName",
-      width: "15%",
+      title: 'Tag Name',
+      dataIndex: 'tagName',
+      width: '15%',
     },
     {
-      title: "Start time",
-      dataIndex: ["position", "0", "startTime"],
-      width: "15%",
+      title: 'Start time',
+      dataIndex: ['position', '0', 'startTime'],
+      width: '15%',
     },
     {
-      title: "Duration",
-      dataIndex: ["position", "0", "duration"],
-      width: "15%",
+      title: 'Duration',
+      dataIndex: ['position', '0', 'duration'],
+      width: '15%',
     },
     {
-      title: "Actions",
-      key: "action",
-      width: "5%",
-      align: "right",
+      title: 'Actions',
+      key: 'action',
+      width: '5%',
+      align: 'right',
       render: (_, __, index) => (
         <>
           <Button
             type="link"
             style={{ padding: 0 }}
             onClick={() => {
-              const tags: any[] = segmentForm.getFieldValue("tags") || [];
+              const tags: any[] = segmentForm.getFieldValue('tags') || [];
               setSelectedTag(tags[index]);
               setSelectedTagIndex(index);
               setShowTagForm(true);
@@ -570,7 +570,7 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
               type="link"
               style={{ padding: 0, margin: 6 }}
               onClick={() => {
-                const tags: any[] = segmentForm.getFieldValue("tags") || [];
+                const tags: any[] = segmentForm.getFieldValue('tags') || [];
                 tags.splice(index, 1);
                 segmentForm.setFieldsValue({
                   tags,
@@ -619,7 +619,7 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
                       <Form.Item label="Video">
                         <Upload.VideoUpload
                           fileList={selectedSegment!.video}
-                          formProp={"video"}
+                          formProp={'video'}
                           form={segmentForm}
                         />
                       </Form.Item>
@@ -628,7 +628,7 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
                       <Form.Item label="Thumbnail URL">
                         <Upload.ImageUpload
                           fileList={selectedSegment!.thumbnail}
-                          formProp={"thumbnail"}
+                          formProp={'thumbnail'}
                           form={segmentForm}
                         />
                       </Form.Item>
@@ -644,7 +644,7 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
                 >
                   <Button
                     type="default"
-                    style={{ float: "right", marginBottom: "12px" }}
+                    style={{ float: 'right', marginBottom: '12px' }}
                     onClick={() => {
                       setSelectedBrand(undefined);
                       setSelectedBrandIndex(-1);
@@ -668,7 +668,7 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
                 >
                   <Button
                     type="default"
-                    style={{ float: "right", marginBottom: "12px" }}
+                    style={{ float: 'right', marginBottom: '12px' }}
                     onClick={() => {
                       setSelectedTag(undefined);
                       setSelectedTagIndex(-1);
@@ -686,7 +686,7 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
                   />
                 </Tabs.TabPane>
               </Tabs>
-              <Row gutter={8} style={{ marginTop: "20px" }}>
+              <Row gutter={8} style={{ marginTop: '20px' }}>
                 <Col>
                   <Button
                     type="default"
@@ -717,8 +717,8 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
       <Form.Provider
         onFormFinish={(name, { values, forms }) => {
           const { feedForm, segmentForm } = forms;
-          if (name === "segmentForm") {
-            const segments: any[] = feedForm.getFieldValue("package") || [];
+          if (name === 'segmentForm') {
+            const segments: any[] = feedForm.getFieldValue('package') || [];
             if (selectedSegmentIndex > -1) {
               segments[selectedSegmentIndex] = segmentForm.getFieldsValue(true);
               feedForm.setFieldsValue({ package: [...segments] });
@@ -730,9 +730,9 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
             setSelectedSegment(undefined);
             setSelectedSegmentIndex(-1);
           }
-          if (name === "brandForm") {
+          if (name === 'brandForm') {
             const { segmentForm, brandForm } = forms;
-            const brands: any[] = segmentForm.getFieldValue("brands") || [];
+            const brands: any[] = segmentForm.getFieldValue('brands') || [];
             const newValue = brandForm.getFieldsValue(true);
             if (selectedBrandIndex > -1) {
               brands[selectedBrandIndex] = newValue;
@@ -747,9 +747,9 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
             setShowBrandForm(false);
             setSelectedSegment(segmentForm.getFieldsValue(true));
           }
-          if (name === "tagForm") {
+          if (name === 'tagForm') {
             const { segmentForm, tagForm } = forms;
-            const tags: any[] = segmentForm.getFieldValue("tags") || [];
+            const tags: any[] = segmentForm.getFieldValue('tags') || [];
             const newValue = tagForm.getFieldsValue(true);
             if (selectedTagIndex > -1) {
               tags[selectedTagIndex] = newValue;
@@ -773,7 +773,7 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
           name="feedForm"
           initialValues={initial}
           onFinishFailed={({ errorFields }) => {
-            errorFields.forEach((errorField) => {
+            errorFields.forEach(errorField => {
               message.error(errorField.errors[0]);
             });
           }}

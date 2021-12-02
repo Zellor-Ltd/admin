@@ -1,23 +1,23 @@
-import { Button, PageHeader, Table } from "antd";
-import { ColumnsType } from "antd/lib/table";
-import { Function } from "interfaces/Function";
-import { useEffect, useState } from "react";
-import { RouteComponentProps } from "react-router-dom";
-import { Link } from "react-router-dom";
-import { fetchInterfaces } from "services/DiscoClubService";
-import { EditOutlined } from "@ant-design/icons";
+import { Button, PageHeader, Table } from 'antd';
+import { ColumnsType } from 'antd/lib/table';
+import { Function } from 'interfaces/Function';
+import { useEffect, useState } from 'react';
+import { RouteComponentProps } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { fetchInterfaces } from 'services/DiscoClubService';
+import { EditOutlined } from '@ant-design/icons';
 
 const Interfaces: React.FC<RouteComponentProps> = ({ history }) => {
   const [interfaces, setInterfaces] = useState<Function[]>([]);
   const [loading, setLoading] = useState(false);
   const columns: ColumnsType<Function> = [
-    { title: "Name", dataIndex: "name", width: "15%" },
-    { title: "HTTP Endpoint", dataIndex: "httpEndpoint", width: "15%" },
+    { title: 'Name', dataIndex: 'name', width: '15%' },
+    { title: 'HTTP Endpoint', dataIndex: 'httpEndpoint', width: '15%' },
     {
-      title: "Actions",
-      key: "action",
-      width: "5%",
-      align: "right",
+      title: 'Actions',
+      key: 'action',
+      width: '5%',
+      align: 'right',
       render: (value, record) => (
         <>
           <Link to={{ pathname: `/interface`, state: record }}>
@@ -49,7 +49,7 @@ const Interfaces: React.FC<RouteComponentProps> = ({ history }) => {
         title="Interfaces"
         subTitle="List of Interfaces"
         extra={[
-          <Button key="1" onClick={() => history.push("/interface")}>
+          <Button key="1" onClick={() => history.push('/interface')}>
             New Interface
           </Button>,
         ]}

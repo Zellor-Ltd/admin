@@ -1,13 +1,13 @@
-import { Typography } from "antd";
-import Select from "antd/lib/select";
-import { useRequest } from "hooks/useRequest";
-import { FanGroup } from "interfaces/FanGroup";
-import React, { useEffect, useState } from "react";
-import { fetchFanGroups } from "../services/DiscoClubService";
+import { Typography } from 'antd';
+import Select from 'antd/lib/select';
+import { useRequest } from 'hooks/useRequest';
+import { FanGroup } from 'interfaces/FanGroup';
+import React, { useEffect, useState } from 'react';
+import { fetchFanGroups } from '../services/DiscoClubService';
 
 type SelectFanGroupProps = Omit<
   React.SelectHTMLAttributes<HTMLSelectElement>,
-  "onChange"
+  'onChange'
 > & {
   onChange: (selectedFanGroup: FanGroup) => {};
   label?: string;
@@ -15,12 +15,12 @@ type SelectFanGroupProps = Omit<
 
 export const SelectFanGroup: React.FC<SelectFanGroupProps> = ({
   onChange,
-  placeholder = "Select",
+  placeholder = 'Select',
   style,
-  label = "Fan Group Filter",
+  label = 'Fan Group Filter',
 }) => {
   const [fanGroups, setFanGroups] = useState<FanGroup[]>([]);
-  const [selectedFanGroup, setSelectedFanGroup] = useState<string>("");
+  const [selectedFanGroup, setSelectedFanGroup] = useState<string>('');
   const { doFetch } = useRequest();
 
   const getResources = async () => {
@@ -38,12 +38,12 @@ export const SelectFanGroup: React.FC<SelectFanGroupProps> = ({
 
   const _onChange = async (value: string) => {
     setSelectedFanGroup(value);
-    onChange(fanGroups.find((group) => group.name === value) as FanGroup);
+    onChange(fanGroups.find(group => group.name === value) as FanGroup);
     getResources();
   };
 
   return (
-    <div style={{ marginBottom: "16px" }}>
+    <div style={{ marginBottom: '16px' }}>
       <Typography.Title level={5} title={label}>
         {label}
       </Typography.Title>
@@ -54,7 +54,7 @@ export const SelectFanGroup: React.FC<SelectFanGroupProps> = ({
         style={style}
         placeholder={placeholder}
       >
-        {fanGroups.map((value) => (
+        {fanGroups.map(value => (
           <Select.Option key={value.name} value={value.name}>
             {value.name}
           </Select.Option>

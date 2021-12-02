@@ -1,6 +1,6 @@
-import { PageHeader, Typography } from "antd";
-import { SmileOutlined } from "@ant-design/icons";
-import "./Preview.scss";
+import { PageHeader, Typography } from 'antd';
+import { SmileOutlined } from '@ant-design/icons';
+import './Preview.scss';
 
 const Preview: React.FC = () => {
   return (

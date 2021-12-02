@@ -2,7 +2,7 @@ import {
   DeleteOutlined,
   EditOutlined,
   SearchOutlined,
-} from "@ant-design/icons";
+} from '@ant-design/icons';
 import {
   Button,
   Dropdown,
@@ -14,21 +14,21 @@ import {
   Space,
   Table,
   Tabs,
-} from "antd";
-import { ColumnsType } from "antd/lib/table";
-import { categoriesSettings } from "helpers/utils";
-import useAllCategories from "hooks/useAllCategories";
+} from 'antd';
+import { ColumnsType } from 'antd/lib/table';
+import { categoriesSettings } from 'helpers/utils';
+import useAllCategories from 'hooks/useAllCategories';
 import {
   AllCategories,
   AllCategoriesAPI,
   ProductCategory,
-} from "interfaces/Category";
-import { Image } from "interfaces/Image";
-import { useEffect, useRef, useState } from "react";
-import Highlighter from "react-highlight-words";
-import { Link, RouteComponentProps } from "react-router-dom";
-import { productCategoriesAPI } from "services/DiscoClubService";
-import CopyIdToClipboard from "components/CopyIdToClipboard";
+} from 'interfaces/Category';
+import { Image } from 'interfaces/Image';
+import { useEffect, useRef, useState } from 'react';
+import Highlighter from 'react-highlight-words';
+import { Link, RouteComponentProps } from 'react-router-dom';
+import { productCategoriesAPI } from 'services/DiscoClubService';
+import CopyIdToClipboard from 'components/CopyIdToClipboard';
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 
@@ -38,16 +38,16 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
   const { fetchAllCategories, allCategories } = useAllCategories({
     setLoading,
   });
-  const [selectedTab, setSelectedTab] = useState<string>("Super Category");
+  const [selectedTab, setSelectedTab] = useState<string>('Super Category');
 
-  const [searchText, setSearchText] = useState<string>("");
-  const [searchedColumn, setSearchedColumn] = useState<string>("");
+  const [searchText, setSearchText] = useState<string>('');
+  const [searchedColumn, setSearchedColumn] = useState<string>('');
   const searchInput = useRef<Input>(null);
   const [content, setContent] = useState<any>({
-    "Super Category": [],
+    'Super Category': [],
     Category: [],
-    "Sub Category": [],
-    "Sub Sub Category": [],
+    'Sub Category': [],
+    'Sub Sub Category': [],
   });
 
   useEffect(() => {
@@ -78,16 +78,16 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
       let index = -1;
 
       switch (selectedKey.toString) {
-        case () => "Super Category":
+        case () => 'Super Category':
           selectedKeyIndex = 0;
           break;
-        case () => "Category":
+        case () => 'Category':
           selectedKeyIndex = 1;
           break;
-        case () => "Sub Category":
+        case () => 'Sub Category':
           selectedKeyIndex = 2;
           break;
-        case () => "Sub Sub Category":
+        case () => 'Sub Sub Category':
           selectedKeyIndex = 3;
           break;
       }
@@ -124,7 +124,7 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
 
   const handleReset = (clearFilters: any) => {
     clearFilters();
-    setSearchText("");
+    setSearchText('');
   };
 
   const getColumnSearchProps = (dataIndex: string) => ({
@@ -144,11 +144,11 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
           ref={searchInput}
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
-          onChange={(e) =>
+          onChange={e =>
             setSelectedKeys(e.target.value ? [e.target.value] : [])
           }
           onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
-          style={{ marginBottom: 8, display: "block" }}
+          style={{ marginBottom: 8, display: 'block' }}
         />
         <Space>
           <Button
@@ -182,7 +182,7 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
       </div>
     ),
     filterIcon: (filtered: any) => (
-      <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
+      <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
     ),
     onFilter: (value: any, record: any) =>
       record[dataIndex]
@@ -190,7 +190,7 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
             .toString()
             .toLowerCase()
             .includes(value.toLowerCase())
-        : "",
+        : '',
     onFilterDropdownVisibleChange: (visible: any) => {
       if (visible) {
         setTimeout(() => searchInput.current!.select(), 100);
@@ -199,10 +199,10 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
     render: (text: any) =>
       searchedColumn === dataIndex ? (
         <Highlighter
-          highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
+          highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
           searchWords={[searchText]}
           autoEscape
-          textToHighlight={text ? text.toString() : ""}
+          textToHighlight={text ? text.toString() : ''}
         />
       ) : (
         text
@@ -211,15 +211,15 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
 
   const columns: ColumnsType<ProductCategory> = [
     {
-      title: "_id",
-      dataIndex: "id",
-      width: "6%",
-      render: (id) => <CopyIdToClipboard id={id} />,
-      align: "center",
+      title: '_id',
+      dataIndex: 'id',
+      width: '6%',
+      render: id => <CopyIdToClipboard id={id} />,
+      align: 'center',
     },
     {
-      title: "Name",
-      width: "15%",
+      title: 'Name',
+      width: '15%',
       ...getColumnSearchProps(
         categoriesFields[
           categoriesKeys.indexOf(selectedTab)
@@ -238,16 +238,16 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
       ),
     },
     {
-      title: "Image",
-      dataIndex: "image",
-      width: "15%",
+      title: 'Image',
+      dataIndex: 'image',
+      width: '15%',
       render: (image: Image) => <AntImage src={image?.url} width={70} />,
     },
     {
-      title: "Actions",
-      key: "action",
-      width: "5%",
-      align: "right",
+      title: 'Actions',
+      key: 'action',
+      width: '5%',
+      align: 'right',
       render: (_, record) => (
         <>
           <Link
@@ -301,14 +301,14 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
                 ))}
               </Menu>
             }
-            trigger={["click"]}
+            trigger={['click']}
           >
             <Button>New Item</Button>
           </Dropdown>,
         ]}
       />
       <Tabs onChange={handleTabChange}>
-        {categoriesKeys.map((key) => (
+        {categoriesKeys.map(key => (
           <Tabs.TabPane tab={key} key={key}>
             <Table
               rowKey="id"

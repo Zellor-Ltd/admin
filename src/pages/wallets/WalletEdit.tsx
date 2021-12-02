@@ -6,11 +6,11 @@ import {
   Popconfirm,
   Row,
   Typography,
-} from "antd";
-import { useForm } from "antd/lib/form/Form";
-import { useRequest } from "hooks/useRequest";
-import { useState } from "react";
-import { addBalanceToUser, resetUserBalance } from "services/DiscoClubService";
+} from 'antd';
+import { useForm } from 'antd/lib/form/Form';
+import { useRequest } from 'hooks/useRequest';
+import { useState } from 'react';
+import { addBalanceToUser, resetUserBalance } from 'services/DiscoClubService';
 
 interface WalletEditProps {
   fanId: string;

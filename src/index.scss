@@ -1,4 +1,4 @@
-@import "~antd/dist/antd.css";
+@import '~antd/dist/antd.css';
 
 .ant-input-number,
 .ant-picker {
@@ -25,4 +25,8 @@
 
 .mt-1 {
   margin-top: 1rem;
+}
+
+.selected-row {
+  background-color: #fafafa;
 }

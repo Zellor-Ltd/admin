@@ -1,10 +1,10 @@
-import { Button, Col, Form, Input, PageHeader, Row } from "antd";
-import { useRequest } from "hooks/useRequest";
-import { useState } from "react";
-import { RouteComponentProps } from "react-router-dom";
-import { saveDdTemplate } from "services/DiscoClubService";
+import { Button, Col, Form, Input, PageHeader, Row } from 'antd';
+import { useRequest } from 'hooks/useRequest';
+import { useState } from 'react';
+import { RouteComponentProps } from 'react-router-dom';
+import { saveDdTemplate } from 'services/DiscoClubService';
 
-const DdTemplatesDetail: React.FC<RouteComponentProps> = (props) => {
+const DdTemplatesDetail: React.FC<RouteComponentProps> = props => {
   const { history, location } = props;
   const initial: any = location.state;
   const [loading, setLoading] = useState<boolean>(false);

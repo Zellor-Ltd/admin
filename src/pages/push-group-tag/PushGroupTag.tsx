@@ -1,14 +1,14 @@
-import { Button, Col, PageHeader, Row, Table } from "antd";
-import { ColumnsType } from "antd/lib/table";
-import { SearchFilter } from "components/SearchFilter";
-import { SelectBrand } from "components/SelectBrand";
-import useFilter from "hooks/useFilter";
-import { useRequest } from "hooks/useRequest";
-import { Brand } from "interfaces/Brand";
-import { Tag } from "interfaces/Tag";
-import { useEffect, useState } from "react";
-import { RouteComponentProps } from "react-router-dom";
-import { fetchTags } from "services/DiscoClubService";
+import { Button, Col, PageHeader, Row, Table } from 'antd';
+import { ColumnsType } from 'antd/lib/table';
+import { SearchFilter } from 'components/SearchFilter';
+import { SelectBrand } from 'components/SelectBrand';
+import useFilter from 'hooks/useFilter';
+import { useRequest } from 'hooks/useRequest';
+import { Brand } from 'interfaces/Brand';
+import { Tag } from 'interfaces/Tag';
+import { useEffect, useState } from 'react';
+import { RouteComponentProps } from 'react-router-dom';
+import { fetchTags } from 'services/DiscoClubService';
 
 const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
   const detailsPathname = `${location.pathname}/step2`;
@@ -26,7 +26,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
   const handleNext = () => {
     history.push(
       detailsPathname,
-      filteredTags.filter((tag) => selectedRowKeys.includes(tag.id))
+      filteredTags.filter(tag => selectedRowKeys.includes(tag.id))
     );
   };
 
@@ -45,20 +45,20 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
   }, []);
 
   const columns: ColumnsType<Tag> = [
-    { title: "Tag", dataIndex: "tagName", width: "25%" },
+    { title: 'Tag', dataIndex: 'tagName', width: '25%' },
     {
-      title: "Product",
-      dataIndex: ["product", "name"],
-      width: "20%",
+      title: 'Product',
+      dataIndex: ['product', 'name'],
+      width: '20%',
     },
-    { title: "Brand", dataIndex: ["brand", "brandName"], width: "20%" },
-    { title: "Template", dataIndex: "template", width: "15%" },
-    { title: "DD's", dataIndex: "discoDollars", width: "10%" },
+    { title: 'Brand', dataIndex: ['brand', 'brandName'], width: '20%' },
+    { title: 'Template', dataIndex: 'template', width: '15%' },
+    { title: "DD's", dataIndex: 'discoDollars', width: '10%' },
   ];
 
   const searchFilterFunction = (filterText: string) => {
-    addFilterFunction("tagName", (tags) =>
-      tags.filter((tag) =>
+    addFilterFunction('tagName', tags =>
+      tags.filter(tag =>
         tag.tagName.toUpperCase().includes(filterText.toUpperCase())
       )
     );
@@ -66,11 +66,11 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
 
   const onChangeBrand = async (_selectedBrand: Brand | undefined) => {
     if (!_selectedBrand) {
-      removeFilterFunction("brandName");
+      removeFilterFunction('brandName');
       return;
     }
-    addFilterFunction("brandName", (tags) =>
-      tags.filter((tag) => tag.brand?.brandName === _selectedBrand.brandName)
+    addFilterFunction('brandName', tags =>
+      tags.filter(tag => tag.brand?.brandName === _selectedBrand.brandName)
     );
   };
 
@@ -96,14 +96,14 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
             </Col>
             <Col lg={8} xs={16}>
               <SelectBrand
-                style={{ width: "100%" }}
+                style={{ width: '100%' }}
                 allowClear={true}
                 onChange={onChangeBrand}
               />
             </Col>
           </Row>
         </Col>
-        <Col style={{ marginBottom: "20px", marginRight: "25px" }}>
+        <Col style={{ marginBottom: '20px', marginRight: '25px' }}>
           <Button
             type="primary"
             disabled={!selectedRowKeys.length}

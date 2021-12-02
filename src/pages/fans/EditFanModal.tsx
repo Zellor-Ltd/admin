@@ -1,11 +1,11 @@
-import { Col, Form, Input, Modal, Row } from "antd";
-import { useResetFormOnCloseModal } from "hooks/useResetFormCloseModal";
-import { Fan } from "interfaces/Fan";
-import { useEffect, useState } from "react";
-import { useRequest } from "hooks/useRequest";
-import { updateManyFans } from "services/DiscoClubService";
-import { EditMultipleModalProps } from "components/EditMultipleButton";
-import FanGroupDropdown from "./FanGroupDropdown";
+import { Col, Form, Input, Modal, Row } from 'antd';
+import { useResetFormOnCloseModal } from 'hooks/useResetFormCloseModal';
+import { Fan } from 'interfaces/Fan';
+import { useEffect, useState } from 'react';
+import { useRequest } from 'hooks/useRequest';
+import { updateManyFans } from 'services/DiscoClubService';
+import { EditMultipleModalProps } from 'components/EditMultipleButton';
+import FanGroupDropdown from './FanGroupDropdown';
 
 const EditFanModal: React.FC<EditMultipleModalProps<Fan>> = ({
   selectedItems: selectedFans,
@@ -28,11 +28,11 @@ const EditFanModal: React.FC<EditMultipleModalProps<Fan>> = ({
 
   const _onOk = () => {
     form.validateFields().then(async () => {
-      const fanGroup = form.getFieldValue("group");
-      const fansToUpdateIds = selectedFans.map((fan) => fan.id);
+      const fanGroup = form.getFieldValue('group');
+      const fansToUpdateIds = selectedFans.map(fan => fan.id);
       await doRequest(
         () => updateManyFans(fanGroup, fansToUpdateIds),
-        "Fans updated."
+        'Fans updated.'
       );
       onOk();
       form.resetFields();

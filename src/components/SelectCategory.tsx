@@ -1,12 +1,12 @@
-import { Typography } from "antd";
-import Select from "antd/lib/select";
-import React, { useEffect, useState } from "react";
-import { Category } from "../interfaces/Category";
-import { fetchCategories } from "../services/DiscoClubService";
+import { Typography } from 'antd';
+import Select from 'antd/lib/select';
+import React, { useEffect, useState } from 'react';
+import { Category } from '../interfaces/Category';
+import { fetchCategories } from '../services/DiscoClubService';
 
 type SelectCategoryProps = Omit<
   React.SelectHTMLAttributes<HTMLSelectElement>,
-  "onChange"
+  'onChange'
 > & {
   onChange: (selectedCategory: Category | undefined) => {};
   allowClear?: boolean;
@@ -17,16 +17,16 @@ export const SelectCategory: React.FC<SelectCategoryProps> = ({
   onChange,
   style,
   allowClear = true,
-  label = "Category Filter",
+  label = 'Category Filter',
 }) => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategoryName, setSelectedCategoryName] = useState<string>();
 
   const _onChange = (value: string) => {
     const selectedCategory = categories.find(
-      (category) => category.id === value
+      category => category.id === value
     ) as Category | undefined;
-    setSelectedCategoryName(selectedCategory?.name || "");
+    setSelectedCategoryName(selectedCategory?.name || '');
     onChange(selectedCategory);
   };
 
@@ -42,7 +42,7 @@ export const SelectCategory: React.FC<SelectCategoryProps> = ({
   }, []);
 
   return (
-    <div style={{ marginBottom: "16px" }}>
+    <div style={{ marginBottom: '16px' }}>
       <Typography.Title level={5} title={label}>
         {label}
       </Typography.Title>

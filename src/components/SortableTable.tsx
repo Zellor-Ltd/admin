@@ -1,15 +1,15 @@
-import { MenuOutlined } from "@ant-design/icons";
-import { Table } from "antd";
-import { TableProps } from "antd/lib/table";
-import arrayMove from "array-move";
+import { MenuOutlined } from '@ant-design/icons';
+import { Table } from 'antd';
+import { TableProps } from 'antd/lib/table';
+import arrayMove from 'array-move';
 import {
   SortableContainer as sortableContainer,
   SortableElement as sortableElement,
   SortableHandle as sortableHandle,
-} from "react-sortable-hoc";
+} from 'react-sortable-hoc';
 
 const DragHandle = sortableHandle(() => (
-  <MenuOutlined style={{ cursor: "grab", color: "#999" }} />
+  <MenuOutlined style={{ cursor: 'grab', color: '#999' }} />
 ));
 
 const SortableItem = sortableElement((props: any) => <tr {...props} />);
@@ -31,10 +31,10 @@ const SortableTable: React.FC<SortableTableProps> = (
 
   const sortableColumns = [
     {
-      title: "Sort",
-      dataIndex: "sort",
-      width: "5%",
-      className: "drag-visible",
+      title: 'Sort',
+      dataIndex: 'sort',
+      width: '5%',
+      className: 'drag-visible',
       render: () => <DragHandle />,
     },
     ...columns,
@@ -49,7 +49,7 @@ const SortableTable: React.FC<SortableTableProps> = (
   }) => {
     if (oldIndex !== newIndex) {
       const newData = arrayMove([...dataSource], oldIndex, newIndex).filter(
-        (el) => !!el
+        el => !!el
       );
       setDataSource(newData);
     }
@@ -72,11 +72,11 @@ const SortableTable: React.FC<SortableTableProps> = (
   }: {
     className: any;
     style: any;
-    "data-row-key": any;
+    'data-row-key': any;
   }) => {
     // function findIndex base on Table rowKey props and should always be a right array index
     const index = dataSource.findIndex(
-      (x: any) => x.index === restProps["data-row-key"]
+      (x: any) => x.index === restProps['data-row-key']
     );
     return <SortableItem index={index} {...restProps} />;
   };

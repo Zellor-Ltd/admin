@@ -1,13 +1,13 @@
-import { Button, Col, PageHeader, Row, Table } from "antd";
-import { ColumnsType } from "antd/lib/table";
-import { SearchFilter } from "components/SearchFilter";
-import useFilter from "hooks/useFilter";
-import { useRequest } from "hooks/useRequest";
-import { FanGroup } from "interfaces/FanGroup";
-import moment from "moment";
-import { useEffect, useState } from "react";
-import { RouteComponentProps } from "react-router-dom";
-import { fetchFanGroups } from "services/DiscoClubService";
+import { Button, Col, PageHeader, Row, Table } from 'antd';
+import { ColumnsType } from 'antd/lib/table';
+import { SearchFilter } from 'components/SearchFilter';
+import useFilter from 'hooks/useFilter';
+import { useRequest } from 'hooks/useRequest';
+import { FanGroup } from 'interfaces/FanGroup';
+import moment from 'moment';
+import { useEffect, useState } from 'react';
+import { RouteComponentProps } from 'react-router-dom';
+import { fetchFanGroups } from 'services/DiscoClubService';
 
 const FanGroups: React.FC<RouteComponentProps> = ({ history, location }) => {
   const detailsPathname = `${location.pathname}/fan-group`;
@@ -36,27 +36,27 @@ const FanGroups: React.FC<RouteComponentProps> = ({ history, location }) => {
 
   const columns: ColumnsType<FanGroup> = [
     {
-      title: "Group Name",
-      dataIndex: "name",
-      width: "20%",
+      title: 'Group Name',
+      dataIndex: 'name',
+      width: '20%',
     },
     {
-      title: "Creation",
-      dataIndex: "hCreationDate",
-      width: "15%",
-      align: "center",
+      title: 'Creation',
+      dataIndex: 'hCreationDate',
+      width: '15%',
+      align: 'center',
       render: (value: Date) => (
         <>
-          <div>{moment(value).format("DD/MM/YYYY")}</div>
-          <div>{moment(value).format("HH:mm")}</div>
+          <div>{moment(value).format('DD/MM/YYYY')}</div>
+          <div>{moment(value).format('HH:mm')}</div>
         </>
       ),
     },
   ];
 
   const searchFilterFunction = (filterText: string) => {
-    addFilterFunction("fanGroupName", (fanGroups) =>
-      fanGroups.filter((fanGroup) =>
+    addFilterFunction('fanGroupName', fanGroups =>
+      fanGroups.filter(fanGroup =>
         fanGroup.name.toUpperCase().includes(filterText.toUpperCase())
       )
     );
