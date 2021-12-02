@@ -1,7 +1,7 @@
-import {Col, FormInstance, message, Row, Tooltip, Upload, Button} from "antd";
-import {ColumnHeightOutlined, ColumnWidthOutlined} from "@ant-design/icons";
+import {Col, FormInstance, message, Row, Tooltip, Upload, Button, Dropdown, Menu} from "antd";
+import {ColumnHeightOutlined, ColumnWidthOutlined, FileImageOutlined, TagOutlined} from "@ant-design/icons";
 import {PlusOutlined} from "@ant-design/icons";
-import React, {useCallback, useEffect, useState, cloneElement} from "react";
+import React, {useCallback, useEffect, useState, cloneElement, ReactElement} from "react";
 import {DndProvider, useDrag, useDrop} from "react-dnd";
 import {HTML5Backend} from "react-dnd-html5-backend";
 import './ImageUpload.scss'
@@ -14,6 +14,8 @@ interface ImageUploadProps {
   accept?: string;
   onOrder?: CallableFunction;
   onFitTo?: (fitTo: 'w' | 'h', sourceProp: 'image' | 'tagImage' | 'thumbnailUrl', imageIndex: number) => void;
+  onAssignToThumbnail?: CallableFunction;
+  onAssignToTag?: CallableFunction;
 }
 
 interface ImageDnDProps {
@@ -31,9 +33,11 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
    accept = "image/png, image/jpeg",
    onOrder,
    onFitTo,
+   onAssignToThumbnail,
+   onAssignToTag
  }) => {
   const [fileListLocal, setFileListLocal] = useState<any>([]);
-  const type = 'DND-IMAGE'
+  const dndType = 'DND-IMAGE'
 
   useEffect(() => {
     if (fileList) {
@@ -174,7 +178,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     const fitHeightSelectedClass = file.fitTo === 'h' ? 'fit-to-selected' : '';
 
     const [{isOver, dropClassName}, drop] = useDrop({
-      accept: type,
+      accept: dndType,
       collect: (monitor) => {
         const {index: dragIndex} = (monitor.getItem() || {}) as any;
         if (dragIndex === index) {
@@ -191,12 +195,65 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
       }
     });
     const [, drag] = useDrag({
-      type,
+      type: dndType,
       item: {index},
       collect: (monitor) => ({
         isDragging: monitor.isDragging()
       })
     });
+
+    const actionButtons: ReactElement[] = [];
+
+    if (onFitTo) {
+      actionButtons.push(
+        (
+          <Col lg={6} xs={24}>
+            <Tooltip title="Fit to Width">
+              <Button size="small" shape="circle" className={fitToWidthSelectedClass} icon={<ColumnWidthOutlined/>}
+                      onClick={() => onFitTo('w', formProp as any, index)}/>
+            </Tooltip>
+          </Col>
+        )
+      );
+
+      actionButtons.push(
+        (
+          <Col lg={6} xs={24}>
+            <Tooltip title="Fit to Height">
+              <Button size="small" shape="circle" className={fitHeightSelectedClass} icon={<ColumnHeightOutlined/>}
+                      onClick={() => onFitTo('h', formProp as any, index)}/>
+            </Tooltip>
+          </Col>
+        )
+      );
+    }
+
+
+    if (onAssignToThumbnail) {
+      actionButtons.push(
+        (
+          <Col lg={6} xs={24}>
+            <Tooltip title="Assign to Thumbnail">
+              <Button size="small" shape="circle" icon={<FileImageOutlined />}
+                      onClick={() => onAssignToThumbnail(file)}/>
+            </Tooltip>
+          </Col>
+        )
+      );
+    }
+
+    if (onAssignToTag) {
+      actionButtons.push(
+        (
+          <Col lg={6} xs={24}>
+            <Tooltip title="Assign to Tag">
+              <Button size="small" shape="circle" icon={<TagOutlined />}
+                      onClick={() => onAssignToTag(file)}/>
+            </Tooltip>
+          </Col>
+        )
+      );
+    }
 
     if (onOrder) {
       drop(drag(ref));
@@ -210,20 +267,9 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
           style={{cursor: fileList.length && fileList.length > 1 ? 'move' : 'cursor'}}
         >
           {node}
-          {onFitTo ? <Row className="fit-to-icons-container">
-            <Col lg={12} xs={24}>
-              <Tooltip title="Fit to Width">
-                <Button shape="circle" className={fitToWidthSelectedClass} icon={<ColumnWidthOutlined/>}
-                        onClick={() => onFitTo('w', formProp as any, index)}/>
-              </Tooltip>
-            </Col>
-            <Col lg={12} xs={24}>
-              <Tooltip title="Fit to Height">
-                <Button shape="circle" className={fitHeightSelectedClass} icon={<ColumnHeightOutlined/>}
-                        onClick={() => onFitTo('h', formProp as any, index)}/>
-              </Tooltip>
-            </Col>
-          </Row> : <></>}
+          <Row className="fit-to-icons-container" justify="space-around">
+            {actionButtons}
+          </Row>
         </div>
       );
     }
@@ -231,19 +277,8 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     return (
       <>
         {originNode}
-        <Row className="fit-to-icons-container">
-          <Col lg={12} xs={24}>
-            <Tooltip title="Fit to Width">
-              <Button shape="circle" className={fitToWidthSelectedClass} icon={<ColumnWidthOutlined/>}
-                      onClick={() => onFitTo?.('w', formProp as any, index)}/>
-            </Tooltip>
-          </Col>
-          <Col lg={12} xs={24}>
-            <Tooltip title="Fit to Height">
-              <Button shape="circle" className={fitHeightSelectedClass} icon={<ColumnHeightOutlined/>}
-                      onClick={() => onFitTo?.('h', formProp as any, index)}/>
-            </Tooltip>
-          </Col>
+        <Row className="fit-to-icons-container" justify="space-around">
+          {actionButtons}
         </Row>
       </>
     );
@@ -258,7 +293,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   );
 
   const itemRender = (originNode: React.ReactElement, file, currFileList) => {
-    if (onOrder || onFitTo) {
+    if (onOrder || onFitTo || onAssignToTag || onAssignToThumbnail) {
       return (
         <ImageDnD
           originNode={originNode}

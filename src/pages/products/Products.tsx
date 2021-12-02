@@ -1,69 +1,57 @@
-import {
-  DeleteOutlined,
-  EditOutlined,
-  SettingOutlined,
-  SearchOutlined,
-} from "@ant-design/icons";
+import {DeleteOutlined, EditOutlined, SearchOutlined, SettingOutlined,} from "@ant-design/icons";
 import {
   Button,
   Checkbox,
   Col,
-  PageHeader,
-  Popconfirm,
-  Row,
-  Spin,
   DatePicker,
   Form,
   Input,
   InputNumber,
   message,
+  PageHeader,
+  Popconfirm,
   Radio,
+  Row,
   Select,
   Slider,
+  Spin,
   Switch,
   Tabs,
   Typography,
 } from "antd";
-import { Upload } from "components";
-import { RichTextEditor } from "components/RichTextEditor";
-import { formatMoment } from "helpers/formatMoment";
-import { categoriesSettings } from "helpers/utils";
-import { AllCategories } from "interfaces/Category";
-import { useCallback, useContext, useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { RouteComponentProps, Link } from "react-router-dom";
-import {} from "services/DiscoClubService";
+import {Upload} from "components";
+import {RichTextEditor} from "components/RichTextEditor";
+import {formatMoment} from "helpers/formatMoment";
+import {categoriesSettings} from "helpers/utils";
+import {AllCategories} from "interfaces/Category";
+import {useCallback, useContext, useEffect, useState} from "react";
+import {useSelector} from "react-redux";
+import {Link, RouteComponentProps} from "react-router-dom";
+import {deleteProduct, fetchAllProducts, fetchBrands, fetchProducts, saveProduct} from "services/DiscoClubService";
 import ProductCategoriesTrees from "./ProductCategoriesTrees";
 import "./Products.scss";
 import EditMultipleButton from "components/EditMultipleButton";
 import CopyIdToClipboard from "components/CopyIdToClipboard";
-import EditableTable, { EditableColumnType } from "components/EditableTable";
-import { SearchFilterDebounce } from "components/SearchFilterDebounce";
-import { SelectBrand } from "components/SelectBrand";
-import { SelectProductBrand } from "components/SelectProductBrand";
-import { SelectBrandSmartSearch } from "components/SelectBrandSmartSearch";
-import { AppContext } from "contexts/AppContext";
+import EditableTable, {EditableColumnType} from "components/EditableTable";
+import {SearchFilterDebounce} from "components/SearchFilterDebounce";
+import {SelectBrand} from "components/SelectBrand";
+import {SelectProductBrand} from "components/SelectProductBrand";
+import {SelectBrandSmartSearch} from "components/SelectBrandSmartSearch";
+import {AppContext} from "contexts/AppContext";
 import useAllCategories from "hooks/useAllCategories";
-import { useRequest } from "hooks/useRequest";
-import { Brand } from "interfaces/Brand";
-import { Product } from "interfaces/Product";
+import {useRequest} from "hooks/useRequest";
+import {Brand} from "interfaces/Brand";
+import {Product} from "interfaces/Product";
 import moment from "moment";
 import InfiniteScroll from "react-infinite-scroll-component";
-import {
-  fetchBrands,
-  deleteProduct,
-  fetchProducts,
-  fetchAllProducts,
-  saveProduct,
-} from "services/DiscoClubService";
 import EditProductModal from "./EditProductModal";
 import ProductAPITestModal from "./ProductAPITestModal";
 import ProductExpandedRow from "./ProductExpandedRow";
-import { CheckboxChangeEvent } from "antd/lib/checkbox";
-import { ProductBrandFilter } from "components/ProductBrandFilter";
-import { ProductBrand } from "interfaces/ProductBrand";
-import { productUtils } from "../../helpers/product-utils";
-import update from "immutability-helper";
+import {CheckboxChangeEvent} from "antd/lib/checkbox";
+import {ProductBrandFilter} from "components/ProductBrandFilter";
+import {ProductBrand} from "interfaces/ProductBrand";
+import {productUtils} from "../../helpers/product-utils";
+import {Image} from "../../interfaces/Image";
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 const { getSearchTags, getCategories, removeSearchTagsByCategory } =
@@ -629,6 +617,24 @@ const Products: React.FC<RouteComponentProps> = () => {
     setSelectedRowKeys(selectedRows);
   };
 
+  const onAssignToThumbnail = (
+    file: Image
+  ) => {
+    if (currentProduct) {
+      currentProduct.thumbnailUrl = file;
+      setCurrentProduct({ ...currentProduct });
+    }
+  };
+
+  const onAssignToTag = (
+    file: Image
+  ) => {
+    if (currentProduct) {
+      currentProduct.tagImage = file;
+      setCurrentProduct({ ...currentProduct });
+    }
+  };
+
   return (
     <>
       {!isViewing && (
@@ -1146,6 +1152,8 @@ const Products: React.FC<RouteComponentProps> = () => {
                         fileList={currentProduct?.image}
                         formProp="image"
                         form={form}
+                        onAssignToTag={onAssignToTag}
+                        onAssignToThumbnail={onAssignToThumbnail}
                       />
                     </Form.Item>
                   </Col>
