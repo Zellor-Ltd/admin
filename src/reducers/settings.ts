@@ -1,8 +1,8 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { fetchSettings } from "services/DiscoClubService";
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { fetchSettings } from 'services/DiscoClubService';
 
 export const getSettings = createAsyncThunk(
-  "settings/FetchSettings",
+  'settings/FetchSettings',
   async () => {
     const response: any = await fetchSettings();
     return response.results[0];
@@ -10,7 +10,7 @@ export const getSettings = createAsyncThunk(
 );
 
 export const settingsSlice = createSlice({
-  name: "settings",
+  name: 'settings',
   initialState: {
     settings: {},
   },

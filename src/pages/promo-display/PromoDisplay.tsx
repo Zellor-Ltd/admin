@@ -1,18 +1,18 @@
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { Button, Col, PageHeader, Popconfirm, Row, Table } from "antd";
-import { ColumnsType } from "antd/lib/table";
-import { SearchFilter } from "components/SearchFilter";
-import useFilter from "hooks/useFilter";
-import { useRequest } from "hooks/useRequest";
-import { PromoDisplay } from "interfaces/PromoDisplay";
-import moment from "moment";
-import { useEffect, useState } from "react";
-import { Link, RouteComponentProps } from "react-router-dom";
+import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import { Button, Col, PageHeader, Popconfirm, Row, Table } from 'antd';
+import { ColumnsType } from 'antd/lib/table';
+import { SearchFilter } from 'components/SearchFilter';
+import useFilter from 'hooks/useFilter';
+import { useRequest } from 'hooks/useRequest';
+import { PromoDisplay } from 'interfaces/PromoDisplay';
+import moment from 'moment';
+import { useEffect, useState } from 'react';
+import { Link, RouteComponentProps } from 'react-router-dom';
 import {
   deletePromoDisplay,
   fetchPromoDisplays,
-} from "services/DiscoClubService";
-import CopyIdToClipboard from "components/CopyIdToClipboard";
+} from 'services/DiscoClubService';
+import CopyIdToClipboard from 'components/CopyIdToClipboard';
 
 const PromoDisplays: React.FC<RouteComponentProps> = ({
   history,
@@ -49,7 +49,7 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({
     for (let i = 0; i < content.length; i++) {
       if (content[i].id === id) {
         const index = i;
-        setPromoDisplays((prev) => [
+        setPromoDisplays(prev => [
           ...prev.slice(0, index),
           ...prev.slice(index + 1),
         ]);
@@ -59,47 +59,47 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({
 
   const columns: ColumnsType<PromoDisplay> = [
     {
-      title: "_id",
-      dataIndex: "id",
-      width: "6%",
-      render: (id) => <CopyIdToClipboard id={id} />,
-      align: "center",
+      title: '_id',
+      dataIndex: 'id',
+      width: '6%',
+      render: id => <CopyIdToClipboard id={id} />,
+      align: 'center',
     },
     {
-      title: "Shop Display ID",
-      dataIndex: "id",
-      width: "20%",
+      title: 'Shop Display ID',
+      dataIndex: 'id',
+      width: '20%',
       render: (value: string, record: PromoDisplay) => (
         <Link to={{ pathname: detailsPathname, state: record }}>{value}</Link>
       ),
     },
     {
-      title: "Display Start Date",
-      dataIndex: "displayStartDate",
-      width: "15%",
-      align: "center",
+      title: 'Display Start Date',
+      dataIndex: 'displayStartDate',
+      width: '15%',
+      align: 'center',
       render: (value: Date) => (
         <>
-          <div>{moment(value).format("DD/MM/YYYY")}</div>
+          <div>{moment(value).format('DD/MM/YYYY')}</div>
         </>
       ),
     },
     {
-      title: "Display Expire Date",
-      dataIndex: "displayExpireDate",
-      width: "15%",
-      align: "center",
+      title: 'Display Expire Date',
+      dataIndex: 'displayExpireDate',
+      width: '15%',
+      align: 'center',
       render: (value: Date) => (
         <>
-          <div>{moment(value).format("DD/MM/YYYY")}</div>
+          <div>{moment(value).format('DD/MM/YYYY')}</div>
         </>
       ),
     },
     {
-      title: "Actions",
-      key: "action",
-      width: "10%",
-      align: "right",
+      title: 'Actions',
+      key: 'action',
+      width: '10%',
+      align: 'right',
       render: (_, record: PromoDisplay) => (
         <>
           <Link to={{ pathname: detailsPathname, state: record }}>
@@ -121,8 +121,8 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({
   ];
 
   const searchFilterFunction = (filterText: string) => {
-    addFilterFunction("promoId", (promoDisplays) =>
-      promoDisplays.filter((promoDisplay) =>
+    addFilterFunction('promoId', promoDisplays =>
+      promoDisplays.filter(promoDisplay =>
         promoDisplay.id.toUpperCase().includes(filterText.toUpperCase())
       )
     );

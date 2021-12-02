@@ -1,5 +1,5 @@
-import { FormInstance } from "antd";
-import { useEffect, useRef } from "react";
+import { FormInstance } from 'antd';
+import { useEffect, useRef } from 'react';
 
 export const useResetFormOnCloseModal = ({
   form,

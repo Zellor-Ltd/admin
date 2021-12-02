@@ -1,5 +1,5 @@
-import { Button, Col, Form, InputNumber, Row, Select } from "antd";
-import { Brand } from "interfaces/Brand";
+import { Button, Col, Form, InputNumber, Row, Select } from 'antd';
+import { Brand } from 'interfaces/Brand';
 
 interface FormProps {
   brands: Brand[];
@@ -48,7 +48,7 @@ const BrandForm: React.FC<FormProps> = ({
               }
               onChange={(key: string) => onChangeBrand(key)}
             >
-              {brands.map((brand) => (
+              {brands.map(brand => (
                 <Select.Option key={brand.id} value={brand.id}>
                   {brand.brandName}
                 </Select.Option>
@@ -64,7 +64,7 @@ const BrandForm: React.FC<FormProps> = ({
           >
             {({ getFieldValue }) => {
               const bra: any = brands.find(
-                (brand: Brand) => brand.id === getFieldValue("id")
+                (brand: Brand) => brand.id === getFieldValue('id')
               );
               return (
                 <Form.Item name="selectedLogo" label="Store logo">
@@ -93,7 +93,7 @@ const BrandForm: React.FC<FormProps> = ({
         </Col>
         <Col lg={4} xs={24}>
           <Form.Item
-            name={["position", 0, "startTime"]}
+            name={['position', 0, 'startTime']}
             label="Start Time"
             rules={[{ required: true }]}
           >
@@ -102,7 +102,7 @@ const BrandForm: React.FC<FormProps> = ({
         </Col>
         <Col lg={4} xs={24}>
           <Form.Item
-            name={["position", 0, "opacity"]}
+            name={['position', 0, 'opacity']}
             label="Opacity"
             rules={[{ required: true }]}
           >
@@ -111,7 +111,7 @@ const BrandForm: React.FC<FormProps> = ({
         </Col>
         <Col lg={4} xs={24}>
           <Form.Item
-            name={["position", 0, "duration"]}
+            name={['position', 0, 'duration']}
             label="duration"
             rules={[{ required: true }]}
           >
@@ -120,7 +120,7 @@ const BrandForm: React.FC<FormProps> = ({
         </Col>
         <Col lg={4} xs={24}>
           <Form.Item
-            name={["position", 0, "x"]}
+            name={['position', 0, 'x']}
             label="Position X"
             rules={[{ required: true }]}
           >
@@ -129,7 +129,7 @@ const BrandForm: React.FC<FormProps> = ({
         </Col>
         <Col lg={4} xs={24}>
           <Form.Item
-            name={["position", 0, "y"]}
+            name={['position', 0, 'y']}
             label="position Y"
             rules={[{ required: true }]}
           >
@@ -138,7 +138,7 @@ const BrandForm: React.FC<FormProps> = ({
         </Col>
         <Col lg={4} xs={24}>
           <Form.Item
-            name={["position", 0, "z"]}
+            name={['position', 0, 'z']}
             label="Z Index"
             rules={[{ required: true }]}
           >

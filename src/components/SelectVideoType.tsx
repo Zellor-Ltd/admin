@@ -1,10 +1,10 @@
-import { Typography } from "antd";
-import Select from "antd/lib/select";
-import React, { useState } from "react";
+import { Typography } from 'antd';
+import Select from 'antd/lib/select';
+import React, { useState } from 'react';
 
 type SelectVideoTypeProps = Omit<
   React.SelectHTMLAttributes<HTMLSelectElement>,
-  "onChange"
+  'onChange'
 > & {
   onChange: (selectedStatus: string) => {};
   allowClear?: boolean;
@@ -15,10 +15,10 @@ export const SelectVideoType: React.FC<SelectVideoTypeProps> = ({
   onChange,
   style,
   allowClear = true,
-  label = "Video Type",
+  label = 'Video Type',
 }) => {
-  const videoTypeList = ["Feed", "Brand", "Review"];
-  const [selectedVideoType, setSelectedVideoType] = useState<string>("");
+  const videoTypeList = ['Feed', 'Brand', 'Review'];
+  const [selectedVideoType, setSelectedVideoType] = useState<string>('');
 
   const _onChange = (value: string) => {
     setSelectedVideoType(value);
@@ -26,7 +26,7 @@ export const SelectVideoType: React.FC<SelectVideoTypeProps> = ({
   };
 
   return (
-    <div style={{ marginBottom: "16px" }}>
+    <div style={{ marginBottom: '16px' }}>
       <Typography.Title level={5} title={label}>
         {label}
       </Typography.Title>
@@ -37,7 +37,7 @@ export const SelectVideoType: React.FC<SelectVideoTypeProps> = ({
         allowClear={allowClear}
         style={style}
       >
-        {videoTypeList.map((value) => (
+        {videoTypeList.map(value => (
           <Select.Option key={value} value={value}>
             {value}
           </Select.Option>

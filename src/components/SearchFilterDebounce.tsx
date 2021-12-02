@@ -1,7 +1,7 @@
-import { SearchOutlined } from "@ant-design/icons";
-import { Input, Typography } from "antd";
-import { debounce } from "lodash";
-import React, { useEffect, useRef, useState } from "react";
+import { SearchOutlined } from '@ant-design/icons';
+import { Input, Typography } from 'antd';
+import { debounce } from 'lodash';
+import React, { useEffect, useRef, useState } from 'react';
 
 interface SearchFilterDebounceProps {
   filterFunction: (filterText: string) => void;
@@ -11,13 +11,13 @@ interface SearchFilterDebounceProps {
 
 export const SearchFilterDebounce: React.FC<SearchFilterDebounceProps> = ({
   filterFunction,
-  initialValue = "",
-  label = "Search",
+  initialValue = '',
+  label = 'Search',
 }) => {
   const [text, setText] = useState<string>(initialValue);
 
   const debounced = useRef(
-    debounce((newText) => {
+    debounce(newText => {
       filterFunction(newText);
     }, 1000)
   );
@@ -25,12 +25,12 @@ export const SearchFilterDebounce: React.FC<SearchFilterDebounceProps> = ({
   useEffect(() => debounced.current(text), [text]);
 
   return (
-    <div style={{ marginBottom: "16px" }}>
+    <div style={{ marginBottom: '16px' }}>
       <Typography.Title level={5} title={label}>
         {label}
       </Typography.Title>
       <Input
-        onChange={(evt) => {
+        onChange={evt => {
           setText(evt.target.value);
         }}
         value={text}

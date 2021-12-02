@@ -1,4 +1,4 @@
-import { Fan } from "./Fan";
+import { Fan } from './Fan';
 
 export interface WalletDetailParams {
   fan: Fan;

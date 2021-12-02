@@ -1,15 +1,15 @@
-import { EditOutlined } from "@ant-design/icons";
-import { Button, PageHeader, Table, Tag } from "antd";
-import { ColumnsType } from "antd/lib/table";
-import { User } from "interfaces/User";
-import { useEffect, useState } from "react";
-import { Link, RouteComponentProps } from "react-router-dom";
-import { fetchUsers } from "services/DiscoClubService";
+import { EditOutlined } from '@ant-design/icons';
+import { Button, PageHeader, Table, Tag } from 'antd';
+import { ColumnsType } from 'antd/lib/table';
+import { User } from 'interfaces/User';
+import { useEffect, useState } from 'react';
+import { Link, RouteComponentProps } from 'react-router-dom';
+import { fetchUsers } from 'services/DiscoClubService';
 
 const tagColorByPermission: any = {
-  Admin: "green",
-  Temp: "blue",
-  Fan: "",
+  Admin: 'green',
+  Temp: 'blue',
+  Fan: '',
 };
 
 const Users: React.FC<RouteComponentProps> = ({ history }) => {
@@ -32,22 +32,22 @@ const Users: React.FC<RouteComponentProps> = ({ history }) => {
   }, []);
 
   const columns: ColumnsType<User> = [
-    { title: "Name", dataIndex: "name", width: "15%" },
-    { title: "E-mail", dataIndex: "user", width: "15%" },
+    { title: 'Name', dataIndex: 'name', width: '15%' },
+    { title: 'E-mail', dataIndex: 'user', width: '15%' },
     {
-      title: "Profile",
-      dataIndex: "profile",
-      width: "5%",
-      render: (profile = "Fan") => (
+      title: 'Profile',
+      dataIndex: 'profile',
+      width: '5%',
+      render: (profile = 'Fan') => (
         <Tag color={tagColorByPermission[profile]}>{profile}</Tag>
       ),
-      align: "center",
+      align: 'center',
     },
     {
-      title: "Actions",
-      key: "action",
-      width: "5%",
-      align: "right",
+      title: 'Actions',
+      key: 'action',
+      width: '5%',
+      align: 'right',
       render: (value, record) => (
         <>
           <Link to={{ pathname: `/user`, state: record }}>
@@ -73,7 +73,7 @@ const Users: React.FC<RouteComponentProps> = ({ history }) => {
         title="Users"
         subTitle="List of Users"
         extra={[
-          <Button key="1" onClick={() => history.push("/user")}>
+          <Button key="1" onClick={() => history.push('/user')}>
             New Item
           </Button>,
         ]}

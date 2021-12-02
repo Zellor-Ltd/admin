@@ -1,6 +1,6 @@
-import { Form, Input, InputNumber } from "antd";
-import { useContext, useEffect, useRef, useState } from "react";
-import EditableContext from "./EditableContext";
+import { Form, Input, InputNumber } from 'antd';
+import { useContext, useEffect, useRef, useState } from 'react';
+import EditableContext from './EditableContext';
 
 interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
   title: any;
@@ -51,7 +51,7 @@ const EditableCell: React.FC<EditableCellProps> = ({
       toggleEdit();
       onSave({ ...record, ...values });
     } catch (errInfo) {
-      console.log("Save failed:", errInfo);
+      console.log('Save failed:', errInfo);
     }
   };
 

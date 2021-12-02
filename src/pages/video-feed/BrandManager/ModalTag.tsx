@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import {
   Button,
   Col,
@@ -9,14 +9,14 @@ import {
   Row,
   Select,
   Table,
-} from "antd";
-import { Position } from "interfaces/Position";
-import { Tag } from "interfaces/Tag";
-import { useResetFormOnCloseModal } from "hooks/useResetFormCloseModal";
-import { EditableCell, EditableRow } from "components";
-import { DeleteOutlined } from "@ant-design/icons";
-import { ColumnTypes } from "components/editable-context";
-import { fetchTags } from "services/DiscoClubService";
+} from 'antd';
+import { Position } from 'interfaces/Position';
+import { Tag } from 'interfaces/Tag';
+import { useResetFormOnCloseModal } from 'hooks/useResetFormCloseModal';
+import { EditableCell, EditableRow } from 'components';
+import { DeleteOutlined } from '@ant-design/icons';
+import { ColumnTypes } from 'components/editable-context';
+import { fetchTags } from 'services/DiscoClubService';
 
 interface ModalFormProps {
   tag: Tag | undefined;
@@ -73,7 +73,7 @@ const ModalTag: React.FC<ModalFormProps> = ({
   };
 
   const onChangeTag = (key: string) => {
-    setSelectedTag(tags.find((tag) => tag.id === key));
+    setSelectedTag(tags.find(tag => tag.id === key));
   };
 
   const components = {
@@ -85,38 +85,38 @@ const ModalTag: React.FC<ModalFormProps> = ({
 
   const columns = [
     {
-      title: "Start time",
-      dataIndex: "startTime",
+      title: 'Start time',
+      dataIndex: 'startTime',
       editable: true,
       number: true,
     },
     {
-      title: "Opacity",
-      dataIndex: "opacity",
+      title: 'Opacity',
+      dataIndex: 'opacity',
       editable: true,
       number: true,
     },
     {
-      title: "Position X",
-      dataIndex: "x",
+      title: 'Position X',
+      dataIndex: 'x',
       editable: true,
       number: true,
     },
     {
-      title: "Position Y",
-      dataIndex: "y",
+      title: 'Position Y',
+      dataIndex: 'y',
       editable: true,
       number: true,
     },
     {
-      title: "Z Index",
-      dataIndex: "z",
+      title: 'Z Index',
+      dataIndex: 'z',
       editable: true,
       number: true,
     },
     {
-      title: "actions",
-      dataIndex: "actions",
+      title: 'actions',
+      dataIndex: 'actions',
       render: (_: any, record: Position, index: number) =>
         selectedPositions.length >= 1 ? (
           <Popconfirm
@@ -131,7 +131,7 @@ const ModalTag: React.FC<ModalFormProps> = ({
     },
   ];
 
-  const configuredColumns = columns.map((col) => {
+  const configuredColumns = columns.map(col => {
     if (!col.editable) {
       return col;
     }
@@ -154,7 +154,7 @@ const ModalTag: React.FC<ModalFormProps> = ({
       visible={visible}
       onOk={onOk}
       onCancel={onCancel}
-      width={"80%"}
+      width={'80%'}
       forceRender
       okButtonProps={{ loading: loading }}
     >
@@ -164,7 +164,7 @@ const ModalTag: React.FC<ModalFormProps> = ({
             <Col lg={8} xs={0}>
               <Form.Item name="tagName" label="Tag">
                 <Select onChange={onChangeTag}>
-                  {tags.map((tag) => (
+                  {tags.map(tag => (
                     <Select.Option key={tag.id} value={tag.id}>
                       {tag.tagName}
                     </Select.Option>
@@ -177,7 +177,7 @@ const ModalTag: React.FC<ModalFormProps> = ({
 
         <Button
           type="primary"
-          style={{ margin: "8px 0" }}
+          style={{ margin: '8px 0' }}
           onClick={() => onAddPosition()}
         >
           Add Movements
@@ -186,9 +186,9 @@ const ModalTag: React.FC<ModalFormProps> = ({
           rowKey={(position: Position) =>
             `posotion_${position.x}_${position.z}_${Math.random()}`
           }
-          title={() => "Tag Motion"}
+          title={() => 'Tag Motion'}
           components={components}
-          rowClassName={() => "editable-row"}
+          rowClassName={() => 'editable-row'}
           bordered
           dataSource={selectedPositions}
           columns={configuredColumns as ColumnTypes}

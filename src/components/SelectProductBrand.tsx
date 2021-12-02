@@ -1,8 +1,8 @@
-import Select from "antd/lib/select";
-import React, { useEffect, useState } from "react";
-import { ProductBrand } from "../interfaces/ProductBrand";
-import { fetchProductBrands } from "../services/DiscoClubService";
-import { FormInstance } from "antd/lib/form";
+import Select from 'antd/lib/select';
+import React, { useEffect, useState } from 'react';
+import { ProductBrand } from '../interfaces/ProductBrand';
+import { fetchProductBrands } from '../services/DiscoClubService';
+import { FormInstance } from 'antd/lib/form';
 
 type SelectProductBrandProps = React.SelectHTMLAttributes<HTMLSelectElement> & {
   allowClear?: boolean;
@@ -12,7 +12,7 @@ type SelectProductBrandProps = React.SelectHTMLAttributes<HTMLSelectElement> & {
 };
 
 export const SelectProductBrand: React.FC<SelectProductBrandProps> = ({
-  placeholder = "Select a Brand",
+  placeholder = 'Select a Brand',
   style,
   allowClear = true,
   initialProductBrandName,

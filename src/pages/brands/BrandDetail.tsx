@@ -15,27 +15,27 @@ import {
   Switch,
   Typography,
   Popconfirm,
-} from "antd";
-import { Upload } from "components";
-import { RichTextEditor } from "components/RichTextEditor";
-import { Brand } from "interfaces/Brand";
-import { useState, useEffect } from "react";
-import React from "react";
-import { useRequest } from "hooks/useRequest";
-import { TwitterPicker } from "react-color";
-import { useSelector } from "react-redux";
-import { RouteComponentProps, Link } from "react-router-dom";
-import { saveBrand } from "services/DiscoClubService";
-import { BrandVault } from "../../interfaces/BrandVault";
+} from 'antd';
+import { Upload } from 'components';
+import { RichTextEditor } from 'components/RichTextEditor';
+import { Brand } from 'interfaces/Brand';
+import { useState, useEffect } from 'react';
+import React from 'react';
+import { useRequest } from 'hooks/useRequest';
+import { TwitterPicker } from 'react-color';
+import { useSelector } from 'react-redux';
+import { RouteComponentProps, Link } from 'react-router-dom';
+import { saveBrand } from 'services/DiscoClubService';
+import { BrandVault } from '../../interfaces/BrandVault';
 import {
   fetchBrandVault,
   deleteBrandVault,
   saveBrandVault,
-} from "services/DiscoClubService";
-import { ColumnsType } from "antd/lib/table";
-import CopyIdToClipboard from "components/CopyIdToClipboard";
-import moment from "moment";
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+} from 'services/DiscoClubService';
+import { ColumnsType } from 'antd/lib/table';
+import CopyIdToClipboard from 'components/CopyIdToClipboard';
+import moment from 'moment';
+import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 
 const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
   const { history, location } = props;
@@ -44,7 +44,7 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [vaults, setVaults] = useState<BrandVault[]>([]);
   const [currentVault, setCurrentVault] = useState<BrandVault>();
-  const [activeTabKey, setActiveTabKey] = React.useState("Details");
+  const [activeTabKey, setActiveTabKey] = React.useState('Details');
   const [vaultOptions, setVaultOptions] = useState<boolean>(false);
   const { doFetch } = useRequest({ setLoading });
   const { doRequest } = useRequest({ setLoading });
@@ -70,7 +70,7 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
   };
 
   useEffect(() => {
-    if (activeTabKey === "Secrets") {
+    if (activeTabKey === 'Secrets') {
       setVaultOptions(false);
       fetchVaults();
     }
@@ -79,14 +79,14 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
 
   const deleteItem = async (vault: BrandVault) => {
     deleteBrandVault(vault.id);
-    setActiveTabKey("Details");
+    setActiveTabKey('Details');
   };
 
   const saveItem = async (vault: any) => {
-    const key = vaultForm.getFieldValue("key");
-    const shopName = vaultForm.getFieldValue("shopName");
-    const apiShopName = vaultForm.getFieldValue("apiShopName");
-    const token = vaultForm.getFieldValue("token");
+    const key = vaultForm.getFieldValue('key');
+    const shopName = vaultForm.getFieldValue('shopName');
+    const apiShopName = vaultForm.getFieldValue('apiShopName');
+    const token = vaultForm.getFieldValue('token');
     if (vault === undefined) {
       const newVault = {
         key: key,
@@ -102,8 +102,8 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
       vault.token = token;
       await doRequest(() => saveBrandVault(vault));
     }
-    setActiveTabKey("Details");
-    setActiveTabKey("Secrets");
+    setActiveTabKey('Details');
+    setActiveTabKey('Secrets');
   };
 
   const editVault = (vault: any) => {
@@ -114,10 +114,10 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
   const newItem = () => {
     const template = {
       shopName: initial.shopName,
-      id: "",
-      apiShopName: "",
-      tokenType: "",
-      token: "",
+      id: '',
+      apiShopName: '',
+      tokenType: '',
+      token: '',
     };
     setCurrentVault(template as BrandVault);
     setVaultOptions(true);
@@ -125,53 +125,53 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
 
   const columns: ColumnsType<BrandVault> = [
     {
-      title: "_id",
-      dataIndex: "id",
-      width: "6%",
-      render: (id) => <CopyIdToClipboard id={id} />,
-      align: "center",
+      title: '_id',
+      dataIndex: 'id',
+      width: '6%',
+      render: id => <CopyIdToClipboard id={id} />,
+      align: 'center',
     },
     {
-      title: "Key",
-      dataIndex: "key",
-      width: "12%",
-      align: "center",
+      title: 'Key',
+      dataIndex: 'key',
+      width: '12%',
+      align: 'center',
     },
     {
-      title: "Shop Name",
-      dataIndex: "shopName",
-      width: "15%",
-      align: "center",
+      title: 'Shop Name',
+      dataIndex: 'shopName',
+      width: '15%',
+      align: 'center',
     },
     {
-      title: "API Shop Name",
-      dataIndex: "apiShopName",
-      width: "15%",
-      align: "center",
+      title: 'API Shop Name',
+      dataIndex: 'apiShopName',
+      width: '15%',
+      align: 'center',
     },
     {
-      title: "Token",
-      dataIndex: "token",
-      width: "10%",
-      align: "center",
+      title: 'Token',
+      dataIndex: 'token',
+      width: '10%',
+      align: 'center',
     },
     {
-      title: "Creation",
-      dataIndex: "hCreationDate",
-      width: "15%",
-      align: "center",
+      title: 'Creation',
+      dataIndex: 'hCreationDate',
+      width: '15%',
+      align: 'center',
       render: (value: Date) => (
         <>
-          <div>{moment(value).format("DD/MM/YYYY")}</div>
-          <div>{moment(value).format("HH:mm")}</div>
+          <div>{moment(value).format('DD/MM/YYYY')}</div>
+          <div>{moment(value).format('HH:mm')}</div>
         </>
       ),
     },
     {
-      title: "Actions",
-      key: "action",
-      width: "10%",
-      align: "right",
+      title: 'Actions',
+      key: 'action',
+      width: '10%',
+      align: 'right',
       render: (_, record: BrandVault) => (
         <>
           <Link
@@ -201,7 +201,7 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
       const brand = form.getFieldsValue(true);
       await saveBrand(brand);
       setLoading(false);
-      message.success("Register updated with success.");
+      message.success('Register updated with success.');
       history.goBack();
     } catch (error) {
       setLoading(false);
@@ -210,13 +210,13 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
 
   const handleCheckoutTypeChange = (e: RadioChangeEvent) => {
     const type = e.target.value;
-    const isExternal = type === "external";
+    const isExternal = type === 'external';
     if (!isExternal) {
       setCheckoutTypeList([
-        checkoutType.find((item: any) => item.name === "Disco"),
+        checkoutType.find((item: any) => item.name === 'Disco'),
       ]);
       form.setFieldsValue({
-        checkout: "Disco",
+        checkout: 'Disco',
       });
     } else {
       setCheckoutTypeList(checkoutType);
@@ -249,7 +249,7 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
                     label="Key"
                     name="key"
                     rules={[{ required: true }]}
-                    initialValue={currentVault?.key || ""}
+                    initialValue={currentVault?.key || ''}
                   >
                     <Input />
                   </Form.Item>
@@ -270,7 +270,7 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
                     name="apiShopName"
                     rules={[{ required: true }]}
                   >
-                    <Input value={currentVault?.apiShopName || ""} />
+                    <Input value={currentVault?.apiShopName || ''} />
                   </Form.Item>
                 </Col>
                 <Col lg={16} xs={24}>
@@ -279,7 +279,7 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
                     name="token"
                     rules={[{ required: true }]}
                   >
-                    <Input type="password" value={currentVault?.token || ""} />
+                    <Input type="password" value={currentVault?.token || ''} />
                   </Form.Item>
                 </Col>
               </Col>
@@ -374,7 +374,7 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
               <Col lg={12} xs={24}>
                 <Col lg={16} xs={24}>
                   <Form.Item
-                    name={"fitTo"}
+                    name={'fitTo'}
                     label="Master Brand Default Image Sizing"
                   >
                     <Select placeholder="Please select a sizing option">
@@ -460,7 +460,7 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
                         valuePropName="checked"
                       >
                         <Switch
-                          disabled={getFieldValue("checkout") === "Disco"}
+                          disabled={getFieldValue('checkout') === 'Disco'}
                         />
                       </Form.Item>
                     )}
@@ -582,7 +582,7 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
                   </Form.Item>
                 </Col>
               </Row>
-              <Typography.Title style={{ marginBottom: "20px" }} level={5}>
+              <Typography.Title style={{ marginBottom: '20px' }} level={5}>
                 Store Page Display
               </Typography.Title>
               <Row>
@@ -621,7 +621,7 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
             <BrandVaultForm />
           </Tabs.TabPane>
         </Tabs>
-        {activeTabKey !== "Secrets" && (
+        {activeTabKey !== 'Secrets' && (
           <Row gutter={8}>
             <Col>
               <Button type="default" onClick={() => history.goBack()}>
@@ -642,7 +642,7 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
 
 export default BrandDetail;
 
-const ColorPicker: React.FC<any> = (props) => {
+const ColorPicker: React.FC<any> = props => {
   const { onChange } = props;
   return (
     <TwitterPicker onChangeComplete={(value: any) => onChange(value.hex)} />

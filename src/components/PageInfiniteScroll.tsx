@@ -1,9 +1,9 @@
-import InfiniteScroll from "react-infinite-scroll-component";
+import InfiniteScroll from 'react-infinite-scroll-component';
 
-import React, { useContext, useEffect } from "react";
-import { AppContext } from "contexts/AppContext";
-import { PageInfiniteScrollContext } from "contexts/PageInfiniteScrollContext";
-import { Spin } from "antd";
+import React, { useContext, useEffect } from 'react';
+import { AppContext } from 'contexts/AppContext';
+import { PageInfiniteScrollContext } from 'contexts/PageInfiniteScrollContext';
+import { Spin } from 'antd';
 
 interface PageInfiniteScrollProps {
   refreshCallback: Function;
@@ -43,7 +43,7 @@ export const PageInfiniteScroll: React.FC<PageInfiniteScrollProps> = ({
   const fetchData = async () => {
     if (!tableData.length) return;
     const { results } = await fetchTableData();
-    setTableData((prev) => [...prev.concat(results)]);
+    setTableData(prev => [...prev.concat(results)]);
   };
 
   useEffect(() => {

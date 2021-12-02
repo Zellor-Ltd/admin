@@ -1,15 +1,15 @@
-import { DeleteOutlined, EyeOutlined, SearchOutlined } from "@ant-design/icons";
-import { Button, Col, PageHeader, Popconfirm, Row, Spin, Table } from "antd";
-import { ColumnsType } from "antd/lib/table";
-import CopyIdToClipboard from "components/CopyIdToClipboard";
-import { SearchFilterDebounce } from "components/SearchFilterDebounce";
-import { AppContext } from "contexts/AppContext";
-import { useRequest } from "hooks/useRequest";
-import { Tag } from "interfaces/Tag";
-import { useContext, useEffect, useState } from "react";
-import InfiniteScroll from "react-infinite-scroll-component";
-import { Link, RouteComponentProps } from "react-router-dom";
-import { deleteTag, fetchTags } from "services/DiscoClubService";
+import { DeleteOutlined, EyeOutlined, SearchOutlined } from '@ant-design/icons';
+import { Button, Col, PageHeader, Popconfirm, Row, Spin, Table } from 'antd';
+import { ColumnsType } from 'antd/lib/table';
+import CopyIdToClipboard from 'components/CopyIdToClipboard';
+import { SearchFilterDebounce } from 'components/SearchFilterDebounce';
+import { AppContext } from 'contexts/AppContext';
+import { useRequest } from 'hooks/useRequest';
+import { Tag } from 'interfaces/Tag';
+import { useContext, useEffect, useState } from 'react';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import { Link, RouteComponentProps } from 'react-router-dom';
+import { deleteTag, fetchTags } from 'services/DiscoClubService';
 
 const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
   const detailsPathname = `${location.pathname}/tag`;
@@ -21,14 +21,14 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
 
   const { doFetch, doRequest } = useRequest({ setLoading });
 
-  const [searchFilter, setSearchFilter] = usePageFilter<string>("search");
+  const [searchFilter, setSearchFilter] = usePageFilter<string>('search');
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
   const [content, setContent] = useState<any[]>([]);
 
   const [tags, setTags] = useState<Tag[]>([]);
 
-  const _fetchTags = async (searchButton) => {
+  const _fetchTags = async searchButton => {
     const pageToUse = refreshing ? 0 : page;
     const response = await doFetch(() =>
       fetchTags({
@@ -46,7 +46,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
     return response;
   };
 
-  const getResources = async (searchButton) => {
+  const getResources = async searchButton => {
     const [{ results }] = await Promise.all([_fetchTags(searchButton)]);
     setTags(results);
   };
@@ -59,7 +59,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
   const fetchData = async () => {
     if (!tags.length) return;
     const { results } = await _fetchTags(false);
-    setTags((prev) => [...prev.concat(results)]);
+    setTags(prev => [...prev.concat(results)]);
   };
 
   useEffect(() => {
@@ -86,33 +86,33 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
     for (let i = 0; i < content.length; i++) {
       if (content[i].id === id) {
         const index = i;
-        setTags((prev) => [...prev.slice(0, index), ...prev.slice(index + 1)]);
+        setTags(prev => [...prev.slice(0, index), ...prev.slice(index + 1)]);
       }
     }
   };
 
   const columns: ColumnsType<Tag> = [
     {
-      title: "_id",
-      dataIndex: "id",
-      width: "6%",
-      render: (id) => <CopyIdToClipboard id={id} />,
-      align: "center",
+      title: '_id',
+      dataIndex: 'id',
+      width: '6%',
+      render: id => <CopyIdToClipboard id={id} />,
+      align: 'center',
     },
-    { title: "Tag", dataIndex: "tagName", width: "15%" },
+    { title: 'Tag', dataIndex: 'tagName', width: '15%' },
     {
-      title: "Product",
-      dataIndex: ["product", "name"],
-      width: "20%",
+      title: 'Product',
+      dataIndex: ['product', 'name'],
+      width: '20%',
     },
-    { title: "Master Brand", dataIndex: ["brand", "brandName"], width: "20%" },
-    { title: "Template", dataIndex: "template", width: "15%" },
-    { title: "DD's", dataIndex: "discoDollars", width: "5%" },
+    { title: 'Master Brand', dataIndex: ['brand', 'brandName'], width: '20%' },
+    { title: 'Template', dataIndex: 'template', width: '15%' },
+    { title: "DD's", dataIndex: 'discoDollars', width: '5%' },
     {
-      title: "Actions",
-      key: "action",
-      width: "5%",
-      align: "right",
+      title: 'Actions',
+      key: 'action',
+      width: '5%',
+      align: 'right',
       render: (value, record) => (
         <>
           <Link to={{ pathname: detailsPathname, state: record }}>
@@ -162,12 +162,12 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
             onClick={() => getResources(true)}
             loading={loading}
             style={{
-              marginBottom: "20px",
-              marginRight: "25px",
+              marginBottom: '20px',
+              marginRight: '25px',
             }}
           >
             Search
-            <SearchOutlined style={{ color: "white" }} />
+            <SearchOutlined style={{ color: 'white' }} />
           </Button>
         </Col>
       </Row>

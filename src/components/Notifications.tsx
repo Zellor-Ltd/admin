@@ -1,7 +1,7 @@
-import { BellOutlined, CloseOutlined } from "@ant-design/icons";
-import { Client } from "@stomp/stompjs";
-import { Button, Col, Dropdown, Menu, Row } from "antd";
-import React, { useEffect, useState } from "react";
+import { BellOutlined, CloseOutlined } from '@ant-design/icons';
+import { Client } from '@stomp/stompjs';
+import { Button, Col, Dropdown, Menu, Row } from 'antd';
+import React, { useEffect, useState } from 'react';
 
 interface NotificationsProps {}
 
@@ -11,7 +11,7 @@ export const Notifications: React.FC<NotificationsProps> = () => {
 
   useEffect(() => {
     const [brokerURL, login, passcode, exchange] =
-      process.env.REACT_APP_STOMP_SERVER?.split("|") || [];
+      process.env.REACT_APP_STOMP_SERVER?.split('|') || [];
     const client = new Client({
       brokerURL,
       connectHeaders: {
@@ -22,7 +22,7 @@ export const Notifications: React.FC<NotificationsProps> = () => {
     client.onConnect = function () {
       //console.log(`Connected to stomp server: ${brokerURL}`);
       client.subscribe(exchange, function (data) {
-        setMessages((prev) => [...prev, data?.body]);
+        setMessages(prev => [...prev, data?.body]);
       });
     };
     client.activate();
@@ -38,9 +38,9 @@ export const Notifications: React.FC<NotificationsProps> = () => {
   const menu = (
     <Menu
       style={{
-        width: "220px",
-        maxHeight: "320px",
-        overflowY: messages.length ? "scroll" : "initial",
+        width: '220px',
+        maxHeight: '320px',
+        overflowY: messages.length ? 'scroll' : 'initial',
       }}
     >
       {messages.length ? (
@@ -51,9 +51,9 @@ export const Notifications: React.FC<NotificationsProps> = () => {
                 <Col xs={20}>
                   <div
                     style={{
-                      padding: "8px 0 0 0",
-                      whiteSpace: "initial",
-                      wordWrap: "break-word",
+                      padding: '8px 0 0 0',
+                      whiteSpace: 'initial',
+                      wordWrap: 'break-word',
                     }}
                   >
                     {message}
@@ -85,35 +85,35 @@ export const Notifications: React.FC<NotificationsProps> = () => {
   return (
     <Dropdown
       overlay={menu}
-      trigger={["click"]}
+      trigger={['click']}
       onVisibleChange={handleVisibleChange}
       visible={showAlerts}
     >
       <Button
         style={{
-          height: "100%",
-          backgroundColor: "rgb(0 21 41)",
-          borderColor: "rgb(0 21 41)",
-          marginRight: "16px",
-          marginTop: "6px",
-          fontSize: "20px",
+          height: '100%',
+          backgroundColor: 'rgb(0 21 41)',
+          borderColor: 'rgb(0 21 41)',
+          marginRight: '16px',
+          marginTop: '6px',
+          fontSize: '20px',
         }}
         shape="circle"
         size="large"
-        onClick={(e) => e.preventDefault()}
+        onClick={e => e.preventDefault()}
         icon={
-          <BellOutlined style={{ color: "white", height: 18, width: 38 }} />
+          <BellOutlined style={{ color: 'white', height: 18, width: 38 }} />
         }
       >
         <span
           style={{
-            position: "absolute",
-            top: "0px",
-            right: "2px",
-            borderRadius: "50%",
-            background: messages.length ? "red" : "inherit",
-            height: "10px",
-            width: "10px",
+            position: 'absolute',
+            top: '0px',
+            right: '2px',
+            borderRadius: '50%',
+            background: messages.length ? 'red' : 'inherit',
+            height: '10px',
+            width: '10px',
           }}
         />
       </Button>

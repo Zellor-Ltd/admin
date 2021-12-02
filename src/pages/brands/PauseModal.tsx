@@ -1,7 +1,7 @@
-import { Button, Col, Divider, Form, Input, Modal, Row } from "antd";
-import { deactivateBrand, reactivateBrand } from "services/DiscoClubService";
-import { useState } from "react";
-import { useRequest } from "hooks/useRequest";
+import { Button, Col, Divider, Form, Input, Modal, Row } from 'antd';
+import { deactivateBrand, reactivateBrand } from 'services/DiscoClubService';
+import { useState } from 'react';
+import { useRequest } from 'hooks/useRequest';
 
 interface PauseModalProps {
   brandId: string;
@@ -62,7 +62,7 @@ export const PauseModal: React.FC<PauseModalProps> = ({
           </Col>
           <Col>
             <Button type="primary" htmlType="submit" loading={loading}>
-              {isBrandPaused ? "Reactivate" : "Deactivate"}
+              {isBrandPaused ? 'Reactivate' : 'Deactivate'}
             </Button>
           </Col>
         </Row>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 
 type FilterFn<T> = (arrayList: T[]) => T[];
 
@@ -12,14 +12,14 @@ const useFilter = <T>(initialArrayListValue: T[]) => {
   const [filterFunctions, setFilterFunctions] = useState<FilterFnObject<T>>({});
 
   const addFilterFunction = (key: string, fn: FilterFn<T>) => {
-    setFilterFunctions((prev) => {
+    setFilterFunctions(prev => {
       prev[key] = fn;
       return { ...prev };
     });
   };
 
   const removeFilterFunction = (key: string) => {
-    setFilterFunctions((prev) => {
+    setFilterFunctions(prev => {
       delete prev[key];
       return { ...prev };
     });

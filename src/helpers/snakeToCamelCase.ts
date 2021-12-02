@@ -1,4 +1,4 @@
-import * as _ from "lodash";
+import * as _ from 'lodash';
 
 function snakeToCamelCase(o: any) {
   let newO: any;
@@ -6,8 +6,8 @@ function snakeToCamelCase(o: any) {
   let newKey;
   let value;
   if (o instanceof Array) {
-    return o.map((value) => {
-      if (typeof value === "object") {
+    return o.map(value => {
+      if (typeof value === 'object') {
         value = snakeToCamelCase(value);
       }
       return value;

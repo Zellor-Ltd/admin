@@ -1,4 +1,4 @@
-import { CalendarOutlined, SearchOutlined } from "@ant-design/icons";
+import { CalendarOutlined, SearchOutlined } from '@ant-design/icons';
 import {
   Button,
   Col,
@@ -10,21 +10,21 @@ import {
   Select,
   Space,
   Table,
-} from "antd";
-import { ColumnsType } from "antd/lib/table";
-import { SelectBrand } from "components/SelectBrand";
-import useFilter from "hooks/useFilter";
-import { Brand } from "interfaces/Brand";
-import { Fan } from "interfaces/Fan";
-import { Order } from "interfaces/Order";
-import moment from "moment";
-import { useEffect, useRef, useState } from "react";
-import Highlighter from "react-highlight-words";
-import { useSelector } from "react-redux";
-import { Link, RouteComponentProps } from "react-router-dom";
-import { fetchFans, fetchOrders, saveOrder } from "services/DiscoClubService";
-import CopyOrderToClipboard from "components/CopyOrderToClipboard";
-import { SelectFan } from "components/SelectFan";
+} from 'antd';
+import { ColumnsType } from 'antd/lib/table';
+import { SelectBrand } from 'components/SelectBrand';
+import useFilter from 'hooks/useFilter';
+import { Brand } from 'interfaces/Brand';
+import { Fan } from 'interfaces/Fan';
+import { Order } from 'interfaces/Order';
+import moment from 'moment';
+import { useEffect, useRef, useState } from 'react';
+import Highlighter from 'react-highlight-words';
+import { useSelector } from 'react-redux';
+import { Link, RouteComponentProps } from 'react-router-dom';
+import { fetchFans, fetchOrders, saveOrder } from 'services/DiscoClubService';
+import CopyOrderToClipboard from 'components/CopyOrderToClipboard';
+import { SelectFan } from 'components/SelectFan';
 
 const Orders: React.FC<RouteComponentProps> = () => {
   const [tableloading, setTableLoading] = useState<boolean>(false);
@@ -41,7 +41,7 @@ const Orders: React.FC<RouteComponentProps> = () => {
 
   const [fans, setFans] = useState<Fan[]>([]);
 
-  const [searchText, setSearchText] = useState<string>("");
+  const [searchText, setSearchText] = useState<string>('');
 
   const searchInput = useRef<Input>(null);
 
@@ -52,7 +52,7 @@ const Orders: React.FC<RouteComponentProps> = () => {
 
   const handleReset = (clearFilters: any) => {
     clearFilters();
-    setSearchText("");
+    setSearchText('');
   };
 
   const {
@@ -71,11 +71,11 @@ const Orders: React.FC<RouteComponentProps> = () => {
     const _orders = [...orders];
     _orders[orderIndex].hLastUpdate = moment
       .utc()
-      .format("YYYY-MM-DDTHH:mm:ss.SSSSSSSZ");
+      .format('YYYY-MM-DDTHH:mm:ss.SSSSSSSZ');
     setOrders(_orders);
 
-    message.success("Changes saved!");
-    setOrderUpdateList((prev) => {
+    message.success('Changes saved!');
+    setOrderUpdateList(prev => {
       prev[orderIndex] = false;
       return [...prev];
     });
@@ -83,19 +83,19 @@ const Orders: React.FC<RouteComponentProps> = () => {
 
   const handleDateChange = (values: any) => {
     if (!values) {
-      removeFilterFunction("creationDate");
+      removeFilterFunction('creationDate');
       return;
     }
-    const startDate = moment(values[0], "DD/MM/YYYY").startOf("day").utc();
-    const endDate = moment(values[1], "DD/MM/YYYY").endOf("day").utc();
-    addFilterFunction("creationDate", (orders: Order[]) =>
+    const startDate = moment(values[0], 'DD/MM/YYYY').startOf('day').utc();
+    const endDate = moment(values[1], 'DD/MM/YYYY').endOf('day').utc();
+    addFilterFunction('creationDate', (orders: Order[]) =>
       orders.filter(({ hCreationDate }) => {
         return moment(hCreationDate).utc().isBetween(startDate, endDate);
       })
     );
   };
 
-  const getFan = (fanId: string) => fans.find((fan) => fan.id === fanId);
+  const getFan = (fanId: string) => fans.find(fan => fan.id === fanId);
 
   const getColumnSearchProps = (dataIndex: any) => ({
     filterDropdown: ({
@@ -114,11 +114,11 @@ const Orders: React.FC<RouteComponentProps> = () => {
           ref={searchInput}
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
-          onChange={(e) =>
+          onChange={e =>
             setSelectedKeys(e.target.value ? [e.target.value] : [])
           }
           onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
-          style={{ marginBottom: 8, display: "block" }}
+          style={{ marginBottom: 8, display: 'block' }}
         />
         <Space>
           <Button
@@ -151,7 +151,7 @@ const Orders: React.FC<RouteComponentProps> = () => {
       </div>
     ),
     filterIcon: (filtered: any) => (
-      <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
+      <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
     ),
     onFilter: (value: any, record: any) => {
       const fan = getFan(record.userid);
@@ -167,10 +167,10 @@ const Orders: React.FC<RouteComponentProps> = () => {
       return (
         <Link to={{ pathname: `/users_fans/fan`, state: fan }}>
           <Highlighter
-            highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
+            highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
             searchWords={[searchText]}
             autoEscape
-            textToHighlight={fan?.user || ""}
+            textToHighlight={fan?.user || ''}
           />
         </Link>
       );
@@ -179,44 +179,44 @@ const Orders: React.FC<RouteComponentProps> = () => {
 
   const columns: ColumnsType<Order> = [
     {
-      title: "_id",
-      dataIndex: "id",
-      width: "6%",
-      render: (id) => <CopyOrderToClipboard order={id} />,
-      align: "center",
+      title: '_id',
+      dataIndex: 'id',
+      width: '6%',
+      render: id => <CopyOrderToClipboard order={id} />,
+      align: 'center',
     },
     {
-      title: "User",
-      dataIndex: "userid",
-      width: "10%",
-      align: "left",
-      ...getColumnSearchProps("userid"),
+      title: 'User',
+      dataIndex: 'userid',
+      width: '10%',
+      align: 'left',
+      ...getColumnSearchProps('userid'),
     },
     {
-      title: "Paid",
-      dataIndex: "paid",
-      width: "5%",
-      align: "center",
-      render: (value: boolean) => <b>{value ? "Yes" : "No"}</b>,
+      title: 'Paid',
+      dataIndex: 'paid',
+      width: '5%',
+      align: 'center',
+      render: (value: boolean) => <b>{value ? 'Yes' : 'No'}</b>,
     },
     {
-      title: "Amount / 100",
-      dataIndex: "amount",
-      width: "5%",
-      align: "center",
+      title: 'Amount / 100',
+      dataIndex: 'amount',
+      width: '5%',
+      align: 'center',
       render: (value: number) => `${value / 100}x`,
     },
     {
-      title: "Name",
-      dataIndex: ["product", "name"],
-      width: "12%",
-      align: "center",
+      title: 'Name',
+      dataIndex: ['product', 'name'],
+      width: '12%',
+      align: 'center',
     },
     {
-      title: "Creation",
-      dataIndex: "hCreationDate",
-      width: "10%",
-      align: "center",
+      title: 'Creation',
+      dataIndex: 'hCreationDate',
+      width: '10%',
+      align: 'center',
       filterIcon: <CalendarOutlined />,
       filterDropdown: () => (
         <DatePicker.RangePicker
@@ -226,29 +226,29 @@ const Orders: React.FC<RouteComponentProps> = () => {
       ),
       render: (value: Date) => (
         <>
-          <div>{moment(value).format("DD/MM/YYYY")}</div>
-          <div>{moment(value).format("HH:mm")}</div>
+          <div>{moment(value).format('DD/MM/YYYY')}</div>
+          <div>{moment(value).format('HH:mm')}</div>
         </>
       ),
     },
     {
-      title: "Disco Dollars",
-      dataIndex: "discoDollars",
-      width: "5%",
-      align: "center",
+      title: 'Disco Dollars',
+      dataIndex: 'discoDollars',
+      width: '5%',
+      align: 'center',
     },
     {
-      title: "Stage",
-      dataIndex: "stage",
-      width: "15%",
-      align: "center",
+      title: 'Stage',
+      dataIndex: 'stage',
+      width: '15%',
+      align: 'center',
       render: (value: string, _, index) => (
         <Select
           loading={orderUpdateList[index]}
           disabled={orderUpdateList[index]}
           defaultValue={value}
-          style={{ width: "175px" }}
-          onChange={(value) => handleSelectChange(value, index)}
+          style={{ width: '175px' }}
+          onChange={value => handleSelectChange(value, index)}
         >
           {ordersSettings.map((ordersSetting: any) => (
             <Select.Option
@@ -262,14 +262,14 @@ const Orders: React.FC<RouteComponentProps> = () => {
       ),
     },
     {
-      title: "Last Update",
-      dataIndex: "hLastUpdate",
-      width: "10%",
-      align: "center",
+      title: 'Last Update',
+      dataIndex: 'hLastUpdate',
+      width: '10%',
+      align: 'center',
       render: (value: Date) => (
         <>
-          <div>{moment(value).format("DD/MM/YYYY")}</div>
-          <div>{moment(value).format("HH:mm")}</div>
+          <div>{moment(value).format('DD/MM/YYYY')}</div>
+          <div>{moment(value).format('HH:mm')}</div>
           {/* <div style={{ color: "grey" }}>({moment(value).fromNow()})</div> */}
         </>
       ),
@@ -302,8 +302,8 @@ const Orders: React.FC<RouteComponentProps> = () => {
     setTableLoading(true);
     const orders: Order[] = await getOrders();
     const fans: Fan[] = await getFans();
-    const ordersWithFanName = orders.map((order) => {
-      const fan = fans.find((fan) => fan.id === order.userid);
+    const ordersWithFanName = orders.map(order => {
+      const fan = fans.find(fan => fan.id === order.userid);
       order.fanName = fan?.user;
       return order;
     });
@@ -321,23 +321,23 @@ const Orders: React.FC<RouteComponentProps> = () => {
 
   const onChangeBrand = async (_selectedBrand: Brand | undefined) => {
     if (!_selectedBrand) {
-      removeFilterFunction("brandName");
+      removeFilterFunction('brandName');
       return;
     }
-    addFilterFunction("brandName", (orders) =>
+    addFilterFunction('brandName', orders =>
       orders.filter(
-        (order) => order.product?.brand.brandName === _selectedBrand.brandName
+        order => order.product?.brand.brandName === _selectedBrand.brandName
       )
     );
   };
 
   const onChangeFan = async (_selectedFan: Fan | undefined) => {
     if (!_selectedFan) {
-      removeFilterFunction("fanName");
+      removeFilterFunction('fanName');
       return;
     }
-    addFilterFunction("fanName", (orders) =>
-      orders.filter((order) => order.fanName === _selectedFan.user)
+    addFilterFunction('fanName', orders =>
+      orders.filter(order => order.fanName === _selectedFan.user)
     );
   };
 
@@ -349,14 +349,14 @@ const Orders: React.FC<RouteComponentProps> = () => {
           <Row gutter={8}>
             <Col lg={8} xs={16}>
               <SelectBrand
-                style={{ width: "100%" }}
+                style={{ width: '100%' }}
                 allowClear={true}
                 onChange={onChangeBrand}
               ></SelectBrand>
             </Col>
             <Col lg={8} xs={16}>
               <SelectFan
-                style={{ width: "100%" }}
+                style={{ width: '100%' }}
                 onChange={onChangeFan}
                 allowClear={true}
               ></SelectFan>
@@ -368,12 +368,12 @@ const Orders: React.FC<RouteComponentProps> = () => {
             type="primary"
             onClick={() => getResources()}
             style={{
-              marginBottom: "20px",
-              marginRight: "25px",
+              marginBottom: '20px',
+              marginRight: '25px',
             }}
           >
             Search
-            <SearchOutlined style={{ color: "white" }} />
+            <SearchOutlined style={{ color: 'white' }} />
           </Button>
         </Col>
       </Row>

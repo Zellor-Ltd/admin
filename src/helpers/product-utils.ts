@@ -1,10 +1,13 @@
-import {AllCategories, SelectedProductCategories} from "../interfaces/Category";
-import {FormInstance} from "antd/lib/form";
-import {categoriesSettings} from "./utils";
-import update from "immutability-helper";
-import {Product} from "../interfaces/Product";
+import {
+  AllCategories,
+  SelectedProductCategories,
+} from '../interfaces/Category';
+import { FormInstance } from 'antd/lib/form';
+import { categoriesSettings } from './utils';
+import update from 'immutability-helper';
+import { Product } from '../interfaces/Product';
 
-const {categoriesKeys, categoriesFields} = categoriesSettings;
+const { categoriesKeys, categoriesFields } = categoriesSettings;
 
 const getCategories = (form: FormInstance, allCategories: AllCategories) => {
   const currentCategories: SelectedProductCategories = {};
@@ -13,16 +16,19 @@ const getCategories = (form: FormInstance, allCategories: AllCategories) => {
     form.getFieldValue('categories')?.forEach((productCategory: any) => {
       const category = allCategories[
         categoriesKeys[index] as keyof AllCategories
-        ].find((category) => category.id === productCategory[field]?.id);
+      ].find(category => category.id === productCategory[field]?.id);
       currentCategories[field] = category;
     });
   });
 
   return currentCategories;
-}
+};
 
-const getSearchTags = (category: SelectedProductCategories, categoryKey?: string, filterFn?: any): string[] => {
-
+const getSearchTags = (
+  category: SelectedProductCategories,
+  categoryKey?: string,
+  filterFn?: any
+): string[] => {
   if (!category) {
     return [];
   }
@@ -33,10 +39,11 @@ const getSearchTags = (category: SelectedProductCategories, categoryKey?: string
     categoryIndex = categoriesKeys.indexOf(categoryKey);
   }
 
-  const searchTags: string[] = categoriesFields.slice(categoryIndex)
-    .map((field) => category[field])
-    .filter((v) => v && v.searchTags)
-    .map((v) => v.searchTags)
+  const searchTags: string[] = categoriesFields
+    .slice(categoryIndex)
+    .map(field => category[field])
+    .filter(v => v && v.searchTags)
+    .map(v => v.searchTags)
     .reduce((prev, curr) => {
       return prev?.concat(curr || []);
     }, []);
@@ -46,17 +53,19 @@ const getSearchTags = (category: SelectedProductCategories, categoryKey?: string
   }
 
   return searchTags;
-}
+};
 
-const removeSearchTagsByCategory = (productCategoryIndex: number, product: Product | undefined, form: FormInstance) => {
-
+const removeSearchTagsByCategory = (
+  productCategoryIndex: number,
+  product: Product | undefined,
+  form: FormInstance
+) => {
   if (product && product?.categories) {
     const updatedCategories: any[] = update(product.categories as any, {
-      $splice: [
-        [productCategoryIndex, 1]
-      ],
+      $splice: [[productCategoryIndex, 1]],
     });
-    const remainingTags = updatedCategories.map(category => getSearchTags(category))
+    const remainingTags = updatedCategories
+      .map(category => getSearchTags(category))
       .reduce((prev, curr) => {
         return prev?.concat(curr || []);
       }, []);
@@ -68,7 +77,6 @@ const removeSearchTagsByCategory = (productCategoryIndex: number, product: Produ
     product.categories = updatedCategories;
     product.searchTags = remainingTags;
   }
-
 };
 
 export const productUtils = {

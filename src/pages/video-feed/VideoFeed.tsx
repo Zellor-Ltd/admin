@@ -2,7 +2,7 @@ import {
   DeleteOutlined,
   EditOutlined,
   SearchOutlined,
-} from "@ant-design/icons";
+} from '@ant-design/icons';
 import {
   Button,
   Col,
@@ -16,21 +16,21 @@ import {
   Table,
   Tag as AntTag,
   Typography,
-} from "antd";
-import { ColumnsType } from "antd/lib/table";
-import CopyIdToClipboard from "components/CopyIdToClipboard";
-import { FeedItem } from "interfaces/FeedItem";
-import { Segment } from "interfaces/Segment";
-import React, { useEffect, useState } from "react";
-import { Link, RouteComponentProps, withRouter } from "react-router-dom";
+} from 'antd';
+import { ColumnsType } from 'antd/lib/table';
+import CopyIdToClipboard from 'components/CopyIdToClipboard';
+import { FeedItem } from 'interfaces/FeedItem';
+import { Segment } from 'interfaces/Segment';
+import React, { useEffect, useState } from 'react';
+import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 import {
   deleteVideoFeed,
   fetchVideoFeed,
   rebuildAllFeedd,
-} from "services/DiscoClubService";
-import { SelectBrand } from "components/SelectBrand";
-import useFilter from "hooks/useFilter";
-import { Brand } from "interfaces/Brand";
+} from 'services/DiscoClubService';
+import { SelectBrand } from 'components/SelectBrand';
+import useFilter from 'hooks/useFilter';
+import { Brand } from 'interfaces/Brand';
 
 const { Content } = Layout;
 
@@ -43,7 +43,7 @@ const reduceSegmentsTags = (packages: Segment[]) => {
 const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
   const detailsPathname = `${location.pathname}/video-feed`;
   const [loading, setLoading] = useState(false);
-  const [filterText, setFilterText] = useState("");
+  const [filterText, setFilterText] = useState('');
   const [content, setContent] = useState<any[]>([]);
   const [loaded, setLoaded] = useState<boolean>(false);
 
@@ -62,13 +62,13 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
       setFilteredItems(response.results);
       setContent(response.results);
     } catch (error) {
-      message.error("Error to get feed");
+      message.error('Error to get feed');
       setLoading(false);
     }
 
     if (_brand) {
-      addFilterFunction("brandName", (feedItems) =>
-        feedItems.filter((feedItem) => {
+      addFilterFunction('brandName', feedItems =>
+        feedItems.filter(feedItem => {
           for (let i = 0; i < feedItem.package.length; i++) {
             if (feedItem.package[i].brands) {
               for (let j = 0; j < feedItem.package[i].brands.length; j++) {
@@ -96,7 +96,7 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
     for (let i = 0; i < content.length; i++) {
       if (content[i].id === _id) {
         const index = i;
-        setFilteredItems((prev) => [
+        setFilteredItems(prev => [
           ...prev.slice(0, index),
           ...prev.slice(index + 1),
         ]);
@@ -107,16 +107,16 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
 
   const onRebuildFeed = async () => {
     await rebuildAllFeedd();
-    message.success("All feeds was rebuilt");
+    message.success('All feeds was rebuilt');
   };
 
   const onRebuildFeedClick = () => {
     Modal.error({
-      title: "Caution!!",
+      title: 'Caution!!',
       content:
         "This action can't be undone and will remove and then generate feed for all Disco Fans. Are you sure you want to proceed?",
       onOk: onRebuildFeed,
-      okText: "Rebuild",
+      okText: 'Rebuild',
       okButtonProps: { danger: true },
       closable: true,
       onCancel: () => {},
@@ -126,11 +126,11 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
   const onChangeBrand = async (_selectedBrand: Brand | undefined) => {
     if (loaded) {
       if (!_selectedBrand) {
-        removeFilterFunction("brandName");
+        removeFilterFunction('brandName');
         return;
       }
-      addFilterFunction("brandName", (feedItems) =>
-        feedItems.filter((feedItem) => {
+      addFilterFunction('brandName', feedItems =>
+        feedItems.filter(feedItem => {
           for (let i = 0; i < feedItem.package.length; i++) {
             if (feedItem.package[i].brands) {
               for (let j = 0; j < feedItem.package[i].brands.length; j++) {
@@ -159,69 +159,69 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
   };
 
   const filterFeed = () => {
-    return filteredItems.filter((item) =>
+    return filteredItems.filter(item =>
       item.title?.toUpperCase().includes(filterText.toUpperCase())
     );
   };
 
   const columns: ColumnsType<FeedItem> = [
     {
-      title: "_id",
-      dataIndex: "id",
-      width: "3%",
-      render: (id) => <CopyIdToClipboard id={id} />,
-      align: "center",
+      title: '_id',
+      dataIndex: 'id',
+      width: '3%',
+      render: id => <CopyIdToClipboard id={id} />,
+      align: 'center',
     },
     {
-      title: "Title",
-      dataIndex: "title",
-      width: "18%",
+      title: 'Title',
+      dataIndex: 'title',
+      width: '18%',
       render: (value: string, record: FeedItem) => (
         <Link to={{ pathname: detailsPathname, state: record }}>{value}</Link>
       ),
     },
     {
-      title: "Segments",
-      dataIndex: "package",
+      title: 'Segments',
+      dataIndex: 'package',
       render: (pack: Array<any> = []) => <AntTag>{pack.length}</AntTag>,
-      width: "5%",
-      align: "center",
+      width: '5%',
+      align: 'center',
     },
     {
-      title: "Length",
-      dataIndex: "lengthTotal",
-      width: "5%",
-      align: "center",
+      title: 'Length',
+      dataIndex: 'lengthTotal',
+      width: '5%',
+      align: 'center',
     },
     {
-      title: "Expiration Date",
-      dataIndex: "validity",
-      width: "5%",
+      title: 'Expiration Date',
+      dataIndex: 'validity',
+      width: '5%',
       render: (creationDate: Date) =>
         new Date(creationDate).toLocaleDateString(),
-      align: "center",
+      align: 'center',
     },
     {
-      title: "Tags",
-      dataIndex: "package",
-      width: "5%",
+      title: 'Tags',
+      dataIndex: 'package',
+      width: '5%',
       render: (pack: Array<any> = []) => (
         <AntTag>{reduceSegmentsTags(pack)}</AntTag>
       ),
-      align: "center",
+      align: 'center',
     },
     {
-      title: "Status",
-      dataIndex: "status",
-      width: "12%",
-      align: "center",
-      responsive: ["sm"],
+      title: 'Status',
+      dataIndex: 'status',
+      width: '12%',
+      align: 'center',
+      responsive: ['sm'],
     },
     {
-      title: "Actions",
-      key: "action",
-      width: "5%",
-      align: "right",
+      title: 'Actions',
+      key: 'action',
+      width: '5%',
+      align: 'right',
       render: (_, record: FeedItem) => (
         <>
           <Link to={{ pathname: detailsPathname, state: record }}>
@@ -253,7 +253,7 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
           </Button>,
         ]}
       />
-      <div style={{ marginBottom: "16px" }}>
+      <div style={{ marginBottom: '16px' }}>
         <Row align="bottom" justify="space-between">
           <Col lg={16} xs={24}>
             <Row gutter={8}>
@@ -265,7 +265,7 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
               </Col>
               <Col lg={8} xs={16}>
                 <SelectBrand
-                  style={{ width: "100%" }}
+                  style={{ width: '100%' }}
                   allowClear={true}
                   onChange={onChangeBrand}
                 ></SelectBrand>
@@ -278,11 +278,11 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
               onClick={() => getResources()}
               loading={loading}
               style={{
-                marginRight: "25px",
+                marginRight: '25px',
               }}
             >
               Search
-              <SearchOutlined style={{ color: "white" }} />
+              <SearchOutlined style={{ color: 'white' }} />
             </Button>
           </Col>
         </Row>

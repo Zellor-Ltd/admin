@@ -1,5 +1,5 @@
-import { Col, Row } from "antd";
-import React, { useEffect, useState } from "react";
+import { Col, Row } from 'antd';
+import React, { useEffect, useState } from 'react';
 import {
   Bar,
   BarChart,
@@ -11,14 +11,14 @@ import {
   Tooltip,
   XAxis,
   YAxis,
-} from "recharts";
-import Pie from "./Pie";
-import Radar from "./Radar";
-import { useRequest } from "hooks/useRequest";
+} from 'recharts';
+import Pie from './Pie';
+import Radar from './Radar';
+import { useRequest } from 'hooks/useRequest';
 import {
   fetchActiveRegFansPerDay,
   fetchProductsPerDay,
-} from "services/DiscoClubService";
+} from 'services/DiscoClubService';
 
 interface DashboardProps {}
 
@@ -46,8 +46,8 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
 
   return (
     <>
-      <Row style={{ height: "50%" }}>
-        <Col style={{ width: "75%" }}>
+      <Row style={{ height: '50%' }}>
+        <Col style={{ width: '75%' }}>
           <ResponsiveContainer>
             <LineChart
               width={500}
@@ -75,12 +75,12 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
             </LineChart>
           </ResponsiveContainer>
         </Col>
-        <Col style={{ width: "25%" }}>
+        <Col style={{ width: '25%' }}>
           <Pie></Pie>
         </Col>
       </Row>
-      <Row style={{ height: "50%" }}>
-        <Col style={{ width: "60%" }}>
+      <Row style={{ height: '50%' }}>
+        <Col style={{ width: '60%' }}>
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
               width={500}
@@ -103,7 +103,7 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
             </BarChart>
           </ResponsiveContainer>
         </Col>
-        <Col style={{ width: "40%" }}>
+        <Col style={{ width: '40%' }}>
           <Radar></Radar>
         </Col>
       </Row>

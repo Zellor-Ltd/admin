@@ -7,13 +7,13 @@ import {
   message,
   PageHeader,
   Row,
-} from "antd";
-import { Function } from "interfaces/Function";
-import { useState } from "react";
-import { RouteComponentProps } from "react-router-dom";
-import { saveInterface } from "services/DiscoClubService";
+} from 'antd';
+import { Function } from 'interfaces/Function';
+import { useState } from 'react';
+import { RouteComponentProps } from 'react-router-dom';
+import { saveInterface } from 'services/DiscoClubService';
 
-const InterfaceDetail: React.FC<RouteComponentProps> = (props) => {
+const InterfaceDetail: React.FC<RouteComponentProps> = props => {
   const { history, location } = props;
   const initial: any = location.state;
   const [loading, setLoading] = useState(false);
@@ -26,7 +26,7 @@ const InterfaceDetail: React.FC<RouteComponentProps> = (props) => {
 
       await saveInterface(endpoint);
       setLoading(false);
-      message.success("Register updated with success.");
+      message.success('Register updated with success.');
       history.goBack();
     } catch (error) {
       setLoading(false);

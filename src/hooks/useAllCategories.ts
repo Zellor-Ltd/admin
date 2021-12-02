@@ -3,20 +3,20 @@ import {
   ProductCategory,
   SelectedCategories,
   SelectedProductCategories,
-} from "interfaces/Category";
-import { useCallback, useEffect, useState } from "react";
-import { productCategoriesAPI } from "services/DiscoClubService";
-import { categoriesSettings } from "helpers/utils";
-import { useRequest } from "./useRequest";
+} from 'interfaces/Category';
+import { useCallback, useEffect, useState } from 'react';
+import { productCategoriesAPI } from 'services/DiscoClubService';
+import { categoriesSettings } from 'helpers/utils';
+import { useRequest } from './useRequest';
 
 const { categoriesKeys, categoriesFields, categoriesArray } =
   categoriesSettings;
 
 const allCategoriesFactory = (): AllCategories => ({
-  "Super Category": [],
+  'Super Category': [],
   Category: [],
-  "Sub Category": [],
-  "Sub Sub Category": [],
+  'Sub Category': [],
+  'Sub Sub Category': [],
 });
 
 const useAllCategories = ({
@@ -53,7 +53,7 @@ const useAllCategories = ({
     const nextKey = categoriesKeys[selectedIndex + 1] as keyof AllCategories;
     if (nextKey) {
       newFilteredCategories[nextKey] = _allCategories[nextKey].filter(
-        (category) => {
+        category => {
           const categoryName = category[selectedField as keyof ProductCategory];
           const isPresent = categoryName === selectedValue;
           if (!isPresent) return false;
@@ -69,7 +69,7 @@ const useAllCategories = ({
         }
       );
     }
-    setSelectedCategories((prev) => {
+    setSelectedCategories(prev => {
       prev[selectedField as keyof SelectedCategories] = selectedValue;
       return prev;
     });
@@ -105,7 +105,7 @@ const useAllCategories = ({
   }, [allCategories]);
 
   useEffect(() => {
-    if (initialValues && _allCategories["Super Category"].length) {
+    if (initialValues && _allCategories['Super Category'].length) {
       const newFilteredCategories = allCategoriesFactory();
       categoriesArray.forEach(({ key, field }) => {
         const iteratorField = field as keyof SelectedProductCategories;
@@ -117,13 +117,13 @@ const useAllCategories = ({
       });
       setFilteredCategories({
         ...newFilteredCategories,
-        "Super Category": _allCategories["Super Category"],
+        'Super Category': _allCategories['Super Category'],
       });
     } else {
-      setFilteredCategories((prev) => {
+      setFilteredCategories(prev => {
         return {
           ...prev,
-          "Super Category": _allCategories["Super Category"],
+          'Super Category': _allCategories['Super Category'],
         };
       });
     }
@@ -139,10 +139,10 @@ const useAllCategories = ({
     ]);
 
     _setAllCategories({
-      "Super Category": responses[0].results,
+      'Super Category': responses[0].results,
       Category: responses[1].results,
-      "Sub Category": responses[2].results,
-      "Sub Sub Category": responses[3].results,
+      'Sub Category': responses[2].results,
+      'Sub Sub Category': responses[3].results,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

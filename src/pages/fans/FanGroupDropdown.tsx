@@ -1,8 +1,8 @@
-import { Button, Divider, Form, FormInstance, Input, Select } from "antd";
-import React, { ChangeEventHandler, useEffect, useState } from "react";
-import { FanGroup } from "interfaces/FanGroup";
-import { useRequest } from "hooks/useRequest";
-import { fetchFanGroups, saveFanGroup } from "services/DiscoClubService";
+import { Button, Divider, Form, FormInstance, Input, Select } from 'antd';
+import React, { ChangeEventHandler, useEffect, useState } from 'react';
+import { FanGroup } from 'interfaces/FanGroup';
+import { useRequest } from 'hooks/useRequest';
+import { fetchFanGroups, saveFanGroup } from 'services/DiscoClubService';
 
 interface FanGroupDropdownProps {
   form: FormInstance<any>;
@@ -18,9 +18,9 @@ const FanGroupDropdown: React.FC<FanGroupDropdownProps> = ({
   const { doFetch, doRequest } = useRequest({ setLoading });
   const [fanGroups, setFanGroups] = useState<FanGroup[]>([]);
   const [selectedFanGroup, setSelectedFanGroup] = useState<string>(
-    form.getFieldValue("group")
+    form.getFieldValue('group')
   );
-  const [addFanGroupField, setAddFanGroupField] = useState<string>("");
+  const [addFanGroupField, setAddFanGroupField] = useState<string>('');
 
   const getFanGroups = async () => {
     const response: any = await fetchFanGroups();
@@ -35,14 +35,14 @@ const FanGroupDropdown: React.FC<FanGroupDropdownProps> = ({
   const addFanGroup = async () => {
     await doRequest(
       () => saveFanGroup({ name: addFanGroupField }),
-      "Fan Group Created."
+      'Fan Group Created.'
     );
     const response = await doFetch(() => fetchFanGroups());
     setFanGroups(response.results);
-    setAddFanGroupField("");
+    setAddFanGroupField('');
   };
 
-  const onFanGroupChange: ChangeEventHandler<HTMLInputElement> = (event) => {
+  const onFanGroupChange: ChangeEventHandler<HTMLInputElement> = event => {
     setAddFanGroupField(event.target.value);
   };
 
@@ -52,25 +52,25 @@ const FanGroupDropdown: React.FC<FanGroupDropdownProps> = ({
         style={{ width: 240 }}
         placeholder="Group"
         allowClear
-        onChange={(value = "") => {
+        onChange={(value = '') => {
           setSelectedFanGroup(String(value));
           form.setFieldsValue({ group: String(value) });
         }}
         value={selectedFanGroup}
-        dropdownRender={(menu) => (
+        dropdownRender={menu => (
           <div>
             {menu}
-            <Divider style={{ margin: "4px 0" }} />
+            <Divider style={{ margin: '4px 0' }} />
             <div
               style={{
-                display: "flex",
-                flexWrap: "nowrap",
-                justifyContent: "space-between",
+                display: 'flex',
+                flexWrap: 'nowrap',
+                justifyContent: 'space-between',
                 padding: 8,
               }}
             >
               <Input
-                style={{ flex: "auto", marginRight: "6px" }}
+                style={{ flex: 'auto', marginRight: '6px' }}
                 value={addFanGroupField}
                 onChange={onFanGroupChange}
               />
@@ -81,7 +81,7 @@ const FanGroupDropdown: React.FC<FanGroupDropdownProps> = ({
           </div>
         )}
       >
-        {fanGroups.map((fanGroup) => (
+        {fanGroups.map(fanGroup => (
           <Select.Option key={fanGroup.id} value={fanGroup.name}>
             {fanGroup.name}
           </Select.Option>

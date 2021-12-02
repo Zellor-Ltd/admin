@@ -1,14 +1,14 @@
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { Button, Col, PageHeader, Popconfirm, Row, Table } from "antd";
-import { ColumnsType } from "antd/lib/table";
-import { SearchFilter } from "../../components/SearchFilter";
-import { useRequest } from "../../hooks/useRequest";
-import { Banner } from "../../interfaces/Banner";
-import moment from "moment";
-import { useEffect, useState } from "react";
-import { Link, RouteComponentProps } from "react-router-dom";
-import { fetchBanners, deleteBanner } from "../../services/DiscoClubService";
-import CopyIdToClipboard from "../../components/CopyIdToClipboard";
+import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import { Button, Col, PageHeader, Popconfirm, Row, Table } from 'antd';
+import { ColumnsType } from 'antd/lib/table';
+import { SearchFilter } from '../../components/SearchFilter';
+import { useRequest } from '../../hooks/useRequest';
+import { Banner } from '../../interfaces/Banner';
+import moment from 'moment';
+import { useEffect, useState } from 'react';
+import { Link, RouteComponentProps } from 'react-router-dom';
+import { fetchBanners, deleteBanner } from '../../services/DiscoClubService';
+import CopyIdToClipboard from '../../components/CopyIdToClipboard';
 
 const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
   const detailsPathname = `${location.pathname}/home-screen`;
@@ -38,63 +38,60 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
     for (let i = 0; i < content.length; i++) {
       if (content[i].id === id) {
         const index = i;
-        setBanners((prev) => [
-          ...prev.slice(0, index),
-          ...prev.slice(index + 1),
-        ]);
+        setBanners(prev => [...prev.slice(0, index), ...prev.slice(index + 1)]);
       }
     }
   };
 
   const columns: ColumnsType<Banner> = [
     {
-      title: "_id",
-      dataIndex: "id",
-      width: "6%",
-      render: (id) => <CopyIdToClipboard id={id} />,
-      align: "center",
+      title: '_id',
+      dataIndex: 'id',
+      width: '6%',
+      render: id => <CopyIdToClipboard id={id} />,
+      align: 'center',
     },
     {
-      title: "id",
-      dataIndex: "id",
-      width: "6%",
+      title: 'id',
+      dataIndex: 'id',
+      width: '6%',
       render: (value: string, record: Banner) => (
         <Link to={{ pathname: detailsPathname, state: record }}>{value}</Link>
       ),
-      align: "center",
+      align: 'center',
     },
     {
-      title: "HTML",
-      dataIndex: "html",
-      width: "20%",
+      title: 'HTML',
+      dataIndex: 'html',
+      width: '20%',
     },
     {
-      title: "Display Start Date",
-      dataIndex: "startDate",
-      width: "15%",
-      align: "center",
+      title: 'Display Start Date',
+      dataIndex: 'startDate',
+      width: '15%',
+      align: 'center',
       render: (value: Date) => (
         <>
-          <div>{moment(value).format("DD/MM/YYYY")}</div>
+          <div>{moment(value).format('DD/MM/YYYY')}</div>
         </>
       ),
     },
     {
-      title: "Display Expire Date",
-      dataIndex: "expireDate",
-      width: "15%",
-      align: "center",
+      title: 'Display Expire Date',
+      dataIndex: 'expireDate',
+      width: '15%',
+      align: 'center',
       render: (value: Date) => (
         <>
-          <div>{moment(value).format("DD/MM/YYYY")}</div>
+          <div>{moment(value).format('DD/MM/YYYY')}</div>
         </>
       ),
     },
     {
-      title: "Actions",
-      key: "action",
-      width: "10%",
-      align: "right",
+      title: 'Actions',
+      key: 'action',
+      width: '10%',
+      align: 'right',
       render: (_, record: Banner) => (
         <>
           <Link to={{ pathname: detailsPathname, state: record }}>

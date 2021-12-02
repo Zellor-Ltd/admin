@@ -1,6 +1,6 @@
-import { Col, Row, Typography } from "antd";
-import { useRequest } from "../../hooks/useRequest";
-import React, { useEffect, useState } from "react";
+import { Col, Row, Typography } from 'antd';
+import { useRequest } from '../../hooks/useRequest';
+import React, { useEffect, useState } from 'react';
 import {
   Bar,
   BarChart,
@@ -10,8 +10,8 @@ import {
   Tooltip,
   XAxis,
   YAxis,
-} from "recharts";
-import { fetchProductsPerDay } from "../../services/DiscoClubService";
+} from 'recharts';
+import { fetchProductsPerDay } from '../../services/DiscoClubService';
 
 interface DashboardProps {}
 
@@ -30,15 +30,15 @@ const ProductsPerDay: React.FC<DashboardProps> = () => {
   }, []);
   return (
     <>
-      <div style={{ marginBottom: "16px" }}>
+      <div style={{ marginBottom: '16px' }}>
         <Row>
           <Col lg={12} xs={24}>
             <Typography.Title level={3}>Products per Day</Typography.Title>
           </Col>
         </Row>
       </div>
-      <Row style={{ height: "300px", marginTop: "40px" }}>
-        <Col style={{ width: "60%" }}>
+      <Row style={{ height: '300px', marginTop: '40px' }}>
+        <Col style={{ width: '60%' }}>
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
               width={500}

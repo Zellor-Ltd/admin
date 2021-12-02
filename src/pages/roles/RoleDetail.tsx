@@ -1,9 +1,9 @@
-import { Button, Col, Form, Input, message, PageHeader, Row } from "antd";
-import { useState } from "react";
-import { RouteComponentProps } from "react-router-dom";
-import { saveRole } from "services/DiscoClubService";
+import { Button, Col, Form, Input, message, PageHeader, Row } from 'antd';
+import { useState } from 'react';
+import { RouteComponentProps } from 'react-router-dom';
+import { saveRole } from 'services/DiscoClubService';
 
-const RoleDetail: React.FC<RouteComponentProps> = (props) => {
+const RoleDetail: React.FC<RouteComponentProps> = props => {
   const { history, location } = props;
   const [loading, setLoading] = useState(false);
   const initial: any = location.state;
@@ -15,7 +15,7 @@ const RoleDetail: React.FC<RouteComponentProps> = (props) => {
       const role = form.getFieldsValue(true);
       await saveRole(role);
       setLoading(false);
-      message.success("Register updated with success.");
+      message.success('Register updated with success.');
       history.goBack();
     } catch (error) {
       setLoading(false);

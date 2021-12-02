@@ -1,9 +1,9 @@
-import { FormInstance } from "antd";
+import { FormInstance } from 'antd';
 // import { UploadChangeParam } from "antd/lib/upload";
 // import { UploadFile } from "antd/lib/upload/interface";
 // import { PlusOutlined } from "@ant-design/icons";
 // import { useEffect, useState } from "react";
-import ImageUpload from "./ImageUpload";
+import ImageUpload from './ImageUpload';
 
 interface VideoUploadProps {
   fileList: any;
@@ -13,12 +13,12 @@ interface VideoUploadProps {
   accept?: string;
 }
 
-const VideoUpload: React.FC<VideoUploadProps> = (props) => {
+const VideoUpload: React.FC<VideoUploadProps> = props => {
   const {
     // fileList,
     // form,
     // formProp,
-    accept = "video/*",
+    accept = 'video/*',
   } = props;
   // const [fileListLocal, setfileListLocal] = useState<any>([]);
 

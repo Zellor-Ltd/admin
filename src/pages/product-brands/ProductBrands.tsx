@@ -1,23 +1,23 @@
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { Button, Col, PageHeader, Popconfirm, Row, Table, Tag } from "antd";
-import { ColumnsType } from "antd/lib/table";
-import { SearchFilter } from "../../components/SearchFilter";
-import useFilter from "../../hooks/useFilter";
-import { useRequest } from "../../hooks/useRequest";
-import { ProductBrand } from "../../interfaces/ProductBrand";
-import moment from "moment";
-import { useEffect, useState } from "react";
-import { Link, RouteComponentProps } from "react-router-dom";
+import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import { Button, Col, PageHeader, Popconfirm, Row, Table, Tag } from 'antd';
+import { ColumnsType } from 'antd/lib/table';
+import { SearchFilter } from '../../components/SearchFilter';
+import useFilter from '../../hooks/useFilter';
+import { useRequest } from '../../hooks/useRequest';
+import { ProductBrand } from '../../interfaces/ProductBrand';
+import moment from 'moment';
+import { useEffect, useState } from 'react';
+import { Link, RouteComponentProps } from 'react-router-dom';
 import {
   fetchProductBrands,
   deleteProductBrand,
-} from "../../services/DiscoClubService";
-import CopyIdToClipboard from "../../components/CopyIdToClipboard";
+} from '../../services/DiscoClubService';
+import CopyIdToClipboard from '../../components/CopyIdToClipboard';
 
 const tagColorByStatus: any = {
-  approved: "green",
-  rejected: "red",
-  pending: "",
+  approved: 'green',
+  rejected: 'red',
+  pending: '',
 };
 
 const ProductBrands: React.FC<RouteComponentProps> = ({
@@ -55,7 +55,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({
     for (let i = 0; i < content.length; i++) {
       if (content[i].id === id) {
         const index = i;
-        setProductBrands((prev) => [
+        setProductBrands(prev => [
           ...prev.slice(0, index),
           ...prev.slice(index + 1),
         ]);
@@ -65,37 +65,37 @@ const ProductBrands: React.FC<RouteComponentProps> = ({
 
   const columns: ColumnsType<ProductBrand> = [
     {
-      title: "_id",
-      dataIndex: "id",
-      width: "6%",
-      render: (id) => <CopyIdToClipboard id={id} />,
-      align: "center",
+      title: '_id',
+      dataIndex: 'id',
+      width: '6%',
+      render: id => <CopyIdToClipboard id={id} />,
+      align: 'center',
     },
     {
-      title: "Name",
-      dataIndex: "brandName",
-      width: "20%",
+      title: 'Name',
+      dataIndex: 'brandName',
+      width: '20%',
       render: (value: string, record: ProductBrand) => (
         <Link to={{ pathname: detailsPathname, state: record }}>{value}</Link>
       ),
     },
     {
-      title: "Creation",
-      dataIndex: "hCreationDate",
-      width: "15%",
-      align: "center",
+      title: 'Creation',
+      dataIndex: 'hCreationDate',
+      width: '15%',
+      align: 'center',
       render: (value: Date) => (
         <>
-          <div>{moment(value).format("DD/MM/YYYY")}</div>
-          <div>{moment(value).format("HH:mm")}</div>
+          <div>{moment(value).format('DD/MM/YYYY')}</div>
+          <div>{moment(value).format('HH:mm')}</div>
         </>
       ),
     },
     {
-      title: "Actions",
-      key: "action",
-      width: "10%",
-      align: "right",
+      title: 'Actions',
+      key: 'action',
+      width: '10%',
+      align: 'right',
       render: (_, record: ProductBrand) => (
         <>
           <Link to={{ pathname: detailsPathname, state: record }}>
@@ -117,8 +117,8 @@ const ProductBrands: React.FC<RouteComponentProps> = ({
   ];
 
   const searchFilterFunction = (filterText: string) => {
-    addFilterFunction("productBrandName", (brands) =>
-      brands.filter((brand) =>
+    addFilterFunction('productBrandName', brands =>
+      brands.filter(brand =>
         brand.brandName.toUpperCase().includes(filterText.toUpperCase())
       )
     );

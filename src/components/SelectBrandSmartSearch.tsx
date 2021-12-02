@@ -1,8 +1,8 @@
-import Select from "antd/lib/select";
-import React, { useEffect, useState } from "react";
-import { Brand } from "../interfaces/Brand";
-import { fetchBrands } from "../services/DiscoClubService";
-import { FormInstance } from "antd/lib/form";
+import Select from 'antd/lib/select';
+import React, { useEffect, useState } from 'react';
+import { Brand } from '../interfaces/Brand';
+import { fetchBrands } from '../services/DiscoClubService';
+import { FormInstance } from 'antd/lib/form';
 
 type SelectBrandProps = React.SelectHTMLAttributes<HTMLSelectElement> & {
   allowClear?: boolean;
@@ -12,10 +12,10 @@ type SelectBrandProps = React.SelectHTMLAttributes<HTMLSelectElement> & {
 };
 
 export const SelectBrandSmartSearch: React.FC<SelectBrandProps> = ({
-  placeholder = "Select a Brand",
+  placeholder = 'Select a Brand',
   style,
   allowClear = true,
-  initialBrandName = "",
+  initialBrandName = '',
   handleMasterBrandChange,
 }) => {
   const [brands, setBrands] = useState<Brand[]>([]);
@@ -34,7 +34,7 @@ export const SelectBrandSmartSearch: React.FC<SelectBrandProps> = ({
 
     handleMasterBrandChange((form: FormInstance) => {
       const formMasterBrand = brands.find(
-        (brand) => brand.brandName === value
+        brand => brand.brandName === value
       ) as Brand;
       form.setFieldsValue({ brand: formMasterBrand });
     });
@@ -55,7 +55,7 @@ export const SelectBrandSmartSearch: React.FC<SelectBrandProps> = ({
       onChange={_onChange}
       filterOption={true}
     >
-      {brands.map((brand) => (
+      {brands.map(brand => (
         <Select.Option key={brand.id} value={brand.brandName}>
           {brand.brandName}
         </Select.Option>

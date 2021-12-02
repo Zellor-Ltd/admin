@@ -1,10 +1,10 @@
-import { Button, Col, Form, Input, message, PageHeader, Row } from "antd";
-import { useState } from "react";
-import { useSelector } from "react-redux";
-import { RouteComponentProps } from "react-router-dom";
-import { saveOrder } from "services/DiscoClubService";
+import { Button, Col, Form, Input, message, PageHeader, Row } from 'antd';
+import { useState } from 'react';
+import { useSelector } from 'react-redux';
+import { RouteComponentProps } from 'react-router-dom';
+import { saveOrder } from 'services/DiscoClubService';
 
-const OrderDetail: React.FC<RouteComponentProps> = (props) => {
+const OrderDetail: React.FC<RouteComponentProps> = props => {
   const { history, location } = props;
   const initial: any = location.state;
   const [loading, setLoading] = useState(false);
@@ -21,7 +21,7 @@ const OrderDetail: React.FC<RouteComponentProps> = (props) => {
       const order = form.getFieldsValue(true);
       await saveOrder(order);
       setLoading(false);
-      message.success("Register updated with success.");
+      message.success('Register updated with success.');
       history.goBack();
     } catch (error) {
       console.error(error);

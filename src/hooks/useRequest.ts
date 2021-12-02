@@ -1,5 +1,5 @@
-import { message } from "antd";
-import React, { useState } from "react";
+import { message } from 'antd';
+import React, { useState } from 'react';
 
 type action = () => Promise<any>;
 
@@ -58,9 +58,9 @@ export const useRequest = ({
     request(action, undefined, completeResponse);
   const doRequest = (
     action: action,
-    successMsg: string = "Register updated with success."
+    successMsg: string = 'Register updated with success.'
   ) => request(action, successMsg);
-  const doAPITest = (action: action) => request(action, "Test Passed.", true);
+  const doAPITest = (action: action) => request(action, 'Test Passed.', true);
 
   return { doFetch, doRequest, doAPITest, loading: _loading };
 };
