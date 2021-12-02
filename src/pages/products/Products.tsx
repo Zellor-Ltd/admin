@@ -63,7 +63,7 @@ import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { ProductBrandFilter } from 'components/ProductBrandFilter';
 import { ProductBrand } from 'interfaces/ProductBrand';
 import { productUtils } from '../../helpers/product-utils';
-import update from 'immutability-helper';
+import scrollIntoView from 'scroll-into-view';
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 const { getSearchTags, getCategories, removeSearchTagsByCategory } =
@@ -629,6 +629,16 @@ const Products: React.FC<RouteComponentProps> = () => {
     setSelectedRowKeys(selectedRows);
   };
 
+  useEffect(() => {
+    if (!isViewing) {
+      scrollIntoView(
+        document.querySelector(
+          `.scrollable-row-${lastViewedIndex}`
+        ) as HTMLElement
+      );
+    }
+  }, [isViewing]);
+
   return (
     <>
       {!isViewing && (
@@ -740,7 +750,11 @@ const Products: React.FC<RouteComponentProps> = () => {
             }
           >
             <EditableTable
-              rowClassName={index => (index === 0 ? '' : 'styled-row')}
+              rowClassName={(_, index) =>
+                `scrollable-row-${index} ${
+                  index === lastViewedIndex ? 'selected-row' : ''
+                }`
+              }
               rowKey="id"
               columns={columns}
               dataSource={products}

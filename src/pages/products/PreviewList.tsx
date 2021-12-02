@@ -63,6 +63,7 @@ import update from 'immutability-helper';
 import { ProductBrandFilter } from 'components/ProductBrandFilter';
 import { ProductBrand } from 'interfaces/ProductBrand';
 import { productUtils } from '../../helpers/product-utils';
+import scrollIntoView from 'scroll-into-view';
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 const { getSearchTags, getCategories, removeSearchTagsByCategory } =
@@ -567,7 +568,7 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
   const editProduct = (record: Product, index) => {
     console.log('current product - ', record);
     setCurrentProduct(record);
-    setLastViewedIndex(index - 1);
+    setLastViewedIndex(index);
     setCurrentMasterBrand(record.brand.brandName);
     if (record.productBrand) {
       setCurrentProductBrand(record.productBrand);
@@ -627,6 +628,16 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
       setCurrentProduct({ ...currentProduct });
     }
   };
+
+  useEffect(() => {
+    if (!isEditing) {
+      scrollIntoView(
+        document.querySelector(
+          `.scrollable-row-${lastViewedIndex}`
+        ) as HTMLElement
+      );
+    }
+  }, [isEditing]);
 
   return (
     <>
@@ -751,7 +762,11 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
             }
           >
             <EditableTable
-              rowClassName={index => (index === 0 ? '' : 'styled-row')}
+              rowClassName={(_, index) =>
+                `scrollable-row-${index} ${
+                  index === lastViewedIndex ? 'selected-row' : ''
+                }`
+              }
               rowKey="id"
               columns={columns}
               dataSource={products}
