@@ -11,6 +11,7 @@ import {
   Col,
   Form,
   Input,
+  InputNumber,
   message,
   PageHeader,
   Row,
@@ -117,7 +118,7 @@ const CreatorDetail: React.FC<RouteComponentProps> = props => {
                 </Form.Item>
               </Col>
 
-              <Col lg={8} xs={24}>
+              <Col lg={12} xs={24}>
                 <Form.Item name={'serverAlias'} label="Server Alias">
                   <Select>
                     {serversList.map(serverAlias => (
@@ -129,6 +130,11 @@ const CreatorDetail: React.FC<RouteComponentProps> = props => {
                       </Select.Option>
                     ))}
                   </Select>
+                </Form.Item>
+              </Col>
+              <Col lg={12} xs={24}>
+                <Form.Item label="Agreed Percentage" name="agreedPercentage">
+                  <InputNumber />
                 </Form.Item>
               </Col>
             </Row>
