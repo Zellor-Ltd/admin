@@ -1,5 +1,5 @@
-import { Segment } from "./Segment";
-import { Video } from "./Video";
+import { Segment } from './Segment';
+import { Video } from './Video';
 
 export interface FeedItem {
   video: Video;

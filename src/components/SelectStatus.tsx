@@ -1,10 +1,10 @@
-import { Typography } from "antd";
-import Select from "antd/lib/select";
-import React, { useState } from "react";
+import { Typography } from 'antd';
+import Select from 'antd/lib/select';
+import React, { useState } from 'react';
 
 type SelectStatusProps = Omit<
   React.SelectHTMLAttributes<HTMLSelectElement>,
-  "onChange"
+  'onChange'
 > & {
   onChange: (selectedStatus: string) => {};
   allowClear?: boolean;
@@ -15,10 +15,10 @@ export const SelectStatus: React.FC<SelectStatusProps> = ({
   onChange,
   style,
   allowClear = true,
-  label = "Status",
+  label = 'Status',
 }) => {
-  const statusList = ["Live", "Paused"];
-  const [selectedStatus, setSelectedStatus] = useState<string>("");
+  const statusList = ['Live', 'Paused'];
+  const [selectedStatus, setSelectedStatus] = useState<string>('');
 
   const _onChange = (value: string) => {
     setSelectedStatus(value);
@@ -26,7 +26,7 @@ export const SelectStatus: React.FC<SelectStatusProps> = ({
   };
 
   return (
-    <div style={{ marginBottom: "16px" }}>
+    <div style={{ marginBottom: '16px' }}>
       <Typography.Title level={5} title={label}>
         {label}
       </Typography.Title>
@@ -37,7 +37,7 @@ export const SelectStatus: React.FC<SelectStatusProps> = ({
         allowClear={allowClear}
         style={style}
       >
-        {statusList.map((statusName) => (
+        {statusList.map(statusName => (
           <Select.Option key={statusName} value={statusName}>
             {statusName}
           </Select.Option>

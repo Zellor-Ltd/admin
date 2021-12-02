@@ -1,5 +1,5 @@
-import { Brand } from "./Brand";
-import { Position } from "./Position";
+import { Brand } from './Brand';
+import { Position } from './Position';
 
 export interface Tag {
   id: string;

@@ -1,4 +1,4 @@
-import { DeleteOutlined } from "@ant-design/icons";
+import { DeleteOutlined } from '@ant-design/icons';
 import {
   Button,
   Col,
@@ -12,19 +12,19 @@ import {
   Select,
   Table,
   Typography,
-} from "antd";
-import { formatMoment } from "helpers/formatMoment";
-import { Category } from "interfaces/Category";
-import { Creator } from "interfaces/Creator";
-import { Role } from "interfaces/Role";
-import { useEffect, useState } from "react";
-import { RouteComponentProps } from "react-router-dom";
+} from 'antd';
+import { formatMoment } from 'helpers/formatMoment';
+import { Category } from 'interfaces/Category';
+import { Creator } from 'interfaces/Creator';
+import { Role } from 'interfaces/Role';
+import { useEffect, useState } from 'react';
+import { RouteComponentProps } from 'react-router-dom';
 import {
   fetchCategories,
   fetchCreators,
   fetchProfiles,
   saveUser,
-} from "services/DiscoClubService";
+} from 'services/DiscoClubService';
 
 const { Option } = Select;
 
@@ -41,24 +41,24 @@ const prefixSelector = (
 
 const gendersList = [
   {
-    label: "Male",
-    value: "male",
+    label: 'Male',
+    value: 'male',
   },
   {
-    label: "Female",
-    value: "female",
+    label: 'Female',
+    value: 'female',
   },
   {
-    label: "Other",
-    value: "other",
+    label: 'Other',
+    value: 'other',
   },
   {
-    label: "Prefer not to say",
-    value: "prefer not to say",
+    label: 'Prefer not to say',
+    value: 'prefer not to say',
   },
 ];
 
-const UserDetail: React.FC<RouteComponentProps> = (props) => {
+const UserDetail: React.FC<RouteComponentProps> = props => {
   const { history, location } = props;
   const [loading, setLoading] = useState(false);
   const [roles, setRoles] = useState<Role[]>([]);
@@ -98,8 +98,8 @@ const UserDetail: React.FC<RouteComponentProps> = (props) => {
   const onChangeCreator = (key: string) => {
     if (key) {
       const { id, firstName, lastName, userName } =
-        creators.find((creator) => creator.userName === key) || {};
-      const followingCreators = form.getFieldValue("followingCreators") || [];
+        creators.find(creator => creator.userName === key) || {};
+      const followingCreators = form.getFieldValue('followingCreators') || [];
       form.setFieldsValue({
         followingCreators: [
           ...followingCreators,
@@ -110,7 +110,7 @@ const UserDetail: React.FC<RouteComponentProps> = (props) => {
   };
 
   const onRemoveCreatorClick = (record: Creator) => {
-    const followingCreators = form.getFieldValue("followingCreators") || [];
+    const followingCreators = form.getFieldValue('followingCreators') || [];
     form.setFieldsValue({
       followingCreators: followingCreators.filter(
         (follow: Creator) => follow.userName !== record.userName
@@ -119,11 +119,11 @@ const UserDetail: React.FC<RouteComponentProps> = (props) => {
   };
 
   const creatorColumns = [
-    { title: "UserName", dataIndex: "userName", width: "15%" },
+    { title: 'UserName', dataIndex: 'userName', width: '15%' },
     {
-      title: "Actions",
-      key: "action",
-      width: "5%",
+      title: 'Actions',
+      key: 'action',
+      width: '5%',
       render: (value: any, record: Creator, index: number) => (
         <>
           <Button
@@ -141,9 +141,9 @@ const UserDetail: React.FC<RouteComponentProps> = (props) => {
   const onChangeCategories = (key: string) => {
     if (key) {
       const { id, name } =
-        categories.find((category) => category.name === key) || {};
+        categories.find(category => category.name === key) || {};
       const followingCategories =
-        form.getFieldValue("followingCategories") || [];
+        form.getFieldValue('followingCategories') || [];
       form.setFieldsValue({
         followingCategories: [...followingCategories, { idCategory: id, name }],
       });
@@ -151,7 +151,7 @@ const UserDetail: React.FC<RouteComponentProps> = (props) => {
   };
 
   const onRemoveCategoryClick = (record: Category) => {
-    const followingCategories = form.getFieldValue("followingCategories") || [];
+    const followingCategories = form.getFieldValue('followingCategories') || [];
     followingCategories.splice(record, 1);
     form.setFieldsValue({
       followingCategories: followingCategories.filter(
@@ -161,11 +161,11 @@ const UserDetail: React.FC<RouteComponentProps> = (props) => {
   };
 
   const categoryColumns = [
-    { title: "Name", dataIndex: "name", width: "15%" },
+    { title: 'Name', dataIndex: 'name', width: '15%' },
     {
-      title: "Actions",
-      key: "action",
-      width: "5%",
+      title: 'Actions',
+      key: 'action',
+      width: '5%',
       render: (value: any, record: Category, index: number) => (
         <>
           <Button
@@ -184,10 +184,10 @@ const UserDetail: React.FC<RouteComponentProps> = (props) => {
     setLoading(true);
     try {
       const user = form.getFieldsValue(true);
-      user.birthday = user.birthday?.format("YYYY-MM-DD");
+      user.birthday = user.birthday?.format('YYYY-MM-DD');
       await saveUser(user);
       setLoading(false);
-      message.success("Register updated with success.");
+      message.success('Register updated with success.');
       history.goBack();
     } catch (error) {
       setLoading(false);
@@ -223,7 +223,7 @@ const UserDetail: React.FC<RouteComponentProps> = (props) => {
           <Col lg={8} xs={24}>
             <Form.Item name="profile" label="Profile">
               <Select>
-                {roles.map((role) => (
+                {roles.map(role => (
                   <Select.Option key={role.id} value={role.name}>
                     {role.name}
                   </Select.Option>
@@ -287,7 +287,7 @@ const UserDetail: React.FC<RouteComponentProps> = (props) => {
             >
               {({ getFieldValue }) => {
                 const followingCreators: Creator[] =
-                  getFieldValue("followingCreators") || [];
+                  getFieldValue('followingCreators') || [];
 
                 return (
                   <>
@@ -303,12 +303,12 @@ const UserDetail: React.FC<RouteComponentProps> = (props) => {
                         >
                           {creators
                             .filter(
-                              (creat) =>
+                              creat =>
                                 !followingCreators
-                                  .map((follow) => follow.userName)
+                                  .map(follow => follow.userName)
                                   .includes(creat.userName)
                             )
-                            .map((creator) => (
+                            .map(creator => (
                               <Select.Option
                                 key={creator.id}
                                 value={creator.userName}
@@ -340,7 +340,7 @@ const UserDetail: React.FC<RouteComponentProps> = (props) => {
             >
               {({ getFieldValue }) => {
                 const followingCategories: Category[] =
-                  getFieldValue("followingCategories") || [];
+                  getFieldValue('followingCategories') || [];
 
                 return (
                   <>
@@ -356,12 +356,12 @@ const UserDetail: React.FC<RouteComponentProps> = (props) => {
                         >
                           {categories
                             .filter(
-                              (creat) =>
+                              creat =>
                                 !followingCategories
-                                  .map((follow) => follow.id)
+                                  .map(follow => follow.id)
                                   .includes(creat.id)
                             )
-                            .map((category) => (
+                            .map(category => (
                               <Select.Option
                                 key={category.id}
                                 value={category.name}

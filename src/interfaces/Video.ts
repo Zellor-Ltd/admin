@@ -1,5 +1,5 @@
-import { Brand } from "./Brand";
-import { Tag } from "./Tag";
+import { Brand } from './Brand';
+import { Tag } from './Tag';
 
 export interface Video {
   videoFeedId?: string;

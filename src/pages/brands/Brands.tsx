@@ -4,7 +4,7 @@ import {
   DeleteOutlined,
   EditOutlined,
   SearchOutlined,
-} from "@ant-design/icons";
+} from '@ant-design/icons';
 import {
   Avatar,
   Button,
@@ -16,31 +16,31 @@ import {
   Table,
   Tag,
   Typography,
-} from "antd";
-import { ColumnsType } from "antd/lib/table";
-import CopyIdToClipboard from "components/CopyIdToClipboard";
-import { discoBrandId } from "helpers/constants";
-import { Brand } from "interfaces/Brand";
-import { useEffect, useState } from "react";
-import { Link, RouteComponentProps } from "react-router-dom";
-import { deleteBrand, fetchBrands, saveBrand } from "services/DiscoClubService";
-import { PauseSwitch } from "./PauseSwitch";
+} from 'antd';
+import { ColumnsType } from 'antd/lib/table';
+import CopyIdToClipboard from 'components/CopyIdToClipboard';
+import { discoBrandId } from 'helpers/constants';
+import { Brand } from 'interfaces/Brand';
+import { useEffect, useState } from 'react';
+import { Link, RouteComponentProps } from 'react-router-dom';
+import { deleteBrand, fetchBrands, saveBrand } from 'services/DiscoClubService';
+import { PauseSwitch } from './PauseSwitch';
 
 const tagColorByStatus: any = {
-  approved: "green",
-  rejected: "red",
-  pending: "",
+  approved: 'green',
+  rejected: 'red',
+  pending: '',
 };
 
 const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
   const detailsPathname = `${location.pathname}/brand`;
   const [loading, setLoading] = useState<boolean>(false);
   const [brands, setBrands] = useState<Brand[]>([]);
-  const [filterText, setFilterText] = useState("");
+  const [filterText, setFilterText] = useState('');
   const [content, setContent] = useState<any[]>([]);
 
   const aproveOrReject = async (aprove: boolean, creator: Brand) => {
-    creator.status = aprove ? "approved" : "rejected";
+    creator.status = aprove ? 'approved' : 'rejected';
     setLoading(true);
     await saveBrand(creator);
     fetch();
@@ -53,7 +53,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
       for (let i = 0; i < content.length; i++) {
         if (content[i].id === id) {
           const index = i;
-          setBrands((prev) => [
+          setBrands(prev => [
             ...prev.slice(0, index),
             ...prev.slice(index + 1),
           ]);
@@ -82,94 +82,94 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
   };
 
   const filterBrand = () => {
-    return brands.filter((brand) =>
+    return brands.filter(brand =>
       brand.brandName?.toUpperCase().includes(filterText.toUpperCase())
     );
   };
 
   const columns: ColumnsType<Brand> = [
     {
-      title: "_id",
-      dataIndex: "id",
-      width: "6%",
-      render: (id) => <CopyIdToClipboard id={id} />,
-      align: "center",
+      title: '_id',
+      dataIndex: 'id',
+      width: '6%',
+      render: id => <CopyIdToClipboard id={id} />,
+      align: 'center',
     },
     {
-      title: "Master Brand Name",
-      dataIndex: "brandName",
-      width: "30%",
+      title: 'Master Brand Name',
+      dataIndex: 'brandName',
+      width: '30%',
       render: (value: string, record: Brand) => (
         <Link to={{ pathname: detailsPathname, state: record }}>
           {record.id !== discoBrandId ? (
             value
           ) : (
-            <b style={{ color: "lightcoral" }}>{value}</b>
+            <b style={{ color: 'lightcoral' }}>{value}</b>
           )}
         </Link>
       ),
     },
     {
-      title: "Paused",
-      dataIndex: "paused",
-      width: "15%",
-      align: "center",
+      title: 'Paused',
+      dataIndex: 'paused',
+      width: '15%',
+      align: 'center',
       render: (value: any, record: Brand) => (
         <PauseSwitch brand={record} reloadFn={fetch} />
       ),
     },
     {
-      title: "Automated",
-      dataIndex: "automated",
-      width: "15%",
-      align: "center",
-      render: (value: any) => <b>{value ? "Yes" : "No"}</b>,
+      title: 'Automated',
+      dataIndex: 'automated',
+      width: '15%',
+      align: 'center',
+      render: (value: any) => <b>{value ? 'Yes' : 'No'}</b>,
     },
     {
-      title: " Master Brand Color",
-      dataIndex: "brandTxtColor",
-      width: "20%",
-      align: "center",
+      title: ' Master Brand Color',
+      dataIndex: 'brandTxtColor',
+      width: '20%',
+      align: 'center',
       render: (value: any) => (
         <Avatar
-          style={{ backgroundColor: value, border: "1px solid #9c9c9c" }}
+          style={{ backgroundColor: value, border: '1px solid #9c9c9c' }}
         />
       ),
     },
     {
-      title: "Disco %",
-      dataIndex: "discoPercentage",
-      width: "12%",
-      align: "center",
-      responsive: ["sm"],
+      title: 'Disco %',
+      dataIndex: 'discoPercentage',
+      width: '12%',
+      align: 'center',
+      responsive: ['sm'],
       // editable: true,
       // number: true,
     },
     {
-      title: "Status",
-      dataIndex: "status",
-      width: "20%",
-      align: "center",
-      render: (value = "pending") => (
+      title: 'Status',
+      dataIndex: 'status',
+      width: '20%',
+      align: 'center',
+      render: (value = 'pending') => (
         <Tag color={tagColorByStatus[value]}>{value}</Tag>
       ),
     },
     {
-      title: "Actions",
-      key: "action",
-      width: "10%",
-      align: "right",
+      title: 'Actions',
+      key: 'action',
+      width: '10%',
+      align: 'right',
       render: (_, record: Brand) => (
         <>
           {!record.status && [
             <CheckOutlined
               key="approve"
-              style={{ color: "green" }}
+              style={{ color: 'green' }}
               onClick={() => aproveOrReject(true, record)}
             />,
             <CloseOutlined
               key="reject"
-              style={{ color: "red", margin: "6px" }}
+              style={{ color: 'red', margin: '6px' }}
               onClick={() => aproveOrReject(false, record)}
             />,
           ]}
@@ -204,7 +204,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
           </Button>,
         ]}
       />
-      <div style={{ marginBottom: "16px" }}>
+      <div style={{ marginBottom: '16px' }}>
         <Row>
           <Col lg={12} xs={24}>
             <Typography.Title level={5} title="Search">

@@ -1,11 +1,11 @@
-import React, { useEffect } from "react";
-import { Form, Input, Button, Row, Col, FormInstance } from "antd";
-import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
-import { SearchTag } from "interfaces/SearchTag";
+import React, { useEffect } from 'react';
+import { Form, Input, Button, Row, Col, FormInstance } from 'antd';
+import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
+import { SearchTag } from 'interfaces/SearchTag';
 
 const searchTagFactory = (tagAsString?: string): SearchTag => ({
-  name: tagAsString ? tagAsString.split(":")[0] : "",
-  value: tagAsString ? tagAsString.split(":")[1] : "",
+  name: tagAsString ? tagAsString.split(':')[0] : '',
+  value: tagAsString ? tagAsString.split(':')[1] : '',
 });
 
 const SearchTags = ({
@@ -25,15 +25,15 @@ const SearchTags = ({
 
   const add = () => {
     form.setFieldsValue({
-      searchTags: [...form.getFieldValue("searchTags"), searchTagFactory()],
+      searchTags: [...form.getFieldValue('searchTags'), searchTagFactory()],
     });
   };
 
   const del = (index: number) => {
     form.setFieldsValue({
       searchTags: [
-        ...form.getFieldValue("searchTags").slice(0, index),
-        ...form.getFieldValue("searchTags").slice(index + 1),
+        ...form.getFieldValue('searchTags').slice(0, index),
+        ...form.getFieldValue('searchTags').slice(index + 1),
       ],
     });
   };
@@ -45,23 +45,23 @@ const SearchTags = ({
       }
     >
       {({ getFieldValue }) =>
-        getFieldValue("searchTags")?.map((_: SearchTag, index: number) => (
+        getFieldValue('searchTags')?.map((_: SearchTag, index: number) => (
           <Row gutter={8} key={index}>
             <Col xs={10}>
-              <Form.Item label="Tag Name" name={["searchTags", index, "name"]}>
+              <Form.Item label="Tag Name" name={['searchTags', index, 'name']}>
                 <Input />
               </Form.Item>
             </Col>
             <Col xs={10}>
               <Form.Item
                 label="Tag Value"
-                name={["searchTags", index, "value"]}
+                name={['searchTags', index, 'value']}
               >
                 <Input />
               </Form.Item>
             </Col>
-            <Col xs={4} style={{ marginTop: "24px" }}>
-              {index === form.getFieldValue("searchTags").length - 1 ? (
+            <Col xs={4} style={{ marginTop: '24px' }}>
+              {index === form.getFieldValue('searchTags').length - 1 ? (
                 <Button
                   onClick={add}
                   type="link"

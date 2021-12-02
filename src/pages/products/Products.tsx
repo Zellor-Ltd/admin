@@ -3,7 +3,7 @@ import {
   EditOutlined,
   SettingOutlined,
   SearchOutlined,
-} from "@ant-design/icons";
+} from '@ant-design/icons';
 import {
   Button,
   Checkbox,
@@ -23,47 +23,47 @@ import {
   Switch,
   Tabs,
   Typography,
-} from "antd";
-import { Upload } from "components";
-import { RichTextEditor } from "components/RichTextEditor";
-import { formatMoment } from "helpers/formatMoment";
-import { categoriesSettings } from "helpers/utils";
-import { AllCategories } from "interfaces/Category";
-import { useCallback, useContext, useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { RouteComponentProps, Link } from "react-router-dom";
-import {} from "services/DiscoClubService";
-import ProductCategoriesTrees from "./ProductCategoriesTrees";
-import "./Products.scss";
-import EditMultipleButton from "components/EditMultipleButton";
-import CopyIdToClipboard from "components/CopyIdToClipboard";
-import EditableTable, { EditableColumnType } from "components/EditableTable";
-import { SearchFilterDebounce } from "components/SearchFilterDebounce";
-import { SelectBrand } from "components/SelectBrand";
-import { SelectProductBrand } from "components/SelectProductBrand";
-import { SelectBrandSmartSearch } from "components/SelectBrandSmartSearch";
-import { AppContext } from "contexts/AppContext";
-import useAllCategories from "hooks/useAllCategories";
-import { useRequest } from "hooks/useRequest";
-import { Brand } from "interfaces/Brand";
-import { Product } from "interfaces/Product";
-import moment from "moment";
-import InfiniteScroll from "react-infinite-scroll-component";
+} from 'antd';
+import { Upload } from 'components';
+import { RichTextEditor } from 'components/RichTextEditor';
+import { formatMoment } from 'helpers/formatMoment';
+import { categoriesSettings } from 'helpers/utils';
+import { AllCategories } from 'interfaces/Category';
+import { useCallback, useContext, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { RouteComponentProps, Link } from 'react-router-dom';
+import {} from 'services/DiscoClubService';
+import ProductCategoriesTrees from './ProductCategoriesTrees';
+import './Products.scss';
+import EditMultipleButton from 'components/EditMultipleButton';
+import CopyIdToClipboard from 'components/CopyIdToClipboard';
+import EditableTable, { EditableColumnType } from 'components/EditableTable';
+import { SearchFilterDebounce } from 'components/SearchFilterDebounce';
+import { SelectBrand } from 'components/SelectBrand';
+import { SelectProductBrand } from 'components/SelectProductBrand';
+import { SelectBrandSmartSearch } from 'components/SelectBrandSmartSearch';
+import { AppContext } from 'contexts/AppContext';
+import useAllCategories from 'hooks/useAllCategories';
+import { useRequest } from 'hooks/useRequest';
+import { Brand } from 'interfaces/Brand';
+import { Product } from 'interfaces/Product';
+import moment from 'moment';
+import InfiniteScroll from 'react-infinite-scroll-component';
 import {
   fetchBrands,
   deleteProduct,
   fetchProducts,
   fetchAllProducts,
   saveProduct,
-} from "services/DiscoClubService";
-import EditProductModal from "./EditProductModal";
-import ProductAPITestModal from "./ProductAPITestModal";
-import ProductExpandedRow from "./ProductExpandedRow";
-import { CheckboxChangeEvent } from "antd/lib/checkbox";
-import { ProductBrandFilter } from "components/ProductBrandFilter";
-import { ProductBrand } from "interfaces/ProductBrand";
-import { productUtils } from "../../helpers/product-utils";
-import update from "immutability-helper";
+} from 'services/DiscoClubService';
+import EditProductModal from './EditProductModal';
+import ProductAPITestModal from './ProductAPITestModal';
+import ProductExpandedRow from './ProductExpandedRow';
+import { CheckboxChangeEvent } from 'antd/lib/checkbox';
+import { ProductBrandFilter } from 'components/ProductBrandFilter';
+import { ProductBrand } from 'interfaces/ProductBrand';
+import { productUtils } from '../../helpers/product-utils';
+import update from 'immutability-helper';
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 const { getSearchTags, getCategories, removeSearchTagsByCategory } =
@@ -90,7 +90,7 @@ const Products: React.FC<RouteComponentProps> = () => {
   const { doRequest: saveCategories, loading: loadingCategories } =
     useRequest();
 
-  const [searchFilter, setSearchFilter] = usePageFilter<string>("search");
+  const [searchFilter, setSearchFilter] = usePageFilter<string>('search');
   const [brandFilter, setBrandFilter] = useState<Brand | undefined>();
   const [productBrandFilter, setProductBrandFilter] = useState<
     ProductBrand | undefined
@@ -163,16 +163,16 @@ const Products: React.FC<RouteComponentProps> = () => {
       }
 
       const selectedCategoriesSearchTags = selectedCategories
-        .filter((v) => v && v.searchTags)
-        .map((v) => v.searchTags)
+        .filter(v => v && v.searchTags)
+        .map(v => v.searchTags)
         .reduce((prev, curr) => {
           return prev?.concat(curr || []);
         }, []);
 
-      let searchTags = form.getFieldValue("searchTags") || [];
+      let searchTags = form.getFieldValue('searchTags') || [];
       const finalValue = Array.from(
         new Set([
-          ...searchTags.filter((tag) => previousTags.indexOf(tag) === -1),
+          ...searchTags.filter(tag => previousTags.indexOf(tag) === -1),
           ...selectedCategoriesSearchTags,
         ])
       );
@@ -290,13 +290,13 @@ const Products: React.FC<RouteComponentProps> = () => {
     setLoading(true);
     try {
       const product = form.getFieldsValue(true);
-      product.brand = brands?.find((brand) => brand.id === product.brand?.id);
+      product.brand = brands?.find(brand => brand.id === product.brand?.id);
 
       categoriesFields.forEach((field, index) => {
         product.categories.forEach((productCategory: any) => {
           productCategory[field] = allCategories[
             categoriesKeys[index] as keyof AllCategories
-          ].find((category) => category.id === productCategory[field]?.id);
+          ].find(category => category.id === productCategory[field]?.id);
         });
       });
 
@@ -304,7 +304,7 @@ const Products: React.FC<RouteComponentProps> = () => {
       await saveProductFn(product);
 
       setLoading(false);
-      message.success("Register updated with success.");
+      message.success('Register updated with success.');
       setIsViewing(false);
     } catch (error) {
       console.error(error);
@@ -312,7 +312,7 @@ const Products: React.FC<RouteComponentProps> = () => {
     }
   };
 
-  const _fetchProducts = async (searchButton) => {
+  const _fetchProducts = async searchButton => {
     const pageToUse = refreshing ? 0 : page;
     const response = await doFetch(() =>
       fetchProducts({
@@ -340,7 +340,7 @@ const Products: React.FC<RouteComponentProps> = () => {
     setContent(response.results);
   };
 
-  const getResources = async (triggerByButton) => {
+  const getResources = async triggerByButton => {
     const [{ results }] = await Promise.all([
       _fetchProducts(triggerByButton),
       fetchAllCategories(),
@@ -359,7 +359,7 @@ const Products: React.FC<RouteComponentProps> = () => {
   const fetchData = async () => {
     if (!products.length) return;
     const { results } = await _fetchProducts(false);
-    setProducts((prev) => [...prev.concat(results)]);
+    setProducts(prev => [...prev.concat(results)]);
   };
 
   useEffect(() => form.resetFields(), [currentProduct]);
@@ -382,7 +382,7 @@ const Products: React.FC<RouteComponentProps> = () => {
     for (let i = 0; i < content.length; i++) {
       if (content[i].id === _id) {
         const index = i;
-        setProducts((prev) => [
+        setProducts(prev => [
           ...prev.slice(0, index),
           ...prev.slice(index + 1),
         ]);
@@ -431,16 +431,16 @@ const Products: React.FC<RouteComponentProps> = () => {
 
   const columns: EditableColumnType<Product>[] = [
     {
-      title: "Id",
-      dataIndex: "id",
-      width: "6%",
-      render: (id) => <CopyIdToClipboard id={id} />,
-      align: "center",
+      title: 'Id',
+      dataIndex: 'id',
+      width: '6%',
+      render: id => <CopyIdToClipboard id={id} />,
+      align: 'center',
     },
     {
-      title: "Name",
-      dataIndex: "name",
-      width: "17%",
+      title: 'Name',
+      dataIndex: 'name',
+      width: '17%',
       shouldCellUpdate: (prevRecord, nextRecord) =>
         prevRecord.name != nextRecord.name,
       render: (value: string, record, index) => (
@@ -451,62 +451,62 @@ const Products: React.FC<RouteComponentProps> = () => {
           >
             {value}
           </Link>
-          <span style={{ fontSize: "12px" }}>
+          <span style={{ fontSize: '12px' }}>
             <br />
             {record.categories
               ? [
                   record.categories[0].superCategory?.superCategory +
-                    " / " +
+                    ' / ' +
                     record.categories[0].category?.category +
                     (record.categories[0].subCategory
-                      ? " / " + record.categories[0].subCategory?.subCategory
-                      : ""),
+                      ? ' / ' + record.categories[0].subCategory?.subCategory
+                      : ''),
                   record.categories[0].subSubCategory
-                    ? " / " +
+                    ? ' / ' +
                       record.categories[0].subSubCategory?.subSubCategory
-                    : "",
-                  record.categories[1] ? " (...)" : "",
+                    : '',
+                  record.categories[1] ? ' (...)' : '',
                 ]
-              : ""}
+              : ''}
           </span>
         </>
       ),
     },
     {
-      title: "Master Brand",
-      dataIndex: ["brand", "brandName"],
-      width: "10%",
-      align: "center",
-      responsive: ["sm"],
+      title: 'Master Brand',
+      dataIndex: ['brand', 'brandName'],
+      width: '10%',
+      align: 'center',
+      responsive: ['sm'],
       shouldCellUpdate: (prevRecord, nextRecord) =>
         prevRecord.brand != nextRecord.brand,
     },
     {
-      title: "In Stock",
-      dataIndex: "outOfStock",
-      width: "7%",
-      align: "center",
+      title: 'In Stock',
+      dataIndex: 'outOfStock',
+      width: '7%',
+      align: 'center',
       shouldCellUpdate: (prevRecord, nextRecord) =>
         prevRecord.outOfStock != nextRecord.outOfStock,
-      render: (outOfStock: boolean) => (outOfStock ? "No" : "Yes"),
+      render: (outOfStock: boolean) => (outOfStock ? 'No' : 'Yes'),
     },
     {
-      title: "Max DD",
-      dataIndex: "maxDiscoDollars",
-      width: "7%",
-      align: "center",
-      responsive: ["sm"],
+      title: 'Max DD',
+      dataIndex: 'maxDiscoDollars',
+      width: '7%',
+      align: 'center',
+      responsive: ['sm'],
       shouldCellUpdate: (prevRecord, nextRecord) =>
         prevRecord.maxDiscoDollars != nextRecord.maxDiscoDollars,
       // editable: true,
       // number: true,
     },
     {
-      title: "Disco %",
-      dataIndex: "discoPercentage",
-      width: "8%",
-      align: "center",
-      responsive: ["sm"],
+      title: 'Disco %',
+      dataIndex: 'discoPercentage',
+      width: '8%',
+      align: 'center',
+      responsive: ['sm'],
       shouldCellUpdate: (prevRecord, nextRecord) =>
         prevRecord.discoPercentage != nextRecord.discoPercentage,
 
@@ -514,47 +514,47 @@ const Products: React.FC<RouteComponentProps> = () => {
       // number: true,
     },
     {
-      title: "Shopify Id",
-      dataIndex: "shopifyUniqueId",
-      width: "7%",
-      align: "center",
-      responsive: ["sm"],
+      title: 'Shopify Id',
+      dataIndex: 'shopifyUniqueId',
+      width: '7%',
+      align: 'center',
+      responsive: ['sm'],
     },
 
     {
-      title: "Expiration Date",
-      dataIndex: "offerExpirationDate",
-      width: "10%",
-      align: "center",
-      responsive: ["sm"],
+      title: 'Expiration Date',
+      dataIndex: 'offerExpirationDate',
+      width: '10%',
+      align: 'center',
+      responsive: ['sm'],
       shouldCellUpdate: (prevRecord, nextRecord) =>
         prevRecord.offerExpirationDate != nextRecord.offerExpirationDate,
 
-      render: (creationDate: Date) => moment(creationDate).format("DD/MM/YYYY"),
+      render: (creationDate: Date) => moment(creationDate).format('DD/MM/YYYY'),
     },
     {
-      title: "Status",
-      dataIndex: "status",
-      width: "12%",
-      align: "center",
-      responsive: ["sm"],
+      title: 'Status',
+      dataIndex: 'status',
+      width: '12%',
+      align: 'center',
+      responsive: ['sm'],
       shouldCellUpdate: (prevRecord, nextRecord) =>
         prevRecord.status != nextRecord.status,
     },
     {
-      title: "Product Brand",
-      dataIndex: "productBrand",
-      width: "10%",
-      align: "center",
-      responsive: ["sm"],
+      title: 'Product Brand',
+      dataIndex: 'productBrand',
+      width: '10%',
+      align: 'center',
+      responsive: ['sm'],
       shouldCellUpdate: (prevRecord, nextRecord) =>
         prevRecord.productBrand != nextRecord.productBrand,
     },
     {
-      title: "Last Go-Live",
-      dataIndex: "goLiveDate",
-      width: "10%",
-      align: "center",
+      title: 'Last Go-Live',
+      dataIndex: 'goLiveDate',
+      width: '10%',
+      align: 'center',
       shouldCellUpdate: (prevRecord, nextRecord) =>
         prevRecord.goLiveDate != nextRecord.goLiveDate,
 
@@ -562,19 +562,19 @@ const Products: React.FC<RouteComponentProps> = () => {
         goLiveDate ? (
           <>
             <div>
-              {moment(goLiveDate).format("DD/MM/YY")}{" "}
-              {moment(goLiveDate).format("HH:mm")}
+              {moment(goLiveDate).format('DD/MM/YY')}{' '}
+              {moment(goLiveDate).format('HH:mm')}
             </div>
           </>
         ) : (
-          ""
+          ''
         ),
     },
     {
-      title: "Actions",
-      key: "action",
-      width: "12%",
-      align: "right",
+      title: 'Actions',
+      key: 'action',
+      width: '12%',
+      align: 'right',
       render: (_: any, record, index) => (
         <>
           <Link
@@ -592,7 +592,7 @@ const Products: React.FC<RouteComponentProps> = () => {
             >
               <Button
                 type="link"
-                style={{ padding: 0, margin: "6px 0 6px 6px" }}
+                style={{ padding: 0, margin: '6px 0 6px 6px' }}
               >
                 <DeleteOutlined />
               </Button>
@@ -601,7 +601,7 @@ const Products: React.FC<RouteComponentProps> = () => {
           <Button
             onClick={() => setProductAPITest(record)}
             type="link"
-            style={{ padding: 0, margin: "6px 0 6px 6px" }}
+            style={{ padding: 0, margin: '6px 0 6px 6px' }}
           >
             <SettingOutlined />
           </Button>
@@ -622,8 +622,8 @@ const Products: React.FC<RouteComponentProps> = () => {
 
   const handleRowSelection = (preSelectedRows: any[]) => {
     const selectedRows: any[] = [];
-    preSelectedRows.forEach((productId) => {
-      const product = products.find((product) => product.id === productId);
+    preSelectedRows.forEach(productId => {
+      const product = products.find(product => product.id === productId);
       if (product!.brand?.automated !== true) selectedRows.push(productId);
     });
     setSelectedRowKeys(selectedRows);
@@ -654,7 +654,7 @@ const Products: React.FC<RouteComponentProps> = () => {
                 </Col>
                 <Col lg={6} xs={16}>
                   <SelectBrand
-                    style={{ width: "100%" }}
+                    style={{ width: '100%' }}
                     allowClear={true}
                     onChange={onChangeBrand}
                     initialBrandName={brandFilter?.brandName}
@@ -662,7 +662,7 @@ const Products: React.FC<RouteComponentProps> = () => {
                 </Col>
                 <Col lg={6} xs={16}>
                   <ProductBrandFilter
-                    style={{ width: "100%" }}
+                    style={{ width: '100%' }}
                     allowClear={true}
                     onChange={onChangeProductBrand}
                     initialProductBrandName={productBrandFilter?.brandName}
@@ -679,7 +679,7 @@ const Products: React.FC<RouteComponentProps> = () => {
                 <Col lg={6} xs={24}>
                   <Checkbox
                     onChange={handleFilterOutOfStock}
-                    style={{ margin: "42px 0 16px 8px" }}
+                    style={{ margin: '42px 0 16px 8px' }}
                   >
                     Out of Stock only
                   </Checkbox>
@@ -693,18 +693,18 @@ const Products: React.FC<RouteComponentProps> = () => {
                   onClick={() => getResources(true)}
                   loading={loading}
                   style={{
-                    position: "relative",
-                    bottom: "-49px",
+                    position: 'relative',
+                    bottom: '-49px',
                   }}
                 >
                   Search
-                  <SearchOutlined style={{ color: "white" }} />
+                  <SearchOutlined style={{ color: 'white' }} />
                 </Button>
                 <div
                   style={{
-                    position: "relative",
-                    bottom: "-49px",
-                    marginLeft: "8px",
+                    position: 'relative',
+                    bottom: '-49px',
+                    marginLeft: '8px',
                   }}
                 >
                   <EditMultipleButton
@@ -740,7 +740,7 @@ const Products: React.FC<RouteComponentProps> = () => {
             }
           >
             <EditableTable
-              rowClassName={(index) => (index === 0 ? "" : "styled-row")}
+              rowClassName={index => (index === 0 ? '' : 'styled-row')}
               rowKey="id"
               columns={columns}
               dataSource={products}
@@ -776,7 +776,7 @@ const Products: React.FC<RouteComponentProps> = () => {
             initialValues={currentProduct}
             onFinish={onFinish}
             onFinishFailed={({ errorFields }) => {
-              errorFields.forEach((errorField) => {
+              errorFields.forEach(errorField => {
                 message.error(errorField.errors[0]);
               });
             }}
@@ -820,7 +820,7 @@ const Products: React.FC<RouteComponentProps> = () => {
                     <Row gutter={8}>
                       <Col lg={24} xs={24}>
                         <Form.Item
-                          name={["brand", "id"]}
+                          name={['brand', 'id']}
                           label="Master Brand"
                           rules={[{ required: true }]}
                         >
@@ -886,9 +886,9 @@ const Products: React.FC<RouteComponentProps> = () => {
                     }
                   >
                     {({ getFieldValue }) => (
-                      <Form.Item name={"searchTags"} label="Search Tags">
+                      <Form.Item name={'searchTags'} label="Search Tags">
                         <Select mode="tags" className="product-search-tags">
-                          {getFieldValue("searchTags")?.map(
+                          {getFieldValue('searchTags')?.map(
                             (searchTag: any) => (
                               <Select.Option key={searchTag} value={searchTag}>
                                 {searchTag}
@@ -908,7 +908,7 @@ const Products: React.FC<RouteComponentProps> = () => {
                     <Form.Item label="Age Range">
                       <Slider
                         range
-                        marks={{ 12: "12", 100: "100" }}
+                        marks={{ 12: '12', 100: '100' }}
                         min={12}
                         max={100}
                         value={ageRange}
@@ -1039,17 +1039,17 @@ const Products: React.FC<RouteComponentProps> = () => {
                     <Form.Item
                       name="maxDiscoDollars"
                       label="Max Discount in DD"
-                      dependencies={["originalPrice"]}
+                      dependencies={['originalPrice']}
                       rules={[
                         {
                           required: true,
-                          message: "Max Discount is required.",
+                          message: 'Max Discount is required.',
                         },
                         ({ getFieldValue }) => ({
                           validator(_, maxDiscount) {
                             // 3x the price
                             const maxPossibleDiscount = Math.trunc(
-                              Number(getFieldValue("originalPrice")) * 3
+                              Number(getFieldValue('originalPrice')) * 3
                             );
                             if (
                               maxDiscount &&
@@ -1066,7 +1066,7 @@ const Products: React.FC<RouteComponentProps> = () => {
                               }
                               setMaxDiscountAlert(true);
                               return Promise.reject(
-                                new Error("Max discount not allowed.")
+                                new Error('Max discount not allowed.')
                               );
                             }
                             setMaxDiscountAlert(false);
@@ -1076,7 +1076,7 @@ const Products: React.FC<RouteComponentProps> = () => {
                       ]}
                     >
                       <InputNumber
-                        parser={(value) => (value || "").replace(/-/g, "")}
+                        parser={value => (value || '').replace(/-/g, '')}
                         precision={0}
                       />
                     </Form.Item>

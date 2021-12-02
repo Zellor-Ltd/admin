@@ -1,9 +1,9 @@
-import { Button, Col, Form, Input, message, PageHeader, Row, Tabs } from "antd";
-import { MinusCircleOutlined } from "@ant-design/icons";
-import { useEffect, useState } from "react";
-import { saveSettings } from "services/DiscoClubService";
-import { useDispatch, useSelector } from "react-redux";
-import { getSettings } from "reducers/settings";
+import { Button, Col, Form, Input, message, PageHeader, Row, Tabs } from 'antd';
+import { MinusCircleOutlined } from '@ant-design/icons';
+import { useEffect, useState } from 'react';
+import { saveSettings } from 'services/DiscoClubService';
+import { useDispatch, useSelector } from 'react-redux';
+import { getSettings } from 'reducers/settings';
 
 const { TabPane } = Tabs;
 const Settings: React.FC = () => {
@@ -26,7 +26,7 @@ const Settings: React.FC = () => {
       await saveSettings(form.getFieldsValue(true));
       setLoading(false);
       dispatch(getSettings());
-      message.success("Register updated with success.");
+      message.success('Register updated with success.');
     } catch (error) {
       setLoading(false);
     }
@@ -94,12 +94,12 @@ const ItemList: React.FC<ItemListProp> = ({ name }) => (
         <Button onClick={() => add()}>
           Add {name.charAt(0).toUpperCase() + name.slice(1)}
         </Button>
-        {fields.map((field) => (
+        {fields.map(field => (
           <Row gutter={8} key={Math.random()}>
             <Col lg={6} xs={24}>
               <Form.Item
-                name={[field.name, "name"]}
-                fieldKey={[field.fieldKey, "name"]}
+                name={[field.name, 'name']}
+                fieldKey={[field.fieldKey, 'name']}
                 label="Name"
               >
                 <Input />
@@ -107,14 +107,14 @@ const ItemList: React.FC<ItemListProp> = ({ name }) => (
             </Col>
             <Col lg={6} xs={24}>
               <Form.Item
-                name={[field.name, "value"]}
-                fieldKey={[field.fieldKey, "value"]}
+                name={[field.name, 'value']}
+                fieldKey={[field.fieldKey, 'value']}
                 label="Value"
               >
                 <Input />
               </Form.Item>
             </Col>
-            <Col style={{ display: "flex", alignItems: "center" }}>
+            <Col style={{ display: 'flex', alignItems: 'center' }}>
               <MinusCircleOutlined onClick={() => remove(field.name)} />
             </Col>
           </Row>

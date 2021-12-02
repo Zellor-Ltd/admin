@@ -8,11 +8,11 @@ import {
   PageHeader,
   Radio,
   Row,
-} from "antd";
-import { Endpoint } from "interfaces/Endpoint";
-import { useEffect, useState } from "react";
-import { RouteComponentProps } from "react-router-dom";
-import { saveEndpoint } from "services/DiscoClubService";
+} from 'antd';
+import { Endpoint } from 'interfaces/Endpoint';
+import { useEffect, useState } from 'react';
+import { RouteComponentProps } from 'react-router-dom';
+import { saveEndpoint } from 'services/DiscoClubService';
 
 const EndpointDetail: React.FC<RouteComponentProps> = ({
   history,
@@ -28,11 +28,11 @@ const EndpointDetail: React.FC<RouteComponentProps> = ({
       form.setFieldsValue({ ...initial });
     } else {
       form.setFieldsValue({
-        name: "",
-        description: "",
-        container: "",
-        action: "Search",
-        application: "Custom",
+        name: '',
+        description: '',
+        container: '',
+        action: 'Search',
+        application: 'Custom',
         isActive: false,
       });
     }
@@ -45,7 +45,7 @@ const EndpointDetail: React.FC<RouteComponentProps> = ({
 
       await saveEndpoint(endpoint);
       setLoading(false);
-      message.success("Register updated with success.");
+      message.success('Register updated with success.');
       history.goBack();
     } catch (error) {
       setLoading(false);

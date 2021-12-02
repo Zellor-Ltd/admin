@@ -1,9 +1,9 @@
-import { Col, Row, Popconfirm, Button } from "antd";
-import { useRequest } from "hooks/useRequest";
-import { DeleteOutlined } from "@ant-design/icons";
-import moment from "moment";
-import CopyIdToClipboard from "components/CopyIdToClipboard";
-import React, { useEffect, useState } from "react";
+import { Col, Row, Popconfirm, Button } from 'antd';
+import { useRequest } from 'hooks/useRequest';
+import { DeleteOutlined } from '@ant-design/icons';
+import moment from 'moment';
+import CopyIdToClipboard from 'components/CopyIdToClipboard';
+import React, { useEffect, useState } from 'react';
 import {
   Bar,
   BarChart,
@@ -15,19 +15,19 @@ import {
   Tooltip,
   XAxis,
   YAxis,
-} from "recharts";
+} from 'recharts';
 import {
   fetchActiveRegFansPerDay,
   fetchProductsPerDay,
   fetchPreRegs,
   deletePreReg,
   fetchFanActivity,
-} from "services/DiscoClubService";
-import Pie from "./Pie";
-import Radar from "./Radar";
-import { PreReg } from "interfaces/PreReg";
-import { FanActivity } from "interfaces/FanActivity";
-import { ColumnsType } from "antd/lib/table";
+} from 'services/DiscoClubService';
+import Pie from './Pie';
+import Radar from './Radar';
+import { PreReg } from 'interfaces/PreReg';
+import { FanActivity } from 'interfaces/FanActivity';
+import { ColumnsType } from 'antd/lib/table';
 
 interface DashboardProps {}
 
@@ -69,27 +69,27 @@ const Dashboard: React.FC<DashboardProps> = () => {
 
   const preRegistered: ColumnsType<PreReg> = [
     {
-      title: "_id",
-      dataIndex: "id",
-      width: "5%",
+      title: '_id',
+      dataIndex: 'id',
+      width: '5%',
       render: (id: any) => <CopyIdToClipboard id={id} />,
-      align: "center",
+      align: 'center',
     },
-    { title: "Email", dataIndex: "email", width: "15%" },
+    { title: 'Email', dataIndex: 'email', width: '15%' },
     {
-      title: "Creation Date",
-      dataIndex: "hCreationDate",
-      width: "65%",
-      align: "center",
-      responsive: ["sm"],
+      title: 'Creation Date',
+      dataIndex: 'hCreationDate',
+      width: '65%',
+      align: 'center',
+      responsive: ['sm'],
       render: (hCreationDate: Date) =>
-        moment(hCreationDate).format("DD/MM/YYYY"),
+        moment(hCreationDate).format('DD/MM/YYYY'),
     },
     {
-      title: "Actions",
-      key: "action",
-      width: "15%",
-      align: "right",
+      title: 'Actions',
+      key: 'action',
+      width: '15%',
+      align: 'right',
       render: (record: PreReg) => (
         <>
           <Popconfirm
@@ -109,33 +109,33 @@ const Dashboard: React.FC<DashboardProps> = () => {
 
   const fanActs: ColumnsType<PreReg> = [
     {
-      title: "_id",
-      dataIndex: "id",
-      width: "5%",
+      title: '_id',
+      dataIndex: 'id',
+      width: '5%',
       render: (id: any) => <CopyIdToClipboard id={id} />,
-      align: "center",
+      align: 'center',
     },
-    { title: "User", dataIndex: "user", width: "30%" },
-    { title: "Total DD", dataIndex: "totalDiscoDollars", width: "10%" },
-    { title: "Wishlist Items", dataIndex: "wishListItems", width: "10%" },
+    { title: 'User', dataIndex: 'user', width: '30%' },
+    { title: 'Total DD', dataIndex: 'totalDiscoDollars', width: '10%' },
+    { title: 'Wishlist Items', dataIndex: 'wishListItems', width: '10%' },
     {
-      title: "Logins in the last 10 days",
-      dataIndex: "last10dayslogins",
-      width: "15%",
+      title: 'Logins in the last 10 days',
+      dataIndex: 'last10dayslogins',
+      width: '15%',
     },
-    { title: "Total Ordered", dataIndex: "totalOrdered", width: "10%" },
-    { title: "Items Ordered", dataIndex: "itemsOrdered", width: "10%" },
+    { title: 'Total Ordered', dataIndex: 'totalOrdered', width: '10%' },
+    { title: 'Items Ordered', dataIndex: 'itemsOrdered', width: '10%' },
     {
-      title: "Videos watched this month",
-      dataIndex: "feedsWatchedThisMonth",
-      width: "10%",
+      title: 'Videos watched this month',
+      dataIndex: 'feedsWatchedThisMonth',
+      width: '10%',
     },
   ];
 
   return (
     <>
-      <Row style={{ height: "300px" }}>
-        <Col style={{ width: "75%" }}>
+      <Row style={{ height: '300px' }}>
+        <Col style={{ width: '75%' }}>
           <ResponsiveContainer>
             <LineChart
               width={500}
@@ -163,12 +163,12 @@ const Dashboard: React.FC<DashboardProps> = () => {
             </LineChart>
           </ResponsiveContainer>
         </Col>
-        <Col style={{ width: "25%" }}>
+        <Col style={{ width: '25%' }}>
           <Pie></Pie>
         </Col>
       </Row>
-      <Row style={{ height: "300px", marginTop: "40px" }}>
-        <Col style={{ width: "60%" }}>
+      <Row style={{ height: '300px', marginTop: '40px' }}>
+        <Col style={{ width: '60%' }}>
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
               width={500}
@@ -190,7 +190,7 @@ const Dashboard: React.FC<DashboardProps> = () => {
             </BarChart>
           </ResponsiveContainer>
         </Col>
-        <Col style={{ width: "40%" }}>
+        <Col style={{ width: '40%' }}>
           <Radar></Radar>
         </Col>
       </Row>

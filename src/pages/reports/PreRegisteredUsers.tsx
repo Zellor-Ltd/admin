@@ -1,12 +1,12 @@
-import { Col, Row, Popconfirm, Button, Table, Typography } from "antd";
-import { useRequest } from "../../hooks/useRequest";
-import { DeleteOutlined } from "@ant-design/icons";
-import moment from "moment";
-import CopyIdToClipboard from "../../components/CopyIdToClipboard";
-import React, { useEffect, useState } from "react";
-import { fetchPreRegs, deletePreReg } from "../../services/DiscoClubService";
-import { PreReg } from "../../interfaces/PreReg";
-import { ColumnsType } from "antd/lib/table";
+import { Col, Row, Popconfirm, Button, Table, Typography } from 'antd';
+import { useRequest } from '../../hooks/useRequest';
+import { DeleteOutlined } from '@ant-design/icons';
+import moment from 'moment';
+import CopyIdToClipboard from '../../components/CopyIdToClipboard';
+import React, { useEffect, useState } from 'react';
+import { fetchPreRegs, deletePreReg } from '../../services/DiscoClubService';
+import { PreReg } from '../../interfaces/PreReg';
+import { ColumnsType } from 'antd/lib/table';
 
 interface DashboardProps {}
 
@@ -32,37 +32,34 @@ const PreRegisteredUsers: React.FC<DashboardProps> = () => {
     for (let i = 0; i < content.length; i++) {
       if (content[i].id === record.id) {
         const index = i;
-        setPreRegs((prev) => [
-          ...prev.slice(0, index),
-          ...prev.slice(index + 1),
-        ]);
+        setPreRegs(prev => [...prev.slice(0, index), ...prev.slice(index + 1)]);
       }
     }
   };
 
   const preRegistered: ColumnsType<PreReg> = [
     {
-      title: "_id",
-      dataIndex: "id",
-      width: "5%",
+      title: '_id',
+      dataIndex: 'id',
+      width: '5%',
       render: (id: any) => <CopyIdToClipboard id={id} />,
-      align: "center",
+      align: 'center',
     },
-    { title: "Email", dataIndex: "email", width: "15%" },
+    { title: 'Email', dataIndex: 'email', width: '15%' },
     {
-      title: "Creation Date",
-      dataIndex: "hCreationDate",
-      width: "65%",
-      align: "center",
-      responsive: ["sm"],
+      title: 'Creation Date',
+      dataIndex: 'hCreationDate',
+      width: '65%',
+      align: 'center',
+      responsive: ['sm'],
       render: (hCreationDate: Date) =>
-        moment(hCreationDate).format("DD/MM/YYYY"),
+        moment(hCreationDate).format('DD/MM/YYYY'),
     },
     {
-      title: "Actions",
-      key: "action",
-      width: "15%",
-      align: "right",
+      title: 'Actions',
+      key: 'action',
+      width: '15%',
+      align: 'right',
       render: (record: PreReg) => (
         <>
           <Popconfirm
@@ -82,7 +79,7 @@ const PreRegisteredUsers: React.FC<DashboardProps> = () => {
 
   return (
     <>
-      <div style={{ marginBottom: "16px" }}>
+      <div style={{ marginBottom: '16px' }}>
         <Row>
           <Col lg={12} xs={24}>
             <Typography.Title level={3}>Pre Registered Users</Typography.Title>

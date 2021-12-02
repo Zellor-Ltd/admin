@@ -1,18 +1,18 @@
-import { Button, Col, Form, Input, PageHeader, Row, Select } from "antd";
-import { Upload } from "components";
-import { categoriesSettings } from "helpers/utils";
-import useAllCategories from "hooks/useAllCategories";
-import { useRequest } from "hooks/useRequest";
+import { Button, Col, Form, Input, PageHeader, Row, Select } from 'antd';
+import { Upload } from 'components';
+import { categoriesSettings } from 'helpers/utils';
+import useAllCategories from 'hooks/useAllCategories';
+import { useRequest } from 'hooks/useRequest';
 import {
   AllCategories,
   AllCategoriesAPI,
   ProductCategory,
-} from "interfaces/Category";
-import { SearchTag } from "interfaces/SearchTag";
-import React, { useEffect, useState } from "react";
-import { RouteComponentProps } from "react-router-dom";
-import { productCategoriesAPI } from "services/DiscoClubService";
-import SearchTags from "./SearchTags";
+} from 'interfaces/Category';
+import { SearchTag } from 'interfaces/SearchTag';
+import React, { useEffect, useState } from 'react';
+import { RouteComponentProps } from 'react-router-dom';
+import { productCategoriesAPI } from 'services/DiscoClubService';
+import SearchTags from './SearchTags';
 
 const { categoriesKeys, categoriesArray, categoriesFields } =
   categoriesSettings;
@@ -26,7 +26,7 @@ const CategoryDetail: React.FC<RouteComponentProps> = ({
   const params = new URLSearchParams(location.search);
   const { doRequest } = useRequest({ setLoading });
 
-  const categoryLevel = Number(params.get("category-level"));
+  const categoryLevel = Number(params.get('category-level'));
   const categoryUpdateName = categoriesKeys[categoryLevel];
   const categoryField = categoriesFields[categoryLevel];
 
@@ -57,7 +57,7 @@ const CategoryDetail: React.FC<RouteComponentProps> = ({
     const category = {
       ...form.getFieldsValue(true),
       searchTags: form
-        .getFieldValue("searchTags")
+        .getFieldValue('searchTags')
         .map(convertTagsIntoStrings)
         .filter((str: string) => str.length > 1),
     };
@@ -100,11 +100,11 @@ const CategoryDetail: React.FC<RouteComponentProps> = ({
                         filterCategory(
                           option?.children as string,
                           key,
-                          (_field) => {
+                          _field => {
                             if (
                               categoriesFields.indexOf(_field) < categoryLevel
                             )
-                              form.setFieldsValue({ [_field]: "" });
+                              form.setFieldsValue({ [_field]: '' });
                           }
                         )
                       }
@@ -113,7 +113,7 @@ const CategoryDetail: React.FC<RouteComponentProps> = ({
                         filteredCategories[
                           key as keyof AllCategories
                         ] as unknown as ProductCategory[]
-                      ).map((category) => (
+                      ).map(category => (
                         <Select.Option
                           key={category.id}
                           value={

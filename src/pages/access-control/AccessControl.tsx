@@ -10,25 +10,25 @@ import {
   Spin,
   Tabs,
   Typography,
-} from "antd";
-import { Role } from "interfaces/Role";
-import { useEffect, useState, useCallback } from "react";
+} from 'antd';
+import { Role } from 'interfaces/Role';
+import { useEffect, useState, useCallback } from 'react';
 import {
   fetchPrivileges,
   fetchProfiles,
   fetchEndpoints,
   savePrivileges,
   deletePrivileges,
-} from "services/DiscoClubService";
-import CloneModal from "./CloneModal";
-import { Privilege } from "interfaces/Privilege";
-import { Endpoint } from "interfaces/Endpoint";
-import { CheckboxChangeEvent } from "antd/lib/checkbox";
+} from 'services/DiscoClubService';
+import CloneModal from './CloneModal';
+import { Privilege } from 'interfaces/Privilege';
+import { Endpoint } from 'interfaces/Endpoint';
+import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 
 const { TabPane } = Tabs;
 const { Text } = Typography;
 
-const methodsList = ["All", "Search", "GetById", "Insert", "Update", "Remove"];
+const methodsList = ['All', 'Search', 'GetById', 'Insert', 'Update', 'Remove'];
 
 interface endpointPrivilege {
   privilege: Privilege | undefined;
@@ -40,8 +40,8 @@ const AccessControl: React.FC = () => {
 
   const [profiles, setProfiles] = useState<string[]>([]);
 
-  const [selectedProfile, setSelectedProfile] = useState<string>("");
-  const [selectedMethod, setSelectedMethod] = useState<string>("All");
+  const [selectedProfile, setSelectedProfile] = useState<string>('');
+  const [selectedMethod, setSelectedMethod] = useState<string>('All');
 
   const [endpoints, setEndpoints] = useState<Endpoint[]>([]);
   const [privileges, setPrivileges] = useState<Privilege[]>([]);
@@ -93,20 +93,20 @@ const AccessControl: React.FC = () => {
 
   useEffect(() => {
     const filteredEndpoints =
-      selectedMethod === "All"
+      selectedMethod === 'All'
         ? endpoints
-        : endpoints.filter((endpoint) => endpoint.action === selectedMethod);
+        : endpoints.filter(endpoint => endpoint.action === selectedMethod);
 
     const filteredPrivileges = privileges.filter(
-      (privilege) => privilege.isEndpoint
+      privilege => privilege.isEndpoint
     );
 
     setEndpointPrivileges(
-      filteredEndpoints.map((endpoint) => {
+      filteredEndpoints.map(endpoint => {
         return {
           endpoint,
           privilege: filteredPrivileges.find(
-            (privilege) => privilege.app === endpoint.name
+            privilege => privilege.app === endpoint.name
           ),
         };
       })
@@ -114,7 +114,7 @@ const AccessControl: React.FC = () => {
   }, [endpoints, privileges, selectedMethod, setEndpointPrivileges]);
 
   const onFinish = () => {
-    console.log("finish");
+    console.log('finish');
   };
 
   const onCloneClick = () => {
@@ -134,7 +134,7 @@ const AccessControl: React.FC = () => {
         <Col xxl={4} lg={6} xs={18}>
           <Select
             placeholder="please select a profile"
-            style={{ width: "100%" }}
+            style={{ width: '100%' }}
             onChange={onChangeProfile}
             value={selectedProfile}
           >
@@ -163,14 +163,14 @@ const AccessControl: React.FC = () => {
       >
         <Tabs
           defaultActiveKey="template"
-          style={{ width: "100%" }}
+          style={{ width: '100%' }}
           onChange={setSelectedMethod}
         >
           {methodsList.map((method, index) => (
             <TabPane tab={method} key={method}>
               <Row gutter={24}>
                 {loading ? (
-                  <Spin style={{ margin: "0 auto" }} />
+                  <Spin style={{ margin: '0 auto' }} />
                 ) : (
                   endpointPrivileges.map((data, _index) => (
                     <FunctionPrivilege
@@ -210,7 +210,7 @@ const FunctionPrivilege: React.FC<FunctionPrivilegeProps> = ({
   const [privilege, setPrevilege] = useState<Privilege>(
     initialPrivilege || {
       app: endpoint.name,
-      privileges: "",
+      privileges: '',
       profile: profile,
       isEndpoint: true,
     }
@@ -220,23 +220,23 @@ const FunctionPrivilege: React.FC<FunctionPrivilegeProps> = ({
   const onChangePermission = async (value: CheckboxChangeEvent) => {
     setLoading(true);
     if (value.target.checked) {
-      const _privilege = { ...privilege, privileges: "ADULM" };
+      const _privilege = { ...privilege, privileges: 'ADULM' };
       await savePrivileges(_privilege);
       setPrevilege(_privilege);
     } else {
       await deletePrivileges(privilege);
-      const _privilege = { ...privilege, privileges: "" };
+      const _privilege = { ...privilege, privileges: '' };
       setPrevilege(_privilege);
     }
-    message.success("Changes saved!");
+    message.success('Changes saved!');
     setLoading(false);
   };
 
   return (
-    <Col lg={8} md={12} xs={24} style={{ margin: "8px 0" }}>
+    <Col lg={8} md={12} xs={24} style={{ margin: '8px 0' }}>
       <Spin spinning={loading}>
         <Checkbox
-          checked={privilege.privileges === "ADULM"}
+          checked={privilege.privileges === 'ADULM'}
           onChange={onChangePermission}
         >
           <Text>{endpoint.name}</Text>

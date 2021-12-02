@@ -1,4 +1,4 @@
-import { EyeOutlined } from "@ant-design/icons";
+import { EyeOutlined } from '@ant-design/icons';
 import {
   Col,
   Layout,
@@ -7,17 +7,17 @@ import {
   Row,
   Table,
   Tag as AntTag,
-} from "antd";
-import { ColumnsType } from "antd/lib/table";
-import CopyIdToClipboard from "components/CopyIdToClipboard";
-import { SelectBrand } from "components/SelectBrand";
-import useFilter from "hooks/useFilter";
-import { Brand } from "interfaces/Brand";
-import { FeedItem } from "interfaces/FeedItem";
-import { Segment } from "interfaces/Segment";
-import React, { useEffect, useState } from "react";
-import { Link, RouteComponentProps, withRouter } from "react-router-dom";
-import { fetchVideoFeed } from "services/DiscoClubService";
+} from 'antd';
+import { ColumnsType } from 'antd/lib/table';
+import CopyIdToClipboard from 'components/CopyIdToClipboard';
+import { SelectBrand } from 'components/SelectBrand';
+import useFilter from 'hooks/useFilter';
+import { Brand } from 'interfaces/Brand';
+import { FeedItem } from 'interfaces/FeedItem';
+import { Segment } from 'interfaces/Segment';
+import React, { useEffect, useState } from 'react';
+import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
+import { fetchVideoFeed } from 'services/DiscoClubService';
 
 const { Content } = Layout;
 
@@ -46,7 +46,7 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ location, history }) => {
       setLoading(false);
       setVideos(response.results);
     } catch (error) {
-      message.error("Error to get feed");
+      message.error('Error to get feed');
       setLoading(false);
     }
   };
@@ -58,63 +58,63 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ location, history }) => {
 
   const columns: ColumnsType<FeedItem> = [
     {
-      title: "_id",
-      dataIndex: "id",
-      width: "3%",
-      render: (id) => <CopyIdToClipboard id={id} />,
-      align: "center",
+      title: '_id',
+      dataIndex: 'id',
+      width: '3%',
+      render: id => <CopyIdToClipboard id={id} />,
+      align: 'center',
     },
     {
-      title: "Title",
-      dataIndex: "title",
-      width: "18%",
+      title: 'Title',
+      dataIndex: 'title',
+      width: '18%',
       render: (value: string, record: FeedItem) => (
         <Link to={{ pathname: detailsPathname, state: record }}>{value}</Link>
       ),
-      align: "center",
+      align: 'center',
     },
     {
-      title: "Segments",
-      dataIndex: "package",
+      title: 'Segments',
+      dataIndex: 'package',
       render: (pack: Array<any> = []) => <AntTag>{pack.length}</AntTag>,
-      width: "5%",
-      align: "center",
+      width: '5%',
+      align: 'center',
     },
     {
-      title: "Length",
-      dataIndex: "lengthTotal",
-      width: "5%",
-      align: "center",
+      title: 'Length',
+      dataIndex: 'lengthTotal',
+      width: '5%',
+      align: 'center',
     },
     {
-      title: "Expiration Date",
-      dataIndex: "validity",
-      width: "5%",
+      title: 'Expiration Date',
+      dataIndex: 'validity',
+      width: '5%',
       render: (creationDate: Date) =>
         new Date(creationDate).toLocaleDateString(),
-      align: "center",
+      align: 'center',
     },
     {
-      title: "Tags",
-      dataIndex: "package",
-      width: "5%",
+      title: 'Tags',
+      dataIndex: 'package',
+      width: '5%',
       render: (pack: Array<any> = []) => (
         <AntTag>{reduceSegmentsTags(pack)}</AntTag>
       ),
-      align: "center",
+      align: 'center',
     },
     {
-      title: "Status",
-      dataIndex: "status",
-      width: "12%",
-      align: "center",
-      responsive: ["sm"],
+      title: 'Status',
+      dataIndex: 'status',
+      width: '12%',
+      align: 'center',
+      responsive: ['sm'],
     },
     {
-      title: "Actions",
-      key: "action",
-      width: "5%",
-      align: "right",
+      title: 'Actions',
+      key: 'action',
+      width: '5%',
+      align: 'right',
       render: (_, record: FeedItem) => (
         <>
           <Link to={{ pathname: detailsPathname, state: record }}>
@@ -127,10 +127,10 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ location, history }) => {
 
   const onChangeBrand = async (_selectedBrand: Brand | undefined) => {
     if (!_selectedBrand) {
-      removeFilterFunction("brandName");
+      removeFilterFunction('brandName');
       return;
     }
-    addFilterFunction("brandName", (videos) => videos.filter((video) => true));
+    addFilterFunction('brandName', videos => videos.filter(video => true));
   };
 
   return (
@@ -139,7 +139,7 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ location, history }) => {
       <Row gutter={8}>
         <Col xxl={40} lg={6} xs={18}>
           <SelectBrand
-            style={{ width: "100%" }}
+            style={{ width: '100%' }}
             allowClear={true}
             onChange={onChangeBrand}
           ></SelectBrand>

@@ -23,14 +23,14 @@ import {
   LineChartOutlined,
   UserAddOutlined,
   FolderAddOutlined,
-} from "@ant-design/icons";
-import { Menu } from "antd";
-import SubMenu from "antd/lib/menu/SubMenu";
-import { Link, useLocation } from "react-router-dom";
+} from '@ant-design/icons';
+import { Menu } from 'antd';
+import SubMenu from 'antd/lib/menu/SubMenu';
+import { Link, useLocation } from 'react-router-dom';
 
 const AdminSideMenu = () => {
-  const [, pathname] = useLocation().pathname.split("/");
-  const [parentMenu] = pathname.split("_");
+  const [, pathname] = useLocation().pathname.split('/');
+  const [parentMenu] = pathname.split('_');
 
   return (
     <Menu

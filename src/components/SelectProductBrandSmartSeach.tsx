@@ -1,12 +1,12 @@
-import { Typography } from "antd";
-import Select from "antd/lib/select";
-import React, { useEffect, useState } from "react";
-import { ProductBrand } from "../interfaces/ProductBrand";
-import { fetchProductBrands } from "../services/DiscoClubService";
+import { Typography } from 'antd';
+import Select from 'antd/lib/select';
+import React, { useEffect, useState } from 'react';
+import { ProductBrand } from '../interfaces/ProductBrand';
+import { fetchProductBrands } from '../services/DiscoClubService';
 
 type SelectProductBrandProps = Omit<
   React.SelectHTMLAttributes<HTMLSelectElement>,
-  "onChange"
+  'onChange'
 > & {
   onChange: (selectedProductBrand: ProductBrand) => {} | void;
   allowClear?: boolean;
@@ -17,11 +17,11 @@ type SelectProductBrandProps = Omit<
 export const SelectProductBrandSmartSearch: React.FC<SelectProductBrandProps> =
   ({
     onChange,
-    placeholder = "Select a product brand",
+    placeholder = 'Select a product brand',
     style,
     allowClear = true,
-    initialBrandName = "",
-    label = "Product Brand",
+    initialBrandName = '',
+    label = 'Product Brand',
   }) => {
     const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
     const [selectedBrandName, setSelectedBrandName] =
@@ -30,7 +30,7 @@ export const SelectProductBrandSmartSearch: React.FC<SelectProductBrandProps> =
     const _onChange = (value: string) => {
       setSelectedBrandName(value);
       onChange(
-        productBrands.find((brand) => brand.brandName === value) as ProductBrand
+        productBrands.find(brand => brand.brandName === value) as ProductBrand
       );
     };
 
@@ -48,7 +48,7 @@ export const SelectProductBrandSmartSearch: React.FC<SelectProductBrandProps> =
     }, []);
 
     return (
-      <div style={{ marginBottom: "16px" }}>
+      <div style={{ marginBottom: '16px' }}>
         <Typography.Title level={5} title={label}>
           {label}
         </Typography.Title>
@@ -61,7 +61,7 @@ export const SelectProductBrandSmartSearch: React.FC<SelectProductBrandProps> =
           placeholder={placeholder}
           filterOption={true}
         >
-          {productBrands.map((productBrand) => (
+          {productBrands.map(productBrand => (
             <Select.Option key={productBrand.id} value={productBrand.brandName}>
               {productBrand.brandName}
             </Select.Option>

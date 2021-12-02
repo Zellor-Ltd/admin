@@ -1,17 +1,17 @@
-import { CalendarOutlined } from "@ant-design/icons";
-import { Col, DatePicker, PageHeader, Row, Table, Typography } from "antd";
-import { ColumnsType } from "antd/lib/table";
-import useFilter from "hooks/useFilter";
-import { useRequest } from "hooks/useRequest";
+import { CalendarOutlined } from '@ant-design/icons';
+import { Col, DatePicker, PageHeader, Row, Table, Typography } from 'antd';
+import { ColumnsType } from 'antd/lib/table';
+import useFilter from 'hooks/useFilter';
+import { useRequest } from 'hooks/useRequest';
 import {
   WalletDetailParams,
   WalletTransaction,
-} from "interfaces/WalletTransactions";
-import moment from "moment";
-import { useEffect, useState } from "react";
-import { RouteComponentProps } from "react-router-dom";
-import { fetchTransactionsPerBrand } from "services/DiscoClubService";
-import WalletEdit from "./WalletEdit";
+} from 'interfaces/WalletTransactions';
+import moment from 'moment';
+import { useEffect, useState } from 'react';
+import { RouteComponentProps } from 'react-router-dom';
+import { fetchTransactionsPerBrand } from 'services/DiscoClubService';
+import WalletEdit from './WalletEdit';
 
 const WalletDetail: React.FC<RouteComponentProps> = ({ location }) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -40,10 +40,10 @@ const WalletDetail: React.FC<RouteComponentProps> = ({ location }) => {
 
   const columns: ColumnsType<WalletTransaction> = [
     {
-      title: "Date Time",
-      dataIndex: "hCreationDate",
-      width: "20%",
-      align: "left",
+      title: 'Date Time',
+      dataIndex: 'hCreationDate',
+      width: '20%',
+      align: 'left',
       filterIcon: <CalendarOutlined />,
       filterDropdown: () => (
         <DatePicker.RangePicker
@@ -52,39 +52,39 @@ const WalletDetail: React.FC<RouteComponentProps> = ({ location }) => {
         />
       ),
       render: (value: Date) =>
-        `${moment(value).format("DD/MM/YYYY")} ${moment(value).format(
-          "HH:mm:ss"
+        `${moment(value).format('DD/MM/YYYY')} ${moment(value).format(
+          'HH:mm:ss'
         )}`,
     },
     {
-      title: "Type",
-      dataIndex: "type",
-      width: "12%",
+      title: 'Type',
+      dataIndex: 'type',
+      width: '12%',
     },
     {
-      title: "Amount",
-      dataIndex: "discoDollars",
-      width: "10%",
-      align: "center",
+      title: 'Amount',
+      dataIndex: 'discoDollars',
+      width: '10%',
+      align: 'center',
     },
     {
-      title: "Who",
-      width: "20%",
-      align: "right",
-      dataIndex: "type",
+      title: 'Who',
+      width: '20%',
+      align: 'right',
+      dataIndex: 'type',
       render: (value: string) =>
-        value === "reset" ? "admin" : initial.fan.user,
+        value === 'reset' ? 'admin' : initial.fan.user,
     },
   ];
 
   const handleDateChange = (values: any) => {
     if (!values) {
-      removeFilterFunction("creationDate");
+      removeFilterFunction('creationDate');
       return;
     }
-    const startDate = moment(values[0], "DD/MM/YYYY").startOf("day").utc();
-    const endDate = moment(values[1], "DD/MM/YYYY").endOf("day").utc();
-    addFilterFunction("creationDate", (transactions: WalletTransaction[]) =>
+    const startDate = moment(values[0], 'DD/MM/YYYY').startOf('day').utc();
+    const endDate = moment(values[1], 'DD/MM/YYYY').endOf('day').utc();
+    addFilterFunction('creationDate', (transactions: WalletTransaction[]) =>
       transactions.filter(({ hCreationDate }) => {
         return moment(hCreationDate).utc().isBetween(startDate, endDate);
       })

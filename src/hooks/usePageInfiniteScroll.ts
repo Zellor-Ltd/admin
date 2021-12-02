@@ -1,6 +1,6 @@
-import { useContext } from "react";
-import { AppContext } from "contexts/AppContext";
-import { PageInfiniteScrollContext } from "contexts/PageInfiniteScrollContext";
+import { useContext } from 'react';
+import { AppContext } from 'contexts/AppContext';
+import { PageInfiniteScrollContext } from 'contexts/PageInfiniteScrollContext';
 
 export const usePageInfiniteScroll = (fetchFn: Function, filters: {}) => {
   const { refreshing, setRefreshing, doFetch, refreshContext } =

@@ -1,12 +1,12 @@
-import { Typography } from "antd";
-import Select from "antd/lib/select";
-import React, { useEffect, useState } from "react";
-import { Brand } from "../interfaces/Brand";
-import { fetchBrands } from "../services/DiscoClubService";
+import { Typography } from 'antd';
+import Select from 'antd/lib/select';
+import React, { useEffect, useState } from 'react';
+import { Brand } from '../interfaces/Brand';
+import { fetchBrands } from '../services/DiscoClubService';
 
 type SelectBrandProps = Omit<
   React.SelectHTMLAttributes<HTMLSelectElement>,
-  "onChange"
+  'onChange'
 > & {
   onChange: (selectedBrand: Brand) => {};
   allowClear: boolean;
@@ -16,11 +16,11 @@ type SelectBrandProps = Omit<
 
 export const SelectBrandVault: React.FC<SelectBrandProps> = ({
   onChange,
-  placeholder = "Select a brand",
+  placeholder = 'Select a brand',
   style,
   allowClear,
-  initialBrandName = "",
-  label = "Brand Filter",
+  initialBrandName = '',
+  label = 'Brand Filter',
 }) => {
   const [brands, setBrands] = useState<Brand[]>([]);
   const [selectedBrandName, setSelectedBrandName] =
@@ -28,7 +28,7 @@ export const SelectBrandVault: React.FC<SelectBrandProps> = ({
 
   const _onChange = (value: string) => {
     setSelectedBrandName(value);
-    onChange(brands.find((brand) => brand.brandName === value) as Brand);
+    onChange(brands.find(brand => brand.brandName === value) as Brand);
   };
 
   useEffect(() => {
@@ -43,7 +43,7 @@ export const SelectBrandVault: React.FC<SelectBrandProps> = ({
   }, []);
 
   return (
-    <div style={{ marginBottom: "16px" }}>
+    <div style={{ marginBottom: '16px' }}>
       <Typography.Title level={5} title={label}>
         {label}
       </Typography.Title>

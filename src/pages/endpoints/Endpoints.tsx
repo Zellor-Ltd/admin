@@ -1,13 +1,13 @@
-import { EditOutlined } from "@ant-design/icons";
-import { Button, Col, PageHeader, Row, Table } from "antd";
-import { ColumnsType } from "antd/lib/table";
-import { SearchFilter } from "components/SearchFilter";
-import useFilter from "hooks/useFilter";
-import { Endpoint } from "interfaces/Endpoint";
-import { useEffect, useState } from "react";
-import { Link, RouteComponentProps } from "react-router-dom";
-import { fetchEndpoints } from "services/DiscoClubService";
-import CopyIdToClipboard from "components/CopyIdToClipboard";
+import { EditOutlined } from '@ant-design/icons';
+import { Button, Col, PageHeader, Row, Table } from 'antd';
+import { ColumnsType } from 'antd/lib/table';
+import { SearchFilter } from 'components/SearchFilter';
+import useFilter from 'hooks/useFilter';
+import { Endpoint } from 'interfaces/Endpoint';
+import { useEffect, useState } from 'react';
+import { Link, RouteComponentProps } from 'react-router-dom';
+import { fetchEndpoints } from 'services/DiscoClubService';
+import CopyIdToClipboard from 'components/CopyIdToClipboard';
 
 const Endpoints: React.FC<RouteComponentProps> = ({ history, location }) => {
   const detailsPathname = `${location.pathname}/endpoint`;
@@ -21,20 +21,20 @@ const Endpoints: React.FC<RouteComponentProps> = ({ history, location }) => {
 
   const columns: ColumnsType<Endpoint> = [
     {
-      title: "_id",
-      dataIndex: "id",
-      width: "6%",
-      render: (id) => <CopyIdToClipboard id={id} />,
-      align: "center",
+      title: '_id',
+      dataIndex: 'id',
+      width: '6%',
+      render: id => <CopyIdToClipboard id={id} />,
+      align: 'center',
     },
-    { title: "Name", dataIndex: "name", width: "15%" },
-    { title: "Container", dataIndex: "container", width: "15%" },
-    { title: "Method", dataIndex: "action", width: "10%" },
+    { title: 'Name', dataIndex: 'name', width: '15%' },
+    { title: 'Container', dataIndex: 'container', width: '15%' },
+    { title: 'Method', dataIndex: 'action', width: '10%' },
     {
-      title: "Actions",
-      key: "action",
-      width: "5%",
-      align: "right",
+      title: 'Actions',
+      key: 'action',
+      width: '5%',
+      align: 'right',
       render: (_, record: Endpoint) => (
         <>
           {!record.isActive && (
@@ -64,8 +64,8 @@ const Endpoints: React.FC<RouteComponentProps> = ({ history, location }) => {
   }, []);
 
   const searchFilterFunction = (filterText: string) => {
-    addFilterFunction("endpointName", (endpoints) =>
-      endpoints.filter((endpoint) =>
+    addFilterFunction('endpointName', endpoints =>
+      endpoints.filter(endpoint =>
         endpoint.name.toUpperCase().includes(filterText.toUpperCase())
       )
     );

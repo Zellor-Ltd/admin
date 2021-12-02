@@ -1,12 +1,12 @@
-import { Input, Modal } from "antd";
-import { FormInstance } from "antd/lib/form";
-import { Button } from "antd/lib/radio";
-import { ContentState, convertToRaw, EditorState } from "draft-js";
-import draftToHtml from "draftjs-to-html";
-import htmlToDraft from "html-to-draftjs";
-import React, { useState } from "react";
-import { Editor } from "react-draft-wysiwyg";
-import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
+import { Input, Modal } from 'antd';
+import { FormInstance } from 'antd/lib/form';
+import { Button } from 'antd/lib/radio';
+import { ContentState, convertToRaw, EditorState } from 'draft-js';
+import draftToHtml from 'draftjs-to-html';
+import htmlToDraft from 'html-to-draftjs';
+import React, { useState } from 'react';
+import { Editor } from 'react-draft-wysiwyg';
+import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 
 const { TextArea } = Input;
 
@@ -59,7 +59,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
     setShowModal(false);
     // Envolve htmlValue content with a <p></p> to prevent RichTextEditor from crashing.
     const formattedHtmlValue =
-      htmlValue.substr(0, 3) === "<p>" ? htmlValue : `<p>${htmlValue}</p>`;
+      htmlValue.substr(0, 3) === '<p>' ? htmlValue : `<p>${htmlValue}</p>`;
     setHtmlValue(formattedHtmlValue);
     form.setFieldsValue({
       [formField]: formattedHtmlValue,
@@ -93,10 +93,10 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
           >
             <TextArea
               value={htmlValue}
-              onChange={(event) => {
+              onChange={event => {
                 setHtmlValue(event.target.value);
               }}
-              style={{ height: "300px" }}
+              style={{ height: '300px' }}
             />
           </Modal>
         </>

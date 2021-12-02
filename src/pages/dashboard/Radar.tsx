@@ -1,4 +1,4 @@
-import React, { PureComponent } from "react";
+import React, { PureComponent } from 'react';
 import {
   Radar,
   RadarChart,
@@ -6,41 +6,41 @@ import {
   PolarAngleAxis,
   PolarRadiusAxis,
   ResponsiveContainer,
-} from "recharts";
+} from 'recharts';
 
 const data = [
   {
-    subject: "Math",
+    subject: 'Math',
     A: 120,
     B: 110,
     fullMark: 150,
   },
   {
-    subject: "Chinese",
+    subject: 'Chinese',
     A: 98,
     B: 130,
     fullMark: 150,
   },
   {
-    subject: "English",
+    subject: 'English',
     A: 86,
     B: 130,
     fullMark: 150,
   },
   {
-    subject: "Geography",
+    subject: 'Geography',
     A: 99,
     B: 100,
     fullMark: 150,
   },
   {
-    subject: "Physics",
+    subject: 'Physics',
     A: 85,
     B: 90,
     fullMark: 150,
   },
   {
-    subject: "History",
+    subject: 'History',
     A: 65,
     B: 85,
     fullMark: 150,
@@ -48,7 +48,7 @@ const data = [
 ];
 
 export default class Example extends PureComponent {
-  static demoUrl = "https://codesandbox.io/s/simple-radar-chart-rjoc6";
+  static demoUrl = 'https://codesandbox.io/s/simple-radar-chart-rjoc6';
 
   render() {
     return (
