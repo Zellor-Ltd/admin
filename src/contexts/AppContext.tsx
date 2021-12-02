@@ -1,6 +1,6 @@
-import { useRequest, DoRequest, DoFetch } from "hooks/useRequest";
-import { PageInfiniteScrollProvider } from "./PageInfiniteScrollContext";
-import React, { useState } from "react";
+import { useRequest, DoRequest, DoFetch } from 'hooks/useRequest';
+import { PageInfiniteScrollProvider } from './PageInfiniteScrollContext';
+import React, { useState } from 'react';
 
 type FilterValue = {
   [key: string]: any;
@@ -38,11 +38,11 @@ export const AppProvider = ({ children }: { children: JSX.Element }) => {
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const { doFetch, doRequest } = useRequest({ setLoading });
   const [filterValues, setFilterValues] = useState<FilterValue>({});
-  const [lastVisitedPage, setLastVisitedPage] = useState<string>("");
+  const [lastVisitedPage, setLastVisitedPage] = useState<string>('');
   const [tableData, setTableData] = useState<any[]>([]);
 
   const setFilterValue: SetFilterValue = (key, value) => {
-    setFilterValues((prev) => ({ ...prev, [key]: value }));
+    setFilterValues(prev => ({ ...prev, [key]: value }));
   };
 
   const usePageFilter: UsePageFilter = <T,>(key: string) => {

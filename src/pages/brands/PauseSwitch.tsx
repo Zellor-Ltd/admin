@@ -1,7 +1,7 @@
-import { Switch } from "antd";
-import { Brand } from "interfaces/Brand";
-import React, { useState } from "react";
-import { PauseModal } from "./PauseModal";
+import { Switch } from 'antd';
+import { Brand } from 'interfaces/Brand';
+import React, { useState } from 'react';
+import { PauseModal } from './PauseModal';
 
 export const PauseSwitch: React.FC<{ brand: Brand; reloadFn: Function }> = ({
   brand,

@@ -1,6 +1,6 @@
-import { Col, Row, Typography } from "antd";
-import { useRequest } from "../../hooks/useRequest";
-import React, { useEffect, useState } from "react";
+import { Col, Row, Typography } from 'antd';
+import { useRequest } from '../../hooks/useRequest';
+import React, { useEffect, useState } from 'react';
 import {
   CartesianGrid,
   Legend,
@@ -10,8 +10,8 @@ import {
   Tooltip,
   XAxis,
   YAxis,
-} from "recharts";
-import { fetchActiveRegFansPerDay } from "../../services/DiscoClubService";
+} from 'recharts';
+import { fetchActiveRegFansPerDay } from '../../services/DiscoClubService';
 
 interface DashboardProps {}
 
@@ -32,15 +32,15 @@ const RegsPerDay: React.FC<DashboardProps> = () => {
 
   return (
     <>
-      <div style={{ marginBottom: "16px" }}>
+      <div style={{ marginBottom: '16px' }}>
         <Row>
           <Col lg={12} xs={24}>
             <Typography.Title level={3}>Registrations per Day</Typography.Title>
           </Col>
         </Row>
       </div>
-      <Row style={{ height: "300px" }}>
-        <Col style={{ width: "75%" }}>
+      <Row style={{ height: '300px' }}>
+        <Col style={{ width: '75%' }}>
           <ResponsiveContainer>
             <LineChart
               width={500}

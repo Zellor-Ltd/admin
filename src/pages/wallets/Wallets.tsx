@@ -1,17 +1,17 @@
-import { Col, PageHeader, Row, Table } from "antd";
-import { ColumnsType } from "antd/lib/table";
-import { SelectBrand } from "components/SelectBrand";
-import { SelectFan } from "components/SelectFan";
-import useFilter from "hooks/useFilter";
-import { useRequest } from "hooks/useRequest";
-import { Brand } from "interfaces/Brand";
-import { Fan } from "interfaces/Fan";
-import { Wallet } from "interfaces/Wallet";
-import { WalletDetailParams } from "interfaces/WalletTransactions";
-import { useState } from "react";
-import { Link, RouteComponentProps } from "react-router-dom";
-import { fetchBalancePerBrand } from "services/DiscoClubService";
-import WalletEdit from "./WalletEdit";
+import { Col, PageHeader, Row, Table } from 'antd';
+import { ColumnsType } from 'antd/lib/table';
+import { SelectBrand } from 'components/SelectBrand';
+import { SelectFan } from 'components/SelectFan';
+import useFilter from 'hooks/useFilter';
+import { useRequest } from 'hooks/useRequest';
+import { Brand } from 'interfaces/Brand';
+import { Fan } from 'interfaces/Fan';
+import { Wallet } from 'interfaces/Wallet';
+import { WalletDetailParams } from 'interfaces/WalletTransactions';
+import { useState } from 'react';
+import { Link, RouteComponentProps } from 'react-router-dom';
+import { fetchBalancePerBrand } from 'services/DiscoClubService';
+import WalletEdit from './WalletEdit';
 
 const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
   const detailsPathname = `${location.pathname}/wallet`;
@@ -30,9 +30,9 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
 
   const columns: ColumnsType<Wallet> = [
     {
-      title: "Master Brand",
-      dataIndex: "brandName",
-      width: "40%",
+      title: 'Master Brand',
+      dataIndex: 'brandName',
+      width: '40%',
       render: (value: string, record: Wallet) => (
         <Link
           to={{
@@ -53,10 +53,10 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
       ),
     },
     {
-      title: "DD Balance",
-      dataIndex: "discoDollars",
-      width: "15%",
-      align: "right",
+      title: 'DD Balance',
+      dataIndex: 'discoDollars',
+      width: '15%',
+      align: 'right',
     },
   ];
 
@@ -71,11 +71,11 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
 
   const onChangeBrand = async (_selectedBrand: Brand | undefined) => {
     if (!_selectedBrand) {
-      removeFilterFunction("brandName");
+      removeFilterFunction('brandName');
       return;
     }
-    addFilterFunction("brandName", (wallets) =>
-      wallets.filter((wallet) => wallet.brandName === _selectedBrand.brandName)
+    addFilterFunction('brandName', wallets =>
+      wallets.filter(wallet => wallet.brandName === _selectedBrand.brandName)
     );
     setSelectedBrand(_selectedBrand);
   };
@@ -89,14 +89,14 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
             <Col lg={6} xs={12}>
               <SelectFan
                 onChange={onChangeFan}
-                style={{ width: "100%" }}
+                style={{ width: '100%' }}
                 allowClear={false}
               />
             </Col>
             {selectedFan && (
               <Col lg={6} xs={12}>
                 <SelectBrand
-                  style={{ width: "100%" }}
+                  style={{ width: '100%' }}
                   allowClear={true}
                   onChange={onChangeBrand}
                 ></SelectBrand>

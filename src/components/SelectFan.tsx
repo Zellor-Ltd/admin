@@ -1,13 +1,13 @@
-import Select from "antd/lib/select";
-import React, { useContext, useEffect, useState } from "react";
-import { fetchFans } from "../services/DiscoClubService";
-import { Fan } from "../interfaces/Fan";
-import { Typography } from "antd";
-import { AppContext } from "contexts/AppContext";
+import Select from 'antd/lib/select';
+import React, { useContext, useEffect, useState } from 'react';
+import { fetchFans } from '../services/DiscoClubService';
+import { Fan } from '../interfaces/Fan';
+import { Typography } from 'antd';
+import { AppContext } from 'contexts/AppContext';
 
 type SelectFanProps = Omit<
   React.SelectHTMLAttributes<HTMLSelectElement>,
-  "onChange"
+  'onChange'
 > & {
   onChange: (selectedFan: Fan) => {};
   allowClear?: boolean;
@@ -16,10 +16,10 @@ type SelectFanProps = Omit<
 
 export const SelectFan: React.FC<SelectFanProps> = ({
   onChange,
-  placeholder = "Select a fan",
+  placeholder = 'Select a fan',
   allowClear = true,
   style,
-  label = "Fan Filter",
+  label = 'Fan Filter',
 }) => {
   const { filterValues, setFilterValues } = useContext(AppContext);
   const [fans, setFans] = useState<Fan[]>([]);
@@ -49,17 +49,17 @@ export const SelectFan: React.FC<SelectFanProps> = ({
 
   const _onChange = (value: string) => {
     setSelectedFan(value);
-    setFilterValues((prev) => ({ ...prev, [label]: value }));
+    setFilterValues(prev => ({ ...prev, [label]: value }));
     onChange(
       fans.find(
         // (fan) => fan.name === value || fan.email === value
-        (fan) => fan.user === value
+        fan => fan.user === value
       ) as Fan
     );
   };
 
   return (
-    <div style={{ marginBottom: "16px" }}>
+    <div style={{ marginBottom: '16px' }}>
       <Typography.Title level={5} title={label}>
         {label}
       </Typography.Title>
@@ -71,7 +71,7 @@ export const SelectFan: React.FC<SelectFanProps> = ({
         style={style}
         placeholder={placeholder}
       >
-        {searchList.map((value) => (
+        {searchList.map(value => (
           <Select.Option key={value} value={value}>
             {value}
           </Select.Option>

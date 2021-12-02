@@ -1,6 +1,6 @@
-import { Button, Col, Divider, Input, Modal, Row } from "antd";
-import { useRequest } from "hooks/useRequest";
-import React, { useEffect, useState } from "react";
+import { Button, Col, Divider, Input, Modal, Row } from 'antd';
+import { useRequest } from 'hooks/useRequest';
+import React, { useEffect, useState } from 'react';
 
 type formParams = { [key: string]: any };
 
@@ -11,7 +11,7 @@ export interface RecordAPIRequest {
   params: {
     label: string;
     field: string;
-    type: "text" | "number";
+    type: 'text' | 'number';
     default: string | number;
   }[];
 }
@@ -41,9 +41,9 @@ const APITestModal: React.FC<APITestModalProps<any>> = ({
     if (!selectedRecord) return;
     setRecordRequests(getRecordAPIRequests(selectedRecord));
     setFormValues([
-      ...getRecordAPIRequests(selectedRecord).map((request) => {
+      ...getRecordAPIRequests(selectedRecord).map(request => {
         const params: formParams = {};
-        request.params.forEach((param) => {
+        request.params.forEach(param => {
           params[param.field] = param.default;
         });
         return params;
@@ -59,7 +59,7 @@ const APITestModal: React.FC<APITestModalProps<any>> = ({
 
   const handleClose = () => {
     setSelectedRecord(null);
-    setResponseBody("");
+    setResponseBody('');
   };
 
   const handleFormChange = (
@@ -67,7 +67,7 @@ const APITestModal: React.FC<APITestModalProps<any>> = ({
     index: number,
     param: string
   ) => {
-    setFormValues((prev) => {
+    setFormValues(prev => {
       prev[index][param] = e.target.value;
       return [...prev];
     });
@@ -97,14 +97,14 @@ const APITestModal: React.FC<APITestModalProps<any>> = ({
                   </Button>
                 </Col>
               </Row>
-              {request.params.map((param) => {
+              {request.params.map(param => {
                 return (
-                  <Row style={{ margin: "8px 0" }}>
+                  <Row style={{ margin: '8px 0' }}>
                     <Input
                       type={param.type}
                       defaultValue={param.default}
                       value={formValues[index][param.field]}
-                      onChange={(e) => handleFormChange(e, index, param.field)}
+                      onChange={e => handleFormChange(e, index, param.field)}
                     />
                   </Row>
                 );
@@ -120,7 +120,7 @@ const APITestModal: React.FC<APITestModalProps<any>> = ({
             </Col>
             <Col>
               {responseBody && (
-                <h4 style={{ color: "grey" }}>Use Ctrl + F to search.</h4>
+                <h4 style={{ color: 'grey' }}>Use Ctrl + F to search.</h4>
               )}
             </Col>
           </Row>

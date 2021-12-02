@@ -1,15 +1,15 @@
-import { CopyOutlined } from "@ant-design/icons";
-import { Button, Col, Form, Input, message, PageHeader, Row } from "antd";
-import { useRequest } from "hooks/useRequest";
-import React, { useState } from "react";
-import CopyToClipboard from "react-copy-to-clipboard";
-import { RouteComponentProps } from "react-router-dom";
-import { getMasterPassword } from "services/DiscoClubService";
+import { CopyOutlined } from '@ant-design/icons';
+import { Button, Col, Form, Input, message, PageHeader, Row } from 'antd';
+import { useRequest } from 'hooks/useRequest';
+import React, { useState } from 'react';
+import CopyToClipboard from 'react-copy-to-clipboard';
+import { RouteComponentProps } from 'react-router-dom';
+import { getMasterPassword } from 'services/DiscoClubService';
 
 const MasterPassword: React.FC<RouteComponentProps> = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const { doFetch } = useRequest({ setLoading });
-  const [masterPassword, setMasterPassword] = useState<string>("");
+  const [masterPassword, setMasterPassword] = useState<string>('');
 
   const onFinish = async (values: any) => {
     const response: any = await doFetch(
@@ -43,15 +43,15 @@ const MasterPassword: React.FC<RouteComponentProps> = () => {
       ) : (
         <p>
           New master password generated:&nbsp;
-          <b style={{ fontSize: "16px" }}>{masterPassword}</b>
+          <b style={{ fontSize: '16px' }}>{masterPassword}</b>
           <CopyToClipboard text={masterPassword}>
             <Button
               onClick={() => {
-                message.success("Copied password to Clipboard.");
+                message.success('Copied password to Clipboard.');
               }}
               type="link"
               style={{
-                marginLeft: "-8px",
+                marginLeft: '-8px',
               }}
             >
               <CopyOutlined />

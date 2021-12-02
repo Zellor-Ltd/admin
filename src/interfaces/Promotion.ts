@@ -1,5 +1,5 @@
-import { Brand } from "./Brand";
-import { Setting } from "./Setting";
+import { Brand } from './Brand';
+import { Setting } from './Setting';
 
 export interface Promotion {
   id: string;

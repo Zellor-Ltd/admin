@@ -1,12 +1,12 @@
-import { Typography } from "antd";
-import Select from "antd/lib/select";
-import React, { useEffect, useState } from "react";
-import { ProductBrand } from "../interfaces/ProductBrand";
-import { fetchProductBrands } from "../services/DiscoClubService";
+import { Typography } from 'antd';
+import Select from 'antd/lib/select';
+import React, { useEffect, useState } from 'react';
+import { ProductBrand } from '../interfaces/ProductBrand';
+import { fetchProductBrands } from '../services/DiscoClubService';
 
 type ProductBrandFilterProps = Omit<
   React.SelectHTMLAttributes<HTMLSelectElement>,
-  "onChange"
+  'onChange'
 > & {
   onChange: (selectedBrand: ProductBrand) => {};
   allowClear?: boolean;
@@ -16,11 +16,11 @@ type ProductBrandFilterProps = Omit<
 
 export const ProductBrandFilter: React.FC<ProductBrandFilterProps> = ({
   onChange,
-  placeholder = "Select a Brand",
+  placeholder = 'Select a Brand',
   style,
   allowClear = true,
   initialProductBrandName,
-  label = "Product Brand",
+  label = 'Product Brand',
 }) => {
   const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
   const [selectedProductBrandName, setSelectedProductBrandName] =
@@ -28,7 +28,7 @@ export const ProductBrandFilter: React.FC<ProductBrandFilterProps> = ({
 
   const _onChange = (value: string) => {
     setSelectedProductBrandName(value);
-    onChange(productBrands.find((brand) => brand.id === value) as ProductBrand);
+    onChange(productBrands.find(brand => brand.id === value) as ProductBrand);
   };
 
   useEffect(() => {
@@ -43,7 +43,7 @@ export const ProductBrandFilter: React.FC<ProductBrandFilterProps> = ({
   }, []);
 
   return (
-    <div style={{ marginBottom: "16px" }}>
+    <div style={{ marginBottom: '16px' }}>
       <Typography.Title level={5} title={label}>
         {label}
       </Typography.Title>

@@ -1,7 +1,7 @@
-import { Button, Col, Form, InputNumber, Row, Select } from "antd";
-import { Brand } from "interfaces/Brand";
-import { Tag } from "interfaces/Tag";
-import { useState } from "react";
+import { Button, Col, Form, InputNumber, Row, Select } from 'antd';
+import { Brand } from 'interfaces/Brand';
+import { Tag } from 'interfaces/Tag';
+import { useState } from 'react';
 
 interface FormProps {
   brands: Brand[];
@@ -17,42 +17,43 @@ const TagForm: React.FC<FormProps> = ({
   tags,
 }) => {
   const [filteredTags, setFilteredTags] = useState<Tag[]>(
-    tag?.brand?.id
-      ? tags.filter((tag) => tag.brand?.id === tag?.brand?.id)
-      : tags
+    tag?.brand?.id ? tags.filter(tag => tag.brand?.id === tag?.brand?.id) : tags
   );
   const [selectedBrand, setSelectedBrand] = useState<string>(
-    tag?.brand?.id || ""
+    tag?.brand?.id || ''
   );
   const [form] = Form.useForm();
 
   const onChangeTag = (key: string) => {
     const selectedTag = tags.find((tag: Tag) => tag.id === key);
 
-    setSelectedBrand((prev) => {
-      prev = selectedTag?.brand?.id || "";
+    setSelectedBrand(prev => {
+      prev = selectedTag?.brand?.id || '';
       return prev;
     });
 
     if (selectedTag) {
       selectedTag.position = selectedTag.position?.map(position => {
         return {
-          x: position.x ?? form.getFieldValue(["position", 0, "x"]),
-          y: position.y ?? form.getFieldValue(["position", 0, "y"]),
-          z: position.z ?? form.getFieldValue(["position", 0, "z"]),
-          opacity: position.opacity ?? form.getFieldValue(["position", 0, "opacity"]),
-          startTime: position.startTime ?? form.getFieldValue(["position", 0, "startTime"]),
-        }
-      })
+          x: position.x ?? form.getFieldValue(['position', 0, 'x']),
+          y: position.y ?? form.getFieldValue(['position', 0, 'y']),
+          z: position.z ?? form.getFieldValue(['position', 0, 'z']),
+          opacity:
+            position.opacity ?? form.getFieldValue(['position', 0, 'opacity']),
+          startTime:
+            position.startTime ??
+            form.getFieldValue(['position', 0, 'startTime']),
+        };
+      });
     }
 
     form.setFieldsValue({ ...selectedTag });
   };
 
   const handleBrandFilter = (value: any) => {
-    setFilteredTags((prev) => {
+    setFilteredTags(prev => {
       if (value) {
-        prev = tags.filter((tag) => tag.brand?.id === value);
+        prev = tags.filter(tag => tag.brand?.id === value);
       } else {
         prev = tags;
       }
@@ -60,7 +61,7 @@ const TagForm: React.FC<FormProps> = ({
     });
     setSelectedBrand(value);
     if (value) {
-      form.setFieldsValue({ id: "" });
+      form.setFieldsValue({ id: '' });
     }
   };
 
@@ -75,10 +76,10 @@ const TagForm: React.FC<FormProps> = ({
               filterOption={(input, option) =>
                 option?.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
               }
-              onChange={(v) => handleBrandFilter(v)}
+              onChange={v => handleBrandFilter(v)}
               value={selectedBrand}
             >
-              {brands.map((brand) => (
+              {brands.map(brand => (
                 <Select.Option key={brand.id} value={brand.id}>
                   {brand.brandName}
                 </Select.Option>
@@ -87,9 +88,9 @@ const TagForm: React.FC<FormProps> = ({
           </Form.Item>
         </Col>
         <Col lg={12} xs={24}>
-          <Form.Item name={"id"} label="Tag" rules={[{ required: true }]}>
+          <Form.Item name={'id'} label="Tag" rules={[{ required: true }]}>
             <Select onChange={(key: string) => onChangeTag(key)}>
-              {filteredTags.map((tag) => (
+              {filteredTags.map(tag => (
                 <Select.Option key={tag.id} value={tag.id}>
                   {tag.tagName}
                 </Select.Option>
@@ -99,8 +100,8 @@ const TagForm: React.FC<FormProps> = ({
         </Col>
         <Col lg={3} xs={24}>
           <Form.Item
-            name={["position", 0, "startTime"]}
-            fieldKey={"startTime"}
+            name={['position', 0, 'startTime']}
+            fieldKey={'startTime'}
             label="Start Time"
             rules={[{ required: true }]}
           >
@@ -109,8 +110,8 @@ const TagForm: React.FC<FormProps> = ({
         </Col>
         <Col lg={3} xs={24}>
           <Form.Item
-            name={["position", 0, "opacity"]}
-            fieldKey={"opacity"}
+            name={['position', 0, 'opacity']}
+            fieldKey={'opacity'}
             label="Opacity"
             rules={[{ required: true }]}
             initialValue={1}
@@ -120,8 +121,8 @@ const TagForm: React.FC<FormProps> = ({
         </Col>
         <Col lg={3} xs={24}>
           <Form.Item
-            name={["position", 0, "duration"]}
-            fieldKey={"duration"}
+            name={['position', 0, 'duration']}
+            fieldKey={'duration'}
             label="duration"
             rules={[{ required: true }]}
           >
@@ -130,8 +131,8 @@ const TagForm: React.FC<FormProps> = ({
         </Col>
         <Col lg={3} xs={24}>
           <Form.Item
-            name={["position", 0, "x"]}
-            fieldKey={"x"}
+            name={['position', 0, 'x']}
+            fieldKey={'x'}
             label="Position X"
             rules={[{ required: true }]}
             initialValue={0}
@@ -141,8 +142,8 @@ const TagForm: React.FC<FormProps> = ({
         </Col>
         <Col lg={3} xs={24}>
           <Form.Item
-            name={["position", 0, "y"]}
-            fieldKey={"y"}
+            name={['position', 0, 'y']}
+            fieldKey={'y'}
             label="Position Y"
             rules={[{ required: true }]}
             initialValue={0}
@@ -152,8 +153,8 @@ const TagForm: React.FC<FormProps> = ({
         </Col>
         <Col lg={3} xs={24}>
           <Form.Item
-            name={["position", 0, "z"]}
-            fieldKey={"z"}
+            name={['position', 0, 'z']}
+            fieldKey={'z'}
             label="Z Index"
             rules={[{ required: true }]}
             initialValue={1}

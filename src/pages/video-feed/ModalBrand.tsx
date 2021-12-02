@@ -1,8 +1,8 @@
-import { Col, Form, Input, InputNumber, Modal, Row, Select } from "antd";
-import { Brand } from "interfaces/Brand";
-import { useEffect, useState } from "react";
-import { fetchBrands } from "services/DiscoClubService";
-import { useResetFormOnCloseModal } from "hooks/useResetFormCloseModal";
+import { Col, Form, Input, InputNumber, Modal, Row, Select } from 'antd';
+import { Brand } from 'interfaces/Brand';
+import { useEffect, useState } from 'react';
+import { fetchBrands } from 'services/DiscoClubService';
+import { useResetFormOnCloseModal } from 'hooks/useResetFormCloseModal';
 
 interface ModalFormProps {
   brand: Brand | undefined;
@@ -47,7 +47,7 @@ const ModalBrand: React.FC<ModalFormProps> = ({ brand, visible, onCancel }) => {
   };
 
   const onChangeBrand = (key: string) => {
-    setselectedBrand(brands.find((brand) => brand.id === key));
+    setselectedBrand(brands.find(brand => brand.id === key));
   };
 
   return (
@@ -56,7 +56,7 @@ const ModalBrand: React.FC<ModalFormProps> = ({ brand, visible, onCancel }) => {
       visible={visible}
       onOk={onOk}
       onCancel={onCancel}
-      width={"80%"}
+      width={'80%'}
       okButtonProps={{ loading: loading }}
       forceRender
     >
@@ -71,7 +71,7 @@ const ModalBrand: React.FC<ModalFormProps> = ({ brand, visible, onCancel }) => {
             <Col lg={6} xs={0}>
               <Form.Item name="brandName" label="Brand">
                 <Select onChange={onChangeBrand}>
-                  {brands.map((brand) => (
+                  {brands.map(brand => (
                     <Select.Option key={brand.id} value={brand.id}>
                       {brand.brandName}
                     </Select.Option>
@@ -82,12 +82,12 @@ const ModalBrand: React.FC<ModalFormProps> = ({ brand, visible, onCancel }) => {
 
             <Col lg={6} xs={24}>
               <Form.Item name="startTime" label="Start Time">
-                <InputNumber style={{ width: "100%" }} />
+                <InputNumber style={{ width: '100%' }} />
               </Form.Item>
             </Col>
             <Col lg={6} xs={24}>
               <Form.Item name="duration" label="Duration">
-                <InputNumber style={{ width: "100%" }} />
+                <InputNumber style={{ width: '100%' }} />
               </Form.Item>
             </Col>
             <Col lg={6} xs={24}>
@@ -96,7 +96,7 @@ const ModalBrand: React.FC<ModalFormProps> = ({ brand, visible, onCancel }) => {
                 label="Opacity"
                 // rules={[{ required: true }]}
               >
-                <InputNumber style={{ width: "100%" }} />
+                <InputNumber style={{ width: '100%' }} />
               </Form.Item>
             </Col>
             <Col lg={8} xs={24}>
@@ -105,7 +105,7 @@ const ModalBrand: React.FC<ModalFormProps> = ({ brand, visible, onCancel }) => {
                 label="Position X"
                 // rules={[{ required: true }]}
               >
-                <InputNumber style={{ width: "100%" }} />
+                <InputNumber style={{ width: '100%' }} />
               </Form.Item>
             </Col>
             <Col lg={8} xs={24}>
@@ -114,7 +114,7 @@ const ModalBrand: React.FC<ModalFormProps> = ({ brand, visible, onCancel }) => {
                 label="Position Y"
                 // rules={[{ required: true }]}
               >
-                <InputNumber style={{ width: "100%" }} />
+                <InputNumber style={{ width: '100%' }} />
               </Form.Item>
             </Col>
             <Col lg={8} xs={24}>
@@ -123,7 +123,7 @@ const ModalBrand: React.FC<ModalFormProps> = ({ brand, visible, onCancel }) => {
                 label="Z Index"
                 // rules={[{ required: true }]}
               >
-                <InputNumber style={{ width: "100%" }} />
+                <InputNumber style={{ width: '100%' }} />
               </Form.Item>
             </Col>
           </Row>

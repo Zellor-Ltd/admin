@@ -1,5 +1,5 @@
-import { Form } from "antd";
-import EditableContext from "./EditableContext";
+import { Form } from 'antd';
+import EditableContext from './EditableContext';
 
 interface EditableRowProps {
   index: number;

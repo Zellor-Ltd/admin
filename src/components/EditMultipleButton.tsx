@@ -1,5 +1,5 @@
-import { Button } from "antd";
-import React, { useEffect, useState } from "react";
+import { Button } from 'antd';
+import React, { useEffect, useState } from 'react';
 
 export interface EditMultipleModalProps<T> {
   selectedItems: T[];
@@ -17,7 +17,7 @@ interface EditProductsButtonProps {
 }
 
 const EditMultipleButton: React.FC<EditProductsButtonProps> = ({
-  text = "Edit",
+  text = 'Edit',
   arrayList,
   selectedRowKeys,
   onOk,
@@ -29,7 +29,7 @@ const EditMultipleButton: React.FC<EditProductsButtonProps> = ({
 
   useEffect(() => {
     setSelectedItems(
-      arrayList.filter((item) => selectedRowKeys.includes(item.id))
+      arrayList.filter(item => selectedRowKeys.includes(item.id))
     );
   }, [arrayList, selectedRowKeys]);
 
@@ -43,7 +43,7 @@ const EditMultipleButton: React.FC<EditProductsButtonProps> = ({
   };
 
   return (
-    <div style={{ marginBottom: "16px" }}>
+    <div style={{ marginBottom: '16px' }}>
       <Button
         type="primary"
         onClick={() => setShowEditProductModal(true)}

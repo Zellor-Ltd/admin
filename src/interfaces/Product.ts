@@ -1,9 +1,9 @@
-import { Brand } from "./Brand";
-import { SelectedProductCategories } from "./Category";
-import { Video } from "./Video";
-import { Tag } from "./Tag";
-import { ProductBrand } from "./ProductBrand";
-import { Image } from "./Image";
+import { Brand } from './Brand';
+import { SelectedProductCategories } from './Category';
+import { Video } from './Video';
+import { Tag } from './Tag';
+import { ProductBrand } from './ProductBrand';
+import { Image } from './Image';
 
 export interface Product {
   id: string;

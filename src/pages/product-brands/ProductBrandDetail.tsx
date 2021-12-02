@@ -1,11 +1,11 @@
-import { Button, Col, Form, Input, PageHeader, Row } from "antd";
-import { Upload } from "components";
-import { useRequest } from "../../hooks/useRequest";
-import { useState } from "react";
-import { RouteComponentProps } from "react-router-dom";
-import { saveProductBrand } from "../../services/DiscoClubService";
+import { Button, Col, Form, Input, PageHeader, Row } from 'antd';
+import { Upload } from 'components';
+import { useRequest } from '../../hooks/useRequest';
+import { useState } from 'react';
+import { RouteComponentProps } from 'react-router-dom';
+import { saveProductBrand } from '../../services/DiscoClubService';
 
-const ProductBrandsDetail: React.FC<RouteComponentProps> = (props) => {
+const ProductBrandsDetail: React.FC<RouteComponentProps> = props => {
   const { history, location } = props;
   const initial: any = location.state;
   const [loading, setLoading] = useState<boolean>(false);

@@ -3,26 +3,26 @@ import {
   OrderedListOutlined,
   SettingOutlined,
   SearchOutlined,
-} from "@ant-design/icons";
-import { Button, Col, PageHeader, Row, Table, Tag } from "antd";
-import { ColumnsType } from "antd/lib/table";
-import CopyIdToClipboard from "components/CopyIdToClipboard";
-import EditMultipleButton from "components/EditMultipleButton";
-import { SearchFilter } from "components/SearchFilter";
-import useFilter from "hooks/useFilter";
-import { useRequest } from "hooks/useRequest";
-import { Fan } from "interfaces/Fan";
-import EditFanModal from "pages/fans/EditFanModal";
-import React, { useEffect, useState } from "react";
-import { Link, RouteComponentProps } from "react-router-dom";
-import { fetchFans } from "services/DiscoClubService";
-import FanAPITestModal from "./FanAPITestModal";
-import FanFeedModal from "./FanFeedModal";
+} from '@ant-design/icons';
+import { Button, Col, PageHeader, Row, Table, Tag } from 'antd';
+import { ColumnsType } from 'antd/lib/table';
+import CopyIdToClipboard from 'components/CopyIdToClipboard';
+import EditMultipleButton from 'components/EditMultipleButton';
+import { SearchFilter } from 'components/SearchFilter';
+import useFilter from 'hooks/useFilter';
+import { useRequest } from 'hooks/useRequest';
+import { Fan } from 'interfaces/Fan';
+import EditFanModal from 'pages/fans/EditFanModal';
+import React, { useEffect, useState } from 'react';
+import { Link, RouteComponentProps } from 'react-router-dom';
+import { fetchFans } from 'services/DiscoClubService';
+import FanAPITestModal from './FanAPITestModal';
+import FanFeedModal from './FanFeedModal';
 
 const tagColorByPermission: any = {
-  Admin: "green",
-  Temp: "blue",
-  Fan: "",
+  Admin: 'green',
+  Temp: 'blue',
+  Fan: '',
 };
 
 const Fans: React.FC<RouteComponentProps> = ({ history, location }) => {
@@ -50,9 +50,9 @@ const Fans: React.FC<RouteComponentProps> = ({ history, location }) => {
   };
 
   const searchFilterFunction = (filterText: string) => {
-    addFilterFunction("fanName", (fans) =>
-      fans.filter((fan) => {
-        fan.name = fan.name || "";
+    addFilterFunction('fanName', fans =>
+      fans.filter(fan => {
+        fan.name = fan.name || '';
         const searchText = filterText.toUpperCase();
         return (
           fan.name.toUpperCase().includes(searchText) ||
@@ -64,37 +64,37 @@ const Fans: React.FC<RouteComponentProps> = ({ history, location }) => {
 
   const columns: ColumnsType<Fan> = [
     {
-      title: "_id",
-      dataIndex: "id",
-      width: "10%",
-      render: (id) => <CopyIdToClipboard id={id} />,
-      align: "center",
+      title: '_id',
+      dataIndex: 'id',
+      width: '10%',
+      render: id => <CopyIdToClipboard id={id} />,
+      align: 'center',
     },
-    { title: "Name", dataIndex: "userName", width: "25%", align: "center" },
-    { title: "E-mail", dataIndex: "user", width: "25%", align: "center" },
+    { title: 'Name', dataIndex: 'userName', width: '25%', align: 'center' },
+    { title: 'E-mail', dataIndex: 'user', width: '25%', align: 'center' },
     {
-      title: "Profile",
-      dataIndex: "profile",
-      width: "10%",
-      render: (profile = "Fan") => (
+      title: 'Profile',
+      dataIndex: 'profile',
+      width: '10%',
+      render: (profile = 'Fan') => (
         <Tag color={tagColorByPermission[profile]}>{profile}</Tag>
       ),
-      align: "center",
+      align: 'center',
     },
     {
-      title: "Group",
-      dataIndex: "group",
-      width: "10%",
+      title: 'Group',
+      dataIndex: 'group',
+      width: '10%',
       render: (_, record) => (
         <Tag color={tagColorByPermission[record.profile]}>{record.group}</Tag>
       ),
-      align: "center",
+      align: 'center',
     },
     {
-      title: "Actions",
-      key: "action",
-      width: "10%",
-      align: "right",
+      title: 'Actions',
+      key: 'action',
+      width: '10%',
+      align: 'right',
       render: (_, record) => (
         <>
           <Link to={{ pathname: detailsPathname, state: record }}>
@@ -103,14 +103,14 @@ const Fans: React.FC<RouteComponentProps> = ({ history, location }) => {
           <Button
             onClick={() => setFanAPITest(record)}
             type="link"
-            style={{ padding: 0, margin: "6px 0 6px 6px" }}
+            style={{ padding: 0, margin: '6px 0 6px 6px' }}
           >
             <SettingOutlined />
           </Button>
           <Button
             onClick={() => setFanFeedModal(record)}
             type="link"
-            style={{ padding: 0, margin: "6px 0 6px 6px" }}
+            style={{ padding: 0, margin: '6px 0 6px 6px' }}
           >
             <OrderedListOutlined />
           </Button>
@@ -158,12 +158,12 @@ const Fans: React.FC<RouteComponentProps> = ({ history, location }) => {
           onClick={() => getResources()}
           loading={loading}
           style={{
-            marginBottom: "20px",
-            marginRight: "25px",
+            marginBottom: '20px',
+            marginRight: '25px',
           }}
         >
           Search
-          <SearchOutlined style={{ color: "white" }} />
+          <SearchOutlined style={{ color: 'white' }} />
         </Button>
       </Row>
       <FanAPITestModal

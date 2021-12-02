@@ -1,4 +1,4 @@
-import { Image } from "./Image";
+import { Image } from './Image';
 
 export interface Category {
   id: string;
@@ -33,10 +33,10 @@ export interface SelectedCategories {
   subSubCategory?: string;
 }
 export interface AllCategories {
-  "Super Category": ProductCategory[];
+  'Super Category': ProductCategory[];
   Category: ProductCategory[];
-  "Sub Category": ProductCategory[];
-  "Sub Sub Category": ProductCategory[];
+  'Sub Category': ProductCategory[];
+  'Sub Sub Category': ProductCategory[];
 }
 
 export interface CategoryAPI {

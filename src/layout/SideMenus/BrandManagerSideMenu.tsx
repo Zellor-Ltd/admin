@@ -3,13 +3,13 @@ import {
   TagOutlined,
   HeartFilled,
   ShoppingCartOutlined,
-} from "@ant-design/icons";
-import { Menu } from "antd";
-import { Link } from "react-router-dom";
+} from '@ant-design/icons';
+import { Menu } from 'antd';
+import { Link } from 'react-router-dom';
 
 const AdminSideMenu = () => {
   return (
-    <Menu theme="dark" mode="inline" defaultSelectedKeys={["brand-dashboard"]}>
+    <Menu theme="dark" mode="inline" defaultSelectedKeys={['brand-dashboard']}>
       <Menu.Item key="brand-dashboard" icon={<FundOutlined />}>
         <Link to="/brand-dashboard">Dashboard</Link>
       </Menu.Item>

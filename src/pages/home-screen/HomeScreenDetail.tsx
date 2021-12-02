@@ -1,12 +1,12 @@
-import { Button, Col, DatePicker, Form, Input, PageHeader, Row } from "antd";
-import { RichTextEditor } from "../../components/RichTextEditor";
-import { formatMoment } from "../../helpers/formatMoment";
-import { useRequest } from "../../hooks/useRequest";
-import { useState } from "react";
-import { RouteComponentProps } from "react-router-dom";
-import { saveBanner } from "../../services/DiscoClubService";
+import { Button, Col, DatePicker, Form, Input, PageHeader, Row } from 'antd';
+import { RichTextEditor } from '../../components/RichTextEditor';
+import { formatMoment } from '../../helpers/formatMoment';
+import { useRequest } from '../../hooks/useRequest';
+import { useState } from 'react';
+import { RouteComponentProps } from 'react-router-dom';
+import { saveBanner } from '../../services/DiscoClubService';
 
-const HomeScreenDetail: React.FC<RouteComponentProps> = (props) => {
+const HomeScreenDetail: React.FC<RouteComponentProps> = props => {
   const { history, location } = props;
   const initial: any = location.state;
   const [loading, setLoading] = useState<boolean>(false);
