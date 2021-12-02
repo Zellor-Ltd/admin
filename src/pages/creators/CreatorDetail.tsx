@@ -134,7 +134,7 @@ const CreatorDetail: React.FC<RouteComponentProps> = props => {
               </Col>
               <Col lg={12} xs={24}>
                 <Form.Item label="Agreed Percentage" name="agreedPercentage">
-                  <InputNumber />
+                  <InputNumber decimalSeparator="."/>
                 </Form.Item>
               </Col>
             </Row>
