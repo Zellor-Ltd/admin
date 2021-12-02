@@ -21,7 +21,7 @@ const ProductBrandsDetail: React.FC<RouteComponentProps> = props => {
   return (
     <>
       <PageHeader
-        title="Product Brand Update"
+        title={`${initial.brandName} Update`}
         subTitle="Product Brand Template"
       />
       <Form

@@ -20,7 +20,7 @@ const DdTemplatesDetail: React.FC<RouteComponentProps> = props => {
   return (
     <>
       <PageHeader
-        title="Disco Dollar Template Update"
+        title={`${initial.tagName} Template Update`}
         subTitle="Disco Dollar Template "
       />
       <Form

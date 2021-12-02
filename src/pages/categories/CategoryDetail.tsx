@@ -71,7 +71,10 @@ const CategoryDetail: React.FC<RouteComponentProps> = ({
 
   return (
     <>
-      <PageHeader title={`${categoryUpdateName} Update`} subTitle="Category" />
+      <PageHeader
+        title={`${initial[categoryField]} ${categoryUpdateName} Update`}
+        subTitle="Category"
+      />
       <Form
         name="categoryForm"
         layout="vertical"

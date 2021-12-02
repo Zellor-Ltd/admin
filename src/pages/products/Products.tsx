@@ -783,7 +783,12 @@ const Products: React.FC<RouteComponentProps> = () => {
       )}
       {isViewing && (
         <div className="products-details">
-          <PageHeader title="Product" subTitle="Form" />
+          <PageHeader
+            title={
+              currentProduct ? `${currentProduct?.name} Update` : 'New Product'
+            }
+            subTitle="Form"
+          />
           <Form
             form={form}
             name="productForm"

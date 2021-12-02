@@ -93,7 +93,9 @@ const WalletDetail: React.FC<RouteComponentProps> = ({ location }) => {
 
   return (
     <div className="walletdetail">
-      <PageHeader title="Wallet Fan/Master Brand Transactions" />
+      <PageHeader
+        title={`${initial.fan.name}/${initial.brand.name} Transactions`}
+      />
       <Row align="bottom" justify="space-between">
         <Col lg={24} xs={24}>
           <Row gutter={8}>

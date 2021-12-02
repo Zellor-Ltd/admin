@@ -38,7 +38,14 @@ const PromotionDetail: React.FC<RouteComponentProps> = props => {
 
   return (
     <>
-      <PageHeader title="Promotion Update" subTitle="Promotion" />
+      <PageHeader
+        title={
+          initial?.brand
+            ? `${initial?.brand} Promotion Update`
+            : 'Promotion Update'
+        }
+        subTitle="Promotion"
+      />
       <Form
         form={form}
         layout="vertical"
