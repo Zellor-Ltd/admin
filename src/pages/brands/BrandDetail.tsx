@@ -107,6 +107,7 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
   };
 
   const editVault = (vault: any) => {
+    console.log(vault);
     setCurrentVault(vault);
     setVaultOptions(true);
   };
@@ -147,12 +148,6 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
       title: 'API Shop Name',
       dataIndex: 'apiShopName',
       width: '15%',
-      align: 'center',
-    },
-    {
-      title: 'Token',
-      dataIndex: 'token',
-      width: '10%',
       align: 'center',
     },
     {
@@ -270,7 +265,10 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
                     name="apiShopName"
                     rules={[{ required: true }]}
                   >
-                    <Input value={currentVault?.apiShopName || ''} />
+                    <Input
+                      defaultValue={currentVault?.apiShopName}
+                      value={currentVault?.apiShopName}
+                    />
                   </Form.Item>
                 </Col>
                 <Col lg={16} xs={24}>
@@ -279,7 +277,11 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
                     name="token"
                     rules={[{ required: true }]}
                   >
-                    <Input type="password" value={currentVault?.token || ''} />
+                    <Input
+                      type="password"
+                      defaultValue={currentVault?.token}
+                      value={currentVault?.token}
+                    />
                   </Form.Item>
                 </Col>
               </Col>
