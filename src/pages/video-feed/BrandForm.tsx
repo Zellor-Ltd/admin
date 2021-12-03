@@ -23,8 +23,22 @@ const BrandForm: React.FC<FormProps> = ({
   const onChangeBrand = (key: string) => {
     const currentValues = form.getFieldsValue(true);
     const selectedBrand: any = brands.find((brand: Brand) => brand.id === key);
-
     const changedBrand = { ...selectedBrand };
+
+    if (selectedBrand) {
+      selectedBrand.position = selectedBrand.position?.map(position => {
+        return {
+          x: position.x ?? form.getFieldValue(['position', 0, 'x']),
+          y: position.y ?? form.getFieldValue(['position', 0, 'y']),
+          z: position.z ?? form.getFieldValue(['position', 0, 'z']),
+          opacity:
+            position.opacity ?? form.getFieldValue(['position', 0, 'opacity']),
+          startTime:
+            position.startTime ??
+            form.getFieldValue(['position', 0, 'startTime']),
+        };
+      });
+    }
 
     form.setFieldsValue({ ...changedBrand, position: currentValues.position });
   };
@@ -137,8 +151,9 @@ const BrandForm: React.FC<FormProps> = ({
             name={['position', 0, 'opacity']}
             label="Opacity"
             rules={[{ required: true }]}
+            initialValue={1}
           >
-            <InputNumber defaultValue={1} />
+            <InputNumber />
           </Form.Item>
         </Col>
         <Col lg={4} xs={24}>
@@ -155,8 +170,9 @@ const BrandForm: React.FC<FormProps> = ({
             name={['position', 0, 'x']}
             label="Position X"
             rules={[{ required: true }]}
+            initialValue={0}
           >
-            <InputNumber defaultValue={0} />
+            <InputNumber />
           </Form.Item>
         </Col>
         <Col lg={4} xs={24}>
@@ -164,8 +180,9 @@ const BrandForm: React.FC<FormProps> = ({
             name={['position', 0, 'y']}
             label="position Y"
             rules={[{ required: true }]}
+            initialValue={0}
           >
-            <InputNumber defaultValue={0} />
+            <InputNumber />
           </Form.Item>
         </Col>
         <Col lg={4} xs={24}>
@@ -173,8 +190,9 @@ const BrandForm: React.FC<FormProps> = ({
             name={['position', 0, 'z']}
             label="Z Index"
             rules={[{ required: true }]}
+            initialValue={1}
           >
-            <InputNumber defaultValue={1} />
+            <InputNumber />
           </Form.Item>
         </Col>
       </Row>
