@@ -1,9 +1,10 @@
-import { Button, Col, Form, Input, PageHeader, Row } from 'antd';
+import { Button, Col, Form, Input, PageHeader, Row, Typography } from 'antd';
 import { Upload } from 'components';
 import { useRequest } from '../../hooks/useRequest';
 import { useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { saveProductBrand } from '../../services/DiscoClubService';
+import { TwitterPicker } from 'react-color';
 
 const ProductBrandsDetail: React.FC<RouteComponentProps> = props => {
   const { history, location } = props;
@@ -42,16 +43,58 @@ const ProductBrandsDetail: React.FC<RouteComponentProps> = props => {
                 <Input />
               </Form.Item>
             </Col>
+            <Col lg={24} xs={24}>
+              <Form.Item
+                label="Product Brand Color"
+                name="brandTxtColor"
+                rules={[{ required: true }]}
+                valuePropName="color"
+              >
+                <ColorPicker />
+              </Form.Item>
+            </Col>
+            <Row>
+              <Col lg={6} xs={24}>
+                <Form.Item label="Colour">
+                  <Upload.ImageUpload
+                    maxCount={1}
+                    fileList={initial?.colourLogo}
+                    form={form}
+                    formProp="colourLogo"
+                  />
+                </Form.Item>
+              </Col>
+              <Col lg={6} xs={24}>
+                <Form.Item label="Black">
+                  <Upload.ImageUpload
+                    maxCount={1}
+                    fileList={initial?.blackLogo}
+                    form={form}
+                    formProp="blackLogo"
+                  />
+                </Form.Item>
+              </Col>
+              <Col lg={6} xs={24}>
+                <Form.Item label="White">
+                  <Upload.ImageUpload
+                    maxCount={1}
+                    fileList={initial?.whiteLogo}
+                    form={form}
+                    formProp="whiteLogo"
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
             <Row>
               <Col lg={6} xs={24}>
                 <Form.Item
-                  label="Brand Logo"
+                  label="Logo Round"
+                  rules={[{ required: true }]}
                   name="brandLogo"
-                  rules={[{ required: false }]}
                 >
                   <Upload.ImageUpload
-                    maxCount={1}
                     fileList={initial?.brandLogo}
+                    maxCount={1}
                     form={form}
                     formProp="brandLogo"
                   />
@@ -86,6 +129,9 @@ const ProductBrandsDetail: React.FC<RouteComponentProps> = props => {
                 </Form.Item>
               </Col>
             </Row>
+            <Typography.Title style={{ marginBottom: '35px' }} level={5}>
+              Store Page Display
+            </Typography.Title>
             <Row>
               <Col lg={6} xs={24}>
                 <Form.Item
@@ -136,3 +182,10 @@ const ProductBrandsDetail: React.FC<RouteComponentProps> = props => {
 };
 
 export default ProductBrandsDetail;
+
+const ColorPicker: React.FC<any> = props => {
+  const { onChange } = props;
+  return (
+    <TwitterPicker onChangeComplete={(value: any) => onChange(value.hex)} />
+  );
+};
