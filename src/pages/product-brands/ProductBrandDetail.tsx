@@ -130,7 +130,7 @@ const ProductBrandsDetail: React.FC<RouteComponentProps> = props => {
               </Col>
             </Row>
             <Typography.Title style={{ marginBottom: '35px' }} level={5}>
-              Store Page Display
+              Brand Page Display
             </Typography.Title>
             <Row>
               <Col lg={6} xs={24}>
