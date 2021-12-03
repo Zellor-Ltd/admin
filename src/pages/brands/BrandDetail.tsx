@@ -585,7 +585,7 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
                   </Form.Item>
                 </Col>
               </Row>
-              <Typography.Title style={{ marginBottom: '20px' }} level={5}>
+              <Typography.Title style={{ marginBottom: '4vh' }} level={5}>
                 Store Page Display
               </Typography.Title>
               <Row>
