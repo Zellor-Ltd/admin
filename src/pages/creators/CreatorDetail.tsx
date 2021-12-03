@@ -70,7 +70,7 @@ const CreatorDetail: React.FC<RouteComponentProps> = props => {
 
   return (
     <>
-      <PageHeader title="Creator Update" subTitle="Creator" />
+      <PageHeader title={`${initial.userName} Update`} subTitle="Creator" />
       <Form
         form={form}
         layout="vertical"
@@ -134,7 +134,7 @@ const CreatorDetail: React.FC<RouteComponentProps> = props => {
               </Col>
               <Col lg={12} xs={24}>
                 <Form.Item label="Agreed Percentage" name="agreedPercentage">
-                  <InputNumber decimalSeparator="."/>
+                  <InputNumber decimalSeparator="." />
                 </Form.Item>
               </Col>
             </Row>

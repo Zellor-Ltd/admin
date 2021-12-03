@@ -63,6 +63,7 @@ import update from 'immutability-helper';
 import { ProductBrandFilter } from 'components/ProductBrandFilter';
 import { ProductBrand } from 'interfaces/ProductBrand';
 import { productUtils } from '../../helpers/product-utils';
+import { Image } from '../../interfaces/Image';
 import scrollIntoView from 'scroll-into-view';
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
@@ -104,7 +105,7 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
   const [currentMasterBrand, setCurrentMasterBrand] = useState<string>();
   const [currentProductBrand, setCurrentProductBrand] = useState<string>();
   const [productStatusFilter, setProductStatusFilter] =
-    useState<string>('paused');
+    useState<string>('live');
 
   const { doFetch, doRequest } = useRequest({ setLoading });
   const { doRequest: saveCategories, loading: loadingCategories } =
@@ -629,6 +630,24 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
     }
   };
 
+  const onAssignToThumbnail = (
+    file: Image
+  ) => {
+    if (currentProduct) {
+      currentProduct.thumbnailUrl = file;
+      setCurrentProduct({ ...currentProduct });
+    }
+  };
+
+  const onAssignToTag = (
+    file: Image
+  ) => {
+    if (currentProduct) {
+      currentProduct.tagImage = file;
+      setCurrentProduct({ ...currentProduct });
+    }
+  };
+
   useEffect(() => {
     if (!isEditing) {
       scrollIntoView(
@@ -795,7 +814,10 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
       )}
       {isEditing && (
         <div className="products-details">
-          <PageHeader title="Product" subTitle="Form" />
+          <PageHeader
+            title={`${currentProduct?.name} Update`}
+            subTitle="Form"
+          />
           <Form
             form={form}
             name="productForm"
@@ -1176,6 +1198,8 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
                         form={form}
                         onOrder={onOrderImages}
                         onFitTo={onFitTo}
+                        onAssignToThumbnail={onAssignToThumbnail}
+                        onAssignToTag={onAssignToTag}
                       />
                     </Form.Item>
                   </Col>

@@ -150,7 +150,12 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
             : 'Creation'
         }`
       );
-    } else setPageTitle('Video Update');
+    } else
+      setPageTitle(
+        initial.title.length > 50
+          ? `${initial.title.substr(0, 50)} Update`
+          : `${initial.title} Update`
+      );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedSegment, showBrandForm, showTagForm]);
 

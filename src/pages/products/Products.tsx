@@ -8,18 +8,18 @@ import {
   Button,
   Checkbox,
   Col,
-  PageHeader,
-  Popconfirm,
-  Row,
-  Spin,
   DatePicker,
   Form,
   Input,
   InputNumber,
   message,
+  PageHeader,
+  Popconfirm,
   Radio,
+  Row,
   Select,
   Slider,
+  Spin,
   Switch,
   Tabs,
   Typography,
@@ -32,7 +32,6 @@ import { AllCategories } from 'interfaces/Category';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RouteComponentProps, Link } from 'react-router-dom';
-import {} from 'services/DiscoClubService';
 import ProductCategoriesTrees from './ProductCategoriesTrees';
 import './Products.scss';
 import EditMultipleButton from 'components/EditMultipleButton';
@@ -63,6 +62,7 @@ import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { ProductBrandFilter } from 'components/ProductBrandFilter';
 import { ProductBrand } from 'interfaces/ProductBrand';
 import { productUtils } from '../../helpers/product-utils';
+import { Image } from '../../interfaces/Image';
 import scrollIntoView from 'scroll-into-view';
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
@@ -629,6 +629,24 @@ const Products: React.FC<RouteComponentProps> = () => {
     setSelectedRowKeys(selectedRows);
   };
 
+  const onAssignToThumbnail = (
+    file: Image
+  ) => {
+    if (currentProduct) {
+      currentProduct.thumbnailUrl = file;
+      setCurrentProduct({ ...currentProduct });
+    }
+  };
+
+  const onAssignToTag = (
+    file: Image
+  ) => {
+    if (currentProduct) {
+      currentProduct.tagImage = file;
+      setCurrentProduct({ ...currentProduct });
+    }
+  };
+
   useEffect(() => {
     if (!isViewing) {
       scrollIntoView(
@@ -783,7 +801,12 @@ const Products: React.FC<RouteComponentProps> = () => {
       )}
       {isViewing && (
         <div className="products-details">
-          <PageHeader title="Product" subTitle="Form" />
+          <PageHeader
+            title={
+              currentProduct ? `${currentProduct?.name} Update` : 'New Product'
+            }
+            subTitle="Form"
+          />
           <Form
             form={form}
             name="productForm"
@@ -1160,6 +1183,8 @@ const Products: React.FC<RouteComponentProps> = () => {
                         fileList={currentProduct?.image}
                         formProp="image"
                         form={form}
+                        onAssignToTag={onAssignToTag}
+                        onAssignToThumbnail={onAssignToThumbnail}
                       />
                     </Form.Item>
                   </Col>
