@@ -107,7 +107,6 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
   };
 
   const editVault = (vault: any) => {
-    console.log(vault);
     setCurrentVault(vault);
     setVaultOptions(true);
   };
