@@ -265,10 +265,7 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
                     name="apiShopName"
                     rules={[{ required: true }]}
                   >
-                    <Input
-                      defaultValue={currentVault?.apiShopName}
-                      value={currentVault?.apiShopName}
-                    />
+                    <Input defaultValue={currentVault?.apiShopName} />
                   </Form.Item>
                 </Col>
                 <Col lg={16} xs={24}>
@@ -277,11 +274,7 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
                     name="token"
                     rules={[{ required: true }]}
                   >
-                    <Input
-                      type="password"
-                      defaultValue={currentVault?.token}
-                      value={currentVault?.token}
-                    />
+                    <Input type="password" defaultValue={currentVault?.token} />
                   </Form.Item>
                 </Col>
               </Col>
