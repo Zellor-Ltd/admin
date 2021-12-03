@@ -1,5 +1,8 @@
 import { Button, Col, Form, InputNumber, Row, Select } from 'antd';
 import { Brand } from 'interfaces/Brand';
+import { ProductBrand } from 'interfaces/ProductBrand';
+import { useState, useEffect } from 'react';
+import { fetchProductBrands } from 'services/DiscoClubService';
 
 interface FormProps {
   brands: Brand[];
@@ -13,26 +16,40 @@ const BrandForm: React.FC<FormProps> = ({
   brands,
 }) => {
   const [form] = Form.useForm();
+  const [selectedProductBrand, setSelectedProductBrand] =
+    useState<ProductBrand>();
+  const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
+
   const onChangeBrand = (key: string) => {
     const currentValues = form.getFieldsValue(true);
     const selectedBrand: any = brands.find((brand: Brand) => brand.id === key);
 
     const changedBrand = { ...selectedBrand };
-    if (changedBrand.selectedLogo) {
-      changedBrand.selectedLogoUrl =
-        selectedBrand[changedBrand.selectedLogo].url;
-    }
 
     form.setFieldsValue({ ...changedBrand, position: currentValues.position });
   };
 
-  const onChangeLogo = (key: string) => {
-    const currentValues = form.getFieldsValue(true);
-    const selectedBrand: any = brands.find(
-      (brand: Brand) => brand.id === currentValues.id
-    );
+  useEffect(() => {
+    getProductBrands();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-    currentValues.selectedLogoUrl = selectedBrand[key].url;
+  const getProductBrands = async () => {
+    try {
+      const { results }: any = await fetchProductBrands();
+      if (brand?.productBrand) {
+        setSelectedProductBrand(
+          results.find(prodBrand => prodBrand.brandName === brand.productBrand)
+        );
+      }
+      setProductBrands(results);
+    } catch (e) {}
+  };
+
+  const onChangeLogo = (input: string) => {
+    const currentValues = form.getFieldsValue(true);
+
+    currentValues.selectedLogo = input;
     form.setFieldsValue({ ...currentValues });
   };
 
@@ -56,39 +73,54 @@ const BrandForm: React.FC<FormProps> = ({
             </Select>
           </Form.Item>
         </Col>
-        <Col lg={4} xs={24}>
+        <Col lg={24} xs={24}>
           <Form.Item
-            shouldUpdate={(prevValues, curValues) =>
-              prevValues.id !== curValues.id
-            }
+            name="productBrand"
+            label="Product Brand"
+            rules={[{ required: true }]}
           >
-            {({ getFieldValue }) => {
-              const bra: any = brands.find(
-                (brand: Brand) => brand.id === getFieldValue('id')
-              );
-              return (
-                <Form.Item name="selectedLogo" label="Store logo">
-                  <Select
-                    placeholder="Please select a logo"
-                    onChange={onChangeLogo}
-                  >
-                    {bra?.brandLogo?.url && (
-                      <Select.Option value="brandLogo">Brand</Select.Option>
-                    )}
+            <Select
+              showSearch
+              filterOption={(input, option) =>
+                option?.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+              }
+              onChange={(key: string) => onChangeBrand(key)}
+            >
+              {productBrands.map(productBrand => (
+                <Select.Option
+                  key={productBrand.id}
+                  value={productBrand.brandName}
+                >
+                  {productBrand.brandName}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+        </Col>
+        <Col lg={4} xs={24}>
+          <Form.Item name="selectedLogo" label="Product Brand logo">
+            <Select placeholder="Please select a logo" onChange={onChangeLogo}>
+              {selectedProductBrand?.brandLogo?.url && (
+                <Select.Option value="brandLogo">Brand</Select.Option>
+              )}
 
-                    {bra?.colourLogo?.url && (
-                      <Select.Option value="colourLogo">Colour</Select.Option>
-                    )}
-                    {bra?.blackLogo?.url && (
-                      <Select.Option value="blackLogo">Black</Select.Option>
-                    )}
-                    {bra?.whiteLogo?.url && (
-                      <Select.Option value="whiteLogo">White</Select.Option>
-                    )}
-                  </Select>
-                </Form.Item>
-              );
-            }}
+              {selectedProductBrand?.colourLogo?.url && (
+                <Select.Option value={selectedProductBrand?.colourLogo?.url}>
+                  Colour
+                </Select.Option>
+              )}
+              {selectedProductBrand?.blackLogo?.url && (
+                <Select.Option value={selectedProductBrand?.blackLogo?.url}>
+                  Black
+                </Select.Option>
+              )}
+              {selectedProductBrand?.brandName && (
+                <Select.Option value={selectedProductBrand?.brandName}>
+                  Text
+                </Select.Option>
+              )}
+              <Select.Option value="">None</Select.Option>
+            </Select>
           </Form.Item>
         </Col>
         <Col lg={4} xs={24}>
