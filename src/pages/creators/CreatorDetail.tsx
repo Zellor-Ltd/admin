@@ -68,9 +68,17 @@ const CreatorDetail: React.FC<RouteComponentProps> = props => {
     setageRange(value);
   };
 
+  const getHeaderTitle = () => {
+    if (initial?.userName) {
+      return `${initial?.userName} Update`;
+    }
+
+    return 'Creator Creation';
+  };
+
   return (
     <>
-      <PageHeader title={`${initial.userName} Update`} subTitle="Creator" />
+      <PageHeader title={getHeaderTitle()} subTitle="Creator" />
       <Form
         form={form}
         layout="vertical"
@@ -93,7 +101,7 @@ const CreatorDetail: React.FC<RouteComponentProps> = props => {
               </Col>
               <Col lg={12} xs={24}>
                 <Form.Item
-                  label="Email"
+                  label="Username (Email)"
                   name="user"
                   rules={[
                     { type: 'email', message: 'please use an valid email' },
@@ -113,7 +121,7 @@ const CreatorDetail: React.FC<RouteComponentProps> = props => {
                 </Form.Item>
               </Col>
               <Col lg={12} xs={24}>
-                <Form.Item label="Username" name="userName">
+                <Form.Item label="Display name (@unique)" name="userName">
                   <Input prefix="@" autoComplete="off" />
                 </Form.Item>
               </Col>

@@ -65,7 +65,7 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
   const [influencers, setInfluencers] = useState<Creator[]>([]);
   const [selectedSegment, setSelectedSegment] = useState<Segment | undefined>();
   const [selectedSegmentIndex, setSelectedSegmentIndex] = useState<number>(-1);
-  const [ageRange, setageRange] = useState<[number, number]>([12, 100]);
+  const [ageRange, setAgeRange] = useState<[number, number]>([12, 100]);
 
   const [brands, setBrands] = useState<Brand[]>([]);
   const [selectedBrand, setSelectedBrand] = useState<Brand | undefined>();
@@ -193,7 +193,7 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
 
   useEffect(() => {
     if (initial?.ageMin && initial?.ageMax)
-      setageRange([initial?.ageMin, initial?.ageMax]);
+      setAgeRange([initial?.ageMin, initial?.ageMax]);
   }, [initial]);
 
   const onChangeAge = (value: [number, number]) => {
@@ -202,7 +202,7 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
       ageMax: value[1],
     });
 
-    setageRange(value);
+    setAgeRange(value);
   };
 
   const onEditSegment = (segment: Segment, segmentIndex: number) => {
@@ -259,7 +259,7 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
                   >
                     {influencers.map((influencer: any) => (
                       <Select.Option key={influencer.id} value={influencer.id}>
-                        {influencer.firstName}
+                        {influencer.firstName} {influencer.lastName}
                       </Select.Option>
                     ))}
                   </Select>
