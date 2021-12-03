@@ -54,9 +54,12 @@ export const ProductBrandFilter: React.FC<ProductBrandFilterProps> = ({
         allowClear={allowClear}
         style={style}
         placeholder={placeholder}
+        filterOption={(input?: string, value?: any) =>
+          value?.children.toLowerCase().includes(input?.toLowerCase())
+        }
       >
         {productBrands.map(({ brandName, id }) => (
-          <Select.Option key={brandName} value={id}>
+          <Select.Option key={id} value={id}>
             {brandName}
           </Select.Option>
         ))}

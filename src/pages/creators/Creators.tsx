@@ -44,7 +44,11 @@ const Creators: React.FC<RouteComponentProps> = ({ history, location }) => {
       render: id => <CopyIdToClipboard id={id} />,
       align: 'center',
     },
-    { title: 'Name', dataIndex: 'firstName', width: '15%' },
+    {
+      title: 'Name',
+      width: '15%',
+      render: value => `${value.firstName} ${value.lastName}`,
+    },
     {
       title: 'Status',
       dataIndex: 'status',

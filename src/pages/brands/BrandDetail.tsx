@@ -40,7 +40,7 @@ import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
   const { history, location } = props;
   const detailsPathname = `${location.pathname}/vault`;
-  const initial = location.state as Brand;
+  const [brand] = useState(location.state as Brand);
   const [loading, setLoading] = useState<boolean>(false);
   const [vaults, setVaults] = useState<BrandVault[]>([]);
   const [currentVault, setCurrentVault] = useState<BrandVault>();
@@ -59,10 +59,10 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
     useState<string[]>(checkoutType);
 
   const fetchVaults = async () => {
-    if (initial) {
-      if (initial.shopName) {
+    if (brand) {
+      if (brand.shopName) {
         const { results } = await doFetch(() =>
-          fetchBrandVault(initial.shopName as string)
+          fetchBrandVault(brand.shopName as string)
         );
         setVaults(results);
       }
@@ -113,7 +113,7 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
 
   const newItem = () => {
     const template = {
-      shopName: initial.shopName,
+      shopName: brand.shopName,
       id: '',
       apiShopName: '',
       tokenType: '',
@@ -147,12 +147,6 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
       title: 'API Shop Name',
       dataIndex: 'apiShopName',
       width: '15%',
-      align: 'center',
-    },
-    {
-      title: 'Token',
-      dataIndex: 'token',
-      width: '10%',
       align: 'center',
     },
     {
@@ -259,7 +253,7 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
                     label="Shop Name"
                     name="shopName"
                     rules={[{ required: true }]}
-                    initialValue={initial.shopName}
+                    initialValue={brand.shopName}
                   >
                     <Input />
                   </Form.Item>
@@ -270,7 +264,7 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
                     name="apiShopName"
                     rules={[{ required: true }]}
                   >
-                    <Input value={currentVault?.apiShopName || ''} />
+                    <Input defaultValue={currentVault?.apiShopName} />
                   </Form.Item>
                 </Col>
                 <Col lg={16} xs={24}>
@@ -279,7 +273,7 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
                     name="token"
                     rules={[{ required: true }]}
                   >
-                    <Input type="password" value={currentVault?.token || ''} />
+                    <Input type="password" defaultValue={currentVault?.token} />
                   </Form.Item>
                 </Col>
               </Col>
@@ -328,15 +322,12 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
 
   return (
     <>
-      <PageHeader
-        title={`${initial.brandName} Update`}
-        subTitle="Master Brand"
-      />
+      <PageHeader title={`${brand.brandName} Update`} subTitle="Master Brand" />
       <Form
         name="brandForm"
         layout="vertical"
         form={form}
-        initialValues={initial}
+        initialValues={brand}
         onFinish={onFinish}
       >
         <Tabs
@@ -516,7 +507,7 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
                   <Form.Item label="Colour">
                     <Upload.ImageUpload
                       maxCount={1}
-                      fileList={initial?.colourLogo}
+                      fileList={brand?.colourLogo}
                       form={form}
                       formProp="colourLogo"
                     />
@@ -526,7 +517,7 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
                   <Form.Item label="Black">
                     <Upload.ImageUpload
                       maxCount={1}
-                      fileList={initial?.blackLogo}
+                      fileList={brand?.blackLogo}
                       form={form}
                       formProp="blackLogo"
                     />
@@ -536,7 +527,7 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
                   <Form.Item label="White">
                     <Upload.ImageUpload
                       maxCount={1}
-                      fileList={initial?.whiteLogo}
+                      fileList={brand?.whiteLogo}
                       form={form}
                       formProp="whiteLogo"
                     />
@@ -549,7 +540,7 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
                     name="brandLogo"
                   >
                     <Upload.ImageUpload
-                      fileList={initial?.brandLogo}
+                      fileList={brand?.brandLogo}
                       maxCount={1}
                       form={form}
                       formProp="brandLogo"
@@ -564,7 +555,7 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
                   >
                     <Upload.ImageUpload
                       maxCount={1}
-                      fileList={initial?.brandCard}
+                      fileList={brand?.brandCard}
                       form={form}
                       formProp="brandCard"
                     />
@@ -578,14 +569,14 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
                   >
                     <Upload.ImageUpload
                       maxCount={1}
-                      fileList={initial?.thumbnail}
+                      fileList={brand?.thumbnail}
                       form={form}
                       formProp="thumbnail"
                     />
                   </Form.Item>
                 </Col>
               </Row>
-              <Typography.Title style={{ marginBottom: '20px' }} level={5}>
+              <Typography.Title style={{ marginBottom: '4vh' }} level={5}>
                 Store Page Display
               </Typography.Title>
               <Row>
@@ -597,7 +588,7 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
                   >
                     <Upload.ImageUpload
                       maxCount={1}
-                      fileList={initial?.mastHead}
+                      fileList={brand?.mastHead}
                       form={form}
                       formProp="mastHead"
                     />
@@ -611,7 +602,7 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
                   >
                     <Upload.ImageUpload
                       maxCount={1}
-                      fileList={initial?.avatar}
+                      fileList={brand?.avatar}
                       form={form}
                       formProp="avatar"
                     />

@@ -55,11 +55,10 @@ export const SelectProductBrand: React.FC<SelectProductBrandProps> = ({
       style={style}
       placeholder={placeholder}
       onChange={_onChange}
-      filterOption={true}
     >
-      {productBrands.map(({ brandName, id }) => (
-        <Select.Option key={id} value={brandName}>
-          {brandName}
+      {productBrands.map(productBrand => (
+        <Select.Option key={productBrand.id} value={productBrand.brandName}>
+          {productBrand.brandName}
         </Select.Option>
       ))}
     </Select>
