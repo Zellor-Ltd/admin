@@ -18,38 +18,34 @@ const BrandForm: React.FC<FormProps> = ({
   const [form] = Form.useForm();
   const [selectedProductBrand, setSelectedProductBrand] =
     useState<ProductBrand>();
+  const [isFetchingProductBrands, setIsFetchingProductBrands] = useState(false);
   const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
 
-  const onChangeBrand = (key: string) => {
+  const onChangeBrand = (brandId: string) => {
     const currentValues = form.getFieldsValue(true);
-    const selectedBrand: any = brands.find((brand: Brand) => brand.id === key);
+    const selectedBrand: any = brands.find(
+      (brand: Brand) => brand.id === brandId
+    );
     const changedBrand = { ...selectedBrand };
-
-    if (selectedBrand) {
-      selectedBrand.position = selectedBrand.position?.map(position => {
-        return {
-          x: position.x ?? form.getFieldValue(['position', 0, 'x']),
-          y: position.y ?? form.getFieldValue(['position', 0, 'y']),
-          z: position.z ?? form.getFieldValue(['position', 0, 'z']),
-          opacity:
-            position.opacity ?? form.getFieldValue(['position', 0, 'opacity']),
-          startTime:
-            position.startTime ??
-            form.getFieldValue(['position', 0, 'startTime']),
-        };
-      });
-    }
 
     form.setFieldsValue({ ...changedBrand, position: currentValues.position });
   };
 
+  const onChangeProductBrand = (productBrandName: string) => {
+    const selectedProductBrand: any = productBrands.find(
+      productBrand => productBrand.brandName === productBrandName
+    );
+
+    setSelectedProductBrand(selectedProductBrand);
+  };
+
   useEffect(() => {
-    getProductBrands();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    getProductBrands().then();
   }, []);
 
   const getProductBrands = async () => {
     try {
+      setIsFetchingProductBrands(true);
       const { results }: any = await fetchProductBrands();
       if (brand?.productBrand) {
         setSelectedProductBrand(
@@ -57,13 +53,17 @@ const BrandForm: React.FC<FormProps> = ({
         );
       }
       setProductBrands(results);
+      setIsFetchingProductBrands(false);
     } catch (e) {}
   };
 
-  const onChangeLogo = (input: string) => {
+  const onChangeProductBrandLogo = (productBrandKey: string) => {
     const currentValues = form.getFieldsValue(true);
 
-    currentValues.selectedLogo = input;
+    if (selectedProductBrand) {
+      currentValues.selectedLogoUrl = selectedProductBrand[productBrandKey].url;
+    }
+
     form.setFieldsValue({ ...currentValues });
   };
 
@@ -77,7 +77,7 @@ const BrandForm: React.FC<FormProps> = ({
               filterOption={(input, option) =>
                 option?.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
               }
-              onChange={(key: string) => onChangeBrand(key)}
+              onChange={(brandId: string) => onChangeBrand(brandId)}
             >
               {brands.map(brand => (
                 <Select.Option key={brand.id} value={brand.id}>
@@ -98,7 +98,9 @@ const BrandForm: React.FC<FormProps> = ({
               filterOption={(input, option) =>
                 option?.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
               }
-              onChange={(key: string) => onChangeBrand(key)}
+              onChange={(productBrandName: string) =>
+                onChangeProductBrand(productBrandName)
+              }
             >
               {productBrands.map(productBrand => (
                 <Select.Option
@@ -113,25 +115,25 @@ const BrandForm: React.FC<FormProps> = ({
         </Col>
         <Col lg={4} xs={24}>
           <Form.Item name="selectedLogo" label="Product Brand logo">
-            <Select placeholder="Please select a logo" onChange={onChangeLogo}>
+            <Select
+              defaultValue={brand?.selectedLogoUrl}
+              placeholder="Please select a logo"
+              loading={isFetchingProductBrands}
+              disabled={isFetchingProductBrands}
+              onChange={onChangeProductBrandLogo}
+            >
               {selectedProductBrand?.brandLogo?.url && (
                 <Select.Option value="brandLogo">Brand</Select.Option>
               )}
 
               {selectedProductBrand?.colourLogo?.url && (
-                <Select.Option value={selectedProductBrand?.colourLogo?.url}>
-                  Colour
-                </Select.Option>
+                <Select.Option value="colourLogo">Colour</Select.Option>
               )}
               {selectedProductBrand?.blackLogo?.url && (
-                <Select.Option value={selectedProductBrand?.blackLogo?.url}>
-                  Black
-                </Select.Option>
+                <Select.Option value="blackLogo">Black</Select.Option>
               )}
               {selectedProductBrand?.brandName && (
-                <Select.Option value={selectedProductBrand?.brandName}>
-                  Text
-                </Select.Option>
+                <Select.Option value="brandName">Text</Select.Option>
               )}
               <Select.Option value="">None</Select.Option>
             </Select>
