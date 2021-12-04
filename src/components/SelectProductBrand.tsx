@@ -37,13 +37,9 @@ export const SelectProductBrand: React.FC<SelectProductBrandProps> = ({
   const _onChange = (value: string) => {
     setSelectedProductBrandName(value);
 
-    const productBrand = productBrands.find(
-      prodBrand => prodBrand.brandName === value
-    );
-
     handleProductBrandChange((form: FormInstance) => {
       form.setFieldsValue({ productBrand: value });
-    }, productBrand);
+    });
   };
 
   return (
