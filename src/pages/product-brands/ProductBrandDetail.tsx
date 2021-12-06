@@ -1,5 +1,4 @@
-import { Button, Col, Form, Input, PageHeader, Row,
-  Tabs, Typography } from 'antd';
+import { Button, Col, Form, Input, PageHeader, Row, Tabs, Typography } from 'antd';
 import { Upload } from 'components';
 import { useRequest } from '../../hooks/useRequest';
 import React, { useState } from 'react';
@@ -180,9 +179,9 @@ const ProductBrandsDetail: React.FC<RouteComponentProps> = props => {
                   />
                 </Form.Item>
               </Col>
-            </Row>
+              </Row>
             </Col>
-        </Tabs.TabPane>
+          </Tabs.TabPane>
         </Tabs>        
         <Row gutter={8}>
           <Col>
