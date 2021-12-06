@@ -1,7 +1,7 @@
-import { Button, Col, Form, Input, PageHeader, Row, Typography } from 'antd';
+import { Button, Col, Form, Input, PageHeader, Row, Tabs, Typography } from 'antd';
 import { Upload } from 'components';
 import { useRequest } from '../../hooks/useRequest';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { saveProductBrand } from '../../services/DiscoClubService';
 import { TwitterPicker } from 'react-color';
@@ -12,11 +12,16 @@ const ProductBrandsDetail: React.FC<RouteComponentProps> = props => {
   const [loading, setLoading] = useState<boolean>(false);
   const [form] = Form.useForm();
   const { doRequest } = useRequest({ setLoading });
+  const [activeTabKey, setActiveTabKey] = React.useState('Details');
 
   const onFinish = async () => {
     const productBrand = form.getFieldsValue(true);
     await doRequest(() => saveProductBrand(productBrand));
     history.goBack();
+  };
+
+  const changeTab = (activeKey: string) => {
+    setActiveTabKey(activeKey);
   };
 
   return (
@@ -32,6 +37,13 @@ const ProductBrandsDetail: React.FC<RouteComponentProps> = props => {
         initialValues={initial}
         onFinish={onFinish}
       >
+        <>
+      <Tabs
+        defaultActiveKey="Details"
+        activeKey={activeTabKey}
+        onChange={changeTab}
+      >
+        <Tabs.TabPane forceRender tab="Details" key="Details">
         <Row gutter={8}>
           <Col lg={12} xs={24}>
             <Col lg={16} xs={24}>
@@ -52,8 +64,14 @@ const ProductBrandsDetail: React.FC<RouteComponentProps> = props => {
               >
                 <ColorPicker />
               </Form.Item>
+            </Col> 
             </Col>
-            <Row>
+            </Row>
+          </Tabs.TabPane>
+
+          <Tabs.TabPane forceRender tab="Images" key="Images">
+            <Col lg={16} xs={24}>
+            <Row gutter={8}>
               <Col lg={6} xs={24}>
                 <Form.Item label="Colour">
                   <Upload.ImageUpload
@@ -84,8 +102,6 @@ const ProductBrandsDetail: React.FC<RouteComponentProps> = props => {
                   />
                 </Form.Item>
               </Col>
-            </Row>
-            <Row>
               <Col lg={6} xs={24}>
                 <Form.Item
                   label="Logo Round"
@@ -100,6 +116,8 @@ const ProductBrandsDetail: React.FC<RouteComponentProps> = props => {
                   />
                 </Form.Item>
               </Col>
+            </Row>
+            <Row gutter={8}>
               <Col lg={6} xs={24}>
                 <Form.Item
                   label="Thumbnail"
@@ -132,7 +150,7 @@ const ProductBrandsDetail: React.FC<RouteComponentProps> = props => {
             <Typography.Title style={{ marginBottom: '4vh' }} level={5}>
               Brand Page Display
             </Typography.Title>
-            <Row>
+            <Row gutter={8}>
               <Col lg={6} xs={24}>
                 <Form.Item
                   label="Mast Head Image"
@@ -161,9 +179,10 @@ const ProductBrandsDetail: React.FC<RouteComponentProps> = props => {
                   />
                 </Form.Item>
               </Col>
-            </Row>
-          </Col>
-        </Row>
+              </Row>
+            </Col>
+          </Tabs.TabPane>
+        </Tabs>        
         <Row gutter={8}>
           <Col>
             <Button type="default" onClick={() => history.goBack()}>
@@ -176,6 +195,7 @@ const ProductBrandsDetail: React.FC<RouteComponentProps> = props => {
             </Button>
           </Col>
         </Row>
+        </>
       </Form>
     </>
   );

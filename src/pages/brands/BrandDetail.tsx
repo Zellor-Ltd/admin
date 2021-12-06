@@ -501,7 +501,7 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
           </Tabs.TabPane>
 
           <Tabs.TabPane forceRender tab="Images" key="Images">
-            <Col lg={12} xs={24}>
+            <Col lg={16} xs={24}>
               <Row>
                 <Col lg={6} xs={24}>
                   <Form.Item label="Colour">
