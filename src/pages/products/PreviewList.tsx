@@ -391,18 +391,6 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
     await getProducts(true);
   };
 
-  useEffect(() => {
-    if (!isEditing && loaded) {
-      if (lastViewedIndex !== 1) {
-        handleScroll();
-      }
-    }
-  }, [isEditing]);
-
-  const handleScroll = () => {
-    window.scroll(0, 300 * lastViewedIndex + 415);
-  };
-
   const handleFilterOutOfStock = (e: CheckboxChangeEvent) => {
     setOutOfStockFilter(e.target.checked);
   };

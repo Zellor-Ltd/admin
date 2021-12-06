@@ -116,10 +116,6 @@ const Products: React.FC<RouteComponentProps> = () => {
     settings: { currency = [] },
   } = useSelector((state: any) => state.settings);
 
-  const handleScroll = () => {
-    window.scroll(0, 300 * lastViewedIndex + 415);
-  };
-
   const handleFilterOutOfStock = (e: CheckboxChangeEvent) => {
     setOutOfStockFilter(e.target.checked);
   };
@@ -131,14 +127,6 @@ const Products: React.FC<RouteComponentProps> = () => {
   useEffect(() => {
     form.setFieldsValue(currentProduct);
   }, [form, currentProduct]);
-
-  useEffect(() => {
-    if (!isViewing && loaded) {
-      if (lastViewedIndex !== 1) {
-        handleScroll();
-      }
-    }
-  }, [isViewing]);
 
   const setSearchTagsByCategory = useCallback(
     (
@@ -411,7 +399,7 @@ const Products: React.FC<RouteComponentProps> = () => {
 
   const editProduct = (record: Product, index: number) => {
     setCurrentProduct(record);
-    setLastViewedIndex(index - 1);
+    setLastViewedIndex(index);
     setCurrentMasterBrand(record.brand.brandName);
     if (record.productBrand) {
       setCurrentProductBrand(record.productBrand);
