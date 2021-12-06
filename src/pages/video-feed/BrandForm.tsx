@@ -123,7 +123,7 @@ const BrandForm: React.FC<FormProps> = ({
               onChange={onChangeProductBrandLogo}
             >
               {selectedProductBrand?.brandLogo?.url && (
-                <Select.Option value="brandLogo">Brand</Select.Option>
+                <Select.Option value="brandLogo">Logo Round</Select.Option>
               )}
 
               {selectedProductBrand?.colourLogo?.url && (
