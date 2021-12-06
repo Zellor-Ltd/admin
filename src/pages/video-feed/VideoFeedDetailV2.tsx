@@ -33,6 +33,7 @@ import { useSelector } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
 import {
   fetchBrands,
+  fetchProductBrands,
   fetchCategories,
   fetchCreators,
   fetchTags,

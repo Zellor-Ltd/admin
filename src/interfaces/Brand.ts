@@ -27,4 +27,6 @@ export interface Brand {
   thumbnail?: any;
   mastHead?: any;
   avatar?: any;
+  productBrand?: string;
+  selectedLogoUrl?: string;
 }

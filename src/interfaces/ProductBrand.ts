@@ -7,4 +7,6 @@ export interface ProductBrand {
   videoLogo?: any;
   mastHead?: any;
   avatar?: any;
+  colourLogo?: any;
+  blackLogo?: any;
 }

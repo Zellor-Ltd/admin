@@ -15,4 +15,5 @@ export interface FeedItem {
   validity: String;
   package: Segment[];
   _id: String;
+  productBrand?: string;
 }
