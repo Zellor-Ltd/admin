@@ -152,7 +152,7 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
         }`
       );
     } else
-      setPageTitle( initial.title ?
+      setPageTitle( initial ?
         initial.title.length > 50
           ? `${initial.title.substr(0, 50)} Update`
           : `${initial.title} Update`
