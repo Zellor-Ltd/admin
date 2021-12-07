@@ -629,18 +629,14 @@ const Products: React.FC<RouteComponentProps> = () => {
     setSelectedRowKeys(selectedRows);
   };
 
-  const onAssignToThumbnail = (
-    file: Image
-  ) => {
+  const onAssignToThumbnail = (file: Image) => {
     if (currentProduct) {
       currentProduct.thumbnailUrl = file;
       setCurrentProduct({ ...currentProduct });
     }
   };
 
-  const onAssignToTag = (
-    file: Image
-  ) => {
+  const onAssignToTag = (file: Image) => {
     if (currentProduct) {
       currentProduct.tagImage = file;
       setCurrentProduct({ ...currentProduct });
@@ -1178,14 +1174,16 @@ const Products: React.FC<RouteComponentProps> = () => {
                   </Col>
                   <Col lg={24} xs={24}>
                     <Form.Item label="Image">
-                      <Upload.ImageUpload
-                        maxCount={20}
-                        fileList={currentProduct?.image}
-                        formProp="image"
-                        form={form}
-                        onAssignToTag={onAssignToTag}
-                        onAssignToThumbnail={onAssignToThumbnail}
-                      />
+                      <div className="img-upload-div">
+                        <Upload.ImageUpload
+                          maxCount={20}
+                          fileList={currentProduct?.image}
+                          formProp="image"
+                          form={form}
+                          onAssignToTag={onAssignToTag}
+                          onAssignToThumbnail={onAssignToThumbnail}
+                        />
+                      </div>
                     </Form.Item>
                   </Col>
                 </Row>
