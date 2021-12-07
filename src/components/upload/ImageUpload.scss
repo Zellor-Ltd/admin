@@ -7,13 +7,7 @@
 }
 
 .fit-to-icons-container {
-  margin: 0.25rem 0;
-}
-
-.ant-upload.ant-upload-select-picture-card {
-  position: relative;
-  top: -86px;
-  transform: scale(1.087);
+  margin: 0.25rem 0.75rem;
 }
 
 .ant-upload-picture-card-wrapper {
@@ -25,8 +19,6 @@
   flex-wrap: wrap;
   height: 100%;
   align-items: baseline;
-  position: relative;
-  left: 0px;
   transform: scale(0.92);
 }
 
@@ -41,4 +33,10 @@
 
 .img-upload-div {
   width: 1150px;
+}
+
+.img-upload-div .ant-upload.ant-upload-select-picture-card {
+  position: relative;
+  top: -86px;
+  transform: scale(1.087);
 }

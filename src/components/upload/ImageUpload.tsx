@@ -336,7 +336,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   const itemRender = (originNode: React.ReactElement, file, currFileList) => {
     if (onOrder || onFitTo || onAssignToTag || onAssignToThumbnail) {
       return (
-        <div style={currFileList.indexOf(file) > 9 ? { marginTop: 50 } : {}}>
+        <div style={currFileList.indexOf(file) > 9 ? {marginTop: 50} : {}}>
           <ImageDnD
             originNode={originNode}
             file={file}
