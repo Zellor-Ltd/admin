@@ -336,12 +336,14 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   const itemRender = (originNode: React.ReactElement, file, currFileList) => {
     if (onOrder || onFitTo || onAssignToTag || onAssignToThumbnail) {
       return (
+        <div style={currFileList.indexOf(file) > 9 ? {marginTop: 50} : {}}>
         <ImageDnD
           originNode={originNode}
           file={file}
           fileList={currFileList}
           moveRow={moveRow}
         />
+        </div>
       );
     }
 
@@ -351,23 +353,27 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   const action = `${process.env.REACT_APP_HOST_ENDPOINT}/Wi/Upload`;
 
   return (
-    <DndProvider backend={HTML5Backend}>
-      <Upload
-        action={action}
-        headers={{
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        }}
-        onChange={onChangeImage}
-        accept={accept}
-        listType="picture-card"
-        fileList={fileListLocal}
-        maxCount={maxCount}
-        onPreview={onPreview}
-        itemRender={itemRender}
-      >
-        {fileListLocal.length >= maxCount ? null : uploadButton}
-      </Upload>
-    </DndProvider>
+    <Row>
+      <Col>
+        <DndProvider backend={HTML5Backend}>
+          <Upload
+            action={action}
+            headers={{
+              Authorization: `Bearer ${localStorage.getItem('token')}`,
+            }}
+            onChange={onChangeImage}
+            accept={accept}
+            listType="picture-card"
+            fileList={fileListLocal}
+            maxCount={maxCount}
+            onPreview={onPreview}
+            itemRender={itemRender}
+          >
+            {fileListLocal.length >= maxCount ? null : uploadButton}
+          </Upload>
+        </DndProvider>
+      </Col>
+    </Row>
   );
 };
 
