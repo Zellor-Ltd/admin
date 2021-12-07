@@ -89,7 +89,13 @@ const TagForm: React.FC<FormProps> = ({
         </Col>
         <Col lg={12} xs={24}>
           <Form.Item name={'id'} label="Tag" rules={[{ required: true }]}>
-            <Select onChange={(key: string) => onChangeTag(key)}>
+            <Select
+              onChange={(key: string) => onChangeTag(key)}
+              filterOption={(input, option) =>
+                option?.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+              }
+              showSearch
+            >
               {filteredTags.map(tag => (
                 <Select.Option key={tag.id} value={tag.id}>
                   {tag.tagName}

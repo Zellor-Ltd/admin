@@ -152,10 +152,11 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
         }`
       );
     } else
-      setPageTitle(
+      setPageTitle( initial.title ?
         initial.title.length > 50
           ? `${initial.title.substr(0, 50)} Update`
           : `${initial.title} Update`
+        : "Update"
       );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedSegment, showBrandForm, showTagForm]);
