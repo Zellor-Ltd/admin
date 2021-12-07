@@ -72,6 +72,12 @@ const ProductBrands: React.FC<RouteComponentProps> = ({
       align: 'center',
     },
     {
+      title: 'External Code',
+      dataIndex: 'externalCode',
+      width: '10%',
+      align: 'center',
+    },
+    {
       title: 'Name',
       dataIndex: 'brandName',
       width: '20%',
