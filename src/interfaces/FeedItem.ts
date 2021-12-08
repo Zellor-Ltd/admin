@@ -1,3 +1,4 @@
+import { Creator } from './Creator';
 import { Segment } from './Segment';
 import { Video } from './Video';
 
@@ -16,4 +17,10 @@ export interface FeedItem {
   package: Segment[];
   _id: String;
   productBrand?: string;
+  hashtags?: string[];
+  ageMax?: number;
+  ageMin?: number;
+  status?: any;
+  shortDescription?: string;
+  creator?: Creator;  
 }
