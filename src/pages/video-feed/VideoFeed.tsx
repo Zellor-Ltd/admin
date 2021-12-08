@@ -173,14 +173,14 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
       const response: any = await fetchTags({});
       setTags(response.results);
     }
-    // setLoading(true);
+    setLoading(true);
     await Promise.all([
       getInfluencers(),
       getCategories(),
       getBrands(),
       getTags(),
     ]);
-    // setLoading(false);
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -314,7 +314,7 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
     for (let i = 0; i < content.length; i++) {
       if (content[i].id === record.id) {
         content[i] = record;
-        setFilteredItems(content);
+        setFilteredItems([...content]);
       }
     }
   };
