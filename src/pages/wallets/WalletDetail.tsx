@@ -31,8 +31,6 @@ const WalletDetail: React.FC<RouteComponentProps> = ({ location }) => {
       fetchTransactionsPerBrand(initial.fan.id, initial.brand.id)
     );
     setTransactions(results);
-
-    console.log(results)
   };
 
   useEffect(() => {
