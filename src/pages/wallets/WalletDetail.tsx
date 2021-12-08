@@ -31,6 +31,8 @@ const WalletDetail: React.FC<RouteComponentProps> = ({ location }) => {
       fetchTransactionsPerBrand(initial.fan.id, initial.brand.id)
     );
     setTransactions(results);
+
+    console.log(results)
   };
 
   useEffect(() => {
@@ -71,9 +73,9 @@ const WalletDetail: React.FC<RouteComponentProps> = ({ location }) => {
       title: 'Who',
       width: '20%',
       align: 'right',
-      dataIndex: 'type',
-      render: (value: string) =>
-        value === 'reset' ? 'admin' : initial.fan.user,
+      dataIndex: 'addedBy',
+      render: (value: string, record) =>
+        value === initial.fan.id ? initial.fan.user : "admin",
     },
   ];
 
@@ -108,6 +110,7 @@ const WalletDetail: React.FC<RouteComponentProps> = ({ location }) => {
               </Typography.Text>
             </Col>
             <WalletEdit
+              disabled={false}
               fanId={initial.fan.id}
               brandId={initial.brand.id}
               getResources={getResources}
