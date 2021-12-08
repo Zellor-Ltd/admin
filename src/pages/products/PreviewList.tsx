@@ -1191,6 +1191,7 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
                   </Col>
                   <Col lg={24} xs={24} className="mt-1">
                     <Form.Item label="Image">
+                      <div className="img-upload-div">
                       <Upload.ImageUpload
                         maxCount={20}
                         fileList={currentProduct?.image}
@@ -1201,6 +1202,7 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
                         onAssignToThumbnail={onAssignToThumbnail}
                         onAssignToTag={onAssignToTag}
                       />
+                      </div>
                     </Form.Item>
                   </Col>
                 </Row>
