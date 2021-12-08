@@ -55,6 +55,15 @@ const ProductBrandsDetail: React.FC<RouteComponentProps> = props => {
                 <Input />
               </Form.Item>
             </Col>
+            <Col lg={16} xs={24}>
+              <Form.Item
+                label="External Code"
+                name="externalCode"
+                rules={[{ required: true }]}
+              >
+                <Input />
+              </Form.Item>
+            </Col>
             <Col lg={24} xs={24}>
               <Form.Item
                 label="Product Brand Color"
