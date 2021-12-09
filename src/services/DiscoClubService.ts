@@ -608,9 +608,8 @@ export const deletePreReg = (params: PreReg) =>
 export const fetchFanActivity = () =>
   instance.get(`Disco/Analytics/GetFanActivitives`);
 
-export const fetchBanners = () => {
+export const fetchBanners = () => 
   instance.get(`Wi/Ep/GetFeedBanner`);
-};
 
 export const saveBanner = (params: Banner) => {
   if (params.id) {

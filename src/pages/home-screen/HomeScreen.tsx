@@ -7,7 +7,7 @@ import { Banner } from '../../interfaces/Banner';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { fetchBanners, deleteBanner } from '../../services/DiscoClubService';
+import { fetchBanners, deleteBanner } from 'services/DiscoClubService';
 import CopyIdToClipboard from '../../components/CopyIdToClipboard';
 
 const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
@@ -17,15 +17,14 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [content, setContent] = useState<any[]>([]);
   const [banners, setBanners] = useState<Banner[]>([]);
 
-  const getResources = async () => {
-    await getBanners();
+  const getResources = () => {
+    getBanners();
   };
 
   const getBanners = async () => {
-    const response = await fetchBanners;
-    console.log(response);
-    //setBanners(response.results);
-    //setContent(response.results);
+    const response = await doFetch(() => fetchBanners());
+    setBanners(response.results);
+    setContent(response.results);
   };
 
   useEffect(() => {
