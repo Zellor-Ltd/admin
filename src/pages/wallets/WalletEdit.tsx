@@ -13,10 +13,11 @@ import { useState } from 'react';
 import { addBalanceToUser, resetUserBalance } from 'services/DiscoClubService';
 
 interface WalletEditProps {
-  fanId: string;
-  brandId: string;
+  fanId: string | undefined;
+  brandId: string | undefined;
   getResources: () => Promise<any>;
   label?: string;
+  disabled?: boolean;
 }
 
 const WalletEdit: React.FC<WalletEditProps> = ({
@@ -24,19 +25,20 @@ const WalletEdit: React.FC<WalletEditProps> = ({
   brandId,
   getResources,
   label,
+  disabled,
 }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const { doRequest } = useRequest({ setLoading: setLoading });
   const [form] = useForm();
 
   const addBalance = async ({ balanceToAdd }: { balanceToAdd: number }) => {
-    await doRequest(() => addBalanceToUser(fanId, brandId, balanceToAdd));
+    await doRequest(() => addBalanceToUser(fanId as string, brandId as string, balanceToAdd));
     form.resetFields();
     await getResources();
   };
 
   const resetBalance = async () => {
-    await doRequest(() => resetUserBalance(fanId, brandId));
+    await doRequest(() => resetUserBalance(fanId as string, brandId as string));
     await getResources();
   };
 
@@ -52,13 +54,13 @@ const WalletEdit: React.FC<WalletEditProps> = ({
           <Row gutter={4}>
             <Col lg={8} xs={8}>
               <Form.Item name="balanceToAdd">
-                <InputNumber></InputNumber>
+                <InputNumber disabled={disabled}></InputNumber>
               </Form.Item>
             </Col>
             <Col lg={12} xs={12}>
               <Row gutter={4}>
                 <Col>
-                  <Button htmlType="submit" loading={loading} type="primary">
+                  <Button htmlType="submit" loading={loading} type="primary" disabled={disabled}>
                     Add
                   </Button>
                 </Col>
@@ -69,7 +71,7 @@ const WalletEdit: React.FC<WalletEditProps> = ({
                     cancelText="No"
                     onConfirm={resetBalance}
                   >
-                    <Button danger>Reset</Button>
+                    <Button disabled={disabled} danger>Reset</Button>
                   </Popconfirm>
                 </Col>
               </Row>
