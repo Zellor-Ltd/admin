@@ -208,9 +208,9 @@ const Orders: React.FC<RouteComponentProps> = () => {
     },
     {
       title: 'Name',
-      dataIndex: ['product', 'name'],
       width: '12%',
       align: 'center',
+      render: (_, record) => record.product ? record.product?.name : record.cart.brandGroups[0].items[0].name,
     },
     {
       title: 'Creation',
@@ -289,7 +289,7 @@ const Orders: React.FC<RouteComponentProps> = () => {
 
   const getOrders = async () => {
     const response: any = await fetchOrders();
-    const orders = response.results.filter((order: Order) => !!order.product);
+    const orders = response.results.filter((order: Order) => !!(order.product || order.cart));
     return orders;
   };
 
@@ -326,8 +326,9 @@ const Orders: React.FC<RouteComponentProps> = () => {
     }
     addFilterFunction('brandName', orders =>
       orders.filter(
-        order => order.product?.brand.brandName === _selectedBrand.brandName
-      )
+        order => order.product ? 
+          order.product?.brand.brandName === _selectedBrand.brandName : order.cart.brandGroups.find(brandGroup => brandGroup.brandName === _selectedBrand.brandName)
+        )
     );
   };
 
@@ -337,7 +338,7 @@ const Orders: React.FC<RouteComponentProps> = () => {
       return;
     }
     addFilterFunction('fanName', orders =>
-      orders.filter(order => order.fanName === _selectedFan.user)
+      orders.filter(order => order.userid === _selectedFan.id)
     );
   };
 
