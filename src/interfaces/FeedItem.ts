@@ -1,6 +1,7 @@
 import { Creator } from './Creator';
 import { Segment } from './Segment';
 import { Video } from './Video';
+import { ProductBrand } from './ProductBrand';
 
 export interface FeedItem {
   video: Video;
@@ -16,7 +17,7 @@ export interface FeedItem {
   validity: String;
   package: Segment[];
   _id: String;
-  productBrand?: string;
+  productBrand?: ProductBrand | string;
   hashtags?: string[];
   ageMax?: number;
   ageMin?: number;

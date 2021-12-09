@@ -1,3 +1,5 @@
+import { ProductBrand } from "./ProductBrand";
+
 export interface Brand {
   checkout: string;
   cancelationUrl: string;
@@ -27,6 +29,6 @@ export interface Brand {
   thumbnail?: any;
   mastHead?: any;
   avatar?: any;
-  productBrand?: string;
+  productBrand?: ProductBrand | string;
   selectedLogoUrl?: string;
 }

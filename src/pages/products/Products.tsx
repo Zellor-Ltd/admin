@@ -54,6 +54,7 @@ import {
   fetchProducts,
   fetchAllProducts,
   saveProduct,
+  fetchProductBrands,
 } from 'services/DiscoClubService';
 import EditProductModal from './EditProductModal';
 import ProductAPITestModal from './ProductAPITestModal';
@@ -72,6 +73,7 @@ const { getSearchTags, getCategories, removeSearchTagsByCategory } =
 const Products: React.FC<RouteComponentProps> = () => {
   const saveProductFn = saveProduct;
   const [brands, setBrands] = useState<Brand[]>([]);
+  const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
   const [ageRange, setAgeRange] = useState<[number, number]>([12, 100]);
   const [form] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
@@ -345,6 +347,15 @@ const Products: React.FC<RouteComponentProps> = () => {
       _fetchProducts(triggerByButton),
       fetchAllCategories(),
     ]);
+
+    const getProductBrands = async () => {
+      try {
+        const { results }: any = await fetchProductBrands();
+        setProductBrands(results);
+      } catch (e) {}
+    };
+    
+    getProductBrands();
     setProducts(results);
     _fetchAllProducts();
     await setLoaded(true);
@@ -401,12 +412,12 @@ const Products: React.FC<RouteComponentProps> = () => {
 
   const onSaveCategories = async (record: Product) => {
     await saveCategories(() => saveProduct(record));
-    await refreshProducts();
+    refreshItem(record);
   };
 
   const onSaveProduct = async (record: Product) => {
     await doRequest(() => saveProduct(record));
-    await refreshProducts();
+    refreshItem(record);
   };
 
   const editProduct = (record: Product, index: number) => {
@@ -414,7 +425,11 @@ const Products: React.FC<RouteComponentProps> = () => {
     setLastViewedIndex(index - 1);
     setCurrentMasterBrand(record.brand.brandName);
     if (record.productBrand) {
-      setCurrentProductBrand(record.productBrand);
+      if (typeof record.productBrand === "string") {
+        setCurrentProductBrand(record.productBrand);
+      } else {
+        setCurrentProductBrand(record.productBrand.brandName);
+      }
     }
     setIsViewing(true);
   };
@@ -549,6 +564,7 @@ const Products: React.FC<RouteComponentProps> = () => {
       responsive: ['sm'],
       shouldCellUpdate: (prevRecord, nextRecord) =>
         prevRecord.productBrand != nextRecord.productBrand,
+      render: (field, record) => (typeof record.productBrand === "string" ? field : record.productBrand?.brandName),
     },
     {
       title: 'Last Go-Live',
@@ -690,6 +706,7 @@ const Products: React.FC<RouteComponentProps> = () => {
                     allowClear={true}
                     onChange={onChangeProductBrand}
                     initialProductBrandName={productBrandFilter?.brandName}
+                    productBrands={productBrands}
                   ></ProductBrandFilter>
                 </Col>
                 <Col lg={6} xs={16}>
@@ -788,6 +805,7 @@ const Products: React.FC<RouteComponentProps> = () => {
                     onSaveProduct={onSaveCategories}
                     loading={loadingCategories}
                     isStaging={false}
+                    productBrands={productBrands}
                   ></ProductExpandedRow>
                 ),
               }}
@@ -877,6 +895,7 @@ const Products: React.FC<RouteComponentProps> = () => {
                             allowClear={true}
                             initialProductBrandName={currentProductBrand}
                             handleProductBrandChange={handleProductBrandChange}
+                            productBrands={productBrands}
                           ></SelectProductBrand>
                         </Form.Item>
                       </Col>

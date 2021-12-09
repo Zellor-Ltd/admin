@@ -43,6 +43,7 @@ import {
   fetchStagingProducts,
   saveStagingProduct,
   transferStageProduct,
+  fetchProductBrands,
 } from 'services/DiscoClubService';
 import EditProductModal from './EditProductModal';
 import ProductExpandedRow from './ProductExpandedRow';
@@ -65,6 +66,7 @@ import { ProductBrand } from 'interfaces/ProductBrand';
 import { productUtils } from '../../helpers/product-utils';
 import { Image } from '../../interfaces/Image';
 import scrollIntoView from 'scroll-into-view';
+import ProductBrands from 'pages/product-brands/ProductBrands';
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 const { getSearchTags, getCategories, removeSearchTagsByCategory } =
@@ -73,6 +75,7 @@ const { getSearchTags, getCategories, removeSearchTagsByCategory } =
 const PreviewList: React.FC<RouteComponentProps> = () => {
   const saveProductFn = saveStagingProduct;
   const [brands, setBrands] = useState<Brand[]>([]);
+  const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
   const [ageRange, setageRange] = useState<[number, number]>([12, 100]);
   const [form] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
@@ -333,6 +336,15 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
       _fetchStagingProducts(searchButton),
       fetchAllCategories(),
     ]);
+
+  const getProductBrands = async () => {
+    try {
+      const { results }: any = await fetchProductBrands();
+      setProductBrands(results);
+    } catch (e) {}
+  };
+  
+    getProductBrands();
     setLoaded(true);
     setProducts(results);
     setContent(results);
@@ -444,6 +456,7 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
       width: '12%',
       align: 'center',
       responsive: ['sm'],
+      render: (field, record) => (typeof record.productBrand === "string" ? field : record.productBrand?.brandName),
     },
     {
       title: 'SKU',
@@ -572,7 +585,11 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
     setLastViewedIndex(index);
     setCurrentMasterBrand(record.brand.brandName);
     if (record.productBrand) {
-      setCurrentProductBrand(record.productBrand);
+      if (typeof record.productBrand === "string") {
+        setCurrentProductBrand(record.productBrand);
+      } else {
+        setCurrentProductBrand(record.productBrand.brandName);
+      }
     } else {
       setCurrentProductBrand('');
     }
@@ -690,6 +707,7 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
                     allowClear={true}
                     onChange={onChangeProductBrand}
                     initialProductBrandName={productBrandFilter?.brandName}
+                    productBrands={productBrands}
                   ></ProductBrandFilter>
                 </Col>
                 <Col lg={6} xs={16}>
@@ -805,6 +823,7 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
                     onSaveProduct={onSaveCategories}
                     loading={loadingCategories}
                     isStaging={true}
+                    productBrands={productBrands}
                   ></ProductExpandedRow>
                 ),
               }}
@@ -892,6 +911,7 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
                             allowClear={true}
                             initialProductBrandName={currentProductBrand}
                             handleProductBrandChange={handleProductBrandChange}
+                            productBrands={productBrands}
                           ></SelectProductBrand>
                         </Form.Item>
                       </Col>
