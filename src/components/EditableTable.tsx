@@ -62,7 +62,15 @@ const EditableTable: React.FC<EditableTableProps<any>> = (
     originalPrice: 'Original Price',
     maxDiscoDollars: 'Max Disco Dollars',
     lastImportDate: 'Last Import Date',
-    productBrand: 'Product Brand',
+    productBrand: {
+      header: 'Product Brand',
+      formatter: (_fieldValue: any, record: any) => {
+        if (typeof _fieldValue === 'string') {
+          return _fieldValue;
+        }
+        return record.productBrand.brandName;
+      },
+    },
     lastGoLiveDate: 'Last Go Live Date',
   };
 

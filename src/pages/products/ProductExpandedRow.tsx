@@ -1,15 +1,13 @@
-import { Button, Col, Form, Radio, Select, Row } from 'antd';
+import { Button, Col, Form, Radio, Row } from 'antd';
 import { categoriesSettings } from 'helpers/utils';
 import { AllCategories } from 'interfaces/Category';
 import { Product } from 'interfaces/Product';
 import { ProductBrand } from 'interfaces/ProductBrand';
 import { useLocation } from 'react-router-dom';
 import ProductCategoriesTrees from './ProductCategoriesTrees';
-import { useCallback, useState, useEffect } from 'react';
-import { fetchProductBrands } from 'services/DiscoClubService';
+import { useCallback } from 'react';
 import { SelectProductBrand } from 'components/SelectProductBrand';
 import { productUtils } from '../../helpers/product-utils';
-import update from 'immutability-helper';
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 const { getSearchTags, getCategories, removeSearchTagsByCategory } =
@@ -21,6 +19,7 @@ interface ProductExpandedRowProps {
   onSaveProduct: Function;
   loading: boolean;
   isStaging: boolean;
+  productBrands: ProductBrand[];
 }
 
 const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
@@ -29,20 +28,9 @@ const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
   onSaveProduct,
   loading,
   isStaging,
+  productBrands,
 }) => {
   const [form] = Form.useForm();
-  const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
-
-  const { pathname } = useLocation();
-
-  useEffect(() => {
-    const getProductBrands = async () => {
-      const response: any = await fetchProductBrands();
-      setProductBrands(response.results);
-    };
-
-    getProductBrands();
-  }, []);
 
   const onFinish = async () => {
     const _categories = [...form.getFieldValue('categories')];
@@ -160,8 +148,9 @@ const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
           <Form.Item name="productBrand" label="Product Brand">
             <SelectProductBrand
               allowClear={true}
-              initialProductBrandName={record.productBrand ?? ''}
+              initialProductBrandName={typeof record.productBrand === 'string' ? record.productBrand : record.productBrand?.brandName}
               handleProductBrandChange={handleProductBrandChange}
+              productBrands={productBrands}
             ></SelectProductBrand>
           </Form.Item>
         </Col>

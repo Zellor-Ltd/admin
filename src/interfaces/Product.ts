@@ -15,7 +15,7 @@ export interface Product {
   discountedPrice: number;
   discoPercentage: number;
   currencyIsoCode: string;
-  productBrand?: string;
+  productBrand?: ProductBrand | string;
   tagText: string;
   relatedVideos: Video[];
   mainRelatedVideo: Video;

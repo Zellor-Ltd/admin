@@ -1,8 +1,7 @@
 import { Typography } from 'antd';
 import Select from 'antd/lib/select';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { ProductBrand } from '../interfaces/ProductBrand';
-import { fetchProductBrands } from '../services/DiscoClubService';
 
 type ProductBrandFilterProps = Omit<
   React.SelectHTMLAttributes<HTMLSelectElement>,
@@ -12,6 +11,7 @@ type ProductBrandFilterProps = Omit<
   allowClear?: boolean;
   initialProductBrandName?: string;
   label?: string;
+  productBrands: ProductBrand[];
 };
 
 export const ProductBrandFilter: React.FC<ProductBrandFilterProps> = ({
@@ -21,8 +21,8 @@ export const ProductBrandFilter: React.FC<ProductBrandFilterProps> = ({
   allowClear = true,
   initialProductBrandName,
   label = 'Product Brand',
+  productBrands,
 }) => {
-  const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
   const [selectedProductBrandName, setSelectedProductBrandName] =
     useState<string>(initialProductBrandName as string);
 
@@ -30,17 +30,6 @@ export const ProductBrandFilter: React.FC<ProductBrandFilterProps> = ({
     setSelectedProductBrandName(value);
     onChange(productBrands.find(brand => brand.id === value) as ProductBrand);
   };
-
-  useEffect(() => {
-    const getProductBrands = async () => {
-      try {
-        const { results }: any = await fetchProductBrands();
-        setProductBrands(results);
-      } catch (e) {}
-    };
-    getProductBrands();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   return (
     <div style={{ marginBottom: '16px' }}>
