@@ -1174,7 +1174,7 @@ const Products: React.FC<RouteComponentProps> = () => {
                   </Col>
                   <Col lg={24} xs={24}>
                     <Form.Item label="Image">
-                      <div className="img-upload-div">
+                      <div className={currentProduct ? (currentProduct.image ? "img-upload-div" : "") : ""}>
                         <Upload.ImageUpload
                           maxCount={20}
                           fileList={currentProduct?.image}
