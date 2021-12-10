@@ -40,7 +40,7 @@ const PromotionDetail: React.FC<RouteComponentProps> = props => {
     <>
       <PageHeader
         title={
-          initial?.brand
+          initial
             ? `${initial?.brand} Promotion Update`
             : 'Promotion Update'
         }

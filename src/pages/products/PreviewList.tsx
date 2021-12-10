@@ -834,7 +834,7 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
       {isEditing && (
         <div className="products-details">
           <PageHeader
-            title={`${currentProduct?.name} Update`}
+            title={currentProduct ? `${currentProduct?.name} Update` : "New Item"}
             subTitle="Form"
           />
           <Form

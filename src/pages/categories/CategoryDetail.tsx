@@ -72,7 +72,7 @@ const CategoryDetail: React.FC<RouteComponentProps> = ({
   return (
     <>
       <PageHeader
-        title={`${initial[categoryField]} ${categoryUpdateName} Update`}
+        title={initial ? `${initial[categoryField]} ${categoryUpdateName} Update` : "New item"}
         subTitle="Category"
       />
       <Form

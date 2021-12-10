@@ -322,7 +322,7 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
 
   return (
     <>
-      <PageHeader title={`${brand.brandName} Update`} subTitle="Master Brand" />
+      <PageHeader title={brand ? `${brand.brandName} Update` : "New Item"} subTitle="Master Brand" />
       <Form
         name="brandForm"
         layout="vertical"

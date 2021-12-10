@@ -69,7 +69,7 @@ const CreatorDetail: React.FC<RouteComponentProps> = props => {
   };
 
   const getHeaderTitle = () => {
-    if (initial?.userName) {
+    if (initial) {
       return `${initial?.userName} Update`;
     }
 
