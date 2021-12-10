@@ -112,7 +112,6 @@ const Products: React.FC<RouteComponentProps> = () => {
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
 
   const [products, setProducts] = useState<Product[]>([]);
-  const [content, setContent] = useState<any[]>([]);
 
   const {
     settings: { currency = [] },
@@ -269,6 +268,15 @@ const Products: React.FC<RouteComponentProps> = () => {
 
     getBrands();
     fetchAllCategories();
+
+    const getProductBrands = async () => {
+      try {
+        const { results }: any = await fetchProductBrands();
+        setProductBrands(results);
+      } catch (e) {}
+    };
+
+    getProductBrands();
     return () => {
       mounted = false;
     };
@@ -337,27 +345,11 @@ const Products: React.FC<RouteComponentProps> = () => {
     return response;
   };
 
-  const _fetchAllProducts = async () => {
-    const response = await doFetch(() => fetchAllProducts());
-    setContent(response.results);
-  };
-
   const getResources = async triggerByButton => {
-    const [{ results }] = await Promise.all([
-      _fetchProducts(triggerByButton),
-      fetchAllCategories(),
-    ]);
+    const { results: products } = await _fetchProducts(triggerByButton);
+    await fetchAllCategories();
 
-    const getProductBrands = async () => {
-      try {
-        const { results }: any = await fetchProductBrands();
-        setProductBrands(results);
-      } catch (e) {}
-    };
-    
-    getProductBrands();
-    setProducts(results);
-    _fetchAllProducts();
+    setProducts(products);
     await setLoaded(true);
   };
 
@@ -390,34 +382,33 @@ const Products: React.FC<RouteComponentProps> = () => {
 
   const deleteItem = async (_id: string) => {
     await doRequest(() => deleteProduct(_id));
-    for (let i = 0; i < content.length; i++) {
-      if (content[i].id === _id) {
-        const index = i;
-        setProducts(prev => [
-          ...prev.slice(0, index),
-          ...prev.slice(index + 1),
-        ]);
+    for (let index = 0; index < products.length; index++) {
+      if (products[index].id === _id) {
+        setProducts(prev => [...prev.splice(index, 1)]);
+        break;
       }
     }
   };
 
-  const refreshItem = async (record: Product) => {
-    for (let i = 0; i < content.length; i++) {
-      if (content[i].id === record.id) {
-        content[i] = record;
-        setProducts(content);
+  const refreshItem = (record: Product) => {
+    for (let i = 0; i < products.length; i++) {
+      if (products[i].id === record.id) {
+        products[i] = record;
+        setProducts([...products]);
+        break;
       }
     }
   };
 
-  const onSaveCategories = async (record: Product) => {
+  const onSaveOnRowEdition = async (record: Product) => {
+    setCurrentProduct(record);
     await saveCategories(() => saveProduct(record));
     refreshItem(record);
   };
 
   const onSaveProduct = async (record: Product) => {
     await doRequest(() => saveProduct(record));
-    refreshItem(record);
+    await refreshItem(record);
   };
 
   const editProduct = (record: Product, index: number) => {
@@ -425,7 +416,7 @@ const Products: React.FC<RouteComponentProps> = () => {
     setLastViewedIndex(index - 1);
     setCurrentMasterBrand(record.brand.brandName);
     if (record.productBrand) {
-      if (typeof record.productBrand === "string") {
+      if (typeof record.productBrand === 'string') {
         setCurrentProductBrand(record.productBrand);
       } else {
         setCurrentProductBrand(record.productBrand.brandName);
@@ -439,7 +430,7 @@ const Products: React.FC<RouteComponentProps> = () => {
     setCurrentMasterBrand(undefined);
     setCurrentProductBrand(undefined);
     if (loaded) {
-      setLastViewedIndex(content.length);
+      setLastViewedIndex(products.length);
     }
     setIsViewing(true);
   };
@@ -564,7 +555,10 @@ const Products: React.FC<RouteComponentProps> = () => {
       responsive: ['sm'],
       shouldCellUpdate: (prevRecord, nextRecord) =>
         prevRecord.productBrand != nextRecord.productBrand,
-      render: (field, record) => (typeof record.productBrand === "string" ? field : record.productBrand?.brandName),
+      render: (field, record) =>
+        typeof record.productBrand === 'string'
+          ? field
+          : record.productBrand?.brandName,
     },
     {
       title: 'Last Go-Live',
@@ -802,7 +796,7 @@ const Products: React.FC<RouteComponentProps> = () => {
                     key={record.id}
                     record={record}
                     allCategories={allCategories}
-                    onSaveProduct={onSaveCategories}
+                    onSaveProduct={onSaveOnRowEdition}
                     loading={loadingCategories}
                     isStaging={false}
                     productBrands={productBrands}
@@ -1193,7 +1187,15 @@ const Products: React.FC<RouteComponentProps> = () => {
                   </Col>
                   <Col lg={24} xs={24}>
                     <Form.Item label="Image">
-                      <div className={currentProduct ? (currentProduct.image ? "img-upload-div" : "") : ""}>
+                      <div
+                        className={
+                          currentProduct
+                            ? currentProduct.image
+                              ? 'img-upload-div'
+                              : ''
+                            : ''
+                        }
+                      >
                         <Upload.ImageUpload
                           maxCount={20}
                           fileList={currentProduct?.image}
