@@ -102,7 +102,7 @@ const TagDetail: React.FC<RouteComponentProps> = props => {
   return (
     <>
       <PageHeader
-        title={initial?.tagName ? `${initial?.tagName} Update` : 'New Tag'}
+        title={initial ? `${initial?.tagName} Update` : 'New Tag'}
         subTitle="Tag"
       />
       <Form

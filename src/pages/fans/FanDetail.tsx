@@ -222,7 +222,7 @@ const FanDetail: React.FC<RouteComponentProps> = props => {
 
   return (
     <>
-      <PageHeader title={`${initial.userName} Update`} subTitle="Fan" />
+      <PageHeader title={initial ? `${initial.userName} Update` : "New Item"} subTitle="Fan" />
       <Form
         name="userForm"
         layout="vertical"

@@ -31,7 +31,7 @@ const OrderDetail: React.FC<RouteComponentProps> = props => {
 
   return (
     <>
-      <PageHeader title={`${initial.firstName} Update`} subTitle="Order" />
+      <PageHeader title={initial ? `${initial.firstName} Update` : "New Item"} subTitle="Order" />
       <Form
         form={form}
         layout="vertical"
