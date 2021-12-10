@@ -1,8 +1,8 @@
 import {
   DeleteOutlined,
   EditOutlined,
-  SettingOutlined,
   SearchOutlined,
+  SettingOutlined,
 } from '@ant-design/icons';
 import {
   Button,
@@ -31,7 +31,7 @@ import { categoriesSettings } from 'helpers/utils';
 import { AllCategories } from 'interfaces/Category';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { RouteComponentProps, Link } from 'react-router-dom';
+import { Link, RouteComponentProps } from 'react-router-dom';
 import ProductCategoriesTrees from './ProductCategoriesTrees';
 import './Products.scss';
 import EditMultipleButton from 'components/EditMultipleButton';
@@ -49,12 +49,11 @@ import { Product } from 'interfaces/Product';
 import moment from 'moment';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import {
-  fetchBrands,
   deleteProduct,
-  fetchProducts,
-  fetchAllProducts,
-  saveProduct,
+  fetchBrands,
   fetchProductBrands,
+  fetchProducts,
+  saveProduct,
 } from 'services/DiscoClubService';
 import EditProductModal from './EditProductModal';
 import ProductAPITestModal from './ProductAPITestModal';

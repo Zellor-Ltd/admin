@@ -124,7 +124,7 @@ export const fetchProducts = ({
   query,
   unclassified,
   page = 0,
-  limit = 0,
+  limit = 30,
   productBrandName,
   date,
   outOfStock,
@@ -144,9 +144,6 @@ export const fetchProducts = ({
     date,
     outOfStock,
   });
-
-export const fetchAllProducts = () =>
-  instance.put('Disco/Product/Adm/List/0/0');
 
 export const fetchAllStagingProducts = () =>
   instance.put('Disco/Staging/Product/List/0/0');
@@ -608,8 +605,7 @@ export const deletePreReg = (params: PreReg) =>
 export const fetchFanActivity = () =>
   instance.get(`Disco/Analytics/GetFanActivitives`);
 
-export const fetchBanners = () => 
-  instance.get(`Wi/Ep/GetFeedBanner`);
+export const fetchBanners = () => instance.get(`Wi/Ep/GetFeedBanner`);
 
 export const saveBanner = (params: Banner) => {
   if (params.id) {
