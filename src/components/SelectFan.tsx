@@ -23,8 +23,8 @@ export const SelectFan: React.FC<SelectFanProps> = ({
 }) => {
   const { filterValues, setFilterValues } = useContext(AppContext);
   const [fans, setFans] = useState<Fan[]>([]);
-  const [searchList, setSearchList] = useState<string[]>([]);
   const [selectedFan, setSelectedFan] = useState<string>(filterValues[label]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     setSelectedFan(filterValues[label]);
@@ -33,16 +33,13 @@ export const SelectFan: React.FC<SelectFanProps> = ({
   useEffect(() => {
     const getFans = async () => {
       try {
+        setIsLoading(true);
         const { results }: any = await fetchFans();
-        const _searchList: string[] = [];
-        results.forEach((fan: Fan) => {
-          // if (fan.name) _searchList.unshift(fan.name);
-          // if (fan.email) _searchList.push(fan.email);
-          if (fan.user) _searchList.push(fan.user);
-        });
-        setSearchList(_searchList);
-        setFans(results);
-      } catch (e) {}
+        setFans(results.filter(fan => !!fan.user));
+      } catch (e) {
+      } finally {
+        setIsLoading(false);
+      }
     };
     getFans();
   }, []);
@@ -50,12 +47,7 @@ export const SelectFan: React.FC<SelectFanProps> = ({
   const _onChange = (value: string) => {
     setSelectedFan(value);
     setFilterValues(prev => ({ ...prev, [label]: value }));
-    onChange(
-      fans.find(
-        // (fan) => fan.name === value || fan.email === value
-        fan => fan.user === value
-      ) as Fan
-    );
+    onChange(fans.find(fan => fan.user === value) as Fan);
   };
 
   return (
@@ -70,10 +62,11 @@ export const SelectFan: React.FC<SelectFanProps> = ({
         allowClear={allowClear}
         style={style}
         placeholder={placeholder}
+        loading={isLoading}
       >
-        {searchList.map(value => (
-          <Select.Option key={value} value={value}>
-            {value}
+        {fans.map(fan => (
+          <Select.Option key={fan.id} value={fan.user}>
+            {fan.user}
           </Select.Option>
         ))}
       </Select>
