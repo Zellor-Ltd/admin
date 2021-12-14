@@ -7,7 +7,7 @@ import { fetchProductBrands } from 'services/DiscoClubService';
 interface FormProps {
   brands: Brand[];
   brand: Brand | undefined;
-  setShowBrandForm: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowBrandForm: (value: boolean) => void;
 }
 
 const BrandForm: React.FC<FormProps> = ({

@@ -7,7 +7,7 @@ interface FormProps {
   brands: Brand[];
   tags: Tag[];
   tag: Tag | undefined;
-  setShowTagForm: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowTagForm: (value: boolean) => void;
 }
 
 const TagForm: React.FC<FormProps> = ({
