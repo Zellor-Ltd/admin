@@ -61,7 +61,7 @@ const BrandForm: React.FC<FormProps> = ({
     const currentValues = form.getFieldsValue(true);
 
     if (selectedProductBrand) {
-      currentValues.selectedLogoUrl = selectedProductBrand[productBrandKey].url;
+      currentValues.selectedLogoUrl = selectedProductBrand[productBrandKey]?.url ?? selectedProductBrand[productBrandKey];
     }
 
     form.setFieldsValue({ ...currentValues });
