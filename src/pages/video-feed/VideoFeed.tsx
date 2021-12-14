@@ -210,21 +210,11 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
           selectedTagIndex > -1 ? `${selectedTagIndex + 1} Update` : 'Creation'
         }`
       );
-    else if (selectedSegment) {
-      const packages = feedForm.getFieldValue('package');
-      setPageTitle(
-        `Segment ${
-          selectedSegmentIndex > -1 &&
-          (packages ? packages.length !== selectedSegmentIndex : true)
-            ? `${selectedSegmentIndex + 1} Update`
-            : 'Creation'
-        }`
-      );
-    } else
+    else
       setPageTitle(
         currentItem
           ? currentItem?.title.length > 50
-            ? `${currentItem.title.substr(0, 50)} Update`
+            ? `${currentItem.title.slice(0, 50)} (...) Update`
             : `${currentItem.title} Update`
           : 'Update'
       );
