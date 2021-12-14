@@ -39,11 +39,11 @@ import { Link, RouteComponentProps } from 'react-router-dom';
 import {
   deleteStagingProduct,
   fetchBrands,
+  fetchProductBrands,
   fetchProducts,
   fetchStagingProducts,
   saveStagingProduct,
   transferStageProduct,
-  fetchProductBrands,
 } from 'services/DiscoClubService';
 import EditProductModal from './EditProductModal';
 import ProductExpandedRow from './ProductExpandedRow';
@@ -66,7 +66,6 @@ import { ProductBrand } from 'interfaces/ProductBrand';
 import { productUtils } from '../../helpers/product-utils';
 import { Image } from '../../interfaces/Image';
 import scrollIntoView from 'scroll-into-view';
-import ProductBrands from 'pages/product-brands/ProductBrands';
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 const { getSearchTags, getCategories, removeSearchTagsByCategory } =
@@ -337,13 +336,13 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
       fetchAllCategories(),
     ]);
 
-  const getProductBrands = async () => {
-    try {
-      const { results }: any = await fetchProductBrands();
-      setProductBrands(results);
-    } catch (e) {}
-  };
-  
+    const getProductBrands = async () => {
+      try {
+        const { results }: any = await fetchProductBrands();
+        setProductBrands(results);
+      } catch (e) {}
+    };
+
     getProductBrands();
     setLoaded(true);
     setProducts(results);
@@ -456,7 +455,10 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
       width: '12%',
       align: 'center',
       responsive: ['sm'],
-      render: (field, record) => (typeof record.productBrand === "string" ? field : record.productBrand?.brandName),
+      render: (field, record) =>
+        typeof record.productBrand === 'string'
+          ? field
+          : record.productBrand?.brandName,
     },
     {
       title: 'SKU',
@@ -585,7 +587,7 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
     setLastViewedIndex(index);
     setCurrentMasterBrand(record.brand.brandName);
     if (record.productBrand) {
-      if (typeof record.productBrand === "string") {
+      if (typeof record.productBrand === 'string') {
         setCurrentProductBrand(record.productBrand);
       } else {
         setCurrentProductBrand(record.productBrand.brandName);
@@ -647,18 +649,14 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
     }
   };
 
-  const onAssignToThumbnail = (
-    file: Image
-  ) => {
+  const onAssignToThumbnail = (file: Image) => {
     if (currentProduct) {
       currentProduct.thumbnailUrl = file;
       setCurrentProduct({ ...currentProduct });
     }
   };
 
-  const onAssignToTag = (
-    file: Image
-  ) => {
+  const onAssignToTag = (file: Image) => {
     if (currentProduct) {
       currentProduct.tagImage = file;
       setCurrentProduct({ ...currentProduct });
@@ -834,7 +832,9 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
       {isEditing && (
         <div className="products-details">
           <PageHeader
-            title={currentProduct ? `${currentProduct?.name} Update` : "New Item"}
+            title={
+              currentProduct ? `${currentProduct?.name} Update` : 'New Item'
+            }
             subTitle="Form"
           />
           <Form
@@ -1212,16 +1212,17 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
                   <Col lg={24} xs={24} className="mt-1">
                     <Form.Item label="Image">
                       <div className="img-upload-div">
-                      <Upload.ImageUpload
-                        maxCount={20}
-                        fileList={currentProduct?.image}
-                        formProp="image"
-                        form={form}
-                        onOrder={onOrderImages}
-                        onFitTo={onFitTo}
-                        onAssignToThumbnail={onAssignToThumbnail}
-                        onAssignToTag={onAssignToTag}
-                      />
+                        <Upload.ImageUpload
+                          maxCount={20}
+                          fileList={currentProduct?.image}
+                          formProp="image"
+                          form={form}
+                          onOrder={onOrderImages}
+                          onFitTo={onFitTo}
+                          onAssignToThumbnail={onAssignToThumbnail}
+                          onAssignToTag={onAssignToTag}
+                          cropable={true}
+                        />
                       </div>
                     </Form.Item>
                   </Col>

@@ -1202,6 +1202,7 @@ const Products: React.FC<RouteComponentProps> = () => {
                           form={form}
                           onAssignToTag={onAssignToTag}
                           onAssignToThumbnail={onAssignToThumbnail}
+                          cropable={true}
                         />
                       </div>
                     </Form.Item>

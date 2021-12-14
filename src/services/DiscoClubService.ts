@@ -617,3 +617,18 @@ export const saveBanner = (params: Banner) => {
 
 export const deleteBanner = (params: Banner) =>
   instance.put(`Wi/Ep/RemoveFeedBanner`, params);
+
+export const uploadImage = (imageFile: File) => {
+  const form = new FormData();
+  form.append('file', imageFile);
+
+  return axios({
+    method: 'post',
+    url: `${process.env.REACT_APP_HOST_ENDPOINT}/Wi/Upload`,
+    data: form,
+    headers: {
+      'Content-Type': 'multipart/form-data',
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
+    },
+  });
+};
