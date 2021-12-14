@@ -125,7 +125,6 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 
   const onChangeImage = (info: any) => {
     setFileListLocal(info.fileList);
-    console.log(fileListLocal);
     if (maxCount === 1) {
       handleMaxOneImage(info);
     } else {
@@ -160,7 +159,6 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
             ),
           });
         } else {
-          console.log(formProp);
           form.setFieldsValue({
             [formProp]: [
               ...imageValue,
