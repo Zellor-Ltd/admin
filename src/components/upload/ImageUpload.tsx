@@ -1,31 +1,24 @@
-import {
-  Col,
-  FormInstance,
-  message,
-  Row,
-  Tooltip,
-  Upload,
-  Button,
-  Dropdown,
-  Menu,
-} from 'antd';
+import { Button, Col, FormInstance, message, Row, Tooltip, Upload } from 'antd';
 import {
   ColumnHeightOutlined,
   ColumnWidthOutlined,
   FileImageOutlined,
+  PlusOutlined,
+  ScissorOutlined,
   TagOutlined,
 } from '@ant-design/icons';
-import { PlusOutlined } from '@ant-design/icons';
 import React, {
+  cloneElement,
+  ReactElement,
   useCallback,
   useEffect,
   useState,
-  cloneElement,
-  ReactElement,
 } from 'react';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import './ImageUpload.scss';
+import ImageCrop from '../ImageCrop';
+import { uploadImage } from '../../services/DiscoClubService';
 
 interface ImageUploadProps {
   fileList: any;
@@ -41,6 +34,7 @@ interface ImageUploadProps {
   ) => void;
   onAssignToThumbnail?: CallableFunction;
   onAssignToTag?: CallableFunction;
+  cropable?: boolean;
 }
 
 interface ImageDnDProps {
@@ -60,8 +54,12 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   onFitTo,
   onAssignToThumbnail,
   onAssignToTag,
+  cropable,
 }) => {
   const [fileListLocal, setFileListLocal] = useState<any>([]);
+  const [isCropping, setIsCropping] = useState(false);
+  const [croppingImage, setCroppingImage] = useState<any>();
+  const [isUploadingCrop, setIsUploadingCrop] = useState(false);
   const dndType = 'DND-IMAGE';
 
   useEffect(() => {
@@ -147,30 +145,62 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
       }
       if (info.file.status === 'done') {
         const response = JSON.parse(info.file.xhr.response);
-        const imageValue = form.getFieldValue('image') || [];
-        if (typeof formProp === 'object') {
-          form.setFieldsValue({
-            [formProp.slice(0, 1)[0]]: createObjectFromPropArray(
-              [
-                ...imageValue,
-                { url: response.result.replace(';', ''), uid: info.file.uid },
-              ],
-              formProp.slice(1)
-            ),
-          });
-        } else {
-          form.setFieldsValue({
-            [formProp]: [
-              ...imageValue,
-              { url: response.result.replace(';', ''), uid: info.file.uid },
-            ],
-          });
-        }
+        const imageData = {
+          url: response.result.replace(';', ''),
+          uid: info.file.uid,
+        };
+        updateForm(imageData);
         message.success(`${info.file.name} file uploaded successfully`);
       } else if (info.file.status === 'error') {
         message.error(`${info.file.name} file upload failed.`);
       }
     }
+  };
+
+  const updateForm = (imageData: any) => {
+    const imageValue = form.getFieldValue('image') || [];
+    if (typeof formProp === 'object') {
+      form.setFieldsValue({
+        [formProp.slice(0, 1)[0]]: createObjectFromPropArray(
+          [...imageValue, imageData],
+          formProp.slice(1)
+        ),
+      });
+    } else {
+      form.setFieldsValue({
+        [formProp]: [...imageValue, imageData],
+      });
+    }
+  };
+
+  const onCropFinish = (imageCanvas: HTMLCanvasElement) => {
+    setIsUploadingCrop(true);
+    imageCanvas.toBlob(async imageBlob => {
+      if (!!imageBlob) {
+        try {
+          const fileName = 'cropped-'.concat(
+            croppingImage.uid,
+            '-',
+            new Date().getTime().toString()
+          );
+          const file = new File([imageBlob], fileName);
+          const resp = await uploadImage(file);
+          const imageData = {
+            url: resp.data.result,
+            id: fileName,
+          };
+          setFileListLocal([...fileListLocal, imageData]);
+          updateForm(imageData);
+          message.success(`Image cropped successfully.`);
+        } catch (e) {
+          console.error(e);
+          message.error(`Failed to crop image.`);
+        } finally {
+          setIsCropping(false);
+          setIsUploadingCrop(false);
+        }
+      }
+    });
   };
 
   const onPreview = async (file: any) => {
@@ -233,7 +263,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 
     if (onFitTo) {
       actionButtons.push(
-        <Col lg={6} xs={24}>
+        <Col lg={6} xs={6}>
           <Tooltip title="Fit to Width">
             <Button
               size="small"
@@ -247,7 +277,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
       );
 
       actionButtons.push(
-        <Col lg={6} xs={24}>
+        <Col lg={6} xs={6}>
           <Tooltip title="Fit to Height">
             <Button
               size="small"
@@ -263,7 +293,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 
     if (onAssignToThumbnail) {
       actionButtons.push(
-        <Col lg={6} xs={24}>
+        <Col lg={6} xs={6}>
           <Tooltip title="Assign to Thumbnail">
             <Button
               size="small"
@@ -278,13 +308,31 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 
     if (onAssignToTag) {
       actionButtons.push(
-        <Col lg={6} xs={24}>
+        <Col lg={6} xs={6}>
           <Tooltip title="Assign to Tag">
             <Button
               size="small"
               shape="circle"
               icon={<TagOutlined />}
               onClick={() => onAssignToTag(file)}
+            />
+          </Tooltip>
+        </Col>
+      );
+    }
+
+    if (cropable) {
+      actionButtons.push(
+        <Col lg={6} xs={6}>
+          <Tooltip title="Crop">
+            <Button
+              size="small"
+              shape="circle"
+              icon={<ScissorOutlined />}
+              onClick={() => {
+                setCroppingImage(file);
+                setIsCropping(true);
+              }}
             />
           </Tooltip>
         </Col>
@@ -332,16 +380,22 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   );
 
   const itemRender = (originNode: React.ReactElement, file, currFileList) => {
-    if (onOrder || onFitTo || onAssignToTag || onAssignToThumbnail) {
+    if (
+      onOrder ||
+      onFitTo ||
+      onAssignToTag ||
+      onAssignToThumbnail ||
+      cropable
+    ) {
       return (
-        <div style={currFileList.indexOf(file) > 9 ? {marginTop: 50} : {}}>
+        <Row>
           <ImageDnD
             originNode={originNode}
             file={file}
             fileList={currFileList}
             moveRow={moveRow}
           />
-        </div>
+        </Row>
       );
     }
 
@@ -371,6 +425,15 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
           </Upload>
         </DndProvider>
       </Col>
+      {isCropping && (
+        <ImageCrop
+          onFinish={onCropFinish}
+          onCancel={() => setIsCropping(false)}
+          src={croppingImage.url}
+          isCropping
+          loading={isUploadingCrop}
+        />
+      )}
     </Row>
   );
 };
