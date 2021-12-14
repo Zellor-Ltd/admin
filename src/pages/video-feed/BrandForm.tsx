@@ -1,7 +1,7 @@
 import { Button, Col, Form, InputNumber, Row, Select } from 'antd';
 import { Brand } from 'interfaces/Brand';
 import { ProductBrand } from 'interfaces/ProductBrand';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { fetchProductBrands } from 'services/DiscoClubService';
 
 interface FormProps {
@@ -57,11 +57,26 @@ const BrandForm: React.FC<FormProps> = ({
     } catch (e) {}
   };
 
-  const onChangeProductBrandLogo = (productBrandKey: string) => {
+  const onChangeProductBrandLogo = (
+    productBrandKey: 'brandLogo' | 'colourLogo' | 'blackLogo' | 'brandName' | ''
+  ) => {
     const currentValues = form.getFieldsValue(true);
 
     if (selectedProductBrand) {
-      currentValues.selectedLogoUrl = selectedProductBrand[productBrandKey].url;
+      switch (productBrandKey) {
+        case 'brandLogo':
+        case 'colourLogo':
+        case 'blackLogo':
+          currentValues.selectedLogoUrl =
+            selectedProductBrand[productBrandKey].url;
+          break;
+        case 'brandName':
+          currentValues.selectedLogoUrl = selectedProductBrand[productBrandKey];
+          break;
+        case '':
+        default:
+          currentValues.selectedLogoUrl = undefined;
+      }
     }
 
     form.setFieldsValue({ ...currentValues });
@@ -116,7 +131,7 @@ const BrandForm: React.FC<FormProps> = ({
         <Col lg={4} xs={24}>
           <Form.Item name="selectedLogo" label="Product Brand logo">
             <Select
-              defaultValue={brand?.selectedLogoUrl}
+              defaultValue={brand?.selectedLogoUrl as any}
               placeholder="Please select a logo"
               loading={isFetchingProductBrands}
               disabled={isFetchingProductBrands}

@@ -19,8 +19,8 @@ import {
   Row,
   Select,
   Slider,
-  Tabs,
   Table,
+  Tabs,
   Tag as AntTag,
   Typography,
 } from 'antd';
@@ -32,12 +32,12 @@ import React, { useEffect, useState } from 'react';
 import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 import {
   deleteVideoFeed,
-  fetchVideoFeed,
-  rebuildAllFeedd,
   fetchBrands,
   fetchCategories,
   fetchCreators,
   fetchTags,
+  fetchVideoFeed,
+  rebuildAllFeedd,
   saveVideoFeed,
 } from 'services/DiscoClubService';
 import { SelectBrand } from 'components/SelectBrand';
@@ -58,7 +58,6 @@ import TagForm from './TagForm';
 import './VideoFeed.scss';
 import './VideoFeedDetail.scss';
 import scrollIntoView from 'scroll-into-view';
-import { unstable_renderSubtreeIntoContainer } from 'react-dom';
 
 const { Content } = Layout;
 const { Title } = Typography;
@@ -70,7 +69,6 @@ const reduceSegmentsTags = (packages: Segment[]) => {
 };
 
 const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
-
   const [currentItem, setCurrentItem] = useState<FeedItem>();
 
   const {
@@ -223,28 +221,35 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
         }`
       );
     } else
-      setPageTitle( currentItem ?
-        currentItem?.title.length > 50
-          ? `${currentItem.title.substr(0, 50)} Update`
-          : `${currentItem.title} Update`
-       : "Update");
+      setPageTitle(
+        currentItem
+          ? currentItem?.title.length > 50
+            ? `${currentItem.title.substr(0, 50)} Update`
+            : `${currentItem.title} Update`
+          : 'Update'
+      );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedSegment, showBrandForm, showTagForm]);
-  
+
   useEffect(() => {
-    feedForm.setFieldsValue(currentItem)
-    segmentForm.setFieldsValue(currentItem)
-   }, [currentItem])
+    feedForm.setFieldsValue(currentItem);
+    segmentForm.setFieldsValue(currentItem);
+  }, [currentItem]);
 
   const onFinish = async () => {
     const item: FeedItem = feedForm.getFieldsValue(true);
-    item.package = item.package?.map(pack => ({
-      ...pack,
-      tags: pack.tags ? pack.tags : [],
-    }));
+    item.package = item.package?.map(pack => {
+      const segment: any = {
+        ...pack,
+        tags: pack.tags ? pack.tags : [],
+      };
+      // TODO: FIND THE ROOT CAUSE FOR THIS SELF REFERENCE
+      delete segment.package;
+      return segment;
+    });
     // item.validity = moment(item.validity).format("DD/MM/YYYY");
     await doRequest(() => saveVideoFeed(item));
-    
+
     resetForm();
     refreshItem(item);
     setIsEditing(false);
@@ -382,44 +387,51 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
     setLastViewedIndex(index);
     setCurrentItem(record);
     setIsEditing(true);
-  }
+  };
 
   const onCancel = () => {
     resetForm();
     setIsEditing(false);
-  }
+  };
 
   const newItem = () => {
     setIsEditing(true);
-  }
+  };
 
   const resetForm = () => {
     const template = {
-      category: "",
-      creator: {id: "", status: "", userName: "", creatorId: "", firstName: "", lastName: ""},
-      description: "",
-      format: "",
+      category: '',
+      creator: {
+        id: '',
+        status: '',
+        userName: '',
+        creatorId: '',
+        firstName: '',
+        lastName: '',
+      },
+      description: '',
+      format: '',
       gender: [],
-      goLiveDate: "",
-      hCreationDate: "",
-      hLastUpdate: "",
-      id: "",
-      language: "",
+      goLiveDate: '',
+      hCreationDate: '',
+      hLastUpdate: '',
+      id: '',
+      language: '',
       package: [],
-      shortDescription: "",
-      status: "",
-      title: "",
-      validity: "",
+      shortDescription: '',
+      status: '',
+      title: '',
+      validity: '',
       videoType: [],
       video: {},
       lengthTotal: 0,
-      market: "",
-      modelRelease: "",
-      target: "",
-      _id: "",
-    }
+      market: '',
+      modelRelease: '',
+      target: '',
+      _id: '',
+    };
     setCurrentItem(template);
-  }
+  };
 
   const columns: ColumnsType<FeedItem> = [
     {
@@ -434,9 +446,12 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
       dataIndex: 'title',
       width: '18%',
       render: (value: string, record: FeedItem, index: number) => (
-        <Link 
-        onClick={() => onEditItem(record, index)}
-        to={{ pathname: window.location.pathname, state: record }}>{value}</Link>
+        <Link
+          onClick={() => onEditItem(record, index)}
+          to={{ pathname: window.location.pathname, state: record }}
+        >
+          {value}
+        </Link>
       ),
     },
     {
@@ -483,8 +498,10 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
       align: 'right',
       render: (_, record: FeedItem, index: number) => (
         <>
-          <Link onClick={() => onEditItem(record, index)}
-        to={{ pathname: window.location.pathname, state: record }}>
+          <Link
+            onClick={() => onEditItem(record, index)}
+            to={{ pathname: window.location.pathname, state: record }}
+          >
             <EditOutlined />
           </Link>
           <Popconfirm
@@ -1010,142 +1027,145 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
 
   return (
     <>
-    {!isEditing && (
-    <div className="video-feed">
-      <PageHeader
-        title="Video feed update"
-        subTitle="List of Feeds"
-        extra={[
-          <Button key="2" onClick={newItem}>
-            New Item
-          </Button>,
-        ]}
-      />
-      <div style={{ marginBottom: '16px' }}>
-        <Row align="bottom" justify="space-between">
-          <Col lg={16} xs={24}>
-            <Row gutter={8}>
-              <Col lg={8} xs={16}>
-                <Typography.Title level={5} title="Search">
-                  Search
-                </Typography.Title>
-                <Input onChange={onChangeFilter} suffix={<SearchOutlined />} />
+      {!isEditing && (
+        <div className="video-feed">
+          <PageHeader
+            title="Video feed update"
+            subTitle="List of Feeds"
+            extra={[
+              <Button key="2" onClick={newItem}>
+                New Item
+              </Button>,
+            ]}
+          />
+          <div style={{ marginBottom: '16px' }}>
+            <Row align="bottom" justify="space-between">
+              <Col lg={16} xs={24}>
+                <Row gutter={8}>
+                  <Col lg={8} xs={16}>
+                    <Typography.Title level={5} title="Search">
+                      Search
+                    </Typography.Title>
+                    <Input
+                      onChange={onChangeFilter}
+                      suffix={<SearchOutlined />}
+                    />
+                  </Col>
+                  <Col lg={8} xs={16}>
+                    <SelectBrand
+                      style={{ width: '100%' }}
+                      allowClear={true}
+                      onChange={onChangeBrand}
+                    ></SelectBrand>
+                  </Col>
+                </Row>
               </Col>
-              <Col lg={8} xs={16}>
-                <SelectBrand
-                  style={{ width: '100%' }}
-                  allowClear={true}
-                  onChange={onChangeBrand}
-                ></SelectBrand>
+              <Col>
+                <Button
+                  type="primary"
+                  onClick={() => getResources()}
+                  loading={loading}
+                  style={{
+                    marginRight: '25px',
+                  }}
+                >
+                  Search
+                  <SearchOutlined style={{ color: 'white' }} />
+                </Button>
               </Col>
             </Row>
-          </Col>
-          <Col>
-            <Button
-              type="primary"
-              onClick={() => getResources()}
+          </div>
+          <Content>
+            <Table
+              rowClassName={(_, index) =>
+                `scrollable-row-${index} ${
+                  index === lastViewedIndex ? 'selected-row' : ''
+                }`
+              }
+              size="small"
+              columns={columns}
+              rowKey="id"
+              dataSource={filterFeed()}
               loading={loading}
-              style={{
-                marginRight: '25px',
-              }}
-            >
-              Search
-              <SearchOutlined style={{ color: 'white' }} />
-            </Button>
-          </Col>
-        </Row>
-      </div>
-      <Content>
-        <Table
-          rowClassName={(_, index) =>
-            `scrollable-row-${index} ${
-              index === lastViewedIndex ? 'selected-row' : ''
-            }`
-          }
-          size="small"
-          columns={columns}
-          rowKey="id"
-          dataSource={filterFeed()}
-          loading={loading}
-        />
-      </Content>
-    </div>
-    )}
-    {isEditing && (
-    <div className="video-feed-detail">
-      <PageHeader title={pageTitle} subTitle="Video Update" />
-      <Form.Provider
-        onFormFinish={(name, { values, forms }) => {
-          const { feedForm, segmentForm } = forms;
-          if (name === 'segmentForm') {
-            const segments: any[] = feedForm.getFieldValue('package') || [];
-            if (selectedSegmentIndex > -1) {
-              segments[selectedSegmentIndex] = segmentForm.getFieldsValue(true);
-              feedForm.setFieldsValue({ package: [...segments] });
-            } else {
-              feedForm.setFieldsValue({
-                package: [...segments, segmentForm.getFieldsValue(true)],
-              });
-            }
-            setSelectedSegment(undefined);
-            setSelectedSegmentIndex(-1);
-          }
-          if (name === 'brandForm') {
-            const { segmentForm, brandForm } = forms;
-            const brands: any[] = segmentForm.getFieldValue('brands') || [];
-            const newValue = brandForm.getFieldsValue(true);
-            if (selectedBrandIndex > -1) {
-              brands[selectedBrandIndex] = newValue;
-              segmentForm.setFieldsValue({ brands: [...brands] });
-            } else {
-              segmentForm.setFieldsValue({
-                brands: [...brands, newValue],
-              });
-            }
-            setSelectedBrand(undefined);
-            setSelectedBrandIndex(-1);
-            setShowBrandForm(false);
-            setSelectedSegment(segmentForm.getFieldsValue(true));
-          }
-          if (name === 'tagForm') {
-            const { segmentForm, tagForm } = forms;
-            const tags: any[] = segmentForm.getFieldValue('tags') || [];
-            const newValue = tagForm.getFieldsValue(true);
-            if (selectedTagIndex > -1) {
-              tags[selectedTagIndex] = newValue;
-              segmentForm.setFieldsValue({ tags: [...tags] });
-            } else {
-              segmentForm.setFieldsValue({
-                tags: [...tags, newValue],
-              });
-            }
-            setSelectedTag(undefined);
-            setSelectedTagIndex(-1);
-            setShowTagForm(false);
-            setSelectedSegment(segmentForm.getFieldsValue(true));
-          }
-        }}
-      >
-        {selectedSegment && <SegmentPage />}
-        <Form
-          
-          form={feedForm}
-          onFinish={onFinish}
-          name="feedForm"
-          onFinishFailed={({ errorFields }) => {
-            errorFields.forEach(errorField => {
-              message.error(errorField.errors[0]);
-            });
-          }}
-          layout="vertical"
-          className="video-feed"
-        >
-          {!selectedSegment && <VideoUpdatePage />}
-        </Form>
-      </Form.Provider>
-    </div>
+            />
+          </Content>
+        </div>
       )}
-      </>
+      {isEditing && (
+        <div className="video-feed-detail">
+          <PageHeader title={pageTitle} subTitle="Video Update" />
+          <Form.Provider
+            onFormFinish={(name, { values, forms }) => {
+              const { feedForm, segmentForm } = forms;
+              if (name === 'segmentForm') {
+                const segments: any[] = feedForm.getFieldValue('package') || [];
+                if (selectedSegmentIndex > -1) {
+                  segments[selectedSegmentIndex] =
+                    segmentForm.getFieldsValue(true);
+                  feedForm.setFieldsValue({ package: [...segments] });
+                } else {
+                  feedForm.setFieldsValue({
+                    package: [...segments, segmentForm.getFieldsValue(true)],
+                  });
+                }
+                setSelectedSegment(undefined);
+                setSelectedSegmentIndex(-1);
+              }
+              if (name === 'brandForm') {
+                const { segmentForm, brandForm } = forms;
+                const brands: any[] = segmentForm.getFieldValue('brands') || [];
+                const newValue = brandForm.getFieldsValue(true);
+                if (selectedBrandIndex > -1) {
+                  brands[selectedBrandIndex] = newValue;
+                  segmentForm.setFieldsValue({ brands: [...brands] });
+                } else {
+                  segmentForm.setFieldsValue({
+                    brands: [...brands, newValue],
+                  });
+                }
+                setSelectedBrand(undefined);
+                setSelectedBrandIndex(-1);
+                setShowBrandForm(false);
+                setSelectedSegment(segmentForm.getFieldsValue(true));
+              }
+              if (name === 'tagForm') {
+                const { segmentForm, tagForm } = forms;
+                const tags: any[] = segmentForm.getFieldValue('tags') || [];
+                const newValue = tagForm.getFieldsValue(true);
+                if (selectedTagIndex > -1) {
+                  tags[selectedTagIndex] = newValue;
+                  segmentForm.setFieldsValue({ tags: [...tags] });
+                } else {
+                  segmentForm.setFieldsValue({
+                    tags: [...tags, newValue],
+                  });
+                }
+                setSelectedTag(undefined);
+                setSelectedTagIndex(-1);
+                setShowTagForm(false);
+                setSelectedSegment(segmentForm.getFieldsValue(true));
+              }
+            }}
+          >
+            {selectedSegment && <SegmentPage />}
+            <Form
+              form={feedForm}
+              onFinish={onFinish}
+              name="feedForm"
+              onFinishFailed={({ errorFields }) => {
+                errorFields.forEach(errorField => {
+                  message.error(errorField.errors[0]);
+                });
+              }}
+              layout="vertical"
+              className="video-feed"
+            >
+              {!selectedSegment && <VideoUpdatePage />}
+            </Form>
+          </Form.Provider>
+        </div>
+      )}
+    </>
   );
 };
 
