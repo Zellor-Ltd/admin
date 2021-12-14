@@ -210,16 +210,16 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
           selectedTagIndex > -1 ? `${selectedTagIndex + 1} Update` : 'Creation'
         }`
       );
-    else
+    else{
       setPageTitle(
         currentItem
           ? currentItem?.title.length > 50
             ? `${currentItem.title.slice(0, 50)} (...) Update`
             : `${currentItem.title} Update`
           : 'Update'
-      );
+      );}
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedSegment, showBrandForm, showTagForm]);
+  }, [selectedSegment, showBrandForm, showTagForm, currentItem]);
 
   useEffect(() => {
     feedForm.setFieldsValue(currentItem);
