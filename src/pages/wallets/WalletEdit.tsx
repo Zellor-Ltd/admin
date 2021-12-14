@@ -32,7 +32,9 @@ const WalletEdit: React.FC<WalletEditProps> = ({
   const [form] = useForm();
 
   const addBalance = async ({ balanceToAdd }: { balanceToAdd: number }) => {
-    await doRequest(() => addBalanceToUser(fanId as string, brandId as string, balanceToAdd));
+    await doRequest(() =>
+      addBalanceToUser(fanId as string, brandId as string, balanceToAdd)
+    );
     form.resetFields();
     await getResources();
   };
@@ -54,13 +56,18 @@ const WalletEdit: React.FC<WalletEditProps> = ({
           <Row gutter={4}>
             <Col lg={8} xs={8}>
               <Form.Item name="balanceToAdd">
-                <InputNumber disabled={disabled}></InputNumber>
+                <InputNumber type="number" disabled={disabled}></InputNumber>
               </Form.Item>
             </Col>
             <Col lg={12} xs={12}>
               <Row gutter={4}>
                 <Col>
-                  <Button htmlType="submit" loading={loading} type="primary" disabled={disabled}>
+                  <Button
+                    htmlType="submit"
+                    loading={loading}
+                    type="primary"
+                    disabled={disabled}
+                  >
                     Add
                   </Button>
                 </Col>
@@ -71,7 +78,9 @@ const WalletEdit: React.FC<WalletEditProps> = ({
                     cancelText="No"
                     onConfirm={resetBalance}
                   >
-                    <Button disabled={disabled} danger>Reset</Button>
+                    <Button disabled={disabled} danger>
+                      Reset
+                    </Button>
                   </Popconfirm>
                 </Col>
               </Row>
