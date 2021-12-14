@@ -76,9 +76,6 @@ const ProductBrandsDetail: React.FC<RouteComponentProps> = props => {
                     <Form.Item
                       label="External Code"
                       name="externalCode"
-                      rules={[
-                        { required: true, message: `External Code is required.` },
-                      ]}
                     >
                       <Input />
                     </Form.Item>
