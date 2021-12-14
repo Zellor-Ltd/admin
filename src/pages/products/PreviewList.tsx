@@ -580,7 +580,6 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
   };
 
   const editProduct = (record: Product, index) => {
-    console.log('current product - ', record);
     setCurrentProduct(record);
     setLastViewedIndex(index);
     setCurrentMasterBrand(record.brand.brandName);
