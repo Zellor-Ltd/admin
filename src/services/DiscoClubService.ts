@@ -125,14 +125,14 @@ export const fetchProducts = ({
   unclassified,
   page = 0,
   limit = 30,
-  productBrandName,
+  productBrandId,
   date,
   outOfStock,
 }: {
   brandId?: string;
   query?: string;
   unclassified?: boolean;
-  productBrandName?: string;
+  productBrandId?: string;
   date?: Date;
   outOfStock?: boolean;
 } & Pagination) =>
@@ -140,7 +140,7 @@ export const fetchProducts = ({
     brandId,
     query,
     unclassified,
-    productBrandName,
+    productBrandId,
     date,
     outOfStock,
   });
@@ -168,7 +168,7 @@ export const fetchStagingProducts = ({
   unclassified,
   page = 0,
   limit = 0,
-  productBrandName,
+  productBrandId,
   date,
   outOfStock,
   status,
@@ -176,7 +176,7 @@ export const fetchStagingProducts = ({
   brandId?: string;
   query?: string;
   unclassified?: boolean;
-  productBrandName?: string;
+  productBrandId?: string;
   date?: Date;
   outOfStock?: boolean;
   status?: string;
@@ -185,7 +185,7 @@ export const fetchStagingProducts = ({
     brandId,
     query,
     unclassified,
-    productBrandName,
+    productBrandId,
     date,
     outOfStock,
     status,

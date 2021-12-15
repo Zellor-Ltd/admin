@@ -26,6 +26,7 @@ export const SelectBrand: React.FC<SelectBrandProps> = ({
   const [selectedBrandName, setSelectedBrandName] = useState<
     string | undefined
   >(initialBrandName);
+  const [isLoading, setIsLoading] = useState(false);
 
   const _onChange = (value: string) => {
     setSelectedBrandName(value);
@@ -35,9 +36,13 @@ export const SelectBrand: React.FC<SelectBrandProps> = ({
   useEffect(() => {
     const getBrands = async () => {
       try {
+        setIsLoading(true);
         const { results }: any = await fetchBrands();
         setBrands(results.filter((brand: any) => brand.brandName));
-      } catch (e) {}
+      } catch (e) {
+      } finally {
+        setIsLoading(false);
+      }
     };
     getBrands();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -55,6 +60,8 @@ export const SelectBrand: React.FC<SelectBrandProps> = ({
         allowClear={allowClear}
         style={style}
         placeholder={placeholder}
+        loading={isLoading}
+        disabled={isLoading}
       >
         {brands.map(({ brandName, brandId }) => (
           <Select.Option key={brandName} value={brandId}>

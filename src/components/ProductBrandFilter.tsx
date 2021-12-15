@@ -12,6 +12,7 @@ type ProductBrandFilterProps = Omit<
   initialProductBrandName?: string;
   label?: string;
   productBrands: ProductBrand[];
+  isLoading?: boolean;
 };
 
 export const ProductBrandFilter: React.FC<ProductBrandFilterProps> = ({
@@ -22,6 +23,7 @@ export const ProductBrandFilter: React.FC<ProductBrandFilterProps> = ({
   initialProductBrandName,
   label = 'Product Brand',
   productBrands,
+  isLoading,
 }) => {
   const [selectedProductBrandName, setSelectedProductBrandName] =
     useState<string>(initialProductBrandName as string);
@@ -46,6 +48,8 @@ export const ProductBrandFilter: React.FC<ProductBrandFilterProps> = ({
         filterOption={(input?: string, value?: any) =>
           value?.children.toLowerCase().includes(input?.toLowerCase())
         }
+        loading={isLoading}
+        disabled={isLoading}
       >
         {productBrands.map(({ brandName, id }) => (
           <Select.Option key={id} value={id}>

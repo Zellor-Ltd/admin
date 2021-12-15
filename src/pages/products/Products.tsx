@@ -64,6 +64,7 @@ import { ProductBrand } from 'interfaces/ProductBrand';
 import { productUtils } from '../../helpers/product-utils';
 import { Image } from '../../interfaces/Image';
 import scrollIntoView from 'scroll-into-view';
+import { useMount } from 'react-use';
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 const { getSearchTags, getCategories, removeSearchTagsByCategory } =
@@ -73,6 +74,7 @@ const Products: React.FC<RouteComponentProps> = () => {
   const saveProductFn = saveProduct;
   const [brands, setBrands] = useState<Brand[]>([]);
   const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
+  const [isFetchingProductBrand, setIsFetchingProductBrand] = useState(false);
   const [ageRange, setAgeRange] = useState<[number, number]>([12, 100]);
   const [form] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
@@ -97,7 +99,6 @@ const Products: React.FC<RouteComponentProps> = () => {
     ProductBrand | undefined
   >();
   const [outOfStockFilter, setOutOfStockFilter] = useState<boolean>(false);
-  const [dateFilter, setDateFilter] = useState<Date>();
 
   const [currentMasterBrand, setCurrentMasterBrand] = useState<string>();
   const [currentProductBrand, setCurrentProductBrand] = useState<string>();
@@ -124,9 +125,23 @@ const Products: React.FC<RouteComponentProps> = () => {
     setOutOfStockFilter(e.target.checked);
   };
 
-  const handleFilterDate = (date: Date) => {
-    setDateFilter(date);
-  };
+  useMount(async () => {
+    const getBrands = async () => {
+      setLoading(true);
+      const response: any = await fetchBrands();
+      setLoading(false);
+      setBrands(response.results);
+    };
+
+    const getProductBrands = async () => {
+      setIsFetchingProductBrand(true);
+      const { results }: any = await fetchProductBrands();
+      setProductBrands(results);
+      setIsFetchingProductBrand(false);
+    };
+
+    await Promise.all([getBrands(), getProductBrands(), fetchAllCategories()]);
+  });
 
   useEffect(() => {
     form.setFieldsValue(currentProduct);
@@ -254,34 +269,6 @@ const Products: React.FC<RouteComponentProps> = () => {
   }, [brands, setDiscoPercentageByBrand, setSearchTagsByCategory]);
 
   useEffect(() => {
-    let mounted = true;
-
-    const getBrands = async () => {
-      setLoading(true);
-      const response: any = await fetchBrands();
-      if (mounted) {
-        setLoading(false);
-        setBrands(response.results);
-      }
-    };
-
-    getBrands();
-    fetchAllCategories();
-
-    const getProductBrands = async () => {
-      try {
-        const { results }: any = await fetchProductBrands();
-        setProductBrands(results);
-      } catch (e) {}
-    };
-
-    getProductBrands();
-    return () => {
-      mounted = false;
-    };
-  }, [fetchAllCategories]);
-
-  useEffect(() => {
     if (currentProduct?.ageMin && currentProduct?.ageMax)
       setAgeRange([currentProduct?.ageMin, currentProduct?.ageMax]);
   }, [currentProduct]);
@@ -330,8 +317,7 @@ const Products: React.FC<RouteComponentProps> = () => {
         brandId: brandFilter?.id,
         query: searchFilter,
         unclassified: false,
-        productBrandName: productBrandFilter?.brandName,
-        date: dateFilter,
+        productBrandId: productBrandFilter?.id,
         outOfStock: outOfStockFilter,
       })
     );
@@ -346,7 +332,6 @@ const Products: React.FC<RouteComponentProps> = () => {
 
   const getResources = async triggerByButton => {
     const { results: products } = await _fetchProducts(triggerByButton);
-    await fetchAllCategories();
 
     setProducts(products);
     await setLoaded(true);
@@ -700,15 +685,8 @@ const Products: React.FC<RouteComponentProps> = () => {
                     onChange={onChangeProductBrand}
                     initialProductBrandName={productBrandFilter?.brandName}
                     productBrands={productBrands}
+                    isLoading={isFetchingProductBrand}
                   ></ProductBrandFilter>
-                </Col>
-                <Col lg={6} xs={16}>
-                  <Typography.Title level={5}>Date added</Typography.Title>
-                  <DatePicker
-                    disabled={true}
-                    onChange={() => handleFilterDate}
-                    format="DD/MM/YYYY"
-                  />
                 </Col>
                 <Col lg={6} xs={24}>
                   <Checkbox
