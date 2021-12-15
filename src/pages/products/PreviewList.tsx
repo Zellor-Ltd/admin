@@ -66,6 +66,7 @@ import { ProductBrand } from 'interfaces/ProductBrand';
 import { productUtils } from '../../helpers/product-utils';
 import { Image } from '../../interfaces/Image';
 import scrollIntoView from 'scroll-into-view';
+import { useMount } from 'react-use';
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 const { getSearchTags, getCategories, removeSearchTagsByCategory } =
@@ -75,6 +76,7 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
   const saveProductFn = saveStagingProduct;
   const [brands, setBrands] = useState<Brand[]>([]);
   const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
+  const [isFetchingProductBrands, setIsFetchingProductBrands] = useState(false);
   const [ageRange, setageRange] = useState<[number, number]>([12, 100]);
   const [form] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
@@ -97,7 +99,6 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
     ProductBrand | undefined
   >();
   const [outOfStockFilter, setOutOfStockFilter] = useState<boolean>(false);
-  const [dateFilter, setDateFilter] = useState<Date>();
   const [unclassifiedFilter, setUnclassifiedFilter] = useState<boolean>(false);
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
@@ -224,6 +225,22 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
     );
   };
 
+  useMount(async () => {
+    const getProductBrands = async () => {
+      setIsFetchingProductBrands(true);
+      const { results }: any = await fetchProductBrands();
+      setProductBrands(results);
+      setIsFetchingProductBrands(false);
+    };
+
+    const getBrands = async () => {
+      const { results }: any = await fetchBrands();
+      setBrands(results);
+    };
+
+    await Promise.all([getBrands(), getProductBrands(), fetchAllCategories()]);
+  });
+
   useEffect(() => {
     if (loaded) {
       refreshProducts();
@@ -235,23 +252,6 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
     setDiscoPercentageByBrand(true);
     setSearchTagsByCategory(true);
   }, [brands, setDiscoPercentageByBrand, setSearchTagsByCategory]);
-
-  useEffect(() => {
-    let mounted = true;
-
-    const getBrands = async () => {
-      const response: any = await fetchBrands();
-      if (mounted) {
-        setBrands(response.results);
-      }
-    };
-
-    getBrands();
-    fetchAllCategories();
-    return () => {
-      mounted = false;
-    };
-  }, [fetchAllCategories]);
 
   useEffect(() => {
     if (refreshing) {
@@ -314,8 +314,7 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
         brandId: brandFilter?.id,
         query: searchFilter,
         unclassified: unclassifiedFilter,
-        productBrandName: productBrandFilter?.brandName,
-        date: dateFilter,
+        productBrandId: productBrandFilter?.id,
         outOfStock: outOfStockFilter,
         status: productStatusFilter,
       })
@@ -331,19 +330,8 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
 
   const getResources = async searchButton => {
     setLoading(true);
-    const [{ results }] = await Promise.all([
-      _fetchStagingProducts(searchButton),
-      fetchAllCategories(),
-    ]);
+    const { results } = await _fetchStagingProducts(searchButton);
 
-    const getProductBrands = async () => {
-      try {
-        const { results }: any = await fetchProductBrands();
-        setProductBrands(results);
-      } catch (e) {}
-    };
-
-    getProductBrands();
     setLoaded(true);
     setProducts(results);
     setContent(results);
@@ -416,10 +404,6 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
 
   const handleFilterOutOfStock = (e: CheckboxChangeEvent) => {
     setOutOfStockFilter(e.target.checked);
-  };
-
-  const handleFilterDate = (date: Date) => {
-    setDateFilter(date);
   };
 
   const columns: EditableColumnType<Product>[] = [
@@ -705,15 +689,8 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
                     onChange={onChangeProductBrand}
                     initialProductBrandName={productBrandFilter?.brandName}
                     productBrands={productBrands}
+                    isLoading={isFetchingProductBrands}
                   ></ProductBrandFilter>
-                </Col>
-                <Col lg={6} xs={16}>
-                  <Typography.Title level={5}>Date added</Typography.Title>
-                  <DatePicker
-                    disabled={true}
-                    onChange={() => handleFilterDate}
-                    format="DD/MM/YYYY"
-                  />
                 </Col>
                 <Col lg={6} xs={24}>
                   <Typography.Title level={5}>Status</Typography.Title>
