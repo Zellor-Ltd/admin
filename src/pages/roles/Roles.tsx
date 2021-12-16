@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { fetchProfiles } from 'services/DiscoClubService';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
+import { Creator } from '../../interfaces/Creator';
 
 const Roles: React.FC<RouteComponentProps> = ({ history, location }) => {
   const detailsPathname = `${location.pathname}/role`;
@@ -43,7 +44,14 @@ const Roles: React.FC<RouteComponentProps> = ({ history, location }) => {
       render: id => <CopyIdToClipboard id={id} />,
       align: 'center',
     },
-    { title: 'Name', dataIndex: 'name', width: '15%' },
+    {
+      title: 'Name',
+      dataIndex: 'name',
+      width: '15%',
+      render: (value, record: Role) => (
+        <Link to={{ pathname: detailsPathname, state: record }}>{value}</Link>
+      ),
+    },
     { title: 'Description', dataIndex: 'description', width: '15%' },
     {
       title: 'Actions',

@@ -1,5 +1,5 @@
 import { CalendarOutlined } from '@ant-design/icons';
-import { Col, DatePicker, PageHeader, Row, Table, Typography } from 'antd';
+import { Button, Col, DatePicker, PageHeader, Row, Table, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import useFilter from 'hooks/useFilter';
 import { useRequest } from 'hooks/useRequest';
@@ -13,7 +13,8 @@ import { RouteComponentProps } from 'react-router-dom';
 import { fetchTransactionsPerBrand } from 'services/DiscoClubService';
 import WalletEdit from './WalletEdit';
 
-const WalletDetail: React.FC<RouteComponentProps> = ({ location }) => {
+const WalletDetail: React.FC<RouteComponentProps> = props => {
+  const { history, location } = props;
   const [loading, setLoading] = useState<boolean>(false);
   const { doFetch } = useRequest({ setLoading: setLoading });
   const initial = location.state as unknown as WalletDetailParams;
@@ -122,6 +123,13 @@ const WalletDetail: React.FC<RouteComponentProps> = ({ location }) => {
         dataSource={filteredTransactions}
         loading={loading}
       />
+      <Row gutter={8}>
+        <Col>
+          <Button type="default" onClick={() => history.goBack()}>
+            Go Back
+          </Button>
+        </Col>
+      </Row>
     </div>
   );
 };
