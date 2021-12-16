@@ -29,6 +29,7 @@ import Highlighter from 'react-highlight-words';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { productCategoriesAPI } from 'services/DiscoClubService';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
+import { Creator } from '../../interfaces/Creator';
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 
@@ -225,8 +226,8 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
           categoriesKeys.indexOf(selectedTab)
         ] as keyof ProductCategory
       ),
-      render: (_, record) => (
-        <>
+      render: (_, record: ProductCategory) => (
+        <Link to={{ pathname: detailsPathname, state: record }}>
           {
             record[
               categoriesFields[
@@ -234,7 +235,7 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
               ] as keyof ProductCategory
             ]
           }
-        </>
+        </Link>
       ),
     },
     {

@@ -18,6 +18,7 @@ import {
   fetchCreators,
   saveCreator,
 } from 'services/DiscoClubService';
+import { ProductBrand } from '../../interfaces/ProductBrand';
 
 const tagColorByStatus: any = {
   approved: 'green',
@@ -47,7 +48,11 @@ const Creators: React.FC<RouteComponentProps> = ({ history, location }) => {
     {
       title: 'Name',
       width: '15%',
-      render: value => `${value.firstName} ${value.lastName}`,
+      render: (_, record: Creator) => (
+        <Link to={{ pathname: detailsPathname, state: record }}>
+          {`${record.firstName} ${record.lastName}`}
+        </Link>
+      ),
     },
     {
       title: 'Status',

@@ -1,4 +1,8 @@
-import { DeleteOutlined, EyeOutlined, SearchOutlined } from '@ant-design/icons';
+import {
+  DeleteOutlined,
+  EditOutlined,
+  SearchOutlined,
+} from '@ant-design/icons';
 import { Button, Col, PageHeader, Popconfirm, Row, Spin, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
@@ -10,6 +14,7 @@ import { useContext, useEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { deleteTag, fetchTags } from 'services/DiscoClubService';
+import { Creator } from '../../interfaces/Creator';
 
 const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
   const detailsPathname = `${location.pathname}/tag`;
@@ -99,7 +104,14 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
       render: id => <CopyIdToClipboard id={id} />,
       align: 'center',
     },
-    { title: 'Tag', dataIndex: 'tagName', width: '15%' },
+    {
+      title: 'Tag',
+      dataIndex: 'tagName',
+      width: '15%',
+      render: (value, record: Tag) => (
+        <Link to={{ pathname: detailsPathname, state: record }}>{value}</Link>
+      ),
+    },
     {
       title: 'Product',
       dataIndex: ['product', 'name'],
@@ -116,7 +128,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
       render: (value, record) => (
         <>
           <Link to={{ pathname: detailsPathname, state: record }}>
-            <EyeOutlined />
+            <EditOutlined />
           </Link>
           <Popconfirm
             title="Are you sure？"
