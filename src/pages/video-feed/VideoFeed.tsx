@@ -58,6 +58,8 @@ import TagForm from './TagForm';
 import './VideoFeed.scss';
 import './VideoFeedDetail.scss';
 import scrollIntoView from 'scroll-into-view';
+import { initial } from 'lodash';
+import moment from 'moment';
 
 const { Content } = Layout;
 const { Title } = Typography;
@@ -374,6 +376,7 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
   };
 
   const onEditItem = (record: any, index: number) => {
+    console.log(record)
     setLastViewedIndex(index);
     setCurrentItem(record);
     setIsEditing(true);
@@ -461,8 +464,8 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
       title: 'Expiration Date',
       dataIndex: 'validity',
       width: '5%',
-      render: (creationDate: Date) =>
-        new Date(creationDate).toLocaleDateString(),
+      render: (validity: Date) =>
+        validity ? new Date(validity).toLocaleDateString() : '-',
       align: 'center',
     },
     {
@@ -785,7 +788,7 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
                       label="Go Live Date"
                       getValueProps={formatMoment}
                     >
-                      <DatePicker format="DD/MM/YYYY" />
+                      <DatePicker defaultValue={feedForm.getFieldValue('goLiveDate') ?? moment()} format="DD/MM/YYYY" />
                     </Form.Item>
                   </Col>
                   <Col lg={12} xs={24}>
@@ -794,7 +797,7 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
                       label="Expiration Date"
                       getValueProps={formatMoment}
                     >
-                      <DatePicker format="DD/MM/YYYY" />
+                      <DatePicker defaultValue={feedForm.getFieldValue('validity') ?? moment()} format="DD/MM/YYYY" />
                     </Form.Item>
                   </Col>
                 </Row>
