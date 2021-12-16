@@ -63,17 +63,6 @@ const Transactions: React.FC<RouteComponentProps> = () => {
       width: '15%',
       align: 'center',
     },
-    {
-      title: 'Actions',
-      key: 'action',
-      width: '5%',
-      align: 'right',
-      render: (_, record) => (
-        <Link to={{ pathname: `/transactions`, state: record }}>
-          <EditOutlined />
-        </Link>
-      ),
-    },
   ];
 
   const onChangeFan = async (_selectedFan: Fan) => {

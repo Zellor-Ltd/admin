@@ -18,6 +18,7 @@ import { Link, RouteComponentProps } from 'react-router-dom';
 import { fetchFans } from 'services/DiscoClubService';
 import FanAPITestModal from './FanAPITestModal';
 import FanFeedModal from './FanFeedModal';
+import { Creator } from '../../interfaces/Creator';
 
 const tagColorByPermission: any = {
   Admin: 'green',
@@ -70,7 +71,15 @@ const Fans: React.FC<RouteComponentProps> = ({ history, location }) => {
       render: id => <CopyIdToClipboard id={id} />,
       align: 'center',
     },
-    { title: 'Name', dataIndex: 'userName', width: '25%', align: 'center' },
+    {
+      title: 'Name',
+      dataIndex: 'userName',
+      width: '25%',
+      align: 'center',
+      render: (value, record: Fan) => (
+        <Link to={{ pathname: detailsPathname, state: record }}>{value}</Link>
+      ),
+    },
     { title: 'E-mail', dataIndex: 'user', width: '25%', align: 'center' },
     {
       title: 'Profile',
