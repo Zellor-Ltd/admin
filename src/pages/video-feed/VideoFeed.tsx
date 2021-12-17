@@ -57,7 +57,6 @@ import TagForm from './TagForm';
 import './VideoFeed.scss';
 import './VideoFeedDetail.scss';
 import scrollIntoView from 'scroll-into-view';
-import { initial } from 'lodash';
 import moment from 'moment';
 
 const { Content } = Layout;
