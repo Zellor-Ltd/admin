@@ -35,7 +35,6 @@ import {
   fetchBrands,
   fetchCategories,
   fetchCreators,
-  fetchTags,
   fetchVideoFeed,
   rebuildAllFeedd,
   saveVideoFeed,
@@ -101,7 +100,6 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [selectedBrandIndex, setSelectedBrandIndex] = useState<number>(-1);
   const [showBrandForm, setShowBrandForm] = useState<boolean>(false);
 
-  const [tags, setTags] = useState<Tag[]>([]);
   const [selectedTag, setSelectedTag] = useState<Tag | undefined>();
   const [selectedTagIndex, setSelectedTagIndex] = useState<number>(-1);
   const [showTagForm, setShowTagForm] = useState<boolean>(false);
@@ -135,6 +133,7 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
     if (_brand) {
       addFilterFunction('brandName', feedItems =>
         feedItems.filter(feedItem => {
+          if (!feedItem.package) return false;
           for (let i = 0; i < feedItem.package.length; i++) {
             if (feedItem.package[i].brands) {
               for (let j = 0; j < feedItem.package[i].brands.length; j++) {
@@ -143,7 +142,7 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
                 );
               }
             } else {
-              return null;
+              return false;
             }
           }
         })
@@ -169,17 +168,8 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
       const response: any = await fetchBrands();
       setBrands(response.results);
     }
-    async function getTags() {
-      const response: any = await fetchTags({});
-      setTags(response.results);
-    }
     setLoading(true);
-    await Promise.all([
-      getInfluencers(),
-      getCategories(),
-      getBrands(),
-      getTags(),
-    ]);
+    await Promise.all([getInfluencers(), getCategories(), getBrands()]);
     setLoading(false);
   };
 
@@ -212,14 +202,15 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
           selectedTagIndex > -1 ? `${selectedTagIndex + 1} Update` : 'Creation'
         }`
       );
-    else{
+    else {
       setPageTitle(
         currentItem
           ? currentItem?.title.length > 50
             ? `${currentItem.title.slice(0, 50)} (...) Update`
             : `${currentItem.title} Update`
           : 'Update'
-      );}
+      );
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedSegment, showBrandForm, showTagForm, currentItem]);
 
@@ -239,7 +230,7 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
       delete segment.package;
       return segment;
     });
-    // item.validity = moment(item.validity).format("DD/MM/YYYY");
+
     await doRequest(() => saveVideoFeed(item));
 
     resetForm();
@@ -342,6 +333,7 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
       }
       addFilterFunction('brandName', feedItems =>
         feedItems.filter(feedItem => {
+          if (!feedItem.package) return false;
           for (let i = 0; i < feedItem.package.length; i++) {
             if (feedItem.package[i].brands) {
               for (let j = 0; j < feedItem.package[i].brands.length; j++) {
@@ -351,7 +343,7 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
                 );
               }
             } else {
-              return null;
+              return false;
             }
           }
         })
@@ -908,7 +900,6 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
             setShowTagForm={setShowTagForm}
             tag={selectedTag}
             brands={brands}
-            tags={tags}
           />
         )}
         <Form

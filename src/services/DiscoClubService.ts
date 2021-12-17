@@ -153,13 +153,16 @@ export const fetchProductBrands = () =>
 
 export const fetchTags = ({
   query,
+  brandId,
   page = 0,
   limit = 0,
 }: {
   query?: string;
+  brandId?: string;
 } & Pagination) =>
   instance.put(`Disco/Product/Adm/ListTags/${page}/${limit}`, {
     query,
+    brandId,
   });
 
 export const fetchStagingProducts = ({
