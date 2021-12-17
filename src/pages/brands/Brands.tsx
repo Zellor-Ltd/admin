@@ -24,7 +24,7 @@ import { Brand } from 'interfaces/Brand';
 import { useEffect, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { deleteBrand, fetchBrands, saveBrand } from 'services/DiscoClubService';
-import { PauseSwitch } from './PauseSwitch';
+import { TableSwitch } from './TableSwitch';
 
 const tagColorByStatus: any = {
   approved: 'green',
@@ -115,7 +115,22 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
       width: '15%',
       align: 'center',
       render: (value: any, record: Brand) => (
-        <PauseSwitch brand={record} reloadFn={fetch} />
+        <TableSwitch brand={record} reloadFn={fetch} 
+        switchOnText='Reactivate'
+        switchOffText='Deactivate'
+        switchType='paused'/>
+      ),
+    },
+    {
+      title: 'Show Out of Stock',
+      dataIndex: 'showOutOfStock',
+      width: '15%',
+      align: 'center',
+      render: (value: any, record: Brand) => (
+        <TableSwitch brand={record} reloadFn={fetch} 
+        switchOnText='Show'
+        switchOffText='Hide'
+        switchType='showOutOfStock'/>
       ),
     },
     {
