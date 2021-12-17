@@ -592,7 +592,7 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
   };
 
   const onFitTo = (
-    fitTo: 'w' | 'h',
+    fitTo: 'w' | 'h' | 'r',
     sourceProp: 'image' | 'tagImage' | 'thumbnailUrl',
     imageIndex: number
   ) => {

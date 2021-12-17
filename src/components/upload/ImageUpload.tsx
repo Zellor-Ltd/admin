@@ -4,6 +4,7 @@ import {
   ColumnWidthOutlined,
   FileImageOutlined,
   PlusOutlined,
+  RollbackOutlined,
   ScissorOutlined,
   TagOutlined,
 } from '@ant-design/icons';
@@ -28,7 +29,7 @@ interface ImageUploadProps {
   accept?: string;
   onOrder?: CallableFunction;
   onFitTo?: (
-    fitTo: 'w' | 'h',
+    fitTo: 'w' | 'h' | 'r',
     sourceProp: 'image' | 'tagImage' | 'thumbnailUrl',
     imageIndex: number
   ) => void;
@@ -233,6 +234,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 
     const fitToWidthSelectedClass = file.fitTo === 'w' ? 'fit-to-selected' : '';
     const fitHeightSelectedClass = file.fitTo === 'h' ? 'fit-to-selected' : '';
+    const rollbackSelectedClass = file.fitTo === 'r' ? 'fit-to-selected' : '';
 
     const [{ isOver, dropClassName }, drop] = useDrop({
       accept: dndType,
@@ -289,6 +291,22 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
           </Tooltip>
         </Col>
       );
+
+      if (file.resized) {
+        actionButtons.push(
+          <Col lg={6} xs={6}>
+            <Tooltip title="Rollback fit">
+              <Button
+                size="small"
+                shape="circle"
+                className={rollbackSelectedClass}
+                icon={<RollbackOutlined />}
+                onClick={() => onFitTo('r', formProp as any, index)}
+              />
+            </Tooltip>
+          </Col>
+        );
+      }
     }
 
     if (onAssignToThumbnail) {
