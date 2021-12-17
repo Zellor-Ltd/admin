@@ -622,14 +622,14 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
 
   const onAssignToThumbnail = (file: Image) => {
     if (currentProduct) {
-      currentProduct.thumbnailUrl = file;
+      currentProduct.thumbnailUrl = { ...file };
       setCurrentProduct({ ...currentProduct });
     }
   };
 
   const onAssignToTag = (file: Image) => {
     if (currentProduct) {
-      currentProduct.tagImage = file;
+      currentProduct.tagImage = { ...file };
       setCurrentProduct({ ...currentProduct });
     }
   };
