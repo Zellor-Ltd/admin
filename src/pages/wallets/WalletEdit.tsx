@@ -46,44 +46,40 @@ const WalletEdit: React.FC<WalletEditProps> = ({
 
   return (
     <>
-      <Col lg={12} xs={24}>
+      <Col span={24}>
         <Form form={form} onFinish={addBalance}>
           {label && (
             <Typography.Title level={5} title={label}>
               {label}
             </Typography.Title>
           )}
-          <Row gutter={4}>
-            <Col lg={8} xs={8}>
+          <Row gutter={2} style={{ display: 'flex', flexWrap: 'nowrap' }}>
+            <Col span={12}>
               <Form.Item name="balanceToAdd">
                 <InputNumber type="number" disabled={disabled}></InputNumber>
               </Form.Item>
             </Col>
-            <Col lg={12} xs={12}>
-              <Row gutter={4}>
-                <Col>
-                  <Button
-                    htmlType="submit"
-                    loading={loading}
-                    type="primary"
-                    disabled={disabled}
-                  >
-                    Add
-                  </Button>
-                </Col>
-                <Col>
-                  <Popconfirm
-                    title="Are you sure？"
-                    okText="Yes"
-                    cancelText="No"
-                    onConfirm={resetBalance}
-                  >
-                    <Button disabled={disabled} danger>
-                      Reset
-                    </Button>
-                  </Popconfirm>
-                </Col>
-              </Row>
+            <Col>
+              <Button
+                htmlType="submit"
+                loading={loading}
+                type="primary"
+                disabled={disabled}
+              >
+                Add
+              </Button>
+            </Col>
+            <Col>
+              <Popconfirm
+                title="Are you sure？"
+                okText="Yes"
+                cancelText="No"
+                onConfirm={resetBalance}
+              >
+                <Button disabled={disabled} danger>
+                  Reset
+                </Button>
+              </Popconfirm>
             </Col>
           </Row>
         </Form>
