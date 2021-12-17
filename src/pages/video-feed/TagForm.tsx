@@ -1,37 +1,34 @@
+import React, { useState } from 'react';
+
 import { Button, Col, Form, InputNumber, Row, Select } from 'antd';
 import { Brand } from 'interfaces/Brand';
 import { Tag } from 'interfaces/Tag';
-import { useState } from 'react';
+import { fetchTags } from '../../services/DiscoClubService';
+import DebounceSelect from '../../components/DebounceSelect';
 
 interface FormProps {
   brands: Brand[];
-  tags: Tag[];
   tag: Tag | undefined;
   setShowTagForm: (value: boolean) => void;
 }
 
-const TagForm: React.FC<FormProps> = ({
-  tag,
-  setShowTagForm,
-  brands,
-  tags,
-}) => {
-  const [filteredTags, setFilteredTags] = useState<Tag[]>(
-    tag?.brand?.id ? tags.filter(tag => tag.brand?.id === tag?.brand?.id) : tags
-  );
-  const [selectedBrand, setSelectedBrand] = useState<string>(
+const TagForm: React.FC<FormProps> = ({ tag, setShowTagForm, brands }) => {
+  const [selectedBrandId, setSelectedBrandId] = useState<string>(
     tag?.brand?.id || ''
   );
   const [form] = Form.useForm();
+  const tagOptionsMapping = { label: 'tagName', value: 'id' };
 
-  const onChangeTag = (key: string) => {
-    const selectedTag = tags.find((tag: Tag) => tag.id === key);
-
-    setSelectedBrand(prev => {
-      prev = selectedTag?.brand?.id || '';
-      return prev;
+  const getTags = async (query: string) => {
+    const response: any = await fetchTags({
+      query,
+      brandId: selectedBrandId,
+      limit: 100,
     });
+    return response.results;
+  };
 
+  const onChangeTag = (key: string, selectedTag: Tag) => {
     if (selectedTag) {
       selectedTag.position = selectedTag.position?.map(position => {
         return {
@@ -51,15 +48,7 @@ const TagForm: React.FC<FormProps> = ({
   };
 
   const handleBrandFilter = (value: any) => {
-    setFilteredTags(prev => {
-      if (value) {
-        prev = tags.filter(tag => tag.brand?.id === value);
-      } else {
-        prev = tags;
-      }
-      return [...prev];
-    });
-    setSelectedBrand(value);
+    setSelectedBrandId(value);
     if (value) {
       form.setFieldsValue({ id: '' });
     }
@@ -77,7 +66,7 @@ const TagForm: React.FC<FormProps> = ({
                 option?.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
               }
               onChange={v => handleBrandFilter(v)}
-              value={selectedBrand}
+              value={selectedBrandId}
             >
               {brands.map(brand => (
                 <Select.Option key={brand.id} value={brand.id}>
@@ -89,19 +78,13 @@ const TagForm: React.FC<FormProps> = ({
         </Col>
         <Col lg={12} xs={24}>
           <Form.Item name={'id'} label="Tag" rules={[{ required: true }]}>
-            <Select
-              onChange={(key: string) => onChangeTag(key)}
-              filterOption={(input, option) =>
-                option?.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-              }
-              showSearch
-            >
-              {filteredTags.map(tag => (
-                <Select.Option key={tag.id} value={tag.id}>
-                  {tag.tagName}
-                </Select.Option>
-              ))}
-            </Select>
+            <DebounceSelect
+              fetchOptions={getTags}
+              onChange={onChangeTag}
+              optionsMapping={tagOptionsMapping}
+              value={tag?.id}
+              disabled={!selectedBrandId}
+            />
           </Form.Item>
         </Col>
         <Col lg={3} xs={24}>

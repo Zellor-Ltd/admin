@@ -33,10 +33,8 @@ import { useSelector } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
 import {
   fetchBrands,
-  fetchProductBrands,
   fetchCategories,
   fetchCreators,
-  fetchTags,
   saveVideoFeed,
 } from 'services/DiscoClubService';
 import BrandForm from './BrandForm';
@@ -73,7 +71,6 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
   const [selectedBrandIndex, setSelectedBrandIndex] = useState<number>(-1);
   const [showBrandForm, setShowBrandForm] = useState<boolean>(false);
 
-  const [tags, setTags] = useState<Tag[]>([]);
   const [selectedTag, setSelectedTag] = useState<Tag | undefined>();
   const [selectedTagIndex, setSelectedTagIndex] = useState<number>(-1);
   const [showTagForm, setShowTagForm] = useState<boolean>(false);
@@ -103,17 +100,8 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
       const response: any = await fetchBrands();
       setBrands(response.results);
     }
-    async function getTags() {
-      const response: any = await fetchTags({});
-      setTags(response.results);
-    }
     // setLoading(true);
-    await Promise.all([
-      getInfluencers(),
-      getCategories(),
-      getBrands(),
-      getTags(),
-    ]);
+    await Promise.all([getInfluencers(), getCategories(), getBrands()]);
     // setLoading(false);
   };
 
@@ -152,11 +140,12 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
         }`
       );
     } else
-      setPageTitle( initial ?
-        initial.title.length > 50
-          ? `${initial.title.substr(0, 50)} Update`
-          : `${initial.title} Update`
-        : "Update"
+      setPageTitle(
+        initial
+          ? initial.title.length > 50
+            ? `${initial.title.substr(0, 50)} Update`
+            : `${initial.title} Update`
+          : 'Update'
       );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedSegment, showBrandForm, showTagForm]);
@@ -608,7 +597,6 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
             setShowTagForm={setShowTagForm}
             tag={selectedTag}
             brands={brands}
-            tags={tags}
           />
         )}
         <Form
