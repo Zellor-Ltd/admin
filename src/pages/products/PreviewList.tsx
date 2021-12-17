@@ -86,7 +86,6 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
   });
 
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
-  const [content, setContent] = useState<any>();
   const [loaded, setLoaded] = useState<boolean>(false);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [currentProduct, setCurrentProduct] = useState<Product>();
@@ -289,12 +288,11 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
         });
       });
 
-      refreshItem(product);
-      await saveProductFn(product);
+      const response = (await saveProductFn(product)) as any;
+      refreshItem(response.result);
 
-      await getResources(false);
-      setLoading(false);
       message.success('Register updated with success.');
+      setLoading(false);
       setIsEditing(false);
     } catch (error) {
       console.error(error);
@@ -305,6 +303,7 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
   const handleFilterClassified = (e: CheckboxChangeEvent) => {
     setUnclassifiedFilter(e.target.checked);
   };
+
   const _fetchStagingProducts = async searchButton => {
     const pageToUse = refreshing ? 0 : page;
     const response = await doFetch(() =>
@@ -334,7 +333,6 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
 
     setLoaded(true);
     setProducts(results);
-    setContent(results);
     setLoading(false);
   };
 
@@ -349,24 +347,12 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
 
   const deleteItem = async (_id: string) => {
     await doRequest(() => deleteStagingProduct(_id));
-    for (let i = 0; i < content.length; i++) {
-      if (content[i].id === _id) {
-        const index = i;
-        setProducts(prev => [
-          ...prev.slice(0, index),
-          ...prev.slice(index + 1),
-        ]);
-      }
-    }
+    setProducts([...products.splice(lastViewedIndex, 1)]);
   };
 
-  const refreshItem = async (record: Product) => {
-    for (let i = 0; i < content.length; i++) {
-      if (content[i].id === record.id) {
-        content[i] = record;
-        setProducts(content);
-      }
-    }
+  const refreshItem = (record: Product) => {
+    products[lastViewedIndex] = record;
+    setProducts([...products]);
   };
 
   const fetchData = async searchButton => {
