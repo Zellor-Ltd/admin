@@ -34,7 +34,13 @@ import { useRequest } from 'hooks/useRequest';
 import { Brand } from 'interfaces/Brand';
 import { Product } from 'interfaces/Product';
 import moment from 'moment';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import {
   deleteStagingProduct,
@@ -76,6 +82,7 @@ const { getSearchTags, getCategories, removeSearchTagsByCategory } =
 
 const PreviewList: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [viewName, setViewName] = useState<'alternate' | 'default'>('default');
+  const previousViewName = useRef('default');
   const saveProductFn = saveStagingProduct;
   const [brands, setBrands] = useState<Brand[]>([]);
   const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
@@ -89,7 +96,6 @@ const PreviewList: React.FC<RouteComponentProps> = ({ history, location }) => {
   });
 
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
-  const [content, setContent] = useState<any>();
   const [loaded, setLoaded] = useState<boolean>(false);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [currentProduct, setCurrentProduct] = useState<Product>();
@@ -292,12 +298,11 @@ const PreviewList: React.FC<RouteComponentProps> = ({ history, location }) => {
         });
       });
 
-      refreshItem(product);
-      await saveProductFn(product);
+      const response = (await saveProductFn(product)) as any;
+      refreshItem(response.result);
 
-      await getResources(false);
-      setLoading(false);
       message.success('Register updated with success.');
+      setLoading(false);
       setIsEditing(false);
     } catch (error) {
       console.error(error);
@@ -308,6 +313,7 @@ const PreviewList: React.FC<RouteComponentProps> = ({ history, location }) => {
   const handleFilterClassified = (e: CheckboxChangeEvent) => {
     setUnclassifiedFilter(e.target.checked);
   };
+
   const _fetchStagingProducts = async searchButton => {
     const pageToUse = refreshing ? 0 : page;
     const response = await doFetch(() =>
@@ -337,7 +343,6 @@ const PreviewList: React.FC<RouteComponentProps> = ({ history, location }) => {
 
     setLoaded(true);
     setProducts(results);
-    setContent(results);
     setLoading(false);
   };
 
@@ -352,24 +357,12 @@ const PreviewList: React.FC<RouteComponentProps> = ({ history, location }) => {
 
   const deleteItem = async (_id: string) => {
     await doRequest(() => deleteStagingProduct(_id));
-    for (let i = 0; i < content.length; i++) {
-      if (content[i].id === _id) {
-        const index = i;
-        setProducts(prev => [
-          ...prev.slice(0, index),
-          ...prev.slice(index + 1),
-        ]);
-      }
-    }
+    setProducts([...products.splice(lastViewedIndex, 1)]);
   };
 
-  const refreshItem = async (record: Product) => {
-    for (let i = 0; i < content.length; i++) {
-      if (content[i].id === record.id) {
-        content[i] = record;
-        setProducts(content);
-      }
-    }
+  const refreshItem = (record: Product) => {
+    products[lastViewedIndex] = record;
+    setProducts([...products]);
   };
 
   const fetchData = async searchButton => {
@@ -557,6 +550,7 @@ const PreviewList: React.FC<RouteComponentProps> = ({ history, location }) => {
   };
 
   const editProduct = (record: Product, index) => {
+    previousViewName.current = 'default';
     setCurrentProduct(record);
     setLastViewedIndex(index);
     setCurrentMasterBrand(record.brand.brandName);
@@ -623,6 +617,24 @@ const PreviewList: React.FC<RouteComponentProps> = ({ history, location }) => {
     }
   };
 
+  const onRollback = (
+    oldUrl: string,
+    sourceProp: 'image' | 'tagImage' | 'thumbnailUrl',
+    imageIndex: number
+  ) => {
+    if (currentProduct) {
+      switch (sourceProp) {
+        case 'image':
+          currentProduct[sourceProp][imageIndex].url = oldUrl;
+          break;
+        default:
+          currentProduct[sourceProp].url = oldUrl;
+      }
+
+      setCurrentProduct({ ...currentProduct });
+    }
+  };
+
   const onAssignToThumbnail = (file: Image) => {
     if (currentProduct) {
       currentProduct.thumbnailUrl = { ...file };
@@ -647,9 +659,17 @@ const PreviewList: React.FC<RouteComponentProps> = ({ history, location }) => {
     }
   }, [isEditing]);
 
+  const cancelEdit = () => {
+    if (previousViewName.current === 'alternate') setViewName('alternate');
+    setIsEditing(false);
+  };
+
   const switchView = () => {
-    if (viewName === 'default') setViewName('alternate');
-    else setViewName('default');
+    if (viewName === 'default') {
+      setViewName('alternate');
+    } else {
+      setViewName('default');
+    }
   };
 
   const buildView = () => {
@@ -679,6 +699,7 @@ const PreviewList: React.FC<RouteComponentProps> = ({ history, location }) => {
             refreshing={refreshing}
             setRefreshing={setRefreshing}
             allCategories={allCategories}
+            previousViewName={previousViewName}
           ></AlternatePreviewList>
         );
       case 'default':
@@ -1171,7 +1192,7 @@ const PreviewList: React.FC<RouteComponentProps> = ({ history, location }) => {
 
                 <Row gutter={8} style={{ marginTop: '1.5rem' }}>
                   <Col>
-                    <Button type="default" onClick={() => setIsEditing(false)}>
+                    <Button type="default" onClick={() => cancelEdit()}>
                       Cancel
                     </Button>
                   </Col>

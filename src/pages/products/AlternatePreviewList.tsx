@@ -4,20 +4,17 @@ import {
   EditOutlined,
 } from '@ant-design/icons';
 import { Button, Form, Popconfirm, Spin } from 'antd';
-import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import EditableTable, {
   EditableColumnType,
 } from '../../components/EditableTable';
-import useAllCategories from '../../hooks/useAllCategories';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useRequest } from '../../hooks/useRequest';
 import { Brand } from '../../interfaces/Brand';
 import { Product } from '../../interfaces/Product';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   deleteStagingProduct,
-  fetchProducts,
   fetchStagingProducts,
   saveStagingProduct,
   transferStageProduct,
@@ -25,8 +22,6 @@ import {
 import ProductExpandedRow from './ProductExpandedRow';
 import CopyIdToClipboard from '../../components/CopyIdToClipboard';
 import { useSelector } from 'react-redux';
-import { AppContext } from '../../contexts/AppContext';
-import update from 'immutability-helper';
 import { ProductBrand } from '../../interfaces/ProductBrand';
 import { Image } from '../../interfaces/Image';
 import scrollIntoView from 'scroll-into-view';
@@ -54,6 +49,7 @@ interface AlternatePreviewListProps {
   refreshing: boolean;
   setRefreshing: Function;
   allCategories: any;
+  previousViewName: any;
 }
 
 const AlternatePreviewList: React.FC<AlternatePreviewListProps> = ({
@@ -79,12 +75,12 @@ const AlternatePreviewList: React.FC<AlternatePreviewListProps> = ({
   refreshing,
   setRefreshing,
   allCategories,
+  previousViewName,
 }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
 
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
-  const [content, setContent] = useState<any>();
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
 
   const [eof, setEof] = useState<boolean>(false);
@@ -102,14 +98,6 @@ const AlternatePreviewList: React.FC<AlternatePreviewListProps> = ({
     setPage(0);
     setRefreshing(true);
   };
-
-  useEffect(() => {
-    if (refreshing) {
-      setEof(false);
-      getProducts(true);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [refreshing]);
 
   useEffect(() => {
     if (loaded) {
@@ -152,15 +140,7 @@ const AlternatePreviewList: React.FC<AlternatePreviewListProps> = ({
 
   const deleteItem = async (_id: string) => {
     await doRequest(() => deleteStagingProduct(_id));
-    for (let i = 0; i < content.length; i++) {
-      if (content[i].id === _id) {
-        const index = i;
-        setProducts(prev => [
-          ...prev.slice(0, index),
-          ...prev.slice(index + 1),
-        ]);
-      }
-    }
+    setProducts([...products.splice(lastViewedIndex, 1)]);
   };
 
   const fetchData = async searchButton => {
@@ -279,6 +259,7 @@ const AlternatePreviewList: React.FC<AlternatePreviewListProps> = ({
   ];
 
   const editProduct = (record: Product, index) => {
+    previousViewName.current = 'alternate';
     setCurrentProduct(record);
     setLastViewedIndex(index);
     setCurrentMasterBrand(record.brand.brandName);

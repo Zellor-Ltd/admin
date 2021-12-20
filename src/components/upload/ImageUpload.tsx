@@ -4,6 +4,7 @@ import {
   ColumnWidthOutlined,
   FileImageOutlined,
   PlusOutlined,
+  RollbackOutlined,
   ScissorOutlined,
   TagOutlined,
 } from '@ant-design/icons';
@@ -32,6 +33,11 @@ interface ImageUploadProps {
     sourceProp: 'image' | 'tagImage' | 'thumbnailUrl',
     imageIndex: number
   ) => void;
+  onRollback?: (
+    oldUrl: string,
+    sourceProp: 'image' | 'tagImage' | 'thumbnailUrl',
+    imageIndex: number
+  ) => void;
   onAssignToThumbnail?: CallableFunction;
   onAssignToTag?: CallableFunction;
   cropable?: boolean;
@@ -52,6 +58,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   accept = 'image/png, image/jpeg',
   onOrder,
   onFitTo,
+  onRollback,
   onAssignToThumbnail,
   onAssignToTag,
   cropable,
@@ -233,6 +240,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 
     const fitToWidthSelectedClass = file.fitTo === 'w' ? 'fit-to-selected' : '';
     const fitHeightSelectedClass = file.fitTo === 'h' ? 'fit-to-selected' : '';
+    const rollbackSelectedClass = file.fitTo === 'r' ? 'fit-to-selected' : '';
 
     const [{ isOver, dropClassName }, drop] = useDrop({
       accept: dndType,
@@ -285,6 +293,22 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
               className={fitHeightSelectedClass}
               icon={<ColumnHeightOutlined />}
               onClick={() => onFitTo('h', formProp as any, index)}
+            />
+          </Tooltip>
+        </Col>
+      );
+    }
+
+    if (!!file.url && !!file.oldUrl && file.url !== file.oldUrl && onRollback) {
+      actionButtons.push(
+        <Col lg={6} xs={6}>
+          <Tooltip title="Rollback fit">
+            <Button
+              size="small"
+              shape="circle"
+              className={rollbackSelectedClass}
+              icon={<RollbackOutlined />}
+              onClick={() => onRollback(file.oldUrl, formProp as any, index)}
             />
           </Tooltip>
         </Col>
@@ -383,6 +407,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     if (
       onOrder ||
       onFitTo ||
+      onRollback ||
       onAssignToTag ||
       onAssignToThumbnail ||
       cropable
