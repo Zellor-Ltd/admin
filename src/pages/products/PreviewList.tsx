@@ -34,7 +34,13 @@ import { useRequest } from 'hooks/useRequest';
 import { Brand } from 'interfaces/Brand';
 import { Product } from 'interfaces/Product';
 import moment from 'moment';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import {
   deleteStagingProduct,
@@ -67,12 +73,16 @@ import { productUtils } from '../../helpers/product-utils';
 import { Image } from '../../interfaces/Image';
 import scrollIntoView from 'scroll-into-view';
 import { useMount } from 'react-use';
+import AlternatePreviewList from './AlternatePreviewList';
+import ErrorPage from 'pages/error/ErrorPage';
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 const { getSearchTags, getCategories, removeSearchTagsByCategory } =
   productUtils;
 
-const PreviewList: React.FC<RouteComponentProps> = () => {
+const PreviewList: React.FC<RouteComponentProps> = ({ history, location }) => {
+  const [viewName, setViewName] = useState<'alternate' | 'default'>('default');
+  const previousViewName = useRef('default');
   const saveProductFn = saveStagingProduct;
   const [brands, setBrands] = useState<Brand[]>([]);
   const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
@@ -86,7 +96,6 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
   });
 
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
-  const [content, setContent] = useState<any>();
   const [loaded, setLoaded] = useState<boolean>(false);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [currentProduct, setCurrentProduct] = useState<Product>();
@@ -289,12 +298,11 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
         });
       });
 
-      refreshItem(product);
-      await saveProductFn(product);
+      const response = (await saveProductFn(product)) as any;
+      refreshItem(response.result);
 
-      await getResources(false);
-      setLoading(false);
       message.success('Register updated with success.');
+      setLoading(false);
       setIsEditing(false);
     } catch (error) {
       console.error(error);
@@ -305,6 +313,7 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
   const handleFilterClassified = (e: CheckboxChangeEvent) => {
     setUnclassifiedFilter(e.target.checked);
   };
+
   const _fetchStagingProducts = async searchButton => {
     const pageToUse = refreshing ? 0 : page;
     const response = await doFetch(() =>
@@ -334,7 +343,6 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
 
     setLoaded(true);
     setProducts(results);
-    setContent(results);
     setLoading(false);
   };
 
@@ -349,24 +357,12 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
 
   const deleteItem = async (_id: string) => {
     await doRequest(() => deleteStagingProduct(_id));
-    for (let i = 0; i < content.length; i++) {
-      if (content[i].id === _id) {
-        const index = i;
-        setProducts(prev => [
-          ...prev.slice(0, index),
-          ...prev.slice(index + 1),
-        ]);
-      }
-    }
+    setProducts([...products.splice(lastViewedIndex, 1)]);
   };
 
-  const refreshItem = async (record: Product) => {
-    for (let i = 0; i < content.length; i++) {
-      if (content[i].id === record.id) {
-        content[i] = record;
-        setProducts(content);
-      }
-    }
+  const refreshItem = (record: Product) => {
+    products[lastViewedIndex] = record;
+    setProducts([...products]);
   };
 
   const fetchData = async searchButton => {
@@ -554,6 +550,7 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
   };
 
   const editProduct = (record: Product, index) => {
+    previousViewName.current = 'default';
     setCurrentProduct(record);
     setLastViewedIndex(index);
     setCurrentMasterBrand(record.brand.brandName);
@@ -620,6 +617,24 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
     }
   };
 
+  const onRollback = (
+    oldUrl: string,
+    sourceProp: 'image' | 'tagImage' | 'thumbnailUrl',
+    imageIndex: number
+  ) => {
+    if (currentProduct) {
+      switch (sourceProp) {
+        case 'image':
+          currentProduct[sourceProp][imageIndex].url = oldUrl;
+          break;
+        default:
+          currentProduct[sourceProp].url = oldUrl;
+      }
+
+      setCurrentProduct({ ...currentProduct });
+    }
+  };
+
   const onAssignToThumbnail = (file: Image) => {
     if (currentProduct) {
       currentProduct.thumbnailUrl = { ...file };
@@ -644,6 +659,558 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
     }
   }, [isEditing]);
 
+  const cancelEdit = () => {
+    if (previousViewName.current === 'alternate') setViewName('alternate');
+    setIsEditing(false);
+  };
+
+  const switchView = () => {
+    if (viewName === 'default') {
+      setViewName('alternate');
+    } else {
+      setViewName('default');
+    }
+  };
+
+  const buildView = () => {
+    switch (viewName) {
+      case 'alternate':
+        return (
+          <AlternatePreviewList
+            setViewName={setViewName}
+            isEditing={isEditing}
+            setIsEditing={setIsEditing}
+            loaded={loaded}
+            products={products}
+            setProducts={setProducts}
+            productBrands={productBrands}
+            currentProduct={currentProduct}
+            setCurrentProduct={setCurrentProduct}
+            setCurrentMasterBrand={setCurrentMasterBrand}
+            setCurrentProductBrand={setCurrentProductBrand}
+            page={page}
+            setPage={setPage}
+            brandFilter={brandFilter}
+            searchFilter={searchFilter}
+            unclassifiedFilter={unclassifiedFilter}
+            productBrandFilter={productBrandFilter}
+            outOfStockFilter={outOfStockFilter}
+            productStatusFilter={productStatusFilter}
+            refreshing={refreshing}
+            setRefreshing={setRefreshing}
+            allCategories={allCategories}
+            previousViewName={previousViewName}
+          ></AlternatePreviewList>
+        );
+      case 'default':
+        if (!isEditing) {
+          return (
+            <>
+              <InfiniteScroll
+                dataLength={products.length}
+                next={() => fetchData(false)}
+                hasMore={!eof}
+                loader={
+                  page !== 0 && (
+                    <div className="scroll-message">
+                      <Spin />
+                    </div>
+                  )
+                }
+                endMessage={
+                  <div className="scroll-message">
+                    <b>End of results.</b>
+                  </div>
+                }
+              >
+                <EditableTable
+                  rowClassName={(_, index) =>
+                    `scrollable-row-${index} ${
+                      index === lastViewedIndex ? 'selected-row' : ''
+                    }`
+                  }
+                  rowKey="id"
+                  columns={columns}
+                  dataSource={products}
+                  loading={loading}
+                  onSave={onSaveProduct}
+                  pagination={false}
+                  rowSelection={{
+                    selectedRowKeys,
+                    onChange: setSelectedRowKeys,
+                  }}
+                  expandable={{
+                    expandedRowRender: (record: Product) => (
+                      <ProductExpandedRow
+                        key={record.id}
+                        record={record}
+                        allCategories={allCategories}
+                        onSaveProduct={onSaveCategories}
+                        loading={loadingCategories}
+                        isStaging={true}
+                        productBrands={productBrands}
+                      ></ProductExpandedRow>
+                    ),
+                  }}
+                />
+              </InfiniteScroll>
+            </>
+          );
+        } else {
+          return (
+            <div className="products-details">
+              <PageHeader
+                title={
+                  currentProduct ? `${currentProduct?.name} Update` : 'New Item'
+                }
+                subTitle="Form"
+              />
+              <Form
+                form={form}
+                name="productForm"
+                initialValues={currentProduct}
+                onFinish={onFinish}
+                onFinishFailed={({ errorFields }) => {
+                  errorFields.forEach(errorField => {
+                    message.error(errorField.errors[0]);
+                  });
+                }}
+                layout="vertical"
+              >
+                <Tabs defaultActiveKey="Details">
+                  <Tabs.TabPane forceRender tab="Details" key="Details">
+                    <Row gutter={8}>
+                      <Col lg={12} xs={24}>
+                        <Row gutter={8}>
+                          <Col lg={20} xs={24}>
+                            <Form.Item name="status" label="Status">
+                              <Radio.Group buttonStyle="solid">
+                                <Radio.Button value="live">Live</Radio.Button>
+                                <Radio.Button value="paused">
+                                  Paused
+                                </Radio.Button>
+                              </Radio.Group>
+                            </Form.Item>
+                          </Col>
+                          <Col lg={4} xs={24}>
+                            <Form.Item
+                              name="outOfStock"
+                              label="Out of stock"
+                              valuePropName="checked"
+                            >
+                              <Switch />
+                            </Form.Item>
+                          </Col>
+                          <Col lg={24} xs={24}>
+                            <Form.Item name="name" label="Short description">
+                              <Input />
+                            </Form.Item>
+                          </Col>
+                          <Col lg={24} xs={24}>
+                            <Form.Item label="Long description">
+                              <RichTextEditor
+                                formField="description"
+                                form={form}
+                              />
+                            </Form.Item>
+                          </Col>
+                        </Row>
+                      </Col>
+                      <Col lg={12} xs={24}>
+                        <Row gutter={8}>
+                          <Col lg={24} xs={24}>
+                            <Form.Item
+                              name={['brand', 'id']}
+                              label="Master Brand"
+                              rules={[{ required: true }]}
+                            >
+                              <SelectBrandSmartSearch
+                                onChange={() =>
+                                  setDiscoPercentageByBrand(false)
+                                }
+                                allowClear={true}
+                                initialBrandName={currentMasterBrand}
+                                handleMasterBrandChange={
+                                  handleMasterBrandChange
+                                }
+                              ></SelectBrandSmartSearch>
+                            </Form.Item>
+                          </Col>
+                        </Row>
+                        <Row gutter={8}>
+                          <Col lg={12} xs={24}>
+                            <Form.Item
+                              name="productBrand"
+                              label="Product Brand"
+                              rules={[{ required: true }]}
+                            >
+                              <SelectProductBrand
+                                allowClear={true}
+                                initialProductBrandName={currentProductBrand}
+                                handleProductBrandChange={
+                                  handleProductBrandChange
+                                }
+                                productBrands={productBrands}
+                              ></SelectProductBrand>
+                            </Form.Item>
+                          </Col>
+                        </Row>
+                        <Row gutter={8}>
+                          <Col lg={12} xs={24}>
+                            <Form.Item
+                              name="goLiveDate"
+                              label="Go Live Date"
+                              getValueProps={formatMoment}
+                            >
+                              <DatePicker format="DD/MM/YYYY" />
+                            </Form.Item>
+                          </Col>
+                          <Col lg={12} xs={24}>
+                            <Form.Item
+                              name="validity"
+                              label="Expiration Date"
+                              getValueProps={formatMoment}
+                            >
+                              <DatePicker format="DD/MM/YYYY" />
+                            </Form.Item>
+                          </Col>
+                        </Row>
+                      </Col>
+                    </Row>
+                  </Tabs.TabPane>
+                  <Tabs.TabPane forceRender tab="Categories" key="Categories">
+                    <ProductCategoriesTrees
+                      categories={currentProduct?.categories}
+                      allCategories={allCategories}
+                      form={form}
+                      handleCategoryChange={handleCategoryChange}
+                      handleCategoryDelete={handleCategoryDelete}
+                    />
+                    <Col lg={16} xs={24}>
+                      <Form.Item
+                        shouldUpdate={(prevValues, curValues) =>
+                          prevValues.category !== curValues.category
+                        }
+                      >
+                        {({ getFieldValue }) => (
+                          <Form.Item name={'searchTags'} label="Search Tags">
+                            <Select mode="tags" className="product-search-tags">
+                              {getFieldValue('searchTags')?.map(
+                                (searchTag: any) => (
+                                  <Select.Option
+                                    key={searchTag}
+                                    value={searchTag}
+                                  >
+                                    {searchTag}
+                                  </Select.Option>
+                                )
+                              )}
+                            </Select>
+                          </Form.Item>
+                        )}
+                      </Form.Item>
+                    </Col>
+                    <Row gutter={8}>
+                      <Col lg={24} xs={24}>
+                        <Typography.Title level={4}>Target</Typography.Title>
+                      </Col>
+                      <Col lg={12} xs={24}>
+                        <Form.Item label="Age Range">
+                          <Slider
+                            range
+                            marks={{ 12: '12', 100: '100' }}
+                            min={12}
+                            max={100}
+                            value={ageRange}
+                            onChange={onChangeAge}
+                          />
+                        </Form.Item>
+                      </Col>
+                    </Row>
+                    <Row gutter={8}>
+                      <Col lg={12} xs={24}>
+                        <Form.Item
+                          name="gender"
+                          label="Gender"
+                          rules={[{ required: true }]}
+                        >
+                          <Select mode="multiple">
+                            <Select.Option value="Female">Female</Select.Option>
+                            <Select.Option value="Male">Male</Select.Option>
+                            <Select.Option value="Other">Other</Select.Option>
+                            <Select.Option value="Prefer not to say">
+                              Prefer not to say
+                            </Select.Option>
+                          </Select>
+                        </Form.Item>
+                      </Col>
+                    </Row>
+                  </Tabs.TabPane>
+                  <Tabs.TabPane forceRender tab="Checkout" key="Checkout">
+                    <Row gutter={8}>
+                      <Col lg={8} xs={24}>
+                        <Form.Item
+                          name="currencyIsoCode"
+                          label="Default Currency"
+                        >
+                          <Select placeholder="Please select a currency">
+                            {currency.map((curr: any) => (
+                              <Select.Option
+                                key={curr.value}
+                                value={curr.value}
+                              >
+                                {curr.name}
+                              </Select.Option>
+                            ))}
+                          </Select>
+                        </Form.Item>
+                      </Col>
+                      <Col lg={8} xs={24}>
+                        <Form.Item
+                          name="originalPrice"
+                          label="Default Price"
+                          rules={[{ required: true }]}
+                        >
+                          <InputNumber />
+                        </Form.Item>
+                      </Col>
+                    </Row>
+                    <Row gutter={8}>
+                      <Col lg={8} xs={24}>
+                        <Form.Item name="currencyIsoCodeUS" label="Currency US">
+                          <Select placeholder="Please select a currency">
+                            {currency.map((curr: any) => (
+                              <Select.Option
+                                key={curr.value}
+                                value={curr.value}
+                              >
+                                {curr.name}
+                              </Select.Option>
+                            ))}
+                          </Select>
+                        </Form.Item>
+                      </Col>
+                      <Col lg={8} xs={24}>
+                        <Form.Item
+                          name="originalPriceUS"
+                          label="Price US"
+                          rules={[{}]}
+                        >
+                          <InputNumber />
+                        </Form.Item>
+                      </Col>
+                    </Row>
+                    <Row gutter={8}>
+                      <Col lg={8} xs={24}>
+                        <Form.Item name="currencyIsoCodeGB" label="Currency UK">
+                          <Select placeholder="Please select a currency">
+                            {currency.map((curr: any) => (
+                              <Select.Option
+                                key={curr.value}
+                                value={curr.value}
+                              >
+                                {curr.name}
+                              </Select.Option>
+                            ))}
+                          </Select>
+                        </Form.Item>
+                      </Col>
+                      <Col lg={8} xs={24}>
+                        <Form.Item
+                          name="originalPriceGB"
+                          label="Price UK"
+                          rules={[{}]}
+                        >
+                          <InputNumber />
+                        </Form.Item>
+                      </Col>
+                    </Row>
+                    <Row gutter={8}>
+                      <Col lg={8} xs={24}>
+                        <Form.Item
+                          name="currencyIsoCodeIE"
+                          label="Currency Europe"
+                        >
+                          <Select placeholder="Please select a currency">
+                            {currency.map((curr: any) => (
+                              <Select.Option
+                                key={curr.value}
+                                value={curr.value}
+                              >
+                                {curr.name}
+                              </Select.Option>
+                            ))}
+                          </Select>
+                        </Form.Item>
+                      </Col>
+                      <Col lg={8} xs={24}>
+                        <Form.Item
+                          name="originalPriceIE"
+                          label="Price Europe"
+                          rules={[{}]}
+                        >
+                          <InputNumber />
+                        </Form.Item>
+                      </Col>
+                    </Row>
+                    <Row gutter={8}>
+                      <Col lg={4} xs={8}>
+                        <Form.Item
+                          name="displayDiscountPage"
+                          label="Allow Use of DD?"
+                          valuePropName="checked"
+                        >
+                          <Switch />
+                        </Form.Item>
+                      </Col>
+                      <Col lg={4} xs={8}>
+                        <Form.Item
+                          name="maxDiscoDollars"
+                          label="Max Discount in DD"
+                          dependencies={['originalPrice']}
+                          rules={[
+                            {
+                              required: true,
+                              message: 'Max Discount is required.',
+                            },
+                            ({ getFieldValue }) => ({
+                              validator(_, maxDiscount) {
+                                // 3x the price
+                                const maxPossibleDiscount = Math.trunc(
+                                  Number(getFieldValue('originalPrice')) * 3
+                                );
+                                if (
+                                  maxDiscount &&
+                                  maxDiscount > maxPossibleDiscount
+                                ) {
+                                  if (!maxDiscountAlert) {
+                                    setTimeout(
+                                      () =>
+                                        alert(
+                                          `The largest amount of DD you can apply for this price is ${maxPossibleDiscount}.`
+                                        ),
+                                      100
+                                    );
+                                  }
+                                  setMaxDiscountAlert(true);
+                                  return Promise.reject(
+                                    new Error('Max discount not allowed.')
+                                  );
+                                }
+                                setMaxDiscountAlert(false);
+                                return Promise.resolve();
+                              },
+                            }),
+                          ]}
+                        >
+                          <InputNumber
+                            parser={value => (value || '').replace(/-/g, '')}
+                            precision={0}
+                          />
+                        </Form.Item>
+                      </Col>
+                      <Col lg={4} xs={8}>
+                        <Form.Item
+                          name="discoPercentage"
+                          label="Disco Percentage %"
+                        >
+                          <InputNumber />
+                        </Form.Item>
+                      </Col>
+                    </Row>
+                    <Row gutter={8}>
+                      <Col lg={4} xs={8}>
+                        <Form.Item
+                          name="shopifyUniqueId"
+                          label="Shopify Uid"
+                          rules={[{}]}
+                        >
+                          <InputNumber />
+                        </Form.Item>
+                      </Col>
+                      <Col lg={4} xs={8}>
+                        <Form.Item name="magentoId" label="Magento Id">
+                          <InputNumber />
+                        </Form.Item>
+                      </Col>
+                      <Col lg={4} xs={8}>
+                        <Form.Item name="sku" label="SKU">
+                          <InputNumber />
+                        </Form.Item>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col lg={4} xs={8}>
+                        <Form.Item name="weight" label="Weight">
+                          <Input type="number" placeholder="Weight in Kg" />
+                        </Form.Item>
+                      </Col>
+                    </Row>
+                  </Tabs.TabPane>
+                  <Tabs.TabPane forceRender tab="Images" key="Images">
+                    <Row gutter={8}>
+                      <Col lg={24} xs={24} className="mt-1">
+                        <Form.Item label="Tag Image">
+                          <Upload.ImageUpload
+                            fileList={currentProduct?.tagImage}
+                            formProp="tagImage"
+                            form={form}
+                            onFitTo={onFitTo}
+                          />
+                        </Form.Item>
+                      </Col>
+                      <Col lg={24} xs={24} className="mt-1">
+                        <Form.Item label="Thumbnail">
+                          <Upload.ImageUpload
+                            fileList={currentProduct?.thumbnailUrl}
+                            formProp="thumbnailUrl"
+                            form={form}
+                            onFitTo={onFitTo}
+                          />
+                        </Form.Item>
+                      </Col>
+                      <Col lg={24} xs={24} className="mt-1">
+                        <Form.Item label="Image">
+                          <div className="img-upload-div">
+                            <Upload.ImageUpload
+                              maxCount={20}
+                              fileList={currentProduct?.image}
+                              formProp="image"
+                              form={form}
+                              onOrder={onOrderImages}
+                              onFitTo={onFitTo}
+                              onAssignToThumbnail={onAssignToThumbnail}
+                              onAssignToTag={onAssignToTag}
+                              cropable={true}
+                            />
+                          </div>
+                        </Form.Item>
+                      </Col>
+                    </Row>
+                  </Tabs.TabPane>
+                </Tabs>
+
+                <Row gutter={8} style={{ marginTop: '1.5rem' }}>
+                  <Col>
+                    <Button type="default" onClick={() => cancelEdit()}>
+                      Cancel
+                    </Button>
+                  </Col>
+                  <Col>
+                    <Button type="primary" htmlType="submit" loading={loading}>
+                      Save Changes
+                    </Button>
+                  </Col>
+                </Row>
+              </Form>
+            </div>
+          );
+        }
+      default:
+        return <h1>Houston...</h1>;
+    }
+  };
+
   return (
     <>
       {!isEditing && (
@@ -651,6 +1218,11 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
           <PageHeader
             title="Preview Products"
             subTitle="List of Products in Preview Mode (not live)"
+            extra={[
+              <Button key="1" type="primary" onClick={switchView}>
+                Switch View
+              </Button>,
+            ]}
           />
           <Row align="bottom" justify="space-between">
             <Col lg={16} xs={24}>
@@ -743,472 +1315,9 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
               </Row>
             </Col>
           </Row>
-          <InfiniteScroll
-            dataLength={products.length}
-            next={() => fetchData(false)}
-            hasMore={!eof}
-            loader={
-              page !== 0 && (
-                <div className="scroll-message">
-                  <Spin />
-                </div>
-              )
-            }
-            endMessage={
-              <div className="scroll-message">
-                <b>End of results.</b>
-              </div>
-            }
-          >
-            <EditableTable
-              rowClassName={(_, index) =>
-                `scrollable-row-${index} ${
-                  index === lastViewedIndex ? 'selected-row' : ''
-                }`
-              }
-              rowKey="id"
-              columns={columns}
-              dataSource={products}
-              loading={loading}
-              onSave={onSaveProduct}
-              pagination={false}
-              rowSelection={{
-                selectedRowKeys,
-                onChange: setSelectedRowKeys,
-              }}
-              expandable={{
-                expandedRowRender: (record: Product) => (
-                  <ProductExpandedRow
-                    key={record.id}
-                    record={record}
-                    allCategories={allCategories}
-                    onSaveProduct={onSaveCategories}
-                    loading={loadingCategories}
-                    isStaging={true}
-                    productBrands={productBrands}
-                  ></ProductExpandedRow>
-                ),
-              }}
-            />
-          </InfiniteScroll>
         </>
       )}
-      {isEditing && (
-        <div className="products-details">
-          <PageHeader
-            title={
-              currentProduct ? `${currentProduct?.name} Update` : 'New Item'
-            }
-            subTitle="Form"
-          />
-          <Form
-            form={form}
-            name="productForm"
-            initialValues={currentProduct}
-            onFinish={onFinish}
-            onFinishFailed={({ errorFields }) => {
-              errorFields.forEach(errorField => {
-                message.error(errorField.errors[0]);
-              });
-            }}
-            layout="vertical"
-          >
-            <Tabs defaultActiveKey="Details">
-              <Tabs.TabPane forceRender tab="Details" key="Details">
-                <Row gutter={8}>
-                  <Col lg={12} xs={24}>
-                    <Row gutter={8}>
-                      <Col lg={20} xs={24}>
-                        <Form.Item name="status" label="Status">
-                          <Radio.Group buttonStyle="solid">
-                            <Radio.Button value="live">Live</Radio.Button>
-                            <Radio.Button value="paused">Paused</Radio.Button>
-                          </Radio.Group>
-                        </Form.Item>
-                      </Col>
-                      <Col lg={4} xs={24}>
-                        <Form.Item
-                          name="outOfStock"
-                          label="Out of stock"
-                          valuePropName="checked"
-                        >
-                          <Switch />
-                        </Form.Item>
-                      </Col>
-                      <Col lg={24} xs={24}>
-                        <Form.Item name="name" label="Short description">
-                          <Input />
-                        </Form.Item>
-                      </Col>
-                      <Col lg={24} xs={24}>
-                        <Form.Item label="Long description">
-                          <RichTextEditor formField="description" form={form} />
-                        </Form.Item>
-                      </Col>
-                    </Row>
-                  </Col>
-                  <Col lg={12} xs={24}>
-                    <Row gutter={8}>
-                      <Col lg={24} xs={24}>
-                        <Form.Item
-                          name={['brand', 'id']}
-                          label="Master Brand"
-                          rules={[{ required: true }]}
-                        >
-                          <SelectBrandSmartSearch
-                            onChange={() => setDiscoPercentageByBrand(false)}
-                            allowClear={true}
-                            initialBrandName={currentMasterBrand}
-                            handleMasterBrandChange={handleMasterBrandChange}
-                          ></SelectBrandSmartSearch>
-                        </Form.Item>
-                      </Col>
-                    </Row>
-                    <Row gutter={8}>
-                      <Col lg={12} xs={24}>
-                        <Form.Item
-                          name="productBrand"
-                          label="Product Brand"
-                          rules={[{ required: true }]}
-                        >
-                          <SelectProductBrand
-                            allowClear={true}
-                            initialProductBrandName={currentProductBrand}
-                            handleProductBrandChange={handleProductBrandChange}
-                            productBrands={productBrands}
-                          ></SelectProductBrand>
-                        </Form.Item>
-                      </Col>
-                    </Row>
-                    <Row gutter={8}>
-                      <Col lg={12} xs={24}>
-                        <Form.Item
-                          name="goLiveDate"
-                          label="Go Live Date"
-                          getValueProps={formatMoment}
-                        >
-                          <DatePicker format="DD/MM/YYYY" />
-                        </Form.Item>
-                      </Col>
-                      <Col lg={12} xs={24}>
-                        <Form.Item
-                          name="validity"
-                          label="Expiration Date"
-                          getValueProps={formatMoment}
-                        >
-                          <DatePicker format="DD/MM/YYYY" />
-                        </Form.Item>
-                      </Col>
-                    </Row>
-                  </Col>
-                </Row>
-              </Tabs.TabPane>
-              <Tabs.TabPane forceRender tab="Categories" key="Categories">
-                <ProductCategoriesTrees
-                  categories={currentProduct?.categories}
-                  allCategories={allCategories}
-                  form={form}
-                  handleCategoryChange={handleCategoryChange}
-                  handleCategoryDelete={handleCategoryDelete}
-                />
-                <Col lg={16} xs={24}>
-                  <Form.Item
-                    shouldUpdate={(prevValues, curValues) =>
-                      prevValues.category !== curValues.category
-                    }
-                  >
-                    {({ getFieldValue }) => (
-                      <Form.Item name={'searchTags'} label="Search Tags">
-                        <Select mode="tags" className="product-search-tags">
-                          {getFieldValue('searchTags')?.map(
-                            (searchTag: any) => (
-                              <Select.Option key={searchTag} value={searchTag}>
-                                {searchTag}
-                              </Select.Option>
-                            )
-                          )}
-                        </Select>
-                      </Form.Item>
-                    )}
-                  </Form.Item>
-                </Col>
-                <Row gutter={8}>
-                  <Col lg={24} xs={24}>
-                    <Typography.Title level={4}>Target</Typography.Title>
-                  </Col>
-                  <Col lg={12} xs={24}>
-                    <Form.Item label="Age Range">
-                      <Slider
-                        range
-                        marks={{ 12: '12', 100: '100' }}
-                        min={12}
-                        max={100}
-                        value={ageRange}
-                        onChange={onChangeAge}
-                      />
-                    </Form.Item>
-                  </Col>
-                </Row>
-                <Row gutter={8}>
-                  <Col lg={12} xs={24}>
-                    <Form.Item
-                      name="gender"
-                      label="Gender"
-                      rules={[{ required: true }]}
-                    >
-                      <Select mode="multiple">
-                        <Select.Option value="Female">Female</Select.Option>
-                        <Select.Option value="Male">Male</Select.Option>
-                        <Select.Option value="Other">Other</Select.Option>
-                        <Select.Option value="Prefer not to say">
-                          Prefer not to say
-                        </Select.Option>
-                      </Select>
-                    </Form.Item>
-                  </Col>
-                </Row>
-              </Tabs.TabPane>
-              <Tabs.TabPane forceRender tab="Checkout" key="Checkout">
-                <Row gutter={8}>
-                  <Col lg={8} xs={24}>
-                    <Form.Item name="currencyIsoCode" label="Default Currency">
-                      <Select placeholder="Please select a currency">
-                        {currency.map((curr: any) => (
-                          <Select.Option key={curr.value} value={curr.value}>
-                            {curr.name}
-                          </Select.Option>
-                        ))}
-                      </Select>
-                    </Form.Item>
-                  </Col>
-                  <Col lg={8} xs={24}>
-                    <Form.Item
-                      name="originalPrice"
-                      label="Default Price"
-                      rules={[{ required: true }]}
-                    >
-                      <InputNumber />
-                    </Form.Item>
-                  </Col>
-                </Row>
-                <Row gutter={8}>
-                  <Col lg={8} xs={24}>
-                    <Form.Item name="currencyIsoCodeUS" label="Currency US">
-                      <Select placeholder="Please select a currency">
-                        {currency.map((curr: any) => (
-                          <Select.Option key={curr.value} value={curr.value}>
-                            {curr.name}
-                          </Select.Option>
-                        ))}
-                      </Select>
-                    </Form.Item>
-                  </Col>
-                  <Col lg={8} xs={24}>
-                    <Form.Item
-                      name="originalPriceUS"
-                      label="Price US"
-                      rules={[{}]}
-                    >
-                      <InputNumber />
-                    </Form.Item>
-                  </Col>
-                </Row>
-                <Row gutter={8}>
-                  <Col lg={8} xs={24}>
-                    <Form.Item name="currencyIsoCodeGB" label="Currency UK">
-                      <Select placeholder="Please select a currency">
-                        {currency.map((curr: any) => (
-                          <Select.Option key={curr.value} value={curr.value}>
-                            {curr.name}
-                          </Select.Option>
-                        ))}
-                      </Select>
-                    </Form.Item>
-                  </Col>
-                  <Col lg={8} xs={24}>
-                    <Form.Item
-                      name="originalPriceGB"
-                      label="Price UK"
-                      rules={[{}]}
-                    >
-                      <InputNumber />
-                    </Form.Item>
-                  </Col>
-                </Row>
-                <Row gutter={8}>
-                  <Col lg={8} xs={24}>
-                    <Form.Item name="currencyIsoCodeIE" label="Currency Europe">
-                      <Select placeholder="Please select a currency">
-                        {currency.map((curr: any) => (
-                          <Select.Option key={curr.value} value={curr.value}>
-                            {curr.name}
-                          </Select.Option>
-                        ))}
-                      </Select>
-                    </Form.Item>
-                  </Col>
-                  <Col lg={8} xs={24}>
-                    <Form.Item
-                      name="originalPriceIE"
-                      label="Price Europe"
-                      rules={[{}]}
-                    >
-                      <InputNumber />
-                    </Form.Item>
-                  </Col>
-                </Row>
-                <Row gutter={8}>
-                  <Col lg={4} xs={8}>
-                    <Form.Item
-                      name="displayDiscountPage"
-                      label="Allow Use of DD?"
-                      valuePropName="checked"
-                    >
-                      <Switch />
-                    </Form.Item>
-                  </Col>
-                  <Col lg={4} xs={8}>
-                    <Form.Item
-                      name="maxDiscoDollars"
-                      label="Max Discount in DD"
-                      dependencies={['originalPrice']}
-                      rules={[
-                        {
-                          required: true,
-                          message: 'Max Discount is required.',
-                        },
-                        ({ getFieldValue }) => ({
-                          validator(_, maxDiscount) {
-                            // 3x the price
-                            const maxPossibleDiscount = Math.trunc(
-                              Number(getFieldValue('originalPrice')) * 3
-                            );
-                            if (
-                              maxDiscount &&
-                              maxDiscount > maxPossibleDiscount
-                            ) {
-                              if (!maxDiscountAlert) {
-                                setTimeout(
-                                  () =>
-                                    alert(
-                                      `The largest amount of DD you can apply for this price is ${maxPossibleDiscount}.`
-                                    ),
-                                  100
-                                );
-                              }
-                              setMaxDiscountAlert(true);
-                              return Promise.reject(
-                                new Error('Max discount not allowed.')
-                              );
-                            }
-                            setMaxDiscountAlert(false);
-                            return Promise.resolve();
-                          },
-                        }),
-                      ]}
-                    >
-                      <InputNumber
-                        parser={value => (value || '').replace(/-/g, '')}
-                        precision={0}
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col lg={4} xs={8}>
-                    <Form.Item
-                      name="discoPercentage"
-                      label="Disco Percentage %"
-                    >
-                      <InputNumber />
-                    </Form.Item>
-                  </Col>
-                </Row>
-                <Row gutter={8}>
-                  <Col lg={4} xs={8}>
-                    <Form.Item
-                      name="shopifyUniqueId"
-                      label="Shopify Uid"
-                      rules={[{}]}
-                    >
-                      <InputNumber />
-                    </Form.Item>
-                  </Col>
-                  <Col lg={4} xs={8}>
-                    <Form.Item name="magentoId" label="Magento Id">
-                      <InputNumber />
-                    </Form.Item>
-                  </Col>
-                  <Col lg={4} xs={8}>
-                    <Form.Item name="sku" label="SKU">
-                      <InputNumber />
-                    </Form.Item>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col lg={4} xs={8}>
-                    <Form.Item name="weight" label="Weight">
-                      <Input type="number" placeholder="Weight in Kg" />
-                    </Form.Item>
-                  </Col>
-                </Row>
-              </Tabs.TabPane>
-              <Tabs.TabPane forceRender tab="Images" key="Images">
-                <Row gutter={8}>
-                  <Col lg={24} xs={24} className="mt-1">
-                    <Form.Item label="Tag Image">
-                      <Upload.ImageUpload
-                        fileList={currentProduct?.tagImage}
-                        formProp="tagImage"
-                        form={form}
-                        onFitTo={onFitTo}
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col lg={24} xs={24} className="mt-1">
-                    <Form.Item label="Thumbnail">
-                      <Upload.ImageUpload
-                        fileList={currentProduct?.thumbnailUrl}
-                        formProp="thumbnailUrl"
-                        form={form}
-                        onFitTo={onFitTo}
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col lg={24} xs={24} className="mt-1">
-                    <Form.Item label="Image">
-                      <div className="img-upload-div">
-                        <Upload.ImageUpload
-                          maxCount={20}
-                          fileList={currentProduct?.image}
-                          formProp="image"
-                          form={form}
-                          onOrder={onOrderImages}
-                          onFitTo={onFitTo}
-                          onAssignToThumbnail={onAssignToThumbnail}
-                          onAssignToTag={onAssignToTag}
-                          cropable={true}
-                        />
-                      </div>
-                    </Form.Item>
-                  </Col>
-                </Row>
-              </Tabs.TabPane>
-            </Tabs>
-
-            <Row gutter={8} style={{ marginTop: '1.5rem' }}>
-              <Col>
-                <Button type="default" onClick={() => setIsEditing(false)}>
-                  Cancel
-                </Button>
-              </Col>
-              <Col>
-                <Button type="primary" htmlType="submit" loading={loading}>
-                  Save Changes
-                </Button>
-              </Col>
-            </Row>
-          </Form>
-        </div>
-      )}
+      {buildView()}
     </>
   );
 };

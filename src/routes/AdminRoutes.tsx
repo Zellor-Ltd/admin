@@ -56,6 +56,7 @@ import RegsPerDay from 'pages/reports/RegsPerDay';
 import PreRegisteredUsers from 'pages/reports/PreRegisteredUsers';
 import ProductsPerDay from 'pages/reports/ProductsPerDay';
 import FanActivities from 'pages/reports/FanActivities';
+import AlternatePreviewList from 'pages/products/AlternatePreviewList';
 
 function AdminRoutes() {
   return (

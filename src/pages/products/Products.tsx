@@ -284,11 +284,11 @@ const Products: React.FC<RouteComponentProps> = () => {
         });
       });
 
-      refreshItem(product);
-      await saveProductFn(product);
+      const response = (await saveProductFn(product)) as any;
+      refreshItem(response.result);
 
-      setLoading(false);
       message.success('Register updated with success.');
+      setLoading(false);
       setIsViewing(false);
     } catch (error) {
       console.error(error);
@@ -354,22 +354,12 @@ const Products: React.FC<RouteComponentProps> = () => {
 
   const deleteItem = async (_id: string) => {
     await doRequest(() => deleteProduct(_id));
-    for (let index = 0; index < products.length; index++) {
-      if (products[index].id === _id) {
-        setProducts(prev => [...prev.splice(index, 1)]);
-        break;
-      }
-    }
+    setProducts([...products.splice(lastViewedIndex, 1)]);
   };
 
   const refreshItem = (record: Product) => {
-    for (let i = 0; i < products.length; i++) {
-      if (products[i].id === record.id) {
-        products[i] = record;
-        setProducts([...products]);
-        break;
-      }
-    }
+    products[lastViewedIndex] = record;
+    setProducts([...products]);
   };
 
   const onSaveOnRowEdition = async (record: Product) => {
