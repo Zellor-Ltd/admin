@@ -578,7 +578,7 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
   };
 
   const onFitTo = (
-    fitTo: 'w' | 'h' | 'r',
+    fitTo: 'w' | 'h',
     sourceProp: 'image' | 'tagImage' | 'thumbnailUrl',
     imageIndex: number
   ) => {
@@ -600,6 +600,24 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
           } else {
             currentProduct[sourceProp].fitTo = fitTo;
           }
+      }
+
+      setCurrentProduct({ ...currentProduct });
+    }
+  };
+
+  const onRollback = (
+    oldUrl: string,
+    sourceProp: 'image' | 'tagImage' | 'thumbnailUrl',
+    imageIndex: number
+  ) => {
+    if (currentProduct) {
+      switch (sourceProp) {
+        case 'image':
+          currentProduct[sourceProp][imageIndex].url = oldUrl;
+          break;
+        default:
+          currentProduct[sourceProp].url = oldUrl;
       }
 
       setCurrentProduct({ ...currentProduct });
@@ -1146,6 +1164,7 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
                         formProp="tagImage"
                         form={form}
                         onFitTo={onFitTo}
+                        onRollback={onRollback}
                       />
                     </Form.Item>
                   </Col>
@@ -1156,6 +1175,7 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
                         formProp="thumbnailUrl"
                         form={form}
                         onFitTo={onFitTo}
+                        onRollback={onRollback}
                       />
                     </Form.Item>
                   </Col>
@@ -1172,6 +1192,7 @@ const PreviewList: React.FC<RouteComponentProps> = () => {
                           onAssignToThumbnail={onAssignToThumbnail}
                           onAssignToTag={onAssignToTag}
                           cropable={true}
+                          onRollback={onRollback}
                         />
                       </div>
                     </Form.Item>
