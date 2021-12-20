@@ -214,11 +214,6 @@ function AdminRoutes() {
         layout={AuthenticatedLayout}
       />
       <AppRoute
-        path="/preview-products/alternate-list"
-        component={AlternatePreviewList}
-        layout={AuthenticatedLayout}
-      />
-      <AppRoute
         path="/preview-products"
         component={PreviewList}
         layout={AuthenticatedLayout}
