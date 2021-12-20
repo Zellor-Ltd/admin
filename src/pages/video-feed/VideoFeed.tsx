@@ -35,7 +35,6 @@ import {
   fetchBrands,
   fetchCategories,
   fetchCreators,
-  fetchTags,
   fetchVideoFeed,
   rebuildAllFeedd,
   saveVideoFeed,
@@ -58,6 +57,7 @@ import TagForm from './TagForm';
 import './VideoFeed.scss';
 import './VideoFeedDetail.scss';
 import scrollIntoView from 'scroll-into-view';
+import moment from 'moment';
 
 const { Content } = Layout;
 const { Title } = Typography;
@@ -99,7 +99,6 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [selectedBrandIndex, setSelectedBrandIndex] = useState<number>(-1);
   const [showBrandForm, setShowBrandForm] = useState<boolean>(false);
 
-  const [tags, setTags] = useState<Tag[]>([]);
   const [selectedTag, setSelectedTag] = useState<Tag | undefined>();
   const [selectedTagIndex, setSelectedTagIndex] = useState<number>(-1);
   const [showTagForm, setShowTagForm] = useState<boolean>(false);
@@ -133,6 +132,7 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
     if (_brand) {
       addFilterFunction('brandName', feedItems =>
         feedItems.filter(feedItem => {
+          if (!feedItem.package) return false;
           for (let i = 0; i < feedItem.package.length; i++) {
             if (feedItem.package[i].brands) {
               for (let j = 0; j < feedItem.package[i].brands.length; j++) {
@@ -141,7 +141,7 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
                 );
               }
             } else {
-              return null;
+              return false;
             }
           }
         })
@@ -167,17 +167,8 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
       const response: any = await fetchBrands();
       setBrands(response.results);
     }
-    async function getTags() {
-      const response: any = await fetchTags({});
-      setTags(response.results);
-    }
     setLoading(true);
-    await Promise.all([
-      getInfluencers(),
-      getCategories(),
-      getBrands(),
-      getTags(),
-    ]);
+    await Promise.all([getInfluencers(), getCategories(), getBrands()]);
     setLoading(false);
   };
 
@@ -210,14 +201,15 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
           selectedTagIndex > -1 ? `${selectedTagIndex + 1} Update` : 'Creation'
         }`
       );
-    else{
+    else {
       setPageTitle(
         currentItem
           ? currentItem?.title.length > 50
             ? `${currentItem.title.slice(0, 50)} (...) Update`
             : `${currentItem.title} Update`
           : 'Update'
-      );}
+      );
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedSegment, showBrandForm, showTagForm, currentItem]);
 
@@ -237,7 +229,7 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
       delete segment.package;
       return segment;
     });
-    // item.validity = moment(item.validity).format("DD/MM/YYYY");
+
     await doRequest(() => saveVideoFeed(item));
 
     resetForm();
@@ -340,6 +332,7 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
       }
       addFilterFunction('brandName', feedItems =>
         feedItems.filter(feedItem => {
+          if (!feedItem.package) return false;
           for (let i = 0; i < feedItem.package.length; i++) {
             if (feedItem.package[i].brands) {
               for (let j = 0; j < feedItem.package[i].brands.length; j++) {
@@ -349,7 +342,7 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
                 );
               }
             } else {
-              return null;
+              return false;
             }
           }
         })
@@ -374,6 +367,7 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
   };
 
   const onEditItem = (record: any, index: number) => {
+    console.log(record)
     setLastViewedIndex(index);
     setCurrentItem(record);
     setIsEditing(true);
@@ -461,8 +455,8 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
       title: 'Expiration Date',
       dataIndex: 'validity',
       width: '5%',
-      render: (creationDate: Date) =>
-        new Date(creationDate).toLocaleDateString(),
+      render: (validity: Date) =>
+        validity ? new Date(validity).toLocaleDateString() : '-',
       align: 'center',
     },
     {
@@ -785,7 +779,7 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
                       label="Go Live Date"
                       getValueProps={formatMoment}
                     >
-                      <DatePicker format="DD/MM/YYYY" />
+                      <DatePicker defaultValue={feedForm.getFieldValue('goLiveDate') ?? moment()} format="DD/MM/YYYY" />
                     </Form.Item>
                   </Col>
                   <Col lg={12} xs={24}>
@@ -794,7 +788,7 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
                       label="Expiration Date"
                       getValueProps={formatMoment}
                     >
-                      <DatePicker format="DD/MM/YYYY" />
+                      <DatePicker defaultValue={feedForm.getFieldValue('validity') ?? moment()} format="DD/MM/YYYY" />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -905,7 +899,6 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
             setShowTagForm={setShowTagForm}
             tag={selectedTag}
             brands={brands}
-            tags={tags}
           />
         )}
         <Form

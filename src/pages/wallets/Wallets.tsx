@@ -11,7 +11,10 @@ import { WalletTransaction } from 'interfaces/WalletTransactions';
 import { WalletDetailParams } from 'interfaces/WalletTransactions';
 import { useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { fetchBalancePerBrand, fetchTransactionsPerBrand } from 'services/DiscoClubService';
+import {
+  fetchBalancePerBrand,
+  fetchTransactionsPerBrand,
+} from 'services/DiscoClubService';
 import WalletEdit from './WalletEdit';
 
 const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
@@ -88,7 +91,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   const getResources = async () => {
-    if(selectedFan && selectedBrand) {
+    if (selectedFan && selectedBrand) {
       const { results } = await doFetch(() =>
         fetchTransactionsPerBrand(selectedFan.id, selectedBrand.id)
       );
@@ -100,9 +103,9 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
     <div className="wallets">
       <PageHeader title="Fan Wallets" subTitle="List of fan wallets" />
       <Row align="bottom" justify="space-between">
-        <Col lg={24} xs={24}>
+        <Col span={24}>
           <Row gutter={8} align="bottom">
-            <Col>
+            <Col span={4}>
               <SelectFan
                 onChange={onChangeFan}
                 style={{ width: '100%' }}
@@ -110,7 +113,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
               />
             </Col>
             {selectedFan && (
-              <Col>
+              <Col span={4}>
                 <SelectBrand
                   style={{ width: '100%' }}
                   allowClear={true}
@@ -118,15 +121,14 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
                 ></SelectBrand>
               </Col>
             )}
-            <Col lg={14} xs={12}
-            style={{position: "relative", top: "8px"}}>
-            <WalletEdit
-            disabled={!selectedFan || !selectedBrand}
-            fanId={selectedFan?.id}
-            brandId={selectedBrand?.id}
-            getResources={getResources}
-          />
-          </Col>
+            <Col span={6} style={{ position: 'relative', top: '8px' }}>
+              <WalletEdit
+                disabled={!selectedFan || !selectedBrand}
+                fanId={selectedFan?.id}
+                brandId={selectedBrand?.id}
+                getResources={getResources}
+              />
+            </Col>
           </Row>
         </Col>
       </Row>

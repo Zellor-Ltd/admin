@@ -64,6 +64,7 @@ import { ProductBrand } from 'interfaces/ProductBrand';
 import { productUtils } from '../../helpers/product-utils';
 import { Image } from '../../interfaces/Image';
 import scrollIntoView from 'scroll-into-view';
+import { useMount } from 'react-use';
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 const { getSearchTags, getCategories, removeSearchTagsByCategory } =
@@ -73,6 +74,7 @@ const Products: React.FC<RouteComponentProps> = () => {
   const saveProductFn = saveProduct;
   const [brands, setBrands] = useState<Brand[]>([]);
   const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
+  const [isFetchingProductBrand, setIsFetchingProductBrand] = useState(false);
   const [ageRange, setAgeRange] = useState<[number, number]>([12, 100]);
   const [form] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
@@ -97,7 +99,6 @@ const Products: React.FC<RouteComponentProps> = () => {
     ProductBrand | undefined
   >();
   const [outOfStockFilter, setOutOfStockFilter] = useState<boolean>(false);
-  const [dateFilter, setDateFilter] = useState<Date>();
 
   const [currentMasterBrand, setCurrentMasterBrand] = useState<string>();
   const [currentProductBrand, setCurrentProductBrand] = useState<string>();
@@ -116,29 +117,31 @@ const Products: React.FC<RouteComponentProps> = () => {
     settings: { currency = [] },
   } = useSelector((state: any) => state.settings);
 
-  const handleScroll = () => {
-    window.scroll(0, 300 * lastViewedIndex + 415);
-  };
-
   const handleFilterOutOfStock = (e: CheckboxChangeEvent) => {
     setOutOfStockFilter(e.target.checked);
   };
 
-  const handleFilterDate = (date: Date) => {
-    setDateFilter(date);
-  };
+  useMount(async () => {
+    const getBrands = async () => {
+      setLoading(true);
+      const response: any = await fetchBrands();
+      setLoading(false);
+      setBrands(response.results);
+    };
+
+    const getProductBrands = async () => {
+      setIsFetchingProductBrand(true);
+      const { results }: any = await fetchProductBrands();
+      setProductBrands(results);
+      setIsFetchingProductBrand(false);
+    };
+
+    await Promise.all([getBrands(), getProductBrands(), fetchAllCategories()]);
+  });
 
   useEffect(() => {
     form.setFieldsValue(currentProduct);
   }, [form, currentProduct]);
-
-  useEffect(() => {
-    if (!isViewing && loaded) {
-      if (lastViewedIndex !== 1) {
-        handleScroll();
-      }
-    }
-  }, [isViewing]);
 
   const setSearchTagsByCategory = useCallback(
     (
@@ -254,34 +257,6 @@ const Products: React.FC<RouteComponentProps> = () => {
   }, [brands, setDiscoPercentageByBrand, setSearchTagsByCategory]);
 
   useEffect(() => {
-    let mounted = true;
-
-    const getBrands = async () => {
-      setLoading(true);
-      const response: any = await fetchBrands();
-      if (mounted) {
-        setLoading(false);
-        setBrands(response.results);
-      }
-    };
-
-    getBrands();
-    fetchAllCategories();
-
-    const getProductBrands = async () => {
-      try {
-        const { results }: any = await fetchProductBrands();
-        setProductBrands(results);
-      } catch (e) {}
-    };
-
-    getProductBrands();
-    return () => {
-      mounted = false;
-    };
-  }, [fetchAllCategories]);
-
-  useEffect(() => {
     if (currentProduct?.ageMin && currentProduct?.ageMax)
       setAgeRange([currentProduct?.ageMin, currentProduct?.ageMax]);
   }, [currentProduct]);
@@ -309,11 +284,11 @@ const Products: React.FC<RouteComponentProps> = () => {
         });
       });
 
-      refreshItem(product);
-      await saveProductFn(product);
+      const response = (await saveProductFn(product)) as any;
+      refreshItem(response.result);
 
-      setLoading(false);
       message.success('Register updated with success.');
+      setLoading(false);
       setIsViewing(false);
     } catch (error) {
       console.error(error);
@@ -330,8 +305,7 @@ const Products: React.FC<RouteComponentProps> = () => {
         brandId: brandFilter?.id,
         query: searchFilter,
         unclassified: false,
-        productBrandName: productBrandFilter?.brandName,
-        date: dateFilter,
+        productBrandId: productBrandFilter?.id,
         outOfStock: outOfStockFilter,
       })
     );
@@ -346,7 +320,6 @@ const Products: React.FC<RouteComponentProps> = () => {
 
   const getResources = async triggerByButton => {
     const { results: products } = await _fetchProducts(triggerByButton);
-    await fetchAllCategories();
 
     setProducts(products);
     await setLoaded(true);
@@ -381,22 +354,12 @@ const Products: React.FC<RouteComponentProps> = () => {
 
   const deleteItem = async (_id: string) => {
     await doRequest(() => deleteProduct(_id));
-    for (let index = 0; index < products.length; index++) {
-      if (products[index].id === _id) {
-        setProducts(prev => [...prev.splice(index, 1)]);
-        break;
-      }
-    }
+    setProducts([...products.splice(lastViewedIndex, 1)]);
   };
 
   const refreshItem = (record: Product) => {
-    for (let i = 0; i < products.length; i++) {
-      if (products[i].id === record.id) {
-        products[i] = record;
-        setProducts([...products]);
-        break;
-      }
-    }
+    products[lastViewedIndex] = record;
+    setProducts([...products]);
   };
 
   const onSaveOnRowEdition = async (record: Product) => {
@@ -412,7 +375,7 @@ const Products: React.FC<RouteComponentProps> = () => {
 
   const editProduct = (record: Product, index: number) => {
     setCurrentProduct(record);
-    setLastViewedIndex(index - 1);
+    setLastViewedIndex(index);
     setCurrentMasterBrand(record.brand.brandName);
     if (record.productBrand) {
       if (typeof record.productBrand === 'string') {
@@ -640,14 +603,14 @@ const Products: React.FC<RouteComponentProps> = () => {
 
   const onAssignToThumbnail = (file: Image) => {
     if (currentProduct) {
-      currentProduct.thumbnailUrl = file;
+      currentProduct.thumbnailUrl = { ...file };
       setCurrentProduct({ ...currentProduct });
     }
   };
 
   const onAssignToTag = (file: Image) => {
     if (currentProduct) {
-      currentProduct.tagImage = file;
+      currentProduct.tagImage = { ...file };
       setCurrentProduct({ ...currentProduct });
     }
   };
@@ -700,15 +663,8 @@ const Products: React.FC<RouteComponentProps> = () => {
                     onChange={onChangeProductBrand}
                     initialProductBrandName={productBrandFilter?.brandName}
                     productBrands={productBrands}
+                    isLoading={isFetchingProductBrand}
                   ></ProductBrandFilter>
-                </Col>
-                <Col lg={6} xs={16}>
-                  <Typography.Title level={5}>Date added</Typography.Title>
-                  <DatePicker
-                    disabled={true}
-                    onChange={() => handleFilterDate}
-                    format="DD/MM/YYYY"
-                  />
                 </Col>
                 <Col lg={6} xs={24}>
                   <Checkbox

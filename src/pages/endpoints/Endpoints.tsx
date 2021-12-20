@@ -27,7 +27,21 @@ const Endpoints: React.FC<RouteComponentProps> = ({ history, location }) => {
       render: id => <CopyIdToClipboard id={id} />,
       align: 'center',
     },
-    { title: 'Name', dataIndex: 'name', width: '15%' },
+    {
+      title: 'Name',
+      dataIndex: 'name',
+      width: '15%',
+      render: (value, record: Endpoint) => (
+        <>
+          {!record.isActive && (
+            <Link to={{ pathname: detailsPathname, state: record }}>
+              {record.name}
+            </Link>
+          )}
+          {record.isActive && `${record.name}`}
+        </>
+      ),
+    },
     { title: 'Container', dataIndex: 'container', width: '15%' },
     { title: 'Method', dataIndex: 'action', width: '10%' },
     {
