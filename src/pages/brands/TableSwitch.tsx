@@ -3,15 +3,17 @@ import { Brand } from 'interfaces/Brand';
 import React, { useState } from 'react';
 import { PauseModal } from './PauseModal';
 
-export const TableSwitch: React.FC<{ brand: Brand; reloadFn: Function, 
-  switchOnText,
-  switchOffText,
-  switchType,}> = ({
-  brand,
-  reloadFn,
-  switchType,
-}) => {
-  const isSwitchToggled = switchType === 'paused' ? brand.paused || false : brand.showOutOfStock || false;
+export const TableSwitch: React.FC<{
+  brand: Brand;
+  reloadFn: Function;
+  switchOnText;
+  switchOffText;
+  switchType;
+}> = ({ brand, reloadFn, switchType }) => {
+  const isSwitchToggled =
+    switchType === 'paused'
+      ? brand.paused || false
+      : brand.showOutOfStock || false;
   const [showModal, setShowModal] = useState<boolean>(false);
 
   const onCompletePausedAction = () => {
@@ -19,7 +21,9 @@ export const TableSwitch: React.FC<{ brand: Brand; reloadFn: Function,
   };
 
   const handleSwitchChange = () => {
-    switchType === 'paused' ? setShowModal(true) : brand.showOutOfStock = 
+    switchType === 'paused'
+      ? setShowModal(true)
+      : (brand.showOutOfStock = !brand.showOutOfStock);
   };
 
   return (
