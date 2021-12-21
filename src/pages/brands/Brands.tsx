@@ -10,6 +10,7 @@ import {
   Button,
   Col,
   Input,
+  message,
   PageHeader,
   Popconfirm,
   Row,
@@ -25,6 +26,7 @@ import { useEffect, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { deleteBrand, fetchBrands, saveBrand } from 'services/DiscoClubService';
 import { TableSwitch } from './TableSwitch';
+import { PauseModal } from './PauseModal';
 
 const tagColorByStatus: any = {
   approved: 'green',
@@ -38,6 +40,8 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [brands, setBrands] = useState<Brand[]>([]);
   const [filterText, setFilterText] = useState('');
   const [content, setContent] = useState<any[]>([]);
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const [currentBrand, setCurrentBrand] = useState<Brand>();
 
   const aproveOrReject = async (aprove: boolean, creator: Brand) => {
     creator.status = aprove ? 'approved' : 'rejected';
@@ -87,6 +91,30 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
     );
   };
 
+  const handleSwitchChange = async (
+    switchType: 'showOutOfStock' | 'paused',
+    brand: Brand,
+    toggled: boolean
+  ) => {
+    if (switchType === 'showOutOfStock') {
+      try {
+        brand.showOutOfStock = !!!brand.showOutOfStock;
+        toggled = !toggled;
+        await saveBrand(brand);
+        message.success('Register updated with success.');
+        console.log(!!brand.showOutOfStock);
+      } catch (error) {
+        message.error("Couldn't set brand property. Try again.");
+      }
+    } else {
+      setShowModal(true);
+    }
+  };
+
+  const onCompletePausedAction = () => {
+    fetch();
+  };
+
   const columns: ColumnsType<Brand> = [
     {
       title: '_id',
@@ -115,10 +143,23 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
       width: '15%',
       align: 'center',
       render: (value: any, record: Brand) => (
-        <TableSwitch brand={record} reloadFn={fetch} 
-        switchOnText='Reactivate'
-        switchOffText='Deactivate'
-        switchType='paused'/>
+        <>
+          <TableSwitch
+            toggled={!!record.paused}
+            handleSwitchChange={toggled =>
+              handleSwitchChange('paused', record, toggled)
+            }
+          />
+          {showModal && (
+            <PauseModal
+              showPauseModal={showModal}
+              setShowPauseModal={setShowModal}
+              brandId={record.id}
+              isBrandPaused={record.paused || false}
+              onOk={onCompletePausedAction}
+            />
+          )}
+        </>
       ),
     },
     {
@@ -127,10 +168,12 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
       width: '15%',
       align: 'center',
       render: (value: any, record: Brand) => (
-        <TableSwitch brand={record} reloadFn={fetch} 
-        switchOnText='Show'
-        switchOffText='Hide'
-        switchType='showOutOfStock'/>
+        <TableSwitch
+          toggled={!!record.showOutOfStock}
+          handleSwitchChange={toggled =>
+            handleSwitchChange('showOutOfStock', record, toggled)
+          }
+        />
       ),
     },
     {
