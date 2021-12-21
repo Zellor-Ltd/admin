@@ -254,7 +254,7 @@ const PreviewList: React.FC<RouteComponentProps> = ({ history, location }) => {
       refreshProducts();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchFilter, brandFilter]);
+  }, [searchFilter]);
 
   useEffect(() => {
     setDiscoPercentageByBrand(true);
