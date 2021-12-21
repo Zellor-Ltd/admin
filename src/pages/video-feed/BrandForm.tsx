@@ -58,13 +58,13 @@ const BrandForm: React.FC<FormProps> = ({
   };
 
   const onChangeProductBrandLogo = (
-    productBrandKey: 'brandLogo' | 'colourLogo' | 'blackLogo' | 'brandName' | ''
+    productBrandKey: 'whiteLogo' | 'colourLogo' | 'blackLogo' | 'brandName' | ''
   ) => {
     const currentValues = form.getFieldsValue(true);
 
     if (selectedProductBrand) {
       switch (productBrandKey) {
-        case 'brandLogo':
+        case 'whiteLogo':
         case 'colourLogo':
         case 'blackLogo':
           currentValues.selectedLogoUrl =
@@ -137,8 +137,8 @@ const BrandForm: React.FC<FormProps> = ({
               disabled={isFetchingProductBrands}
               onChange={onChangeProductBrandLogo}
             >
-              {selectedProductBrand?.brandLogo?.url && (
-                <Select.Option value="brandLogo">Logo Round</Select.Option>
+              {selectedProductBrand?.whiteLogo?.url && (
+                <Select.Option value="whiteLogo">White</Select.Option>
               )}
 
               {selectedProductBrand?.colourLogo?.url && (

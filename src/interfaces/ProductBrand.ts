@@ -9,4 +9,5 @@ export interface ProductBrand {
   avatar?: any;
   colourLogo?: any;
   blackLogo?: any;
+  whiteLogo?: any;
 }
