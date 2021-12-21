@@ -30,7 +30,21 @@
   border-color: #096dd9;
 }
 
-.img-upload-div .ant-upload.ant-upload-select-picture-card {
-  position: relative;
-  top: -4rem;
+//.img-upload-div .ant-upload.ant-upload-select-picture-card {
+//  position: relative;
+//  top: -5.2rem;
+//}
+
+.ant-upload-list {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-y: visible;
+}
+
+.alternate-row-overflow {
+  overflow-x: scroll;
+}
+
+.ant-upload-list-picture-card-container {
+  flex-shrink: 0;
 }

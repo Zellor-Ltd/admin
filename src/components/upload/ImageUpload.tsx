@@ -41,6 +41,7 @@ interface ImageUploadProps {
   onAssignToThumbnail?: CallableFunction;
   onAssignToTag?: CallableFunction;
   cropable?: boolean;
+  showRow?: boolean;
 }
 
 interface ImageDnDProps {
@@ -62,6 +63,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   onAssignToThumbnail,
   onAssignToTag,
   cropable,
+  showRow,
 }) => {
   const [fileListLocal, setFileListLocal] = useState<any>([]);
   const [isCropping, setIsCropping] = useState(false);
@@ -413,14 +415,12 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
       cropable
     ) {
       return (
-        <Row>
-          <ImageDnD
-            originNode={originNode}
-            file={file}
-            fileList={currFileList}
-            moveRow={moveRow}
-          />
-        </Row>
+        <ImageDnD
+          originNode={originNode}
+          file={file}
+          fileList={currFileList}
+          moveRow={moveRow}
+        />
       );
     }
 
@@ -430,26 +430,24 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   const action = `${process.env.REACT_APP_HOST_ENDPOINT}/Wi/Upload`;
 
   return (
-    <Row>
-      <Col>
-        <DndProvider backend={HTML5Backend}>
-          <Upload
-            action={action}
-            headers={{
-              Authorization: `Bearer ${localStorage.getItem('token')}`,
-            }}
-            onChange={onChangeImage}
-            accept={accept}
-            listType="picture-card"
-            fileList={fileListLocal}
-            maxCount={maxCount}
-            onPreview={onPreview}
-            itemRender={itemRender}
-          >
-            {fileListLocal.length >= maxCount ? null : uploadButton}
-          </Upload>
-        </DndProvider>
-      </Col>
+    <div className={showRow ? 'alternate-row-overflow' : ''}>
+      <DndProvider backend={HTML5Backend}>
+        <Upload
+          action={action}
+          headers={{
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          }}
+          onChange={onChangeImage}
+          accept={accept}
+          listType="picture-card"
+          fileList={fileListLocal}
+          maxCount={maxCount}
+          onPreview={onPreview}
+          itemRender={itemRender}
+        >
+          {fileListLocal.length >= maxCount ? null : uploadButton}
+        </Upload>
+      </DndProvider>
       {isCropping && (
         <ImageCrop
           onFinish={onCropFinish}
@@ -459,7 +457,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
           loading={isUploadingCrop}
         />
       )}
-    </Row>
+    </div>
   );
 };
 
