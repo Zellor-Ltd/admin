@@ -1,6 +1,7 @@
-import { Switch } from 'antd';
+import { message, Switch } from 'antd';
 import { Brand } from 'interfaces/Brand';
 import React, { useState } from 'react';
+import { saveBrand } from 'services/DiscoClubService';
 import { PauseModal } from './PauseModal';
 
 export const TableSwitch: React.FC<{
@@ -10,20 +11,28 @@ export const TableSwitch: React.FC<{
   switchOffText;
   switchType;
 }> = ({ brand, reloadFn, switchType }) => {
-  const isSwitchToggled =
-    switchType === 'paused'
-      ? brand.paused || false
-      : brand.showOutOfStock || false;
+  const [isSwitchToggled, setIsSwitchToggled] = useState<boolean>(
+    switchType === 'paused' ? !!brand.paused : !!brand.showOutOfStock
+  );
   const [showModal, setShowModal] = useState<boolean>(false);
 
   const onCompletePausedAction = () => {
     reloadFn();
   };
 
-  const handleSwitchChange = () => {
-    switchType === 'paused'
-      ? setShowModal(true)
-      : (brand.showOutOfStock = !brand.showOutOfStock);
+  const handleSwitchChange = async () => {
+    if (switchType === 'showOutOfStock') {
+      try {
+        brand.showOutOfStock = !brand.showOutOfStock;
+        setIsSwitchToggled(toggled => !toggled);
+        await saveBrand(brand);
+        message.success('Register updated with success.');
+      } catch (error) {
+        message.error("Couldn't set brand property. Try again.");
+      }
+    } else {
+      setShowModal(true);
+    }
   };
 
   return (
