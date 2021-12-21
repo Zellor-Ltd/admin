@@ -11,14 +11,11 @@
 }
 
 .ant-upload-picture-card-wrapper {
-  min-height: 7.7rem;
+  min-height: 9rem;
 }
 
-.ant-upload-list {
-  display: flex;
-  flex-wrap: wrap;
-  height: 100%;
-  align-items: baseline;
+.big-image-height {
+  height: 13rem;
 }
 
 .fit-to-selected {
@@ -30,21 +27,21 @@
   border-color: #096dd9;
 }
 
-//.img-upload-div .ant-upload.ant-upload-select-picture-card {
-//  position: relative;
-//  top: -5.2rem;
-//}
-
 .ant-upload-list {
   display: flex;
   flex-wrap: nowrap;
   overflow-y: visible;
 }
 
-.alternate-row-overflow {
-  overflow-x: scroll;
+.scroll-x {
+  overflow-x: auto;
 }
 
 .ant-upload-list-picture-card-container {
   flex-shrink: 0;
+}
+
+.custom-upload-button {
+  min-width: 5.5rem;
+  min-height: 3.5rem;
 }

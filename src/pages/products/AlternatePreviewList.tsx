@@ -1,10 +1,6 @@
-import {
-  ArrowRightOutlined,
-  DeleteOutlined,
-  EditOutlined,
-} from '@ant-design/icons';
+import { ArrowRightOutlined } from '@ant-design/icons';
 import { Upload } from 'components';
-import { Button, Form, message, Popconfirm, Spin } from 'antd';
+import { Button, Form, message, Spin } from 'antd';
 import EditableTable, {
   EditableColumnType,
 } from '../../components/EditableTable';
@@ -304,7 +300,7 @@ const AlternatePreviewList: React.FC<AlternatePreviewListProps> = ({
                   onAssignToTag={onAssignToTag}
                   onAssignToThumbnail={onAssignToThumbnail}
                   cropable={true}
-                  showRow={false}
+                  scrollOverflow={true}
                 />
               </Form.Item>
             </div>
