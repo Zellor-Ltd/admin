@@ -1,9 +1,6 @@
-import {
-  ArrowRightOutlined,
-  DeleteOutlined,
-  EditOutlined,
-} from '@ant-design/icons';
-import { Button, Form, Popconfirm, Spin } from 'antd';
+import { ArrowRightOutlined } from '@ant-design/icons';
+import { Upload } from 'components';
+import { Button, Form, message, Spin } from 'antd';
 import EditableTable, {
   EditableColumnType,
 } from '../../components/EditableTable';
@@ -81,7 +78,7 @@ const AlternatePreviewList: React.FC<AlternatePreviewListProps> = ({
   const [loading, setLoading] = useState<boolean>(false);
 
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
-  const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
+  const [lastViewedIndex, setLastViewedIndex] = useState<number>(0);
 
   const [eof, setEof] = useState<boolean>(false);
 
@@ -129,6 +126,27 @@ const AlternatePreviewList: React.FC<AlternatePreviewListProps> = ({
     return response;
   };
 
+  const refreshItem = (record: Product) => {
+    products[lastViewedIndex] = record;
+    setProducts([...products]);
+  };
+
+  const onFinish = async () => {
+    setLoading(true);
+    try {
+      const product = form.getFieldsValue(true);
+
+      const response = (await saveStagingProduct(product)) as any;
+      refreshItem(response.result);
+
+      message.success('Register updated with success.');
+      setLoading(false);
+    } catch (error) {
+      console.error(error);
+      setLoading(false);
+    }
+  };
+
   const getProducts = async searchButton => {
     const { results } = await doFetch(() =>
       _fetchStagingProducts(searchButton)
@@ -166,6 +184,46 @@ const AlternatePreviewList: React.FC<AlternatePreviewListProps> = ({
     await getProducts(true);
   };
 
+  const onAssignToTag = (file: Image, record: Product) => {
+    if (record) {
+      record.tagImage = { ...file };
+    }
+  };
+
+  const onAssignToThumbnail = (file: Image, record: Product) => {
+    if (record) {
+      record.thumbnailUrl = { ...file };
+    }
+  };
+
+  const onFitTo = (
+    fitTo: 'w' | 'h',
+    sourceProp: 'image' | 'tagImage' | 'thumbnailUrl',
+    imageIndex: number,
+    record: any
+  ) => {
+    if (!sourceProp) {
+      throw new Error('missing sourceProp parameter');
+    }
+    if (record) {
+      switch (sourceProp) {
+        case 'image':
+          if (record[sourceProp][imageIndex].fitTo === fitTo) {
+            record[sourceProp][imageIndex].fitTo = undefined;
+          } else {
+            record[sourceProp][imageIndex].fitTo = fitTo;
+          }
+          break;
+        default:
+          if (record[sourceProp].fitTo === fitTo) {
+            record[sourceProp].fitTo = undefined;
+          } else {
+            record[sourceProp].fitTo = fitTo;
+          }
+      }
+    }
+  };
+
   const columns: EditableColumnType<Product>[] = [
     {
       title: 'Id',
@@ -177,7 +235,7 @@ const AlternatePreviewList: React.FC<AlternatePreviewListProps> = ({
     {
       title: 'Name',
       dataIndex: 'name',
-      width: '15%',
+      width: '10%',
       render: (value: string, record: Product, index: number) => (
         <Link
           onClick={() => editProduct(record, index)}
@@ -192,60 +250,79 @@ const AlternatePreviewList: React.FC<AlternatePreviewListProps> = ({
       dataIndex: ['tagImage'],
       width: '15%',
       align: 'center',
-      render: (value: Image) => (
-        <img style={{ maxWidth: 100, maxHeight: 100 }} src={value.url} />
+      render: (value: Image, record) => (
+        <Form.Item>
+          <Upload.ImageUpload
+            fileList={value}
+            formProp="tagImage"
+            form={form}
+            onFitTo={(fitTo, sourceProp, imageIndex) => {
+              onFitTo(fitTo, sourceProp, imageIndex, record);
+            }}
+          />
+        </Form.Item>
       ),
     },
     {
       title: 'Thumbnail',
       dataIndex: ['thumbnailUrl'],
-      width: '6%',
+      width: '15%',
       align: 'center',
-      render: (value: Image) => (
-        <img style={{ maxWidth: 100, maxHeight: 100 }} src={value.url} />
+      render: (value: Image, record) => (
+        <Form.Item>
+          <Upload.ImageUpload
+            fileList={value}
+            formProp="thumbnailUrl"
+            form={form}
+            onFitTo={(fitTo, sourceProp, imageIndex) => {
+              onFitTo(fitTo, sourceProp, imageIndex, record);
+            }}
+          />
+        </Form.Item>
       ),
     },
     {
       title: 'Image',
       dataIndex: ['image'],
-      width: '45%',
+      width: '40%',
       align: 'left',
+      ellipsis: true,
       render: (value: any) => {
-        const images = value.map(item => {
-          return (
-            <img style={{ maxWidth: 100, maxHeight: 100 }} src={item.url} />
-          );
-        });
-        return images;
+        return (
+          <div className="images-wrapper">
+            <div className="images-content">
+              <Form.Item>
+                <Upload.ImageUpload
+                  maxCount={20}
+                  fileList={value}
+                  formProp="image"
+                  form={form}
+                  onAssignToTag={onAssignToTag}
+                  onAssignToThumbnail={onAssignToThumbnail}
+                  cropable={true}
+                  scrollOverflow={true}
+                />
+              </Form.Item>
+            </div>
+          </div>
+        );
       },
     },
     {
       title: 'Actions',
       key: 'action',
-      width: '12%',
-      align: 'right',
-      render: (_, record: Product, index: number) => (
+      width: '15%',
+      align: 'center',
+      render: (_, record: Product) => (
         <>
-          <Link
-            onClick={() => editProduct(record, index)}
-            to={{ pathname: window.location.pathname, state: record }}
+          <Button
+            disabled={record.brand.automated === true}
+            type="primary"
+            htmlType="submit"
+            loading={loading}
           >
-            <EditOutlined />
-          </Link>
-          <Popconfirm
-            title="Are you sure？"
-            okText="Yes"
-            cancelText="No"
-            onConfirm={() => deleteItem(record.id)}
-          >
-            <Button
-              type="link"
-              style={{ padding: 0, marginLeft: 8 }}
-              disabled={record.lastGoLiveDate != null}
-            >
-              <DeleteOutlined />
-            </Button>
-          </Popconfirm>
+            Save Changes
+          </Button>
           <Button
             onClick={() => handleStage(record.id)}
             type="link"
@@ -287,54 +364,65 @@ const AlternatePreviewList: React.FC<AlternatePreviewListProps> = ({
   }, [isEditing]);
 
   return (
-    <InfiniteScroll
-      dataLength={products.length}
-      next={() => fetchData(false)}
-      hasMore={!eof}
-      loader={
-        page !== 0 && (
-          <div className="scroll-message">
-            <Spin />
-          </div>
-        )
-      }
-      endMessage={
-        <div className="scroll-message">
-          <b>End of results.</b>
-        </div>
-      }
+    <Form
+      form={form}
+      name="productForm"
+      onFinish={onFinish}
+      onFinishFailed={({ errorFields }) => {
+        errorFields.forEach(errorField => {
+          message.error(errorField.errors[0]);
+        });
+      }}
     >
-      <EditableTable
-        rowClassName={(_, index) =>
-          `scrollable-row-${index} ${
-            index === lastViewedIndex ? 'selected-row' : ''
-          }`
+      <InfiniteScroll
+        dataLength={products.length}
+        next={() => fetchData(false)}
+        hasMore={!eof}
+        loader={
+          page !== 0 && (
+            <div className="scroll-message">
+              <Spin />
+            </div>
+          )
         }
-        rowKey="id"
-        columns={columns}
-        dataSource={products}
-        loading={loading}
-        onSave={onSaveProduct}
-        pagination={false}
-        rowSelection={{
-          selectedRowKeys,
-          onChange: setSelectedRowKeys,
-        }}
-        expandable={{
-          expandedRowRender: (record: Product) => (
-            <ProductExpandedRow
-              key={record.id}
-              record={record}
-              allCategories={allCategories}
-              onSaveProduct={onSaveCategories}
-              loading={loadingCategories}
-              isStaging={true}
-              productBrands={productBrands}
-            ></ProductExpandedRow>
-          ),
-        }}
-      />
-    </InfiniteScroll>
+        endMessage={
+          <div className="scroll-message">
+            <b>End of results.</b>
+          </div>
+        }
+      >
+        <EditableTable
+          rowClassName={(_, index) =>
+            `scrollable-row-${index} ${
+              index === lastViewedIndex ? 'selected-row' : ''
+            }`
+          }
+          rowKey="id"
+          columns={columns}
+          dataSource={products}
+          loading={loading}
+          onSave={onSaveProduct}
+          pagination={false}
+          rowSelection={{
+            selectedRowKeys,
+            onChange: setSelectedRowKeys,
+          }}
+          expandable={{
+            expandedRowRender: (record: Product) => (
+              <ProductExpandedRow
+                key={record.id}
+                record={record}
+                allCategories={allCategories}
+                onSaveProduct={onSaveCategories}
+                loading={loadingCategories}
+                isStaging={true}
+                productBrands={productBrands}
+              ></ProductExpandedRow>
+            ),
+          }}
+        />
+      </InfiniteScroll>
+    </Form>
   );
 };
 

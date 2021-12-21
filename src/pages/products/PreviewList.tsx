@@ -74,7 +74,6 @@ import { Image } from '../../interfaces/Image';
 import scrollIntoView from 'scroll-into-view';
 import { useMount } from 'react-use';
 import AlternatePreviewList from './AlternatePreviewList';
-import ErrorPage from 'pages/error/ErrorPage';
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 const { getSearchTags, getCategories, removeSearchTagsByCategory } =
@@ -255,7 +254,7 @@ const PreviewList: React.FC<RouteComponentProps> = ({ history, location }) => {
       refreshProducts();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchFilter, brandFilter]);
+  }, [searchFilter]);
 
   useEffect(() => {
     setDiscoPercentageByBrand(true);
@@ -1156,6 +1155,7 @@ const PreviewList: React.FC<RouteComponentProps> = ({ history, location }) => {
                             formProp="tagImage"
                             form={form}
                             onFitTo={onFitTo}
+                            onRollback={onRollback}
                           />
                         </Form.Item>
                       </Col>
@@ -1166,6 +1166,7 @@ const PreviewList: React.FC<RouteComponentProps> = ({ history, location }) => {
                             formProp="thumbnailUrl"
                             form={form}
                             onFitTo={onFitTo}
+                            onRollback={onRollback}
                           />
                         </Form.Item>
                       </Col>
@@ -1182,6 +1183,8 @@ const PreviewList: React.FC<RouteComponentProps> = ({ history, location }) => {
                               onAssignToThumbnail={onAssignToThumbnail}
                               onAssignToTag={onAssignToTag}
                               cropable={true}
+                              onRollback={onRollback}
+                              classNames="big-image-height scroll-x"
                             />
                           </div>
                         </Form.Item>

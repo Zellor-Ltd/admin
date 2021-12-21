@@ -1159,6 +1159,7 @@ const Products: React.FC<RouteComponentProps> = () => {
                           onAssignToTag={onAssignToTag}
                           onAssignToThumbnail={onAssignToThumbnail}
                           cropable={true}
+                          classNames="big-image-height scroll-x"
                         />
                       </div>
                     </Form.Item>

@@ -20,6 +20,9 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import './ImageUpload.scss';
 import ImageCrop from '../ImageCrop';
 import { uploadImage } from '../../services/DiscoClubService';
+import classNames from 'classnames';
+
+const classNamesFn = classNames;
 
 interface ImageUploadProps {
   fileList: any;
@@ -41,6 +44,8 @@ interface ImageUploadProps {
   onAssignToThumbnail?: CallableFunction;
   onAssignToTag?: CallableFunction;
   cropable?: boolean;
+  scrollOverflow?: boolean;
+  classNames?: string;
 }
 
 interface ImageDnDProps {
@@ -62,6 +67,8 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   onAssignToThumbnail,
   onAssignToTag,
   cropable,
+  scrollOverflow,
+  classNames = '',
 }) => {
   const [fileListLocal, setFileListLocal] = useState<any>([]);
   const [isCropping, setIsCropping] = useState(false);
@@ -83,7 +90,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   }, [fileList]);
 
   const uploadButton = (
-    <div>
+    <div className={'custom-upload-button'}>
       <PlusOutlined />
       <div style={{ marginTop: 8 }}>Upload</div>
     </div>
@@ -212,6 +219,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 
   const onPreview = async (file: any) => {
     let src = file.url;
+
     if (!src) {
       src = await new Promise(resolve => {
         const reader = new FileReader();
@@ -219,14 +227,8 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
         reader.onload = () => resolve(reader.result);
       });
     }
-    if (accept === 'video/*') {
-      window.open(src);
-    } else {
-      const image = new Image();
-      image.src = src;
-      const imgWindow = window.open(src);
-      imgWindow?.document.write(image.outerHTML);
-    }
+
+    window.open(src);
   };
 
   const ImageDnD: React.FC<ImageDnDProps> = ({
@@ -240,7 +242,6 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 
     const fitToWidthSelectedClass = file.fitTo === 'w' ? 'fit-to-selected' : '';
     const fitHeightSelectedClass = file.fitTo === 'h' ? 'fit-to-selected' : '';
-    const rollbackSelectedClass = file.fitTo === 'r' ? 'fit-to-selected' : '';
 
     const [{ isOver, dropClassName }, drop] = useDrop({
       accept: dndType,
@@ -306,7 +307,6 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
             <Button
               size="small"
               shape="circle"
-              className={rollbackSelectedClass}
               icon={<RollbackOutlined />}
               onClick={() => onRollback(file.oldUrl, formProp as any, index)}
             />
@@ -413,14 +413,12 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
       cropable
     ) {
       return (
-        <Row>
-          <ImageDnD
-            originNode={originNode}
-            file={file}
-            fileList={currFileList}
-            moveRow={moveRow}
-          />
-        </Row>
+        <ImageDnD
+          originNode={originNode}
+          file={file}
+          fileList={currFileList}
+          moveRow={moveRow}
+        />
       );
     }
 
@@ -430,26 +428,28 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   const action = `${process.env.REACT_APP_HOST_ENDPOINT}/Wi/Upload`;
 
   return (
-    <Row>
-      <Col>
-        <DndProvider backend={HTML5Backend}>
-          <Upload
-            action={action}
-            headers={{
-              Authorization: `Bearer ${localStorage.getItem('token')}`,
-            }}
-            onChange={onChangeImage}
-            accept={accept}
-            listType="picture-card"
-            fileList={fileListLocal}
-            maxCount={maxCount}
-            onPreview={onPreview}
-            itemRender={itemRender}
-          >
-            {fileListLocal.length >= maxCount ? null : uploadButton}
-          </Upload>
-        </DndProvider>
-      </Col>
+    <div
+      className={classNamesFn(classNames, {
+        'scroll-x': scrollOverflow,
+      })}
+    >
+      <DndProvider backend={HTML5Backend}>
+        <Upload
+          action={action}
+          headers={{
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          }}
+          onChange={onChangeImage}
+          accept={accept}
+          listType="picture-card"
+          fileList={fileListLocal}
+          maxCount={maxCount}
+          onPreview={onPreview}
+          itemRender={itemRender}
+        >
+          {fileListLocal.length >= maxCount ? null : uploadButton}
+        </Upload>
+      </DndProvider>
       {isCropping && (
         <ImageCrop
           onFinish={onCropFinish}
@@ -459,7 +459,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
           loading={isUploadingCrop}
         />
       )}
-    </Row>
+    </div>
   );
 };
 
