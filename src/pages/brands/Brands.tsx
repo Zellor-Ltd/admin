@@ -98,11 +98,10 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
   ) => {
     if (switchType === 'showOutOfStock') {
       try {
-        brand.showOutOfStock = !!!brand.showOutOfStock;
-        toggled = !toggled;
+        console.log(toggled);
+        brand.showOutOfStock = toggled;
         await saveBrand(brand);
         message.success('Register updated with success.');
-        console.log(!!brand.showOutOfStock);
       } catch (error) {
         message.error("Couldn't set brand property. Try again.");
       }
