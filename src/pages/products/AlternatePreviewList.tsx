@@ -1,9 +1,5 @@
-import {
-  ArrowRightOutlined,
-  DeleteOutlined,
-  EditOutlined,
-} from '@ant-design/icons';
-import { Button, Form, Popconfirm, Spin } from 'antd';
+import { Upload } from 'components';
+import { Button, Form, message, Spin } from 'antd';
 import EditableTable, {
   EditableColumnType,
 } from '../../components/EditableTable';
@@ -14,7 +10,6 @@ import { Product } from '../../interfaces/Product';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  deleteStagingProduct,
   fetchStagingProducts,
   saveStagingProduct,
   transferStageProduct,
@@ -50,6 +45,7 @@ interface AlternatePreviewListProps {
   setRefreshing: Function;
   allCategories: any;
   previousViewName: any;
+  onSaveChanges: (entity: Product, index: number) => Promise<void>;
 }
 
 const AlternatePreviewList: React.FC<AlternatePreviewListProps> = ({
@@ -76,14 +72,18 @@ const AlternatePreviewList: React.FC<AlternatePreviewListProps> = ({
   setRefreshing,
   allCategories,
   previousViewName,
+  onSaveChanges,
 }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
 
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
-  const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
+  const [lastViewedIndex, setLastViewedIndex] = useState<number>(0);
 
   const [eof, setEof] = useState<boolean>(false);
+
+  // TODO: THIS IS A WORKAROUND TO FORCE THE RERENDER. IT MUST BE REMOVED ASAP
+  const [forceRerenderWorkaround, setForceRerenderWorkaround] = useState(false);
 
   const { doFetch, doRequest } = useRequest({ setLoading });
   const { doRequest: saveCategories, loading: loadingCategories } =
@@ -129,6 +129,27 @@ const AlternatePreviewList: React.FC<AlternatePreviewListProps> = ({
     return response;
   };
 
+  const refreshItem = (record: Product) => {
+    products[lastViewedIndex] = record;
+    setProducts([...products]);
+  };
+
+  const onFinish = async () => {
+    setLoading(true);
+    try {
+      const product = form.getFieldsValue(true);
+
+      const response = (await saveStagingProduct(product)) as any;
+      refreshItem(response.result);
+
+      message.success('Register updated with success.');
+      setLoading(false);
+    } catch (error) {
+      console.error(error);
+      setLoading(false);
+    }
+  };
+
   const getProducts = async searchButton => {
     const { results } = await doFetch(() =>
       _fetchStagingProducts(searchButton)
@@ -137,11 +158,6 @@ const AlternatePreviewList: React.FC<AlternatePreviewListProps> = ({
   };
 
   useEffect(() => form.resetFields(), [currentProduct]);
-
-  const deleteItem = async (_id: string) => {
-    await doRequest(() => deleteStagingProduct(_id));
-    setProducts([...products.splice(lastViewedIndex, 1)]);
-  };
 
   const fetchData = async searchButton => {
     if (products) {
@@ -161,9 +177,76 @@ const AlternatePreviewList: React.FC<AlternatePreviewListProps> = ({
     await getProducts(true);
   };
 
-  const handleStage = async (productId: string) => {
-    await doRequest(() => transferStageProduct(productId), 'Product commited.');
-    await getProducts(true);
+  const onAssignToTag = (file: any, record: Product) => {
+    let imageData = file;
+    if (file.response) {
+      imageData = {
+        uid: file.uid,
+        url: file.response.result,
+      };
+    }
+    record.tagImage = { ...imageData };
+    setForceRerenderWorkaround(prev => !prev);
+  };
+
+  const onAssignToThumbnail = (file: any, record: Product) => {
+    let imageData = file;
+    if (file.response) {
+      imageData = {
+        uid: file.uid,
+        url: file.response.result,
+      };
+    }
+    record.thumbnailUrl = { ...imageData };
+    setForceRerenderWorkaround(prev => !prev);
+  };
+
+  const onRollback = (
+    oldUrl: string,
+    sourceProp: 'image' | 'tagImage' | 'thumbnailUrl',
+    imageIndex: number,
+    entity: Product
+  ) => {
+    if (entity) {
+      switch (sourceProp) {
+        case 'image':
+          entity[sourceProp][imageIndex].url = oldUrl;
+          break;
+        default:
+          entity[sourceProp].url = oldUrl;
+      }
+
+      setForceRerenderWorkaround(prev => !prev);
+    }
+  };
+
+  const onFitTo = (
+    fitTo: 'w' | 'h',
+    sourceProp: 'image' | 'tagImage' | 'thumbnailUrl',
+    imageIndex: number,
+    record: any
+  ) => {
+    if (!sourceProp) {
+      throw new Error('missing sourceProp parameter');
+    }
+    if (record) {
+      switch (sourceProp) {
+        case 'image':
+          if (record[sourceProp][imageIndex].fitTo === fitTo) {
+            record[sourceProp][imageIndex].fitTo = undefined;
+          } else {
+            record[sourceProp][imageIndex].fitTo = fitTo;
+          }
+          break;
+        default:
+          if (record[sourceProp].fitTo === fitTo) {
+            record[sourceProp].fitTo = undefined;
+          } else {
+            record[sourceProp].fitTo = fitTo;
+          }
+      }
+      setForceRerenderWorkaround(prev => !prev);
+    }
   };
 
   const columns: EditableColumnType<Product>[] = [
@@ -177,7 +260,7 @@ const AlternatePreviewList: React.FC<AlternatePreviewListProps> = ({
     {
       title: 'Name',
       dataIndex: 'name',
-      width: '15%',
+      width: '10%',
       render: (value: string, record: Product, index: number) => (
         <Link
           onClick={() => editProduct(record, index)}
@@ -192,71 +275,118 @@ const AlternatePreviewList: React.FC<AlternatePreviewListProps> = ({
       dataIndex: ['tagImage'],
       width: '15%',
       align: 'center',
-      render: (value: Image) => (
-        <img style={{ maxWidth: 100, maxHeight: 100 }} src={value.url} />
+      render: (_, record) => (
+        <Form.Item>
+          <Upload.ImageUpload
+            fileList={record.tagImage}
+            formProp="tagImage"
+            form={form}
+            onFitTo={(fitTo, sourceProp, imageIndex) => {
+              onFitTo(fitTo, sourceProp, imageIndex, record);
+            }}
+            onRollback={(oldUrl, sourceProp, imageIndex) =>
+              onRollback(oldUrl, sourceProp, imageIndex, record)
+            }
+            onImageChange={imageData => (record.tagImage = imageData)}
+          />
+        </Form.Item>
       ),
     },
     {
       title: 'Thumbnail',
       dataIndex: ['thumbnailUrl'],
-      width: '6%',
+      width: '15%',
       align: 'center',
-      render: (value: Image) => (
-        <img style={{ maxWidth: 100, maxHeight: 100 }} src={value.url} />
+      render: (_, record) => (
+        <Form.Item>
+          <Upload.ImageUpload
+            fileList={record.thumbnailUrl}
+            formProp="thumbnailUrl"
+            form={form}
+            onFitTo={(fitTo, sourceProp, imageIndex) => {
+              onFitTo(fitTo, sourceProp, imageIndex, record);
+            }}
+            onRollback={(oldUrl, sourceProp, imageIndex) =>
+              onRollback(oldUrl, sourceProp, imageIndex, record)
+            }
+            onImageChange={imageData => (record.thumbnailUrl = imageData)}
+          />
+        </Form.Item>
       ),
     },
     {
       title: 'Image',
       dataIndex: ['image'],
-      width: '45%',
+      width: '40%',
       align: 'left',
-      render: (value: any) => {
-        const images = value.map(item => {
-          return (
-            <img style={{ maxWidth: 100, maxHeight: 100 }} src={item.url} />
-          );
-        });
-        return images;
+      ellipsis: true,
+      render: (_, record) => {
+        return (
+          <div className="images-wrapper">
+            <div className="images-content">
+              <Form.Item>
+                <Upload.ImageUpload
+                  maxCount={20}
+                  fileList={record.image}
+                  formProp="image"
+                  form={form}
+                  onAssignToTag={file => onAssignToTag(file, record)}
+                  onAssignToThumbnail={file =>
+                    onAssignToThumbnail(file, record)
+                  }
+                  cropable={true}
+                  scrollOverflow={true}
+                  onImageChange={imageData =>
+                    (record.image = [...(record.image || []), imageData])
+                  }
+                  onRollback={(oldUrl, sourceProp, imageIndex) =>
+                    onRollback(oldUrl, sourceProp, imageIndex, record)
+                  }
+                />
+              </Form.Item>
+            </div>
+          </div>
+        );
       },
     },
     {
       title: 'Actions',
       key: 'action',
-      width: '12%',
-      align: 'right',
-      render: (_, record: Product, index: number) => (
+      width: '15%',
+      align: 'center',
+      render: (_, record, index) => (
         <>
-          <Link
-            onClick={() => editProduct(record, index)}
-            to={{ pathname: window.location.pathname, state: record }}
+          <Button
+            disabled={record.brand.automated === true}
+            type="primary"
+            loading={loading}
+            onClick={() => saveChanges(record, index)}
           >
-            <EditOutlined />
-          </Link>
-          <Popconfirm
-            title="Are you sure？"
-            okText="Yes"
-            cancelText="No"
-            onConfirm={() => deleteItem(record.id)}
-          >
-            <Button
-              type="link"
-              style={{ padding: 0, marginLeft: 8 }}
-              disabled={record.lastGoLiveDate != null}
-            >
-              <DeleteOutlined />
-            </Button>
-          </Popconfirm>
+            Save Changes
+          </Button>
           <Button
             onClick={() => handleStage(record.id)}
-            type="link"
-            style={{ color: 'green', padding: 0, margin: 6 }}
+            type="primary"
+            style={{ margin: '0.5rem' }}
+            className="success-button"
           >
-            <ArrowRightOutlined />
+            Promote
           </Button>
         </>
       ),
     },
   ];
+
+  const handleStage = async (productId: string) => {
+    await doRequest(() => transferStageProduct(productId), 'Product commited.');
+    await getProducts(true);
+  };
+
+  const saveChanges = async (record: Product, index: number) => {
+    setLoading(true);
+    await onSaveChanges(record, index);
+    setLoading(false);
+  };
 
   const editProduct = (record: Product, index) => {
     previousViewName.current = 'alternate';
@@ -287,54 +417,65 @@ const AlternatePreviewList: React.FC<AlternatePreviewListProps> = ({
   }, [isEditing]);
 
   return (
-    <InfiniteScroll
-      dataLength={products.length}
-      next={() => fetchData(false)}
-      hasMore={!eof}
-      loader={
-        page !== 0 && (
-          <div className="scroll-message">
-            <Spin />
-          </div>
-        )
-      }
-      endMessage={
-        <div className="scroll-message">
-          <b>End of results.</b>
-        </div>
-      }
+    <Form
+      form={form}
+      name="productForm"
+      onFinish={onFinish}
+      onFinishFailed={({ errorFields }) => {
+        errorFields.forEach(errorField => {
+          message.error(errorField.errors[0]);
+        });
+      }}
     >
-      <EditableTable
-        rowClassName={(_, index) =>
-          `scrollable-row-${index} ${
-            index === lastViewedIndex ? 'selected-row' : ''
-          }`
+      <InfiniteScroll
+        dataLength={products.length}
+        next={() => fetchData(false)}
+        hasMore={!eof}
+        loader={
+          page !== 0 && (
+            <div className="scroll-message">
+              <Spin />
+            </div>
+          )
         }
-        rowKey="id"
-        columns={columns}
-        dataSource={products}
-        loading={loading}
-        onSave={onSaveProduct}
-        pagination={false}
-        rowSelection={{
-          selectedRowKeys,
-          onChange: setSelectedRowKeys,
-        }}
-        expandable={{
-          expandedRowRender: (record: Product) => (
-            <ProductExpandedRow
-              key={record.id}
-              record={record}
-              allCategories={allCategories}
-              onSaveProduct={onSaveCategories}
-              loading={loadingCategories}
-              isStaging={true}
-              productBrands={productBrands}
-            ></ProductExpandedRow>
-          ),
-        }}
-      />
-    </InfiniteScroll>
+        endMessage={
+          <div className="scroll-message">
+            <b>End of results.</b>
+          </div>
+        }
+      >
+        <EditableTable
+          rowClassName={(_, index) =>
+            `scrollable-row-${index} ${
+              index === lastViewedIndex ? 'selected-row' : ''
+            }`
+          }
+          rowKey="id"
+          columns={columns}
+          dataSource={products}
+          loading={loading}
+          onSave={onSaveProduct}
+          pagination={false}
+          rowSelection={{
+            selectedRowKeys,
+            onChange: setSelectedRowKeys,
+          }}
+          expandable={{
+            expandedRowRender: (record: Product) => (
+              <ProductExpandedRow
+                key={record.id}
+                record={record}
+                allCategories={allCategories}
+                onSaveProduct={onSaveCategories}
+                loading={loadingCategories}
+                isStaging={true}
+                productBrands={productBrands}
+              ></ProductExpandedRow>
+            ),
+          }}
+        />
+      </InfiniteScroll>
+    </Form>
   );
 };
 

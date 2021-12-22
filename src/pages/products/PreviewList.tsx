@@ -74,7 +74,6 @@ import { Image } from '../../interfaces/Image';
 import scrollIntoView from 'scroll-into-view';
 import { useMount } from 'react-use';
 import AlternatePreviewList from './AlternatePreviewList';
-import ErrorPage from 'pages/error/ErrorPage';
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 const { getSearchTags, getCategories, removeSearchTagsByCategory } =
@@ -255,7 +254,7 @@ const PreviewList: React.FC<RouteComponentProps> = ({ history, location }) => {
       refreshProducts();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchFilter, brandFilter]);
+  }, [searchFilter]);
 
   useEffect(() => {
     setDiscoPercentageByBrand(true);
@@ -304,6 +303,20 @@ const PreviewList: React.FC<RouteComponentProps> = ({ history, location }) => {
       message.success('Register updated with success.');
       setLoading(false);
       setIsEditing(false);
+    } catch (error) {
+      console.error(error);
+      setLoading(false);
+    }
+  };
+
+  const onAlternateViewSaveChanges = async (entity: Product, index: number) => {
+    setLoading(true);
+    try {
+      const response = (await saveProductFn(entity)) as any;
+      refreshItem(response.result, index);
+
+      message.success('Register updated with success.');
+      setLoading(false);
     } catch (error) {
       console.error(error);
       setLoading(false);
@@ -360,8 +373,8 @@ const PreviewList: React.FC<RouteComponentProps> = ({ history, location }) => {
     setProducts([...products.splice(lastViewedIndex, 1)]);
   };
 
-  const refreshItem = (record: Product) => {
-    products[lastViewedIndex] = record;
+  const refreshItem = (record: Product, index?: number) => {
+    products[index ?? lastViewedIndex] = record;
     setProducts([...products]);
   };
 
@@ -700,6 +713,7 @@ const PreviewList: React.FC<RouteComponentProps> = ({ history, location }) => {
             setRefreshing={setRefreshing}
             allCategories={allCategories}
             previousViewName={previousViewName}
+            onSaveChanges={onAlternateViewSaveChanges}
           ></AlternatePreviewList>
         );
       case 'default':
@@ -1156,6 +1170,7 @@ const PreviewList: React.FC<RouteComponentProps> = ({ history, location }) => {
                             formProp="tagImage"
                             form={form}
                             onFitTo={onFitTo}
+                            onRollback={onRollback}
                           />
                         </Form.Item>
                       </Col>
@@ -1166,6 +1181,7 @@ const PreviewList: React.FC<RouteComponentProps> = ({ history, location }) => {
                             formProp="thumbnailUrl"
                             form={form}
                             onFitTo={onFitTo}
+                            onRollback={onRollback}
                           />
                         </Form.Item>
                       </Col>
@@ -1182,6 +1198,8 @@ const PreviewList: React.FC<RouteComponentProps> = ({ history, location }) => {
                               onAssignToThumbnail={onAssignToThumbnail}
                               onAssignToTag={onAssignToTag}
                               cropable={true}
+                              onRollback={onRollback}
+                              classNames="big-image-height scroll-x"
                             />
                           </div>
                         </Form.Item>
