@@ -249,6 +249,33 @@ const AlternatePreviewList: React.FC<AlternatePreviewListProps> = ({
     }
   };
 
+  const onImageChange = (
+    image: Image,
+    sourceProp: 'image' | 'tagImage' | 'thumbnailUrl',
+    record: Product,
+    removed?: boolean
+  ) => {
+    if (removed) {
+      switch (sourceProp) {
+        case 'image':
+          record[sourceProp] = record[sourceProp].filter(
+            img => img.uid !== image.uid
+          );
+          break;
+        default:
+          record[sourceProp] = undefined as any;
+      }
+    } else {
+      switch (sourceProp) {
+        case 'image':
+          record[sourceProp] = [...(record[sourceProp] || []), image];
+          break;
+        default:
+          record[sourceProp] = image;
+      }
+    }
+  };
+
   const columns: EditableColumnType<Product>[] = [
     {
       title: 'Id',
@@ -287,7 +314,9 @@ const AlternatePreviewList: React.FC<AlternatePreviewListProps> = ({
             onRollback={(oldUrl, sourceProp, imageIndex) =>
               onRollback(oldUrl, sourceProp, imageIndex, record)
             }
-            onImageChange={imageData => (record.tagImage = imageData)}
+            onImageChange={(image, sourceProp, removed) =>
+              onImageChange(image, sourceProp, record, removed)
+            }
           />
         </Form.Item>
       ),
@@ -309,7 +338,9 @@ const AlternatePreviewList: React.FC<AlternatePreviewListProps> = ({
             onRollback={(oldUrl, sourceProp, imageIndex) =>
               onRollback(oldUrl, sourceProp, imageIndex, record)
             }
-            onImageChange={imageData => (record.thumbnailUrl = imageData)}
+            onImageChange={(image, sourceProp, removed) =>
+              onImageChange(image, sourceProp, record, removed)
+            }
           />
         </Form.Item>
       ),
@@ -336,8 +367,8 @@ const AlternatePreviewList: React.FC<AlternatePreviewListProps> = ({
                   }
                   cropable={true}
                   scrollOverflow={true}
-                  onImageChange={imageData =>
-                    (record.image = [...(record.image || []), imageData])
+                  onImageChange={(image, sourceProp, removed) =>
+                    onImageChange(image, sourceProp, record, removed)
                   }
                   onRollback={(oldUrl, sourceProp, imageIndex) =>
                     onRollback(oldUrl, sourceProp, imageIndex, record)
