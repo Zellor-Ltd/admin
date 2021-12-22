@@ -1,6 +1,7 @@
 import { ProductBrand } from "./ProductBrand";
 
 export interface Brand {
+  showOutOfStock: boolean;
   checkout: string;
   cancelationUrl: string;
   confirmationUrl: string;

@@ -346,6 +346,15 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
                   <Switch />
                 </Form.Item>
               </Col>
+              <Col lg={3} xs={3}>
+                <Form.Item
+                  name="showOutOfStock"
+                  label="Show Out of Stock"
+                  valuePropName="checked"
+                >
+                  <Switch />
+                </Form.Item>
+              </Col>
             </Row>
             <Row gutter={8}>
               <Col lg={12} xs={24}>
