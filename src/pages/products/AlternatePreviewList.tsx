@@ -1,4 +1,3 @@
-import { ArrowRightOutlined } from '@ant-design/icons';
 import { Upload } from 'components';
 import { Button, Form, message, Spin } from 'antd';
 import EditableTable, {
@@ -11,10 +10,8 @@ import { Product } from '../../interfaces/Product';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  deleteStagingProduct,
   fetchStagingProducts,
   saveStagingProduct,
-  transferStageProduct,
 } from '../../services/DiscoClubService';
 import ProductExpandedRow from './ProductExpandedRow';
 import CopyIdToClipboard from '../../components/CopyIdToClipboard';
@@ -47,6 +44,7 @@ interface AlternatePreviewListProps {
   setRefreshing: Function;
   allCategories: any;
   previousViewName: any;
+  onSaveChanges: (entity: Product, index: number) => Promise<void>;
 }
 
 const AlternatePreviewList: React.FC<AlternatePreviewListProps> = ({
@@ -73,6 +71,7 @@ const AlternatePreviewList: React.FC<AlternatePreviewListProps> = ({
   setRefreshing,
   allCategories,
   previousViewName,
+  onSaveChanges,
 }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
@@ -81,6 +80,9 @@ const AlternatePreviewList: React.FC<AlternatePreviewListProps> = ({
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(0);
 
   const [eof, setEof] = useState<boolean>(false);
+
+  // TODO: THIS IS A WORKAROUND TO FORCE THE RERENDER. IT MUST BE REMOVED ASAP
+  const [forceRerenderWorkaround, setForceRerenderWorkaround] = useState(false);
 
   const { doFetch, doRequest } = useRequest({ setLoading });
   const { doRequest: saveCategories, loading: loadingCategories } =
@@ -156,11 +158,6 @@ const AlternatePreviewList: React.FC<AlternatePreviewListProps> = ({
 
   useEffect(() => form.resetFields(), [currentProduct]);
 
-  const deleteItem = async (_id: string) => {
-    await doRequest(() => deleteStagingProduct(_id));
-    setProducts([...products.splice(lastViewedIndex, 1)]);
-  };
-
   const fetchData = async searchButton => {
     if (products) {
       if (!products.length) return;
@@ -179,20 +176,46 @@ const AlternatePreviewList: React.FC<AlternatePreviewListProps> = ({
     await getProducts(true);
   };
 
-  const handleStage = async (productId: string) => {
-    await doRequest(() => transferStageProduct(productId), 'Product commited.');
-    await getProducts(true);
-  };
-
-  const onAssignToTag = (file: Image, record: Product) => {
-    if (record) {
-      record.tagImage = { ...file };
+  const onAssignToTag = (file: any, record: Product) => {
+    let imageData = file;
+    if (file.response) {
+      imageData = {
+        uid: file.uid,
+        url: file.response.result,
+      };
     }
+    record.tagImage = { ...imageData };
+    setForceRerenderWorkaround(prev => !prev);
   };
 
-  const onAssignToThumbnail = (file: Image, record: Product) => {
-    if (record) {
-      record.thumbnailUrl = { ...file };
+  const onAssignToThumbnail = (file: any, record: Product) => {
+    let imageData = file;
+    if (file.response) {
+      imageData = {
+        uid: file.uid,
+        url: file.response.result,
+      };
+    }
+    record.thumbnailUrl = { ...imageData };
+    setForceRerenderWorkaround(prev => !prev);
+  };
+
+  const onRollback = (
+    oldUrl: string,
+    sourceProp: 'image' | 'tagImage' | 'thumbnailUrl',
+    imageIndex: number,
+    entity: Product
+  ) => {
+    if (entity) {
+      switch (sourceProp) {
+        case 'image':
+          entity[sourceProp][imageIndex].url = oldUrl;
+          break;
+        default:
+          entity[sourceProp].url = oldUrl;
+      }
+
+      setForceRerenderWorkaround(prev => !prev);
     }
   };
 
@@ -250,15 +273,19 @@ const AlternatePreviewList: React.FC<AlternatePreviewListProps> = ({
       dataIndex: ['tagImage'],
       width: '15%',
       align: 'center',
-      render: (value: Image, record) => (
+      render: (_, record) => (
         <Form.Item>
           <Upload.ImageUpload
-            fileList={value}
+            fileList={record.tagImage}
             formProp="tagImage"
             form={form}
             onFitTo={(fitTo, sourceProp, imageIndex) => {
               onFitTo(fitTo, sourceProp, imageIndex, record);
             }}
+            onRollback={(oldUrl, sourceProp, imageIndex) =>
+              onRollback(oldUrl, sourceProp, imageIndex, record)
+            }
+            onImageChange={imageData => (record.tagImage = imageData)}
           />
         </Form.Item>
       ),
@@ -268,15 +295,19 @@ const AlternatePreviewList: React.FC<AlternatePreviewListProps> = ({
       dataIndex: ['thumbnailUrl'],
       width: '15%',
       align: 'center',
-      render: (value: Image, record) => (
+      render: (_, record) => (
         <Form.Item>
           <Upload.ImageUpload
-            fileList={value}
+            fileList={record.thumbnailUrl}
             formProp="thumbnailUrl"
             form={form}
             onFitTo={(fitTo, sourceProp, imageIndex) => {
               onFitTo(fitTo, sourceProp, imageIndex, record);
             }}
+            onRollback={(oldUrl, sourceProp, imageIndex) =>
+              onRollback(oldUrl, sourceProp, imageIndex, record)
+            }
+            onImageChange={imageData => (record.thumbnailUrl = imageData)}
           />
         </Form.Item>
       ),
@@ -287,20 +318,28 @@ const AlternatePreviewList: React.FC<AlternatePreviewListProps> = ({
       width: '40%',
       align: 'left',
       ellipsis: true,
-      render: (value: any) => {
+      render: (_, record) => {
         return (
           <div className="images-wrapper">
             <div className="images-content">
               <Form.Item>
                 <Upload.ImageUpload
                   maxCount={20}
-                  fileList={value}
+                  fileList={record.image}
                   formProp="image"
                   form={form}
-                  onAssignToTag={onAssignToTag}
-                  onAssignToThumbnail={onAssignToThumbnail}
+                  onAssignToTag={file => onAssignToTag(file, record)}
+                  onAssignToThumbnail={file =>
+                    onAssignToThumbnail(file, record)
+                  }
                   cropable={true}
                   scrollOverflow={true}
+                  onImageChange={imageData =>
+                    (record.image = [...(record.image || []), imageData])
+                  }
+                  onRollback={(oldUrl, sourceProp, imageIndex) =>
+                    onRollback(oldUrl, sourceProp, imageIndex, record)
+                  }
                 />
               </Form.Item>
             </div>
@@ -313,27 +352,26 @@ const AlternatePreviewList: React.FC<AlternatePreviewListProps> = ({
       key: 'action',
       width: '15%',
       align: 'center',
-      render: (_, record: Product) => (
+      render: (_, record, index) => (
         <>
           <Button
             disabled={record.brand.automated === true}
             type="primary"
-            htmlType="submit"
             loading={loading}
+            onClick={() => saveChanges(record, index)}
           >
             Save Changes
-          </Button>
-          <Button
-            onClick={() => handleStage(record.id)}
-            type="link"
-            style={{ color: 'green', padding: 0, margin: 6 }}
-          >
-            <ArrowRightOutlined />
           </Button>
         </>
       ),
     },
   ];
+
+  const saveChanges = async (record: Product, index: number) => {
+    setLoading(true);
+    await onSaveChanges(record, index);
+    setLoading(false);
+  };
 
   const editProduct = (record: Product, index) => {
     previousViewName.current = 'alternate';

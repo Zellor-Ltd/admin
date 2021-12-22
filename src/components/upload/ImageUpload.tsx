@@ -46,6 +46,7 @@ interface ImageUploadProps {
   cropable?: boolean;
   scrollOverflow?: boolean;
   classNames?: string;
+  onImageChange?: CallableFunction;
 }
 
 interface ImageDnDProps {
@@ -69,6 +70,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   cropable,
   scrollOverflow,
   classNames = '',
+  onImageChange,
 }) => {
   const [fileListLocal, setFileListLocal] = useState<any>([]);
   const [isCropping, setIsCropping] = useState(false);
@@ -164,6 +166,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
           uid: info.file.uid,
         };
         updateForm(imageData);
+        onImageChange?.(imageData);
         message.success(`${info.file.name} file uploaded successfully`);
       } else if (info.file.status === 'error') {
         message.error(`${info.file.name} file upload failed.`);

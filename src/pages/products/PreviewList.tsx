@@ -309,6 +309,20 @@ const PreviewList: React.FC<RouteComponentProps> = ({ history, location }) => {
     }
   };
 
+  const onAlternateViewSaveChanges = async (entity: Product, index: number) => {
+    setLoading(true);
+    try {
+      const response = (await saveProductFn(entity)) as any;
+      refreshItem(response.result, index);
+
+      message.success('Register updated with success.');
+      setLoading(false);
+    } catch (error) {
+      console.error(error);
+      setLoading(false);
+    }
+  };
+
   const handleFilterClassified = (e: CheckboxChangeEvent) => {
     setUnclassifiedFilter(e.target.checked);
   };
@@ -359,8 +373,8 @@ const PreviewList: React.FC<RouteComponentProps> = ({ history, location }) => {
     setProducts([...products.splice(lastViewedIndex, 1)]);
   };
 
-  const refreshItem = (record: Product) => {
-    products[lastViewedIndex] = record;
+  const refreshItem = (record: Product, index?: number) => {
+    products[index ?? lastViewedIndex] = record;
     setProducts([...products]);
   };
 
@@ -699,6 +713,7 @@ const PreviewList: React.FC<RouteComponentProps> = ({ history, location }) => {
             setRefreshing={setRefreshing}
             allCategories={allCategories}
             previousViewName={previousViewName}
+            onSaveChanges={onAlternateViewSaveChanges}
           ></AlternatePreviewList>
         );
       case 'default':
