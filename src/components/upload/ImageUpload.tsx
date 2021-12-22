@@ -21,6 +21,7 @@ import './ImageUpload.scss';
 import ImageCrop from '../ImageCrop';
 import { uploadImage } from '../../services/DiscoClubService';
 import classNames from 'classnames';
+import { Image } from '../../interfaces/Image';
 
 const classNamesFn = classNames;
 
@@ -46,7 +47,11 @@ interface ImageUploadProps {
   cropable?: boolean;
   scrollOverflow?: boolean;
   classNames?: string;
-  onImageChange?: CallableFunction;
+  onImageChange?: (
+    image: Image,
+    sourceProp: 'image' | 'tagImage' | 'thumbnailUrl',
+    removed?: boolean
+  ) => void;
 }
 
 interface ImageDnDProps {
@@ -141,6 +146,11 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     setFileListLocal(info.fileList);
     if (maxCount === 1) {
       handleMaxOneImage(info);
+      onImageChange?.(
+        info.file,
+        formProp as any,
+        info.file.status === 'removed'
+      );
     } else {
       if (info.file.status === 'removed') {
         const image = form.getFieldValue('image') || [];
@@ -158,15 +168,16 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
             ),
           });
         }
+        onImageChange?.(info.file, formProp as any, true);
       }
       if (info.file.status === 'done') {
         const response = JSON.parse(info.file.xhr.response);
-        const imageData = {
+        const imageData: any = {
           url: response.result.replace(';', ''),
           uid: info.file.uid,
         };
         updateForm(imageData);
-        onImageChange?.(imageData);
+        onImageChange?.(imageData, formProp as any);
         message.success(`${info.file.name} file uploaded successfully`);
       } else if (info.file.status === 'error') {
         message.error(`${info.file.name} file upload failed.`);
