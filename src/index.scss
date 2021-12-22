@@ -30,3 +30,15 @@
 .selected-row {
   background-color: #fafafa;
 }
+
+.success-button {
+  color: #fff;
+  background-color: #218838;
+  border-color: #1e7e34;
+
+  &:hover {
+    color: #fff;
+    background-color: #37934b;
+    border-color: #348a48;
+  }
+}

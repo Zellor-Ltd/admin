@@ -12,6 +12,7 @@ import { Link } from 'react-router-dom';
 import {
   fetchStagingProducts,
   saveStagingProduct,
+  transferStageProduct,
 } from '../../services/DiscoClubService';
 import ProductExpandedRow from './ProductExpandedRow';
 import CopyIdToClipboard from '../../components/CopyIdToClipboard';
@@ -362,10 +363,23 @@ const AlternatePreviewList: React.FC<AlternatePreviewListProps> = ({
           >
             Save Changes
           </Button>
+          <Button
+            onClick={() => handleStage(record.id)}
+            type="primary"
+            style={{ margin: '0.5rem' }}
+            className="success-button"
+          >
+            Promote
+          </Button>
         </>
       ),
     },
   ];
+
+  const handleStage = async (productId: string) => {
+    await doRequest(() => transferStageProduct(productId), 'Product commited.');
+    await getProducts(true);
+  };
 
   const saveChanges = async (record: Product, index: number) => {
     setLoading(true);
