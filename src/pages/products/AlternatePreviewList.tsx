@@ -245,6 +245,7 @@ const AlternatePreviewList: React.FC<AlternatePreviewListProps> = ({
             record[sourceProp].fitTo = fitTo;
           }
       }
+      setForceRerenderWorkaround(prev => !prev);
     }
   };
 
