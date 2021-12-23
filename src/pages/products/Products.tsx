@@ -352,9 +352,9 @@ const Products: React.FC<RouteComponentProps> = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refreshing]);
 
-  const deleteItem = async (_id: string) => {
+  const deleteItem = async (_id: string, index: number) => {
     await doRequest(() => deleteProduct(_id));
-    setProducts([...products.splice(lastViewedIndex, 1)]);
+    setProducts(prev => [...prev.slice(0, index), ...prev.slice(index + 1)]);
   };
 
   const refreshItem = (record: Product) => {
@@ -560,7 +560,7 @@ const Products: React.FC<RouteComponentProps> = () => {
               title="Are you sure？"
               okText="Yes"
               cancelText="No"
-              onConfirm={() => deleteItem(record.id)}
+              onConfirm={() => deleteItem(record.id, index)}
             >
               <Button
                 type="link"

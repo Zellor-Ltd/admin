@@ -368,9 +368,9 @@ const PreviewList: React.FC<RouteComponentProps> = ({ history, location }) => {
 
   useEffect(() => form.resetFields(), [currentProduct]);
 
-  const deleteItem = async (_id: string) => {
+  const deleteItem = async (_id: string, index: number) => {
     await doRequest(() => deleteStagingProduct(_id));
-    setProducts([...products.splice(lastViewedIndex, 1)]);
+    setProducts(prev => [...prev.slice(0, index), ...prev.slice(index + 1)]);
   };
 
   const refreshItem = (record: Product, index?: number) => {
@@ -525,7 +525,7 @@ const PreviewList: React.FC<RouteComponentProps> = ({ history, location }) => {
             title="Are you sure？"
             okText="Yes"
             cancelText="No"
-            onConfirm={() => deleteItem(record.id)}
+            onConfirm={() => deleteItem(record.id, index)}
           >
             <Button
               type="link"
