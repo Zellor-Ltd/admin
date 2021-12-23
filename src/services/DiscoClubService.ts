@@ -175,6 +175,9 @@ export const fetchStagingProducts = ({
   date,
   outOfStock,
   status,
+  categoryId,
+  subCategoryId,
+  subSubCategoryId,
 }: {
   brandId?: string;
   query?: string;
@@ -183,6 +186,9 @@ export const fetchStagingProducts = ({
   date?: Date;
   outOfStock?: boolean;
   status?: string;
+  categoryId?: string;
+  subCategoryId?: string;
+  subSubCategoryId?: string;
 } & Pagination) =>
   instance.put(`Disco/Staging/Product/List/${page}/${limit}`, {
     brandId,
@@ -192,6 +198,9 @@ export const fetchStagingProducts = ({
     date,
     outOfStock,
     status,
+    categoryId,
+    subCategoryId,
+    subSubCategoryId,
   });
 
 export const fetchBrands = () => instance.get('Wi/Ep/ListBrands');

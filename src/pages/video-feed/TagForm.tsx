@@ -5,6 +5,7 @@ import { Brand } from 'interfaces/Brand';
 import { Tag } from 'interfaces/Tag';
 import { fetchTags } from '../../services/DiscoClubService';
 import DebounceSelect from '../../components/DebounceSelect';
+import { SelectOption } from '../../interfaces/SelectOption';
 
 interface FormProps {
   brands: Brand[];
@@ -17,7 +18,11 @@ const TagForm: React.FC<FormProps> = ({ tag, setShowTagForm, brands }) => {
     tag?.brand?.id || ''
   );
   const [form] = Form.useForm();
-  const tagOptionsMapping = { label: 'tagName', value: 'id' };
+  const tagOptionsMapping: SelectOption = {
+    label: 'tagName',
+    value: 'id',
+    key: 'id',
+  };
 
   const getTags = async (query: string) => {
     const response: any = await fetchTags({

@@ -3,11 +3,7 @@ import React, { useMemo, useRef, useState } from 'react';
 import { Select, Spin } from 'antd';
 import debounce from 'lodash/debounce';
 import { useMount } from 'react-use';
-
-interface SelectOption {
-  label: string;
-  value: string;
-}
+import { SelectOption } from '../interfaces/SelectOption';
 
 interface DebounceSelectProps {
   fetchOptions: (search: string) => Promise<any[]>;
@@ -56,6 +52,7 @@ const DebounceSelect: React.FC<DebounceSelectProps> = ({
             return {
               label: option[optionsMapping.label],
               value: option[optionsMapping.value],
+              key: option[optionsMapping.value],
             };
           })
         );
