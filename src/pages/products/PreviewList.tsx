@@ -60,7 +60,7 @@ import { Upload } from 'components';
 import { RichTextEditor } from 'components/RichTextEditor';
 import { formatMoment } from 'helpers/formatMoment';
 import { categoriesSettings } from 'helpers/utils';
-import { AllCategories } from 'interfaces/Category';
+import { AllCategories, ProductCategory } from 'interfaces/Category';
 import { useSelector } from 'react-redux';
 import { SearchFilterDebounce } from 'components/SearchFilterDebounce';
 import { AppContext } from 'contexts/AppContext';
@@ -74,6 +74,8 @@ import { Image } from '../../interfaces/Image';
 import scrollIntoView from 'scroll-into-view';
 import { useMount } from 'react-use';
 import AlternatePreviewList from './AlternatePreviewList';
+import SimpleSelect from '../../components/SimpleSelect';
+import { SelectOption } from '../../interfaces/SelectOption';
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 const { getSearchTags, getCategories, removeSearchTagsByCategory } =
@@ -89,9 +91,10 @@ const PreviewList: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [ageRange, setageRange] = useState<[number, number]>([12, 100]);
   const [form] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
+  const [fetchingCategories, setFetchingCategories] = useState(false);
   const [maxDiscountAlert, setMaxDiscountAlert] = useState<boolean>(false);
   const { fetchAllCategories, allCategories } = useAllCategories({
-    setLoading,
+    setLoading: setFetchingCategories,
   });
 
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
@@ -118,6 +121,13 @@ const PreviewList: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [productStatusFilter, setProductStatusFilter] =
     useState<string>('live');
 
+  const [productCategoryFilter, setProductCategoryFilter] =
+    useState<ProductCategory>();
+  const [productSubCategoryFilter, setProductSubCategoryFilter] =
+    useState<ProductCategory>();
+  const [productSubSubCategoryFilter, setProductSubSubCategoryFilter] =
+    useState<ProductCategory>();
+
   const { doFetch, doRequest } = useRequest({ setLoading });
   const { doRequest: saveCategories, loading: loadingCategories } =
     useRequest();
@@ -125,6 +135,29 @@ const PreviewList: React.FC<RouteComponentProps> = ({ history, location }) => {
   const {
     settings: { currency = [] },
   } = useSelector((state: any) => state.settings);
+
+  const productCategoryOptionsMapping: SelectOption = {
+    key: 'id',
+    label: 'category',
+    value: 'id',
+  };
+
+  const productSubCategoryOptionsMapping: SelectOption = {
+    key: 'id',
+    label: 'subCategory',
+    value: 'id',
+  };
+
+  const productSubSubCategoryOptionsMapping: SelectOption = {
+    key: 'id',
+    label: 'subSubCategory',
+    value: 'id',
+  };
+
+  // useEffect(() => {
+  //   setProductCategories(allCategories.Category);
+  //   console.log('Category ->', allCategories.Category);
+  // }, [allCategories.Category]);
 
   const setSearchTagsByCategory = useCallback(
     (
@@ -339,6 +372,9 @@ const PreviewList: React.FC<RouteComponentProps> = ({ history, location }) => {
         productBrandId: productBrandFilter?.id,
         outOfStock: outOfStockFilter,
         status: productStatusFilter,
+        categoryId: productCategoryFilter?.id,
+        subCategoryId: productSubCategoryFilter?.id,
+        subSubCategoryId: productSubSubCategoryFilter?.id,
       })
     );
     if (searchButton) {
@@ -1282,6 +1318,59 @@ const PreviewList: React.FC<RouteComponentProps> = ({ history, location }) => {
                     <Select.Option value="live">Live</Select.Option>
                     <Select.Option value="paused">Paused</Select.Option>
                   </Select>
+                </Col>
+                <Col lg={6} xs={24}>
+                  <Typography.Title level={5}>Category</Typography.Title>
+                  <SimpleSelect
+                    data={allCategories.Category}
+                    onChange={(_, category) =>
+                      setProductCategoryFilter(category)
+                    }
+                    style={{ width: '100%' }}
+                    selectedOption={productCategoryFilter?.id}
+                    optionsMapping={productCategoryOptionsMapping}
+                    placeholder={'Select a Category'}
+                    loading={fetchingCategories}
+                    disabled={fetchingCategories}
+                    showSearch={true}
+                    allowClear={true}
+                  ></SimpleSelect>
+                </Col>
+                <Col lg={6} xs={24}>
+                  <Typography.Title level={5}>Sub Category</Typography.Title>
+                  <SimpleSelect
+                    data={allCategories['Sub Category']}
+                    onChange={(_, category) =>
+                      setProductSubCategoryFilter(category)
+                    }
+                    style={{ width: '100%' }}
+                    selectedOption={productSubCategoryFilter?.id}
+                    optionsMapping={productSubCategoryOptionsMapping}
+                    placeholder={'Select a Sub Category'}
+                    loading={fetchingCategories}
+                    disabled={fetchingCategories}
+                    showSearch={true}
+                    allowClear={true}
+                  ></SimpleSelect>
+                </Col>
+                <Col lg={6} xs={24}>
+                  <Typography.Title level={5}>
+                    Sub Sub Category
+                  </Typography.Title>
+                  <SimpleSelect
+                    data={allCategories['Sub Sub Category']}
+                    onChange={(_, category) =>
+                      setProductSubSubCategoryFilter(category)
+                    }
+                    style={{ width: '100%' }}
+                    selectedOption={productSubSubCategoryFilter?.id}
+                    optionsMapping={productSubSubCategoryOptionsMapping}
+                    placeholder={'Select a Sub SubCategory'}
+                    loading={fetchingCategories}
+                    disabled={fetchingCategories}
+                    showSearch={true}
+                    allowClear={true}
+                  ></SimpleSelect>
                 </Col>
                 <Col lg={6} xs={24}>
                   <Checkbox
