@@ -81,7 +81,7 @@ const { categoriesKeys, categoriesFields } = categoriesSettings;
 const { getSearchTags, getCategories, removeSearchTagsByCategory } =
   productUtils;
 
-const PreviewList: React.FC<RouteComponentProps> = ({ history, location }) => {
+const PreviewProducts: React.FC<RouteComponentProps> = () => {
   const [viewName, setViewName] = useState<'alternate' | 'default'>('default');
   const previousViewName = useRef('default');
   const saveProductFn = saveStagingProduct;
@@ -684,16 +684,28 @@ const PreviewList: React.FC<RouteComponentProps> = ({ history, location }) => {
     }
   };
 
+  const handleThumbnailOrTagReplacement = (prevImage: Image) => {
+    if (currentProduct) {
+      if (!currentProduct.image.some(img => img.url === prevImage.url)) {
+        currentProduct.image.push(prevImage);
+      }
+    }
+  };
+
   const onAssignToThumbnail = (file: Image) => {
     if (currentProduct) {
+      const prevThumb = { ...currentProduct.thumbnailUrl };
       currentProduct.thumbnailUrl = { ...file };
+      handleThumbnailOrTagReplacement(prevThumb);
       setCurrentProduct({ ...currentProduct });
     }
   };
 
   const onAssignToTag = (file: Image) => {
     if (currentProduct) {
+      const prevTag = { ...currentProduct.tagImage };
       currentProduct.tagImage = { ...file };
+      handleThumbnailOrTagReplacement(prevTag);
       setCurrentProduct({ ...currentProduct });
     }
   };
@@ -1429,4 +1441,4 @@ const PreviewList: React.FC<RouteComponentProps> = ({ history, location }) => {
   );
 };
 
-export default PreviewList;
+export default PreviewProducts;

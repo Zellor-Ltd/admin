@@ -29,7 +29,7 @@ import { RichTextEditor } from 'components/RichTextEditor';
 import { formatMoment } from 'helpers/formatMoment';
 import { categoriesSettings } from 'helpers/utils';
 import { AllCategories } from 'interfaces/Category';
-import { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import ProductCategoriesTrees from './ProductCategoriesTrees';
@@ -70,7 +70,7 @@ const { categoriesKeys, categoriesFields } = categoriesSettings;
 const { getSearchTags, getCategories, removeSearchTagsByCategory } =
   productUtils;
 
-const Products: React.FC<RouteComponentProps> = () => {
+const LiveProducts: React.FC<RouteComponentProps> = () => {
   const saveProductFn = saveProduct;
   const [brands, setBrands] = useState<Brand[]>([]);
   const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
@@ -601,16 +601,28 @@ const Products: React.FC<RouteComponentProps> = () => {
     setSelectedRowKeys(selectedRows);
   };
 
+  const handleThumbnailOrTagReplacement = (prevImage: Image) => {
+    if (currentProduct) {
+      if (!currentProduct.image.some(img => img.url === prevImage.url)) {
+        currentProduct.image.push(prevImage);
+      }
+    }
+  };
+
   const onAssignToThumbnail = (file: Image) => {
     if (currentProduct) {
+      const prevThumb = { ...currentProduct.thumbnailUrl };
       currentProduct.thumbnailUrl = { ...file };
+      handleThumbnailOrTagReplacement(prevThumb);
       setCurrentProduct({ ...currentProduct });
     }
   };
 
   const onAssignToTag = (file: Image) => {
     if (currentProduct) {
+      const prevTag = { ...currentProduct.tagImage };
       currentProduct.tagImage = { ...file };
+      handleThumbnailOrTagReplacement(prevTag);
       setCurrentProduct({ ...currentProduct });
     }
   };
@@ -1192,4 +1204,4 @@ const Products: React.FC<RouteComponentProps> = () => {
   );
 };
 
-export default Products;
+export default LiveProducts;
