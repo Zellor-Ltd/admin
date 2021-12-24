@@ -3,7 +3,7 @@ import AuthenticatedLayout from 'layout/AuthenticatedLayout';
 import OpenLayout from 'layout/OpenLayout';
 import Login from 'pages/login/Login';
 import ProductDetails from 'pages/products/ProductsDetails';
-import PreviewList from 'pages/products/PreviewList';
+import PreviewProducts from 'pages/products/PreviewProducts';
 import { Redirect, Switch } from 'react-router-dom';
 import Orders from 'pages/orders/BrandManager/Orders';
 import VideoFeed from 'pages/video-feed/BrandManager/VideoFeed';
@@ -38,7 +38,7 @@ function BrandManagerRoutes() {
       />
       <AppRoute
         path="/preview-list"
-        component={PreviewList}
+        component={PreviewProducts}
         layout={AuthenticatedLayout}
       />
       <AppRoute

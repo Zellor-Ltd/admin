@@ -1,4 +1,4 @@
-import { Switch, Redirect } from 'react-router-dom';
+import { Redirect, Switch } from 'react-router-dom';
 import Login from 'pages/login/Login';
 import VideoFeed from 'pages/video-feed/VideoFeed';
 // import VideoFeedDetail from "pages/video-feed/VideoFeedDetail";
@@ -6,7 +6,7 @@ import VideoFeedDetail from 'pages/video-feed/VideoFeedDetailV2';
 import ProductDetails from 'pages/products/ProductsDetails';
 import Creators from 'pages/creators/Creators';
 import CreatorDetail from 'pages/creators/CreatorDetail';
-import Products from 'pages/products/Products';
+import LiveProducts from 'pages/products/LiveProducts';
 import TagDetail from 'pages/tags/TagDetail';
 import Tags from 'pages/tags/Tags';
 import Brands from 'pages/brands/Brands';
@@ -32,7 +32,7 @@ import Orders from 'pages/orders/Orders';
 import OrderDetail from 'pages/orders/OrderDetail';
 import Transactions from 'pages/transactions/Transactions';
 import FeedMixer from 'pages/feed-mixer/FeedMixer';
-import PreviewList from 'pages/products/PreviewList';
+import PreviewProducts from 'pages/products/PreviewProducts';
 import Promotions from 'pages/promotions/Promotions';
 import PromotionDetail from 'pages/promotions/PromotionDetail';
 import DdTemplates from 'pages/dd-templates/DdTemplates';
@@ -56,7 +56,6 @@ import RegsPerDay from 'pages/reports/RegsPerDay';
 import PreRegisteredUsers from 'pages/reports/PreRegisteredUsers';
 import ProductsPerDay from 'pages/reports/ProductsPerDay';
 import FanActivities from 'pages/reports/FanActivities';
-import AlternatePreviewList from 'pages/products/AlternatePreviewList';
 
 function AdminRoutes() {
   return (
@@ -105,7 +104,7 @@ function AdminRoutes() {
       />
       <AppRoute
         path="/products"
-        component={Products}
+        component={LiveProducts}
         layout={AuthenticatedLayout}
       />
       <AppRoute
@@ -215,7 +214,7 @@ function AdminRoutes() {
       />
       <AppRoute
         path="/preview-products"
-        component={PreviewList}
+        component={PreviewProducts}
         layout={AuthenticatedLayout}
       />
       <AppRoute

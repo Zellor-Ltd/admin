@@ -177,6 +177,15 @@ const AlternatePreviewList: React.FC<AlternatePreviewListProps> = ({
     await getProducts(true);
   };
 
+  const handleThumbnailOrTagReplacement = (
+    prevImage: Image,
+    record: Product
+  ) => {
+    if (!record.image.some(img => img.url === prevImage.url)) {
+      record.image.push(prevImage);
+    }
+  };
+
   const onAssignToTag = (file: any, record: Product) => {
     let imageData = file;
     if (file.response) {
@@ -185,6 +194,8 @@ const AlternatePreviewList: React.FC<AlternatePreviewListProps> = ({
         url: file.response.result,
       };
     }
+    const prevTag = record.tagImage;
+    handleThumbnailOrTagReplacement(prevTag, record);
     record.tagImage = { ...imageData };
     setForceRerenderWorkaround(prev => !prev);
   };
@@ -197,6 +208,8 @@ const AlternatePreviewList: React.FC<AlternatePreviewListProps> = ({
         url: file.response.result,
       };
     }
+    const prevThumb = record.thumbnailUrl;
+    handleThumbnailOrTagReplacement(prevThumb, record);
     record.thumbnailUrl = { ...imageData };
     setForceRerenderWorkaround(prev => !prev);
   };
