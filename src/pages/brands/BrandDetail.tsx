@@ -215,9 +215,6 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
     } else {
       setCheckoutTypeList(checkoutType);
     }
-    form.setFieldsValue({
-      requireMobilePurchaseStatus: isExternal,
-    });
   };
 
   const changeTab = (activeKey: string) => {
@@ -448,25 +445,6 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
                     rules={[{ required: true }]}
                   >
                     <Input />
-                  </Form.Item>
-                </Col>
-                <Col lg={16} xs={24}>
-                  <Form.Item
-                    shouldUpdate={(prevValues, curValues) =>
-                      prevValues.checkout !== curValues.checkout
-                    }
-                  >
-                    {({ getFieldValue }) => (
-                      <Form.Item
-                        name="requireMobilePurchaseStatus"
-                        label="Log Completed Purchases?"
-                        valuePropName="checked"
-                      >
-                        <Switch
-                          disabled={getFieldValue('checkout') === 'Disco'}
-                        />
-                      </Form.Item>
-                    )}
                   </Form.Item>
                 </Col>
                 <Col lg={8} xs={8}>
