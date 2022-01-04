@@ -10,10 +10,10 @@ import {
   Select,
   Space,
   Table,
+  Typography,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import CopyOrderToClipboard from 'components/CopyOrderToClipboard';
-import { SelectBrand } from 'components/SelectBrand';
 import useFilter from 'hooks/useFilter';
 import { Brand } from 'interfaces/Brand';
 import { Fan } from 'interfaces/Fan';
@@ -23,7 +23,14 @@ import { useEffect, useRef, useState } from 'react';
 import Highlighter from 'react-highlight-words';
 import { useSelector } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
-import { fetchFans, fetchOrders, saveOrder } from 'services/DiscoClubService';
+import {
+  fetchBrands,
+  fetchFans,
+  fetchOrders,
+  saveOrder,
+} from 'services/DiscoClubService';
+import SimpleSelect from 'components/SimpleSelect';
+import { SelectOption } from 'interfaces/SelectOption';
 
 const Orders: React.FC<RouteComponentProps> = () => {
   const [tableloading, setTableLoading] = useState<boolean>(false);
@@ -38,10 +45,33 @@ const Orders: React.FC<RouteComponentProps> = () => {
   } = useFilter<Order>([]);
 
   const [fans, setFans] = useState<Fan[]>([]);
+  const [brands, setBrands] = useState<Brand[]>([]);
+  const [isFetchingBrands, setIsFetchingBrands] = useState(false);
 
   const [searchText, setSearchText] = useState<string>('');
 
   const searchInput = useRef<Input>(null);
+
+  const optionsMapping: SelectOption = {
+    key: 'id',
+    label: 'brandName',
+    value: 'id',
+  };
+
+  useEffect(() => {
+    const getBrands = async () => {
+      try {
+        setIsFetchingBrands(true);
+        const { results }: any = await fetchBrands();
+        setBrands(results.filter((brand: any) => brand.brandName));
+        setIsFetchingBrands(false);
+      } catch (e) {
+      } finally {
+      }
+    };
+
+    getBrands();
+  }, []);
 
   const handleSearch = (selectedKeys: any, confirm: any, dataIndex: any) => {
     confirm();
@@ -328,11 +358,19 @@ const Orders: React.FC<RouteComponentProps> = () => {
       <PageHeader title="Orders" subTitle="List of Orders" />
       <Row gutter={8}>
         <Col xxl={40} lg={6} xs={18}>
-          <SelectBrand
+          <Typography.Title level={5}>Master Brand</Typography.Title>
+          <SimpleSelect
+            data={brands}
+            onChange={(_, brand) => onChangeBrand(brand)}
             style={{ width: '100%' }}
+            selectedOption={''}
+            optionsMapping={optionsMapping}
+            placeholder={'Select a master brand'}
+            loading={isFetchingBrands}
+            disabled={isFetchingBrands}
+            showSearch={true}
             allowClear={true}
-            onChange={onChangeBrand}
-          ></SelectBrand>
+          ></SimpleSelect>
         </Col>
       </Row>
       <Table

@@ -39,7 +39,6 @@ import {
   rebuildAllFeedd,
   saveVideoFeed,
 } from 'services/DiscoClubService';
-import { SelectBrand } from 'components/SelectBrand';
 import useFilter from 'hooks/useFilter';
 import { Brand } from 'interfaces/Brand';
 import ReactTagInput from '@pathofdev/react-tag-input';
@@ -58,6 +57,8 @@ import './VideoFeed.scss';
 import './VideoFeedDetail.scss';
 import scrollIntoView from 'scroll-into-view';
 import moment from 'moment';
+import SimpleSelect from 'components/SimpleSelect';
+import { SelectOption } from '../../interfaces/SelectOption';
 
 const { Content } = Layout;
 const { Title } = Typography;
@@ -94,6 +95,7 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [selectedSegmentIndex, setSelectedSegmentIndex] = useState<number>(-1);
   const [ageRange, setAgeRange] = useState<[number, number]>([12, 100]);
 
+  const [isFetchingBrands, setIsFetchingBrands] = useState(false);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [selectedBrand, setSelectedBrand] = useState<Brand | undefined>();
   const [selectedBrandIndex, setSelectedBrandIndex] = useState<number>(-1);
@@ -109,6 +111,12 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
 
   const { doRequest } = useRequest({ setLoading });
+
+  const optionsMapping: SelectOption = {
+    key: 'id',
+    label: 'brandName',
+    value: 'id',
+  };
 
   const {
     setArrayList: setFilteredItems,
@@ -164,8 +172,10 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
       setCategories(response.results);
     }
     async function getBrands() {
+      setIsFetchingBrands(true);
       const response: any = await fetchBrands();
       setBrands(response.results);
+      setIsFetchingBrands(false);
     }
     setLoading(true);
     await Promise.all([getInfluencers(), getCategories(), getBrands()]);
@@ -367,7 +377,6 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
   };
 
   const onEditItem = (record: any, index: number) => {
-    console.log(record)
     setLastViewedIndex(index);
     setCurrentItem(record);
     setIsEditing(true);
@@ -779,7 +788,12 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
                       label="Go Live Date"
                       getValueProps={formatMoment}
                     >
-                      <DatePicker defaultValue={feedForm.getFieldValue('goLiveDate') ?? moment()} format="DD/MM/YYYY" />
+                      <DatePicker
+                        defaultValue={
+                          feedForm.getFieldValue('goLiveDate') ?? moment()
+                        }
+                        format="DD/MM/YYYY"
+                      />
                     </Form.Item>
                   </Col>
                   <Col lg={12} xs={24}>
@@ -788,7 +802,12 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
                       label="Expiration Date"
                       getValueProps={formatMoment}
                     >
-                      <DatePicker defaultValue={feedForm.getFieldValue('validity') ?? moment()} format="DD/MM/YYYY" />
+                      <DatePicker
+                        defaultValue={
+                          feedForm.getFieldValue('validity') ?? moment()
+                        }
+                        format="DD/MM/YYYY"
+                      />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -1035,11 +1054,19 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
                     />
                   </Col>
                   <Col lg={8} xs={16}>
-                    <SelectBrand
+                    <Typography.Title level={5}>Master Brand</Typography.Title>
+                    <SimpleSelect
+                      data={brands}
+                      onChange={(_, brand) => onChangeBrand(brand)}
                       style={{ width: '100%' }}
+                      selectedOption={''}
+                      optionsMapping={optionsMapping}
+                      placeholder={'Select a master brand'}
+                      loading={isFetchingBrands}
+                      disabled={isFetchingBrands}
+                      showSearch={true}
                       allowClear={true}
-                      onChange={onChangeBrand}
-                    ></SelectBrand>
+                    ></SimpleSelect>
                   </Col>
                 </Row>
               </Col>

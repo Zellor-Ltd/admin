@@ -38,9 +38,6 @@ import EditMultipleButton from 'components/EditMultipleButton';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
 import EditableTable, { EditableColumnType } from 'components/EditableTable';
 import { SearchFilterDebounce } from 'components/SearchFilterDebounce';
-import { SelectBrand } from 'components/SelectBrand';
-import { SelectProductBrand } from 'components/SelectProductBrand';
-import { SelectBrandSmartSearch } from 'components/SelectBrandSmartSearch';
 import { AppContext } from 'contexts/AppContext';
 import useAllCategories from 'hooks/useAllCategories';
 import { useRequest } from 'hooks/useRequest';
@@ -59,12 +56,13 @@ import EditProductModal from './EditProductModal';
 import ProductAPITestModal from './ProductAPITestModal';
 import ProductExpandedRow from './ProductExpandedRow';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
-import { ProductBrandFilter } from 'components/ProductBrandFilter';
 import { ProductBrand } from 'interfaces/ProductBrand';
 import { productUtils } from '../../helpers/product-utils';
 import { Image } from '../../interfaces/Image';
 import scrollIntoView from 'scroll-into-view';
 import { useMount } from 'react-use';
+import SimpleSelect from 'components/SimpleSelect';
+import { SelectOption } from '../../interfaces/SelectOption';
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 const { getSearchTags, getCategories, removeSearchTagsByCategory } =
@@ -74,6 +72,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
   const saveProductFn = saveProduct;
   const [brands, setBrands] = useState<Brand[]>([]);
   const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
+  const [isFetchingBrands, setIsFetchingBrands] = useState(false);
   const [isFetchingProductBrand, setIsFetchingProductBrand] = useState(false);
   const [ageRange, setAgeRange] = useState<[number, number]>([12, 100]);
   const [form] = Form.useForm();
@@ -113,6 +112,12 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
 
   const [products, setProducts] = useState<Product[]>([]);
 
+  const optionsMapping: SelectOption = {
+    key: 'id',
+    label: 'brandName',
+    value: 'id',
+  };
+
   const {
     settings: { currency = [] },
   } = useSelector((state: any) => state.settings);
@@ -124,8 +129,10 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
   useMount(async () => {
     const getBrands = async () => {
       setLoading(true);
+      setIsFetchingBrands(true);
       const response: any = await fetchBrands();
       setLoading(false);
+      setIsFetchingBrands(false);
       setBrands(response.results);
     };
 
@@ -141,7 +148,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
 
   useEffect(() => {
     form.setFieldsValue(currentProduct);
-  }, [form, currentProduct]);
+  }, [currentProduct]);
 
   const setSearchTagsByCategory = useCallback(
     (
@@ -274,7 +281,6 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
     setLoading(true);
     try {
       const product = form.getFieldsValue(true);
-      product.brand = brands?.find(brand => brand.id === product.brand?.id);
 
       categoriesFields.forEach((field, index) => {
         product.categories.forEach((productCategory: any) => {
@@ -637,6 +643,19 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
     }
   }, [isViewing]);
 
+  const updateForm = (
+    _: string,
+    entity: any,
+    type: 'brand' | 'productBrand'
+  ) => {
+    setDiscoPercentageByBrand(false);
+    if (type === 'brand') {
+      form.setFieldsValue({ brand: entity });
+    } else {
+      form.setFieldsValue({ productBrand: entity });
+    }
+  };
+
   return (
     <>
       {!isViewing && (
@@ -661,22 +680,36 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                   />
                 </Col>
                 <Col lg={6} xs={16}>
-                  <SelectBrand
+                  <Typography.Title level={5}>Master Brand</Typography.Title>
+                  <SimpleSelect
+                    data={brands}
+                    onChange={(_, brand) => onChangeBrand(brand)}
                     style={{ width: '100%' }}
+                    selectedOption={brandFilter?.brandName}
+                    optionsMapping={optionsMapping}
+                    placeholder={'Select a master brand'}
+                    loading={isFetchingBrands}
+                    disabled={isFetchingBrands}
+                    showSearch={true}
                     allowClear={true}
-                    onChange={onChangeBrand}
-                    initialBrandName={brandFilter?.brandName}
-                  ></SelectBrand>
+                  ></SimpleSelect>
                 </Col>
                 <Col lg={6} xs={16}>
-                  <ProductBrandFilter
+                  <Typography.Title level={5}>Product Brand</Typography.Title>
+                  <SimpleSelect
+                    data={productBrands}
+                    onChange={(_, productBrand) =>
+                      onChangeProductBrand(productBrand)
+                    }
                     style={{ width: '100%' }}
+                    selectedOption={productBrandFilter?.brandName}
+                    optionsMapping={optionsMapping}
+                    placeholder={'Select a Product Brand'}
+                    loading={isFetchingProductBrand}
+                    disabled={isFetchingProductBrand}
+                    showSearch={true}
                     allowClear={true}
-                    onChange={onChangeProductBrand}
-                    initialProductBrandName={productBrandFilter?.brandName}
-                    productBrands={productBrands}
-                    isLoading={isFetchingProductBrand}
-                  ></ProductBrandFilter>
+                  ></SimpleSelect>
                 </Col>
                 <Col lg={6} xs={24}>
                   <Checkbox
@@ -836,12 +869,20 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                           label="Master Brand"
                           rules={[{ required: true }]}
                         >
-                          <SelectBrandSmartSearch
-                            onChange={() => setDiscoPercentageByBrand(false)}
+                          <SimpleSelect
+                            data={brands}
+                            onChange={(value, brand) =>
+                              updateForm(value, brand, 'brand')
+                            }
+                            style={{ width: '100%' }}
+                            selectedOption={currentMasterBrand}
+                            optionsMapping={optionsMapping}
+                            placeholder={'Select a brand'}
+                            loading={isFetchingBrands}
+                            disabled={isFetchingBrands}
+                            showSearch={true}
                             allowClear={true}
-                            initialBrandName={currentMasterBrand}
-                            handleMasterBrandChange={handleMasterBrandChange}
-                          ></SelectBrandSmartSearch>
+                          ></SimpleSelect>
                         </Form.Item>
                       </Col>
                     </Row>
@@ -852,12 +893,20 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                           label="Product Brand"
                           rules={[{ required: true }]}
                         >
-                          <SelectProductBrand
+                          <SimpleSelect
+                            data={productBrands}
+                            onChange={(value, brand) =>
+                              updateForm(value, brand, 'productBrand')
+                            }
+                            style={{ width: '100%' }}
+                            selectedOption={currentProductBrand}
+                            optionsMapping={optionsMapping}
+                            placeholder={'Select a brand'}
+                            loading={isFetchingProductBrand}
+                            disabled={isFetchingProductBrand}
+                            showSearch={true}
                             allowClear={true}
-                            initialProductBrandName={currentProductBrand}
-                            handleProductBrandChange={handleProductBrandChange}
-                            productBrands={productBrands}
-                          ></SelectProductBrand>
+                          ></SimpleSelect>
                         </Form.Item>
                       </Col>
                     </Row>

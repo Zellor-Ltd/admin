@@ -127,7 +127,6 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = props => {
 
   const onEditSegment = (segment: Segment, index: number) => {
     if (segForm?.isFieldsTouched()) {
-      console.log(segForm.getFieldsValue(true));
       segForm.submit();
     }
     setTimeout(() => {

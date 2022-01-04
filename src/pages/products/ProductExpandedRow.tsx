@@ -3,11 +3,11 @@ import { categoriesSettings } from 'helpers/utils';
 import { AllCategories } from 'interfaces/Category';
 import { Product } from 'interfaces/Product';
 import { ProductBrand } from 'interfaces/ProductBrand';
-import { useLocation } from 'react-router-dom';
 import ProductCategoriesTrees from './ProductCategoriesTrees';
 import { useCallback } from 'react';
-import { SelectProductBrand } from 'components/SelectProductBrand';
 import { productUtils } from '../../helpers/product-utils';
+import SimpleSelect from 'components/SimpleSelect';
+import { SelectOption } from 'interfaces/SelectOption';
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 const { getSearchTags, getCategories, removeSearchTagsByCategory } =
@@ -31,6 +31,12 @@ const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
   productBrands,
 }) => {
   const [form] = Form.useForm();
+
+  const optionsMapping: SelectOption = {
+    key: 'id',
+    label: 'brandName',
+    value: 'id',
+  };
 
   const onFinish = async () => {
     const _categories = [...form.getFieldValue('categories')];
@@ -128,6 +134,18 @@ const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
     filterProductBrand(form);
   };
 
+  const updateForm = (
+    _: string,
+    entity: any,
+    type: 'brand' | 'productBrand'
+  ) => {
+    if (type === 'brand') {
+      form.setFieldsValue({ brand: entity });
+    } else {
+      form.setFieldsValue({ productBrand: entity });
+    }
+  };
+
   return (
     <Form
       layout="vertical"
@@ -146,12 +164,24 @@ const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
         </Col>
         <Col lg={4} xs={8}>
           <Form.Item name="productBrand" label="Product Brand">
-            <SelectProductBrand
+            <SimpleSelect
+              data={productBrands}
+              onChange={(value, brand) =>
+                updateForm(value, brand, 'productBrand')
+              }
+              style={{ width: '100%' }}
+              selectedOption={
+                typeof record.productBrand === 'string'
+                  ? record.productBrand
+                  : record.productBrand?.brandName
+              }
+              optionsMapping={optionsMapping}
+              placeholder={'Select a brand'}
+              loading={false}
+              disabled={false}
+              showSearch={true}
               allowClear={true}
-              initialProductBrandName={typeof record.productBrand === 'string' ? record.productBrand : record.productBrand?.brandName}
-              handleProductBrandChange={handleProductBrandChange}
-              productBrands={productBrands}
-            ></SelectProductBrand>
+            ></SimpleSelect>
           </Form.Item>
         </Col>
       </Row>

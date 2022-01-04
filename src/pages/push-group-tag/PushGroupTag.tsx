@@ -1,20 +1,29 @@
-import { Button, Col, PageHeader, Row, Table } from 'antd';
+import { Button, Col, PageHeader, Row, Table, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { SearchFilter } from 'components/SearchFilter';
-import { SelectBrand } from 'components/SelectBrand';
 import useFilter from 'hooks/useFilter';
 import { useRequest } from 'hooks/useRequest';
 import { Brand } from 'interfaces/Brand';
 import { Tag } from 'interfaces/Tag';
 import { useEffect, useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
-import { fetchTags } from 'services/DiscoClubService';
+import { fetchBrands, fetchTags } from 'services/DiscoClubService';
+import SimpleSelect from 'components/SimpleSelect';
+import { SelectOption } from '../../interfaces/SelectOption';
 
 const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
   const detailsPathname = `${location.pathname}/step2`;
   const [loading, setLoading] = useState<boolean>(false);
   const { doFetch } = useRequest({ setLoading });
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
+  const [isFetchingBrands, setIsFetchingBrands] = useState(false);
+  const [brands, setBrands] = useState<Brand[]>([]);
+
+  const optionsMapping: SelectOption = {
+    key: 'id',
+    label: 'brandName',
+    value: 'id',
+  };
 
   const {
     setArrayList: setTags,
@@ -30,12 +39,22 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
     );
   };
 
+  const getBrands = async () => {
+    setLoading(true);
+    setIsFetchingBrands(true);
+    const response: any = await fetchBrands();
+    setLoading(false);
+    setIsFetchingBrands(false);
+    setBrands(response.results);
+  };
+
   const getTags = async () => {
     const { results } = await doFetch(() => fetchTags({}));
     setTags(results);
   };
 
   const getResources = async () => {
+    await getBrands();
     await getTags();
   };
 
@@ -95,11 +114,19 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
               />
             </Col>
             <Col lg={8} xs={16}>
-              <SelectBrand
+              <Typography.Title level={5}>Master Brand</Typography.Title>
+              <SimpleSelect
+                data={brands}
+                onChange={(_, brand) => onChangeBrand(brand)}
                 style={{ width: '100%' }}
+                selectedOption={''}
+                optionsMapping={optionsMapping}
+                placeholder={'Select a master brand'}
+                loading={isFetchingBrands}
+                disabled={isFetchingBrands}
+                showSearch={true}
                 allowClear={true}
-                onChange={onChangeBrand}
-              />
+              ></SimpleSelect>
             </Col>
           </Row>
         </Col>

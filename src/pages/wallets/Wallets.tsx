@@ -1,17 +1,19 @@
-import { Col, PageHeader, Row, Table } from 'antd';
+import { Col, PageHeader, Row, Table, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import { SelectBrand } from 'components/SelectBrand';
 import { SelectFan } from 'components/SelectFan';
+import SimpleSelect from 'components/SimpleSelect';
 import useFilter from 'hooks/useFilter';
 import { useRequest } from 'hooks/useRequest';
 import { Brand } from 'interfaces/Brand';
 import { Fan } from 'interfaces/Fan';
+import { SelectOption } from 'interfaces/SelectOption';
 import { Wallet } from 'interfaces/Wallet';
 import { WalletTransaction } from 'interfaces/WalletTransactions';
 import { WalletDetailParams } from 'interfaces/WalletTransactions';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import {
+  fetchBrands,
   fetchBalancePerBrand,
   fetchTransactionsPerBrand,
 } from 'services/DiscoClubService';
@@ -23,6 +25,14 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
   const [selectedFan, setSelectedFan] = useState<Fan>();
   const [selectedBrand, setSelectedBrand] = useState<Brand>();
   const { doFetch } = useRequest({ setLoading: setLoading });
+  const [isFetchingBrands, setIsFetchingBrands] = useState(false);
+  const [brands, setBrands] = useState<Brand[]>([]);
+
+  const optionsMapping: SelectOption = {
+    key: 'id',
+    label: 'brandName',
+    value: 'id',
+  };
 
   const {
     // arrayList: wallets,
@@ -37,6 +47,19 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
     setArrayList: setTransactions,
     filteredArrayList: filteredTransactions,
   } = useFilter<WalletTransaction>([]);
+
+  useEffect(() => {
+    const getBrands = async () => {
+      try {
+        setIsFetchingBrands(true);
+        const { results }: any = await fetchBrands();
+        setBrands(results.filter((brand: any) => brand.brandName));
+        setIsFetchingBrands(false);
+      } catch (e) {}
+    };
+    getBrands();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const columns: ColumnsType<Wallet> = [
     {
@@ -114,11 +137,19 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
             </Col>
             {selectedFan && (
               <Col span={4}>
-                <SelectBrand
-                  style={{ width: '100%' }}
+                <Typography.Title level={5}>Master Brand</Typography.Title>
+                <SimpleSelect
+                  data={brands}
+                  onChange={(_, brand) => onChangeBrand(brand)}
+                  style={{ width: '100%', marginBottom: '16px' }}
+                  selectedOption={''}
+                  optionsMapping={optionsMapping}
+                  placeholder={'Select a master brand'}
+                  loading={isFetchingBrands}
+                  disabled={isFetchingBrands}
+                  showSearch={true}
                   allowClear={true}
-                  onChange={onChangeBrand}
-                ></SelectBrand>
+                ></SimpleSelect>
               </Col>
             )}
             <Col span={6} style={{ position: 'relative', top: '8px' }}>
