@@ -25,7 +25,7 @@ const SimpleSelect: React.FC<SimpleSelectProps> = ({
   style,
   loading,
   disabled,
-  showSearch,
+  showSearch = true,
 }) => {
   const [options, setOptions] = useState<SelectOption[]>([]);
   const [_selectedOption, _setSelectedOption] = useState<string>();
@@ -66,7 +66,7 @@ const SimpleSelect: React.FC<SimpleSelectProps> = ({
       onChange={_onChange}
       options={options}
       allowClear={allowClear}
-      defaultValue={_selectedOption}
+      value={_selectedOption}
       loading={loading}
       disabled={disabled}
       showSearch={showSearch}

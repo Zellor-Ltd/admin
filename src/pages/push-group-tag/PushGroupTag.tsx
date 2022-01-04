@@ -124,7 +124,6 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
                 placeholder={'Select a master brand'}
                 loading={isFetchingBrands}
                 disabled={isFetchingBrands}
-                showSearch={true}
                 allowClear={true}
               ></SimpleSelect>
             </Col>

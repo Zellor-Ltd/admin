@@ -368,7 +368,6 @@ const Orders: React.FC<RouteComponentProps> = () => {
             placeholder={'Select a master brand'}
             loading={isFetchingBrands}
             disabled={isFetchingBrands}
-            showSearch={true}
             allowClear={true}
           ></SimpleSelect>
         </Col>

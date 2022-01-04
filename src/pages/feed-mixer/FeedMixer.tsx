@@ -16,10 +16,6 @@ import { SwitchChangeEventHandler } from 'antd/lib/switch';
 import { ColumnsType } from 'antd/lib/table';
 import { SortableTable } from 'components';
 import { SearchFilter } from 'components/SearchFilter';
-import { SelectCategory } from 'components/SelectCategory';
-import { SelectStatus } from 'components/SelectStatus';
-import { SelectVideoType } from 'components/SelectVideoType';
-import { SelectFanQuery } from 'components/SelectFanQuery';
 import useFilter from 'hooks/useFilter';
 import { useRequest } from 'hooks/useRequest';
 import { FanFilter } from 'interfaces/Fan';
@@ -27,6 +23,8 @@ import { FeedItem } from 'interfaces/FeedItem';
 import React, { useEffect, useMemo, useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import {
+  fetchCategories,
+  fetchFanGroups,
   fetchGroupFeed,
   fetchUserFeed,
   fetchVideoFeed,
@@ -40,10 +38,116 @@ import {
 } from 'services/DiscoClubService';
 import { Category } from 'interfaces/Category';
 import { ColumnType } from 'antd/lib/table/interface';
+import { FanGroup } from 'interfaces/FanGroup';
+import SimpleSelect from 'components/SimpleSelect';
+import { SelectOption } from 'interfaces/SelectOption';
+
+const fansQueryFilters: FanFilter[] = [
+  {
+    id: 'allfans',
+    user: 'All Disco Fans',
+    isFilter: true,
+    isGroup: false,
+  },
+];
 
 const FeedMixer: React.FC<RouteComponentProps> = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const { doFetch, doRequest } = useRequest({ setLoading });
+  const [fans, setFans] = useState<FanFilter[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [selectedCategoryName, setSelectedCategoryName] = useState<string>();
+  const [selectedFan, setSelectedFan] = useState<FanFilter>();
+  const [selectedVideoType, setSelectedVideoType] = useState<string>('');
+  const [isFetchingFanQueries, setIsFetchingFanQueries] = useState(false);
+  const [selectedStatus, setSelectedStatus] = useState<string>('');
+  const [isFetchingFeed, setIsFetchingFeed] = useState<boolean>(false);
+  const statusList = [
+    {
+      key: 'Live',
+      label: 'Live',
+      value: 'Live',
+    },
+    {
+      key: 'Paused',
+      label: 'Paused',
+      value: 'Paused',
+    },
+  ];
+  const videoTypeList = [
+    {
+      key: 'Feed',
+      label: 'Feed',
+      value: 'Feed',
+    },
+    {
+      key: 'Brand',
+      label: 'Brand',
+      value: 'Brand',
+    },
+    {
+      key: 'Review',
+      label: 'Review',
+      value: 'Review',
+    },
+  ];
+
+  const fanOptionsMapping: SelectOption = {
+    key: 'user',
+    label: 'user',
+    value: 'id',
+  };
+
+  const statusMapping: SelectOption = {
+    key: 'key',
+    label: 'label',
+    value: 'value',
+  };
+
+  const videoTypeMapping: SelectOption = {
+    key: 'key',
+    label: 'label',
+    value: 'value',
+  };
+
+  const categoryMapping: SelectOption = {
+    key: 'id',
+    label: 'name',
+    value: 'id',
+  };
+
+  const getResources = async () => {
+    setIsFetchingFanQueries(true);
+    // const { results: fansResults } = await doFetch(() => fetchFans());
+    const initialArray: FanFilter[] = [];
+    const { results: fanGroupsResults }: { results: FanGroup[] } =
+      await doFetch(() => fetchFanGroups());
+    const _fansQueryFilters: FanFilter[] = [
+      ...fansQueryFilters,
+      ...fanGroupsResults.map(fanGroup => ({
+        id: fanGroup.id,
+        user: fanGroup.name,
+        isFilter: true,
+        isGroup: true,
+      })),
+    ];
+    initialArray.unshift(..._fansQueryFilters);
+    setFans([...initialArray]);
+    setIsFetchingFanQueries(false);
+  };
+
+  useEffect(() => {
+    const getCategories = async () => {
+      try {
+        const { results }: any = await fetchCategories();
+        setCategories(results);
+      } catch (e) {}
+    };
+
+    getCategories();
+    getResources();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const {
     arrayList: publishedFeed,
@@ -61,7 +165,6 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
     removeFilterFunction: removeUnpublishedFeedFilter,
   } = useFilter<FeedItem>([]);
 
-  const [selectedFan, setSelectedFan] = useState<FanFilter>();
   const [lockedFeed, setLockedFeed] = useState<boolean>(false);
   const [displayFeedName, setDisplayFeedName] = useState<string>();
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
@@ -176,13 +279,16 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
     },
   ];
 
-  const onChangeFan = async (_selectedFan: FanFilter) => {
+  const onChangeFan = async (_selectedGroup: FanFilter) => {
+    const _selectedFan = fans.find(
+      fan => fan.user === _selectedGroup.user
+    ) as FanFilter;
     setLoading(true);
-    const fetchFeed = async (_selectedFan: FanFilter) => {
+    const fetchFeed = async (_selectedGroup: FanFilter) => {
       const response = await doFetch(() =>
-        _selectedFan.isGroup
-          ? fetchGroupFeed(_selectedFan.id)
-          : fetchUserFeed(_selectedFan.id)
+        _selectedGroup.isGroup
+          ? fetchGroupFeed(_selectedGroup.id)
+          : fetchUserFeed(_selectedGroup.id)
       );
       return response;
     };
@@ -252,25 +358,36 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
     filterFeedFn: Function,
     removeFilterFeedFn: Function
   ) => {
+    setIsFetchingFeed(true);
     if (!_selectedStatus) {
       removeFilterFeedFn('status');
+      setIsFetchingFeed(false);
       return;
     }
+    setSelectedStatus(_selectedStatus);
     filterFeedFn('status', (feed: any[]) =>
       feed.filter(
         feedVideo =>
           feedVideo.status.toUpperCase() === _selectedStatus.toUpperCase()
       )
     );
+    setIsFetchingFeed(false);
   };
 
   const onChangeCategory = async (
-    _selectedCategory: Category | undefined,
+    _selectedItem: Category | undefined,
     filterFeedFn: Function,
     removeFilterFeedFn: Function
   ) => {
+    setIsFetchingFeed(true);
+    const _selectedCategory = categories.find(
+      category => category.id === _selectedItem?.id
+    ) as Category | undefined;
+    setSelectedCategoryName(_selectedCategory?.name || '');
+
     if (!_selectedCategory) {
       removeFilterFeedFn('category');
+      setIsFetchingFeed(false);
       return;
     }
     filterFeedFn('category', (feed: any[]) =>
@@ -278,6 +395,7 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
         return feedVideo.category === _selectedCategory.name;
       })
     );
+    setIsFetchingFeed(false);
   };
 
   const onChangeVideoType = async (
@@ -285,10 +403,13 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
     filterFeedFn: Function,
     removeFilterFeedFn: Function
   ) => {
+    setIsFetchingFeed(true);
     if (!_selectedVideoType) {
       removeFilterFeedFn('videoType');
+      setIsFetchingFeed(false);
       return;
     }
+    setSelectedVideoType(_selectedVideoType);
     filterFeedFn('videoType', (feed: any[]) =>
       feed.filter(
         feedVideo =>
@@ -296,6 +417,7 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
           feedVideo.videoType.includes(_selectedVideoType)
       )
     );
+    setIsFetchingFeed(false);
   };
 
   const FiltersRow = useMemo(
@@ -316,9 +438,9 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
               />
             </Col>
             <Col lg={6} xs={16}>
-              <SelectStatus
-                label="Status"
-                style={{ width: '100%' }}
+              <Typography.Title level={5}>Status</Typography.Title>
+              <SimpleSelect
+                data={statusList}
                 onChange={_selectedStatus =>
                   onChangeStatus(
                     _selectedStatus,
@@ -326,25 +448,39 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
                     removeFilterFeedFn
                   )
                 }
-              />
+                style={{ width: '100%', marginBottom: '16px' }}
+                selectedOption={selectedStatus}
+                optionsMapping={statusMapping}
+                placeholder={''}
+                loading={isFetchingFeed}
+                disabled={isFetchingFeed}
+                allowClear={true}
+              ></SimpleSelect>
             </Col>
             <Col lg={6} xs={16}>
-              <SelectCategory
-                label="Category"
-                style={{ width: '100%' }}
-                onChange={_selectedCategory =>
+              <Typography.Title level={5}>Category</Typography.Title>
+              <SimpleSelect
+                data={categories}
+                onChange={(_, _selectedCategory) =>
                   onChangeCategory(
                     _selectedCategory,
                     filterFeedFn,
                     removeFilterFeedFn
                   )
                 }
-              />
+                style={{ width: '100%', marginBottom: '16px' }}
+                selectedOption={selectedCategoryName}
+                optionsMapping={categoryMapping}
+                placeholder={''}
+                loading={isFetchingFeed}
+                disabled={isFetchingFeed}
+                allowClear={true}
+              ></SimpleSelect>
             </Col>
             <Col lg={6} xs={16}>
-              <SelectVideoType
-                label="Video Type"
-                style={{ width: '100%' }}
+              <Typography.Title level={5}>Video Type</Typography.Title>
+              <SimpleSelect
+                data={videoTypeList}
                 onChange={_selectedVideoType =>
                   onChangeVideoType(
                     _selectedVideoType,
@@ -352,7 +488,14 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
                     removeFilterFeedFn
                   )
                 }
-              />
+                style={{ width: '100%', marginBottom: '16px' }}
+                selectedOption={selectedVideoType}
+                optionsMapping={videoTypeMapping}
+                placeholder={''}
+                loading={isFetchingFeed}
+                disabled={isFetchingFeed}
+                allowClear={true}
+              ></SimpleSelect>
             </Col>
           </Row>
         ),
@@ -363,11 +506,19 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
     <div className="feed-mixer">
       <PageHeader title="Feed Mixer" subTitle="Define feed for users." />
       <Row gutter={8} style={{ marginBottom: '20px', width: '100%' }}>
-        <Col>
-          <SelectFanQuery
-            style={{ width: '250px' }}
-            onChange={onChangeFan}
-          ></SelectFanQuery>
+        <Col span={6}>
+          <Typography.Title level={5}>Fan Filter</Typography.Title>
+          <SimpleSelect
+            data={fans}
+            onChange={(_, fan) => onChangeFan(fan)}
+            style={{ width: '100%', marginBottom: '16px' }}
+            selectedOption={selectedFan?.user}
+            optionsMapping={fanOptionsMapping}
+            placeholder={'Select a fan'}
+            loading={isFetchingFanQueries}
+            disabled={isFetchingFanQueries}
+            allowClear={false}
+          ></SimpleSelect>
         </Col>
         {selectedFan && !selectedFan.isFilter && (
           <>

@@ -179,7 +179,6 @@ const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
               placeholder={'Select a brand'}
               loading={false}
               disabled={false}
-              showSearch={true}
               allowClear={true}
             ></SimpleSelect>
           </Form.Item>

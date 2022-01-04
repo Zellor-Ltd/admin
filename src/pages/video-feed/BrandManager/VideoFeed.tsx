@@ -170,7 +170,6 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ location, history }) => {
             placeholder={'Select a master brand'}
             loading={isFetchingBrands}
             disabled={isFetchingBrands}
-            showSearch={true}
             allowClear={true}
           ></SimpleSelect>
         </Col>

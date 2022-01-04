@@ -690,7 +690,6 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                     placeholder={'Select a master brand'}
                     loading={isFetchingBrands}
                     disabled={isFetchingBrands}
-                    showSearch={true}
                     allowClear={true}
                   ></SimpleSelect>
                 </Col>
@@ -707,7 +706,6 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                     placeholder={'Select a Product Brand'}
                     loading={isFetchingProductBrand}
                     disabled={isFetchingProductBrand}
-                    showSearch={true}
                     allowClear={true}
                   ></SimpleSelect>
                 </Col>
@@ -875,12 +873,11 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                               updateForm(value, brand, 'brand')
                             }
                             style={{ width: '100%' }}
-                            selectedOption={currentMasterBrand}
+                            selectedOption={currentProduct?.brand?.id}
                             optionsMapping={optionsMapping}
                             placeholder={'Select a brand'}
                             loading={isFetchingBrands}
                             disabled={isFetchingBrands}
-                            showSearch={true}
                             allowClear={true}
                           ></SimpleSelect>
                         </Form.Item>
@@ -904,7 +901,6 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                             placeholder={'Select a brand'}
                             loading={isFetchingProductBrand}
                             disabled={isFetchingProductBrand}
-                            showSearch={true}
                             allowClear={true}
                           ></SimpleSelect>
                         </Form.Item>

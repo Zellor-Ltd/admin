@@ -915,7 +915,6 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                                 placeholder={'Select a brand'}
                                 loading={isFetchingBrands}
                                 disabled={isFetchingBrands}
-                                showSearch={true}
                                 allowClear={true}
                               ></SimpleSelect>
                             </Form.Item>
@@ -939,7 +938,6 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                                 placeholder={'Select a brand'}
                                 loading={isFetchingProductBrands}
                                 disabled={isFetchingProductBrands}
-                                showSearch={true}
                                 allowClear={true}
                               ></SimpleSelect>
                             </Form.Item>
@@ -1339,7 +1337,6 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                     placeholder={'Select a master brand'}
                     loading={isFetchingBrands}
                     disabled={isFetchingBrands}
-                    showSearch={true}
                     allowClear={true}
                   ></SimpleSelect>
                 </Col>
@@ -1356,7 +1353,6 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                     placeholder={'Select a Product Brand'}
                     loading={isFetchingProductBrands}
                     disabled={isFetchingProductBrands}
-                    showSearch={true}
                     allowClear={true}
                   ></SimpleSelect>
                 </Col>
@@ -1386,7 +1382,6 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                     placeholder={'Select a Category'}
                     loading={fetchingCategories}
                     disabled={fetchingCategories}
-                    showSearch={true}
                     allowClear={true}
                   ></SimpleSelect>
                 </Col>
@@ -1403,7 +1398,6 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                     placeholder={'Select a Sub Category'}
                     loading={fetchingCategories}
                     disabled={fetchingCategories}
-                    showSearch={true}
                     allowClear={true}
                   ></SimpleSelect>
                 </Col>
@@ -1422,7 +1416,6 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                     placeholder={'Select a Sub SubCategory'}
                     loading={fetchingCategories}
                     disabled={fetchingCategories}
-                    showSearch={true}
                     allowClear={true}
                   ></SimpleSelect>
                 </Col>
