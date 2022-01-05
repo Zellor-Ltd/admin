@@ -7,17 +7,19 @@ import {
   Row,
   Table,
   Tag as AntTag,
+  Typography,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
-import { SelectBrand } from 'components/SelectBrand';
 import useFilter from 'hooks/useFilter';
 import { Brand } from 'interfaces/Brand';
 import { FeedItem } from 'interfaces/FeedItem';
 import { Segment } from 'interfaces/Segment';
 import React, { useEffect, useState } from 'react';
 import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
-import { fetchVideoFeed } from 'services/DiscoClubService';
+import { fetchBrands, fetchVideoFeed } from 'services/DiscoClubService';
+import SimpleSelect from 'components/SimpleSelect';
+import { SelectOption } from 'interfaces/SelectOption';
 
 const { Content } = Layout;
 
@@ -32,6 +34,15 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ location, history }) => {
 
   const [loading, setLoading] = useState(false);
 
+  const [isFetchingBrands, setIsFetchingBrands] = useState(false);
+  const [brands, setBrands] = useState<Brand[]>([]);
+
+  const optionsMapping: SelectOption = {
+    key: 'id',
+    label: 'brandName',
+    value: 'id',
+  };
+
   const {
     setArrayList: setVideos,
     filteredArrayList: filteredVideos,
@@ -45,6 +56,17 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ location, history }) => {
       const response: any = await fetchVideoFeed();
       setLoading(false);
       setVideos(response.results);
+
+      const getBrands = async () => {
+        setLoading(true);
+        setIsFetchingBrands(true);
+        const response: any = await fetchBrands();
+        setLoading(false);
+        setIsFetchingBrands(false);
+        setBrands(response.results);
+      };
+
+      getBrands();
     } catch (error) {
       message.error('Error to get feed');
       setLoading(false);
@@ -138,11 +160,18 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ location, history }) => {
       <PageHeader title="Video feed" subTitle="List of Feeds" />
       <Row gutter={8}>
         <Col xxl={40} lg={6} xs={18}>
-          <SelectBrand
+          <Typography.Title level={5}>Master Brand</Typography.Title>
+          <SimpleSelect
+            data={brands}
+            onChange={(_, brand) => onChangeBrand(brand)}
             style={{ width: '100%' }}
+            selectedOption={''}
+            optionsMapping={optionsMapping}
+            placeholder={'Select a master brand'}
+            loading={isFetchingBrands}
+            disabled={isFetchingBrands}
             allowClear={true}
-            onChange={onChangeBrand}
-          ></SelectBrand>
+          ></SimpleSelect>
         </Col>
       </Row>
       <Content>

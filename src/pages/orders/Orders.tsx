@@ -10,9 +10,9 @@ import {
   Select,
   Space,
   Table,
+  Typography,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import { SelectBrand } from 'components/SelectBrand';
 import useFilter from 'hooks/useFilter';
 import { Brand } from 'interfaces/Brand';
 import { Fan } from 'interfaces/Fan';
@@ -22,14 +22,21 @@ import { useEffect, useRef, useState } from 'react';
 import Highlighter from 'react-highlight-words';
 import { useSelector } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { fetchFans, fetchOrders, saveOrder } from 'services/DiscoClubService';
+import {
+  fetchBrands,
+  fetchFans,
+  fetchOrders,
+  saveOrder,
+} from 'services/DiscoClubService';
 import CopyOrderToClipboard from 'components/CopyOrderToClipboard';
-import { SelectFan } from 'components/SelectFan';
+import SimpleSelect from 'components/SimpleSelect';
+import { SelectOption } from 'interfaces/SelectOption';
 
 const Orders: React.FC<RouteComponentProps> = () => {
   const [tableloading, setTableLoading] = useState<boolean>(false);
   const [orderUpdateList, setOrderUpdateList] = useState<boolean[]>([]);
   const [loaded, setLoaded] = useState<boolean>(false);
+  const [selectedFan, setSelectedFan] = useState<Fan | undefined>();
 
   const {
     arrayList: orders,
@@ -40,10 +47,25 @@ const Orders: React.FC<RouteComponentProps> = () => {
   } = useFilter<Order>([]);
 
   const [fans, setFans] = useState<Fan[]>([]);
+  const [brands, setBrands] = useState<Brand[]>([]);
+  const [isFetchingBrands, setIsFetchingBrands] = useState(false);
+  const [isFetchingFans, setIsFetchingFans] = useState(false);
 
   const [searchText, setSearchText] = useState<string>('');
 
   const searchInput = useRef<Input>(null);
+
+  const optionsMapping: SelectOption = {
+    key: 'id',
+    label: 'brandName',
+    value: 'id',
+  };
+
+  const fanOptionsMapping: SelectOption = {
+    key: 'id',
+    label: 'user',
+    value: 'user',
+  };
 
   const handleSearch = (selectedKeys: any, confirm: any, dataIndex: any) => {
     confirm();
@@ -210,7 +232,12 @@ const Orders: React.FC<RouteComponentProps> = () => {
       title: 'Name',
       width: '12%',
       align: 'center',
-      render: (_, record) => record.product ? record.product?.name : record.cart.brandGroups[0].items[0].name,
+      render: (_, record) =>
+        record.product
+          ? record.product?.name
+          : record.cart.brandGroups[0]
+          ? record.cart.brandGroups[0].items[0].name
+          : 'Empty order',
     },
     {
       title: 'Creation',
@@ -289,26 +316,43 @@ const Orders: React.FC<RouteComponentProps> = () => {
 
   const getOrders = async () => {
     const response: any = await fetchOrders();
-    const orders = response.results.filter((order: Order) => !!(order.product || order.cart));
+    const orders = response.results.filter(
+      (order: Order) => !!(order.product || order.cart)
+    );
     return orders;
   };
 
-  const getFans = async () => {
-    const response: any = await fetchFans();
-    return response.results;
-  };
+  useEffect(() => {
+    const getFans = async () => {
+      setIsFetchingFans(true);
+      const response: any = await fetchFans();
+      setFans(response.results);
+      setIsFetchingFans(false);
+    };
+
+    const getBrands = async () => {
+      try {
+        setIsFetchingBrands(true);
+        const { results }: any = await fetchBrands();
+        setBrands(results.filter((brand: any) => brand.brandName));
+        setIsFetchingBrands(false);
+      } catch (e) {
+      } finally {
+      }
+    };
+    getFans();
+    getBrands();
+  }, []);
 
   const getResources = async () => {
     setTableLoading(true);
     const orders: Order[] = await getOrders();
-    const fans: Fan[] = await getFans();
     const ordersWithFanName = orders.map(order => {
       const fan = fans.find(fan => fan.id === order.userid);
       order.fanName = fan?.user;
       return order;
     });
     setOrders(ordersWithFanName);
-    setFans(fans);
     setLoaded(true);
     setTableLoading(false);
   };
@@ -325,14 +369,18 @@ const Orders: React.FC<RouteComponentProps> = () => {
       return;
     }
     addFilterFunction('brandName', orders =>
-      orders.filter(
-        order => order.product ? 
-          order.product?.brand.brandName === _selectedBrand.brandName : order.cart.brandGroups.find(brandGroup => brandGroup.brandName === _selectedBrand.brandName)
-        )
+      orders.filter(order =>
+        order.product
+          ? order.product?.brand.brandName === _selectedBrand.brandName
+          : order.cart.brandGroups.find(
+              brandGroup => brandGroup.brandName === _selectedBrand.brandName
+            )
+      )
     );
   };
 
   const onChangeFan = async (_selectedFan: Fan | undefined) => {
+    setSelectedFan(_selectedFan);
     if (!_selectedFan) {
       removeFilterFunction('fanName');
       return;
@@ -349,18 +397,32 @@ const Orders: React.FC<RouteComponentProps> = () => {
         <Col lg={16} xs={24}>
           <Row gutter={8}>
             <Col lg={8} xs={16}>
-              <SelectBrand
+              <Typography.Title level={5}>Master Brand</Typography.Title>
+              <SimpleSelect
+                data={brands}
+                onChange={(_, brand) => onChangeBrand(brand)}
                 style={{ width: '100%' }}
+                selectedOption={''}
+                optionsMapping={optionsMapping}
+                placeholder={'Select a master brand'}
+                loading={isFetchingBrands}
+                disabled={isFetchingBrands}
                 allowClear={true}
-                onChange={onChangeBrand}
-              ></SelectBrand>
+              ></SimpleSelect>
             </Col>
             <Col lg={8} xs={16}>
-              <SelectFan
-                style={{ width: '100%' }}
-                onChange={onChangeFan}
+              <Typography.Title level={5}>Fan Filter</Typography.Title>
+              <SimpleSelect
+                data={fans}
+                onChange={(_, fan) => onChangeFan(fan)}
+                style={{ width: '100%', marginBottom: '16px' }}
+                selectedOption={selectedFan?.user}
+                optionsMapping={fanOptionsMapping}
+                placeholder={'Select a fan'}
+                loading={isFetchingFans}
+                disabled={isFetchingFans}
                 allowClear={true}
-              ></SelectFan>
+              ></SimpleSelect>
             </Col>
           </Row>
         </Col>

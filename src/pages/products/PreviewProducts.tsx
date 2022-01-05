@@ -27,7 +27,6 @@ import {
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import EditableTable, { EditableColumnType } from 'components/EditableTable';
 import EditMultipleButton from 'components/EditMultipleButton';
-import { SelectBrand } from 'components/SelectBrand';
 import useAllCategories from 'hooks/useAllCategories';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useRequest } from 'hooks/useRequest';
@@ -64,10 +63,7 @@ import { AllCategories, ProductCategory } from 'interfaces/Category';
 import { useSelector } from 'react-redux';
 import { SearchFilterDebounce } from 'components/SearchFilterDebounce';
 import { AppContext } from 'contexts/AppContext';
-import { SelectProductBrand } from 'components/SelectProductBrand';
-import { SelectBrandSmartSearch } from 'components/SelectBrandSmartSearch';
 import update from 'immutability-helper';
-import { ProductBrandFilter } from 'components/ProductBrandFilter';
 import { ProductBrand } from 'interfaces/ProductBrand';
 import { productUtils } from '../../helpers/product-utils';
 import { Image } from '../../interfaces/Image';
@@ -87,6 +83,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
   const saveProductFn = saveStagingProduct;
   const [brands, setBrands] = useState<Brand[]>([]);
   const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
+  const [isFetchingBrands, setIsFetchingBrands] = useState(false);
   const [isFetchingProductBrands, setIsFetchingProductBrands] = useState(false);
   const [ageRange, setageRange] = useState<[number, number]>([12, 100]);
   const [form] = Form.useForm();
@@ -131,6 +128,12 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
   const { doFetch, doRequest } = useRequest({ setLoading });
   const { doRequest: saveCategories, loading: loadingCategories } =
     useRequest();
+
+  const optionsMapping: SelectOption = {
+    key: 'id',
+    label: 'brandName',
+    value: 'id',
+  };
 
   const {
     settings: { currency = [] },
@@ -275,8 +278,10 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
     };
 
     const getBrands = async () => {
+      setIsFetchingBrands(true);
       const { results }: any = await fetchBrands();
       setBrands(results);
+      setIsFetchingBrands(false);
     };
 
     await Promise.all([getBrands(), getProductBrands(), fetchAllCategories()]);
@@ -725,6 +730,19 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
     setIsEditing(false);
   };
 
+  const updateForm = (
+    _: string,
+    entity: any,
+    type: 'brand' | 'productBrand'
+  ) => {
+    setDiscoPercentageByBrand(false);
+    if (type === 'brand') {
+      form.setFieldsValue({ brand: entity });
+    } else {
+      form.setFieldsValue({ productBrand: entity });
+    }
+  };
+
   const switchView = () => {
     if (viewName === 'default') {
       setViewName('alternate');
@@ -886,16 +904,19 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                               label="Master Brand"
                               rules={[{ required: true }]}
                             >
-                              <SelectBrandSmartSearch
-                                onChange={() =>
-                                  setDiscoPercentageByBrand(false)
+                              <SimpleSelect
+                                data={brands}
+                                onChange={(value, brand) =>
+                                  updateForm(value, brand, 'brand')
                                 }
+                                style={{ width: '100%' }}
+                                selectedOption={currentMasterBrand}
+                                optionsMapping={optionsMapping}
+                                placeholder={'Select a brand'}
+                                loading={isFetchingBrands}
+                                disabled={isFetchingBrands}
                                 allowClear={true}
-                                initialBrandName={currentMasterBrand}
-                                handleMasterBrandChange={
-                                  handleMasterBrandChange
-                                }
-                              ></SelectBrandSmartSearch>
+                              ></SimpleSelect>
                             </Form.Item>
                           </Col>
                         </Row>
@@ -906,14 +927,19 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                               label="Product Brand"
                               rules={[{ required: true }]}
                             >
-                              <SelectProductBrand
-                                allowClear={true}
-                                initialProductBrandName={currentProductBrand}
-                                handleProductBrandChange={
-                                  handleProductBrandChange
+                              <SimpleSelect
+                                data={productBrands}
+                                onChange={(value, brand) =>
+                                  updateForm(value, brand, 'productBrand')
                                 }
-                                productBrands={productBrands}
-                              ></SelectProductBrand>
+                                style={{ width: '100%' }}
+                                selectedOption={currentProductBrand}
+                                optionsMapping={optionsMapping}
+                                placeholder={'Select a brand'}
+                                loading={isFetchingProductBrands}
+                                disabled={isFetchingProductBrands}
+                                allowClear={true}
+                              ></SimpleSelect>
                             </Form.Item>
                           </Col>
                         </Row>
@@ -1301,22 +1327,34 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                   />
                 </Col>
                 <Col lg={6} xs={16}>
-                  <SelectBrand
+                  <Typography.Title level={5}>Master Brand</Typography.Title>
+                  <SimpleSelect
+                    data={brands}
+                    onChange={(_, brand) => onChangeBrand(brand)}
                     style={{ width: '100%' }}
+                    selectedOption={brandFilter?.brandName}
+                    optionsMapping={optionsMapping}
+                    placeholder={'Select a master brand'}
+                    loading={isFetchingBrands}
+                    disabled={isFetchingBrands}
                     allowClear={true}
-                    onChange={onChangeBrand}
-                    initialBrandName={brandFilter?.brandName}
-                  ></SelectBrand>
+                  ></SimpleSelect>
                 </Col>
                 <Col lg={6} xs={16}>
-                  <ProductBrandFilter
+                  <Typography.Title level={5}>Product Brand</Typography.Title>
+                  <SimpleSelect
+                    data={productBrands}
+                    onChange={(_, productBrand) =>
+                      onChangeProductBrand(productBrand)
+                    }
                     style={{ width: '100%' }}
+                    selectedOption={productBrandFilter?.brandName}
+                    optionsMapping={optionsMapping}
+                    placeholder={'Select a Product Brand'}
+                    loading={isFetchingProductBrands}
+                    disabled={isFetchingProductBrands}
                     allowClear={true}
-                    onChange={onChangeProductBrand}
-                    initialProductBrandName={productBrandFilter?.brandName}
-                    productBrands={productBrands}
-                    isLoading={isFetchingProductBrands}
-                  ></ProductBrandFilter>
+                  ></SimpleSelect>
                 </Col>
                 <Col lg={6} xs={24}>
                   <Typography.Title level={5}>Status</Typography.Title>
@@ -1344,7 +1382,6 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                     placeholder={'Select a Category'}
                     loading={fetchingCategories}
                     disabled={fetchingCategories}
-                    showSearch={true}
                     allowClear={true}
                   ></SimpleSelect>
                 </Col>
@@ -1361,7 +1398,6 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                     placeholder={'Select a Sub Category'}
                     loading={fetchingCategories}
                     disabled={fetchingCategories}
-                    showSearch={true}
                     allowClear={true}
                   ></SimpleSelect>
                 </Col>
@@ -1380,7 +1416,6 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                     placeholder={'Select a Sub SubCategory'}
                     loading={fetchingCategories}
                     disabled={fetchingCategories}
-                    showSearch={true}
                     allowClear={true}
                   ></SimpleSelect>
                 </Col>
