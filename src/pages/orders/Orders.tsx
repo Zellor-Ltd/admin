@@ -237,7 +237,7 @@ const Orders: React.FC<RouteComponentProps> = () => {
           ? record.product?.name
           : record.cart.brandGroups[0]
           ? record.cart.brandGroups[0].items[0].name
-          : null,
+          : 'Empty order',
     },
     {
       title: 'Creation',

@@ -64,30 +64,20 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
   const [isFetchingFeed, setIsFetchingFeed] = useState<boolean>(false);
   const statusList = [
     {
-      key: 'Live',
-      label: 'Live',
       value: 'Live',
     },
     {
-      key: 'Paused',
-      label: 'Paused',
       value: 'Paused',
     },
   ];
   const videoTypeList = [
     {
-      key: 'Feed',
-      label: 'Feed',
       value: 'Feed',
     },
     {
-      key: 'Brand',
-      label: 'Brand',
       value: 'Brand',
     },
     {
-      key: 'Review',
-      label: 'Review',
       value: 'Review',
     },
   ];
@@ -99,14 +89,14 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
   };
 
   const statusMapping: SelectOption = {
-    key: 'key',
-    label: 'label',
+    key: 'value',
+    label: 'value',
     value: 'value',
   };
 
   const videoTypeMapping: SelectOption = {
-    key: 'key',
-    label: 'label',
+    key: 'value',
+    label: 'value',
     value: 'value',
   };
 
