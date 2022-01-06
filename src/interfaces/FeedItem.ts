@@ -14,7 +14,8 @@ export interface FeedItem {
   modelRelease: String;
   target: String;
   title: String;
-  validity: String;
+  validity: string;
+  goLiveDate: string;
   package: Segment[];
   _id: String;
   productBrand?: ProductBrand | string;

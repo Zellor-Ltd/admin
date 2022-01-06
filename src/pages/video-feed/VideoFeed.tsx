@@ -230,6 +230,9 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
 
   const onFinish = async () => {
     const item: FeedItem = feedForm.getFieldsValue(true);
+    item.goLiveDate = moment(item.goLiveDate).format();
+    item.validity = moment(item.validity).format();
+
     item.package = item.package?.map(pack => {
       const segment: any = {
         ...pack,
@@ -312,6 +315,7 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
       if (content[i].id === record.id) {
         content[i] = record;
         setFilteredItems([...content]);
+        break;
       }
     }
   };
@@ -789,9 +793,9 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
                       getValueProps={formatMoment}
                     >
                       <DatePicker
-                        defaultValue={
-                          feedForm.getFieldValue('goLiveDate') ?? moment()
-                        }
+                        defaultValue={moment(
+                          feedForm.getFieldValue('goLiveDate')
+                        )}
                         format="DD/MM/YYYY"
                       />
                     </Form.Item>
@@ -803,9 +807,9 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
                       getValueProps={formatMoment}
                     >
                       <DatePicker
-                        defaultValue={
-                          feedForm.getFieldValue('validity') ?? moment()
-                        }
+                        defaultValue={moment(
+                          feedForm.getFieldValue('validity')
+                        )}
                         format="DD/MM/YYYY"
                       />
                     </Form.Item>
