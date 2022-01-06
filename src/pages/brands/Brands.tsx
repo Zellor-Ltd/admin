@@ -98,7 +98,6 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
   ) => {
     if (switchType === 'showOutOfStock') {
       try {
-        console.log(toggled);
         brand.showOutOfStock = toggled;
         await saveBrand(brand);
         message.success('Register updated with success.');
@@ -106,6 +105,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
         message.error("Couldn't set brand property. Try again.");
       }
     } else {
+      setCurrentBrand(brand);
       setShowModal(true);
     }
   };
@@ -119,7 +119,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
       title: '_id',
       dataIndex: 'id',
       width: '6%',
-      render: id => <CopyIdToClipboard id={id} />,
+      render: (_, record: Brand) => <CopyIdToClipboard id={record.id} />,
       align: 'center',
     },
     {
@@ -153,8 +153,8 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
             <PauseModal
               showPauseModal={showModal}
               setShowPauseModal={setShowModal}
-              brandId={record.id}
-              isBrandPaused={record.paused || false}
+              brandId={currentBrand?.id as string}
+              isBrandPaused={!!currentBrand?.paused}
               onOk={onCompletePausedAction}
             />
           )}
