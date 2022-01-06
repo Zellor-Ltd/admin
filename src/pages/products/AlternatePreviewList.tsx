@@ -401,7 +401,6 @@ const AlternatePreviewList: React.FC<AlternatePreviewListProps> = ({
       render: (_, record, index) => (
         <>
           <Button
-            disabled={record.brand.automated === true}
             type="primary"
             loading={loading}
             onClick={() => saveChanges(record, index)}
