@@ -102,7 +102,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
 
   const { usePageFilter } = useContext(AppContext);
   const [searchFilter, setSearchFilter] = usePageFilter<string>('search');
-  const [runIdFilter, setRunIdFilter] = usePageFilter<string>('search');
+  const [runIdFilter, setRunIdFilter] = useState<string>();
   const [brandFilter, setBrandFilter] = useState<Brand | undefined>();
   const [productBrandFilter, setProductBrandFilter] = useState<
     ProductBrand | undefined
@@ -1422,10 +1422,14 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                   ></SimpleSelect>
                 </Col>
                 <Col lg={6} xs={24}>
-                  <SearchFilterDebounce
-                    initialValue={runIdFilter}
-                    filterFunction={setRunIdFilter}
-                    label="Search by Run ID"
+                  <Typography.Title level={5}>Run ID</Typography.Title>
+                  <Input
+                    onChange={evt => {
+                      setRunIdFilter(evt.target.value);
+                    }}
+                    value={runIdFilter}
+                    suffix={<SearchOutlined />}
+                    placeholder="Search by Run ID"
                   />
                 </Col>
                 <Col lg={6} xs={24}>
