@@ -688,7 +688,7 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
               <Col lg={3} xs={3}>
                 <Form.Item
                   name={['creator', 'displayInVideoFeed']}
-                  label="Display Creator"
+                  label="Display in Video Feed"
                   valuePropName="checked"
                   initialValue={true}
                 >
