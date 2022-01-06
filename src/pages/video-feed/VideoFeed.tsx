@@ -311,7 +311,6 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
   };
 
   const refreshItem = async (record: any) => {
-    console.log(record);
     for (let i = 0; i < content.length; i++) {
       if (content[i].id === record.id) {
         content[i] = record;
