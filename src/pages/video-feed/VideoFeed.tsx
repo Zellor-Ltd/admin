@@ -19,7 +19,6 @@ import {
   Row,
   Select,
   Slider,
-  Switch,
   Table,
   Tabs,
   Tag as AntTag,
@@ -683,16 +682,6 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
                       </Select.Option>
                     ))}
                   </Select>
-                </Form.Item>
-              </Col>
-              <Col lg={3} xs={3}>
-                <Form.Item
-                  name={['creator', 'displayInVideoFeed']}
-                  label="Display in Video Feed"
-                  valuePropName="checked"
-                  initialValue={true}
-                >
-                  <Switch />
                 </Form.Item>
               </Col>
               <Col lg={24} xs={24}>
