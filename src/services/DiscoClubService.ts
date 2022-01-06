@@ -178,6 +178,7 @@ export const fetchStagingProducts = ({
   categoryId,
   subCategoryId,
   subSubCategoryId,
+  runId,
 }: {
   brandId?: string;
   query?: string;
@@ -189,6 +190,7 @@ export const fetchStagingProducts = ({
   categoryId?: string;
   subCategoryId?: string;
   subSubCategoryId?: string;
+  runId?: string;
 } & Pagination) =>
   instance.put(`Disco/Staging/Product/List/${page}/${limit}`, {
     brandId,
@@ -201,6 +203,7 @@ export const fetchStagingProducts = ({
     categoryId,
     subCategoryId,
     subSubCategoryId,
+    runId,
   });
 
 export const fetchBrands = () => instance.get('Wi/Ep/ListBrands');
