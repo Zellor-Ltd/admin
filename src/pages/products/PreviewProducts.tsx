@@ -102,6 +102,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
 
   const { usePageFilter } = useContext(AppContext);
   const [searchFilter, setSearchFilter] = usePageFilter<string>('search');
+  const [runIdFilter, setRunIdFilter] = useState<string>();
   const [brandFilter, setBrandFilter] = useState<Brand | undefined>();
   const [productBrandFilter, setProductBrandFilter] = useState<
     ProductBrand | undefined
@@ -380,6 +381,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
         categoryId: productCategoryFilter?.id,
         subCategoryId: productSubCategoryFilter?.id,
         subSubCategoryId: productSubSubCategoryFilter?.id,
+        runId: runIdFilter,
       })
     );
     if (searchButton) {
@@ -1418,6 +1420,17 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                     disabled={fetchingCategories}
                     allowClear={true}
                   ></SimpleSelect>
+                </Col>
+                <Col lg={6} xs={24}>
+                  <Typography.Title level={5}>Run ID</Typography.Title>
+                  <Input
+                    onChange={evt => {
+                      setRunIdFilter(evt.target.value);
+                    }}
+                    value={runIdFilter}
+                    suffix={<SearchOutlined />}
+                    placeholder="Search by Run ID"
+                  />
                 </Col>
                 <Col lg={6} xs={24}>
                   <Checkbox
