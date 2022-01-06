@@ -35,8 +35,8 @@ const WalletEdit: React.FC<WalletEditProps> = ({
     await doRequest(() =>
       addBalanceToUser(fanId as string, brandId as string, balanceToAdd)
     );
-    form.resetFields();
     await getResources();
+    form.resetFields();
   };
 
   const resetBalance = async () => {

@@ -136,6 +136,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
         fetchTransactionsPerBrand(selectedFan.id, selectedBrand.id)
       );
       setTransactions(results);
+      onChangeFan(selectedFan);
     }
   };
 
