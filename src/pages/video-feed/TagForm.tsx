@@ -63,7 +63,7 @@ const TagForm: React.FC<FormProps> = ({ tag, setShowTagForm, brands }) => {
     <Form name="tagForm" form={form} initialValues={tag} layout="vertical">
       <Row gutter={8}>
         <Col lg={12} xs={24}>
-          <Form.Item label="Brand">
+          <Form.Item label="Brand" rules={[{ required: true }]}>
             <Select
               showSearch
               allowClear
@@ -82,12 +82,13 @@ const TagForm: React.FC<FormProps> = ({ tag, setShowTagForm, brands }) => {
           </Form.Item>
         </Col>
         <Col lg={12} xs={24}>
-          <Form.Item name={'id'} label="Tag" rules={[{ required: true }]}>
+          <Form.Item name={'tagName'} label="Tag" rules={[{ required: true }]}>
             <DebounceSelect
               fetchOptions={getTags}
               onChange={onChangeTag}
               optionsMapping={tagOptionsMapping}
-              value={tag?.id}
+              placeholder="Type to search a Tag"
+              value={tag?.tagName}
               disabled={!selectedBrandId}
             />
           </Form.Item>
