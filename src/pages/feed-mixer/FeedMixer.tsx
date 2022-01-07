@@ -290,10 +290,11 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
           fetchFeed(_selectedFan),
           doFetch(() => fetchVideoFeed()),
         ]);
+      // Reverse array to display from last to first
       setPublishedFeed(
-        _publishedFeed.filter(
-          pubFeed => !!pubFeed.package && pubFeed.package.length > 0
-        )
+        [..._publishedFeed]
+          .filter(pubFeed => !!pubFeed.package && pubFeed.package.length > 0)
+          .reverse()
       );
       setUnpublishedFeed(
         _unpublishedFeed.filter(
@@ -312,12 +313,21 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
   };
 
   const saveChanges = async () => {
+    // Reverse back the array to original natural order and fix indexes
+    const reversedPublishedFeed = [...publishedFeed]
+      .reverse()
+      .map((feed, i) => {
+        return {
+          ...feed,
+          index: i,
+        };
+      });
     const action = () =>
       selectedFan!.isFilter
         ? selectedFan!.id === 'allfans'
-          ? updateMultipleUsersFeed(publishedFeed)
-          : updateUsersFeedByGroup(selectedFan!.user, publishedFeed)
-        : saveUserFeed(selectedFan!.id, publishedFeed);
+          ? updateMultipleUsersFeed(reversedPublishedFeed)
+          : updateUsersFeedByGroup(selectedFan!.user, reversedPublishedFeed)
+        : saveUserFeed(selectedFan!.id, reversedPublishedFeed);
     await doRequest(action, `${displayFeedName} updated.`);
   };
 
