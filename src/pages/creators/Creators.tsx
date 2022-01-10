@@ -18,7 +18,8 @@ import {
   fetchCreators,
   saveCreator,
 } from 'services/DiscoClubService';
-import { ProductBrand } from '../../interfaces/ProductBrand';
+import scrollIntoView from 'scroll-into-view';
+import CreatorDetail from './CreatorDetail';
 
 const tagColorByStatus: any = {
   approved: 'green',
@@ -30,12 +31,31 @@ const Creators: React.FC<RouteComponentProps> = ({ history, location }) => {
   const detailsPathname = `${location.pathname}/creator`;
   const [loading, setLoading] = useState<boolean>(false);
   const [content, setContent] = useState<any[]>([]);
+  const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
+  const [details, setDetails] = useState<boolean>(false);
+  const [currentCreator, setCurrentCreator] = useState<Creator>();
 
   const {
     setArrayList: setCreators,
     filteredArrayList: filteredCreators,
     addFilterFunction,
   } = useFilter<Creator>([]);
+
+  useEffect(() => {
+    if (!details) {
+      scrollIntoView(
+        document.querySelector(
+          `.scrollable-row-${lastViewedIndex}`
+        ) as HTMLElement
+      );
+    }
+  }, [details]);
+
+  const editCreator = (index: number, creator?: Creator) => {
+    setLastViewedIndex(index);
+    setCurrentCreator(creator);
+    setDetails(true);
+  };
 
   const columns: ColumnsType<Creator> = [
     {
@@ -48,8 +68,8 @@ const Creators: React.FC<RouteComponentProps> = ({ history, location }) => {
     {
       title: 'Name',
       width: '15%',
-      render: (_, record: Creator) => (
-        <Link to={{ pathname: detailsPathname, state: record }}>
+      render: (_, record: Creator, index: number) => (
+        <Link to={location.pathname} onClick={() => editCreator(index, record)}>
           {`${record.firstName} ${record.lastName}`}
         </Link>
       ),
@@ -67,7 +87,7 @@ const Creators: React.FC<RouteComponentProps> = ({ history, location }) => {
       key: 'action',
       width: '5%',
       align: 'right',
-      render: (value, record) => (
+      render: (value, record, index) => (
         <>
           {!record.status && [
             <CheckOutlined
@@ -81,7 +101,10 @@ const Creators: React.FC<RouteComponentProps> = ({ history, location }) => {
               onClick={() => aproveOrReject(false, record)}
             />,
           ]}
-          <Link to={{ pathname: detailsPathname, state: record }}>
+          <Link
+            to={location.pathname}
+            onClick={() => editCreator(index, record)}
+          >
             <EditOutlined />
           </Link>
           <Popconfirm
@@ -146,43 +169,51 @@ const Creators: React.FC<RouteComponentProps> = ({ history, location }) => {
   };
 
   return (
-    <div className="creators">
-      <PageHeader
-        title="Creators"
-        subTitle="List of Creators"
-        extra={[
-          <Button key="1" onClick={() => history.push(detailsPathname)}>
-            New Item
-          </Button>,
-        ]}
-      />
-      <Row gutter={8} align="bottom" justify="space-between">
-        <Col lg={8} xs={16}>
-          <SearchFilter
-            filterFunction={searchFilterFunction}
-            label="Search by First Name"
+    <>
+      {!details && (
+        <div className="creators">
+          <PageHeader
+            title="Creators"
+            subTitle="List of Creators"
+            extra={[
+              <Button key="1" onClick={() => editCreator(1)}>
+                New Item
+              </Button>,
+            ]}
           />
-        </Col>
-        <Button
-          type="primary"
-          onClick={() => fetch()}
-          loading={loading}
-          style={{
-            marginBottom: '16px',
-            marginRight: '25px',
-          }}
-        >
-          Search
-          <SearchOutlined style={{ color: 'white' }} />
-        </Button>
-      </Row>
-      <Table
-        rowKey="id"
-        columns={columns}
-        dataSource={filteredCreators}
-        loading={loading}
-      />
-    </div>
+          <Row gutter={8} align="bottom" justify="space-between">
+            <Col lg={8} xs={16}>
+              <SearchFilter
+                filterFunction={searchFilterFunction}
+                label="Search by First Name"
+              />
+            </Col>
+            <Button
+              type="primary"
+              onClick={() => fetch()}
+              loading={loading}
+              style={{
+                marginBottom: '16px',
+                marginRight: '25px',
+              }}
+            >
+              Search
+              <SearchOutlined style={{ color: 'white' }} />
+            </Button>
+          </Row>
+          <Table
+            rowClassName={(_, index) => `scrollable-row-${index}`}
+            rowKey="id"
+            columns={columns}
+            dataSource={filteredCreators}
+            loading={loading}
+          />
+        </div>
+      )}
+      {details && (
+        <CreatorDetail creator={currentCreator} setDetails={setDetails} />
+      )}
+    </>
   );
 };
 

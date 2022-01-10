@@ -1,16 +1,19 @@
 import { Button, Col, Form, Input, PageHeader, Row, Select } from 'antd';
 import { RichTextEditor } from 'components/RichTextEditor';
 import { useRequest } from 'hooks/useRequest';
-import { PromotionAndStatusList } from 'interfaces/Promotion';
+import { Promotion } from 'interfaces/Promotion';
 import { useCallback, useEffect, useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { fetchVideoFeed2, savePromotion } from 'services/DiscoClubService';
+interface PromotionDetailProps {
+  promotion: Promotion | undefined;
+  setDetails: Function;
+}
 
-const PromotionDetail: React.FC<RouteComponentProps> = props => {
-  const { history, location } = props;
-  const _state = location.state as undefined | PromotionAndStatusList;
-  // const promoStatusList = _state?.promoStatusList;
-  const initial = _state?.promotion;
+const PromotionDetail: React.FC<PromotionDetailProps> = ({
+  promotion,
+  setDetails,
+}) => {
   const [form] = Form.useForm();
   const { doRequest, doFetch, loading } = useRequest();
   const [packages, setPackages] = useState<any[]>([]);
@@ -18,7 +21,7 @@ const PromotionDetail: React.FC<RouteComponentProps> = props => {
   const onFinish = async () => {
     const promotion = form.getFieldsValue(true);
     await doRequest(() => savePromotion(promotion));
-    history.goBack();
+    setDetails(false);
   };
 
   const getPackages = useCallback(async () => {
@@ -40,8 +43,8 @@ const PromotionDetail: React.FC<RouteComponentProps> = props => {
     <>
       <PageHeader
         title={
-          initial
-            ? `${initial?.brand} Promotion Update`
+          promotion
+            ? `${promotion?.brand} Promotion Update`
             : 'Promotion Update'
         }
         subTitle="Promotion"
@@ -50,7 +53,7 @@ const PromotionDetail: React.FC<RouteComponentProps> = props => {
         form={form}
         layout="vertical"
         onFinish={onFinish}
-        initialValues={initial}
+        initialValues={promotion}
         autoComplete="off"
       >
         <Row gutter={8}>
@@ -78,7 +81,7 @@ const PromotionDetail: React.FC<RouteComponentProps> = props => {
         </Row>
         <Row gutter={8}>
           <Col>
-            <Button type="default" onClick={() => history.goBack()}>
+            <Button type="default" onClick={() => setDetails(false)}>
               Cancel
             </Button>
           </Col>

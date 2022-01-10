@@ -24,7 +24,6 @@ import React from 'react';
 import { useRequest } from 'hooks/useRequest';
 import { TwitterPicker } from 'react-color';
 import { useSelector } from 'react-redux';
-import { RouteComponentProps, Link } from 'react-router-dom';
 import { saveBrand } from 'services/DiscoClubService';
 import { BrandVault } from '../../interfaces/BrandVault';
 import {
@@ -36,11 +35,12 @@ import { ColumnsType } from 'antd/lib/table';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
 import moment from 'moment';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
+interface BrandDetailProps {
+  brand: Brand | undefined;
+  setDetails: any;
+}
 
-const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
-  const { history, location } = props;
-  const detailsPathname = `${location.pathname}/vault`;
-  const [brand] = useState(location.state as Brand);
+const BrandDetail: React.FC<BrandDetailProps> = ({ brand, setDetails }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [vaults, setVaults] = useState<BrandVault[]>([]);
   const [currentVault, setCurrentVault] = useState<BrandVault>();
@@ -109,11 +109,12 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
   const editVault = (vault: any) => {
     setCurrentVault(vault);
     setVaultOptions(true);
+    setVaultOptions(true);
   };
 
   const newItem = () => {
     const template = {
-      shopName: brand.shopName,
+      shopName: brand ? brand.shopName : '',
       id: '',
       apiShopName: '',
       tokenType: '',
@@ -168,12 +169,9 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
       align: 'right',
       render: (_, record: BrandVault) => (
         <>
-          <Link
-            to={{ pathname: detailsPathname, state: record }}
-            onClick={() => editVault(record)}
-          >
+          <Button type="link" onClick={() => editVault(record)}>
             <EditOutlined />
-          </Link>
+          </Button>
           <Popconfirm
             title="Are you sure？"
             okText="Yes"
@@ -196,7 +194,7 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
       await saveBrand(brand);
       setLoading(false);
       message.success('Register updated with success.');
-      history.goBack();
+      setDetails(false);
     } catch (error) {
       setLoading(false);
     }
@@ -224,7 +222,7 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
   const returnFromVault = () => {
     setVaultOptions(false);
     if (currentVault?.id) {
-      history.goBack();
+      setDetails(false);
     }
   };
 
@@ -250,7 +248,7 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
                     label="Shop Name"
                     name="shopName"
                     rules={[{ required: true }]}
-                    initialValue={brand.shopName}
+                    initialValue={brand ? brand.shopName : ''}
                   >
                     <Input />
                   </Form.Item>
@@ -319,7 +317,10 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
 
   return (
     <>
-      <PageHeader title={brand ? `${brand.brandName} Update` : "New Item"} subTitle="Master Brand" />
+      <PageHeader
+        title={brand ? `${brand.brandName} Update` : 'New Item'}
+        subTitle="Master Brand"
+      />
       <Form
         name="brandForm"
         layout="vertical"
@@ -605,7 +606,7 @@ const BrandDetail: React.FC<RouteComponentProps> = (props: any) => {
         {activeTabKey !== 'Secrets' && (
           <Row gutter={8}>
             <Col>
-              <Button type="default" onClick={() => history.goBack()}>
+              <Button type="default" onClick={() => setDetails(false)}>
                 Cancel
               </Button>
             </Col>

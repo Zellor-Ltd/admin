@@ -12,13 +12,18 @@ import {
 import { Upload } from 'components';
 import { useRequest } from '../../hooks/useRequest';
 import React, { useState } from 'react';
-import { RouteComponentProps } from 'react-router-dom';
 import { saveProductBrand } from '../../services/DiscoClubService';
 import { TwitterPicker } from 'react-color';
+import { ProductBrand } from 'interfaces/ProductBrand';
+interface ProductBrandDetailProps {
+  productBrand: ProductBrand | undefined;
+  setDetails: any;
+}
 
-const ProductBrandsDetail: React.FC<RouteComponentProps> = props => {
-  const { history, location } = props;
-  const initial: any = location.state;
+const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
+  productBrand,
+  setDetails,
+}) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [form] = Form.useForm();
   const { doRequest } = useRequest({ setLoading });
@@ -27,7 +32,7 @@ const ProductBrandsDetail: React.FC<RouteComponentProps> = props => {
   const onFinish = async () => {
     const productBrand = form.getFieldsValue(true);
     await doRequest(() => saveProductBrand(productBrand));
-    history.goBack();
+    setDetails(false);
   };
 
   const changeTab = (activeKey: string) => {
@@ -37,14 +42,14 @@ const ProductBrandsDetail: React.FC<RouteComponentProps> = props => {
   return (
     <>
       <PageHeader
-        title={initial ? `${initial.brandName} Update` : 'New Item'}
+        title={productBrand ? `${productBrand.brandName} Update` : 'New Item'}
         subTitle="Product Brand Template"
       />
       <Form
         name="productBrandForm"
         layout="vertical"
         form={form}
-        initialValues={initial}
+        initialValues={productBrand}
         onFinish={onFinish}
         onFinishFailed={({ errorFields }) => {
           errorFields.forEach(errorField => {
@@ -66,17 +71,17 @@ const ProductBrandsDetail: React.FC<RouteComponentProps> = props => {
                       label="Product Brand Name"
                       name="brandName"
                       rules={[
-                        { required: true, message: `Product Brand Name is required.` },
+                        {
+                          required: true,
+                          message: `Product Brand Name is required.`,
+                        },
                       ]}
                     >
                       <Input />
                     </Form.Item>
                   </Col>
                   <Col lg={16} xs={24}>
-                    <Form.Item
-                      label="External Code"
-                      name="externalCode"
-                    >
+                    <Form.Item label="External Code" name="externalCode">
                       <Input />
                     </Form.Item>
                   </Col>
@@ -85,7 +90,10 @@ const ProductBrandsDetail: React.FC<RouteComponentProps> = props => {
                       label="Product Brand Color"
                       name="brandTxtColor"
                       rules={[
-                        { required: true, message: `Product Brand Color is required.` },
+                        {
+                          required: true,
+                          message: `Product Brand Color is required.`,
+                        },
                       ]}
                       valuePropName="color"
                     >
@@ -103,7 +111,7 @@ const ProductBrandsDetail: React.FC<RouteComponentProps> = props => {
                     <Form.Item label="Colour">
                       <Upload.ImageUpload
                         maxCount={1}
-                        fileList={initial?.colourLogo}
+                        fileList={productBrand?.colourLogo}
                         form={form}
                         formProp="colourLogo"
                       />
@@ -113,7 +121,7 @@ const ProductBrandsDetail: React.FC<RouteComponentProps> = props => {
                     <Form.Item label="Black">
                       <Upload.ImageUpload
                         maxCount={1}
-                        fileList={initial?.blackLogo}
+                        fileList={productBrand?.blackLogo}
                         form={form}
                         formProp="blackLogo"
                       />
@@ -123,7 +131,7 @@ const ProductBrandsDetail: React.FC<RouteComponentProps> = props => {
                     <Form.Item label="White">
                       <Upload.ImageUpload
                         maxCount={1}
-                        fileList={initial?.whiteLogo}
+                        fileList={productBrand?.whiteLogo}
                         form={form}
                         formProp="whiteLogo"
                       />
@@ -138,7 +146,7 @@ const ProductBrandsDetail: React.FC<RouteComponentProps> = props => {
                       name="brandLogo"
                     >
                       <Upload.ImageUpload
-                        fileList={initial?.brandLogo}
+                        fileList={productBrand?.brandLogo}
                         maxCount={1}
                         form={form}
                         formProp="brandLogo"
@@ -155,7 +163,7 @@ const ProductBrandsDetail: React.FC<RouteComponentProps> = props => {
                     >
                       <Upload.ImageUpload
                         maxCount={1}
-                        fileList={initial?.thumbnail}
+                        fileList={productBrand?.thumbnail}
                         form={form}
                         formProp="thumbnail"
                       />
@@ -169,7 +177,7 @@ const ProductBrandsDetail: React.FC<RouteComponentProps> = props => {
                     >
                       <Upload.ImageUpload
                         maxCount={1}
-                        fileList={initial?.videoLogo}
+                        fileList={productBrand?.videoLogo}
                         form={form}
                         formProp="videoLogo"
                       />
@@ -185,12 +193,15 @@ const ProductBrandsDetail: React.FC<RouteComponentProps> = props => {
                       label="Mast Head Image"
                       name="mastHead"
                       rules={[
-                        { required: true, message: `Mast Head Image is required.` },
+                        {
+                          required: true,
+                          message: `Mast Head Image is required.`,
+                        },
                       ]}
                     >
                       <Upload.ImageUpload
                         maxCount={1}
-                        fileList={initial?.mastHead}
+                        fileList={productBrand?.mastHead}
                         form={form}
                         formProp="mastHead"
                       />
@@ -206,7 +217,7 @@ const ProductBrandsDetail: React.FC<RouteComponentProps> = props => {
                     >
                       <Upload.ImageUpload
                         maxCount={1}
-                        fileList={initial?.avatar}
+                        fileList={productBrand?.avatar}
                         form={form}
                         formProp="avatar"
                       />
@@ -218,7 +229,7 @@ const ProductBrandsDetail: React.FC<RouteComponentProps> = props => {
           </Tabs>
           <Row gutter={8}>
             <Col>
-              <Button type="default" onClick={() => history.goBack()}>
+              <Button type="default" onClick={() => setDetails(false)}>
                 Cancel
               </Button>
             </Col>

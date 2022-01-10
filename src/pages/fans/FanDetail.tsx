@@ -30,12 +30,16 @@ import {
   saveUser,
 } from 'services/DiscoClubService';
 import FanGroupDropdown from './FanGroupDropdown';
+interface FanDetailProps {
+  fan: any;
+  setDetails: any;
+}
 
 const { Option } = Select;
 
 const prefixSelector = (prefix: string) => (
-  <Form.Item name="dialCode" noStyle>
-    <Select defaultValue={prefix || '+353'} style={{ width: 80 }}>
+  <Form.Item initialValue={prefix || '+353'} name="dialCode" noStyle>
+    <Select style={{ width: 80 }}>
       <Option value="+353">+353</Option>
       <Option value="+55">+55</Option>
       <Option value="+86">+86</Option>
@@ -44,15 +48,13 @@ const prefixSelector = (prefix: string) => (
   </Form.Item>
 );
 
-const FanDetail: React.FC<RouteComponentProps> = props => {
-  const { history, location } = props;
+const FanDetail: React.FC<FanDetailProps> = ({ fan, setDetails }) => {
   const [loading, setLoading] = useState(false);
   const [roles, setRoles] = useState<Role[]>([]);
   const [creators, setCreators] = useState<Creator[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [serversList, setServersList] = useState<ServerAlias[]>([]);
   const [currencies, setCurrencies] = useState<Currency[]>([]);
-  const initial: any = location.state || {};
   const [form] = Form.useForm();
 
   useEffect(() => {
@@ -214,7 +216,7 @@ const FanDetail: React.FC<RouteComponentProps> = props => {
       await saveUser(formattedUserData);
       setLoading(false);
       message.success('Register updated with success.');
-      history.goBack();
+      setDetails(false);
     } catch (error) {
       setLoading(false);
     }
@@ -222,25 +224,28 @@ const FanDetail: React.FC<RouteComponentProps> = props => {
 
   return (
     <>
-      <PageHeader title={initial ? `${initial.userName} Update` : "New Item"} subTitle="Fan" />
+      <PageHeader
+        title={fan ? `${fan.userName} Update` : 'New Item'}
+        subTitle="Fan"
+      />
       <Form
         name="userForm"
         layout="vertical"
         form={form}
         initialValues={{
-          ...initial,
-          phoneNumber: initial.personalDetails?.phone?.number,
-          line1: initial.addresses?.[0]?.line1,
-          city: initial.addresses?.[0]?.city,
-          country: initial.addresses?.[0]?.country,
-          postalCode: initial.addresses?.[0]?.postalCode,
+          ...fan,
+          phoneNumber: fan.personalDetails?.phone?.number,
+          line1: fan.addresses?.[0]?.line1,
+          city: fan.addresses?.[0]?.city,
+          country: fan.addresses?.[0]?.country,
+          postalCode: fan.addresses?.[0]?.postalCode,
         }}
         onFinish={onFinish}
       >
         <Tabs defaultActiveKey="Details">
           <Tabs.TabPane forceRender tab="Details" key="Details">
             <Row gutter={8}>
-              {initial.id && (
+              {fan.id && (
                 <Col lg={8} xs={24}>
                   <Form.Item label="_id" name="id">
                     <Input disabled />
@@ -298,7 +303,7 @@ const FanDetail: React.FC<RouteComponentProps> = props => {
                 <Form.Item label="Phone" name="phoneNumber">
                   <Input
                     addonBefore={prefixSelector(
-                      initial.personalDetails?.phone?.dialCode
+                      fan.personalDetails?.phone?.dialCode
                     )}
                   />
                 </Form.Item>
@@ -307,7 +312,7 @@ const FanDetail: React.FC<RouteComponentProps> = props => {
                 <Form.Item label="Default Currency" name="currencyCode">
                   <Select>
                     {currencies.map(currency => (
-                      <Select.Option key={currency.id} value={currency.code}>
+                      <Select.Option key={currency.code} value={currency.code}>
                         {currency.code}
                       </Select.Option>
                     ))}
@@ -487,7 +492,7 @@ const FanDetail: React.FC<RouteComponentProps> = props => {
         </Tabs>
         <Row gutter={8}>
           <Col>
-            <Button type="default" onClick={() => history.goBack()}>
+            <Button type="default" onClick={() => setDetails(false)}>
               Cancel
             </Button>
           </Col>

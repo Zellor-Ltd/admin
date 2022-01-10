@@ -13,6 +13,8 @@ import {
   fetchPromoDisplays,
 } from 'services/DiscoClubService';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
+import scrollIntoView from 'scroll-into-view';
+import PromoDisplayDetail from './PromoDisplayDetail';
 
 const PromoDisplays: React.FC<RouteComponentProps> = ({
   history,
@@ -22,6 +24,10 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({
   const [loading, setLoading] = useState<boolean>(false);
   const { doFetch, doRequest } = useRequest({ setLoading });
   const [content, setContent] = useState<any[]>([]);
+  const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
+  const [details, setDetails] = useState<boolean>(false);
+  const [currentPromoDisplay, setCurrentPromoDisplay] =
+    useState<PromoDisplay>();
 
   const {
     setArrayList: setPromoDisplays,
@@ -43,6 +49,22 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({
     getResources();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (!details) {
+      scrollIntoView(
+        document.querySelector(
+          `.scrollable-row-${lastViewedIndex}`
+        ) as HTMLElement
+      );
+    }
+  }, [details]);
+
+  const editPromoDisplay = (index: number, promoDisplay?: PromoDisplay) => {
+    setLastViewedIndex(index);
+    setCurrentPromoDisplay(promoDisplay);
+    setDetails(true);
+  };
 
   const deleteItem = async (id: string) => {
     await doRequest(() => deletePromoDisplay({ id }));
@@ -69,8 +91,13 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({
       title: 'Shop Display ID',
       dataIndex: 'id',
       width: '20%',
-      render: (value: string, record: PromoDisplay) => (
-        <Link to={{ pathname: detailsPathname, state: record }}>{value}</Link>
+      render: (value: string, record: PromoDisplay, index: number) => (
+        <Link
+          to={location.pathname}
+          onClick={() => editPromoDisplay(index, record)}
+        >
+          {value}
+        </Link>
       ),
     },
     {
@@ -100,9 +127,12 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({
       key: 'action',
       width: '10%',
       align: 'right',
-      render: (_, record: PromoDisplay) => (
+      render: (_, record: PromoDisplay, index: number) => (
         <>
-          <Link to={{ pathname: detailsPathname, state: record }}>
+          <Link
+            to={location.pathname}
+            onClick={() => editPromoDisplay(index, record)}
+          >
             <EditOutlined />
           </Link>
           <Popconfirm
@@ -129,31 +159,42 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({
   };
 
   return (
-    <div>
-      <PageHeader
-        title="Shop Display"
-        subTitle="List of Shop Display"
-        extra={[
-          <Button key="1" onClick={() => history.push(detailsPathname)}>
-            New Item
-          </Button>,
-        ]}
-      />
-      <Row gutter={8}>
-        <Col lg={8} xs={16}>
-          <SearchFilter
-            filterFunction={searchFilterFunction}
-            label="Search by ID"
+    <>
+      {!details && (
+        <div>
+          <PageHeader
+            title="Shop Display"
+            subTitle="List of Shop Display"
+            extra={[
+              <Button key="1" onClick={() => editPromoDisplay(1)}>
+                New Item
+              </Button>,
+            ]}
           />
-        </Col>
-      </Row>
-      <Table
-        rowKey="id"
-        columns={columns}
-        dataSource={filteredPromoDisplays}
-        loading={loading}
-      />
-    </div>
+          <Row gutter={8}>
+            <Col lg={8} xs={16}>
+              <SearchFilter
+                filterFunction={searchFilterFunction}
+                label="Search by ID"
+              />
+            </Col>
+          </Row>
+          <Table
+            rowClassName={(_, index) => `scrollable-row-${index}`}
+            rowKey="id"
+            columns={columns}
+            dataSource={filteredPromoDisplays}
+            loading={loading}
+          />
+        </div>
+      )}
+      {details && (
+        <PromoDisplayDetail
+          promoDisplay={currentPromoDisplay}
+          setDetails={setDetails}
+        />
+      )}
+    </>
   );
 };
 

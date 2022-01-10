@@ -1,5 +1,13 @@
 import { CalendarOutlined } from '@ant-design/icons';
-import { Button, Col, DatePicker, PageHeader, Row, Table, Typography } from 'antd';
+import {
+  Button,
+  Col,
+  DatePicker,
+  PageHeader,
+  Row,
+  Table,
+  Typography,
+} from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import useFilter from 'hooks/useFilter';
 import { useRequest } from 'hooks/useRequest';
@@ -9,12 +17,18 @@ import {
 } from 'interfaces/WalletTransactions';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
-import { RouteComponentProps } from 'react-router-dom';
 import { fetchTransactionsPerBrand } from 'services/DiscoClubService';
 import WalletEdit from './WalletEdit';
+import * as H from 'history';
+interface WalletDetailProps {
+  location: H.Location<H.LocationState>;
+  setDetails: any;
+}
 
-const WalletDetail: React.FC<RouteComponentProps> = props => {
-  const { history, location } = props;
+const WalletDetail: React.FC<WalletDetailProps> = ({
+  location,
+  setDetails,
+}) => {
   const [loading, setLoading] = useState<boolean>(false);
   const { doFetch } = useRequest({ setLoading: setLoading });
   const initial = location.state as unknown as WalletDetailParams;
@@ -74,7 +88,7 @@ const WalletDetail: React.FC<RouteComponentProps> = props => {
       align: 'right',
       dataIndex: 'addedBy',
       render: (value: string, record) =>
-        value === initial.fan.id ? initial.fan.user : "admin",
+        value === initial.fan.id ? initial.fan.user : 'admin',
     },
   ];
 
@@ -95,7 +109,11 @@ const WalletDetail: React.FC<RouteComponentProps> = props => {
   return (
     <div className="walletdetail">
       <PageHeader
-        title={initial ? `${initial.fan.name}/${initial.brand.name} Transactions` : "New Item"}
+        title={
+          initial
+            ? `${initial.fan.name}/${initial.brand.name} Transactions`
+            : 'New Item'
+        }
       />
       <Row align="bottom" justify="space-between">
         <Col lg={24} xs={24}>
@@ -125,7 +143,7 @@ const WalletDetail: React.FC<RouteComponentProps> = props => {
       />
       <Row gutter={8}>
         <Col>
-          <Button type="default" onClick={() => history.goBack()}>
+          <Button type="default" onClick={() => setDetails(false)}>
             Go Back
           </Button>
         </Col>

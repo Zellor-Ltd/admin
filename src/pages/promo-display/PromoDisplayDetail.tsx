@@ -5,10 +5,16 @@ import { useRequest } from 'hooks/useRequest';
 import { useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { savePromoDisplay } from 'services/DiscoClubService';
+import PromoDisplay from './PromoDisplay';
+interface PromoDisplayDetailProps {
+  promoDisplay: any;
+  setDetails: any;
+}
 
-const PromoDisplaysDetail: React.FC<RouteComponentProps> = props => {
-  const { history, location } = props;
-  const initial: any = location.state;
+const PromoDisplaysDetail: React.FC<PromoDisplayDetailProps> = ({
+  promoDisplay,
+  setDetails,
+}) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [form] = Form.useForm();
   const { doRequest } = useRequest({ setLoading });
@@ -16,7 +22,7 @@ const PromoDisplaysDetail: React.FC<RouteComponentProps> = props => {
   const onFinish = async () => {
     const promoDisplay = form.getFieldsValue(true);
     await doRequest(() => savePromoDisplay(promoDisplay));
-    history.goBack();
+    setDetails(false);
   };
 
   return (
@@ -26,7 +32,7 @@ const PromoDisplaysDetail: React.FC<RouteComponentProps> = props => {
         name="promoDisplayForm"
         layout="vertical"
         form={form}
-        initialValues={initial}
+        initialValues={promoDisplay}
         onFinish={onFinish}
       >
         <Row>
@@ -64,7 +70,7 @@ const PromoDisplaysDetail: React.FC<RouteComponentProps> = props => {
         </Row>
         <Row gutter={8}>
           <Col>
-            <Button type="default" onClick={() => history.goBack()}>
+            <Button type="default" onClick={() => setDetails(false)}>
               Cancel
             </Button>
           </Col>

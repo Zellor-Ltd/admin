@@ -27,6 +27,8 @@ import { Link, RouteComponentProps } from 'react-router-dom';
 import { deleteBrand, fetchBrands, saveBrand } from 'services/DiscoClubService';
 import { TableSwitch } from './TableSwitch';
 import { PauseModal } from './PauseModal';
+import BrandDetail from './BrandDetail';
+import scrollIntoView from 'scroll-into-view';
 
 const tagColorByStatus: any = {
   approved: 'green',
@@ -35,7 +37,8 @@ const tagColorByStatus: any = {
 };
 
 const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
-  const detailsPathname = `${location.pathname}/brand`;
+  const [details, setDetails] = useState<boolean>(false);
+  const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(false);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [filterText, setFilterText] = useState('');
@@ -81,6 +84,16 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
     fetch();
   }, []);
 
+  useEffect(() => {
+    if (!details) {
+      scrollIntoView(
+        document.querySelector(
+          `.scrollable-row-${lastViewedIndex}`
+        ) as HTMLElement
+      );
+    }
+  }, [details]);
+
   const onChangeFilter = (evt: any) => {
     setFilterText(evt.target.value);
   };
@@ -114,6 +127,12 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
     fetch();
   };
 
+  const editBrand = (index: number, brand?: Brand) => {
+    setLastViewedIndex(index);
+    setCurrentBrand(brand);
+    setDetails(true);
+  };
+
   const columns: ColumnsType<Brand> = [
     {
       title: '_id',
@@ -126,8 +145,8 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
       title: 'Master Brand Name',
       dataIndex: 'brandName',
       width: '30%',
-      render: (value: string, record: Brand) => (
-        <Link to={{ pathname: detailsPathname, state: record }}>
+      render: (value: string, record: Brand, index: number) => (
+        <Link to={location.pathname} onClick={() => editBrand(index, record)}>
           {record.id !== discoBrandId ? (
             value
           ) : (
@@ -216,7 +235,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
       key: 'action',
       width: '10%',
       align: 'right',
-      render: (_, record: Brand) => (
+      render: (_, record: Brand, index: number) => (
         <>
           {!record.status && [
             <CheckOutlined
@@ -230,7 +249,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
               onClick={() => aproveOrReject(false, record)}
             />,
           ]}
-          <Link to={{ pathname: detailsPathname, state: record }}>
+          <Link to={location.pathname} onClick={() => editBrand(index, record)}>
             <EditOutlined />
           </Link>
           {record.id !== discoBrandId && (
@@ -252,31 +271,39 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
 
   return (
     <>
-      <PageHeader
-        title="Master Brands"
-        subTitle="List of Master Brands"
-        extra={[
-          <Button key="1" onClick={() => history.push(detailsPathname)}>
-            New Item
-          </Button>,
-        ]}
-      />
-      <div style={{ marginBottom: '16px' }}>
-        <Row>
-          <Col lg={12} xs={24}>
-            <Typography.Title level={5} title="Search">
-              Search
-            </Typography.Title>
-            <Input onChange={onChangeFilter} suffix={<SearchOutlined />} />
-          </Col>
-        </Row>
-      </div>
-      <Table
-        rowKey="id"
-        columns={columns}
-        dataSource={filterBrand()}
-        loading={loading}
-      />
+      {!details && (
+        <>
+          <PageHeader
+            title="Master Brands"
+            subTitle="List of Master Brands"
+            extra={[
+              <Button key="1" onClick={() => editBrand(1)}>
+                New Item
+              </Button>,
+            ]}
+          />
+          <div style={{ marginBottom: '16px' }}>
+            <Row>
+              <Col lg={12} xs={24}>
+                <Typography.Title level={5} title="Search">
+                  Search
+                </Typography.Title>
+                <Input onChange={onChangeFilter} suffix={<SearchOutlined />} />
+              </Col>
+            </Row>
+          </div>
+          <Table
+            rowClassName={(_, index) => `scrollable-row-${index}`}
+            rowKey="id"
+            columns={columns}
+            dataSource={filterBrand()}
+            loading={loading}
+          />
+        </>
+      )}
+      {details && (
+        <BrandDetail brand={currentBrand as Brand} setDetails={setDetails} />
+      )}
     </>
   );
 };

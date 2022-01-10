@@ -26,6 +26,8 @@ import {
   fetchPromotions,
 } from 'services/DiscoClubService';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
+import scrollIntoView from 'scroll-into-view';
+import PromotionDetail from './PromotionDetail';
 
 const Promotions: React.FC<RouteComponentProps> = ({ history, location }) => {
   const detailsPathname = `${location.pathname}/promotion`;
@@ -34,6 +36,9 @@ const Promotions: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [promoStatusList, setPromoStatusList] = useState<any>();
   const [content, setContent] = useState<any[]>([]);
   // const [promotionUpdateList, setPromotionUpdateList] = useState<boolean[]>([]);
+  const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
+  const [details, setDetails] = useState<boolean>(false);
+  const [currentPromotion, setCurrentPromotion] = useState<Promotion>();
 
   const {
     // arrayList: promotions,
@@ -57,6 +62,22 @@ const Promotions: React.FC<RouteComponentProps> = ({ history, location }) => {
     );
   };
 
+  useEffect(() => {
+    if (!details) {
+      scrollIntoView(
+        document.querySelector(
+          `.scrollable-row-${lastViewedIndex}`
+        ) as HTMLElement
+      );
+    }
+  }, [details]);
+
+  const editPromotion = (index: number, promotion?: Promotion) => {
+    setLastViewedIndex(index);
+    setCurrentPromotion(promotion);
+    setDetails(true);
+  };
+
   const columns: ColumnsType<Promotion> = [
     {
       title: '_id',
@@ -69,8 +90,13 @@ const Promotions: React.FC<RouteComponentProps> = ({ history, location }) => {
       title: 'Promo ID',
       dataIndex: 'id',
       width: '10%',
-      render: (value: string, record: Promotion) => (
-        <Link to={{ pathname: detailsPathname, state: record }}>{value}</Link>
+      render: (value: string, record: Promotion, index: number) => (
+        <Link
+          to={location.pathname}
+          onClick={() => editPromotion(index, record)}
+        >
+          {value}
+        </Link>
       ),
     },
     {
@@ -103,16 +129,11 @@ const Promotions: React.FC<RouteComponentProps> = ({ history, location }) => {
       key: 'action',
       width: '5%',
       align: 'right',
-      render: (_, record) => (
+      render: (_, record, index: number) => (
         <>
           <Link
-            to={{
-              pathname: detailsPathname,
-              state: {
-                promotion: record,
-                promoStatusList: promoStatusList,
-              } as PromotionAndStatusList,
-            }}
+            to={location.pathname}
+            onClick={() => editPromotion(index, record)}
           >
             <EditOutlined />
           </Link>
@@ -175,31 +196,38 @@ const Promotions: React.FC<RouteComponentProps> = ({ history, location }) => {
   };
 
   return (
-    <div className="promotions">
-      <PageHeader
-        title="Promotions"
-        subTitle="List of Promotions"
-        extra={[
-          <Button key="1" onClick={() => history.push(detailsPathname)}>
-            New Item
-          </Button>,
-        ]}
-      />
-      <Row gutter={8}>
-        <Col lg={8} xs={16}>
-          <SearchFilter
-            filterFunction={searchFilterFunction}
-            label="Search by ID"
+    <>
+      {!details && (
+        <div className="promotions">
+          <PageHeader
+            title="Promotions"
+            subTitle="List of Promotions"
+            extra={[
+              <Button key="1" onClick={() => editPromotion(1)}>
+                New Item
+              </Button>,
+            ]}
           />
-        </Col>
-      </Row>
-      <Table
-        rowKey="id"
-        columns={columns}
-        dataSource={filteredPromotions}
-        loading={tableloading}
-      />
-    </div>
+          <Row gutter={8}>
+            <Col lg={8} xs={16}>
+              <SearchFilter
+                filterFunction={searchFilterFunction}
+                label="Search by ID"
+              />
+            </Col>
+          </Row>
+          <Table
+            rowKey="id"
+            columns={columns}
+            dataSource={filteredPromotions}
+            loading={tableloading}
+          />
+        </div>
+      )}
+      {details && (
+        <PromotionDetail promotion={currentPromotion} setDetails={setDetails} />
+      )}
+    </>
   );
 };
 

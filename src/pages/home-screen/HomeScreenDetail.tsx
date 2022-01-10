@@ -1,14 +1,18 @@
 import { Button, Col, DatePicker, Form, Input, PageHeader, Row } from 'antd';
-import { RichTextEditor } from '../../components/RichTextEditor';
 import { formatMoment } from '../../helpers/formatMoment';
 import { useRequest } from '../../hooks/useRequest';
 import { useState } from 'react';
-import { RouteComponentProps } from 'react-router-dom';
 import { saveBanner } from '../../services/DiscoClubService';
+import { Banner } from 'interfaces/Banner';
+interface HomeScreenDetailProps {
+  banner: Banner;
+  setDetails: Function;
+}
 
-const HomeScreenDetail: React.FC<RouteComponentProps> = props => {
-  const { history, location } = props;
-  const initial: any = location.state;
+const HomeScreenDetail: React.FC<HomeScreenDetailProps> = ({
+  banner,
+  setDetails,
+}) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [form] = Form.useForm();
   const { doRequest } = useRequest({ setLoading });
@@ -16,7 +20,7 @@ const HomeScreenDetail: React.FC<RouteComponentProps> = props => {
   const onFinish = async () => {
     const banner = form.getFieldsValue(true);
     await doRequest(() => saveBanner(banner));
-    history.goBack();
+    setDetails(false);
   };
 
   return (
@@ -26,7 +30,7 @@ const HomeScreenDetail: React.FC<RouteComponentProps> = props => {
         name="bannerForm"
         layout="vertical"
         form={form}
-        initialValues={initial}
+        initialValues={banner}
         onFinish={onFinish}
       >
         <Row>
@@ -60,7 +64,7 @@ const HomeScreenDetail: React.FC<RouteComponentProps> = props => {
         </Row>
         <Row gutter={8}>
           <Col>
-            <Button type="default" onClick={() => history.goBack()}>
+            <Button type="default" onClick={() => setDetails(false)}>
               Cancel
             </Button>
           </Col>

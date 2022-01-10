@@ -1,12 +1,15 @@
 import { Button, Col, Form, Input, message, PageHeader, Row } from 'antd';
+import { Order } from 'interfaces/Order';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
 import { saveOrder } from 'services/DiscoClubService';
+interface OrderDetailProps {
+  order: Order | undefined;
+  setDetails: any;
+}
 
-const OrderDetail: React.FC<RouteComponentProps> = props => {
-  const { history, location } = props;
-  const initial: any = location.state;
+const OrderDetail: React.FC<OrderDetailProps> = ({ order, setDetails }) => {
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
 
@@ -22,7 +25,7 @@ const OrderDetail: React.FC<RouteComponentProps> = props => {
       await saveOrder(order);
       setLoading(false);
       message.success('Register updated with success.');
-      history.goBack();
+      setDetails(false);
     } catch (error) {
       console.error(error);
       setLoading(false);
@@ -31,12 +34,15 @@ const OrderDetail: React.FC<RouteComponentProps> = props => {
 
   return (
     <>
-      <PageHeader title={initial ? `${initial.firstName} Update` : "New Item"} subTitle="Order" />
+      <PageHeader
+        title={order ? `${order.firstName} Update` : 'New Item'}
+        subTitle="Order"
+      />
       <Form
         form={form}
         layout="vertical"
         onFinish={onFinish}
-        initialValues={initial}
+        initialValues={order}
         autoComplete="off"
       >
         <Row gutter={8}>
@@ -53,7 +59,7 @@ const OrderDetail: React.FC<RouteComponentProps> = props => {
         </Row>
         <Row gutter={8}>
           <Col>
-            <Button type="default" onClick={() => history.goBack()}>
+            <Button type="default" onClick={() => setDetails(false)}>
               Cancel
             </Button>
           </Col>

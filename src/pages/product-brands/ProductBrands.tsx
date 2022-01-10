@@ -13,6 +13,8 @@ import {
   deleteProductBrand,
 } from '../../services/DiscoClubService';
 import CopyIdToClipboard from '../../components/CopyIdToClipboard';
+import ProductBrandDetail from './ProductBrandDetail';
+import scrollIntoView from 'scroll-into-view';
 
 const tagColorByStatus: any = {
   approved: 'green',
@@ -24,10 +26,13 @@ const ProductBrands: React.FC<RouteComponentProps> = ({
   history,
   location,
 }) => {
-  const detailsPathname = `${location.pathname}/product-brand`;
   const [loading, setLoading] = useState<boolean>(false);
   const { doFetch, doRequest } = useRequest({ setLoading });
   const [content, setContent] = useState<any[]>([]);
+  const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
+  const [details, setDetails] = useState<boolean>(false);
+  const [currentProductBrand, setCurrentProductBrand] =
+    useState<ProductBrand>();
 
   const {
     setArrayList: setProductBrands,
@@ -49,6 +54,22 @@ const ProductBrands: React.FC<RouteComponentProps> = ({
     getResources();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (!details) {
+      scrollIntoView(
+        document.querySelector(
+          `.scrollable-row-${lastViewedIndex}`
+        ) as HTMLElement
+      );
+    }
+  }, [details]);
+
+  const editProductBrand = (index: number, productBrand?: ProductBrand) => {
+    setLastViewedIndex(index);
+    setCurrentProductBrand(productBrand);
+    setDetails(true);
+  };
 
   const deleteItem = async (id: string) => {
     await doRequest(() => deleteProductBrand(id));
@@ -81,8 +102,13 @@ const ProductBrands: React.FC<RouteComponentProps> = ({
       title: 'Name',
       dataIndex: 'brandName',
       width: '20%',
-      render: (value: string, record: ProductBrand) => (
-        <Link to={{ pathname: detailsPathname, state: record }}>{value}</Link>
+      render: (value: string, record: ProductBrand, index: number) => (
+        <Link
+          to={location.pathname}
+          onClick={() => editProductBrand(index, record)}
+        >
+          {value}
+        </Link>
       ),
     },
     {
@@ -102,9 +128,12 @@ const ProductBrands: React.FC<RouteComponentProps> = ({
       key: 'action',
       width: '10%',
       align: 'right',
-      render: (_, record: ProductBrand) => (
+      render: (_, record: ProductBrand, index: number) => (
         <>
-          <Link to={{ pathname: detailsPathname, state: record }}>
+          <Link
+            to={location.pathname}
+            onClick={() => editProductBrand(index, record)}
+          >
             <EditOutlined />
           </Link>
           <Popconfirm
@@ -131,31 +160,42 @@ const ProductBrands: React.FC<RouteComponentProps> = ({
   };
 
   return (
-    <div>
-      <PageHeader
-        title="Product Brands"
-        subTitle="List of Product Brands"
-        extra={[
-          <Button key="1" onClick={() => history.push(detailsPathname)}>
-            New Item
-          </Button>,
-        ]}
-      />
-      <Row gutter={8}>
-        <Col lg={8} xs={16}>
-          <SearchFilter
-            filterFunction={searchFilterFunction}
-            label="Search by Product Brand Name"
+    <>
+      {!details && (
+        <div>
+          <PageHeader
+            title="Product Brands"
+            subTitle="List of Product Brands"
+            extra={[
+              <Button key="1" onClick={() => editProductBrand(1)}>
+                New Item
+              </Button>,
+            ]}
           />
-        </Col>
-      </Row>
-      <Table
-        rowKey="id"
-        columns={columns}
-        dataSource={filteredProductBrands}
-        loading={loading}
-      />
-    </div>
+          <Row gutter={8}>
+            <Col lg={8} xs={16}>
+              <SearchFilter
+                filterFunction={searchFilterFunction}
+                label="Search by Product Brand Name"
+              />
+            </Col>
+          </Row>
+          <Table
+            rowClassName={(_, index) => `scrollable-row-${index}`}
+            rowKey="id"
+            columns={columns}
+            dataSource={filteredProductBrands}
+            loading={loading}
+          />
+        </div>
+      )}
+      {details && (
+        <ProductBrandDetail
+          productBrand={currentProductBrand as ProductBrand}
+          setDetails={setDetails}
+        />
+      )}
+    </>
   );
 };
 
