@@ -1,4 +1,4 @@
-import { ProductBrand } from "./ProductBrand";
+import { ProductBrand } from './ProductBrand';
 
 export interface Brand {
   showOutOfStock: boolean;
@@ -32,4 +32,5 @@ export interface Brand {
   avatar?: any;
   productBrand?: ProductBrand | string;
   selectedLogoUrl?: string;
+  selectedLogo?: 'whiteLogo' | 'colourLogo' | 'blackLogo' | 'brandName' | '';
 }
