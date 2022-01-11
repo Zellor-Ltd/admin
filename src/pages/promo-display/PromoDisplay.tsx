@@ -16,11 +16,7 @@ import CopyIdToClipboard from 'components/CopyIdToClipboard';
 import scrollIntoView from 'scroll-into-view';
 import PromoDisplayDetail from './PromoDisplayDetail';
 
-const PromoDisplays: React.FC<RouteComponentProps> = ({
-  history,
-  location,
-}) => {
-  const detailsPathname = `${location.pathname}/promo-display`;
+const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const { doFetch, doRequest } = useRequest({ setLoading });
   const [content, setContent] = useState<any[]>([]);

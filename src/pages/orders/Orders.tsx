@@ -31,7 +31,6 @@ import {
 import CopyOrderToClipboard from 'components/CopyOrderToClipboard';
 import SimpleSelect from 'components/SimpleSelect';
 import { SelectOption } from 'interfaces/SelectOption';
-import OrderDetail from './OrderDetail';
 import scrollIntoView from 'scroll-into-view';
 import FanDetail from 'pages/fans/FanDetail';
 

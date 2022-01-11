@@ -10,35 +10,38 @@ import {
 } from 'interfaces/Category';
 import { SearchTag } from 'interfaces/SearchTag';
 import React, { useEffect, useState } from 'react';
-import { RouteComponentProps } from 'react-router-dom';
 import { productCategoriesAPI } from 'services/DiscoClubService';
 import SearchTags from './SearchTags';
+interface CategoryDetailProps {
+  search?: any;
+  category: any;
+  setDetails: any;
+}
 
 const { categoriesKeys, categoriesArray, categoriesFields } =
   categoriesSettings;
 
-const CategoryDetail: React.FC<RouteComponentProps> = ({
-  history,
-  location,
+const CategoryDetail: React.FC<CategoryDetailProps> = ({
+  search,
+  category,
+  setDetails,
 }) => {
   const [loading, setLoading] = useState<boolean>(false);
-  const initial: any = location.state;
-  const params = new URLSearchParams(location.search);
   const { doRequest } = useRequest({ setLoading });
 
-  const categoryLevel = Number(params.get('category-level'));
+  const categoryLevel = search;
   const categoryUpdateName = categoriesKeys[categoryLevel];
   const categoryField = categoriesFields[categoryLevel];
 
   const { fetchAllCategories, filteredCategories, filterCategory } =
     useAllCategories({
       setLoading,
-      initialValues: initial
+      initialValues: category
         ? {
-            superCategory: initial.superCategory,
-            category: initial.category,
-            subCategory: initial.subCategory,
-            subSubCategory: initial.subSubCategory,
+            superCategory: category.superCategory,
+            category: category.category,
+            subCategory: category.subCategory,
+            subSubCategory: category.subSubCategory,
           }
         : undefined,
     });
@@ -66,13 +69,17 @@ const CategoryDetail: React.FC<RouteComponentProps> = ({
         category
       )
     );
-    history.goBack();
+    setDetails(false);
   };
 
   return (
     <>
       <PageHeader
-        title={initial ? `${initial[categoryField]} ${categoryUpdateName} Update` : "New item"}
+        title={
+          category
+            ? `${category[categoryField]} ${categoryUpdateName} Update`
+            : 'New item'
+        }
         subTitle="Category"
       />
       <Form
@@ -80,7 +87,7 @@ const CategoryDetail: React.FC<RouteComponentProps> = ({
         layout="vertical"
         form={form}
         onFinish={onFinish}
-        initialValues={initial}
+        initialValues={category}
       >
         <Row gutter={8}>
           <Col lg={12} xs={24}>
@@ -132,13 +139,13 @@ const CategoryDetail: React.FC<RouteComponentProps> = ({
                   )}
                 </Form.Item>
               ))}
-            <SearchTags form={form} tagsAsStrings={initial?.searchTags} />
+            <SearchTags form={form} tagsAsStrings={category?.searchTags} />
           </Col>
           <Col lg={12} xs={24}>
             <Form.Item label="Image">
               <Upload.ImageUpload
                 maxCount={1}
-                fileList={initial?.image}
+                fileList={category?.image}
                 form={form}
                 formProp="image"
               />
@@ -147,7 +154,7 @@ const CategoryDetail: React.FC<RouteComponentProps> = ({
         </Row>
         <Row gutter={8}>
           <Col>
-            <Button type="default" onClick={() => history.goBack()}>
+            <Button type="default" onClick={() => setDetails(false)}>
               Cancel
             </Button>
           </Col>

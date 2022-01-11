@@ -14,10 +14,13 @@ import { useContext, useEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { deleteTag, fetchTags } from 'services/DiscoClubService';
-import { Creator } from '../../interfaces/Creator';
+import scrollIntoView from 'scroll-into-view';
+import TagDetail from './TagDetail';
 
 const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
-  const detailsPathname = `${location.pathname}/tag`;
+  const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
+  const [details, setDetails] = useState<boolean>(false);
+  const [currentTag, setCurrentTag] = useState<Tag>();
 
   const { usePageFilter } = useContext(AppContext);
 
@@ -86,6 +89,22 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchFilter]);
 
+  useEffect(() => {
+    if (!details) {
+      scrollIntoView(
+        document.querySelector(
+          `.scrollable-row-${lastViewedIndex}`
+        ) as HTMLElement
+      );
+    }
+  }, [details]);
+
+  const editTag = (index: number, tag?: Tag) => {
+    setLastViewedIndex(index);
+    setCurrentTag(tag);
+    setDetails(true);
+  };
+
   const deleteItem = async (id: string) => {
     await doRequest(() => deleteTag({ id }));
     for (let i = 0; i < content.length; i++) {
@@ -108,8 +127,10 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
       title: 'Tag',
       dataIndex: 'tagName',
       width: '15%',
-      render: (value, record: Tag) => (
-        <Link to={{ pathname: detailsPathname, state: record }}>{value}</Link>
+      render: (value, record: Tag, index: number) => (
+        <Link to={location.pathname} onClick={() => editTag(index, record)}>
+          {value}
+        </Link>
       ),
     },
     {
@@ -125,9 +146,9 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
       key: 'action',
       width: '5%',
       align: 'right',
-      render: (value, record) => (
+      render: (value, record, index: number) => (
         <>
-          <Link to={{ pathname: detailsPathname, state: record }}>
+          <Link to={location.pathname} onClick={() => editTag(index, record)}>
             <EditOutlined />
           </Link>
           <Popconfirm
@@ -147,67 +168,73 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
 
   return (
     <>
-      <PageHeader
-        title="Tags"
-        subTitle="List of Tags"
-        extra={[
-          <Button key="1" onClick={() => history.push(detailsPathname)}>
-            New Item
-          </Button>,
-        ]}
-      />
-      <Row align="bottom" justify="space-between">
-        <Col lg={16} xs={24}>
-          <Row gutter={8}>
-            <Col lg={8} xs={16}>
-              <SearchFilterDebounce
-                initialValue={searchFilter}
-                filterFunction={setSearchFilter}
-                label="Search by Name"
-              />
+      {!details && (
+        <>
+          <PageHeader
+            title="Tags"
+            subTitle="List of Tags"
+            extra={[
+              <Button key="1" onClick={() => editTag(1)}>
+                New Item
+              </Button>,
+            ]}
+          />
+          <Row align="bottom" justify="space-between">
+            <Col lg={16} xs={24}>
+              <Row gutter={8}>
+                <Col lg={8} xs={16}>
+                  <SearchFilterDebounce
+                    initialValue={searchFilter}
+                    filterFunction={setSearchFilter}
+                    label="Search by Name"
+                  />
+                </Col>
+              </Row>
+            </Col>
+            <Col>
+              <Button
+                type="primary"
+                onClick={() => getResources(true)}
+                loading={loading}
+                style={{
+                  marginBottom: '20px',
+                  marginRight: '25px',
+                }}
+              >
+                Search
+                <SearchOutlined style={{ color: 'white' }} />
+              </Button>
             </Col>
           </Row>
-        </Col>
-        <Col>
-          <Button
-            type="primary"
-            onClick={() => getResources(true)}
-            loading={loading}
-            style={{
-              marginBottom: '20px',
-              marginRight: '25px',
-            }}
+          <InfiniteScroll
+            dataLength={tags.length}
+            next={fetchData}
+            hasMore={!eof}
+            loader={
+              page !== 0 && (
+                <div className="scroll-message">
+                  <Spin />
+                </div>
+              )
+            }
+            endMessage={
+              <div className="scroll-message">
+                <b>End of results.</b>
+              </div>
+            }
           >
-            Search
-            <SearchOutlined style={{ color: 'white' }} />
-          </Button>
-        </Col>
-      </Row>
-      <InfiniteScroll
-        dataLength={tags.length}
-        next={fetchData}
-        hasMore={!eof}
-        loader={
-          page !== 0 && (
-            <div className="scroll-message">
-              <Spin />
-            </div>
-          )
-        }
-        endMessage={
-          <div className="scroll-message">
-            <b>End of results.</b>
-          </div>
-        }
-      >
-        <Table
-          rowKey="id"
-          columns={columns}
-          dataSource={tags}
-          loading={refreshing || (!tags.length && loading)}
-          pagination={false}
-        />
-      </InfiniteScroll>
+            <Table
+              rowClassName={(_, index) => `scrollable-row-${index}`}
+              rowKey="id"
+              columns={columns}
+              dataSource={tags}
+              loading={refreshing || (!tags.length && loading)}
+              pagination={false}
+            />
+          </InfiniteScroll>
+        </>
+      )}
+      {details && <TagDetail tag={currentTag} setDetails={setDetails} />}
     </>
   );
 };

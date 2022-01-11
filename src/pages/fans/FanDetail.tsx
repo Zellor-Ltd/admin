@@ -20,7 +20,6 @@ import { Currency } from 'interfaces/Currency';
 import { Role } from 'interfaces/Role';
 import { ServerAlias } from 'interfaces/ServerAlias';
 import { useEffect, useState } from 'react';
-import { RouteComponentProps } from 'react-router-dom';
 import {
   fetchCategories,
   fetchCreators,
@@ -60,10 +59,14 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, setDetails }) => {
   useEffect(() => {
     let mounted = true;
     async function getRoles() {
-      const response: any = await fetchProfiles();
-      if (mounted) {
-        setRoles(response.results);
-        setLoading(false);
+      try {
+        const response: any = await fetchProfiles();
+        if (mounted) {
+          setRoles(response.results);
+          setLoading(false);
+        }
+      } catch {
+        message.error("Couldn't fetch roles.");
       }
     }
 

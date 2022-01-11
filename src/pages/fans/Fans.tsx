@@ -18,7 +18,6 @@ import { Link, RouteComponentProps } from 'react-router-dom';
 import { fetchFans } from 'services/DiscoClubService';
 import FanAPITestModal from './FanAPITestModal';
 import FanFeedModal from './FanFeedModal';
-import { Creator } from '../../interfaces/Creator';
 import scrollIntoView from 'scroll-into-view';
 import FanDetail from './FanDetail';
 
@@ -28,8 +27,7 @@ const tagColorByPermission: any = {
   Fan: '',
 };
 
-const Fans: React.FC<RouteComponentProps> = ({ history, location }) => {
-  const detailsPathname = `${location.pathname}/fan`;
+const Fans: React.FC<RouteComponentProps> = ({ location }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
   const [fanAPITest, setFanAPITest] = useState<Fan | null>(null);

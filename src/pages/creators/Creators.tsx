@@ -27,8 +27,7 @@ const tagColorByStatus: any = {
   pending: '',
 };
 
-const Creators: React.FC<RouteComponentProps> = ({ history, location }) => {
-  const detailsPathname = `${location.pathname}/creator`;
+const Creators: React.FC<RouteComponentProps> = ({ location }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [content, setContent] = useState<any[]>([]);
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);

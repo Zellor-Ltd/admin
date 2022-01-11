@@ -29,12 +29,18 @@ import Highlighter from 'react-highlight-words';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { productCategoriesAPI } from 'services/DiscoClubService';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
-import { Creator } from '../../interfaces/Creator';
+import scrollIntoView from 'scroll-into-view';
+import CategoryDetail from './CategoryDetail';
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 
 const Categories: React.FC<RouteComponentProps> = ({ location }) => {
-  const detailsPathname = `${location.pathname}/category`;
+  const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
+  const [details, setDetails] = useState<boolean>(false);
+  const [currentProductCategory, setCurrentProductCategory] =
+    useState<ProductCategory>();
+  const [search, setSearch] = useState<any>();
+
   const [loading, setLoading] = useState<boolean>(false);
   const { fetchAllCategories, allCategories } = useAllCategories({
     setLoading,
@@ -58,6 +64,27 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
   useEffect(() => {
     setContent(allCategories);
   }, [allCategories]);
+
+  useEffect(() => {
+    if (!details) {
+      scrollIntoView(
+        document.querySelector(
+          `.scrollable-row-${lastViewedIndex}`
+        ) as HTMLElement
+      );
+    }
+  }, [details]);
+
+  const editProductCategory = (
+    index: number,
+    productCategory?: ProductCategory,
+    searchLevel?: any
+  ) => {
+    if (searchLevel) setSearch(searchLevel);
+    setLastViewedIndex(index);
+    setCurrentProductCategory(productCategory);
+    setDetails(true);
+  };
 
   const deleteItem = async (id: string) => {
     try {
@@ -226,8 +253,17 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
           categoriesKeys.indexOf(selectedTab)
         ] as keyof ProductCategory
       ),
-      render: (_, record: ProductCategory) => (
-        <Link to={{ pathname: detailsPathname, state: record }}>
+      render: (_, record: ProductCategory, index: number) => (
+        <Link
+          to={location.pathname}
+          onClick={() =>
+            editProductCategory(
+              index,
+              record,
+              categoriesKeys.indexOf(selectedTab)
+            )
+          }
+        >
           {
             record[
               categoriesFields[
@@ -249,14 +285,17 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
       key: 'action',
       width: '5%',
       align: 'right',
-      render: (_, record) => (
+      render: (_, record, index: number) => (
         <>
           <Link
-            to={{
-              pathname: detailsPathname,
-              search: `?category-level=${categoriesKeys.indexOf(selectedTab)}`,
-              state: record,
-            }}
+            to={location.pathname}
+            onClick={() =>
+              editProductCategory(
+                index,
+                record,
+                categoriesKeys.indexOf(selectedTab)
+              )
+            }
           >
             <EditOutlined />
           </Link>
@@ -280,47 +319,59 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   return (
-    <div className="categories">
-      <PageHeader
-        title="Categories"
-        subTitle="List of categories"
-        extra={[
-          <Dropdown
-            overlay={
-              <Menu>
-                {categoriesKeys.map((key, index) => (
-                  <Menu.Item>
-                    <Link
-                      to={{
-                        pathname: detailsPathname,
-                        search: `?category-level=${index}`,
-                      }}
-                    >
-                      {key}
-                    </Link>
-                  </Menu.Item>
-                ))}
-              </Menu>
-            }
-            trigger={['click']}
-          >
-            <Button>New Item</Button>
-          </Dropdown>,
-        ]}
-      />
-      <Tabs onChange={handleTabChange}>
-        {categoriesKeys.map(key => (
-          <Tabs.TabPane tab={key} key={key}>
-            <Table
-              rowKey="id"
-              columns={columns}
-              dataSource={content[key as keyof AllCategories]}
-              loading={loading}
-            />
-          </Tabs.TabPane>
-        ))}
-      </Tabs>
-    </div>
+    <>
+      {!details && (
+        <div className="categories">
+          <PageHeader
+            title="Categories"
+            subTitle="List of categories"
+            extra={[
+              <Dropdown
+                overlay={
+                  <Menu>
+                    {categoriesKeys.map((key, index) => (
+                      <Menu.Item>
+                        <Link
+                          to={location.pathname}
+                          onClick={() =>
+                            editProductCategory(index, undefined, index)
+                          }
+                        >
+                          {key}
+                        </Link>
+                      </Menu.Item>
+                    ))}
+                  </Menu>
+                }
+                trigger={['click']}
+              >
+                <Button>New Item</Button>
+              </Dropdown>,
+            ]}
+          />
+          <Tabs onChange={handleTabChange} activeKey={selectedTab}>
+            {categoriesKeys.map(key => (
+              <Tabs.TabPane tab={key} key={key}>
+                <Table
+                  rowClassName={(_, index) => `scrollable-row-${index}`}
+                  rowKey="id"
+                  columns={columns}
+                  dataSource={content[key as keyof AllCategories]}
+                  loading={loading}
+                />
+              </Tabs.TabPane>
+            ))}
+          </Tabs>
+        </div>
+      )}
+      {details && (
+        <CategoryDetail
+          search={search}
+          category={currentProductCategory}
+          setDetails={setDetails}
+        />
+      )}
+    </>
   );
 };
 

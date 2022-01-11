@@ -10,14 +10,18 @@ import { RouteComponentProps } from 'react-router-dom';
 import { fetchBrands, fetchTags } from 'services/DiscoClubService';
 import SimpleSelect from 'components/SimpleSelect';
 import { SelectOption } from '../../interfaces/SelectOption';
+import scrollIntoView from 'scroll-into-view';
+import Step2 from './Step2';
 
 const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
-  const detailsPathname = `${location.pathname}/step2`;
   const [loading, setLoading] = useState<boolean>(false);
   const { doFetch } = useRequest({ setLoading });
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
   const [isFetchingBrands, setIsFetchingBrands] = useState(false);
   const [brands, setBrands] = useState<Brand[]>([]);
+  const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
+  const [details, setDetails] = useState<boolean>(false);
+  const [currentTags, setCurrentTags] = useState<Tag[]>([]);
 
   const optionsMapping: SelectOption = {
     key: 'id',
@@ -32,11 +36,21 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
     removeFilterFunction,
   } = useFilter<Tag>([]);
 
-  const handleNext = () => {
-    history.push(
-      detailsPathname,
+  useEffect(() => {
+    if (!details) {
+      scrollIntoView(
+        document.querySelector(
+          `.scrollable-row-${lastViewedIndex}`
+        ) as HTMLElement
+      );
+    }
+  }, [details]);
+
+  const editTags = () => {
+    setCurrentTags(
       filteredTags.filter(tag => selectedRowKeys.includes(tag.id))
     );
+    setDetails(true);
   };
 
   const getBrands = async () => {
@@ -93,8 +107,9 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
     );
   };
 
-  const onSelectChange = (selectedRowKeys: any) => {
+  const onSelectChange = (selectedRowKeys: any, selectedRows: any) => {
     setSelectedRowKeys(selectedRowKeys);
+    setLastViewedIndex(filteredTags.indexOf(selectedRows[0]));
   };
 
   const rowSelection = {
@@ -102,51 +117,57 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
   };
 
   return (
-    <div>
-      <PageHeader title="Tags" subTitle="Push tags to groups of users" />
-      <Row align="bottom" justify="space-between">
-        <Col lg={16} xs={24}>
-          <Row gutter={8}>
-            <Col lg={8} xs={16}>
-              <SearchFilter
-                filterFunction={searchFilterFunction}
-                label="Search by Tag Name"
-              />
+    <>
+      {!details && (
+        <div>
+          <PageHeader title="Tags" subTitle="Push tags to groups of users" />
+          <Row align="bottom" justify="space-between">
+            <Col lg={16} xs={24}>
+              <Row gutter={8}>
+                <Col lg={8} xs={16}>
+                  <SearchFilter
+                    filterFunction={searchFilterFunction}
+                    label="Search by Tag Name"
+                  />
+                </Col>
+                <Col lg={8} xs={16}>
+                  <Typography.Title level={5}>Master Brand</Typography.Title>
+                  <SimpleSelect
+                    data={brands}
+                    onChange={(_, brand) => onChangeBrand(brand)}
+                    style={{ width: '100%' }}
+                    selectedOption={''}
+                    optionsMapping={optionsMapping}
+                    placeholder={'Select a master brand'}
+                    loading={isFetchingBrands}
+                    disabled={isFetchingBrands}
+                    allowClear={true}
+                  ></SimpleSelect>
+                </Col>
+              </Row>
             </Col>
-            <Col lg={8} xs={16}>
-              <Typography.Title level={5}>Master Brand</Typography.Title>
-              <SimpleSelect
-                data={brands}
-                onChange={(_, brand) => onChangeBrand(brand)}
-                style={{ width: '100%' }}
-                selectedOption={''}
-                optionsMapping={optionsMapping}
-                placeholder={'Select a master brand'}
-                loading={isFetchingBrands}
-                disabled={isFetchingBrands}
-                allowClear={true}
-              ></SimpleSelect>
+            <Col style={{ marginBottom: '20px', marginRight: '25px' }}>
+              <Button
+                type="primary"
+                disabled={!selectedRowKeys.length}
+                onClick={editTags}
+              >
+                Next
+              </Button>
             </Col>
           </Row>
-        </Col>
-        <Col style={{ marginBottom: '20px', marginRight: '25px' }}>
-          <Button
-            type="primary"
-            disabled={!selectedRowKeys.length}
-            onClick={handleNext}
-          >
-            Next
-          </Button>
-        </Col>
-      </Row>
-      <Table
-        rowSelection={rowSelection}
-        rowKey="id"
-        columns={columns}
-        dataSource={filteredTags}
-        loading={loading}
-      />
-    </div>
+          <Table
+            rowClassName={(_, index) => `scrollable-row-${index}`}
+            rowSelection={rowSelection}
+            rowKey="id"
+            columns={columns}
+            dataSource={filteredTags}
+            loading={loading}
+          />
+        </div>
+      )}
+      {details && <Step2 selectedTags={currentTags} setDetails={setDetails} />}
+    </>
   );
 };
 

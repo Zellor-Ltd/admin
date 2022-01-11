@@ -3,9 +3,7 @@ import { RichTextEditor } from 'components/RichTextEditor';
 import { formatMoment } from 'helpers/formatMoment';
 import { useRequest } from 'hooks/useRequest';
 import { useState } from 'react';
-import { RouteComponentProps } from 'react-router-dom';
 import { savePromoDisplay } from 'services/DiscoClubService';
-import PromoDisplay from './PromoDisplay';
 interface PromoDisplayDetailProps {
   promoDisplay: any;
   setDetails: any;

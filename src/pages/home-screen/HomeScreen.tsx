@@ -1,5 +1,5 @@
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import { Button, Col, PageHeader, Popconfirm, Table } from 'antd';
+import { Button, PageHeader, Popconfirm, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { useRequest } from '../../hooks/useRequest';
 import { Banner } from '../../interfaces/Banner';

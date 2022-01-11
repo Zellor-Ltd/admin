@@ -2,7 +2,6 @@ import { Button, Col, Form, Input, message, PageHeader, Row } from 'antd';
 import { Order } from 'interfaces/Order';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { RouteComponentProps } from 'react-router-dom';
 import { saveOrder } from 'services/DiscoClubService';
 interface OrderDetailProps {
   order: Order | undefined;

@@ -1,9 +1,17 @@
-import { Button, Col, Form, Input, PageHeader, Row, Select } from 'antd';
+import {
+  Button,
+  Col,
+  Form,
+  Input,
+  message,
+  PageHeader,
+  Row,
+  Select,
+} from 'antd';
 import { RichTextEditor } from 'components/RichTextEditor';
 import { useRequest } from 'hooks/useRequest';
 import { Promotion } from 'interfaces/Promotion';
 import { useCallback, useEffect, useState } from 'react';
-import { RouteComponentProps } from 'react-router-dom';
 import { fetchVideoFeed2, savePromotion } from 'services/DiscoClubService';
 interface PromotionDetailProps {
   promotion: Promotion | undefined;
@@ -31,8 +39,11 @@ const PromotionDetail: React.FC<PromotionDetailProps> = ({
   }, []);
 
   const getResources = useCallback(async () => {
-    await getPackages();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    try {
+      await getPackages();
+    } catch {
+      message.error("Couldn't fetch packages.");
+    } // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

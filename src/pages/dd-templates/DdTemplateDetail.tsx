@@ -1,12 +1,17 @@
 import { Button, Col, Form, Input, PageHeader, Row } from 'antd';
 import { useRequest } from 'hooks/useRequest';
+import { DdTemplate } from 'interfaces/DdTemplate';
 import { useState } from 'react';
-import { RouteComponentProps } from 'react-router-dom';
 import { saveDdTemplate } from 'services/DiscoClubService';
+interface DdTemplatesDetailProps {
+  template: DdTemplate | undefined;
+  setDetails: any;
+}
 
-const DdTemplatesDetail: React.FC<RouteComponentProps> = props => {
-  const { history, location } = props;
-  const initial: any = location.state;
+const DdTemplatesDetail: React.FC<DdTemplatesDetailProps> = ({
+  template,
+  setDetails,
+}) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [form] = Form.useForm();
   const { doRequest } = useRequest({ setLoading });
@@ -14,20 +19,20 @@ const DdTemplatesDetail: React.FC<RouteComponentProps> = props => {
   const onFinish = async () => {
     const ddTemplate = form.getFieldsValue(true);
     await doRequest(() => saveDdTemplate(ddTemplate));
-    history.goBack();
+    setDetails(false);
   };
 
   return (
     <>
       <PageHeader
-        title={initial ? `${initial.tagName} Template Update` : "New Item"}
+        title={template ? `${template.tagName} Template Update` : 'New Item'}
         subTitle="Disco Dollar Template "
       />
       <Form
         name="ddTemplateForm"
         layout="vertical"
         form={form}
-        initialValues={initial}
+        initialValues={template}
         onFinish={onFinish}
       >
         <Row gutter={8}>
@@ -72,7 +77,7 @@ const DdTemplatesDetail: React.FC<RouteComponentProps> = props => {
         </Row>
         <Row gutter={8}>
           <Col>
-            <Button type="default" onClick={() => history.goBack()}>
+            <Button type="default" onClick={() => setDetails(false)}>
               Cancel
             </Button>
           </Col>

@@ -1,5 +1,5 @@
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import { Button, Col, PageHeader, Popconfirm, Row, Table, Tag } from 'antd';
+import { Button, Col, PageHeader, Popconfirm, Row, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { SearchFilter } from '../../components/SearchFilter';
 import useFilter from '../../hooks/useFilter';
@@ -16,16 +16,7 @@ import CopyIdToClipboard from '../../components/CopyIdToClipboard';
 import ProductBrandDetail from './ProductBrandDetail';
 import scrollIntoView from 'scroll-into-view';
 
-const tagColorByStatus: any = {
-  approved: 'green',
-  rejected: 'red',
-  pending: '',
-};
-
-const ProductBrands: React.FC<RouteComponentProps> = ({
-  history,
-  location,
-}) => {
+const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const { doFetch, doRequest } = useRequest({ setLoading });
   const [content, setContent] = useState<any[]>([]);

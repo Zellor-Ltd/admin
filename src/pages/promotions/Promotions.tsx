@@ -16,7 +16,7 @@ import { ColumnsType } from 'antd/lib/table';
 import { SearchFilter } from 'components/SearchFilter';
 import useFilter from 'hooks/useFilter';
 import { useRequest } from 'hooks/useRequest';
-import { Promotion, PromotionAndStatusList } from 'interfaces/Promotion';
+import { Promotion } from 'interfaces/Promotion';
 import moment from 'moment';
 import { useCallback, useEffect, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
@@ -29,8 +29,7 @@ import CopyIdToClipboard from 'components/CopyIdToClipboard';
 import scrollIntoView from 'scroll-into-view';
 import PromotionDetail from './PromotionDetail';
 
-const Promotions: React.FC<RouteComponentProps> = ({ history, location }) => {
-  const detailsPathname = `${location.pathname}/promotion`;
+const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
   const [tableloading, setTableLoading] = useState<boolean>(false);
   const { doRequest, doFetch } = useRequest({ setLoading: setTableLoading });
   const [promoStatusList, setPromoStatusList] = useState<any>();

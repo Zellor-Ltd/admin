@@ -15,18 +15,19 @@ import { Product } from 'interfaces/Product';
 import { Tag } from 'interfaces/Tag';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { RouteComponentProps } from 'react-router-dom';
 import { fetchBrands, fetchProducts, saveTag } from 'services/DiscoClubService';
+interface TagDetailProps {
+  tag: Tag | undefined;
+  setDetails: any;
+}
 
-const TagDetail: React.FC<RouteComponentProps> = props => {
-  const { history, location } = props;
-  const initial = location.state as unknown as Tag | undefined;
+const TagDetail: React.FC<TagDetailProps> = ({ tag, setDetails }) => {
   const [loading, setLoading] = useState(false);
 
   const [products, setProducts] = useState<Product[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [selectedBrand, setSelectedBrand] = useState<string>(
-    initial?.brand?.id || ''
+    tag?.brand?.id || ''
   );
   const [form] = Form.useForm();
 
@@ -40,8 +41,8 @@ const TagDetail: React.FC<RouteComponentProps> = props => {
     form.setFieldsValue({
       position: [
         {
-          x: initial?.position?.[0]?.x || 50,
-          y: initial?.position?.[0]?.y || 50,
+          x: tag?.position?.[0]?.x || 50,
+          y: tag?.position?.[0]?.y || 50,
         },
       ],
     });
@@ -66,7 +67,7 @@ const TagDetail: React.FC<RouteComponentProps> = props => {
     return () => {
       mounted = false;
     };
-  }, [initial, form]);
+  }, [tag, form]);
 
   const onFinish = () => {
     form.validateFields().then(async () => {
@@ -78,7 +79,7 @@ const TagDetail: React.FC<RouteComponentProps> = props => {
         await saveTag(tag);
         setLoading(false);
         message.success('Register updated with success.');
-        history.goBack();
+        setDetails(false);
       } catch (e) {
         console.error(e);
         setLoading(false);
@@ -102,14 +103,14 @@ const TagDetail: React.FC<RouteComponentProps> = props => {
   return (
     <>
       <PageHeader
-        title={initial ? `${initial?.tagName} Update` : 'New Tag'}
+        title={tag ? `${tag?.tagName} Update` : 'New Tag'}
         subTitle="Tag"
       />
       <Form
         name="tagForm"
         layout="vertical"
         form={form}
-        initialValues={initial}
+        initialValues={tag}
         onFinish={onFinish}
         className="tags"
       >
@@ -228,7 +229,7 @@ const TagDetail: React.FC<RouteComponentProps> = props => {
         </Input.Group>
         <Row gutter={8}>
           <Col>
-            <Button type="default" onClick={() => history.goBack()}>
+            <Button type="default" onClick={() => setDetails(false)}>
               Cancel
             </Button>
           </Col>
@@ -236,7 +237,7 @@ const TagDetail: React.FC<RouteComponentProps> = props => {
             <Button
               type="primary"
               htmlType="submit"
-              disabled={!!initial}
+              disabled={!!tag}
               loading={loading}
             >
               Save Changes
