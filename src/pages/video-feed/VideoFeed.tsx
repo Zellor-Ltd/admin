@@ -12,7 +12,6 @@ import {
   InputNumber,
   Layout,
   message,
-  Modal,
   PageHeader,
   Popconfirm,
   Radio,
@@ -36,7 +35,6 @@ import {
   fetchCategories,
   fetchCreators,
   fetchVideoFeed,
-  rebuildAllFeedd,
   saveVideoFeed,
 } from 'services/DiscoClubService';
 import useFilter from 'hooks/useFilter';
@@ -109,6 +107,7 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
 
   const [pageTitle, setPageTitle] = useState<string>('Video Update');
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const { doRequest } = useRequest({ setLoading });
 
@@ -124,6 +123,62 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
     addFilterFunction,
     removeFilterFunction,
   } = useFilter<FeedItem>([]);
+
+  useEffect(() => {
+    getDetailsResources();
+    if (currentItem && currentItem.hashtags) {
+      setHashtags(currentItem.hashtags);
+    } else {
+      setHashtags([]);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (currentItem?.ageMin && currentItem?.ageMax)
+      setAgeRange([currentItem?.ageMin, currentItem?.ageMax]);
+  }, [currentItem]);
+
+  useEffect(() => {
+    if (showBrandForm)
+      setPageTitle(
+        `Store ${
+          selectedBrandIndex > -1
+            ? `${selectedBrandIndex + 1} Update`
+            : 'Creation'
+        }`
+      );
+    else if (showTagForm)
+      setPageTitle(
+        `Tag ${
+          selectedTagIndex > -1 ? `${selectedTagIndex + 1} Update` : 'Creation'
+        }`
+      );
+    else {
+      setPageTitle(
+        currentItem
+          ? currentItem?.title.length > 50
+            ? `${currentItem.title.slice(0, 50)} (...) Update`
+            : `${currentItem.title} Update`
+          : 'Update'
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedSegment, showBrandForm, showTagForm, currentItem]);
+
+  useEffect(() => {
+    feedForm.setFieldsValue(currentItem);
+    segmentForm.setFieldsValue(currentItem);
+  }, [currentItem]);
+
+  useEffect(() => {
+    if (!isEditing) {
+      scrollIntoView(
+        document.querySelector(
+          `.scrollable-row-${lastViewedIndex}`
+        ) as HTMLElement
+      );
+    }
+  }, [isEditing]);
 
   const fetch = async (_brand?: Brand) => {
     setLoading(true);
@@ -182,52 +237,6 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
     setLoading(false);
   };
 
-  useEffect(() => {
-    getDetailsResources();
-    if (currentItem && currentItem.hashtags) {
-      setHashtags(currentItem.hashtags);
-    } else {
-      setHashtags([]);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (currentItem?.ageMin && currentItem?.ageMax)
-      setAgeRange([currentItem?.ageMin, currentItem?.ageMax]);
-  }, [currentItem]);
-
-  useEffect(() => {
-    if (showBrandForm)
-      setPageTitle(
-        `Store ${
-          selectedBrandIndex > -1
-            ? `${selectedBrandIndex + 1} Update`
-            : 'Creation'
-        }`
-      );
-    else if (showTagForm)
-      setPageTitle(
-        `Tag ${
-          selectedTagIndex > -1 ? `${selectedTagIndex + 1} Update` : 'Creation'
-        }`
-      );
-    else {
-      setPageTitle(
-        currentItem
-          ? currentItem?.title.length > 50
-            ? `${currentItem.title.slice(0, 50)} (...) Update`
-            : `${currentItem.title} Update`
-          : 'Update'
-      );
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedSegment, showBrandForm, showTagForm, currentItem]);
-
-  useEffect(() => {
-    feedForm.setFieldsValue(currentItem);
-    segmentForm.setFieldsValue(currentItem);
-  }, [currentItem]);
-
   const onFinish = async () => {
     const item: FeedItem = feedForm.getFieldsValue(true);
     item.goLiveDate = moment(item.goLiveDate).format();
@@ -249,16 +258,6 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
     refreshItem(item);
     setIsEditing(false);
   };
-
-  useEffect(() => {
-    if (!isEditing) {
-      scrollIntoView(
-        document.querySelector(
-          `.scrollable-row-${lastViewedIndex}`
-        ) as HTMLElement
-      );
-    }
-  }, [isEditing]);
 
   const onChangeAge = (value: [number, number]) => {
     feedForm.setFieldsValue({
@@ -320,24 +319,6 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
     }
   };
 
-  const onRebuildFeed = async () => {
-    await rebuildAllFeedd();
-    message.success('All feeds was rebuilt');
-  };
-
-  const onRebuildFeedClick = () => {
-    Modal.error({
-      title: 'Caution!!',
-      content:
-        "This action can't be undone and will remove and then generate feed for all Disco Fans. Are you sure you want to proceed?",
-      onOk: onRebuildFeed,
-      okText: 'Rebuild',
-      okButtonProps: { danger: true },
-      closable: true,
-      onCancel: () => {},
-    });
-  };
-
   const onChangeBrand = async (_selectedBrand: Brand | undefined) => {
     if (loaded) {
       if (!_selectedBrand) {
@@ -389,6 +370,7 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
   const onCancel = () => {
     resetForm();
     setIsEditing(false);
+    setVideoTab('Video Details');
   };
 
   const newItem = () => {
@@ -428,6 +410,10 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
       _id: '',
     };
     setCurrentItem(template);
+  };
+
+  const onPageChange = (page: number) => {
+    setCurrentPage(page);
   };
 
   const columns: ColumnsType<FeedItem> = [
@@ -1100,6 +1086,7 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
               rowKey="id"
               dataSource={filterFeed()}
               loading={loading}
+              pagination={{ current: currentPage, onChange: onPageChange }}
             />
           </Content>
         </div>

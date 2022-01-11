@@ -87,12 +87,16 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     settings: { order: ordersSettings = [] },
   } = useSelector((state: any) => state.settings);
 
-  const handleSelectChange = async (value: string, orderIndex: number) => {
+  const handleSelectChange = async (
+    value: string,
+    order: Order,
+    orderIndex: number
+  ) => {
     const currentOrderUpdateList = [...orderUpdateList];
     currentOrderUpdateList[orderIndex] = true;
     setOrderUpdateList(currentOrderUpdateList);
     await saveOrder({
-      ...orders[orderIndex],
+      ...order,
       stage: value,
     });
 
@@ -291,13 +295,13 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       dataIndex: 'stage',
       width: '15%',
       align: 'center',
-      render: (value: string, _, index) => (
+      render: (value: string, order, index) => (
         <Select
           loading={orderUpdateList[index]}
           disabled={orderUpdateList[index]}
           defaultValue={value}
           style={{ width: '175px' }}
-          onChange={value => handleSelectChange(value, index)}
+          onChange={value => handleSelectChange(value, order, index)}
         >
           {ordersSettings.map((ordersSetting: any) => (
             <Select.Option
