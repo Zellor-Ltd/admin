@@ -211,10 +211,10 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
 
   const titleColumns: ColumnType<FeedItem> = {
     title: 'Feed',
-    dataIndex: 'title',
+    dataIndex: 'videoType',
     width: '70%',
     align: 'center',
-    render: (title, feedItem) => (
+    render: (videoType, feedItem) => (
       <>
         <Row justify="space-between" align="middle">
           <Col span={6}>
@@ -227,7 +227,14 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
               }
             ></Image>
           </Col>
-          <Col span={18}>{title}</Col>
+          <Col span={18}>
+            {feedItem.title}
+            <br />
+            <br />
+            <span style={{ fontSize: '12px', fontWeight: 'bold' }}>
+              {videoType ? videoType.join(', ') : ''}
+            </span>
+          </Col>
         </Row>
       </>
     ),
