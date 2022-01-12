@@ -35,12 +35,20 @@ import { ColumnsType } from 'antd/lib/table';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
 import moment from 'moment';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import scrollIntoView from 'scroll-into-view';
 interface BrandDetailProps {
-  brand: Brand | undefined;
-  setDetails: any;
+  index?: number;
+  onSave?: (record: Brand, index?: number) => void;
+  onCancel?: () => void;
+  brand?: Brand;
 }
 
-const BrandDetail: React.FC<BrandDetailProps> = ({ brand, setDetails }) => {
+const BrandDetail: React.FC<BrandDetailProps> = ({
+  index,
+  onSave,
+  onCancel,
+  brand,
+}) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [vaults, setVaults] = useState<BrandVault[]>([]);
   const [currentVault, setCurrentVault] = useState<BrandVault>();
@@ -50,6 +58,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({ brand, setDetails }) => {
   const { doRequest } = useRequest({ setLoading });
   const [form] = Form.useForm();
   const [vaultForm] = Form.useForm();
+  const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
 
   const {
     settings: { checkoutType = [] },
@@ -77,9 +86,19 @@ const BrandDetail: React.FC<BrandDetailProps> = ({ brand, setDetails }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTabKey]);
 
-  const deleteItem = async (vault: BrandVault) => {
+  useEffect(() => {
+    if (!vaultOptions) {
+      scrollIntoView(
+        document.querySelector(
+          `.scrollable-row-${lastViewedIndex}`
+        ) as HTMLElement
+      );
+    }
+  }, [vaultOptions]);
+
+  const deleteItem = async (vault: BrandVault, index: number) => {
     deleteBrandVault(vault.id);
-    setActiveTabKey('Details');
+    setVaults(prev => [...prev.slice(0, index), ...prev.slice(index + 1)]);
   };
 
   const saveItem = async (vault: any) => {
@@ -106,13 +125,15 @@ const BrandDetail: React.FC<BrandDetailProps> = ({ brand, setDetails }) => {
     setActiveTabKey('Secrets');
   };
 
-  const editVault = (vault: any) => {
+  const editVault = (vault: any, index: number) => {
+    setLastViewedIndex(index);
     setCurrentVault(vault);
-    setVaultOptions(true);
+    vaultForm.resetFields();
     setVaultOptions(true);
   };
 
   const newItem = () => {
+    setLastViewedIndex(vaults.length);
     const template = {
       shopName: brand ? brand.shopName : '',
       id: '',
@@ -121,6 +142,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({ brand, setDetails }) => {
       token: '',
     };
     setCurrentVault(template as BrandVault);
+    vaultForm.resetFields();
     setVaultOptions(true);
   };
 
@@ -167,16 +189,16 @@ const BrandDetail: React.FC<BrandDetailProps> = ({ brand, setDetails }) => {
       key: 'action',
       width: '10%',
       align: 'right',
-      render: (_, record: BrandVault) => (
+      render: (_, record: BrandVault, index: number) => (
         <>
-          <Button type="link" onClick={() => editVault(record)}>
+          <Button type="link" onClick={() => editVault(record, index)}>
             <EditOutlined />
           </Button>
           <Popconfirm
             title="Are you sure？"
             okText="Yes"
             cancelText="No"
-            onConfirm={() => deleteItem(record)}
+            onConfirm={() => deleteItem(record, index)}
           >
             <Button type="link" style={{ padding: 0, margin: 6 }}>
               <DeleteOutlined />
@@ -190,11 +212,11 @@ const BrandDetail: React.FC<BrandDetailProps> = ({ brand, setDetails }) => {
   const onFinish = async () => {
     setLoading(true);
     try {
-      const brand = form.getFieldsValue(true);
-      await saveBrand(brand);
-      setLoading(false);
+      const formBrand = form.getFieldsValue(true);
+      await saveBrand(formBrand);
       message.success('Register updated with success.');
-      setDetails(false);
+      setLoading(false);
+      onSave?.(formBrand, index);
     } catch (error) {
       setLoading(false);
     }
@@ -221,9 +243,6 @@ const BrandDetail: React.FC<BrandDetailProps> = ({ brand, setDetails }) => {
 
   const returnFromVault = () => {
     setVaultOptions(false);
-    if (currentVault?.id) {
-      setDetails(false);
-    }
   };
 
   const BrandVaultForm: React.FC<any> = () => {
@@ -238,7 +257,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({ brand, setDetails }) => {
                     label="Key"
                     name="key"
                     rules={[{ required: true }]}
-                    initialValue={currentVault?.key || ''}
+                    initialValue={currentVault?.key}
                   >
                     <Input />
                   </Form.Item>
@@ -258,8 +277,9 @@ const BrandDetail: React.FC<BrandDetailProps> = ({ brand, setDetails }) => {
                     label="API Shop Name"
                     name="apiShopName"
                     rules={[{ required: true }]}
+                    initialValue={currentVault?.apiShopName}
                   >
-                    <Input defaultValue={currentVault?.apiShopName} />
+                    <Input />
                   </Form.Item>
                 </Col>
                 <Col lg={16} xs={24}>
@@ -267,8 +287,9 @@ const BrandDetail: React.FC<BrandDetailProps> = ({ brand, setDetails }) => {
                     label="Token"
                     name="token"
                     rules={[{ required: true }]}
+                    initialValue={currentVault?.token}
                   >
-                    <Input type="password" defaultValue={currentVault?.token} />
+                    <Input type="password" />
                   </Form.Item>
                 </Col>
               </Col>
@@ -302,6 +323,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({ brand, setDetails }) => {
             <Row gutter={8}>
               <Col span={24}>
                 <Table
+                  rowClassName={(_, index) => `scrollable-row-${index}`}
                   rowKey="id"
                   columns={columns}
                   dataSource={vaults}
@@ -606,7 +628,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({ brand, setDetails }) => {
         {activeTabKey !== 'Secrets' && (
           <Row gutter={8}>
             <Col>
-              <Button type="default" onClick={() => setDetails(false)}>
+              <Button type="default" onClick={() => onCancel?.()}>
                 Cancel
               </Button>
             </Col>

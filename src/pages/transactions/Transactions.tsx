@@ -84,13 +84,18 @@ const Transactions: React.FC<RouteComponentProps> = () => {
     },
   ];
 
-  const onChangeFan = async (_selectedFan: Fan) => {
-    setSelectedFan(_selectedFan);
+  const onChangeFan = async (_selectedFan?: Fan) => {
     setTableLoading(true);
-    const { results }: any = await fetchWalletTransactions(_selectedFan.id);
+    if (_selectedFan) {
+      setSelectedFan(_selectedFan);
+      const { results }: any = await fetchWalletTransactions(_selectedFan.id);
+      setTransactions(results);
+      setFilteredTransactions(results);
+    } else {
+      setTransactions([]);
+      setFilteredTransactions([]);
+    }
     setTableLoading(false);
-    setTransactions(results);
-    setFilteredTransactions(results);
   };
 
   const handleDateChange = (values: any) => {

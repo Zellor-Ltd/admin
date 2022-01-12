@@ -99,7 +99,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
   };
 
   const filterBrand = () => {
-    return brands.filter(brand =>
+    return content.filter(brand =>
       brand.brandName?.toUpperCase().includes(filterText.toUpperCase())
     );
   };
@@ -131,6 +131,20 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
     setLastViewedIndex(index);
     setCurrentBrand(brand);
     setDetails(true);
+  };
+
+  const refreshItem = (record: Brand, index?: number) => {
+    content[index ?? lastViewedIndex] = record;
+    setContent([...content]);
+  };
+
+  const onSaveBrand = (record: Brand, index?: number) => {
+    refreshItem(record, index);
+    setDetails(false);
+  };
+
+  const onCancelBrand = () => {
+    setDetails(false);
   };
 
   const columns: ColumnsType<Brand> = [
@@ -277,7 +291,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
             title="Master Brands"
             subTitle="List of Master Brands"
             extra={[
-              <Button key="1" onClick={() => editBrand(1)}>
+              <Button key="1" onClick={() => editBrand(filterBrand().length)}>
                 New Item
               </Button>,
             ]}
@@ -302,7 +316,12 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
         </>
       )}
       {details && (
-        <BrandDetail brand={currentBrand as Brand} setDetails={setDetails} />
+        <BrandDetail
+          index={lastViewedIndex}
+          onSave={onSaveBrand}
+          onCancel={onCancelBrand}
+          brand={currentBrand as Brand}
+        />
       )}
     </>
   );
