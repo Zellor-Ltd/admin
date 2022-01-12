@@ -17,12 +17,14 @@ import { TwitterPicker } from 'react-color';
 import { ProductBrand } from 'interfaces/ProductBrand';
 interface ProductBrandDetailProps {
   productBrand: ProductBrand | undefined;
-  setDetails: any;
+  onSave?: (record: ProductBrand) => void;
+  onCancel?: () => void;
 }
 
 const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
   productBrand,
-  setDetails,
+  onSave,
+  onCancel,
 }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [form] = Form.useForm();
@@ -30,9 +32,9 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
   const [activeTabKey, setActiveTabKey] = React.useState('Details');
 
   const onFinish = async () => {
-    const productBrand = form.getFieldsValue(true);
-    await doRequest(() => saveProductBrand(productBrand));
-    setDetails(false);
+    const formProductBrand = form.getFieldsValue(true);
+    await doRequest(() => saveProductBrand(formProductBrand));
+    onSave?.(formProductBrand);
   };
 
   const changeTab = (activeKey: string) => {
@@ -229,7 +231,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
           </Tabs>
           <Row gutter={8}>
             <Col>
-              <Button type="default" onClick={() => setDetails(false)}>
+              <Button type="default" onClick={() => onCancel?.()}>
                 Cancel
               </Button>
             </Col>

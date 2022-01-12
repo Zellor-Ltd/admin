@@ -5,21 +5,23 @@ import { useState } from 'react';
 import { saveDdTemplate } from 'services/DiscoClubService';
 interface DdTemplatesDetailProps {
   template: DdTemplate | undefined;
-  setDetails: any;
+  onSave?: (record: DdTemplate) => void;
+  onCancel?: () => void;
 }
 
 const DdTemplatesDetail: React.FC<DdTemplatesDetailProps> = ({
   template,
-  setDetails,
+  onSave,
+  onCancel,
 }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [form] = Form.useForm();
   const { doRequest } = useRequest({ setLoading });
 
   const onFinish = async () => {
-    const ddTemplate = form.getFieldsValue(true);
-    await doRequest(() => saveDdTemplate(ddTemplate));
-    setDetails(false);
+    const formDdTemplate = form.getFieldsValue(true);
+    await doRequest(() => saveDdTemplate(formDdTemplate));
+    onSave?.(formDdTemplate);
   };
 
   return (
@@ -77,7 +79,7 @@ const DdTemplatesDetail: React.FC<DdTemplatesDetailProps> = ({
         </Row>
         <Row gutter={8}>
           <Col>
-            <Button type="default" onClick={() => setDetails(false)}>
+            <Button type="default" onClick={() => onCancel?.()}>
               Cancel
             </Button>
           </Col>

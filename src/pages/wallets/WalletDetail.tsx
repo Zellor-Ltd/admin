@@ -20,15 +20,13 @@ import { useEffect, useState } from 'react';
 import { fetchTransactionsPerBrand } from 'services/DiscoClubService';
 import WalletEdit from './WalletEdit';
 import * as H from 'history';
+import { Wallet } from 'interfaces/Wallet';
 interface WalletDetailProps {
   location: H.Location<H.LocationState>;
-  setDetails: any;
+  onCancel?: () => void;
 }
 
-const WalletDetail: React.FC<WalletDetailProps> = ({
-  location,
-  setDetails,
-}) => {
+const WalletDetail: React.FC<WalletDetailProps> = ({ location, onCancel }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const { doFetch } = useRequest({ setLoading: setLoading });
   const initial = location.state as unknown as WalletDetailParams;
@@ -143,7 +141,7 @@ const WalletDetail: React.FC<WalletDetailProps> = ({
       />
       <Row gutter={8}>
         <Col>
-          <Button type="default" onClick={() => setDetails(false)}>
+          <Button type="default" onClick={() => onCancel?.()}>
             Go Back
           </Button>
         </Col>

@@ -18,10 +18,11 @@ import { useSelector } from 'react-redux';
 import { fetchBrands, fetchProducts, saveTag } from 'services/DiscoClubService';
 interface TagDetailProps {
   tag: Tag | undefined;
-  setDetails: any;
+  onSave?: (record: Tag) => void;
+  onCancel?: () => void;
 }
 
-const TagDetail: React.FC<TagDetailProps> = ({ tag, setDetails }) => {
+const TagDetail: React.FC<TagDetailProps> = ({ tag, onSave, onCancel }) => {
   const [loading, setLoading] = useState(false);
 
   const [products, setProducts] = useState<Product[]>([]);
@@ -73,13 +74,15 @@ const TagDetail: React.FC<TagDetailProps> = ({ tag, setDetails }) => {
     form.validateFields().then(async () => {
       setLoading(true);
       try {
-        const tag = form.getFieldsValue(true);
-        tag.product = products.find(product => product.id === tag.product?.id);
-        tag.brand = brands.find(brand => brand.id === tag.brand?.id);
-        await saveTag(tag);
+        const formTag = form.getFieldsValue(true);
+        formTag.product = products.find(
+          product => product.id === formTag.product?.id
+        );
+        formTag.brand = brands.find(brand => brand.id === formTag.brand?.id);
+        await saveTag(formTag);
         setLoading(false);
         message.success('Register updated with success.');
-        setDetails(false);
+        onSave?.(formTag);
       } catch (e) {
         console.error(e);
         setLoading(false);
@@ -229,7 +232,7 @@ const TagDetail: React.FC<TagDetailProps> = ({ tag, setDetails }) => {
         </Input.Group>
         <Row gutter={8}>
           <Col>
-            <Button type="default" onClick={() => setDetails(false)}>
+            <Button type="default" onClick={() => onCancel?.()}>
               Cancel
             </Button>
           </Col>

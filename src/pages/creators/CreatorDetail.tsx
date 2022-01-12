@@ -22,17 +22,20 @@ import {
   Typography,
 } from 'antd';
 import { Upload } from 'components';
+import { Creator } from 'interfaces/Creator';
 import { ServerAlias } from 'interfaces/ServerAlias';
 import { useEffect, useState } from 'react';
 import { fetchServersList, saveCreator } from 'services/DiscoClubService';
 interface CreatorDetailProps {
   creator: any;
-  setDetails: any;
+  onSave?: (record: Creator) => void;
+  onCancel?: () => void;
 }
 
 const CreatorDetail: React.FC<CreatorDetailProps> = ({
   creator,
-  setDetails,
+  onSave,
+  onCancel,
 }) => {
   const [loading, setLoading] = useState(false);
   const [ageRange, setageRange] = useState<[number, number]>([12, 100]);
@@ -43,11 +46,11 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
   const onFinish = async () => {
     setLoading(true);
     try {
-      const creator = form.getFieldsValue(true);
-      await saveCreator(creator);
+      const formCreator = form.getFieldsValue(true);
+      await saveCreator(formCreator);
       setLoading(false);
       message.success('Register updated with success.');
-      setDetails(false);
+      onSave?.(formCreator);
     } catch (error) {
       console.error(error);
       setLoading(false);
@@ -263,7 +266,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
         </Tabs>
         <Row gutter={8}>
           <Col>
-            <Button type="default" onClick={() => setDetails(false)}>
+            <Button type="default" onClick={() => onCancel?.()}>
               Cancel
             </Button>
           </Col>

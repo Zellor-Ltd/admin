@@ -167,6 +167,20 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
     );
   };
 
+  const refreshItem = (record: Creator) => {
+    filteredCreators[lastViewedIndex] = record;
+    setCreators([...filteredCreators]);
+  };
+
+  const onSaveCreator = (record: Creator) => {
+    refreshItem(record);
+    setDetails(false);
+  };
+
+  const onCancelCreator = () => {
+    setDetails(false);
+  };
+
   return (
     <>
       {!details && (
@@ -213,7 +227,11 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
         </div>
       )}
       {details && (
-        <CreatorDetail creator={currentCreator} setDetails={setDetails} />
+        <CreatorDetail
+          creator={currentCreator}
+          onSave={onSaveCreator}
+          onCancel={onCancelCreator}
+        />
       )}
     </>
   );

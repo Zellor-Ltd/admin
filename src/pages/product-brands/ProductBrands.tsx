@@ -150,6 +150,20 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
     );
   };
 
+  const refreshItem = (record: ProductBrand) => {
+    filteredProductBrands[lastViewedIndex] = record;
+    setProductBrands([...filteredProductBrands]);
+  };
+
+  const onSaveBrand = (record: ProductBrand) => {
+    refreshItem(record);
+    setDetails(false);
+  };
+
+  const onCancelBrand = () => {
+    setDetails(false);
+  };
+
   return (
     <>
       {!details && (
@@ -186,7 +200,8 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
       {details && (
         <ProductBrandDetail
           productBrand={currentProductBrand as ProductBrand}
-          setDetails={setDetails}
+          onSave={onSaveBrand}
+          onCancel={onCancelBrand}
         />
       )}
     </>

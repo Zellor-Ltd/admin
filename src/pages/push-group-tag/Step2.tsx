@@ -9,10 +9,10 @@ import { fetchFanGroups } from 'services/DiscoClubService';
 import { TagBox } from './TagBox';
 interface Step2Props {
   selectedTags: Tag[];
-  setDetails: any;
+  onReturn?: () => void;
 }
 
-const Step2: React.FC<Step2Props> = ({ selectedTags, setDetails }) => {
+const Step2: React.FC<Step2Props> = ({ selectedTags, onReturn }) => {
   const [selectedFanGroup, setSelectedFanGroup] = useState<FanGroup>();
   const [fanGroups, setFanGroups] = useState<FanGroup[]>([]);
   const [isFetchingFanGroups, setIsFetchingFanGroups] = useState(false);
@@ -73,7 +73,7 @@ const Step2: React.FC<Step2Props> = ({ selectedTags, setDetails }) => {
       </Row>
       <Row gutter={8} style={{ marginTop: '16px' }}>
         <Col>
-          <Button type="default" onClick={() => setDetails(false)}>
+          <Button type="default" onClick={() => onReturn?.()}>
             Back
           </Button>
         </Col>

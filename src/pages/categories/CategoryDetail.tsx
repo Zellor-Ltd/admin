@@ -13,23 +13,25 @@ import React, { useEffect, useState } from 'react';
 import { productCategoriesAPI } from 'services/DiscoClubService';
 import SearchTags from './SearchTags';
 interface CategoryDetailProps {
-  search?: any;
+  index?: any;
   category: any;
-  setDetails: any;
+  onSave?: (record: ProductCategory, key: string) => void;
+  onCancel?: () => void;
 }
 
 const { categoriesKeys, categoriesArray, categoriesFields } =
   categoriesSettings;
 
 const CategoryDetail: React.FC<CategoryDetailProps> = ({
-  search,
+  index,
   category,
-  setDetails,
+  onSave,
+  onCancel,
 }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const { doRequest } = useRequest({ setLoading });
 
-  const categoryLevel = search;
+  const categoryLevel = index;
   const categoryUpdateName = categoriesKeys[categoryLevel];
   const categoryField = categoriesFields[categoryLevel];
 
@@ -57,7 +59,7 @@ const CategoryDetail: React.FC<CategoryDetailProps> = ({
   };
 
   const onFinish = async () => {
-    const category = {
+    const formCategory = {
       ...form.getFieldsValue(true),
       searchTags: form
         .getFieldValue('searchTags')
@@ -66,10 +68,10 @@ const CategoryDetail: React.FC<CategoryDetailProps> = ({
     };
     await doRequest(() =>
       productCategoriesAPI[categoryField as keyof AllCategoriesAPI].save(
-        category
+        formCategory
       )
     );
-    setDetails(false);
+    onSave?.(formCategory, categoryUpdateName);
   };
 
   return (
@@ -154,7 +156,7 @@ const CategoryDetail: React.FC<CategoryDetailProps> = ({
         </Row>
         <Row gutter={8}>
           <Col>
-            <Button type="default" onClick={() => setDetails(false)}>
+            <Button type="default" onClick={() => onCancel?.()}>
               Cancel
             </Button>
           </Col>

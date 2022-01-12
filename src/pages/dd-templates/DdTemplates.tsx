@@ -58,6 +58,20 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
     setDetails(true);
   };
 
+  const refreshItem = (record: DdTemplate) => {
+    filteredDdTemplates[lastViewedIndex] = record;
+    setDdTemplates([...filteredDdTemplates]);
+  };
+
+  const onSaveDdTemplate = (record: DdTemplate) => {
+    refreshItem(record);
+    setDetails(false);
+  };
+
+  const onCancelDdTemplate = () => {
+    setDetails(false);
+  };
+
   const deleteItem = async (id: string) => {
     await doRequest(() => deleteDdTemplate({ id }));
     for (let i = 0; i < content.length; i++) {
@@ -194,7 +208,8 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
       {details && (
         <DdTemplateDetail
           template={currentDdTemplate}
-          setDetails={setDetails}
+          onSave={onSaveDdTemplate}
+          onCancel={onCancelDdTemplate}
         />
       )}
     </>

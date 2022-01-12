@@ -37,17 +37,15 @@ import moment from 'moment';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import scrollIntoView from 'scroll-into-view';
 interface BrandDetailProps {
-  index?: number;
-  onSave?: (record: Brand, index?: number) => void;
+  onSave?: (record: Brand) => void;
   onCancel?: () => void;
   brand?: Brand;
 }
 
 const BrandDetail: React.FC<BrandDetailProps> = ({
-  index,
+  brand,
   onSave,
   onCancel,
-  brand,
 }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [vaults, setVaults] = useState<BrandVault[]>([]);
@@ -216,7 +214,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
       await saveBrand(formBrand);
       message.success('Register updated with success.');
       setLoading(false);
-      onSave?.(formBrand, index);
+      onSave?.(formBrand);
     } catch (error) {
       setLoading(false);
     }

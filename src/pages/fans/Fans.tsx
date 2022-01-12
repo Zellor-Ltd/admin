@@ -154,6 +154,20 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
     setSelectedRowKeys([]);
   };
 
+  const refreshItem = (record: Fan) => {
+    filteredFans[lastViewedIndex] = record;
+    setFans([...filteredFans]);
+  };
+
+  const onSaveFan = (record: Fan) => {
+    refreshItem(record);
+    setDetails(false);
+  };
+
+  const onCancelFan = () => {
+    setDetails(false);
+  };
+
   return (
     <>
       {!details && (
@@ -219,7 +233,9 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
           />
         </div>
       )}
-      {details && <FanDetail fan={currentFan} setDetails={setDetails} />}
+      {details && (
+        <FanDetail fan={currentFan} onSave={onSaveFan} onCancel={onCancelFan} />
+      )}
     </>
   );
 };

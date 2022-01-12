@@ -166,6 +166,20 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
     },
   ];
 
+  const refreshItem = (record: Tag) => {
+    tags[lastViewedIndex] = record;
+    setTags([...tags]);
+  };
+
+  const onSaveTag = (record: Tag) => {
+    refreshItem(record);
+    setDetails(false);
+  };
+
+  const onCancelTag = () => {
+    setDetails(false);
+  };
+
   return (
     <>
       {!details && (
@@ -234,7 +248,9 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
           </InfiniteScroll>
         </>
       )}
-      {details && <TagDetail tag={currentTag} setDetails={setDetails} />}
+      {details && (
+        <TagDetail tag={currentTag} onSave={onSaveTag} onCancel={onCancelTag} />
+      )}
     </>
   );
 };

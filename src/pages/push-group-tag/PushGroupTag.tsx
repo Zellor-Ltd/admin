@@ -116,6 +116,10 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
     onChange: onSelectChange,
   };
 
+  const onReturnStep2 = () => {
+    setDetails(false);
+  };
+
   return (
     <>
       {!details && (
@@ -166,7 +170,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
           />
         </div>
       )}
-      {details && <Step2 selectedTags={currentTags} setDetails={setDetails} />}
+      {details && <Step2 selectedTags={currentTags} onReturn={onReturnStep2} />}
     </>
   );
 };

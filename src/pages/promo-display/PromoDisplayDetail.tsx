@@ -2,25 +2,28 @@ import { Button, Col, DatePicker, Form, PageHeader, Row } from 'antd';
 import { RichTextEditor } from 'components/RichTextEditor';
 import { formatMoment } from 'helpers/formatMoment';
 import { useRequest } from 'hooks/useRequest';
+import { PromoDisplay } from 'interfaces/PromoDisplay';
 import { useState } from 'react';
 import { savePromoDisplay } from 'services/DiscoClubService';
 interface PromoDisplayDetailProps {
   promoDisplay: any;
-  setDetails: any;
+  onSave?: (record: PromoDisplay) => void;
+  onCancel?: () => void;
 }
 
 const PromoDisplaysDetail: React.FC<PromoDisplayDetailProps> = ({
   promoDisplay,
-  setDetails,
+  onSave,
+  onCancel,
 }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [form] = Form.useForm();
   const { doRequest } = useRequest({ setLoading });
 
   const onFinish = async () => {
-    const promoDisplay = form.getFieldsValue(true);
-    await doRequest(() => savePromoDisplay(promoDisplay));
-    setDetails(false);
+    const formPromoDisplay = form.getFieldsValue(true);
+    await doRequest(() => savePromoDisplay(formPromoDisplay));
+    onSave?.(formPromoDisplay);
   };
 
   return (
@@ -68,7 +71,7 @@ const PromoDisplaysDetail: React.FC<PromoDisplayDetailProps> = ({
         </Row>
         <Row gutter={8}>
           <Col>
-            <Button type="default" onClick={() => setDetails(false)}>
+            <Button type="default" onClick={() => onCancel?.()}>
               Cancel
             </Button>
           </Col>

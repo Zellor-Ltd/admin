@@ -5,21 +5,23 @@ import { useState } from 'react';
 import { saveFanGroup } from 'services/DiscoClubService';
 interface FanGroupsDetailProps {
   fanGroup?: FanGroup;
-  setDetails: Function;
+  onSave?: (record: FanGroup) => void;
+  onCancel?: () => void;
 }
 
 const FanGroupsDetail: React.FC<FanGroupsDetailProps> = ({
   fanGroup,
-  setDetails,
+  onSave,
+  onCancel,
 }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [form] = Form.useForm();
   const { doRequest } = useRequest({ setLoading });
 
   const onFinish = async () => {
-    const fanGroup = form.getFieldsValue(true);
-    await doRequest(() => saveFanGroup(fanGroup));
-    setDetails(false);
+    const formFanGroup = form.getFieldsValue(true);
+    await doRequest(() => saveFanGroup(formFanGroup));
+    onSave?.(formFanGroup);
   };
 
   return (
@@ -43,7 +45,7 @@ const FanGroupsDetail: React.FC<FanGroupsDetailProps> = ({
         </Row>
         <Row gutter={8}>
           <Col>
-            <Button type="default" onClick={() => setDetails(false)}>
+            <Button type="default" onClick={() => onCancel?.()}>
               Cancel
             </Button>
           </Col>

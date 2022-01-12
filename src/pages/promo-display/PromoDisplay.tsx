@@ -154,6 +154,20 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
     );
   };
 
+  const refreshItem = (record: PromoDisplay) => {
+    filteredPromoDisplays[lastViewedIndex] = record;
+    setPromoDisplays([...filteredPromoDisplays]);
+  };
+
+  const onSavePromoDisplay = (record: PromoDisplay) => {
+    refreshItem(record);
+    setDetails(false);
+  };
+
+  const onCancelPromoDisplay = () => {
+    setDetails(false);
+  };
+
   return (
     <>
       {!details && (
@@ -190,7 +204,8 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
       {details && (
         <PromoDisplayDetail
           promoDisplay={currentPromoDisplay}
-          setDetails={setDetails}
+          onSave={onSavePromoDisplay}
+          onCancel={onCancelPromoDisplay}
         />
       )}
     </>

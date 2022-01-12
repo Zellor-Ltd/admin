@@ -61,6 +61,20 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
     }
   };
 
+  const refreshItem = (record: Banner) => {
+    banners[lastViewedIndex] = record;
+    setBanners([...banners]);
+  };
+
+  const onSaveBanner = (record: Banner) => {
+    refreshItem(record);
+    setDetails(false);
+  };
+
+  const onCancelBanner = () => {
+    setDetails(false);
+  };
+
   const columns: ColumnsType<Banner> = [
     {
       title: '_id',
@@ -159,7 +173,8 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
       {details && (
         <HomeScreenDetail
           banner={currentBanner as Banner}
-          setDetails={setDetails}
+          onSave={onSaveBanner}
+          onCancel={onCancelBanner}
         />
       )}{' '}
     </>

@@ -42,7 +42,6 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [filterText, setFilterText] = useState('');
-  const [content, setContent] = useState<any[]>([]);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [currentBrand, setCurrentBrand] = useState<Brand>();
 
@@ -57,8 +56,8 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
     setLoading(true);
     try {
       await deleteBrand({ id });
-      for (let i = 0; i < content.length; i++) {
-        if (content[i].id === id) {
+      for (let i = 0; i < brands.length; i++) {
+        if (brands[i].id === id) {
           const index = i;
           setBrands(prev => [
             ...prev.slice(0, index),
@@ -77,7 +76,6 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
     const response: any = await fetchBrands();
     setLoading(false);
     setBrands(response.results);
-    setContent(response.results);
   };
 
   useEffect(() => {
@@ -99,7 +97,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
   };
 
   const filterBrand = () => {
-    return content.filter(brand =>
+    return brands.filter(brand =>
       brand.brandName?.toUpperCase().includes(filterText.toUpperCase())
     );
   };
@@ -133,13 +131,13 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
     setDetails(true);
   };
 
-  const refreshItem = (record: Brand, index?: number) => {
-    content[index ?? lastViewedIndex] = record;
-    setContent([...content]);
+  const refreshItem = (record: Brand) => {
+    brands[lastViewedIndex] = record;
+    setBrands([...brands]);
   };
 
-  const onSaveBrand = (record: Brand, index?: number) => {
-    refreshItem(record, index);
+  const onSaveBrand = (record: Brand) => {
+    refreshItem(record);
     setDetails(false);
   };
 
@@ -317,7 +315,6 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
       )}
       {details && (
         <BrandDetail
-          index={lastViewedIndex}
           onSave={onSaveBrand}
           onCancel={onCancelBrand}
           brand={currentBrand as Brand}

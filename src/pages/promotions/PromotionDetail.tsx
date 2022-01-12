@@ -15,21 +15,23 @@ import { useCallback, useEffect, useState } from 'react';
 import { fetchVideoFeed2, savePromotion } from 'services/DiscoClubService';
 interface PromotionDetailProps {
   promotion: Promotion | undefined;
-  setDetails: Function;
+  onSave?: (record: Promotion) => void;
+  onCancel?: () => void;
 }
 
 const PromotionDetail: React.FC<PromotionDetailProps> = ({
   promotion,
-  setDetails,
+  onSave,
+  onCancel,
 }) => {
   const [form] = Form.useForm();
   const { doRequest, doFetch, loading } = useRequest();
   const [packages, setPackages] = useState<any[]>([]);
 
   const onFinish = async () => {
-    const promotion = form.getFieldsValue(true);
-    await doRequest(() => savePromotion(promotion));
-    setDetails(false);
+    const formPromotion = form.getFieldsValue(true);
+    await doRequest(() => savePromotion(formPromotion));
+    onSave?.(formPromotion);
   };
 
   const getPackages = useCallback(async () => {
@@ -92,7 +94,7 @@ const PromotionDetail: React.FC<PromotionDetailProps> = ({
         </Row>
         <Row gutter={8}>
           <Col>
-            <Button type="default" onClick={() => setDetails(false)}>
+            <Button type="default" onClick={() => onCancel?.()}>
               Cancel
             </Button>
           </Col>

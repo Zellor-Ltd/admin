@@ -416,6 +416,14 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     );
   };
 
+  const onSaveFan = (record: Fan) => {
+    setDetails(false);
+  };
+
+  const onCancelFan = () => {
+    setDetails(false);
+  };
+
   return (
     <>
       {!details && (
@@ -477,7 +485,9 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
           />
         </div>
       )}
-      {details && <FanDetail fan={currentFan} setDetails={setDetails} />}
+      {details && (
+        <FanDetail fan={currentFan} onSave={onSaveFan} onCancel={onCancelFan} />
+      )}
     </>
   );
 };

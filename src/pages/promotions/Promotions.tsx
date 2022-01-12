@@ -194,6 +194,20 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
     );
   };
 
+  const refreshItem = (record: Promotion) => {
+    filteredPromotions[lastViewedIndex] = record;
+    setPromotions([...filteredPromotions]);
+  };
+
+  const onSavePromotion = (record: Promotion) => {
+    refreshItem(record);
+    setDetails(false);
+  };
+
+  const onCancelPromotion = () => {
+    setDetails(false);
+  };
+
   return (
     <>
       {!details && (
@@ -227,7 +241,11 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
         </div>
       )}
       {details && (
-        <PromotionDetail promotion={currentPromotion} setDetails={setDetails} />
+        <PromotionDetail
+          promotion={currentPromotion}
+          onSave={onSavePromotion}
+          onCancel={onCancelPromotion}
+        />
       )}
     </>
   );

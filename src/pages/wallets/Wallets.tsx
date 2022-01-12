@@ -159,6 +159,10 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
     }
   };
 
+  const onCancelWallet = () => {
+    setDetails(false);
+  };
+
   return (
     <>
       {!details && (
@@ -216,7 +220,9 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
           />
         </div>
       )}
-      {details && <WalletDetail location={location} setDetails={setDetails} />}
+      {details && (
+        <WalletDetail location={location} onCancel={onCancelWallet} />
+      )}
     </>
   );
 };

@@ -84,6 +84,20 @@ const FanGroups: React.FC<RouteComponentProps> = ({ history, location }) => {
     );
   };
 
+  const refreshItem = (record: FanGroup) => {
+    filteredFanGroups[lastViewedIndex] = record;
+    setFanGroups([...filteredFanGroups]);
+  };
+
+  const onSaveFanGroup = (record: FanGroup) => {
+    refreshItem(record);
+    setDetails(false);
+  };
+
+  const onCancelFanGroup = () => {
+    setDetails(false);
+  };
+
   return (
     <>
       {!details && (
@@ -118,7 +132,11 @@ const FanGroups: React.FC<RouteComponentProps> = ({ history, location }) => {
         </div>
       )}
       {details && (
-        <FanGroupDetail fanGroup={currentFanGroup} setDetails={setDetails} />
+        <FanGroupDetail
+          fanGroup={currentFanGroup}
+          onSave={onSaveFanGroup}
+          onCancel={onCancelFanGroup}
+        />
       )}
     </>
   );

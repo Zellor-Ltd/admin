@@ -6,21 +6,23 @@ import { saveBanner } from '../../services/DiscoClubService';
 import { Banner } from 'interfaces/Banner';
 interface HomeScreenDetailProps {
   banner: Banner;
-  setDetails: Function;
+  onSave?: (record: Banner) => void;
+  onCancel?: () => void;
 }
 
 const HomeScreenDetail: React.FC<HomeScreenDetailProps> = ({
   banner,
-  setDetails,
+  onSave,
+  onCancel,
 }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [form] = Form.useForm();
   const { doRequest } = useRequest({ setLoading });
 
   const onFinish = async () => {
-    const banner = form.getFieldsValue(true);
-    await doRequest(() => saveBanner(banner));
-    setDetails(false);
+    const formBanner = form.getFieldsValue(true);
+    await doRequest(() => saveBanner(formBanner));
+    onSave?.(formBanner);
   };
 
   return (
@@ -64,7 +66,7 @@ const HomeScreenDetail: React.FC<HomeScreenDetailProps> = ({
         </Row>
         <Row gutter={8}>
           <Col>
-            <Button type="default" onClick={() => setDetails(false)}>
+            <Button type="default" onClick={() => onCancel?.()}>
               Cancel
             </Button>
           </Col>

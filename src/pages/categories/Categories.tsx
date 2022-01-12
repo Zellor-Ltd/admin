@@ -39,7 +39,7 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
   const [details, setDetails] = useState<boolean>(false);
   const [currentProductCategory, setCurrentProductCategory] =
     useState<ProductCategory>();
-  const [search, setSearch] = useState<any>();
+  const [index, setIndex] = useState<any>();
 
   const [loading, setLoading] = useState<boolean>(false);
   const { fetchAllCategories, allCategories } = useAllCategories({
@@ -80,7 +80,7 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
     searchLevel: number,
     productCategory?: ProductCategory
   ) => {
-    setSearch(searchLevel);
+    setIndex(searchLevel);
     setLastViewedIndex(index);
     setCurrentProductCategory(productCategory);
     setDetails(true);
@@ -318,6 +318,22 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
     setSelectedTab(value);
   };
 
+  const refreshItem = (record: ProductCategory, key: string) => {
+    setContent((prev: any) => {
+      prev[key][lastViewedIndex] = record;
+      return prev;
+    });
+  };
+
+  const onSaveCategory = (record: ProductCategory, key: string) => {
+    refreshItem(record, key);
+    setDetails(false);
+  };
+
+  const onCancelCategory = () => {
+    setDetails(false);
+  };
+
   return (
     <>
       {!details && (
@@ -370,9 +386,10 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
       )}
       {details && (
         <CategoryDetail
-          search={search}
+          index={index}
           category={currentProductCategory}
-          setDetails={setDetails}
+          onSave={onSaveCategory}
+          onCancel={onCancelCategory}
         />
       )}
     </>

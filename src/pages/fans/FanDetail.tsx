@@ -17,6 +17,7 @@ import { formatMoment } from 'helpers/formatMoment';
 import { Category } from 'interfaces/Category';
 import { Creator } from 'interfaces/Creator';
 import { Currency } from 'interfaces/Currency';
+import { Fan } from 'interfaces/Fan';
 import { Role } from 'interfaces/Role';
 import { ServerAlias } from 'interfaces/ServerAlias';
 import { useEffect, useState } from 'react';
@@ -31,7 +32,8 @@ import {
 import FanGroupDropdown from './FanGroupDropdown';
 interface FanDetailProps {
   fan: any;
-  setDetails: any;
+  onSave?: (record: Fan) => void;
+  onCancel?: () => void;
 }
 
 const { Option } = Select;
@@ -47,7 +49,7 @@ const prefixSelector = (prefix: string) => (
   </Form.Item>
 );
 
-const FanDetail: React.FC<FanDetailProps> = ({ fan, setDetails }) => {
+const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
   const [loading, setLoading] = useState(false);
   const [roles, setRoles] = useState<Role[]>([]);
   const [creators, setCreators] = useState<Creator[]>([]);
@@ -219,7 +221,7 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, setDetails }) => {
       await saveUser(formattedUserData);
       setLoading(false);
       message.success('Register updated with success.');
-      setDetails(false);
+      onSave?.(user);
     } catch (error) {
       setLoading(false);
     }
@@ -495,7 +497,7 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, setDetails }) => {
         </Tabs>
         <Row gutter={8}>
           <Col>
-            <Button type="default" onClick={() => setDetails(false)}>
+            <Button type="default" onClick={() => onCancel?.()}>
               Cancel
             </Button>
           </Col>
