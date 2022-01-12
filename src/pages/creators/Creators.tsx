@@ -175,7 +175,10 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
             title="Creators"
             subTitle="List of Creators"
             extra={[
-              <Button key="1" onClick={() => editCreator(1)}>
+              <Button
+                key="1"
+                onClick={() => editCreator(filteredCreators.length)}
+              >
                 New Item
               </Button>,
             ]}

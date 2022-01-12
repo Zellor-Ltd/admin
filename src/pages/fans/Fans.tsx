@@ -162,7 +162,7 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
             title="Fans"
             subTitle="List of Fans"
             extra={[
-              <Button key="1" onClick={() => editFan(1)}>
+              <Button key="1" onClick={() => editFan(filteredFans.length)}>
                 New Item
               </Button>,
             ]}

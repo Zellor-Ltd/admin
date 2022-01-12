@@ -202,7 +202,10 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
             title="Promotions"
             subTitle="List of Promotions"
             extra={[
-              <Button key="1" onClick={() => editPromotion(1)}>
+              <Button
+                key="1"
+                onClick={() => editPromotion(filteredPromotions.length)}
+              >
                 New Item
               </Button>,
             ]}

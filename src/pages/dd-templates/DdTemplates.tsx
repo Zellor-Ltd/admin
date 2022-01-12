@@ -166,7 +166,10 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
             title="Disco Dollars Templates"
             subTitle="List of Disco Dollars Templates"
             extra={[
-              <Button key="1" onClick={() => editDdTemplate(1)}>
+              <Button
+                key="1"
+                onClick={() => editDdTemplate(filteredDdTemplates.length)}
+              >
                 New Item
               </Button>,
             ]}

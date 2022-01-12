@@ -142,7 +142,7 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
             title="Banners"
             subTitle="List of Banners"
             extra={[
-              <Button key="1" onClick={() => editBanner(1)}>
+              <Button key="1" onClick={() => editBanner(banners.length)}>
                 New Item
               </Button>,
             ]}

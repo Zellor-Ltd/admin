@@ -374,6 +374,7 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
   };
 
   const newItem = () => {
+    setLastViewedIndex(filterFeed().length);
     setIsEditing(true);
   };
 

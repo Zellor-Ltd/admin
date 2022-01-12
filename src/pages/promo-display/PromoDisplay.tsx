@@ -162,7 +162,10 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
             title="Shop Display"
             subTitle="List of Shop Display"
             extra={[
-              <Button key="1" onClick={() => editPromoDisplay(1)}>
+              <Button
+                key="1"
+                onClick={() => editPromoDisplay(filteredPromoDisplays.length)}
+              >
                 New Item
               </Button>,
             ]}

@@ -77,10 +77,10 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
 
   const editProductCategory = (
     index: number,
-    productCategory?: ProductCategory,
-    searchLevel?: any
+    searchLevel: number,
+    productCategory?: ProductCategory
   ) => {
-    if (searchLevel) setSearch(searchLevel);
+    setSearch(searchLevel);
     setLastViewedIndex(index);
     setCurrentProductCategory(productCategory);
     setDetails(true);
@@ -259,8 +259,8 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
           onClick={() =>
             editProductCategory(
               index,
-              record,
-              categoriesKeys.indexOf(selectedTab)
+              categoriesKeys.indexOf(selectedTab),
+              record
             )
           }
         >
@@ -292,8 +292,8 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
             onClick={() =>
               editProductCategory(
                 index,
-                record,
-                categoriesKeys.indexOf(selectedTab)
+                categoriesKeys.indexOf(selectedTab),
+                record
               )
             }
           >
@@ -334,7 +334,11 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
                         <Link
                           to={location.pathname}
                           onClick={() =>
-                            editProductCategory(index, undefined, index)
+                            editProductCategory(
+                              content[key as keyof AllCategories].length,
+                              index,
+                              undefined
+                            )
                           }
                         >
                           {key}

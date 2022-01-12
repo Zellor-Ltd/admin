@@ -158,7 +158,10 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
             title="Product Brands"
             subTitle="List of Product Brands"
             extra={[
-              <Button key="1" onClick={() => editProductBrand(1)}>
+              <Button
+                key="1"
+                onClick={() => editProductBrand(filteredProductBrands.length)}
+              >
                 New Item
               </Button>,
             ]}

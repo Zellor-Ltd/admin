@@ -174,7 +174,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
             title="Tags"
             subTitle="List of Tags"
             extra={[
-              <Button key="1" onClick={() => editTag(1)}>
+              <Button key="1" onClick={() => editTag(tags.length)}>
                 New Item
               </Button>,
             ]}
