@@ -363,9 +363,9 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     );
   };
 
-  const onEditItem = (record: any, index: number) => {
+  const onEditItem = (videoFeed: FeedItem, index: number) => {
     setLastViewedIndex(index);
-    setSelectedVideoFeed(record);
+    setSelectedVideoFeed(videoFeed);
     setIsEditing(true);
   };
 

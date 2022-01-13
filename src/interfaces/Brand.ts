@@ -30,7 +30,7 @@ export interface Brand {
   thumbnail?: any;
   mastHead?: any;
   avatar?: any;
-  productBrand?: ProductBrand | string;
+  productBrand?: ProductBrand;
   selectedLogoUrl?: string;
   selectedLogo?: 'whiteLogo' | 'colourLogo' | 'blackLogo' | 'brandName' | '';
 }

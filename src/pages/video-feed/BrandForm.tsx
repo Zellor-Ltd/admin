@@ -4,6 +4,7 @@ import { ProductBrand } from 'interfaces/ProductBrand';
 import { useEffect, useState } from 'react';
 import { fetchProductBrands } from 'services/DiscoClubService';
 import { useMount } from 'react-use';
+import { find } from 'lodash';
 
 interface FormProps {
   brands: Brand[];
@@ -29,20 +30,21 @@ const BrandForm: React.FC<FormProps> = ({
 
   const onChangeBrand = (brandId: string) => {
     const currentValues = form.getFieldsValue(true);
-    const selectedBrand: any = brands.find(
-      (brand: Brand) => brand.id === brandId
-    );
+    const selectedBrand: any = find(brands, { id: brandId });
     const changedBrand = { ...selectedBrand };
 
     form.setFieldsValue({ ...changedBrand, position: currentValues.position });
   };
 
-  const onChangeProductBrand = (productBrandName: string) => {
-    const selectedProductBrand: any = productBrands.find(
-      productBrand => productBrand.brandName === productBrandName
-    );
+  const onChangeProductBrand = (productBrandId: string) => {
+    const selectedProductBrand: any = find(productBrands, {
+      id: productBrandId,
+    });
 
     setSelectedProductBrand(selectedProductBrand);
+    form.setFieldsValue({
+      productBrand: selectedProductBrand,
+    });
   };
 
   useMount(() => {
@@ -53,10 +55,8 @@ const BrandForm: React.FC<FormProps> = ({
     try {
       setIsFetchingProductBrands(true);
       const { results }: any = await fetchProductBrands();
-      if (brand?.productBrand) {
-        setSelectedProductBrand(
-          results.find(prodBrand => prodBrand.brandName === brand.productBrand)
-        );
+      if (brand?.productBrand?.id) {
+        setSelectedProductBrand(find(results, { id: brand.productBrand?.id }));
       }
       setProductBrands(results);
       setIsFetchingProductBrands(false);
@@ -118,7 +118,7 @@ const BrandForm: React.FC<FormProps> = ({
         </Col>
         <Col lg={24} xs={24}>
           <Form.Item
-            name="productBrand"
+            name={['productBrand', 'id']}
             label="Product Brand"
             rules={[{ required: true }]}
           >
@@ -134,10 +134,7 @@ const BrandForm: React.FC<FormProps> = ({
               disabled={isFetchingProductBrands}
             >
               {productBrands.map(productBrand => (
-                <Select.Option
-                  key={productBrand.id}
-                  value={productBrand.brandName}
-                >
+                <Select.Option key={productBrand.id} value={productBrand.id}>
                   {productBrand.brandName}
                 </Select.Option>
               ))}
