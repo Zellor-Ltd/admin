@@ -67,8 +67,8 @@ const reduceSegmentsTags = (packages: Segment[]) => {
   }, 0);
 };
 
-const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
-  const [currentItem, setCurrentItem] = useState<FeedItem>();
+const VideoFeed: React.FC<RouteComponentProps> = () => {
+  const [selectedVideoFeed, setSelectedVideoFeed] = useState<FeedItem>();
 
   const {
     settings: { language = [] },
@@ -76,7 +76,7 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
 
   const [loading, setLoading] = useState(false);
   const [filterText, setFilterText] = useState('');
-  const [content, setContent] = useState<any[]>([]);
+  const [videoFeeds, setVideoFeeds] = useState<any[]>([]);
   const [loaded, setLoaded] = useState<boolean>(false);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [videoTab, setVideoTab] = useState<string>('Video Details');
@@ -126,17 +126,17 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
 
   useEffect(() => {
     getDetailsResources();
-    if (currentItem && currentItem.hashtags) {
-      setHashtags(currentItem.hashtags);
+    if (selectedVideoFeed && selectedVideoFeed.hashtags) {
+      setHashtags(selectedVideoFeed.hashtags);
     } else {
       setHashtags([]);
     }
   }, []);
 
   useEffect(() => {
-    if (currentItem?.ageMin && currentItem?.ageMax)
-      setAgeRange([currentItem?.ageMin, currentItem?.ageMax]);
-  }, [currentItem]);
+    if (selectedVideoFeed?.ageMin && selectedVideoFeed?.ageMax)
+      setAgeRange([selectedVideoFeed?.ageMin, selectedVideoFeed?.ageMax]);
+  }, [selectedVideoFeed]);
 
   useEffect(() => {
     if (showBrandForm)
@@ -155,20 +155,19 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
       );
     else {
       setPageTitle(
-        currentItem
-          ? currentItem?.title.length > 50
-            ? `${currentItem.title.slice(0, 50)} (...) Update`
-            : `${currentItem.title} Update`
+        selectedVideoFeed
+          ? selectedVideoFeed?.title.length > 50
+            ? `${selectedVideoFeed.title.slice(0, 50)} (...) Update`
+            : `${selectedVideoFeed.title} Update`
           : 'Update'
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedSegment, showBrandForm, showTagForm, currentItem]);
+  }, [selectedSegment, showBrandForm, showTagForm, selectedVideoFeed]);
 
   useEffect(() => {
-    feedForm.setFieldsValue(currentItem);
-    segmentForm.setFieldsValue(currentItem);
-  }, [currentItem]);
+    feedForm.setFieldsValue(selectedVideoFeed);
+  }, [selectedVideoFeed]);
 
   useEffect(() => {
     if (!isEditing) {
@@ -186,7 +185,7 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
       const response: any = await fetchVideoFeed();
       setLoading(false);
       setFilteredItems(response.results);
-      setContent(response.results);
+      setVideoFeeds(response.results);
     } catch (error) {
       message.error('Error to get feed');
       setLoading(false);
@@ -257,6 +256,8 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
     resetForm();
     refreshItem(item);
     setIsEditing(false);
+    setSegmentTab('Images');
+    setVideoTab('Video Details');
   };
 
   const onChangeAge = (value: [number, number]) => {
@@ -271,6 +272,7 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
   const onEditSegment = (segment: Segment, segmentIndex: number) => {
     setSelectedSegment(segment);
     setSelectedSegmentIndex(segmentIndex);
+    segmentForm.setFieldsValue(segment);
   };
 
   const onDeleteSegment = (evt: any, index: number) => {
@@ -297,8 +299,8 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
   const deleteItem = async (_id: string) => {
     setLoading(true);
     await deleteVideoFeed(_id);
-    for (let i = 0; i < content.length; i++) {
-      if (content[i].id === _id) {
+    for (let i = 0; i < videoFeeds.length; i++) {
+      if (videoFeeds[i].id === _id) {
         const index = i;
         setFilteredItems(prev => [
           ...prev.slice(0, index),
@@ -310,10 +312,10 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
   };
 
   const refreshItem = async (record: any) => {
-    for (let i = 0; i < content.length; i++) {
-      if (content[i].id === record.id) {
-        content[i] = record;
-        setFilteredItems([...content]);
+    for (let i = 0; i < videoFeeds.length; i++) {
+      if (videoFeeds[i].id === record.id) {
+        videoFeeds[i] = record;
+        setFilteredItems([...videoFeeds]);
         break;
       }
     }
@@ -363,7 +365,7 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
 
   const onEditItem = (record: any, index: number) => {
     setLastViewedIndex(index);
-    setCurrentItem(record);
+    setSelectedVideoFeed(record);
     setIsEditing(true);
   };
 
@@ -409,7 +411,7 @@ const VideoFeed: React.FC<RouteComponentProps> = ({ history, location }) => {
       target: '',
       _id: '',
     };
-    setCurrentItem(template);
+    setSelectedVideoFeed(template);
   };
 
   const onPageChange = (page: number) => {
