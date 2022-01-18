@@ -10,6 +10,7 @@ import {
   Select,
   Slider,
 } from 'antd';
+import { useRequest } from 'hooks/useRequest';
 import { Brand } from 'interfaces/Brand';
 import { Product } from 'interfaces/Product';
 import { Tag } from 'interfaces/Tag';
@@ -17,13 +18,14 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { fetchBrands, fetchProducts, saveTag } from 'services/DiscoClubService';
 interface TagDetailProps {
-  tag: Tag | undefined;
+  tag?: Tag;
   onSave?: (record: Tag) => void;
   onCancel?: () => void;
 }
 
 const TagDetail: React.FC<TagDetailProps> = ({ tag, onSave, onCancel }) => {
   const [loading, setLoading] = useState(false);
+  const { doRequest } = useRequest({ setLoading });
 
   const [products, setProducts] = useState<Product[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
@@ -79,10 +81,10 @@ const TagDetail: React.FC<TagDetailProps> = ({ tag, onSave, onCancel }) => {
           product => product.id === formTag.product?.id
         );
         formTag.brand = brands.find(brand => brand.id === formTag.brand?.id);
-        await saveTag(formTag);
+        const { result } = await doRequest(() => saveTag(formTag));
         setLoading(false);
         message.success('Register updated with success.');
-        onSave?.(formTag);
+        formTag.id ? onSave?.(formTag) : onSave?.({ ...formTag, id: result });
       } catch (e) {
         console.error(e);
         setLoading(false);
@@ -237,12 +239,7 @@ const TagDetail: React.FC<TagDetailProps> = ({ tag, onSave, onCancel }) => {
             </Button>
           </Col>
           <Col>
-            <Button
-              type="primary"
-              htmlType="submit"
-              disabled={!!tag}
-              loading={loading}
-            >
+            <Button type="primary" htmlType="submit" loading={loading}>
               Save Changes
             </Button>
           </Col>

@@ -66,12 +66,14 @@ const CategoryDetail: React.FC<CategoryDetailProps> = ({
         .map(convertTagsIntoStrings)
         .filter((str: string) => str.length > 1),
     };
-    await doRequest(() =>
+    const { result } = await doRequest(() =>
       productCategoriesAPI[categoryField as keyof AllCategoriesAPI].save(
         formCategory
       )
     );
-    onSave?.(formCategory, categoryUpdateName);
+    formCategory.id
+      ? onSave?.(formCategory, categoryUpdateName)
+      : onSave?.({ ...formCategory, id: result }, categoryUpdateName);
   };
 
   return (

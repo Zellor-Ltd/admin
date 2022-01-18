@@ -30,8 +30,10 @@ const PromotionDetail: React.FC<PromotionDetailProps> = ({
 
   const onFinish = async () => {
     const formPromotion = form.getFieldsValue(true);
-    await doRequest(() => savePromotion(formPromotion));
-    onSave?.(formPromotion);
+    const { result } = await doRequest(() => savePromotion(formPromotion));
+    formPromotion.id
+      ? onSave?.(formPromotion)
+      : onSave?.({ ...formPromotion, id: result });
   };
 
   const getPackages = useCallback(async () => {

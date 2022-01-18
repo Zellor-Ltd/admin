@@ -96,6 +96,30 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
     setDetails(true);
   };
 
+  const onResetWallet = () => {
+    setTransactions([]);
+  };
+
+  const onSaveWallet = (balanceToAdd: number, record?: Wallet) => {
+    if (record) {
+      record.discoDollars += balanceToAdd;
+      refreshItem(record as Wallet);
+    } else {
+      setTransactions([
+        { brandName: selectedBrand, discoDollars: balanceToAdd },
+      ]);
+    }
+  };
+
+  const refreshItem = (record: Wallet) => {
+    filteredWallets[
+      filteredWallets.indexOf(
+        filteredWallets.find(item => item.brandId === record.brandId) as Wallet
+      )
+    ] = record;
+    setWallets([...filteredWallets]);
+  };
+
   const columns: ColumnsType<Wallet> = [
     {
       title: 'Master Brand',
@@ -139,6 +163,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   const onChangeBrand = async (_selectedBrand: Brand | undefined) => {
+    setSelectedBrand(_selectedBrand);
     if (!_selectedBrand) {
       removeFilterFunction('brandName');
       return;
@@ -146,7 +171,6 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
     addFilterFunction('brandName', wallets =>
       wallets.filter(wallet => wallet.brandName === _selectedBrand.brandName)
     );
-    setSelectedBrand(_selectedBrand);
   };
 
   const getResources = async () => {
@@ -206,7 +230,11 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
                     disabled={!selectedFan || !selectedBrand}
                     fanId={selectedFan?.id}
                     brandId={selectedBrand?.id}
-                    getResources={getResources}
+                    wallet={filteredWallets.find(
+                      item => item.brandId === selectedBrand?.id
+                    )}
+                    onSave={onSaveWallet}
+                    onReset={onResetWallet}
                   />
                 </Col>
               </Row>

@@ -211,10 +211,12 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
     setLoading(true);
     try {
       const formBrand = form.getFieldsValue(true);
-      await saveBrand(formBrand);
+      const { result } = await doRequest(() => saveBrand(formBrand));
       message.success('Register updated with success.');
       setLoading(false);
-      onSave?.(formBrand);
+      formBrand.id
+        ? onSave?.(formBrand)
+        : onSave?.({ ...formBrand, id: result });
     } catch (error) {
       setLoading(false);
     }

@@ -33,6 +33,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
   const [details, setDetails] = useState<boolean>(false);
   const [currentCreator, setCurrentCreator] = useState<Creator>();
+  const [loaded, setLoaded] = useState<boolean>(false);
 
   const {
     setArrayList: setCreators,
@@ -110,7 +111,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
             title="Are you sure？"
             okText="Yes"
             cancelText="No"
-            onConfirm={() => deleteItem(record.id)}
+            onConfirm={() => deleteItem(record.id, index)}
           >
             <Button type="link" style={{ padding: 0, margin: 6 }}>
               <DeleteOutlined />
@@ -129,19 +130,11 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
     fetch();
   };
 
-  const deleteItem = async (id: string) => {
+  const deleteItem = async (id: string, index: number) => {
     try {
       setLoading(true);
       await deleteCreator(id);
-      for (let i = 0; i < content.length; i++) {
-        if (content[i].id === id) {
-          const index = i;
-          setCreators(prev => [
-            ...prev.slice(0, index),
-            ...prev.slice(index + 1),
-          ]);
-        }
-      }
+      setCreators(prev => [...prev.slice(0, index), ...prev.slice(index + 1)]);
     } catch (err) {
       console.log(err);
     }
@@ -153,6 +146,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
     setLoading(true);
     const response: any = await fetchCreators();
     setLoading(false);
+    setLoaded(true);
     setCreators(response.results);
     setContent(response.results);
   };
@@ -168,8 +162,12 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   const refreshItem = (record: Creator) => {
-    filteredCreators[lastViewedIndex] = record;
-    setCreators([...filteredCreators]);
+    if (loaded) {
+      filteredCreators[lastViewedIndex] = record;
+      setCreators([...filteredCreators]);
+    } else {
+      setCreators([record]);
+    }
   };
 
   const onSaveCreator = (record: Creator) => {

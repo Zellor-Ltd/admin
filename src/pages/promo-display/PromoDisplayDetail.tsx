@@ -22,8 +22,12 @@ const PromoDisplaysDetail: React.FC<PromoDisplayDetailProps> = ({
 
   const onFinish = async () => {
     const formPromoDisplay = form.getFieldsValue(true);
-    await doRequest(() => savePromoDisplay(formPromoDisplay));
-    onSave?.(formPromoDisplay);
+    const { result } = await doRequest(() =>
+      savePromoDisplay(formPromoDisplay)
+    );
+    formPromoDisplay.id
+      ? onSave?.(formPromoDisplay)
+      : onSave?.({ ...formPromoDisplay, id: result });
   };
 
   return (

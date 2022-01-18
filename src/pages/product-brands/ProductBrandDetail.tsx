@@ -32,9 +32,18 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
   const [activeTabKey, setActiveTabKey] = React.useState('Details');
 
   const onFinish = async () => {
-    const formProductBrand = form.getFieldsValue(true);
-    await doRequest(() => saveProductBrand(formProductBrand));
-    onSave?.(formProductBrand);
+    try {
+      const formProductBrand = form.getFieldsValue(true);
+      const { result } = await doRequest(() =>
+        saveProductBrand(formProductBrand)
+      );
+      formProductBrand.id
+        ? onSave?.(formProductBrand)
+        : onSave?.({ ...formProductBrand, id: result });
+    } catch (err: any) {
+      console.log(err);
+      message.error(err.error);
+    }
   };
 
   const changeTab = (activeKey: string) => {

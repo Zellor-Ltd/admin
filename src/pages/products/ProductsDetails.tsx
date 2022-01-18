@@ -19,76 +19,87 @@ import { Upload } from 'components';
 import { RichTextEditor } from 'components/RichTextEditor';
 import { formatMoment } from 'helpers/formatMoment';
 import { categoriesSettings } from 'helpers/utils';
-import useAllCategories from 'hooks/useAllCategories';
 import { Brand } from 'interfaces/Brand';
 import { ProductBrand } from '../../interfaces/ProductBrand';
 import { AllCategories } from 'interfaces/Category';
 import { Product } from 'interfaces/Product';
 import { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { RouteComponentProps, useParams } from 'react-router-dom';
-import {
-  fetchBrands,
-  fetchProductBrands,
-  saveProduct,
-  saveStagingProduct,
-} from 'services/DiscoClubService';
+import { useParams } from 'react-router-dom';
+import { saveProduct, saveStagingProduct } from 'services/DiscoClubService';
 import ProductCategoriesTrees from './ProductCategoriesTrees';
 import './Products.scss';
+import SimpleSelect from 'components/SimpleSelect';
+import { SelectOption } from 'interfaces/SelectOption';
+import { productUtils } from 'helpers/product-utils';
+import { Image } from '../../interfaces/Image';
+import { useRequest } from 'hooks/useRequest';
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
-
-interface RouteParams {
-  productMode: 'staging' | 'commited';
+const { getSearchTags, getCategories, removeSearchTagsByCategory } =
+  productUtils;
+interface ProductDetailsProps {
+  brands: Brand[];
+  productBrands: ProductBrand[];
+  allCategories: any;
+  onSave?: (record: Product) => void;
+  onCancel?: () => void;
+  product?: Product;
+  setCurrentProduct: (Product) => void;
+  brand?: string;
+  productBrand?: string;
+  isFetchingBrands: boolean;
+  isFetchingProductBrand: boolean;
+  onOrder?: (dragIndex: number, hoverIndex: number) => void;
+  onFitTo?: (
+    fitTo: 'w' | 'h',
+    sourceProp: 'image' | 'tagImage' | 'thumbnailUrl',
+    imageIndex: number
+  ) => void;
+  onRollback?: (
+    oldUrl: string,
+    sourceProp: 'image' | 'tagImage' | 'thumbnailUrl',
+    imageIndex: number
+  ) => void;
 }
 
-const ProductDetails: React.FC<RouteComponentProps> = props => {
-  const { history, location } = props;
+const optionsMapping: SelectOption = {
+  key: 'id',
+  label: 'brandName',
+  value: 'id',
+};
+interface RouteParams {
+  productMode: 'staging' | 'committed';
+}
+
+const ProductDetails: React.FC<ProductDetailsProps> = ({
+  brands,
+  productBrands,
+  allCategories,
+  product,
+  setCurrentProduct,
+  productBrand,
+  brand,
+  onSave,
+  onCancel,
+  isFetchingBrands,
+  isFetchingProductBrand,
+  onOrder,
+  onFitTo,
+  onRollback,
+}) => {
   const { productMode } = useParams<RouteParams>();
   const isStaging = productMode === 'staging';
   const saveProductFn = isStaging ? saveStagingProduct : saveProduct;
-  const initial = location.state as unknown as Product | undefined;
   const [loading, setLoading] = useState<boolean>(false);
-  const [brands, setBrands] = useState<Brand[]>([]);
-  const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
   const [ageRange, setageRange] = useState<[number, number]>([12, 100]);
   const [form] = Form.useForm();
-
   const [maxDiscountAlert, setMaxDiscountAlert] = useState<boolean>(false);
-
-  const { fetchAllCategories, allCategories } = useAllCategories({
-    setLoading,
-  });
+  const { doRequest } = useRequest({ setLoading });
 
   const {
     settings: { currency = [] },
   } = useSelector((state: any) => state.settings);
-
-  const setSearchTagsByCategory = useCallback(
-    (useInitialValue: boolean, selectedCategories: any[] = []) => {
-      const selectedCategoriesSearchTags = selectedCategories
-        .filter(v => v && v.searchTags)
-        .map(v => v.searchTags)
-        .reduce((prev, curr) => {
-          return prev?.concat(curr || []);
-        }, []);
-
-      let searchTags = form.getFieldValue('searchTags') || [];
-      const finalValue = Array.from(
-        new Set([...searchTags, ...selectedCategoriesSearchTags])
-      );
-      if (useInitialValue && initial) {
-        searchTags = initial.searchTags || finalValue;
-      } else {
-        searchTags = finalValue;
-      }
-
-      form.setFieldsValue({
-        searchTags,
-      });
-    },
-    [form, initial]
-  );
 
   const setDiscoPercentageByBrand = useCallback(
     (useInitialValue: boolean) => {
@@ -99,9 +110,9 @@ const ProductDetails: React.FC<RouteComponentProps> = props => {
 
       let discoPercentage;
 
-      if (useInitialValue && initial) {
+      if (useInitialValue && product) {
         discoPercentage =
-          initial.discoPercentage || selectedBrand?.discoPercentage;
+          product.discoPercentage || selectedBrand?.discoPercentage;
       } else {
         discoPercentage = selectedBrand?.discoPercentage;
       }
@@ -110,16 +121,84 @@ const ProductDetails: React.FC<RouteComponentProps> = props => {
         discoPercentage,
       });
     },
-    [brands, form, initial]
+    [brands, form, product]
   );
+
+  const setSearchTagsByCategory = useCallback(
+    (
+      useInitialValue: boolean,
+      selectedCategories: any[] = [],
+      categoryKey?: string,
+      productCategoryIndex?: number
+    ) => {
+      const currentCategories = getCategories(form, allCategories);
+      let previousTags: string[] = [];
+
+      if (
+        productCategoryIndex !== undefined &&
+        categoryKey !== undefined &&
+        product &&
+        product?.categories
+      ) {
+        previousTags = getSearchTags(
+          product.categories[productCategoryIndex],
+          categoryKey
+        );
+      }
+
+      const selectedCategoriesSearchTags = selectedCategories
+        .filter(v => v && v.searchTags)
+        .map(v => v.searchTags)
+        .reduce((prev, curr) => {
+          return prev?.concat(curr || []);
+        }, []);
+
+      let searchTags = form.getFieldValue('searchTags') || [];
+      const finalValue = Array.from(
+        new Set([
+          ...searchTags.filter(tag => previousTags.indexOf(tag) === -1),
+          ...selectedCategoriesSearchTags,
+        ])
+      );
+      if (useInitialValue && product) {
+        searchTags = product.searchTags || finalValue;
+      } else {
+        searchTags = finalValue;
+      }
+
+      if (
+        !!selectedCategories &&
+        !!product &&
+        !!product.categories &&
+        productCategoryIndex !== undefined
+      ) {
+        product.categories[productCategoryIndex] = currentCategories;
+      }
+
+      form.setFieldsValue({
+        searchTags,
+      });
+    },
+    [form, product]
+  );
+
+  const handleCategoryDelete = (productCategoryIndex: number) => {
+    removeSearchTagsByCategory(productCategoryIndex, product, form);
+  };
 
   const handleCategoryChange = (
     selectedCategories: any,
     _productCategoryIndex: number,
-    filterCategory: Function
+    filterCategory: Function,
+    categoryKey: string
   ) => {
     filterCategory(form);
-    setSearchTagsByCategory(false, selectedCategories);
+    setSearchTagsByCategory(
+      false,
+      selectedCategories,
+      categoryKey,
+      _productCategoryIndex
+    );
   };
 
   useEffect(() => {
@@ -128,34 +207,9 @@ const ProductDetails: React.FC<RouteComponentProps> = props => {
   }, [brands, setDiscoPercentageByBrand, setSearchTagsByCategory]);
 
   useEffect(() => {
-    let mounted = true;
-
-    const getBrands = async () => {
-      setLoading(true);
-      const response: any = await fetchBrands();
-      if (mounted) {
-        setLoading(false);
-        setBrands(response.results);
-      }
-    };
-
-    const getProductBrands = async () => {
-      const response: any = await fetchProductBrands();
-      setProductBrands(response.results);
-    };
-
-    getBrands();
-    getProductBrands();
-    fetchAllCategories();
-    return () => {
-      mounted = false;
-    };
-  }, [fetchAllCategories]);
-
-  useEffect(() => {
-    if (initial?.ageMin && initial?.ageMax)
-      setageRange([initial?.ageMin, initial?.ageMax]);
-  }, [initial]);
+    if (product?.ageMin && product?.ageMax)
+      setageRange([product?.ageMin, product?.ageMax]);
+  }, [product]);
 
   const onChangeAge = (value: [number, number]) => {
     form.setFieldsValue({
@@ -169,35 +223,81 @@ const ProductDetails: React.FC<RouteComponentProps> = props => {
   const onFinish = async () => {
     setLoading(true);
     try {
-      const product = form.getFieldsValue(true);
-      product.brand = brands?.find(brand => brand.id === product.brand?.id);
+      const formProduct = form.getFieldsValue(true);
+      formProduct.brand = brands?.find(
+        brand => brand.id === formProduct.brand?.id
+      );
 
       categoriesFields.forEach((field, index) => {
-        product.categories.forEach((productCategory: any) => {
+        formProduct.categories.forEach((productCategory: any) => {
           productCategory[field] = allCategories[
             categoriesKeys[index] as keyof AllCategories
           ].find(category => category.id === productCategory[field]?.id);
         });
       });
 
-      await saveProductFn(product);
+      const { result } = await doRequest(() => saveProductFn(formProduct));
 
       setLoading(false);
       message.success('Register updated with success.');
-      history.goBack();
+      formProduct.id
+        ? onSave?.(formProduct)
+        : onSave?.({ ...formProduct, id: result });
     } catch (error) {
       console.error(error);
       setLoading(false);
     }
   };
 
+  const updateForm = (
+    _: string,
+    entity: any,
+    type: 'brand' | 'productBrand'
+  ) => {
+    setDiscoPercentageByBrand(false);
+    if (type === 'brand') {
+      form.setFieldsValue({ brand: entity });
+    } else {
+      form.setFieldsValue({ productBrand: entity });
+    }
+  };
+
+  const handleThumbnailOrTagReplacement = (prevImage: Image) => {
+    if (product) {
+      if (!product.image.some(img => img.url === prevImage.url)) {
+        product.image.push(prevImage);
+      }
+    }
+  };
+
+  const onAssignToThumbnail = (file: Image) => {
+    if (product) {
+      const prevThumb = { ...product.thumbnailUrl };
+      product.thumbnailUrl = { ...file };
+      handleThumbnailOrTagReplacement(prevThumb);
+      setCurrentProduct({ ...product });
+    }
+  };
+
+  const onAssignToTag = (file: Image) => {
+    if (product) {
+      const prevTag = { ...product.tagImage };
+      product.tagImage = { ...file };
+      handleThumbnailOrTagReplacement(prevTag);
+      setCurrentProduct({ ...product });
+    }
+  };
+
   return (
     <div className="products-details">
-      <PageHeader title="Product" subTitle="Form" />
+      <PageHeader
+        title={product ? `${product?.name} Update` : 'New Product'}
+        subTitle="Form"
+      />
       <Form
         form={form}
         name="productForm"
-        initialValues={initial}
+        initialValues={product}
         onFinish={onFinish}
         onFinishFailed={({ errorFields }) => {
           errorFields.forEach(errorField => {
@@ -244,17 +344,23 @@ const ProductDetails: React.FC<RouteComponentProps> = props => {
                 <Row gutter={8}>
                   <Col lg={24} xs={24}>
                     <Form.Item
-                      name={['brand', 'id']}
+                      name="brand"
                       label="Master Brand"
                       rules={[{ required: true }]}
                     >
-                      <Select onChange={() => setDiscoPercentageByBrand(false)}>
-                        {brands.map(brand => (
-                          <Select.Option key={brand.id} value={brand.id}>
-                            {brand.brandName}
-                          </Select.Option>
-                        ))}
-                      </Select>
+                      <SimpleSelect
+                        data={brands}
+                        onChange={(value, brand) =>
+                          updateForm(value, brand, 'brand')
+                        }
+                        style={{ width: '100%' }}
+                        selectedOption={brand}
+                        optionsMapping={optionsMapping}
+                        placeholder={'Select a brand'}
+                        loading={isFetchingBrands}
+                        disabled={isFetchingBrands}
+                        allowClear={true}
+                      ></SimpleSelect>
                     </Form.Item>
                   </Col>
                 </Row>
@@ -265,13 +371,19 @@ const ProductDetails: React.FC<RouteComponentProps> = props => {
                       label="Product Brand"
                       rules={[{ required: true }]}
                     >
-                      <Select>
-                        {productBrands.map(brand => (
-                          <Select.Option key={brand.id} value={brand.brandName}>
-                            {brand.brandName}
-                          </Select.Option>
-                        ))}
-                      </Select>
+                      <SimpleSelect
+                        data={productBrands}
+                        onChange={(value, productBrand) =>
+                          updateForm(value, productBrand, 'productBrand')
+                        }
+                        style={{ width: '100%' }}
+                        selectedOption={productBrand}
+                        optionsMapping={optionsMapping}
+                        placeholder={'Select a brand'}
+                        loading={isFetchingProductBrand}
+                        disabled={isFetchingProductBrand}
+                        allowClear={true}
+                      ></SimpleSelect>
                     </Form.Item>
                   </Col>
                 </Row>
@@ -300,10 +412,11 @@ const ProductDetails: React.FC<RouteComponentProps> = props => {
           </Tabs.TabPane>
           <Tabs.TabPane forceRender tab="Categories" key="Categories">
             <ProductCategoriesTrees
-              categories={initial?.categories}
+              categories={product?.categories}
               allCategories={allCategories}
               form={form}
               handleCategoryChange={handleCategoryChange}
+              handleCategoryDelete={handleCategoryDelete}
             />
             <Col lg={16} xs={24}>
               <Form.Item
@@ -500,7 +613,7 @@ const ProductDetails: React.FC<RouteComponentProps> = props => {
                 </Form.Item>
               </Col>
             </Row>
-            <Row>
+            <Row gutter={8}>
               <Col lg={4} xs={8}>
                 <Form.Item
                   name="shopifyUniqueId"
@@ -534,29 +647,46 @@ const ProductDetails: React.FC<RouteComponentProps> = props => {
               <Col lg={24} xs={24}>
                 <Form.Item label="Tag Image">
                   <Upload.ImageUpload
-                    fileList={initial?.tagImage}
+                    fileList={product?.tagImage}
                     formProp="tagImage"
                     form={form}
+                    onFitTo={onFitTo}
+                    onRollback={onRollback}
                   />
                 </Form.Item>
               </Col>
               <Col lg={24} xs={24}>
                 <Form.Item label="Thumbnail">
                   <Upload.ImageUpload
-                    fileList={initial?.thumbnailUrl}
+                    fileList={product?.thumbnailUrl}
                     formProp="thumbnailUrl"
                     form={form}
+                    onFitTo={onFitTo}
+                    onRollback={onRollback}
                   />
                 </Form.Item>
               </Col>
               <Col lg={24} xs={24}>
                 <Form.Item label="Image">
-                  <Upload.ImageUpload
-                    maxCount={20}
-                    fileList={initial?.image}
-                    formProp="image"
-                    form={form}
-                  />
+                  <div
+                    className={
+                      product ? (product.image ? 'img-upload-div' : '') : ''
+                    }
+                  >
+                    <Upload.ImageUpload
+                      maxCount={20}
+                      fileList={product?.image}
+                      formProp="image"
+                      form={form}
+                      onAssignToTag={onAssignToTag}
+                      onAssignToThumbnail={onAssignToThumbnail}
+                      cropable={true}
+                      classNames="big-image-height scroll-x"
+                      onOrder={onOrder}
+                      onFitTo={onFitTo}
+                      onRollback={onRollback}
+                    />
+                  </div>
                 </Form.Item>
               </Col>
             </Row>
@@ -565,13 +695,23 @@ const ProductDetails: React.FC<RouteComponentProps> = props => {
 
         <Row gutter={8}>
           <Col>
-            <Button type="default" onClick={() => history.goBack()}>
+            <Button type="default" onClick={() => onCancel?.()}>
               Cancel
             </Button>
           </Col>
           <Col>
             <Button
-              disabled={initial?.brand.automated === true && !isStaging}
+              disabled={
+                form.getFieldValue('brand')
+                  ? (
+                      brands.find(
+                        item =>
+                          item.brandName ===
+                          form.getFieldValue('brand').brandName
+                      ) as Brand
+                    ).automated === true
+                  : false
+              }
               type="primary"
               htmlType="submit"
               loading={loading}

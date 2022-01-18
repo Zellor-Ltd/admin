@@ -20,8 +20,10 @@ const DdTemplatesDetail: React.FC<DdTemplatesDetailProps> = ({
 
   const onFinish = async () => {
     const formDdTemplate = form.getFieldsValue(true);
-    await doRequest(() => saveDdTemplate(formDdTemplate));
-    onSave?.(formDdTemplate);
+    const { result } = await doRequest(() => saveDdTemplate(formDdTemplate));
+    formDdTemplate.id
+      ? onSave?.(formDdTemplate)
+      : onSave?.({ ...formDdTemplate, id: result });
   };
 
   return (

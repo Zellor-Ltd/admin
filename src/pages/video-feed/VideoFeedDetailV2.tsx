@@ -30,28 +30,35 @@ import { Segment } from 'interfaces/Segment';
 import { Tag } from 'interfaces/Tag';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { RouteComponentProps } from 'react-router-dom';
-import {
-  fetchBrands,
-  fetchCategories,
-  fetchCreators,
-  saveVideoFeed,
-} from 'services/DiscoClubService';
+import { saveVideoFeed } from 'services/DiscoClubService';
 import BrandForm from './BrandForm';
 import TagForm from './TagForm';
 import './VideoFeed.scss';
 import './VideoFeedDetail.scss';
 import ReactTagInput from '@pathofdev/react-tag-input';
 import '@pathofdev/react-tag-input/build/index.css';
+import moment from 'moment';
 
 const { Title } = Typography;
+interface VideoFeedDetailProps {
+  onSave?: (record: FeedItem) => void;
+  onCancel?: () => void;
+  feedItem?: FeedItem;
+  setFeedItem: (record: FeedItem) => void;
+  brands: Brand[];
+  categories: Category[];
+  influencers: Creator[];
+}
 
-const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
-  history,
-  location,
+const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
+  onSave,
+  onCancel,
+  feedItem,
+  setFeedItem,
+  brands,
+  categories,
+  influencers,
 }) => {
-  const initial: any = location.state;
-
   const {
     settings: { language = [] },
   } = useSelector((state: any) => state.settings);
@@ -60,13 +67,10 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
   const [segmentForm] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
 
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [influencers, setInfluencers] = useState<Creator[]>([]);
   const [selectedSegment, setSelectedSegment] = useState<Segment | undefined>();
   const [selectedSegmentIndex, setSelectedSegmentIndex] = useState<number>(-1);
   const [ageRange, setAgeRange] = useState<[number, number]>([12, 100]);
 
-  const [brands, setBrands] = useState<Brand[]>([]);
   const [selectedBrand, setSelectedBrand] = useState<Brand | undefined>();
   const [selectedBrandIndex, setSelectedBrandIndex] = useState<number>(-1);
   const [showBrandForm, setShowBrandForm] = useState<boolean>(false);
@@ -87,28 +91,22 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
 
   const { doRequest } = useRequest({ setLoading });
 
-  const getResources = async () => {
-    async function getInfluencers() {
-      const response: any = await fetchCreators();
-      setInfluencers(response.results);
+  useEffect(() => {
+    if (feedItem && feedItem.hashtags) {
+      setHashtags(feedItem.hashtags);
+    } else {
+      setHashtags([]);
     }
-    async function getCategories() {
-      const response: any = await fetchCategories();
-      setCategories(response.results);
-    }
-    async function getBrands() {
-      const response: any = await fetchBrands();
-      setBrands(response.results);
-    }
-    // setLoading(true);
-    await Promise.all([getInfluencers(), getCategories(), getBrands()]);
-    // setLoading(false);
-  };
+  }, []);
 
   useEffect(() => {
-    getResources();
-    if (initial && initial.hashtags) {
-      setHashtags(initial.hashtags);
+    if (feedItem?.ageMin && feedItem?.ageMax)
+      setAgeRange([feedItem?.ageMin, feedItem?.ageMax]);
+  }, [feedItem]);
+
+  useEffect(() => {
+    if (feedItem && feedItem.hashtags) {
+      setHashtags(feedItem.hashtags);
     } else {
       setHashtags([]);
     }
@@ -141,10 +139,10 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
       );
     } else
       setPageTitle(
-        initial
-          ? initial.title.length > 50
-            ? `${initial.title.substr(0, 50)} Update`
-            : `${initial.title} Update`
+        feedItem
+          ? feedItem.title.length > 50
+            ? `${feedItem.title.substr(0, 50)} Update`
+            : `${feedItem.title} Update`
           : 'Update'
       );
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -152,13 +150,23 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
 
   const onFinish = async () => {
     const item: FeedItem = feedForm.getFieldsValue(true);
-    item.package = item.package?.map(pack => ({
-      ...pack,
-      tags: pack.tags ? pack.tags : [],
-    }));
-    // item.validity = moment(item.validity).format("DD/MM/YYYY");
-    await doRequest(() => saveVideoFeed(item));
-    history.goBack();
+    item.goLiveDate = moment(item.goLiveDate).format();
+    item.validity = moment(item.validity).format();
+
+    item.package = item.package?.map(pack => {
+      const segment: any = {
+        ...pack,
+        tags: pack.tags ? pack.tags : [],
+      };
+      // TODO: FIND THE ROOT CAUSE FOR THIS SELF REFERENCE
+      delete segment.package;
+      return segment;
+    });
+
+    const { result } = await doRequest(() => saveVideoFeed(item));
+    item.id ? onSave?.(item) : onSave?.({ ...item, id: result });
+
+    resetForm();
   };
 
   const onDeleteSegment = (evt: any, index: number) => {
@@ -183,9 +191,9 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
   };
 
   useEffect(() => {
-    if (initial?.ageMin && initial?.ageMax)
-      setAgeRange([initial?.ageMin, initial?.ageMax]);
-  }, [initial]);
+    if (feedItem?.ageMin && feedItem?.ageMax)
+      setAgeRange([feedItem?.ageMin, feedItem?.ageMax]);
+  }, [feedItem]);
 
   const onChangeAge = (value: [number, number]) => {
     feedForm.setFieldsValue({
@@ -199,6 +207,47 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
   const onEditSegment = (segment: Segment, segmentIndex: number) => {
     setSelectedSegment(segment);
     setSelectedSegmentIndex(segmentIndex);
+  };
+
+  const resetForm = () => {
+    const template = {
+      category: '',
+      creator: {
+        id: '',
+        status: '',
+        userName: '',
+        creatorId: '',
+        firstName: '',
+        lastName: '',
+      },
+      description: '',
+      format: '',
+      gender: [],
+      goLiveDate: '',
+      hCreationDate: '',
+      hLastUpdate: '',
+      id: '',
+      language: '',
+      package: [],
+      shortDescription: '',
+      status: '',
+      title: '',
+      validity: '',
+      videoType: [],
+      video: {},
+      lengthTotal: 0,
+      market: '',
+      modelRelease: '',
+      target: '',
+      _id: '',
+    };
+    setFeedItem(template);
+  };
+
+  const onCancelUpdate = () => {
+    resetForm();
+    onCancel?.();
+    setVideoTab('Video Details');
   };
 
   const VideoUpdatePage = () => {
@@ -360,7 +409,12 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
                       label="Go Live Date"
                       getValueProps={formatMoment}
                     >
-                      <DatePicker format="DD/MM/YYYY" />
+                      <DatePicker
+                        defaultValue={moment(
+                          feedForm.getFieldValue('goLiveDate')
+                        )}
+                        format="DD/MM/YYYY"
+                      />
                     </Form.Item>
                   </Col>
                   <Col lg={12} xs={24}>
@@ -369,7 +423,12 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
                       label="Expiration Date"
                       getValueProps={formatMoment}
                     >
-                      <DatePicker format="DD/MM/YYYY" />
+                      <DatePicker
+                        defaultValue={moment(
+                          feedForm.getFieldValue('validity')
+                        )}
+                        format="DD/MM/YYYY"
+                      />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -451,7 +510,7 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
         </Tabs>
         <Row gutter={8}>
           <Col>
-            <Button type="default" onClick={() => history.goBack()}>
+            <Button type="default" onClick={() => onCancelUpdate?.()}>
               Cancel
             </Button>
           </Col>
@@ -766,7 +825,6 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
           form={feedForm}
           onFinish={onFinish}
           name="feedForm"
-          initialValues={initial}
           onFinishFailed={({ errorFields }) => {
             errorFields.forEach(errorField => {
               message.error(errorField.errors[0]);
@@ -774,6 +832,7 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
           }}
           layout="vertical"
           className="video-feed"
+          initialValues={feedItem}
         >
           {!selectedSegment && <VideoUpdatePage />}
         </Form>

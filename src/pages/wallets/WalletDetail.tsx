@@ -104,6 +104,16 @@ const WalletDetail: React.FC<WalletDetailProps> = ({ location, onCancel }) => {
     );
   };
 
+  const onResetWallet = () => {
+    setTransactions([]);
+  };
+
+  const onSaveWallet = (balanceToAdd: number) => {
+    filteredTransactions[filteredTransactions.length].discoDollars =
+      balanceToAdd;
+    setTransactions([...filteredTransactions]);
+  };
+
   return (
     <div className="walletdetail">
       <PageHeader
@@ -128,7 +138,9 @@ const WalletDetail: React.FC<WalletDetailProps> = ({ location, onCancel }) => {
               disabled={false}
               fanId={initial.fan.id}
               brandId={initial.brand.id}
-              getResources={getResources}
+              wallet={initial as unknown as Wallet}
+              onSave={onSaveWallet}
+              onReset={onResetWallet}
             />
           </Row>
         </Col>

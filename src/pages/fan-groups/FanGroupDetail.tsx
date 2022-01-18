@@ -20,8 +20,10 @@ const FanGroupsDetail: React.FC<FanGroupsDetailProps> = ({
 
   const onFinish = async () => {
     const formFanGroup = form.getFieldsValue(true);
-    await doRequest(() => saveFanGroup(formFanGroup));
-    onSave?.(formFanGroup);
+    const { result } = await doRequest(() => saveFanGroup(formFanGroup));
+    formFanGroup.id
+      ? onSave?.(formFanGroup)
+      : onSave?.({ ...formFanGroup, id: result });
   };
 
   return (

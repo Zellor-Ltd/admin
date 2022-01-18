@@ -35,6 +35,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [content, setContent] = useState<any[]>([]);
 
   const [tags, setTags] = useState<Tag[]>([]);
+  const [loaded, setLoaded] = useState<boolean>(false);
 
   const _fetchTags = async searchButton => {
     const pageToUse = refreshing ? 0 : page;
@@ -56,6 +57,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
 
   const getResources = async searchButton => {
     const [{ results }] = await Promise.all([_fetchTags(searchButton)]);
+    setLoaded(true);
     setTags(results);
   };
 
@@ -105,14 +107,9 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
     setDetails(true);
   };
 
-  const deleteItem = async (id: string) => {
+  const deleteItem = async (id: string, index: number) => {
     await doRequest(() => deleteTag({ id }));
-    for (let i = 0; i < content.length; i++) {
-      if (content[i].id === id) {
-        const index = i;
-        setTags(prev => [...prev.slice(0, index), ...prev.slice(index + 1)]);
-      }
-    }
+    setTags(prev => [...prev.slice(0, index), ...prev.slice(index + 1)]);
   };
 
   const columns: ColumnsType<Tag> = [
@@ -155,7 +152,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
             title="Are you sure？"
             okText="Yes"
             cancelText="No"
-            onConfirm={() => deleteItem(record.id)}
+            onConfirm={() => deleteItem(record.id, index)}
           >
             <Button type="link" style={{ padding: 0, margin: 6 }}>
               <DeleteOutlined />
@@ -167,8 +164,12 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
   ];
 
   const refreshItem = (record: Tag) => {
-    tags[lastViewedIndex] = record;
-    setTags([...tags]);
+    if (loaded) {
+      tags[lastViewedIndex] = record;
+      setTags([...tags]);
+    } else {
+      setTags([record]);
+    }
   };
 
   const onSaveTag = (record: Tag) => {

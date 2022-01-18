@@ -21,8 +21,10 @@ const HomeScreenDetail: React.FC<HomeScreenDetailProps> = ({
 
   const onFinish = async () => {
     const formBanner = form.getFieldsValue(true);
-    await doRequest(() => saveBanner(formBanner));
-    onSave?.(formBanner);
+    const { result } = await doRequest(() => saveBanner(formBanner));
+    formBanner.id
+      ? onSave?.(formBanner)
+      : onSave?.({ ...formBanner, id: result });
   };
 
   return (

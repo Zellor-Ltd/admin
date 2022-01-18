@@ -22,6 +22,7 @@ import {
   Typography,
 } from 'antd';
 import { Upload } from 'components';
+import { useRequest } from 'hooks/useRequest';
 import { Creator } from 'interfaces/Creator';
 import { ServerAlias } from 'interfaces/ServerAlias';
 import { useEffect, useState } from 'react';
@@ -40,6 +41,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
   const [loading, setLoading] = useState(false);
   const [ageRange, setageRange] = useState<[number, number]>([12, 100]);
   const [serversList, setServersList] = useState<ServerAlias[]>([]);
+  const { doRequest } = useRequest({ setLoading });
 
   const [form] = Form.useForm();
 
@@ -47,10 +49,12 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
     setLoading(true);
     try {
       const formCreator = form.getFieldsValue(true);
-      await saveCreator(formCreator);
+      const { result } = await doRequest(() => saveCreator(formCreator));
       setLoading(false);
       message.success('Register updated with success.');
-      onSave?.(formCreator);
+      formCreator.id
+        ? onSave?.(formCreator)
+        : onSave?.({ ...formCreator, id: result });
     } catch (error) {
       console.error(error);
       setLoading(false);

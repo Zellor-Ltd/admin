@@ -140,7 +140,7 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
             title="Are you sure？"
             okText="Yes"
             cancelText="No"
-            onConfirm={() => deleteItem(record.id)}
+            onConfirm={() => deleteItem(record.id, index)}
           >
             <Button type="link" style={{ padding: 0, margin: 6 }}>
               <DeleteOutlined />
@@ -169,17 +169,9 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const deleteItem = async (id: string) => {
+  const deleteItem = async (id: string, index: number) => {
     await doRequest(() => deletePromotion({ id }));
-    for (let i = 0; i < content.length; i++) {
-      if (content[i].id === id) {
-        const index = i;
-        setPromotions(prev => [
-          ...prev.slice(0, index),
-          ...prev.slice(index + 1),
-        ]);
-      }
-    }
+    setPromotions(prev => [...prev.slice(0, index), ...prev.slice(index + 1)]);
   };
 
   useEffect(() => {
@@ -233,6 +225,7 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
             </Col>
           </Row>
           <Table
+            rowClassName={(_, index) => `scrollable-row-${index}`}
             rowKey="id"
             columns={columns}
             dataSource={filteredPromotions}

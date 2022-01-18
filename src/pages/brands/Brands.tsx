@@ -52,19 +52,11 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
     fetch();
   };
 
-  const deleteItem = async (id: string) => {
+  const deleteItem = async (id: string, index: number) => {
     setLoading(true);
     try {
       await deleteBrand({ id });
-      for (let i = 0; i < brands.length; i++) {
-        if (brands[i].id === id) {
-          const index = i;
-          setBrands(prev => [
-            ...prev.slice(0, index),
-            ...prev.slice(index + 1),
-          ]);
-        }
-      }
+      setBrands(prev => [...prev.slice(0, index), ...prev.slice(index + 1)]);
     } catch (err) {
       console.log(err);
     }
@@ -269,7 +261,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
               title="Are you sure？"
               okText="Yes"
               cancelText="No"
-              onConfirm={() => deleteItem(record.id)}
+              onConfirm={() => deleteItem(record.id, index)}
             >
               <Button type="link" style={{ padding: 0, margin: 6 }}>
                 <DeleteOutlined />

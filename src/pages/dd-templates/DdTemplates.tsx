@@ -72,17 +72,9 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
     setDetails(false);
   };
 
-  const deleteItem = async (id: string) => {
+  const deleteItem = async (id: string, index: number) => {
     await doRequest(() => deleteDdTemplate({ id }));
-    for (let i = 0; i < content.length; i++) {
-      if (content[i].id === id) {
-        const index = i;
-        setDdTemplates(prev => [
-          ...prev.slice(0, index),
-          ...prev.slice(index + 1),
-        ]);
-      }
-    }
+    setDdTemplates(prev => [...prev.slice(0, index), ...prev.slice(index + 1)]);
   };
 
   const columns: ColumnsType<DdTemplate> = [
@@ -153,7 +145,7 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
             title="Are you sure？"
             okText="Yes"
             cancelText="No"
-            onConfirm={() => deleteItem(record.id)}
+            onConfirm={() => deleteItem(record.id, index)}
           >
             <Button type="link" style={{ padding: 0, margin: 6 }}>
               <DeleteOutlined />

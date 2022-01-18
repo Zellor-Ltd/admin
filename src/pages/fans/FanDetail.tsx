@@ -14,6 +14,7 @@ import {
   Typography,
 } from 'antd';
 import { formatMoment } from 'helpers/formatMoment';
+import { useRequest } from 'hooks/useRequest';
 import { Category } from 'interfaces/Category';
 import { Creator } from 'interfaces/Creator';
 import { Currency } from 'interfaces/Currency';
@@ -57,6 +58,7 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
   const [serversList, setServersList] = useState<ServerAlias[]>([]);
   const [currencies, setCurrencies] = useState<Currency[]>([]);
   const [form] = Form.useForm();
+  const { doRequest } = useRequest({ setLoading });
 
   useEffect(() => {
     let mounted = true;
@@ -218,10 +220,10 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
     try {
       const user = form.getFieldsValue(true);
       const formattedUserData = formatUserData(user);
-      await saveUser(formattedUserData);
+      const { result } = await doRequest(() => saveUser(formattedUserData));
       setLoading(false);
       message.success('Register updated with success.');
-      onSave?.(user);
+      user.id ? onSave?.(user) : onSave?.({ ...user, id: result });
     } catch (error) {
       setLoading(false);
     }
@@ -237,20 +239,24 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
         name="userForm"
         layout="vertical"
         form={form}
-        initialValues={{
-          ...fan,
-          phoneNumber: fan.personalDetails?.phone?.number,
-          line1: fan.addresses?.[0]?.line1,
-          city: fan.addresses?.[0]?.city,
-          country: fan.addresses?.[0]?.country,
-          postalCode: fan.addresses?.[0]?.postalCode,
-        }}
+        initialValues={
+          fan
+            ? {
+                ...fan,
+                phoneNumber: fan.personalDetails?.phone?.number,
+                line1: fan.addresses?.[0]?.line1,
+                city: fan.addresses?.[0]?.city,
+                country: fan.addresses?.[0]?.country,
+                postalCode: fan.addresses?.[0]?.postalCode,
+              }
+            : undefined
+        }
         onFinish={onFinish}
       >
         <Tabs defaultActiveKey="Details">
           <Tabs.TabPane forceRender tab="Details" key="Details">
             <Row gutter={8}>
-              {fan.id && (
+              {fan && (
                 <Col lg={8} xs={24}>
                   <Form.Item label="_id" name="id">
                     <Input disabled />
@@ -307,9 +313,11 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
               <Col lg={8} xs={24}>
                 <Form.Item label="Phone" name="phoneNumber">
                   <Input
-                    addonBefore={prefixSelector(
-                      fan.personalDetails?.phone?.dialCode
-                    )}
+                    addonBefore={
+                      fan
+                        ? prefixSelector(fan.personalDetails?.phone?.dialCode)
+                        : undefined
+                    }
                   />
                 </Form.Item>
               </Col>
