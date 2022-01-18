@@ -60,7 +60,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
 
   const [loading, setLoading] = useState(false);
   const [filterText, setFilterText] = useState('');
-  const [content, setContent] = useState<any[]>([]);
+  const [videoFeeds, setVideoFeeds] = useState<any[]>([]);
   const [loaded, setLoaded] = useState<boolean>(false);
   const [details, setDetails] = useState<boolean>(false);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -110,7 +110,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       const response: any = await fetchVideoFeed();
       setLoading(false);
       setFilteredItems(response.results);
-      setContent(response.results);
+      setVideoFeeds(response.results);
     } catch (error) {
       message.error('Error to get feed');
       setLoading(false);
@@ -173,8 +173,8 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
 
   const refreshItem = async (record: FeedItem) => {
     if (loaded) {
-      content[lastViewedIndex] = record;
-      setFilteredItems([...content]);
+      videoFeeds[lastViewedIndex] = record;
+      setFilteredItems([...videoFeeds]);
     } else {
       setFilteredItems([record]);
     }

@@ -15,10 +15,10 @@ import {
   message,
   PageHeader,
   Row,
-  Tabs,
-  Switch,
   Select,
   Slider,
+  Switch,
+  Tabs,
   Typography,
 } from 'antd';
 import { Upload } from 'components';
