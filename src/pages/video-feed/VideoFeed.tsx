@@ -109,6 +109,11 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
   const [currentPage, setCurrentPage] = useState(1);
 
+  const [segmentListing, setSegmentListing] = useState<
+    'creator' | 'productBrand'
+  >('creator');
+  const [showSegmentListing, setShowSegmentListing] = useState(false);
+
   const { doRequest } = useRequest({ setLoading });
 
   const optionsMapping: SelectOption = {
@@ -178,6 +183,13 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       );
     }
   }, [isEditing]);
+
+  useEffect(() => {
+    if (showSegmentListing) {
+      const selectedOption = selectedSegment?.selectedOption || 'creator';
+      onSegmentListingChange(selectedOption);
+    }
+  }, [showSegmentListing]);
 
   const fetch = async (_brand?: Brand) => {
     setLoading(true);
@@ -270,7 +282,15 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   };
 
   const onEditSegment = (segment: Segment, segmentIndex: number) => {
-    setSelectedSegment(segment);
+    const selectedOption = segment.selectedOption || 'creator';
+    setSelectedSegment({
+      ...segment,
+      selectedOption: selectedOption,
+    });
+    if (segment.brands && segment.brands.length > 0) {
+      setShowSegmentListing(true);
+    }
+    onSegmentListingChange(selectedOption);
     setSelectedSegmentIndex(segmentIndex);
     segmentForm.setFieldsValue(segment);
   };
@@ -292,6 +312,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       sequence,
       tags: [],
       brands: [],
+      selectedOption: 'creator',
     });
     setSelectedSegmentIndex(sequence - 1);
   };
@@ -363,7 +384,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     );
   };
 
-  const onEditItem = (videoFeed: FeedItem, index: number) => {
+  const onEditFeedItem = (videoFeed: FeedItem, index: number) => {
     setLastViewedIndex(index);
     setSelectedVideoFeed(videoFeed);
     setIsEditing(true);
@@ -418,6 +439,51 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     setCurrentPage(page);
   };
 
+  const onSegmentListingChange = (
+    segmentListing: 'creator' | 'productBrand'
+  ) => {
+    const segmentBrands = segmentForm.getFieldValue('brands') as Brand[];
+    if (segmentBrands && segmentBrands.length > 0) {
+      setSegmentListing(segmentListing);
+      const firstBrand = segmentForm.getFieldValue('brands')[0] as Brand;
+      switch (segmentListing) {
+        case 'creator':
+          const creator = selectedVideoFeed?.creator;
+          if (creator) {
+            segmentForm.setFieldsValue({
+              selectedFeedTitle: creator?.userName,
+              selectedIconUrl: creator?.avatar?.url || undefined,
+            });
+          }
+          break;
+        case 'productBrand':
+          segmentForm.setFieldsValue({
+            selectedFeedTitle: firstBrand.productBrand?.brandName,
+            selectedIconUrl: firstBrand.selectedLogoUrl,
+          });
+          break;
+      }
+    }
+  };
+
+  const onCreatorChange = (key: string) => {
+    const creator = influencers.find(influencer => influencer.id === key);
+    const feedItem = feedForm.getFieldsValue(true) as FeedItem;
+
+    const segments = feedItem.package.map(segment => {
+      if (!segment.selectedOption || segment.selectedOption === 'creator') {
+        segment.selectedFeedTitle = creator?.userName;
+        segment.selectedIconUrl = creator?.avatar?.url || undefined;
+      }
+      return segment;
+    });
+
+    feedForm.setFieldsValue({
+      package: [...segments],
+      creator: creator,
+    });
+  };
+
   const columns: ColumnsType<FeedItem> = [
     {
       title: '_id',
@@ -430,10 +496,10 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       title: 'Title',
       dataIndex: 'title',
       width: '18%',
-      render: (value: string, record: FeedItem, index: number) => (
+      render: (value: string, feedItem: FeedItem, index: number) => (
         <Link
-          onClick={() => onEditItem(record, index)}
-          to={{ pathname: window.location.pathname, state: record }}
+          onClick={() => onEditFeedItem(feedItem, index)}
+          to={{ pathname: window.location.pathname, state: feedItem }}
         >
           {value}
         </Link>
@@ -481,11 +547,11 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       key: 'action',
       width: '5%',
       align: 'right',
-      render: (_, record: FeedItem, index: number) => (
+      render: (_, feedItem: FeedItem, index: number) => (
         <>
           <Link
-            onClick={() => onEditItem(record, index)}
-            to={{ pathname: window.location.pathname, state: record }}
+            onClick={() => onEditFeedItem(feedItem, index)}
+            to={{ pathname: window.location.pathname, state: feedItem }}
           >
             <EditOutlined />
           </Link>
@@ -493,7 +559,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
             title="Are you sure？"
             okText="Yes"
             cancelText="No"
-            onConfirm={() => deleteItem(record.id)}
+            onConfirm={() => deleteItem(feedItem.id)}
           >
             <Button type="link" style={{ padding: 0, margin: 6 }}>
               <DeleteOutlined />
@@ -660,13 +726,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                 <Form.Item name={['creator', 'id']} label="Creator">
                   <Select
                     placeholder="Please select a creator"
-                    onChange={(key: string) =>
-                      feedForm.setFieldsValue({
-                        creator: influencers.find(
-                          influencer => influencer.id === key
-                        ),
-                      })
-                    }
+                    onChange={onCreatorChange}
                   >
                     {influencers.map((influencer: any) => (
                       <Select.Option key={influencer.id} value={influencer.id}>
@@ -993,6 +1053,24 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                     pagination={false}
                   />
                 </Tabs.TabPane>
+                {showSegmentListing && (
+                  <Tabs.TabPane forceRender tab="Listing" key="Listing">
+                    <Form.Item
+                      name="selectedOption"
+                      initialValue={selectedSegment?.selectedOption}
+                    >
+                      <Radio.Group
+                        value={segmentListing}
+                        onChange={event =>
+                          onSegmentListingChange(event.target.value)
+                        }
+                      >
+                        <Radio value="creator">Creator</Radio>
+                        <Radio value="productBrand">Product Brand</Radio>
+                      </Radio.Group>
+                    </Form.Item>
+                  </Tabs.TabPane>
+                )}
               </Tabs>
               <Row gutter={8} style={{ marginTop: '20px' }}>
                 <Col>
@@ -1129,6 +1207,9 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                 setSelectedBrandIndex(-1);
                 setShowBrandForm(false);
                 setSelectedSegment(segmentForm.getFieldsValue(true));
+                if (newValue && !showSegmentListing) {
+                  setShowSegmentListing(true);
+                }
               }
               if (name === 'tagForm') {
                 const { segmentForm, tagForm } = forms;
