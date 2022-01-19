@@ -6,6 +6,7 @@ import { ProductBrand } from './ProductBrand';
 export interface FeedItem {
   video: Video;
   id: string;
+  index?: number;
   category: String;
   format: String;
   language: String;
@@ -24,5 +25,5 @@ export interface FeedItem {
   ageMin?: number;
   status?: any;
   shortDescription?: string;
-  creator?: Creator;  
+  creator?: Creator;
 }
