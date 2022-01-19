@@ -204,6 +204,12 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   }, []);
 
   useEffect(() => {
+    if (selectedVideoFeed) {
+      selectedVideoFeed.index =
+        selectedVideoFeed?.index !== undefined
+          ? selectedVideoFeed?.index
+          : 1000;
+    }
     feedForm.setFieldsValue(selectedVideoFeed);
     segmentForm.setFieldsValue(selectedVideoFeed);
   }, [selectedVideoFeed]);
