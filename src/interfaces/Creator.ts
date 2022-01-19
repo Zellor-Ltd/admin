@@ -1,3 +1,5 @@
+import { Image } from './Image';
+
 export interface Creator {
   id: string;
   status: string;
@@ -6,4 +8,5 @@ export interface Creator {
   firstName: string;
   lastName: string;
   coverPictureUrl?: string;
+  avatar?: Image;
 }
