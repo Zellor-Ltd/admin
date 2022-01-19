@@ -39,14 +39,12 @@ import { Brand } from 'interfaces/Brand';
 import '@pathofdev/react-tag-input/build/index.css';
 import { Category } from 'interfaces/Category';
 import { Creator } from 'interfaces/Creator';
-import { useSelector } from 'react-redux';
 import './VideoFeed.scss';
 import './VideoFeedDetail.scss';
 import scrollIntoView from 'scroll-into-view';
 import SimpleSelect from 'components/SimpleSelect';
 import { SelectOption } from '../../interfaces/SelectOption';
 import VideoFeedDetailV2 from './VideoFeedDetailV2';
-import { useRequest } from 'hooks/useRequest';
 
 const { Content } = Layout;
 
@@ -58,10 +56,6 @@ const reduceSegmentsTags = (packages: Segment[]) => {
 
 const VideoFeed: React.FC<RouteComponentProps> = () => {
   const [selectedVideoFeed, setSelectedVideoFeed] = useState<FeedItem>();
-
-  const {
-    settings: { language = [] },
-  } = useSelector((state: any) => state.settings);
 
   const [loading, setLoading] = useState(false);
   const [filterText, setFilterText] = useState('');
@@ -76,7 +70,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const [brands, setBrands] = useState<Brand[]>([]);
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
   const [currentPage, setCurrentPage] = useState(1);
-  const { doRequest } = useRequest({ setLoading });
 
   const shouldUpdateFeedItemIndex = useRef(false);
   const originalFeedItemsIndex = useRef<Record<string, number | undefined>>({});
@@ -97,223 +90,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     removeFilterFunction,
   } = useFilter<FeedItem>([]);
 
-  useEffect(() => {
-    getDetailsResources();
-  }, []);
-
-  useEffect(() => {
-    feedForm.setFieldsValue(selectedVideoFeed);
-    segmentForm.setFieldsValue(selectedVideoFeed);
-  }, [selectedVideoFeed]);
-
-  useEffect(() => {
-    if (!details) {
-      scrollIntoView(
-        document.querySelector(
-          `.scrollable-row-${lastViewedIndex}`
-        ) as HTMLElement
-      );
-    }
-  }, [details]);
-
-  const fetch = async (_brand?: Brand) => {
-    setLoading(true);
-    try {
-      const response: any = await fetchVideoFeed();
-      setLoading(false);
-      setFilteredItems(response.results);
-      setVideoFeeds(response.results);
-    } catch (error) {
-      message.error('Error to get feed');
-      setLoading(false);
-    }
-
-    if (_brand) {
-      addFilterFunction('brandName', feedItems =>
-        feedItems.filter(feedItem => {
-          if (!feedItem.package) return false;
-          for (let i = 0; i < feedItem.package.length; i++) {
-            if (feedItem.package[i].brands) {
-              for (let j = 0; j < feedItem.package[i].brands.length; j++) {
-                return (
-                  feedItem.package[i].brands[j].brandName === _brand.brandName
-                );
-              }
-            } else {
-              return false;
-            }
-          }
-        })
-      );
-    }
-  };
-
-  const getResources = (_brand?: Brand) => {
-    fetch(_brand);
-    setLoaded(true);
-  };
-
-  const getDetailsResources = async () => {
-    async function getInfluencers() {
-      const response: any = await fetchCreators();
-      setInfluencers(response.results);
-    }
-    async function getCategories() {
-      const response: any = await fetchCategories();
-      setCategories(response.results);
-    }
-    async function getBrands() {
-      setIsFetchingBrands(true);
-      const response: any = await fetchBrands();
-      setBrands(response.results);
-      setIsFetchingBrands(false);
-    }
-    setLoading(true);
-    await Promise.all([getInfluencers(), getCategories(), getBrands()]);
-    setLoading(false);
-  };
-
-  const deleteItem = async (_id: string, index: number) => {
-    setLoading(true);
-    await deleteVideoFeed(_id);
-    setFilteredItems(prev => [
-      ...prev.slice(0, index),
-      ...prev.slice(index + 1),
-    ]);
-    setLoading(false);
-  };
-
-  const refreshItem = async (record: FeedItem) => {
-    if (loaded) {
-      videoFeeds[lastViewedIndex] = record;
-      setFilteredItems([...videoFeeds]);
-    } else {
-      setFilteredItems([record]);
-    }
-  };
-
-  const onChangeBrand = async (_selectedBrand: Brand | undefined) => {
-    if (loaded) {
-      if (!_selectedBrand) {
-        removeFilterFunction('brandName');
-        return;
-      }
-      addFilterFunction('brandName', feedItems =>
-        feedItems.filter(feedItem => {
-          if (!feedItem.package) return false;
-          for (let i = 0; i < feedItem.package.length; i++) {
-            if (feedItem.package[i].brands) {
-              for (let j = 0; j < feedItem.package[i].brands.length; j++) {
-                return (
-                  feedItem.package[i].brands[j].brandName ===
-                  _selectedBrand.brandName
-                );
-              }
-            } else {
-              return false;
-            }
-          }
-        })
-      );
-    } else {
-      if (_selectedBrand) {
-        getResources(_selectedBrand);
-      } else {
-        getResources();
-      }
-    }
-  };
-
-  const onChangeFilter = (evt: any) => {
-    setFilterText(evt.target.value);
-  };
-
-  const filterFeed = () => {
-    return filteredItems.filter(item =>
-      item.title?.toUpperCase().includes(filterText.toUpperCase())
-    );
-  };
-
-  const onEditFeedItem = (index: number, videoFeed?: FeedItem) => {
-    setLastViewedIndex(index);
-    setSelectedVideoFeed(videoFeed);
-    setDetails(true);
-  };
-
-  const onPageChange = (page: number) => {
-    setCurrentPage(page);
-  };
-  const onCreatorChange = (key: string) => {
-    const creator = influencers.find(influencer => influencer.id === key);
-    const feedItem = feedForm.getFieldsValue(true) as FeedItem;
-
-    const segments = feedItem.package.map(segment => {
-      if (!segment.selectedOption || segment.selectedOption === 'creator') {
-        segment.selectedFeedTitle = creator?.userName;
-        segment.selectedIconUrl = creator?.avatar?.url || undefined;
-      }
-      return segment;
-    });
-
-    feedForm.setFieldsValue({
-      package: [...segments],
-      creator: creator,
-    });
-  };
-
-  const onFeedItemIndexOnColumnChange = (
-    feedItemIndex: number,
-    feedItem: FeedItem
-  ) => {
-    for (let i = 0; i < filteredItems.length; i++) {
-      if (filteredItems[i].id === feedItem.id) {
-        if (originalFeedItemsIndex.current[feedItem.id] === undefined) {
-          originalFeedItemsIndex.current[feedItem.id] = feedItem.index;
-        }
-
-        shouldUpdateFeedItemIndex.current =
-          originalFeedItemsIndex.current[feedItem.id] !== feedItemIndex;
-
-        filteredItems[i].index = feedItemIndex;
-        setFilteredItems([...filteredItems]);
-        break;
-      }
-    }
-  };
-
-  const onFeedItemIndexOnColumnBlur = async (feedItem: FeedItem) => {
-    if (!shouldUpdateFeedItemIndex.current) {
-      return;
-    }
-    setUpdatingFeedItemIndex(prev => {
-      const newValue = {
-        ...prev,
-      };
-      newValue[feedItem.id] = true;
-
-      return newValue;
-    });
-    try {
-      await saveVideoFeed(feedItem);
-      message.success('Register updated with success.');
-    } catch (err) {
-      console.error(
-        `Error while trying to update FeedItem[${feedItem.id}] index.`,
-        err
-      );
-      message.success('Error while trying to update FeedItem index.');
-    }
-    setUpdatingFeedItemIndex(prev => {
-      const newValue = {
-        ...prev,
-      };
-      delete newValue[feedItem.id];
-      return newValue;
-    });
-    delete originalFeedItemsIndex.current[feedItem.id];
-    shouldUpdateFeedItemIndex.current = false;
-  };
-
   const feedItemColumns: ColumnsType<FeedItem> = [
     {
       title: '_id',
@@ -326,7 +102,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       title: 'Index',
       dataIndex: 'index',
       width: '3%',
-      render: (_, feedItem, index) => {
+      render: (_, feedItem) => {
         if (updatingFeedItemIndex[feedItem.id]) {
           const antIcon = <LoadingOutlined spin />;
           return <Spin indicator={antIcon} />;
@@ -423,13 +199,251 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     },
   ];
 
+  useEffect(() => {
+    getDetailsResources();
+  }, []);
+
+  useEffect(() => {
+    feedForm.setFieldsValue(selectedVideoFeed);
+    segmentForm.setFieldsValue(selectedVideoFeed);
+  }, [selectedVideoFeed]);
+
+  useEffect(() => {
+    if (!details) {
+      scrollIntoView(
+        document.querySelector(
+          `.scrollable-row-${lastViewedIndex}`
+        ) as HTMLElement
+      );
+    }
+  }, [details]);
+
+  const fetch = async (_brand?: Brand) => {
+    setLoading(true);
+    try {
+      const response: any = await fetchVideoFeed();
+      setLoading(false);
+      setFilteredItems(response.results);
+      setVideoFeeds(response.results);
+    } catch (error) {
+      message.error('Error to get feed');
+      setLoading(false);
+    }
+
+    if (_brand) {
+      addFilterFunction('brandName', feedItems =>
+        feedItems.filter(feedItem => {
+          if (!feedItem.package) return false;
+          for (let i = 0; i < feedItem.package.length; i++) {
+            if (feedItem.package[i].brands) {
+              for (let j = 0; j < feedItem.package[i].brands.length; j++) {
+                if (
+                  feedItem.package[i].brands[j].brandName === _brand.brandName
+                ) {
+                  return true;
+                }
+              }
+            }
+          }
+          return false;
+        })
+      );
+    }
+  };
+
+  const getResources = (_brand?: Brand) => {
+    fetch(_brand);
+    setLoaded(true);
+  };
+
+  const getDetailsResources = async () => {
+    async function getInfluencers() {
+      const response: any = await fetchCreators();
+      setInfluencers(response.results);
+    }
+    async function getCategories() {
+      const response: any = await fetchCategories();
+      setCategories(response.results);
+    }
+    async function getBrands() {
+      setIsFetchingBrands(true);
+      const response: any = await fetchBrands();
+      setBrands(response.results);
+      setIsFetchingBrands(false);
+    }
+    setLoading(true);
+    await Promise.all([getInfluencers(), getCategories(), getBrands()]);
+    setLoading(false);
+  };
+
+  const deleteItem = async (_id: string, index: number) => {
+    setLoading(true);
+    await deleteVideoFeed(_id);
+    setFilteredItems(prev => [
+      ...prev.slice(0, index),
+      ...prev.slice(index + 1),
+    ]);
+    setLoading(false);
+  };
+
+  const refreshItem = (record: FeedItem) => {
+    if (loaded) {
+      videoFeeds[lastViewedIndex] = record;
+      setFilteredItems([...videoFeeds]);
+    } else {
+      setFilteredItems([record]);
+    }
+  };
+
+  const onChangeBrand = async (_selectedBrand: Brand | undefined) => {
+    if (loaded) {
+      if (!_selectedBrand) {
+        removeFilterFunction('brandName');
+        return;
+      }
+      addFilterFunction('brandName', feedItems =>
+        feedItems.filter(feedItem => {
+          if (!feedItem.package) return false;
+          for (let i = 0; i < feedItem.package.length; i++) {
+            if (feedItem.package[i].brands) {
+              for (let j = 0; j < feedItem.package[i].brands.length; j++) {
+                if (
+                  feedItem.package[i].brands[j].brandName ===
+                  _selectedBrand.brandName
+                ) {
+                  return true;
+                }
+              }
+            }
+          }
+          return false;
+        })
+      );
+    } else {
+      if (_selectedBrand) {
+        getResources(_selectedBrand);
+      } else {
+        getResources();
+      }
+    }
+  };
+
+  const onChangeFilter = (evt: any) => {
+    setFilterText(evt.target.value);
+  };
+
+  const filterFeed = () => {
+    return filteredItems.filter(item =>
+      item.title?.toUpperCase().includes(filterText.toUpperCase())
+    );
+  };
+
+  const onEditFeedItem = (index: number, videoFeed?: FeedItem) => {
+    setLastViewedIndex(index);
+    setSelectedVideoFeed(videoFeed);
+    setDetails(true);
+  };
+
+  const onPageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const onFeedItemIndexOnColumnChange = (
+    feedItemIndex: number,
+    feedItem: FeedItem
+  ) => {
+    for (let i = 0; i < filteredItems.length; i++) {
+      if (filteredItems[i].id === feedItem.id) {
+        if (originalFeedItemsIndex.current[feedItem.id] === undefined) {
+          originalFeedItemsIndex.current[feedItem.id] = feedItem.index;
+        }
+
+        shouldUpdateFeedItemIndex.current =
+          originalFeedItemsIndex.current[feedItem.id] !== feedItemIndex;
+
+        filteredItems[i].index = feedItemIndex;
+        setFilteredItems([...filteredItems]);
+        break;
+      }
+    }
+  };
+
+  const onFeedItemIndexOnColumnBlur = async (feedItem: FeedItem) => {
+    if (!shouldUpdateFeedItemIndex.current) {
+      return;
+    }
+    setUpdatingFeedItemIndex(prev => {
+      const newValue = {
+        ...prev,
+      };
+      newValue[feedItem.id] = true;
+
+      return newValue;
+    });
+    try {
+      await saveVideoFeed(feedItem);
+      message.success('Register updated with success.');
+    } catch (err) {
+      console.error(
+        `Error while trying to update FeedItem[${feedItem.id}] index.`,
+        err
+      );
+      message.success('Error while trying to update FeedItem index.');
+    }
+    setUpdatingFeedItemIndex(prev => {
+      const newValue = {
+        ...prev,
+      };
+      delete newValue[feedItem.id];
+      return newValue;
+    });
+    delete originalFeedItemsIndex.current[feedItem.id];
+    shouldUpdateFeedItemIndex.current = false;
+  };
+
   const onSaveItem = (record: FeedItem) => {
     refreshItem(record);
     setDetails(false);
+    resetForm();
   };
 
   const onCancelItem = () => {
     setDetails(false);
+  };
+
+  const resetForm = () => {
+    const template = {
+      category: '',
+      creator: {
+        id: '',
+        status: '',
+        userName: '',
+        creatorId: '',
+        firstName: '',
+        lastName: '',
+      },
+      description: '',
+      format: '',
+      gender: [],
+      goLiveDate: '',
+      hCreationDate: '',
+      hLastUpdate: '',
+      id: '',
+      language: '',
+      package: [],
+      shortDescription: '',
+      status: '',
+      title: '',
+      validity: '',
+      videoType: [],
+      video: {},
+      lengthTotal: 0,
+      market: '',
+      modelRelease: '',
+      target: '',
+      _id: '',
+    };
+    setSelectedVideoFeed(template);
   };
 
   return (
@@ -473,7 +487,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                       loading={isFetchingBrands}
                       disabled={isFetchingBrands}
                       allowClear={true}
-                    ></SimpleSelect>
+                    />
                   </Col>
                 </Row>
               </Col>
@@ -527,7 +541,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
           onSave={onSaveItem}
           onCancel={onCancelItem}
           feedItem={selectedVideoFeed}
-          setFeedItem={setSelectedVideoFeed}
           brands={brands}
           categories={categories}
           influencers={influencers}

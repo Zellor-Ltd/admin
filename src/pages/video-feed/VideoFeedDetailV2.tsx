@@ -44,7 +44,6 @@ interface VideoFeedDetailProps {
   onSave?: (record: FeedItem) => void;
   onCancel?: () => void;
   feedItem?: FeedItem;
-  setFeedItem: (record: FeedItem) => void;
   brands: Brand[];
   categories: Category[];
   influencers: Creator[];
@@ -54,7 +53,6 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
   onSave,
   onCancel,
   feedItem,
-  setFeedItem,
   brands,
   categories,
   influencers,
@@ -102,14 +100,6 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
       onSegmentListingChange(selectedOption);
     }
   }, [showSegmentListing]);
-
-  useEffect(() => {
-    if (feedItem && feedItem.hashtags) {
-      setHashtags(feedItem.hashtags);
-    } else {
-      setHashtags([]);
-    }
-  }, []);
 
   useEffect(() => {
     if (feedItem?.ageMin && feedItem?.ageMax)
@@ -160,6 +150,11 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedSegment, showBrandForm, showTagForm]);
 
+  useEffect(() => {
+    if (feedItem?.ageMin && feedItem?.ageMax)
+      setAgeRange([feedItem?.ageMin, feedItem?.ageMax]);
+  }, [feedItem]);
+
   const onSegmentListingChange = (
     segmentListing: 'creator' | 'productBrand'
   ) => {
@@ -204,8 +199,6 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
 
     const { result } = await doRequest(() => saveVideoFeed(item));
     item.id ? onSave?.(item) : onSave?.({ ...item, id: result });
-
-    resetForm();
   };
 
   const onDeleteSegment = (evt: any, index: number) => {
@@ -230,11 +223,6 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
     setSelectedSegmentIndex(sequence - 1);
   };
 
-  useEffect(() => {
-    if (feedItem?.ageMin && feedItem?.ageMax)
-      setAgeRange([feedItem?.ageMin, feedItem?.ageMax]);
-  }, [feedItem]);
-
   const onChangeAge = (value: [number, number]) => {
     feedForm.setFieldsValue({
       ageMin: value[0],
@@ -256,47 +244,6 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
     onSegmentListingChange(selectedOption);
     setSelectedSegmentIndex(segmentIndex);
     segmentForm.setFieldsValue(segment);
-  };
-
-  const resetForm = () => {
-    const template = {
-      category: '',
-      creator: {
-        id: '',
-        status: '',
-        userName: '',
-        creatorId: '',
-        firstName: '',
-        lastName: '',
-      },
-      description: '',
-      format: '',
-      gender: [],
-      goLiveDate: '',
-      hCreationDate: '',
-      hLastUpdate: '',
-      id: '',
-      language: '',
-      package: [],
-      shortDescription: '',
-      status: '',
-      title: '',
-      validity: '',
-      videoType: [],
-      video: {},
-      lengthTotal: 0,
-      market: '',
-      modelRelease: '',
-      target: '',
-      _id: '',
-    };
-    setFeedItem(template);
-  };
-
-  const onCancelUpdate = () => {
-    resetForm();
-    onCancel?.();
-    setVideoTab('Video Details');
   };
 
   const onCreatorChange = (key: string) => {
@@ -859,7 +806,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
     <div className="video-feed-detail">
       <PageHeader title={pageTitle} subTitle="Video Update" />
       <Form.Provider
-        onFormFinish={(name, { values, forms }) => {
+        onFormFinish={(name, { forms }) => {
           const { feedForm, segmentForm } = forms;
           if (name === 'segmentForm') {
             const segments: any[] = feedForm.getFieldValue('package') || [];
