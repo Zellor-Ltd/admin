@@ -30,28 +30,33 @@ import { Segment } from 'interfaces/Segment';
 import { Tag } from 'interfaces/Tag';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { RouteComponentProps } from 'react-router-dom';
-import {
-  fetchBrands,
-  fetchCategories,
-  fetchCreators,
-  saveVideoFeed,
-} from 'services/DiscoClubService';
+import { saveVideoFeed } from 'services/DiscoClubService';
 import BrandForm from './BrandForm';
 import TagForm from './TagForm';
 import './VideoFeed.scss';
 import './VideoFeedDetail.scss';
 import ReactTagInput from '@pathofdev/react-tag-input';
 import '@pathofdev/react-tag-input/build/index.css';
+import moment from 'moment';
 
 const { Title } = Typography;
+interface VideoFeedDetailProps {
+  onSave?: (record: FeedItem) => void;
+  onCancel?: () => void;
+  feedItem?: FeedItem;
+  brands: Brand[];
+  categories: Category[];
+  influencers: Creator[];
+}
 
-const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
-  history,
-  location,
+const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
+  onSave,
+  onCancel,
+  feedItem,
+  brands,
+  categories,
+  influencers,
 }) => {
-  const initial: any = location.state;
-
   const {
     settings: { language = [] },
   } = useSelector((state: any) => state.settings);
@@ -60,13 +65,10 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
   const [segmentForm] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
 
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [influencers, setInfluencers] = useState<Creator[]>([]);
   const [selectedSegment, setSelectedSegment] = useState<Segment | undefined>();
   const [selectedSegmentIndex, setSelectedSegmentIndex] = useState<number>(-1);
   const [ageRange, setAgeRange] = useState<[number, number]>([12, 100]);
 
-  const [brands, setBrands] = useState<Brand[]>([]);
   const [selectedBrand, setSelectedBrand] = useState<Brand | undefined>();
   const [selectedBrandIndex, setSelectedBrandIndex] = useState<number>(-1);
   const [showBrandForm, setShowBrandForm] = useState<boolean>(false);
@@ -87,28 +89,26 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
 
   const { doRequest } = useRequest({ setLoading });
 
-  const getResources = async () => {
-    async function getInfluencers() {
-      const response: any = await fetchCreators();
-      setInfluencers(response.results);
-    }
-    async function getCategories() {
-      const response: any = await fetchCategories();
-      setCategories(response.results);
-    }
-    async function getBrands() {
-      const response: any = await fetchBrands();
-      setBrands(response.results);
-    }
-    // setLoading(true);
-    await Promise.all([getInfluencers(), getCategories(), getBrands()]);
-    // setLoading(false);
-  };
+  const [segmentListing, setSegmentListing] = useState<
+    'creator' | 'productBrand'
+  >('creator');
+  const [showSegmentListing, setShowSegmentListing] = useState(false);
 
   useEffect(() => {
-    getResources();
-    if (initial && initial.hashtags) {
-      setHashtags(initial.hashtags);
+    if (showSegmentListing) {
+      const selectedOption = selectedSegment?.selectedOption || 'creator';
+      onSegmentListingChange(selectedOption);
+    }
+  }, [showSegmentListing]);
+
+  useEffect(() => {
+    if (feedItem?.ageMin && feedItem?.ageMax)
+      setAgeRange([feedItem?.ageMin, feedItem?.ageMax]);
+  }, [feedItem]);
+
+  useEffect(() => {
+    if (feedItem && feedItem.hashtags) {
+      setHashtags(feedItem.hashtags);
     } else {
       setHashtags([]);
     }
@@ -141,24 +141,64 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
       );
     } else
       setPageTitle(
-        initial
-          ? initial.title.length > 50
-            ? `${initial.title.substr(0, 50)} Update`
-            : `${initial.title} Update`
+        feedItem
+          ? feedItem.title.length > 50
+            ? `${feedItem.title.substr(0, 50)} Update`
+            : `${feedItem.title} Update`
           : 'Update'
       );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedSegment, showBrandForm, showTagForm]);
 
+  useEffect(() => {
+    if (feedItem?.ageMin && feedItem?.ageMax)
+      setAgeRange([feedItem?.ageMin, feedItem?.ageMax]);
+  }, [feedItem]);
+
+  const onSegmentListingChange = (
+    segmentListing: 'creator' | 'productBrand'
+  ) => {
+    const segmentBrands = segmentForm.getFieldValue('brands') as Brand[];
+    if (segmentBrands && segmentBrands.length > 0) {
+      setSegmentListing(segmentListing);
+      const firstBrand = segmentForm.getFieldValue('brands')[0] as Brand;
+      switch (segmentListing) {
+        case 'creator':
+          const creator = feedItem?.creator;
+          if (creator) {
+            segmentForm.setFieldsValue({
+              selectedFeedTitle: creator?.userName,
+              selectedIconUrl: creator?.avatar?.url || undefined,
+            });
+          }
+          break;
+        case 'productBrand':
+          segmentForm.setFieldsValue({
+            selectedFeedTitle: firstBrand.productBrand?.brandName,
+            selectedIconUrl: firstBrand.selectedLogoUrl,
+          });
+          break;
+      }
+    }
+  };
+
   const onFinish = async () => {
     const item: FeedItem = feedForm.getFieldsValue(true);
-    item.package = item.package?.map(pack => ({
-      ...pack,
-      tags: pack.tags ? pack.tags : [],
-    }));
-    // item.validity = moment(item.validity).format("DD/MM/YYYY");
-    await doRequest(() => saveVideoFeed(item));
-    history.goBack();
+    item.goLiveDate = moment(item.goLiveDate).format();
+    item.validity = moment(item.validity).format();
+
+    item.package = item.package?.map(pack => {
+      const segment: any = {
+        ...pack,
+        tags: pack.tags ? pack.tags : [],
+      };
+      // TODO: FIND THE ROOT CAUSE FOR THIS SELF REFERENCE
+      delete segment.package;
+      return segment;
+    });
+
+    const { result } = await doRequest(() => saveVideoFeed(item));
+    item.id ? onSave?.(item) : onSave?.({ ...item, id: result });
   };
 
   const onDeleteSegment = (evt: any, index: number) => {
@@ -178,14 +218,10 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
       sequence,
       tags: [],
       brands: [],
+      selectedOption: 'creator',
     });
     setSelectedSegmentIndex(sequence - 1);
   };
-
-  useEffect(() => {
-    if (initial?.ageMin && initial?.ageMax)
-      setAgeRange([initial?.ageMin, initial?.ageMax]);
-  }, [initial]);
 
   const onChangeAge = (value: [number, number]) => {
     feedForm.setFieldsValue({
@@ -197,8 +233,35 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
   };
 
   const onEditSegment = (segment: Segment, segmentIndex: number) => {
-    setSelectedSegment(segment);
+    const selectedOption = segment.selectedOption || 'creator';
+    setSelectedSegment({
+      ...segment,
+      selectedOption: selectedOption,
+    });
+    if (segment.brands && segment.brands.length > 0) {
+      setShowSegmentListing(true);
+    }
+    onSegmentListingChange(selectedOption);
     setSelectedSegmentIndex(segmentIndex);
+    segmentForm.setFieldsValue(segment);
+  };
+
+  const onCreatorChange = (key: string) => {
+    const creator = influencers.find(influencer => influencer.id === key);
+    const feedItem = feedForm.getFieldsValue(true) as FeedItem;
+
+    const segments = feedItem.package.map(segment => {
+      if (!segment.selectedOption || segment.selectedOption === 'creator') {
+        segment.selectedFeedTitle = creator?.userName;
+        segment.selectedIconUrl = creator?.avatar?.url || undefined;
+      }
+      return segment;
+    });
+
+    feedForm.setFieldsValue({
+      package: [...segments],
+      creator: creator,
+    });
   };
 
   const VideoUpdatePage = () => {
@@ -208,12 +271,23 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
           <Tabs.TabPane forceRender tab="Video Details" key={defaultVideoTab}>
             <Row gutter={8}>
               <Col lg={24} xs={24}>
-                <Form.Item name="status" label="Status">
-                  <Radio.Group buttonStyle="solid">
-                    <Radio.Button value="live">Live</Radio.Button>
-                    <Radio.Button value="paused">Paused</Radio.Button>
-                  </Radio.Group>
-                </Form.Item>
+                <Row>
+                  <Form.Item name="status" label="Status">
+                    <Radio.Group buttonStyle="solid">
+                      <Radio.Button value="live">Live</Radio.Button>
+                      <Radio.Button value="paused">Paused</Radio.Button>
+                    </Radio.Group>
+                  </Form.Item>
+                  <Form.Item
+                    name="index"
+                    label="Index"
+                    className="ml-1"
+                    rules={[{ required: true, min: 0, type: 'number' }]}
+                    initialValue={1000}
+                  >
+                    <InputNumber />
+                  </Form.Item>
+                </Row>
               </Col>
               <Col lg={24} xs={24}>
                 <Form.Item name="title" label="Title">
@@ -240,13 +314,7 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
                 <Form.Item name={['creator', 'id']} label="Creator">
                   <Select
                     placeholder="Please select a creator"
-                    onChange={(key: string) =>
-                      feedForm.setFieldsValue({
-                        creator: influencers.find(
-                          influencer => influencer.id === key
-                        ),
-                      })
-                    }
+                    onChange={onCreatorChange}
                   >
                     {influencers.map((influencer: any) => (
                       <Select.Option key={influencer.id} value={influencer.id}>
@@ -360,7 +428,12 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
                       label="Go Live Date"
                       getValueProps={formatMoment}
                     >
-                      <DatePicker format="DD/MM/YYYY" />
+                      <DatePicker
+                        defaultValue={moment(
+                          feedForm.getFieldValue('goLiveDate')
+                        )}
+                        format="DD/MM/YYYY"
+                      />
                     </Form.Item>
                   </Col>
                   <Col lg={12} xs={24}>
@@ -369,7 +442,12 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
                       label="Expiration Date"
                       getValueProps={formatMoment}
                     >
-                      <DatePicker format="DD/MM/YYYY" />
+                      <DatePicker
+                        defaultValue={moment(
+                          feedForm.getFieldValue('validity')
+                        )}
+                        format="DD/MM/YYYY"
+                      />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -451,7 +529,7 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
         </Tabs>
         <Row gutter={8}>
           <Col>
-            <Button type="default" onClick={() => history.goBack()}>
+            <Button type="default" onClick={() => onCancel?.()}>
               Cancel
             </Button>
           </Col>
@@ -680,6 +758,24 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
                     pagination={false}
                   />
                 </Tabs.TabPane>
+                {showSegmentListing && (
+                  <Tabs.TabPane forceRender tab="Listing" key="Listing">
+                    <Form.Item
+                      name="selectedOption"
+                      initialValue={selectedSegment?.selectedOption}
+                    >
+                      <Radio.Group
+                        value={segmentListing}
+                        onChange={event =>
+                          onSegmentListingChange(event.target.value)
+                        }
+                      >
+                        <Radio value="creator">Creator</Radio>
+                        <Radio value="productBrand">Product Brand</Radio>
+                      </Radio.Group>
+                    </Form.Item>
+                  </Tabs.TabPane>
+                )}
               </Tabs>
               <Row gutter={8} style={{ marginTop: '20px' }}>
                 <Col>
@@ -710,7 +806,7 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
     <div className="video-feed-detail">
       <PageHeader title={pageTitle} subTitle="Video Update" />
       <Form.Provider
-        onFormFinish={(name, { values, forms }) => {
+        onFormFinish={(name, { forms }) => {
           const { feedForm, segmentForm } = forms;
           if (name === 'segmentForm') {
             const segments: any[] = feedForm.getFieldValue('package') || [];
@@ -741,6 +837,9 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
             setSelectedBrandIndex(-1);
             setShowBrandForm(false);
             setSelectedSegment(segmentForm.getFieldsValue(true));
+            if (newValue && !showSegmentListing) {
+              setShowSegmentListing(true);
+            }
           }
           if (name === 'tagForm') {
             const { segmentForm, tagForm } = forms;
@@ -766,7 +865,6 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
           form={feedForm}
           onFinish={onFinish}
           name="feedForm"
-          initialValues={initial}
           onFinishFailed={({ errorFields }) => {
             errorFields.forEach(errorField => {
               message.error(errorField.errors[0]);
@@ -774,6 +872,7 @@ const VideoFeedDetailV2: React.FC<RouteComponentProps> = ({
           }}
           layout="vertical"
           className="video-feed"
+          initialValues={feedItem}
         >
           {!selectedSegment && <VideoUpdatePage />}
         </Form>

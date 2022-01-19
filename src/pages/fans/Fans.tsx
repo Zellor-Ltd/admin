@@ -18,7 +18,8 @@ import { Link, RouteComponentProps } from 'react-router-dom';
 import { fetchFans } from 'services/DiscoClubService';
 import FanAPITestModal from './FanAPITestModal';
 import FanFeedModal from './FanFeedModal';
-import { Creator } from '../../interfaces/Creator';
+import scrollIntoView from 'scroll-into-view';
+import FanDetail from './FanDetail';
 
 const tagColorByPermission: any = {
   Admin: 'green',
@@ -26,12 +27,14 @@ const tagColorByPermission: any = {
   Fan: '',
 };
 
-const Fans: React.FC<RouteComponentProps> = ({ history, location }) => {
-  const detailsPathname = `${location.pathname}/fan`;
+const Fans: React.FC<RouteComponentProps> = ({ location }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
   const [fanAPITest, setFanAPITest] = useState<Fan | null>(null);
   const [fanFeedModal, setFanFeedModal] = useState<Fan | null>(null);
+  const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
+  const [details, setDetails] = useState<boolean>(false);
+  const [currentFan, setCurrentFan] = useState<Fan>();
 
   const { doFetch } = useRequest({ setLoading });
 
@@ -48,6 +51,22 @@ const Fans: React.FC<RouteComponentProps> = ({ history, location }) => {
 
   const getResources = async () => {
     await Promise.all([getFans()]);
+  };
+
+  useEffect(() => {
+    if (!details) {
+      scrollIntoView(
+        document.querySelector(
+          `.scrollable-row-${lastViewedIndex}`
+        ) as HTMLElement
+      );
+    }
+  }, [details]);
+
+  const editFan = (index: number, fan?: Fan) => {
+    setLastViewedIndex(index);
+    setCurrentFan(fan);
+    setDetails(true);
   };
 
   const searchFilterFunction = (filterText: string) => {
@@ -76,8 +95,10 @@ const Fans: React.FC<RouteComponentProps> = ({ history, location }) => {
       dataIndex: 'userName',
       width: '25%',
       align: 'center',
-      render: (value, record: Fan) => (
-        <Link to={{ pathname: detailsPathname, state: record }}>{value}</Link>
+      render: (value, record: Fan, index: number) => (
+        <Link to={location.pathname} onClick={() => editFan(index, record)}>
+          {value}
+        </Link>
       ),
     },
     { title: 'E-mail', dataIndex: 'user', width: '25%', align: 'center' },
@@ -104,9 +125,9 @@ const Fans: React.FC<RouteComponentProps> = ({ history, location }) => {
       key: 'action',
       width: '10%',
       align: 'right',
-      render: (_, record) => (
+      render: (_, record, index: number) => (
         <>
-          <Link to={{ pathname: detailsPathname, state: record }}>
+          <Link to={location.pathname} onClick={() => editFan(index, record)}>
             <EditOutlined />
           </Link>
           <Button
@@ -133,67 +154,89 @@ const Fans: React.FC<RouteComponentProps> = ({ history, location }) => {
     setSelectedRowKeys([]);
   };
 
+  const refreshItem = (record: Fan) => {
+    filteredFans[lastViewedIndex] = record;
+    setFans([...filteredFans]);
+  };
+
+  const onSaveFan = (record: Fan) => {
+    refreshItem(record);
+    setDetails(false);
+  };
+
+  const onCancelFan = () => {
+    setDetails(false);
+  };
+
   return (
-    <div className="fans">
-      <PageHeader
-        title="Fans"
-        subTitle="List of Fans"
-        extra={[
-          <Button key="1" onClick={() => history.push(detailsPathname)}>
-            New Item
-          </Button>,
-        ]}
-      />
-      <Row align="bottom" justify="space-between">
-        <Col lg={16} xs={24}>
-          <Row gutter={8}>
-            <Col lg={8} xs={16}>
-              <SearchFilter
-                filterFunction={searchFilterFunction}
-                label="Search by Email"
-              />
+    <>
+      {!details && (
+        <div className="fans">
+          <PageHeader
+            title="Fans"
+            subTitle="List of Fans"
+            extra={[
+              <Button key="1" onClick={() => editFan(filteredFans.length)}>
+                New Item
+              </Button>,
+            ]}
+          />
+          <Row align="bottom" justify="space-between">
+            <Col lg={16} xs={24}>
+              <Row gutter={8}>
+                <Col lg={8} xs={16}>
+                  <SearchFilter
+                    filterFunction={searchFilterFunction}
+                    label="Search by Email"
+                  />
+                </Col>
+              </Row>
             </Col>
+            <EditMultipleButton
+              text="Edit Fans"
+              arrayList={filteredFans}
+              ModalComponent={EditFanModal}
+              selectedRowKeys={selectedRowKeys}
+              onOk={handleEditFans}
+            />
+            <Button
+              type="primary"
+              onClick={() => getResources()}
+              loading={loading}
+              style={{
+                marginBottom: '20px',
+                marginRight: '25px',
+              }}
+            >
+              Search
+              <SearchOutlined style={{ color: 'white' }} />
+            </Button>
           </Row>
-        </Col>
-        <EditMultipleButton
-          text="Edit Fans"
-          arrayList={filteredFans}
-          ModalComponent={EditFanModal}
-          selectedRowKeys={selectedRowKeys}
-          onOk={handleEditFans}
-        />
-        <Button
-          type="primary"
-          onClick={() => getResources()}
-          loading={loading}
-          style={{
-            marginBottom: '20px',
-            marginRight: '25px',
-          }}
-        >
-          Search
-          <SearchOutlined style={{ color: 'white' }} />
-        </Button>
-      </Row>
-      <FanAPITestModal
-        selectedRecord={fanAPITest}
-        setSelectedRecord={setFanAPITest}
-      />
-      <FanFeedModal
-        selectedRecord={fanFeedModal}
-        setSelectedRecord={setFanFeedModal}
-      />
-      <Table
-        rowKey="id"
-        columns={columns}
-        dataSource={filteredFans}
-        loading={loading}
-        rowSelection={{
-          selectedRowKeys,
-          onChange: setSelectedRowKeys,
-        }}
-      />
-    </div>
+          <FanAPITestModal
+            selectedRecord={fanAPITest}
+            setSelectedRecord={setFanAPITest}
+          />
+          <FanFeedModal
+            selectedRecord={fanFeedModal}
+            setSelectedRecord={setFanFeedModal}
+          />
+          <Table
+            rowClassName={(_, index) => `scrollable-row-${index}`}
+            rowKey="id"
+            columns={columns}
+            dataSource={filteredFans}
+            loading={loading}
+            rowSelection={{
+              selectedRowKeys,
+              onChange: setSelectedRowKeys,
+            }}
+          />
+        </div>
+      )}
+      {details && (
+        <FanDetail fan={currentFan} onSave={onSaveFan} onCancel={onCancelFan} />
+      )}
+    </>
   );
 };
 export default Fans;

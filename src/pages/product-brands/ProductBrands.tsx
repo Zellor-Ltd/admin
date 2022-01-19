@@ -1,5 +1,5 @@
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import { Button, Col, PageHeader, Popconfirm, Row, Table, Tag } from 'antd';
+import { Button, Col, PageHeader, Popconfirm, Row, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { SearchFilter } from '../../components/SearchFilter';
 import useFilter from '../../hooks/useFilter';
@@ -13,21 +13,17 @@ import {
   deleteProductBrand,
 } from '../../services/DiscoClubService';
 import CopyIdToClipboard from '../../components/CopyIdToClipboard';
+import ProductBrandDetail from './ProductBrandDetail';
+import scrollIntoView from 'scroll-into-view';
 
-const tagColorByStatus: any = {
-  approved: 'green',
-  rejected: 'red',
-  pending: '',
-};
-
-const ProductBrands: React.FC<RouteComponentProps> = ({
-  history,
-  location,
-}) => {
-  const detailsPathname = `${location.pathname}/product-brand`;
+const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const { doFetch, doRequest } = useRequest({ setLoading });
   const [content, setContent] = useState<any[]>([]);
+  const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
+  const [details, setDetails] = useState<boolean>(false);
+  const [currentProductBrand, setCurrentProductBrand] =
+    useState<ProductBrand>();
 
   const {
     setArrayList: setProductBrands,
@@ -50,17 +46,28 @@ const ProductBrands: React.FC<RouteComponentProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const deleteItem = async (id: string) => {
-    await doRequest(() => deleteProductBrand(id));
-    for (let i = 0; i < content.length; i++) {
-      if (content[i].id === id) {
-        const index = i;
-        setProductBrands(prev => [
-          ...prev.slice(0, index),
-          ...prev.slice(index + 1),
-        ]);
-      }
+  useEffect(() => {
+    if (!details) {
+      scrollIntoView(
+        document.querySelector(
+          `.scrollable-row-${lastViewedIndex}`
+        ) as HTMLElement
+      );
     }
+  }, [details]);
+
+  const editProductBrand = (index: number, productBrand?: ProductBrand) => {
+    setLastViewedIndex(index);
+    setCurrentProductBrand(productBrand);
+    setDetails(true);
+  };
+
+  const deleteItem = async (id: string, index: number) => {
+    await doRequest(() => deleteProductBrand(id));
+    setProductBrands(prev => [
+      ...prev.slice(0, index),
+      ...prev.slice(index + 1),
+    ]);
   };
 
   const columns: ColumnsType<ProductBrand> = [
@@ -81,8 +88,13 @@ const ProductBrands: React.FC<RouteComponentProps> = ({
       title: 'Name',
       dataIndex: 'brandName',
       width: '20%',
-      render: (value: string, record: ProductBrand) => (
-        <Link to={{ pathname: detailsPathname, state: record }}>{value}</Link>
+      render: (value: string, record: ProductBrand, index: number) => (
+        <Link
+          to={location.pathname}
+          onClick={() => editProductBrand(index, record)}
+        >
+          {value}
+        </Link>
       ),
     },
     {
@@ -102,16 +114,19 @@ const ProductBrands: React.FC<RouteComponentProps> = ({
       key: 'action',
       width: '10%',
       align: 'right',
-      render: (_, record: ProductBrand) => (
+      render: (_, record: ProductBrand, index: number) => (
         <>
-          <Link to={{ pathname: detailsPathname, state: record }}>
+          <Link
+            to={location.pathname}
+            onClick={() => editProductBrand(index, record)}
+          >
             <EditOutlined />
           </Link>
           <Popconfirm
             title="Are you sure？"
             okText="Yes"
             cancelText="No"
-            onConfirm={() => deleteItem(record.id)}
+            onConfirm={() => deleteItem(record.id, index)}
           >
             <Button type="link" style={{ padding: 0, margin: 6 }}>
               <DeleteOutlined />
@@ -130,32 +145,61 @@ const ProductBrands: React.FC<RouteComponentProps> = ({
     );
   };
 
+  const refreshItem = (record: ProductBrand) => {
+    filteredProductBrands[lastViewedIndex] = record;
+    setProductBrands([...filteredProductBrands]);
+  };
+
+  const onSaveBrand = (record: ProductBrand) => {
+    refreshItem(record);
+    setDetails(false);
+  };
+
+  const onCancelBrand = () => {
+    setDetails(false);
+  };
+
   return (
-    <div>
-      <PageHeader
-        title="Product Brands"
-        subTitle="List of Product Brands"
-        extra={[
-          <Button key="1" onClick={() => history.push(detailsPathname)}>
-            New Item
-          </Button>,
-        ]}
-      />
-      <Row gutter={8}>
-        <Col lg={8} xs={16}>
-          <SearchFilter
-            filterFunction={searchFilterFunction}
-            label="Search by Product Brand Name"
+    <>
+      {!details && (
+        <div>
+          <PageHeader
+            title="Product Brands"
+            subTitle="List of Product Brands"
+            extra={[
+              <Button
+                key="1"
+                onClick={() => editProductBrand(filteredProductBrands.length)}
+              >
+                New Item
+              </Button>,
+            ]}
           />
-        </Col>
-      </Row>
-      <Table
-        rowKey="id"
-        columns={columns}
-        dataSource={filteredProductBrands}
-        loading={loading}
-      />
-    </div>
+          <Row gutter={8}>
+            <Col lg={8} xs={16}>
+              <SearchFilter
+                filterFunction={searchFilterFunction}
+                label="Search by Product Brand Name"
+              />
+            </Col>
+          </Row>
+          <Table
+            rowClassName={(_, index) => `scrollable-row-${index}`}
+            rowKey="id"
+            columns={columns}
+            dataSource={filteredProductBrands}
+            loading={loading}
+          />
+        </div>
+      )}
+      {details && (
+        <ProductBrandDetail
+          productBrand={currentProductBrand as ProductBrand}
+          onSave={onSaveBrand}
+          onCancel={onCancelBrand}
+        />
+      )}
+    </>
   );
 };
 

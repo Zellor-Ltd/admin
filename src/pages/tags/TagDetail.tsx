@@ -10,23 +10,27 @@ import {
   Select,
   Slider,
 } from 'antd';
+import { useRequest } from 'hooks/useRequest';
 import { Brand } from 'interfaces/Brand';
 import { Product } from 'interfaces/Product';
 import { Tag } from 'interfaces/Tag';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { RouteComponentProps } from 'react-router-dom';
 import { fetchBrands, fetchProducts, saveTag } from 'services/DiscoClubService';
+interface TagDetailProps {
+  tag?: Tag;
+  onSave?: (record: Tag) => void;
+  onCancel?: () => void;
+}
 
-const TagDetail: React.FC<RouteComponentProps> = props => {
-  const { history, location } = props;
-  const initial = location.state as unknown as Tag | undefined;
+const TagDetail: React.FC<TagDetailProps> = ({ tag, onSave, onCancel }) => {
   const [loading, setLoading] = useState(false);
+  const { doRequest } = useRequest({ setLoading });
 
   const [products, setProducts] = useState<Product[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [selectedBrand, setSelectedBrand] = useState<string>(
-    initial?.brand?.id || ''
+    tag?.brand?.id || ''
   );
   const [form] = Form.useForm();
 
@@ -40,8 +44,8 @@ const TagDetail: React.FC<RouteComponentProps> = props => {
     form.setFieldsValue({
       position: [
         {
-          x: initial?.position?.[0]?.x || 50,
-          y: initial?.position?.[0]?.y || 50,
+          x: tag?.position?.[0]?.x || 50,
+          y: tag?.position?.[0]?.y || 50,
         },
       ],
     });
@@ -66,19 +70,21 @@ const TagDetail: React.FC<RouteComponentProps> = props => {
     return () => {
       mounted = false;
     };
-  }, [initial, form]);
+  }, [tag, form]);
 
   const onFinish = () => {
     form.validateFields().then(async () => {
       setLoading(true);
       try {
-        const tag = form.getFieldsValue(true);
-        tag.product = products.find(product => product.id === tag.product?.id);
-        tag.brand = brands.find(brand => brand.id === tag.brand?.id);
-        await saveTag(tag);
+        const formTag = form.getFieldsValue(true);
+        formTag.product = products.find(
+          product => product.id === formTag.product?.id
+        );
+        formTag.brand = brands.find(brand => brand.id === formTag.brand?.id);
+        const { result } = await doRequest(() => saveTag(formTag));
         setLoading(false);
         message.success('Register updated with success.');
-        history.goBack();
+        formTag.id ? onSave?.(formTag) : onSave?.({ ...formTag, id: result });
       } catch (e) {
         console.error(e);
         setLoading(false);
@@ -102,14 +108,14 @@ const TagDetail: React.FC<RouteComponentProps> = props => {
   return (
     <>
       <PageHeader
-        title={initial ? `${initial?.tagName} Update` : 'New Tag'}
+        title={tag ? `${tag?.tagName} Update` : 'New Tag'}
         subTitle="Tag"
       />
       <Form
         name="tagForm"
         layout="vertical"
         form={form}
-        initialValues={initial}
+        initialValues={tag}
         onFinish={onFinish}
         className="tags"
       >
@@ -228,17 +234,12 @@ const TagDetail: React.FC<RouteComponentProps> = props => {
         </Input.Group>
         <Row gutter={8}>
           <Col>
-            <Button type="default" onClick={() => history.goBack()}>
+            <Button type="default" onClick={() => onCancel?.()}>
               Cancel
             </Button>
           </Col>
           <Col>
-            <Button
-              type="primary"
-              htmlType="submit"
-              disabled={!!initial}
-              loading={loading}
-            >
+            <Button type="primary" htmlType="submit" loading={loading}>
               Save Changes
             </Button>
           </Col>

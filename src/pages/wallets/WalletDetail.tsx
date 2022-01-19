@@ -1,5 +1,13 @@
 import { CalendarOutlined } from '@ant-design/icons';
-import { Button, Col, DatePicker, PageHeader, Row, Table, Typography } from 'antd';
+import {
+  Button,
+  Col,
+  DatePicker,
+  PageHeader,
+  Row,
+  Table,
+  Typography,
+} from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import useFilter from 'hooks/useFilter';
 import { useRequest } from 'hooks/useRequest';
@@ -9,15 +17,38 @@ import {
 } from 'interfaces/WalletTransactions';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
-import { RouteComponentProps } from 'react-router-dom';
 import { fetchTransactionsPerBrand } from 'services/DiscoClubService';
 import WalletEdit from './WalletEdit';
+import * as H from 'history';
+import { Wallet } from 'interfaces/Wallet';
+interface WalletDetailProps {
+  location: H.Location<H.LocationState>;
+  onCancel?: () => void;
+  onSave?: (value: number, record?: Wallet) => void;
+  onReset?: (record?: Wallet) => void;
+}
 
-const WalletDetail: React.FC<RouteComponentProps> = props => {
-  const { history, location } = props;
+const WalletDetail: React.FC<WalletDetailProps> = ({
+  location,
+  onCancel,
+  onSave,
+  onReset,
+}) => {
   const [loading, setLoading] = useState<boolean>(false);
   const { doFetch } = useRequest({ setLoading: setLoading });
   const initial = location.state as unknown as WalletDetailParams;
+  const wallet = initial
+    ? {
+        discoGold: initial.brand.discoGold,
+        discoDollars: initial.brand.discoDollars,
+        brandId: initial.brand.id,
+        totalProducts: '',
+        brandName: initial.brand.name,
+        brandTxtColor: initial.brand.brandTxtColor,
+        brandLogoUrl: initial.brand.brandLogoUrl,
+        brandCardUrl: initial.brand.brandCardUrl,
+      }
+    : undefined;
 
   const {
     // arrayList: wallets,
@@ -74,7 +105,7 @@ const WalletDetail: React.FC<RouteComponentProps> = props => {
       align: 'right',
       dataIndex: 'addedBy',
       render: (value: string, record) =>
-        value === initial.fan.id ? initial.fan.user : "admin",
+        value === initial.fan.id ? initial.fan.user : 'admin',
     },
   ];
 
@@ -92,10 +123,29 @@ const WalletDetail: React.FC<RouteComponentProps> = props => {
     );
   };
 
+  const onResetWallet = () => {
+    setTransactions([]);
+    onReset?.(wallet);
+  };
+
+  const onSaveWallet = (balanceToAdd: number) => {
+    filteredTransactions.push({
+      discoDollars: balanceToAdd,
+      hCreationDate: moment(),
+      addedBy: 'admin',
+    });
+    setTransactions([...filteredTransactions]);
+    onSave?.(balanceToAdd, wallet);
+  };
+
   return (
     <div className="walletdetail">
       <PageHeader
-        title={initial ? `${initial.fan.name}/${initial.brand.name} Transactions` : "New Item"}
+        title={
+          initial
+            ? `${initial.fan.name}/${initial.brand.name} Transactions`
+            : 'New Item'
+        }
       />
       <Row align="bottom" justify="space-between">
         <Col lg={24} xs={24}>
@@ -112,7 +162,9 @@ const WalletDetail: React.FC<RouteComponentProps> = props => {
               disabled={false}
               fanId={initial.fan.id}
               brandId={initial.brand.id}
-              getResources={getResources}
+              wallet={initial as unknown as Wallet}
+              onSave={onSaveWallet}
+              onReset={onResetWallet}
             />
           </Row>
         </Col>
@@ -125,7 +177,7 @@ const WalletDetail: React.FC<RouteComponentProps> = props => {
       />
       <Row gutter={8}>
         <Col>
-          <Button type="default" onClick={() => history.goBack()}>
+          <Button type="default" onClick={() => onCancel?.()}>
             Go Back
           </Button>
         </Col>

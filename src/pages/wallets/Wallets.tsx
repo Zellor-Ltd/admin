@@ -18,9 +18,10 @@ import {
   fetchFans,
 } from 'services/DiscoClubService';
 import WalletEdit from './WalletEdit';
+import scrollIntoView from 'scroll-into-view';
+import WalletDetail from './WalletDetail';
 
 const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
-  const detailsPathname = `${location.pathname}/wallet`;
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedBrand, setSelectedBrand] = useState<Brand>();
   const { doFetch } = useRequest({ setLoading: setLoading });
@@ -29,6 +30,8 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
   const [selectedFan, setSelectedFan] = useState<Fan | undefined>();
   const [isFetchingFans, setIsFetchingFans] = useState(false);
   const [fans, setFans] = useState<Fan[]>([]);
+  const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
+  const [details, setDetails] = useState<boolean>(false);
 
   const optionsMapping: SelectOption = {
     key: 'id',
@@ -43,7 +46,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   const {
-    // arrayList: wallets,
+    arrayList: wallets,
     setArrayList: setWallets,
     filteredArrayList: filteredWallets,
     addFilterFunction,
@@ -78,15 +81,68 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    if (!details) {
+      scrollIntoView(
+        document.querySelector(
+          `.scrollable-row-${lastViewedIndex}`
+        ) as HTMLElement
+      );
+    }
+  }, [details]);
+
+  const editWallet = (index: number) => {
+    setLastViewedIndex(index);
+    setDetails(true);
+  };
+
+  const onResetWallet = (record?: Wallet) => {
+    if (record) {
+      const index = wallets.indexOf(
+        wallets.find(item => item.brandId === record.brandId) as Wallet
+      );
+      setWallets(prev => [...prev.slice(0, index), ...prev.slice(index + 1)]);
+    }
+  };
+
+  const onSaveWallet = (balanceToAdd: number, record?: Wallet) => {
+    if (record) {
+      record.discoDollars += balanceToAdd;
+    }
+    refreshItem(balanceToAdd, record);
+  };
+
+  const refreshItem = (balanceToAdd: number, record?: Wallet) => {
+    if (record) {
+      wallets[
+        wallets.indexOf(
+          wallets.find(item => item.brandId === record.brandId) as Wallet
+        )
+      ] = record;
+    } else {
+      wallets.push({
+        discoDollars: balanceToAdd,
+        discoGold: 0,
+        brandId: selectedBrand?.id as string,
+        totalProducts: '',
+        brandName: selectedBrand?.brandName as string,
+        brandTxtColor: selectedBrand?.brandTxtColor as string,
+        brandLogoUrl: selectedBrand?.brandLogoUrl as string,
+        brandCardUrl: selectedBrand?.brandCardUrl as string,
+      });
+    }
+    setWallets([...wallets]);
+  };
+
   const columns: ColumnsType<Wallet> = [
     {
       title: 'Master Brand',
       dataIndex: 'brandName',
       width: '40%',
-      render: (value: string, record: Wallet) => (
+      render: (value: string, record: Wallet, index: number) => (
         <Link
           to={{
-            pathname: detailsPathname,
+            pathname: location.pathname,
             state: {
               fan: selectedFan,
               brand: {
@@ -94,9 +150,13 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
                 discoDollars: record.discoDollars,
                 discoGold: record.discoGold,
                 name: record.brandName,
+                brandTxtColor: record.brandTxtColor,
+                brandLogoUrl: record.brandLogoUrl,
+                brandCardUrl: record.brandCardUrl,
               },
             } as WalletDetailParams,
           }}
+          onClick={() => editWallet(index)}
         >
           {value}
         </Link>
@@ -110,16 +170,21 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
     },
   ];
 
-  const onChangeFan = async (_selectedFan: Fan) => {
-    const { balance }: any = await doFetch(
-      () => fetchBalancePerBrand(_selectedFan.id),
-      true
-    );
-    setWallets(balance);
+  const onChangeFan = async (_selectedFan?: Fan) => {
+    if (_selectedFan) {
+      const { balance }: any = await doFetch(
+        () => fetchBalancePerBrand(_selectedFan.id),
+        true
+      );
+      setWallets(balance);
+    } else {
+      setWallets([]);
+    }
     setSelectedFan(_selectedFan);
   };
 
   const onChangeBrand = async (_selectedBrand: Brand | undefined) => {
+    setSelectedBrand(_selectedBrand);
     if (!_selectedBrand) {
       removeFilterFunction('brandName');
       return;
@@ -127,7 +192,6 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
     addFilterFunction('brandName', wallets =>
       wallets.filter(wallet => wallet.brandName === _selectedBrand.brandName)
     );
-    setSelectedBrand(_selectedBrand);
   };
 
   const getResources = async () => {
@@ -140,60 +204,81 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
     }
   };
 
+  const onCancelWallet = () => {
+    setDetails(false);
+  };
+
   return (
-    <div className="wallets">
-      <PageHeader title="Fan Wallets" subTitle="List of fan wallets" />
-      <Row align="bottom" justify="space-between">
-        <Col span={24}>
-          <Row gutter={8} align="bottom">
-            <Col span={4}>
-              <Typography.Title level={5}>Fan Filter</Typography.Title>
-              <SimpleSelect
-                data={fans}
-                onChange={(_, fan) => onChangeFan(fan)}
-                style={{ width: '100%', marginBottom: '16px' }}
-                selectedOption={selectedFan?.user}
-                optionsMapping={fanOptionsMapping}
-                placeholder={'Select a fan'}
-                loading={isFetchingFans}
-                disabled={isFetchingFans}
-                allowClear={true}
-              ></SimpleSelect>
-            </Col>
-            {selectedFan && (
-              <Col span={4}>
-                <Typography.Title level={5}>Master Brand</Typography.Title>
-                <SimpleSelect
-                  data={brands}
-                  onChange={(_, brand) => onChangeBrand(brand)}
-                  style={{ width: '100%', marginBottom: '16px' }}
-                  selectedOption={''}
-                  optionsMapping={optionsMapping}
-                  placeholder={'Select a master brand'}
-                  loading={isFetchingBrands}
-                  disabled={isFetchingBrands}
-                  allowClear={true}
-                ></SimpleSelect>
-              </Col>
-            )}
-            <Col span={6} style={{ position: 'relative', top: '8px' }}>
-              <WalletEdit
-                disabled={!selectedFan || !selectedBrand}
-                fanId={selectedFan?.id}
-                brandId={selectedBrand?.id}
-                getResources={getResources}
-              />
+    <>
+      {!details && (
+        <div className="wallets">
+          <PageHeader title="Fan Wallets" subTitle="List of fan wallets" />
+          <Row align="bottom" justify="space-between">
+            <Col span={24}>
+              <Row gutter={8} align="bottom">
+                <Col span={4}>
+                  <Typography.Title level={5}>Fan Filter</Typography.Title>
+                  <SimpleSelect
+                    data={fans}
+                    onChange={(_, fan) => onChangeFan(fan)}
+                    style={{ width: '100%', marginBottom: '16px' }}
+                    selectedOption={selectedFan?.user}
+                    optionsMapping={fanOptionsMapping}
+                    placeholder={'Select a fan'}
+                    loading={isFetchingFans}
+                    disabled={isFetchingFans}
+                    allowClear={true}
+                  ></SimpleSelect>
+                </Col>
+                {selectedFan && (
+                  <Col span={4}>
+                    <Typography.Title level={5}>Master Brand</Typography.Title>
+                    <SimpleSelect
+                      data={brands}
+                      onChange={(_, brand) => onChangeBrand(brand)}
+                      style={{ width: '100%', marginBottom: '16px' }}
+                      selectedOption={selectedBrand?.brandName}
+                      optionsMapping={optionsMapping}
+                      placeholder={'Select a master brand'}
+                      loading={isFetchingBrands}
+                      disabled={isFetchingBrands}
+                      allowClear={true}
+                    ></SimpleSelect>
+                  </Col>
+                )}
+                <Col span={6} style={{ position: 'relative', top: '8px' }}>
+                  <WalletEdit
+                    disabled={!selectedFan || !selectedBrand}
+                    fanId={selectedFan?.id}
+                    brandId={selectedBrand?.id}
+                    wallet={filteredWallets.find(
+                      item => item.brandId === selectedBrand?.id
+                    )}
+                    onSave={onSaveWallet}
+                    onReset={onResetWallet}
+                  />
+                </Col>
+              </Row>
             </Col>
           </Row>
-        </Col>
-      </Row>
-      <Table
-        rowKey="id"
-        columns={columns}
-        dataSource={filteredWallets}
-        loading={loading}
-      />
-    </div>
+          <Table
+            rowClassName={(_, index) => `scrollable-row-${index}`}
+            rowKey="id"
+            columns={columns}
+            dataSource={filteredWallets}
+            loading={loading}
+          />
+        </div>
+      )}
+      {details && (
+        <WalletDetail
+          location={location}
+          onCancel={onCancelWallet}
+          onSave={onSaveWallet}
+          onReset={onResetWallet}
+        />
+      )}
+    </>
   );
 };
 

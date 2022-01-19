@@ -10,12 +10,16 @@ import { useEffect, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { deleteDdTemplate, fetchDdTemplates } from 'services/DiscoClubService';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
+import scrollIntoView from 'scroll-into-view';
+import DdTemplateDetail from './DdTemplateDetail';
 
-const DdTemplates: React.FC<RouteComponentProps> = ({ history, location }) => {
-  const detailsPathname = `${location.pathname}/dd-template`;
+const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const { doFetch, doRequest } = useRequest({ setLoading });
   const [content, setContent] = useState<any[]>([]);
+  const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
+  const [details, setDetails] = useState<boolean>(false);
+  const [currentDdTemplate, setCurrentDdTemplate] = useState<DdTemplate>();
 
   const {
     setArrayList: setDdTemplates,
@@ -38,17 +42,39 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ history, location }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const deleteItem = async (id: string) => {
-    await doRequest(() => deleteDdTemplate({ id }));
-    for (let i = 0; i < content.length; i++) {
-      if (content[i].id === id) {
-        const index = i;
-        setDdTemplates(prev => [
-          ...prev.slice(0, index),
-          ...prev.slice(index + 1),
-        ]);
-      }
+  useEffect(() => {
+    if (!details) {
+      scrollIntoView(
+        document.querySelector(
+          `.scrollable-row-${lastViewedIndex}`
+        ) as HTMLElement
+      );
     }
+  }, [details]);
+
+  const editDdTemplate = (index: number, template?: DdTemplate) => {
+    setLastViewedIndex(index);
+    setCurrentDdTemplate(template);
+    setDetails(true);
+  };
+
+  const refreshItem = (record: DdTemplate) => {
+    filteredDdTemplates[lastViewedIndex] = record;
+    setDdTemplates([...filteredDdTemplates]);
+  };
+
+  const onSaveDdTemplate = (record: DdTemplate) => {
+    refreshItem(record);
+    setDetails(false);
+  };
+
+  const onCancelDdTemplate = () => {
+    setDetails(false);
+  };
+
+  const deleteItem = async (id: string, index: number) => {
+    await doRequest(() => deleteDdTemplate({ id }));
+    setDdTemplates(prev => [...prev.slice(0, index), ...prev.slice(index + 1)]);
   };
 
   const columns: ColumnsType<DdTemplate> = [
@@ -63,8 +89,13 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ history, location }) => {
       title: 'Tag Name',
       dataIndex: 'tagName',
       width: '20%',
-      render: (value: string, record: DdTemplate) => (
-        <Link to={{ pathname: detailsPathname, state: record }}>{value}</Link>
+      render: (value: string, record: DdTemplate, index: number) => (
+        <Link
+          to={location.pathname}
+          onClick={() => editDdTemplate(index, record)}
+        >
+          {value}
+        </Link>
       ),
     },
     {
@@ -102,16 +133,19 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ history, location }) => {
       key: 'action',
       width: '10%',
       align: 'right',
-      render: (_, record: DdTemplate) => (
+      render: (_, record: DdTemplate, index: number) => (
         <>
-          <Link to={{ pathname: detailsPathname, state: record }}>
+          <Link
+            to={location.pathname}
+            onClick={() => editDdTemplate(index, record)}
+          >
             <EditOutlined />
           </Link>
           <Popconfirm
             title="Are you sure？"
             okText="Yes"
             cancelText="No"
-            onConfirm={() => deleteItem(record.id)}
+            onConfirm={() => deleteItem(record.id, index)}
           >
             <Button type="link" style={{ padding: 0, margin: 6 }}>
               <DeleteOutlined />
@@ -131,31 +165,46 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ history, location }) => {
   };
 
   return (
-    <div>
-      <PageHeader
-        title="Disco Dollars Templates"
-        subTitle="List of Disco Dollars Templates"
-        extra={[
-          <Button key="1" onClick={() => history.push(detailsPathname)}>
-            New Item
-          </Button>,
-        ]}
-      />
-      <Row gutter={8}>
-        <Col lg={8} xs={16}>
-          <SearchFilter
-            filterFunction={searchFilterFunction}
-            label="Search by Tag Name"
+    <>
+      {!details && (
+        <div>
+          <PageHeader
+            title="Disco Dollars Templates"
+            subTitle="List of Disco Dollars Templates"
+            extra={[
+              <Button
+                key="1"
+                onClick={() => editDdTemplate(filteredDdTemplates.length)}
+              >
+                New Item
+              </Button>,
+            ]}
           />
-        </Col>
-      </Row>
-      <Table
-        rowKey="id"
-        columns={columns}
-        dataSource={filteredDdTemplates}
-        loading={loading}
-      />
-    </div>
+          <Row gutter={8}>
+            <Col lg={8} xs={16}>
+              <SearchFilter
+                filterFunction={searchFilterFunction}
+                label="Search by Tag Name"
+              />
+            </Col>
+          </Row>
+          <Table
+            rowClassName={(_, index) => `scrollable-row-${index}`}
+            rowKey="id"
+            columns={columns}
+            dataSource={filteredDdTemplates}
+            loading={loading}
+          />
+        </div>
+      )}
+      {details && (
+        <DdTemplateDetail
+          template={currentDdTemplate}
+          onSave={onSaveDdTemplate}
+          onCancel={onCancelDdTemplate}
+        />
+      )}
+    </>
   );
 };
 

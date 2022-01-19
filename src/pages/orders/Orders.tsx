@@ -31,12 +31,18 @@ import {
 import CopyOrderToClipboard from 'components/CopyOrderToClipboard';
 import SimpleSelect from 'components/SimpleSelect';
 import { SelectOption } from 'interfaces/SelectOption';
+import scrollIntoView from 'scroll-into-view';
+import FanDetail from 'pages/fans/FanDetail';
 
-const Orders: React.FC<RouteComponentProps> = () => {
+const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   const [tableloading, setTableLoading] = useState<boolean>(false);
   const [orderUpdateList, setOrderUpdateList] = useState<boolean[]>([]);
   const [loaded, setLoaded] = useState<boolean>(false);
   const [selectedFan, setSelectedFan] = useState<Fan | undefined>();
+
+  const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
+  const [currentFan, setCurrentFan] = useState<Fan>();
+  const [details, setDetails] = useState<boolean>(false);
 
   const {
     arrayList: orders,
@@ -123,6 +129,22 @@ const Orders: React.FC<RouteComponentProps> = () => {
 
   const getFan = (fanId: string) => fans.find(fan => fan.id === fanId);
 
+  useEffect(() => {
+    if (!details) {
+      scrollIntoView(
+        document.querySelector(
+          `.scrollable-row-${lastViewedIndex}`
+        ) as HTMLElement
+      );
+    }
+  }, [details]);
+
+  const editFan = (index: number, fan?: Fan) => {
+    setLastViewedIndex(index);
+    setCurrentFan(fan);
+    setDetails(true);
+  };
+
   const getColumnSearchProps = (dataIndex: any) => ({
     filterDropdown: ({
       setSelectedKeys,
@@ -188,10 +210,10 @@ const Orders: React.FC<RouteComponentProps> = () => {
         setTimeout(() => searchInput.current!.select(), 100);
       }
     },
-    render: (userId: any) => {
+    render: (userId: any, _, index: number) => {
       const fan = getFan(userId);
       return (
-        <Link to={{ pathname: `/users_fans/fan`, state: fan }}>
+        <Link to={location.pathname} onClick={() => editFan(index, fan)}>
           <Highlighter
             highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
             searchWords={[searchText]}
@@ -394,63 +416,79 @@ const Orders: React.FC<RouteComponentProps> = () => {
     );
   };
 
+  const onSaveFan = (record: Fan) => {
+    setDetails(false);
+  };
+
+  const onCancelFan = () => {
+    setDetails(false);
+  };
+
   return (
-    <div className="orders">
-      <PageHeader title="Orders" subTitle="List of Orders" />
-      <Row align="bottom" justify="space-between">
-        <Col lg={16} xs={24}>
-          <Row gutter={8}>
-            <Col lg={8} xs={16}>
-              <Typography.Title level={5}>Master Brand</Typography.Title>
-              <SimpleSelect
-                data={brands}
-                onChange={(_, brand) => onChangeBrand(brand)}
-                style={{ width: '100%' }}
-                selectedOption={''}
-                optionsMapping={optionsMapping}
-                placeholder={'Select a master brand'}
-                loading={isFetchingBrands}
-                disabled={isFetchingBrands}
-                allowClear={true}
-              ></SimpleSelect>
+    <>
+      {!details && (
+        <div className="orders">
+          <PageHeader title="Orders" subTitle="List of Orders" />
+          <Row align="bottom" justify="space-between">
+            <Col lg={16} xs={24}>
+              <Row gutter={8}>
+                <Col lg={8} xs={16}>
+                  <Typography.Title level={5}>Master Brand</Typography.Title>
+                  <SimpleSelect
+                    data={brands}
+                    onChange={(_, brand) => onChangeBrand(brand)}
+                    style={{ width: '100%' }}
+                    selectedOption={''}
+                    optionsMapping={optionsMapping}
+                    placeholder={'Select a master brand'}
+                    loading={isFetchingBrands}
+                    disabled={isFetchingBrands}
+                    allowClear={true}
+                  ></SimpleSelect>
+                </Col>
+                <Col lg={8} xs={16}>
+                  <Typography.Title level={5}>Fan Filter</Typography.Title>
+                  <SimpleSelect
+                    data={fans}
+                    onChange={(_, fan) => onChangeFan(fan)}
+                    style={{ width: '100%', marginBottom: '16px' }}
+                    selectedOption={selectedFan?.user}
+                    optionsMapping={fanOptionsMapping}
+                    placeholder={'Select a fan'}
+                    loading={isFetchingFans}
+                    disabled={isFetchingFans}
+                    allowClear={true}
+                  ></SimpleSelect>
+                </Col>
+              </Row>
             </Col>
-            <Col lg={8} xs={16}>
-              <Typography.Title level={5}>Fan Filter</Typography.Title>
-              <SimpleSelect
-                data={fans}
-                onChange={(_, fan) => onChangeFan(fan)}
-                style={{ width: '100%', marginBottom: '16px' }}
-                selectedOption={selectedFan?.user}
-                optionsMapping={fanOptionsMapping}
-                placeholder={'Select a fan'}
-                loading={isFetchingFans}
-                disabled={isFetchingFans}
-                allowClear={true}
-              ></SimpleSelect>
+            <Col>
+              <Button
+                type="primary"
+                onClick={() => getResources()}
+                style={{
+                  marginBottom: '20px',
+                  marginRight: '25px',
+                }}
+              >
+                Search
+                <SearchOutlined style={{ color: 'white' }} />
+              </Button>
             </Col>
           </Row>
-        </Col>
-        <Col>
-          <Button
-            type="primary"
-            onClick={() => getResources()}
-            style={{
-              marginBottom: '20px',
-              marginRight: '25px',
-            }}
-          >
-            Search
-            <SearchOutlined style={{ color: 'white' }} />
-          </Button>
-        </Col>
-      </Row>
-      <Table
-        rowKey="id"
-        columns={columns}
-        dataSource={filteredOrders}
-        loading={tableloading}
-      />
-    </div>
+          <Table
+            rowClassName={(_, index) => `scrollable-row-${index}`}
+            rowKey="id"
+            columns={columns}
+            dataSource={filteredOrders}
+            loading={tableloading}
+          />
+        </div>
+      )}
+      {details && (
+        <FanDetail fan={currentFan} onSave={onSaveFan} onCancel={onCancelFan} />
+      )}
+    </>
   );
 };
 

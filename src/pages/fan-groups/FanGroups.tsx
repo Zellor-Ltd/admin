@@ -8,11 +8,17 @@ import moment from 'moment';
 import { useEffect, useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { fetchFanGroups } from 'services/DiscoClubService';
+import scrollIntoView from 'scroll-into-view';
+import FanGroupsDetail from './FanGroupDetail';
+import FanGroupDetail from './FanGroupDetail';
 
 const FanGroups: React.FC<RouteComponentProps> = ({ history, location }) => {
   const detailsPathname = `${location.pathname}/fan-group`;
   const [loading, setLoading] = useState<boolean>(false);
   const { doFetch } = useRequest({ setLoading });
+  const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
+  const [details, setDetails] = useState<boolean>(false);
+  const [currentFanGroup, setCurrentFanGroup] = useState<FanGroup>();
 
   const {
     setArrayList: setFanGroups,
@@ -33,6 +39,22 @@ const FanGroups: React.FC<RouteComponentProps> = ({ history, location }) => {
     getResources();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (!details) {
+      scrollIntoView(
+        document.querySelector(
+          `.scrollable-row-${lastViewedIndex}`
+        ) as HTMLElement
+      );
+    }
+  }, [details]);
+
+  const editFanGroup = (index: number, fanGroup?: FanGroup) => {
+    setLastViewedIndex(index);
+    setCurrentFanGroup(fanGroup);
+    setDetails(true);
+  };
 
   const columns: ColumnsType<FanGroup> = [
     {
@@ -62,32 +84,61 @@ const FanGroups: React.FC<RouteComponentProps> = ({ history, location }) => {
     );
   };
 
+  const refreshItem = (record: FanGroup) => {
+    filteredFanGroups[lastViewedIndex] = record;
+    setFanGroups([...filteredFanGroups]);
+  };
+
+  const onSaveFanGroup = (record: FanGroup) => {
+    refreshItem(record);
+    setDetails(false);
+  };
+
+  const onCancelFanGroup = () => {
+    setDetails(false);
+  };
+
   return (
-    <div>
-      <PageHeader
-        title="Fan Groups"
-        subTitle="List of Fan Groups"
-        extra={[
-          <Button key="1" onClick={() => history.push(detailsPathname)}>
-            New Item
-          </Button>,
-        ]}
-      />
-      <Row gutter={8}>
-        <Col lg={8} xs={16}>
-          <SearchFilter
-            filterFunction={searchFilterFunction}
-            label="Search by Name"
+    <>
+      {!details && (
+        <div>
+          <PageHeader
+            title="Fan Groups"
+            subTitle="List of Fan Groups"
+            extra={[
+              <Button
+                key="1"
+                onClick={() => editFanGroup(filteredFanGroups.length)}
+              >
+                New Item
+              </Button>,
+            ]}
           />
-        </Col>
-      </Row>
-      <Table
-        rowKey="id"
-        columns={columns}
-        dataSource={filteredFanGroups}
-        loading={loading}
-      />
-    </div>
+          <Row gutter={8}>
+            <Col lg={8} xs={16}>
+              <SearchFilter
+                filterFunction={searchFilterFunction}
+                label="Search by Name"
+              />
+            </Col>
+          </Row>
+          <Table
+            rowClassName={(_, index) => `scrollable-row-${index}`}
+            rowKey="id"
+            columns={columns}
+            dataSource={filteredFanGroups}
+            loading={loading}
+          />
+        </div>
+      )}
+      {details && (
+        <FanGroupDetail
+          fanGroup={currentFanGroup}
+          onSave={onSaveFanGroup}
+          onCancel={onCancelFanGroup}
+        />
+      )}
+    </>
   );
 };
 

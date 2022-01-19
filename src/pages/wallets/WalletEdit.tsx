@@ -9,23 +9,29 @@ import {
 } from 'antd';
 import { useForm } from 'antd/lib/form/Form';
 import { useRequest } from 'hooks/useRequest';
+import { Wallet } from 'interfaces/Wallet';
+import { WalletDetailParams } from 'interfaces/WalletTransactions';
 import { useState } from 'react';
 import { addBalanceToUser, resetUserBalance } from 'services/DiscoClubService';
 
 interface WalletEditProps {
   fanId: string | undefined;
   brandId: string | undefined;
-  getResources: () => Promise<any>;
   label?: string;
   disabled?: boolean;
+  wallet?: Wallet;
+  onSave?: (value: number, record?: Wallet) => void;
+  onReset?: (record?: Wallet) => void;
 }
 
 const WalletEdit: React.FC<WalletEditProps> = ({
   fanId,
   brandId,
-  getResources,
   label,
   disabled,
+  wallet,
+  onSave,
+  onReset,
 }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const { doRequest } = useRequest({ setLoading: setLoading });
@@ -35,13 +41,13 @@ const WalletEdit: React.FC<WalletEditProps> = ({
     await doRequest(() =>
       addBalanceToUser(fanId as string, brandId as string, balanceToAdd)
     );
-    await getResources();
+    onSave?.(balanceToAdd, wallet);
     form.resetFields();
   };
 
   const resetBalance = async () => {
     await doRequest(() => resetUserBalance(fanId as string, brandId as string));
-    await getResources();
+    onReset?.(wallet);
   };
 
   return (

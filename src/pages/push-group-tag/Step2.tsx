@@ -5,13 +5,14 @@ import { FanGroup } from 'interfaces/FanGroup';
 import { SelectOption } from 'interfaces/SelectOption';
 import { Tag } from 'interfaces/Tag';
 import { useEffect, useState } from 'react';
-import { RouteComponentProps } from 'react-router-dom';
 import { fetchFanGroups } from 'services/DiscoClubService';
 import { TagBox } from './TagBox';
+interface Step2Props {
+  selectedTags: Tag[];
+  onReturn?: () => void;
+}
 
-const Step2: React.FC<RouteComponentProps> = props => {
-  const { history, location } = props;
-  const selectedTags = location.state as unknown as Tag[];
+const Step2: React.FC<Step2Props> = ({ selectedTags, onReturn }) => {
   const [selectedFanGroup, setSelectedFanGroup] = useState<FanGroup>();
   const [fanGroups, setFanGroups] = useState<FanGroup[]>([]);
   const [isFetchingFanGroups, setIsFetchingFanGroups] = useState(false);
@@ -72,7 +73,7 @@ const Step2: React.FC<RouteComponentProps> = props => {
       </Row>
       <Row gutter={8} style={{ marginTop: '16px' }}>
         <Col>
-          <Button type="default" onClick={() => history.goBack()}>
+          <Button type="default" onClick={() => onReturn?.()}>
             Back
           </Button>
         </Col>

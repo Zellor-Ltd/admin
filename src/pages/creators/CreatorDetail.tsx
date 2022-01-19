@@ -22,28 +22,39 @@ import {
   Typography,
 } from 'antd';
 import { Upload } from 'components';
+import { useRequest } from 'hooks/useRequest';
+import { Creator } from 'interfaces/Creator';
 import { ServerAlias } from 'interfaces/ServerAlias';
 import { useEffect, useState } from 'react';
-import { RouteComponentProps } from 'react-router-dom';
 import { fetchServersList, saveCreator } from 'services/DiscoClubService';
+interface CreatorDetailProps {
+  creator: any;
+  onSave?: (record: Creator) => void;
+  onCancel?: () => void;
+}
 
-const CreatorDetail: React.FC<RouteComponentProps> = props => {
-  const { history, location } = props;
-  const initial: any = location.state;
+const CreatorDetail: React.FC<CreatorDetailProps> = ({
+  creator,
+  onSave,
+  onCancel,
+}) => {
   const [loading, setLoading] = useState(false);
   const [ageRange, setageRange] = useState<[number, number]>([12, 100]);
   const [serversList, setServersList] = useState<ServerAlias[]>([]);
+  const { doRequest } = useRequest({ setLoading });
 
   const [form] = Form.useForm();
 
   const onFinish = async () => {
     setLoading(true);
     try {
-      const creator = form.getFieldsValue(true);
-      await saveCreator(creator);
+      const formCreator = form.getFieldsValue(true);
+      const { result } = await doRequest(() => saveCreator(formCreator));
       setLoading(false);
       message.success('Register updated with success.');
-      history.goBack();
+      formCreator.id
+        ? onSave?.(formCreator)
+        : onSave?.({ ...formCreator, id: result });
     } catch (error) {
       console.error(error);
       setLoading(false);
@@ -55,10 +66,10 @@ const CreatorDetail: React.FC<RouteComponentProps> = props => {
       const response: any = await fetchServersList();
       setServersList(response.results);
     };
-    if (initial?.ageMin && initial?.ageMax)
-      setageRange([initial?.ageMin, initial?.ageMax]);
+    if (creator?.ageMin && creator?.ageMax)
+      setageRange([creator?.ageMin, creator?.ageMax]);
     getServersList();
-  }, [initial]);
+  }, [creator]);
 
   const onChangeAge = (value: [number, number]) => {
     form.setFieldsValue({
@@ -70,8 +81,8 @@ const CreatorDetail: React.FC<RouteComponentProps> = props => {
   };
 
   const getHeaderTitle = () => {
-    if (initial) {
-      return `${initial?.userName} Update`;
+    if (creator) {
+      return `${creator?.userName} Update`;
     }
 
     return 'Creator Creation';
@@ -84,7 +95,7 @@ const CreatorDetail: React.FC<RouteComponentProps> = props => {
         form={form}
         layout="vertical"
         onFinish={onFinish}
-        initialValues={initial}
+        initialValues={creator}
         autoComplete="off"
       >
         <Tabs defaultActiveKey="Details">
@@ -148,7 +159,7 @@ const CreatorDetail: React.FC<RouteComponentProps> = props => {
               </Col>
               <Col lg={12} xs={24}>
                 <Form.Item
-                  name="displayInVideoFeed"
+                  name={['creator', 'displayInVideoFeed']}
                   label="Display in Video Feed"
                   valuePropName="checked"
                   initialValue={true}
@@ -161,7 +172,7 @@ const CreatorDetail: React.FC<RouteComponentProps> = props => {
               <Col lg={4} xs={24}>
                 <Form.Item label="Cover Picture">
                   <Upload.ImageUpload
-                    fileList={initial?.coverPictureUrl}
+                    fileList={creator?.coverPictureUrl}
                     formProp="coverPictureUrl"
                     form={form}
                   />
@@ -170,7 +181,7 @@ const CreatorDetail: React.FC<RouteComponentProps> = props => {
               <Col lg={4} xs={24}>
                 <Form.Item label="Avatar">
                   <Upload.ImageUpload
-                    fileList={initial?.avatar}
+                    fileList={creator?.avatar}
                     formProp="avatar"
                     form={form}
                   />
@@ -259,7 +270,7 @@ const CreatorDetail: React.FC<RouteComponentProps> = props => {
         </Tabs>
         <Row gutter={8}>
           <Col>
-            <Button type="default" onClick={() => history.goBack()}>
+            <Button type="default" onClick={() => onCancel?.()}>
               Cancel
             </Button>
           </Col>

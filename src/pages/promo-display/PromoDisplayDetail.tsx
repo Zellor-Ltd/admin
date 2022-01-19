@@ -2,21 +2,32 @@ import { Button, Col, DatePicker, Form, PageHeader, Row } from 'antd';
 import { RichTextEditor } from 'components/RichTextEditor';
 import { formatMoment } from 'helpers/formatMoment';
 import { useRequest } from 'hooks/useRequest';
+import { PromoDisplay } from 'interfaces/PromoDisplay';
 import { useState } from 'react';
-import { RouteComponentProps } from 'react-router-dom';
 import { savePromoDisplay } from 'services/DiscoClubService';
+interface PromoDisplayDetailProps {
+  promoDisplay: any;
+  onSave?: (record: PromoDisplay) => void;
+  onCancel?: () => void;
+}
 
-const PromoDisplaysDetail: React.FC<RouteComponentProps> = props => {
-  const { history, location } = props;
-  const initial: any = location.state;
+const PromoDisplaysDetail: React.FC<PromoDisplayDetailProps> = ({
+  promoDisplay,
+  onSave,
+  onCancel,
+}) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [form] = Form.useForm();
   const { doRequest } = useRequest({ setLoading });
 
   const onFinish = async () => {
-    const promoDisplay = form.getFieldsValue(true);
-    await doRequest(() => savePromoDisplay(promoDisplay));
-    history.goBack();
+    const formPromoDisplay = form.getFieldsValue(true);
+    const { result } = await doRequest(() =>
+      savePromoDisplay(formPromoDisplay)
+    );
+    formPromoDisplay.id
+      ? onSave?.(formPromoDisplay)
+      : onSave?.({ ...formPromoDisplay, id: result });
   };
 
   return (
@@ -26,7 +37,7 @@ const PromoDisplaysDetail: React.FC<RouteComponentProps> = props => {
         name="promoDisplayForm"
         layout="vertical"
         form={form}
-        initialValues={initial}
+        initialValues={promoDisplay}
         onFinish={onFinish}
       >
         <Row>
@@ -64,7 +75,7 @@ const PromoDisplaysDetail: React.FC<RouteComponentProps> = props => {
         </Row>
         <Row gutter={8}>
           <Col>
-            <Button type="default" onClick={() => history.goBack()}>
+            <Button type="default" onClick={() => onCancel?.()}>
               Cancel
             </Button>
           </Col>

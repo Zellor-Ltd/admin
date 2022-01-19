@@ -1,7 +1,6 @@
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import { Button, Col, PageHeader, Popconfirm, Row, Table } from 'antd';
+import { Button, PageHeader, Popconfirm, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import { SearchFilter } from '../../components/SearchFilter';
 import { useRequest } from '../../hooks/useRequest';
 import { Banner } from '../../interfaces/Banner';
 import moment from 'moment';
@@ -9,13 +8,17 @@ import { useEffect, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { fetchBanners, deleteBanner } from 'services/DiscoClubService';
 import CopyIdToClipboard from '../../components/CopyIdToClipboard';
+import scrollIntoView from 'scroll-into-view';
+import HomeScreenDetail from './HomeScreenDetail';
 
 const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
-  const detailsPathname = `${location.pathname}/home-screen`;
   const [loading, setLoading] = useState<boolean>(false);
   const { doFetch, doRequest } = useRequest({ setLoading });
   const [content, setContent] = useState<any[]>([]);
   const [banners, setBanners] = useState<Banner[]>([]);
+  const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
+  const [details, setDetails] = useState<boolean>(false);
+  const [currentBanner, setCurrentBanner] = useState<Banner>();
 
   const getResources = () => {
     getBanners();
@@ -32,14 +35,39 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const deleteItem = async (id: string) => {
-    await doRequest(() => deleteBanner({ id }));
-    for (let i = 0; i < content.length; i++) {
-      if (content[i].id === id) {
-        const index = i;
-        setBanners(prev => [...prev.slice(0, index), ...prev.slice(index + 1)]);
-      }
+  useEffect(() => {
+    if (!details) {
+      scrollIntoView(
+        document.querySelector(
+          `.scrollable-row-${lastViewedIndex}`
+        ) as HTMLElement
+      );
     }
+  }, [details]);
+
+  const editBanner = (index: number, banner?: Banner) => {
+    setLastViewedIndex(index);
+    setCurrentBanner(banner);
+    setDetails(true);
+  };
+
+  const deleteItem = async (id: string, index: number) => {
+    await doRequest(() => deleteBanner({ id }));
+    setBanners(prev => [...prev.slice(0, index), ...prev.slice(index + 1)]);
+  };
+
+  const refreshItem = (record: Banner) => {
+    banners[lastViewedIndex] = record;
+    setBanners([...banners]);
+  };
+
+  const onSaveBanner = (record: Banner) => {
+    refreshItem(record);
+    setDetails(false);
+  };
+
+  const onCancelBanner = () => {
+    setDetails(false);
   };
 
   const columns: ColumnsType<Banner> = [
@@ -54,8 +82,10 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
       title: 'id',
       dataIndex: 'id',
       width: '6%',
-      render: (value: string, record: Banner) => (
-        <Link to={{ pathname: detailsPathname, state: record }}>{value}</Link>
+      render: (value: string, record: Banner, index: number) => (
+        <Link to={location.pathname} onClick={() => editBanner(index, record)}>
+          {value}
+        </Link>
       ),
       align: 'center',
     },
@@ -91,16 +121,19 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
       key: 'action',
       width: '10%',
       align: 'right',
-      render: (_, record: Banner) => (
+      render: (_, record: Banner, index: number) => (
         <>
-          <Link to={{ pathname: detailsPathname, state: record }}>
+          <Link
+            to={location.pathname}
+            onClick={() => editBanner(index, record)}
+          >
             <EditOutlined />
           </Link>
           <Popconfirm
             title="Are you sure？"
             okText="Yes"
             cancelText="No"
-            onConfirm={() => deleteItem(record.id)}
+            onConfirm={() => deleteItem(record.id, index)}
           >
             <Button type="link" style={{ padding: 0, margin: 6 }}>
               <DeleteOutlined />
@@ -111,23 +144,35 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
     },
   ];
   return (
-    <div>
-      <PageHeader
-        title="Banners"
-        subTitle="List of Banners"
-        extra={[
-          <Button key="1" onClick={() => history.push(detailsPathname)}>
-            New Item
-          </Button>,
-        ]}
-      />
-      <Table
-        rowKey="id"
-        columns={columns}
-        dataSource={banners}
-        loading={loading}
-      />
-    </div>
+    <>
+      {!details && (
+        <div>
+          <PageHeader
+            title="Banners"
+            subTitle="List of Banners"
+            extra={[
+              <Button key="1" onClick={() => editBanner(banners.length)}>
+                New Item
+              </Button>,
+            ]}
+          />
+          <Table
+            rowClassName={(_, index) => `scrollable-row-${index}`}
+            rowKey="id"
+            columns={columns}
+            dataSource={banners}
+            loading={loading}
+          />
+        </div>
+      )}
+      {details && (
+        <HomeScreenDetail
+          banner={currentBanner as Banner}
+          onSave={onSaveBanner}
+          onCancel={onCancelBanner}
+        />
+      )}{' '}
+    </>
   );
 };
 

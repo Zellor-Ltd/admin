@@ -7,7 +7,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import { useRequest } from '../../hooks/useRequest';
 import { Brand } from '../../interfaces/Brand';
 import { Product } from '../../interfaces/Product';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   fetchStagingProducts,
@@ -23,8 +23,8 @@ import scrollIntoView from 'scroll-into-view';
 
 interface AlternatePreviewListProps {
   setViewName: Function;
-  isEditing: boolean;
-  setIsEditing: Function;
+  details: boolean;
+  setDetails: Function;
   loaded: boolean;
   products: Product[];
   setProducts: Function;
@@ -45,13 +45,14 @@ interface AlternatePreviewListProps {
   setRefreshing: Function;
   allCategories: any;
   previousViewName: any;
-  onSaveChanges: (entity: Product, index: number) => Promise<void>;
+  onSaveChanges: (entity: Product) => Promise<void>;
+  lastViewedIndex: any;
 }
 
 const AlternatePreviewList: React.FC<AlternatePreviewListProps> = ({
   setViewName,
-  isEditing,
-  setIsEditing,
+  details,
+  setDetails,
   loaded,
   products,
   setProducts,
@@ -73,12 +74,12 @@ const AlternatePreviewList: React.FC<AlternatePreviewListProps> = ({
   allCategories,
   previousViewName,
   onSaveChanges,
+  lastViewedIndex,
 }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
 
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
-  const [lastViewedIndex, setLastViewedIndex] = useState<number>(0);
 
   const [eof, setEof] = useState<boolean>(false);
 
@@ -130,7 +131,7 @@ const AlternatePreviewList: React.FC<AlternatePreviewListProps> = ({
   };
 
   const refreshItem = (record: Product) => {
-    products[lastViewedIndex] = record;
+    products[lastViewedIndex.current] = record;
     setProducts([...products]);
   };
 
@@ -427,14 +428,15 @@ const AlternatePreviewList: React.FC<AlternatePreviewListProps> = ({
 
   const saveChanges = async (record: Product, index: number) => {
     setLoading(true);
-    await onSaveChanges(record, index);
+    lastViewedIndex.current = index;
+    await onSaveChanges(record);
     setLoading(false);
   };
 
-  const editProduct = (record: Product, index) => {
+  const editProduct = (record: Product, index: number) => {
     previousViewName.current = 'alternate';
     setCurrentProduct(record);
-    setLastViewedIndex(index);
+    lastViewedIndex.current = index;
     setCurrentMasterBrand(record.brand.brandName);
     if (record.productBrand) {
       if (typeof record.productBrand === 'string') {
@@ -446,18 +448,18 @@ const AlternatePreviewList: React.FC<AlternatePreviewListProps> = ({
       setCurrentProductBrand('');
     }
     setViewName('default');
-    setIsEditing(true);
+    setDetails(true);
   };
 
   useEffect(() => {
-    if (!isEditing) {
+    if (!details) {
       scrollIntoView(
         document.querySelector(
-          `.scrollable-row-${lastViewedIndex}`
+          `.scrollable-row-${lastViewedIndex.current}`
         ) as HTMLElement
       );
     }
-  }, [isEditing]);
+  }, [details]);
 
   return (
     <Form
@@ -490,7 +492,7 @@ const AlternatePreviewList: React.FC<AlternatePreviewListProps> = ({
         <EditableTable
           rowClassName={(_, index) =>
             `scrollable-row-${index} ${
-              index === lastViewedIndex ? 'selected-row' : ''
+              index === lastViewedIndex.current ? 'selected-row' : ''
             }`
           }
           rowKey="id"

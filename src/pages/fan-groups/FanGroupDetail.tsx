@@ -1,20 +1,29 @@
 import { Button, Col, Form, Input, PageHeader, Row } from 'antd';
 import { useRequest } from 'hooks/useRequest';
+import { FanGroup } from 'interfaces/FanGroup';
 import { useState } from 'react';
-import { RouteComponentProps } from 'react-router-dom';
 import { saveFanGroup } from 'services/DiscoClubService';
+interface FanGroupsDetailProps {
+  fanGroup?: FanGroup;
+  onSave?: (record: FanGroup) => void;
+  onCancel?: () => void;
+}
 
-const FanGroupsDetail: React.FC<RouteComponentProps> = props => {
-  const { history, location } = props;
-  const initial: any = location.state;
+const FanGroupsDetail: React.FC<FanGroupsDetailProps> = ({
+  fanGroup,
+  onSave,
+  onCancel,
+}) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [form] = Form.useForm();
   const { doRequest } = useRequest({ setLoading });
 
   const onFinish = async () => {
-    const fanGroup = form.getFieldsValue(true);
-    await doRequest(() => saveFanGroup(fanGroup));
-    history.goBack();
+    const formFanGroup = form.getFieldsValue(true);
+    const { result } = await doRequest(() => saveFanGroup(formFanGroup));
+    formFanGroup.id
+      ? onSave?.(formFanGroup)
+      : onSave?.({ ...formFanGroup, id: result });
   };
 
   return (
@@ -24,7 +33,7 @@ const FanGroupsDetail: React.FC<RouteComponentProps> = props => {
         name="fanGroupForm"
         layout="vertical"
         form={form}
-        initialValues={initial}
+        initialValues={fanGroup}
         onFinish={onFinish}
       >
         <Row gutter={8}>
@@ -38,7 +47,7 @@ const FanGroupsDetail: React.FC<RouteComponentProps> = props => {
         </Row>
         <Row gutter={8}>
           <Col>
-            <Button type="default" onClick={() => history.goBack()}>
+            <Button type="default" onClick={() => onCancel?.()}>
               Cancel
             </Button>
           </Col>
