@@ -1,6 +1,7 @@
 import {
   DeleteOutlined,
   EditOutlined,
+  LoadingOutlined,
   SearchOutlined,
 } from '@ant-design/icons';
 import {
@@ -8,11 +9,13 @@ import {
   Col,
   Form,
   Input,
+  InputNumber,
   Layout,
   message,
   PageHeader,
   Popconfirm,
   Row,
+  Spin,
   Table,
   Tag as AntTag,
   Typography,
@@ -21,7 +24,7 @@ import { ColumnsType } from 'antd/lib/table';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
 import { FeedItem } from 'interfaces/FeedItem';
 import { Segment } from 'interfaces/Segment';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 import {
   deleteVideoFeed,
@@ -29,6 +32,7 @@ import {
   fetchCategories,
   fetchCreators,
   fetchVideoFeed,
+  saveVideoFeed,
 } from 'services/DiscoClubService';
 import useFilter from 'hooks/useFilter';
 import { Brand } from 'interfaces/Brand';
@@ -42,6 +46,7 @@ import scrollIntoView from 'scroll-into-view';
 import SimpleSelect from 'components/SimpleSelect';
 import { SelectOption } from '../../interfaces/SelectOption';
 import VideoFeedDetailV2 from './VideoFeedDetailV2';
+import { useRequest } from 'hooks/useRequest';
 
 const { Content } = Layout;
 
@@ -52,7 +57,7 @@ const reduceSegmentsTags = (packages: Segment[]) => {
 };
 
 const VideoFeed: React.FC<RouteComponentProps> = () => {
-  const [currentItem, setCurrentItem] = useState<FeedItem>();
+  const [selectedVideoFeed, setSelectedVideoFeed] = useState<FeedItem>();
 
   const {
     settings: { language = [] },
@@ -71,6 +76,13 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const [brands, setBrands] = useState<Brand[]>([]);
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
   const [currentPage, setCurrentPage] = useState(1);
+  const { doRequest } = useRequest({ setLoading });
+
+  const shouldUpdateFeedItemIndex = useRef(false);
+  const originalFeedItemsIndex = useRef<Record<string, number | undefined>>({});
+  const [updatingFeedItemIndex, setUpdatingFeedItemIndex] = useState<
+    Record<string, boolean>
+  >({});
 
   const optionsMapping: SelectOption = {
     key: 'id',
@@ -90,9 +102,9 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   }, []);
 
   useEffect(() => {
-    feedForm.setFieldsValue(currentItem);
-    segmentForm.setFieldsValue(currentItem);
-  }, [currentItem]);
+    feedForm.setFieldsValue(selectedVideoFeed);
+    segmentForm.setFieldsValue(selectedVideoFeed);
+  }, [selectedVideoFeed]);
 
   useEffect(() => {
     if (!details) {
@@ -222,17 +234,87 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     );
   };
 
-  const onEditItem = (index: number, record?: any) => {
+  const onEditFeedItem = (index: number, videoFeed?: FeedItem) => {
     setLastViewedIndex(index);
-    setCurrentItem(record);
+    setSelectedVideoFeed(videoFeed);
     setDetails(true);
   };
 
   const onPageChange = (page: number) => {
     setCurrentPage(page);
   };
+  const onCreatorChange = (key: string) => {
+    const creator = influencers.find(influencer => influencer.id === key);
+    const feedItem = feedForm.getFieldsValue(true) as FeedItem;
 
-  const columns: ColumnsType<FeedItem> = [
+    const segments = feedItem.package.map(segment => {
+      if (!segment.selectedOption || segment.selectedOption === 'creator') {
+        segment.selectedFeedTitle = creator?.userName;
+        segment.selectedIconUrl = creator?.avatar?.url || undefined;
+      }
+      return segment;
+    });
+
+    feedForm.setFieldsValue({
+      package: [...segments],
+      creator: creator,
+    });
+  };
+
+  const onFeedItemIndexOnColumnChange = (
+    feedItemIndex: number,
+    feedItem: FeedItem
+  ) => {
+    for (let i = 0; i < filteredItems.length; i++) {
+      if (filteredItems[i].id === feedItem.id) {
+        if (originalFeedItemsIndex.current[feedItem.id] === undefined) {
+          originalFeedItemsIndex.current[feedItem.id] = feedItem.index;
+        }
+
+        shouldUpdateFeedItemIndex.current =
+          originalFeedItemsIndex.current[feedItem.id] !== feedItemIndex;
+
+        filteredItems[i].index = feedItemIndex;
+        setFilteredItems([...filteredItems]);
+        break;
+      }
+    }
+  };
+
+  const onFeedItemIndexOnColumnBlur = async (feedItem: FeedItem) => {
+    if (!shouldUpdateFeedItemIndex.current) {
+      return;
+    }
+    setUpdatingFeedItemIndex(prev => {
+      const newValue = {
+        ...prev,
+      };
+      newValue[feedItem.id] = true;
+
+      return newValue;
+    });
+    try {
+      await saveVideoFeed(feedItem);
+      message.success('Register updated with success.');
+    } catch (err) {
+      console.error(
+        `Error while trying to update FeedItem[${feedItem.id}] index.`,
+        err
+      );
+      message.success('Error while trying to update FeedItem index.');
+    }
+    setUpdatingFeedItemIndex(prev => {
+      const newValue = {
+        ...prev,
+      };
+      delete newValue[feedItem.id];
+      return newValue;
+    });
+    delete originalFeedItemsIndex.current[feedItem.id];
+    shouldUpdateFeedItemIndex.current = false;
+  };
+
+  const feedItemColumns: ColumnsType<FeedItem> = [
     {
       title: '_id',
       dataIndex: 'id',
@@ -241,13 +323,36 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       align: 'center',
     },
     {
+      title: 'Index',
+      dataIndex: 'index',
+      width: '3%',
+      render: (_, feedItem, index) => {
+        if (updatingFeedItemIndex[feedItem.id]) {
+          const antIcon = <LoadingOutlined spin />;
+          return <Spin indicator={antIcon} />;
+        } else {
+          return (
+            <InputNumber
+              type="number"
+              value={feedItem.index}
+              onChange={feedItemIndex =>
+                onFeedItemIndexOnColumnChange(feedItemIndex, feedItem)
+              }
+              onBlur={() => onFeedItemIndexOnColumnBlur(feedItem)}
+            />
+          );
+        }
+      },
+      align: 'center',
+    },
+    {
       title: 'Title',
       dataIndex: 'title',
       width: '18%',
-      render: (value: string, record: FeedItem, index: number) => (
+      render: (value: string, feedItem: FeedItem, index: number) => (
         <Link
-          onClick={() => onEditItem(index, record)}
-          to={{ pathname: window.location.pathname, state: record }}
+          onClick={() => onEditFeedItem(index, feedItem)}
+          to={{ pathname: window.location.pathname, state: feedItem }}
         >
           {value}
         </Link>
@@ -295,11 +400,11 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       key: 'action',
       width: '5%',
       align: 'right',
-      render: (_, record: FeedItem, index: number) => (
+      render: (_, feedItem: FeedItem, index: number) => (
         <>
           <Link
-            onClick={() => onEditItem(index, record)}
-            to={{ pathname: window.location.pathname, state: record }}
+            onClick={() => onEditFeedItem(index, feedItem)}
+            to={{ pathname: window.location.pathname, state: feedItem }}
           >
             <EditOutlined />
           </Link>
@@ -307,7 +412,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
             title="Are you sure？"
             okText="Yes"
             cancelText="No"
-            onConfirm={() => deleteItem(record.id, index)}
+            onConfirm={() => deleteItem(feedItem.id, index)}
           >
             <Button type="link" style={{ padding: 0, margin: 6 }}>
               <DeleteOutlined />
@@ -335,7 +440,10 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
             title="Video feed update"
             subTitle="List of Feeds"
             extra={[
-              <Button key="2" onClick={() => onEditItem(filterFeed().length)}>
+              <Button
+                key="2"
+                onClick={() => onEditFeedItem(filterFeed().length)}
+              >
                 New Item
               </Button>,
             ]}
@@ -392,11 +500,24 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                 }`
               }
               size="small"
-              columns={columns}
+              columns={feedItemColumns}
               rowKey="id"
               dataSource={filterFeed()}
               loading={loading}
-              pagination={{ current: currentPage, onChange: onPageChange }}
+              pagination={{
+                current: currentPage,
+                onChange: onPageChange,
+                pageSize: 50,
+                pageSizeOptions: [
+                  '50',
+                  '100',
+                  '200',
+                  '300',
+                  '400',
+                  '500',
+                  '1000',
+                ],
+              }}
             />
           </Content>
         </div>
@@ -405,8 +526,8 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
         <VideoFeedDetailV2
           onSave={onSaveItem}
           onCancel={onCancelItem}
-          feedItem={currentItem}
-          setFeedItem={setCurrentItem}
+          feedItem={selectedVideoFeed}
+          setFeedItem={setSelectedVideoFeed}
           brands={brands}
           categories={categories}
           influencers={influencers}

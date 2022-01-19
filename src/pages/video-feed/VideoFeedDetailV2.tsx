@@ -91,6 +91,18 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
 
   const { doRequest } = useRequest({ setLoading });
 
+  const [segmentListing, setSegmentListing] = useState<
+    'creator' | 'productBrand'
+  >('creator');
+  const [showSegmentListing, setShowSegmentListing] = useState(false);
+
+  useEffect(() => {
+    if (showSegmentListing) {
+      const selectedOption = selectedSegment?.selectedOption || 'creator';
+      onSegmentListingChange(selectedOption);
+    }
+  }, [showSegmentListing]);
+
   useEffect(() => {
     if (feedItem && feedItem.hashtags) {
       setHashtags(feedItem.hashtags);
@@ -148,6 +160,33 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedSegment, showBrandForm, showTagForm]);
 
+  const onSegmentListingChange = (
+    segmentListing: 'creator' | 'productBrand'
+  ) => {
+    const segmentBrands = segmentForm.getFieldValue('brands') as Brand[];
+    if (segmentBrands && segmentBrands.length > 0) {
+      setSegmentListing(segmentListing);
+      const firstBrand = segmentForm.getFieldValue('brands')[0] as Brand;
+      switch (segmentListing) {
+        case 'creator':
+          const creator = feedItem?.creator;
+          if (creator) {
+            segmentForm.setFieldsValue({
+              selectedFeedTitle: creator?.userName,
+              selectedIconUrl: creator?.avatar?.url || undefined,
+            });
+          }
+          break;
+        case 'productBrand':
+          segmentForm.setFieldsValue({
+            selectedFeedTitle: firstBrand.productBrand?.brandName,
+            selectedIconUrl: firstBrand.selectedLogoUrl,
+          });
+          break;
+      }
+    }
+  };
+
   const onFinish = async () => {
     const item: FeedItem = feedForm.getFieldsValue(true);
     item.goLiveDate = moment(item.goLiveDate).format();
@@ -186,6 +225,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
       sequence,
       tags: [],
       brands: [],
+      selectedOption: 'creator',
     });
     setSelectedSegmentIndex(sequence - 1);
   };
@@ -205,8 +245,17 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
   };
 
   const onEditSegment = (segment: Segment, segmentIndex: number) => {
-    setSelectedSegment(segment);
+    const selectedOption = segment.selectedOption || 'creator';
+    setSelectedSegment({
+      ...segment,
+      selectedOption: selectedOption,
+    });
+    if (segment.brands && segment.brands.length > 0) {
+      setShowSegmentListing(true);
+    }
+    onSegmentListingChange(selectedOption);
     setSelectedSegmentIndex(segmentIndex);
+    segmentForm.setFieldsValue(segment);
   };
 
   const resetForm = () => {
@@ -250,6 +299,24 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
     setVideoTab('Video Details');
   };
 
+  const onCreatorChange = (key: string) => {
+    const creator = influencers.find(influencer => influencer.id === key);
+    const feedItem = feedForm.getFieldsValue(true) as FeedItem;
+
+    const segments = feedItem.package.map(segment => {
+      if (!segment.selectedOption || segment.selectedOption === 'creator') {
+        segment.selectedFeedTitle = creator?.userName;
+        segment.selectedIconUrl = creator?.avatar?.url || undefined;
+      }
+      return segment;
+    });
+
+    feedForm.setFieldsValue({
+      package: [...segments],
+      creator: creator,
+    });
+  };
+
   const VideoUpdatePage = () => {
     return (
       <>
@@ -257,12 +324,23 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
           <Tabs.TabPane forceRender tab="Video Details" key={defaultVideoTab}>
             <Row gutter={8}>
               <Col lg={24} xs={24}>
-                <Form.Item name="status" label="Status">
-                  <Radio.Group buttonStyle="solid">
-                    <Radio.Button value="live">Live</Radio.Button>
-                    <Radio.Button value="paused">Paused</Radio.Button>
-                  </Radio.Group>
-                </Form.Item>
+                <Row>
+                  <Form.Item name="status" label="Status">
+                    <Radio.Group buttonStyle="solid">
+                      <Radio.Button value="live">Live</Radio.Button>
+                      <Radio.Button value="paused">Paused</Radio.Button>
+                    </Radio.Group>
+                  </Form.Item>
+                  <Form.Item
+                    name="index"
+                    label="Index"
+                    className="ml-1"
+                    rules={[{ required: true, min: 0, type: 'number' }]}
+                    initialValue={1000}
+                  >
+                    <InputNumber />
+                  </Form.Item>
+                </Row>
               </Col>
               <Col lg={24} xs={24}>
                 <Form.Item name="title" label="Title">
@@ -289,13 +367,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                 <Form.Item name={['creator', 'id']} label="Creator">
                   <Select
                     placeholder="Please select a creator"
-                    onChange={(key: string) =>
-                      feedForm.setFieldsValue({
-                        creator: influencers.find(
-                          influencer => influencer.id === key
-                        ),
-                      })
-                    }
+                    onChange={onCreatorChange}
                   >
                     {influencers.map((influencer: any) => (
                       <Select.Option key={influencer.id} value={influencer.id}>
@@ -510,7 +582,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
         </Tabs>
         <Row gutter={8}>
           <Col>
-            <Button type="default" onClick={() => onCancelUpdate?.()}>
+            <Button type="default" onClick={() => onCancel?.()}>
               Cancel
             </Button>
           </Col>
@@ -739,6 +811,24 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                     pagination={false}
                   />
                 </Tabs.TabPane>
+                {showSegmentListing && (
+                  <Tabs.TabPane forceRender tab="Listing" key="Listing">
+                    <Form.Item
+                      name="selectedOption"
+                      initialValue={selectedSegment?.selectedOption}
+                    >
+                      <Radio.Group
+                        value={segmentListing}
+                        onChange={event =>
+                          onSegmentListingChange(event.target.value)
+                        }
+                      >
+                        <Radio value="creator">Creator</Radio>
+                        <Radio value="productBrand">Product Brand</Radio>
+                      </Radio.Group>
+                    </Form.Item>
+                  </Tabs.TabPane>
+                )}
               </Tabs>
               <Row gutter={8} style={{ marginTop: '20px' }}>
                 <Col>
@@ -800,6 +890,9 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
             setSelectedBrandIndex(-1);
             setShowBrandForm(false);
             setSelectedSegment(segmentForm.getFieldsValue(true));
+            if (newValue && !showSegmentListing) {
+              setShowSegmentListing(true);
+            }
           }
           if (name === 'tagForm') {
             const { segmentForm, tagForm } = forms;

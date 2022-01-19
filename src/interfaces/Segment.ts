@@ -1,6 +1,5 @@
 import { Brand } from './Brand';
 import { Tag } from './Tag';
-import { Video } from './Video';
 
 export interface Segment {
   id?: string;
@@ -9,4 +8,7 @@ export interface Segment {
   brands: Brand[];
   video?: any;
   thumbnail?: any;
+  selectedOption?: 'creator' | 'productBrand';
+  selectedFeedTitle?: string;
+  selectedIconUrl?: string;
 }
