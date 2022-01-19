@@ -33,4 +33,6 @@ export interface Brand {
   productBrand?: ProductBrand;
   selectedLogoUrl?: string;
   selectedLogo?: 'whiteLogo' | 'colourLogo' | 'blackLogo' | 'brandName' | '';
+  brandTxtColor?: string;
+  brandCardUrl?: string;
 }

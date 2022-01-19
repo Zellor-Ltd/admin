@@ -7,6 +7,9 @@ export interface WalletDetailParams {
     discoDollars: number;
     discoGold: number;
     name: string;
+    brandTxtColor: string;
+    brandLogoUrl: string;
+    brandCardUrl: string;
   };
 }
 

@@ -24,12 +24,31 @@ import { Wallet } from 'interfaces/Wallet';
 interface WalletDetailProps {
   location: H.Location<H.LocationState>;
   onCancel?: () => void;
+  onSave?: (value: number, record?: Wallet) => void;
+  onReset?: (record?: Wallet) => void;
 }
 
-const WalletDetail: React.FC<WalletDetailProps> = ({ location, onCancel }) => {
+const WalletDetail: React.FC<WalletDetailProps> = ({
+  location,
+  onCancel,
+  onSave,
+  onReset,
+}) => {
   const [loading, setLoading] = useState<boolean>(false);
   const { doFetch } = useRequest({ setLoading: setLoading });
   const initial = location.state as unknown as WalletDetailParams;
+  const wallet = initial
+    ? {
+        discoGold: initial.brand.discoGold,
+        discoDollars: initial.brand.discoDollars,
+        brandId: initial.brand.id,
+        totalProducts: '',
+        brandName: initial.brand.name,
+        brandTxtColor: initial.brand.brandTxtColor,
+        brandLogoUrl: initial.brand.brandLogoUrl,
+        brandCardUrl: initial.brand.brandCardUrl,
+      }
+    : undefined;
 
   const {
     // arrayList: wallets,
@@ -106,12 +125,17 @@ const WalletDetail: React.FC<WalletDetailProps> = ({ location, onCancel }) => {
 
   const onResetWallet = () => {
     setTransactions([]);
+    onReset?.(wallet);
   };
 
   const onSaveWallet = (balanceToAdd: number) => {
-    filteredTransactions[filteredTransactions.length].discoDollars =
-      balanceToAdd;
+    filteredTransactions.push({
+      discoDollars: balanceToAdd,
+      hCreationDate: moment(),
+      addedBy: 'admin',
+    });
     setTransactions([...filteredTransactions]);
+    onSave?.(balanceToAdd, wallet);
   };
 
   return (

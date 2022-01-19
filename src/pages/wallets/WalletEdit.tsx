@@ -21,7 +21,7 @@ interface WalletEditProps {
   disabled?: boolean;
   wallet?: Wallet;
   onSave?: (value: number, record?: Wallet) => void;
-  onReset?: () => void;
+  onReset?: (record?: Wallet) => void;
 }
 
 const WalletEdit: React.FC<WalletEditProps> = ({
@@ -47,7 +47,7 @@ const WalletEdit: React.FC<WalletEditProps> = ({
 
   const resetBalance = async () => {
     await doRequest(() => resetUserBalance(fanId as string, brandId as string));
-    onReset?.();
+    onReset?.(wallet);
   };
 
   return (

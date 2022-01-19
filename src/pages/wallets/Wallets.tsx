@@ -46,7 +46,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   const {
-    // arrayList: wallets,
+    arrayList: wallets,
     setArrayList: setWallets,
     filteredArrayList: filteredWallets,
     addFilterFunction,
@@ -96,28 +96,42 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
     setDetails(true);
   };
 
-  const onResetWallet = () => {
-    setTransactions([]);
+  const onResetWallet = (record?: Wallet) => {
+    if (record) {
+      const index = wallets.indexOf(
+        wallets.find(item => item.brandId === record.brandId) as Wallet
+      );
+      setWallets(prev => [...prev.slice(0, index), ...prev.slice(index + 1)]);
+    }
   };
 
   const onSaveWallet = (balanceToAdd: number, record?: Wallet) => {
     if (record) {
       record.discoDollars += balanceToAdd;
-      refreshItem(record as Wallet);
-    } else {
-      setTransactions([
-        { brandName: selectedBrand, discoDollars: balanceToAdd },
-      ]);
     }
+    refreshItem(balanceToAdd, record);
   };
 
-  const refreshItem = (record: Wallet) => {
-    filteredWallets[
-      filteredWallets.indexOf(
-        filteredWallets.find(item => item.brandId === record.brandId) as Wallet
-      )
-    ] = record;
-    setWallets([...filteredWallets]);
+  const refreshItem = (balanceToAdd: number, record?: Wallet) => {
+    if (record) {
+      wallets[
+        wallets.indexOf(
+          wallets.find(item => item.brandId === record.brandId) as Wallet
+        )
+      ] = record;
+    } else {
+      wallets.push({
+        discoDollars: balanceToAdd,
+        discoGold: 0,
+        brandId: selectedBrand?.id as string,
+        totalProducts: '',
+        brandName: selectedBrand?.brandName as string,
+        brandTxtColor: selectedBrand?.brandTxtColor as string,
+        brandLogoUrl: selectedBrand?.brandLogoUrl as string,
+        brandCardUrl: selectedBrand?.brandCardUrl as string,
+      });
+    }
+    setWallets([...wallets]);
   };
 
   const columns: ColumnsType<Wallet> = [
@@ -136,6 +150,9 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
                 discoDollars: record.discoDollars,
                 discoGold: record.discoGold,
                 name: record.brandName,
+                brandTxtColor: record.brandTxtColor,
+                brandLogoUrl: record.brandLogoUrl,
+                brandCardUrl: record.brandCardUrl,
               },
             } as WalletDetailParams,
           }}
@@ -153,12 +170,16 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
     },
   ];
 
-  const onChangeFan = async (_selectedFan: Fan) => {
-    const { balance }: any = await doFetch(
-      () => fetchBalancePerBrand(_selectedFan.id),
-      true
-    );
-    setWallets(balance);
+  const onChangeFan = async (_selectedFan?: Fan) => {
+    if (_selectedFan) {
+      const { balance }: any = await doFetch(
+        () => fetchBalancePerBrand(_selectedFan.id),
+        true
+      );
+      setWallets(balance);
+    } else {
+      setWallets([]);
+    }
     setSelectedFan(_selectedFan);
   };
 
@@ -216,7 +237,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
                       data={brands}
                       onChange={(_, brand) => onChangeBrand(brand)}
                       style={{ width: '100%', marginBottom: '16px' }}
-                      selectedOption={''}
+                      selectedOption={selectedBrand?.brandName}
                       optionsMapping={optionsMapping}
                       placeholder={'Select a master brand'}
                       loading={isFetchingBrands}
@@ -241,6 +262,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
             </Col>
           </Row>
           <Table
+            rowClassName={(_, index) => `scrollable-row-${index}`}
             rowKey="id"
             columns={columns}
             dataSource={filteredWallets}
@@ -249,7 +271,12 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
         </div>
       )}
       {details && (
-        <WalletDetail location={location} onCancel={onCancelWallet} />
+        <WalletDetail
+          location={location}
+          onCancel={onCancelWallet}
+          onSave={onSaveWallet}
+          onReset={onResetWallet}
+        />
       )}
     </>
   );
