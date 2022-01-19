@@ -1,6 +1,7 @@
 import {
   DeleteOutlined,
   EditOutlined,
+  LoadingOutlined,
   SearchOutlined,
 } from '@ant-design/icons';
 import {
@@ -18,6 +19,7 @@ import {
   Row,
   Select,
   Slider,
+  Spin,
   Table,
   Tabs,
   Tag as AntTag,
@@ -27,7 +29,7 @@ import { ColumnsType } from 'antd/lib/table';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
 import { FeedItem } from 'interfaces/FeedItem';
 import { Segment } from 'interfaces/Segment';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 import {
   deleteVideoFeed,
@@ -116,6 +118,12 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
 
   const { doRequest } = useRequest({ setLoading });
 
+  const shouldUpdateFeedItemIndex = useRef(false);
+  const originalFeedItemsIndex = useRef<Record<string, number | undefined>>({});
+  const [updatingFeedItemIndex, setUpdatingFeedItemIndex] = useState<
+    Record<string, boolean>
+  >({});
+
   const optionsMapping: SelectOption = {
     key: 'id',
     label: 'brandName',
@@ -171,6 +179,12 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   }, [selectedSegment, showBrandForm, showTagForm, selectedVideoFeed]);
 
   useEffect(() => {
+    if (selectedVideoFeed) {
+      selectedVideoFeed.index =
+        selectedVideoFeed?.index !== undefined
+          ? selectedVideoFeed?.index
+          : 1000;
+    }
     feedForm.setFieldsValue(selectedVideoFeed);
   }, [selectedVideoFeed]);
 
@@ -484,12 +498,88 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     });
   };
 
-  const columns: ColumnsType<FeedItem> = [
+  const onFeedItemIndexOnColumnChange = (
+    feedItemIndex: number,
+    feedItem: FeedItem
+  ) => {
+    for (let i = 0; i < filteredItems.length; i++) {
+      if (filteredItems[i].id === feedItem.id) {
+        if (originalFeedItemsIndex.current[feedItem.id] === undefined) {
+          originalFeedItemsIndex.current[feedItem.id] = feedItem.index;
+        }
+
+        shouldUpdateFeedItemIndex.current =
+          originalFeedItemsIndex.current[feedItem.id] !== feedItemIndex;
+
+        filteredItems[i].index = feedItemIndex;
+        setFilteredItems([...filteredItems]);
+        break;
+      }
+    }
+  };
+
+  const onFeedItemIndexOnColumnBlur = async (feedItem: FeedItem) => {
+    if (!shouldUpdateFeedItemIndex.current) {
+      return;
+    }
+    setUpdatingFeedItemIndex(prev => {
+      const newValue = {
+        ...prev,
+      };
+      newValue[feedItem.id] = true;
+
+      return newValue;
+    });
+    try {
+      await saveVideoFeed(feedItem);
+      message.success('Register updated with success.');
+    } catch (err) {
+      console.error(
+        `Error while trying to update FeedItem[${feedItem.id}] index.`,
+        err
+      );
+      message.success('Error while trying to update FeedItem index.');
+    }
+    setUpdatingFeedItemIndex(prev => {
+      const newValue = {
+        ...prev,
+      };
+      delete newValue[feedItem.id];
+      return newValue;
+    });
+    delete originalFeedItemsIndex.current[feedItem.id];
+    shouldUpdateFeedItemIndex.current = false;
+  };
+
+  const feedItemColumns: ColumnsType<FeedItem> = [
     {
       title: '_id',
       dataIndex: 'id',
       width: '3%',
       render: id => <CopyIdToClipboard id={id} />,
+      align: 'center',
+    },
+    {
+      title: 'Index',
+      dataIndex: 'index',
+      width: '3%',
+      render: (_, feedItem) => {
+        if (updatingFeedItemIndex[feedItem.id]) {
+          const antIcon = <LoadingOutlined spin />;
+          return <Spin indicator={antIcon} />;
+        } else {
+          return (
+            <InputNumber
+              type="number"
+              value={feedItem.index}
+              onChange={feedItemIndex =>
+                onFeedItemIndexOnColumnChange(feedItemIndex, feedItem)
+              }
+              onBlur={() => onFeedItemIndexOnColumnBlur(feedItem)}
+            />
+          );
+        }
+      },
       align: 'center',
     },
     {
@@ -694,12 +784,23 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
           <Tabs.TabPane forceRender tab="Video Details" key={defaultVideoTab}>
             <Row gutter={8}>
               <Col lg={24} xs={24}>
-                <Form.Item name="status" label="Status">
-                  <Radio.Group buttonStyle="solid">
-                    <Radio.Button value="live">Live</Radio.Button>
-                    <Radio.Button value="paused">Paused</Radio.Button>
-                  </Radio.Group>
-                </Form.Item>
+                <Row>
+                  <Form.Item name="status" label="Status">
+                    <Radio.Group buttonStyle="solid">
+                      <Radio.Button value="live">Live</Radio.Button>
+                      <Radio.Button value="paused">Paused</Radio.Button>
+                    </Radio.Group>
+                  </Form.Item>
+                  <Form.Item
+                    name="index"
+                    label="Index"
+                    className="ml-1"
+                    rules={[{ required: true, min: 0, type: 'number' }]}
+                    initialValue={1000}
+                  >
+                    <InputNumber />
+                  </Form.Item>
+                </Row>
               </Col>
               <Col lg={24} xs={24}>
                 <Form.Item name="title" label="Title">
@@ -1162,7 +1263,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                 }`
               }
               size="small"
-              columns={columns}
+              columns={feedItemColumns}
               rowKey="id"
               dataSource={filterFeed()}
               loading={loading}
