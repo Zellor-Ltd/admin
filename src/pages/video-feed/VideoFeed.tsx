@@ -1166,7 +1166,20 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
               rowKey="id"
               dataSource={filterFeed()}
               loading={loading}
-              pagination={{ current: currentPage, onChange: onPageChange }}
+              pagination={{
+                current: currentPage,
+                onChange: onPageChange,
+                pageSize: 50,
+                pageSizeOptions: [
+                  '50',
+                  '100',
+                  '200',
+                  '300',
+                  '400',
+                  '500',
+                  '1000',
+                ],
+              }}
             />
           </Content>
         </div>
