@@ -1,12 +1,12 @@
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import { Button, Col, PageHeader, Popconfirm, Row, Table } from 'antd';
+import { Button, Col, PageHeader, Popconfirm, Row, Spin, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { SearchFilter } from '../../components/SearchFilter';
 import useFilter from '../../hooks/useFilter';
 import { useRequest } from '../../hooks/useRequest';
 import { ProductBrand } from '../../interfaces/ProductBrand';
 import moment from 'moment';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import {
   fetchProductBrands,
@@ -15,19 +15,26 @@ import {
 import CopyIdToClipboard from '../../components/CopyIdToClipboard';
 import ProductBrandDetail from './ProductBrandDetail';
 import scrollIntoView from 'scroll-into-view';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const { doFetch, doRequest } = useRequest({ setLoading });
-  const [content, setContent] = useState<any[]>([]);
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
   const [details, setDetails] = useState<boolean>(false);
   const [currentProductBrand, setCurrentProductBrand] =
     useState<ProductBrand>();
+  const [page, setPage] = useState<number>(1);
+  const [eof, setEof] = useState<boolean>(false);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [filteredProductBrands, setFilteredProductBrands] = useState<
+    ProductBrand[]
+  >([]);
+  const firstUpdate = useRef(true);
 
   const {
     setArrayList: setProductBrands,
-    filteredArrayList: filteredProductBrands,
+    filteredArrayList: filteredContent,
     addFilterFunction,
   } = useFilter<ProductBrand>([]);
 
@@ -38,13 +45,47 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
   const getProductBrands = async () => {
     const { results } = await doFetch(fetchProductBrands);
     setProductBrands(results);
-    setContent(results);
+    setFilteredProductBrands(results.slice(0, 10));
   };
 
   useEffect(() => {
     getResources();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const fetchData = async (reset: boolean) => {
+    if (!filteredProductBrands.length) return;
+
+    const pageToUse = refreshing ? 1 : page;
+    const results = filteredContent.slice(pageToUse * 10, pageToUse * 10 + 10);
+
+    if (reset) {
+      setPage(1);
+      setFilteredProductBrands(filteredContent.slice(0, 10));
+    } else {
+      setPage(pageToUse + 1);
+      setFilteredProductBrands(prev => [...prev.concat(results)]);
+    }
+
+    if (results.length < 10) setEof(true);
+  };
+
+  useEffect(() => {
+    if (refreshing) {
+      setEof(false);
+      fetchData(true);
+      setRefreshing(false);
+    }
+  }, [refreshing]);
+
+  useEffect(() => {
+    if (firstUpdate.current) {
+      firstUpdate.current = false;
+      return;
+    }
+    setPage(1);
+    setRefreshing(true);
+  }, [filteredContent]);
 
   useEffect(() => {
     if (!details) {
@@ -183,13 +224,32 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
               />
             </Col>
           </Row>
-          <Table
-            rowClassName={(_, index) => `scrollable-row-${index}`}
-            rowKey="id"
-            columns={columns}
-            dataSource={filteredProductBrands}
-            loading={loading}
-          />
+          <InfiniteScroll
+            dataLength={filteredProductBrands.length}
+            next={() => fetchData(false)}
+            hasMore={!eof}
+            loader={
+              page !== 1 && (
+                <div className="scroll-message">
+                  <Spin />
+                </div>
+              )
+            }
+            endMessage={
+              <div className="scroll-message">
+                <b>End of results.</b>
+              </div>
+            }
+          >
+            <Table
+              rowClassName={(_, index) => `scrollable-row-${index}`}
+              rowKey="id"
+              columns={columns}
+              dataSource={filteredProductBrands}
+              loading={loading || refreshing}
+              pagination={false}
+            />
+          </InfiniteScroll>
         </div>
       )}
       {details && (
