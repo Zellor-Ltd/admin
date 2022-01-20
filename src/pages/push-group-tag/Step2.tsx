@@ -1,5 +1,5 @@
 import { Button, Col, PageHeader, Row, Typography } from 'antd';
-import SimpleSelect from 'components/SimpleSelect';
+import SimpleSelect from 'components/select/SimpleSelect';
 import { useRequest } from 'hooks/useRequest';
 import { FanGroup } from 'interfaces/FanGroup';
 import { SelectOption } from 'interfaces/SelectOption';
@@ -7,6 +7,7 @@ import { Tag } from 'interfaces/Tag';
 import { useEffect, useState } from 'react';
 import { fetchFanGroups } from 'services/DiscoClubService';
 import { TagBox } from './TagBox';
+
 interface Step2Props {
   selectedTags: Tag[];
   onReturn?: () => void;

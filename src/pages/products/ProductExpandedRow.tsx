@@ -6,7 +6,7 @@ import { ProductBrand } from 'interfaces/ProductBrand';
 import ProductCategoriesTrees from './ProductCategoriesTrees';
 import { useCallback } from 'react';
 import { productUtils } from '../../helpers/product-utils';
-import SimpleSelect from 'components/SimpleSelect';
+import SimpleSelect from 'components/select/SimpleSelect';
 import { SelectOption } from 'interfaces/SelectOption';
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;

@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import { Select, Spin } from 'antd';
 import debounce from 'lodash/debounce';
-import { SelectOption } from '../interfaces/SelectOption';
+import { SelectOption } from '../../interfaces/SelectOption';
 
 interface DebounceSelectProps {
   fetchOptions: (search: string) => Promise<any[]>;
