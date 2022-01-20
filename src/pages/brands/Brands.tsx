@@ -69,8 +69,6 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
     if (results.length < 10) setEof(true);
   };
 
-  const fetchRow = () => {};
-
   useEffect(() => {
     if (refreshing) {
       setEof(false);
