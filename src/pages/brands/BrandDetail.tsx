@@ -474,7 +474,12 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                   <Form.Item
                     name="discoPercentage"
                     label="Disco Percentage %"
-                    rules={[{ required: true }]}
+                    rules={[
+                      {
+                        required: true,
+                        type: 'number',
+                      },
+                    ]}
                   >
                     <InputNumber />
                   </Form.Item>

@@ -637,7 +637,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
             <Row>
               <Col lg={4} xs={8}>
                 <Form.Item name="weight" label="Weight">
-                  <Input type="number" placeholder="Weight in Kg" />
+                  <InputNumber placeholder="Weight in Kg" />
                 </Form.Item>
               </Col>
             </Row>
