@@ -45,7 +45,7 @@ const DdTemplatesDetail: React.FC<DdTemplatesDetailProps> = ({
               <Form.Item
                 label="Tag Name"
                 name="tagName"
-                rules={[{ required: true }]}
+                rules={[{ required: true, message: `Tag Name is required.` }]}
               >
                 <Input />
               </Form.Item>
@@ -54,7 +54,7 @@ const DdTemplatesDetail: React.FC<DdTemplatesDetailProps> = ({
               <Form.Item
                 label="Template"
                 name="template"
-                rules={[{ required: true }]}
+                rules={[{ required: true, message: `Template is required.` }]}
               >
                 <Input />
               </Form.Item>
@@ -63,7 +63,7 @@ const DdTemplatesDetail: React.FC<DdTemplatesDetailProps> = ({
               <Form.Item
                 label="Disco Gold"
                 name="discoGold"
-                rules={[{ required: true }]}
+                rules={[{ required: true, message: `Disco Gold is required.` }]}
               >
                 <Input type="number" />
               </Form.Item>
@@ -72,7 +72,9 @@ const DdTemplatesDetail: React.FC<DdTemplatesDetailProps> = ({
               <Form.Item
                 label="Disco Dollars"
                 name="discoDollars"
-                rules={[{ required: true }]}
+                rules={[
+                  { required: true, message: `Disco Dollars is required.` },
+                ]}
               >
                 <Input type="number" />
               </Form.Item>

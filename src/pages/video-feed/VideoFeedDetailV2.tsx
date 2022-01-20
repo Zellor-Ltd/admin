@@ -282,7 +282,14 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                     name="index"
                     label="Index"
                     className="ml-1"
-                    rules={[{ required: true, min: 0, type: 'number' }]}
+                    rules={[
+                      {
+                        required: true,
+                        min: 0,
+                        type: 'number',
+                        message: `Index is required.`,
+                      },
+                    ]}
                     initialValue={1000}
                   >
                     <InputNumber />
@@ -378,7 +385,9 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                 <Form.Item
                   name="videoType"
                   label="Video Type"
-                  rules={[{ required: true }]}
+                  rules={[
+                    { required: true, message: `Video Type is required.` },
+                  ]}
                 >
                   <Select mode="multiple">
                     <Select.Option value="Feed">Feed</Select.Option>
