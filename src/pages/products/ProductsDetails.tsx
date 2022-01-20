@@ -29,7 +29,7 @@ import { useParams } from 'react-router-dom';
 import { saveProduct, saveStagingProduct } from 'services/DiscoClubService';
 import ProductCategoriesTrees from './ProductCategoriesTrees';
 import './Products.scss';
-import SimpleSelect from 'components/SimpleSelect';
+import SimpleSelect from 'components/select/SimpleSelect';
 import { SelectOption } from 'interfaces/SelectOption';
 import { productUtils } from 'helpers/product-utils';
 import { Image } from '../../interfaces/Image';

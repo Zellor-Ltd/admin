@@ -29,7 +29,7 @@ import {
   fetchOrders,
   saveOrder,
 } from 'services/DiscoClubService';
-import SimpleSelect from 'components/SimpleSelect';
+import SimpleSelect from 'components/select/SimpleSelect';
 import { SelectOption } from 'interfaces/SelectOption';
 
 const Orders: React.FC<RouteComponentProps> = () => {

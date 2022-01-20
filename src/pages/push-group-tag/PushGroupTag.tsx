@@ -8,7 +8,7 @@ import { Tag } from 'interfaces/Tag';
 import { useEffect, useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { fetchBrands, fetchTags } from 'services/DiscoClubService';
-import SimpleSelect from 'components/SimpleSelect';
+import SimpleSelect from 'components/select/SimpleSelect';
 import { SelectOption } from '../../interfaces/SelectOption';
 import scrollIntoView from 'scroll-into-view';
 import Step2 from './Step2';

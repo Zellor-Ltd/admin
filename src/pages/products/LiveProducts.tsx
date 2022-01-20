@@ -45,7 +45,7 @@ import { ProductBrand } from 'interfaces/ProductBrand';
 import { productUtils } from '../../helpers/product-utils';
 import scrollIntoView from 'scroll-into-view';
 import { useMount } from 'react-use';
-import SimpleSelect from 'components/SimpleSelect';
+import SimpleSelect from 'components/select/SimpleSelect';
 import { SelectOption } from '../../interfaces/SelectOption';
 import ProductsDetails from './ProductsDetails';
 

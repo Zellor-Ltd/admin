@@ -39,8 +39,12 @@ import {
 import { Category } from 'interfaces/Category';
 import { ColumnType } from 'antd/lib/table/interface';
 import { FanGroup } from 'interfaces/FanGroup';
-import SimpleSelect from 'components/SimpleSelect';
+import SimpleSelect from 'components/select/SimpleSelect';
 import { SelectOption } from 'interfaces/SelectOption';
+import {
+  statusList,
+  videoTypeList,
+} from '../../components/select/select.utils';
 
 const fansQueryFilters: FanFilter[] = [
   {
@@ -62,25 +66,6 @@ const FeedMixer: React.FC<RouteComponentProps> = () => {
   const [isFetchingFanQueries, setIsFetchingFanQueries] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState<string>('');
   const [isFetchingFeed, setIsFetchingFeed] = useState<boolean>(false);
-  const statusList = [
-    {
-      value: 'Live',
-    },
-    {
-      value: 'Paused',
-    },
-  ];
-  const videoTypeList = [
-    {
-      value: 'Feed',
-    },
-    {
-      value: 'Brand',
-    },
-    {
-      value: 'Review',
-    },
-  ];
 
   const fanOptionsMapping: SelectOption = {
     key: 'user',

@@ -29,7 +29,7 @@ import {
   saveOrder,
 } from 'services/DiscoClubService';
 import CopyOrderToClipboard from 'components/CopyOrderToClipboard';
-import SimpleSelect from 'components/SimpleSelect';
+import SimpleSelect from 'components/select/SimpleSelect';
 import { SelectOption } from 'interfaces/SelectOption';
 import scrollIntoView from 'scroll-into-view';
 import FanDetail from 'pages/fans/FanDetail';

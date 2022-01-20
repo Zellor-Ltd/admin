@@ -42,7 +42,7 @@ import { Creator } from 'interfaces/Creator';
 import './VideoFeed.scss';
 import './VideoFeedDetail.scss';
 import scrollIntoView from 'scroll-into-view';
-import SimpleSelect from 'components/SimpleSelect';
+import SimpleSelect from 'components/select/SimpleSelect';
 import { SelectOption } from '../../interfaces/SelectOption';
 import VideoFeedDetailV2 from './VideoFeedDetailV2';
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { SelectOption } from '../interfaces/SelectOption';
+import { SelectOption } from '../../interfaces/SelectOption';
 import { Select } from 'antd';
 
 interface SimpleSelectProps {
