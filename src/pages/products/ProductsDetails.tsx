@@ -242,7 +242,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
       message.success('Register updated with success.');
       formProduct.id
         ? onSave?.(formProduct)
-        : onSave?.({ ...formProduct, id: result });
+        : onSave?.({ ...formProduct, id: result._id });
     } catch (error) {
       console.error(error);
       setLoading(false);
