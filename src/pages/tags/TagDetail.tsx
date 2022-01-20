@@ -125,7 +125,7 @@ const TagDetail: React.FC<TagDetailProps> = ({ tag, onSave, onCancel }) => {
               <Form.Item
                 name="tagName"
                 label="Tag Name"
-                rules={[{ required: true }]}
+                rules={[{ required: true, message: `Tag Name is required.` }]}
               >
                 <Input />
               </Form.Item>
@@ -145,7 +145,7 @@ const TagDetail: React.FC<TagDetailProps> = ({ tag, onSave, onCancel }) => {
               <Form.Item
                 name="template"
                 label="Template"
-                rules={[{ required: true }]}
+                rules={[{ required: true, message: `Template is required.` }]}
               >
                 <Select
                   placeholder="Please select a template"
@@ -182,7 +182,9 @@ const TagDetail: React.FC<TagDetailProps> = ({ tag, onSave, onCancel }) => {
                   <Form.Item
                     name="discoGold"
                     label="Disco Gold"
-                    rules={[{ required: true }]}
+                    rules={[
+                      { required: true, message: `Disco Gold is required.` },
+                    ]}
                   >
                     <InputNumber style={{ width: '100%' }} />
                   </Form.Item>
@@ -215,7 +217,9 @@ const TagDetail: React.FC<TagDetailProps> = ({ tag, onSave, onCancel }) => {
                 <Form.Item
                   name="clickSound"
                   label="Click Sound"
-                  rules={[{ required: true }]}
+                  rules={[
+                    { required: true, message: `Click Sound is required.` },
+                  ]}
                 >
                   <Select placeholder="Please select a click sound">
                     {clickSound.map((click: any) => (

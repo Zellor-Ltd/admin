@@ -101,7 +101,7 @@ const CategoryDetail: React.FC<CategoryDetailProps> = ({
                 <Form.Item
                   label={key}
                   name={field}
-                  rules={[{ required: true }]}
+                  rules={[{ required: true, message: `${field} is required.` }]}
                 >
                   {_index < categoryLevel ? (
                     <Select

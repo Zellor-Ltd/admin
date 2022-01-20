@@ -39,7 +39,11 @@ const FanGroupsDetail: React.FC<FanGroupsDetailProps> = ({
         <Row gutter={8}>
           <Col lg={12} xs={24}>
             <Col lg={16} xs={24}>
-              <Form.Item label="Name" name="name" rules={[{ required: true }]}>
+              <Form.Item
+                label="Name"
+                name="name"
+                rules={[{ required: true, message: `Name is required.` }]}
+              >
                 <Input />
               </Form.Item>
             </Col>
