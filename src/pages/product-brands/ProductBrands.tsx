@@ -6,7 +6,7 @@ import useFilter from '../../hooks/useFilter';
 import { useRequest } from '../../hooks/useRequest';
 import { ProductBrand } from '../../interfaces/ProductBrand';
 import moment from 'moment';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import {
   fetchProductBrands,
@@ -24,18 +24,18 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
   const [details, setDetails] = useState<boolean>(false);
   const [currentProductBrand, setCurrentProductBrand] =
     useState<ProductBrand>();
-  const [page, setPage] = useState<number>(1);
+  const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [filteredProductBrands, setFilteredProductBrands] = useState<
     ProductBrand[]
   >([]);
-  const firstUpdate = useRef(true);
 
   const {
     setArrayList: setProductBrands,
     filteredArrayList: filteredContent,
     addFilterFunction,
+    removeFilterFunction,
   } = useFilter<ProductBrand>([]);
 
   const getResources = async () => {
@@ -45,7 +45,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
   const getProductBrands = async () => {
     const { results } = await doFetch(fetchProductBrands);
     setProductBrands(results);
-    setFilteredProductBrands(results.slice(0, 10));
+    setRefreshing(true);
   };
 
   useEffect(() => {
@@ -53,39 +53,26 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const fetchData = async (reset: boolean) => {
-    if (!filteredProductBrands.length) return;
+  const fetchData = () => {
+    if (!filteredContent.length) return;
 
-    const pageToUse = refreshing ? 1 : page;
+    const pageToUse = refreshing ? 0 : page;
     const results = filteredContent.slice(pageToUse * 10, pageToUse * 10 + 10);
 
-    if (reset) {
-      setPage(1);
-      setFilteredProductBrands(filteredContent.slice(0, 10));
-    } else {
-      setPage(pageToUse + 1);
-      setFilteredProductBrands(prev => [...prev.concat(results)]);
-    }
+    setPage(pageToUse + 1);
+    setFilteredProductBrands(prev => [...prev.concat(results)]);
 
     if (results.length < 10) setEof(true);
   };
 
   useEffect(() => {
     if (refreshing) {
+      setFilteredProductBrands([]);
       setEof(false);
-      fetchData(true);
+      fetchData();
       setRefreshing(false);
     }
   }, [refreshing]);
-
-  useEffect(() => {
-    if (firstUpdate.current) {
-      firstUpdate.current = false;
-      return;
-    }
-    setPage(1);
-    setRefreshing(true);
-  }, [filteredContent]);
 
   useEffect(() => {
     if (!details) {
@@ -179,11 +166,17 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
   ];
 
   const searchFilterFunction = (filterText: string) => {
+    if (!filterText) {
+      removeFilterFunction('productBrandName');
+      setRefreshing(true);
+      return;
+    }
     addFilterFunction('productBrandName', brands =>
       brands.filter(brand =>
         brand.brandName.toUpperCase().includes(filterText.toUpperCase())
       )
     );
+    setRefreshing(true);
   };
 
   const refreshItem = (record: ProductBrand) => {
@@ -226,10 +219,10 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
           </Row>
           <InfiniteScroll
             dataLength={filteredProductBrands.length}
-            next={() => fetchData(false)}
+            next={fetchData}
             hasMore={!eof}
             loader={
-              page !== 1 && (
+              page !== 0 && (
                 <div className="scroll-message">
                   <Spin />
                 </div>
