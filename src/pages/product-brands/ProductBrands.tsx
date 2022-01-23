@@ -38,6 +38,11 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
     removeFilterFunction,
   } = useFilter<ProductBrand>([]);
 
+  useEffect(() => {
+    getResources();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const getResources = async () => {
     await getProductBrands();
   };
@@ -47,11 +52,6 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
     setProductBrands(results);
     setRefreshing(true);
   };
-
-  useEffect(() => {
-    getResources();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const fetchData = () => {
     if (!filteredContent.length) return;
@@ -83,20 +83,6 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
       );
     }
   }, [details]);
-
-  const editProductBrand = (index: number, productBrand?: ProductBrand) => {
-    setLastViewedIndex(index);
-    setCurrentProductBrand(productBrand);
-    setDetails(true);
-  };
-
-  const deleteItem = async (id: string, index: number) => {
-    await doRequest(() => deleteProductBrand(id));
-    setProductBrands(prev => [
-      ...prev.slice(0, index),
-      ...prev.slice(index + 1),
-    ]);
-  };
 
   const columns: ColumnsType<ProductBrand> = [
     {
@@ -177,6 +163,20 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
       )
     );
     setRefreshing(true);
+  };
+
+  const editProductBrand = (index: number, productBrand?: ProductBrand) => {
+    setLastViewedIndex(index);
+    setCurrentProductBrand(productBrand);
+    setDetails(true);
+  };
+
+  const deleteItem = async (id: string, index: number) => {
+    await doRequest(() => deleteProductBrand(id));
+    setProductBrands(prev => [
+      ...prev.slice(0, index),
+      ...prev.slice(index + 1),
+    ]);
   };
 
   const refreshItem = (record: ProductBrand) => {

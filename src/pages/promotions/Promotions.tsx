@@ -10,6 +10,7 @@ import {
   PageHeader,
   Popconfirm,
   Row,
+  Spin,
   Table,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
@@ -28,38 +29,66 @@ import {
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
 import scrollIntoView from 'scroll-into-view';
 import PromotionDetail from './PromotionDetail';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
   const [tableloading, setTableLoading] = useState<boolean>(false);
   const { doRequest, doFetch } = useRequest({ setLoading: setTableLoading });
   const [promoStatusList, setPromoStatusList] = useState<any>();
-  const [content, setContent] = useState<any[]>([]);
-  // const [promotionUpdateList, setPromotionUpdateList] = useState<boolean[]>([]);
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
   const [details, setDetails] = useState<boolean>(false);
   const [currentPromotion, setCurrentPromotion] = useState<Promotion>();
+  const [page, setPage] = useState<number>(0);
+  const [eof, setEof] = useState<boolean>(false);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [filteredPromotions, setFilteredPromotions] = useState<Promotion[]>([]);
 
   const {
-    // arrayList: promotions,
     setArrayList: setPromotions,
-    filteredArrayList: filteredPromotions,
+    filteredArrayList: filteredContent,
     addFilterFunction,
     removeFilterFunction,
   } = useFilter<Promotion>([]);
 
-  const handleDateChange = (values: any) => {
-    if (!values) {
-      removeFilterFunction('creationDate');
-      return;
-    }
-    const startDate = moment(values[0], 'DD/MM/YYYY').startOf('day').utc();
-    const endDate = moment(values[1], 'DD/MM/YYYY').endOf('day').utc();
-    addFilterFunction('creationDate', (promotions: Promotion[]) =>
-      promotions.filter(({ hCreationDate }) => {
-        return moment(hCreationDate).utc().isBetween(startDate, endDate);
-      })
-    );
+  const getResources = useCallback(async () => {
+    await Promise.all([getPromotions(), getPromoStatus()]);
+  }, []);
+
+  useEffect(() => {
+    getResources();
+  }, [getResources]);
+
+  const getPromotions = useCallback(async () => {
+    const { results } = await doFetch(fetchPromotions);
+    setPromotions(results);
+    setRefreshing(true);
+  }, []);
+
+  const getPromoStatus = useCallback(async () => {
+    const { results } = await doFetch(fetchPromoStatus);
+    setPromoStatusList(results[0]?.promoStatus);
+  }, []);
+
+  const fetchData = () => {
+    if (!filteredContent.length) return;
+
+    const pageToUse = refreshing ? 0 : page;
+    const results = filteredContent.slice(pageToUse * 10, pageToUse * 10 + 10);
+
+    setPage(pageToUse + 1);
+    setFilteredPromotions(prev => [...prev.concat(results)]);
+
+    if (results.length < 10) setEof(true);
   };
+
+  useEffect(() => {
+    if (refreshing) {
+      setFilteredPromotions([]);
+      setEof(false);
+      fetchData();
+      setRefreshing(false);
+    }
+  }, [refreshing]);
 
   useEffect(() => {
     if (!details) {
@@ -70,12 +99,6 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
       );
     }
   }, [details]);
-
-  const editPromotion = (index: number, promotion?: Promotion) => {
-    setLastViewedIndex(index);
-    setCurrentPromotion(promotion);
-    setDetails(true);
-  };
 
   const columns: ColumnsType<Promotion> = [
     {
@@ -151,41 +174,44 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
     },
   ];
 
-  const getPromotions = useCallback(async () => {
-    const { results } = await doFetch(fetchPromotions);
-    setPromotions(results);
-    setContent(results);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const getPromoStatus = useCallback(async () => {
-    const { results } = await doFetch(fetchPromoStatus);
-    setPromoStatusList(results[0]?.promoStatus);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const getResources = useCallback(async () => {
-    await Promise.all([getPromotions(), getPromoStatus()]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const deleteItem = async (id: string, index: number) => {
-    await doRequest(() => deletePromotion({ id }));
-    setPromotions(prev => [...prev.slice(0, index), ...prev.slice(index + 1)]);
-  };
-
-  useEffect(() => {
-    getResources();
-  }, [getResources]);
-
   const searchFilterFunction = (filterText: string) => {
+    if (!filterText) {
+      removeFilterFunction('promoId');
+      setRefreshing(true);
+      return;
+    }
     addFilterFunction('promoId', promotions =>
       promotions.filter(promotion =>
         promotion.id.toUpperCase().includes(filterText.toUpperCase())
       )
     );
+    setRefreshing(true);
   };
 
+  const handleDateChange = (values: any) => {
+    if (!values) {
+      removeFilterFunction('creationDate');
+      return;
+    }
+    const startDate = moment(values[0], 'DD/MM/YYYY').startOf('day').utc();
+    const endDate = moment(values[1], 'DD/MM/YYYY').endOf('day').utc();
+    addFilterFunction('creationDate', (promotions: Promotion[]) =>
+      promotions.filter(({ hCreationDate }) => {
+        return moment(hCreationDate).utc().isBetween(startDate, endDate);
+      })
+    );
+  };
+
+  const editPromotion = (index: number, promotion?: Promotion) => {
+    setLastViewedIndex(index);
+    setCurrentPromotion(promotion);
+    setDetails(true);
+  };
+
+  const deleteItem = async (id: string, index: number) => {
+    await doRequest(() => deletePromotion({ id }));
+    setPromotions(prev => [...prev.slice(0, index), ...prev.slice(index + 1)]);
+  };
   const refreshItem = (record: Promotion) => {
     filteredPromotions[lastViewedIndex] = record;
     setPromotions([...filteredPromotions]);
@@ -224,13 +250,32 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
               />
             </Col>
           </Row>
-          <Table
-            rowClassName={(_, index) => `scrollable-row-${index}`}
-            rowKey="id"
-            columns={columns}
-            dataSource={filteredPromotions}
-            loading={tableloading}
-          />
+          <InfiniteScroll
+            dataLength={filteredPromotions.length}
+            next={fetchData}
+            hasMore={!eof}
+            loader={
+              page !== 0 && (
+                <div className="scroll-message">
+                  <Spin />
+                </div>
+              )
+            }
+            endMessage={
+              <div className="scroll-message">
+                <b>End of results.</b>
+              </div>
+            }
+          >
+            <Table
+              rowClassName={(_, index) => `scrollable-row-${index}`}
+              rowKey="id"
+              columns={columns}
+              dataSource={filteredPromotions}
+              loading={tableloading || refreshing}
+              pagination={false}
+            />
+          </InfiniteScroll>
         </div>
       )}
       {details && (

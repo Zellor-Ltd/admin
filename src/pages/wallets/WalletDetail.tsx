@@ -5,6 +5,7 @@ import {
   DatePicker,
   PageHeader,
   Row,
+  Spin,
   Table,
   Typography,
 } from 'antd';
@@ -21,6 +22,7 @@ import { fetchTransactionsPerBrand } from 'services/DiscoClubService';
 import WalletEdit from './WalletEdit';
 import * as H from 'history';
 import { Wallet } from 'interfaces/Wallet';
+import InfiniteScroll from 'react-infinite-scroll-component';
 interface WalletDetailProps {
   location: H.Location<H.LocationState>;
   onCancel?: () => void;
@@ -37,6 +39,20 @@ const WalletDetail: React.FC<WalletDetailProps> = ({
   const [loading, setLoading] = useState<boolean>(false);
   const { doFetch } = useRequest({ setLoading: setLoading });
   const initial = location.state as unknown as WalletDetailParams;
+  const [page, setPage] = useState<number>(0);
+  const [eof, setEof] = useState<boolean>(false);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [filteredTransactions, setFilteredTransactions] = useState<
+    WalletTransaction[]
+  >([]);
+
+  const {
+    setArrayList: setTransactions,
+    filteredArrayList: filteredContent,
+    addFilterFunction,
+    removeFilterFunction,
+  } = useFilter<WalletTransaction>([]);
+
   const wallet = initial
     ? {
         discoGold: initial.brand.discoGold,
@@ -50,25 +66,39 @@ const WalletDetail: React.FC<WalletDetailProps> = ({
       }
     : undefined;
 
-  const {
-    // arrayList: wallets,
-    setArrayList: setTransactions,
-    filteredArrayList: filteredTransactions,
-    addFilterFunction,
-    removeFilterFunction,
-  } = useFilter<WalletTransaction>([]);
+  useEffect(() => {
+    getResources();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const getResources = async () => {
     const { results } = await doFetch(() =>
       fetchTransactionsPerBrand(initial.fan.id, initial.brand.id)
     );
     setTransactions(results);
+    setRefreshing(true);
+  };
+
+  const fetchData = () => {
+    if (!filteredContent.length) return;
+
+    const pageToUse = refreshing ? 0 : page;
+    const results = filteredContent.slice(pageToUse * 10, pageToUse * 10 + 10);
+
+    setPage(pageToUse + 1);
+    setFilteredTransactions(prev => [...prev.concat(results)]);
+
+    if (results.length < 10) setEof(true);
   };
 
   useEffect(() => {
-    getResources();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    if (refreshing) {
+      setFilteredTransactions([]);
+      setEof(false);
+      fetchData();
+      setRefreshing(false);
+    }
+  }, [refreshing]);
 
   const columns: ColumnsType<WalletTransaction> = [
     {
@@ -112,6 +142,7 @@ const WalletDetail: React.FC<WalletDetailProps> = ({
   const handleDateChange = (values: any) => {
     if (!values) {
       removeFilterFunction('creationDate');
+      setRefreshing(true);
       return;
     }
     const startDate = moment(values[0], 'DD/MM/YYYY').startOf('day').utc();
@@ -121,6 +152,7 @@ const WalletDetail: React.FC<WalletDetailProps> = ({
         return moment(hCreationDate).utc().isBetween(startDate, endDate);
       })
     );
+    setRefreshing(true);
   };
 
   const onResetWallet = () => {
@@ -158,30 +190,51 @@ const WalletDetail: React.FC<WalletDetailProps> = ({
                 Master Brand: {initial.brand.name}
               </Typography.Text>
             </Col>
-            <WalletEdit
-              disabled={false}
-              fanId={initial.fan.id}
-              brandId={initial.brand.id}
-              wallet={initial as unknown as Wallet}
-              onSave={onSaveWallet}
-              onReset={onResetWallet}
-            />
+          </Row>
+          <Row justify="space-between">
+            <Col lg={20} xs={12}>
+              <WalletEdit
+                disabled={false}
+                fanId={initial.fan.id}
+                brandId={initial.brand.id}
+                wallet={initial as unknown as Wallet}
+                onSave={onSaveWallet}
+                onReset={onResetWallet}
+              />
+            </Col>
+            <Col>
+              <Button type="primary" onClick={() => onCancel?.()}>
+                Go Back
+              </Button>
+            </Col>
           </Row>
         </Col>
       </Row>
-      <Table
-        rowKey="id"
-        columns={columns}
-        dataSource={filteredTransactions}
-        loading={loading}
-      />
-      <Row gutter={8}>
-        <Col>
-          <Button type="default" onClick={() => onCancel?.()}>
-            Go Back
-          </Button>
-        </Col>
-      </Row>
+      <InfiniteScroll
+        dataLength={filteredTransactions.length}
+        next={fetchData}
+        hasMore={!eof}
+        loader={
+          page !== 0 && (
+            <div className="scroll-message">
+              <Spin />
+            </div>
+          )
+        }
+        endMessage={
+          <div className="scroll-message">
+            <b>End of results.</b>
+          </div>
+        }
+      >
+        <Table
+          rowKey="id"
+          columns={columns}
+          dataSource={filteredTransactions}
+          loading={loading || refreshing}
+          pagination={false}
+        />
+      </InfiniteScroll>
     </div>
   );
 };

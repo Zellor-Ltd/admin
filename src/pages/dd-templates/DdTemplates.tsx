@@ -6,7 +6,7 @@ import useFilter from 'hooks/useFilter';
 import { useRequest } from 'hooks/useRequest';
 import { DdTemplate } from 'interfaces/DdTemplate';
 import moment from 'moment';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { deleteDdTemplate, fetchDdTemplates } from 'services/DiscoClubService';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
@@ -20,7 +20,7 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
   const [details, setDetails] = useState<boolean>(false);
   const [currentDdTemplate, setCurrentDdTemplate] = useState<DdTemplate>();
-  const [page, setPage] = useState<number>(1);
+  const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [filteredDdTemplates, setFilteredDdTemplates] = useState<DdTemplate[]>(
@@ -34,6 +34,10 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
     removeFilterFunction,
   } = useFilter<DdTemplate>([]);
 
+  useEffect(() => {
+    getResources();
+  }, []);
+
   const getResources = async () => {
     await getDdTemplates();
   };
@@ -41,42 +45,29 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
   const getDdTemplates = async () => {
     const { results } = await doFetch(fetchDdTemplates);
     setDdTemplates(results);
-    setFilteredDdTemplates(results.slice(0, 10));
+    setRefreshing(true);
   };
 
-  useEffect(() => {
-    getResources();
-  }, []);
+  const fetchData = () => {
+    if (!filteredContent.length) return;
 
-  const fetchData = (reset: boolean) => {
-    if (!filteredDdTemplates.length) return;
-
-    const pageToUse = refreshing ? 1 : page;
+    const pageToUse = refreshing ? 0 : page;
     const results = filteredContent.slice(pageToUse * 10, pageToUse * 10 + 10);
 
-    if (reset) {
-      setPage(1);
-      setFilteredDdTemplates(filteredContent.slice(0, 10));
-    } else {
-      setPage(pageToUse + 1);
-      setFilteredDdTemplates(prev => [...prev.concat(results)]);
-    }
+    setPage(pageToUse + 1);
+    setFilteredDdTemplates(prev => [...prev.concat(results)]);
 
     if (results.length < 10) setEof(true);
   };
 
   useEffect(() => {
     if (refreshing) {
+      setFilteredDdTemplates([]);
       setEof(false);
-      fetchData(true);
+      fetchData();
       setRefreshing(false);
     }
   }, [refreshing]);
-
-  useEffect(() => {
-    setPage(1);
-    setRefreshing(true);
-  }, [filteredContent]);
 
   useEffect(() => {
     if (!details) {
@@ -195,6 +186,7 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
   const searchFilterFunction = (filterText: string) => {
     if (!filterText) {
       removeFilterFunction('ddTagName');
+      setRefreshing(true);
       return;
     }
     addFilterFunction('ddTagName', dds =>
@@ -202,6 +194,7 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
         dd.tagName.toUpperCase().includes(filterText.toUpperCase())
       )
     );
+    setRefreshing(true);
   };
 
   return (
@@ -230,10 +223,10 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
           </Row>
           <InfiniteScroll
             dataLength={filteredDdTemplates.length}
-            next={() => fetchData(false)}
+            next={fetchData}
             hasMore={!eof}
             loader={
-              page !== 1 && (
+              page !== 0 && (
                 <div className="scroll-message">
                   <Spin />
                 </div>

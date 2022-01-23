@@ -41,7 +41,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
   }, [refreshing]);
 
   useEffect(() => {
-    if (tags.length) setRefreshing(true);
+    setRefreshing(true);
   }, [searchFilter]);
 
   const fetchData = async () => {
@@ -61,10 +61,13 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
     if (results.length < 30) setEof(true);
   };
 
-  const fetch = async () => {
+  const fetch = () => {
+    if (!loaded) {
+      setRefreshing(true);
+      setLoaded(true);
+      return;
+    }
     fetchData();
-    setRefreshing(true);
-    setLoaded(true);
   };
 
   useEffect(() => {
