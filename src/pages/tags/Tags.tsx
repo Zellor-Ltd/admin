@@ -21,75 +21,54 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
   const [details, setDetails] = useState<boolean>(false);
   const [currentTag, setCurrentTag] = useState<Tag>();
-
   const { usePageFilter } = useContext(AppContext);
-
   const [loading, setLoading] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
-
   const { doFetch, doRequest } = useRequest({ setLoading });
-
   const [searchFilter, setSearchFilter] = usePageFilter<string>('search');
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
-  const [content, setContent] = useState<any[]>([]);
-
   const [tags, setTags] = useState<Tag[]>([]);
   const [loaded, setLoaded] = useState<boolean>(false);
 
-  const _fetchTags = async searchButton => {
+  useEffect(() => {
+    if (refreshing) {
+      setTags([]);
+      setEof(false);
+      fetchData();
+      setRefreshing(false);
+    }
+  }, [refreshing]);
+
+  useEffect(() => {
+    setRefreshing(true);
+  }, [searchFilter]);
+
+  const fetchData = async () => {
     const pageToUse = refreshing ? 0 : page;
-    const response = await doFetch(() =>
+
+    const { results } = await doFetch(() =>
       fetchTags({
         limit: 30,
         page: pageToUse,
         query: searchFilter,
       })
     );
-    if (searchButton) {
-      setPage(0);
-    } else {
-      setPage(pageToUse + 1);
-    }
-    if (response.results.length < 30) setEof(true);
-    return response;
-  };
 
-  const getResources = async searchButton => {
-    const [{ results }] = await Promise.all([_fetchTags(searchButton)]);
-    setLoaded(true);
-    setTags(results);
-  };
-
-  const refreshTags = async () => {
-    setPage(0);
-    setRefreshing(true);
-  };
-
-  const fetchData = async () => {
-    if (!tags.length) return;
-    const { results } = await _fetchTags(false);
+    setPage(pageToUse + 1);
     setTags(prev => [...prev.concat(results)]);
+
+    if (results.length < 30) setEof(true);
   };
 
-  useEffect(() => {
-    const getTags = async () => {
-      const { results } = await _fetchTags(true);
-      setTags(results);
-      setContent(results);
-      setRefreshing(false);
-    };
-    if (refreshing) {
-      setEof(false);
-      getTags();
+  const fetch = () => {
+    if (!loaded) {
+      setRefreshing(true);
+      setLoaded(true);
+      return;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [refreshing]);
-
-  useEffect(() => {
-    if (tags.length) refreshTags();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchFilter]);
+    fetchData();
+  };
 
   useEffect(() => {
     if (!details) {
@@ -209,7 +188,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
             <Col>
               <Button
                 type="primary"
-                onClick={() => getResources(true)}
+                onClick={fetch}
                 loading={loading}
                 style={{
                   marginBottom: '20px',
@@ -223,7 +202,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
           </Row>
           <InfiniteScroll
             dataLength={tags.length}
-            next={fetchData}
+            next={fetch}
             hasMore={!eof}
             loader={
               page !== 0 && (

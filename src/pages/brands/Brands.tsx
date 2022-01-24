@@ -23,7 +23,7 @@ import { ColumnsType } from 'antd/lib/table';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
 import { discoBrandId } from 'helpers/constants';
 import { Brand } from 'interfaces/Brand';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { deleteBrand, fetchBrands, saveBrand } from 'services/DiscoClubService';
 import { TableSwitch } from './TableSwitch';
@@ -31,6 +31,7 @@ import { PauseModal } from './PauseModal';
 import BrandDetail from './BrandDetail';
 import scrollIntoView from 'scroll-into-view';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import { useRequest } from 'hooks/useRequest';
 
 const tagColorByStatus: any = {
   approved: 'green',
@@ -42,49 +43,59 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [details, setDetails] = useState<boolean>(false);
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(false);
+  const { doFetch } = useRequest({ setLoading });
   const [brands, setBrands] = useState<Brand[]>([]);
   const [content, setContent] = useState<Brand[]>([]);
   const [filterText, setFilterText] = useState('');
   const [showModal, setShowModal] = useState<boolean>(false);
   const [currentBrand, setCurrentBrand] = useState<Brand>();
-  const [page, setPage] = useState<number>(1);
+  const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
-  const firstUpdate = useRef(true);
 
-  const fetchData = async (reset: boolean) => {
-    if (!filterBrand().length) return;
-
-    const pageToUse = refreshing ? 1 : page;
-    const results = content.slice(pageToUse * 10, pageToUse * 10 + 10);
-
-    if (reset) {
-      setPage(1);
-      setBrands(content.slice(0, 10));
-    } else {
-      setPage(pageToUse + 1);
-      setBrands(prev => [...prev.concat(results)]);
-    }
-
-    if (results.length < 10) setEof(true);
-  };
+  useEffect(() => {
+    fetch();
+  }, []);
 
   useEffect(() => {
     if (refreshing) {
+      setBrands([]);
       setEof(false);
-      fetchData(true);
+      fetchData();
       setRefreshing(false);
     }
   }, [refreshing]);
 
   useEffect(() => {
-    if (firstUpdate.current) {
-      firstUpdate.current = false;
-      return;
-    }
-    setPage(1);
     setRefreshing(true);
   }, [filterText]);
+
+  const fetchData = async () => {
+    if (!content.length) return;
+    const pageToUse = refreshing ? 0 : page;
+    const results = content.slice(pageToUse * 10, pageToUse * 10 + 10);
+
+    setPage(pageToUse + 1);
+    setBrands(prev => [...prev.concat(results)]);
+
+    if (results.length < 10) setEof(true);
+  };
+
+  const fetch = async () => {
+    const { results }: any = await doFetch(fetchBrands);
+    setContent(results);
+    setRefreshing(true);
+  };
+
+  useEffect(() => {
+    if (!details) {
+      scrollIntoView(
+        document.querySelector(
+          `.scrollable-row-${lastViewedIndex}`
+        ) as HTMLElement
+      );
+    }
+  }, [details]);
 
   const aproveOrReject = async (aprove: boolean, creator: Brand) => {
     creator.status = aprove ? 'approved' : 'rejected';
@@ -103,29 +114,6 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
     }
     setLoading(false);
   };
-
-  const fetch = async () => {
-    setLoading(true);
-    const response: any = await fetchBrands();
-    setContent(response.results);
-    setBrands(response.results.slice(0, 10));
-    setLoading(false);
-    setRefreshing(false);
-  };
-
-  useEffect(() => {
-    fetch();
-  }, []);
-
-  useEffect(() => {
-    if (!details) {
-      scrollIntoView(
-        document.querySelector(
-          `.scrollable-row-${lastViewedIndex}`
-        ) as HTMLElement
-      );
-    }
-  }, [details]);
 
   const onChangeFilter = (evt: any) => {
     setFilterText(evt.target.value);
@@ -341,10 +329,10 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
           </div>
           <InfiniteScroll
             dataLength={filterBrand().length}
-            next={() => fetchData(false)}
+            next={fetchData}
             hasMore={!eof}
             loader={
-              page !== 1 && (
+              page !== 0 && (
                 <div className="scroll-message">
                   <Spin />
                 </div>
