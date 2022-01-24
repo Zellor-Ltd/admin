@@ -228,16 +228,6 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
     setRefreshing(true);
   };
 
-  const getResources = async () => {
-    if (selectedFan && selectedBrand) {
-      const { results } = await doFetch(() =>
-        fetchTransactionsPerBrand(selectedFan.id, selectedBrand.id)
-      );
-      setTransactions(results);
-      onChangeFan(selectedFan);
-    }
-  };
-
   const onCancelWallet = () => {
     setDetails(false);
   };
