@@ -31,7 +31,8 @@ import {
   fetchBrands,
   fetchCategories,
   fetchCreators,
-  fetchVideoFeed,
+  fetchProductBrands,
+  fetchVideoFeedV2,
   saveVideoFeed,
 } from 'services/DiscoClubService';
 import { Brand } from 'interfaces/Brand';
@@ -48,6 +49,7 @@ import {
   statusList,
   videoTypeList,
 } from '../../components/select/select.utils';
+import { ProductBrand } from '../../interfaces/ProductBrand';
 
 const { Content } = Layout;
 
@@ -65,11 +67,13 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const [loading, setLoading] = useState(false);
   const [videoFeeds, setVideoFeeds] = useState<any[]>([]);
   const [details, setDetails] = useState<boolean>(false);
+  const [isFetchingCategories, setIsFetchingCategories] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
   const [influencers, setInfluencers] = useState<Creator[]>([]);
   const [isFetchingBrands, setIsFetchingBrands] = useState(false);
-  const [isFetchingCategories, setIsFetchingCategories] = useState(false);
   const [brands, setBrands] = useState<Brand[]>([]);
+  const [isFetchingProductBrands, setIsFetchingProductBrands] = useState(false);
+  const [productBrands, setProductBrands] = useState([]);
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -80,14 +84,21 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   >({});
 
   // Filter state
-  const [statusFilter, setStatusFilter] = useState('');
+  const [statusFilter, setStatusFilter] = useState<string>();
   const [brandFilter, setBrandFilter] = useState<Brand>();
+  const [productBrandFilter, setProductBrandFilter] = useState<ProductBrand>();
   const [categoryFilter, setCategoryFilter] = useState<Category>();
-  const [videoTypeFilter, setVideoTypeFilter] = useState('');
+  const [videoTypeFilter, setVideoTypeFilter] = useState<string>();
   const [startIndexFilter, setStartIndexFilter] = useState(1);
   const [titleFilter, setTitleFilter] = useState<string>();
 
   const masterBrandMapping: SelectOption = {
+    key: 'id',
+    label: 'brandName',
+    value: 'id',
+  };
+
+  const productBrandMapping: SelectOption = {
     key: 'id',
     label: 'brandName',
     value: 'id',
@@ -248,7 +259,15 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const fetch = async () => {
     setLoading(true);
     try {
-      const response: any = await fetchVideoFeed();
+      const response: any = await fetchVideoFeedV2({
+        query: titleFilter,
+        status: statusFilter,
+        videoType: videoTypeFilter,
+        productBrandId: productBrandFilter?.id,
+        brandId: brandFilter?.id,
+        categoryId: categoryFilter?.id,
+        startIndex: startIndexFilter,
+      });
       setLoading(false);
       setVideoFeeds(response.results);
     } catch (error) {
@@ -274,9 +293,18 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       setBrands(response.results);
       setIsFetchingBrands(false);
     }
-    setLoading(true);
-    await Promise.all([getInfluencers(), getCategories(), getBrands()]);
-    setLoading(false);
+    async function getProductBrands() {
+      setIsFetchingProductBrands(true);
+      const response: any = await fetchProductBrands();
+      setProductBrands(response.results);
+      setIsFetchingProductBrands(false);
+    }
+    await Promise.all([
+      getInfluencers(),
+      getCategories(),
+      getBrands(),
+      getProductBrands(),
+    ]);
   };
 
   const deleteItem = async (_id: string, index: number) => {
@@ -437,6 +465,22 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                       placeholder={'Select a master brand'}
                       loading={isFetchingBrands}
                       disabled={isFetchingBrands}
+                      allowClear={true}
+                    />
+                  </Col>
+                  <Col lg={4} xs={12}>
+                    <Typography.Title level={5}>Product Brand</Typography.Title>
+                    <SimpleSelect
+                      data={productBrands}
+                      onChange={(_, productBrand) =>
+                        setProductBrandFilter(productBrand)
+                      }
+                      style={{ width: '100%' }}
+                      selectedOption={productBrandFilter?.id}
+                      optionsMapping={productBrandMapping}
+                      placeholder={'Select a product brand'}
+                      loading={isFetchingProductBrands}
+                      disabled={isFetchingProductBrands}
                       allowClear={true}
                     />
                   </Col>
