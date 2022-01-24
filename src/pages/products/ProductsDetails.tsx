@@ -242,7 +242,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
       message.success('Register updated with success.');
       formProduct.id
         ? onSave?.(formProduct)
-        : onSave?.({ ...formProduct, id: result });
+        : onSave?.({ ...formProduct, id: result._id });
     } catch (error) {
       console.error(error);
       setLoading(false);
@@ -346,7 +346,12 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                     <Form.Item
                       name="brand"
                       label="Master Brand"
-                      rules={[{ required: true }]}
+                      rules={[
+                        {
+                          required: true,
+                          message: `Master Brand is required.`,
+                        },
+                      ]}
                     >
                       <SimpleSelect
                         data={brands}
@@ -369,7 +374,12 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                     <Form.Item
                       name="productBrand"
                       label="Product Brand"
-                      rules={[{ required: true }]}
+                      rules={[
+                        {
+                          required: true,
+                          message: `Product Brand is required.`,
+                        },
+                      ]}
                     >
                       <SimpleSelect
                         data={productBrands}
@@ -459,7 +469,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                 <Form.Item
                   name="gender"
                   label="Gender"
-                  rules={[{ required: true }]}
+                  rules={[{ required: true, message: `Gender is required.` }]}
                 >
                   <Select mode="multiple">
                     <Select.Option value="Female">Female</Select.Option>
@@ -490,7 +500,9 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                 <Form.Item
                   name="originalPrice"
                   label="Default Price"
-                  rules={[{ required: true }]}
+                  rules={[
+                    { required: true, message: `Default Price is required.` },
+                  ]}
                 >
                   <InputNumber />
                 </Form.Item>
