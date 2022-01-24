@@ -116,7 +116,34 @@ instance.interceptors.response.use(
 
 export const fetchStartupVideo = () => instance.get('Wi/Ep/GetStartupVideo');
 
+// TODO: REMOVE IT WHEN PAGE FEED MIXER IS GONE
 export const fetchVideoFeed = () => instance.get('Wi/Ep/ListVideoFeed');
+export const fetchVideoFeedV2 = ({
+  query,
+  status,
+  videoType,
+  productBrandId,
+  brandId,
+  categoryId,
+  startIndex,
+}: {
+  query: string | undefined;
+  status: string | undefined;
+  videoType: string | undefined;
+  productBrandId: string | undefined;
+  brandId: string | undefined;
+  categoryId: string | undefined;
+  startIndex: number;
+}) =>
+  instance.put('Disco/Feed/Adm/List', {
+    query,
+    status,
+    videoType,
+    productBrandId,
+    brandId,
+    categoryId,
+    startIndex,
+  });
 export const fetchVideoFeed2 = () => instance.get('Wi/Ep/GetVideoFeed');
 
 export const fetchProducts = ({

@@ -56,6 +56,7 @@ const SimpleSelect: React.FC<SimpleSelectProps> = ({
     const selectedEntity = data.find(
       entity => entity[optionsMapping.value] === value
     );
+    _setSelectedOption(value);
     onChange(value, selectedEntity);
   };
 
