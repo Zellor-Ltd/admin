@@ -1,4 +1,4 @@
-import { Button, Col, PageHeader, Row, Table, Typography } from 'antd';
+import { Button, Col, PageHeader, Row, Spin, Table, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { SearchFilter } from 'components/SearchFilter';
 import useFilter from 'hooks/useFilter';
@@ -8,10 +8,11 @@ import { Tag } from 'interfaces/Tag';
 import { useEffect, useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { fetchBrands, fetchTags } from 'services/DiscoClubService';
-import SimpleSelect from 'components/SimpleSelect';
+import SimpleSelect from 'components/select/SimpleSelect';
 import { SelectOption } from '../../interfaces/SelectOption';
 import scrollIntoView from 'scroll-into-view';
 import Step2 from './Step2';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -22,6 +23,10 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
   const [details, setDetails] = useState<boolean>(false);
   const [currentTags, setCurrentTags] = useState<Tag[]>([]);
+  const [page, setPage] = useState<number>(0);
+  const [eof, setEof] = useState<boolean>(false);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [filteredTags, setFilteredTags] = useState<Tag[]>([]);
 
   const optionsMapping: SelectOption = {
     key: 'id',
@@ -31,10 +36,54 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
 
   const {
     setArrayList: setTags,
-    filteredArrayList: filteredTags,
+    filteredArrayList: filteredContent,
     addFilterFunction,
     removeFilterFunction,
   } = useFilter<Tag>([]);
+
+  useEffect(() => {
+    getResources();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const getResources = async () => {
+    await getBrands();
+    await getTags();
+  };
+
+  const getBrands = async () => {
+    setIsFetchingBrands(true);
+    const { results }: any = await doFetch(fetchBrands);
+    setIsFetchingBrands(false);
+    setBrands(results);
+  };
+
+  const getTags = async () => {
+    const { results } = await doFetch(() => fetchTags({}));
+    setTags(results);
+    setRefreshing(true);
+  };
+
+  const fetchData = () => {
+    if (!filteredContent.length) return;
+
+    const pageToUse = refreshing ? 0 : page;
+    const results = filteredContent.slice(pageToUse * 10, pageToUse * 10 + 10);
+
+    setPage(pageToUse + 1);
+    setFilteredTags(prev => [...prev.concat(results)]);
+
+    if (results.length < 10) setEof(true);
+  };
+
+  useEffect(() => {
+    if (refreshing) {
+      setFilteredTags([]);
+      setEof(false);
+      fetchData();
+      setRefreshing(false);
+    }
+  }, [refreshing]);
 
   useEffect(() => {
     if (!details) {
@@ -45,37 +94,6 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
       );
     }
   }, [details]);
-
-  const editTags = () => {
-    setCurrentTags(
-      filteredTags.filter(tag => selectedRowKeys.includes(tag.id))
-    );
-    setDetails(true);
-  };
-
-  const getBrands = async () => {
-    setLoading(true);
-    setIsFetchingBrands(true);
-    const response: any = await fetchBrands();
-    setLoading(false);
-    setIsFetchingBrands(false);
-    setBrands(response.results);
-  };
-
-  const getTags = async () => {
-    const { results } = await doFetch(() => fetchTags({}));
-    setTags(results);
-  };
-
-  const getResources = async () => {
-    await getBrands();
-    await getTags();
-  };
-
-  useEffect(() => {
-    getResources();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const columns: ColumnsType<Tag> = [
     { title: 'Tag', dataIndex: 'tagName', width: '25%' },
@@ -90,21 +108,36 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
   ];
 
   const searchFilterFunction = (filterText: string) => {
+    if (!filterText) {
+      removeFilterFunction('tagName');
+      setRefreshing(true);
+      return;
+    }
     addFilterFunction('tagName', tags =>
       tags.filter(tag =>
         tag.tagName.toUpperCase().includes(filterText.toUpperCase())
       )
     );
+    setRefreshing(true);
+  };
+
+  const editTags = () => {
+    setCurrentTags(
+      filteredTags.filter(tag => selectedRowKeys.includes(tag.id))
+    );
+    setDetails(true);
   };
 
   const onChangeBrand = async (_selectedBrand: Brand | undefined) => {
     if (!_selectedBrand) {
       removeFilterFunction('brandName');
+      setRefreshing(true);
       return;
     }
     addFilterFunction('brandName', tags =>
       tags.filter(tag => tag.brand?.brandName === _selectedBrand.brandName)
     );
+    setRefreshing(true);
   };
 
   const onSelectChange = (selectedRowKeys: any, selectedRows: any) => {
@@ -160,14 +193,33 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
               </Button>
             </Col>
           </Row>
-          <Table
-            rowClassName={(_, index) => `scrollable-row-${index}`}
-            rowSelection={rowSelection}
-            rowKey="id"
-            columns={columns}
-            dataSource={filteredTags}
-            loading={loading}
-          />
+          <InfiniteScroll
+            dataLength={filteredTags.length}
+            next={fetchData}
+            hasMore={!eof}
+            loader={
+              page !== 0 && (
+                <div className="scroll-message">
+                  <Spin />
+                </div>
+              )
+            }
+            endMessage={
+              <div className="scroll-message">
+                <b>End of results.</b>
+              </div>
+            }
+          >
+            <Table
+              rowClassName={(_, index) => `scrollable-row-${index}`}
+              rowSelection={rowSelection}
+              rowKey="id"
+              columns={columns}
+              dataSource={filteredTags}
+              loading={loading || refreshing}
+              pagination={false}
+            />
+          </InfiniteScroll>
         </div>
       )}
       {details && <Step2 selectedTags={currentTags} onReturn={onReturnStep2} />}

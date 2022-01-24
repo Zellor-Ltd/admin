@@ -4,7 +4,7 @@ import { Button, Col, Form, InputNumber, Row, Select } from 'antd';
 import { Brand } from 'interfaces/Brand';
 import { Tag } from 'interfaces/Tag';
 import { fetchTags } from '../../services/DiscoClubService';
-import DebounceSelect from '../../components/DebounceSelect';
+import DebounceSelect from '../../components/select/DebounceSelect';
 import { SelectOption } from '../../interfaces/SelectOption';
 
 interface FormProps {

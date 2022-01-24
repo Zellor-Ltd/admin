@@ -31,10 +31,10 @@ import {
   fetchBrands,
   fetchCategories,
   fetchCreators,
-  fetchVideoFeed,
+  fetchProductBrands,
+  fetchVideoFeedV2,
   saveVideoFeed,
 } from 'services/DiscoClubService';
-import useFilter from 'hooks/useFilter';
 import { Brand } from 'interfaces/Brand';
 import '@pathofdev/react-tag-input/build/index.css';
 import { Category } from 'interfaces/Category';
@@ -42,9 +42,14 @@ import { Creator } from 'interfaces/Creator';
 import './VideoFeed.scss';
 import './VideoFeedDetail.scss';
 import scrollIntoView from 'scroll-into-view';
-import SimpleSelect from 'components/SimpleSelect';
+import SimpleSelect from 'components/select/SimpleSelect';
 import { SelectOption } from '../../interfaces/SelectOption';
 import VideoFeedDetailV2 from './VideoFeedDetailV2';
+import {
+  statusList,
+  videoTypeList,
+} from '../../components/select/select.utils';
+import { ProductBrand } from '../../interfaces/ProductBrand';
 
 const { Content } = Layout;
 
@@ -55,19 +60,20 @@ const reduceSegmentsTags = (packages: Segment[]) => {
 };
 
 const VideoFeed: React.FC<RouteComponentProps> = () => {
-  const [selectedVideoFeed, setSelectedVideoFeed] = useState<FeedItem>();
-
-  const [loading, setLoading] = useState(false);
-  const [filterText, setFilterText] = useState('');
-  const [videoFeeds, setVideoFeeds] = useState<any[]>([]);
-  const [loaded, setLoaded] = useState<boolean>(false);
-  const [details, setDetails] = useState<boolean>(false);
-  const [categories, setCategories] = useState<Category[]>([]);
   const [feedForm] = Form.useForm();
   const [segmentForm] = Form.useForm();
+
+  const [selectedVideoFeed, setSelectedVideoFeed] = useState<FeedItem>();
+  const [loading, setLoading] = useState(false);
+  const [videoFeeds, setVideoFeeds] = useState<any[]>([]);
+  const [details, setDetails] = useState<boolean>(false);
+  const [isFetchingCategories, setIsFetchingCategories] = useState(false);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [influencers, setInfluencers] = useState<Creator[]>([]);
   const [isFetchingBrands, setIsFetchingBrands] = useState(false);
   const [brands, setBrands] = useState<Brand[]>([]);
+  const [isFetchingProductBrands, setIsFetchingProductBrands] = useState(false);
+  const [productBrands, setProductBrands] = useState([]);
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -77,18 +83,44 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     Record<string, boolean>
   >({});
 
-  const optionsMapping: SelectOption = {
+  // Filter state
+  const [statusFilter, setStatusFilter] = useState<string>();
+  const [brandFilter, setBrandFilter] = useState<Brand>();
+  const [productBrandFilter, setProductBrandFilter] = useState<ProductBrand>();
+  const [categoryFilter, setCategoryFilter] = useState<Category>();
+  const [videoTypeFilter, setVideoTypeFilter] = useState<string>();
+  const [startIndexFilter, setStartIndexFilter] = useState(1);
+  const [titleFilter, setTitleFilter] = useState<string>();
+
+  const masterBrandMapping: SelectOption = {
     key: 'id',
     label: 'brandName',
     value: 'id',
   };
 
-  const {
-    setArrayList: setFilteredItems,
-    filteredArrayList: filteredItems,
-    addFilterFunction,
-    removeFilterFunction,
-  } = useFilter<FeedItem>([]);
+  const productBrandMapping: SelectOption = {
+    key: 'id',
+    label: 'brandName',
+    value: 'id',
+  };
+
+  const categoryMapping: SelectOption = {
+    key: 'id',
+    label: 'name',
+    value: 'id',
+  };
+
+  const statusMapping: SelectOption = {
+    key: 'value',
+    label: 'value',
+    value: 'value',
+  };
+
+  const videoTypeMapping: SelectOption = {
+    key: 'value',
+    label: 'value',
+    value: 'value',
+  };
 
   const feedItemColumns: ColumnsType<FeedItem> = [
     {
@@ -224,42 +256,24 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     }
   }, [details]);
 
-  const fetch = async (_brand?: Brand) => {
+  const fetch = async () => {
     setLoading(true);
     try {
-      const response: any = await fetchVideoFeed();
+      const response: any = await fetchVideoFeedV2({
+        query: titleFilter,
+        status: statusFilter,
+        videoType: videoTypeFilter,
+        productBrandId: productBrandFilter?.id,
+        brandId: brandFilter?.id,
+        categoryId: categoryFilter?.id,
+        startIndex: startIndexFilter,
+      });
       setLoading(false);
-      setFilteredItems(response.results);
       setVideoFeeds(response.results);
     } catch (error) {
       message.error('Error to get feed');
       setLoading(false);
     }
-
-    if (_brand) {
-      addFilterFunction('brandName', feedItems =>
-        feedItems.filter(feedItem => {
-          if (!feedItem.package) return false;
-          for (let i = 0; i < feedItem.package.length; i++) {
-            if (feedItem.package[i].brands) {
-              for (let j = 0; j < feedItem.package[i].brands.length; j++) {
-                if (
-                  feedItem.package[i].brands[j].brandName === _brand.brandName
-                ) {
-                  return true;
-                }
-              }
-            }
-          }
-          return false;
-        })
-      );
-    }
-  };
-
-  const getResources = (_brand?: Brand) => {
-    fetch(_brand);
-    setLoaded(true);
   };
 
   const getDetailsResources = async () => {
@@ -268,8 +282,10 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       setInfluencers(response.results);
     }
     async function getCategories() {
+      setIsFetchingCategories(true);
       const response: any = await fetchCategories();
       setCategories(response.results);
+      setIsFetchingCategories(false);
     }
     async function getBrands() {
       setIsFetchingBrands(true);
@@ -277,71 +293,30 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       setBrands(response.results);
       setIsFetchingBrands(false);
     }
-    setLoading(true);
-    await Promise.all([getInfluencers(), getCategories(), getBrands()]);
-    setLoading(false);
+    async function getProductBrands() {
+      setIsFetchingProductBrands(true);
+      const response: any = await fetchProductBrands();
+      setProductBrands(response.results);
+      setIsFetchingProductBrands(false);
+    }
+    await Promise.all([
+      getInfluencers(),
+      getCategories(),
+      getBrands(),
+      getProductBrands(),
+    ]);
   };
 
   const deleteItem = async (_id: string, index: number) => {
     setLoading(true);
     await deleteVideoFeed(_id);
-    setFilteredItems(prev => [
-      ...prev.slice(0, index),
-      ...prev.slice(index + 1),
-    ]);
+    setVideoFeeds(prev => [...prev.slice(0, index), ...prev.slice(index + 1)]);
     setLoading(false);
   };
 
   const refreshItem = (record: FeedItem) => {
-    if (loaded) {
-      videoFeeds[lastViewedIndex] = record;
-      setFilteredItems([...videoFeeds]);
-    } else {
-      setFilteredItems([record]);
-    }
-  };
-
-  const onChangeBrand = async (_selectedBrand: Brand | undefined) => {
-    if (loaded) {
-      if (!_selectedBrand) {
-        removeFilterFunction('brandName');
-        return;
-      }
-      addFilterFunction('brandName', feedItems =>
-        feedItems.filter(feedItem => {
-          if (!feedItem.package) return false;
-          for (let i = 0; i < feedItem.package.length; i++) {
-            if (feedItem.package[i].brands) {
-              for (let j = 0; j < feedItem.package[i].brands.length; j++) {
-                if (
-                  feedItem.package[i].brands[j].brandName ===
-                  _selectedBrand.brandName
-                ) {
-                  return true;
-                }
-              }
-            }
-          }
-          return false;
-        })
-      );
-    } else {
-      if (_selectedBrand) {
-        getResources(_selectedBrand);
-      } else {
-        getResources();
-      }
-    }
-  };
-
-  const onChangeFilter = (evt: any) => {
-    setFilterText(evt.target.value);
-  };
-
-  const filterFeed = () => {
-    return filteredItems.filter(item =>
-      item.title?.toUpperCase().includes(filterText.toUpperCase())
-    );
+    videoFeeds[lastViewedIndex] = record;
+    setVideoFeeds([...videoFeeds]);
   };
 
   const onEditFeedItem = (index: number, videoFeed?: FeedItem) => {
@@ -358,8 +333,8 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     feedItemIndex: number,
     feedItem: FeedItem
   ) => {
-    for (let i = 0; i < filteredItems.length; i++) {
-      if (filteredItems[i].id === feedItem.id) {
+    for (let i = 0; i < videoFeeds.length; i++) {
+      if (videoFeeds[i].id === feedItem.id) {
         if (originalFeedItemsIndex.current[feedItem.id] === undefined) {
           originalFeedItemsIndex.current[feedItem.id] = feedItem.index;
         }
@@ -367,8 +342,8 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
         shouldUpdateFeedItemIndex.current =
           originalFeedItemsIndex.current[feedItem.id] !== feedItemIndex;
 
-        filteredItems[i].index = feedItemIndex;
-        setFilteredItems([...filteredItems]);
+        videoFeeds[i].index = feedItemIndex;
+        setVideoFeeds([...videoFeeds]);
         break;
       }
     }
@@ -460,55 +435,110 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
             title="Video feed update"
             subTitle="List of Feeds"
             extra={[
-              <Button
-                key="2"
-                onClick={() => onEditFeedItem(filterFeed().length)}
-              >
+              <Button key="2" onClick={() => onEditFeedItem(videoFeeds.length)}>
                 New Item
               </Button>,
             ]}
           />
           <div style={{ marginBottom: '16px' }}>
-            <Row align="bottom" justify="space-between">
-              <Col lg={16} xs={24}>
+            <Row align="bottom" justify="space-between" gutter={[8, 8]}>
+              <Col lg={24} xs={24}>
                 <Row gutter={8}>
-                  <Col lg={8} xs={16}>
+                  <Col lg={4} xs={12}>
                     <Typography.Title level={5} title="Search">
                       Search
                     </Typography.Title>
                     <Input
-                      onChange={onChangeFilter}
+                      onChange={event => setTitleFilter(event.target.value)}
                       suffix={<SearchOutlined />}
+                      value={titleFilter}
                     />
                   </Col>
-                  <Col lg={8} xs={16}>
+                  <Col lg={4} xs={12}>
                     <Typography.Title level={5}>Master Brand</Typography.Title>
                     <SimpleSelect
                       data={brands}
-                      onChange={(_, brand) => onChangeBrand(brand)}
+                      onChange={(_, brand) => setBrandFilter(brand)}
                       style={{ width: '100%' }}
-                      selectedOption={''}
-                      optionsMapping={optionsMapping}
+                      selectedOption={brandFilter?.id}
+                      optionsMapping={masterBrandMapping}
                       placeholder={'Select a master brand'}
                       loading={isFetchingBrands}
                       disabled={isFetchingBrands}
                       allowClear={true}
                     />
                   </Col>
+                  <Col lg={4} xs={12}>
+                    <Typography.Title level={5}>Product Brand</Typography.Title>
+                    <SimpleSelect
+                      data={productBrands}
+                      onChange={(_, productBrand) =>
+                        setProductBrandFilter(productBrand)
+                      }
+                      style={{ width: '100%' }}
+                      selectedOption={productBrandFilter?.id}
+                      optionsMapping={productBrandMapping}
+                      placeholder={'Select a product brand'}
+                      loading={isFetchingProductBrands}
+                      disabled={isFetchingProductBrands}
+                      allowClear={true}
+                    />
+                  </Col>
+                  <Col lg={4} xs={12}>
+                    <Typography.Title level={5}>Status</Typography.Title>
+                    <SimpleSelect
+                      data={statusList}
+                      onChange={status => setStatusFilter(status)}
+                      style={{ width: '100%' }}
+                      selectedOption={statusFilter}
+                      optionsMapping={statusMapping}
+                      placeholder={'Select a status'}
+                      allowClear={true}
+                    />
+                  </Col>
+                  <Col lg={4} xs={12}>
+                    <Typography.Title level={5}>Category</Typography.Title>
+                    <SimpleSelect
+                      data={categories}
+                      onChange={(_, category) => setCategoryFilter(category)}
+                      style={{ width: '100%' }}
+                      selectedOption={categoryFilter?.id}
+                      optionsMapping={categoryMapping}
+                      placeholder={'Select a category'}
+                      allowClear={true}
+                      loading={isFetchingCategories}
+                      disabled={isFetchingCategories}
+                    />
+                  </Col>
+                  <Col lg={4} xs={12}>
+                    <Typography.Title level={5}>Video Type</Typography.Title>
+                    <SimpleSelect
+                      data={videoTypeList}
+                      onChange={videoType => setVideoTypeFilter(videoType)}
+                      style={{ width: '100%' }}
+                      selectedOption={videoTypeFilter}
+                      optionsMapping={videoTypeMapping}
+                      placeholder={'Select a video type'}
+                      allowClear={true}
+                    />
+                  </Col>
+                  <Col lg={4} xs={12}>
+                    <Typography.Title level={5}>Start Index</Typography.Title>
+                    <InputNumber
+                      min={0}
+                      onChange={startIndex => setStartIndexFilter(startIndex)}
+                      value={startIndexFilter}
+                    />
+                  </Col>
                 </Row>
               </Col>
-              <Col>
-                <Button
-                  type="primary"
-                  onClick={() => getResources()}
-                  loading={loading}
-                  style={{
-                    marginRight: '25px',
-                  }}
-                >
-                  Search
-                  <SearchOutlined style={{ color: 'white' }} />
-                </Button>
+              <Col lg={24} xs={24}>
+                <Row justify="end">
+                  <Button type="primary" onClick={fetch} loading={loading}>
+                    Search
+                    <SearchOutlined style={{ color: 'white' }} />
+                  </Button>
+                </Row>
               </Col>
             </Row>
           </div>
@@ -522,7 +552,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
               size="small"
               columns={feedItemColumns}
               rowKey="id"
-              dataSource={filterFeed()}
+              dataSource={videoFeeds}
               loading={loading}
               pagination={{
                 current: currentPage,

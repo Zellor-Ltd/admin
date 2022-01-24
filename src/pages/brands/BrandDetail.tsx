@@ -256,7 +256,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                   <Form.Item
                     label="Key"
                     name="key"
-                    rules={[{ required: true }]}
+                    rules={[{ required: true, message: `Key is required.` }]}
                     initialValue={currentVault?.key}
                   >
                     <Input />
@@ -266,7 +266,9 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                   <Form.Item
                     label="Shop Name"
                     name="shopName"
-                    rules={[{ required: true }]}
+                    rules={[
+                      { required: true, message: `Shop Name is required.` },
+                    ]}
                     initialValue={brand ? brand.shopName : ''}
                   >
                     <Input />
@@ -276,7 +278,9 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                   <Form.Item
                     label="API Shop Name"
                     name="apiShopName"
-                    rules={[{ required: true }]}
+                    rules={[
+                      { required: true, message: `API Shop Name is required.` },
+                    ]}
                     initialValue={currentVault?.apiShopName}
                   >
                     <Input />
@@ -286,7 +290,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                   <Form.Item
                     label="Token"
                     name="token"
-                    rules={[{ required: true }]}
+                    rules={[{ required: true, message: `Token is required.` }]}
                     initialValue={currentVault?.token}
                   >
                     <Input type="password" />
@@ -388,7 +392,12 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                 <Form.Item
                   label="Master Brand Color"
                   name="brandTxtColor"
-                  rules={[{ required: true }]}
+                  rules={[
+                    {
+                      required: true,
+                      message: `Master Brand Color is required.`,
+                    },
+                  ]}
                   valuePropName="color"
                 >
                   <ColorPicker />
@@ -426,7 +435,9 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                   <Form.Item
                     name="checkoutType"
                     label="Checkout Type"
-                    rules={[{ required: true }]}
+                    rules={[
+                      { required: true, message: `Checkout Type is required.` },
+                    ]}
                   >
                     <Radio.Group
                       buttonStyle="solid"
@@ -441,7 +452,9 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                   <Form.Item
                     name="checkout"
                     label="Checkout"
-                    rules={[{ required: true }]}
+                    rules={[
+                      { required: true, message: `Checkout is required.` },
+                    ]}
                   >
                     <Select placeholder="Select a checkout type">
                       {checkoutTypeList.map((curr: any) => (
@@ -456,7 +469,12 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                   <Form.Item
                     name="confirmationUrl"
                     label="External Payment Confirmation URL"
-                    rules={[{ required: true }]}
+                    rules={[
+                      {
+                        required: true,
+                        message: `External Payment Confirmation URL is required.`,
+                      },
+                    ]}
                   >
                     <Input />
                   </Form.Item>
@@ -465,7 +483,12 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                   <Form.Item
                     name="cancelationUrl"
                     label="External Payment Cancelation URL"
-                    rules={[{ required: true }]}
+                    rules={[
+                      {
+                        required: true,
+                        message: `External Payment Cancelation URL is required.`,
+                      },
+                    ]}
                   >
                     <Input />
                   </Form.Item>
@@ -478,6 +501,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                       {
                         required: true,
                         type: 'number',
+                        message: `Disco Percentage is required.`,
                       },
                     ]}
                   >
@@ -488,7 +512,9 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                   <Form.Item
                     name="shopName"
                     label="Shop Name (without https:// or spaces)"
-                    rules={[{ required: true }]}
+                    rules={[
+                      { required: true, message: `Shop Name is required.` },
+                    ]}
                   >
                     <Input placeholder="casey-temp.myshopify.com" />
                   </Form.Item>
@@ -551,7 +577,9 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                 <Col lg={6} xs={24}>
                   <Form.Item
                     label="Logo Round"
-                    rules={[{ required: true }]}
+                    rules={[
+                      { required: true, message: `Logo Round is required.` },
+                    ]}
                     name="brandLogo"
                   >
                     <Upload.ImageUpload
@@ -566,7 +594,9 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                   <Form.Item
                     label="Upload Card"
                     name="brandCard"
-                    rules={[{ required: true }]}
+                    rules={[
+                      { required: true, message: `Upload Card is required.` },
+                    ]}
                   >
                     <Upload.ImageUpload
                       maxCount={1}
@@ -580,7 +610,9 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                   <Form.Item
                     label="Thumbnail"
                     name="thumbnail"
-                    rules={[{ required: false }]}
+                    rules={[
+                      { required: false, message: `Thumbnail is required.` },
+                    ]}
                   >
                     <Upload.ImageUpload
                       maxCount={1}
@@ -599,7 +631,12 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                   <Form.Item
                     label="Mast Head Image"
                     name="mastHead"
-                    rules={[{ required: true }]}
+                    rules={[
+                      {
+                        required: true,
+                        message: `Mast Head Image is required.`,
+                      },
+                    ]}
                   >
                     <Upload.ImageUpload
                       maxCount={1}
@@ -613,7 +650,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                   <Form.Item
                     label="Avatar"
                     name="avatar"
-                    rules={[{ required: true }]}
+                    rules={[{ required: true, message: `Avatar is required.` }]}
                   >
                     <Upload.ImageUpload
                       maxCount={1}

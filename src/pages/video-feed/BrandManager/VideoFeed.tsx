@@ -18,7 +18,7 @@ import { Segment } from 'interfaces/Segment';
 import React, { useEffect, useState } from 'react';
 import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 import { fetchBrands, fetchVideoFeed } from 'services/DiscoClubService';
-import SimpleSelect from 'components/SimpleSelect';
+import SimpleSelect from 'components/select/SimpleSelect';
 import { SelectOption } from 'interfaces/SelectOption';
 
 const { Content } = Layout;

@@ -1,5 +1,5 @@
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import { Button, Col, PageHeader, Popconfirm, Row, Table } from 'antd';
+import { Button, Col, PageHeader, Popconfirm, Row, Spin, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { SearchFilter } from '../../components/SearchFilter';
 import useFilter from '../../hooks/useFilter';
@@ -15,21 +15,33 @@ import {
 import CopyIdToClipboard from '../../components/CopyIdToClipboard';
 import ProductBrandDetail from './ProductBrandDetail';
 import scrollIntoView from 'scroll-into-view';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const { doFetch, doRequest } = useRequest({ setLoading });
-  const [content, setContent] = useState<any[]>([]);
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
   const [details, setDetails] = useState<boolean>(false);
   const [currentProductBrand, setCurrentProductBrand] =
     useState<ProductBrand>();
+  const [page, setPage] = useState<number>(0);
+  const [eof, setEof] = useState<boolean>(false);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [filteredProductBrands, setFilteredProductBrands] = useState<
+    ProductBrand[]
+  >([]);
 
   const {
     setArrayList: setProductBrands,
-    filteredArrayList: filteredProductBrands,
+    filteredArrayList: filteredContent,
     addFilterFunction,
+    removeFilterFunction,
   } = useFilter<ProductBrand>([]);
+
+  useEffect(() => {
+    getResources();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const getResources = async () => {
     await getProductBrands();
@@ -38,13 +50,29 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
   const getProductBrands = async () => {
     const { results } = await doFetch(fetchProductBrands);
     setProductBrands(results);
-    setContent(results);
+    setRefreshing(true);
+  };
+
+  const fetchData = () => {
+    if (!filteredContent.length) return;
+
+    const pageToUse = refreshing ? 0 : page;
+    const results = filteredContent.slice(pageToUse * 10, pageToUse * 10 + 10);
+
+    setPage(pageToUse + 1);
+    setFilteredProductBrands(prev => [...prev.concat(results)]);
+
+    if (results.length < 10) setEof(true);
   };
 
   useEffect(() => {
-    getResources();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    if (refreshing) {
+      setFilteredProductBrands([]);
+      setEof(false);
+      fetchData();
+      setRefreshing(false);
+    }
+  }, [refreshing]);
 
   useEffect(() => {
     if (!details) {
@@ -55,20 +83,6 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
       );
     }
   }, [details]);
-
-  const editProductBrand = (index: number, productBrand?: ProductBrand) => {
-    setLastViewedIndex(index);
-    setCurrentProductBrand(productBrand);
-    setDetails(true);
-  };
-
-  const deleteItem = async (id: string, index: number) => {
-    await doRequest(() => deleteProductBrand(id));
-    setProductBrands(prev => [
-      ...prev.slice(0, index),
-      ...prev.slice(index + 1),
-    ]);
-  };
 
   const columns: ColumnsType<ProductBrand> = [
     {
@@ -138,11 +152,31 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
   ];
 
   const searchFilterFunction = (filterText: string) => {
+    if (!filterText) {
+      removeFilterFunction('productBrandName');
+      setRefreshing(true);
+      return;
+    }
     addFilterFunction('productBrandName', brands =>
       brands.filter(brand =>
         brand.brandName.toUpperCase().includes(filterText.toUpperCase())
       )
     );
+    setRefreshing(true);
+  };
+
+  const editProductBrand = (index: number, productBrand?: ProductBrand) => {
+    setLastViewedIndex(index);
+    setCurrentProductBrand(productBrand);
+    setDetails(true);
+  };
+
+  const deleteItem = async (id: string, index: number) => {
+    await doRequest(() => deleteProductBrand(id));
+    setProductBrands(prev => [
+      ...prev.slice(0, index),
+      ...prev.slice(index + 1),
+    ]);
   };
 
   const refreshItem = (record: ProductBrand) => {
@@ -183,13 +217,32 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
               />
             </Col>
           </Row>
-          <Table
-            rowClassName={(_, index) => `scrollable-row-${index}`}
-            rowKey="id"
-            columns={columns}
-            dataSource={filteredProductBrands}
-            loading={loading}
-          />
+          <InfiniteScroll
+            dataLength={filteredProductBrands.length}
+            next={fetchData}
+            hasMore={!eof}
+            loader={
+              page !== 0 && (
+                <div className="scroll-message">
+                  <Spin />
+                </div>
+              )
+            }
+            endMessage={
+              <div className="scroll-message">
+                <b>End of results.</b>
+              </div>
+            }
+          >
+            <Table
+              rowClassName={(_, index) => `scrollable-row-${index}`}
+              rowKey="id"
+              columns={columns}
+              dataSource={filteredProductBrands}
+              loading={loading || refreshing}
+              pagination={false}
+            />
+          </InfiniteScroll>
         </div>
       )}
       {details && (

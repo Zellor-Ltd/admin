@@ -1,21 +1,23 @@
 import { Col, PageHeader, Row, Table, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import SimpleSelect from 'components/SimpleSelect';
+import SimpleSelect from 'components/select/SimpleSelect';
 import useFilter from 'hooks/useFilter';
 import { useRequest } from 'hooks/useRequest';
 import { Brand } from 'interfaces/Brand';
 import { Fan } from 'interfaces/Fan';
 import { SelectOption } from 'interfaces/SelectOption';
 import { Wallet } from 'interfaces/Wallet';
-import { WalletTransaction } from 'interfaces/WalletTransactions';
-import { WalletDetailParams } from 'interfaces/WalletTransactions';
+import {
+  WalletDetailParams,
+  WalletTransaction,
+} from 'interfaces/WalletTransactions';
 import { useEffect, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import {
-  fetchBrands,
   fetchBalancePerBrand,
-  fetchTransactionsPerBrand,
+  fetchBrands,
   fetchFans,
+  fetchTransactionsPerBrand,
 } from 'services/DiscoClubService';
 import WalletEdit from './WalletEdit';
 import scrollIntoView from 'scroll-into-view';

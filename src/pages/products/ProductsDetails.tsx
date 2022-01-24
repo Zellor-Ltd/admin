@@ -29,7 +29,7 @@ import { useParams } from 'react-router-dom';
 import { saveProduct, saveStagingProduct } from 'services/DiscoClubService';
 import ProductCategoriesTrees from './ProductCategoriesTrees';
 import './Products.scss';
-import SimpleSelect from 'components/SimpleSelect';
+import SimpleSelect from 'components/select/SimpleSelect';
 import { SelectOption } from 'interfaces/SelectOption';
 import { productUtils } from 'helpers/product-utils';
 import { Image } from '../../interfaces/Image';
@@ -50,6 +50,7 @@ interface ProductDetailsProps {
   productBrand?: string;
   isFetchingBrands: boolean;
   isFetchingProductBrand: boolean;
+  isLive: boolean;
   onOrder?: (dragIndex: number, hoverIndex: number) => void;
   onFitTo?: (
     fitTo: 'w' | 'h',
@@ -84,13 +85,12 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
   onCancel,
   isFetchingBrands,
   isFetchingProductBrand,
+  isLive,
   onOrder,
   onFitTo,
   onRollback,
 }) => {
-  const { productMode } = useParams<RouteParams>();
-  const isStaging = productMode === 'staging';
-  const saveProductFn = isStaging ? saveStagingProduct : saveProduct;
+  const saveProductFn = isLive ? saveProduct : saveStagingProduct;
   const [loading, setLoading] = useState<boolean>(false);
   const [ageRange, setageRange] = useState<[number, number]>([12, 100]);
   const [form] = Form.useForm();
@@ -346,7 +346,12 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                     <Form.Item
                       name="brand"
                       label="Master Brand"
-                      rules={[{ required: true }]}
+                      rules={[
+                        {
+                          required: true,
+                          message: `Master Brand is required.`,
+                        },
+                      ]}
                     >
                       <SimpleSelect
                         data={brands}
@@ -369,7 +374,12 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                     <Form.Item
                       name="productBrand"
                       label="Product Brand"
-                      rules={[{ required: true }]}
+                      rules={[
+                        {
+                          required: true,
+                          message: `Product Brand is required.`,
+                        },
+                      ]}
                     >
                       <SimpleSelect
                         data={productBrands}
@@ -459,7 +469,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                 <Form.Item
                   name="gender"
                   label="Gender"
-                  rules={[{ required: true }]}
+                  rules={[{ required: true, message: `Gender is required.` }]}
                 >
                   <Select mode="multiple">
                     <Select.Option value="Female">Female</Select.Option>
@@ -490,7 +500,9 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                 <Form.Item
                   name="originalPrice"
                   label="Default Price"
-                  rules={[{ required: true }]}
+                  rules={[
+                    { required: true, message: `Default Price is required.` },
+                  ]}
                 >
                   <InputNumber />
                 </Form.Item>

@@ -1,4 +1,4 @@
-import { Button, Col, PageHeader, Row, Table } from 'antd';
+import { Button, Col, PageHeader, Row, Spin, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { SearchFilter } from 'components/SearchFilter';
 import useFilter from 'hooks/useFilter';
@@ -9,22 +9,31 @@ import { useEffect, useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { fetchFanGroups } from 'services/DiscoClubService';
 import scrollIntoView from 'scroll-into-view';
-import FanGroupsDetail from './FanGroupDetail';
 import FanGroupDetail from './FanGroupDetail';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
-const FanGroups: React.FC<RouteComponentProps> = ({ history, location }) => {
-  const detailsPathname = `${location.pathname}/fan-group`;
+const FanGroups: React.FC<RouteComponentProps> = props => {
   const [loading, setLoading] = useState<boolean>(false);
   const { doFetch } = useRequest({ setLoading });
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
   const [details, setDetails] = useState<boolean>(false);
   const [currentFanGroup, setCurrentFanGroup] = useState<FanGroup>();
+  const [page, setPage] = useState<number>(0);
+  const [eof, setEof] = useState<boolean>(false);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [filteredFanGroups, setFilteredFanGroups] = useState<FanGroup[]>([]);
 
   const {
     setArrayList: setFanGroups,
-    filteredArrayList: filteredFanGroups,
+    filteredArrayList: filteredContent,
     addFilterFunction,
+    removeFilterFunction,
   } = useFilter<FanGroup>([]);
+
+  useEffect(() => {
+    getResources();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const getResources = async () => {
     await getFanGroups();
@@ -33,12 +42,29 @@ const FanGroups: React.FC<RouteComponentProps> = ({ history, location }) => {
   const getFanGroups = async () => {
     const { results } = await doFetch(fetchFanGroups);
     setFanGroups(results);
+    setRefreshing(true);
+  };
+
+  const fetchData = () => {
+    if (!filteredContent.length) return;
+
+    const pageToUse = refreshing ? 0 : page;
+    const results = filteredContent.slice(pageToUse * 10, pageToUse * 10 + 10);
+
+    setPage(pageToUse + 1);
+    setFilteredFanGroups(prev => [...prev.concat(results)]);
+
+    if (results.length < 10) setEof(true);
   };
 
   useEffect(() => {
-    getResources();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    if (refreshing) {
+      setFilteredFanGroups([]);
+      setEof(false);
+      fetchData();
+      setRefreshing(false);
+    }
+  }, [refreshing]);
 
   useEffect(() => {
     if (!details) {
@@ -77,11 +103,17 @@ const FanGroups: React.FC<RouteComponentProps> = ({ history, location }) => {
   ];
 
   const searchFilterFunction = (filterText: string) => {
+    if (!filterText) {
+      removeFilterFunction('fanGroupName');
+      setRefreshing(true);
+      return;
+    }
     addFilterFunction('fanGroupName', fanGroups =>
       fanGroups.filter(fanGroup =>
         fanGroup.name.toUpperCase().includes(filterText.toUpperCase())
       )
     );
+    setRefreshing(true);
   };
 
   const refreshItem = (record: FanGroup) => {
@@ -122,13 +154,32 @@ const FanGroups: React.FC<RouteComponentProps> = ({ history, location }) => {
               />
             </Col>
           </Row>
-          <Table
-            rowClassName={(_, index) => `scrollable-row-${index}`}
-            rowKey="id"
-            columns={columns}
-            dataSource={filteredFanGroups}
-            loading={loading}
-          />
+          <InfiniteScroll
+            dataLength={filteredFanGroups.length}
+            next={fetchData}
+            hasMore={!eof}
+            loader={
+              page !== 0 && (
+                <div className="scroll-message">
+                  <Spin />
+                </div>
+              )
+            }
+            endMessage={
+              <div className="scroll-message">
+                <b>End of results.</b>
+              </div>
+            }
+          >
+            <Table
+              rowClassName={(_, index) => `scrollable-row-${index}`}
+              rowKey="id"
+              columns={columns}
+              dataSource={filteredFanGroups}
+              loading={loading || refreshing}
+              pagination={false}
+            />
+          </InfiniteScroll>
         </div>
       )}
       {details && (

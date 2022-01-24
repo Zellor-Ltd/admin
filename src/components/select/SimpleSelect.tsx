@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { SelectOption } from '../interfaces/SelectOption';
+import { SelectOption } from '../../interfaces/SelectOption';
 import { Select } from 'antd';
 
 interface SimpleSelectProps {
@@ -56,6 +56,7 @@ const SimpleSelect: React.FC<SimpleSelectProps> = ({
     const selectedEntity = data.find(
       entity => entity[optionsMapping.value] === value
     );
+    _setSelectedOption(value);
     onChange(value, selectedEntity);
   };
 
