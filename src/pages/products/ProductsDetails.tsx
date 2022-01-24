@@ -50,6 +50,7 @@ interface ProductDetailsProps {
   productBrand?: string;
   isFetchingBrands: boolean;
   isFetchingProductBrand: boolean;
+  isLive: boolean;
   onOrder?: (dragIndex: number, hoverIndex: number) => void;
   onFitTo?: (
     fitTo: 'w' | 'h',
@@ -84,13 +85,12 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
   onCancel,
   isFetchingBrands,
   isFetchingProductBrand,
+  isLive,
   onOrder,
   onFitTo,
   onRollback,
 }) => {
-  const { productMode } = useParams<RouteParams>();
-  const isStaging = productMode === 'staging';
-  const saveProductFn = isStaging ? saveStagingProduct : saveProduct;
+  const saveProductFn = isLive ? saveProduct : saveStagingProduct;
   const [loading, setLoading] = useState<boolean>(false);
   const [ageRange, setageRange] = useState<[number, number]>([12, 100]);
   const [form] = Form.useForm();

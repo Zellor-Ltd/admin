@@ -755,6 +755,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
               onOrder={onOrderImages}
               onFitTo={onFitTo}
               onRollback={onRollback}
+              isLive={false}
             />
           );
         }
