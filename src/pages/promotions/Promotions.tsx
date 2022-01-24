@@ -191,6 +191,7 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
   const handleDateChange = (values: any) => {
     if (!values) {
       removeFilterFunction('creationDate');
+      setRefreshing(true);
       return;
     }
     const startDate = moment(values[0], 'DD/MM/YYYY').startOf('day').utc();
@@ -200,6 +201,7 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
         return moment(hCreationDate).utc().isBetween(startDate, endDate);
       })
     );
+    setRefreshing(true);
   };
 
   const editPromotion = (index: number, promotion?: Promotion) => {

@@ -4,7 +4,7 @@ import {
   SettingOutlined,
   SearchOutlined,
 } from '@ant-design/icons';
-import { Button, Col, PageHeader, Row, Table, Tag } from 'antd';
+import { Button, Col, PageHeader, Row, Spin, Table, Tag } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
 import EditMultipleButton from 'components/EditMultipleButton';
@@ -20,6 +20,7 @@ import FanAPITestModal from './FanAPITestModal';
 import FanFeedModal from './FanFeedModal';
 import scrollIntoView from 'scroll-into-view';
 import FanDetail from './FanDetail';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 const tagColorByPermission: any = {
   Admin: 'green',
@@ -35,22 +36,46 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
   const [details, setDetails] = useState<boolean>(false);
   const [currentFan, setCurrentFan] = useState<Fan>();
-
   const { doFetch } = useRequest({ setLoading });
+  const [loaded, setLoaded] = useState<boolean>(false);
+  const [page, setPage] = useState<number>(0);
+  const [eof, setEof] = useState<boolean>(false);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [filteredFans, setFilteredFans] = useState<Fan[]>([]);
 
   const {
     setArrayList: setFans,
-    filteredArrayList: filteredFans,
+    filteredArrayList: filteredContent,
     addFilterFunction,
+    removeFilterFunction,
   } = useFilter<Fan>([]);
 
-  const getFans = async () => {
+  const fetch = async () => {
     const { results } = await doFetch(() => fetchFans());
     setFans(results);
+    setRefreshing(true);
+    setLoaded(true);
   };
 
-  const getResources = async () => {
-    await Promise.all([getFans()]);
+  useEffect(() => {
+    if (refreshing) {
+      setFilteredFans([]);
+      setEof(false);
+      fetchData();
+      setRefreshing(false);
+    }
+  }, [refreshing]);
+
+  const fetchData = async () => {
+    if (!filteredContent.length) return;
+
+    const pageToUse = refreshing ? 0 : page;
+    const results = filteredContent.slice(pageToUse * 10, pageToUse * 10 + 10);
+
+    setPage(pageToUse + 1);
+    setFilteredFans(prev => [...prev.concat(results)]);
+
+    if (results.length < 10) setEof(true);
   };
 
   useEffect(() => {
@@ -70,6 +95,11 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   const searchFilterFunction = (filterText: string) => {
+    if (!filterText) {
+      removeFilterFunction('fanName');
+      setRefreshing(true);
+      return;
+    }
     addFilterFunction('fanName', fans =>
       fans.filter(fan => {
         fan.name = fan.name || '';
@@ -80,6 +110,7 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
         );
       })
     );
+    setRefreshing(true);
   };
 
   const columns: ColumnsType<Fan> = [
@@ -150,13 +181,17 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
   ];
 
   const handleEditFans = async () => {
-    await getResources();
+    await fetch();
     setSelectedRowKeys([]);
   };
 
   const refreshItem = (record: Fan) => {
-    filteredFans[lastViewedIndex] = record;
-    setFans([...filteredFans]);
+    if (loaded) {
+      filteredFans[lastViewedIndex] = record;
+      setFans([...filteredFans]);
+    } else {
+      setFans([record]);
+    }
   };
 
   const onSaveFan = (record: Fan) => {
@@ -201,7 +236,7 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
             />
             <Button
               type="primary"
-              onClick={() => getResources()}
+              onClick={fetch}
               loading={loading}
               style={{
                 marginBottom: '20px',
@@ -220,17 +255,36 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
             selectedRecord={fanFeedModal}
             setSelectedRecord={setFanFeedModal}
           />
-          <Table
-            rowClassName={(_, index) => `scrollable-row-${index}`}
-            rowKey="id"
-            columns={columns}
-            dataSource={filteredFans}
-            loading={loading}
-            rowSelection={{
-              selectedRowKeys,
-              onChange: setSelectedRowKeys,
-            }}
-          />
+          <InfiniteScroll
+            dataLength={filteredFans.length}
+            next={fetchData}
+            hasMore={!eof}
+            loader={
+              page !== 0 && (
+                <div className="scroll-message">
+                  <Spin />
+                </div>
+              )
+            }
+            endMessage={
+              <div className="scroll-message">
+                <b>End of results.</b>
+              </div>
+            }
+          >
+            <Table
+              rowClassName={(_, index) => `scrollable-row-${index}`}
+              rowKey="id"
+              columns={columns}
+              dataSource={filteredFans}
+              loading={loading || refreshing}
+              pagination={false}
+              rowSelection={{
+                selectedRowKeys,
+                onChange: setSelectedRowKeys,
+              }}
+            />
+          </InfiniteScroll>
         </div>
       )}
       {details && (

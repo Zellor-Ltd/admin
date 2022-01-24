@@ -1,4 +1,4 @@
-import { Col, PageHeader, Row, Table, Typography } from 'antd';
+import { Col, PageHeader, Row, Spin, Table, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import SimpleSelect from 'components/select/SimpleSelect';
 import useFilter from 'hooks/useFilter';
@@ -22,6 +22,7 @@ import {
 import WalletEdit from './WalletEdit';
 import scrollIntoView from 'scroll-into-view';
 import WalletDetail from './WalletDetail';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -34,6 +35,25 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
   const [fans, setFans] = useState<Fan[]>([]);
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
   const [details, setDetails] = useState<boolean>(false);
+  const [loaded, setLoaded] = useState<boolean>(false);
+  const [page, setPage] = useState<number>(0);
+  const [eof, setEof] = useState<boolean>(false);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [filteredWallets, setFilteredWallets] = useState<Wallet[]>([]);
+
+  const {
+    arrayList: wallets,
+    setArrayList: setWallets,
+    filteredArrayList: filteredContent,
+    addFilterFunction,
+    removeFilterFunction,
+  } = useFilter<Wallet>([]);
+
+  const {
+    // arrayList: wallets,
+    setArrayList: setTransactions,
+    filteredArrayList: filteredTransactions,
+  } = useFilter<WalletTransaction>([]);
 
   const optionsMapping: SelectOption = {
     key: 'id',
@@ -47,19 +67,42 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
     value: 'user',
   };
 
-  const {
-    arrayList: wallets,
-    setArrayList: setWallets,
-    filteredArrayList: filteredWallets,
-    addFilterFunction,
-    removeFilterFunction,
-  } = useFilter<Wallet>([]);
+  const onChangeFan = async (_selectedFan?: Fan) => {
+    if (_selectedFan) {
+      const { balance }: any = await doFetch(
+        () => fetchBalancePerBrand(_selectedFan.id),
+        true
+      );
+      setWallets(balance);
+      setRefreshing(true);
+      setLoaded(true);
+    } else {
+      setWallets([]);
+      setLoaded(false);
+    }
+    setSelectedFan(_selectedFan);
+  };
 
-  const {
-    // arrayList: wallets,
-    setArrayList: setTransactions,
-    filteredArrayList: filteredTransactions,
-  } = useFilter<WalletTransaction>([]);
+  useEffect(() => {
+    if (refreshing) {
+      setFilteredWallets([]);
+      setEof(false);
+      fetchData();
+      setRefreshing(false);
+    }
+  }, [refreshing]);
+
+  const fetchData = async () => {
+    if (!filteredContent.length) return;
+
+    const pageToUse = refreshing ? 0 : page;
+    const results = filteredContent.slice(pageToUse * 10, pageToUse * 10 + 10);
+
+    setPage(pageToUse + 1);
+    setFilteredWallets(prev => [...prev.concat(results)]);
+
+    if (results.length < 10) setEof(true);
+  };
 
   useEffect(() => {
     const getFans = async () => {
@@ -172,28 +215,17 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
     },
   ];
 
-  const onChangeFan = async (_selectedFan?: Fan) => {
-    if (_selectedFan) {
-      const { balance }: any = await doFetch(
-        () => fetchBalancePerBrand(_selectedFan.id),
-        true
-      );
-      setWallets(balance);
-    } else {
-      setWallets([]);
-    }
-    setSelectedFan(_selectedFan);
-  };
-
   const onChangeBrand = async (_selectedBrand: Brand | undefined) => {
     setSelectedBrand(_selectedBrand);
     if (!_selectedBrand) {
       removeFilterFunction('brandName');
+      setRefreshing(true);
       return;
     }
     addFilterFunction('brandName', wallets =>
       wallets.filter(wallet => wallet.brandName === _selectedBrand.brandName)
     );
+    setRefreshing(true);
   };
 
   const getResources = async () => {
@@ -263,13 +295,32 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
               </Row>
             </Col>
           </Row>
-          <Table
-            rowClassName={(_, index) => `scrollable-row-${index}`}
-            rowKey="id"
-            columns={columns}
-            dataSource={filteredWallets}
-            loading={loading}
-          />
+          <InfiniteScroll
+            dataLength={filteredWallets.length}
+            next={fetchData}
+            hasMore={!eof}
+            loader={
+              page !== 0 && (
+                <div className="scroll-message">
+                  <Spin />
+                </div>
+              )
+            }
+            endMessage={
+              <div className="scroll-message">
+                <b>End of results.</b>
+              </div>
+            }
+          >
+            <Table
+              rowClassName={(_, index) => `scrollable-row-${index}`}
+              rowKey="id"
+              columns={columns}
+              dataSource={filteredWallets}
+              loading={loading || refreshing}
+              pagination={false}
+            />
+          </InfiniteScroll>
         </div>
       )}
       {details && (
