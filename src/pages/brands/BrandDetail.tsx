@@ -500,6 +500,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                     rules={[
                       {
                         required: true,
+                        type: 'number',
                         message: `Disco Percentage is required.`,
                       },
                     ]}
