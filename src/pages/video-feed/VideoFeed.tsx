@@ -557,7 +557,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
               pagination={{
                 current: currentPage,
                 onChange: onPageChange,
-                pageSize: 50,
+                defaultPageSize: 50,
                 pageSizeOptions: [
                   '50',
                   '100',
@@ -567,6 +567,8 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                   '500',
                   '1000',
                 ],
+                showTotal: (total, [from, to]) =>
+                  `${from}-${to} of ${total} items`,
               }}
             />
           </Content>
