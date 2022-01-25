@@ -92,8 +92,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const [startIndexFilter, setStartIndexFilter] = useState(1);
   const [titleFilter, setTitleFilter] = useState<string>();
 
-  const [pageSize, setPageSize] = useState(50);
-
   const masterBrandMapping: SelectOption = {
     key: 'id',
     label: 'brandName',
