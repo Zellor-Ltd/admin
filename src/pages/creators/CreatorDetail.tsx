@@ -129,7 +129,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
               </Col>
               <Col lg={12} xs={24}>
                 <Form.Item label="Phone" name="phone">
-                  <Input />
+                  <InputNumber />
                 </Form.Item>
               </Col>
               <Col lg={12} xs={24}>

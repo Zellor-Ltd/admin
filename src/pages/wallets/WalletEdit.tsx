@@ -62,7 +62,7 @@ const WalletEdit: React.FC<WalletEditProps> = ({
           <Row gutter={2} style={{ display: 'flex', flexWrap: 'nowrap' }}>
             <Col span={12}>
               <Form.Item name="balanceToAdd">
-                <InputNumber type="number" disabled={disabled}></InputNumber>
+                <InputNumber disabled={disabled}></InputNumber>
               </Form.Item>
             </Col>
             <Col>

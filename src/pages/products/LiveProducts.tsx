@@ -708,6 +708,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
           brand={currentMasterBrand}
           isFetchingBrands={isFetchingBrands}
           isFetchingProductBrand={isFetchingProductBrand}
+          isLive={true}
         />
       )}
     </>
