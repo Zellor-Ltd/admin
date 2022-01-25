@@ -9,6 +9,7 @@ import {
   Row,
   Select,
   Space,
+  Spin,
   Table,
   Typography,
 } from 'antd';
@@ -33,33 +34,34 @@ import SimpleSelect from 'components/select/SimpleSelect';
 import { SelectOption } from 'interfaces/SelectOption';
 import scrollIntoView from 'scroll-into-view';
 import FanDetail from 'pages/fans/FanDetail';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 const Orders: React.FC<RouteComponentProps> = ({ location }) => {
-  const [tableloading, setTableLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const [orderUpdateList, setOrderUpdateList] = useState<boolean[]>([]);
-  const [loaded, setLoaded] = useState<boolean>(false);
   const [selectedFan, setSelectedFan] = useState<Fan | undefined>();
-
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
   const [currentFan, setCurrentFan] = useState<Fan>();
   const [details, setDetails] = useState<boolean>(false);
-
-  const {
-    arrayList: orders,
-    setArrayList: setOrders,
-    filteredArrayList: filteredOrders,
-    addFilterFunction,
-    removeFilterFunction,
-  } = useFilter<Order>([]);
-
   const [fans, setFans] = useState<Fan[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [isFetchingBrands, setIsFetchingBrands] = useState(false);
   const [isFetchingFans, setIsFetchingFans] = useState(false);
-
   const [searchText, setSearchText] = useState<string>('');
-
   const searchInput = useRef<Input>(null);
+  const [loaded, setLoaded] = useState<boolean>(false);
+  const [page, setPage] = useState<number>(0);
+  const [eof, setEof] = useState<boolean>(false);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [filteredOrders, setFilteredOrders] = useState<Order[]>([]);
+
+  const {
+    arrayList: orders,
+    setArrayList: setOrders,
+    filteredArrayList: filteredContent,
+    addFilterFunction,
+    removeFilterFunction,
+  } = useFilter<Order>([]);
 
   const optionsMapping: SelectOption = {
     key: 'id',
@@ -71,6 +73,47 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     key: 'id',
     label: 'user',
     value: 'user',
+  };
+
+  const fetch = async () => {
+    const orders: Order[] = await getValidOrders();
+    const ordersWithFanName = orders.map(order => {
+      const fan = fans.find(fan => fan.id === order.userid);
+      order.fanName = fan?.user;
+      return order;
+    });
+    setOrders(ordersWithFanName);
+    setRefreshing(true);
+    setLoaded(true);
+  };
+
+  const getValidOrders = async () => {
+    const { results }: any = await fetchOrders();
+    const orders = results.filter(
+      (order: Order) => !!(order.product || order.cart)
+    );
+    return orders;
+  };
+
+  useEffect(() => {
+    if (refreshing) {
+      setFilteredOrders([]);
+      setEof(false);
+      fetchData();
+      setRefreshing(false);
+    }
+  }, [refreshing]);
+
+  const fetchData = async () => {
+    if (!filteredContent.length) return;
+
+    const pageToUse = refreshing ? 0 : page;
+    const results = filteredContent.slice(pageToUse * 10, pageToUse * 10 + 10);
+
+    setPage(pageToUse + 1);
+    setFilteredOrders(prev => [...prev.concat(results)]);
+
+    if (results.length < 10) setEof(true);
   };
 
   const handleSearch = (selectedKeys: any, confirm: any, dataIndex: any) => {
@@ -116,6 +159,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   const handleDateChange = (values: any) => {
     if (!values) {
       removeFilterFunction('creationDate');
+      setRefreshing(true);
       return;
     }
     const startDate = moment(values[0], 'DD/MM/YYYY').startOf('day').utc();
@@ -125,6 +169,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
         return moment(hCreationDate).utc().isBetween(startDate, endDate);
       })
     );
+    setRefreshing(true);
   };
 
   const getFan = (fanId: string) => fans.find(fan => fan.id === fanId);
@@ -340,14 +385,6 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     // },
   ];
 
-  const getOrders = async () => {
-    const response: any = await fetchOrders();
-    const orders = response.results.filter(
-      (order: Order) => !!(order.product || order.cart)
-    );
-    return orders;
-  };
-
   useEffect(() => {
     const getFans = async () => {
       setIsFetchingFans(true);
@@ -370,28 +407,16 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     getBrands();
   }, []);
 
-  const getResources = async () => {
-    setTableLoading(true);
-    const orders: Order[] = await getOrders();
-    const ordersWithFanName = orders.map(order => {
-      const fan = fans.find(fan => fan.id === order.userid);
-      order.fanName = fan?.user;
-      return order;
-    });
-    setOrders(ordersWithFanName);
-    setLoaded(true);
-    setTableLoading(false);
-  };
-
   useEffect(() => {
     if (loaded) {
-      getResources();
+      fetch();
     }
   }, [setOrders]);
 
   const onChangeBrand = async (_selectedBrand: Brand | undefined) => {
     if (!_selectedBrand) {
       removeFilterFunction('brandName');
+      setRefreshing(true);
       return;
     }
     addFilterFunction('brandName', orders =>
@@ -403,17 +428,20 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
             )
       )
     );
+    setRefreshing(true);
   };
 
   const onChangeFan = async (_selectedFan: Fan | undefined) => {
     setSelectedFan(_selectedFan);
     if (!_selectedFan) {
       removeFilterFunction('fanName');
+      setRefreshing(true);
       return;
     }
     addFilterFunction('fanName', orders =>
       orders.filter(order => order.userid === _selectedFan.id)
     );
+    setRefreshing(true);
   };
 
   const onSaveFan = (record: Fan) => {
@@ -465,7 +493,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
             <Col>
               <Button
                 type="primary"
-                onClick={() => getResources()}
+                onClick={fetch}
                 style={{
                   marginBottom: '20px',
                   marginRight: '25px',
@@ -476,13 +504,32 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
               </Button>
             </Col>
           </Row>
-          <Table
-            rowClassName={(_, index) => `scrollable-row-${index}`}
-            rowKey="id"
-            columns={columns}
-            dataSource={filteredOrders}
-            loading={tableloading}
-          />
+          <InfiniteScroll
+            dataLength={filteredOrders.length}
+            next={fetchData}
+            hasMore={!eof}
+            loader={
+              page !== 0 && (
+                <div className="scroll-message">
+                  <Spin />
+                </div>
+              )
+            }
+            endMessage={
+              <div className="scroll-message">
+                <b>End of results.</b>
+              </div>
+            }
+          >
+            <Table
+              rowClassName={(_, index) => `scrollable-row-${index}`}
+              rowKey="id"
+              columns={columns}
+              dataSource={filteredOrders}
+              loading={loading || refreshing}
+              pagination={false}
+            />
+          </InfiniteScroll>
         </div>
       )}
       {details && (

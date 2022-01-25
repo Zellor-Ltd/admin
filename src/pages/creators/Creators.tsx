@@ -29,6 +29,7 @@ import {
 } from 'services/DiscoClubService';
 import scrollIntoView from 'scroll-into-view';
 import CreatorDetail from './CreatorDetail';
+import { useRequest } from 'hooks/useRequest';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 const tagColorByStatus: any = {
@@ -42,6 +43,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
   const [details, setDetails] = useState<boolean>(false);
   const [currentCreator, setCurrentCreator] = useState<Creator>();
+  const { doFetch } = useRequest({ setLoading });
   const [loaded, setLoaded] = useState<boolean>(false);
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
@@ -55,24 +57,10 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
     removeFilterFunction,
   } = useFilter<Creator>([]);
 
-  const fetchData = async () => {
-    if (!filteredContent.length) return;
-
-    const pageToUse = refreshing ? 0 : page;
-    const results = filteredContent.slice(pageToUse * 10, pageToUse * 10 + 10);
-
-    setPage(pageToUse + 1);
-    setFilteredCreators(prev => [...prev.concat(results)]);
-
-    if (results.length < 10) setEof(true);
-  };
-
   const fetch = async () => {
-    setLoading(true);
-    const response: any = await fetchCreators();
-    setCreators(response.results);
+    const { results }: any = await doFetch(fetchCreators);
+    setCreators(results);
     setRefreshing(true);
-    setLoading(false);
     setLoaded(true);
   };
 
@@ -84,6 +72,18 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
       setRefreshing(false);
     }
   }, [refreshing]);
+
+  const fetchData = async () => {
+    if (!filteredContent.length) return;
+
+    const pageToUse = refreshing ? 0 : page;
+    const results = filteredContent.slice(pageToUse * 10, pageToUse * 10 + 10);
+
+    setPage(pageToUse + 1);
+    setFilteredCreators(prev => [...prev.concat(results)]);
+
+    if (results.length < 10) setEof(true);
+  };
 
   useEffect(() => {
     if (!details) {
@@ -244,7 +244,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
             </Col>
             <Button
               type="primary"
-              onClick={() => fetch()}
+              onClick={fetch}
               loading={loading}
               style={{
                 marginBottom: '16px',
