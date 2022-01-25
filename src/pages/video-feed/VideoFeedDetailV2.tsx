@@ -26,6 +26,7 @@ import { Brand } from 'interfaces/Brand';
 import { Category } from 'interfaces/Category';
 import { Creator } from 'interfaces/Creator';
 import { FeedItem } from 'interfaces/FeedItem';
+import { FeedSwitch } from './FeedSwitch';
 import { Segment } from 'interfaces/Segment';
 import { Tag } from 'interfaces/Tag';
 import React, { useEffect, useState } from 'react';
@@ -76,6 +77,9 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
   const [selectedTag, setSelectedTag] = useState<Tag | undefined>();
   const [selectedTagIndex, setSelectedTagIndex] = useState<number>(-1);
   const [showTagForm, setShowTagForm] = useState<boolean>(false);
+  const [selectedOptions, setSelectedOptions] = useState<
+    'productBrand' | 'creator'
+  >('productBrand');
 
   const [hashtags, setHashtags] = useState<string[]>([]);
 
@@ -89,17 +93,9 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
 
   const { doRequest } = useRequest({ setLoading });
 
-  const [segmentListing, setSegmentListing] = useState<
-    'creator' | 'productBrand'
-  >('creator');
-  const [showSegmentListing, setShowSegmentListing] = useState(false);
-
-  useEffect(() => {
-    if (showSegmentListing) {
-      const selectedOption = selectedSegment?.selectedOption || 'creator';
-      onSegmentListingChange(selectedOption);
-    }
-  }, [showSegmentListing]);
+  //useEffect(() => {
+  //    onSegmentListingChange(selectedOptions);
+  //}, [selectedOptions]);
 
   useEffect(() => {
     if (feedItem?.ageMin && feedItem?.ageMax)
@@ -233,15 +229,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
   };
 
   const onEditSegment = (segment: Segment, segmentIndex: number) => {
-    const selectedOption = segment.selectedOption || 'creator';
-    setSelectedSegment({
-      ...segment,
-      selectedOption: selectedOption,
-    });
-    if (segment.brands && segment.brands.length > 0) {
-      setShowSegmentListing(true);
-    }
-    onSegmentListingChange(selectedOption);
+    setSelectedSegment(segment);
     setSelectedSegmentIndex(segmentIndex);
     segmentForm.setFieldsValue(segment);
   };
@@ -262,6 +250,14 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
       package: [...segments],
       creator: creator,
     });
+  };
+
+  const handleSwitchChange = async (toggled: boolean) => {
+    if (toggled) {
+      setSelectedOptions('creator');
+    } else {
+      setSelectedOptions('productBrand');
+    }
   };
 
   const VideoUpdatePage = () => {
@@ -535,6 +531,40 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
               Add Segment
             </Button>
           </Tabs.TabPane>
+          <Tabs.TabPane forceRender tab="Listing" key="Listing">
+            <Form.Item
+              name="selectedOption"
+              initialValue={selectedOptions}
+              label="Product Brand | Creator"
+            >
+              <FeedSwitch
+                toggled={selectedOptions === 'creator'}
+                handleSwitchChange={toggled => handleSwitchChange(toggled)}
+              />
+            </Form.Item>
+            {selectedOptions == 'productBrand' && (
+              <Form.Item name="selectedOption" initialValue={selectedOptions}>
+                <Col lg={16} xs={24}>
+                  <Form.Item
+                    name="checkout"
+                    label="Checkout"
+                    rules={[
+                      { required: true, message: `Checkout is required.` },
+                    ]}
+                  >
+                    <Select placeholder="Select a checkout type">
+                      {checkoutTypeList.map((curr: any) => (
+                        <Select.Option key={curr.value} value={curr.value}>
+                          {curr.name}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
+                </Col>
+              </Form.Item>
+            )}
+            {selectedOptions == 'creator' && <>conteudo creator</>}
+          </Tabs.TabPane>
         </Tabs>
         <Row gutter={8}>
           <Col>
@@ -767,24 +797,6 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                     pagination={false}
                   />
                 </Tabs.TabPane>
-                {showSegmentListing && (
-                  <Tabs.TabPane forceRender tab="Listing" key="Listing">
-                    <Form.Item
-                      name="selectedOption"
-                      initialValue={selectedSegment?.selectedOption}
-                    >
-                      <Radio.Group
-                        value={segmentListing}
-                        onChange={event =>
-                          onSegmentListingChange(event.target.value)
-                        }
-                      >
-                        <Radio value="creator">Creator</Radio>
-                        <Radio value="productBrand">Product Brand</Radio>
-                      </Radio.Group>
-                    </Form.Item>
-                  </Tabs.TabPane>
-                )}
               </Tabs>
               <Row gutter={8} style={{ marginTop: '20px' }}>
                 <Col>
@@ -846,9 +858,6 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
             setSelectedBrandIndex(-1);
             setShowBrandForm(false);
             setSelectedSegment(segmentForm.getFieldsValue(true));
-            if (newValue && !showSegmentListing) {
-              setShowSegmentListing(true);
-            }
           }
           if (name === 'tagForm') {
             const { segmentForm, tagForm } = forms;
