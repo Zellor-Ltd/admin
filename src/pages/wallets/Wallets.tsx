@@ -35,10 +35,8 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
   const [fans, setFans] = useState<Fan[]>([]);
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
   const [details, setDetails] = useState<boolean>(false);
-  const [loaded, setLoaded] = useState<boolean>(false);
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
-  const [refreshing, setRefreshing] = useState<boolean>(false);
   const [filteredWallets, setFilteredWallets] = useState<Wallet[]>([]);
 
   const {
@@ -74,34 +72,30 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
         true
       );
       setWallets(balance);
-      setRefreshing(true);
-      setLoaded(true);
+      setPage(0);
     } else {
       setWallets([]);
-      setLoaded(false);
     }
     setSelectedFan(_selectedFan);
   };
 
   useEffect(() => {
-    if (refreshing) {
-      setFilteredWallets([]);
-      setEof(false);
-      fetchData();
-      setRefreshing(false);
-    }
-  }, [refreshing]);
+    setFilteredWallets([]);
+    setEof(false);
+    updateDisplayedArray();
+  }, [filteredContent, page]);
 
-  const fetchData = async () => {
+  const updateDisplayedArray = () => {
     if (!filteredContent.length) return;
 
-    const pageToUse = refreshing ? 0 : page;
-    const results = filteredContent.slice(pageToUse * 10, pageToUse * 10 + 10);
-
-    setPage(pageToUse + 1);
+    const results = filteredContent.slice(page * 10, page * 10 + 10);
     setFilteredWallets(prev => [...prev.concat(results)]);
 
-    if (results.length < 10) setEof(true);
+    if (results.length < 10) {
+      setEof(true);
+    } else {
+      setPage(page + 1);
+    }
   };
 
   useEffect(() => {
@@ -219,13 +213,13 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
     setSelectedBrand(_selectedBrand);
     if (!_selectedBrand) {
       removeFilterFunction('brandName');
-      setRefreshing(true);
+      setPage(0);
       return;
     }
     addFilterFunction('brandName', wallets =>
       wallets.filter(wallet => wallet.brandName === _selectedBrand.brandName)
     );
-    setRefreshing(true);
+    setPage(0);
   };
 
   const onCancelWallet = () => {
@@ -287,7 +281,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
           </Row>
           <InfiniteScroll
             dataLength={filteredWallets.length}
-            next={fetchData}
+            next={updateDisplayedArray}
             hasMore={!eof}
             loader={
               page !== 0 && (
@@ -307,7 +301,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
               rowKey="id"
               columns={columns}
               dataSource={filteredWallets}
-              loading={loading || refreshing}
+              loading={loading}
               pagination={false}
             />
           </InfiniteScroll>
