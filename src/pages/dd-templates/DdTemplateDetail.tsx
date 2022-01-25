@@ -1,4 +1,4 @@
-import { Button, Col, Form, Input, PageHeader, Row } from 'antd';
+import { Button, Col, Form, Input, InputNumber, PageHeader, Row } from 'antd';
 import { useRequest } from 'hooks/useRequest';
 import { DdTemplate } from 'interfaces/DdTemplate';
 import { useState } from 'react';
@@ -65,7 +65,7 @@ const DdTemplatesDetail: React.FC<DdTemplatesDetailProps> = ({
                 name="discoGold"
                 rules={[{ required: true, message: `Disco Gold is required.` }]}
               >
-                <Input type="number" />
+                <InputNumber />
               </Form.Item>
             </Col>
             <Col lg={16} xs={24}>
@@ -76,7 +76,7 @@ const DdTemplatesDetail: React.FC<DdTemplatesDetailProps> = ({
                   { required: true, message: `Disco Dollars is required.` },
                 ]}
               >
-                <Input type="number" />
+                <InputNumber />
               </Form.Item>
             </Col>
           </Col>

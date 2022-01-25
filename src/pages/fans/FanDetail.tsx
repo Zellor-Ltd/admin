@@ -5,6 +5,7 @@ import {
   DatePicker,
   Form,
   Input,
+  InputNumber,
   message,
   PageHeader,
   Row,
@@ -312,11 +313,11 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
               </Col>
               <Col lg={8} xs={24}>
                 <Form.Item label="Phone" name="phoneNumber">
-                  <Input
-                    addonBefore={
-                      fan
+                  <InputNumber
+                    prefix={
+                      (fan
                         ? prefixSelector(fan.personalDetails?.phone?.dialCode)
-                        : undefined
+                        : undefined) as unknown as string
                     }
                   />
                 </Form.Item>
@@ -353,7 +354,7 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
               </Col>
               <Col lg={8} xs={24}>
                 <Form.Item label="Postal Code" name="postalCode">
-                  <Input />
+                  <InputNumber />
                 </Form.Item>
               </Col>
             </Row>
