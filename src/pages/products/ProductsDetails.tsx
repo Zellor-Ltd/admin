@@ -25,7 +25,6 @@ import { AllCategories } from 'interfaces/Category';
 import { Product } from 'interfaces/Product';
 import { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
 import { saveProduct, saveStagingProduct } from 'services/DiscoClubService';
 import ProductCategoriesTrees from './ProductCategoriesTrees';
 import './Products.scss';
@@ -713,17 +712,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
           </Col>
           <Col>
             <Button
-              disabled={
-                form.getFieldValue('brand')
-                  ? (
-                      brands.find(
-                        item =>
-                          item.brandName ===
-                          form.getFieldValue('brand').brandName
-                      ) as Brand
-                    ).automated === true
-                  : false
-              }
+              disabled={isLive}
               type="primary"
               htmlType="submit"
               loading={loading}
