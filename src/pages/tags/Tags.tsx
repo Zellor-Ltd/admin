@@ -181,6 +181,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
                     initialValue={searchFilter}
                     filterFunction={setSearchFilter}
                     label="Search by Name"
+                    style={{ marginBottom: '16px' }}
                   />
                 </Col>
               </Row>

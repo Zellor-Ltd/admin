@@ -567,6 +567,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                     initialValue={searchFilter}
                     filterFunction={setSearchFilter}
                     label="Search by Name"
+                    style={{ marginBottom: '16px' }}
                   />
                 </Col>
                 <Col lg={6} xs={16}>
