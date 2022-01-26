@@ -27,7 +27,7 @@ import { Brand } from 'interfaces/Brand';
 import { Category } from 'interfaces/Category';
 import { Creator } from 'interfaces/Creator';
 import { FeedItem } from 'interfaces/FeedItem';
-import { FeedSwitch } from './FeedSwitch';
+import { SimpleSwitch } from 'components/SimpleSwitch';
 import { Segment } from 'interfaces/Segment';
 import { Tag } from 'interfaces/Tag';
 import React, { useEffect, useState } from 'react';
@@ -87,19 +87,15 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
   const {
     settings: { language = [] },
   } = useSelector((state: any) => state.settings);
-
   const [feedForm] = Form.useForm();
   const [segmentForm] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
-
   const [selectedSegment, setSelectedSegment] = useState<Segment | undefined>();
   const [selectedSegmentIndex, setSelectedSegmentIndex] = useState<number>(-1);
   const [ageRange, setAgeRange] = useState<[number, number]>([12, 100]);
-
   const [selectedBrand, setSelectedBrand] = useState<Brand | undefined>();
   const [selectedBrandIndex, setSelectedBrandIndex] = useState<number>(-1);
   const [showBrandForm, setShowBrandForm] = useState<boolean>(false);
-
   const [selectedTag, setSelectedTag] = useState<Tag | undefined>();
   const [selectedTagIndex, setSelectedTagIndex] = useState<number>(-1);
   const [showTagForm, setShowTagForm] = useState<boolean>(false);
@@ -113,22 +109,13 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
     useState<ProductBrand>();
   const [currentInfluencer, setCurrentInfluencer] = useState<Creator>();
   const [selectedIconUrl, setSelectedIconUrl] = useState<string>();
-
   const [hashtags, setHashtags] = useState<string[]>([]);
-
   const defaultVideoTab = 'Video Details';
   const defaultSegmentTab = 'Images';
-
   const [videoTab, setVideoTab] = useState<string>('Video Details');
   const [segmentTab, setSegmentTab] = useState<string>('Images');
-
   const [pageTitle, setPageTitle] = useState<string>('Video Update');
-
   const { doRequest } = useRequest({ setLoading });
-
-  //useEffect(() => {
-  //    onSegmentListingChange(selectedOptions);
-  //}, [selectedOptions]);
 
   useEffect(() => {
     if (feedItem?.selectedOption) {
@@ -621,7 +608,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
               initialValue={selectedOptions}
               label="Product Brand | Creator"
             >
-              <FeedSwitch
+              <SimpleSwitch
                 toggled={selectedOptions === 'creator'}
                 handleSwitchChange={toggled => handleSwitchChange(toggled)}
               />

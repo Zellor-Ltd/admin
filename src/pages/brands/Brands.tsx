@@ -26,7 +26,7 @@ import { Brand } from 'interfaces/Brand';
 import { useEffect, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { deleteBrand, fetchBrands, saveBrand } from 'services/DiscoClubService';
-import { TableSwitch } from './TableSwitch';
+import { SimpleSwitch } from '../../components/SimpleSwitch';
 import { PauseModal } from './PauseModal';
 import BrandDetail from './BrandDetail';
 import scrollIntoView from 'scroll-into-view';
@@ -197,7 +197,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
       align: 'center',
       render: (value: any, record: Brand) => (
         <>
-          <TableSwitch
+          <SimpleSwitch
             toggled={!!record.paused}
             handleSwitchChange={toggled =>
               handleSwitchChange('paused', record, toggled)
@@ -221,7 +221,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
       width: '15%',
       align: 'center',
       render: (value: any, record: Brand) => (
-        <TableSwitch
+        <SimpleSwitch
           toggled={!!record.showOutOfStock}
           handleSwitchChange={toggled =>
             handleSwitchChange('showOutOfStock', record, toggled)
