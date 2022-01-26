@@ -202,6 +202,7 @@ export const fetchStagingProducts = ({
   date,
   outOfStock,
   status,
+  superCategoryId,
   categoryId,
   subCategoryId,
   subSubCategoryId,
@@ -214,6 +215,7 @@ export const fetchStagingProducts = ({
   date?: Date;
   outOfStock?: boolean;
   status?: string;
+  superCategoryId?: string;
   categoryId?: string;
   subCategoryId?: string;
   subSubCategoryId?: string;
@@ -227,6 +229,7 @@ export const fetchStagingProducts = ({
     date,
     outOfStock,
     status,
+    superCategoryId,
     categoryId,
     subCategoryId,
     subSubCategoryId,

@@ -106,6 +106,8 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
   const [productStatusFilter, setProductStatusFilter] =
     useState<string>('live');
 
+  const [productSuperCategoryFilter, setProductSuperCategoryFilter] =
+    useState<ProductCategory>();
   const [productCategoryFilter, setProductCategoryFilter] =
     useState<ProductCategory>();
   const [productSubCategoryFilter, setProductSubCategoryFilter] =
@@ -126,6 +128,12 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
   const {
     settings: { currency = [] },
   } = useSelector((state: any) => state.settings);
+
+  const productSuperCategoryOptionsMapping: SelectOption = {
+    key: 'id',
+    label: 'superCategory',
+    value: 'id',
+  };
 
   const productCategoryOptionsMapping: SelectOption = {
     key: 'id',
@@ -311,6 +319,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
         productBrandId: productBrandFilter?.id,
         outOfStock: outOfStockFilter,
         status: productStatusFilter,
+        superCategoryId: productSuperCategoryFilter?.id,
         categoryId: productCategoryFilter?.id,
         subCategoryId: productSubCategoryFilter?.id,
         subSubCategoryId: productSubSubCategoryFilter?.id,
@@ -829,6 +838,28 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                     <Select.Option value="live">Live</Select.Option>
                     <Select.Option value="paused">Paused</Select.Option>
                   </Select>
+                </Col>
+                <Col lg={6} xs={24}>
+                  <Typography.Title level={5}>Super Category</Typography.Title>
+                  <SimpleSelect
+                    data={allCategories['Super Category'].filter(item => {
+                      return (
+                        item.superCategory === 'Women' ||
+                        item.superCategory === 'Men' ||
+                        item.superCategory === 'Children'
+                      );
+                    })}
+                    onChange={(_, category) =>
+                      setProductSuperCategoryFilter(category)
+                    }
+                    style={{ width: '100%' }}
+                    selectedOption={productSuperCategoryFilter?.id}
+                    optionsMapping={productSuperCategoryOptionsMapping}
+                    placeholder={'Select a Super Category'}
+                    loading={fetchingCategories}
+                    disabled={fetchingCategories}
+                    allowClear={true}
+                  ></SimpleSelect>
                 </Col>
                 <Col lg={6} xs={24}>
                   <Typography.Title level={5}>Category</Typography.Title>
