@@ -72,8 +72,7 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
   const onChangeTag = (key: string, fieldName: number, index: number) => {
     const formTags = form.getFieldValue('tags');
     const selectedTag = tags.find((tag: Tag) => tag.id === key);
-    const changedTag = { ...formTags[fieldName], ...selectedTag };
-    formTags[fieldName] = changedTag;
+    formTags[fieldName] = { ...formTags[fieldName], ...selectedTag };
 
     setSelectedFilterBrands(prev => {
       prev[index] = selectedTag?.brand?.id || '';
@@ -212,9 +211,10 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                           <Select
                             showSearch
                             filterOption={(input, option) =>
-                              option?.children
+                              !!option?.value
+                                ?.toString()
                                 .toLowerCase()
-                                .indexOf(input.toLowerCase()) >= 0
+                                .includes(input.toLowerCase())
                             }
                             onChange={(key: string) =>
                               onChangeBrand(key, field.name)
@@ -279,7 +279,7 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                       <Col lg={4} xs={24}>
                         <Form.Item
                           name={[field.name, 'position', 0, 'startTime']}
-                          fieldKey={[field.fieldKey, 'startTime']}
+                          fieldKey={[field.key, 'startTime']}
                           label="Start Time"
                           rules={[{ required: true }]}
                         >
@@ -289,7 +289,7 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                       <Col lg={4} xs={24}>
                         <Form.Item
                           name={[field.name, 'position', 0, 'opacity']}
-                          fieldKey={[field.fieldKey, 'opacity']}
+                          fieldKey={[field.key, 'opacity']}
                           label="Opacity"
                           rules={[{ required: true }]}
                         >
@@ -299,7 +299,7 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                       <Col lg={4} xs={24}>
                         <Form.Item
                           name={[field.name, 'position', 0, 'duration']}
-                          fieldKey={[field.fieldKey, 'duration']}
+                          fieldKey={[field.key, 'duration']}
                           label="duration"
                           rules={[{ required: true }]}
                         >
@@ -309,7 +309,7 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                       <Col lg={4} xs={24}>
                         <Form.Item
                           name={[field.name, 'position', 0, 'x']}
-                          fieldKey={[field.fieldKey, 'x']}
+                          fieldKey={[field.key, 'x']}
                           label="Position X"
                           rules={[{ required: true }]}
                         >
@@ -319,7 +319,7 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                       <Col lg={4} xs={24}>
                         <Form.Item
                           name={[field.name, 'position', 0, 'y']}
-                          fieldKey={[field.fieldKey, 'y']}
+                          fieldKey={[field.key, 'y']}
                           label="position Y"
                           rules={[{ required: true }]}
                         >
@@ -329,7 +329,7 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                       <Col lg={4} xs={24}>
                         <Form.Item
                           name={[field.name, 'position', 0, 'z']}
-                          fieldKey={[field.fieldKey, 'z']}
+                          fieldKey={[field.key, 'z']}
                           label="Z Index"
                           rules={[{ required: true }]}
                         >
@@ -381,9 +381,10 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                             showSearch
                             allowClear
                             filterOption={(input, option) =>
-                              option?.children
+                              !!option?.value
+                                ?.toString()
                                 .toLowerCase()
-                                .indexOf(input.toLowerCase()) >= 0
+                                .includes(input.toLowerCase())
                             }
                             loading={loading}
                             onChange={v => handleBrandFilter(v, index)}
@@ -423,7 +424,7 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                       <Col lg={3} xs={24}>
                         <Form.Item
                           name={[field.name, 'position', 0, 'startTime']}
-                          fieldKey={[field.fieldKey, 'startTime']}
+                          fieldKey={[field.key, 'startTime']}
                           label="Start Time"
                           rules={[{ required: true }]}
                         >
@@ -433,7 +434,7 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                       <Col lg={3} xs={24}>
                         <Form.Item
                           name={[field.name, 'position', 0, 'opacity']}
-                          fieldKey={[field.fieldKey, 'opacity']}
+                          fieldKey={[field.key, 'opacity']}
                           label="Opacity"
                           rules={[{ required: true }]}
                         >
@@ -443,7 +444,7 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                       <Col lg={3} xs={24}>
                         <Form.Item
                           name={[field.name, 'position', 0, 'duration']}
-                          fieldKey={[field.fieldKey, 'duration']}
+                          fieldKey={[field.key, 'duration']}
                           label="duration"
                           rules={[{ required: true }]}
                         >
@@ -453,7 +454,7 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                       <Col lg={3} xs={24}>
                         <Form.Item
                           name={[field.name, 'position', 0, 'x']}
-                          fieldKey={[field.fieldKey, 'x']}
+                          fieldKey={[field.key, 'x']}
                           label="Position X"
                           rules={[{ required: true }]}
                         >
@@ -463,7 +464,7 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                       <Col lg={3} xs={24}>
                         <Form.Item
                           name={[field.name, 'position', 0, 'y']}
-                          fieldKey={[field.fieldKey, 'y']}
+                          fieldKey={[field.key, 'y']}
                           label="Position Y"
                           rules={[{ required: true }]}
                         >
@@ -473,7 +474,7 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                       <Col lg={3} xs={24}>
                         <Form.Item
                           name={[field.name, 'position', 0, 'z']}
-                          fieldKey={[field.fieldKey, 'z']}
+                          fieldKey={[field.key, 'z']}
                           label="Z Index"
                           rules={[{ required: true }]}
                         >
