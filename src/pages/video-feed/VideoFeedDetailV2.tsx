@@ -140,7 +140,6 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
         setCurrentProductBrand(
           productBrands.find(item => item.id === feedItem?.selectedId)
         );
-
         setSelectedIconUrl(feedItem?.selectedIconUrl);
       }
     }
@@ -288,6 +287,10 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
           selectedFeedTitle: feedItem?.selectedFeedTitle,
           selectedIconUrl: feedItem?.selectedIconUrl,
         });
+      } else {
+        feedForm.setFieldsValue({
+          selectedIconUrl: undefined,
+        });
       }
     } else {
       setSelectedOptions('productBrand');
@@ -297,6 +300,10 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
           selectedId: feedItem?.selectedId,
           selectedFeedTitle: feedItem?.selectedFeedTitle,
           selectedIconUrl: feedItem?.selectedIconUrl,
+        });
+      } else {
+        feedForm.setFieldsValue({
+          selectedIconUrl: undefined,
         });
       }
     }
@@ -652,7 +659,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                       rules={[
                         {
                           required: true,
-                          message: `Product Brand is required.`,
+                          message: `Product Brand Icon is required.`,
                         },
                       ]}
                     >
@@ -660,7 +667,9 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                         data={productBrandIconOptions}
                         onChange={onChangeIcon}
                         style={{ width: '100%' }}
-                        selectedOption={selectedIconUrl}
+                        selectedOption={feedForm.getFieldValue(
+                          'selectedIconUrl'
+                        )}
                         optionsMapping={prouctBrandIconMapping}
                         placeholder={'Select an icon'}
                         allowClear={false}
@@ -670,7 +679,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                   )}
                   {selectedIconUrl && (
                     <Image
-                      src={selectedIconUrl}
+                      src={feedForm.getFieldValue('selectedIconUrl')}
                       style={{ marginBottom: 30 }}
                     ></Image>
                   )}
