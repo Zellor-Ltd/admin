@@ -4,6 +4,7 @@ import {
   Col,
   DatePicker,
   Form,
+  Image,
   Input,
   InputNumber,
   message,
@@ -26,6 +27,7 @@ import { Brand } from 'interfaces/Brand';
 import { Category } from 'interfaces/Category';
 import { Creator } from 'interfaces/Creator';
 import { FeedItem } from 'interfaces/FeedItem';
+import { SimpleSwitch } from 'components/SimpleSwitch';
 import { Segment } from 'interfaces/Segment';
 import { Tag } from 'interfaces/Tag';
 import React, { useEffect, useState } from 'react';
@@ -38,6 +40,9 @@ import './VideoFeedDetail.scss';
 import ReactTagInput from '@pathofdev/react-tag-input';
 import '@pathofdev/react-tag-input/build/index.css';
 import moment from 'moment';
+import SimpleSelect from 'components/select/SimpleSelect';
+import { ProductBrand } from 'interfaces/ProductBrand';
+import { SelectOption } from 'interfaces/SelectOption';
 
 const { Title } = Typography;
 interface VideoFeedDetailProps {
@@ -47,7 +52,27 @@ interface VideoFeedDetailProps {
   brands: Brand[];
   categories: Category[];
   influencers: Creator[];
+  productBrands: ProductBrand[];
+  isFetchingProductBrand: boolean;
 }
+
+const prouctBrandMapping: SelectOption = {
+  key: 'id',
+  label: 'brandName',
+  value: 'id',
+};
+
+const prouctBrandIconMapping: SelectOption = {
+  key: 'value',
+  label: 'label',
+  value: 'value',
+};
+
+const influencerMapping: SelectOption = {
+  key: 'id',
+  label: 'firstName',
+  value: 'id',
+};
 
 const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
   onSave,
@@ -56,50 +81,60 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
   brands,
   categories,
   influencers,
+  productBrands,
+  isFetchingProductBrand,
 }) => {
   const {
     settings: { language = [] },
   } = useSelector((state: any) => state.settings);
-
   const [feedForm] = Form.useForm();
   const [segmentForm] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
-
   const [selectedSegment, setSelectedSegment] = useState<Segment | undefined>();
   const [selectedSegmentIndex, setSelectedSegmentIndex] = useState<number>(-1);
   const [ageRange, setAgeRange] = useState<[number, number]>([12, 100]);
-
   const [selectedBrand, setSelectedBrand] = useState<Brand | undefined>();
   const [selectedBrandIndex, setSelectedBrandIndex] = useState<number>(-1);
   const [showBrandForm, setShowBrandForm] = useState<boolean>(false);
-
   const [selectedTag, setSelectedTag] = useState<Tag | undefined>();
   const [selectedTagIndex, setSelectedTagIndex] = useState<number>(-1);
   const [showTagForm, setShowTagForm] = useState<boolean>(false);
-
+  const [selectedOptions, setSelectedOptions] = useState<
+    'productBrand' | 'creator'
+  >(feedItem?.selectedOption ?? 'productBrand');
+  const [productBrandIconOptions, setProductBrandIconOptions] = useState<any[]>(
+    []
+  );
+  const [currentProductBrand, setCurrentProductBrand] =
+    useState<ProductBrand>();
+  const [currentInfluencer, setCurrentInfluencer] = useState<Creator>();
+  const [selectedIconUrl, setSelectedIconUrl] = useState<string>();
   const [hashtags, setHashtags] = useState<string[]>([]);
-
   const defaultVideoTab = 'Video Details';
   const defaultSegmentTab = 'Images';
-
   const [videoTab, setVideoTab] = useState<string>('Video Details');
   const [segmentTab, setSegmentTab] = useState<string>('Images');
-
   const [pageTitle, setPageTitle] = useState<string>('Video Update');
-
   const { doRequest } = useRequest({ setLoading });
 
-  const [segmentListing, setSegmentListing] = useState<
-    'creator' | 'productBrand'
-  >('creator');
-  const [showSegmentListing, setShowSegmentListing] = useState(false);
+  useEffect(() => {
+    if (feedItem?.selectedOption) {
+      if (feedItem?.selectedOption === 'creator') {
+        setCurrentInfluencer(
+          influencers.find(item => item.id === feedItem?.selectedId)
+        );
+      } else {
+        setCurrentProductBrand(
+          productBrands.find(item => item.id === feedItem?.selectedId)
+        );
+        setSelectedIconUrl(feedItem?.selectedIconUrl);
+      }
+    }
+  });
 
   useEffect(() => {
-    if (showSegmentListing) {
-      const selectedOption = selectedSegment?.selectedOption || 'creator';
-      onSegmentListingChange(selectedOption);
-    }
-  }, [showSegmentListing]);
+    if (currentProductBrand) loadOptions(currentProductBrand);
+  }, [currentProductBrand]);
 
   useEffect(() => {
     if (feedItem?.ageMin && feedItem?.ageMax)
@@ -155,33 +190,6 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
       setAgeRange([feedItem?.ageMin, feedItem?.ageMax]);
   }, [feedItem]);
 
-  const onSegmentListingChange = (
-    segmentListing: 'creator' | 'productBrand'
-  ) => {
-    const segmentBrands = segmentForm.getFieldValue('brands') as Brand[];
-    if (segmentBrands && segmentBrands.length > 0) {
-      setSegmentListing(segmentListing);
-      const firstBrand = segmentForm.getFieldValue('brands')[0] as Brand;
-      switch (segmentListing) {
-        case 'creator':
-          const creator = feedItem?.creator;
-          if (creator) {
-            segmentForm.setFieldsValue({
-              selectedFeedTitle: creator?.userName,
-              selectedIconUrl: creator?.avatar?.url || undefined,
-            });
-          }
-          break;
-        case 'productBrand':
-          segmentForm.setFieldsValue({
-            selectedFeedTitle: firstBrand.productBrand?.brandName,
-            selectedIconUrl: firstBrand.selectedLogoUrl,
-          });
-          break;
-      }
-    }
-  };
-
   const onFinish = async () => {
     const item: FeedItem = feedForm.getFieldsValue(true);
     item.goLiveDate = moment(item.goLiveDate).format();
@@ -233,15 +241,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
   };
 
   const onEditSegment = (segment: Segment, segmentIndex: number) => {
-    const selectedOption = segment.selectedOption || 'creator';
-    setSelectedSegment({
-      ...segment,
-      selectedOption: selectedOption,
-    });
-    if (segment.brands && segment.brands.length > 0) {
-      setShowSegmentListing(true);
-    }
-    onSegmentListingChange(selectedOption);
+    setSelectedSegment(segment);
     setSelectedSegmentIndex(segmentIndex);
     segmentForm.setFieldsValue(segment);
   };
@@ -262,6 +262,73 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
       package: [...segments],
       creator: creator,
     });
+  };
+
+  const handleSwitchChange = async (toggled: boolean) => {
+    if (toggled) {
+      setSelectedOptions('creator');
+      feedForm.setFieldsValue({ selectedOption: 'creator' });
+      if (feedItem?.selectedOption === 'creator') {
+        feedForm.setFieldsValue({
+          selectedId: feedItem?.selectedId,
+          selectedFeedTitle: feedItem?.selectedFeedTitle,
+          selectedIconUrl: feedItem?.selectedIconUrl,
+        });
+      } else {
+        feedForm.setFieldsValue({
+          selectedIconUrl: undefined,
+        });
+      }
+    } else {
+      setSelectedOptions('productBrand');
+      feedForm.setFieldsValue({ selectedOption: 'productBrand' });
+      if (feedItem?.selectedOption === 'productBrand') {
+        feedForm.setFieldsValue({
+          selectedId: feedItem?.selectedId,
+          selectedFeedTitle: feedItem?.selectedFeedTitle,
+          selectedIconUrl: feedItem?.selectedIconUrl,
+        });
+      } else {
+        feedForm.setFieldsValue({
+          selectedIconUrl: undefined,
+        });
+      }
+    }
+  };
+
+  const onChangeProductBrand = (_: string, entity: ProductBrand) => {
+    setCurrentProductBrand(entity);
+    feedForm.setFieldsValue({
+      selectedId: entity.id,
+      selectedFeedTitle: entity.brandName,
+    });
+  };
+
+  const loadOptions = entity => {
+    const iconOptions: any[] = [];
+
+    if (entity.whiteLogo)
+      iconOptions.push({ label: 'White', value: entity.whiteLogo.url });
+    if (entity.blackLogo)
+      iconOptions.push({ label: 'Black', value: entity.blackLogo.url });
+    if (entity.colourLogo)
+      iconOptions.push({ label: 'Colour', value: entity.colourLogo.url });
+
+    setProductBrandIconOptions(iconOptions);
+  };
+
+  const onChangeInfluencer = (_: string, entity: Creator) => {
+    setCurrentInfluencer(entity);
+    feedForm.setFieldsValue({
+      selectedId: entity.id,
+      selectedFeedTitle: entity.firstName,
+      selectedIconUrl: entity.avatar?.url,
+    });
+  };
+
+  const onChangeIcon = selectedIconUrl => {
+    setSelectedIconUrl(selectedIconUrl);
+    feedForm.setFieldsValue({ selectedIconUrl: selectedIconUrl });
   };
 
   const VideoUpdatePage = () => {
@@ -535,6 +602,112 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
               Add Segment
             </Button>
           </Tabs.TabPane>
+          <Tabs.TabPane forceRender tab="Listing" key="Listing">
+            <Form.Item
+              name="selectedOption"
+              initialValue={selectedOptions}
+              label="Product Brand | Creator"
+            >
+              <SimpleSwitch
+                toggled={selectedOptions === 'creator'}
+                handleSwitchChange={toggled => handleSwitchChange(toggled)}
+              />
+            </Form.Item>
+            <Col sm={12} lg={6}>
+              {selectedOptions == 'productBrand' && (
+                <>
+                  <Form.Item
+                    name="selectedId"
+                    label="Product Brand"
+                    rules={[
+                      {
+                        required: true,
+                        message: `Product Brand is required.`,
+                      },
+                    ]}
+                  >
+                    <SimpleSelect
+                      data={productBrands}
+                      onChange={(value, productBrand) =>
+                        onChangeProductBrand(value, productBrand)
+                      }
+                      style={{ width: '100%' }}
+                      selectedOption={currentProductBrand?.brandName}
+                      optionsMapping={prouctBrandMapping}
+                      placeholder={'Select a brand'}
+                      loading={isFetchingProductBrand}
+                      disabled={isFetchingProductBrand}
+                      allowClear={false}
+                    ></SimpleSelect>
+                  </Form.Item>
+                  {feedForm.getFieldValue('selectedId') && (
+                    <Form.Item
+                      label="Product Brand Icon"
+                      rules={[
+                        {
+                          required: true,
+                          message: `Product Brand Icon is required.`,
+                        },
+                      ]}
+                    >
+                      <SimpleSelect
+                        data={productBrandIconOptions}
+                        onChange={onChangeIcon}
+                        style={{ width: '100%' }}
+                        selectedOption={feedForm.getFieldValue(
+                          'selectedIconUrl'
+                        )}
+                        optionsMapping={prouctBrandIconMapping}
+                        placeholder={'Select an icon'}
+                        allowClear={false}
+                        disabled={!productBrandIconOptions}
+                      ></SimpleSelect>
+                    </Form.Item>
+                  )}
+                  {selectedIconUrl && (
+                    <Image
+                      src={feedForm.getFieldValue('selectedIconUrl')}
+                      style={{ marginBottom: 30 }}
+                    ></Image>
+                  )}
+                </>
+              )}
+              {selectedOptions == 'creator' && (
+                <>
+                  <Form.Item
+                    name="selectedId"
+                    label="Creator"
+                    rules={[
+                      {
+                        required: true,
+                        message: `Creator is required.`,
+                      },
+                    ]}
+                  >
+                    <SimpleSelect
+                      data={influencers}
+                      onChange={(value, influencer) =>
+                        onChangeInfluencer(value, influencer)
+                      }
+                      style={{ width: '100%' }}
+                      selectedOption={currentInfluencer?.firstName}
+                      optionsMapping={influencerMapping}
+                      placeholder={'Select a creator'}
+                      loading={false}
+                      disabled={false}
+                      allowClear={true}
+                    ></SimpleSelect>
+                  </Form.Item>
+                  {feedForm.getFieldValue('selectedId') && (
+                    <Image
+                      src={currentInfluencer?.avatar?.url}
+                      style={{ marginBottom: 30 }}
+                    ></Image>
+                  )}
+                </>
+              )}
+            </Col>
+          </Tabs.TabPane>
         </Tabs>
         <Row gutter={8}>
           <Col>
@@ -767,24 +940,6 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                     pagination={false}
                   />
                 </Tabs.TabPane>
-                {showSegmentListing && (
-                  <Tabs.TabPane forceRender tab="Listing" key="Listing">
-                    <Form.Item
-                      name="selectedOption"
-                      initialValue={selectedSegment?.selectedOption}
-                    >
-                      <Radio.Group
-                        value={segmentListing}
-                        onChange={event =>
-                          onSegmentListingChange(event.target.value)
-                        }
-                      >
-                        <Radio value="creator">Creator</Radio>
-                        <Radio value="productBrand">Product Brand</Radio>
-                      </Radio.Group>
-                    </Form.Item>
-                  </Tabs.TabPane>
-                )}
               </Tabs>
               <Row gutter={8} style={{ marginTop: '20px' }}>
                 <Col>
@@ -846,9 +1001,6 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
             setSelectedBrandIndex(-1);
             setShowBrandForm(false);
             setSelectedSegment(segmentForm.getFieldsValue(true));
-            if (newValue && !showSegmentListing) {
-              setShowSegmentListing(true);
-            }
           }
           if (name === 'tagForm') {
             const { segmentForm, tagForm } = forms;

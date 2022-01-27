@@ -26,4 +26,8 @@ export interface FeedItem {
   status?: any;
   shortDescription?: string;
   creator?: Creator;
+  selectedOption?: 'productBrand' | 'creator';
+  selectedId?: string;
+  selectedFeedTitle?: string;
+  selectedIconUrl?: string;
 }
