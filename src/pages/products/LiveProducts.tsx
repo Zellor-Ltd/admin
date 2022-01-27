@@ -561,13 +561,12 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
           />
           <Row align="bottom" justify="space-between">
             <Col lg={16} xs={24}>
-              <Row gutter={8}>
+              <Row gutter={[8, 8]}>
                 <Col lg={6} xs={16}>
                   <SearchFilterDebounce
                     initialValue={searchFilter}
                     filterFunction={setSearchFilter}
                     label="Search by Name"
-                    style={{ marginBottom: '16px' }}
                   />
                 </Col>
                 <Col lg={6} xs={16}>

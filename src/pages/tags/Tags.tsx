@@ -175,13 +175,12 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
           />
           <Row align="bottom" justify="space-between">
             <Col lg={16} xs={24}>
-              <Row gutter={8}>
+              <Row gutter={[8, 8]}>
                 <Col lg={8} xs={16}>
                   <SearchFilterDebounce
                     initialValue={searchFilter}
                     filterFunction={setSearchFilter}
                     label="Search by Name"
-                    style={{ marginBottom: '16px' }}
                   />
                 </Col>
               </Row>
