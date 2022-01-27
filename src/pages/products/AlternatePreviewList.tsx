@@ -217,7 +217,7 @@ const AlternatePreviewList: React.FC<AlternatePreviewListProps> = ({
 
   const onRollback = (
     oldUrl: string,
-    sourceProp: 'image' | 'tagImage' | 'thumbnailUrl',
+    sourceProp: 'image' | 'tagImage' | 'thumbnailUrl' | 'masthead',
     imageIndex: number,
     entity: Product
   ) => {
@@ -265,7 +265,7 @@ const AlternatePreviewList: React.FC<AlternatePreviewListProps> = ({
 
   const onImageChange = (
     image: Image,
-    sourceProp: 'image' | 'tagImage' | 'thumbnailUrl',
+    sourceProp: 'image' | 'tagImage' | 'thumbnailUrl' | 'masthead',
     record: Product,
     removed?: boolean
   ) => {

@@ -31,6 +31,7 @@ import scrollIntoView from 'scroll-into-view';
 import CreatorDetail from './CreatorDetail';
 import { useRequest } from 'hooks/useRequest';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import { Image } from '../../interfaces/Image';
 
 const tagColorByStatus: any = {
   approved: 'green',
@@ -219,6 +220,17 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
     setDetails(false);
   };
 
+  const onRollback = (
+    oldUrl: string,
+    _sourceProp: 'image' | 'tagImage' | 'thumbnailUrl' | 'masthead',
+    imageIndex: number
+  ) => {
+    if (currentCreator) {
+      currentCreator[_sourceProp][imageIndex].url = oldUrl;
+      setCurrentCreator({ ...currentCreator });
+    }
+  };
+
   return (
     <>
       {!details && (
@@ -288,6 +300,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
           creator={currentCreator}
           onSave={onSaveCreator}
           onCancel={onCancelCreator}
+          onRollback={onRollback}
         />
       )}
     </>
