@@ -20,7 +20,7 @@ import CopyIdToClipboard from 'components/CopyIdToClipboard';
 import { SearchFilter } from 'components/SearchFilter';
 import useFilter from 'hooks/useFilter';
 import { Creator } from 'interfaces/Creator';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import {
   deleteCreator,
@@ -47,8 +47,8 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
   const [loaded, setLoaded] = useState<boolean>(false);
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
-  const [refreshing, setRefreshing] = useState<boolean>(false);
   const [filteredCreators, setFilteredCreators] = useState<Creator[]>([]);
+  const timeoutRef = useRef<any>();
 
   const {
     setArrayList: setCreators,
@@ -60,29 +60,28 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
   const fetch = async () => {
     const { results }: any = await doFetch(fetchCreators);
     setCreators(results);
-    setRefreshing(true);
     setLoaded(true);
   };
 
   useEffect(() => {
-    if (refreshing) {
-      setFilteredCreators([]);
-      setEof(false);
-      fetchData();
-      setRefreshing(false);
+    setFilteredCreators([]);
+    paginateData();
+  }, [filteredContent]);
+
+  const paginateData = () => {
+    if (!filteredContent.length) {
+      return;
     }
-  }, [refreshing]);
 
-  const fetchData = async () => {
-    if (!filteredContent.length) return;
+    const results = filteredContent.slice(page * 10, page * 10 + 10);
 
-    const pageToUse = refreshing ? 0 : page;
-    const results = filteredContent.slice(pageToUse * 10, pageToUse * 10 + 10);
-
-    setPage(pageToUse + 1);
     setFilteredCreators(prev => [...prev.concat(results)]);
 
-    if (results.length < 10) setEof(true);
+    if (results.length < 10) {
+      setEof(true);
+    } else {
+      setPage(page + 1);
+    }
   };
 
   useEffect(() => {
@@ -137,12 +136,12 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
             <CheckOutlined
               key="approve"
               style={{ color: 'green' }}
-              onClick={() => aproveOrReject(true, record)}
+              onClick={() => approveOrReject(true, record)}
             />,
             <CloseOutlined
               key="reject"
               style={{ color: 'red', margin: '6px' }}
-              onClick={() => aproveOrReject(false, record)}
+              onClick={() => approveOrReject(false, record)}
             />,
           ]}
           <Link
@@ -166,7 +165,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
     },
   ];
 
-  const aproveOrReject = async (aprove: boolean, creator: Creator) => {
+  const approveOrReject = async (aprove: boolean, creator: Creator) => {
     setLoading(true);
     creator.status = aprove ? 'approved' : 'rejected';
 
@@ -186,19 +185,25 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   const searchFilterFunction = (filterText: string) => {
-    if (!filterText) {
-      removeFilterFunction('creatorFirstName');
-      setRefreshing(true);
-      return;
+    setPage(0);
+    setEof(false);
+    if (timeoutRef.current !== undefined) {
+      clearTimeout(timeoutRef.current);
     }
-    addFilterFunction('creatorFirstName', creators =>
-      creators.filter(creator =>
-        (creator.firstName || '')
-          .toUpperCase()
-          .includes(filterText.toUpperCase())
-      )
-    );
-    setRefreshing(true);
+
+    if (!filterText) {
+      removeFilterFunction('fullName');
+    } else {
+      timeoutRef.current = setTimeout(() => {
+        addFilterFunction('fullName', creators =>
+          creators.filter(creator =>
+            `${creator.firstName || ''} ${creator.lastName || ''}`
+              .toUpperCase()
+              .includes(filterText.toUpperCase())
+          )
+        );
+      }, 250);
+    }
   };
 
   const refreshItem = (record: Creator) => {
@@ -257,7 +262,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
           </Row>
           <InfiniteScroll
             dataLength={filteredCreators.length}
-            next={fetchData}
+            next={paginateData}
             hasMore={!eof}
             loader={
               page !== 0 && (
@@ -277,7 +282,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
               rowKey="id"
               columns={columns}
               dataSource={filteredCreators}
-              loading={loading || refreshing}
+              loading={loading}
               pagination={false}
             />
           </InfiniteScroll>

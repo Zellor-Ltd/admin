@@ -27,6 +27,7 @@ import { Creator } from 'interfaces/Creator';
 import { ServerAlias } from 'interfaces/ServerAlias';
 import { useEffect, useState } from 'react';
 import { fetchServersList, saveCreator } from 'services/DiscoClubService';
+import { RichTextEditor } from '../../components/RichTextEditor';
 
 interface CreatorDetailProps {
   creator: any;
@@ -224,6 +225,11 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
               <Col lg={24} xs={24}>
                 <Form.Item label="Your Work" name="yourWork">
                   <Input showCount maxLength={40} />
+                </Form.Item>
+              </Col>
+              <Col lg={24} xs={24}>
+                <Form.Item label="Creator Profile">
+                  <RichTextEditor formField="creatorProfile" form={form} />
                 </Form.Item>
               </Col>
             </Row>

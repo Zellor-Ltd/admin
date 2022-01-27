@@ -1,4 +1,4 @@
-import { Typography, Input } from 'antd';
+import { Input, Typography } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import React from 'react';
 
@@ -20,7 +20,7 @@ export const SearchFilter: React.FC<SearchFilterProps> = ({
       <Typography.Title level={5} title={label}>
         {label}
       </Typography.Title>
-      <Input onChange={onChangeFilter} suffix={<SearchOutlined />} />
+      <Input onChange={onChangeFilter} allowClear suffix={<SearchOutlined />} />
     </div>
   );
 };
