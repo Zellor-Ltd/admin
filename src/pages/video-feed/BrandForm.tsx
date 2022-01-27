@@ -104,7 +104,10 @@ const BrandForm: React.FC<FormProps> = ({
             <Select
               showSearch
               filterOption={(input, option) =>
-                option?.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                !!option?.children
+                  ?.toString()
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
               }
               onChange={(brandId: string) => onChangeBrand(brandId)}
             >
@@ -125,7 +128,10 @@ const BrandForm: React.FC<FormProps> = ({
             <Select
               showSearch
               filterOption={(input, option) =>
-                option?.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                !!option?.children
+                  ?.toString()
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
               }
               onChange={(productBrandName: string) =>
                 onChangeProductBrand(productBrandName)

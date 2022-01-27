@@ -99,7 +99,7 @@ const ItemList: React.FC<ItemListProp> = ({ name }) => (
             <Col lg={6} xs={24}>
               <Form.Item
                 name={[field.name, 'name']}
-                fieldKey={[field.fieldKey, 'name']}
+                fieldKey={[field.key, 'name']}
                 label="Name"
               >
                 <Input />
@@ -108,7 +108,7 @@ const ItemList: React.FC<ItemListProp> = ({ name }) => (
             <Col lg={6} xs={24}>
               <Form.Item
                 name={[field.name, 'value']}
-                fieldKey={[field.fieldKey, 'value']}
+                fieldKey={[field.key, 'value']}
                 label="Value"
               >
                 <Input />

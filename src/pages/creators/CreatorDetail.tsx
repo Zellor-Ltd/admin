@@ -27,6 +27,7 @@ import { Creator } from 'interfaces/Creator';
 import { ServerAlias } from 'interfaces/ServerAlias';
 import { useEffect, useState } from 'react';
 import { fetchServersList, saveCreator } from 'services/DiscoClubService';
+
 interface CreatorDetailProps {
   creator: any;
   onSave?: (record: Creator) => void;
@@ -39,7 +40,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
   onCancel,
 }) => {
   const [loading, setLoading] = useState(false);
-  const [ageRange, setageRange] = useState<[number, number]>([12, 100]);
+  const [ageRange, setAgeRange] = useState<[number, number]>([12, 100]);
   const [serversList, setServersList] = useState<ServerAlias[]>([]);
   const { doRequest } = useRequest({ setLoading });
 
@@ -67,7 +68,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
       setServersList(response.results);
     };
     if (creator?.ageMin && creator?.ageMax)
-      setageRange([creator?.ageMin, creator?.ageMax]);
+      setAgeRange([creator?.ageMin, creator?.ageMax]);
     getServersList();
   }, [creator]);
 
@@ -77,7 +78,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
       ageMax: value[1],
     });
 
-    setageRange(value);
+    setAgeRange(value);
   };
 
   const getHeaderTitle = () => {
@@ -137,7 +138,11 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                   <Input prefix="@" autoComplete="off" />
                 </Form.Item>
               </Col>
-
+              <Col lg={12} xs={24}>
+                <Form.Item label="Description" name="description">
+                  <Input showCount maxLength={40} />
+                </Form.Item>
+              </Col>
               <Col lg={12} xs={24}>
                 <Form.Item name={'serverAlias'} label="Server Alias">
                   <Select>
@@ -187,6 +192,15 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                   />
                 </Form.Item>
               </Col>
+              <Col lg={4} xs={24}>
+                <Form.Item label="Thumbnail">
+                  <Upload.ImageUpload
+                    fileList={creator?.thumbnail}
+                    formProp="thumbnail"
+                    form={form}
+                  />
+                </Form.Item>
+              </Col>
             </Row>
           </Tabs.TabPane>
           <Tabs.TabPane forceRender tab="Your Work" key="YourWork">
@@ -205,6 +219,11 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                   name="topBrands"
                 >
                   <Input.TextArea rows={4} />
+                </Form.Item>
+              </Col>
+              <Col lg={24} xs={24}>
+                <Form.Item label="Your Work" name="yourWork">
+                  <Input showCount maxLength={40} />
                 </Form.Item>
               </Col>
             </Row>
