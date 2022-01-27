@@ -423,6 +423,10 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       modelRelease: '',
       target: '',
       _id: '',
+      selectedOption: 'productBrand' as any,
+      selectedId: '',
+      selectedIconUrl: '',
+      selectedselectedFeedTitle: '',
     };
     setSelectedVideoFeed(template);
   };
@@ -582,6 +586,8 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
           brands={brands}
           categories={categories}
           influencers={influencers}
+          productBrands={productBrands}
+          isFetchingProductBrand={isFetchingProductBrands}
         />
       )}
     </>

@@ -1,9 +1,7 @@
-import { message, Switch } from 'antd';
-import { Brand } from 'interfaces/Brand';
+import { Switch } from 'antd';
 import React, { useState } from 'react';
-import { saveBrand } from 'services/DiscoClubService';
 
-export const TableSwitch: React.FC<{
+export const SimpleSwitch: React.FC<{
   toggled: boolean;
   handleSwitchChange: Function;
 }> = ({ toggled, handleSwitchChange }) => {

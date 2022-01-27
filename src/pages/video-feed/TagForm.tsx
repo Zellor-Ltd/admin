@@ -68,7 +68,10 @@ const TagForm: React.FC<FormProps> = ({ tag, setShowTagForm, brands }) => {
               showSearch
               allowClear
               filterOption={(input, option) =>
-                option?.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                !!option?.children
+                  ?.toString()
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
               }
               onChange={v => handleBrandFilter(v)}
               value={selectedBrandId}
