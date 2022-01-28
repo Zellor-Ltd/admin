@@ -1,6 +1,6 @@
 import {
   DeleteOutlined,
-  EditOutlined,
+  EyeOutlined,
   SearchOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
@@ -446,7 +446,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
             to={{ pathname: window.location.pathname, state: record }}
             onClick={() => editProduct(index, record)}
           >
-            <EditOutlined />
+            <EyeOutlined />
           </Link>
           {record.brand?.automated !== true && (
             <Popconfirm
