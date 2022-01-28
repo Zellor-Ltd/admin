@@ -10,6 +10,7 @@ import {
   Button,
   Col,
   Form,
+  Image,
   Input,
   InputNumber,
   message,
@@ -32,17 +33,26 @@ interface CreatorDetailProps {
   creator: any;
   onSave?: (record: Creator) => void;
   onCancel?: () => void;
+  onRollback?: (
+    oldUrl: string,
+    sourceProp: 'image' | 'tagImage' | 'thumbnailUrl' | 'masthead',
+    imageIndex: number
+  ) => void;
 }
 
 const CreatorDetail: React.FC<CreatorDetailProps> = ({
   creator,
   onSave,
   onCancel,
+  onRollback,
 }) => {
   const [loading, setLoading] = useState(false);
   const [ageRange, setAgeRange] = useState<[number, number]>([12, 100]);
   const [serversList, setServersList] = useState<ServerAlias[]>([]);
   const { doRequest } = useRequest({ setLoading });
+  const [currentMasthead, setCurrentMasthead] = useState<any>(
+    creator.activeMasthead
+  );
 
   const [form] = Form.useForm();
 
@@ -87,6 +97,21 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
     }
 
     return 'Creator Creation';
+  };
+
+  const onAssignToMasthead = file => {
+    if (file.xhr) {
+      const response = JSON.parse(file.xhr.response);
+      const imageData: any = {
+        url: response.result.replace(';', ''),
+        uid: file.uid,
+      };
+      form.setFieldsValue({ activeMasthead: imageData });
+      setCurrentMasthead(imageData);
+      return;
+    }
+    form.setFieldsValue({ activeMasthead: file });
+    setCurrentMasthead(file);
   };
 
   return (
@@ -286,8 +311,46 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
               </Col>
             </Row>
           </Tabs.TabPane>
+          <Tabs.TabPane forceRender tab="Marketing" key="Marketing">
+            <Row gutter={8}>
+              <Col lg={24} xs={24}>
+                <Form.Item label="Creator Masthead">
+                  <Upload.ImageUpload
+                    maxCount={20}
+                    fileList={creator?.masthead}
+                    formProp="masthead"
+                    form={form}
+                    onAssignToMasthead={onAssignToMasthead}
+                    classNames="scroll-x"
+                    onRollback={onRollback}
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
+            {currentMasthead && (
+              <>
+                <Row gutter={[8, 8]}>
+                  <Col lg={24} xs={24}>
+                    <label>Active Masthead</label>
+                  </Col>
+                  <Col lg={24} xs={24}>
+                    <Row
+                      className="active-masthead-border mb-1"
+                      align="middle"
+                      justify={'center'}
+                    >
+                      <Image
+                        className="active-masthead"
+                        src={currentMasthead.url}
+                      />
+                    </Row>
+                  </Col>
+                </Row>
+              </>
+            )}
+          </Tabs.TabPane>
         </Tabs>
-        <Row gutter={8}>
+        <Row gutter={[8, 8]} className="mt-1">
           <Col>
             <Button type="default" onClick={() => onCancel?.()}>
               Cancel
