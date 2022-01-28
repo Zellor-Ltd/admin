@@ -704,7 +704,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
             </Col>
           </Tabs.TabPane>
         </Tabs>
-        <Row gutter={8}>
+        <Row gutter={8} className="mt-1">
           <Col>
             <Button type="default" onClick={() => onCancel?.()}>
               Cancel

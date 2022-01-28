@@ -10,6 +10,7 @@ interface ProductCategoriesTreesProps {
   form: FormInstance;
   handleCategoryChange: Function;
   handleCategoryDelete?: Function;
+  disabled?: boolean;
 }
 
 const ProductCategoriesTrees: React.FC<ProductCategoriesTreesProps> = ({
@@ -18,6 +19,7 @@ const ProductCategoriesTrees: React.FC<ProductCategoriesTreesProps> = ({
   form,
   handleCategoryChange,
   handleCategoryDelete,
+  disabled,
 }) => {
   const [_categories, _setCategories] = useState<SelectedProductCategories[]>(
     categories || [{}]
@@ -53,6 +55,7 @@ const ProductCategoriesTrees: React.FC<ProductCategoriesTreesProps> = ({
               initialValues={_categories}
               allCategories={allCategories}
               handleCategoryChange={handleCategoryChange}
+              disabled={disabled}
             />
             {_categories.length > 1 ? (
               <Button
