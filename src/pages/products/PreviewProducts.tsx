@@ -770,7 +770,9 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
         <>
           <PageHeader
             title="Preview Products"
-            subTitle="List of Products in Preview Mode (not live)"
+            subTitle={
+              viewName === 'default' ? 'Default View' : 'Alternate View'
+            }
             extra={[
               <Button key="1" type="primary" onClick={switchView}>
                 Switch View

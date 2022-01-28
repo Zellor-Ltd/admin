@@ -56,14 +56,7 @@ const PromotionDetail: React.FC<PromotionDetailProps> = ({
 
   return (
     <>
-      <PageHeader
-        title={
-          promotion
-            ? `${promotion?.brand} Promotion Update`
-            : 'Promotion Update'
-        }
-        subTitle="Promotion"
-      />
+      <PageHeader title={promotion ? 'Promotion Update' : 'New Promotion'} />
       <Form
         form={form}
         layout="vertical"

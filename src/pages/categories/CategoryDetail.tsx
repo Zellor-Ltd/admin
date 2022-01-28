@@ -81,10 +81,9 @@ const CategoryDetail: React.FC<CategoryDetailProps> = ({
       <PageHeader
         title={
           category
-            ? `${category[categoryField]} ${categoryUpdateName} Update`
-            : 'New item'
+            ? `${category[categoryField]} Update`
+            : `New ${categoryUpdateName}`
         }
-        subTitle="Category"
       />
       <Form
         name="categoryForm"

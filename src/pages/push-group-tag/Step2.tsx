@@ -46,7 +46,7 @@ const Step2: React.FC<Step2Props> = ({ selectedTags, onReturn }) => {
 
   return (
     <>
-      <PageHeader title="Push Notifcations - Tags" />
+      <PageHeader title="Push Notifications - Tags" />
       <Row gutter={8} style={{ marginBottom: '20px', width: '100%' }}>
         <Col>
           <Typography.Title level={5}>Fan Group Filter</Typography.Title>

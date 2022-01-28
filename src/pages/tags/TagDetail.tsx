@@ -107,10 +107,7 @@ const TagDetail: React.FC<TagDetailProps> = ({ tag, onSave, onCancel }) => {
 
   return (
     <>
-      <PageHeader
-        title={tag ? `${tag?.tagName} Update` : 'New Tag'}
-        subTitle="Tag"
-      />
+      <PageHeader title={tag ? `${tag?.tagName} Update` : 'New Tag'} />
       <Form
         name="tagForm"
         layout="vertical"

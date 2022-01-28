@@ -232,10 +232,7 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
 
   return (
     <>
-      <PageHeader
-        title={fan ? `${fan.userName} Update` : 'New Item'}
-        subTitle="Fan"
-      />
+      <PageHeader title={fan ? `${fan.userName} Update` : 'New Fan'} />
       <Form
         name="userForm"
         layout="vertical"

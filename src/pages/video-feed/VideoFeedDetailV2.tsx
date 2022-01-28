@@ -152,27 +152,23 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
   useEffect(() => {
     if (showBrandForm)
       setPageTitle(
-        `Store ${
-          selectedBrandIndex > -1
-            ? `${selectedBrandIndex + 1} Update`
-            : 'Creation'
-        }`
+        selectedBrandIndex > -1
+          ? `${selectedBrand?.brandName} Update`
+          : 'New Segment Master Brand'
       );
     else if (showTagForm)
       setPageTitle(
-        `Tag ${
-          selectedTagIndex > -1 ? `${selectedTagIndex + 1} Update` : 'Creation'
-        }`
+        selectedTagIndex > -1
+          ? `${selectedTag?.tagName} Update`
+          : 'New Segment Tag'
       );
     else if (selectedSegment) {
       const packages = feedForm.getFieldValue('package');
       setPageTitle(
-        `Segment ${
-          selectedSegmentIndex > -1 &&
+        selectedSegmentIndex > -1 &&
           (packages ? packages.length !== selectedSegmentIndex : true)
-            ? `${selectedSegmentIndex + 1} Update`
-            : 'Creation'
-        }`
+          ? `Segment ${selectedSegmentIndex + 1} Update`
+          : 'New Segment'
       );
     } else
       setPageTitle(
@@ -180,9 +176,8 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
           ? feedItem.title.length > 50
             ? `${feedItem.title.substr(0, 50)} Update`
             : `${feedItem.title} Update`
-          : 'Update'
+          : 'New Video Feed'
       );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedSegment, showBrandForm, showTagForm]);
 
   useEffect(() => {
@@ -968,7 +963,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
 
   return (
     <div className="video-feed-detail">
-      <PageHeader title={pageTitle} subTitle="Video Update" />
+      <PageHeader title={pageTitle} />
       <Form.Provider
         onFormFinish={(name, { forms }) => {
           const { feedForm, segmentForm } = forms;

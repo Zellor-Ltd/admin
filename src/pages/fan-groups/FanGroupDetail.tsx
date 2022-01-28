@@ -28,7 +28,9 @@ const FanGroupsDetail: React.FC<FanGroupsDetailProps> = ({
 
   return (
     <>
-      <PageHeader title="Fan Group Update" subTitle="Fan Group" />
+      <PageHeader
+        title={fanGroup ? `${fanGroup.name} Update` : 'New Fan Group'}
+      />
       <Form
         name="fanGroupForm"
         layout="vertical"

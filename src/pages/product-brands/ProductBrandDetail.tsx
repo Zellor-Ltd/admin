@@ -53,8 +53,11 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
   return (
     <>
       <PageHeader
-        title={productBrand ? `${productBrand.brandName} Update` : 'New Item'}
-        subTitle="Product Brand Template"
+        title={
+          productBrand
+            ? `${productBrand.brandName} Update`
+            : 'New Product Brand'
+        }
       />
       <Form
         name="productBrandForm"

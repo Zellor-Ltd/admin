@@ -81,17 +81,11 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
     setAgeRange(value);
   };
 
-  const getHeaderTitle = () => {
-    if (creator) {
-      return `${creator?.userName} Update`;
-    }
-
-    return 'Creator Creation';
-  };
-
   return (
     <>
-      <PageHeader title={getHeaderTitle()} subTitle="Creator" />
+      <PageHeader
+        title={creator ? `${creator?.firstName} Update` : 'New Creator'}
+      />
       <Form
         form={form}
         layout="vertical"
@@ -117,7 +111,10 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                   label="Username (Email)"
                   name="user"
                   rules={[
-                    { type: 'email', message: 'please use an valid email' },
+                    {
+                      type: 'email',
+                      message: 'Please use a valid e-mail address.',
+                    },
                   ]}
                 >
                   <Input />

@@ -54,7 +54,7 @@ const EndpointDetail: React.FC<RouteComponentProps> = ({
 
   return (
     <>
-      <PageHeader title="Endpoint Update" subTitle="Endpoint" />
+      <PageHeader title={initial ? `${initial.name} Update` : 'New Endpoint'} />
       <Form
         name="endpointForm"
         layout="vertical"
