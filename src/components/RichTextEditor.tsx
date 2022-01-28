@@ -79,6 +79,8 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
         wrapperClassName="wrapperClassName"
         editorClassName="editorClassName"
         onEditorStateChange={handleEditorChange}
+        wrapperStyle={{ border: '1px solid #F1F1F1' }}
+        editorStyle={{ padding: '4px' }}
       />
       {editableHtml && (
         <>
