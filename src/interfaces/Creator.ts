@@ -9,4 +9,6 @@ export interface Creator {
   lastName: string;
   coverPictureUrl?: string;
   avatar?: Image;
+  masthead?: Image[];
+  activeMasthead?: Image;
 }

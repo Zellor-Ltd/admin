@@ -58,7 +58,7 @@ interface ProductDetailsProps {
   ) => void;
   onRollback?: (
     oldUrl: string,
-    sourceProp: 'image' | 'tagImage' | 'thumbnailUrl',
+    sourceProp: 'image' | 'tagImage' | 'thumbnailUrl' | 'masthead',
     imageIndex: number
   ) => void;
 }

@@ -608,7 +608,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
 
   const onRollback = (
     oldUrl: string,
-    sourceProp: 'image' | 'tagImage' | 'thumbnailUrl',
+    sourceProp: 'image' | 'tagImage' | 'thumbnailUrl' | 'masthead',
     imageIndex: number
   ) => {
     if (currentProduct) {
