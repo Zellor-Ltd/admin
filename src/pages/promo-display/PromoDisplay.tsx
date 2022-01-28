@@ -203,7 +203,7 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
         <div>
           <PageHeader
             title="Shop Display"
-            subTitle="List of Shop Display"
+            subTitle="List of Shop Displays"
             extra={[
               <Button
                 key="1"

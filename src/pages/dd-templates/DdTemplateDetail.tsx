@@ -29,8 +29,9 @@ const DdTemplatesDetail: React.FC<DdTemplatesDetailProps> = ({
   return (
     <>
       <PageHeader
-        title={template ? `${template.tagName} Template Update` : 'New Item'}
-        subTitle="Disco Dollar Template "
+        title={
+          template ? `${template.tagName} Update` : 'New Disco Dollar Template'
+        }
       />
       <Form
         name="ddTemplateForm"

@@ -29,7 +29,7 @@ const HomeScreenDetail: React.FC<HomeScreenDetailProps> = ({
 
   return (
     <>
-      <PageHeader title="Banner Update" subTitle="Banner" />
+      <PageHeader title={banner ? 'Banner Update' : 'New Banner'} />
       <Form
         name="bannerForm"
         layout="vertical"

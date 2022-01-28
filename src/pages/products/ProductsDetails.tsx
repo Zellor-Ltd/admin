@@ -289,10 +289,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
 
   return (
     <div className="products-details">
-      <PageHeader
-        title={product ? `${product?.name} Update` : 'New Product'}
-        subTitle="Form"
-      />
+      <PageHeader title={product ? `${product?.name} Update` : 'New Product'} />
       <Form
         form={form}
         name="productForm"
