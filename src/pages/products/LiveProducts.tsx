@@ -448,21 +448,6 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
           >
             <EyeOutlined />
           </Link>
-          {record.brand?.automated !== true && (
-            <Popconfirm
-              title="Are you sure？"
-              okText="Yes"
-              cancelText="No"
-              onConfirm={() => deleteItem(record.id, index)}
-            >
-              <Button
-                type="link"
-                style={{ padding: 0, margin: '6px 0 6px 6px' }}
-              >
-                <DeleteOutlined />
-              </Button>
-            </Popconfirm>
-          )}
           <Button
             onClick={() => setProductAPITest(record)}
             type="link"
