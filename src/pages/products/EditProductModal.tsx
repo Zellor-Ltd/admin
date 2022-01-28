@@ -3,7 +3,6 @@ import { useResetFormOnCloseModal } from 'hooks/useResetFormCloseModal';
 import { Product } from 'interfaces/Product';
 import { useEffect, useState } from 'react';
 import { useRequest } from 'hooks/useRequest';
-import { updateManyProducts } from 'services/DiscoClubService';
 import { EditMultipleModalProps } from 'components/EditMultipleButton';
 
 interface formValues {
@@ -35,11 +34,11 @@ const EditProductModal: React.FC<EditMultipleModalProps<Product>> = ({
         product.maxDiscoDollars = maxDiscoDollars;
         return product;
       });
-      await doRequest(
-        () => updateManyProducts(updatedProducts),
-        'Products updated.'
-      );
-      onOk();
+      // await doRequest(
+      //   //() => updateManyProducts(updatedProducts),
+      //   'Products updated.'
+      // );
+      // onOk();
       form.resetFields();
     });
   };

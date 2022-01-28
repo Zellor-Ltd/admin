@@ -1,6 +1,6 @@
 import {
   DeleteOutlined,
-  EditOutlined,
+  EyeOutlined,
   SearchOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
@@ -19,7 +19,6 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import './Products.scss';
-import EditMultipleButton from 'components/EditMultipleButton';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
 import EditableTable, { EditableColumnType } from 'components/EditableTable';
 import { SearchFilterDebounce } from 'components/SearchFilterDebounce';
@@ -31,7 +30,6 @@ import { Product } from 'interfaces/Product';
 import moment from 'moment';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import {
-  deleteProduct,
   fetchBrands,
   fetchProductBrands,
   fetchProducts,
@@ -279,11 +277,6 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refreshing]);
 
-  const deleteItem = async (_id: string, index: number) => {
-    await doRequest(() => deleteProduct(_id));
-    setProducts(prev => [...prev.slice(0, index), ...prev.slice(index + 1)]);
-  };
-
   const onSaveOnRowEdition = async (record: Product) => {
     setCurrentProduct(record);
     await saveCategories(() => saveProduct(record));
@@ -446,23 +439,8 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
             to={{ pathname: window.location.pathname, state: record }}
             onClick={() => editProduct(index, record)}
           >
-            <EditOutlined />
+            <EyeOutlined />
           </Link>
-          {record.brand?.automated !== true && (
-            <Popconfirm
-              title="Are you sure？"
-              okText="Yes"
-              cancelText="No"
-              onConfirm={() => deleteItem(record.id, index)}
-            >
-              <Button
-                type="link"
-                style={{ padding: 0, margin: '6px 0 6px 6px' }}
-              >
-                <DeleteOutlined />
-              </Button>
-            </Popconfirm>
-          )}
           <Button
             onClick={() => setProductAPITest(record)}
             type="link"
@@ -559,7 +537,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
               </Button>,
             ]}
           />
-          <Row align="bottom" justify="space-between">
+          <Row align="bottom" justify="space-between" className="mb-1">
             <Col lg={16} xs={24}>
               <Row gutter={8}>
                 <Col lg={6} xs={16}>
@@ -623,21 +601,6 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                   Search
                   <SearchOutlined style={{ color: 'white' }} />
                 </Button>
-                <div
-                  style={{
-                    position: 'relative',
-                    bottom: '-49px',
-                    marginLeft: '8px',
-                  }}
-                >
-                  <EditMultipleButton
-                    text="Edit Products"
-                    arrayList={products}
-                    ModalComponent={EditProductModal}
-                    selectedRowKeys={selectedRowKeys}
-                    onOk={refreshProducts}
-                  />
-                </div>
               </Row>
             </Col>
           </Row>

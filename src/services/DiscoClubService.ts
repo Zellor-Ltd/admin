@@ -350,20 +350,12 @@ export const saveVideoFeed = (params: FeedItem) => {
   }
 };
 
-export const updateManyProducts = (params: Product[]) => {
-  return instance.post('/Disco/Product/UpdateMany', params);
-};
-
 export const updateManyFans = (groupName: string, fansIds: string[]) => {
   return instance.post(`/Disco/Fan/SetUsersGroup/${groupName}`, fansIds);
 };
 
 export const saveProduct = (params: Product) => {
-  if (params.id) {
-    return instance.post('/Disco/Product/Update', params);
-  } else {
     return instance.put('/Disco/Product/Add', params);
-  }
 };
 
 export const saveProductBrand = (params: ProductBrand) => {
@@ -529,9 +521,6 @@ export const deleteTag = (data: IDelete) =>
 
 export const deleteCreator = (id: string) =>
   instance.delete(`Disco/Creator/Delete/${id}`);
-
-export const deleteProduct = (id: string) =>
-  instance.delete(`Disco/Product/Remove/${id}`);
 
 export const deleteProductBrand = (id: string) =>
   instance.delete(`Disco/ProductBrand/Adm/Delete/${id}`);

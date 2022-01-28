@@ -20,7 +20,6 @@ import {
 } from 'antd';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import EditableTable, { EditableColumnType } from 'components/EditableTable';
-import EditMultipleButton from 'components/EditMultipleButton';
 import useAllCategories from 'hooks/useAllCategories';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useRequest } from 'hooks/useRequest';
@@ -779,7 +778,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
               </Button>,
             ]}
           />
-          <Row align="bottom" justify="space-between">
+          <Row align="bottom" justify="space-between" className="mb-1">
             <Col lg={16} xs={24}>
               <Row gutter={8}>
                 <Col lg={6} xs={24}>
@@ -925,21 +924,6 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                   Search
                   <SearchOutlined style={{ color: 'white' }} />
                 </Button>
-                <div
-                  style={{
-                    position: 'relative',
-                    bottom: '-49px',
-                    marginLeft: '8px',
-                  }}
-                >
-                  <EditMultipleButton
-                    text="Edit Products"
-                    arrayList={products}
-                    ModalComponent={EditProductModal}
-                    selectedRowKeys={selectedRowKeys}
-                    onOk={handleEditProducts}
-                  />
-                </div>
               </Row>
             </Col>
           </Row>
