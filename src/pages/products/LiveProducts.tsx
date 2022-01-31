@@ -537,8 +537,9 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
     }
   };
 
-  const onSaveProduct = (record: Product) => {
-    refreshItem(record);
+  const onSaveProduct = (product: Product) => {
+    refreshItem(product);
+    setCurrentProduct(product);
     setDetails(false);
   };
 
@@ -703,7 +704,6 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
           onSave={onSaveProduct}
           onCancel={onCancelProduct}
           product={currentProduct}
-          setCurrentProduct={setCurrentProduct}
           productBrand={currentProductBrand}
           brand={currentMasterBrand}
           isFetchingBrands={isFetchingBrands}
