@@ -52,7 +52,6 @@ import { ProductCategory } from 'interfaces/Category';
 import { useSelector } from 'react-redux';
 import { SearchFilterDebounce } from 'components/SearchFilterDebounce';
 import { AppContext } from 'contexts/AppContext';
-import update from 'immutability-helper';
 import { ProductBrand } from 'interfaces/ProductBrand';
 import { productUtils } from '../../helpers/product-utils';
 import scrollIntoView from 'scroll-into-view';
@@ -559,75 +558,6 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
     setDetails(true);
   };
 
-  const handleMasterBrandChange = (filterMasterBrand: Function) => {
-    filterMasterBrand(form);
-  };
-
-  const handleProductBrandChange = (filterProductBrand: Function) => {
-    filterProductBrand(form);
-  };
-
-  const onOrderImages = (dragIndex: number, hoverIndex: number) => {
-    if (currentProduct) {
-      const dragImage = currentProduct?.image[dragIndex];
-      currentProduct.image = update(currentProduct.image as any, {
-        $splice: [
-          [dragIndex, 1],
-          [hoverIndex, 0, dragImage],
-        ],
-      });
-
-      setCurrentProduct({ ...currentProduct });
-    }
-  };
-
-  const onFitTo = (
-    fitTo: 'w' | 'h',
-    sourceProp: 'image' | 'tagImage' | 'thumbnailUrl',
-    imageIndex: number
-  ) => {
-    if (!sourceProp) {
-      throw new Error('missing sourceProp parameter');
-    }
-    if (currentProduct) {
-      switch (sourceProp) {
-        case 'image':
-          if (currentProduct[sourceProp][imageIndex].fitTo === fitTo) {
-            currentProduct[sourceProp][imageIndex].fitTo = undefined;
-          } else {
-            currentProduct[sourceProp][imageIndex].fitTo = fitTo;
-          }
-          break;
-        default:
-          if (currentProduct[sourceProp].fitTo === fitTo) {
-            currentProduct[sourceProp].fitTo = undefined;
-          } else {
-            currentProduct[sourceProp].fitTo = fitTo;
-          }
-      }
-
-      setCurrentProduct({ ...currentProduct });
-    }
-  };
-
-  const onRollback = (
-    oldUrl: string,
-    sourceProp: 'image' | 'tagImage' | 'thumbnailUrl' | 'masthead',
-    imageIndex: number
-  ) => {
-    if (currentProduct) {
-      switch (sourceProp) {
-        case 'image':
-          currentProduct[sourceProp][imageIndex].url = oldUrl;
-          break;
-        default:
-          currentProduct[sourceProp].url = oldUrl;
-      }
-
-      setCurrentProduct({ ...currentProduct });
-    }
-  };
-
   useEffect(() => {
     if (!details) {
       scrollIntoView(
@@ -638,8 +568,9 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
     }
   }, [details]);
 
-  const onSaveProduct = (record: Product) => {
-    refreshItem(record);
+  const onSaveProduct = (product: Product) => {
+    refreshItem(product);
+    setCurrentProduct(product);
     setDetails(false);
   };
 
@@ -751,14 +682,10 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
               onSave={onSaveProduct}
               onCancel={onCancelProduct}
               product={currentProduct}
-              setCurrentProduct={setCurrentProduct}
               productBrand={currentProductBrand}
               brand={currentMasterBrand}
               isFetchingBrands={isFetchingBrands}
               isFetchingProductBrand={isFetchingProductBrands}
-              onOrder={onOrderImages}
-              onFitTo={onFitTo}
-              onRollback={onRollback}
               isLive={false}
             />
           );
