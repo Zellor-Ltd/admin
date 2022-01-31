@@ -561,7 +561,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
           />
           <Row align="bottom" justify="space-between">
             <Col lg={16} xs={24}>
-              <Row gutter={8}>
+              <Row gutter={[8, 8]}>
                 <Col lg={6} xs={16}>
                   <SearchFilterDebounce
                     initialValue={searchFilter}

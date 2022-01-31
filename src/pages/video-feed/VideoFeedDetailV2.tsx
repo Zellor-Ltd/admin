@@ -259,8 +259,8 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
     });
   };
 
-  const handleSwitchChange = async (toggled: boolean) => {
-    if (toggled) {
+  const handleSwitchChange = async () => {
+    if (selectedOptions !== 'creator') {
       setSelectedOptions('creator');
       feedForm.setFieldsValue({ selectedOption: 'creator' });
       if (feedItem?.selectedOption === 'creator') {
@@ -598,15 +598,11 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
             </Button>
           </Tabs.TabPane>
           <Tabs.TabPane forceRender tab="Listing" key="Listing">
-            <Form.Item
-              name="selectedOption"
-              initialValue={selectedOptions}
-              label="Product Brand | Creator"
-            >
-              <SimpleSwitch
-                toggled={selectedOptions === 'creator'}
-                handleSwitchChange={toggled => handleSwitchChange(toggled)}
-              />
+            <Form.Item name="selectedOption" initialValue={selectedOptions}>
+              <Radio.Group buttonStyle="solid" onChange={handleSwitchChange}>
+                <Radio.Button value="productBrand">Product Brand</Radio.Button>
+                <Radio.Button value="creator">Creator</Radio.Button>
+              </Radio.Group>
             </Form.Item>
             <Col sm={12} lg={6}>
               {selectedOptions == 'productBrand' && (
