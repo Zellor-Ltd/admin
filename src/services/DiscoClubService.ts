@@ -151,10 +151,16 @@ export const fetchProducts = ({
   query,
   unclassified,
   page = 0,
-  limit = 30,
+  limit = 0,
   productBrandId,
   date,
   outOfStock,
+  status,
+  superCategoryId,
+  categoryId,
+  subCategoryId,
+  subSubCategoryId,
+  runId,
 }: {
   brandId?: string;
   query?: string;
@@ -162,6 +168,12 @@ export const fetchProducts = ({
   productBrandId?: string;
   date?: Date;
   outOfStock?: boolean;
+  status?: string;
+  superCategoryId?: string;
+  categoryId?: string;
+  subCategoryId?: string;
+  subSubCategoryId?: string;
+  runId?: string;
 } & Pagination) =>
   instance.put(`Disco/Product/Adm/List/${page}/${limit}`, {
     brandId,
@@ -170,6 +182,12 @@ export const fetchProducts = ({
     productBrandId,
     date,
     outOfStock,
+    status,
+    superCategoryId,
+    categoryId,
+    subCategoryId,
+    subSubCategoryId,
+    runId,
   });
 
 export const fetchAllStagingProducts = () =>
