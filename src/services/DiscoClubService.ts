@@ -151,7 +151,7 @@ export const fetchProducts = ({
   query,
   unclassified,
   page = 0,
-  limit = 0,
+  limit = 30,
   productBrandId,
   date,
   outOfStock,
