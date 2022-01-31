@@ -149,6 +149,7 @@ export const fetchVideoFeed2 = () => instance.get('Wi/Ep/GetVideoFeed');
 export const fetchProducts = ({
   brandId,
   query,
+  unclassified,
   page = 0,
   limit = 30,
   productBrandId,
@@ -163,6 +164,7 @@ export const fetchProducts = ({
 }: {
   brandId?: string;
   query?: string;
+  unclassified?: boolean;
   productBrandId?: string;
   date?: Date;
   outOfStock?: boolean;
@@ -176,6 +178,7 @@ export const fetchProducts = ({
   instance.put(`Disco/Product/Adm/List/${page}/${limit}`, {
     brandId,
     query,
+    unclassified,
     productBrandId,
     date,
     outOfStock,
