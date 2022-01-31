@@ -153,11 +153,6 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
     value: 'id',
   };
 
-  // useEffect(() => {
-  //   setProductCategories(allCategories.Category);
-  //   console.log('Category ->', allCategories.Category);
-  // }, [allCategories.Category]);
-
   const setSearchTagsByCategory = useCallback(
     (
       useInitialValue: boolean,
