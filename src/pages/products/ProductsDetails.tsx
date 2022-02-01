@@ -23,7 +23,7 @@ import { Brand } from 'interfaces/Brand';
 import { ProductBrand } from '../../interfaces/ProductBrand';
 import { AllCategories } from 'interfaces/Category';
 import { Product } from 'interfaces/Product';
-import { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { saveProduct, saveStagingProduct } from 'services/DiscoClubService';
 import ProductCategoriesTrees from './ProductCategoriesTrees';
@@ -33,6 +33,7 @@ import { SelectOption } from 'interfaces/SelectOption';
 import { productUtils } from 'helpers/product-utils';
 import { Image } from '../../interfaces/Image';
 import { useRequest } from 'hooks/useRequest';
+import update from 'immutability-helper';
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 const { getSearchTags, getCategories, removeSearchTagsByCategory } =
@@ -44,32 +45,11 @@ interface ProductDetailsProps {
   onSave?: (record: Product) => void;
   onCancel?: () => void;
   product?: Product;
-  setCurrentProduct: (Product) => void;
   brand?: string;
   productBrand?: string;
   isFetchingBrands: boolean;
   isFetchingProductBrand: boolean;
   isLive: boolean;
-  onOrder?: (dragIndex: number, hoverIndex: number) => void;
-  onFitTo?: (
-    fitTo: 'w' | 'h',
-    sourceProp: 'image' | 'tagImage' | 'thumbnailUrl',
-    imageIndex: number
-  ) => void;
-  onRollback?: (
-    oldUrl: string,
-    sourceProp: 'image' | 'tagImage' | 'thumbnailUrl' | 'masthead',
-    imageIndex: number
-  ) => void;
-}
-
-const optionsMapping: SelectOption = {
-  key: 'id',
-  label: 'brandName',
-  value: 'id',
-};
-interface RouteParams {
-  productMode: 'staging' | 'committed';
 }
 
 const ProductDetails: React.FC<ProductDetailsProps> = ({
@@ -77,7 +57,6 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
   productBrands,
   allCategories,
   product,
-  setCurrentProduct,
   productBrand,
   brand,
   onSave,
@@ -85,20 +64,30 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
   isFetchingBrands,
   isFetchingProductBrand,
   isLive,
-  onOrder,
-  onFitTo,
-  onRollback,
 }) => {
   const saveProductFn = isLive ? saveProduct : saveStagingProduct;
   const [loading, setLoading] = useState<boolean>(false);
-  const [ageRange, setageRange] = useState<[number, number]>([12, 100]);
+  const [ageRange, setAgeRange] = useState<[number, number]>([12, 100]);
   const [form] = Form.useForm();
   const [maxDiscountAlert, setMaxDiscountAlert] = useState<boolean>(false);
   const { doRequest } = useRequest({ setLoading });
+  const [_product, _setProduct] = useState(product);
 
   const {
     settings: { currency = [] },
   } = useSelector((state: any) => state.settings);
+
+  const optionsMapping: SelectOption = {
+    key: 'id',
+    label: 'brandName',
+    value: 'id',
+  };
+
+  useEffect(() => {
+    if (product) {
+      _setProduct(product);
+    }
+  }, [product]);
 
   const setDiscoPercentageByBrand = useCallback(
     (useInitialValue: boolean) => {
@@ -207,7 +196,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
 
   useEffect(() => {
     if (product?.ageMin && product?.ageMax)
-      setageRange([product?.ageMin, product?.ageMax]);
+      setAgeRange([product?.ageMin, product?.ageMax]);
   }, [product]);
 
   const onChangeAge = (value: [number, number]) => {
@@ -216,7 +205,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
       ageMax: value[1],
     });
 
-    setageRange(value);
+    setAgeRange(value);
   };
 
   const onFinish = async () => {
@@ -238,7 +227,6 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
       const { result } = await doRequest(() => saveProductFn(formProduct));
 
       setLoading(false);
-      message.success('Register updated with success.');
       formProduct.id
         ? onSave?.(formProduct)
         : onSave?.({ ...formProduct, id: result._id });
@@ -262,38 +250,107 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
   };
 
   const handleThumbnailOrTagReplacement = (prevImage: Image) => {
-    if (product) {
-      if (!product.image.some(img => img.url === prevImage.url)) {
-        product.image.push(prevImage);
+    if (_product) {
+      if (!_product.image.some(img => img.url === prevImage.url)) {
+        _product.image.push(prevImage);
       }
+      form.setFieldsValue({ ..._product });
     }
   };
 
   const onAssignToThumbnail = (file: Image) => {
-    if (product) {
-      const prevThumb = { ...product.thumbnailUrl };
-      product.thumbnailUrl = { ...file };
+    if (_product) {
+      const prevThumb = { ..._product.thumbnailUrl };
+      _product.thumbnailUrl = { ...file };
+      form.setFieldsValue({ ..._product });
       handleThumbnailOrTagReplacement(prevThumb);
-      setCurrentProduct({ ...product });
+      _setProduct({ ..._product });
     }
   };
 
   const onAssignToTag = (file: Image) => {
-    if (product) {
-      const prevTag = { ...product.tagImage };
-      product.tagImage = { ...file };
+    if (_product) {
+      const prevTag = { ..._product.tagImage };
+      _product.tagImage = { ...file };
       handleThumbnailOrTagReplacement(prevTag);
-      setCurrentProduct({ ...product });
+      form.setFieldsValue({ ..._product });
+      _setProduct({ ..._product });
+    }
+  };
+
+  const onOrder = (dragIndex: number, hoverIndex: number) => {
+    if (_product) {
+      const dragImage = _product?.image[dragIndex];
+      _product.image = update(_product.image as any, {
+        $splice: [
+          [dragIndex, 1],
+          [hoverIndex, 0, dragImage],
+        ],
+      });
+
+      form.setFieldsValue({ ..._product });
+      _setProduct({ ..._product });
+    }
+  };
+
+  const onFitTo = (
+    fitTo: 'w' | 'h',
+    sourceProp: 'image' | 'tagImage' | 'thumbnailUrl',
+    imageIndex: number
+  ) => {
+    if (!sourceProp) {
+      throw new Error('missing sourceProp parameter');
+    }
+    if (_product) {
+      switch (sourceProp) {
+        case 'image':
+          if (_product[sourceProp][imageIndex].fitTo === fitTo) {
+            _product[sourceProp][imageIndex].fitTo = undefined;
+          } else {
+            _product[sourceProp][imageIndex].fitTo = fitTo;
+          }
+          break;
+        default:
+          if (_product[sourceProp].fitTo === fitTo) {
+            _product[sourceProp].fitTo = undefined;
+          } else {
+            _product[sourceProp].fitTo = fitTo;
+          }
+      }
+
+      form.setFieldsValue({ ..._product });
+      _setProduct({ ..._product });
+    }
+  };
+
+  const onRollback = (
+    oldUrl: string,
+    sourceProp: 'image' | 'tagImage' | 'thumbnailUrl' | 'masthead',
+    imageIndex: number
+  ) => {
+    if (_product) {
+      switch (sourceProp) {
+        case 'image':
+          _product[sourceProp][imageIndex].url = oldUrl;
+          break;
+        default:
+          _product[sourceProp].url = oldUrl;
+      }
+
+      form.setFieldsValue({ ..._product });
+      _setProduct({ ..._product });
     }
   };
 
   return (
     <div className="products-details">
-      <PageHeader title={product ? `${product?.name} Update` : 'New Product'} />
+      <PageHeader
+        title={_product ? `${_product?.name} Update` : 'New Product'}
+      />
       <Form
         form={form}
         name="productForm"
-        initialValues={product}
+        initialValues={_product}
         onFinish={onFinish}
         onFinishFailed={({ errorFields }) => {
           errorFields.forEach(errorField => {
@@ -309,7 +366,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                 <Row gutter={8}>
                   <Col lg={20} xs={24}>
                     <Form.Item name="status" label="Status">
-                      <Radio.Group buttonStyle="solid">
+                      <Radio.Group disabled={isLive} buttonStyle="solid">
                         <Radio.Button value="live">Live</Radio.Button>
                         <Radio.Button value="paused">Paused</Radio.Button>
                       </Radio.Group>
@@ -321,17 +378,21 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                       label="Out of stock"
                       valuePropName="checked"
                     >
-                      <Switch />
+                      <Switch disabled={isLive} />
                     </Form.Item>
                   </Col>
                   <Col lg={24} xs={24}>
                     <Form.Item name="name" label="Short description">
-                      <Input />
+                      <Input disabled={isLive} />
                     </Form.Item>
                   </Col>
                   <Col lg={24} xs={24}>
                     <Form.Item label="Long description">
-                      <RichTextEditor formField="description" form={form} />
+                      <RichTextEditor
+                        formField="description"
+                        form={form}
+                        disabled={isLive}
+                      />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -359,7 +420,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                         optionsMapping={optionsMapping}
                         placeholder={'Select a brand'}
                         loading={isFetchingBrands}
-                        disabled={isFetchingBrands}
+                        disabled={isFetchingBrands || isLive}
                         allowClear={true}
                       ></SimpleSelect>
                     </Form.Item>
@@ -387,7 +448,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                         optionsMapping={optionsMapping}
                         placeholder={'Select a brand'}
                         loading={isFetchingProductBrand}
-                        disabled={isFetchingProductBrand}
+                        disabled={isFetchingProductBrand || isLive}
                         allowClear={true}
                       ></SimpleSelect>
                     </Form.Item>
@@ -400,7 +461,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                       label="Go Live Date"
                       getValueProps={formatMoment}
                     >
-                      <DatePicker format="DD/MM/YYYY" />
+                      <DatePicker format="DD/MM/YYYY" disabled={isLive} />
                     </Form.Item>
                   </Col>
                   <Col lg={12} xs={24}>
@@ -409,7 +470,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                       label="Expiration Date"
                       getValueProps={formatMoment}
                     >
-                      <DatePicker format="DD/MM/YYYY" />
+                      <DatePicker format="DD/MM/YYYY" disabled={isLive} />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -418,11 +479,12 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
           </Tabs.TabPane>
           <Tabs.TabPane forceRender tab="Categories" key="Categories">
             <ProductCategoriesTrees
-              categories={product?.categories}
+              categories={_product?.categories}
               allCategories={allCategories}
               form={form}
               handleCategoryChange={handleCategoryChange}
               handleCategoryDelete={handleCategoryDelete}
+              disabled={isLive}
             />
             <Col lg={16} xs={24}>
               <Form.Item
@@ -432,7 +494,11 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
               >
                 {({ getFieldValue }) => (
                   <Form.Item name={'searchTags'} label="Search Tags">
-                    <Select mode="tags" className="product-search-tags">
+                    <Select
+                      mode="tags"
+                      className="product-search-tags"
+                      disabled={isLive}
+                    >
                       {getFieldValue('searchTags')?.map((searchTag: any) => (
                         <Select.Option key={searchTag} value={searchTag}>
                           {searchTag}
@@ -456,6 +522,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                     max={100}
                     value={ageRange}
                     onChange={onChangeAge}
+                    disabled={isLive}
                   />
                 </Form.Item>
               </Col>
@@ -467,7 +534,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                   label="Gender"
                   rules={[{ required: true, message: `Gender is required.` }]}
                 >
-                  <Select mode="multiple">
+                  <Select mode="multiple" disabled={isLive}>
                     <Select.Option value="Female">Female</Select.Option>
                     <Select.Option value="Male">Male</Select.Option>
                     <Select.Option value="Other">Other</Select.Option>
@@ -483,7 +550,10 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
             <Row gutter={8}>
               <Col lg={8} xs={24}>
                 <Form.Item name="currencyIsoCode" label="Default Currency">
-                  <Select placeholder="Please select a currency">
+                  <Select
+                    placeholder="Please select a currency"
+                    disabled={isLive}
+                  >
                     {currency.map((curr: any) => (
                       <Select.Option key={curr.value} value={curr.value}>
                         {curr.name}
@@ -500,14 +570,17 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                     { required: true, message: `Default Price is required.` },
                   ]}
                 >
-                  <InputNumber />
+                  <InputNumber disabled={isLive} />
                 </Form.Item>
               </Col>
             </Row>
             <Row gutter={8}>
               <Col lg={8} xs={24}>
                 <Form.Item name="currencyIsoCodeUS" label="Currency US">
-                  <Select placeholder="Please select a currency">
+                  <Select
+                    placeholder="Please select a currency"
+                    disabled={isLive}
+                  >
                     {currency.map((curr: any) => (
                       <Select.Option key={curr.value} value={curr.value}>
                         {curr.name}
@@ -518,14 +591,17 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
               </Col>
               <Col lg={8} xs={24}>
                 <Form.Item name="originalPriceUS" label="Price US" rules={[{}]}>
-                  <InputNumber />
+                  <InputNumber disabled={isLive} />
                 </Form.Item>
               </Col>
             </Row>
             <Row gutter={8}>
               <Col lg={8} xs={24}>
                 <Form.Item name="currencyIsoCodeGB" label="Currency UK">
-                  <Select placeholder="Please select a currency">
+                  <Select
+                    placeholder="Please select a currency"
+                    disabled={isLive}
+                  >
                     {currency.map((curr: any) => (
                       <Select.Option key={curr.value} value={curr.value}>
                         {curr.name}
@@ -536,14 +612,17 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
               </Col>
               <Col lg={8} xs={24}>
                 <Form.Item name="originalPriceGB" label="Price UK" rules={[{}]}>
-                  <InputNumber />
+                  <InputNumber disabled={isLive} />
                 </Form.Item>
               </Col>
             </Row>
             <Row gutter={8}>
               <Col lg={8} xs={24}>
                 <Form.Item name="currencyIsoCodeIE" label="Currency Europe">
-                  <Select placeholder="Please select a currency">
+                  <Select
+                    placeholder="Please select a currency"
+                    disabled={isLive}
+                  >
                     {currency.map((curr: any) => (
                       <Select.Option key={curr.value} value={curr.value}>
                         {curr.name}
@@ -558,7 +637,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                   label="Price Europe"
                   rules={[{}]}
                 >
-                  <InputNumber />
+                  <InputNumber disabled={isLive} />
                 </Form.Item>
               </Col>
             </Row>
@@ -569,7 +648,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                   label="Allow Use of DD?"
                   valuePropName="checked"
                 >
-                  <Switch />
+                  <Switch disabled={isLive} />
                 </Form.Item>
               </Col>
               <Col lg={4} xs={8}>
@@ -612,12 +691,13 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                   <InputNumber
                     parser={value => (value || '').replace(/-/g, '')}
                     precision={0}
+                    disabled={isLive}
                   />
                 </Form.Item>
               </Col>
               <Col lg={4} xs={8}>
                 <Form.Item name="discoPercentage" label="Disco Percentage %">
-                  <InputNumber />
+                  <InputNumber disabled={isLive} />
                 </Form.Item>
               </Col>
             </Row>
@@ -628,24 +708,24 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                   label="Shopify Uid"
                   rules={[{}]}
                 >
-                  <InputNumber />
+                  <InputNumber disabled={isLive} />
                 </Form.Item>
               </Col>
               <Col lg={4} xs={8}>
                 <Form.Item name="magentoId" label="Magento Id">
-                  <InputNumber />
+                  <InputNumber disabled={isLive} />
                 </Form.Item>
               </Col>
               <Col lg={4} xs={8}>
                 <Form.Item name="sku" label="SKU">
-                  <InputNumber />
+                  <InputNumber disabled={isLive} />
                 </Form.Item>
               </Col>
             </Row>
             <Row>
               <Col lg={4} xs={8}>
                 <Form.Item name="weight" label="Weight">
-                  <InputNumber placeholder="Weight in Kg" />
+                  <InputNumber placeholder="Weight in Kg" disabled={isLive} />
                 </Form.Item>
               </Col>
             </Row>
@@ -655,22 +735,24 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
               <Col lg={24} xs={24}>
                 <Form.Item label="Tag Image">
                   <Upload.ImageUpload
-                    fileList={product?.tagImage}
+                    fileList={_product?.tagImage}
                     formProp="tagImage"
                     form={form}
                     onFitTo={onFitTo}
                     onRollback={onRollback}
+                    disabled={isLive}
                   />
                 </Form.Item>
               </Col>
               <Col lg={24} xs={24}>
                 <Form.Item label="Thumbnail">
                   <Upload.ImageUpload
-                    fileList={product?.thumbnailUrl}
+                    fileList={_product?.thumbnailUrl}
                     formProp="thumbnailUrl"
                     form={form}
                     onFitTo={onFitTo}
                     onRollback={onRollback}
+                    disabled={isLive}
                   />
                 </Form.Item>
               </Col>
@@ -678,7 +760,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                 <Form.Item label="Image">
                   <div
                     className={
-                      product ? (product.image ? 'img-upload-div' : '') : ''
+                      _product ? (_product.image ? 'img-upload-div' : '') : ''
                     }
                   >
                     <Upload.ImageUpload
@@ -693,6 +775,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                       onOrder={onOrder}
                       onFitTo={onFitTo}
                       onRollback={onRollback}
+                      disabled={isLive}
                     />
                   </div>
                 </Form.Item>

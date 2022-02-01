@@ -7,12 +7,14 @@ interface SearchFilterDebounceProps {
   filterFunction: (filterText: string) => void;
   initialValue?: string;
   label?: string;
+  style?: React.CSSProperties;
 }
 
 export const SearchFilterDebounce: React.FC<SearchFilterDebounceProps> = ({
   filterFunction,
   initialValue = '',
   label = 'Search',
+  style,
 }) => {
   const [text, setText] = useState<string>(initialValue);
 
@@ -25,7 +27,7 @@ export const SearchFilterDebounce: React.FC<SearchFilterDebounceProps> = ({
   useEffect(() => debounced.current(text), [text]);
 
   return (
-    <div style={{ marginBottom: '16px' }}>
+    <div style={style}>
       <Typography.Title level={5} title={label}>
         {label}
       </Typography.Title>

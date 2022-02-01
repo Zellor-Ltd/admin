@@ -53,6 +53,7 @@ interface ImageUploadProps {
     sourceProp: 'image' | 'tagImage' | 'thumbnailUrl' | 'masthead',
     removed?: boolean
   ) => void;
+  disabled?: boolean;
 }
 
 interface ImageDnDProps {
@@ -78,6 +79,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   scrollOverflow,
   classNames = '',
   onImageChange,
+  disabled = false,
 }) => {
   const [fileListLocal, setFileListLocal] = useState<any>([]);
   const [isCropping, setIsCropping] = useState(false);
@@ -479,6 +481,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
           maxCount={maxCount}
           onPreview={onPreview}
           itemRender={itemRender}
+          disabled={disabled}
         >
           {fileListLocal.length >= maxCount ? null : uploadButton}
         </Upload>

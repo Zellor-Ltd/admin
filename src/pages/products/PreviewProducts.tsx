@@ -51,7 +51,6 @@ import { ProductCategory } from 'interfaces/Category';
 import { useSelector } from 'react-redux';
 import { SearchFilterDebounce } from 'components/SearchFilterDebounce';
 import { AppContext } from 'contexts/AppContext';
-import update from 'immutability-helper';
 import { ProductBrand } from 'interfaces/ProductBrand';
 import { productUtils } from '../../helpers/product-utils';
 import scrollIntoView from 'scroll-into-view';
@@ -105,6 +104,8 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
   const [productStatusFilter, setProductStatusFilter] =
     useState<string>('live');
 
+  const [productSuperCategoryFilter, setProductSuperCategoryFilter] =
+    useState<ProductCategory>();
   const [productCategoryFilter, setProductCategoryFilter] =
     useState<ProductCategory>();
   const [productSubCategoryFilter, setProductSubCategoryFilter] =
@@ -126,6 +127,12 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
     settings: { currency = [] },
   } = useSelector((state: any) => state.settings);
 
+  const productSuperCategoryOptionsMapping: SelectOption = {
+    key: 'id',
+    label: 'superCategory',
+    value: 'id',
+  };
+
   const productCategoryOptionsMapping: SelectOption = {
     key: 'id',
     label: 'category',
@@ -143,11 +150,6 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
     label: 'subSubCategory',
     value: 'id',
   };
-
-  // useEffect(() => {
-  //   setProductCategories(allCategories.Category);
-  //   console.log('Category ->', allCategories.Category);
-  // }, [allCategories.Category]);
 
   const setSearchTagsByCategory = useCallback(
     (
@@ -310,6 +312,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
         productBrandId: productBrandFilter?.id,
         outOfStock: outOfStockFilter,
         status: productStatusFilter,
+        superCategoryId: productSuperCategoryFilter?.id,
         categoryId: productCategoryFilter?.id,
         subCategoryId: productSubCategoryFilter?.id,
         subSubCategoryId: productSubSubCategoryFilter?.id,
@@ -554,75 +557,6 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
     setDetails(true);
   };
 
-  const handleMasterBrandChange = (filterMasterBrand: Function) => {
-    filterMasterBrand(form);
-  };
-
-  const handleProductBrandChange = (filterProductBrand: Function) => {
-    filterProductBrand(form);
-  };
-
-  const onOrderImages = (dragIndex: number, hoverIndex: number) => {
-    if (currentProduct) {
-      const dragImage = currentProduct?.image[dragIndex];
-      currentProduct.image = update(currentProduct.image as any, {
-        $splice: [
-          [dragIndex, 1],
-          [hoverIndex, 0, dragImage],
-        ],
-      });
-
-      setCurrentProduct({ ...currentProduct });
-    }
-  };
-
-  const onFitTo = (
-    fitTo: 'w' | 'h',
-    sourceProp: 'image' | 'tagImage' | 'thumbnailUrl',
-    imageIndex: number
-  ) => {
-    if (!sourceProp) {
-      throw new Error('missing sourceProp parameter');
-    }
-    if (currentProduct) {
-      switch (sourceProp) {
-        case 'image':
-          if (currentProduct[sourceProp][imageIndex].fitTo === fitTo) {
-            currentProduct[sourceProp][imageIndex].fitTo = undefined;
-          } else {
-            currentProduct[sourceProp][imageIndex].fitTo = fitTo;
-          }
-          break;
-        default:
-          if (currentProduct[sourceProp].fitTo === fitTo) {
-            currentProduct[sourceProp].fitTo = undefined;
-          } else {
-            currentProduct[sourceProp].fitTo = fitTo;
-          }
-      }
-
-      setCurrentProduct({ ...currentProduct });
-    }
-  };
-
-  const onRollback = (
-    oldUrl: string,
-    sourceProp: 'image' | 'tagImage' | 'thumbnailUrl' | 'masthead',
-    imageIndex: number
-  ) => {
-    if (currentProduct) {
-      switch (sourceProp) {
-        case 'image':
-          currentProduct[sourceProp][imageIndex].url = oldUrl;
-          break;
-        default:
-          currentProduct[sourceProp].url = oldUrl;
-      }
-
-      setCurrentProduct({ ...currentProduct });
-    }
-  };
-
   useEffect(() => {
     if (!details) {
       scrollIntoView(
@@ -633,8 +567,9 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
     }
   }, [details]);
 
-  const onSaveProduct = (record: Product) => {
-    refreshItem(record);
+  const onSaveProduct = (product: Product) => {
+    refreshItem(product);
+    setCurrentProduct(product);
     setDetails(false);
   };
 
@@ -746,14 +681,10 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
               onSave={onSaveProduct}
               onCancel={onCancelProduct}
               product={currentProduct}
-              setCurrentProduct={setCurrentProduct}
               productBrand={currentProductBrand}
               brand={currentMasterBrand}
               isFetchingBrands={isFetchingBrands}
               isFetchingProductBrand={isFetchingProductBrands}
-              onOrder={onOrderImages}
-              onFitTo={onFitTo}
-              onRollback={onRollback}
               isLive={false}
             />
           );
@@ -780,7 +711,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
           />
           <Row align="bottom" justify="space-between" className="mb-1">
             <Col lg={16} xs={24}>
-              <Row gutter={8}>
+              <Row gutter={[8,8]}>
                 <Col lg={6} xs={24}>
                   <SearchFilterDebounce
                     initialValue={searchFilter}
@@ -788,12 +719,12 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                     label="Search by Name"
                   />
                 </Col>
-                <Col lg={6} xs={16}>
+                <Col lg={6} xs={24}>
                   <Typography.Title level={5}>Master Brand</Typography.Title>
                   <SimpleSelect
                     data={brands}
                     onChange={(_, brand) => onChangeBrand(brand)}
-                    style={{ width: '100%' }}
+                    style={{ width: '100%'}}
                     selectedOption={brandFilter?.brandName}
                     optionsMapping={optionsMapping}
                     placeholder={'Select a master brand'}
@@ -802,14 +733,14 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                     allowClear={true}
                   ></SimpleSelect>
                 </Col>
-                <Col lg={6} xs={16}>
+                <Col lg={6} xs={24}>
                   <Typography.Title level={5}>Product Brand</Typography.Title>
                   <SimpleSelect
                     data={productBrands}
                     onChange={(_, productBrand) =>
                       onChangeProductBrand(productBrand)
                     }
-                    style={{ width: '100%' }}
+                    style={{ width: '100%'}}
                     selectedOption={productBrandFilter?.brandName}
                     optionsMapping={optionsMapping}
                     placeholder={'Select a Product Brand'}
@@ -822,7 +753,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                   <Typography.Title level={5}>Status</Typography.Title>
                   <Select
                     placeholder="Select a Status"
-                    style={{ width: '100%' }}
+                    style={{ width: '100%'}}
                     onChange={(value: string) => setProductStatusFilter(value)}
                     allowClear={true}
                     defaultValue={productStatusFilter}
@@ -832,13 +763,35 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                   </Select>
                 </Col>
                 <Col lg={6} xs={24}>
+                  <Typography.Title level={5}>Super Category</Typography.Title>
+                  <SimpleSelect
+                    data={allCategories['Super Category'].filter(item => {
+                      return (
+                        item.superCategory === 'Women' ||
+                        item.superCategory === 'Men' ||
+                        item.superCategory === 'Children'
+                      );
+                    })}
+                    onChange={(_, category) =>
+                      setProductSuperCategoryFilter(category)
+                    }
+                    style={{ width: '100%'}}
+                    selectedOption={productSuperCategoryFilter?.id}
+                    optionsMapping={productSuperCategoryOptionsMapping}
+                    placeholder={'Select a Super Category'}
+                    loading={fetchingCategories}
+                    disabled={fetchingCategories}
+                    allowClear={true}
+                  ></SimpleSelect>
+                </Col>
+                <Col lg={6} xs={24}>
                   <Typography.Title level={5}>Category</Typography.Title>
                   <SimpleSelect
                     data={allCategories.Category}
                     onChange={(_, category) =>
                       setProductCategoryFilter(category)
                     }
-                    style={{ width: '100%' }}
+                    style={{ width: '100%'}}
                     selectedOption={productCategoryFilter?.id}
                     optionsMapping={productCategoryOptionsMapping}
                     placeholder={'Select a Category'}
@@ -854,7 +807,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                     onChange={(_, category) =>
                       setProductSubCategoryFilter(category)
                     }
-                    style={{ width: '100%' }}
+                    style={{ width: '100%'}}
                     selectedOption={productSubCategoryFilter?.id}
                     optionsMapping={productSubCategoryOptionsMapping}
                     placeholder={'Select a Sub Category'}
@@ -872,7 +825,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                     onChange={(_, category) =>
                       setProductSubSubCategoryFilter(category)
                     }
-                    style={{ width: '100%' }}
+                    style={{ width: '100%'}}
                     selectedOption={productSubSubCategoryFilter?.id}
                     optionsMapping={productSubSubCategoryOptionsMapping}
                     placeholder={'Select a Sub SubCategory'}

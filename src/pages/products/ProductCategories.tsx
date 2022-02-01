@@ -16,6 +16,7 @@ interface ProductCategoriesProps {
   productCategoryIndex: number;
   initialValues: SelectedProductCategories[];
   handleCategoryChange: Function;
+  disabled?: boolean;
 }
 
 const formatProductCategories: (
@@ -40,6 +41,7 @@ const ProductCategories: React.FC<ProductCategoriesProps> = ({
   productCategoryIndex,
   initialValues,
   handleCategoryChange,
+  disabled = false,
 }) => {
   const { filteredCategories, filterCategory } = useAllCategories({
     initialValues: formatProductCategories(initialValues[productCategoryIndex]),
@@ -82,7 +84,9 @@ const ProductCategories: React.FC<ProductCategoriesProps> = ({
           rules={[{ required: _index < 2, message: `${key} is required` }]}
         >
           <Select
-            disabled={!filteredCategories[key as keyof AllCategories].length}
+            disabled={
+              disabled || !filteredCategories[key as keyof AllCategories].length
+            }
             allowClear={_index >= 2}
             placeholder="Please select a category"
             style={{ width: '180px' }}
