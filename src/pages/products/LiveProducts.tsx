@@ -37,7 +37,6 @@ import {
   fetchProducts,
   saveProduct,
 } from 'services/DiscoClubService';
-import EditProductModal from './EditProductModal';
 import ProductAPITestModal from './ProductAPITestModal';
 import ProductExpandedRow from './ProductExpandedRow';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
@@ -89,7 +88,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [productStatusFilter, setProductStatusFilter] =
     useState<string>('live');
-    const [runIdFilter, setRunIdFilter] = useState<string>();
+  const [runIdFilter, setRunIdFilter] = useState<string>();
 
   const [productSuperCategoryFilter, setProductSuperCategoryFilter] =
     useState<ProductCategory>();
@@ -628,7 +627,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                   <Typography.Title level={5}>Status</Typography.Title>
                   <Select
                     placeholder="Select a Status"
-                    style={{ width: '100%'}}
+                    style={{ width: '100%' }}
                     onChange={(value: string) => setProductStatusFilter(value)}
                     allowClear={true}
                     defaultValue={productStatusFilter}
@@ -650,7 +649,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                     onChange={(_, category) =>
                       setProductSuperCategoryFilter(category)
                     }
-                    style={{ width: '100%'}}
+                    style={{ width: '100%' }}
                     selectedOption={productSuperCategoryFilter?.id}
                     optionsMapping={productSuperCategoryOptionsMapping}
                     placeholder={'Select a Super Category'}
@@ -666,7 +665,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                     onChange={(_, category) =>
                       setProductCategoryFilter(category)
                     }
-                    style={{ width: '100%'}}
+                    style={{ width: '100%' }}
                     selectedOption={productCategoryFilter?.id}
                     optionsMapping={productCategoryOptionsMapping}
                     placeholder={'Select a Category'}
@@ -682,7 +681,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                     onChange={(_, category) =>
                       setProductSubCategoryFilter(category)
                     }
-                    style={{ width: '100%'}}
+                    style={{ width: '100%' }}
                     selectedOption={productSubCategoryFilter?.id}
                     optionsMapping={productSubCategoryOptionsMapping}
                     placeholder={'Select a Sub Category'}
@@ -700,7 +699,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                     onChange={(_, category) =>
                       setProductSubSubCategoryFilter(category)
                     }
-                    style={{ width: '100%'}}
+                    style={{ width: '100%' }}
                     selectedOption={productSubSubCategoryFilter?.id}
                     optionsMapping={productSubSubCategoryOptionsMapping}
                     placeholder={'Select a Sub SubCategory'}
