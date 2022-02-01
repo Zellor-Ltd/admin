@@ -21,12 +21,12 @@ import { Order } from 'interfaces/Order';
 import moment from 'moment';
 import { useEffect, useRef, useState } from 'react';
 import Highlighter from 'react-highlight-words';
-import { useSelector } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import {
   fetchBrands,
   fetchFans,
   fetchOrders,
+  fetchSettings,
   saveOrder,
 } from 'services/DiscoClubService';
 import CopyOrderToClipboard from 'components/CopyOrderToClipboard';
@@ -35,6 +35,7 @@ import { SelectOption } from 'interfaces/SelectOption';
 import scrollIntoView from 'scroll-into-view';
 import FanDetail from 'pages/fans/FanDetail';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import { useMount } from 'react-use';
 
 const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -54,6 +55,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   const [eof, setEof] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [filteredOrders, setFilteredOrders] = useState<Order[]>([]);
+  const [ordersSettings, setOrdersSettings] = useState([]);
 
   const {
     arrayList: orders,
@@ -75,7 +77,13 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     value: 'user',
   };
 
+  useMount(async () => {
+    const response: any = await fetchSettings();
+    setOrdersSettings(response.results[0].order);
+  });
+
   const fetch = async () => {
+    setLoading(true);
     const orders: Order[] = await getValidOrders();
     const ordersWithFanName = orders.map(order => {
       const fan = fans.find(fan => fan.id === order.userid);
@@ -85,6 +93,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     setOrders(ordersWithFanName);
     setRefreshing(true);
     setLoaded(true);
+    setLoading(false);
   };
 
   const getValidOrders = async () => {
@@ -125,10 +134,6 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     clearFilters();
     setSearchText('');
   };
-
-  const {
-    settings: { order: ordersSettings = [] },
-  } = useSelector((state: any) => state.settings);
 
   const handleSelectChange = async (
     value: string,

@@ -20,7 +20,6 @@ import {
 } from 'antd';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import EditableTable, { EditableColumnType } from 'components/EditableTable';
-import EditMultipleButton from 'components/EditMultipleButton';
 import useAllCategories from 'hooks/useAllCategories';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useRequest } from 'hooks/useRequest';
@@ -44,7 +43,6 @@ import {
   saveStagingProduct,
   transferStageProduct,
 } from 'services/DiscoClubService';
-import EditProductModal from './EditProductModal';
 import ProductExpandedRow from './ProductExpandedRow';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
 import './Products.scss';
@@ -710,9 +708,9 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
               </Button>,
             ]}
           />
-          <Row align="bottom" justify="space-between">
+          <Row align="bottom" justify="space-between" className="mb-1">
             <Col lg={16} xs={24}>
-              <Row gutter={[8,8]}>
+              <Row gutter={[8, 8]}>
                 <Col lg={6} xs={24}>
                   <SearchFilterDebounce
                     initialValue={searchFilter}
@@ -725,7 +723,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                   <SimpleSelect
                     data={brands}
                     onChange={(_, brand) => onChangeBrand(brand)}
-                    style={{ width: '100%'}}
+                    style={{ width: '100%' }}
                     selectedOption={brandFilter?.brandName}
                     optionsMapping={optionsMapping}
                     placeholder={'Select a master brand'}
@@ -741,7 +739,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                     onChange={(_, productBrand) =>
                       onChangeProductBrand(productBrand)
                     }
-                    style={{ width: '100%'}}
+                    style={{ width: '100%' }}
                     selectedOption={productBrandFilter?.brandName}
                     optionsMapping={optionsMapping}
                     placeholder={'Select a Product Brand'}
@@ -754,7 +752,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                   <Typography.Title level={5}>Status</Typography.Title>
                   <Select
                     placeholder="Select a Status"
-                    style={{ width: '100%'}}
+                    style={{ width: '100%' }}
                     onChange={(value: string) => setProductStatusFilter(value)}
                     allowClear={true}
                     defaultValue={productStatusFilter}
@@ -776,7 +774,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                     onChange={(_, category) =>
                       setProductSuperCategoryFilter(category)
                     }
-                    style={{ width: '100%'}}
+                    style={{ width: '100%' }}
                     selectedOption={productSuperCategoryFilter?.id}
                     optionsMapping={productSuperCategoryOptionsMapping}
                     placeholder={'Select a Super Category'}
@@ -792,7 +790,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                     onChange={(_, category) =>
                       setProductCategoryFilter(category)
                     }
-                    style={{ width: '100%'}}
+                    style={{ width: '100%' }}
                     selectedOption={productCategoryFilter?.id}
                     optionsMapping={productCategoryOptionsMapping}
                     placeholder={'Select a Category'}
@@ -808,7 +806,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                     onChange={(_, category) =>
                       setProductSubCategoryFilter(category)
                     }
-                    style={{ width: '100%'}}
+                    style={{ width: '100%' }}
                     selectedOption={productSubCategoryFilter?.id}
                     optionsMapping={productSubCategoryOptionsMapping}
                     placeholder={'Select a Sub Category'}
@@ -826,7 +824,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                     onChange={(_, category) =>
                       setProductSubSubCategoryFilter(category)
                     }
-                    style={{ width: '100%'}}
+                    style={{ width: '100%' }}
                     selectedOption={productSubSubCategoryFilter?.id}
                     optionsMapping={productSubSubCategoryOptionsMapping}
                     placeholder={'Select a Sub SubCategory'}
@@ -878,21 +876,6 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                   Search
                   <SearchOutlined style={{ color: 'white' }} />
                 </Button>
-                <div
-                  style={{
-                    position: 'relative',
-                    bottom: '-49px',
-                    marginLeft: '8px',
-                  }}
-                >
-                  <EditMultipleButton
-                    text="Edit Products"
-                    arrayList={products}
-                    ModalComponent={EditProductModal}
-                    selectedRowKeys={selectedRowKeys}
-                    onOk={handleEditProducts}
-                  />
-                </div>
               </Row>
             </Col>
           </Row>

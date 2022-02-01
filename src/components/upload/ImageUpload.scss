@@ -14,10 +14,6 @@
   min-height: 9rem;
 }
 
-.big-image-height {
-  height: 13rem;
-}
-
 .fit-to-selected {
   outline: 0;
   box-shadow: none;
@@ -39,6 +35,12 @@
 
 .ant-upload-list-picture-card-container {
   flex-shrink: 0;
+  height: 104px;
+}
+
+.big-image-height .ant-upload-list-picture-card-container {
+  flex-shrink: 0;
+  height: 100%;
 }
 
 .custom-upload-button {
