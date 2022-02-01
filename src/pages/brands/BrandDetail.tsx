@@ -375,7 +375,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
         >
           <Tabs.TabPane forceRender tab="Details" key="Details">
             <Row gutter={8}>
-              <Col lg={3} xs={3}>
+              <Col lg={4} xs={4}>
                 <Form.Item
                   name="automated"
                   label="Automated"
@@ -384,7 +384,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                   <Switch />
                 </Form.Item>
               </Col>
-              <Col lg={3} xs={3}>
+              <Col lg={4} xs={4}>
                 <Form.Item
                   name="showOutOfStock"
                   label="Show Out of Stock"
@@ -393,14 +393,21 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                   <Switch />
                 </Form.Item>
               </Col>
+              <Col lg={5} xs={5}>
+                <Form.Item
+                  name="removeVideo"
+                  label="Remove video if no product"
+                  valuePropName="checked"
+                >
+                  <Switch />
+                </Form.Item>
+              </Col>
             </Row>
             <Row gutter={8}>
               <Col lg={12} xs={24}>
-                <Col lg={16} xs={24}>
-                  <Form.Item label="Master Brand Name" name="brandName">
-                    <Input />
-                  </Form.Item>
-                </Col>
+                <Form.Item label="Master Brand Name" name="brandName">
+                  <Input />
+                </Form.Item>
               </Col>
               <Col lg={24} xs={24}>
                 <Form.Item
@@ -418,21 +425,19 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                 </Form.Item>
               </Col>
               <Col lg={12} xs={24}>
-                <Col lg={16} xs={24}>
-                  <Form.Item
-                    name={'fitTo'}
-                    label="Master Brand Default Image Sizing"
-                  >
-                    <Select placeholder="Please select a sizing option">
-                      <Select.Option key="w" value="w" label="Width">
-                        Width
-                      </Select.Option>
-                      <Select.Option key="h" value="h" label="Height">
-                        Height
-                      </Select.Option>
-                    </Select>
-                  </Form.Item>
-                </Col>
+                <Form.Item
+                  name={'fitTo'}
+                  label="Master Brand Default Image Sizing"
+                >
+                  <Select placeholder="Please select a sizing option">
+                    <Select.Option key="w" value="w" label="Width">
+                      Width
+                    </Select.Option>
+                    <Select.Option key="h" value="h" label="Height">
+                      Height
+                    </Select.Option>
+                  </Select>
+                </Form.Item>
               </Col>
             </Row>
           </Tabs.TabPane>
