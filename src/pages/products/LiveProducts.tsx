@@ -21,7 +21,6 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import './Products.scss';
-import EditMultipleButton from 'components/EditMultipleButton';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
 import EditableTable, { EditableColumnType } from 'components/EditableTable';
 import { SearchFilterDebounce } from 'components/SearchFilterDebounce';
@@ -33,13 +32,11 @@ import { Product } from 'interfaces/Product';
 import moment from 'moment';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import {
-  deleteProduct,
   fetchBrands,
   fetchProductBrands,
   fetchProducts,
   saveProduct,
 } from 'services/DiscoClubService';
-import EditProductModal from './EditProductModal';
 import ProductAPITestModal from './ProductAPITestModal';
 import ProductExpandedRow from './ProductExpandedRow';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
@@ -91,7 +88,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [productStatusFilter, setProductStatusFilter] =
     useState<string>('live');
-    const [runIdFilter, setRunIdFilter] = useState<string>();
+  const [runIdFilter, setRunIdFilter] = useState<string>();
 
   const [productSuperCategoryFilter, setProductSuperCategoryFilter] =
     useState<ProductCategory>();
@@ -324,11 +321,6 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refreshing]);
-
-  const deleteItem = async (_id: string, index: number) => {
-    await doRequest(() => deleteProduct(_id));
-    setProducts(prev => [...prev.slice(0, index), ...prev.slice(index + 1)]);
-  };
 
   const onSaveOnRowEdition = async (record: Product) => {
     setCurrentProduct(record);
@@ -591,7 +583,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
               </Button>,
             ]}
           />
-          <Row align="bottom" justify="space-between">
+          <Row align="bottom" justify="space-between" className="mb-1">
             <Col lg={16} xs={24}>
               <Row gutter={[8, 8]}>
                 <Col lg={6} xs={16}>
@@ -635,7 +627,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                   <Typography.Title level={5}>Status</Typography.Title>
                   <Select
                     placeholder="Select a Status"
-                    style={{ width: '100%'}}
+                    style={{ width: '100%' }}
                     onChange={(value: string) => setProductStatusFilter(value)}
                     allowClear={true}
                     defaultValue={productStatusFilter}
@@ -657,7 +649,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                     onChange={(_, category) =>
                       setProductSuperCategoryFilter(category)
                     }
-                    style={{ width: '100%'}}
+                    style={{ width: '100%' }}
                     selectedOption={productSuperCategoryFilter?.id}
                     optionsMapping={productSuperCategoryOptionsMapping}
                     placeholder={'Select a Super Category'}
@@ -673,7 +665,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                     onChange={(_, category) =>
                       setProductCategoryFilter(category)
                     }
-                    style={{ width: '100%'}}
+                    style={{ width: '100%' }}
                     selectedOption={productCategoryFilter?.id}
                     optionsMapping={productCategoryOptionsMapping}
                     placeholder={'Select a Category'}
@@ -689,7 +681,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                     onChange={(_, category) =>
                       setProductSubCategoryFilter(category)
                     }
-                    style={{ width: '100%'}}
+                    style={{ width: '100%' }}
                     selectedOption={productSubCategoryFilter?.id}
                     optionsMapping={productSubCategoryOptionsMapping}
                     placeholder={'Select a Sub Category'}
@@ -707,7 +699,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                     onChange={(_, category) =>
                       setProductSubSubCategoryFilter(category)
                     }
-                    style={{ width: '100%'}}
+                    style={{ width: '100%' }}
                     selectedOption={productSubSubCategoryFilter?.id}
                     optionsMapping={productSubSubCategoryOptionsMapping}
                     placeholder={'Select a Sub SubCategory'}
@@ -751,21 +743,6 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                   Search
                   <SearchOutlined style={{ color: 'white' }} />
                 </Button>
-                <div
-                  style={{
-                    position: 'relative',
-                    bottom: '-49px',
-                    marginLeft: '8px',
-                  }}
-                >
-                  <EditMultipleButton
-                    text="Edit Products"
-                    arrayList={products}
-                    ModalComponent={EditProductModal}
-                    selectedRowKeys={selectedRowKeys}
-                    onOk={refreshProducts}
-                  />
-                </div>
               </Row>
             </Col>
           </Row>
