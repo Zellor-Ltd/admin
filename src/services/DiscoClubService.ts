@@ -681,6 +681,19 @@ export const saveBanner = (params: Banner) => {
 export const deleteBanner = (params: Banner) =>
   instance.put(`Wi/Ep/RemoveFeedBanner`, params);
 
+export const fetchMastheads = () => instance.get(`Wi/Ep/ListCreatorMastHead`);
+
+export const saveMasthead = (params: Banner) => {
+  if (params.id) {
+    return instance.post('Wi/Ep/UpdateCreatorMastHead', params);
+  } else {
+    return instance.put('Wi/Ep/AddCreatorMastHead', params);
+  }
+};
+
+export const deleteMasthead = (params: Banner) =>
+  instance.put(`Wi/Ep/RemoveCreatorMastHead`, params);
+
 export const uploadImage = (imageFile: File) => {
   const form = new FormData();
   form.append('file', imageFile);

@@ -84,6 +84,9 @@ const AdminSideMenu = () => {
         <Link to="/transactions">Transactions</Link>
       </Menu.Item>
       <SubMenu key="marketing" icon={<FireOutlined />} title="Marketing">
+        <Menu.Item key="marketing_creators-page" icon={<UserOutlined />}>
+          <Link to="/marketing_creators-page">Creator's Page</Link>
+        </Menu.Item>
         <Menu.Item key="marketing_home-screen" icon={<IdcardOutlined />}>
           <Link to="/marketing_home-screen">Home Screen</Link>
         </Menu.Item>
