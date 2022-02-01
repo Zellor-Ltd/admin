@@ -341,22 +341,24 @@ const AlternatePreviewList: React.FC<AlternatePreviewListProps> = ({
       width: '15%',
       align: 'center',
       render: (_, record) => (
-        <Form.Item>
-          <Upload.ImageUpload
-            fileList={record.thumbnailUrl}
-            formProp="thumbnailUrl"
-            form={form}
-            onFitTo={(fitTo, sourceProp, imageIndex) => {
-              onFitTo(fitTo, sourceProp, imageIndex, record);
-            }}
-            onRollback={(oldUrl, sourceProp, imageIndex) =>
-              onRollback(oldUrl, sourceProp, imageIndex, record)
-            }
-            onImageChange={(image, sourceProp, removed) =>
-              onImageChange(image, sourceProp, record, removed)
-            }
-          />
-        </Form.Item>
+        <div className="images-content">
+          <Form.Item>
+            <Upload.ImageUpload
+              fileList={record.thumbnailUrl}
+              formProp="thumbnailUrl"
+              form={form}
+              onFitTo={(fitTo, sourceProp, imageIndex) => {
+                onFitTo(fitTo, sourceProp, imageIndex, record);
+              }}
+              onRollback={(oldUrl, sourceProp, imageIndex) =>
+                onRollback(oldUrl, sourceProp, imageIndex, record)
+              }
+              onImageChange={(image, sourceProp, removed) =>
+                onImageChange(image, sourceProp, record, removed)
+              }
+            />
+          </Form.Item>
+        </div>
       ),
     },
     {
