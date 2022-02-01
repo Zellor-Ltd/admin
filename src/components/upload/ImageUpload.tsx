@@ -39,9 +39,10 @@ interface ImageUploadProps {
   ) => void;
   onRollback?: (
     oldUrl: string,
-    sourceProp: 'image' | 'tagImage' | 'thumbnailUrl',
+    sourceProp: 'image' | 'tagImage' | 'thumbnailUrl' | 'masthead',
     imageIndex: number
   ) => void;
+  onAssignToMasthead?: CallableFunction;
   onAssignToThumbnail?: CallableFunction;
   onAssignToTag?: CallableFunction;
   cropable?: boolean;
@@ -49,9 +50,10 @@ interface ImageUploadProps {
   classNames?: string;
   onImageChange?: (
     image: Image,
-    sourceProp: 'image' | 'tagImage' | 'thumbnailUrl',
+    sourceProp: 'image' | 'tagImage' | 'thumbnailUrl' | 'masthead',
     removed?: boolean
   ) => void;
+  disabled?: boolean;
 }
 
 interface ImageDnDProps {
@@ -70,12 +72,14 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   onOrder,
   onFitTo,
   onRollback,
+  onAssignToMasthead,
   onAssignToThumbnail,
   onAssignToTag,
   cropable,
   scrollOverflow,
   classNames = '',
   onImageChange,
+  disabled = false,
 }) => {
   const [fileListLocal, setFileListLocal] = useState<any>([]);
   const [isCropping, setIsCropping] = useState(false);
@@ -153,7 +157,8 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
       );
     } else {
       if (info.file.status === 'removed') {
-        const image = form.getFieldValue('image') || [];
+        const image =
+          form.getFieldValue('masthead') || form.getFieldValue('image') || [];
         if (typeof formProp === 'object') {
           form.setFieldsValue({
             [formProp.slice(0, 1)[0]]: createObjectFromPropArray(
@@ -186,7 +191,8 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   };
 
   const updateForm = (imageData: any) => {
-    const imageValue = form.getFieldValue('image') || [];
+    const imageValue =
+      form.getFieldValue('masthead') || form.getFieldValue('image') || [];
     if (typeof formProp === 'object') {
       form.setFieldsValue({
         [formProp.slice(0, 1)[0]]: createObjectFromPropArray(
@@ -329,6 +335,21 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
       );
     }
 
+    if (onAssignToMasthead) {
+      actionButtons.push(
+        <Col lg={6} xs={6}>
+          <Tooltip title="Assign to Masthead">
+            <Button
+              size="small"
+              shape="circle"
+              icon={<FileImageOutlined />}
+              onClick={() => onAssignToMasthead(file)}
+            />
+          </Tooltip>
+        </Col>
+      );
+    }
+
     if (onAssignToThumbnail) {
       actionButtons.push(
         <Col lg={6} xs={6}>
@@ -460,6 +481,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
           maxCount={maxCount}
           onPreview={onPreview}
           itemRender={itemRender}
+          disabled={disabled}
         >
           {fileListLocal.length >= maxCount ? null : uploadButton}
         </Upload>

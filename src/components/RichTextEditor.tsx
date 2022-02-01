@@ -21,12 +21,14 @@ interface RichTextEditorProps {
   formField: string;
   form: FormInstance;
   editableHtml?: boolean;
+  disabled?: boolean;
 }
 
 export const RichTextEditor: React.FC<RichTextEditorProps> = ({
   formField,
   form,
   editableHtml = false,
+  disabled,
 }) => {
   const generateEditorContent = (htmlValue: string) => {
     return EditorState.createWithContent(
@@ -74,11 +76,14 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
   return (
     <>
       <Editor
+        readOnly={disabled}
         editorState={editorState}
         toolbarClassName="toolbarClassName"
         wrapperClassName="wrapperClassName"
         editorClassName="editorClassName"
         onEditorStateChange={handleEditorChange}
+        wrapperStyle={{ border: '1px solid #F1F1F1' }}
+        editorStyle={{ padding: '4px' }}
       />
       {editableHtml && (
         <>

@@ -3,6 +3,7 @@ import {
   Col,
   Form,
   InputNumber,
+  message,
   Popconfirm,
   Row,
   Typography,
@@ -10,7 +11,6 @@ import {
 import { useForm } from 'antd/lib/form/Form';
 import { useRequest } from 'hooks/useRequest';
 import { Wallet } from 'interfaces/Wallet';
-import { WalletDetailParams } from 'interfaces/WalletTransactions';
 import { useState } from 'react';
 import { addBalanceToUser, resetUserBalance } from 'services/DiscoClubService';
 
@@ -53,7 +53,15 @@ const WalletEdit: React.FC<WalletEditProps> = ({
   return (
     <>
       <Col span={24}>
-        <Form form={form} onFinish={addBalance}>
+        <Form
+          form={form}
+          onFinish={addBalance}
+          onFinishFailed={({ errorFields }) => {
+            errorFields.forEach(errorField => {
+              message.error(errorField.errors[0]);
+            });
+          }}
+        >
           {label && (
             <Typography.Title level={5} title={label}>
               {label}
@@ -61,7 +69,16 @@ const WalletEdit: React.FC<WalletEditProps> = ({
           )}
           <Row gutter={2} style={{ display: 'flex', flexWrap: 'nowrap' }}>
             <Col span={12}>
-              <Form.Item name="balanceToAdd">
+              <Form.Item
+                rules={[
+                  {
+                    type: 'number',
+                    required: true,
+                    message: 'Balance must be a number.',
+                  },
+                ]}
+                name="balanceToAdd"
+              >
                 <InputNumber disabled={disabled}></InputNumber>
               </Form.Item>
             </Col>

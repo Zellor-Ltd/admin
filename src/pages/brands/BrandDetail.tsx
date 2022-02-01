@@ -36,6 +36,7 @@ import CopyIdToClipboard from 'components/CopyIdToClipboard';
 import moment from 'moment';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import scrollIntoView from 'scroll-into-view';
+import { Link } from 'react-router-dom';
 interface BrandDetailProps {
   onSave?: (record: Brand) => void;
   onCancel?: () => void;
@@ -157,6 +158,14 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
       dataIndex: 'key',
       width: '12%',
       align: 'center',
+      render: (value: string, record: BrandVault, index: number) => (
+        <Link
+          to={window.location.pathname}
+          onClick={() => editVault(record, index)}
+        >
+          {value}
+        </Link>
+      ),
     },
     {
       title: 'Shop Name',
@@ -344,8 +353,13 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
   return (
     <>
       <PageHeader
-        title={brand ? `${brand.brandName} Update` : 'New Item'}
-        subTitle="Master Brand"
+        title={
+          vaultOptions
+            ? 'Vault Update'
+            : brand
+            ? `${brand.brandName} Update`
+            : 'New Master Brand'
+        }
       />
       <Form
         name="brandForm"

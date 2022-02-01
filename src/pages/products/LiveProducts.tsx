@@ -1,6 +1,6 @@
 import {
   DeleteOutlined,
-  EditOutlined,
+  EyeOutlined,
   SearchOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
@@ -9,9 +9,11 @@ import {
   Checkbox,
   Col,
   Form,
+  Input,
   PageHeader,
   Popconfirm,
   Row,
+  Select,
   Spin,
   Typography,
 } from 'antd';
@@ -48,6 +50,7 @@ import { useMount } from 'react-use';
 import SimpleSelect from 'components/select/SimpleSelect';
 import { SelectOption } from '../../interfaces/SelectOption';
 import ProductsDetails from './ProductsDetails';
+import { ProductCategory } from 'interfaces/Category';
 
 const { getSearchTags, getCategories, removeSearchTagsByCategory } =
   productUtils;
@@ -60,8 +63,9 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
   const [ageRange, setAgeRange] = useState<[number, number]>([12, 100]);
   const [form] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
+  const [fetchingCategories, setFetchingCategories] = useState(false);
   const { fetchAllCategories, allCategories } = useAllCategories({
-    setLoading,
+    setLoading: setFetchingCategories,
   });
   const { usePageFilter } = useContext(AppContext);
   const [refreshing, setRefreshing] = useState<boolean>(false);
@@ -85,10 +89,46 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
   const [currentProduct, setCurrentProduct] = useState<Product>();
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
   const [products, setProducts] = useState<Product[]>([]);
+  const [productStatusFilter, setProductStatusFilter] =
+    useState<string>('live');
+    const [runIdFilter, setRunIdFilter] = useState<string>();
+
+  const [productSuperCategoryFilter, setProductSuperCategoryFilter] =
+    useState<ProductCategory>();
+  const [productCategoryFilter, setProductCategoryFilter] =
+    useState<ProductCategory>();
+  const [productSubCategoryFilter, setProductSubCategoryFilter] =
+    useState<ProductCategory>();
+  const [productSubSubCategoryFilter, setProductSubSubCategoryFilter] =
+    useState<ProductCategory>();
 
   const optionsMapping: SelectOption = {
     key: 'id',
     label: 'brandName',
+    value: 'id',
+  };
+
+  const productSuperCategoryOptionsMapping: SelectOption = {
+    key: 'id',
+    label: 'superCategory',
+    value: 'id',
+  };
+
+  const productCategoryOptionsMapping: SelectOption = {
+    key: 'id',
+    label: 'category',
+    value: 'id',
+  };
+
+  const productSubCategoryOptionsMapping: SelectOption = {
+    key: 'id',
+    label: 'subCategory',
+    value: 'id',
+  };
+
+  const productSubSubCategoryOptionsMapping: SelectOption = {
+    key: 'id',
+    label: 'subSubCategory',
     value: 'id',
   };
 
@@ -234,6 +274,12 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
         unclassified: false,
         productBrandId: productBrandFilter?.id,
         outOfStock: outOfStockFilter,
+        status: productStatusFilter,
+        superCategoryId: productSuperCategoryFilter?.id,
+        categoryId: productCategoryFilter?.id,
+        subCategoryId: productSubCategoryFilter?.id,
+        subSubCategoryId: productSubSubCategoryFilter?.id,
+        runId: runIdFilter,
       })
     );
     if (searchButton) {
@@ -446,23 +492,8 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
             to={{ pathname: window.location.pathname, state: record }}
             onClick={() => editProduct(index, record)}
           >
-            <EditOutlined />
+            <EyeOutlined />
           </Link>
-          {record.brand?.automated !== true && (
-            <Popconfirm
-              title="Are you sure？"
-              okText="Yes"
-              cancelText="No"
-              onConfirm={() => deleteItem(record.id, index)}
-            >
-              <Button
-                type="link"
-                style={{ padding: 0, margin: '6px 0 6px 6px' }}
-              >
-                <DeleteOutlined />
-              </Button>
-            </Popconfirm>
-          )}
           <Button
             onClick={() => setProductAPITest(record)}
             type="link"
@@ -537,8 +568,9 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
     }
   };
 
-  const onSaveProduct = (record: Product) => {
-    refreshItem(record);
+  const onSaveProduct = (product: Product) => {
+    refreshItem(product);
+    setCurrentProduct(product);
     setDetails(false);
   };
 
@@ -561,7 +593,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
           />
           <Row align="bottom" justify="space-between">
             <Col lg={16} xs={24}>
-              <Row gutter={8}>
+              <Row gutter={[8, 8]}>
                 <Col lg={6} xs={16}>
                   <SearchFilterDebounce
                     initialValue={searchFilter}
@@ -598,6 +630,102 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                     disabled={isFetchingProductBrand}
                     allowClear={true}
                   ></SimpleSelect>
+                </Col>
+                <Col lg={6} xs={24}>
+                  <Typography.Title level={5}>Status</Typography.Title>
+                  <Select
+                    placeholder="Select a Status"
+                    style={{ width: '100%'}}
+                    onChange={(value: string) => setProductStatusFilter(value)}
+                    allowClear={true}
+                    defaultValue={productStatusFilter}
+                  >
+                    <Select.Option value="live">Live</Select.Option>
+                    <Select.Option value="paused">Paused</Select.Option>
+                  </Select>
+                </Col>
+                <Col lg={6} xs={24}>
+                  <Typography.Title level={5}>Super Category</Typography.Title>
+                  <SimpleSelect
+                    data={allCategories['Super Category'].filter(item => {
+                      return (
+                        item.superCategory === 'Women' ||
+                        item.superCategory === 'Men' ||
+                        item.superCategory === 'Children'
+                      );
+                    })}
+                    onChange={(_, category) =>
+                      setProductSuperCategoryFilter(category)
+                    }
+                    style={{ width: '100%'}}
+                    selectedOption={productSuperCategoryFilter?.id}
+                    optionsMapping={productSuperCategoryOptionsMapping}
+                    placeholder={'Select a Super Category'}
+                    loading={fetchingCategories}
+                    disabled={fetchingCategories}
+                    allowClear={true}
+                  ></SimpleSelect>
+                </Col>
+                <Col lg={6} xs={24}>
+                  <Typography.Title level={5}>Category</Typography.Title>
+                  <SimpleSelect
+                    data={allCategories.Category}
+                    onChange={(_, category) =>
+                      setProductCategoryFilter(category)
+                    }
+                    style={{ width: '100%'}}
+                    selectedOption={productCategoryFilter?.id}
+                    optionsMapping={productCategoryOptionsMapping}
+                    placeholder={'Select a Category'}
+                    loading={fetchingCategories}
+                    disabled={fetchingCategories}
+                    allowClear={true}
+                  ></SimpleSelect>
+                </Col>
+                <Col lg={6} xs={24}>
+                  <Typography.Title level={5}>Sub Category</Typography.Title>
+                  <SimpleSelect
+                    data={allCategories['Sub Category']}
+                    onChange={(_, category) =>
+                      setProductSubCategoryFilter(category)
+                    }
+                    style={{ width: '100%'}}
+                    selectedOption={productSubCategoryFilter?.id}
+                    optionsMapping={productSubCategoryOptionsMapping}
+                    placeholder={'Select a Sub Category'}
+                    loading={fetchingCategories}
+                    disabled={fetchingCategories}
+                    allowClear={true}
+                  ></SimpleSelect>
+                </Col>
+                <Col lg={6} xs={24}>
+                  <Typography.Title level={5}>
+                    Sub Sub Category
+                  </Typography.Title>
+                  <SimpleSelect
+                    data={allCategories['Sub Sub Category']}
+                    onChange={(_, category) =>
+                      setProductSubSubCategoryFilter(category)
+                    }
+                    style={{ width: '100%'}}
+                    selectedOption={productSubSubCategoryFilter?.id}
+                    optionsMapping={productSubSubCategoryOptionsMapping}
+                    placeholder={'Select a Sub SubCategory'}
+                    loading={fetchingCategories}
+                    disabled={fetchingCategories}
+                    allowClear={true}
+                  ></SimpleSelect>
+                </Col>
+                <Col lg={6} xs={24}>
+                  <Typography.Title level={5}>Run ID</Typography.Title>
+                  <Input
+                    onChange={evt => {
+                      setRunIdFilter(evt.target.value);
+                    }}
+                    value={runIdFilter}
+                    suffix={<SearchOutlined />}
+                    placeholder="Search by Run ID"
+                  />
                 </Col>
                 <Col lg={6} xs={24}>
                   <Checkbox
@@ -703,7 +831,6 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
           onSave={onSaveProduct}
           onCancel={onCancelProduct}
           product={currentProduct}
-          setCurrentProduct={setCurrentProduct}
           productBrand={currentProductBrand}
           brand={currentMasterBrand}
           isFetchingBrands={isFetchingBrands}

@@ -32,7 +32,9 @@ const PromoDisplaysDetail: React.FC<PromoDisplayDetailProps> = ({
 
   return (
     <>
-      <PageHeader title="Shop Display Update" subTitle="Shop Display " />
+      <PageHeader
+        title={promoDisplay ? 'Shop Display Update' : 'New Shop Display'}
+      />
       <Form
         name="promoDisplayForm"
         layout="vertical"
