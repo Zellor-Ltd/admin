@@ -54,23 +54,21 @@ import { ProductBrand } from 'interfaces/ProductBrand';
 import { productUtils } from '../../helpers/product-utils';
 import scrollIntoView from 'scroll-into-view';
 import { useMount } from 'react-use';
-import AlternatePreviewList from './AlternatePreviewList';
+import AlternatePreviewProducts from './AlternatePreviewProducts';
 import SimpleSelect from '../../components/select/SimpleSelect';
 import { SelectOption } from '../../interfaces/SelectOption';
 import ProductsDetails from './ProductsDetails';
 
-const { getSearchTags, getCategories, removeSearchTagsByCategory } =
-  productUtils;
+const { getSearchTags, getCategories } = productUtils;
 
 const PreviewProducts: React.FC<RouteComponentProps> = () => {
   const [viewName, setViewName] = useState<'alternate' | 'default'>('default');
-  const previousViewName = useRef('default');
+  const previousViewName = useRef<'alternate' | 'default'>('default');
   const saveProductFn = saveStagingProduct;
   const [brands, setBrands] = useState<Brand[]>([]);
   const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
   const [isFetchingBrands, setIsFetchingBrands] = useState(false);
   const [isFetchingProductBrands, setIsFetchingProductBrands] = useState(false);
-  const [ageRange, setageRange] = useState<[number, number]>([12, 100]);
   const [form] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
   const [fetchingCategories, setFetchingCategories] = useState(false);
@@ -276,21 +274,16 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refreshing]);
 
-  useEffect(() => {
-    if (currentProduct?.ageMin && currentProduct?.ageMax)
-      setageRange([currentProduct?.ageMin, currentProduct?.ageMax]);
-  }, [currentProduct]);
-
   const onAlternateViewSaveChanges = async (entity: Product) => {
     setLoading(true);
     try {
       const response = (await saveProductFn(entity)) as any;
-      refreshItem(response.result);
+      refreshItem(response.result, 'alternate');
 
       message.success('Register updated with success.');
-      setLoading(false);
     } catch (error) {
       console.error(error);
+    } finally {
       setLoading(false);
     }
   };
@@ -350,9 +343,10 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
     setProducts(prev => [...prev.slice(0, index), ...prev.slice(index + 1)]);
   };
 
-  const refreshItem = (record: Product) => {
+  const refreshItem = (record: Product, viewName?: 'default' | 'alternate') => {
     products[lastViewedIndex] = record;
     setProducts([...products]);
+    setViewName(viewName ?? previousViewName.current);
   };
 
   const fetchData = async searchButton => {
@@ -394,7 +388,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
       width: '15%',
       render: (value: string, record: Product, index: number) => (
         <Link
-          onClick={() => editProduct(record, index)}
+          onClick={() => editProduct(record, index, 'default')}
           to={{ pathname: window.location.pathname, state: record }}
         >
           {value}
@@ -493,7 +487,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
       render: (_, record: Product, index: number) => (
         <>
           <Link
-            onClick={() => editProduct(record, index)}
+            onClick={() => editProduct(record, index, 'default')}
             to={{ pathname: window.location.pathname, state: record }}
           >
             <EditOutlined />
@@ -539,20 +533,25 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
     setSelectedRowKeys([]);
   };
 
-  const editProduct = (record: Product, index) => {
-    previousViewName.current = 'default';
-    setCurrentProduct(record);
-    setLastViewedIndex(index);
-    setCurrentMasterBrand(record.brand.brandName);
-    if (record.productBrand) {
-      if (typeof record.productBrand === 'string') {
-        setCurrentProductBrand(record.productBrand);
+  const editProduct = (
+    product: Product,
+    productIndex: number,
+    viewName: 'default' | 'alternate'
+  ) => {
+    previousViewName.current = viewName;
+    setCurrentProduct(product);
+    setLastViewedIndex(productIndex);
+    setCurrentMasterBrand(product.brand.brandName);
+    if (product.productBrand) {
+      if (typeof product.productBrand === 'string') {
+        setCurrentProductBrand(product.productBrand);
       } else {
-        setCurrentProductBrand(record.productBrand.brandName);
+        setCurrentProductBrand(product.productBrand.brandName);
       }
     } else {
       setCurrentProductBrand('');
     }
+    setViewName('default');
     setDetails(true);
   };
 
@@ -589,33 +588,20 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
     switch (viewName) {
       case 'alternate':
         return (
-          <AlternatePreviewList
-            setViewName={setViewName}
-            details={details}
-            setDetails={setDetails}
-            loaded={loaded}
+          <AlternatePreviewProducts
             products={products}
-            setProducts={setProducts}
             productBrands={productBrands}
-            currentProduct={currentProduct}
-            setCurrentProduct={setCurrentProduct}
-            setCurrentMasterBrand={setCurrentMasterBrand}
-            setCurrentProductBrand={setCurrentProductBrand}
-            page={page}
-            setPage={setPage}
-            brandFilter={brandFilter}
-            searchFilter={searchFilter}
-            unclassifiedFilter={unclassifiedFilter}
-            productBrandFilter={productBrandFilter}
-            outOfStockFilter={outOfStockFilter}
-            productStatusFilter={productStatusFilter}
-            refreshing={refreshing}
-            setRefreshing={setRefreshing}
             allCategories={allCategories}
-            previousViewName={previousViewName}
             onSaveChanges={onAlternateViewSaveChanges}
             lastViewedIndex={lastViewedIndex}
-          ></AlternatePreviewList>
+            onRefreshItem={product => refreshItem(product, 'alternate')}
+            onEditProduct={(product, productIndex) =>
+              editProduct(product, productIndex, 'alternate')
+            }
+            onNextPage={() => fetchData(false)}
+            page={page}
+            eof={eof}
+          ></AlternatePreviewProducts>
         );
       case 'default':
         if (!details) {
