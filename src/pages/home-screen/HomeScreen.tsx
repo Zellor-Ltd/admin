@@ -1,5 +1,5 @@
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import { Button, PageHeader, Popconfirm, Table } from 'antd';
+import { Button, PageHeader, Popconfirm, Spin, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { useRequest } from '../../hooks/useRequest';
 import { Banner } from '../../interfaces/Banner';
@@ -10,30 +10,49 @@ import { fetchBanners, deleteBanner } from 'services/DiscoClubService';
 import CopyIdToClipboard from '../../components/CopyIdToClipboard';
 import scrollIntoView from 'scroll-into-view';
 import HomeScreenDetail from './HomeScreenDetail';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const { doFetch, doRequest } = useRequest({ setLoading });
-  const [content, setContent] = useState<any[]>([]);
   const [banners, setBanners] = useState<Banner[]>([]);
+  const [content, setContent] = useState<Banner[]>([]);
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
   const [details, setDetails] = useState<boolean>(false);
   const [currentBanner, setCurrentBanner] = useState<Banner>();
-
-  const getResources = () => {
-    getBanners();
-  };
+  const [page, setPage] = useState<number>(0);
+  const [eof, setEof] = useState<boolean>(false);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
 
   const getBanners = async () => {
     const response = await doFetch(() => fetchBanners());
-    setBanners(response.results);
     setContent(response.results);
+    setRefreshing(true);
   };
 
   useEffect(() => {
-    getResources();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    getBanners();
   }, []);
+
+  useEffect(() => {
+    if (refreshing) {
+      setBanners([]);
+      setEof(false);
+      fetchData();
+      setRefreshing(false);
+    }
+  }, [refreshing]);
+
+  const fetchData = async () => {
+    if (!content.length) return;
+    const pageToUse = refreshing ? 0 : page;
+    const results = content.slice(pageToUse * 10, pageToUse * 10 + 10);
+
+    setPage(pageToUse + 1);
+    setBanners(prev => [...prev.concat(results)]);
+
+    if (results.length < 10) setEof(true);
+  };
 
   useEffect(() => {
     if (!details) {
@@ -156,13 +175,32 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
               </Button>,
             ]}
           />
-          <Table
-            rowClassName={(_, index) => `scrollable-row-${index}`}
-            rowKey="id"
-            columns={columns}
-            dataSource={banners}
-            loading={loading}
-          />
+          <InfiniteScroll
+            dataLength={banners.length}
+            next={fetchData}
+            hasMore={!eof}
+            loader={
+              page !== 0 && (
+                <div className="scroll-message">
+                  <Spin />
+                </div>
+              )
+            }
+            endMessage={
+              <div className="scroll-message">
+                <b>End of results.</b>
+              </div>
+            }
+          >
+            <Table
+              rowClassName={(_, index) => `scrollable-row-${index}`}
+              rowKey="id"
+              columns={columns}
+              dataSource={banners}
+              loading={loading || refreshing}
+              pagination={false}
+            />
+          </InfiniteScroll>
         </div>
       )}
       {details && (
