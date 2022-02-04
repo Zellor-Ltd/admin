@@ -5,189 +5,97 @@ import EditableTable, {
 } from '../../components/EditableTable';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useRequest } from '../../hooks/useRequest';
-import { Brand } from '../../interfaces/Brand';
 import { Product } from '../../interfaces/Product';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  fetchStagingProducts,
   saveStagingProduct,
   transferStageProduct,
 } from '../../services/DiscoClubService';
 import ProductExpandedRow from './ProductExpandedRow';
 import CopyIdToClipboard from '../../components/CopyIdToClipboard';
-import { useSelector } from 'react-redux';
 import { ProductBrand } from '../../interfaces/ProductBrand';
 import { Image } from '../../interfaces/Image';
 import scrollIntoView from 'scroll-into-view';
+import { useMount } from 'react-use';
 
-interface AlternatePreviewListProps {
-  setViewName: Function;
-  details: boolean;
-  setDetails: Function;
-  loaded: boolean;
+interface AlternatePreviewProductsProps {
   products: Product[];
-  setProducts: Function;
   productBrands: ProductBrand[];
-  currentProduct?: Product;
-  setCurrentProduct: Function;
-  setCurrentMasterBrand: Function;
-  setCurrentProductBrand: Function;
-  page: number;
-  setPage: Function;
-  brandFilter?: Brand;
-  searchFilter?: string;
-  unclassifiedFilter?: boolean;
-  productBrandFilter?: ProductBrand;
-  outOfStockFilter?: boolean;
-  productStatusFilter?: string;
-  refreshing: boolean;
-  setRefreshing: Function;
   allCategories: any;
-  previousViewName: any;
-  onSaveChanges: (entity: Product) => Promise<void>;
+  onSaveChanges: (product: Product, productIndex: number) => Promise<void>;
   lastViewedIndex: any;
+  onRefreshItem: (product: Product) => void;
+  onEditProduct: (product: Product, productIndex: number) => void;
+  onNextPage: () => void;
+  page: number;
+  eof: boolean;
 }
 
-const AlternatePreviewList: React.FC<AlternatePreviewListProps> = ({
-  setViewName,
-  details,
-  setDetails,
-  loaded,
+const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
   products,
-  setProducts,
   productBrands,
-  currentProduct,
-  setCurrentProduct,
-  setCurrentMasterBrand,
-  setCurrentProductBrand,
-  page,
-  setPage,
-  brandFilter,
-  searchFilter,
-  unclassifiedFilter,
-  productBrandFilter,
-  outOfStockFilter,
-  productStatusFilter,
-  refreshing,
-  setRefreshing,
   allCategories,
-  previousViewName,
   onSaveChanges,
   lastViewedIndex,
+  onRefreshItem,
+  onEditProduct,
+  onNextPage,
+  page,
+  eof,
 }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
 
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
+  const [_products, _setProducts] = useState<Product[]>([]);
 
-  const [eof, setEof] = useState<boolean>(false);
+  useEffect(() => {
+    const productsMap = new Map<string, Product>();
+    products.forEach(product => productsMap.set(product.id, product));
+    _setProducts(Array.from(productsMap.values()));
+  }, [products]);
 
-  // TODO: THIS IS A WORKAROUND TO FORCE THE RERENDER. IT MUST BE REMOVED ASAP
-  const [forceRerenderWorkaround, setForceRerenderWorkaround] = useState(false);
-
-  const { doFetch, doRequest } = useRequest({ setLoading });
+  const { doRequest } = useRequest({ setLoading });
   const { doRequest: saveCategories, loading: loadingCategories } =
     useRequest();
 
-  const {
-    settings: { currency = [] },
-  } = useSelector((state: any) => state.settings);
-
-  const refreshProducts = async () => {
-    setSelectedRowKeys([]);
-    setPage(0);
-    setRefreshing(true);
-  };
-
-  useEffect(() => {
-    if (loaded) {
-      refreshProducts();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchFilter, brandFilter]);
-
-  const _fetchStagingProducts = async searchButton => {
-    const pageToUse = refreshing ? 0 : page;
-    const response = await doFetch(() =>
-      fetchStagingProducts({
-        limit: 30,
-        page: pageToUse,
-        brandId: brandFilter?.id,
-        query: searchFilter,
-        unclassified: unclassifiedFilter,
-        productBrandId: productBrandFilter?.id,
-        outOfStock: outOfStockFilter,
-        status: productStatusFilter,
-      })
-    );
-    if (searchButton) {
-      setPage(0);
-    } else {
-      setPage(pageToUse + 1);
-    }
-    if (response.results.length < 30) setEof(true);
-    return response;
-  };
-
-  const refreshItem = (record: Product) => {
-    products[lastViewedIndex.current] = record;
-    setProducts([...products]);
-  };
-
-  const onFinish = async () => {
+  const onFormFinish = async () => {
     setLoading(true);
     try {
       const product = form.getFieldsValue(true);
 
       const response = (await saveStagingProduct(product)) as any;
-      refreshItem(response.result);
 
       message.success('Register updated with success.');
       setLoading(false);
+      onRefreshItem(response.result);
     } catch (error) {
       console.error(error);
       setLoading(false);
     }
   };
 
-  const getProducts = async searchButton => {
-    const { results } = await doFetch(() =>
-      _fetchStagingProducts(searchButton)
-    );
-    setProducts(results);
-  };
-
-  useEffect(() => form.resetFields(), [currentProduct]);
-
-  const fetchData = async searchButton => {
-    if (products) {
-      if (!products.length) return;
-      const { results } = await _fetchStagingProducts(searchButton);
-      setProducts(prev => [...prev.concat(results)]);
-    }
-  };
-
   const onSaveCategories = async (record: Product) => {
     await saveCategories(() => saveStagingProduct(record));
-    await getProducts(true);
+    onRefreshItem(record);
   };
 
   const onSaveProduct = async (record: Product) => {
     await doRequest(() => saveStagingProduct(record));
-    await getProducts(true);
+    onRefreshItem(record);
   };
 
   const handleThumbnailOrTagReplacement = (
     prevImage: Image,
-    record: Product
+    product: Product
   ) => {
-    if (!record.image.some(img => img.url === prevImage.url)) {
-      record.image.push(prevImage);
+    if (!product.image.some(img => img.url === prevImage.url)) {
+      product.image.push(prevImage);
     }
   };
 
-  const onAssignToTag = (file: any, record: Product) => {
+  const onAssignToTag = (file: any, product: Product) => {
     let imageData = file;
     if (file.response) {
       imageData = {
@@ -195,13 +103,13 @@ const AlternatePreviewList: React.FC<AlternatePreviewListProps> = ({
         url: file.response.result,
       };
     }
-    const prevTag = record.tagImage;
-    handleThumbnailOrTagReplacement(prevTag, record);
-    record.tagImage = { ...imageData };
-    setForceRerenderWorkaround(prev => !prev);
+    const prevTag = product.tagImage;
+    handleThumbnailOrTagReplacement(prevTag, product);
+    product.tagImage = { ...imageData };
+    onRefreshItem(product);
   };
 
-  const onAssignToThumbnail = (file: any, record: Product) => {
+  const onAssignToThumbnail = (file: any, product: Product) => {
     let imageData = file;
     if (file.response) {
       imageData = {
@@ -209,83 +117,78 @@ const AlternatePreviewList: React.FC<AlternatePreviewListProps> = ({
         url: file.response.result,
       };
     }
-    const prevThumb = record.thumbnailUrl;
-    handleThumbnailOrTagReplacement(prevThumb, record);
-    record.thumbnailUrl = { ...imageData };
-    setForceRerenderWorkaround(prev => !prev);
+    const prevThumb = product.thumbnailUrl;
+    handleThumbnailOrTagReplacement(prevThumb, product);
+    product.thumbnailUrl = { ...imageData };
+    onRefreshItem(product);
   };
 
   const onRollback = (
     oldUrl: string,
     sourceProp: 'image' | 'tagImage' | 'thumbnailUrl' | 'masthead',
     imageIndex: number,
-    entity: Product
+    product: Product
   ) => {
-    if (entity) {
-      switch (sourceProp) {
-        case 'image':
-          entity[sourceProp][imageIndex].url = oldUrl;
-          break;
-        default:
-          entity[sourceProp].url = oldUrl;
-      }
-
-      setForceRerenderWorkaround(prev => !prev);
+    switch (sourceProp) {
+      case 'image':
+        product[sourceProp][imageIndex].url = oldUrl;
+        break;
+      default:
+        product[sourceProp].url = oldUrl;
     }
+    onRefreshItem(product);
   };
 
   const onFitTo = (
     fitTo: 'w' | 'h',
     sourceProp: 'image' | 'tagImage' | 'thumbnailUrl',
     imageIndex: number,
-    record: any
+    product: Product
   ) => {
     if (!sourceProp) {
       throw new Error('missing sourceProp parameter');
     }
-    if (record) {
-      switch (sourceProp) {
-        case 'image':
-          if (record[sourceProp][imageIndex].fitTo === fitTo) {
-            record[sourceProp][imageIndex].fitTo = undefined;
-          } else {
-            record[sourceProp][imageIndex].fitTo = fitTo;
-          }
-          break;
-        default:
-          if (record[sourceProp].fitTo === fitTo) {
-            record[sourceProp].fitTo = undefined;
-          } else {
-            record[sourceProp].fitTo = fitTo;
-          }
-      }
-      setForceRerenderWorkaround(prev => !prev);
+    switch (sourceProp) {
+      case 'image':
+        if (product[sourceProp][imageIndex].fitTo === fitTo) {
+          product[sourceProp][imageIndex].fitTo = undefined;
+        } else {
+          product[sourceProp][imageIndex].fitTo = fitTo;
+        }
+        break;
+      default:
+        if (product[sourceProp].fitTo === fitTo) {
+          product[sourceProp].fitTo = undefined;
+        } else {
+          product[sourceProp].fitTo = fitTo;
+        }
     }
+    onRefreshItem(product);
   };
 
   const onImageChange = (
     image: Image,
     sourceProp: 'image' | 'tagImage' | 'thumbnailUrl' | 'masthead',
-    record: Product,
+    product: Product,
     removed?: boolean
   ) => {
     if (removed) {
       switch (sourceProp) {
         case 'image':
-          record[sourceProp] = record[sourceProp].filter(
+          product[sourceProp] = product[sourceProp].filter(
             img => img.uid !== image.uid
           );
           break;
         default:
-          record[sourceProp] = undefined as any;
+          product[sourceProp] = undefined as any;
       }
     } else {
       switch (sourceProp) {
         case 'image':
-          record[sourceProp] = [...(record[sourceProp] || []), image];
+          product[sourceProp] = [...(product[sourceProp] || []), image];
           break;
         default:
-          record[sourceProp] = image;
+          product[sourceProp] = image;
       }
     }
   };
@@ -304,7 +207,7 @@ const AlternatePreviewList: React.FC<AlternatePreviewListProps> = ({
       width: '10%',
       render: (value: string, record: Product, index: number) => (
         <Link
-          onClick={() => editProduct(record, index)}
+          onClick={() => onEditProduct(record, index)}
           to={{ pathname: window.location.pathname, state: record }}
         >
           {value}
@@ -406,7 +309,7 @@ const AlternatePreviewList: React.FC<AlternatePreviewListProps> = ({
           <Button
             type="primary"
             loading={loading}
-            onClick={() => saveChanges(record, index)}
+            onClick={() => onSaveChanges(record, index)}
           >
             Save Changes
           </Button>
@@ -425,49 +328,21 @@ const AlternatePreviewList: React.FC<AlternatePreviewListProps> = ({
 
   const handleStage = async (productId: string) => {
     await doRequest(() => transferStageProduct(productId), 'Product commited.');
-    await getProducts(true);
   };
 
-  const saveChanges = async (record: Product, index: number) => {
-    setLoading(true);
-    lastViewedIndex.current = index;
-    await onSaveChanges(record);
-    setLoading(false);
-  };
-
-  const editProduct = (record: Product, index: number) => {
-    previousViewName.current = 'alternate';
-    setCurrentProduct(record);
-    lastViewedIndex.current = index;
-    setCurrentMasterBrand(record.brand.brandName);
-    if (record.productBrand) {
-      if (typeof record.productBrand === 'string') {
-        setCurrentProductBrand(record.productBrand);
-      } else {
-        setCurrentProductBrand(record.productBrand.brandName);
-      }
-    } else {
-      setCurrentProductBrand('');
-    }
-    setViewName('default');
-    setDetails(true);
-  };
-
-  useEffect(() => {
-    if (!details) {
-      scrollIntoView(
-        document.querySelector(
-          `.scrollable-row-${lastViewedIndex.current}`
-        ) as HTMLElement
-      );
-    }
-  }, [details]);
+  useMount(() => {
+    scrollIntoView(
+      document.querySelector(
+        `.scrollable-row-${lastViewedIndex}`
+      ) as HTMLElement
+    );
+  });
 
   return (
     <Form
       form={form}
       name="productForm"
-      onFinish={onFinish}
+      onFinish={onFormFinish}
       onFinishFailed={({ errorFields }) => {
         errorFields.forEach(errorField => {
           message.error(errorField.errors[0]);
@@ -475,8 +350,8 @@ const AlternatePreviewList: React.FC<AlternatePreviewListProps> = ({
       }}
     >
       <InfiniteScroll
-        dataLength={products.length}
-        next={() => fetchData(false)}
+        dataLength={_products.length}
+        next={onNextPage}
         hasMore={!eof}
         loader={
           page !== 0 && (
@@ -494,12 +369,12 @@ const AlternatePreviewList: React.FC<AlternatePreviewListProps> = ({
         <EditableTable
           rowClassName={(_, index) =>
             `scrollable-row-${index} ${
-              index === lastViewedIndex.current ? 'selected-row' : ''
+              index === lastViewedIndex ? 'selected-row' : ''
             }`
           }
           rowKey="id"
           columns={columns}
-          dataSource={products}
+          dataSource={_products}
           loading={loading}
           onSave={onSaveProduct}
           pagination={false}
@@ -526,4 +401,4 @@ const AlternatePreviewList: React.FC<AlternatePreviewListProps> = ({
   );
 };
 
-export default AlternatePreviewList;
+export default AlternatePreviewProducts;

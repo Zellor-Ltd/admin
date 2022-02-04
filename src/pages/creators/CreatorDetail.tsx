@@ -314,44 +314,6 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
               </Col>
             </Row>
           </Tabs.TabPane>
-          <Tabs.TabPane forceRender tab="Marketing" key="Marketing">
-            <Row gutter={8}>
-              <Col lg={24} xs={24}>
-                <Form.Item label="Creator Masthead">
-                  <Upload.ImageUpload
-                    maxCount={20}
-                    fileList={creator?.masthead}
-                    formProp="masthead"
-                    form={form}
-                    onAssignToMasthead={onAssignToMasthead}
-                    classNames="scroll-x"
-                    onRollback={onRollback}
-                  />
-                </Form.Item>
-              </Col>
-            </Row>
-            {currentMasthead && (
-              <>
-                <Row gutter={[8, 8]}>
-                  <Col lg={24} xs={24}>
-                    <label>Active Masthead</label>
-                  </Col>
-                  <Col lg={24} xs={24}>
-                    <Row
-                      className="active-masthead-border mb-1"
-                      align="middle"
-                      justify={'center'}
-                    >
-                      <Image
-                        className="active-masthead"
-                        src={currentMasthead.url}
-                      />
-                    </Row>
-                  </Col>
-                </Row>
-              </>
-            )}
-          </Tabs.TabPane>
         </Tabs>
         <Row gutter={[8, 8]} className="mt-1">
           <Col>

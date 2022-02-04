@@ -1,5 +1,13 @@
 import { CalendarOutlined } from '@ant-design/icons';
-import { Col, DatePicker, PageHeader, Row, Table, Typography } from 'antd';
+import {
+  Col,
+  DatePicker,
+  PageHeader,
+  Row,
+  Spin,
+  Table,
+  Typography,
+} from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { Fan } from 'interfaces/Fan';
 import { Transaction } from 'interfaces/Transaction';
@@ -10,6 +18,7 @@ import { fetchFans, fetchWalletTransactions } from 'services/DiscoClubService';
 import CopyOrderToClipboard from 'components/CopyOrderToClipboard';
 import SimpleSelect from 'components/select/SimpleSelect';
 import { SelectOption } from 'interfaces/SelectOption';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 const Transactions: React.FC<RouteComponentProps> = () => {
   const [tableLoading, setTableLoading] = useState<boolean>(false);
@@ -20,6 +29,10 @@ const Transactions: React.FC<RouteComponentProps> = () => {
   const [filteredTransactions, setFilteredTransactions] = useState<
     Transaction[]
   >([]);
+  const [page, setPage] = useState<number>(0);
+  const [eof, setEof] = useState<boolean>(false);
+  const [loaded, setLoaded] = useState<boolean>(false);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
 
   const fanOptionsMapping: SelectOption = {
     key: 'id',
@@ -27,15 +40,37 @@ const Transactions: React.FC<RouteComponentProps> = () => {
     value: 'user',
   };
 
+  const getFans = async () => {
+    setIsFetchingFans(true);
+    const response: any = await fetchFans();
+    setFans(response.results);
+    setIsFetchingFans(false);
+  };
+
   useEffect(() => {
-    const getFans = async () => {
-      setIsFetchingFans(true);
-      const response: any = await fetchFans();
-      setFans(response.results);
-      setIsFetchingFans(false);
-    };
     getFans();
   }, []);
+
+  useEffect(() => {
+    if (refreshing) {
+      setFilteredTransactions([]);
+      setEof(false);
+      fetchData();
+      setRefreshing(false);
+    }
+  }, [refreshing]);
+
+  const fetchData = async () => {
+    if (!transactions.length) return;
+
+    const pageToUse = refreshing ? 0 : page;
+    const results = transactions.slice(pageToUse * 10, pageToUse * 10 + 10);
+
+    setPage(pageToUse + 1);
+    setFilteredTransactions(prev => [...prev.concat(results)]);
+
+    if (results.length < 10) setEof(true);
+  };
 
   const columns: ColumnsType<Transaction> = [
     {
@@ -84,16 +119,32 @@ const Transactions: React.FC<RouteComponentProps> = () => {
     },
   ];
 
+  const paginateData = () => {
+    if (!transactions.length) {
+      return;
+    }
+
+    const results = transactions.slice(page * 10, page * 10 + 10);
+
+    setFilteredTransactions(prev => [...prev.concat(results)]);
+
+    if (results.length < 10) {
+      setEof(true);
+    } else {
+      setPage(page + 1);
+    }
+  };
+
   const onChangeFan = async (_selectedFan?: Fan) => {
     setTableLoading(true);
     if (_selectedFan) {
       setSelectedFan(_selectedFan);
       const { results }: any = await fetchWalletTransactions(_selectedFan.id);
       setTransactions(results);
-      setFilteredTransactions(results);
+      setRefreshing(true);
+      if (!loaded) setLoaded(true);
     } else {
       setTransactions([]);
-      setFilteredTransactions([]);
     }
     setTableLoading(false);
   };
@@ -131,12 +182,31 @@ const Transactions: React.FC<RouteComponentProps> = () => {
           ></SimpleSelect>
         </Col>
       </Row>
-      <Table
-        rowKey="id"
-        columns={columns}
-        dataSource={filteredTransactions}
-        loading={tableLoading}
-      />
+      <InfiniteScroll
+        dataLength={filteredTransactions.length}
+        next={fetchData}
+        hasMore={!eof}
+        loader={
+          page !== 0 && (
+            <div className="scroll-message">
+              <Spin />
+            </div>
+          )
+        }
+        endMessage={
+          <div className="scroll-message">
+            <b>End of results.</b>
+          </div>
+        }
+      >
+        <Table
+          rowKey="id"
+          columns={columns}
+          dataSource={filteredTransactions}
+          loading={tableLoading || refreshing}
+          pagination={false}
+        />
+      </InfiniteScroll>
     </div>
   );
 };

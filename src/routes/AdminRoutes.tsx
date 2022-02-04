@@ -56,6 +56,7 @@ import RegsPerDay from 'pages/reports/RegsPerDay';
 import PreRegisteredUsers from 'pages/reports/PreRegisteredUsers';
 import ProductsPerDay from 'pages/reports/ProductsPerDay';
 import FanActivities from 'pages/reports/FanActivities';
+import CreatorsPage from 'pages/creators-page/CreatorsPage';
 
 function AdminRoutes() {
   return (
@@ -215,6 +216,11 @@ function AdminRoutes() {
       <AppRoute
         path="/preview-products"
         component={PreviewProducts}
+        layout={AuthenticatedLayout}
+      />
+      <AppRoute
+        path="/marketing_creators-page"
+        component={CreatorsPage}
         layout={AuthenticatedLayout}
       />
       <AppRoute
