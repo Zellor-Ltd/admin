@@ -52,21 +52,16 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
   const [searchText, setSearchText] = useState<string>('');
   const [searchedColumn, setSearchedColumn] = useState<string>('');
   const searchInput = useRef<Input>(null);
+  const [page, setPage] = useState<number>(0);
+  const [eof, setEof] = useState<boolean>(false);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
   const [content, setContent] = useState<any>({
     'Super Category': [],
     Category: [],
     'Sub Category': [],
     'Sub Sub Category': [],
   });
-  const [page, setPage] = useState<number>(0);
-  const [eof, setEof] = useState<boolean>(false);
-  const [refreshing, setRefreshing] = useState<boolean>(false);
-  const [categories, setCategories] = useState<any>({
-    'Super Category': [],
-    Category: [],
-    'Sub Category': [],
-    'Sub Sub Category': [],
-  });
+  const [categories, setCategories] = useState<any>([]);
 
   useEffect(() => {
     fetchAllCategories();
@@ -79,12 +74,12 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
 
   useEffect(() => {
     if (refreshing) {
-      setCategories(prev => [...(prev[selectedTab] = [])]);
+      setCategories([]);
       setEof(false);
       fetchData();
       setRefreshing(false);
     }
-  }, [refreshing, selectedTab]);
+  }, [refreshing]);
 
   const fetchData = async () => {
     if (!content[selectedTab].length) return;
@@ -95,7 +90,7 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
     );
 
     setPage(pageToUse + 1);
-    setCategories(prev => [...prev[selectedTab].concat(results)]);
+    setCategories(prev => [...prev.concat(results)]);
 
     if (results.length < 10) setEof(true);
   };
@@ -409,7 +404,7 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
             {categoriesKeys.map(key => (
               <Tabs.TabPane tab={key} key={key}>
                 <InfiniteScroll
-                  dataLength={categories[key as keyof AllCategories].length}
+                  dataLength={categories.length}
                   next={fetchData}
                   hasMore={!eof}
                   loader={
@@ -429,7 +424,7 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
                     rowClassName={(_, index) => `scrollable-row-${index}`}
                     rowKey="id"
                     columns={columns}
-                    dataSource={categories[key as keyof AllCategories]}
+                    dataSource={categories}
                     loading={loading || refreshing}
                     pagination={false}
                   />
