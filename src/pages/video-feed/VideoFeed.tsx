@@ -50,6 +50,8 @@ import {
   videoTypeList,
 } from '../../components/select/select.utils';
 import { ProductBrand } from '../../interfaces/ProductBrand';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import { useRequest } from 'hooks/useRequest';
 
 const { Content } = Layout;
 
@@ -76,6 +78,12 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const [productBrands, setProductBrands] = useState([]);
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
   const [currentPage, setCurrentPage] = useState(1);
+  const [loaded, setLoaded] = useState<boolean>(false);
+  const [page, setPage] = useState<number>(0);
+  const [eof, setEof] = useState<boolean>(false);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [filteredVideoFeeds, setFilteredVideoFeeds] = useState<any[]>([]);
+  const { doFetch } = useRequest({ setLoading });
 
   const shouldUpdateFeedItemIndex = useRef(false);
   const originalFeedItemsIndex = useRef<Record<string, number | undefined>>({});
@@ -120,6 +128,27 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     key: 'value',
     label: 'value',
     value: 'value',
+  };
+
+  useEffect(() => {
+    if (refreshing) {
+      setFilteredVideoFeeds([]);
+      setEof(false);
+      fetchData();
+      setRefreshing(false);
+    }
+  }, [refreshing]);
+
+  const fetchData = async () => {
+    if (!videoFeeds.length) return;
+
+    const pageToUse = refreshing ? 0 : page;
+    const results = videoFeeds.slice(pageToUse * 10, pageToUse * 10 + 10);
+
+    setPage(pageToUse + 1);
+    setFilteredVideoFeeds(prev => [...prev.concat(results)]);
+
+    if (results.length < 10) setEof(true);
   };
 
   const feedItemColumns: ColumnsType<FeedItem> = [
@@ -257,22 +286,23 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   }, [details]);
 
   const fetch = async () => {
-    setLoading(true);
     try {
-      const response: any = await fetchVideoFeedV2({
-        query: titleFilter,
-        status: statusFilter,
-        videoType: videoTypeFilter,
-        productBrandId: productBrandFilter?.id,
-        brandId: brandFilter?.id,
-        categoryId: categoryFilter?.id,
-        startIndex: startIndexFilter,
-      });
-      setLoading(false);
-      setVideoFeeds(response.results);
+      const { results }: any = await doFetch(() =>
+        fetchVideoFeedV2({
+          query: titleFilter,
+          status: statusFilter,
+          videoType: videoTypeFilter,
+          productBrandId: productBrandFilter?.id,
+          brandId: brandFilter?.id,
+          categoryId: categoryFilter?.id,
+          startIndex: startIndexFilter,
+        })
+      );
+      setVideoFeeds(results);
+      setRefreshing(true);
+      setLoaded(true);
     } catch (error) {
       message.error('Error to get feed');
-      setLoading(false);
     }
   };
 
@@ -315,8 +345,12 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   };
 
   const refreshItem = (record: FeedItem) => {
-    videoFeeds[lastViewedIndex] = record;
-    setVideoFeeds([...videoFeeds]);
+    if (loaded) {
+      videoFeeds[lastViewedIndex] = record;
+      setVideoFeeds([...videoFeeds]);
+    } else {
+      setVideoFeeds([record]);
+    }
   };
 
   const onEditFeedItem = (index: number, videoFeed?: FeedItem) => {
@@ -547,34 +581,37 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
             </Row>
           </div>
           <Content>
-            <Table
-              rowClassName={(_, index) =>
-                `scrollable-row-${index} ${
-                  index === lastViewedIndex ? 'selected-row' : ''
-                }`
+            <InfiniteScroll
+              dataLength={filteredVideoFeeds.length}
+              next={fetchData}
+              hasMore={!eof}
+              loader={
+                page !== 0 && (
+                  <div className="scroll-message">
+                    <Spin />
+                  </div>
+                )
               }
-              size="small"
-              columns={feedItemColumns}
-              rowKey="id"
-              dataSource={videoFeeds}
-              loading={loading}
-              pagination={{
-                current: currentPage,
-                onChange: onPageChange,
-                defaultPageSize: 50,
-                pageSizeOptions: [
-                  '50',
-                  '100',
-                  '200',
-                  '300',
-                  '400',
-                  '500',
-                  '1000',
-                ],
-                showTotal: (total, [from, to]) =>
-                  `${from}-${to} of ${total} items`,
-              }}
-            />
+              endMessage={
+                <div className="scroll-message">
+                  <b>End of results.</b>
+                </div>
+              }
+            >
+              <Table
+                rowClassName={(_, index) =>
+                  `scrollable-row-${index} ${
+                    index === lastViewedIndex ? 'selected-row' : ''
+                  }`
+                }
+                size="small"
+                columns={feedItemColumns}
+                rowKey="id"
+                dataSource={filteredVideoFeeds}
+                loading={loading || refreshing}
+                pagination={false}
+              />
+            </InfiniteScroll>
           </Content>
         </div>
       )}
