@@ -722,7 +722,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
               <Col lg={24} xs={24}>
                 <Form.Item label="Tag Image">
                   <Upload.ImageUpload
-                    fileList={_product?.tagImage}
+                    fileList={form.getFieldValue('tagImage')}
                     formProp="tagImage"
                     form={form}
                     onFitTo={onFitTo}
@@ -734,7 +734,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
               <Col lg={24} xs={24}>
                 <Form.Item label="Thumbnail">
                   <Upload.ImageUpload
-                    fileList={_product?.thumbnailUrl}
+                    fileList={form.getFieldValue('thumbnailUrl')}
                     formProp="thumbnailUrl"
                     form={form}
                     onFitTo={onFitTo}
@@ -752,7 +752,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                   >
                     <Upload.ImageUpload
                       maxCount={20}
-                      fileList={product?.image}
+                      fileList={form.getFieldValue('image')}
                       formProp="image"
                       form={form}
                       onAssignToTag={onAssignToTag}
