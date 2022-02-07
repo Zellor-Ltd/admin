@@ -249,31 +249,18 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
     }
   };
 
-  const handleThumbnailOrTagReplacement = (prevImage: Image) => {
-    if (_product) {
-      if (!_product.image.some(img => img.url === prevImage.url)) {
-        _product.image.push(prevImage);
-      }
-      form.setFieldsValue({ ..._product });
-    }
-  };
-
   const onAssignToThumbnail = (file: Image) => {
     if (_product) {
-      const prevThumb = { ..._product.thumbnailUrl };
-      _product.thumbnailUrl = { ...file };
-      form.setFieldsValue({ ..._product });
-      handleThumbnailOrTagReplacement(prevThumb);
+      form.setFieldsValue({ thumbnailUrl: file });
+      _product.thumbnailUrl = file;
       _setProduct({ ..._product });
     }
   };
 
   const onAssignToTag = (file: Image) => {
     if (_product) {
-      const prevTag = { ..._product.tagImage };
-      _product.tagImage = { ...file };
-      handleThumbnailOrTagReplacement(prevTag);
-      form.setFieldsValue({ ..._product });
+      form.setFieldsValue({ tagImage: file });
+      _product.tagImage = file;
       _setProduct({ ..._product });
     }
   };
@@ -288,7 +275,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
         ],
       });
 
-      form.setFieldsValue({ ..._product });
+      form.setFieldsValue({ image: _product.image });
       _setProduct({ ..._product });
     }
   };
@@ -735,7 +722,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
               <Col lg={24} xs={24}>
                 <Form.Item label="Tag Image">
                   <Upload.ImageUpload
-                    fileList={_product?.tagImage}
+                    fileList={form.getFieldValue('tagImage')}
                     formProp="tagImage"
                     form={form}
                     onFitTo={onFitTo}
@@ -747,7 +734,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
               <Col lg={24} xs={24}>
                 <Form.Item label="Thumbnail">
                   <Upload.ImageUpload
-                    fileList={_product?.thumbnailUrl}
+                    fileList={form.getFieldValue('thumbnailUrl')}
                     formProp="thumbnailUrl"
                     form={form}
                     onFitTo={onFitTo}
@@ -765,7 +752,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                   >
                     <Upload.ImageUpload
                       maxCount={20}
-                      fileList={product?.image}
+                      fileList={form.getFieldValue('image')}
                       formProp="image"
                       form={form}
                       onAssignToTag={onAssignToTag}
