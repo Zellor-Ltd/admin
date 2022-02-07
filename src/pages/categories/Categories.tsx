@@ -12,6 +12,7 @@ import {
   PageHeader,
   Popconfirm,
   Space,
+  Spin,
   Table,
   Tabs,
 } from 'antd';
@@ -31,6 +32,7 @@ import { productCategoriesAPI } from 'services/DiscoClubService';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
 import scrollIntoView from 'scroll-into-view';
 import CategoryDetail from './CategoryDetail';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 
@@ -50,12 +52,16 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
   const [searchText, setSearchText] = useState<string>('');
   const [searchedColumn, setSearchedColumn] = useState<string>('');
   const searchInput = useRef<Input>(null);
+  const [page, setPage] = useState<number>(0);
+  const [eof, setEof] = useState<boolean>(false);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
   const [content, setContent] = useState<any>({
     'Super Category': [],
     Category: [],
     'Sub Category': [],
     'Sub Sub Category': [],
   });
+  const [categories, setCategories] = useState<any>([]);
 
   useEffect(() => {
     fetchAllCategories();
@@ -63,7 +69,31 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
 
   useEffect(() => {
     setContent(allCategories);
+    setRefreshing(true);
   }, [allCategories]);
+
+  useEffect(() => {
+    if (refreshing) {
+      setCategories([]);
+      setEof(false);
+      fetchData();
+      setRefreshing(false);
+    }
+  }, [refreshing]);
+
+  const fetchData = async () => {
+    if (!content[selectedTab].length) return;
+    const pageToUse = refreshing ? 0 : page;
+    const results = content[selectedTab].slice(
+      pageToUse * 10,
+      pageToUse * 10 + 10
+    );
+
+    setPage(pageToUse + 1);
+    setCategories(prev => [...prev.concat(results)]);
+
+    if (results.length < 10) setEof(true);
+  };
 
   useEffect(() => {
     if (!details) {
@@ -316,6 +346,7 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
 
   const handleTabChange = (value: string) => {
     setSelectedTab(value);
+    setRefreshing(true);
   };
 
   const refreshItem = (record: ProductCategory, key: string) => {
@@ -372,13 +403,32 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
           <Tabs onChange={handleTabChange} activeKey={selectedTab}>
             {categoriesKeys.map(key => (
               <Tabs.TabPane tab={key} key={key}>
-                <Table
-                  rowClassName={(_, index) => `scrollable-row-${index}`}
-                  rowKey="id"
-                  columns={columns}
-                  dataSource={content[key as keyof AllCategories]}
-                  loading={loading}
-                />
+                <InfiniteScroll
+                  dataLength={categories.length}
+                  next={fetchData}
+                  hasMore={!eof}
+                  loader={
+                    page !== 0 && (
+                      <div className="scroll-message">
+                        <Spin />
+                      </div>
+                    )
+                  }
+                  endMessage={
+                    <div className="scroll-message">
+                      <b>End of results.</b>
+                    </div>
+                  }
+                >
+                  <Table
+                    rowClassName={(_, index) => `scrollable-row-${index}`}
+                    rowKey="id"
+                    columns={columns}
+                    dataSource={categories}
+                    loading={loading || refreshing}
+                    pagination={false}
+                  />
+                </InfiniteScroll>
               </Tabs.TabPane>
             ))}
           </Tabs>
