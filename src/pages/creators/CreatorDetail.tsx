@@ -51,9 +51,6 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
   const [ageRange, setAgeRange] = useState<[number, number]>([12, 100]);
   const [serversList, setServersList] = useState<ServerAlias[]>([]);
   const { doRequest } = useRequest({ setLoading });
-  const [currentMasthead, setCurrentMasthead] = useState<any>(
-    creator.activeMasthead
-  );
 
   const [form] = Form.useForm();
 
@@ -90,21 +87,6 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
     });
 
     setAgeRange(value);
-  };
-
-  const onAssignToMasthead = file => {
-    if (file.xhr) {
-      const response = JSON.parse(file.xhr.response);
-      const imageData: any = {
-        url: response.result.replace(';', ''),
-        uid: file.uid,
-      };
-      form.setFieldsValue({ activeMasthead: imageData });
-      setCurrentMasthead(imageData);
-      return;
-    }
-    form.setFieldsValue({ activeMasthead: file });
-    setCurrentMasthead(file);
   };
 
   return (
