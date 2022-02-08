@@ -260,7 +260,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
       setAgeRange([currentProduct?.ageMin, currentProduct?.ageMax]);
   }, [currentProduct]);
 
-  const _fetchProducts = async searchButton => {
+  const _fetchProducts = async () => {
     const pageToUse = refreshing ? 0 : page;
     const response = await doFetch(() =>
       fetchProducts({
@@ -279,17 +279,14 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
         runId: runIdFilter,
       })
     );
-    if (searchButton) {
-      setPage(0);
-    } else {
-      setPage(pageToUse + 1);
-    }
+    setPage(pageToUse + 1);
     if (response.results.length < 30) setEof(true);
     return response;
   };
 
-  const getResources = async triggerByButton => {
-    const { results: products } = await _fetchProducts(triggerByButton);
+  const getResources = async () => {
+    setRefreshing(true);
+    const { results: products } = await _fetchProducts();
 
     setProducts(products);
     setLoaded(true);
@@ -303,7 +300,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
 
   const fetchData = async () => {
     if (!products.length) return;
-    const { results } = await _fetchProducts(false);
+    const { results } = await _fetchProducts();
     setProducts(prev => [...prev.concat(results)]);
   };
 
@@ -311,7 +308,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
 
   useEffect(() => {
     const getProducts = async () => {
-      const { results } = await _fetchProducts(true);
+      const { results } = await _fetchProducts();
       setProducts(results);
       setRefreshing(false);
     };
@@ -733,7 +730,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
               <Row justify="end">
                 <Button
                   type="primary"
-                  onClick={() => getResources(true)}
+                  onClick={getResources}
                   loading={loading}
                   style={{
                     position: 'relative',
