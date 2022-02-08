@@ -31,7 +31,6 @@ import CategoryDetail from 'pages/categories/CategoryDetail';
 import Orders from 'pages/orders/Orders';
 import OrderDetail from 'pages/orders/OrderDetail';
 import Transactions from 'pages/transactions/Transactions';
-import FeedMixer from 'pages/feed-mixer/FeedMixer';
 import PreviewProducts from 'pages/products/PreviewProducts';
 import Promotions from 'pages/promotions/Promotions';
 import PromotionDetail from 'pages/promotions/PromotionDetail';
@@ -206,11 +205,6 @@ function AdminRoutes() {
       <AppRoute
         path="/transactions"
         component={Transactions}
-        layout={AuthenticatedLayout}
-      />
-      <AppRoute
-        path="/feed-mixer"
-        component={FeedMixer}
         layout={AuthenticatedLayout}
       />
       <AppRoute

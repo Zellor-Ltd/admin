@@ -6,10 +6,8 @@ import {
   FireOutlined,
   GiftOutlined,
   HeartFilled,
-  OrderedListOutlined,
   SettingOutlined,
   IdcardOutlined,
-  // AppstoreAddOutlined,
   ShoppingCartOutlined,
   SoundOutlined,
   SwitcherOutlined,
@@ -70,9 +68,6 @@ const AdminSideMenu = () => {
       </Menu.Item>
       <Menu.Item key="feed" icon={<HeartFilled />}>
         <Link to="/feed">Videos Feed</Link>
-      </Menu.Item>
-      <Menu.Item key="feed-mixer" icon={<OrderedListOutlined />}>
-        <Link to="/feed-mixer">Feed Mixer</Link>
       </Menu.Item>
       <Menu.Item key="orders" icon={<ShoppingCartOutlined />}>
         <Link to="/orders">Orders</Link>
