@@ -121,10 +121,8 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
     {
       title: 'Status',
       dataIndex: 'status',
-      width: '15%',
-      render: (value = 'pending') => (
-        <Tag color={tagColorByStatus[value]}>{value}</Tag>
-      ),
+      width: '10%',
+      align: 'center',
     },
     {
       title: 'Actions',

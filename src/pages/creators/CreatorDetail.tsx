@@ -15,6 +15,7 @@ import {
   InputNumber,
   message,
   PageHeader,
+  Radio,
   Row,
   Select,
   Slider,
@@ -104,6 +105,36 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
         <Tabs defaultActiveKey="Details">
           <Tabs.TabPane forceRender tab="Details" key="Details">
             <Row gutter={8}>
+              <Col lg={24} xs={24}>
+                <Row gutter={24}>
+                  <Col>
+                    <Form.Item name="status" label="Status">
+                      <Radio.Group buttonStyle="solid">
+                        <Radio.Button value="live">Live</Radio.Button>
+                        <Radio.Button value="paused">Paused</Radio.Button>
+                      </Radio.Group>
+                    </Form.Item>
+                  </Col>
+                  <Col>
+                    <Form.Item name="approved" label="Approved">
+                      <Radio.Group buttonStyle="solid">
+                        <Radio.Button value="true">Approved</Radio.Button>
+                        <Radio.Button value="false">Not Approved</Radio.Button>
+                      </Radio.Group>
+                    </Form.Item>
+                  </Col>
+                  <Col>
+                    <Form.Item
+                      name={['creator', 'displayInVideoFeed']}
+                      label="Display in Video Feed"
+                      valuePropName="checked"
+                      initialValue={true}
+                    >
+                      <Switch />
+                    </Form.Item>
+                  </Col>
+                </Row>
+              </Col>
               <Col lg={12} xs={24}>
                 <Form.Item label="First Name" name="firstName">
                   <Input />
@@ -165,16 +196,6 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
               <Col lg={12} xs={24}>
                 <Form.Item label="Agreed Percentage" name="agreedPercentage">
                   <InputNumber decimalSeparator="." />
-                </Form.Item>
-              </Col>
-              <Col lg={12} xs={24}>
-                <Form.Item
-                  name={['creator', 'displayInVideoFeed']}
-                  label="Display in Video Feed"
-                  valuePropName="checked"
-                  initialValue={true}
-                >
-                  <Switch />
                 </Form.Item>
               </Col>
             </Row>
