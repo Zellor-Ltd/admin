@@ -21,6 +21,7 @@ import FanFeedModal from './FanFeedModal';
 import scrollIntoView from 'scroll-into-view';
 import FanDetail from './FanDetail';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import moment from 'moment';
 
 const tagColorByPermission: any = {
   Admin: 'green',
@@ -130,6 +131,18 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
         <Link to={location.pathname} onClick={() => editFan(index, record)}>
           {value}
         </Link>
+      ),
+    },
+    {
+      title: 'Creation',
+      dataIndex: 'hCreationDate',
+      width: '15%',
+      align: 'center',
+      render: (value: Date) => (
+        <>
+          <div>{moment(value).format('DD/MM/YYYY')}</div>
+          <div>{moment(value).format('HH:mm')}</div>
+        </>
       ),
     },
     { title: 'E-mail', dataIndex: 'user', width: '25%', align: 'center' },
