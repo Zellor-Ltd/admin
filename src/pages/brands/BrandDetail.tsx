@@ -512,21 +512,42 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                     <Input />
                   </Form.Item>
                 </Col>
-                <Col lg={8} xs={8}>
-                  <Form.Item
-                    name="discoPercentage"
-                    label="Disco Percentage %"
-                    rules={[
-                      {
-                        required: true,
-                        type: 'number',
-                        message: `Disco Percentage is required.`,
-                      },
-                    ]}
-                  >
-                    <InputNumber />
-                  </Form.Item>
-                </Col>
+                <Row gutter={4}>
+                  <Col lg={8} xs={8}>
+                    <Form.Item
+                      name="discoPercentage"
+                      label="Disco Percentage %"
+                      rules={[
+                        {
+                          required: true,
+                          type: 'number',
+                          message: `Disco Percentage is required.`,
+                        },
+                      ]}
+                    >
+                      <InputNumber />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={8} xs={8}>
+                    <Form.Item
+                      name="initialFreeDdAmount"
+                      label="Initial Free Disco Dollars"
+                      rules={[
+                        {
+                          required: true,
+                          type: 'number',
+                          message: `'Initial Free Disco Dollars' is required.`,
+                        },
+                      ]}
+                    >
+                      <InputNumber
+                        pattern="^[0-9]*$"
+                        title="positive integers"
+                        min={0}
+                      />
+                    </Form.Item>
+                  </Col>
+                </Row>
                 <Col lg={16} xs={24}>
                   <Form.Item
                     name="shopName"
