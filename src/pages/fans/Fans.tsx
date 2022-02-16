@@ -22,6 +22,7 @@ import scrollIntoView from 'scroll-into-view';
 import FanDetail from './FanDetail';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import moment from 'moment';
+import { SearchFilterDebounce } from 'components/SearchFilterDebounce';
 
 const tagColorByPermission: any = {
   Admin: 'green',
@@ -43,6 +44,7 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
   const [eof, setEof] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [filteredFans, setFilteredFans] = useState<Fan[]>([]);
+  const [searchFilter, setSearchFilter] = useState<string>();
 
   const {
     setArrayList: setFans,
@@ -51,10 +53,10 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
     removeFilterFunction,
   } = useFilter<Fan>([]);
 
-  const fetch = async () => {
-    const { results } = await doFetch(() => fetchFans());
-    setFans(results);
+  const getResources = async () => {
     setRefreshing(true);
+    const { results } = await fetchUsers();
+    setFans(results);
     setLoaded(true);
   };
 
@@ -62,21 +64,33 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
     if (refreshing) {
       setFilteredFans([]);
       setEof(false);
-      fetchData();
+      fetchUsers();
       setRefreshing(false);
     }
   }, [refreshing]);
 
-  const fetchData = async () => {
-    if (!filteredContent.length) return;
+  useEffect(() => {
+    fetchUsers();
+  }, [searchFilter]);
 
+  const fetchUsers = async () => {
     const pageToUse = refreshing ? 0 : page;
-    const results = filteredContent.slice(pageToUse * 10, pageToUse * 10 + 10);
+    const response = await doFetch(() =>
+      fetchFans({
+        page: pageToUse,
+        query: searchFilter,
+      })
+    );
 
     setPage(pageToUse + 1);
-    setFilteredFans(prev => [...prev.concat(results)]);
+    if (response.results.length < 10) setEof(true);
+    return response;
+  };
 
-    if (results.length < 10) setEof(true);
+  const fetchData = async () => {
+    if (!filteredContent.length) return;
+    const { results } = await fetchUsers();
+    setFilteredFans(prev => [...prev.concat(results)]);
   };
 
   useEffect(() => {
@@ -101,6 +115,8 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
       setRefreshing(true);
       return;
     }
+    setSearchFilter(filterText);
+
     addFilterFunction('fanName', fans =>
       fans.filter(fan => {
         fan.name = fan.name || '';
@@ -194,7 +210,7 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
   ];
 
   const handleEditFans = async () => {
-    await fetch();
+    await getResources();
     setSelectedRowKeys([]);
   };
 
@@ -235,7 +251,7 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
                 <Col lg={8} xs={16}>
                   <SearchFilter
                     filterFunction={searchFilterFunction}
-                    label="Search by Email"
+                    label="Search Fan"
                   />
                 </Col>
               </Row>
@@ -249,7 +265,7 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
             />
             <Button
               type="primary"
-              onClick={fetch}
+              onClick={getResources}
               loading={loading}
               style={{
                 marginBottom: '20px',
@@ -307,3 +323,6 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
   );
 };
 export default Fans;
+function usePageFilter<T>(arg0: string): [any, any] {
+  throw new Error('Function not implemented.');
+}

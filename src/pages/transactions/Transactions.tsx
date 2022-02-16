@@ -19,9 +19,10 @@ import CopyOrderToClipboard from 'components/CopyOrderToClipboard';
 import SimpleSelect from 'components/select/SimpleSelect';
 import { SelectOption } from 'interfaces/SelectOption';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import { useRequest } from 'hooks/useRequest';
 
 const Transactions: React.FC<RouteComponentProps> = () => {
-  const [tableLoading, setTableLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const [selectedFan, setSelectedFan] = useState<Fan | undefined>();
   const [isFetchingFans, setIsFetchingFans] = useState(false);
   const [fans, setFans] = useState<Fan[]>([]);
@@ -33,6 +34,7 @@ const Transactions: React.FC<RouteComponentProps> = () => {
   const [eof, setEof] = useState<boolean>(false);
   const [loaded, setLoaded] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
+  const { doFetch, doRequest } = useRequest({ setLoading });
 
   const fanOptionsMapping: SelectOption = {
     key: 'id',
@@ -42,7 +44,12 @@ const Transactions: React.FC<RouteComponentProps> = () => {
 
   const getFans = async () => {
     setIsFetchingFans(true);
-    const response: any = await fetchFans();
+    const response: any = await doFetch(() =>
+      fetchFans({
+        page: 0,
+        query: undefined,
+      })
+    );
     setFans(response.results);
     setIsFetchingFans(false);
   };
@@ -136,7 +143,7 @@ const Transactions: React.FC<RouteComponentProps> = () => {
   };
 
   const onChangeFan = async (_selectedFan?: Fan) => {
-    setTableLoading(true);
+    setLoading(true);
     if (_selectedFan) {
       setSelectedFan(_selectedFan);
       const { results }: any = await fetchWalletTransactions(_selectedFan.id);
@@ -146,7 +153,7 @@ const Transactions: React.FC<RouteComponentProps> = () => {
     } else {
       setTransactions([]);
     }
-    setTableLoading(false);
+    setLoading(false);
   };
 
   const handleDateChange = (values: any) => {
@@ -203,7 +210,7 @@ const Transactions: React.FC<RouteComponentProps> = () => {
           rowKey="id"
           columns={columns}
           dataSource={filteredTransactions}
-          loading={tableLoading || refreshing}
+          loading={loading || refreshing}
           pagination={false}
         />
       </InfiniteScroll>

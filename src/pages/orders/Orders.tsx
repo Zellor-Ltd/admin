@@ -36,6 +36,7 @@ import scrollIntoView from 'scroll-into-view';
 import FanDetail from 'pages/fans/FanDetail';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useMount } from 'react-use';
+import { useRequest } from 'hooks/useRequest';
 
 const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -56,6 +57,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [filteredOrders, setFilteredOrders] = useState<Order[]>([]);
   const [ordersSettings, setOrdersSettings] = useState([]);
+  const { doFetch } = useRequest({ setLoading });
 
   const {
     arrayList: orders,
@@ -393,7 +395,12 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   useEffect(() => {
     const getFans = async () => {
       setIsFetchingFans(true);
-      const response: any = await fetchFans();
+      const response: any = await doFetch(() =>
+        fetchFans({
+          page: 0,
+          query: undefined,
+        })
+      );
       setFans(response.results);
       setIsFetchingFans(false);
     };

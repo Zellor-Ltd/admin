@@ -101,7 +101,12 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
   useEffect(() => {
     const getFans = async () => {
       setIsFetchingFans(true);
-      const response: any = await fetchFans();
+      const response: any = await doFetch(() =>
+        fetchFans({
+          page: 0,
+          query: undefined,
+        })
+      );
       setFans(response.results);
       setIsFetchingFans(false);
     };
