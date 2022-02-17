@@ -176,7 +176,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
               </Col>
               <Col lg={12} xs={24}>
                 <Form.Item label="Description" name="description">
-                  <Input showCount maxLength={40} />
+                  <Input showCount maxLength={200} />
                 </Form.Item>
               </Col>
               <Col lg={12} xs={24}>
