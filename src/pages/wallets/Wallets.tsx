@@ -1,4 +1,12 @@
-import { Col, PageHeader, Row, Spin, Table, Typography } from 'antd';
+import {
+  AutoComplete,
+  Col,
+  PageHeader,
+  Row,
+  Spin,
+  Table,
+  Typography,
+} from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import SimpleSelect from 'components/select/SimpleSelect';
 import useFilter from 'hooks/useFilter';
@@ -7,17 +15,13 @@ import { Brand } from 'interfaces/Brand';
 import { Fan } from 'interfaces/Fan';
 import { SelectOption } from 'interfaces/SelectOption';
 import { Wallet } from 'interfaces/Wallet';
-import {
-  WalletDetailParams,
-  WalletTransaction,
-} from 'interfaces/WalletTransactions';
+import { WalletDetailParams } from 'interfaces/WalletTransactions';
 import { useEffect, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import {
   fetchBalancePerBrand,
   fetchBrands,
   fetchFans,
-  fetchTransactionsPerBrand,
 } from 'services/DiscoClubService';
 import WalletEdit from './WalletEdit';
 import scrollIntoView from 'scroll-into-view';
@@ -31,13 +35,15 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
   const [isFetchingBrands, setIsFetchingBrands] = useState(false);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [selectedFan, setSelectedFan] = useState<Fan | undefined>();
-  const [isFetchingFans, setIsFetchingFans] = useState(false);
-  const [fans, setFans] = useState<Fan[]>([]);
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
   const [details, setDetails] = useState<boolean>(false);
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
   const [filteredWallets, setFilteredWallets] = useState<Wallet[]>([]);
+  const [searchFilter, setSearchFilter] = useState<string>();
+  const [options, setOptions] = useState<
+    { label: string; value: string; key: string }[]
+  >([]);
 
   const {
     arrayList: wallets,
@@ -46,12 +52,6 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
     addFilterFunction,
     removeFilterFunction,
   } = useFilter<Wallet>([]);
-
-  const {
-    // arrayList: wallets,
-    setArrayList: setTransactions,
-    filteredArrayList: filteredTransactions,
-  } = useFilter<WalletTransaction>([]);
 
   const optionsMapping: SelectOption = {
     key: 'id',
@@ -65,7 +65,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
     value: 'user',
   };
 
-  const onChangeFan = async (_selectedFan?: Fan) => {
+  const onChangeFan = async (value: string, _selectedFan?: any) => {
     if (_selectedFan) {
       const { balance }: any = await doFetch(
         () => fetchBalancePerBrand(_selectedFan.id),
@@ -99,18 +99,6 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   useEffect(() => {
-    const getFans = async () => {
-      setIsFetchingFans(true);
-      const response: any = await doFetch(() =>
-        fetchFans({
-          page: 0,
-          query: undefined,
-        })
-      );
-      setFans(response.results);
-      setIsFetchingFans(false);
-    };
-
     const getBrands = async () => {
       try {
         setIsFetchingBrands(true);
@@ -120,10 +108,27 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
       } catch (e) {}
     };
 
-    getFans();
     getBrands();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const getFans = async () => {
+    const response = await doFetch(() =>
+      fetchFans({
+        page: 0,
+        query: searchFilter,
+      })
+    );
+
+    const optionFactory = (option: any) => {
+      return {
+        label: option[fanOptionsMapping.label],
+        value: option[fanOptionsMapping.value],
+        key: option[fanOptionsMapping.value],
+      };
+    };
+
+    setOptions(response.results.map(optionFactory));
+  };
 
   useEffect(() => {
     if (!details) {
@@ -231,6 +236,11 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
     setDetails(false);
   };
 
+  const onSearch = (value: string) => {
+    setSearchFilter(value);
+    getFans();
+  };
+
   return (
     <>
       {!details && (
@@ -241,17 +251,13 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
               <Row gutter={8} align="bottom">
                 <Col span={4}>
                   <Typography.Title level={5}>Fan Filter</Typography.Title>
-                  <SimpleSelect
-                    data={fans}
-                    onChange={(_, fan) => onChangeFan(fan)}
-                    style={{ width: '100%', marginBottom: '16px' }}
-                    selectedOption={selectedFan?.user}
-                    optionsMapping={fanOptionsMapping}
-                    placeholder={'Select a fan'}
-                    loading={isFetchingFans}
-                    disabled={isFetchingFans}
-                    allowClear={true}
-                  ></SimpleSelect>
+                  <AutoComplete
+                    style={{ width: '100%' }}
+                    options={options}
+                    onSelect={onChangeFan}
+                    onSearch={onSearch}
+                    placeholder="Type to search a fan"
+                  />
                 </Col>
                 {selectedFan && (
                   <Col span={4}>
@@ -269,7 +275,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
                     ></SimpleSelect>
                   </Col>
                 )}
-                <Col span={6} style={{ position: 'relative', top: '8px' }}>
+                <Col span={6} style={{ position: 'relative', top: '23px' }}>
                   <WalletEdit
                     disabled={!selectedFan || !selectedBrand}
                     fanId={selectedFan?.id}

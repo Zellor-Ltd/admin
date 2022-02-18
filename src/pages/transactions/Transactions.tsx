@@ -1,5 +1,6 @@
 import { CalendarOutlined } from '@ant-design/icons';
 import {
+  AutoComplete,
   Col,
   DatePicker,
   PageHeader,
@@ -35,6 +36,10 @@ const Transactions: React.FC<RouteComponentProps> = () => {
   const [loaded, setLoaded] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const { doFetch, doRequest } = useRequest({ setLoading });
+  const [searchFilter, setSearchFilter] = useState<string>();
+  const [options, setOptions] = useState<
+    { label: string; value: string; key: string }[]
+  >([]);
 
   const fanOptionsMapping: SelectOption = {
     key: 'id',
@@ -44,13 +49,22 @@ const Transactions: React.FC<RouteComponentProps> = () => {
 
   const getFans = async () => {
     setIsFetchingFans(true);
-    const response: any = await doFetch(() =>
+    const response = await doFetch(() =>
       fetchFans({
         page: 0,
-        query: undefined,
+        query: searchFilter,
       })
     );
-    setFans(response.results);
+
+    const optionFactory = (option: any) => {
+      return {
+        label: option[fanOptionsMapping.label],
+        value: option[fanOptionsMapping.value],
+        key: option[fanOptionsMapping.value],
+      };
+    };
+
+    setOptions(response.results.map(optionFactory));
     setIsFetchingFans(false);
   };
 
@@ -142,7 +156,7 @@ const Transactions: React.FC<RouteComponentProps> = () => {
     }
   };
 
-  const onChangeFan = async (_selectedFan?: Fan) => {
+  const onChangeFan = async (value: string, _selectedFan?: any) => {
     setLoading(true);
     if (_selectedFan) {
       setSelectedFan(_selectedFan);
@@ -170,12 +184,24 @@ const Transactions: React.FC<RouteComponentProps> = () => {
     );
   };
 
+  const onSearch = (value: string) => {
+    setSearchFilter(value);
+    getFans();
+  };
+
   return (
     <div className="transactions">
       <PageHeader title="Transactions" subTitle="List of Transactions" />
       <Row gutter={8} style={{ marginBottom: '20px' }}>
         <Col xxl={40} lg={6} xs={18}>
           <Typography.Title level={5}>Fan Filter</Typography.Title>
+          <AutoComplete
+            style={{ width: '100%' }}
+            options={options}
+            onSelect={onChangeFan}
+            onSearch={onSearch}
+            placeholder="Type to search a fan"
+          />
           <SimpleSelect
             data={fans}
             onChange={(_, fan) => onChangeFan(fan)}

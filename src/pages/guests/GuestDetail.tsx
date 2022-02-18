@@ -1,129 +1,19 @@
-import { DeleteOutlined } from '@ant-design/icons';
-import {
-  Button,
-  Col,
-  DatePicker,
-  Form,
-  Input,
-  InputNumber,
-  message,
-  PageHeader,
-  Row,
-  Select,
-  Table,
-  Tabs,
-  Typography,
-} from 'antd';
-import { formatMoment } from '../../helpers/formatMoment';
+import { Button, Col, Form, message, PageHeader, Row, Table, Tabs } from 'antd';
 import { useRequest } from '../../hooks/useRequest';
-import { Category } from '../../interfaces/Category';
 import { Creator } from '../../interfaces/Creator';
-import { Currency } from '../../interfaces/Currency';
 import { Fan } from '../../interfaces/Fan';
-import { Role } from '../../interfaces/Role';
-import { ServerAlias } from '../../interfaces/ServerAlias';
-import { useEffect, useState } from 'react';
-import {
-  fetchCategories,
-  fetchCreators,
-  fetchCurrencies,
-  fetchProfiles,
-  fetchServersList,
-  saveUser,
-} from '../../services/DiscoClubService';
-import GuestGroupDropdown from './GuestGroupDropdown';
+import { useState } from 'react';
+import { saveUser } from '../../services/DiscoClubService';
 interface FanDetailProps {
   fan: any;
   onSave?: (record: Fan) => void;
   onCancel?: () => void;
 }
 
-const { Option } = Select;
-
-const prefixSelector = (prefix: string) => (
-  <Form.Item initialValue={prefix || '+353'} name="dialCode" noStyle>
-    <Select style={{ width: 80 }}>
-      <Option value="+353">+353</Option>
-      <Option value="+55">+55</Option>
-      <Option value="+86">+86</Option>
-      <Option value="+87">+87</Option>
-    </Select>
-  </Form.Item>
-);
-
 const GuestDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
   const [loading, setLoading] = useState(false);
-  const [roles, setRoles] = useState<Role[]>([]);
-  const [creators, setCreators] = useState<Creator[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [serversList, setServersList] = useState<ServerAlias[]>([]);
-  const [currencies, setCurrencies] = useState<Currency[]>([]);
   const [form] = Form.useForm();
   const { doRequest } = useRequest({ setLoading });
-
-  useEffect(() => {
-    let mounted = true;
-    async function getRoles() {
-      try {
-        const response: any = await fetchProfiles();
-        if (mounted) {
-          setRoles(response.results);
-          setLoading(false);
-        }
-      } catch {
-        message.error("Couldn't fetch roles.");
-      }
-    }
-
-    const getCreatores = async () => {
-      const response: any = await fetchCreators();
-      setCreators(response.results);
-    };
-    const getCategories = async () => {
-      const response: any = await fetchCategories();
-      setCategories(response.results);
-    };
-    const getServersList = async () => {
-      const response: any = await fetchServersList();
-      setServersList(response.results);
-    };
-    const getCurrencies = async () => {
-      const response: any = await fetchCurrencies();
-      setCurrencies(response.results);
-    };
-    setLoading(true);
-    getRoles();
-    getCreatores();
-    getCategories();
-    getServersList();
-    getCurrencies();
-    return () => {
-      mounted = false;
-    };
-  }, [form]);
-
-  const onChangeCreator = (key: string) => {
-    if (key) {
-      const { id, firstName, lastName, userName } =
-        creators.find(creator => creator.userName === key) || {};
-      const followingCreators = form.getFieldValue('followingCreators') || [];
-      form.setFieldsValue({
-        followingCreators: [
-          ...followingCreators,
-          { creatorId: id, firstName, lastName, userName },
-        ],
-      });
-    }
-  };
-
-  const onRemoveCreatorClick = (record: Creator) => {
-    const followingCreators = form.getFieldValue('followingCreators') || [];
-    form.setFieldsValue({
-      followingCreators: followingCreators.filter(
-        (follow: Creator) => follow.userName !== record.userName
-      ),
-    });
-  };
 
   const creatorColumns = [
     { title: 'UserName', dataIndex: 'userName', width: '15%' },
@@ -138,28 +28,6 @@ const GuestDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
       ),
     },
   ];
-
-  const onChangeCategories = (key: string) => {
-    if (key) {
-      const { id, name } =
-        categories.find(category => category.name === key) || {};
-      const followingCategories =
-        form.getFieldValue('followingCategories') || [];
-      form.setFieldsValue({
-        followingCategories: [...followingCategories, { idCategory: id, name }],
-      });
-    }
-  };
-
-  const onRemoveCategoryClick = (record: Category) => {
-    const followingCategories = form.getFieldValue('followingCategories') || [];
-    followingCategories.splice(record, 1);
-    form.setFieldsValue({
-      followingCategories: followingCategories.filter(
-        (follow: Category) => follow.id !== record.id
-      ),
-    });
-  };
 
   const categoryColumns = [{ title: 'Name', dataIndex: 'name', width: '100%' }];
 
@@ -231,7 +99,9 @@ const GuestDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
           <Tabs.TabPane forceRender tab="Details" key="Details">
             <Row gutter={8}>
               <Col lg={8} xs={24}>
-                <span>_id</span>
+                <Row justify="space-between">
+                  <span>_id</span>
+                </Row>
                 <span className="info-block mt-05 mb-1">{fan.id}</span>
               </Col>
               <Col lg={8} xs={24}>

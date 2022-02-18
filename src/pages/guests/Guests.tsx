@@ -1,8 +1,8 @@
 import { EditOutlined, SearchOutlined } from '@ant-design/icons';
 import {
+  AutoComplete,
   Button,
   Col,
-  Input,
   PageHeader,
   Row,
   Spin,
@@ -21,6 +21,7 @@ import scrollIntoView from 'scroll-into-view';
 import GuestDetail from './GuestDetail';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import moment from 'moment';
+import { SelectOption } from 'interfaces/SelectOption';
 
 const tagColorByPermission: any = {
   Admin: 'green',
@@ -38,21 +39,27 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
   const [loaded, setLoaded] = useState<boolean>(false);
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
-  const [refreshing, setRefreshing] = useState<boolean>(false);
   const [guests, setGuests] = useState<Fan[]>([]);
   const [searchFilter, setSearchFilter] = useState<string>();
+  const [options, setOptions] = useState<
+    { label: string; value: string; key: string }[]
+  >([]);
+
+  const fanOptionsMapping: SelectOption = {
+    key: 'id',
+    label: 'user',
+    value: 'user',
+  };
 
   const getResources = async () => {
-    setRefreshing(true);
-    const { results } = await fetchFans();
+    setEof(false);
+    const { results } = await doFetch(fetchFans);
     setGuests(results);
     setLoaded(true);
-    setEof(false);
-    setRefreshing(false);
   };
 
   const fetchFans = async () => {
-    const pageToUse = refreshing ? 0 : page;
+    const pageToUse = loading ? 0 : page;
     console.log(searchFilter);
     const response = await doFetch(() =>
       fetchGuests({
@@ -63,6 +70,17 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
 
     setPage(pageToUse + 1);
     if (response.results.length < 10) setEof(true);
+
+    const optionFactory = (option: any) => {
+      return {
+        label: option[fanOptionsMapping.label],
+        value: option[fanOptionsMapping.value],
+        key: option[fanOptionsMapping.value],
+      };
+    };
+
+    setOptions(response.results.map(optionFactory));
+
     return response;
   };
 
@@ -86,11 +104,6 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
     setLastViewedIndex(index);
     setCurrentGuest(fan);
     setDetails(true);
-  };
-
-  const searchFilterFunction = (filterText: any) => {
-    setSearchFilter(filterText.target.value);
-    getResources();
   };
 
   const columns: ColumnsType<Fan> = [
@@ -198,6 +211,16 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
     setDetails(false);
   };
 
+  const onChangeFan = async (value: string, _selectedFan?: any) => {
+    setSearchFilter(_selectedFan.name);
+    getResources();
+  };
+
+  const onSearch = (value: string) => {
+    setSearchFilter(value);
+    getResources();
+  };
+
   return (
     <>
       {!details && (
@@ -213,7 +236,13 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
               <Row gutter={8}>
                 <Col lg={8} xs={16}>
                   <Typography.Title level={5}>Search Guest</Typography.Title>
-                  <Input onPressEnter={evt => searchFilterFunction(evt)} />
+                  <AutoComplete
+                    style={{ width: '100%' }}
+                    options={options}
+                    onSelect={onChangeFan}
+                    onSearch={onSearch}
+                    placeholder="Type to search a guest"
+                  />
                 </Col>
               </Row>
             </Col>
@@ -258,7 +287,7 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
               rowKey="id"
               columns={columns}
               dataSource={guests}
-              loading={loading || refreshing}
+              loading={loading}
               pagination={false}
               rowSelection={{
                 selectedRowKeys,

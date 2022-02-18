@@ -1,5 +1,6 @@
 import { CalendarOutlined, SearchOutlined } from '@ant-design/icons';
 import {
+  AutoComplete,
   Button,
   Col,
   DatePicker,
@@ -41,14 +42,12 @@ import { useRequest } from 'hooks/useRequest';
 const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [orderUpdateList, setOrderUpdateList] = useState<boolean[]>([]);
-  const [selectedFan, setSelectedFan] = useState<Fan | undefined>();
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
   const [currentFan, setCurrentFan] = useState<Fan>();
   const [details, setDetails] = useState<boolean>(false);
   const [fans, setFans] = useState<Fan[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [isFetchingBrands, setIsFetchingBrands] = useState(false);
-  const [isFetchingFans, setIsFetchingFans] = useState(false);
   const [searchText, setSearchText] = useState<string>('');
   const searchInput = useRef<Input>(null);
   const [loaded, setLoaded] = useState<boolean>(false);
@@ -58,6 +57,11 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   const [filteredOrders, setFilteredOrders] = useState<Order[]>([]);
   const [ordersSettings, setOrdersSettings] = useState([]);
   const { doFetch } = useRequest({ setLoading });
+  const [searchFilter, setSearchFilter] = useState<string>();
+  const [selectedFan, setSelectedFan] = useState<Fan>();
+  const [options, setOptions] = useState<
+    { label: string; value: string; key: string }[]
+  >([]);
 
   const {
     arrayList: orders,
@@ -88,8 +92,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     setLoading(true);
     const orders: Order[] = await getValidOrders();
     const ordersWithFanName = orders.map(order => {
-      const fan = fans.find(fan => fan.id === order.userid);
-      order.fanName = fan?.user;
+      order.fanName = selectedFan?.user;
       return order;
     });
     setOrders(ordersWithFanName);
@@ -375,36 +378,12 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
         <>
           <div>{moment(value).format('DD/MM/YYYY')}</div>
           <div>{moment(value).format('HH:mm')}</div>
-          {/* <div style={{ color: "grey" }}>({moment(value).fromNow()})</div> */}
         </>
       ),
     },
-    // {
-    //   title: "Actions",
-    //   key: "action",
-    //   width: "5%",
-    //   align: "right",
-    //   render: (_, record) => (
-    //     <Link to={{ pathname: `/order`, state: record }}>
-    //       <EditOutlined />
-    //     </Link>
-    //   ),
-    // },
   ];
 
   useEffect(() => {
-    const getFans = async () => {
-      setIsFetchingFans(true);
-      const response: any = await doFetch(() =>
-        fetchFans({
-          page: 0,
-          query: undefined,
-        })
-      );
-      setFans(response.results);
-      setIsFetchingFans(false);
-    };
-
     const getBrands = async () => {
       try {
         setIsFetchingBrands(true);
@@ -415,7 +394,6 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       } finally {
       }
     };
-    getFans();
     getBrands();
   }, []);
 
@@ -443,7 +421,12 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     setRefreshing(true);
   };
 
-  const onChangeFan = async (_selectedFan: Fan | undefined) => {
+  const onSearch = (value: string) => {
+    setSearchFilter(value);
+    getFans();
+  };
+
+  const onChangeFan = async (value: string, _selectedFan: any) => {
     setSelectedFan(_selectedFan);
     if (!_selectedFan) {
       removeFilterFunction('fanName');
@@ -462,6 +445,26 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
 
   const onCancelFan = () => {
     setDetails(false);
+  };
+
+  const getFans = async () => {
+    const response = await doFetch(() =>
+      fetchFans({
+        page: 0,
+        query: searchFilter,
+      })
+    );
+
+    const optionFactory = (option: any) => {
+      return {
+        label: option[fanOptionsMapping.label],
+        value: option[fanOptionsMapping.value],
+        key: option[fanOptionsMapping.value],
+      };
+    };
+
+    setFans(response.results);
+    setOptions(response.results.map(optionFactory));
   };
 
   return (
@@ -488,17 +491,13 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
                 </Col>
                 <Col lg={8} xs={16}>
                   <Typography.Title level={5}>Fan Filter</Typography.Title>
-                  <SimpleSelect
-                    data={fans}
-                    onChange={(_, fan) => onChangeFan(fan)}
-                    style={{ width: '100%', marginBottom: '16px' }}
-                    selectedOption={selectedFan?.user}
-                    optionsMapping={fanOptionsMapping}
-                    placeholder={'Select a fan'}
-                    loading={isFetchingFans}
-                    disabled={isFetchingFans}
-                    allowClear={true}
-                  ></SimpleSelect>
+                  <AutoComplete
+                    style={{ width: '100%' }}
+                    options={options}
+                    onSelect={onChangeFan}
+                    onSearch={onSearch}
+                    placeholder="Type to search a fan"
+                  />
                 </Col>
               </Row>
             </Col>

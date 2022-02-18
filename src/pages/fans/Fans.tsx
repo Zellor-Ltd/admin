@@ -4,12 +4,20 @@ import {
   SettingOutlined,
   SearchOutlined,
 } from '@ant-design/icons';
-import { Button, Col, PageHeader, Row, Spin, Table, Tag } from 'antd';
+import {
+  AutoComplete,
+  Button,
+  Col,
+  PageHeader,
+  Row,
+  Spin,
+  Table,
+  Tag,
+  Typography,
+} from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
 import EditMultipleButton from 'components/EditMultipleButton';
-import { SearchFilter } from 'components/SearchFilter';
-import useFilter from 'hooks/useFilter';
 import { useRequest } from 'hooks/useRequest';
 import { Fan } from 'interfaces/Fan';
 import EditFanModal from 'pages/fans/EditFanModal';
@@ -22,7 +30,7 @@ import scrollIntoView from 'scroll-into-view';
 import FanDetail from './FanDetail';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import moment from 'moment';
-import { SearchFilterDebounce } from 'components/SearchFilterDebounce';
+import { SelectOption } from 'interfaces/SelectOption';
 
 const tagColorByPermission: any = {
   Admin: 'green',
@@ -42,39 +50,27 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
   const [loaded, setLoaded] = useState<boolean>(false);
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
-  const [refreshing, setRefreshing] = useState<boolean>(false);
-  const [filteredFans, setFilteredFans] = useState<Fan[]>([]);
+  const [fans, setFans] = useState<Fan[]>([]);
   const [searchFilter, setSearchFilter] = useState<string>();
+  const [options, setOptions] = useState<
+    { label: string; value: string; key: string }[]
+  >([]);
 
-  const {
-    setArrayList: setFans,
-    filteredArrayList: filteredContent,
-    addFilterFunction,
-    removeFilterFunction,
-  } = useFilter<Fan>([]);
+  const fanOptionsMapping: SelectOption = {
+    key: 'id',
+    label: 'user',
+    value: 'user',
+  };
 
   const getResources = async () => {
-    setRefreshing(true);
-    const { results } = await fetchUsers();
+    setEof(false);
+    const { results } = await doFetch(fetchUsers);
     setFans(results);
     setLoaded(true);
   };
 
-  useEffect(() => {
-    if (refreshing) {
-      setFilteredFans([]);
-      setEof(false);
-      fetchUsers();
-      setRefreshing(false);
-    }
-  }, [refreshing]);
-
-  useEffect(() => {
-    fetchUsers();
-  }, [searchFilter]);
-
   const fetchUsers = async () => {
-    const pageToUse = refreshing ? 0 : page;
+    const pageToUse = loading ? 0 : page;
     const response = await doFetch(() =>
       fetchFans({
         page: pageToUse,
@@ -84,13 +80,24 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
 
     setPage(pageToUse + 1);
     if (response.results.length < 10) setEof(true);
+
+    const optionFactory = (option: any) => {
+      return {
+        label: option[fanOptionsMapping.label],
+        value: option[fanOptionsMapping.value],
+        key: option[fanOptionsMapping.value],
+      };
+    };
+
+    setOptions(response.results.map(optionFactory));
+
     return response;
   };
 
   const fetchData = async () => {
-    if (!filteredContent.length) return;
+    if (!fans.length) return;
     const { results } = await fetchUsers();
-    setFilteredFans(prev => [...prev.concat(results)]);
+    setFans(prev => [...prev.concat(results)]);
   };
 
   useEffect(() => {
@@ -107,27 +114,6 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
     setLastViewedIndex(index);
     setCurrentFan(fan);
     setDetails(true);
-  };
-
-  const searchFilterFunction = (filterText: string) => {
-    if (!filterText) {
-      removeFilterFunction('fanName');
-      setRefreshing(true);
-      return;
-    }
-    setSearchFilter(filterText);
-
-    addFilterFunction('fanName', fans =>
-      fans.filter(fan => {
-        fan.name = fan.name || '';
-        const searchText = filterText.toUpperCase();
-        return (
-          fan.name.toUpperCase().includes(searchText) ||
-          fan.user.toUpperCase().includes(searchText)
-        );
-      })
-    );
-    setRefreshing(true);
   };
 
   const columns: ColumnsType<Fan> = [
@@ -216,8 +202,8 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
 
   const refreshItem = (record: Fan) => {
     if (loaded) {
-      filteredFans[lastViewedIndex] = record;
-      setFans([...filteredFans]);
+      fans[lastViewedIndex] = record;
+      setFans([...fans]);
     } else {
       setFans([record]);
     }
@@ -232,6 +218,16 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
     setDetails(false);
   };
 
+  const onChangeFan = async (value: string, _selectedFan?: any) => {
+    setSearchFilter(_selectedFan.name);
+    getResources();
+  };
+
+  const onSearch = (value: string) => {
+    setSearchFilter(value);
+    getResources();
+  };
+
   return (
     <>
       {!details && (
@@ -240,7 +236,7 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
             title="Fans"
             subTitle="List of Fans"
             extra={[
-              <Button key="1" onClick={() => editFan(filteredFans.length)}>
+              <Button key="1" onClick={() => editFan(fans.length)}>
                 New Item
               </Button>,
             ]}
@@ -249,16 +245,20 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
             <Col lg={16} xs={24}>
               <Row gutter={8}>
                 <Col lg={8} xs={16}>
-                  <SearchFilter
-                    filterFunction={searchFilterFunction}
-                    label="Search Fan"
+                  <Typography.Title level={5}>Search Fan</Typography.Title>
+                  <AutoComplete
+                    style={{ width: '100%' }}
+                    options={options}
+                    onSelect={onChangeFan}
+                    onSearch={onSearch}
+                    placeholder="Type to search a fan"
                   />
                 </Col>
               </Row>
             </Col>
             <EditMultipleButton
               text="Edit Fans"
-              arrayList={filteredFans}
+              arrayList={fans}
               ModalComponent={EditFanModal}
               selectedRowKeys={selectedRowKeys}
               onOk={handleEditFans}
@@ -285,7 +285,7 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
             setSelectedRecord={setFanFeedModal}
           />
           <InfiniteScroll
-            dataLength={filteredFans.length}
+            dataLength={fans.length}
             next={fetchData}
             hasMore={!eof}
             loader={
@@ -305,8 +305,8 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
               rowClassName={(_, index) => `scrollable-row-${index}`}
               rowKey="id"
               columns={columns}
-              dataSource={filteredFans}
-              loading={loading || refreshing}
+              dataSource={fans}
+              loading={loading}
               pagination={false}
               rowSelection={{
                 selectedRowKeys,
@@ -323,6 +323,3 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
   );
 };
 export default Fans;
-function usePageFilter<T>(arg0: string): [any, any] {
-  throw new Error('Function not implemented.');
-}
