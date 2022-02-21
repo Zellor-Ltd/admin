@@ -74,7 +74,12 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
     const results = filteredContent.slice(pageToUse * 10, pageToUse * 10 + 10);
 
     setPage(pageToUse + 1);
-    setFilteredFans(prev => [...prev.concat(results)]);
+
+    const validUsers = results.filter(
+      (fan: Fan) => !fan.user.includes('guest')
+    );
+
+    setFilteredFans(prev => [...prev.concat(validUsers)]);
 
     if (results.length < 10) setEof(true);
   };
