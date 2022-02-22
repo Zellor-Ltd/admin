@@ -50,6 +50,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
   const [eof, setEof] = useState<boolean>(false);
   const [filteredCreators, setFilteredCreators] = useState<Creator[]>([]);
   const timeoutRef = useRef<any>();
+  const [refreshing, setRefreshing] = useState<boolean>(false);
 
   const {
     setArrayList: setCreators,
@@ -62,12 +63,18 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
     const { results }: any = await doFetch(fetchCreators);
     setCreators(results);
     setLoaded(true);
+    setRefreshing(true);
   };
 
   useEffect(() => {
-    setFilteredCreators([]);
-    paginateData();
-  }, [filteredContent]);
+    if (refreshing) {
+      setFilteredCreators([]);
+      setEof(false);
+      paginateData();
+
+      setRefreshing(false);
+    }
+  }, [refreshing]);
 
   const paginateData = () => {
     if (!filteredContent.length) {
@@ -181,6 +188,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
       console.log(err);
     }
     setLoading(false);
+    setRefreshing(true);
   };
 
   const searchFilterFunction = (filterText: string) => {
@@ -208,10 +216,11 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
   const refreshItem = (record: Creator) => {
     if (loaded) {
       filteredCreators[lastViewedIndex] = record;
-      setCreators([...filteredCreators]);
+      setFilteredCreators([...filteredCreators]);
     } else {
-      setCreators([record]);
+      setFilteredCreators([record]);
     }
+    setRefreshing(true);
   };
 
   const onSaveCreator = (record: Creator) => {
