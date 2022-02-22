@@ -338,10 +338,9 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   };
 
   const deleteItem = async (_id: string, index: number) => {
-    setLoading(true);
     await deleteVideoFeed(_id);
     setVideoFeeds(prev => [...prev.slice(0, index), ...prev.slice(index + 1)]);
-    setLoading(false);
+    setRefreshing(true);
   };
 
   const refreshItem = (record: FeedItem) => {
