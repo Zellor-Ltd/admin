@@ -31,10 +31,12 @@ import {
 } from 'services/DiscoClubService';
 import SimpleSelect from 'components/select/SimpleSelect';
 import { SelectOption } from 'interfaces/SelectOption';
+import { useRequest } from 'hooks/useRequest';
 
 const Orders: React.FC<RouteComponentProps> = () => {
-  const [tableloading, setTableLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const [orderUpdateList, setOrderUpdateList] = useState<boolean[]>([]);
+  const { doFetch } = useRequest({ setLoading });
 
   const {
     arrayList: orders,
@@ -320,13 +322,18 @@ const Orders: React.FC<RouteComponentProps> = () => {
   };
 
   const getFans = async () => {
-    const response: any = await fetchFans();
+    const response: any = await doFetch(() =>
+      fetchFans({
+        page: 0,
+        query: undefined,
+      })
+    );
     return response.results;
   };
 
   useEffect(() => {
     const getResources = async () => {
-      setTableLoading(true);
+      setLoading(true);
       const orders: Order[] = await getOrders();
       const fans: Fan[] = await getFans();
       const ordersWithFanName = orders.map(order => {
@@ -336,7 +343,7 @@ const Orders: React.FC<RouteComponentProps> = () => {
       });
       setOrders(ordersWithFanName);
       setFans(fans);
-      setTableLoading(false);
+      setLoading(false);
     };
     getResources();
   }, [setOrders]);
@@ -376,7 +383,7 @@ const Orders: React.FC<RouteComponentProps> = () => {
         rowKey="id"
         columns={columns}
         dataSource={filteredOrders}
-        loading={tableloading}
+        loading={loading}
       />
     </div>
   );

@@ -1,4 +1,4 @@
-import { message } from 'antd';
+import { message, Pagination } from 'antd';
 import axios, { AxiosRequestConfig } from 'axios';
 import { Brand } from 'interfaces/Brand';
 import {
@@ -313,7 +313,13 @@ export const fetchCreators = () => instance.get('Wi/Ep/ListCreators');
 
 export const fetchUsers = () => instance.get('Wi/Ep/ListUsers');
 
-export const fetchFans = () => instance.get('Wi/Ep/ListFans');
+export const fetchFans = ({page = 0, query}:{page: number, query?: string}) => instance.post(`Disco/Identity/Adm/Fans/List/${page}/`, {
+  query
+});
+
+export const fetchGuests = ({page = 0, query}:{page: number, query?: string}) => instance.post(`Disco/Identity/Adm/Guests/List/${page}/`, {
+  query
+});
 
 export const fetchProfiles = () => instance.get('Wi/Ep/ListProfiles');
 
@@ -441,9 +447,9 @@ export const saveInterface = (params: Function) => {
 
 export const saveUser = (params: User) => {
   if (params.id) {
-    return instance.post('Disco/Identity/UpdateUser', params);
+    return instance.post('Disco/Identity/Adm/UpdateUser', params);
   } else {
-    return instance.put('Disco/Identity/AddUser', params);
+    return instance.put('Disco/Identity/Adm/AddUser', params);
   }
 };
 
@@ -567,8 +573,11 @@ export const deleteDdTemplate = (data: IDelete) =>
 export const deletePromoDisplay = (data: IDelete) =>
   instance.delete(`Wi/Ep/RemovePromoDisplay`, { data });
 
-export const deleteFanGroup = (data: IDelete) =>
-  instance.delete(`Wi/Ep/RemoveFanGroup`, { data });
+  export const deleteFanGroup = (data: IDelete) =>
+    instance.delete(`Wi/Ep/RemoveFanGroup`, { data });
+
+    export const deleteGuest = (id: string) =>
+      instance.delete(`Disco/Identity/Adm/DeleteGuest/${id}`);
 
 export const loginService = (login: Login) =>
   instance.put('Disco/Identity/Adm/GetApiToken', login);

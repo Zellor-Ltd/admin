@@ -96,6 +96,9 @@ const AdminSideMenu = () => {
         <Menu.Item key="users_fans" icon={<UserOutlined />}>
           <Link to="/users_fans">Fans</Link>
         </Menu.Item>
+        <Menu.Item key="users_guests" icon={<UserOutlined />}>
+          <Link to="/users_guests">Guests</Link>
+        </Menu.Item>
         <Menu.Item key="creators" icon={<UserOutlined />}>
           <Link to="/users_creators">Creators</Link>
         </Menu.Item>
@@ -132,7 +135,7 @@ const AdminSideMenu = () => {
           <Link to="/settings_dd-templates">DD Templates</Link>
         </Menu.Item>
         <Menu.Item key="settings_fan-groups" icon={<SwitcherOutlined />}>
-          <Link to="/settings_fan-groups">Fans Groups</Link>
+          <Link to="/settings_fan-groups">Fan Groups</Link>
         </Menu.Item>
         <Menu.Item key="settings_push-group-tag" icon={<SwitcherOutlined />}>
           <Link to="/settings_push-group-tag">Push Group Tag</Link>
