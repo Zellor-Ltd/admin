@@ -108,7 +108,7 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
       dataIndex: 'image',
       width: '15%',
       align: 'center',
-      render: value => <Image className="active-masthead" src={value.url} />,
+      render: value => <Image className="active-masthead" src={value?.url} />,
     },
     {
       title: 'Actions',
@@ -153,11 +153,13 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
     setLastViewedIndex(index);
     setCurrentMasthead(masthead);
     setDetails(true);
+    setRefreshing(true);
   };
 
   const deleteItem = async (id: string, index: number) => {
     await doRequest(() => deleteMasthead({ id }));
     setMastheads(prev => [...prev.slice(0, index), ...prev.slice(index + 1)]);
+    setRefreshing(true);
   };
   const refreshItem = (record: Masthead) => {
     filteredMastheads[lastViewedIndex] = record;
