@@ -60,6 +60,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
   } = useFilter<Creator>([]);
 
   const fetch = async () => {
+    setRefreshing(true);
     const { results }: any = await doFetch(fetchCreators);
     setCreators(results);
     setLoaded(true);
@@ -80,15 +81,16 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
     if (!filteredContent.length) {
       return;
     }
+    const pageToUse = refreshing ? 0 : page;
 
-    const results = filteredContent.slice(page * 10, page * 10 + 10);
+    const results = filteredContent.slice(pageToUse * 10, pageToUse * 10 + 10);
 
     setFilteredCreators(prev => [...prev.concat(results)]);
 
     if (results.length < 10) {
       setEof(true);
     } else {
-      setPage(page + 1);
+      setPage(pageToUse + 1);
     }
   };
 
