@@ -64,8 +64,8 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
 
   const getResources = async () => {
     setEof(false);
-    const { results } = await doFetch(fetchUsers);
-    setFans(results);
+    const validUsers = await fetchUsers();
+    setFans(validUsers);
     setLoaded(true);
   };
 
@@ -79,7 +79,6 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
     );
 
     setPage(pageToUse + 1);
-    if (response.results.length < 10) setEof(true);
 
     const optionFactory = (option: any) => {
       return {
@@ -89,15 +88,21 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
       };
     };
 
-    setOptions(response.results.map(optionFactory));
+    const validUsers = response.results.filter(
+      (fan: Fan) => !fan.user.includes('guest')
+    );
 
-    return response;
+    if (validUsers.length < 30) setEof(true);
+
+    setOptions(validUsers.map(optionFactory));
+
+    return validUsers;
   };
 
   const fetchData = async () => {
     if (!fans.length) return;
-    const { results } = await fetchUsers();
-    setFans(prev => [...prev.concat(results)]);
+    const validUsers = await fetchUsers();
+    setFans(prev => [...prev.concat(validUsers)]);
   };
 
   useEffect(() => {

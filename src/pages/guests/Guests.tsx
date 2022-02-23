@@ -60,7 +60,6 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
 
   const fetchFans = async () => {
     const pageToUse = loading ? 0 : page;
-    console.log(searchFilter);
     const response = await doFetch(() =>
       fetchGuests({
         page: pageToUse,
@@ -69,7 +68,7 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
     );
 
     setPage(pageToUse + 1);
-    if (response.results.length < 10) setEof(true);
+    if (response.results.length < 30) setEof(true);
 
     const optionFactory = (option: any) => {
       return {
