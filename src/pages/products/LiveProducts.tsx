@@ -286,9 +286,6 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
 
   const getResources = async () => {
     setRefreshing(true);
-    const { results: products } = await _fetchProducts();
-
-    setProducts(products);
     setLoaded(true);
   };
 
