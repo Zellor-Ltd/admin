@@ -23,6 +23,10 @@
   margin-top: 16px;
 }
 
+.mt-05 {
+  margin-top: 0.5rem;
+}
+
 .mt-1 {
   margin-top: 1rem;
 }
@@ -86,4 +90,24 @@
 
 .dashboard-items hr {
   color: rgba(0, 0, 0, 0.45);
+}
+
+.info-block {
+  width: 100%;
+  min-width: 0;
+  padding: 4px 11px;
+  color: rgba(0, 0, 0, 0.85);
+  font-size: 14px;
+  line-height: 1.5715;
+  background-color: #fff;
+  background-image: none;
+  border: 1px solid #d9d9d9;
+  border-radius: 2px;
+  transition: all 0.3s;
+  display: inline-flex;
+  white-space: nowrap;
+  text-overflow: clip;
+  overflow: hidden;
+  display: inline-block;
+  height: 32px;
 }

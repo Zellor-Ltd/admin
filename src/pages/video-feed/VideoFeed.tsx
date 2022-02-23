@@ -338,10 +338,9 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   };
 
   const deleteItem = async (_id: string, index: number) => {
-    setLoading(true);
     await deleteVideoFeed(_id);
     setVideoFeeds(prev => [...prev.slice(0, index), ...prev.slice(index + 1)]);
-    setLoading(false);
+    setRefreshing(true);
   };
 
   const refreshItem = (record: FeedItem) => {
@@ -351,6 +350,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     } else {
       setVideoFeeds([record]);
     }
+    setRefreshing(true);
   };
 
   const onEditFeedItem = (index: number, videoFeed?: FeedItem) => {
@@ -473,7 +473,10 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
             title="Video feed update"
             subTitle="List of Feeds"
             extra={[
-              <Button key="2" onClick={() => onEditFeedItem(videoFeeds.length)}>
+              <Button
+                key="2"
+                onClick={() => onEditFeedItem(filteredVideoFeeds.length)}
+              >
                 New Item
               </Button>,
             ]}
