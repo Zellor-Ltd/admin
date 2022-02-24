@@ -1,4 +1,4 @@
-import { Button, Col, DatePicker, Form, PageHeader, Row } from 'antd';
+import { Button, Col, DatePicker, Form, PageHeader, Radio, Row } from 'antd';
 import { RichTextEditor } from 'components/RichTextEditor';
 import { formatMoment } from 'helpers/formatMoment';
 import { useRequest } from 'hooks/useRequest';
@@ -19,6 +19,9 @@ const PromoDisplaysDetail: React.FC<PromoDisplayDetailProps> = ({
   const [loading, setLoading] = useState<boolean>(false);
   const [form] = Form.useForm();
   const { doRequest } = useRequest({ setLoading });
+  const [selectedOption, setSelectedOption] = useState<'women' | 'men'>(
+    'women'
+  );
 
   const onFinish = async () => {
     const formPromoDisplay = form.getFieldsValue(true);
@@ -28,6 +31,12 @@ const PromoDisplaysDetail: React.FC<PromoDisplayDetailProps> = ({
     formPromoDisplay.id
       ? onSave?.(formPromoDisplay)
       : onSave?.({ ...formPromoDisplay, id: result });
+  };
+
+  const handleSwitchChange = async () => {
+    selectedOption === 'women'
+      ? setSelectedOption('men')
+      : setSelectedOption('women');
   };
 
   return (
@@ -44,16 +53,27 @@ const PromoDisplaysDetail: React.FC<PromoDisplayDetailProps> = ({
       >
         <Row>
           <Col lg={24} xs={24}>
-            <Form.Item label="Display HTML">
-              <RichTextEditor
-                formField="displayHtml"
-                form={form}
-                editableHtml={true}
-              />
-            </Form.Item>
+            {selectedOption === 'women' && (
+              <Form.Item label="Women Display HTML">
+                <RichTextEditor
+                  formField="womenHtml"
+                  form={form}
+                  editableHtml={true}
+                />
+              </Form.Item>
+            )}
+            {selectedOption === 'men' && (
+              <Form.Item label="Men Display HTML">
+                <RichTextEditor
+                  formField="menHtml"
+                  form={form}
+                  editableHtml={true}
+                />
+              </Form.Item>
+            )}
           </Col>
         </Row>
-        <Row gutter={8}>
+        <Row gutter={16}>
           <Col lg={6} xs={24}>
             <Form.Item
               name="displayStartDate"
@@ -76,6 +96,18 @@ const PromoDisplaysDetail: React.FC<PromoDisplayDetailProps> = ({
               ]}
             >
               <DatePicker format="DD/MM/YYYY" />
+            </Form.Item>
+          </Col>
+          <Col lg={6} xs={24}>
+            <Form.Item
+              label="Super Category"
+              name="selectedOption"
+              initialValue={selectedOption}
+            >
+              <Radio.Group buttonStyle="solid" onChange={handleSwitchChange}>
+                <Radio.Button value="women">Women</Radio.Button>
+                <Radio.Button value="men">Men</Radio.Button>
+              </Radio.Group>
             </Form.Item>
           </Col>
         </Row>
