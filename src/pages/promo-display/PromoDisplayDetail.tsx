@@ -1,9 +1,13 @@
 import { Button, Col, DatePicker, Form, PageHeader, Radio, Row } from 'antd';
 import { RichTextEditor } from 'components/RichTextEditor';
+import SimpleSelect from 'components/select/SimpleSelect';
 import { formatMoment } from 'helpers/formatMoment';
+import useAllCategories from 'hooks/useAllCategories';
 import { useRequest } from 'hooks/useRequest';
 import { PromoDisplay } from 'interfaces/PromoDisplay';
+import { SelectOption } from 'interfaces/SelectOption';
 import { useState } from 'react';
+import { useMount } from 'react-use';
 import { savePromoDisplay } from 'services/DiscoClubService';
 interface PromoDisplayDetailProps {
   promoDisplay: any;
@@ -19,9 +23,23 @@ const PromoDisplaysDetail: React.FC<PromoDisplayDetailProps> = ({
   const [loading, setLoading] = useState<boolean>(false);
   const [form] = Form.useForm();
   const { doRequest } = useRequest({ setLoading });
-  const [selectedOption, setSelectedOption] = useState<'women' | 'men'>(
-    'women'
+  const [fetchingCategories, setFetchingCategories] = useState(false);
+  const { fetchAllCategories, allCategories } = useAllCategories({
+    setLoading: setFetchingCategories,
+  });
+  const [selectedOption, setSelectedOption] = useState<'Women' | 'Men'>(
+    promoDisplay.superCategory ?? 'Women'
   );
+
+  const productSuperCategoryOptionsMapping: SelectOption = {
+    key: 'id',
+    label: 'superCategory',
+    value: 'id',
+  };
+
+  useMount(async () => {
+    await fetchAllCategories();
+  });
 
   const onFinish = async () => {
     const formPromoDisplay = form.getFieldsValue(true);
@@ -33,10 +51,12 @@ const PromoDisplaysDetail: React.FC<PromoDisplayDetailProps> = ({
       : onSave?.({ ...formPromoDisplay, id: result });
   };
 
-  const handleSwitchChange = async () => {
-    selectedOption === 'women'
-      ? setSelectedOption('men')
-      : setSelectedOption('women');
+  const handleCategoryChange = async () => {
+    setSelectedOption(
+      allCategories['Super Category'].find(
+        item => item.id === form.getFieldValue('superCategory')
+      )?.superCategory as any
+    );
   };
 
   return (
@@ -53,16 +73,16 @@ const PromoDisplaysDetail: React.FC<PromoDisplayDetailProps> = ({
       >
         <Row>
           <Col lg={24} xs={24}>
-            {selectedOption === 'women' && (
+            {selectedOption === 'Women' && (
               <Form.Item label="Women Display HTML">
                 <RichTextEditor
-                  formField="womenHtml"
+                  formField="WomenHtml"
                   form={form}
                   editableHtml={true}
                 />
               </Form.Item>
             )}
-            {selectedOption === 'men' && (
+            {selectedOption === 'Men' && (
               <Form.Item label="Men Display HTML">
                 <RichTextEditor
                   formField="menHtml"
@@ -101,13 +121,25 @@ const PromoDisplaysDetail: React.FC<PromoDisplayDetailProps> = ({
           <Col lg={6} xs={24}>
             <Form.Item
               label="Super Category"
-              name="selectedOption"
+              name="superCategory"
               initialValue={selectedOption}
             >
-              <Radio.Group buttonStyle="solid" onChange={handleSwitchChange}>
-                <Radio.Button value="women">Women</Radio.Button>
-                <Radio.Button value="men">Men</Radio.Button>
-              </Radio.Group>
+              <SimpleSelect
+                data={allCategories['Super Category'].filter(item => {
+                  return (
+                    item.superCategory === 'Women' ||
+                    item.superCategory === 'Men'
+                  );
+                })}
+                onChange={handleCategoryChange}
+                style={{ width: '100%' }}
+                selectedOption={promoDisplay.selectedOption?.id ?? 'Women'}
+                optionsMapping={productSuperCategoryOptionsMapping}
+                placeholder={'Select a Super Category'}
+                loading={fetchingCategories}
+                disabled={fetchingCategories}
+                allowClear={true}
+              ></SimpleSelect>
             </Form.Item>
           </Col>
         </Row>
