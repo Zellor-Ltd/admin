@@ -6,7 +6,7 @@ interface SimpleSelectProps {
   data: any[];
   optionsMapping: SelectOption;
   onChange: (value: string, entity?: any) => void;
-  selectedOption?: string;
+  selectedOption?: string | null;
   allowClear?: boolean;
   placeholder?: string;
   style?: React.CSSProperties;
@@ -28,7 +28,7 @@ const SimpleSelect: React.FC<SimpleSelectProps> = ({
   showSearch = true,
 }) => {
   const [options, setOptions] = useState<SelectOption[]>([]);
-  const [_selectedOption, _setSelectedOption] = useState<string>();
+  const [_selectedOption, _setSelectedOption] = useState<string | null>();
 
   const optionFactory = (option: any) => {
     return {
@@ -43,9 +43,7 @@ const SimpleSelect: React.FC<SimpleSelectProps> = ({
   }, [data]);
 
   useEffect(() => {
-    if (selectedOption) {
-      _setSelectedOption(selectedOption);
-    }
+    _setSelectedOption(selectedOption);
   }, [selectedOption]);
 
   const _onSearch = (input: any, option: any) => {

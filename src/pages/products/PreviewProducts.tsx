@@ -101,13 +101,12 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
   const [productStatusFilter, setProductStatusFilter] =
     useState<string>('live');
 
-  const [productSuperCategoryFilter, setProductSuperCategoryFilter] =
+  const [currentSuperCategory, setCurrentSuperCategory] =
     useState<ProductCategory>();
-  const [productCategoryFilter, setProductCategoryFilter] =
+  const [currentCategory, setCurrentCategory] = useState<ProductCategory>();
+  const [currentSubCategory, setCurrentSubCategory] =
     useState<ProductCategory>();
-  const [productSubCategoryFilter, setProductSubCategoryFilter] =
-    useState<ProductCategory>();
-  const [productSubSubCategoryFilter, setProductSubSubCategoryFilter] =
+  const [currentSubSubCategory, setCurrentSubSubCategory] =
     useState<ProductCategory>();
 
   const { doFetch, doRequest } = useRequest({ setLoading });
@@ -147,6 +146,21 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
     label: 'subSubCategory',
     value: 'id',
   };
+
+  useEffect(() => {
+    setCurrentCategory(undefined);
+    setCurrentSubCategory(undefined);
+    setCurrentSubSubCategory(undefined);
+  }, [currentSuperCategory]);
+
+  useEffect(() => {
+    setCurrentSubCategory(undefined);
+    setCurrentSubSubCategory(undefined);
+  }, [currentCategory]);
+
+  useEffect(() => {
+    setCurrentSubSubCategory(undefined);
+  }, [currentSubCategory]);
 
   const setSearchTagsByCategory = useCallback(
     (
@@ -304,10 +318,10 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
         productBrandId: productBrandFilter?.id,
         outOfStock: outOfStockFilter,
         status: productStatusFilter,
-        superCategoryId: productSuperCategoryFilter?.id,
-        categoryId: productCategoryFilter?.id,
-        subCategoryId: productSubCategoryFilter?.id,
-        subSubCategoryId: productSubSubCategoryFilter?.id,
+        superCategoryId: currentSuperCategory?.id,
+        categoryId: currentCategory?.id,
+        subCategoryId: currentSubCategory?.id,
+        subSubCategoryId: currentSubSubCategory?.id,
         runId: runIdFilter,
       })
     );
@@ -758,10 +772,10 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                       );
                     })}
                     onChange={(_, category) =>
-                      setProductSuperCategoryFilter(category)
+                      setCurrentSuperCategory(category)
                     }
                     style={{ width: '100%' }}
-                    selectedOption={productSuperCategoryFilter?.id}
+                    selectedOption={currentSuperCategory?.id}
                     optionsMapping={productSuperCategoryOptionsMapping}
                     placeholder={'Select a Super Category'}
                     loading={fetchingCategories}
@@ -772,12 +786,15 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                 <Col lg={6} xs={24}>
                   <Typography.Title level={5}>Category</Typography.Title>
                   <SimpleSelect
-                    data={allCategories.Category}
-                    onChange={(_, category) =>
-                      setProductCategoryFilter(category)
-                    }
+                    data={allCategories.Category.filter(item => {
+                      return currentSuperCategory
+                        ? item.superCategory ===
+                            currentSuperCategory.superCategory
+                        : true;
+                    })}
+                    onChange={(_, category) => setCurrentCategory(category)}
                     style={{ width: '100%' }}
-                    selectedOption={productCategoryFilter?.id}
+                    selectedOption={currentCategory?.id ?? null}
                     optionsMapping={productCategoryOptionsMapping}
                     placeholder={'Select a Category'}
                     loading={fetchingCategories}
@@ -788,16 +805,37 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                 <Col lg={6} xs={24}>
                   <Typography.Title level={5}>Sub Category</Typography.Title>
                   <SimpleSelect
-                    data={allCategories['Sub Category']}
-                    onChange={(_, category) =>
-                      setProductSubCategoryFilter(category)
-                    }
+                    data={allCategories['Sub Category'].filter(item => {
+                      return (
+                        (currentCategory
+                          ? item.category === currentCategory.category
+                          : true) &&
+                        (currentSuperCategory
+                          ? item.superCategory ===
+                            currentSuperCategory.superCategory
+                          : true)
+                      );
+                    })}
+                    onChange={(_, category) => setCurrentSubCategory(category)}
                     style={{ width: '100%' }}
-                    selectedOption={productSubCategoryFilter?.id}
+                    selectedOption={currentSubCategory?.id ?? null}
                     optionsMapping={productSubCategoryOptionsMapping}
                     placeholder={'Select a Sub Category'}
                     loading={fetchingCategories}
-                    disabled={fetchingCategories}
+                    disabled={
+                      fetchingCategories ||
+                      !allCategories['Sub Category'].filter(item => {
+                        return (
+                          (currentCategory
+                            ? item.category === currentCategory.category
+                            : true) &&
+                          (currentSuperCategory
+                            ? item.superCategory ===
+                              currentSuperCategory.superCategory
+                            : true)
+                        );
+                      }).length
+                    }
                     allowClear={true}
                   ></SimpleSelect>
                 </Col>
@@ -806,16 +844,46 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                     Sub Sub Category
                   </Typography.Title>
                   <SimpleSelect
-                    data={allCategories['Sub Sub Category']}
+                    data={allCategories['Sub Sub Category'].filter(item => {
+                      return (
+                        (currentSubCategory
+                          ? item.subCategory === currentSubCategory.subCategory
+                          : true) &&
+                        (currentCategory
+                          ? item.category === currentCategory.category
+                          : true) &&
+                        (currentSuperCategory
+                          ? item.superCategory ===
+                            currentSuperCategory.superCategory
+                          : true)
+                      );
+                    })}
                     onChange={(_, category) =>
-                      setProductSubSubCategoryFilter(category)
+                      setCurrentSubSubCategory(category)
                     }
                     style={{ width: '100%' }}
-                    selectedOption={productSubSubCategoryFilter?.id}
+                    selectedOption={currentSubSubCategory?.id ?? null}
                     optionsMapping={productSubSubCategoryOptionsMapping}
-                    placeholder={'Select a Sub SubCategory'}
+                    placeholder={'Select a Sub Sub Category'}
                     loading={fetchingCategories}
-                    disabled={fetchingCategories}
+                    disabled={
+                      fetchingCategories ||
+                      !allCategories['Sub Sub Category'].filter(item => {
+                        return (
+                          (currentSubCategory
+                            ? item.subCategory ===
+                              currentSubCategory.subCategory
+                            : true) &&
+                          (currentCategory
+                            ? item.category === currentCategory.category
+                            : true) &&
+                          (currentSuperCategory
+                            ? item.superCategory ===
+                              currentSuperCategory.superCategory
+                            : true)
+                        );
+                      }).length
+                    }
                     allowClear={true}
                   ></SimpleSelect>
                 </Col>
