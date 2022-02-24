@@ -14,6 +14,7 @@ export interface FanFilter {
 export interface Fan {
   id: string;
   name: string;
+  userName: string;
   email: string;
   user: string;
   phone: string;
