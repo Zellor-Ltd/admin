@@ -55,6 +55,7 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
   const [options, setOptions] = useState<
     { label: string; value: string; key: string }[]
   >([]);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
 
   const fanOptionsMapping: SelectOption = {
     key: 'id',
@@ -62,15 +63,22 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
     value: 'user',
   };
 
-  const getResources = async () => {
-    setEof(false);
-    const validUsers = await fetchUsers();
-    setFans(validUsers);
+  useEffect(() => {
+    if (refreshing) {
+      setFans([]);
+      fetchUsers();
+      setEof(false);
+      setRefreshing(false);
+    }
+  }, [refreshing]);
+
+  const getResources = () => {
+    setRefreshing(true);
     setLoaded(true);
   };
 
   const fetchUsers = async () => {
-    const pageToUse = loading ? 0 : page;
+    const pageToUse = refreshing ? 0 : page;
     const response = await doFetch(() =>
       fetchFans({
         page: pageToUse,
@@ -89,20 +97,19 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
     };
 
     const validUsers = response.results.filter(
-      (fan: Fan) => !fan.user.includes('guest')
+      (fan: Fan) => !fan.userName?.includes('guest')
     );
 
     if (validUsers.length < 30) setEof(true);
 
     setOptions(validUsers.map(optionFactory));
 
-    return validUsers;
+    setFans(prev => [...prev.concat(validUsers)]);
   };
 
   const fetchData = async () => {
     if (!fans.length) return;
-    const validUsers = await fetchUsers();
-    setFans(prev => [...prev.concat(validUsers)]);
+    await fetchUsers();
   };
 
   useEffect(() => {
@@ -311,7 +318,7 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
               rowKey="id"
               columns={columns}
               dataSource={fans}
-              loading={loading}
+              loading={refreshing}
               pagination={false}
               rowSelection={{
                 selectedRowKeys,
