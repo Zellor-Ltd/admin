@@ -1,5 +1,6 @@
 import { CalendarOutlined } from '@ant-design/icons';
 import {
+  AutoComplete,
   Col,
   DatePicker,
   PageHeader,
@@ -19,9 +20,10 @@ import CopyOrderToClipboard from 'components/CopyOrderToClipboard';
 import SimpleSelect from 'components/select/SimpleSelect';
 import { SelectOption } from 'interfaces/SelectOption';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import { useRequest } from 'hooks/useRequest';
 
 const Transactions: React.FC<RouteComponentProps> = () => {
-  const [tableLoading, setTableLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const [selectedFan, setSelectedFan] = useState<Fan | undefined>();
   const [isFetchingFans, setIsFetchingFans] = useState(false);
   const [fans, setFans] = useState<Fan[]>([]);
@@ -33,6 +35,11 @@ const Transactions: React.FC<RouteComponentProps> = () => {
   const [eof, setEof] = useState<boolean>(false);
   const [loaded, setLoaded] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
+  const { doFetch, doRequest } = useRequest({ setLoading });
+  const [searchFilter, setSearchFilter] = useState<string>();
+  const [options, setOptions] = useState<
+    { label: string; value: string; key: string }[]
+  >([]);
 
   const fanOptionsMapping: SelectOption = {
     key: 'id',
@@ -42,8 +49,22 @@ const Transactions: React.FC<RouteComponentProps> = () => {
 
   const getFans = async () => {
     setIsFetchingFans(true);
-    const response: any = await fetchFans();
-    setFans(response.results);
+    const response = await doFetch(() =>
+      fetchFans({
+        page: 0,
+        query: searchFilter,
+      })
+    );
+
+    const optionFactory = (option: any) => {
+      return {
+        label: option[fanOptionsMapping.label],
+        value: option[fanOptionsMapping.value],
+        key: option[fanOptionsMapping.value],
+      };
+    };
+
+    setOptions(response.results.map(optionFactory));
     setIsFetchingFans(false);
   };
 
@@ -135,8 +156,8 @@ const Transactions: React.FC<RouteComponentProps> = () => {
     }
   };
 
-  const onChangeFan = async (_selectedFan?: Fan) => {
-    setTableLoading(true);
+  const onChangeFan = async (value: string, _selectedFan?: any) => {
+    setLoading(true);
     if (_selectedFan) {
       setSelectedFan(_selectedFan);
       const { results }: any = await fetchWalletTransactions(_selectedFan.id);
@@ -146,7 +167,7 @@ const Transactions: React.FC<RouteComponentProps> = () => {
     } else {
       setTransactions([]);
     }
-    setTableLoading(false);
+    setLoading(false);
   };
 
   const handleDateChange = (values: any) => {
@@ -163,23 +184,24 @@ const Transactions: React.FC<RouteComponentProps> = () => {
     );
   };
 
+  const onSearch = (value: string) => {
+    setSearchFilter(value);
+    getFans();
+  };
+
   return (
     <div className="transactions">
       <PageHeader title="Transactions" subTitle="List of Transactions" />
       <Row gutter={8} style={{ marginBottom: '20px' }}>
         <Col xxl={40} lg={6} xs={18}>
           <Typography.Title level={5}>Fan Filter</Typography.Title>
-          <SimpleSelect
-            data={fans}
-            onChange={(_, fan) => onChangeFan(fan)}
-            style={{ width: '100%', marginBottom: '16px' }}
-            selectedOption={selectedFan?.user}
-            optionsMapping={fanOptionsMapping}
-            placeholder={'Select a fan'}
-            loading={isFetchingFans}
-            disabled={isFetchingFans}
-            allowClear={true}
-          ></SimpleSelect>
+          <AutoComplete
+            style={{ width: '100%' }}
+            options={options}
+            onSelect={onChangeFan}
+            onSearch={onSearch}
+            placeholder="Type to search a fan"
+          />
         </Col>
       </Row>
       <InfiniteScroll
@@ -203,7 +225,7 @@ const Transactions: React.FC<RouteComponentProps> = () => {
           rowKey="id"
           columns={columns}
           dataSource={filteredTransactions}
-          loading={tableLoading || refreshing}
+          loading={loading || refreshing}
           pagination={false}
         />
       </InfiniteScroll>

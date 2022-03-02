@@ -19,7 +19,7 @@ export interface FeedItem {
   goLiveDate: string;
   package: Segment[];
   _id: String;
-  productBrand?: ProductBrand | string;
+  productBrand?: ProductBrand;
   hashtags?: string[];
   ageMax?: number;
   ageMin?: number;

@@ -12,6 +12,7 @@ interface DebounceSelectProps {
   disabled?: boolean;
   value?: string;
   debounceTimeout?: number;
+  style?: React.CSSProperties;
 }
 
 const DebounceSelect: React.FC<DebounceSelectProps> = ({
@@ -22,6 +23,7 @@ const DebounceSelect: React.FC<DebounceSelectProps> = ({
   disabled,
   value,
   debounceTimeout = 800,
+  style,
 }) => {
   const [fetching, setFetching] = useState(false);
   const [options, setOptions] = useState<SelectOption[]>([]);
@@ -61,7 +63,9 @@ const DebounceSelect: React.FC<DebounceSelectProps> = ({
         setOptions(options);
 
         if (isInit) {
-          const selectedOption = options.find(option => option.label === value);
+          const selectedOption = options.find(option =>
+            (option.label as string).toUpperCase().includes(value.toUpperCase())
+          );
           _setSelectedOption(selectedOption);
         } else {
           _setSelectedOption(undefined);
@@ -75,26 +79,30 @@ const DebounceSelect: React.FC<DebounceSelectProps> = ({
   }, [fetchOptions, debounceTimeout]);
 
   const _onChange = (option: { value: string; label: string; key: string }) => {
-    const selectedEntity = fetchedEntities.current.find(
-      entity => entity[optionsMapping.value] === option.value
+    const selectedEntity = fetchedEntities.current.find(entity =>
+      entity[optionsMapping.value]
+        .toUpperCase()
+        .includes(option.value.toUpperCase())
     );
     onChange(option.value, selectedEntity);
   };
 
   return (
-    <Select
-      placeholder={placeholder}
-      labelInValue
-      showSearch={true}
-      filterOption={false}
-      onChange={_onChange}
-      onSearch={debounceFetcher}
-      notFoundContent={fetching ? <Spin size="small" /> : null}
-      options={options}
-      disabled={disabled}
-      value={_selectedOption}
-      loading={fetching}
-    />
+    <div style={style}>
+      <Select
+        placeholder={placeholder}
+        labelInValue
+        showSearch={true}
+        filterOption={false}
+        onChange={_onChange}
+        onSearch={debounceFetcher}
+        notFoundContent={fetching ? <Spin size="small" /> : null}
+        options={options}
+        disabled={disabled}
+        value={_selectedOption}
+        loading={fetching}
+      />
+    </div>
   );
 };
 

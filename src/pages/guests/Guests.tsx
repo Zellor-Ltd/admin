@@ -1,9 +1,4 @@
-import {
-  EditOutlined,
-  OrderedListOutlined,
-  SettingOutlined,
-  SearchOutlined,
-} from '@ant-design/icons';
+import { EditOutlined, SearchOutlined } from '@ant-design/icons';
 import {
   AutoComplete,
   Button,
@@ -17,17 +12,13 @@ import {
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
-import EditMultipleButton from 'components/EditMultipleButton';
 import { useRequest } from 'hooks/useRequest';
 import { Fan } from 'interfaces/Fan';
-import EditFanModal from 'pages/fans/EditFanModal';
 import React, { useEffect, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { fetchFans } from 'services/DiscoClubService';
-import FanAPITestModal from './FanAPITestModal';
-import FanFeedModal from './FanFeedModal';
+import { fetchGuests } from 'services/DiscoClubService';
 import scrollIntoView from 'scroll-into-view';
-import FanDetail from './FanDetail';
+import GuestDetail from './GuestDetail';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import moment from 'moment';
 import { SelectOption } from 'interfaces/SelectOption';
@@ -38,19 +29,17 @@ const tagColorByPermission: any = {
   Fan: '',
 };
 
-const Fans: React.FC<RouteComponentProps> = ({ location }) => {
+const Guests: React.FC<RouteComponentProps> = ({ location }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
-  const [fanAPITest, setFanAPITest] = useState<Fan | null>(null);
-  const [fanFeedModal, setFanFeedModal] = useState<Fan | null>(null);
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
   const [details, setDetails] = useState<boolean>(false);
-  const [currentFan, setCurrentFan] = useState<Fan>();
+  const [currentGuest, setCurrentGuest] = useState<Fan>();
   const { doFetch } = useRequest({ setLoading });
   const [loaded, setLoaded] = useState<boolean>(false);
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
-  const [fans, setFans] = useState<Fan[]>([]);
+  const [guests, setGuests] = useState<Fan[]>([]);
   const [searchFilter, setSearchFilter] = useState<string>();
   const [options, setOptions] = useState<
     { label: string; value: string; key: string }[]
@@ -65,28 +54,29 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
 
   useEffect(() => {
     if (refreshing) {
-      setFans([]);
-      fetchUsers();
+      setGuests([]);
+      fetchFans();
       setEof(false);
       setRefreshing(false);
     }
   }, [refreshing]);
 
-  const getResources = () => {
+  const getResources = async () => {
     setRefreshing(true);
     setLoaded(true);
   };
 
-  const fetchUsers = async () => {
+  const fetchFans = async () => {
     const pageToUse = refreshing ? 0 : page;
     const response = await doFetch(() =>
-      fetchFans({
+      fetchGuests({
         page: pageToUse,
         query: searchFilter,
       })
     );
 
     setPage(pageToUse + 1);
+    if (response.results.length < 30) setEof(true);
 
     const optionFactory = (option: any) => {
       return {
@@ -96,20 +86,14 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
       };
     };
 
-    const validUsers = response.results.filter(
-      (fan: Fan) => !fan.userName?.includes('guest')
-    );
+    setOptions(response.results.map(optionFactory));
 
-    if (validUsers.length < 30) setEof(true);
-
-    setOptions(validUsers.map(optionFactory));
-
-    setFans(prev => [...prev.concat(validUsers)]);
+    setGuests(prev => [...prev.concat(response.results)]);
   };
 
-  const fetchData = async () => {
-    if (!fans.length) return;
-    await fetchUsers();
+  const fetchData = () => {
+    if (!guests.length) return;
+    fetchFans();
   };
 
   useEffect(() => {
@@ -122,9 +106,9 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
     }
   }, [details]);
 
-  const editFan = (index: number, fan?: Fan) => {
+  const viewGuest = (index: number, fan?: Fan) => {
     setLastViewedIndex(index);
-    setCurrentFan(fan);
+    setCurrentGuest(fan);
     setDetails(true);
   };
 
@@ -142,9 +126,22 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
       width: '25%',
       align: 'center',
       render: (value, record: Fan, index: number) => (
-        <Link to={location.pathname} onClick={() => editFan(index, record)}>
-          {value}
-        </Link>
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              whiteSpace: 'nowrap',
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+            }}
+          >
+            <Link
+              to={location.pathname}
+              onClick={() => viewGuest(index, record)}
+            >
+              {value}
+            </Link>
+          </div>
+        </div>
       ),
     },
     {
@@ -159,7 +156,25 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
         </>
       ),
     },
-    { title: 'E-mail', dataIndex: 'user', width: '25%', align: 'center' },
+    {
+      title: 'E-mail',
+      dataIndex: 'user',
+      width: '25%',
+      align: 'center',
+      render: value => (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              whiteSpace: 'nowrap',
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+            }}
+          >
+            {value}
+          </div>
+        </div>
+      ),
+    },
     {
       title: 'Profile',
       dataIndex: 'profile',
@@ -170,54 +185,26 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
       align: 'center',
     },
     {
-      title: 'Group',
-      dataIndex: 'group',
-      width: '10%',
-      render: (_, record) => (
-        <Tag color={tagColorByPermission[record.profile]}>{record.group}</Tag>
-      ),
-      align: 'center',
-    },
-    {
       title: 'Actions',
       key: 'action',
       width: '10%',
-      align: 'right',
+      align: 'center',
       render: (_, record, index: number) => (
         <>
-          <Link to={location.pathname} onClick={() => editFan(index, record)}>
+          <Link to={location.pathname} onClick={() => viewGuest(index, record)}>
             <EditOutlined />
           </Link>
-          <Button
-            onClick={() => setFanAPITest(record)}
-            type="link"
-            style={{ padding: 0, margin: '6px 0 6px 6px' }}
-          >
-            <SettingOutlined />
-          </Button>
-          <Button
-            onClick={() => setFanFeedModal(record)}
-            type="link"
-            style={{ padding: 0, margin: '6px 0 6px 6px' }}
-          >
-            <OrderedListOutlined />
-          </Button>
         </>
       ),
     },
   ];
 
-  const handleEditFans = async () => {
-    await getResources();
-    setSelectedRowKeys([]);
-  };
-
   const refreshItem = (record: Fan) => {
     if (loaded) {
-      fans[lastViewedIndex] = record;
-      setFans([...fans]);
+      guests[lastViewedIndex] = record;
+      setGuests([...guests]);
     } else {
-      setFans([record]);
+      setGuests([record]);
     }
   };
 
@@ -243,61 +230,49 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
   return (
     <>
       {!details && (
-        <div className="fans">
-          <PageHeader
-            title="Fans"
-            subTitle="List of Fans"
-            extra={[
-              <Button key="1" onClick={() => editFan(fans.length)}>
-                New Item
-              </Button>,
-            ]}
-          />
-          <Row align="bottom" justify="space-between">
+        <div>
+          <PageHeader title="Guests" subTitle="List of guests" />
+          <Row
+            align="bottom"
+            justify="space-between"
+            gutter={8}
+            className="mb-1"
+          >
             <Col lg={16} xs={24}>
               <Row gutter={8}>
                 <Col lg={8} xs={16}>
-                  <Typography.Title level={5}>Search Fan</Typography.Title>
+                  <Typography.Title level={5}>Search Guest</Typography.Title>
                   <AutoComplete
                     style={{ width: '100%' }}
                     options={options}
                     onSelect={onChangeFan}
                     onSearch={onSearch}
-                    placeholder="Type to search a fan"
+                    placeholder="Type to search a guest"
                   />
                 </Col>
               </Row>
             </Col>
-            <EditMultipleButton
-              text="Edit Fans"
-              arrayList={fans}
-              ModalComponent={EditFanModal}
-              selectedRowKeys={selectedRowKeys}
-              onOk={handleEditFans}
-            />
-            <Button
-              type="primary"
-              onClick={getResources}
-              loading={loading}
-              style={{
-                marginBottom: '20px',
-                marginRight: '25px',
-              }}
-            >
-              Search
-              <SearchOutlined style={{ color: 'white' }} />
-            </Button>
+            <Col lg={8} xs={24}>
+              <Row gutter={8} justify="end" className="mt-1">
+                <Col lg={8} xs={16}>
+                  <Button
+                    type="primary"
+                    onClick={getResources}
+                    loading={loading}
+                    style={{
+                      marginBottom: '20px',
+                      marginRight: '25px',
+                    }}
+                  >
+                    Search
+                    <SearchOutlined style={{ color: 'white' }} />
+                  </Button>
+                </Col>
+              </Row>
+            </Col>
           </Row>
-          <FanAPITestModal
-            selectedRecord={fanAPITest}
-            setSelectedRecord={setFanAPITest}
-          />
-          <FanFeedModal
-            selectedRecord={fanFeedModal}
-            setSelectedRecord={setFanFeedModal}
-          />
           <InfiniteScroll
-            dataLength={fans.length}
+            dataLength={guests.length}
             next={fetchData}
             hasMore={!eof}
             loader={
@@ -317,7 +292,7 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
               rowClassName={(_, index) => `scrollable-row-${index}`}
               rowKey="id"
               columns={columns}
-              dataSource={fans}
+              dataSource={guests}
               loading={refreshing}
               pagination={false}
               rowSelection={{
@@ -329,9 +304,13 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
         </div>
       )}
       {details && (
-        <FanDetail fan={currentFan} onSave={onSaveFan} onCancel={onCancelFan} />
+        <GuestDetail
+          fan={currentGuest}
+          onSave={onSaveFan}
+          onCancel={onCancelFan}
+        />
       )}
     </>
   );
 };
-export default Fans;
+export default Guests;
