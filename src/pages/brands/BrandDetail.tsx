@@ -37,6 +37,7 @@ import moment from 'moment';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import scrollIntoView from 'scroll-into-view';
 import { Link } from 'react-router-dom';
+import { noop } from 'lodash';
 interface BrandDetailProps {
   onSave?: (record: Brand) => void;
   onCancel?: () => void;
@@ -76,6 +77,16 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
       }
     }
   };
+
+  useEffect(() => {
+    for (let i = 2; i < 12; i += 2) {
+      if (document.getElementById(`rc-editable-input-${i}`)) {
+        var picker: any = document.getElementById(`rc-editable-input-${i}`);
+        picker.value = brand?.brandTxtColor;
+        break;
+      }
+    }
+  });
 
   useEffect(() => {
     if (activeTabKey === 'Secrets') {
@@ -217,17 +228,15 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
   ];
 
   const onFinish = async () => {
-    setLoading(true);
     try {
       const formBrand = form.getFieldsValue(true);
-      const { result } = await doRequest(() => saveBrand(formBrand));
+      const response: any = await saveBrand(formBrand);
       message.success('Register updated with success.');
-      setLoading(false);
       formBrand.id
         ? onSave?.(formBrand)
-        : onSave?.({ ...formBrand, id: result });
+        : onSave?.({ ...formBrand, id: response.result });
     } catch (error) {
-      setLoading(false);
+      console.log(error as string);
     }
   };
 
@@ -367,6 +376,11 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
         form={form}
         initialValues={brand}
         onFinish={onFinish}
+        onFinishFailed={({ errorFields }) => {
+          errorFields.forEach(errorField => {
+            message.error(errorField.errors[0]);
+          });
+        }}
       >
         <Tabs
           defaultActiveKey="Details"
@@ -419,7 +433,6 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                       message: `Master Brand Color is required.`,
                     },
                   ]}
-                  valuePropName="color"
                 >
                   <ColorPicker />
                 </Form.Item>
@@ -520,7 +533,6 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                       rules={[
                         {
                           required: true,
-                          type: 'number',
                           message: `Disco Percentage is required.`,
                         },
                       ]}
@@ -535,7 +547,6 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                       rules={[
                         {
                           required: true,
-                          type: 'number',
                           message: `'Initial Free Disco Dollars' is required.`,
                         },
                       ]}
@@ -730,7 +741,19 @@ export default BrandDetail;
 
 const ColorPicker: React.FC<any> = props => {
   const { onChange } = props;
+
+  const _onChange = input => {
+    onChange(input);
+    for (let i = 2; i < 12; i += 2) {
+      if (document.getElementById(`rc-editable-input-${i}`)) {
+        var picker: any = document.getElementById(`rc-editable-input-${i}`);
+        picker.value = input;
+        break;
+      }
+    }
+  };
+
   return (
-    <TwitterPicker onChangeComplete={(value: any) => onChange(value.hex)} />
+    <TwitterPicker onChangeComplete={(value: any) => _onChange(value.hex)} />
   );
 };
