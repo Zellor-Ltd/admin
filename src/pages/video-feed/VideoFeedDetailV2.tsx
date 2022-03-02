@@ -189,7 +189,6 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
     const item: FeedItem = feedForm.getFieldsValue(true);
     item.goLiveDate = moment(item.goLiveDate).format();
     item.validity = moment(item.validity).format();
-    item.creator = feedForm.getFieldValue('creator');
 
     item.package = item.package?.map(pack => {
       const segment: any = {
