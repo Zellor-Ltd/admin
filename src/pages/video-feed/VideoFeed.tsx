@@ -475,7 +475,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
             extra={[
               <Button
                 key="2"
-                onClick={() => onEditFeedItem(filteredVideoFeeds.length)}
+                onClick={() => onEditFeedItem(filteredVideoFeeds.length - 1)}
               >
                 New Item
               </Button>,
