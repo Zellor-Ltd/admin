@@ -254,6 +254,9 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
     });
 
     feedForm.setFieldsValue({
+      creator: null,
+    });
+    feedForm.setFieldsValue({
       package: [...segments],
       creator: creator,
     });
