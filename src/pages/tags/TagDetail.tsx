@@ -33,10 +33,27 @@ const TagDetail: React.FC<TagDetailProps> = ({ tag, onSave, onCancel }) => {
     tag?.brand?.id || ''
   );
   const [form] = Form.useForm();
+  const [productOptions, setProductOptions] = useState<Product[]>([]);
 
   const {
     settings: { template = [], clickSound = [] },
   } = useSelector((state: any) => state.settings);
+
+  async function getProducts(mounted: boolean, _id?: string) {
+    const response: any = await fetchProducts({
+      brandId: _id ?? undefined,
+    });
+    if (mounted) {
+      setProducts(response.results);
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    getProducts(true, selectedBrand);
+    setProductOptions(productsBySelectedBrand());
+    console.log(productOptions);
+  }, [selectedBrand]);
 
   useEffect(() => {
     let mounted = true;
@@ -50,13 +67,6 @@ const TagDetail: React.FC<TagDetailProps> = ({ tag, onSave, onCancel }) => {
       ],
     });
 
-    async function getProducts() {
-      const response: any = await fetchProducts({});
-      if (mounted) {
-        setProducts(response.results);
-        setLoading(false);
-      }
-    }
     async function getBrands() {
       const response: any = await fetchBrands();
       if (mounted) {
@@ -65,7 +75,7 @@ const TagDetail: React.FC<TagDetailProps> = ({ tag, onSave, onCancel }) => {
       }
     }
     setLoading(true);
-    getProducts();
+    getProducts(true);
     getBrands();
     return () => {
       mounted = false;
@@ -161,9 +171,12 @@ const TagDetail: React.FC<TagDetailProps> = ({ tag, onSave, onCancel }) => {
                 {() => (
                   <Form.Item name={['product', 'id']} label="Product">
                     <Select
-                      disabled={form.getFieldValue('template') === 'dollar'}
+                      disabled={
+                        form.getFieldValue('template') === 'dollar' ||
+                        !form.getFieldValue('brand')
+                      }
                     >
-                      {productsBySelectedBrand().map(product => (
+                      {productOptions.map(product => (
                         <Select.Option key={product.id} value={product.id}>
                           {product.name}
                         </Select.Option>

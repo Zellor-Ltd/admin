@@ -202,17 +202,6 @@ const Transactions: React.FC<RouteComponentProps> = () => {
             onSearch={onSearch}
             placeholder="Type to search a fan"
           />
-          <SimpleSelect
-            data={fans}
-            onChange={(_, fan) => onChangeFan(fan)}
-            style={{ width: '100%', marginBottom: '16px' }}
-            selectedOption={selectedFan?.user}
-            optionsMapping={fanOptionsMapping}
-            placeholder={'Select a fan'}
-            loading={isFetchingFans}
-            disabled={isFetchingFans}
-            allowClear={true}
-          ></SimpleSelect>
         </Col>
       </Row>
       <InfiniteScroll
