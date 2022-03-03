@@ -1,14 +1,14 @@
-import { Button, Col, DatePicker, Form, PageHeader, Radio, Row } from 'antd';
+import { Button, Col, DatePicker, Form, PageHeader, Row } from 'antd';
 import { RichTextEditor } from 'components/RichTextEditor';
 import SimpleSelect from 'components/select/SimpleSelect';
 import { formatMoment } from 'helpers/formatMoment';
-import useAllCategories from 'hooks/useAllCategories';
 import { useRequest } from 'hooks/useRequest';
 import { PromoDisplay } from 'interfaces/PromoDisplay';
-import { SelectOption } from 'interfaces/SelectOption';
 import { useState } from 'react';
-import { useMount } from 'react-use';
 import { savePromoDisplay } from 'services/DiscoClubService';
+import useAllCategories from 'hooks/useAllCategories';
+import { useMount } from 'react-use';
+import { SelectOption } from 'interfaces/SelectOption';
 interface PromoDisplayDetailProps {
   promoDisplay: any;
   onSave?: (record: PromoDisplay) => void;
@@ -27,11 +27,8 @@ const PromoDisplaysDetail: React.FC<PromoDisplayDetailProps> = ({
   const { fetchAllCategories, allCategories } = useAllCategories({
     setLoading: setFetchingCategories,
   });
-  const [selectedOption, setSelectedOption] = useState<'Women' | 'Men'>(
-    promoDisplay.superCategory ?? 'Women'
-  );
 
-  const productSuperCategoryOptionsMapping: SelectOption = {
+  const optionsMapping: SelectOption = {
     key: 'id',
     label: 'superCategory',
     value: 'id',
@@ -51,14 +48,6 @@ const PromoDisplaysDetail: React.FC<PromoDisplayDetailProps> = ({
       : onSave?.({ ...formPromoDisplay, id: result });
   };
 
-  const handleCategoryChange = async () => {
-    setSelectedOption(
-      allCategories['Super Category'].find(
-        item => item.id === form.getFieldValue('superCategory')
-      )?.superCategory as any
-    );
-  };
-
   return (
     <>
       <PageHeader
@@ -73,27 +62,16 @@ const PromoDisplaysDetail: React.FC<PromoDisplayDetailProps> = ({
       >
         <Row>
           <Col lg={24} xs={24}>
-            {selectedOption === 'Women' && (
-              <Form.Item label="Women Display HTML">
-                <RichTextEditor
-                  formField="WomenHtml"
-                  form={form}
-                  editableHtml={true}
-                />
-              </Form.Item>
-            )}
-            {selectedOption === 'Men' && (
-              <Form.Item label="Men Display HTML">
-                <RichTextEditor
-                  formField="menHtml"
-                  form={form}
-                  editableHtml={true}
-                />
-              </Form.Item>
-            )}
+            <Form.Item label="Display HTML">
+              <RichTextEditor
+                formField="displayHtml"
+                form={form}
+                editableHtml={true}
+              />
+            </Form.Item>
           </Col>
         </Row>
-        <Row gutter={16}>
+        <Row gutter={8}>
           <Col lg={6} xs={24}>
             <Form.Item
               name="displayStartDate"
@@ -119,11 +97,7 @@ const PromoDisplaysDetail: React.FC<PromoDisplayDetailProps> = ({
             </Form.Item>
           </Col>
           <Col lg={6} xs={24}>
-            <Form.Item
-              label="Super Category"
-              name="superCategory"
-              initialValue={selectedOption}
-            >
+            <Form.Item label="Super Category" name="superCategoryId">
               <SimpleSelect
                 data={allCategories['Super Category'].filter(item => {
                   return (
@@ -131,10 +105,9 @@ const PromoDisplaysDetail: React.FC<PromoDisplayDetailProps> = ({
                     item.superCategory === 'Men'
                   );
                 })}
-                onChange={handleCategoryChange}
                 style={{ width: '100%' }}
-                selectedOption={promoDisplay.selectedOption?.id ?? 'Women'}
-                optionsMapping={productSuperCategoryOptionsMapping}
+                selectedOption={promoDisplay.superCategoryId}
+                optionsMapping={optionsMapping}
                 placeholder={'Select a Super Category'}
                 loading={fetchingCategories}
                 disabled={fetchingCategories}
