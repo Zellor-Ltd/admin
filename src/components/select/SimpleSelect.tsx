@@ -5,7 +5,7 @@ import { Select } from 'antd';
 interface SimpleSelectProps {
   data: any[];
   optionsMapping: SelectOption;
-  onChange: (value: string, entity?: any) => void;
+  onChange?: (value: string, entity?: any) => void;
   selectedOption?: string | null;
   allowClear?: boolean;
   placeholder?: string;
@@ -55,7 +55,7 @@ const SimpleSelect: React.FC<SimpleSelectProps> = ({
       entity => entity[optionsMapping.value] === value
     );
     _setSelectedOption(value);
-    onChange(value, selectedEntity);
+    onChange?.(value, selectedEntity);
   };
 
   return (
