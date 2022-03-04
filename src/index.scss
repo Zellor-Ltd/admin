@@ -111,3 +111,20 @@
   display: inline-block;
   height: 32px;
 }
+
+.ant-layout-sider-children {
+  position: fixed;
+  overflow: auto;
+  height: 90vh;
+  left: 0;
+  top: 64px;
+  bottom: 0;
+  width: 200px;
+}
+
+.ant-layout-header {
+  position: sticky;
+  position: -webkit-sticky;
+  z-index: 2;
+  top: 0px;
+}

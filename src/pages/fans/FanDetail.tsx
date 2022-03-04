@@ -27,7 +27,6 @@ import {
   fetchCategories,
   fetchCreators,
   fetchCurrencies,
-  fetchProfiles,
   fetchServersList,
   saveUser,
 } from 'services/DiscoClubService';
@@ -63,17 +62,6 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
 
   useEffect(() => {
     let mounted = true;
-    async function getRoles() {
-      try {
-        const response: any = await fetchProfiles();
-        if (mounted) {
-          setRoles(response.results);
-          setLoading(false);
-        }
-      } catch {
-        message.error("Couldn't fetch roles.");
-      }
-    }
 
     const getCreatores = async () => {
       const response: any = await fetchCreators();
@@ -92,7 +80,6 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
       setCurrencies(response.results);
     };
     setLoading(true);
-    getRoles();
     getCreatores();
     getCategories();
     getServersList();
@@ -277,15 +264,8 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
                 </Form.Item>
               </Col>
               <Col lg={8} xs={24}>
-                <Form.Item name="profile" label="Profile">
-                  <Select>
-                    {roles.map(role => (
-                      <Select.Option key={role.id} value={role.name}>
-                        {role.name}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </Form.Item>
+                <span>Profile</span>
+                <span className="info-block mt-05 mb-1">{fan.profile}</span>
               </Col>
               <Col lg={8} xs={24}>
                 <Form.Item
@@ -311,7 +291,10 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
               <Col lg={8} xs={24}>
                 <Form.Item label="Phone" name="phoneNumber">
                   <InputNumber
-                    prefix={
+                    style={{
+                      width: '100%',
+                    }}
+                    addonBefore={
                       (fan
                         ? prefixSelector(fan.personalDetails?.phone?.dialCode)
                         : undefined) as unknown as string
