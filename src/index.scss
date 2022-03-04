@@ -115,7 +115,7 @@
 .ant-layout-sider-children {
   position: fixed;
   overflow: auto;
-  height: 100vh;
+  height: 90vh;
   left: 0;
   top: 64px;
   bottom: 0;
@@ -127,4 +127,14 @@
   position: -webkit-sticky;
   z-index: 2;
   top: 0px;
+}
+
+.batch-process {
+  background: #fafafa;
+  height: 90%;
+}
+
+.requests {
+  border-right: 1px solid #d9d9d9;
+  border-bottom: 1px solid #d9d9d9;
 }
