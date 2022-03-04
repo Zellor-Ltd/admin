@@ -218,9 +218,9 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
   const refreshItem = (record: Creator) => {
     if (loaded) {
       filteredCreators[lastViewedIndex] = record;
-      setFilteredCreators([...filteredCreators]);
+      setCreators([...filteredCreators]);
     } else {
-      setFilteredCreators([record]);
+      setCreators([record]);
     }
     setRefreshing(true);
   };

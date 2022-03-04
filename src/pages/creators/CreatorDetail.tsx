@@ -253,7 +253,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                 </Form.Item>
               </Col>
               <Col lg={24} xs={24}>
-                <Form.Item label="Creator Profile">
+                <Form.Item label="Creator Profile" name="creatorProfile">
                   <RichTextEditor formField="creatorProfile" form={form} />
                 </Form.Item>
               </Col>
