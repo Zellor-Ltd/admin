@@ -44,6 +44,8 @@ const DataManagement: React.FC<RouteComponentProps> = ({}) => {
   const [newTabIndex, setNewTabIndex] = useState<number>(0);
   const [panes, setPanes] = useState<any>([{}]);
 
+  useEffect(() => {});
+
   const add = () => {
     setNewTabIndex(prev => prev++);
     setCurrentActiveKey(newTabIndex);
@@ -57,26 +59,13 @@ const DataManagement: React.FC<RouteComponentProps> = ({}) => {
   };
 
   const remove = targetKey => {
-    let newActiveKey = currentActiveKey;
-    let lastIndex;
-
-    panes.forEach((pane, i) => {
-      if (pane.key === targetKey) {
-        lastIndex = i - 1;
-      }
-    });
-
-    const newPanes = panes.filter(pane => pane.key !== targetKey);
-    if (newPanes.length && newActiveKey === targetKey) {
-      if (lastIndex >= 0) {
-        newActiveKey = newPanes[lastIndex].key;
-      } else {
-        newActiveKey = newPanes[0].key;
-      }
+    if (currentActiveKey === newTabIndex) {
+      setCurrentActiveKey(prev => prev--);
+      setNewTabIndex(prev => prev--);
     }
-
+    const newPanes = [...panes];
+    newPanes.splice(targetKey, 1);
     setPanes(newPanes);
-    setCurrentActiveKey(newActiveKey);
   };
 
   const onChange = activeKey => {
