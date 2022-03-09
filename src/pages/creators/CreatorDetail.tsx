@@ -125,7 +125,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                   </Col>
                   <Col>
                     <Form.Item
-                      name={['creator', 'displayInVideoFeed']}
+                      name="displayInVideoFeed"
                       label="Display in Video Feed"
                       valuePropName="checked"
                       initialValue={true}

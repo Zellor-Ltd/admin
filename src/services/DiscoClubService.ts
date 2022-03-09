@@ -334,7 +334,7 @@ export const fetchSettings = () => instance.get('Wi/Ep/GetSettings');
 export const fetchPrivileges = (profile: string) =>
   instance.put('Wi/Ep/ListPrivileges', { profile });
 
-export const fetchOrders = () => instance.get('Wi/Ep/ListOrders');
+export const fetchOrders = (page: number) => instance.get(`Disco/Orders/Adm/List/${page}`);
 
 export const fetchWalletTransactions = (userId: string) =>
   instance.put('Wi/Ep/GetWalletTransactions', { userId });

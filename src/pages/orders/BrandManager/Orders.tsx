@@ -1,5 +1,6 @@
 import { CalendarOutlined, SearchOutlined } from '@ant-design/icons';
 import {
+  AutoComplete,
   Button,
   Col,
   DatePicker,
@@ -9,11 +10,11 @@ import {
   Row,
   Select,
   Space,
+  Spin,
   Table,
   Typography,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import CopyOrderToClipboard from 'components/CopyOrderToClipboard';
 import useFilter from 'hooks/useFilter';
 import { Brand } from 'interfaces/Brand';
 import { Fan } from 'interfaces/Fan';
@@ -21,38 +22,54 @@ import { Order } from 'interfaces/Order';
 import moment from 'moment';
 import { useEffect, useRef, useState } from 'react';
 import Highlighter from 'react-highlight-words';
-import { useSelector } from 'react-redux';
-import { RouteComponentProps } from 'react-router-dom';
+import { Link, RouteComponentProps } from 'react-router-dom';
 import {
   fetchBrands,
   fetchFans,
   fetchOrders,
+  fetchSettings,
   saveOrder,
 } from 'services/DiscoClubService';
+import CopyOrderToClipboard from 'components/CopyOrderToClipboard';
 import SimpleSelect from 'components/select/SimpleSelect';
 import { SelectOption } from 'interfaces/SelectOption';
+import scrollIntoView from 'scroll-into-view';
+import FanDetail from 'pages/fans/FanDetail';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import { useMount } from 'react-use';
 import { useRequest } from 'hooks/useRequest';
 
-const Orders: React.FC<RouteComponentProps> = () => {
+const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [orderUpdateList, setOrderUpdateList] = useState<boolean[]>([]);
+  const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
+  const [currentFan, setCurrentFan] = useState<Fan>();
+  const [details, setDetails] = useState<boolean>(false);
+  const [fans, setFans] = useState<Fan[]>([]);
+  const [brands, setBrands] = useState<Brand[]>([]);
+  const [isFetchingBrands, setIsFetchingBrands] = useState(false);
+  const [searchText, setSearchText] = useState<string>('');
+  const searchInput = useRef<Input>(null);
+  const [loaded, setLoaded] = useState<boolean>(false);
+  const [page, setPage] = useState<number>(0);
+  const [eof, setEof] = useState<boolean>(false);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [filteredOrders, setFilteredOrders] = useState<Order[]>([]);
+  const [ordersSettings, setOrdersSettings] = useState([]);
   const { doFetch } = useRequest({ setLoading });
+  const [searchFilter, setSearchFilter] = useState<string>();
+  const [selectedFan, setSelectedFan] = useState<Fan>();
+  const [options, setOptions] = useState<
+    { label: string; value: string; key: string }[]
+  >([]);
 
   const {
     arrayList: orders,
     setArrayList: setOrders,
-    filteredArrayList: filteredOrders,
+    filteredArrayList: filteredContent,
     addFilterFunction,
     removeFilterFunction,
   } = useFilter<Order>([]);
-
-  const [fans, setFans] = useState<Fan[]>([]);
-  const [brands, setBrands] = useState<Brand[]>([]);
-  const [isFetchingBrands, setIsFetchingBrands] = useState(false);
-
-  const [searchText, setSearchText] = useState<string>('');
-
-  const searchInput = useRef<Input>(null);
 
   const optionsMapping: SelectOption = {
     key: 'id',
@@ -60,20 +77,58 @@ const Orders: React.FC<RouteComponentProps> = () => {
     value: 'id',
   };
 
-  useEffect(() => {
-    const getBrands = async () => {
-      try {
-        setIsFetchingBrands(true);
-        const { results }: any = await fetchBrands();
-        setBrands(results.filter((brand: any) => brand.brandName));
-        setIsFetchingBrands(false);
-      } catch (e) {
-      } finally {
-      }
-    };
+  const fanOptionsMapping: SelectOption = {
+    key: 'id',
+    label: 'user',
+    value: 'user',
+  };
 
-    getBrands();
-  }, []);
+  useMount(async () => {
+    const response: any = await fetchSettings();
+    setOrdersSettings(response.results[0].order);
+  });
+
+  const fetch = async () => {
+    setLoading(true);
+    const orders: Order[] = await getValidOrders();
+    const ordersWithFanName = orders.map(order => {
+      order.fanName = selectedFan?.user;
+      return order;
+    });
+    setOrders(ordersWithFanName);
+    setRefreshing(true);
+    setLoaded(true);
+    setLoading(false);
+  };
+
+  const getValidOrders = async () => {
+    const { results }: any = await fetchOrders(page);
+    const orders = results.filter(
+      (order: Order) => !!(order.product || order.cart)
+    );
+    return orders;
+  };
+
+  useEffect(() => {
+    if (refreshing) {
+      setFilteredOrders([]);
+      setEof(false);
+      fetchData();
+      setRefreshing(false);
+    }
+  }, [refreshing]);
+
+  const fetchData = async () => {
+    if (!filteredContent.length) return;
+
+    const pageToUse = refreshing ? 0 : page;
+    const results = filteredContent.slice(pageToUse * 10, pageToUse * 10 + 10);
+
+    setPage(pageToUse + 1);
+    setFilteredOrders(prev => [...prev.concat(results)]);
+
+    if (results.length < 10) setEof(true);
+  };
 
   const handleSearch = (selectedKeys: any, confirm: any, dataIndex: any) => {
     confirm();
@@ -85,16 +140,16 @@ const Orders: React.FC<RouteComponentProps> = () => {
     setSearchText('');
   };
 
-  const {
-    settings: { order: ordersSettings = [] },
-  } = useSelector((state: any) => state.settings);
-
-  const handleSelectChange = async (value: string, orderIndex: number) => {
+  const handleSelectChange = async (
+    value: string,
+    order: Order,
+    orderIndex: number
+  ) => {
     const currentOrderUpdateList = [...orderUpdateList];
     currentOrderUpdateList[orderIndex] = true;
     setOrderUpdateList(currentOrderUpdateList);
     await saveOrder({
-      ...orders[orderIndex],
+      ...order,
       stage: value,
     });
 
@@ -114,6 +169,7 @@ const Orders: React.FC<RouteComponentProps> = () => {
   const handleDateChange = (values: any) => {
     if (!values) {
       removeFilterFunction('creationDate');
+      setRefreshing(true);
       return;
     }
     const startDate = moment(values[0], 'DD/MM/YYYY').startOf('day').utc();
@@ -123,9 +179,26 @@ const Orders: React.FC<RouteComponentProps> = () => {
         return moment(hCreationDate).utc().isBetween(startDate, endDate);
       })
     );
+    setRefreshing(true);
   };
 
   const getFan = (fanId: string) => fans.find(fan => fan.id === fanId);
+
+  useEffect(() => {
+    if (!details) {
+      scrollIntoView(
+        document.querySelector(
+          `.scrollable-row-${lastViewedIndex}`
+        ) as HTMLElement
+      );
+    }
+  }, [details]);
+
+  const editFan = (index: number, fan?: Fan) => {
+    setLastViewedIndex(index);
+    setCurrentFan(fan);
+    setDetails(true);
+  };
 
   const getColumnSearchProps = (dataIndex: any) => ({
     filterDropdown: ({
@@ -192,15 +265,17 @@ const Orders: React.FC<RouteComponentProps> = () => {
         setTimeout(() => searchInput.current!.select(), 100);
       }
     },
-    render: (userId: any) => {
+    render: (userId: any, _, index: number) => {
       const fan = getFan(userId);
       return (
-        <Highlighter
-          highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
-          searchWords={[searchText]}
-          autoEscape
-          textToHighlight={fan?.user || ''}
-        />
+        <Link to={location.pathname} onClick={() => editFan(index, fan)}>
+          <Highlighter
+            highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
+            searchWords={[searchText]}
+            autoEscape
+            textToHighlight={fan?.user || ''}
+          />
+        </Link>
       );
     },
   });
@@ -232,13 +307,18 @@ const Orders: React.FC<RouteComponentProps> = () => {
       dataIndex: 'amount',
       width: '5%',
       align: 'center',
-      render: (value: number) => value / 100,
+      render: (value: number) => `${value / 100}x`,
     },
     {
       title: 'Name',
-      dataIndex: ['product', 'name'],
       width: '12%',
       align: 'center',
+      render: (_, record) =>
+        record.product
+          ? record.product?.name
+          : record.cart.brandGroups[0]
+          ? record.cart.brandGroups[0].items[0].name
+          : 'Empty order',
     },
     {
       title: 'Creation',
@@ -270,13 +350,13 @@ const Orders: React.FC<RouteComponentProps> = () => {
       dataIndex: 'stage',
       width: '15%',
       align: 'center',
-      render: (value: string, _, index) => (
+      render: (value: string, order, index) => (
         <Select
           loading={orderUpdateList[index]}
-          disabled
+          disabled={orderUpdateList[index]}
           defaultValue={value}
           style={{ width: '175px' }}
-          onChange={value => handleSelectChange(value, index)}
+          onChange={value => handleSelectChange(value, order, index)}
         >
           {ordersSettings.map((ordersSetting: any) => (
             <Select.Option
@@ -298,94 +378,175 @@ const Orders: React.FC<RouteComponentProps> = () => {
         <>
           <div>{moment(value).format('DD/MM/YYYY')}</div>
           <div>{moment(value).format('HH:mm')}</div>
-          {/* <div style={{ color: "grey" }}>({moment(value).fromNow()})</div> */}
         </>
       ),
     },
-    // {
-    //   title: "Actions",
-    //   key: "action",
-    //   width: "5%",
-    //   align: "right",
-    //   render: (_, record) => (
-    //     <Link to={{ pathname: `/order`, state: record }}>
-    //       <EditOutlined />
-    //     </Link>
-    //   ),
-    // },
   ];
 
-  const getOrders = async () => {
-    const response: any = await fetchOrders();
-    const orders = response.results.filter((order: Order) => !!order.product);
-    return orders;
-  };
-
-  const getFans = async () => {
-    const response: any = await doFetch(() =>
-      fetchFans({
-        page: 0,
-        query: undefined,
-      })
-    );
-    return response.results;
-  };
+  useEffect(() => {
+    const getBrands = async () => {
+      try {
+        setIsFetchingBrands(true);
+        const { results }: any = await fetchBrands();
+        setBrands(results.filter((brand: any) => brand.brandName));
+        setIsFetchingBrands(false);
+      } catch (e) {
+      } finally {
+      }
+    };
+    getBrands();
+  }, []);
 
   useEffect(() => {
-    const getResources = async () => {
-      setLoading(true);
-      const orders: Order[] = await getOrders();
-      const fans: Fan[] = await getFans();
-      const ordersWithFanName = orders.map(order => {
-        const fan = fans.find(fan => fan.id === order.userId);
-        order.fanName = fan?.name;
-        return order;
-      });
-      setOrders(ordersWithFanName);
-      setFans(fans);
-      setLoading(false);
-    };
-    getResources();
+    if (loaded) {
+      fetch();
+    }
   }, [setOrders]);
 
   const onChangeBrand = async (_selectedBrand: Brand | undefined) => {
     if (!_selectedBrand) {
       removeFilterFunction('brandName');
+      setRefreshing(true);
       return;
     }
     addFilterFunction('brandName', orders =>
-      orders.filter(
-        order => order.product?.brand.brandName === _selectedBrand.brandName
+      orders.filter(order =>
+        order.product
+          ? order.product?.brand.brandName === _selectedBrand.brandName
+          : order.cart.brandGroups.find(
+              brandGroup => brandGroup.brandName === _selectedBrand.brandName
+            )
       )
     );
+    setRefreshing(true);
+  };
+
+  const onSearch = (value: string) => {
+    setSearchFilter(value);
+    getFans();
+  };
+
+  const onChangeFan = async (value: string, _selectedFan: any) => {
+    setSelectedFan(_selectedFan);
+    if (!_selectedFan) {
+      removeFilterFunction('fanName');
+      setRefreshing(true);
+      return;
+    }
+    addFilterFunction('fanName', orders =>
+      orders.filter(order => order.userid === _selectedFan.id)
+    );
+    setRefreshing(true);
+  };
+
+  const onSaveFan = (record: Fan) => {
+    setDetails(false);
+  };
+
+  const onCancelFan = () => {
+    setDetails(false);
+  };
+
+  const getFans = async () => {
+    const response = await doFetch(() =>
+      fetchFans({
+        page: 0,
+        query: searchFilter,
+      })
+    );
+
+    const optionFactory = (option: any) => {
+      return {
+        label: option[fanOptionsMapping.label],
+        value: option[fanOptionsMapping.value],
+        key: option[fanOptionsMapping.value],
+      };
+    };
+
+    setFans(response.results);
+    setOptions(response.results.map(optionFactory));
   };
 
   return (
-    <div className="orders">
-      <PageHeader title="Orders" subTitle="List of Orders" />
-      <Row gutter={8}>
-        <Col xxl={40} lg={6} xs={18}>
-          <Typography.Title level={5}>Master Brand</Typography.Title>
-          <SimpleSelect
-            data={brands}
-            onChange={(_, brand) => onChangeBrand(brand)}
-            style={{ width: '100%' }}
-            selectedOption={''}
-            optionsMapping={optionsMapping}
-            placeholder={'Select a master brand'}
-            loading={isFetchingBrands}
-            disabled={isFetchingBrands}
-            allowClear={true}
-          ></SimpleSelect>
-        </Col>
-      </Row>
-      <Table
-        rowKey="id"
-        columns={columns}
-        dataSource={filteredOrders}
-        loading={loading}
-      />
-    </div>
+    <>
+      {!details && (
+        <div className="orders">
+          <PageHeader title="Orders" subTitle="List of Orders" />
+          <Row align="bottom" justify="space-between">
+            <Col lg={16} xs={24}>
+              <Row gutter={8}>
+                <Col lg={8} xs={16}>
+                  <Typography.Title level={5}>Master Brand</Typography.Title>
+                  <SimpleSelect
+                    data={brands}
+                    onChange={(_, brand) => onChangeBrand(brand)}
+                    style={{ width: '100%' }}
+                    selectedOption={''}
+                    optionsMapping={optionsMapping}
+                    placeholder={'Select a master brand'}
+                    loading={isFetchingBrands}
+                    disabled={isFetchingBrands}
+                    allowClear={true}
+                  ></SimpleSelect>
+                </Col>
+                <Col lg={8} xs={16}>
+                  <Typography.Title level={5}>Fan Filter</Typography.Title>
+                  <AutoComplete
+                    style={{ width: '100%' }}
+                    options={options}
+                    onSelect={onChangeFan}
+                    onSearch={onSearch}
+                    placeholder="Type to search a fan"
+                  />
+                </Col>
+              </Row>
+            </Col>
+            <Col>
+              <Button
+                type="primary"
+                onClick={fetch}
+                style={{
+                  marginBottom: '20px',
+                  marginRight: '25px',
+                }}
+              >
+                Search
+                <SearchOutlined style={{ color: 'white' }} />
+              </Button>
+            </Col>
+          </Row>
+          <InfiniteScroll
+            dataLength={filteredOrders.length}
+            next={fetchData}
+            hasMore={!eof}
+            loader={
+              page !== 0 && (
+                <div className="scroll-message">
+                  <Spin />
+                </div>
+              )
+            }
+            endMessage={
+              <div className="scroll-message">
+                <b>End of results.</b>
+              </div>
+            }
+          >
+            <Table
+              rowClassName={(_, index) => `scrollable-row-${index}`}
+              rowKey="id"
+              columns={columns}
+              dataSource={filteredOrders}
+              loading={loading || refreshing}
+              pagination={false}
+            />
+          </InfiniteScroll>
+        </div>
+      )}
+      {details && (
+        <FanDetail fan={currentFan} onSave={onSaveFan} onCancel={onCancelFan} />
+      )}
+    </>
   );
 };
 

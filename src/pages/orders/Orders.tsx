@@ -102,7 +102,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   const getValidOrders = async () => {
-    const { results }: any = await fetchOrders();
+    const { results }: any = await fetchOrders(page);
     const orders = results.filter(
       (order: Order) => !!(order.product || order.cart)
     );
