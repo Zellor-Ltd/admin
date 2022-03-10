@@ -122,12 +122,12 @@ const VideoTypes: React.FC<RouteComponentProps> = props => {
     setVideoTypes([...filteredVideoTypes]);
   };
 
-  const onSaveFanGroup = (record: FanGroup) => {
+  const onSaveVideoType = (record: FanGroup) => {
     refreshItem(record);
     setDetails(false);
   };
 
-  const onCancelFanGroup = () => {
+  const onCancelVideoType = () => {
     setDetails(false);
   };
 
@@ -186,8 +186,8 @@ const VideoTypes: React.FC<RouteComponentProps> = props => {
       {details && (
         <VideoTypeDetail
           videoType={currentVideoType}
-          onSave={onSaveFanGroup}
-          onCancel={onCancelFanGroup}
+          onSave={onSaveVideoType}
+          onCancel={onCancelVideoType}
         />
       )}
     </>
