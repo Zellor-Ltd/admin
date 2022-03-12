@@ -10,7 +10,7 @@ import useAllCategories from 'hooks/useAllCategories';
 import { useMount } from 'react-use';
 import { SelectOption } from 'interfaces/SelectOption';
 interface PromoDisplayDetailProps {
-  promoDisplay: any;
+  promoDisplay?: any;
   onSave?: (record: PromoDisplay) => void;
   onCancel?: () => void;
 }
@@ -106,7 +106,7 @@ const PromoDisplaysDetail: React.FC<PromoDisplayDetailProps> = ({
                   );
                 })}
                 style={{ width: '100%' }}
-                selectedOption={promoDisplay.superCategoryId}
+                selectedOption={promoDisplay?.superCategoryId}
                 optionsMapping={optionsMapping}
                 placeholder={'Select a Super Category'}
                 loading={fetchingCategories}
