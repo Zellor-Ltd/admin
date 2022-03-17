@@ -3,6 +3,7 @@ import {
   CloseOutlined,
   DeleteOutlined,
   EditOutlined,
+  LoadingOutlined,
   SearchOutlined,
 } from '@ant-design/icons';
 import {
@@ -40,117 +41,56 @@ import { useRequest } from 'hooks/useRequest';
 import { useMount } from 'react-use';
 import ReactJson from 'react-json-view';
 import Item from 'antd/lib/list/Item';
+import React from 'react';
+import { setFlagsFromString } from 'v8';
+import index from 'components/upload';
 
 const { Panel } = Collapse;
 
 const DataManagement: React.FC<RouteComponentProps> = ({}) => {
   const [currentActiveKey, setCurrentActiveKey] = useState<string>('');
+  const [activeTabIndex, setActiveTabIndex] = useState<number>(0);
   const [newTabIndex, setNewTabIndex] = useState<number>(0);
   const [panes, setPanes] = useState<any>([{}]);
   const [tabContent, setTabContent] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
   const { doFetch } = useRequest({ setLoading });
+  const [showLoadingScreen, setShowLoadingScreen] = useState<boolean>(false);
+  const [result, setResult] = useState<any[]>([]);
+  const [input, setInput] = useState<any>();
+  const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
   useMount(() => {
     panes.pop();
   });
 
-  const procedures = [
-    <Button
-      onClick={() => add('GetApiToken')}
-      type="text"
-      style={{ display: 'flex', alignItems: 'baseline', fontSize: '.95em' }}
-    >
-      <span style={{ color: '#67e6a9', fontSize: '.75em' }}>GET</span>&zwnj;
-      &zwnj; GetApiToken
-    </Button>,
-    <Button
-      onClick={() => add('Brand/ImportProducts')}
-      type="text"
-      style={{ display: 'flex', alignItems: 'baseline', fontSize: '.95em' }}
-    >
-      <span style={{ color: '#67e6a9', fontSize: '.75em' }}>GET</span>&zwnj;
-      &zwnj; Brand/ImportProducts
-    </Button>,
-    <Button
-      onClick={() => add('Brand/UpdateStock')}
-      type="text"
-      style={{ display: 'flex', alignItems: 'baseline', fontSize: '.95em' }}
-    >
-      <span style={{ color: '#67e6a9', fontSize: '.75em' }}>GET</span>&zwnj;
-      &zwnj; Brand/UpdateStock
-    </Button>,
-    <Button
-      onClick={() => add('RebuildCategoriesTree')}
-      type="text"
-      style={{ display: 'flex', alignItems: 'baseline', fontSize: '.95em' }}
-    >
-      <span style={{ color: '#67e6a9', fontSize: '.75em' }}>GET</span>&zwnj;
-      &zwnj; RebuildCategoriesTree
-    </Button>,
-    <Button
-      onClick={() => add('RebuildCategoriesTreeAllCreators')}
-      type="text"
-      style={{ display: 'flex', alignItems: 'baseline', fontSize: '.95em' }}
-    >
-      <span style={{ color: '#67e6a9', fontSize: '.75em' }}>GET</span>&zwnj;
-      &zwnj; RebuildCategoriesTreeAllCreators
-    </Button>,
-    <Button
-      onClick={() => add('RebuildCategoriesTreeAllProductBrands')}
-      type="text"
-      style={{ display: 'flex', alignItems: 'baseline', fontSize: '.95em' }}
-    >
-      <span style={{ color: '#67e6a9', fontSize: '.75em' }}>GET</span>&zwnj;
-      &zwnj; RebuildCategoriesTreeAllProductBrands
-    </Button>,
-    <Button
-      onClick={() => add('RebuildCategoriesTreeAllBrands')}
-      type="text"
-      style={{ display: 'flex', alignItems: 'baseline', fontSize: '.95em' }}
-    >
-      <span style={{ color: '#67e6a9', fontSize: '.75em' }}>GET</span>&zwnj;
-      &zwnj; RebuildCategoriesTreeAllBrands
-    </Button>,
-    <Button
-      onClick={() => add('ProductBrand/Rebuild')}
-      type="text"
-      style={{ display: 'flex', alignItems: 'baseline', fontSize: '.95em' }}
-    >
-      <span style={{ color: '#67e6a9', fontSize: '.75em' }}>GET</span>&zwnj;
-      &zwnj; ProductBrand/Rebuild
-    </Button>,
-    <Button
-      onClick={() => add('ProductBrand/RebuildAllBrands')}
-      type="text"
-      style={{ display: 'flex', alignItems: 'baseline', fontSize: '.95em' }}
-    >
-      <span style={{ color: '#67e6a9', fontSize: '.75em' }}>GET</span>&zwnj;
-      &zwnj; ProductBrand/RebuildAllBrands
-    </Button>,
-    <Button
-      onClick={() => add('ProductBrand/RebuildAllCreators')}
-      type="text"
-      style={{ display: 'flex', alignItems: 'baseline', fontSize: '.95em' }}
-    >
-      <span style={{ color: '#67e6a9', fontSize: '.75em' }}>GET</span>&zwnj;
-      &zwnj; ProductBrand/RebuildAllCreators
-    </Button>,
-    <Button
-      onClick={() => add('Brand/Propagate')}
-      type="text"
-      style={{ display: 'flex', alignItems: 'baseline', fontSize: '.95em' }}
-    >
-      <span style={{ color: '#67e6a9', fontSize: '.75em' }}>GET</span>&zwnj;
-      &zwnj; Brand/Propagate
-    </Button>,
-  ];
+  useEffect(() => {
+    setPanes(panes);
+  }, [currentActiveKey]);
+
+  useEffect(() => {
+    if (input) {
+      asyncSetCurrentActiveKey(input);
+      setInput(undefined);
+    }
+  }, [input]);
+
+  const asyncSetCurrentActiveKey = (input: any) => {
+    try {
+      setLoading(true);
+      setCurrentActiveKey(input);
+      setActiveTabIndex(panes.indexOf(panes.find(item => item.key === input)));
+    } catch (error: any) {
+      console.log(error.error);
+    }
+  };
 
   const add = async title => {
+    setInput(title);
     const { results }: any = await doFetch(fetchBrands);
-    setNewTabIndex(prev => prev++);
-    setCurrentActiveKey(title);
-    if (panes.find(item => item.key === currentActiveKey)) return;
+    setActiveTabIndex(panes.length);
+    asyncSetCurrentActiveKey(title);
+    if (panes.find(item => item.title === title)) return;
     const newPanes = [...panes];
     newPanes.push({
       title: title,
@@ -159,27 +99,186 @@ const DataManagement: React.FC<RouteComponentProps> = ({}) => {
           <ReactJson src={results} />
         </div>
       ),
-      key: currentActiveKey,
+      key: title,
     });
     setPanes(newPanes);
+    setLoading(false);
   };
 
   const remove = targetKey => {
-    setCurrentActiveKey(targetKey);
-    setNewTabIndex(prev => prev--);
-    const newPanes = [...panes];
-    newPanes.splice(targetKey, 1);
+    const newPanes = [...panes].splice(
+      panes.indexOf(panes.find(pane => pane.key === targetKey) + 2),
+      1
+    );
     setPanes(newPanes);
+    asyncSetCurrentActiveKey(panes[activeTabIndex]?.key);
+    setLoading(false);
   };
 
   const onChange = activeKey => {
-    console.log(activeKey);
     setCurrentActiveKey(activeKey);
+    setActiveTabIndex(
+      panes.indexOf(panes.find(item => item.key === activeKey))
+    );
   };
 
   const onEdit = (targetKey, action) => {
-    remove(targetKey);
+    action === 'remove' ? remove(targetKey) : add(targetKey);
   };
+
+  const procedures = [
+    <Spin
+      indicator={antIcon}
+      spinning={loading && currentActiveKey === 'GetApiToken'}
+    >
+      <Button
+        onClick={() => add('GetApiToken')}
+        type="text"
+        style={{ display: 'flex', alignItems: 'baseline', fontSize: '.95em' }}
+      >
+        <span style={{ color: '#67e6a9', fontSize: '.75em' }}>GET</span>&zwnj;
+        &zwnj; GetApiToken
+      </Button>
+    </Spin>,
+    <Spin
+      indicator={antIcon}
+      spinning={loading && currentActiveKey === 'Brand/ImportProducts'}
+    >
+      <Button
+        onClick={() => add('Brand/ImportProducts')}
+        type="text"
+        style={{ display: 'flex', alignItems: 'baseline', fontSize: '.95em' }}
+      >
+        <span style={{ color: '#67e6a9', fontSize: '.75em' }}>GET</span>&zwnj;
+        &zwnj; Brand/ImportProducts
+      </Button>
+    </Spin>,
+    <Spin
+      indicator={antIcon}
+      spinning={loading && currentActiveKey === 'Brand/UpdateStock'}
+    >
+      <Button
+        onClick={() => add('Brand/UpdateStock')}
+        type="text"
+        style={{ display: 'flex', alignItems: 'baseline', fontSize: '.95em' }}
+      >
+        <span style={{ color: '#67e6a9', fontSize: '.75em' }}>GET</span>&zwnj;
+        &zwnj; Brand/UpdateStock
+      </Button>
+    </Spin>,
+    <Spin
+      indicator={antIcon}
+      spinning={loading && currentActiveKey === 'RebuildCategoriesTree'}
+    >
+      <Button
+        onClick={() => add('RebuildCategoriesTree')}
+        type="text"
+        style={{ display: 'flex', alignItems: 'baseline', fontSize: '.95em' }}
+      >
+        <span style={{ color: '#67e6a9', fontSize: '.75em' }}>GET</span>&zwnj;
+        &zwnj; RebuildCategoriesTree
+      </Button>
+    </Spin>,
+    <Spin
+      indicator={antIcon}
+      spinning={
+        loading && currentActiveKey === 'RebuildCategoriesTreeAllCreators'
+      }
+    >
+      <Button
+        onClick={() => add('RebuildCategoriesTreeAllCreators')}
+        type="text"
+        style={{ display: 'flex', alignItems: 'baseline', fontSize: '.95em' }}
+      >
+        <span style={{ color: '#67e6a9', fontSize: '.75em' }}>GET</span>&zwnj;
+        &zwnj; RebuildCategoriesTreeAllCreators
+      </Button>
+    </Spin>,
+    <Spin
+      indicator={antIcon}
+      spinning={
+        loading && currentActiveKey === 'RebuildCategoriesTreeAllProductBrands'
+      }
+    >
+      <Button
+        onClick={() => add('RebuildCategoriesTreeAllProductBrands')}
+        type="text"
+        style={{ display: 'flex', alignItems: 'baseline', fontSize: '.95em' }}
+      >
+        <span style={{ color: '#67e6a9', fontSize: '.75em' }}>GET</span>&zwnj;
+        &zwnj; RebuildCategoriesTreeAllProductBrands
+      </Button>
+    </Spin>,
+    <Spin
+      indicator={antIcon}
+      spinning={
+        loading && currentActiveKey === 'RebuildCategoriesTreeAllBrands'
+      }
+    >
+      <Button
+        onClick={() => add('RebuildCategoriesTreeAllBrands')}
+        type="text"
+        style={{ display: 'flex', alignItems: 'baseline', fontSize: '.95em' }}
+      >
+        <span style={{ color: '#67e6a9', fontSize: '.75em' }}>GET</span>&zwnj;
+        &zwnj; RebuildCategoriesTreeAllBrands
+      </Button>
+    </Spin>,
+    <Spin
+      indicator={antIcon}
+      spinning={loading && currentActiveKey === 'ProductBrand/Rebuild'}
+    >
+      <Button
+        onClick={() => add('ProductBrand/Rebuild')}
+        type="text"
+        style={{ display: 'flex', alignItems: 'baseline', fontSize: '.95em' }}
+      >
+        <span style={{ color: '#67e6a9', fontSize: '.75em' }}>GET</span>&zwnj;
+        &zwnj; ProductBrand/Rebuild
+      </Button>
+    </Spin>,
+    <Spin
+      indicator={antIcon}
+      spinning={loading && currentActiveKey === 'ProductBrand/RebuildAllBrands'}
+    >
+      <Button
+        onClick={() => add('ProductBrand/RebuildAllBrands')}
+        type="text"
+        style={{ display: 'flex', alignItems: 'baseline', fontSize: '.95em' }}
+      >
+        <span style={{ color: '#67e6a9', fontSize: '.75em' }}>GET</span>&zwnj;
+        &zwnj; ProductBrand/RebuildAllBrands
+      </Button>
+    </Spin>,
+    <Spin
+      indicator={antIcon}
+      spinning={
+        loading && currentActiveKey === 'ProductBrand/RebuildAllCreators'
+      }
+    >
+      <Button
+        onClick={() => add('ProductBrand/RebuildAllCreators')}
+        type="text"
+        style={{ display: 'flex', alignItems: 'baseline', fontSize: '.95em' }}
+      >
+        <span style={{ color: '#67e6a9', fontSize: '.75em' }}>GET</span>&zwnj;
+        &zwnj; ProductBrand/RebuildAllCreators
+      </Button>
+    </Spin>,
+    <Spin
+      indicator={antIcon}
+      spinning={loading && currentActiveKey === 'Brand/Propagate'}
+    >
+      <Button
+        onClick={() => add('Brand/Propagate')}
+        type="text"
+        style={{ display: 'flex', alignItems: 'baseline', fontSize: '.95em' }}
+      >
+        <span style={{ color: '#67e6a9', fontSize: '.75em' }}>GET</span>&zwnj;
+        &zwnj; Brand/Propagate
+      </Button>
+    </Spin>,
+  ];
 
   return (
     <>
