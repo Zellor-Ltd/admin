@@ -1,12 +1,16 @@
 import { Button, Col, DatePicker, Form, PageHeader, Row } from 'antd';
 import { RichTextEditor } from 'components/RichTextEditor';
+import SimpleSelect from 'components/select/SimpleSelect';
 import { formatMoment } from 'helpers/formatMoment';
 import { useRequest } from 'hooks/useRequest';
 import { PromoDisplay } from 'interfaces/PromoDisplay';
 import { useState } from 'react';
 import { savePromoDisplay } from 'services/DiscoClubService';
+import useAllCategories from 'hooks/useAllCategories';
+import { useMount } from 'react-use';
+import { SelectOption } from 'interfaces/SelectOption';
 interface PromoDisplayDetailProps {
-  promoDisplay: any;
+  promoDisplay?: any;
   onSave?: (record: PromoDisplay) => void;
   onCancel?: () => void;
 }
@@ -19,6 +23,20 @@ const PromoDisplaysDetail: React.FC<PromoDisplayDetailProps> = ({
   const [loading, setLoading] = useState<boolean>(false);
   const [form] = Form.useForm();
   const { doRequest } = useRequest({ setLoading });
+  const [fetchingCategories, setFetchingCategories] = useState(false);
+  const { fetchAllCategories, allCategories } = useAllCategories({
+    setLoading: setFetchingCategories,
+  });
+
+  const optionsMapping: SelectOption = {
+    key: 'id',
+    label: 'superCategory',
+    value: 'id',
+  };
+
+  useMount(async () => {
+    await fetchAllCategories();
+  });
 
   const onFinish = async () => {
     const formPromoDisplay = form.getFieldsValue(true);
@@ -76,6 +94,25 @@ const PromoDisplaysDetail: React.FC<PromoDisplayDetailProps> = ({
               ]}
             >
               <DatePicker format="DD/MM/YYYY" />
+            </Form.Item>
+          </Col>
+          <Col lg={6} xs={24}>
+            <Form.Item label="Super Category" name="superCategoryId">
+              <SimpleSelect
+                data={allCategories['Super Category'].filter(item => {
+                  return (
+                    item.superCategory === 'Women' ||
+                    item.superCategory === 'Men'
+                  );
+                })}
+                style={{ width: '100%' }}
+                selectedOption={promoDisplay?.superCategoryId}
+                optionsMapping={optionsMapping}
+                placeholder={'Select a Super Category'}
+                loading={fetchingCategories}
+                disabled={fetchingCategories}
+                allowClear={true}
+              ></SimpleSelect>
             </Form.Item>
           </Col>
         </Row>

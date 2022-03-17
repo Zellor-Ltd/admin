@@ -640,6 +640,15 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
               </Col>
               <Col lg={4} xs={8}>
                 <Form.Item
+                  name="onSale"
+                  label="On Sale"
+                  valuePropName="checked"
+                >
+                  <Switch disabled={isLive} />
+                </Form.Item>
+              </Col>
+              <Col lg={4} xs={8}>
+                <Form.Item
                   name="maxDiscoDollars"
                   label="Max Discount in DD"
                   dependencies={['originalPrice']}

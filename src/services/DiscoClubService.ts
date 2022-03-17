@@ -23,6 +23,7 @@ import { Role } from 'interfaces/Role';
 import { Tag } from 'interfaces/Tag';
 import { User } from 'interfaces/User';
 import { Banner } from 'interfaces/Banner';
+import { VideoType } from 'interfaces/VideoType';
 
 export const instance = axios.create({
   baseURL: process.env.REACT_APP_HOST_ENDPOINT,
@@ -334,7 +335,7 @@ export const fetchSettings = () => instance.get('Wi/Ep/GetSettings');
 export const fetchPrivileges = (profile: string) =>
   instance.put('Wi/Ep/ListPrivileges', { profile });
 
-export const fetchOrders = () => instance.get('Wi/Ep/ListOrders');
+export const fetchOrders = (page: number) => instance.get(`Disco/Orders/Adm/List/${page}`);
 
 export const fetchWalletTransactions = (userId: string) =>
   instance.put('Wi/Ep/GetWalletTransactions', { userId });
@@ -345,7 +346,13 @@ export const fetchUserFeed = (userId: string) =>
 export const fetchGroupFeed = (groupId: string) =>
   instance.get(`Disco/Feed/GetGroup/${groupId}`);
 
-export const fetchPromoCodes = () => instance.get('Wi/Ep/ListPromoCodes');
+  export const fetchPromoCodes = () => instance.get('Wi/Ep/ListPromoCodes');
+
+  export const fetchVideoTypes = () => instance.get('Wi/Ep/ListVideoTypes');
+
+export const saveVideoType = (params: VideoType) => {
+    return instance.put('Disco/Feed/Add', params);
+};
 
 export const fetchPromotions = () => instance.get('Wi/Ep/ListPromotions');
 

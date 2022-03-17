@@ -416,6 +416,13 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
       align: 'center',
     },
     {
+      title: 'Import Run Id',
+      dataIndex: 'importRunId',
+      width: '7%',
+      align: 'center',
+      responsive: ['sm'],
+    },
+    {
       title: 'Product Brand',
       dataIndex: ['productBrand'],
       width: '12%',

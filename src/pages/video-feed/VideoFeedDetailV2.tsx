@@ -305,6 +305,8 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
   const loadOptions = entity => {
     const iconOptions: any[] = [];
 
+    if (entity.brandLogo)
+      iconOptions.push({ label: 'Round', value: entity.brandLogo.url });
     if (entity.whiteLogo)
       iconOptions.push({ label: 'White', value: entity.whiteLogo.url });
     if (entity.blackLogo)

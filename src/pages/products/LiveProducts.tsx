@@ -413,7 +413,13 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
       align: 'center',
       responsive: ['sm'],
     },
-
+    {
+      title: 'Import Run Id',
+      dataIndex: 'importRunId',
+      width: '7%',
+      align: 'center',
+      responsive: ['sm'],
+    },
     {
       title: 'Expiration Date',
       dataIndex: 'offerExpirationDate',
