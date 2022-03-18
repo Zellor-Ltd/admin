@@ -107,7 +107,7 @@ const DataManagement: React.FC<RouteComponentProps> = ({}) => {
 
   const remove = targetKey => {
     const newPanes = [...panes].splice(
-      panes.indexOf(panes.find(pane => pane.key === targetKey) + 2),
+      panes.indexOf(panes.find(pane => pane.key === targetKey)),
       1
     );
     setPanes(newPanes);
