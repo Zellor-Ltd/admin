@@ -52,7 +52,7 @@ const DebounceSelect: React.FC<DebounceSelectProps> = ({
       setOptions([]);
       setFetching(true);
 
-      fetchOptions(value).then(entities => {
+      fetchOptions(value.toUpperCase()).then(entities => {
         if (fetchId !== fetchRef.current) {
           // for fetch callback order
           return;
