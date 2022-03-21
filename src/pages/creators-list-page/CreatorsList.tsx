@@ -191,7 +191,7 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
               </Button>,
             ]}
           />
-          <Row gutter={8}>
+          <Row gutter={8} className={'sticky-filter-box'}>
             <Col lg={8} xs={16}>
               <SearchFilter
                 filterFunction={searchFilterFunction}

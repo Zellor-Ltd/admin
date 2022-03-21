@@ -246,7 +246,11 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
       {!details && (
         <div className="wallets">
           <PageHeader title="Fan Wallets" subTitle="List of fan wallets" />
-          <Row align="bottom" justify="space-between">
+          <Row
+            align="bottom"
+            justify="space-between"
+            className={'sticky-filter-box'}
+          >
             <Col span={24}>
               <Row gutter={8} align="bottom">
                 <Col span={4}>
@@ -265,7 +269,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
                     <SimpleSelect
                       data={brands}
                       onChange={(_, brand) => onChangeBrand(brand)}
-                      style={{ width: '100%', marginBottom: '16px' }}
+                      style={{ width: '100%' }}
                       selectedOption={selectedBrand?.brandName}
                       optionsMapping={optionsMapping}
                       placeholder={'Select a master brand'}
