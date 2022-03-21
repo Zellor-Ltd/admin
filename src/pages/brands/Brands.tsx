@@ -317,7 +317,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
               </Button>,
             ]}
           />
-          <div style={{ marginBottom: '16px' }}>
+          <div className="sticky-filter-box" style={{ marginBottom: '16px' }}>
             <Row>
               <Col lg={12} xs={24}>
                 <Typography.Title level={5} title="Search">

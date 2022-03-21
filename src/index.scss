@@ -128,3 +128,12 @@
   z-index: 2;
   top: 0px;
 }
+
+.sticky-filter-box {
+  position: sticky;
+  position: -webkit-sticky;
+  z-index: 2;
+  top: 64px;
+  background: white;
+  padding: 14px;
+}
