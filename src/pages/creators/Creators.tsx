@@ -261,7 +261,12 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
               </Button>,
             ]}
           />
-          <Row gutter={8} align="bottom" justify="space-between">
+          <Row
+            gutter={8}
+            align="bottom"
+            justify="space-between"
+            className={'sticky-filter-box'}
+          >
             <Col lg={8} xs={16}>
               <SearchFilter
                 filterFunction={searchFilterFunction}

@@ -468,7 +468,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   return (
     <>
       {!details && (
-        <div className="video-feed">
+        <div className="video-feed mb-1">
           <PageHeader
             title="Video feed update"
             subTitle="List of Feeds"
@@ -481,108 +481,111 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
               </Button>,
             ]}
           />
-          <div style={{ marginBottom: '16px' }}>
-            <Row align="bottom" justify="space-between" gutter={[8, 8]}>
-              <Col lg={24} xs={24}>
-                <Row gutter={8}>
-                  <Col lg={4} xs={12}>
-                    <Typography.Title level={5} title="Search">
-                      Search
-                    </Typography.Title>
-                    <Input
-                      onChange={event => setTitleFilter(event.target.value)}
-                      suffix={<SearchOutlined />}
-                      value={titleFilter}
-                    />
-                  </Col>
-                  <Col lg={4} xs={12}>
-                    <Typography.Title level={5}>Master Brand</Typography.Title>
-                    <SimpleSelect
-                      data={brands}
-                      onChange={(_, brand) => setBrandFilter(brand)}
-                      style={{ width: '100%' }}
-                      selectedOption={brandFilter?.id}
-                      optionsMapping={masterBrandMapping}
-                      placeholder={'Select a master brand'}
-                      loading={isFetchingBrands}
-                      disabled={isFetchingBrands}
-                      allowClear={true}
-                    />
-                  </Col>
-                  <Col lg={4} xs={12}>
-                    <Typography.Title level={5}>Product Brand</Typography.Title>
-                    <SimpleSelect
-                      data={productBrands}
-                      onChange={(_, productBrand) =>
-                        setProductBrandFilter(productBrand)
-                      }
-                      style={{ width: '100%' }}
-                      selectedOption={productBrandFilter?.id}
-                      optionsMapping={productBrandMapping}
-                      placeholder={'Select a product brand'}
-                      loading={isFetchingProductBrands}
-                      disabled={isFetchingProductBrands}
-                      allowClear={true}
-                    />
-                  </Col>
-                  <Col lg={4} xs={12}>
-                    <Typography.Title level={5}>Status</Typography.Title>
-                    <SimpleSelect
-                      data={statusList}
-                      onChange={status => setStatusFilter(status)}
-                      style={{ width: '100%' }}
-                      selectedOption={statusFilter}
-                      optionsMapping={statusMapping}
-                      placeholder={'Select a status'}
-                      allowClear={true}
-                    />
-                  </Col>
-                  <Col lg={4} xs={12}>
-                    <Typography.Title level={5}>Category</Typography.Title>
-                    <SimpleSelect
-                      data={categories}
-                      onChange={(_, category) => setCategoryFilter(category)}
-                      style={{ width: '100%' }}
-                      selectedOption={categoryFilter?.id}
-                      optionsMapping={categoryMapping}
-                      placeholder={'Select a category'}
-                      allowClear={true}
-                      loading={isFetchingCategories}
-                      disabled={isFetchingCategories}
-                    />
-                  </Col>
-                  <Col lg={4} xs={12}>
-                    <Typography.Title level={5}>Video Type</Typography.Title>
-                    <SimpleSelect
-                      data={videoTypeList}
-                      onChange={videoType => setVideoTypeFilter(videoType)}
-                      style={{ width: '100%' }}
-                      selectedOption={videoTypeFilter}
-                      optionsMapping={videoTypeMapping}
-                      placeholder={'Select a video type'}
-                      allowClear={true}
-                    />
-                  </Col>
-                  <Col lg={4} xs={12}>
-                    <Typography.Title level={5}>Start Index</Typography.Title>
-                    <InputNumber
-                      min={0}
-                      onChange={startIndex => setStartIndexFilter(startIndex)}
-                      value={startIndexFilter}
-                    />
-                  </Col>
-                </Row>
-              </Col>
-              <Col lg={24} xs={24}>
-                <Row justify="end">
-                  <Button type="primary" onClick={fetch} loading={loading}>
+          <Row
+            align="bottom"
+            justify="space-between"
+            gutter={[8, 8]}
+            className={'sticky-filter-box'}
+          >
+            <Col lg={24} xs={24}>
+              <Row gutter={8}>
+                <Col lg={4} xs={12}>
+                  <Typography.Title level={5} title="Search">
                     Search
-                    <SearchOutlined style={{ color: 'white' }} />
-                  </Button>
-                </Row>
-              </Col>
-            </Row>
-          </div>
+                  </Typography.Title>
+                  <Input
+                    onChange={event => setTitleFilter(event.target.value)}
+                    suffix={<SearchOutlined />}
+                    value={titleFilter}
+                  />
+                </Col>
+                <Col lg={4} xs={12}>
+                  <Typography.Title level={5}>Master Brand</Typography.Title>
+                  <SimpleSelect
+                    data={brands}
+                    onChange={(_, brand) => setBrandFilter(brand)}
+                    style={{ width: '100%' }}
+                    selectedOption={brandFilter?.id}
+                    optionsMapping={masterBrandMapping}
+                    placeholder={'Select a master brand'}
+                    loading={isFetchingBrands}
+                    disabled={isFetchingBrands}
+                    allowClear={true}
+                  />
+                </Col>
+                <Col lg={4} xs={12}>
+                  <Typography.Title level={5}>Product Brand</Typography.Title>
+                  <SimpleSelect
+                    data={productBrands}
+                    onChange={(_, productBrand) =>
+                      setProductBrandFilter(productBrand)
+                    }
+                    style={{ width: '100%' }}
+                    selectedOption={productBrandFilter?.id}
+                    optionsMapping={productBrandMapping}
+                    placeholder={'Select a product brand'}
+                    loading={isFetchingProductBrands}
+                    disabled={isFetchingProductBrands}
+                    allowClear={true}
+                  />
+                </Col>
+                <Col lg={4} xs={12}>
+                  <Typography.Title level={5}>Status</Typography.Title>
+                  <SimpleSelect
+                    data={statusList}
+                    onChange={status => setStatusFilter(status)}
+                    style={{ width: '100%' }}
+                    selectedOption={statusFilter}
+                    optionsMapping={statusMapping}
+                    placeholder={'Select a status'}
+                    allowClear={true}
+                  />
+                </Col>
+                <Col lg={4} xs={12}>
+                  <Typography.Title level={5}>Category</Typography.Title>
+                  <SimpleSelect
+                    data={categories}
+                    onChange={(_, category) => setCategoryFilter(category)}
+                    style={{ width: '100%' }}
+                    selectedOption={categoryFilter?.id}
+                    optionsMapping={categoryMapping}
+                    placeholder={'Select a category'}
+                    allowClear={true}
+                    loading={isFetchingCategories}
+                    disabled={isFetchingCategories}
+                  />
+                </Col>
+                <Col lg={4} xs={12}>
+                  <Typography.Title level={5}>Video Type</Typography.Title>
+                  <SimpleSelect
+                    data={videoTypeList}
+                    onChange={videoType => setVideoTypeFilter(videoType)}
+                    style={{ width: '100%' }}
+                    selectedOption={videoTypeFilter}
+                    optionsMapping={videoTypeMapping}
+                    placeholder={'Select a video type'}
+                    allowClear={true}
+                  />
+                </Col>
+                <Col lg={4} xs={12}>
+                  <Typography.Title level={5}>Start Index</Typography.Title>
+                  <InputNumber
+                    min={0}
+                    onChange={startIndex => setStartIndexFilter(startIndex)}
+                    value={startIndexFilter}
+                  />
+                </Col>
+              </Row>
+            </Col>
+            <Col lg={24} xs={24}>
+              <Row justify="end">
+                <Button type="primary" onClick={fetch} loading={loading}>
+                  Search
+                  <SearchOutlined style={{ color: 'white' }} />
+                </Button>
+              </Row>
+            </Col>
+          </Row>
           <Content>
             <InfiniteScroll
               dataLength={filteredVideoFeeds.length}

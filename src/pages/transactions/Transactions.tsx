@@ -192,7 +192,11 @@ const Transactions: React.FC<RouteComponentProps> = () => {
   return (
     <div className="transactions">
       <PageHeader title="Transactions" subTitle="List of Transactions" />
-      <Row gutter={8} style={{ marginBottom: '20px' }}>
+      <Row
+        gutter={8}
+        style={{ marginBottom: '20px' }}
+        className={'sticky-filter-box'}
+      >
         <Col xxl={40} lg={6} xs={18}>
           <Typography.Title level={5}>Fan Filter</Typography.Title>
           <AutoComplete

@@ -209,7 +209,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
               </Button>,
             ]}
           />
-          <Row gutter={8}>
+          <Row className="sticky-filter-box" gutter={8}>
             <Col lg={8} xs={16}>
               <SearchFilter
                 filterFunction={searchFilterFunction}

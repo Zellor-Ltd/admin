@@ -472,7 +472,11 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       {!details && (
         <div className="orders">
           <PageHeader title="Orders" subTitle="List of Orders" />
-          <Row align="bottom" justify="space-between">
+          <Row
+            align="bottom"
+            justify="space-between"
+            className={'sticky-filter-box'}
+          >
             <Col lg={16} xs={24}>
               <Row gutter={8}>
                 <Col lg={8} xs={16}>
