@@ -106,13 +106,15 @@ const DataManagement: React.FC<RouteComponentProps> = ({}) => {
   };
 
   const remove = targetKey => {
-    const newPanes = [...panes].splice(
-      panes.indexOf(panes.find(pane => pane.key === targetKey)),
-      1
-    );
-    setPanes(newPanes);
-    asyncSetCurrentActiveKey(panes[activeTabIndex]?.key);
-    setLoading(false);
+    const index = panes.indexOf(panes.find(pane => pane.key === targetKey));
+    try {
+      const newPanes = panes.filter(pane => pane.key !== targetKey);
+      setLoading(false);
+      setCurrentActiveKey(index === 0 ? '' : panes[index - 1].key);
+      setPanes(newPanes);
+    } catch (error: any) {
+      console.log(error.error);
+    }
   };
 
   const onChange = activeKey => {
