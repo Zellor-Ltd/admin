@@ -38,6 +38,7 @@ import PreRegisteredUsers from 'pages/reports/PreRegisteredUsers';
 import ProductsPerDay from 'pages/reports/ProductsPerDay';
 import FanActivities from 'pages/reports/FanActivities';
 import CreatorsList from 'pages/creators-list-page/CreatorsList';
+import DataManagement from 'pages/data-management/DataManagement';
 import VideoTypes from 'pages/video-types/VideoTypes';
 
 function AdminRoutes() {
@@ -73,6 +74,11 @@ function AdminRoutes() {
       <AppRoute
         path="/users_creators"
         component={Creators}
+        layout={AuthenticatedLayout}
+      />
+      <AppRoute
+        path="/settings_data-management"
+        component={DataManagement}
         layout={AuthenticatedLayout}
       />
       <AppRoute
