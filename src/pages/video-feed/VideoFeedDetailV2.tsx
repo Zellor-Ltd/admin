@@ -84,6 +84,9 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
   productBrands,
   isFetchingProductBrand,
 }) => {
+  const {
+    settings: { language = [] },
+  } = useSelector((state: any) => state.settings);
   const [feedForm] = Form.useForm();
   const [segmentForm] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
@@ -113,13 +116,6 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
   const [segmentTab, setSegmentTab] = useState<string>('Images');
   const [pageTitle, setPageTitle] = useState<string>('Video Update');
   const { doRequest } = useRequest({ setLoading });
-  const languages = [
-    {
-      key: 'english',
-      label: 'English',
-      value: 'English',
-    },
-  ];
 
   useEffect(() => {
     if (feedItem?.selectedOption) {
@@ -445,9 +441,10 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                 <Form.Item name="language" label="Language">
                   <Select
                     placeholder="Please select a language"
-                    defaultValue={'English'}
+                    disabled={!language.length}
+                    defaultValue="English"
                   >
-                    {languages.map((lang: any) => (
+                    {language.map((lang: any) => (
                       <Select.Option key={lang.value} value={lang.value}>
                         {lang.name}
                       </Select.Option>
