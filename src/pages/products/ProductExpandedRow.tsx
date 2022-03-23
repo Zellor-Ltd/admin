@@ -109,7 +109,7 @@ const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
         searchTags,
       });
     },
-    [form]
+    [form, allCategories, record]
   );
 
   const handleCategoryDelete = (productCategoryIndex: number) => {
@@ -128,10 +128,6 @@ const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
       categoryKey,
       _productCategoryIndex
     );
-  };
-
-  const handleProductBrandChange = (filterProductBrand: Function) => {
-    filterProductBrand(form);
   };
 
   const updateForm = (

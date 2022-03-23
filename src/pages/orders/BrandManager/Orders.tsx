@@ -20,7 +20,7 @@ import { Brand } from 'interfaces/Brand';
 import { Fan } from 'interfaces/Fan';
 import { Order } from 'interfaces/Order';
 import moment from 'moment';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Highlighter from 'react-highlight-words';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import {
@@ -88,7 +88,15 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     setOrdersSettings(response.results[0].order);
   });
 
-  const fetch = async () => {
+  const getValidOrders = useCallback(async () => {
+    const { results }: any = await fetchOrders(page);
+    const orders = results.filter(
+      (order: Order) => !!(order.product || order.cart)
+    );
+    return orders;
+  }, [page]);
+
+  const fetch = useCallback(async () => {
     setLoading(true);
     const orders: Order[] = await getValidOrders();
     const ordersWithFanName = orders.map(order => {
@@ -99,26 +107,9 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     setRefreshing(true);
     setLoaded(true);
     setLoading(false);
-  };
+  }, [getValidOrders, selectedFan?.user, setOrders]);
 
-  const getValidOrders = async () => {
-    const { results }: any = await fetchOrders(page);
-    const orders = results.filter(
-      (order: Order) => !!(order.product || order.cart)
-    );
-    return orders;
-  };
-
-  useEffect(() => {
-    if (refreshing) {
-      setFilteredOrders([]);
-      setEof(false);
-      fetchData();
-      setRefreshing(false);
-    }
-  }, [refreshing]);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     if (!filteredContent.length) return;
 
     const pageToUse = refreshing ? 0 : page;
@@ -128,7 +119,16 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     setFilteredOrders(prev => [...prev.concat(results)]);
 
     if (results.length < 10) setEof(true);
-  };
+  }, [filteredContent, page, refreshing]);
+
+  useEffect(() => {
+    if (refreshing) {
+      setFilteredOrders([]);
+      setEof(false);
+      fetchData();
+      setRefreshing(false);
+    }
+  }, [refreshing, fetchData]);
 
   const handleSearch = (selectedKeys: any, confirm: any, dataIndex: any) => {
     confirm();
@@ -192,7 +192,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
         ) as HTMLElement
       );
     }
-  }, [details]);
+  }, [details, lastViewedIndex]);
 
   const editFan = (index: number, fan?: Fan) => {
     setLastViewedIndex(index);
@@ -401,7 +401,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     if (loaded) {
       fetch();
     }
-  }, [setOrders]);
+  }, [setOrders, fetch, loaded]);
 
   const onChangeBrand = async (_selectedBrand: Brand | undefined) => {
     if (!_selectedBrand) {
@@ -472,7 +472,11 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       {!details && (
         <div className="orders">
           <PageHeader title="Orders" subTitle="List of Orders" />
-          <Row align="bottom" justify="space-between">
+          <Row
+            align="bottom"
+            justify="space-between"
+            className={'sticky-filter-box'}
+          >
             <Col lg={16} xs={24}>
               <Row gutter={8}>
                 <Col lg={8} xs={16}>

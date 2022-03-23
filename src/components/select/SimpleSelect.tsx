@@ -30,17 +30,17 @@ const SimpleSelect: React.FC<SimpleSelectProps> = ({
   const [options, setOptions] = useState<SelectOption[]>([]);
   const [_selectedOption, _setSelectedOption] = useState<string | null>();
 
-  const optionFactory = (option: any) => {
-    return {
-      label: option[optionsMapping.label],
-      value: option[optionsMapping.value],
-      key: option[optionsMapping.value],
-    };
-  };
-
   useEffect(() => {
+    const optionFactory = (option: any) => {
+      return {
+        label: option[optionsMapping.label],
+        value: option[optionsMapping.value],
+        key: option[optionsMapping.value],
+      };
+    };
+
     setOptions(data.map(optionFactory));
-  }, [data]);
+  }, [data, optionsMapping.label, optionsMapping.value]);
 
   useEffect(() => {
     _setSelectedOption(selectedOption);

@@ -14,7 +14,7 @@ import { useRequest } from 'hooks/useRequest';
 import { Brand } from 'interfaces/Brand';
 import { Product } from 'interfaces/Product';
 import { Tag } from 'interfaces/Tag';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { fetchBrands, fetchProducts, saveTag } from 'services/DiscoClubService';
 interface TagDetailProps {
@@ -49,11 +49,15 @@ const TagDetail: React.FC<TagDetailProps> = ({ tag, onSave, onCancel }) => {
     }
   }
 
+  const productsBySelectedBrand = useCallback(() => {
+    return products.filter(product => product.brand?.id === selectedBrand);
+  }, [products, selectedBrand]);
+
   useEffect(() => {
     getProducts(true, selectedBrand);
     setProductOptions(productsBySelectedBrand());
     console.log(productOptions);
-  }, [selectedBrand]);
+  }, [selectedBrand, productOptions, productsBySelectedBrand]);
 
   useEffect(() => {
     let mounted = true;
@@ -100,10 +104,6 @@ const TagDetail: React.FC<TagDetailProps> = ({ tag, onSave, onCancel }) => {
         setLoading(false);
       }
     });
-  };
-
-  const productsBySelectedBrand = () => {
-    return products.filter(product => product.brand?.id === selectedBrand);
   };
 
   const onChangeBrand = (brandKey: string) => {

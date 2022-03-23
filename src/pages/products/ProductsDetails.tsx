@@ -109,7 +109,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
         discoPercentage,
       });
     },
-    [brands, form, product]
+    [brands, form]
   );
 
   const setSearchTagsByCategory = useCallback(
@@ -167,7 +167,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
         searchTags,
       });
     },
-    [form, product]
+    [form, product, allCategories]
   );
 
   const handleCategoryDelete = (productCategoryIndex: number) => {

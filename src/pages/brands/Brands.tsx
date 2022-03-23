@@ -23,7 +23,7 @@ import { ColumnsType } from 'antd/lib/table';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
 import { discoBrandId } from 'helpers/constants';
 import { Brand } from 'interfaces/Brand';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { deleteBrand, fetchBrands, saveBrand } from 'services/DiscoClubService';
 import { SimpleSwitch } from '../../components/SimpleSwitch';
@@ -53,24 +53,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [eof, setEof] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
 
-  useEffect(() => {
-    fetch();
-  }, []);
-
-  useEffect(() => {
-    if (refreshing) {
-      setBrands([]);
-      setEof(false);
-      fetchData();
-      setRefreshing(false);
-    }
-  }, [refreshing]);
-
-  useEffect(() => {
-    setRefreshing(true);
-  }, [filterText]);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     if (!content.length) return;
     const pageToUse = refreshing ? 0 : page;
     const results = content.slice(pageToUse * 10, pageToUse * 10 + 10);
@@ -79,13 +62,32 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
     setBrands(prev => [...prev.concat(results)]);
 
     if (results.length < 10) setEof(true);
-  };
+  }, [content, page, refreshing]);
 
   const fetch = async () => {
     const { results }: any = await doFetch(fetchBrands);
     setContent(results);
     setRefreshing(true);
   };
+
+  useEffect(() => {
+    const { results }: any = doFetch(fetchBrands);
+    setContent(results);
+    setRefreshing(true);
+  }, [doFetch]);
+
+  useEffect(() => {
+    if (refreshing) {
+      setBrands([]);
+      setEof(false);
+      fetchData();
+      setRefreshing(false);
+    }
+  }, [refreshing, fetchData]);
+
+  useEffect(() => {
+    setRefreshing(true);
+  }, [filterText]);
 
   useEffect(() => {
     if (!details) {
@@ -95,7 +97,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
         ) as HTMLElement
       );
     }
-  }, [details]);
+  }, [details, lastViewedIndex]);
 
   const aproveOrReject = async (aprove: boolean, creator: Brand) => {
     creator.status = aprove ? 'approved' : 'rejected';

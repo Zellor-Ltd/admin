@@ -38,7 +38,6 @@ import {
   deleteStagingProduct,
   fetchBrands,
   fetchProductBrands,
-  fetchProducts,
   fetchStagingProducts,
   saveStagingProduct,
   transferStageProduct,
@@ -47,7 +46,6 @@ import ProductExpandedRow from './ProductExpandedRow';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
 import './Products.scss';
 import { ProductCategory } from 'interfaces/Category';
-import { useSelector } from 'react-redux';
 import { SearchFilterDebounce } from 'components/SearchFilterDebounce';
 import { AppContext } from 'contexts/AppContext';
 import { ProductBrand } from 'interfaces/ProductBrand';
@@ -118,10 +116,6 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
     label: 'brandName',
     value: 'id',
   };
-
-  const {
-    settings: { currency = [] },
-  } = useSelector((state: any) => state.settings);
 
   const productSuperCategoryOptionsMapping: SelectOption = {
     key: 'id',
@@ -218,7 +212,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
         searchTags,
       });
     },
-    [form, currentProduct]
+    [form, currentProduct, allCategories]
   );
 
   const setDiscoPercentageByBrand = useCallback(
@@ -350,7 +344,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
     setProducts(results);
   };
 
-  useEffect(() => form.resetFields(), [currentProduct]);
+  useEffect(() => form.resetFields(), [currentProduct, form]);
 
   const deleteItem = async (_id: string, index: number) => {
     await doRequest(() => deleteStagingProduct(_id));
@@ -549,11 +543,6 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
     setProductBrandFilter(_selectedBrand);
   };
 
-  const handleEditProducts = async () => {
-    await fetchProducts({});
-    setSelectedRowKeys([]);
-  };
-
   const editProduct = (
     product: Product,
     productIndex: number,
@@ -584,7 +573,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
         ) as HTMLElement
       );
     }
-  }, [details]);
+  }, [details, lastViewedIndex]);
 
   const onSaveProduct = (product: Product) => {
     refreshItem(product);

@@ -20,7 +20,6 @@ import { Category } from 'interfaces/Category';
 import { Creator } from 'interfaces/Creator';
 import { Currency } from 'interfaces/Currency';
 import { Fan } from 'interfaces/Fan';
-import { Role } from 'interfaces/Role';
 import { ServerAlias } from 'interfaces/ServerAlias';
 import { useEffect, useState } from 'react';
 import {
@@ -52,7 +51,6 @@ const prefixSelector = (prefix: string) => (
 
 const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
   const [loading, setLoading] = useState(false);
-  const [roles, setRoles] = useState<Role[]>([]);
   const [creators, setCreators] = useState<Creator[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [serversList, setServersList] = useState<ServerAlias[]>([]);
@@ -61,8 +59,6 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
   const { doRequest } = useRequest({ setLoading });
 
   useEffect(() => {
-    let mounted = true;
-
     const getCreatores = async () => {
       const response: any = await fetchCreators();
       setCreators(response.results);
@@ -83,9 +79,6 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
     getCategories();
     getServersList();
     getCurrencies();
-    return () => {
-      mounted = false;
-    };
   }, [form]);
 
   const onChangeCreator = (key: string) => {

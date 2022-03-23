@@ -47,13 +47,13 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
     const { results } = await doFetch(fetchMastheads);
     setMastheads(results);
     setRefreshing(true);
-  }, []);
+  }, [doFetch, setMastheads]);
 
   useEffect(() => {
     getResources();
   }, [getResources]);
 
-  const fetchData = () => {
+  const fetchData = useCallback(() => {
     if (!filteredContent.length) return;
 
     const pageToUse = refreshing ? 0 : page;
@@ -63,7 +63,7 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
     setFilteredMastheads(prev => [...prev.concat(results)]);
 
     if (results.length < 10) setEof(true);
-  };
+  }, [page, refreshing, filteredContent]);
 
   useEffect(() => {
     if (refreshing) {
@@ -72,7 +72,7 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
       fetchData();
       setRefreshing(false);
     }
-  }, [refreshing]);
+  }, [refreshing, fetchData]);
 
   useEffect(() => {
     if (!details) {
@@ -82,7 +82,7 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
         ) as HTMLElement
       );
     }
-  }, [details]);
+  }, [details, lastViewedIndex]);
 
   const columns: ColumnsType<Masthead> = [
     {
