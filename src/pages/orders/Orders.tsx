@@ -59,6 +59,8 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   const { doFetch } = useRequest({ setLoading });
   const [searchFilter, setSearchFilter] = useState<string>();
   const [selectedFan, setSelectedFan] = useState<Fan>();
+  const [fanFilter, setFanFilter] = useState<string>();
+  const [brandFilter, setBrandFilter] = useState<string>();
   const [options, setOptions] = useState<
     { label: string; value: string; key: string }[]
   >([]);
@@ -102,7 +104,11 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   const getValidOrders = async () => {
-    const { results }: any = await fetchOrders(page);
+    const { results }: any = await fetchOrders({
+      page: page,
+      brandId: brandFilter,
+      userId: fanFilter,
+    });
     const orders = results.filter(
       (order: Order) => !!(order.product || order.cart)
     );
@@ -119,7 +125,10 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   }, [refreshing]);
 
   const fetchData = async () => {
-    if (!filteredContent.length) return;
+    if (!filteredContent.length) {
+      setEof(true);
+      return;
+    }
 
     const pageToUse = refreshing ? 0 : page;
     const results = filteredContent.slice(pageToUse * 10, pageToUse * 10 + 10);
@@ -404,20 +413,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   }, [setOrders]);
 
   const onChangeBrand = async (_selectedBrand: Brand | undefined) => {
-    if (!_selectedBrand) {
-      removeFilterFunction('brandName');
-      setRefreshing(true);
-      return;
-    }
-    addFilterFunction('brandName', orders =>
-      orders.filter(order =>
-        order.product
-          ? order.product?.brand.brandName === _selectedBrand.brandName
-          : order.cart.brandGroups.find(
-              brandGroup => brandGroup.brandName === _selectedBrand.brandName
-            )
-      )
-    );
+    setBrandFilter(_selectedBrand?.id);
     setRefreshing(true);
   };
 
@@ -428,14 +424,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
 
   const onChangeFan = async (value: string, _selectedFan: any) => {
     setSelectedFan(_selectedFan);
-    if (!_selectedFan) {
-      removeFilterFunction('fanName');
-      setRefreshing(true);
-      return;
-    }
-    addFilterFunction('fanName', orders =>
-      orders.filter(order => order.userid === _selectedFan.id)
-    );
+    setFanFilter(_selectedFan?.id);
     setRefreshing(true);
   };
 
