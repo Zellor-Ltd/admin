@@ -79,7 +79,6 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
       const response: any = await fetchCurrencies();
       setCurrencies(response.results);
     };
-    setLoading(true);
     getCreatores();
     getCategories();
     getServersList();
