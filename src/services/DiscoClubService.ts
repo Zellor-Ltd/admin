@@ -127,6 +127,7 @@ export const fetchVideoFeedV2 = ({
   brandId,
   categoryId,
   startIndex,
+  page = 0,
 }: {
   query: string | undefined;
   status: string | undefined;
@@ -135,8 +136,9 @@ export const fetchVideoFeedV2 = ({
   brandId: string | undefined;
   categoryId: string | undefined;
   startIndex: number;
-}) =>
-  instance.put('Disco/Feed/Adm/List', {
+  page: number;
+} & Pagination) =>
+  instance.put(`Disco/Feed/Adm/List/${page}`, {
     query,
     status,
     videoType,
