@@ -140,7 +140,10 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   }, [refreshing]);
 
   const fetchData = async () => {
-    if (!videoFeeds.length) return;
+    if (!videoFeeds.length) {
+      setEof(true);
+      return;
+    }
 
     const pageToUse = refreshing ? 0 : page;
     const results = videoFeeds.slice(pageToUse * 10, pageToUse * 10 + 10);
@@ -296,6 +299,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
           brandId: brandFilter?.id,
           categoryId: categoryFilter?.id,
           startIndex: startIndexFilter,
+          page: page,
         })
       );
       setVideoFeeds(results);
