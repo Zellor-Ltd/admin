@@ -295,6 +295,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
           brandId: brandFilter?.id,
           categoryId: categoryFilter?.id,
           startIndex: startIndexFilter,
+          page: page,
         })
       );
       setVideoFeeds(results);

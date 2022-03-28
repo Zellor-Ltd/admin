@@ -127,6 +127,7 @@ export const fetchVideoFeedV2 = ({
   brandId,
   categoryId,
   startIndex,
+  page = 0,
 }: {
   query: string | undefined;
   status: string | undefined;
@@ -135,8 +136,9 @@ export const fetchVideoFeedV2 = ({
   brandId: string | undefined;
   categoryId: string | undefined;
   startIndex: number;
-}) =>
-  instance.put('Disco/Feed/Adm/List', {
+  page: number;
+} & Pagination) =>
+  instance.put(`Disco/Feed/Adm/List/${page}`, {
     query,
     status,
     videoType,
@@ -314,6 +316,8 @@ export const fetchCreators = () => instance.get('Wi/Ep/ListCreators');
 
 export const fetchUsers = () => instance.get('Wi/Ep/ListUsers');
 
+export const resetUser = (id: string)  => instance.get(`Disco/Identity/ResetUser/${id}`);
+
 export const fetchFans = ({page = 0, query}:{page: number, query?: string}) => instance.post(`Disco/Identity/Adm/Fans/List/${page}/`, {
   query
 });
@@ -335,7 +339,19 @@ export const fetchSettings = () => instance.get('Wi/Ep/GetSettings');
 export const fetchPrivileges = (profile: string) =>
   instance.put('Wi/Ep/ListPrivileges', { profile });
 
-export const fetchOrders = (page: number) => instance.get(`Disco/Orders/Adm/List/${page}`);
+export const fetchOrders = ({
+  page = 0,
+  brandId,
+  userId,
+}: {
+  page: number;
+  brandId?: string;
+  userId?: string;
+}) =>
+  instance.post(`Disco/Orders/Adm/List/${page}`, {
+    brandId,
+    userId,
+  });
 
 export const fetchWalletTransactions = (userId: string) =>
   instance.put('Wi/Ep/GetWalletTransactions', { userId });

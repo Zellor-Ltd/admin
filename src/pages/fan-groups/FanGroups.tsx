@@ -46,7 +46,10 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
   };
 
   const fetchData = useCallback(() => {
-    if (!filteredContent.length) return;
+    if (!filteredContent.length) {
+      setEof(true);
+      return;
+    }
 
     const pageToUse = refreshing ? 0 : page;
     const results = filteredContent.slice(pageToUse * 10, pageToUse * 10 + 10);
