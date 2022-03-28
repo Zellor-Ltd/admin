@@ -316,6 +316,8 @@ export const fetchCreators = () => instance.get('Wi/Ep/ListCreators');
 
 export const fetchUsers = () => instance.get('Wi/Ep/ListUsers');
 
+export const resetUser = (id: string)  => instance.get(`Disco/Identity/ResetUser/${id}`);
+
 export const fetchFans = ({page = 0, query}:{page: number, query?: string}) => instance.post(`Disco/Identity/Adm/Fans/List/${page}/`, {
   query
 });
