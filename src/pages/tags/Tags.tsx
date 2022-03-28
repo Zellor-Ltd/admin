@@ -10,7 +10,7 @@ import { SearchFilterDebounce } from 'components/SearchFilterDebounce';
 import { AppContext } from 'contexts/AppContext';
 import { useRequest } from 'hooks/useRequest';
 import { Tag } from 'interfaces/Tag';
-import { useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { deleteTag, fetchTags } from 'services/DiscoClubService';
@@ -31,20 +31,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [tags, setTags] = useState<Tag[]>([]);
   const [loaded, setLoaded] = useState<boolean>(false);
 
-  useEffect(() => {
-    if (refreshing) {
-      setTags([]);
-      setEof(false);
-      fetchData();
-      setRefreshing(false);
-    }
-  }, [refreshing]);
-
-  useEffect(() => {
-    setRefreshing(true);
-  }, [searchFilter]);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     const pageToUse = refreshing ? 0 : page;
 
     const { results } = await doFetch(() =>
@@ -59,7 +46,20 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
     setTags(prev => [...prev.concat(results)]);
 
     if (results.length < 30) setEof(true);
-  };
+  }, [doFetch, page, refreshing, searchFilter]);
+
+  useEffect(() => {
+    if (refreshing) {
+      setTags([]);
+      setEof(false);
+      fetchData();
+      setRefreshing(false);
+    }
+  }, [refreshing, fetchData]);
+
+  useEffect(() => {
+    setRefreshing(true);
+  }, [searchFilter]);
 
   const fetch = () => {
     if (!loaded) {
@@ -78,7 +78,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
         ) as HTMLElement
       );
     }
-  }, [details]);
+  }, [details, lastViewedIndex]);
 
   const editTag = (index: number, tag?: Tag) => {
     setLastViewedIndex(index);

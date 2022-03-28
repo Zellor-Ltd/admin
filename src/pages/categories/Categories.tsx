@@ -25,7 +25,7 @@ import {
   ProductCategory,
 } from 'interfaces/Category';
 import { Image } from 'interfaces/Image';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Highlighter from 'react-highlight-words';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { productCategoriesAPI } from 'services/DiscoClubService';
@@ -72,16 +72,7 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
     setRefreshing(true);
   }, [allCategories]);
 
-  useEffect(() => {
-    if (refreshing) {
-      setCategories([]);
-      setEof(false);
-      fetchData();
-      setRefreshing(false);
-    }
-  }, [refreshing]);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     if (!content[selectedTab].length) return;
     const pageToUse = refreshing ? 0 : page;
     const results = content[selectedTab].slice(
@@ -93,7 +84,16 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
     setCategories(prev => [...prev.concat(results)]);
 
     if (results.length < 10) setEof(true);
-  };
+  }, [content, page, refreshing, selectedTab]);
+
+  useEffect(() => {
+    if (refreshing) {
+      setCategories([]);
+      setEof(false);
+      fetchData();
+      setRefreshing(false);
+    }
+  }, [refreshing, fetchData]);
 
   useEffect(() => {
     if (!details) {
@@ -103,7 +103,7 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
         ) as HTMLElement
       );
     }
-  }, [details]);
+  }, [details, lastViewedIndex]);
 
   const editProductCategory = (
     index: number,
@@ -132,23 +132,7 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
         categoriesKeys.indexOf(selectedTab)
       ] as keyof AllCategoriesAPI;
 
-      let selectedKeyIndex = -1;
       let index = -1;
-
-      switch (selectedKey.toString) {
-        case () => 'Super Category':
-          selectedKeyIndex = 0;
-          break;
-        case () => 'Category':
-          selectedKeyIndex = 1;
-          break;
-        case () => 'Sub Category':
-          selectedKeyIndex = 2;
-          break;
-        case () => 'Sub Sub Category':
-          selectedKeyIndex = 3;
-          break;
-      }
 
       const contentArray: any[] = Object.values(content);
 

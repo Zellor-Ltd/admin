@@ -1,7 +1,7 @@
 import { Button, Col, Form, InputNumber, Row, Select } from 'antd';
 import { Brand } from 'interfaces/Brand';
 import { ProductBrand } from 'interfaces/ProductBrand';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { fetchProductBrands } from 'services/DiscoClubService';
 import { useMount } from 'react-use';
 import { find } from 'lodash';
@@ -24,9 +24,50 @@ const BrandForm: React.FC<FormProps> = ({
   const [selectedLogo, setSelectedLogo] = useState(brand?.selectedLogo);
   const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
 
+  const onChangeProductBrandLogo = useCallback(
+    (
+      productBrandKey:
+        | 'whiteLogo'
+        | 'colourLogo'
+        | 'blackLogo'
+        | 'brandName'
+        | ''
+    ) => {
+      const currentValues = form.getFieldsValue(true);
+
+      if (selectedProductBrand) {
+        if (selectedProductBrand[productBrandKey]) {
+          switch (productBrandKey) {
+            case 'whiteLogo':
+            case 'colourLogo':
+            case 'blackLogo':
+              currentValues.selectedLogoUrl =
+                selectedProductBrand[productBrandKey]?.url;
+              break;
+            case 'brandName':
+              currentValues.selectedLogoUrl =
+                selectedProductBrand[productBrandKey];
+              break;
+            case '':
+            default:
+              currentValues.selectedLogoUrl = undefined;
+          }
+        } else {
+          currentValues.selectedLogoUrl = undefined;
+          currentValues.selectedLogo = '';
+          productBrandKey = '';
+        }
+      }
+
+      form.setFieldsValue({ ...currentValues });
+      setSelectedLogo(productBrandKey);
+    },
+    [form, selectedProductBrand]
+  );
+
   useEffect(() => {
     onChangeProductBrandLogo(form.getFieldValue('selectedLogo'));
-  }, [selectedProductBrand]);
+  }, [selectedProductBrand, onChangeProductBrandLogo, form]);
 
   const onChangeBrand = (brandId: string) => {
     const currentValues = form.getFieldsValue(true);
@@ -61,39 +102,6 @@ const BrandForm: React.FC<FormProps> = ({
       setProductBrands(results);
       setIsFetchingProductBrands(false);
     } catch (e) {}
-  };
-
-  const onChangeProductBrandLogo = (
-    productBrandKey: 'whiteLogo' | 'colourLogo' | 'blackLogo' | 'brandName' | ''
-  ) => {
-    const currentValues = form.getFieldsValue(true);
-
-    if (selectedProductBrand) {
-      if (selectedProductBrand[productBrandKey]) {
-        switch (productBrandKey) {
-          case 'whiteLogo':
-          case 'colourLogo':
-          case 'blackLogo':
-            currentValues.selectedLogoUrl =
-              selectedProductBrand[productBrandKey]?.url;
-            break;
-          case 'brandName':
-            currentValues.selectedLogoUrl =
-              selectedProductBrand[productBrandKey];
-            break;
-          case '':
-          default:
-            currentValues.selectedLogoUrl = undefined;
-        }
-      } else {
-        currentValues.selectedLogoUrl = undefined;
-        currentValues.selectedLogo = '';
-        productBrandKey = '';
-      }
-    }
-
-    form.setFieldsValue({ ...currentValues });
-    setSelectedLogo(productBrandKey);
   };
 
   return (

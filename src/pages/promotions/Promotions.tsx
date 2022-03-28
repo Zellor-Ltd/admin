@@ -21,11 +21,7 @@ import { Promotion } from 'interfaces/Promotion';
 import moment from 'moment';
 import { useCallback, useEffect, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import {
-  deletePromotion,
-  fetchPromoStatus,
-  fetchPromotions,
-} from 'services/DiscoClubService';
+import { deletePromotion, fetchPromotions } from 'services/DiscoClubService';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
 import scrollIntoView from 'scroll-into-view';
 import PromotionDetail from './PromotionDetail';
@@ -34,7 +30,6 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
   const [tableloading, setTableLoading] = useState<boolean>(false);
   const { doRequest, doFetch } = useRequest({ setLoading: setTableLoading });
-  const [promoStatusList, setPromoStatusList] = useState<any>();
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
   const [details, setDetails] = useState<boolean>(false);
   const [currentPromotion, setCurrentPromotion] = useState<Promotion>();
@@ -50,26 +45,21 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
     removeFilterFunction,
   } = useFilter<Promotion>([]);
 
+  const getPromotions = useCallback(async () => {
+    const { results } = await doFetch(fetchPromotions);
+    setPromotions(results);
+    setRefreshing(true);
+  }, [doFetch, setPromotions]);
+
   const getResources = useCallback(async () => {
-    await Promise.all([getPromotions(), getPromoStatus()]);
-  }, []);
+    await getPromotions();
+  }, [getPromotions]);
 
   useEffect(() => {
     getResources();
   }, [getResources]);
 
-  const getPromotions = useCallback(async () => {
-    const { results } = await doFetch(fetchPromotions);
-    setPromotions(results);
-    setRefreshing(true);
-  }, []);
-
-  const getPromoStatus = useCallback(async () => {
-    const { results } = await doFetch(fetchPromoStatus);
-    setPromoStatusList(results[0]?.promoStatus);
-  }, []);
-
-  const fetchData = () => {
+  const fetchData = useCallback(() => {
     if (!filteredContent.length) {
       setEof(true);
       return;
@@ -82,7 +72,7 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
     setFilteredPromotions(prev => [...prev.concat(results)]);
 
     if (results.length < 10) setEof(true);
-  };
+  }, [filteredContent, page, refreshing]);
 
   useEffect(() => {
     if (refreshing) {
@@ -91,7 +81,7 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
       fetchData();
       setRefreshing(false);
     }
-  }, [refreshing]);
+  }, [refreshing, fetchData]);
 
   useEffect(() => {
     if (!details) {
@@ -101,7 +91,7 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
         ) as HTMLElement
       );
     }
-  }, [details]);
+  }, [details, lastViewedIndex]);
 
   const columns: ColumnsType<Promotion> = [
     {

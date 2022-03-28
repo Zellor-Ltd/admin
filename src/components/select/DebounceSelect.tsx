@@ -31,20 +31,6 @@ const DebounceSelect: React.FC<DebounceSelectProps> = ({
   const fetchedEntities = useRef<any[]>([]);
   const fetchRef = useRef(0);
 
-  const optionFactory = (option: any) => {
-    return {
-      label: option[optionsMapping.label],
-      value: option[optionsMapping.value],
-      key: option[optionsMapping.value],
-    };
-  };
-
-  useEffect(() => {
-    if (value) {
-      debounceFetcher(value, true);
-    }
-  }, [value]);
-
   const debounceFetcher = useMemo(() => {
     const loadOptions = (value: string, isInit?: boolean) => {
       fetchRef.current += 1;
@@ -57,6 +43,14 @@ const DebounceSelect: React.FC<DebounceSelectProps> = ({
           // for fetch callback order
           return;
         }
+
+        const optionFactory = (option: any) => {
+          return {
+            label: option[optionsMapping.label],
+            value: option[optionsMapping.value],
+            key: option[optionsMapping.value],
+          };
+        };
 
         fetchedEntities.current = entities;
         const options = entities.map(optionFactory);
@@ -76,7 +70,18 @@ const DebounceSelect: React.FC<DebounceSelectProps> = ({
     };
 
     return debounce(loadOptions, debounceTimeout);
-  }, [fetchOptions, debounceTimeout]);
+  }, [
+    fetchOptions,
+    debounceTimeout,
+    optionsMapping.label,
+    optionsMapping.value,
+  ]);
+
+  useEffect(() => {
+    if (value) {
+      debounceFetcher(value, true);
+    }
+  }, [value, debounceFetcher]);
 
   const _onChange = (option: { value: string; label: string; key: string }) => {
     const selectedEntity = fetchedEntities.current.find(entity =>

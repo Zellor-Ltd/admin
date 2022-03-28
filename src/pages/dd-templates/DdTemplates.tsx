@@ -6,7 +6,7 @@ import useFilter from 'hooks/useFilter';
 import { useRequest } from 'hooks/useRequest';
 import { DdTemplate } from 'interfaces/DdTemplate';
 import moment from 'moment';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { deleteDdTemplate, fetchDdTemplates } from 'services/DiscoClubService';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
@@ -34,21 +34,21 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
     removeFilterFunction,
   } = useFilter<DdTemplate>([]);
 
-  useEffect(() => {
-    getResources();
-  }, []);
-
-  const getResources = async () => {
-    await getDdTemplates();
-  };
-
-  const getDdTemplates = async () => {
+  const getDdTemplates = useCallback(async () => {
     const { results } = await doFetch(fetchDdTemplates);
     setDdTemplates(results);
     setRefreshing(true);
-  };
+  }, [doFetch, setDdTemplates]);
 
-  const fetchData = () => {
+  const getResources = useCallback(async () => {
+    await getDdTemplates();
+  }, [getDdTemplates]);
+
+  useEffect(() => {
+    getResources();
+  }, [getResources]);
+
+  const fetchData = useCallback(() => {
     if (!filteredContent.length) {
       setEof(true);
       return;
@@ -61,7 +61,7 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
     setFilteredDdTemplates(prev => [...prev.concat(results)]);
 
     if (results.length < 10) setEof(true);
-  };
+  }, [filteredContent, page, refreshing]);
 
   useEffect(() => {
     if (refreshing) {
@@ -70,7 +70,7 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
       fetchData();
       setRefreshing(false);
     }
-  }, [refreshing]);
+  }, [refreshing, fetchData]);
 
   useEffect(() => {
     if (!details) {
@@ -80,7 +80,7 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
         ) as HTMLElement
       );
     }
-  }, [details]);
+  }, [details, lastViewedIndex]);
 
   const editDdTemplate = (index: number, template?: DdTemplate) => {
     setLastViewedIndex(index);

@@ -21,7 +21,7 @@ import EditMultipleButton from 'components/EditMultipleButton';
 import { useRequest } from 'hooks/useRequest';
 import { Fan } from 'interfaces/Fan';
 import EditFanModal from 'pages/fans/EditFanModal';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { fetchFans } from 'services/DiscoClubService';
 import FanAPITestModal from './FanAPITestModal';
@@ -63,21 +63,7 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
     value: 'user',
   };
 
-  useEffect(() => {
-    if (refreshing) {
-      setFans([]);
-      fetchUsers();
-      setEof(false);
-      setRefreshing(false);
-    }
-  }, [refreshing]);
-
-  const getResources = () => {
-    setRefreshing(true);
-    setLoaded(true);
-  };
-
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     const pageToUse = refreshing ? 0 : page;
     const response = await doFetch(() =>
       fetchFans({
@@ -105,6 +91,27 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
     setOptions(validUsers.map(optionFactory));
 
     setFans(prev => [...prev.concat(validUsers)]);
+  }, [
+    doFetch,
+    fanOptionsMapping.label,
+    fanOptionsMapping.value,
+    page,
+    refreshing,
+    searchFilter,
+  ]);
+
+  useEffect(() => {
+    if (refreshing) {
+      setFans([]);
+      fetchUsers();
+      setEof(false);
+      setRefreshing(false);
+    }
+  }, [refreshing, fetchUsers]);
+
+  const getResources = () => {
+    setRefreshing(true);
+    setLoaded(true);
   };
 
   const fetchData = async () => {
@@ -120,7 +127,7 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
         ) as HTMLElement
       );
     }
-  }, [details]);
+  }, [details, lastViewedIndex]);
 
   const editFan = (index: number, fan?: Fan) => {
     setLastViewedIndex(index);

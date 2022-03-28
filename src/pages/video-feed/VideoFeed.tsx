@@ -24,7 +24,7 @@ import { ColumnsType } from 'antd/lib/table';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
 import { FeedItem } from 'interfaces/FeedItem';
 import { Segment } from 'interfaces/Segment';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 import {
   deleteVideoFeed,
@@ -77,7 +77,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const [isFetchingProductBrands, setIsFetchingProductBrands] = useState(false);
   const [productBrands, setProductBrands] = useState([]);
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
-  const [currentPage, setCurrentPage] = useState(1);
   const [loaded, setLoaded] = useState<boolean>(false);
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
@@ -130,20 +129,8 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     value: 'value',
   };
 
-  useEffect(() => {
-    if (refreshing) {
-      setFilteredVideoFeeds([]);
-      setEof(false);
-      fetchData();
-      setRefreshing(false);
-    }
-  }, [refreshing]);
-
-  const fetchData = async () => {
-    if (!videoFeeds.length) {
-      setEof(true);
-      return;
-    }
+  const fetchData = useCallback(async () => {
+    if (!videoFeeds.length) return;
 
     const pageToUse = refreshing ? 0 : page;
     const results = videoFeeds.slice(pageToUse * 10, pageToUse * 10 + 10);
@@ -152,7 +139,16 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     setFilteredVideoFeeds(prev => [...prev.concat(results)]);
 
     if (results.length < 10) setEof(true);
-  };
+  }, [page, refreshing, videoFeeds]);
+
+  useEffect(() => {
+    if (refreshing) {
+      setFilteredVideoFeeds([]);
+      setEof(false);
+      fetchData();
+      setRefreshing(false);
+    }
+  }, [refreshing, fetchData]);
 
   const feedItemColumns: ColumnsType<FeedItem> = [
     {
@@ -276,7 +272,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     }
     feedForm.setFieldsValue(selectedVideoFeed);
     segmentForm.setFieldsValue(selectedVideoFeed);
-  }, [selectedVideoFeed]);
+  }, [selectedVideoFeed, feedForm, segmentForm]);
 
   useEffect(() => {
     if (!details) {
@@ -286,7 +282,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
         ) as HTMLElement
       );
     }
-  }, [details]);
+  }, [details, lastViewedIndex]);
 
   const fetch = async () => {
     try {
@@ -361,10 +357,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     setLastViewedIndex(index);
     setSelectedVideoFeed(videoFeed);
     setDetails(true);
-  };
-
-  const onPageChange = (page: number) => {
-    setCurrentPage(page);
   };
 
   const onFeedItemIndexOnColumnChange = (

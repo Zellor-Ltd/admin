@@ -1,62 +1,20 @@
-import {
-  CheckOutlined,
-  CloseOutlined,
-  DeleteOutlined,
-  EditOutlined,
-  LoadingOutlined,
-  SearchOutlined,
-} from '@ant-design/icons';
-import {
-  Avatar,
-  Button,
-  Col,
-  Collapse,
-  Input,
-  List,
-  message,
-  PageHeader,
-  Popconfirm,
-  Row,
-  Spin,
-  Tabs,
-  Table,
-  Tag,
-  Typography,
-} from 'antd';
-import { ColumnsType } from 'antd/lib/table';
-import CopyIdToClipboard from '../../components/CopyIdToClipboard';
-import { discoBrandId } from '../../helpers/constants';
-import { Brand } from '../../interfaces/Brand';
+import { LoadingOutlined } from '@ant-design/icons';
+import { Button, Col, Collapse, List, PageHeader, Row, Spin, Tabs } from 'antd';
 import { useEffect, useState } from 'react';
-import { Link, RouteComponentProps } from 'react-router-dom';
-import {
-  deleteBrand,
-  fetchBrands,
-  saveBrand,
-} from '../../services/DiscoClubService';
-import { SimpleSwitch } from '../../components/SimpleSwitch';
-import scrollIntoView from 'scroll-into-view';
-import InfiniteScroll from 'react-infinite-scroll-component';
+import { RouteComponentProps } from 'react-router-dom';
+import { fetchBrands } from '../../services/DiscoClubService';
 import { useRequest } from 'hooks/useRequest';
 import { useMount } from 'react-use';
 import ReactJson from 'react-json-view';
-import Item from 'antd/lib/list/Item';
 import React from 'react';
-import { setFlagsFromString } from 'v8';
-import index from 'components/upload';
 
 const { Panel } = Collapse;
 
-const DataManagement: React.FC<RouteComponentProps> = ({}) => {
+const DataManagement: React.FC<RouteComponentProps> = () => {
   const [currentActiveKey, setCurrentActiveKey] = useState<string>('');
-  const [activeTabIndex, setActiveTabIndex] = useState<number>(0);
-  const [newTabIndex, setNewTabIndex] = useState<number>(0);
   const [panes, setPanes] = useState<any>([{}]);
-  const [tabContent, setTabContent] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
   const { doFetch } = useRequest({ setLoading });
-  const [showLoadingScreen, setShowLoadingScreen] = useState<boolean>(false);
-  const [result, setResult] = useState<any[]>([]);
   const [input, setInput] = useState<any>();
   const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
@@ -66,7 +24,7 @@ const DataManagement: React.FC<RouteComponentProps> = ({}) => {
 
   useEffect(() => {
     setPanes(panes);
-  }, [currentActiveKey]);
+  }, [currentActiveKey, panes]);
 
   useEffect(() => {
     if (input) {
@@ -79,7 +37,6 @@ const DataManagement: React.FC<RouteComponentProps> = ({}) => {
     try {
       setLoading(true);
       setCurrentActiveKey(input);
-      setActiveTabIndex(panes.indexOf(panes.find(item => item.key === input)));
     } catch (error: any) {
       console.log(error.error);
     }
@@ -88,7 +45,6 @@ const DataManagement: React.FC<RouteComponentProps> = ({}) => {
   const add = async title => {
     setInput(title);
     const { results }: any = await doFetch(fetchBrands);
-    setActiveTabIndex(panes.length);
     asyncSetCurrentActiveKey(title);
     if (panes.find(item => item.title === title)) return;
     const newPanes = [...panes];
@@ -119,9 +75,6 @@ const DataManagement: React.FC<RouteComponentProps> = ({}) => {
 
   const onChange = activeKey => {
     setCurrentActiveKey(activeKey);
-    setActiveTabIndex(
-      panes.indexOf(panes.find(item => item.key === activeKey))
-    );
   };
 
   const onEdit = (targetKey, action) => {

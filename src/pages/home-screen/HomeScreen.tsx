@@ -4,7 +4,7 @@ import { ColumnsType } from 'antd/lib/table';
 import { useRequest } from '../../hooks/useRequest';
 import { Banner } from '../../interfaces/Banner';
 import moment from 'moment';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { fetchBanners, deleteBanner } from 'services/DiscoClubService';
 import CopyIdToClipboard from '../../components/CopyIdToClipboard';
@@ -24,26 +24,17 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [eof, setEof] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
 
-  const getBanners = async () => {
+  const getBanners = useCallback(async () => {
     const response = await doFetch(() => fetchBanners());
     setContent(response.results);
     setRefreshing(true);
-  };
+  }, [doFetch]);
 
   useEffect(() => {
     getBanners();
-  }, []);
+  }, [getBanners]);
 
-  useEffect(() => {
-    if (refreshing) {
-      setBanners([]);
-      setEof(false);
-      fetchData();
-      setRefreshing(false);
-    }
-  }, [refreshing]);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     if (!content.length) return;
     const pageToUse = refreshing ? 0 : page;
     const results = content.slice(pageToUse * 10, pageToUse * 10 + 10);
@@ -52,7 +43,16 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
     setBanners(prev => [...prev.concat(results)]);
 
     if (results.length < 10) setEof(true);
-  };
+  }, [page, refreshing, content]);
+
+  useEffect(() => {
+    if (refreshing) {
+      setBanners([]);
+      setEof(false);
+      fetchData();
+      setRefreshing(false);
+    }
+  }, [refreshing, fetchData]);
 
   useEffect(() => {
     if (!details) {
@@ -62,7 +62,7 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
         ) as HTMLElement
       );
     }
-  }, [details]);
+  }, [details, lastViewedIndex]);
 
   const editBanner = (index: number, banner?: Banner) => {
     setLastViewedIndex(index);

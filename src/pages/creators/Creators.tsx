@@ -5,22 +5,13 @@ import {
   EditOutlined,
   SearchOutlined,
 } from '@ant-design/icons';
-import {
-  Button,
-  Col,
-  PageHeader,
-  Popconfirm,
-  Row,
-  Spin,
-  Table,
-  Tag,
-} from 'antd';
+import { Button, Col, PageHeader, Popconfirm, Row, Spin, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
 import { SearchFilter } from 'components/SearchFilter';
 import useFilter from 'hooks/useFilter';
 import { Creator } from 'interfaces/Creator';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import {
   deleteCreator,
@@ -31,13 +22,6 @@ import scrollIntoView from 'scroll-into-view';
 import CreatorDetail from './CreatorDetail';
 import { useRequest } from 'hooks/useRequest';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { Image } from '../../interfaces/Image';
-
-const tagColorByStatus: any = {
-  approved: 'green',
-  rejected: 'red',
-  pending: '',
-};
 
 const Creators: React.FC<RouteComponentProps> = ({ location }) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -67,17 +51,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
     setRefreshing(true);
   };
 
-  useEffect(() => {
-    if (refreshing) {
-      setFilteredCreators([]);
-      setEof(false);
-      paginateData();
-
-      setRefreshing(false);
-    }
-  }, [refreshing]);
-
-  const paginateData = () => {
+  const paginateData = useCallback(() => {
     if (!filteredContent.length) {
       return;
     }
@@ -92,7 +66,17 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
     } else {
       setPage(pageToUse + 1);
     }
-  };
+  }, [filteredContent, page, refreshing]);
+
+  useEffect(() => {
+    if (refreshing) {
+      setFilteredCreators([]);
+      setEof(false);
+      paginateData();
+
+      setRefreshing(false);
+    }
+  }, [refreshing, paginateData]);
 
   useEffect(() => {
     if (!details) {
@@ -102,7 +86,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
         ) as HTMLElement
       );
     }
-  }, [details]);
+  }, [details, lastViewedIndex]);
 
   const editCreator = (index: number, creator?: Creator) => {
     setLastViewedIndex(index);

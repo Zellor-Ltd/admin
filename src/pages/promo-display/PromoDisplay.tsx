@@ -6,7 +6,7 @@ import useFilter from 'hooks/useFilter';
 import { useRequest } from 'hooks/useRequest';
 import { PromoDisplay } from 'interfaces/PromoDisplay';
 import moment from 'moment';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import {
   deletePromoDisplay,
@@ -53,7 +53,7 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
     setRefreshing(true);
   };
 
-  const fetchData = () => {
+  const fetchData = useCallback(() => {
     if (!filteredContent.length) {
       setEof(true);
       return;
@@ -66,7 +66,7 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
     setFilteredPromoDisplays(prev => [...prev.concat(results)]);
 
     if (results.length < 10) setEof(true);
-  };
+  }, [filteredContent, page, refreshing]);
 
   useEffect(() => {
     if (refreshing) {
@@ -75,7 +75,7 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
       fetchData();
       setRefreshing(false);
     }
-  }, [refreshing]);
+  }, [refreshing, fetchData]);
 
   useEffect(() => {
     if (!details) {
@@ -85,7 +85,7 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
         ) as HTMLElement
       );
     }
-  }, [details]);
+  }, [details, lastViewedIndex]);
 
   const editPromoDisplay = (index: number, promoDisplay?: PromoDisplay) => {
     setLastViewedIndex(index);

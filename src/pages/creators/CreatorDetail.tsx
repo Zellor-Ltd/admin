@@ -10,7 +10,6 @@ import {
   Button,
   Col,
   Form,
-  Image,
   Input,
   InputNumber,
   message,
