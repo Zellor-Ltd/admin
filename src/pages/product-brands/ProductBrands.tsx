@@ -6,7 +6,7 @@ import useFilter from '../../hooks/useFilter';
 import { useRequest } from '../../hooks/useRequest';
 import { ProductBrand } from '../../interfaces/ProductBrand';
 import moment from 'moment';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import {
   fetchProductBrands,
@@ -53,7 +53,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
     setRefreshing(true);
   };
 
-  const fetchData = useCallback(() => {
+  const fetchData = () => {
     if (!filteredContent.length) return;
 
     const pageToUse = refreshing ? 0 : page;
@@ -63,7 +63,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
     setFilteredProductBrands(prev => [...prev.concat(results)]);
 
     if (results.length < 10) setEof(true);
-  }, [filteredContent, page, refreshing]);
+  };
 
   useEffect(() => {
     if (refreshing) {
@@ -72,7 +72,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
       fetchData();
       setRefreshing(false);
     }
-  }, [refreshing, fetchData]);
+  }, [refreshing]);
 
   useEffect(() => {
     if (!details) {
@@ -82,7 +82,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
         ) as HTMLElement
       );
     }
-  }, [details, lastViewedIndex]);
+  }, [details]);
 
   const columns: ColumnsType<ProductBrand> = [
     {
