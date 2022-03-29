@@ -5,7 +5,7 @@ import useFilter from 'hooks/useFilter';
 import { useRequest } from 'hooks/useRequest';
 import { Brand } from 'interfaces/Brand';
 import { Tag } from 'interfaces/Tag';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { fetchBrands, fetchTags } from 'services/DiscoClubService';
 import SimpleSelect from 'components/select/SimpleSelect';
@@ -64,7 +64,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
     setRefreshing(true);
   };
 
-  const fetchData = useCallback(() => {
+  const fetchData = () => {
     if (!filteredContent.length) return;
 
     const pageToUse = refreshing ? 0 : page;
@@ -74,7 +74,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
     setFilteredTags(prev => [...prev.concat(results)]);
 
     if (results.length < 10) setEof(true);
-  }, [page, refreshing, filteredContent]);
+  };
 
   useEffect(() => {
     if (refreshing) {
@@ -83,7 +83,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
       fetchData();
       setRefreshing(false);
     }
-  }, [refreshing, fetchData]);
+  }, [refreshing]);
 
   useEffect(() => {
     if (!details) {
@@ -93,7 +93,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
         ) as HTMLElement
       );
     }
-  }, [details, lastViewedIndex]);
+  }, [details]);
 
   const columns: ColumnsType<Tag> = [
     { title: 'Tag', dataIndex: 'tagName', width: '25%' },

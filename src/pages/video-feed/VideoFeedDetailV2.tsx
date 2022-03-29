@@ -27,6 +27,7 @@ import { Brand } from 'interfaces/Brand';
 import { Category } from 'interfaces/Category';
 import { Creator } from 'interfaces/Creator';
 import { FeedItem } from 'interfaces/FeedItem';
+import { SimpleSwitch } from 'components/SimpleSwitch';
 import { Segment } from 'interfaces/Segment';
 import { Tag } from 'interfaces/Tag';
 import React, { useEffect, useState } from 'react';
@@ -129,13 +130,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
         setSelectedIconUrl(feedItem?.selectedIconUrl);
       }
     }
-  }, [
-    feedItem?.selectedOption,
-    feedItem?.selectedId,
-    feedItem?.selectedIconUrl,
-    influencers,
-    productBrands,
-  ]);
+  });
 
   useEffect(() => {
     if (currentProductBrand) loadOptions(currentProductBrand);
@@ -152,7 +147,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
     } else {
       setHashtags([]);
     }
-  }, [feedItem]);
+  }, []);
 
   useEffect(() => {
     if (showBrandForm)
@@ -183,18 +178,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
             : `${feedItem.title} Update`
           : 'New Video Feed'
       );
-  }, [
-    selectedSegment,
-    showBrandForm,
-    showTagForm,
-    feedForm,
-    feedItem,
-    selectedBrand?.brandName,
-    selectedBrandIndex,
-    selectedSegmentIndex,
-    selectedTag?.tagName,
-    selectedTagIndex,
-  ]);
+  }, [selectedSegment, showBrandForm, showTagForm]);
 
   useEffect(() => {
     if (feedItem?.ageMin && feedItem?.ageMax)
@@ -630,7 +614,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
               </Radio.Group>
             </Form.Item>
             <Col sm={12} lg={6}>
-              {selectedOptions === 'productBrand' && (
+              {selectedOptions == 'productBrand' && (
                 <>
                   <Form.Item
                     name="selectedId"
@@ -688,7 +672,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                   )}
                 </>
               )}
-              {selectedOptions === 'creator' && (
+              {selectedOptions == 'creator' && (
                 <>
                   <Form.Item
                     name="selectedId"

@@ -435,7 +435,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     (dragIndex, hoverIndex) => {
       onOrder?.(dragIndex, hoverIndex);
     },
-    [onOrder]
+    [fileList]
   );
 
   const itemRender = (originNode: React.ReactElement, file, currFileList) => {

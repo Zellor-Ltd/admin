@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { fetchProfiles } from 'services/DiscoClubService';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
+import { Creator } from '../../interfaces/Creator';
 
 const Roles: React.FC<RouteComponentProps> = ({ history, location }) => {
   const detailsPathname = `${location.pathname}/role`;

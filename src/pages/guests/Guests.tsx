@@ -14,7 +14,7 @@ import { ColumnsType } from 'antd/lib/table';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
 import { useRequest } from 'hooks/useRequest';
 import { Fan } from 'interfaces/Fan';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { fetchGuests } from 'services/DiscoClubService';
 import scrollIntoView from 'scroll-into-view';
@@ -52,7 +52,21 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
     value: 'user',
   };
 
-  const fetchFans = useCallback(async () => {
+  useEffect(() => {
+    if (refreshing) {
+      setGuests([]);
+      fetchFans();
+      setEof(false);
+      setRefreshing(false);
+    }
+  }, [refreshing]);
+
+  const getResources = async () => {
+    setRefreshing(true);
+    setLoaded(true);
+  };
+
+  const fetchFans = async () => {
     const pageToUse = refreshing ? 0 : page;
     const response = await doFetch(() =>
       fetchGuests({
@@ -75,27 +89,6 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
     setOptions(response.results.map(optionFactory));
 
     setGuests(prev => [...prev.concat(response.results)]);
-  }, [
-    page,
-    refreshing,
-    doFetch,
-    fanOptionsMapping.label,
-    fanOptionsMapping.value,
-    searchFilter,
-  ]);
-
-  useEffect(() => {
-    if (refreshing) {
-      setGuests([]);
-      fetchFans();
-      setEof(false);
-      setRefreshing(false);
-    }
-  }, [refreshing, fetchFans]);
-
-  const getResources = async () => {
-    setRefreshing(true);
-    setLoaded(true);
   };
 
   const fetchData = () => {
@@ -111,7 +104,7 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
         ) as HTMLElement
       );
     }
-  }, [details, lastViewedIndex]);
+  }, [details]);
 
   const viewGuest = (index: number, fan?: Fan) => {
     setLastViewedIndex(index);

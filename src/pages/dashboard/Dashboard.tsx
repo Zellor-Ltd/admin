@@ -1,17 +1,140 @@
-import { Col, Row, Card, Statistic, List, Tabs } from 'antd';
 import {
+  Col,
+  Row,
+  Popconfirm,
+  Button,
+  Card,
+  Statistic,
+  List,
+  Tabs,
+} from 'antd';
+import { useRequest } from 'hooks/useRequest';
+import {
+  DeleteOutlined,
   GlobalOutlined,
   ShopOutlined,
   SkinOutlined,
   TagOutlined,
 } from '@ant-design/icons';
-import React from 'react';
+import moment from 'moment';
+import CopyIdToClipboard from 'components/CopyIdToClipboard';
+import React, { useEffect, useState } from 'react';
+import {
+  fetchActiveRegFansPerDay,
+  fetchProductsPerDay,
+  fetchPreRegs,
+  deletePreReg,
+  fetchFanActivity,
+} from 'services/DiscoClubService';
+import { PreReg } from 'interfaces/PreReg';
+import { FanActivity } from 'interfaces/FanActivity';
+import { ColumnsType } from 'antd/lib/table';
 import '@ant-design/flowchart/dist/index.css';
 import { Column, Pie, Sunburst } from '@ant-design/plots';
 
 interface DashboardProps {}
 
 const Dashboard: React.FC<DashboardProps> = () => {
+  const [fansPerDay, setFansPerDay] = useState<any[]>([]);
+  const [, setLoading] = useState<boolean>(true);
+  const { doFetch } = useRequest({ setLoading });
+  const [productsPerDay, setProductsPerDay] = useState<any[]>([]);
+  const [preRegs, setPreRegs] = useState<PreReg[]>([]);
+  const [fanActivity, setFanActivity] = useState<FanActivity[]>([]);
+
+  const getFans = async () => {
+    const { results } = await doFetch(fetchActiveRegFansPerDay);
+    setFansPerDay(results);
+  };
+
+  const getProducts = async () => {
+    const { results } = await doFetch(fetchProductsPerDay);
+    setProductsPerDay(results);
+  };
+
+  const getPreRegs = async () => {
+    const { results } = await doFetch(fetchPreRegs);
+    setPreRegs(results);
+  };
+
+  const getFanActivity = async () => {
+    const { results } = await doFetch(fetchFanActivity);
+    setFanActivity(results);
+  };
+
+  useEffect(() => {
+    getFans();
+    getProducts();
+    getPreRegs();
+    getFanActivity();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const preRegistered: ColumnsType<PreReg> = [
+    {
+      title: '_id',
+      dataIndex: 'id',
+      width: '5%',
+      render: (id: any) => <CopyIdToClipboard id={id} />,
+      align: 'center',
+    },
+    { title: 'Email', dataIndex: 'email', width: '15%' },
+    {
+      title: 'Creation Date',
+      dataIndex: 'hCreationDate',
+      width: '65%',
+      align: 'center',
+      responsive: ['sm'],
+      render: (hCreationDate: Date) =>
+        moment(hCreationDate).format('DD/MM/YYYY'),
+    },
+    {
+      title: 'Actions',
+      key: 'action',
+      width: '15%',
+      align: 'right',
+      render: (record: PreReg) => (
+        <>
+          <Popconfirm
+            title="Are you sure？"
+            okText="Yes"
+            cancelText="No"
+            onConfirm={() => deletePreReg(record)}
+          >
+            <Button type="link" style={{ padding: 0, margin: 6 }}>
+              <DeleteOutlined />
+            </Button>
+          </Popconfirm>
+        </>
+      ),
+    },
+  ];
+
+  const fanActs: ColumnsType<PreReg> = [
+    {
+      title: '_id',
+      dataIndex: 'id',
+      width: '5%',
+      render: (id: any) => <CopyIdToClipboard id={id} />,
+      align: 'center',
+    },
+    { title: 'User', dataIndex: 'user', width: '30%' },
+    { title: 'Total DD', dataIndex: 'totalDiscoDollars', width: '10%' },
+    { title: 'Wishlist Items', dataIndex: 'wishListItems', width: '10%' },
+    {
+      title: 'Logins in the last 10 days',
+      dataIndex: 'last10dayslogins',
+      width: '15%',
+    },
+    { title: 'Total Ordered', dataIndex: 'totalOrdered', width: '10%' },
+    { title: 'Items Ordered', dataIndex: 'itemsOrdered', width: '10%' },
+    {
+      title: 'Videos watched this month',
+      dataIndex: 'feedsWatchedThisMonth',
+      width: '10%',
+    },
+  ];
+
   const cardStyle = {
     display: 'flex',
     justifyContent: 'space-around',

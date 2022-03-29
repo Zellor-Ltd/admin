@@ -10,18 +10,23 @@ import {
   Typography,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
+import { Fan } from 'interfaces/Fan';
 import { Transaction } from 'interfaces/Transaction';
 import moment from 'moment';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { fetchFans, fetchWalletTransactions } from 'services/DiscoClubService';
 import CopyOrderToClipboard from 'components/CopyOrderToClipboard';
+import SimpleSelect from 'components/select/SimpleSelect';
 import { SelectOption } from 'interfaces/SelectOption';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useRequest } from 'hooks/useRequest';
 
 const Transactions: React.FC<RouteComponentProps> = () => {
   const [loading, setLoading] = useState<boolean>(false);
+  const [selectedFan, setSelectedFan] = useState<Fan | undefined>();
+  const [isFetchingFans, setIsFetchingFans] = useState(false);
+  const [fans, setFans] = useState<Fan[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [filteredTransactions, setFilteredTransactions] = useState<
     Transaction[]
@@ -30,7 +35,7 @@ const Transactions: React.FC<RouteComponentProps> = () => {
   const [eof, setEof] = useState<boolean>(false);
   const [loaded, setLoaded] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
-  const { doFetch } = useRequest({ setLoading });
+  const { doFetch, doRequest } = useRequest({ setLoading });
   const [searchFilter, setSearchFilter] = useState<string>();
   const [options, setOptions] = useState<
     { label: string; value: string; key: string }[]
@@ -42,7 +47,8 @@ const Transactions: React.FC<RouteComponentProps> = () => {
     value: 'user',
   };
 
-  const getFans = useCallback(async () => {
+  const getFans = async () => {
+    setIsFetchingFans(true);
     const response = await doFetch(() =>
       fetchFans({
         page: 0,
@@ -59,13 +65,23 @@ const Transactions: React.FC<RouteComponentProps> = () => {
     };
 
     setOptions(response.results.map(optionFactory));
-  }, [doFetch, fanOptionsMapping.label, fanOptionsMapping.value, searchFilter]);
+    setIsFetchingFans(false);
+  };
 
   useEffect(() => {
     getFans();
-  }, [getFans]);
+  }, []);
 
-  const fetchData = useCallback(async () => {
+  useEffect(() => {
+    if (refreshing) {
+      setFilteredTransactions([]);
+      setEof(false);
+      fetchData();
+      setRefreshing(false);
+    }
+  }, [refreshing]);
+
+  const fetchData = async () => {
     if (!transactions.length) return;
 
     const pageToUse = refreshing ? 0 : page;
@@ -75,16 +91,7 @@ const Transactions: React.FC<RouteComponentProps> = () => {
     setFilteredTransactions(prev => [...prev.concat(results)]);
 
     if (results.length < 10) setEof(true);
-  }, [page, refreshing, transactions]);
-
-  useEffect(() => {
-    if (refreshing) {
-      setFilteredTransactions([]);
-      setEof(false);
-      fetchData();
-      setRefreshing(false);
-    }
-  }, [refreshing, fetchData]);
+  };
 
   const columns: ColumnsType<Transaction> = [
     {
@@ -133,9 +140,26 @@ const Transactions: React.FC<RouteComponentProps> = () => {
     },
   ];
 
+  const paginateData = () => {
+    if (!transactions.length) {
+      return;
+    }
+
+    const results = transactions.slice(page * 10, page * 10 + 10);
+
+    setFilteredTransactions(prev => [...prev.concat(results)]);
+
+    if (results.length < 10) {
+      setEof(true);
+    } else {
+      setPage(page + 1);
+    }
+  };
+
   const onChangeFan = async (value: string, _selectedFan?: any) => {
     setLoading(true);
     if (_selectedFan) {
+      setSelectedFan(_selectedFan);
       const { results }: any = await fetchWalletTransactions(_selectedFan.id);
       setTransactions(results);
       setRefreshing(true);

@@ -1,4 +1,5 @@
 import {
+  DeleteOutlined,
   EyeOutlined,
   SearchOutlined,
   SettingOutlined,
@@ -10,12 +11,14 @@ import {
   Form,
   Input,
   PageHeader,
+  Popconfirm,
   Row,
   Select,
   Spin,
   Typography,
 } from 'antd';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import './Products.scss';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
@@ -46,13 +49,15 @@ import { SelectOption } from '../../interfaces/SelectOption';
 import ProductsDetails from './ProductsDetails';
 import { ProductCategory } from 'interfaces/Category';
 
-const { getSearchTags, getCategories } = productUtils;
+const { getSearchTags, getCategories, removeSearchTagsByCategory } =
+  productUtils;
 
 const LiveProducts: React.FC<RouteComponentProps> = () => {
   const [brands, setBrands] = useState<Brand[]>([]);
   const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
   const [isFetchingBrands, setIsFetchingBrands] = useState(false);
   const [isFetchingProductBrand, setIsFetchingProductBrand] = useState(false);
+  const [ageRange, setAgeRange] = useState<[number, number]>([12, 100]);
   const [form] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
   const [fetchingCategories, setFetchingCategories] = useState(false);
@@ -124,6 +129,10 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
     value: 'id',
   };
 
+  const {
+    settings: { currency = [] },
+  } = useSelector((state: any) => state.settings);
+
   const handleFilterOutOfStock = (e: CheckboxChangeEvent) => {
     setOutOfStockFilter(e.target.checked);
   };
@@ -150,7 +159,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
 
   useEffect(() => {
     form.setFieldsValue(currentProduct);
-  }, [currentProduct, form]);
+  }, [currentProduct]);
 
   const setDiscoPercentageByBrand = useCallback(
     (useInitialValue: boolean) => {
@@ -174,6 +183,14 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
     },
     [brands, form, currentProduct]
   );
+
+  const handleMasterBrandChange = (filterMasterBrand: Function) => {
+    filterMasterBrand(form);
+  };
+
+  const handleProductBrandChange = (filterProductBrand: Function) => {
+    filterProductBrand(form);
+  };
 
   const setSearchTagsByCategory = useCallback(
     (
@@ -230,13 +247,18 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
         searchTags,
       });
     },
-    [form, currentProduct, allCategories]
+    [form, currentProduct]
   );
 
   useEffect(() => {
     setDiscoPercentageByBrand(true);
     setSearchTagsByCategory(true);
   }, [brands, setDiscoPercentageByBrand, setSearchTagsByCategory]);
+
+  useEffect(() => {
+    if (currentProduct?.ageMin && currentProduct?.ageMax)
+      setAgeRange([currentProduct?.ageMin, currentProduct?.ageMax]);
+  }, [currentProduct]);
 
   const _fetchProducts = async () => {
     const pageToUse = refreshing ? 0 : page;
@@ -267,13 +289,19 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
     setLoaded(true);
   };
 
+  const refreshProducts = async () => {
+    setSelectedRowKeys([]);
+    setPage(0);
+    setRefreshing(true);
+  };
+
   const fetchData = async () => {
     if (!products.length) return;
     const { results } = await _fetchProducts();
     setProducts(prev => [...prev.concat(results)]);
   };
 
-  useEffect(() => form.resetFields(), [currentProduct, form]);
+  useEffect(() => form.resetFields(), [currentProduct]);
 
   useEffect(() => {
     const getProducts = async () => {
@@ -307,7 +335,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
       dataIndex: 'name',
       width: '17%',
       shouldCellUpdate: (prevRecord, nextRecord) =>
-        prevRecord.name !== nextRecord.name,
+        prevRecord.name != nextRecord.name,
       render: (value: string, record, index) => (
         <>
           <Link
@@ -344,7 +372,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
       align: 'center',
       responsive: ['sm'],
       shouldCellUpdate: (prevRecord, nextRecord) =>
-        prevRecord.brand !== nextRecord.brand,
+        prevRecord.brand != nextRecord.brand,
     },
     {
       title: 'In Stock',
@@ -352,7 +380,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
       width: '7%',
       align: 'center',
       shouldCellUpdate: (prevRecord, nextRecord) =>
-        prevRecord.outOfStock !== nextRecord.outOfStock,
+        prevRecord.outOfStock != nextRecord.outOfStock,
       render: (outOfStock: boolean) => (outOfStock ? 'No' : 'Yes'),
     },
     {
@@ -362,7 +390,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
       align: 'center',
       responsive: ['sm'],
       shouldCellUpdate: (prevRecord, nextRecord) =>
-        prevRecord.maxDiscoDollars !== nextRecord.maxDiscoDollars,
+        prevRecord.maxDiscoDollars != nextRecord.maxDiscoDollars,
       // editable: true,
       // number: true,
     },
@@ -373,7 +401,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
       align: 'center',
       responsive: ['sm'],
       shouldCellUpdate: (prevRecord, nextRecord) =>
-        prevRecord.discoPercentage !== nextRecord.discoPercentage,
+        prevRecord.discoPercentage != nextRecord.discoPercentage,
 
       // editable: true,
       // number: true,
@@ -399,7 +427,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
       align: 'center',
       responsive: ['sm'],
       shouldCellUpdate: (prevRecord, nextRecord) =>
-        prevRecord.offerExpirationDate !== nextRecord.offerExpirationDate,
+        prevRecord.offerExpirationDate != nextRecord.offerExpirationDate,
 
       render: (creationDate: Date) => moment(creationDate).format('DD/MM/YYYY'),
     },
@@ -410,7 +438,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
       align: 'center',
       responsive: ['sm'],
       shouldCellUpdate: (prevRecord, nextRecord) =>
-        prevRecord.status !== nextRecord.status,
+        prevRecord.status != nextRecord.status,
     },
     {
       title: 'Product Brand',
@@ -419,7 +447,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
       align: 'center',
       responsive: ['sm'],
       shouldCellUpdate: (prevRecord, nextRecord) =>
-        prevRecord.productBrand !== nextRecord.productBrand,
+        prevRecord.productBrand != nextRecord.productBrand,
       render: (field, record) =>
         typeof record.productBrand === 'string'
           ? field
@@ -431,7 +459,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
       width: '10%',
       align: 'center',
       shouldCellUpdate: (prevRecord, nextRecord) =>
-        prevRecord.goLiveDate !== nextRecord.goLiveDate,
+        prevRecord.goLiveDate != nextRecord.goLiveDate,
 
       render: (goLiveDate: Date | null | undefined) =>
         goLiveDate ? (
@@ -502,7 +530,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
         ) as HTMLElement
       );
     }
-  }, [details, lastViewedIndex]);
+  }, [details]);
 
   const editProduct = (index: number, record?: Product) => {
     setCurrentProduct(record);

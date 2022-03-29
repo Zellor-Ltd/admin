@@ -1,4 +1,4 @@
-import { message } from 'antd';
+import { message, Pagination } from 'antd';
 import axios, { AxiosRequestConfig } from 'axios';
 import { Brand } from 'interfaces/Brand';
 import {
