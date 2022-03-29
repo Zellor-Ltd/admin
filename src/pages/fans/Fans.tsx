@@ -268,13 +268,13 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
             <Col lg={16} xs={24}>
               <Row gutter={8}>
                 <Col lg={8} xs={16}>
-                  <Typography.Title level={5}>Search Fan</Typography.Title>
+                  <Typography.Title level={5}>Fan Filter</Typography.Title>
                   <AutoComplete
                     style={{ width: '100%' }}
                     options={options}
                     onSelect={onChangeFan}
                     onSearch={onSearch}
-                    placeholder="Type to search a fan"
+                    placeholder="Search by fan e-mail"
                   />
                 </Col>
               </Row>
