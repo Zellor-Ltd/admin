@@ -5,7 +5,7 @@ import useFilter from 'hooks/useFilter';
 import { useRequest } from 'hooks/useRequest';
 import { FanGroup } from 'interfaces/FanGroup';
 import moment from 'moment';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { fetchFanGroups } from 'services/DiscoClubService';
 import scrollIntoView from 'scroll-into-view';
@@ -45,7 +45,7 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
     setRefreshing(true);
   };
 
-  const fetchData = useCallback(() => {
+  const fetchData = () => {
     if (!filteredContent.length) {
       setEof(true);
       return;
@@ -58,7 +58,7 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
     setFilteredFanGroups(prev => [...prev.concat(results)]);
 
     if (results.length < 10) setEof(true);
-  }, [filteredContent, page, refreshing]);
+  };
 
   useEffect(() => {
     if (refreshing) {
@@ -67,7 +67,7 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
       fetchData();
       setRefreshing(false);
     }
-  }, [refreshing, fetchData]);
+  }, [refreshing]);
 
   useEffect(() => {
     if (!details) {
@@ -77,7 +77,7 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
         ) as HTMLElement
       );
     }
-  }, [details, lastViewedIndex]);
+  }, [details]);
 
   const editFanGroup = (index: number, fanGroup?: FanGroup) => {
     setLastViewedIndex(index);

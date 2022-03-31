@@ -20,7 +20,7 @@ import { Brand } from 'interfaces/Brand';
 import { Fan } from 'interfaces/Fan';
 import { Order } from 'interfaces/Order';
 import moment from 'moment';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Highlighter from 'react-highlight-words';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import {
@@ -38,6 +38,7 @@ import FanDetail from 'pages/fans/FanDetail';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useMount } from 'react-use';
 import { useRequest } from 'hooks/useRequest';
+import { identity } from 'lodash';
 
 const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -56,9 +57,8 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [ordersSettings, setOrdersSettings] = useState([]);
   const { doFetch } = useRequest({ setLoading });
-  const [searchFilter, setSearchFilter] = useState<string>();
   const [selectedFan, setSelectedFan] = useState<Fan>();
-  const [fanFilter, setFanFilter] = useState<string>();
+  const [fanFilter, setFanFilter] = useState<string>('');
   const [brandFilter, setBrandFilter] = useState<string>();
   const [options, setOptions] = useState<
     { label: string; value: string; key: string }[]
@@ -71,6 +71,27 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     addFilterFunction,
     removeFilterFunction,
   } = useFilter<Order>([]);
+
+  useEffect(() => {
+    fetchUsers();
+  });
+
+  const fetchUsers = async () => {
+    const response = await doFetch(() =>
+      fetchFans({
+        page: 0,
+        query: '',
+      })
+    );
+
+    const validUsers = response.results.filter(
+      (fan: Fan) => !fan.userName?.includes('guest')
+    );
+
+    if (validUsers.length < 30) setEof(true);
+
+    setFans(validUsers);
+  };
 
   const optionsMapping: SelectOption = {
     key: 'id',
@@ -103,10 +124,10 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     setLoaded(true);
   };
 
-  const loadNext = useCallback(async () => {
+  const loadNext = async () => {
     if (loaded) setPage(prev => prev + 1);
     fetch();
-  }, []);
+  };
 
   const handleSearch = (selectedKeys: any, confirm: any, dataIndex: any) => {
     confirm();
@@ -160,7 +181,9 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     setRefreshing(true);
   };
 
-  const getFan = (fanId: string) => fans.find(fan => fan.id === fanId);
+  const getFan = (fanId: string) => {
+    return fans.find(fan => fan.id === fanId);
+  };
 
   useEffect(() => {
     if (!details) {
@@ -170,7 +193,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
         ) as HTMLElement
       );
     }
-  }, [details, lastViewedIndex]);
+  }, [details]);
 
   const editFan = (index: number, fan?: Fan) => {
     setLastViewedIndex(index);
@@ -379,7 +402,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     if (loaded) {
       fetch();
     }
-  }, [setOrders, fetch, loaded]);
+  }, [setOrders]);
 
   const onChangeBrand = async (id: string | undefined) => {
     setBrandFilter(id);
@@ -387,8 +410,14 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   const onChangeFan = async (value: string) => {
-    setSearchFilter(value);
+    const id = getFan(value)?.id;
+    setFanFilter(id ?? '');
     fetch();
+  };
+
+  const onSearch = (value: string) => {
+    const id = getFan(value)?.id;
+    setFanFilter(id ?? '');
   };
 
   const onSaveFan = (record: Fan) => {
@@ -397,26 +426,6 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
 
   const onCancelFan = () => {
     setDetails(false);
-  };
-
-  const getFans = async () => {
-    const response = await doFetch(() =>
-      fetchFans({
-        page: 0,
-        query: searchFilter,
-      })
-    );
-
-    const optionFactory = (option: any) => {
-      return {
-        label: option[fanOptionsMapping.label],
-        value: option[fanOptionsMapping.value],
-        key: option[fanOptionsMapping.value],
-      };
-    };
-
-    setFans(response.results);
-    setOptions(response.results.map(optionFactory));
   };
 
   return (
@@ -451,8 +460,9 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
                     style={{ width: '100%' }}
                     options={options}
                     onSelect={onChangeFan}
-                    onSearch={onChangeFan}
+                    onSearch={onSearch}
                     placeholder="Search by fan e-mail"
+                    disabled={!fans}
                   />
                 </Col>
               </Row>

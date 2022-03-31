@@ -37,6 +37,7 @@ import moment from 'moment';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import scrollIntoView from 'scroll-into-view';
 import { Link } from 'react-router-dom';
+import { noop } from 'lodash';
 interface BrandDetailProps {
   onSave?: (record: Brand) => void;
   onCancel?: () => void;
@@ -103,7 +104,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
         ) as HTMLElement
       );
     }
-  }, [vaultOptions, lastViewedIndex]);
+  }, [vaultOptions]);
 
   const deleteItem = async (vault: BrandVault, index: number) => {
     deleteBrandVault(vault.id);

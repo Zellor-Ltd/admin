@@ -20,7 +20,7 @@ import { Brand } from 'interfaces/Brand';
 import { Fan } from 'interfaces/Fan';
 import { Order } from 'interfaces/Order';
 import moment from 'moment';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Highlighter from 'react-highlight-words';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import {
@@ -38,6 +38,7 @@ import FanDetail from 'pages/fans/FanDetail';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useMount } from 'react-use';
 import { useRequest } from 'hooks/useRequest';
+import { identity } from 'lodash';
 
 const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -56,7 +57,6 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [ordersSettings, setOrdersSettings] = useState([]);
   const { doFetch } = useRequest({ setLoading });
-  const [searchFilter, setSearchFilter] = useState<string>();
   const [selectedFan, setSelectedFan] = useState<Fan>();
   const [fanFilter, setFanFilter] = useState<string>();
   const [brandFilter, setBrandFilter] = useState<string>();
@@ -103,10 +103,10 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     setLoaded(true);
   };
 
-  const loadNext = useCallback(async () => {
+  const loadNext = async () => {
     if (loaded) setPage(prev => prev + 1);
     fetch();
-  }, []);
+  };
 
   const handleSearch = (selectedKeys: any, confirm: any, dataIndex: any) => {
     confirm();
@@ -160,7 +160,9 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     setRefreshing(true);
   };
 
-  const getFan = (fanId: string) => fans.find(fan => fan.id === fanId);
+  const getFan = (fanId: string) => {
+    return fans.find(fan => fan.id === fanId);
+  };
 
   useEffect(() => {
     if (!details) {
@@ -170,7 +172,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
         ) as HTMLElement
       );
     }
-  }, [details, lastViewedIndex]);
+  }, [details]);
 
   const editFan = (index: number, fan?: Fan) => {
     setLastViewedIndex(index);
@@ -379,21 +381,21 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     if (loaded) {
       fetch();
     }
-  }, [setOrders, fetch, loaded]);
+  }, [setOrders]);
 
   const onChangeBrand = async (id: string | undefined) => {
     setBrandFilter(id);
     fetch();
   };
 
-  const onSearch = (value: string) => {
-    setSearchFilter(value);
-    setTimeout(() => fetch(), 1000);
+  const onChangeFan = async (value: string) => {
+    setFanFilter(value);
+    fetch();
   };
 
-  const onChangeFan = async (value: string, _selectedFan: any) => {
-    setSearchFilter(value);
-    fetch();
+  const onSearch = (value: string) => {
+    setFanFilter(value);
+    getFans();
   };
 
   const onSaveFan = (record: Fan) => {
@@ -408,20 +410,11 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     const response = await doFetch(() =>
       fetchFans({
         page: 0,
-        query: searchFilter,
+        query: fanFilter,
       })
     );
 
-    const optionFactory = (option: any) => {
-      return {
-        label: option[fanOptionsMapping.label],
-        value: option[fanOptionsMapping.value],
-        key: option[fanOptionsMapping.value],
-      };
-    };
-
     setFans(response.results);
-    setOptions(response.results.map(optionFactory));
   };
 
   return (

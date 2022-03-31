@@ -17,7 +17,7 @@ import {
   WalletTransaction,
 } from 'interfaces/WalletTransactions';
 import moment from 'moment';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { fetchTransactionsPerBrand } from 'services/DiscoClubService';
 import WalletEdit from './WalletEdit';
 import * as H from 'history';
@@ -79,7 +79,7 @@ const WalletDetail: React.FC<WalletDetailProps> = ({
     setRefreshing(true);
   };
 
-  const fetchData = useCallback(() => {
+  const fetchData = () => {
     if (!filteredContent.length) return;
 
     const pageToUse = refreshing ? 0 : page;
@@ -89,7 +89,7 @@ const WalletDetail: React.FC<WalletDetailProps> = ({
     setFilteredTransactions(prev => [...prev.concat(results)]);
 
     if (results.length < 10) setEof(true);
-  }, [filteredContent, page, refreshing]);
+  };
 
   useEffect(() => {
     if (refreshing) {
@@ -98,7 +98,7 @@ const WalletDetail: React.FC<WalletDetailProps> = ({
       fetchData();
       setRefreshing(false);
     }
-  }, [refreshing, fetchData]);
+  }, [refreshing]);
 
   const columns: ColumnsType<WalletTransaction> = [
     {

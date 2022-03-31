@@ -82,17 +82,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
   useEffect(() => {
     setFilteredWallets([]);
     setEof(false);
-
-    if (!filteredContent.length) return;
-
-    const results = filteredContent.slice(page * 10, page * 10 + 10);
-    setFilteredWallets(prev => [...prev.concat(results)]);
-
-    if (results.length < 10) {
-      setEof(true);
-    } else {
-      setPage(page + 1);
-    }
+    updateDisplayedArray();
   }, [filteredContent, page]);
 
   const updateDisplayedArray = () => {
@@ -148,7 +138,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
         ) as HTMLElement
       );
     }
-  }, [details, lastViewedIndex]);
+  }, [details]);
 
   const editWallet = (index: number) => {
     setLastViewedIndex(index);
