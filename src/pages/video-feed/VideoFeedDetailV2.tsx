@@ -54,6 +54,7 @@ interface VideoFeedDetailProps {
   influencers: Creator[];
   productBrands: ProductBrand[];
   isFetchingProductBrand: boolean;
+  setDetails?: (boolean) => void;
 }
 
 const prouctBrandMapping: SelectOption = {
@@ -83,6 +84,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
   influencers,
   productBrands,
   isFetchingProductBrand,
+  setDetails,
 }) => {
   const {
     settings: { language = [] },
@@ -200,8 +202,9 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
       return segment;
     });
 
-    const { result } = await doRequest(() => saveVideoFeed(item));
-    item.id ? onSave?.(item) : onSave?.({ ...item, id: result });
+    const response = await doRequest(() => saveVideoFeed(item));
+    item.id ? onSave?.(item) : onSave?.({ ...item, id: response.result });
+    if (!response.result) setDetails?.(false);
   };
 
   const onDeleteSegment = (evt: any, index: number) => {
