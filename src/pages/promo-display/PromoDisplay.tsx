@@ -54,7 +54,10 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   const fetchData = () => {
-    if (!filteredContent.length) return;
+    if (!filteredContent.length) {
+      setEof(true);
+      return;
+    }
 
     const pageToUse = refreshing ? 0 : page;
     const results = filteredContent.slice(pageToUse * 10, pageToUse * 10 + 10);
@@ -213,7 +216,7 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
               </Button>,
             ]}
           />
-          <Row gutter={8}>
+          <Row gutter={8} className={'sticky-filter-box'}>
             <Col lg={8} xs={16}>
               <SearchFilter
                 filterFunction={searchFilterFunction}

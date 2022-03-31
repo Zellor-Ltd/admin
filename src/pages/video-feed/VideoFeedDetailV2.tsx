@@ -442,7 +442,11 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
               </Col>
               <Col lg={12} xs={24}>
                 <Form.Item name="language" label="Language">
-                  <Select placeholder="Please select a language">
+                  <Select
+                    placeholder="Please select a language"
+                    disabled={!language.length}
+                    defaultValue="English"
+                  >
                     {language.map((lang: any) => (
                       <Select.Option key={lang.value} value={lang.value}>
                         {lang.name}

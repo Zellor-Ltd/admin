@@ -28,6 +28,7 @@ import {
   fetchCreators,
   fetchCurrencies,
   fetchServersList,
+  resetUser,
   saveUser,
 } from 'services/DiscoClubService';
 import FanGroupDropdown from './FanGroupDropdown';
@@ -79,7 +80,6 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
       const response: any = await fetchCurrencies();
       setCurrencies(response.results);
     };
-    setLoading(true);
     getCreatores();
     getCategories();
     getServersList();
@@ -219,7 +219,19 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
 
   return (
     <>
-      <PageHeader title={fan ? `${fan.userName} Update` : 'New Fan'} />
+      <PageHeader
+        title={fan ? `${fan.userName} Update` : 'New Fan'}
+        extra={[
+          <Button
+            key="1"
+            type="primary"
+            disabled={!fan}
+            onClick={() => resetUser(fan.id)}
+          >
+            Reset User
+          </Button>,
+        ]}
+      />
       <Form
         name="userForm"
         layout="vertical"

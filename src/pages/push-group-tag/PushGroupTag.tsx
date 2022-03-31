@@ -158,7 +158,11 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
       {!details && (
         <div>
           <PageHeader title="Tags" subTitle="Push Tags to user groups" />
-          <Row align="bottom" justify="space-between">
+          <Row
+            align="bottom"
+            justify="space-between"
+            className={'sticky-filter-box'}
+          >
             <Col lg={16} xs={24}>
               <Row gutter={8}>
                 <Col lg={8} xs={16}>

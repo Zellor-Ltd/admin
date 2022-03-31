@@ -17,6 +17,7 @@ const TagForm: React.FC<FormProps> = ({ tag, setShowTagForm, brands }) => {
   const [selectedBrandId, setSelectedBrandId] = useState<string>(
     tag?.brand?.id || ''
   );
+  const [selectedTag, setSelectedTag] = useState<string>(tag?.tagName || '');
   const [form] = Form.useForm();
   const tagOptionsMapping: SelectOption = {
     label: 'tagName',
@@ -34,6 +35,7 @@ const TagForm: React.FC<FormProps> = ({ tag, setShowTagForm, brands }) => {
   };
 
   const onChangeTag = (key: string, selectedTag: Tag) => {
+    setSelectedTag(selectedTag.tagName);
     if (selectedTag) {
       selectedTag.position = selectedTag.position?.map(position => {
         return {
@@ -91,7 +93,7 @@ const TagForm: React.FC<FormProps> = ({ tag, setShowTagForm, brands }) => {
               onChange={onChangeTag}
               optionsMapping={tagOptionsMapping}
               placeholder="Type to search a Tag"
-              value={tag?.tagName}
+              value={selectedTag}
               disabled={!selectedBrandId}
             />
           </Form.Item>
