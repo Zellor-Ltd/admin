@@ -30,4 +30,5 @@ export interface FeedItem {
   selectedId?: string;
   selectedFeedTitle?: string;
   selectedIconUrl?: string;
+  videoType?: string[];
 }
