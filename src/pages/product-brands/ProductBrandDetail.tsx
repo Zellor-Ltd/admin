@@ -114,9 +114,10 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                           ]}
                         >
                           <InputNumber
-                            pattern="^[0-9]*$"
+                            pattern="^(?:100|\d{1,2})(?:.\d{1,2})?$"
                             title="positive integers"
                             min={0}
+                            max={100}
                           />
                         </Form.Item>
                       </Col>
@@ -132,9 +133,10 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                           ]}
                         >
                           <InputNumber
-                            pattern="^[0-9]*$"
+                            pattern="^(?:100|\d{1,2})(?:.\d{1,2})?$"
                             title="positive integers"
                             min={0}
+                            max={100}
                           />
                         </Form.Item>
                       </Col>
@@ -152,9 +154,10 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                           ]}
                         >
                           <InputNumber
-                            pattern="^[0-9]*$"
+                            pattern="^(?:100|\d{1,2})(?:.\d{1,2})?$"
                             title="positive integers"
                             min={0}
+                            max={100}
                           />
                         </Form.Item>
                       </Col>
