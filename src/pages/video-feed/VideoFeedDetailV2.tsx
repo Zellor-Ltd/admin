@@ -27,7 +27,6 @@ import { Brand } from 'interfaces/Brand';
 import { Category } from 'interfaces/Category';
 import { Creator } from 'interfaces/Creator';
 import { FeedItem } from 'interfaces/FeedItem';
-import { SimpleSwitch } from 'components/SimpleSwitch';
 import { Segment } from 'interfaces/Segment';
 import { Tag } from 'interfaces/Tag';
 import React, { useEffect, useState } from 'react';
@@ -214,9 +213,22 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
     setSelectedSegmentIndex(-1);
   };
 
-  const onAddSegment = () => {
+  const onAddSegment = (addWatermark?: boolean, segment?: any) => {
     const packages = feedForm.getFieldValue('package');
     const sequence = packages ? packages.length + 1 : 1;
+    if (addWatermark) {
+      setSelectedSegment({
+        sequence,
+        tags: [],
+        brands: [],
+        selectedOption: 'creator',
+        watermarkVideo: segment.video,
+      } as Segment);
+
+      setSelectedSegmentIndex(sequence - 1);
+
+      return;
+    }
     setSelectedSegment({
       sequence,
       tags: [],
@@ -533,78 +545,96 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                 </Row>
               </Col>
             </Row>
-            <Title level={3}>Segments</Title>
-            <Form.Item
-              shouldUpdate={(prevValues, curValues) =>
-                prevValues.package !== curValues.package
-              }
-            >
-              {({ getFieldValue }) => {
-                const segments: Segment[] = getFieldValue('package') || [];
-                return (
-                  <div
-                    style={{
-                      display: 'flex',
-                    }}
-                  >
-                    {segments.map((segment, segmentIndex) => (
+            <Row>
+              <Col className="scroll-x">
+                <Title level={3}>Segments</Title>
+                <Form.Item
+                  shouldUpdate={(prevValues, curValues) =>
+                    prevValues.package !== curValues.package
+                  }
+                >
+                  {({ getFieldValue }) => {
+                    const segments: Segment[] = getFieldValue('package') || [];
+                    return (
                       <div
-                        key={segment.sequence}
-                        className={`segment-thumbnail ${
-                          (selectedSegmentIndex === segmentIndex &&
-                            'selected') ||
-                          ''
-                        }`}
-                        onClick={() => onEditSegment(segment, segmentIndex)}
+                        style={{
+                          display: 'flex',
+                        }}
                       >
-                        {segment?.thumbnail?.url
-                          ? [
-                              <img
-                                alt={segment.thumbnail || 'Thumbnail'}
-                                src={segment.thumbnail?.url}
-                                key={segment.thumbnail?.url}
-                                style={{
-                                  height: '256px',
-                                  width: 'auto',
-                                }}
-                              />,
-                              <Button
-                                icon={<DeleteOutlined />}
-                                shape="circle"
-                                danger
-                                type="primary"
-                                className="remove-button"
-                                key={`botao_${segment.thumbnail?.url}`}
-                                onClick={evt =>
-                                  onDeleteSegment(evt, segmentIndex)
-                                }
-                              />,
-                            ]
-                          : [
-                              <Button
-                                icon={<DeleteOutlined />}
-                                shape="circle"
-                                type="primary"
-                                danger
-                                onClick={evt =>
-                                  onDeleteSegment(evt, segmentIndex)
-                                }
-                              />,
-                              <div>No Thumbnail</div>,
-                            ]}
+                        {segments.map((segment, segmentIndex) => (
+                          <div
+                            key={segment.sequence}
+                            className={`segment-thumbnail ${
+                              (selectedSegmentIndex === segmentIndex &&
+                                'selected') ||
+                              ''
+                            }`}
+                            onClick={() => onEditSegment(segment, segmentIndex)}
+                          >
+                            {segment?.thumbnail?.url
+                              ? [
+                                  <img
+                                    alt={segment.thumbnail || 'Thumbnail'}
+                                    src={segment.thumbnail?.url}
+                                    key={segment.thumbnail?.url}
+                                    style={{
+                                      height: '256px',
+                                      width: 'auto',
+                                    }}
+                                  />,
+                                  <Button
+                                    icon={<DeleteOutlined />}
+                                    shape="circle"
+                                    danger
+                                    type="primary"
+                                    className="remove-button"
+                                    key={`botao_${segment.thumbnail?.url}`}
+                                    onClick={evt =>
+                                      onDeleteSegment(evt, segmentIndex)
+                                    }
+                                  />,
+                                ]
+                              : [
+                                  <Button
+                                    icon={<DeleteOutlined />}
+                                    shape="circle"
+                                    type="primary"
+                                    danger
+                                    onClick={evt =>
+                                      onDeleteSegment(evt, segmentIndex)
+                                    }
+                                  />,
+                                  <div>No Thumbnail</div>,
+                                ]}
+                          </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
-                );
-              }}
-            </Form.Item>
-            <Button
-              htmlType="button"
-              style={{ margin: '8px 0px 80px 8px' }}
-              onClick={onAddSegment}
-            >
-              Add Segment
-            </Button>
+                    );
+                  }}
+                </Form.Item>
+                <Button
+                  htmlType="button"
+                  style={{ margin: '8px 0px 80px 8px' }}
+                  onClick={() => onAddSegment()}
+                >
+                  Add Segment
+                </Button>
+                <Button
+                  htmlType="button"
+                  style={{ margin: '8px 0px 80px 8px' }}
+                  onClick={() =>
+                    onAddSegment(
+                      true,
+                      feedForm.getFieldValue('package')[
+                        feedForm.getFieldValue('package').length - 1
+                      ]
+                    )
+                  }
+                >
+                  Add Watermark Video
+                </Button>
+              </Col>
+            </Row>
           </Tabs.TabPane>
           <Tabs.TabPane forceRender tab="Listing" key="Listing">
             <Form.Item name="selectedOption" initialValue={selectedOptions}>
