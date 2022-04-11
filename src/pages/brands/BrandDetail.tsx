@@ -537,7 +537,52 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                         },
                       ]}
                     >
-                      <InputNumber />
+                      <InputNumber
+                        pattern="^(?:100|\d{1,2})(?:.\d{1,2})?$"
+                        title="positive integers"
+                        min={0}
+                        max={100}
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={8} xs={8}>
+                    <Form.Item
+                      name="creatorPercentage"
+                      label="Creator %"
+                      rules={[
+                        {
+                          required: true,
+                          message: `Creator Percentage is required.`,
+                        },
+                      ]}
+                    >
+                      <InputNumber
+                        pattern="^(?:100|\d{1,2})(?:.\d{1,2})?$"
+                        title="positive integers"
+                        min={0}
+                        max={100}
+                      />
+                    </Form.Item>
+                  </Col>
+                </Row>
+                <Row gutter={4}>
+                  <Col lg={8} xs={8}>
+                    <Form.Item
+                      name="maxDiscoDollarPercentage"
+                      label="Max Disco Dollar %"
+                      rules={[
+                        {
+                          required: true,
+                          message: `'Max Disco Dollar percentage' is required.`,
+                        },
+                      ]}
+                    >
+                      <InputNumber
+                        pattern="^(?:100|\d{1,2})(?:.\d{1,2})?$"
+                        title="positive integers"
+                        min={0}
+                        max={100}
+                      />
                     </Form.Item>
                   </Col>
                   <Col lg={8} xs={8}>
