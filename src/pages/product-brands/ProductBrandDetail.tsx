@@ -3,6 +3,7 @@ import {
   Col,
   Form,
   Input,
+  InputNumber,
   message,
   PageHeader,
   Row,
@@ -98,6 +99,69 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                     <Form.Item label="External Code" name="externalCode">
                       <Input />
                     </Form.Item>
+                  </Col>
+                  <Col>
+                    <Row gutter={4}>
+                      <Col lg={8} xs={8}>
+                        <Form.Item
+                          name="discoPercentage"
+                          label="Disco Percentage %"
+                          rules={[
+                            {
+                              required: true,
+                              message: `Disco Percentage is required.`,
+                            },
+                          ]}
+                        >
+                          <InputNumber
+                            pattern="^(?:100|\d{1,2})(?:.\d{1,2})?$"
+                            title="positive integers"
+                            min={0}
+                            max={100}
+                          />
+                        </Form.Item>
+                      </Col>
+                      <Col lg={8} xs={8}>
+                        <Form.Item
+                          name="creatorPercentage"
+                          label="Creator %"
+                          rules={[
+                            {
+                              required: true,
+                              message: `Creator Percentage is required.`,
+                            },
+                          ]}
+                        >
+                          <InputNumber
+                            pattern="^(?:100|\d{1,2})(?:.\d{1,2})?$"
+                            title="positive integers"
+                            min={0}
+                            max={100}
+                          />
+                        </Form.Item>
+                      </Col>
+                    </Row>
+                    <Row gutter={4}>
+                      <Col lg={8} xs={8}>
+                        <Form.Item
+                          name="maxDiscoDollarPercentage"
+                          label="Max Disco Dollar %"
+                          rules={[
+                            {
+                              required: true,
+                              message: `'Max Disco Dollar percentage' is required.`,
+                            },
+                          ]}
+                        >
+                          <InputNumber
+                            pattern="^(?:100|\d{1,2})(?:.\d{1,2})?$"
+                            title="positive integers"
+                            min={0}
+                            max={100}
+                          />
+                        </Form.Item>
+                      </Col>
+                    </Row>
                   </Col>
                   <Col lg={24} xs={24}>
                     <Form.Item
