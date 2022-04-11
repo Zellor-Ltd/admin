@@ -35,4 +35,6 @@ export interface Brand {
   selectedLogo?: 'whiteLogo' | 'colourLogo' | 'blackLogo' | 'brandName' | '';
   brandTxtColor?: string;
   brandCardUrl?: string;
+  checkoutType: string;
+  externalCheckoutType: string;
 }
