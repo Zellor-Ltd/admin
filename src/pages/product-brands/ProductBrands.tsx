@@ -99,6 +99,27 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
       align: 'center',
     },
     {
+      title: 'D%',
+      dataIndex: 'discoPercentage',
+      width: '10%',
+      align: 'center',
+      render: (value: string) => <a href="#">{value}</a>,
+    },
+    {
+      title: 'C%',
+      dataIndex: 'creatorPercentage',
+      width: '10%',
+      align: 'center',
+      render: (value: string) => <a href="#">{value}</a>,
+    },
+    {
+      title: 'DD%',
+      dataIndex: 'maxDiscoDollarPercentage',
+      width: '10%',
+      align: 'center',
+      render: (value: string) => <a href="#">{value}</a>,
+    },
+    {
       title: 'Name',
       dataIndex: 'brandName',
       width: '20%',
@@ -209,7 +230,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
               </Button>,
             ]}
           />
-          <Row gutter={8}>
+          <Row className="sticky-filter-box" gutter={8}>
             <Col lg={8} xs={16}>
               <SearchFilter
                 filterFunction={searchFilterFunction}

@@ -23,6 +23,7 @@ import { Role } from 'interfaces/Role';
 import { Tag } from 'interfaces/Tag';
 import { User } from 'interfaces/User';
 import { Banner } from 'interfaces/Banner';
+import { VideoType } from 'interfaces/VideoType';
 
 export const instance = axios.create({
   baseURL: process.env.REACT_APP_HOST_ENDPOINT,
@@ -126,6 +127,7 @@ export const fetchVideoFeedV2 = ({
   brandId,
   categoryId,
   startIndex,
+  page = 0,
 }: {
   query: string | undefined;
   status: string | undefined;
@@ -134,8 +136,9 @@ export const fetchVideoFeedV2 = ({
   brandId: string | undefined;
   categoryId: string | undefined;
   startIndex: number;
-}) =>
-  instance.put('Disco/Feed/Adm/List', {
+  page: number;
+} & Pagination) =>
+  instance.put(`Disco/Feed/Adm/List/${page}`, {
     query,
     status,
     videoType,
@@ -313,6 +316,8 @@ export const fetchCreators = () => instance.get('Wi/Ep/ListCreators');
 
 export const fetchUsers = () => instance.get('Wi/Ep/ListUsers');
 
+export const resetUser = (id: string)  => instance.get(`Disco/Identity/ResetUser/${id}`);
+
 export const fetchFans = ({page = 0, query}:{page: number, query?: string}) => instance.post(`Disco/Identity/Adm/Fans/List/${page}/`, {
   query
 });
@@ -334,7 +339,19 @@ export const fetchSettings = () => instance.get('Wi/Ep/GetSettings');
 export const fetchPrivileges = (profile: string) =>
   instance.put('Wi/Ep/ListPrivileges', { profile });
 
-export const fetchOrders = (page: number) => instance.get(`Disco/Orders/Adm/List/${page}`);
+export const fetchOrders = ({
+  page = 0,
+  brandId,
+  userId,
+}: {
+  page: number;
+  brandId?: string;
+  userId?: string;
+}) =>
+  instance.post(`Disco/Orders/Adm/List/${page}`, {
+    brandId,
+    userId,
+  });
 
 export const fetchWalletTransactions = (userId: string) =>
   instance.put('Wi/Ep/GetWalletTransactions', { userId });
@@ -345,7 +362,13 @@ export const fetchUserFeed = (userId: string) =>
 export const fetchGroupFeed = (groupId: string) =>
   instance.get(`Disco/Feed/GetGroup/${groupId}`);
 
-export const fetchPromoCodes = () => instance.get('Wi/Ep/ListPromoCodes');
+  export const fetchPromoCodes = () => instance.get('Wi/Ep/ListPromoCodes');
+
+  export const fetchVideoTypes = () => instance.get('Wi/Ep/ListVideoTypes');
+
+export const saveVideoType = (params: VideoType) => {
+    return instance.put('Disco/Feed/Add', params);
+};
 
 export const fetchPromotions = () => instance.get('Wi/Ep/ListPromotions');
 

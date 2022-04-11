@@ -54,6 +54,7 @@ interface VideoFeedDetailProps {
   influencers: Creator[];
   productBrands: ProductBrand[];
   isFetchingProductBrand: boolean;
+  setDetails?: (boolean) => void;
 }
 
 const prouctBrandMapping: SelectOption = {
@@ -83,6 +84,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
   influencers,
   productBrands,
   isFetchingProductBrand,
+  setDetails,
 }) => {
   const {
     settings: { language = [] },
@@ -200,8 +202,9 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
       return segment;
     });
 
-    const { result } = await doRequest(() => saveVideoFeed(item));
-    item.id ? onSave?.(item) : onSave?.({ ...item, id: result });
+    const response = await doRequest(() => saveVideoFeed(item));
+    item.id ? onSave?.(item) : onSave?.({ ...item, id: response.result });
+    if (!response.result) setDetails?.(false);
   };
 
   const onDeleteSegment = (evt: any, index: number) => {
@@ -305,6 +308,8 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
   const loadOptions = entity => {
     const iconOptions: any[] = [];
 
+    if (entity.brandLogo)
+      iconOptions.push({ label: 'Round', value: entity.brandLogo.url });
     if (entity.whiteLogo)
       iconOptions.push({ label: 'White', value: entity.whiteLogo.url });
     if (entity.blackLogo)
@@ -437,7 +442,11 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
               </Col>
               <Col lg={12} xs={24}>
                 <Form.Item name="language" label="Language">
-                  <Select placeholder="Please select a language">
+                  <Select
+                    placeholder="Please select a language"
+                    disabled={!language.length}
+                    defaultValue="English"
+                  >
                     {language.map((lang: any) => (
                       <Select.Option key={lang.value} value={lang.value}>
                         {lang.name}

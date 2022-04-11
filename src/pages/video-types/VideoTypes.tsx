@@ -7,24 +7,25 @@ import { FanGroup } from 'interfaces/FanGroup';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
-import { fetchFanGroups } from 'services/DiscoClubService';
+import { fetchVideoTypes } from 'services/DiscoClubService';
 import scrollIntoView from 'scroll-into-view';
-import FanGroupDetail from './FanGroupDetail';
+import VideoTypeDetail from './VideoTypeDetail';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import { VideoType } from 'interfaces/VideoType';
 
-const FanGroups: React.FC<RouteComponentProps> = props => {
+const VideoTypes: React.FC<RouteComponentProps> = props => {
   const [loading, setLoading] = useState<boolean>(false);
   const { doFetch } = useRequest({ setLoading });
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
   const [details, setDetails] = useState<boolean>(false);
-  const [currentFanGroup, setCurrentFanGroup] = useState<FanGroup>();
+  const [currentVideoType, setCurrentVideoType] = useState<FanGroup>();
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
-  const [filteredFanGroups, setFilteredFanGroups] = useState<FanGroup[]>([]);
+  const [filteredVideoTypes, setFilteredVideoTypes] = useState<VideoType[]>([]);
 
   const {
-    setArrayList: setFanGroups,
+    setArrayList: setVideoTypes,
     filteredArrayList: filteredContent,
     addFilterFunction,
     removeFilterFunction,
@@ -36,33 +37,30 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
   }, []);
 
   const getResources = async () => {
-    await getFanGroups();
+    await getVideoTypes();
   };
 
-  const getFanGroups = async () => {
-    const { results } = await doFetch(fetchFanGroups);
-    setFanGroups(results);
+  const getVideoTypes = async () => {
+    const { results } = await doFetch(fetchVideoTypes);
+    setVideoTypes(results);
     setRefreshing(true);
   };
 
   const fetchData = () => {
-    if (!filteredContent.length) {
-      setEof(true);
-      return;
-    }
+    if (!filteredContent.length) return;
 
     const pageToUse = refreshing ? 0 : page;
     const results = filteredContent.slice(pageToUse * 10, pageToUse * 10 + 10);
 
     setPage(pageToUse + 1);
-    setFilteredFanGroups(prev => [...prev.concat(results)]);
+    setFilteredVideoTypes(prev => [...prev.concat(results)]);
 
     if (results.length < 10) setEof(true);
   };
 
   useEffect(() => {
     if (refreshing) {
-      setFilteredFanGroups([]);
+      setFilteredVideoTypes([]);
       setEof(false);
       fetchData();
       setRefreshing(false);
@@ -79,15 +77,15 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
     }
   }, [details]);
 
-  const editFanGroup = (index: number, fanGroup?: FanGroup) => {
+  const editFanGroup = (index: number, videoType?: FanGroup) => {
     setLastViewedIndex(index);
-    setCurrentFanGroup(fanGroup);
+    setCurrentVideoType(videoType);
     setDetails(true);
   };
 
   const columns: ColumnsType<FanGroup> = [
     {
-      title: 'Group Name',
+      title: 'Name',
       dataIndex: 'name',
       width: '20%',
     },
@@ -107,29 +105,29 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
 
   const searchFilterFunction = (filterText: string) => {
     if (!filterText) {
-      removeFilterFunction('fanGroupName');
+      removeFilterFunction('name');
       setRefreshing(true);
       return;
     }
-    addFilterFunction('fanGroupName', fanGroups =>
-      fanGroups.filter(fanGroup =>
-        fanGroup.name.toUpperCase().includes(filterText.toUpperCase())
+    addFilterFunction('name', videoTypes =>
+      videoTypes.filter(videoType =>
+        videoType.name.toUpperCase().includes(filterText.toUpperCase())
       )
     );
     setRefreshing(true);
   };
 
   const refreshItem = (record: FanGroup) => {
-    filteredFanGroups[lastViewedIndex] = record;
-    setFanGroups([...filteredFanGroups]);
+    filteredVideoTypes[lastViewedIndex] = record;
+    setVideoTypes([...filteredVideoTypes]);
   };
 
-  const onSaveFanGroup = (record: FanGroup) => {
+  const onSaveVideoType = (record: FanGroup) => {
     refreshItem(record);
     setDetails(false);
   };
 
-  const onCancelFanGroup = () => {
+  const onCancelVideoType = () => {
     setDetails(false);
   };
 
@@ -138,12 +136,12 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
       {!details && (
         <div>
           <PageHeader
-            title="Fan Groups"
-            subTitle="List of Fan Groups"
+            title="Video Types"
+            subTitle="List of Video Types"
             extra={[
               <Button
                 key="1"
-                onClick={() => editFanGroup(filteredFanGroups.length)}
+                onClick={() => editFanGroup(filteredVideoTypes.length)}
               >
                 New Item
               </Button>,
@@ -158,7 +156,7 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
             </Col>
           </Row>
           <InfiniteScroll
-            dataLength={filteredFanGroups.length}
+            dataLength={filteredVideoTypes.length}
             next={fetchData}
             hasMore={!eof}
             loader={
@@ -178,7 +176,7 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
               rowClassName={(_, index) => `scrollable-row-${index}`}
               rowKey="id"
               columns={columns}
-              dataSource={filteredFanGroups}
+              dataSource={filteredVideoTypes}
               loading={loading || refreshing}
               pagination={false}
             />
@@ -186,14 +184,14 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
         </div>
       )}
       {details && (
-        <FanGroupDetail
-          fanGroup={currentFanGroup}
-          onSave={onSaveFanGroup}
-          onCancel={onCancelFanGroup}
+        <VideoTypeDetail
+          videoType={currentVideoType}
+          onSave={onSaveVideoType}
+          onCancel={onCancelVideoType}
         />
       )}
     </>
   );
 };
 
-export default FanGroups;
+export default VideoTypes;

@@ -21,6 +21,7 @@ import {
   LineChartOutlined,
   UserAddOutlined,
   FolderAddOutlined,
+  ToolOutlined,
 } from '@ant-design/icons';
 import { Menu } from 'antd';
 import SubMenu from 'antd/lib/menu/SubMenu';
@@ -107,6 +108,9 @@ const AdminSideMenu = () => {
         </Menu.Item> */}
       </SubMenu>
       <SubMenu key="settings" icon={<SettingOutlined />} title="Settings">
+        <Menu.Item key="settings_data-management" icon={<ToolOutlined />}>
+          <Link to="/settings_data-management">Data Management</Link>
+        </Menu.Item>
         <Menu.Item key="settings_endpoints" icon={<CloudServerOutlined />}>
           <Link to="/settings_endpoints">Endpoints</Link>
         </Menu.Item>

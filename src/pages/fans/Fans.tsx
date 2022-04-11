@@ -230,9 +230,24 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
     setDetails(false);
   };
 
-  const onChangeFan = async (value: string, _selectedFan?: any) => {
-    setSearchFilter(_selectedFan.name);
+  const findFanInfo = (id: string, option: any) => {
+    let index: any = undefined;
+    while (!index) {
+      fetchData();
+      index = fans.find(item => item.user === option) ?? undefined;
+      break;
+    }
+    const fan = fans.find(item => (item.id = id));
+    return { index, fan };
+  };
+
+  const onChangeFan = async (value: string, option?: any) => {
+    setSearchFilter(option.name);
     getResources();
+    if (option) {
+      const { index, fan } = findFanInfo(value, option);
+      editFan(index, fan);
+    }
   };
 
   const onSearch = (value: string) => {
@@ -253,7 +268,11 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
               </Button>,
             ]}
           />
-          <Row align="bottom" justify="space-between">
+          <Row
+            align="bottom"
+            justify="space-between"
+            className={'sticky-filter-box'}
+          >
             <Col lg={16} xs={24}>
               <Row gutter={8}>
                 <Col lg={8} xs={16}>

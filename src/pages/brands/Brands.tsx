@@ -248,13 +248,25 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
       ),
     },
     {
-      title: 'Disco %',
+      title: 'D%',
       dataIndex: 'discoPercentage',
-      width: '12%',
+      width: '10%',
       align: 'center',
-      responsive: ['sm'],
-      // editable: true,
-      // number: true,
+      render: (value: string) => <a href="#">{value}</a>,
+    },
+    {
+      title: 'C%',
+      dataIndex: 'creatorPercentage',
+      width: '10%',
+      align: 'center',
+      render: (value: string) => <a href="#">{value}</a>,
+    },
+    {
+      title: 'DD%',
+      dataIndex: 'maxDiscoDollarPercentage',
+      width: '10%',
+      align: 'center',
+      render: (value: string) => <a href="#">{value}</a>,
     },
     {
       title: 'Status',
@@ -317,7 +329,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
               </Button>,
             ]}
           />
-          <div style={{ marginBottom: '16px' }}>
+          <div className="sticky-filter-box" style={{ marginBottom: '16px' }}>
             <Row>
               <Col lg={12} xs={24}>
                 <Typography.Title level={5} title="Search">

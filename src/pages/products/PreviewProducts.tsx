@@ -416,6 +416,13 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
       align: 'center',
     },
     {
+      title: 'Import Run Id',
+      dataIndex: 'importRunId',
+      width: '7%',
+      align: 'center',
+      responsive: ['sm'],
+    },
+    {
       title: 'Product Brand',
       dataIndex: ['productBrand'],
       width: '12%',
@@ -708,7 +715,11 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
               </Button>,
             ]}
           />
-          <Row align="bottom" justify="space-between" className="mb-1">
+          <Row
+            align="bottom"
+            justify="space-between"
+            className="mb-1 sticky-filter-box"
+          >
             <Col lg={16} xs={24}>
               <Row gutter={[8, 8]}>
                 <Col lg={6} xs={24}>
