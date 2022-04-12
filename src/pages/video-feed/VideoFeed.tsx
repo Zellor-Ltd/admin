@@ -290,6 +290,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
 
   const fetch = async () => {
     try {
+      setPage(0);
       const { results }: any = await doFetch(() =>
         fetchVideoFeedV2({
           query: titleFilter,
