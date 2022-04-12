@@ -241,7 +241,9 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
             <Col lg={16} xs={24}>
               <Row gutter={8}>
                 <Col lg={8} xs={16}>
-                  <Typography.Title level={5}>Search Guest</Typography.Title>
+                  <Typography.Title level={5}>
+                    Search by Guest e-mail
+                  </Typography.Title>
                   <AutoComplete
                     style={{ width: '100%' }}
                     options={options}

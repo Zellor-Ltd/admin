@@ -38,6 +38,7 @@ import FanDetail from 'pages/fans/FanDetail';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useMount } from 'react-use';
 import { useRequest } from 'hooks/useRequest';
+import { identity } from 'lodash';
 
 const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -54,10 +55,8 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
-  const [filteredOrders, setFilteredOrders] = useState<Order[]>([]);
   const [ordersSettings, setOrdersSettings] = useState([]);
   const { doFetch } = useRequest({ setLoading });
-  const [searchFilter, setSearchFilter] = useState<string>();
   const [selectedFan, setSelectedFan] = useState<Fan>();
   const [fanFilter, setFanFilter] = useState<string>();
   const [brandFilter, setBrandFilter] = useState<string>();
@@ -68,7 +67,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   const {
     arrayList: orders,
     setArrayList: setOrders,
-    filteredArrayList: filteredContent,
+    filteredArrayList: filteredOrders,
     addFilterFunction,
     removeFilterFunction,
   } = useFilter<Order>([]);
@@ -91,52 +90,22 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   });
 
   const fetch = async () => {
-    setLoading(true);
-    const orders: Order[] = await getValidOrders();
-    const ordersWithFanName = orders.map(order => {
-      order.fanName = selectedFan?.user;
-      return order;
-    });
-    setOrders(ordersWithFanName);
-    setRefreshing(true);
-    setLoaded(true);
-    setLoading(false);
-  };
-
-  const getValidOrders = async () => {
     const { results }: any = await fetchOrders({
       page: page,
       brandId: brandFilter,
       userId: fanFilter,
     });
-    const orders = results.filter(
+    const validOrders = results.filter(
       (order: Order) => !!(order.product || order.cart)
     );
-    return orders;
+    setOrders(prev => [...prev.concat(validOrders)]);
+    if (validOrders.length < 10) setEof(true);
+    setLoaded(true);
   };
 
-  useEffect(() => {
-    if (refreshing) {
-      setFilteredOrders([]);
-      setEof(false);
-      fetchData();
-      setRefreshing(false);
-    }
-  }, [refreshing]);
-
-  const fetchData = async () => {
-    if (!filteredContent.length) {
-      setEof(true);
-      return;
-    }
-
-    const pageToUse = refreshing ? 0 : page;
-    const results = filteredContent.slice(pageToUse * 10, pageToUse * 10 + 10);
-
-    setPage(pageToUse + 1);
-    setFilteredOrders(prev => [...prev.concat(results)]);
-
-    if (results.length < 10) setEof(true);
+  const loadNext = async () => {
+    if (loaded) setPage(prev => prev + 1);
+    fetch();
   };
 
   const handleSearch = (selectedKeys: any, confirm: any, dataIndex: any) => {
@@ -191,7 +160,9 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     setRefreshing(true);
   };
 
-  const getFan = (fanId: string) => fans.find(fan => fan.id === fanId);
+  const getFan = (fanId: string) => {
+    return fans.find(fan => fan.id === fanId);
+  };
 
   useEffect(() => {
     if (!details) {
@@ -412,20 +383,19 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     }
   }, [setOrders]);
 
-  const onChangeBrand = async (_selectedBrand: Brand | undefined) => {
-    setBrandFilter(_selectedBrand?.id);
-    setRefreshing(true);
+  const onChangeBrand = async (id: string | undefined) => {
+    setBrandFilter(id);
+    fetch();
+  };
+
+  const onChangeFan = async (value: string) => {
+    setFanFilter(value);
+    fetch();
   };
 
   const onSearch = (value: string) => {
-    setSearchFilter(value);
+    setFanFilter(value);
     getFans();
-  };
-
-  const onChangeFan = async (value: string, _selectedFan: any) => {
-    setSelectedFan(_selectedFan);
-    setFanFilter(_selectedFan?.id);
-    setRefreshing(true);
   };
 
   const onSaveFan = (record: Fan) => {
@@ -440,20 +410,11 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     const response = await doFetch(() =>
       fetchFans({
         page: 0,
-        query: searchFilter,
+        query: fanFilter,
       })
     );
 
-    const optionFactory = (option: any) => {
-      return {
-        label: option[fanOptionsMapping.label],
-        value: option[fanOptionsMapping.value],
-        key: option[fanOptionsMapping.value],
-      };
-    };
-
     setFans(response.results);
-    setOptions(response.results.map(optionFactory));
   };
 
   return (
@@ -472,7 +433,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
                   <Typography.Title level={5}>Master Brand</Typography.Title>
                   <SimpleSelect
                     data={brands}
-                    onChange={(_, brand) => onChangeBrand(brand)}
+                    onChange={id => onChangeBrand(id)}
                     style={{ width: '100%' }}
                     selectedOption={''}
                     optionsMapping={optionsMapping}
@@ -489,7 +450,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
                     options={options}
                     onSelect={onChangeFan}
                     onSearch={onSearch}
-                    placeholder="Type to search a fan"
+                    placeholder="Search by fan e-mail"
                   />
                 </Col>
               </Row>
@@ -510,7 +471,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
           </Row>
           <InfiniteScroll
             dataLength={filteredOrders.length}
-            next={fetchData}
+            next={loadNext}
             hasMore={!eof}
             loader={
               page !== 0 && (
