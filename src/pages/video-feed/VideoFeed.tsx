@@ -475,7 +475,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       {!details && (
         <div className="video-feed mb-1">
           <PageHeader
-            title="Video feed update"
+            title="Video Feeds"
             subTitle="List of Feeds"
             extra={[
               <Button
