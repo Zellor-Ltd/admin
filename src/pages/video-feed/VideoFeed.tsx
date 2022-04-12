@@ -41,7 +41,6 @@ import { Category } from 'interfaces/Category';
 import { Creator } from 'interfaces/Creator';
 import './VideoFeed.scss';
 import './VideoFeedDetail.scss';
-import scrollIntoView from 'scroll-into-view';
 import SimpleSelect from 'components/select/SimpleSelect';
 import { SelectOption } from '../../interfaces/SelectOption';
 import VideoFeedDetailV2 from './VideoFeedDetailV2';
@@ -50,7 +49,6 @@ import {
   videoTypeList,
 } from '../../components/select/select.utils';
 import { ProductBrand } from '../../interfaces/ProductBrand';
-import InfiniteScroll from 'react-infinite-scroll-component';
 import { useRequest } from 'hooks/useRequest';
 import useFilter from 'hooks/useFilter';
 
@@ -77,9 +75,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const [productBrands, setProductBrands] = useState([]);
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
   const [loaded, setLoaded] = useState<boolean>(false);
-  const [page, setPage] = useState<number>(0);
-  const [eof, setEof] = useState<boolean>(false);
-  const [refreshing, setRefreshing] = useState<boolean>(false);
   const [filteredVideoFeeds, setFilteredVideoFeeds] = useState<any[]>([]);
   const { doFetch } = useRequest({ setLoading });
   const shouldUpdateFeedItemIndex = useRef(false);
@@ -91,10 +86,10 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   // Filter state
   const [statusFilter, setStatusFilter] = useState<string>();
   const [brandFilter, setBrandFilter] = useState<Brand>();
-  const [productBrandFilter, setProductBrandFilter] = useState<ProductBrand>();
-  const [categoryFilter, setCategoryFilter] = useState<Category>();
+  const [productBrandFilter, setProductBrandFilter] = useState<string>();
   const [videoTypeFilter, setVideoTypeFilter] = useState<string>();
   const [titleFilter, setTitleFilter] = useState<string>();
+  const [categoryFilter, setCategoryFilter] = useState<string>('');
 
   const {
     setArrayList: setFeedItems,
@@ -131,105 +126,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     key: 'value',
     label: 'value',
     value: 'value',
-  };
-
-  useEffect(() => {
-    if (refreshing) {
-      setFilteredVideoFeeds([]);
-      setEof(false);
-      fetchData();
-      setRefreshing(false);
-    }
-  }, [refreshing]);
-
-  const fetchData = async () => {
-    if (!filteredContent.length) {
-      setEof(true);
-      return;
-    }
-
-    const pageToUse = refreshing ? 0 : page;
-    const results = filteredContent.slice(pageToUse * 10, pageToUse * 10 + 10);
-
-    setPage(pageToUse + 1);
-    setFilteredVideoFeeds(prev => [...prev.concat(results)]);
-
-    if (results.length < 10) setEof(true);
-  };
-
-  const onChangeStatus = async (_status?: string) => {
-    if (!_status) {
-      removeFilterFunction('status');
-      setRefreshing(true);
-      return;
-    }
-    if (filteredContent.length) setFilteredVideoFeeds(filteredContent);
-    addFilterFunction('status', items =>
-      items.filter(feedItem => feedItem.status === _status)
-    );
-    setStatusFilter(_status);
-    setRefreshing(true);
-  };
-
-  const onChangeVideoType = async (_videoType?: string) => {
-    if (!_videoType) {
-      removeFilterFunction('videotype');
-      setRefreshing(true);
-      return;
-    }
-    if (filteredContent.length) setFilteredVideoFeeds(filteredContent);
-    addFilterFunction('videoType', items =>
-      items.filter(feedItem => feedItem.videoType?.includes(_videoType))
-    );
-    setVideoTypeFilter(_videoType);
-    setRefreshing(true);
-  };
-
-  const onChangeProductBrand = async (
-    _productBrandId?: string,
-    _productBrand?: ProductBrand
-  ) => {
-    if (!_productBrandId) {
-      removeFilterFunction('id');
-      setRefreshing(true);
-      return;
-    }
-    if (filteredContent.length) setFilteredVideoFeeds(filteredContent);
-    addFilterFunction('id', items =>
-      items.filter(feedItem => feedItem.id === _productBrandId)
-    );
-    setProductBrandFilter(_productBrand);
-    setRefreshing(true);
-  };
-
-  const onChangeCategory = async (
-    _categoryid?: string,
-    _category?: Category
-  ) => {
-    if (!_categoryid) {
-      removeFilterFunction('id');
-      setRefreshing(true);
-      return;
-    }
-    if (filteredContent.length) setFilteredVideoFeeds(filteredContent);
-    addFilterFunction('id', items =>
-      items.filter(feedItem => feedItem.category === _categoryid)
-    );
-    setCategoryFilter(_category);
-    setRefreshing(true);
-  };
-
-  const onChangeStartIndex = async (_startIndex?: number) => {
-    if (!_startIndex) {
-      removeFilterFunction('index');
-      setRefreshing(true);
-      return;
-    }
-    if (filteredContent.length) setFilteredVideoFeeds(filteredContent);
-    addFilterFunction('index', items =>
-      items.filter(feedItem => feedItem.index === _startIndex)
-    );
-    setRefreshing(true);
   };
 
   const feedItemColumns: ColumnsType<FeedItem> = [
@@ -356,34 +252,18 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     segmentForm.setFieldsValue(selectedVideoFeed);
   }, [selectedVideoFeed]);
 
-  useEffect(() => {
-    if (!details) {
-      scrollIntoView(
-        document.querySelector(
-          `.scrollable-row-${lastViewedIndex}`
-        ) as HTMLElement
-      );
-    }
-  }, [details]);
-
   const fetch = async () => {
     try {
-      setPage(0);
       const { results }: any = await doFetch(() =>
         fetchVideoFeedV2({
           query: titleFilter,
           brandId: brandFilter?.id,
+          status: statusFilter?.toLowerCase(),
+          videoType: videoTypeFilter,
+          productBrandId: productBrandFilter,
         })
       );
       setFeedItems(results);
-      if (statusFilter) onChangeStatus(statusFilter);
-      // TODO convert these into calls
-      // const [brandFilter, setBrandFilter] = useState<Brand>();
-      // const [productBrandFilter, setProductBrandFilter] = useState<ProductBrand>();
-      // const [categoryFilter, setCategoryFilter] = useState<Category>();
-      // const [videoTypeFilter, setVideoTypeFilter] = useState<string>();
-      // const [titleFilter, setTitleFilter] = useState<string>();
-      setRefreshing(true);
       setLoaded(true);
     } catch (error) {
       message.error('Error to get feed');
@@ -421,10 +301,34 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     ]);
   };
 
+  const onChangeCategory = (_category?: string, _entity?: any) => {
+    if (!_entity) {
+      removeFilterFunction('category');
+      setCategoryFilter('');
+      return;
+    }
+    addFilterFunction('category', items =>
+      items.filter(
+        item => item.category.toLowerCase() === _entity.name.toLowerCase()
+      )
+    );
+
+    setCategoryFilter(_entity.name);
+  };
+
+  const onChangeStartIndex = (_startIndex?: number) => {
+    if (!_startIndex) {
+      removeFilterFunction('index');
+      return;
+    }
+    addFilterFunction('index', items =>
+      items.filter(item => item.index === _startIndex)
+    );
+  };
+
   const deleteItem = async (_id: string, index: number) => {
     await deleteVideoFeed(_id);
     setFeedItems(prev => [...prev.slice(0, index), ...prev.slice(index + 1)]);
-    setRefreshing(true);
   };
 
   const refreshItem = (record: FeedItem) => {
@@ -434,7 +338,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     } else {
       setFeedItems([record]);
     }
-    setRefreshing(true);
   };
 
   const onEditFeedItem = (index: number, videoFeed?: FeedItem) => {
@@ -597,11 +500,9 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                   <Typography.Title level={5}>Product Brand</Typography.Title>
                   <SimpleSelect
                     data={productBrands}
-                    onChange={(id, productBrand) =>
-                      onChangeProductBrand(id, productBrand)
-                    }
+                    onChange={id => setProductBrandFilter(id as any)}
                     style={{ width: '100%' }}
-                    selectedOption={productBrandFilter?.id}
+                    selectedOption={productBrandFilter}
                     optionsMapping={productBrandMapping}
                     placeholder={'Select a product brand'}
                     loading={isFetchingProductBrands}
@@ -613,7 +514,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                   <Typography.Title level={5}>Status</Typography.Title>
                   <SimpleSelect
                     data={statusList}
-                    onChange={status => onChangeStatus(status)}
+                    onChange={status => setStatusFilter(status)}
                     style={{ width: '100%' }}
                     selectedOption={statusFilter}
                     optionsMapping={statusMapping}
@@ -625,9 +526,11 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                   <Typography.Title level={5}>Category</Typography.Title>
                   <SimpleSelect
                     data={categories}
-                    onChange={(id, category) => onChangeCategory(id, category)}
+                    onChange={(name, category) =>
+                      onChangeCategory(name as any, category as any)
+                    }
                     style={{ width: '100%' }}
-                    selectedOption={categoryFilter?.id}
+                    selectedOption={categoryFilter}
                     optionsMapping={categoryMapping}
                     placeholder={'Select a category'}
                     allowClear={true}
@@ -639,7 +542,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                   <Typography.Title level={5}>Video Type</Typography.Title>
                   <SimpleSelect
                     data={videoTypeList}
-                    onChange={videoType => onChangeVideoType(videoType)}
+                    onChange={videoType => setVideoTypeFilter(videoType)}
                     style={{ width: '100%' }}
                     selectedOption={videoTypeFilter}
                     optionsMapping={videoTypeMapping}
@@ -666,37 +569,16 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
             </Col>
           </Row>
           <Content>
-            <InfiniteScroll
-              dataLength={filteredVideoFeeds.length}
-              next={fetchData}
-              hasMore={!eof}
-              loader={
-                page !== 0 && (
-                  <div className="scroll-message">
-                    <Spin />
-                  </div>
-                )
+            <Table
+              rowClassName={(_, index) =>
+                `${index === lastViewedIndex ? 'selected-row' : ''}`
               }
-              endMessage={
-                <div className="scroll-message">
-                  <b>End of results.</b>
-                </div>
-              }
-            >
-              <Table
-                rowClassName={(_, index) =>
-                  `scrollable-row-${index} ${
-                    index === lastViewedIndex ? 'selected-row' : ''
-                  }`
-                }
-                size="small"
-                columns={feedItemColumns}
-                rowKey="id"
-                dataSource={filteredVideoFeeds}
-                loading={loading || refreshing}
-                pagination={false}
-              />
-            </InfiniteScroll>
+              size="small"
+              columns={feedItemColumns}
+              rowKey="id"
+              dataSource={filteredContent}
+              loading={loading}
+            />
           </Content>
         </div>
       )}
