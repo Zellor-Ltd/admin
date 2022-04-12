@@ -5,33 +5,21 @@ import {
   EditOutlined,
   SearchOutlined,
 } from '@ant-design/icons';
-import {
-  Button,
-  Col,
-  PageHeader,
-  Popconfirm,
-  Row,
-  Spin,
-  Table,
-  Tag,
-} from 'antd';
+import { Button, Col, PageHeader, Popconfirm, Row, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
 import { SearchFilter } from 'components/SearchFilter';
 import useFilter from 'hooks/useFilter';
 import { Creator } from 'interfaces/Creator';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import {
   deleteCreator,
   fetchCreators,
   saveCreator,
 } from 'services/DiscoClubService';
-import scrollIntoView from 'scroll-into-view';
 import CreatorDetail from './CreatorDetail';
 import { useRequest } from 'hooks/useRequest';
-import InfiniteScroll from 'react-infinite-scroll-component';
-import { Image } from '../../interfaces/Image';
 
 const tagColorByStatus: any = {
   approved: 'green',
@@ -46,11 +34,8 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
   const [currentCreator, setCurrentCreator] = useState<Creator>();
   const { doFetch } = useRequest({ setLoading });
   const [loaded, setLoaded] = useState<boolean>(false);
-  const [page, setPage] = useState<number>(0);
-  const [eof, setEof] = useState<boolean>(false);
   const [filteredCreators, setFilteredCreators] = useState<Creator[]>([]);
   const timeoutRef = useRef<any>();
-  const [refreshing, setRefreshing] = useState<boolean>(false);
 
   const {
     setArrayList: setCreators,
@@ -60,50 +45,10 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
   } = useFilter<Creator>([]);
 
   const fetch = async () => {
-    setPage(0);
-    setRefreshing(true);
     const { results }: any = await doFetch(fetchCreators);
     setCreators(results);
     setLoaded(true);
-    setRefreshing(true);
   };
-
-  useEffect(() => {
-    if (refreshing) {
-      setFilteredCreators([]);
-      setEof(false);
-      paginateData();
-
-      setRefreshing(false);
-    }
-  }, [refreshing]);
-
-  const paginateData = () => {
-    if (!filteredContent.length) {
-      return;
-    }
-    const pageToUse = refreshing ? 0 : page;
-
-    const results = filteredContent.slice(pageToUse * 10, pageToUse * 10 + 10);
-
-    setFilteredCreators(prev => [...prev.concat(results)]);
-
-    if (results.length < 10) {
-      setEof(true);
-    } else {
-      setPage(pageToUse + 1);
-    }
-  };
-
-  useEffect(() => {
-    if (!details) {
-      scrollIntoView(
-        document.querySelector(
-          `.scrollable-row-${lastViewedIndex}`
-        ) as HTMLElement
-      );
-    }
-  }, [details]);
 
   const editCreator = (index: number, creator?: Creator) => {
     setLastViewedIndex(index);
@@ -191,12 +136,9 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
       console.log(err);
     }
     setLoading(false);
-    setRefreshing(true);
   };
 
   const searchFilterFunction = (filterText: string) => {
-    setPage(0);
-    setEof(false);
     if (timeoutRef.current !== undefined) {
       clearTimeout(timeoutRef.current);
     }
@@ -223,7 +165,6 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
     } else {
       setCreators([record]);
     }
-    setRefreshing(true);
   };
 
   const onSaveCreator = (record: Creator) => {
@@ -287,32 +228,12 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
               <SearchOutlined style={{ color: 'white' }} />
             </Button>
           </Row>
-          <InfiniteScroll
-            dataLength={filteredCreators.length}
-            next={paginateData}
-            hasMore={!eof}
-            loader={
-              page !== 0 && (
-                <div className="scroll-message">
-                  <Spin />
-                </div>
-              )
-            }
-            endMessage={
-              <div className="scroll-message">
-                <b>End of results.</b>
-              </div>
-            }
-          >
-            <Table
-              rowClassName={(_, index) => `scrollable-row-${index}`}
-              rowKey="id"
-              columns={columns}
-              dataSource={filteredCreators}
-              loading={loading}
-              pagination={false}
-            />
-          </InfiniteScroll>
+          <Table
+            rowKey="id"
+            columns={columns}
+            dataSource={filteredContent}
+            loading={loading}
+          />
         </div>
       )}
       {details && (
