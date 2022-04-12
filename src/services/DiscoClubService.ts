@@ -121,32 +121,16 @@ export const fetchStartupVideo = () => instance.get('Wi/Ep/GetStartupVideo');
 export const fetchVideoFeed = () => instance.get('Wi/Ep/ListVideoFeed');
 export const fetchVideoFeedV2 = ({
   query,
-  status,
-  videoType,
-  productBrandId,
   brandId,
-  categoryId,
-  startIndex,
-  page = 0,
 }: {
-  query: string | undefined;
-  status: string | undefined;
-  videoType: string | undefined;
-  productBrandId: string | undefined;
-  brandId: string | undefined;
-  categoryId: string | undefined;
-  startIndex: number;
-  page: number;
-} & Pagination) =>
-  instance.put(`Disco/Feed/Adm/List/${page}`, {
+  query?: string;
+  brandId?: string;
+}) =>
+  instance.put(`Disco/Feed/Adm/List/`, {
     query,
-    status,
-    videoType,
-    productBrandId,
     brandId,
-    categoryId,
-    startIndex,
   });
+
 export const fetchVideoFeed2 = () => instance.get('Wi/Ep/GetVideoFeed');
 
 export const fetchProducts = ({
