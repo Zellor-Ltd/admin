@@ -60,6 +60,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
   } = useFilter<Creator>([]);
 
   const fetch = async () => {
+    setPage(0);
     setRefreshing(true);
     const { results }: any = await doFetch(fetchCreators);
     setCreators(results);
