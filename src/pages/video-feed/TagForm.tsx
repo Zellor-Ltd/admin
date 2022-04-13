@@ -1,9 +1,17 @@
 import React, { useState } from 'react';
 
-import { Button, Col, Form, InputNumber, Row, Select } from 'antd';
+import {
+  AutoComplete,
+  Button,
+  Col,
+  Form,
+  InputNumber,
+  Row,
+  Select,
+} from 'antd';
 import { Brand } from 'interfaces/Brand';
 import { Tag } from 'interfaces/Tag';
-import { fetchTags } from '../../services/DiscoClubService';
+import { fetchTags, setPreserveDdTags } from '../../services/DiscoClubService';
 import DebounceSelect from '../../components/select/DebounceSelect';
 import { SelectOption } from '../../interfaces/SelectOption';
 
@@ -19,25 +27,39 @@ const TagForm: React.FC<FormProps> = ({ tag, setShowTagForm, brands }) => {
   );
   const [selectedTag, setSelectedTag] = useState<string>(tag?.tagName || '');
   const [form] = Form.useForm();
+  const [tags, setTags] = useState<any[]>([]);
+  const [filteredTags, setFilteredTags] = useState<any[]>([]);
+
   const tagOptionsMapping: SelectOption = {
     label: 'tagName',
-    value: 'id',
+    value: 'tagName',
     key: 'id',
+  };
+
+  const optionFactory = (option: any) => {
+    return {
+      label: option[tagOptionsMapping.label],
+      value: option[tagOptionsMapping.value],
+      key: option[tagOptionsMapping.value],
+    };
   };
 
   const getTags = async (query: string) => {
     const response: any = await fetchTags({
       query,
       brandId: selectedBrandId,
-      limit: 100,
+      limit: 500,
     });
-    return response.results;
+
+    setTags(response.results);
+    setFilteredTags(response.results.map(optionFactory));
   };
 
-  const onChangeTag = (key: string, selectedTag: Tag) => {
-    setSelectedTag(selectedTag.tagName);
+  const onChangeTag = (key: string, selectedTag: any) => {
+    setSelectedTag(selectedTag.label);
     if (selectedTag) {
-      selectedTag.position = selectedTag.position?.map(position => {
+      const _selectedTag = tags.find(tag => tag.tagName === selectedTag.label);
+      _selectedTag.position = _selectedTag.position?.map(position => {
         return {
           x: position.x ?? form.getFieldValue(['position', 0, 'x']),
           y: position.y ?? form.getFieldValue(['position', 0, 'y']),
@@ -49,16 +71,28 @@ const TagForm: React.FC<FormProps> = ({ tag, setShowTagForm, brands }) => {
             form.getFieldValue(['position', 0, 'startTime']),
         };
       });
+      form.setFieldsValue({ ..._selectedTag });
+      return;
     }
-
-    form.setFieldsValue({ ...selectedTag });
+    form.setFieldsValue({ ...(selectedTag as any) });
   };
 
-  const handleBrandFilter = (value: any) => {
+  const handleBrandFilter = async (value: any) => {
     setSelectedBrandId(value);
     if (value) {
-      form.setFieldsValue({ id: '' });
+      const selectedBrand = brands.find(brand => brand.id === value);
+      form.setFieldsValue({ id: '', brand: selectedBrand });
     }
+    form.setFieldsValue({ tagName: '' });
+  };
+
+  const onSearchTag = (input: string) => {
+    const mappedTags = tags.map(optionFactory);
+    setFilteredTags(
+      mappedTags.filter(tag =>
+        tag.label.toLowerCase().includes(input.toLowerCase())
+      )
+    );
   };
 
   return (
@@ -88,13 +122,15 @@ const TagForm: React.FC<FormProps> = ({ tag, setShowTagForm, brands }) => {
         </Col>
         <Col lg={12} xs={24}>
           <Form.Item name={'tagName'} label="Tag" rules={[{ required: true }]}>
-            <DebounceSelect
-              fetchOptions={getTags}
-              onChange={onChangeTag}
-              optionsMapping={tagOptionsMapping}
+            <AutoComplete
+              onFocus={() => getTags('')}
+              style={{ width: '100%' }}
+              options={filteredTags}
+              onSelect={(_, tag) => onChangeTag(_, tag)}
+              onSearch={onSearchTag}
               placeholder="Type to search a Tag"
-              value={selectedTag}
               disabled={!selectedBrandId}
+              value={selectedTag}
             />
           </Form.Item>
         </Col>
