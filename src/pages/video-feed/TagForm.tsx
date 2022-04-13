@@ -11,8 +11,7 @@ import {
 } from 'antd';
 import { Brand } from 'interfaces/Brand';
 import { Tag } from 'interfaces/Tag';
-import { fetchTags, setPreserveDdTags } from '../../services/DiscoClubService';
-import DebounceSelect from '../../components/select/DebounceSelect';
+import { fetchTags } from '../../services/DiscoClubService';
 import { SelectOption } from '../../interfaces/SelectOption';
 
 interface FormProps {
