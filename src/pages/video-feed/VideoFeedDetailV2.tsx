@@ -1,6 +1,7 @@
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import {
   Button,
+  Checkbox,
   Col,
   DatePicker,
   Form,
@@ -740,6 +741,33 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                 </>
               )}
             </Col>
+          </Tabs.TabPane>
+          <Tabs.TabPane forceRender tab="InstaLinks" key="InstaLinks">
+            <Row gutter={8}>
+              <Col span={4}>
+                <Form.Item name="includeVideo">
+                  <Checkbox>Include Video</Checkbox>
+                </Form.Item>{' '}
+              </Col>
+              <Col lg={24} xs={24}>
+                <Form.Item name="socialPlatform" label="Social Platform">
+                  <RichTextEditor formField="socialPlatform" form={feedForm} />
+                </Form.Item>
+              </Col>
+              <Col span={24}>
+                <Button
+                  type="default"
+                  onClick={() =>
+                    console.log(
+                      'todo: call ep here + populate following fields + store it automatically'
+                    )
+                  }
+                >
+                  Generate link
+                </Button>
+              </Col>
+              //get more details on these two fields here
+            </Row>
           </Tabs.TabPane>
         </Tabs>
         <Row gutter={8} className="mt-1">
