@@ -47,11 +47,10 @@ const TagForm: React.FC<FormProps> = ({ tag, setShowTagForm, brands }) => {
     const response: any = await fetchTags({
       query,
       brandId: selectedBrandId,
-      limit: 500,
+      limit: 30,
     });
 
-    setTags(response.results);
-    setFilteredTags(response.results.map(optionFactory));
+    return response.results;
   };
 
   const onChangeTag = (key: string, selectedTag: any) => {
@@ -86,12 +85,10 @@ const TagForm: React.FC<FormProps> = ({ tag, setShowTagForm, brands }) => {
   };
 
   const onSearchTag = (input: string) => {
-    const mappedTags = tags.map(optionFactory);
-    setFilteredTags(
-      mappedTags.filter(tag =>
-        tag.label.toLowerCase().includes(input.toLowerCase())
-      )
-    );
+    setTimeout(async () => {
+      const validTags = await getTags(input);
+      setFilteredTags((validTags as any).map(optionFactory));
+    }, 500);
   };
 
   return (
