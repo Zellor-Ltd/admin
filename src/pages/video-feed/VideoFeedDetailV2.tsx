@@ -22,6 +22,7 @@ import {
 import { ColumnsType } from 'antd/lib/table';
 import { Upload } from 'components';
 import { RichTextEditor } from 'components/RichTextEditor';
+import CopyIdToClipboard from 'components/CopyIdToClipboard';
 import { formatMoment } from 'helpers/formatMoment';
 import { useRequest } from 'hooks/useRequest';
 import { Brand } from 'interfaces/Brand';
@@ -32,7 +33,7 @@ import { Segment } from 'interfaces/Segment';
 import { Tag } from 'interfaces/Tag';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { saveVideoFeed } from 'services/DiscoClubService';
+import { fetchExternalLink, saveVideoFeed } from 'services/DiscoClubService';
 import BrandForm from './BrandForm';
 import TagForm from './TagForm';
 import './VideoFeed.scss';
@@ -117,7 +118,9 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
   const [videoTab, setVideoTab] = useState<string>('Video Details');
   const [segmentTab, setSegmentTab] = useState<string>('Images');
   const [pageTitle, setPageTitle] = useState<string>('Video Update');
-  const { doRequest } = useRequest({ setLoading });
+  const { doFetch, doRequest } = useRequest({ setLoading });
+  const [links, setLinks] = useState<any[]>([]);
+  const [showLinkTable, setShowLinkTable] = useState<boolean>(false);
 
   useEffect(() => {
     if (feedItem?.selectedOption) {
@@ -345,6 +348,54 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
   const onChangeIcon = selectedIconUrl => {
     setSelectedIconUrl(selectedIconUrl);
     feedForm.setFieldsValue({ selectedIconUrl: selectedIconUrl });
+  };
+
+  const columns: ColumnsType<any> = [
+    {
+      title: 'Link',
+      dataIndex: 'link',
+      width: '6%',
+      render: link => <CopyIdToClipboard id={link} />,
+      align: 'center',
+    },
+    {
+      title: 'Social Platform',
+      dataIndex: 'socialPlatform',
+      width: '12%',
+      align: 'center',
+      render: (value: boolean) =>
+        value ? (
+          <>
+            <Checkbox checked={value} disabled={true} />
+          </>
+        ) : (
+          '-'
+        ),
+    },
+    {
+      title: 'Include Video',
+      dataIndex: 'includeVideo',
+      width: '15%',
+      align: 'center',
+      render: (value: boolean) => (
+        <>
+          <Checkbox checked={value} disabled={true} />
+        </>
+      ),
+    },
+  ];
+
+  const handleGenerateLink = async () => {
+    const response: any = await doFetch(() =>
+      fetchExternalLink({
+        videoFeedId: feedItem?.id,
+        creatorId: feedItem?.creator?.id,
+        includeVideo: feedForm.getFieldValue('includeVideo'),
+        socialPlatform: feedForm.getFieldValue('socialPlatform'),
+      })
+    );
+    setLinks(response.results);
+    setShowLinkTable(true);
   };
 
   const VideoUpdatePage = () => {
@@ -751,22 +802,22 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
               </Col>
               <Col lg={24} xs={24}>
                 <Form.Item name="socialPlatform" label="Social Platform">
-                  <RichTextEditor formField="socialPlatform" form={feedForm} />
+                  <Input />
                 </Form.Item>
               </Col>
               <Col span={24}>
-                <Button
-                  type="default"
-                  onClick={() =>
-                    console.log(
-                      'todo: call ep here + populate following fields + store it automatically'
-                    )
-                  }
-                >
+                <Button type="default" onClick={handleGenerateLink}>
                   Generate link
                 </Button>
               </Col>
-              //get more details on these two fields here
+              {showLinkTable && (
+                <Table
+                  rowKey="id"
+                  columns={columns}
+                  dataSource={links}
+                  loading={loading}
+                />
+              )}
             </Row>
           </Tabs.TabPane>
         </Tabs>

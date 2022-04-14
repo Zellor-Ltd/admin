@@ -391,6 +391,24 @@ export const fetchServersList = () => instance.get(`Wi/Ep/GetServersList`);
 
 export const fetchCurrencies = () => instance.get(`Wi/Ep/GetCurrencies`);
 
+export const fetchExternalLink = ({
+  videoFeedId,
+  creatorId,
+  includeVideo,
+  socialPlatform,
+}: {
+  videoFeedId?: string;
+  creatorId?: string;
+  includeVideo: boolean;
+  socialPlatform?: string;
+}) =>
+  instance.put(`Link/Adm/GenerateExternalLink`, {
+    videoFeedId,
+    creatorId,
+    includeVideo,
+    socialPlatform,
+  });
+
 export const saveVideoFeed = (params: FeedItem) => {
   if (params.id) {
     return instance.put('Disco/Feed/Update', params);
