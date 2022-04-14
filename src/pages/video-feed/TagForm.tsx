@@ -79,7 +79,7 @@ const TagForm: React.FC<FormProps> = ({ tag, setShowTagForm, brands }) => {
     setSelectedBrandId(value);
     if (value) {
       const selectedBrand = brands.find(brand => brand.id === value);
-      form.setFieldsValue({ id: '', brand: selectedBrand });
+      form.setFieldsValue({ brand: selectedBrand });
     }
     form.setFieldsValue({ tagName: '' });
   };
