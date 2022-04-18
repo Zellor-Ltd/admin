@@ -53,12 +53,6 @@ const TagForm: React.FC<FormProps> = ({ tag, setShowTagForm, brands }) => {
     return response.results;
   };
 
-  // let drivers = getFieldValue("drivers")
-  // drivers[0].drive_img = ""
-  // setFieldsValue({
-  //   drivers: drivers
-  // })
-
   const onChangeTag = (key: string, _selectedTag: any) => {
     setSelectedTag(_selectedTag.label);
     if (_selectedTag) {
@@ -77,7 +71,7 @@ const TagForm: React.FC<FormProps> = ({ tag, setShowTagForm, brands }) => {
               form.getFieldValue(['position', 0, 'startTime']),
           };
         });
-        form.setFieldsValue({ position });
+        form.setFieldsValue({ position: position });
       }
     }
   };
@@ -94,6 +88,7 @@ const TagForm: React.FC<FormProps> = ({ tag, setShowTagForm, brands }) => {
   const onSearchTag = (input: string) => {
     setTimeout(async () => {
       const validTags = await getTags(input);
+      setTags(validTags);
       setFilteredTags((validTags as any).map(optionFactory));
     }, 500);
   };
