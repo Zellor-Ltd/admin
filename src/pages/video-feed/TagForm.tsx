@@ -53,26 +53,33 @@ const TagForm: React.FC<FormProps> = ({ tag, setShowTagForm, brands }) => {
     return response.results;
   };
 
-  const onChangeTag = (key: string, selectedTag: any) => {
-    setSelectedTag(selectedTag.label);
-    if (selectedTag) {
-      const _selectedTag = tags.find(tag => tag.tagName === selectedTag.label);
-      _selectedTag.position = _selectedTag.position?.map(position => {
-        return {
-          x: position.x ?? form.getFieldValue(['position', 0, 'x']),
-          y: position.y ?? form.getFieldValue(['position', 0, 'y']),
-          z: position.z ?? form.getFieldValue(['position', 0, 'z']),
-          opacity:
-            position.opacity ?? form.getFieldValue(['position', 0, 'opacity']),
-          startTime:
-            position.startTime ??
-            form.getFieldValue(['position', 0, 'startTime']),
-        };
-      });
-      form.setFieldsValue({ ..._selectedTag });
-      return;
+  // let drivers = getFieldValue("drivers")
+  // drivers[0].drive_img = ""
+  // setFieldsValue({
+  //   drivers: drivers
+  // })
+
+  const onChangeTag = (key: string, _selectedTag: any) => {
+    setSelectedTag(_selectedTag.label);
+    if (_selectedTag) {
+      const _tag = tags.find(tag => tag.tagName === _selectedTag.label);
+      if (_tag) {
+        const position = _tag.position?.map(position => {
+          return {
+            x: position.x ?? form.getFieldValue(['position', 0, 'x']),
+            y: position.y ?? form.getFieldValue(['position', 0, 'y']),
+            z: position.z ?? form.getFieldValue(['position', 0, 'z']),
+            opacity:
+              position.opacity ??
+              form.getFieldValue(['position', 0, 'opacity']),
+            startTime:
+              position.startTime ??
+              form.getFieldValue(['position', 0, 'startTime']),
+          };
+        });
+        form.setFieldsValue({ position });
+      }
     }
-    form.setFieldsValue({ ...(selectedTag as any) });
   };
 
   const handleBrandFilter = async (value: any) => {
