@@ -88,7 +88,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
   setDetails,
 }) => {
   const {
-    settings: { language = [] },
+    settings: { language = [], socialPlatform = [] },
   } = useSelector((state: any) => state.settings);
   const [feedForm] = Form.useForm();
   const [segmentForm] = Form.useForm();
@@ -120,7 +120,6 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
   const [pageTitle, setPageTitle] = useState<string>('Video Update');
   const { doFetch, doRequest } = useRequest({ setLoading });
   const [links, setLinks] = useState<any[]>([]);
-  const [showLinkTable, setShowLinkTable] = useState<boolean>(false);
 
   useEffect(() => {
     if (feedItem?.selectedOption) {
@@ -395,7 +394,6 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
       })
     );
     setLinks(response.results);
-    setShowLinkTable(true);
   };
 
   const VideoUpdatePage = () => {
@@ -478,7 +476,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
               </Col>
             </Row>
           </Tabs.TabPane>
-          <Tabs.TabPane forceRender tab="Descriptors" key="Descriptors">
+          <Tabs.TabPane forceRender tab="Descriptors" key="descriptors">
             <Row gutter={8}>
               <Col lg={24} xs={24}>
                 <Form.Item name="description" label="Long description">
@@ -492,7 +490,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
               </Col>
             </Row>
           </Tabs.TabPane>
-          <Tabs.TabPane forceRender tab="Settings" key="Settings">
+          <Tabs.TabPane forceRender tab="Settings" key="settings">
             <Row gutter={8}>
               <Col lg={12} xs={24}>
                 <Form.Item name="lengthTotal" label="Length">
@@ -565,7 +563,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
               </Col>
             </Row>
           </Tabs.TabPane>
-          <Tabs.TabPane forceRender tab="Segments" key="Segments">
+          <Tabs.TabPane forceRender tab="Segments" key="segments">
             <Row gutter={8}>
               <Col lg={12} xs={24}>
                 <Row gutter={8}>
@@ -691,7 +689,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
               </Col>
             </Row>
           </Tabs.TabPane>
-          <Tabs.TabPane forceRender tab="Listing" key="Listing">
+          <Tabs.TabPane forceRender tab="Listing" key="listing">
             <Form.Item name="selectedOption" initialValue={selectedOptions}>
               <Radio.Group buttonStyle="solid" onChange={handleSwitchChange}>
                 <Radio.Button value="productBrand">Product Brand</Radio.Button>
@@ -793,31 +791,40 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
               )}
             </Col>
           </Tabs.TabPane>
-          <Tabs.TabPane forceRender tab="InstaLinks" key="InstaLinks">
+          <Tabs.TabPane forceRender tab="Links" key="links">
             <Row gutter={8}>
-              <Col span={4}>
+              <Col span={24}>
                 <Form.Item name="includeVideo">
                   <Checkbox>Include Video</Checkbox>
                 </Form.Item>{' '}
               </Col>
-              <Col lg={24} xs={24}>
+              <Col lg={6} xs={24}>
                 <Form.Item name="socialPlatform" label="Social Platform">
-                  <Input />
+                  <Select
+                    placeholder="Please select a social platform"
+                    disabled={!socialPlatform.length}
+                  >
+                    {socialPlatform.map((item: any) => (
+                      <Select.Option key={item.value} value={item.value}>
+                        {item.name}
+                      </Select.Option>
+                    ))}
+                  </Select>
                 </Form.Item>
               </Col>
-              <Col span={24}>
+              <Col span={24} className="mb-1">
                 <Button type="default" onClick={handleGenerateLink}>
                   Generate link
                 </Button>
               </Col>
-              {showLinkTable && (
+              <Col span={24}>
                 <Table
                   rowKey="id"
                   columns={columns}
                   dataSource={links}
                   loading={loading}
                 />
-              )}
+              </Col>
             </Row>
           </Tabs.TabPane>
         </Tabs>
