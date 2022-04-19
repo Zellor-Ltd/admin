@@ -15,12 +15,18 @@ import { fetchTags } from '../../services/DiscoClubService';
 import { SelectOption } from '../../interfaces/SelectOption';
 
 interface FormProps {
+  setTag: any;
   brands: Brand[];
   tag: Tag | undefined;
   setShowTagForm: (value: boolean) => void;
 }
 
-const TagForm: React.FC<FormProps> = ({ tag, setShowTagForm, brands }) => {
+const TagForm: React.FC<FormProps> = ({
+  setTag,
+  tag,
+  setShowTagForm,
+  brands,
+}) => {
   const [selectedBrandId, setSelectedBrandId] = useState<string>(
     tag?.brand?.id || ''
   );
@@ -56,23 +62,20 @@ const TagForm: React.FC<FormProps> = ({ tag, setShowTagForm, brands }) => {
   const onChangeTag = (key: string, _selectedTag: any) => {
     setSelectedTag(_selectedTag.label);
     if (_selectedTag) {
-      const _tag = tags.find(tag => tag.tagName === _selectedTag.label);
-      if (_tag) {
-        const position = _tag.position?.map(position => {
-          return {
-            x: position.x ?? form.getFieldValue(['position', 0, 'x']),
-            y: position.y ?? form.getFieldValue(['position', 0, 'y']),
-            z: position.z ?? form.getFieldValue(['position', 0, 'z']),
-            opacity:
-              position.opacity ??
-              form.getFieldValue(['position', 0, 'opacity']),
-            startTime:
-              position.startTime ??
-              form.getFieldValue(['position', 0, 'startTime']),
-          };
-        });
-        form.setFieldsValue({ position: position });
-      }
+      const position = _selectedTag.position?.map(position => {
+        return {
+          x: position.x ?? form.getFieldValue(['position', 0, 'x']),
+          y: position.y ?? form.getFieldValue(['position', 0, 'y']),
+          z: position.z ?? form.getFieldValue(['position', 0, 'z']),
+          opacity:
+            position.opacity ?? form.getFieldValue(['position', 0, 'opacity']),
+          startTime:
+            position.startTime ??
+            form.getFieldValue(['position', 0, 'startTime']),
+        };
+      });
+      form.setFieldsValue({ position: position });
+      setTag(_selectedTag);
     }
   };
 
@@ -88,8 +91,13 @@ const TagForm: React.FC<FormProps> = ({ tag, setShowTagForm, brands }) => {
   const onSearchTag = (input: string) => {
     setTimeout(async () => {
       const validTags = await getTags(input);
+      validTags.forEach(tag => {
+        tag.value = tag.tagName;
+        tag.key = tag.id;
+        tag.label = tag.tagName;
+      });
       setTags(validTags);
-      setFilteredTags((validTags as any).map(optionFactory));
+      setFilteredTags(validTags);
     }, 500);
   };
 
