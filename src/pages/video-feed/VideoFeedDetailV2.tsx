@@ -887,6 +887,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
         )}
         {showTagForm && (
           <TagForm
+            setTag={setSelectedTag}
             setShowTagForm={setShowTagForm}
             tag={selectedTag}
             brands={brands}
