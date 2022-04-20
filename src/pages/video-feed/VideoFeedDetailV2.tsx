@@ -259,20 +259,25 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
   const onCreatorChange = (key: string) => {
     const creator = influencers.find(influencer => influencer.id === key);
     const feedItem = feedForm.getFieldsValue(true) as FeedItem;
+      feedForm.setFieldsValue({
+          creator: null,
+      });
+      if (feedItem.package) {
+          const segments = feedItem.package.map(segment => {
+              if (!segment.selectedOption || segment.selectedOption === 'creator') {
+                  segment.selectedFeedTitle = creator?.userName;
+                  segment.selectedIconUrl = creator?.avatar?.url || undefined;
+              }
 
-    const segments = feedItem.package.map(segment => {
-      if (!segment.selectedOption || segment.selectedOption === 'creator') {
-        segment.selectedFeedTitle = creator?.userName;
-        segment.selectedIconUrl = creator?.avatar?.url || undefined;
+              return segment;
+
+          });
+          feedForm.setFieldsValue({
+              package: [...segments],
+              creator: creator,
+          });
       }
-      return segment;
-    });
-
     feedForm.setFieldsValue({
-      creator: null,
-    });
-    feedForm.setFieldsValue({
-      package: [...segments],
       creator: creator,
     });
   };
@@ -621,20 +626,6 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                   onClick={() => onAddSegment()}
                 >
                   Add Segment
-                </Button>
-                <Button
-                  htmlType="button"
-                  style={{ margin: '8px 0px 80px 8px' }}
-                  onClick={() =>
-                    onAddSegment(
-                      true,
-                      feedForm.getFieldValue('package')[
-                        feedForm.getFieldValue('package').length - 1
-                      ]
-                    )
-                  }
-                >
-                  Add Watermark Video
                 </Button>
               </Col>
             </Row>
