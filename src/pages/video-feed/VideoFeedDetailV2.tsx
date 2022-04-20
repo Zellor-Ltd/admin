@@ -589,7 +589,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                   <Col lg={12} xs={24}>
                     <Form.Item
                       name="validity"
-                      label="Expiration Date"
+                      label="Creation Date"
                       getValueProps={formatMoment}
                     >
                       <DatePicker

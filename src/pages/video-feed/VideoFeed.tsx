@@ -186,11 +186,11 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       align: 'center',
     },
     {
-      title: 'Expiration Date',
-      dataIndex: 'validity',
-      width: '5%',
-      render: (validity: Date) =>
-        validity ? new Date(validity).toLocaleDateString() : '-',
+      title: 'Creation Date',
+      dataIndex: 'hCreationDate',
+      width: '10%',
+      render: (creation: Date) =>
+          creation ? new Date(creation).toLocaleDateString('en-GB') + ' ' + new Date(creation).toLocaleTimeString('en-GB') : '-',
       align: 'center',
     },
     {
@@ -205,7 +205,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     {
       title: 'Status',
       dataIndex: 'status',
-      width: '12%',
+      width: '7%',
       align: 'center',
       responsive: ['sm'],
     },
