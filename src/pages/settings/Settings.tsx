@@ -70,6 +70,9 @@ const Settings: React.FC = () => {
           <TabPane tab="Checkout Type" key="checkoutType">
             <ItemList name="checkoutType" />
           </TabPane>
+          <TabPane tab="Social Platforms" key="socialPlatforms">
+            <ItemList name="socialPlatforms" />
+          </TabPane>
         </Tabs>
         <Row gutter={8}>
           <Col>

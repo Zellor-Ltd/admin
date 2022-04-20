@@ -1,6 +1,7 @@
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import {
   Button,
+  Checkbox,
   Col,
   DatePicker,
   Form,
@@ -21,6 +22,7 @@ import {
 import { ColumnsType } from 'antd/lib/table';
 import { Upload } from 'components';
 import { RichTextEditor } from 'components/RichTextEditor';
+import CopyIdToClipboard from 'components/CopyIdToClipboard';
 import { formatMoment } from 'helpers/formatMoment';
 import { useRequest } from 'hooks/useRequest';
 import { Brand } from 'interfaces/Brand';
@@ -31,7 +33,7 @@ import { Segment } from 'interfaces/Segment';
 import { Tag } from 'interfaces/Tag';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { saveVideoFeed } from 'services/DiscoClubService';
+import { fetchExternalLink, saveVideoFeed } from 'services/DiscoClubService';
 import BrandForm from './BrandForm';
 import TagForm from './TagForm';
 import './VideoFeed.scss';
@@ -86,7 +88,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
   setDetails,
 }) => {
   const {
-    settings: { language = [] },
+    settings: { language = [], socialPlatform = [] },
   } = useSelector((state: any) => state.settings);
   const [feedForm] = Form.useForm();
   const [segmentForm] = Form.useForm();
@@ -116,7 +118,8 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
   const [videoTab, setVideoTab] = useState<string>('Video Details');
   const [segmentTab, setSegmentTab] = useState<string>('Images');
   const [pageTitle, setPageTitle] = useState<string>('Video Update');
-  const { doRequest } = useRequest({ setLoading });
+  const { doFetch, doRequest } = useRequest({ setLoading });
+  const [links, setLinks] = useState<any[]>([]);
 
   useEffect(() => {
     if (feedItem?.selectedOption) {
@@ -346,6 +349,53 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
     feedForm.setFieldsValue({ selectedIconUrl: selectedIconUrl });
   };
 
+  const columns: ColumnsType<any> = [
+    {
+      title: 'Link',
+      dataIndex: 'link',
+      width: '6%',
+      render: link => <CopyIdToClipboard id={link} />,
+      align: 'center',
+    },
+    {
+      title: 'Social Platform',
+      dataIndex: 'socialPlatform',
+      width: '12%',
+      align: 'center',
+      render: (value: boolean) =>
+        value ? (
+          <>
+            <Checkbox checked={value} disabled={true} />
+          </>
+        ) : (
+          '-'
+        ),
+    },
+    {
+      title: 'Include Video',
+      dataIndex: 'includeVideo',
+      width: '15%',
+      align: 'center',
+      render: (value: boolean) => (
+        <>
+          <Checkbox checked={value} disabled={true} />
+        </>
+      ),
+    },
+  ];
+
+  const handleGenerateLink = async () => {
+    const response: any = await doFetch(() =>
+      fetchExternalLink({
+        videoFeedId: feedItem?.id,
+        creatorId: feedItem?.creator?.id,
+        includeVideo: feedForm.getFieldValue('includeVideo'),
+        socialPlatform: feedForm.getFieldValue('socialPlatform'),
+      })
+    );
+    setLinks(response.results);
+  };
+
   const VideoUpdatePage = () => {
     return (
       <>
@@ -426,7 +476,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
               </Col>
             </Row>
           </Tabs.TabPane>
-          <Tabs.TabPane forceRender tab="Descriptors" key="Descriptors">
+          <Tabs.TabPane forceRender tab="Descriptors" key="descriptors">
             <Row gutter={8}>
               <Col lg={24} xs={24}>
                 <Form.Item name="description" label="Long description">
@@ -440,7 +490,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
               </Col>
             </Row>
           </Tabs.TabPane>
-          <Tabs.TabPane forceRender tab="Settings" key="Settings">
+          <Tabs.TabPane forceRender tab="Settings" key="settings">
             <Row gutter={8}>
               <Col lg={12} xs={24}>
                 <Form.Item name="lengthTotal" label="Length">
@@ -513,7 +563,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
               </Col>
             </Row>
           </Tabs.TabPane>
-          <Tabs.TabPane forceRender tab="Segments" key="Segments">
+          <Tabs.TabPane forceRender tab="Segments" key="segments">
             <Row gutter={8}>
               <Col lg={12} xs={24}>
                 <Row gutter={8}>
@@ -639,7 +689,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
               </Col>
             </Row>
           </Tabs.TabPane>
-          <Tabs.TabPane forceRender tab="Listing" key="Listing">
+          <Tabs.TabPane forceRender tab="Listing" key="listing">
             <Form.Item name="selectedOption" initialValue={selectedOptions}>
               <Radio.Group buttonStyle="solid" onChange={handleSwitchChange}>
                 <Radio.Button value="productBrand">Product Brand</Radio.Button>
@@ -740,6 +790,42 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                 </>
               )}
             </Col>
+          </Tabs.TabPane>
+          <Tabs.TabPane forceRender tab="Links" key="links">
+            <Row gutter={8}>
+              <Col span={24}>
+                <Form.Item name="includeVideo">
+                  <Checkbox>Include Video</Checkbox>
+                </Form.Item>{' '}
+              </Col>
+              <Col lg={6} xs={24}>
+                <Form.Item name="socialPlatform" label="Social Platform">
+                  <Select
+                    placeholder="Please select a social platform"
+                    disabled={!socialPlatform.length}
+                  >
+                    {socialPlatform.map((item: any) => (
+                      <Select.Option key={item.value} value={item.value}>
+                        {item.name}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col span={24} className="mb-1">
+                <Button type="default" onClick={handleGenerateLink}>
+                  Generate link
+                </Button>
+              </Col>
+              <Col span={24}>
+                <Table
+                  rowKey="id"
+                  columns={columns}
+                  dataSource={links}
+                  loading={loading}
+                />
+              </Col>
+            </Row>
           </Tabs.TabPane>
         </Tabs>
         <Row gutter={8} className="mt-1">
