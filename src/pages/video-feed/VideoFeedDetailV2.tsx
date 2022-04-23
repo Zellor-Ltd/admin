@@ -1,6 +1,8 @@
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import {
+  AutoComplete,
   Button,
+  Checkbox,
   Col,
   DatePicker,
   Form,
@@ -31,7 +33,11 @@ import { Segment } from 'interfaces/Segment';
 import { Tag } from 'interfaces/Tag';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { saveVideoFeed } from 'services/DiscoClubService';
+import {
+  fetchCreators,
+  fetchLinks,
+  saveVideoFeed,
+} from 'services/DiscoClubService';
 import BrandForm from './BrandForm';
 import TagForm from './TagForm';
 import './VideoFeed.scss';
@@ -42,6 +48,7 @@ import moment from 'moment';
 import SimpleSelect from 'components/select/SimpleSelect';
 import { ProductBrand } from 'interfaces/ProductBrand';
 import { SelectOption } from 'interfaces/SelectOption';
+import CopyIdToClipboard from 'components/CopyIdToClipboard';
 
 const { Title } = Typography;
 interface VideoFeedDetailProps {
@@ -86,7 +93,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
   setDetails,
 }) => {
   const {
-    settings: { language = [] },
+    settings: { language = [], socialPlatform = [] },
   } = useSelector((state: any) => state.settings);
   const [feedForm] = Form.useForm();
   const [segmentForm] = Form.useForm();
@@ -116,7 +123,23 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
   const [videoTab, setVideoTab] = useState<string>('Video Details');
   const [segmentTab, setSegmentTab] = useState<string>('Images');
   const [pageTitle, setPageTitle] = useState<string>('Video Update');
-  const { doRequest } = useRequest({ setLoading });
+  const { doFetch, doRequest } = useRequest({ setLoading });
+  const [creators, setCreators] = useState<Creator[]>([]);
+  const [includeVideo, setIncludeVideo] = useState<boolean>(false);
+  const [selectedCreator, setSelectedCreator] = useState<string>('');
+  const [selectedSocialPlatform, setSelectedSocialPlatform] =
+    useState<string>('');
+
+  const getCreators = async () => {
+    const { results }: any = await doFetch(fetchCreators);
+    setCreators(results);
+  };
+
+  useEffect(() => {
+    if (videoTab === 'Links') {
+      getCreators();
+    }
+  }, [videoTab]);
 
   useEffect(() => {
     if (feedItem?.selectedOption) {
@@ -345,6 +368,48 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
     setSelectedIconUrl(selectedIconUrl);
     feedForm.setFieldsValue({ selectedIconUrl: selectedIconUrl });
   };
+
+  const onChangeCreator = (_, _selectedCreator) => {};
+
+  const onSearchCreator = (input: string) => {};
+
+  const fetch = async () => {
+    const { results }: any = await fetchLinks({
+      videoFeedId: feedItem?.id as string,
+      creatorId: selectedCreator,
+      includeVideo: includeVideo,
+      socialPlatform: selectedSocialPlatform,
+    });
+
+    console.log(results);
+  };
+
+  const handleGenerateLink = () => {
+    fetch();
+  };
+
+  const columns: ColumnsType<any> = [
+    {
+      title: 'Link',
+      dataIndex: 'link',
+      width: '20%',
+      render: link => <CopyIdToClipboard id={link} />,
+      align: 'center',
+    },
+    {
+      title: 'Social Platform',
+      dataIndex: 'socialPlatform',
+      width: '15%',
+      align: 'center',
+    },
+    {
+      title: 'With Video',
+      dataIndex: 'includeVideo',
+      width: '15%',
+      align: 'center',
+      render: value => (value ? 'Yes' : 'No'),
+    },
+  ];
 
   const VideoUpdatePage = () => {
     return (
@@ -741,15 +806,79 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
               )}
             </Col>
           </Tabs.TabPane>
+          <Tabs.TabPane forceRender tab="Links" key="Links">
+            <Row gutter={[32, 32]}>
+              <Col span={4}>
+                <Select
+                  placeholder="Select a creator"
+                  disabled={!creators.length}
+                  style={{ width: '100%' }}
+                  onChange={setSelectedCreator}
+                >
+                  {creators.map((curr: any) => (
+                    <Select.Option key={curr.id} value={curr.id}>
+                      {curr.firstName}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </Col>
+              <Col span={4}>
+                <Select
+                  placeholder="Select a social platform"
+                  disabled={!socialPlatform.length}
+                  style={{ width: '100%' }}
+                  onChange={setSelectedSocialPlatform}
+                >
+                  {socialPlatform.map((curr: any) => (
+                    <Select.Option key={curr.value} value={curr.value}>
+                      {curr.value}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </Col>
+              <Col>
+                <Checkbox onChange={evt => setIncludeVideo(evt.target.checked)}>
+                  Include Video
+                </Checkbox>
+              </Col>
+              <Col span={12}></Col>
+              <Col>
+                <Button
+                  type="default"
+                  onClick={handleGenerateLink}
+                  disabled={!selectedCreator || !selectedSocialPlatform}
+                >
+                  Generate Link
+                </Button>
+              </Col>
+              <Col span={24}>
+                <Table
+                  columns={columns}
+                  rowKey="id"
+                  dataSource={[]}
+                  loading={loading}
+                />
+              </Col>
+            </Row>
+          </Tabs.TabPane>
         </Tabs>
         <Row gutter={8} className="mt-1">
           <Col>
-            <Button type="default" onClick={() => onCancel?.()}>
+            <Button
+              type="default"
+              style={{ display: videoTab === 'Links' ? 'none' : '' }}
+              onClick={() => onCancel?.()}
+            >
               Cancel
             </Button>
           </Col>
           <Col>
-            <Button type="primary" htmlType="submit" loading={loading}>
+            <Button
+              type="primary"
+              style={{ display: videoTab === 'Links' ? 'none' : '' }}
+              htmlType="submit"
+              loading={loading}
+            >
               Save Changes
             </Button>
           </Col>
