@@ -23,6 +23,7 @@ import {
 import { ColumnsType } from 'antd/lib/table';
 import { Upload } from 'components';
 import { RichTextEditor } from 'components/RichTextEditor';
+import CopyIdToClipboard from 'components/CopyIdToClipboard';
 import { formatMoment } from 'helpers/formatMoment';
 import { useRequest } from 'hooks/useRequest';
 import { Brand } from 'interfaces/Brand';
@@ -491,7 +492,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
               </Col>
             </Row>
           </Tabs.TabPane>
-          <Tabs.TabPane forceRender tab="Descriptors" key="Descriptors">
+          <Tabs.TabPane forceRender tab="Descriptors" key="descriptors">
             <Row gutter={8}>
               <Col lg={24} xs={24}>
                 <Form.Item name="description" label="Long description">
@@ -505,7 +506,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
               </Col>
             </Row>
           </Tabs.TabPane>
-          <Tabs.TabPane forceRender tab="Settings" key="Settings">
+          <Tabs.TabPane forceRender tab="Settings" key="settings">
             <Row gutter={8}>
               <Col lg={12} xs={24}>
                 <Form.Item name="lengthTotal" label="Length">
@@ -578,7 +579,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
               </Col>
             </Row>
           </Tabs.TabPane>
-          <Tabs.TabPane forceRender tab="Segments" key="Segments">
+          <Tabs.TabPane forceRender tab="Segments" key="segments">
             <Row gutter={8}>
               <Col lg={12} xs={24}>
                 <Row gutter={8}>
@@ -704,7 +705,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
               </Col>
             </Row>
           </Tabs.TabPane>
-          <Tabs.TabPane forceRender tab="Listing" key="Listing">
+          <Tabs.TabPane forceRender tab="Listing" key="listing">
             <Form.Item name="selectedOption" initialValue={selectedOptions}>
               <Radio.Group buttonStyle="solid" onChange={handleSwitchChange}>
                 <Radio.Button value="productBrand">Product Brand</Radio.Button>
