@@ -48,6 +48,7 @@ import SimpleSelect from 'components/select/SimpleSelect';
 import { SelectOption } from '../../interfaces/SelectOption';
 import ProductsDetails from './ProductsDetails';
 import { ProductCategory } from 'interfaces/Category';
+import { time } from 'console';
 
 const { getSearchTags, getCategories, removeSearchTagsByCategory } =
   productUtils;
@@ -364,6 +365,9 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
           </span>
         </>
       ),
+      sorter: (a, b) => {
+        return a.name.localeCompare(b.name);
+      },
     },
     {
       title: 'Master Brand',
@@ -373,6 +377,9 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
       responsive: ['sm'],
       shouldCellUpdate: (prevRecord, nextRecord) =>
         prevRecord.brand != nextRecord.brand,
+      sorter: (a, b) => {
+        return a.brand.brandName.localeCompare(b.brand.brandName);
+      },
     },
     {
       title: 'In Stock',
@@ -382,6 +389,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
       shouldCellUpdate: (prevRecord, nextRecord) =>
         prevRecord.outOfStock != nextRecord.outOfStock,
       render: (outOfStock: boolean) => (outOfStock ? 'No' : 'Yes'),
+      sorter: (a, b): any => (a === b ? 0 : !a && b ? 1 : -1),
     },
     {
       title: 'Max DD',
@@ -391,6 +399,10 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
       responsive: ['sm'],
       shouldCellUpdate: (prevRecord, nextRecord) =>
         prevRecord.maxDiscoDollars != nextRecord.maxDiscoDollars,
+      sorter: (a, b) =>
+        a.maxDiscoDollars && b.maxDiscoDollars
+          ? a.maxDiscoDollars - b.maxDiscoDollars
+          : 0,
       // editable: true,
       // number: true,
     },
@@ -403,6 +415,10 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
       shouldCellUpdate: (prevRecord, nextRecord) =>
         prevRecord.discoPercentage != nextRecord.discoPercentage,
 
+      sorter: (a, b) =>
+        a.discoPercentage && b.discoPercentage
+          ? a.discoPercentage - b.discoPercentage
+          : 0,
       // editable: true,
       // number: true,
     },
@@ -412,6 +428,9 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
       width: '7%',
       align: 'center',
       responsive: ['sm'],
+      sorter: (a, b) => {
+        return a.shopifyUniqueId.localeCompare(b.shopifyUniqueId);
+      },
     },
     {
       title: 'Import Run Id',
@@ -419,6 +438,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
       width: '7%',
       align: 'center',
       responsive: ['sm'],
+      render: importRunId => <CopyIdToClipboard id={importRunId} />,
     },
     {
       title: 'Expiration Date',
@@ -430,6 +450,9 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
         prevRecord.offerExpirationDate != nextRecord.offerExpirationDate,
 
       render: (creationDate: Date) => moment(creationDate).format('DD/MM/YYYY'),
+      sorter: (a, b) =>
+        moment(a.offerExpirationDate).unix() -
+        moment(b.offerExpirationDate).unix(),
     },
     {
       title: 'Status',
@@ -452,6 +475,39 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
         typeof record.productBrand === 'string'
           ? field
           : record.productBrand?.brandName,
+      sorter: (a, b) => {
+        if (typeof a.productBrand === typeof b.productBrand) {
+          if (typeof a.productBrand === 'string') {
+            return a.productBrand.localeCompare(
+              b.productBrand as string
+            ) as number;
+          }
+          if (
+            typeof a.productBrand !== 'string' &&
+            typeof b.productBrand !== 'string'
+          ) {
+            return a.productBrand?.brandName.localeCompare(
+              b.productBrand?.brandName as string
+            ) as number;
+          }
+        }
+        if (
+          typeof a.productBrand === 'string' &&
+          typeof b.productBrand !== 'string'
+        ) {
+          return a.productBrand.localeCompare(
+            b.productBrand?.brandName as any
+          ) as number;
+        }
+        if (
+          typeof a.productBrand !== 'string' &&
+          typeof b.productBrand === 'string'
+        ) {
+          return a.productBrand?.brandName.localeCompare(
+            b.productBrand as string
+          ) as number;
+        }
+      },
     },
     {
       title: 'Last Go-Live',
@@ -472,6 +528,8 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
         ) : (
           ''
         ),
+      sorter: (a, b) =>
+        moment(a.goLiveDate).unix() - moment(b.goLiveDate).unix(),
     },
     {
       title: 'Actions',

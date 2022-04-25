@@ -10,4 +10,9 @@ export interface ProductBrand {
   colourLogo?: any;
   blackLogo?: any;
   whiteLogo?: any;
+  externalCode: number;
+  discoPercentage: number;
+  creatorPercentage: number;
+  maxDiscoDollarPercentage: number;
+  hCreationDate: Date;
 }
