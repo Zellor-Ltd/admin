@@ -403,11 +403,18 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
   const columns: ColumnsType<any> = [
     {
       title: 'Link',
-      dataIndex: 'link',
+      dataIndex: 'id',
       width: '20%',
-      render: link => <CopyIdToClipboard id={link} />,
+      render: link => <CopyIdToClipboard id={'https://link.discoclub.com/'+link?.substring(0, 7)} />,
       align: 'center',
-    },
+      },
+      {
+          title: 'Link',
+          dataIndex: 'id',
+          width: '15%',
+          render: id => <a href={'https://link.discoclub.com/' + id.substring(0, 7)} target='blank'>{id.substring(0, 7)}</a>,
+          align: 'center',
+      },
     {
       title: 'Social Platform',
       dataIndex: 'socialPlatform',
