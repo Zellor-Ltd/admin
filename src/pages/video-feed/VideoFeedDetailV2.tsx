@@ -390,7 +390,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
       creatorId: selectedCreator,
       includeVideo: includeVideo,
       socialPlatform: selectedSocialPlatform,
-      segment: selectedSegment,
+      segment: segment,
     });
     setLinks(results);
   };
