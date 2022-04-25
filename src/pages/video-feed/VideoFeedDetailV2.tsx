@@ -23,7 +23,6 @@ import {
 import { ColumnsType } from 'antd/lib/table';
 import { Upload } from 'components';
 import { RichTextEditor } from 'components/RichTextEditor';
-import CopyIdToClipboard from 'components/CopyIdToClipboard';
 import { formatMoment } from 'helpers/formatMoment';
 import { useRequest } from 'hooks/useRequest';
 import { Brand } from 'interfaces/Brand';
@@ -37,6 +36,7 @@ import { useSelector } from 'react-redux';
 import {
   fetchCreators,
   fetchLinks,
+  saveLink,
   saveVideoFeed,
 } from 'services/DiscoClubService';
 import BrandForm from './BrandForm';
@@ -50,6 +50,7 @@ import SimpleSelect from 'components/select/SimpleSelect';
 import { ProductBrand } from 'interfaces/ProductBrand';
 import { SelectOption } from 'interfaces/SelectOption';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
+import { noop } from 'lodash';
 
 const { Title } = Typography;
 interface VideoFeedDetailProps {
@@ -130,6 +131,8 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
   const [selectedCreator, setSelectedCreator] = useState<string>('');
   const [selectedSocialPlatform, setSelectedSocialPlatform] =
     useState<string>('');
+  const [links, setLinks] = useState<any[]>([]);
+  const [segment, setSegment] = useState<number>(0);
 
   const getCreators = async () => {
     const { results }: any = await doFetch(fetchCreators);
@@ -141,6 +144,17 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
       getCreators();
     }
   }, [videoTab]);
+
+  const fetch = async () => {
+    const { results } = await doFetch(() => fetchLinks(feedItem?.id as string));
+    setLinks(results);
+  };
+
+  useEffect(() => {
+    if (feedItem && !links?.length) {
+      fetch();
+    }
+  });
 
   useEffect(() => {
     if (feedItem?.selectedOption) {
@@ -370,23 +384,15 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
     feedForm.setFieldsValue({ selectedIconUrl: selectedIconUrl });
   };
 
-  const onChangeCreator = (_, _selectedCreator) => {};
-
-  const onSearchCreator = (input: string) => {};
-
-  const fetch = async () => {
-    const { results }: any = await fetchLinks({
+  const handleGenerateLink = async () => {
+    const { results }: any = await saveLink({
       videoFeedId: feedItem?.id as string,
       creatorId: selectedCreator,
       includeVideo: includeVideo,
       socialPlatform: selectedSocialPlatform,
+      segment: selectedSegment,
     });
-
-    console.log(results);
-  };
-
-  const handleGenerateLink = () => {
-    fetch();
+    setLinks(results);
   };
 
   const columns: ColumnsType<any> = [
@@ -400,6 +406,19 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
     {
       title: 'Social Platform',
       dataIndex: 'socialPlatform',
+      width: '15%',
+      align: 'center',
+    },
+    {
+      title: 'Feed ID',
+      dataIndex: 'videoFeedId',
+      width: '15%',
+      align: 'center',
+      render: videoFeedId => <CopyIdToClipboard id={videoFeedId} />,
+    },
+    {
+      title: 'Segment',
+      dataIndex: 'segment',
       width: '15%',
       align: 'center',
     },
@@ -810,11 +829,12 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
           <Tabs.TabPane forceRender tab="Links" key="Links">
             <Row gutter={[32, 32]}>
               <Col span={4}>
+                <Typography.Title level={5}>Creator</Typography.Title>
                 <Select
-                  placeholder="Select a creator"
                   disabled={!creators.length}
                   style={{ width: '100%' }}
-                  onChange={setSelectedCreator}
+                  onSelect={setSelectedCreator}
+                  value={selectedCreator}
                 >
                   {creators.map((curr: any) => (
                     <Select.Option key={curr.id} value={curr.id}>
@@ -824,11 +844,12 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                 </Select>
               </Col>
               <Col span={4}>
+                <Typography.Title level={5}>Social platform</Typography.Title>
                 <Select
-                  placeholder="Select a social platform"
                   disabled={!socialPlatform.length}
                   style={{ width: '100%' }}
-                  onChange={setSelectedSocialPlatform}
+                  onSelect={setSelectedSocialPlatform}
+                  value={selectedSocialPlatform}
                 >
                   {socialPlatform.map((curr: any) => (
                     <Select.Option key={curr.value} value={curr.value}>
@@ -837,10 +858,21 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                   ))}
                 </Select>
               </Col>
+              <Col span={4}>
+                <Typography.Title level={5}>Segment</Typography.Title>
+                <InputNumber
+                  defaultValue={0}
+                  title="positive integers"
+                  min={0}
+                  max={100}
+                  onChange={setSegment}
+                />
+              </Col>
               <Col>
-                <Checkbox onChange={evt => setIncludeVideo(evt.target.checked)}>
-                  Include Video
-                </Checkbox>
+                <Typography.Title level={5}>Include Video</Typography.Title>
+                <Checkbox
+                  onChange={evt => setIncludeVideo(evt.target.checked)}
+                ></Checkbox>
               </Col>
               <Col span={12}></Col>
               <Col>
@@ -856,7 +888,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                 <Table
                   columns={columns}
                   rowKey="id"
-                  dataSource={[]}
+                  dataSource={links}
                   loading={loading}
                 />
               </Col>
