@@ -1,5 +1,6 @@
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import {
+  AutoComplete,
   Button,
   Checkbox,
   Col,
@@ -22,7 +23,6 @@ import {
 import { ColumnsType } from 'antd/lib/table';
 import { Upload } from 'components';
 import { RichTextEditor } from 'components/RichTextEditor';
-import CopyIdToClipboard from 'components/CopyIdToClipboard';
 import { formatMoment } from 'helpers/formatMoment';
 import { useRequest } from 'hooks/useRequest';
 import { Brand } from 'interfaces/Brand';
@@ -33,7 +33,12 @@ import { Segment } from 'interfaces/Segment';
 import { Tag } from 'interfaces/Tag';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { fetchExternalLink, saveVideoFeed } from 'services/DiscoClubService';
+import {
+  fetchCreators,
+  fetchLinks,
+  saveLink,
+  saveVideoFeed,
+} from 'services/DiscoClubService';
 import BrandForm from './BrandForm';
 import TagForm from './TagForm';
 import './VideoFeed.scss';
@@ -44,6 +49,8 @@ import moment from 'moment';
 import SimpleSelect from 'components/select/SimpleSelect';
 import { ProductBrand } from 'interfaces/ProductBrand';
 import { SelectOption } from 'interfaces/SelectOption';
+import CopyIdToClipboard from 'components/CopyIdToClipboard';
+import { noop } from 'lodash';
 
 const { Title } = Typography;
 interface VideoFeedDetailProps {
@@ -119,7 +126,35 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
   const [segmentTab, setSegmentTab] = useState<string>('Images');
   const [pageTitle, setPageTitle] = useState<string>('Video Update');
   const { doFetch, doRequest } = useRequest({ setLoading });
+  const [creators, setCreators] = useState<Creator[]>([]);
+  const [includeVideo, setIncludeVideo] = useState<boolean>(false);
+  const [selectedCreator, setSelectedCreator] = useState<string>('');
+  const [selectedSocialPlatform, setSelectedSocialPlatform] =
+    useState<string>('');
   const [links, setLinks] = useState<any[]>([]);
+  const [segment, setSegment] = useState<number>(0);
+
+  const getCreators = async () => {
+    const { results }: any = await doFetch(fetchCreators);
+    setCreators(results);
+  };
+
+  useEffect(() => {
+    if (videoTab === 'Links') {
+      getCreators();
+    }
+  }, [videoTab]);
+
+  const fetch = async () => {
+    const { results } = await doFetch(() => fetchLinks(feedItem?.id as string));
+    setLinks(results);
+  };
+
+  useEffect(() => {
+    if (feedItem && !links?.length) {
+      fetch();
+    }
+  });
 
   useEffect(() => {
     if (feedItem?.selectedOption) {
@@ -354,52 +389,59 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
     feedForm.setFieldsValue({ selectedIconUrl: selectedIconUrl });
   };
 
+  const handleGenerateLink = async () => {
+    const { results }: any = await saveLink({
+      videoFeedId: feedItem?.id as string,
+      creatorId: selectedCreator,
+      includeVideo: includeVideo,
+      socialPlatform: selectedSocialPlatform,
+      segment: segment,
+    });
+    setLinks(results);
+  };
+
   const columns: ColumnsType<any> = [
     {
       title: 'Link',
-      dataIndex: 'link',
-      width: '6%',
-      render: link => <CopyIdToClipboard id={link} />,
+      dataIndex: 'id',
+      width: '20%',
+      render: link => <CopyIdToClipboard id={'https://link.discoclub.com/'+link?.substring(0, 7)} />,
       align: 'center',
-    },
+      },
+      {
+          title: 'Link',
+          dataIndex: 'id',
+          width: '15%',
+          render: id => <a href={'https://link.discoclub.com/' + id.substring(0, 7)} target='blank'>{id.substring(0, 7)}</a>,
+          align: 'center',
+      },
     {
       title: 'Social Platform',
       dataIndex: 'socialPlatform',
-      width: '12%',
+      width: '15%',
       align: 'center',
-      render: (value: boolean) =>
-        value ? (
-          <>
-            <Checkbox checked={value} disabled={true} />
-          </>
-        ) : (
-          '-'
-        ),
     },
     {
-      title: 'Include Video',
+      title: 'Feed ID',
+      dataIndex: 'videoFeedId',
+      width: '15%',
+      align: 'center',
+      render: videoFeedId => <CopyIdToClipboard id={videoFeedId} />,
+    },
+    {
+      title: 'Segment',
+      dataIndex: 'segment',
+      width: '15%',
+      align: 'center',
+    },
+    {
+      title: 'With Video',
       dataIndex: 'includeVideo',
       width: '15%',
       align: 'center',
-      render: (value: boolean) => (
-        <>
-          <Checkbox checked={value} disabled={true} />
-        </>
-      ),
+      render: value => (value ? 'Yes' : 'No'),
     },
   ];
-
-  const handleGenerateLink = async () => {
-    const response: any = await doFetch(() =>
-      fetchExternalLink({
-        videoFeedId: feedItem?.id,
-        creatorId: feedItem?.creator?.id,
-        includeVideo: feedForm.getFieldValue('includeVideo'),
-        socialPlatform: feedForm.getFieldValue('socialPlatform'),
-      })
-    );
-    setLinks(response.results);
-  };
 
   const VideoUpdatePage = () => {
     return (
@@ -782,36 +824,68 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
               )}
             </Col>
           </Tabs.TabPane>
-          <Tabs.TabPane forceRender tab="Links" key="links">
-            <Row gutter={8}>
-              <Col span={24}>
-                <Form.Item name="includeVideo">
-                  <Checkbox>Include Video</Checkbox>
-                </Form.Item>{' '}
+          <Tabs.TabPane forceRender tab="Links" key="Links">
+            <Row gutter={[32, 32]}>
+              <Col span={4}>
+                <Typography.Title level={5}>Creator</Typography.Title>
+                <Select
+                  disabled={!creators.length}
+                  style={{ width: '100%' }}
+                  onSelect={setSelectedCreator}
+                  value={selectedCreator}
+                >
+                  {creators.map((curr: any) => (
+                    <Select.Option key={curr.id} value={curr.id}>
+                      {curr.firstName}
+                    </Select.Option>
+                  ))}
+                </Select>
               </Col>
-              <Col lg={6} xs={24}>
-                <Form.Item name="socialPlatform" label="Social Platform">
-                  <Select
-                    placeholder="Please select a social platform"
-                    disabled={!socialPlatform.length}
-                  >
-                    {socialPlatform.map((item: any) => (
-                      <Select.Option key={item.value} value={item.value}>
-                        {item.name}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </Form.Item>
+              <Col span={4}>
+                <Typography.Title level={5}>Social platform</Typography.Title>
+                <Select
+                  disabled={!socialPlatform.length}
+                  style={{ width: '100%' }}
+                  onSelect={setSelectedSocialPlatform}
+                  value={selectedSocialPlatform}
+                >
+                  {socialPlatform.map((curr: any) => (
+                    <Select.Option key={curr.value} value={curr.value}>
+                      {curr.value}
+                    </Select.Option>
+                  ))}
+                </Select>
               </Col>
-              <Col span={24} className="mb-1">
-                <Button type="default" onClick={handleGenerateLink}>
-                  Generate link
+              <Col span={4}>
+                <Typography.Title level={5}>Segment</Typography.Title>
+                <InputNumber
+                  defaultValue={0}
+                  title="positive integers"
+                  min={0}
+                  max={100}
+                  onChange={setSegment}
+                />
+              </Col>
+              <Col>
+                <Typography.Title level={5}>Include Video</Typography.Title>
+                <Checkbox
+                  onChange={evt => setIncludeVideo(evt.target.checked)}
+                ></Checkbox>
+              </Col>
+              <Col span={12}></Col>
+              <Col>
+                <Button
+                  type="default"
+                  onClick={handleGenerateLink}
+                  disabled={!selectedCreator || !selectedSocialPlatform}
+                >
+                  Generate Link
                 </Button>
               </Col>
               <Col span={24}>
                 <Table
-                  rowKey="id"
                   columns={columns}
+                  rowKey="id"
                   dataSource={links}
                   loading={loading}
                 />
@@ -821,12 +895,21 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
         </Tabs>
         <Row gutter={8} className="mt-1">
           <Col>
-            <Button type="default" onClick={() => onCancel?.()}>
+            <Button
+              type="default"
+              style={{ display: videoTab === 'Links' ? 'none' : '' }}
+              onClick={() => onCancel?.()}
+            >
               Cancel
             </Button>
           </Col>
           <Col>
-            <Button type="primary" htmlType="submit" loading={loading}>
+            <Button
+              type="primary"
+              style={{ display: videoTab === 'Links' ? 'none' : '' }}
+              htmlType="submit"
+              loading={loading}
+            >
               Save Changes
             </Button>
           </Col>
