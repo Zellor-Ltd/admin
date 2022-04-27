@@ -35,4 +35,5 @@ export interface Product {
   goLiveDate?: Date;
   outOfStock?: boolean;
   status?: string;
+  shopifyUniqueId: string;
 }

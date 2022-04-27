@@ -297,24 +297,23 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
   const onCreatorChange = (key: string) => {
     const creator = influencers.find(influencer => influencer.id === key);
     const feedItem = feedForm.getFieldsValue(true) as FeedItem;
-      feedForm.setFieldsValue({
-          creator: null,
+    feedForm.setFieldsValue({
+      creator: null,
+    });
+    if (feedItem.package) {
+      const segments = feedItem.package.map(segment => {
+        if (!segment.selectedOption || segment.selectedOption === 'creator') {
+          segment.selectedFeedTitle = creator?.userName;
+          segment.selectedIconUrl = creator?.avatar?.url || undefined;
+        }
+
+        return segment;
       });
-      if (feedItem.package) {
-          const segments = feedItem.package.map(segment => {
-              if (!segment.selectedOption || segment.selectedOption === 'creator') {
-                  segment.selectedFeedTitle = creator?.userName;
-                  segment.selectedIconUrl = creator?.avatar?.url || undefined;
-              }
-
-              return segment;
-
-          });
-          feedForm.setFieldsValue({
-              package: [...segments],
-              creator: creator,
-          });
-      }
+      feedForm.setFieldsValue({
+        package: [...segments],
+        creator: creator,
+      });
+    }
     feedForm.setFieldsValue({
       creator: creator,
     });
@@ -405,16 +404,27 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
       title: 'Link',
       dataIndex: 'id',
       width: '20%',
-      render: link => <CopyIdToClipboard id={'https://link.discoclub.com/'+link?.substring(0, 7)} />,
+      render: link => (
+        <CopyIdToClipboard
+          id={'https://link.discoclub.com/' + link?.substring(0, 7)}
+        />
+      ),
       align: 'center',
-      },
-      {
-          title: 'Link',
-          dataIndex: 'id',
-          width: '15%',
-          render: id => <a href={'https://link.discoclub.com/' + id.substring(0, 7)} target='blank'>{id.substring(0, 7)}</a>,
-          align: 'center',
-      },
+    },
+    {
+      title: 'Link',
+      dataIndex: 'id',
+      width: '15%',
+      render: id => (
+        <a
+          href={'https://link.discoclub.com/' + id.substring(0, 7)}
+          target="blank"
+        >
+          {id.substring(0, 7)}
+        </a>
+      ),
+      align: 'center',
+    },
     {
       title: 'Social Platform',
       dataIndex: 'socialPlatform',
@@ -533,6 +543,19 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
               <Col lg={24} xs={24}>
                 <Form.Item name="creatorHtml" label="Creator Descriptor">
                   <RichTextEditor formField="creatorHtml" form={feedForm} />
+                </Form.Item>
+              </Col>
+              <Col lg={24} xs={24}>
+                <Form.Item name={'searchTags'} label="Search Tags">
+                  <Select mode="tags" className="product-search-tags">
+                    {feedForm
+                      .getFieldValue('searchTags')
+                      ?.map((searchTag: any) => (
+                        <Select.Option key={searchTag} value={searchTag}>
+                          {searchTag}
+                        </Select.Option>
+                      ))}
+                  </Select>
                 </Form.Item>
               </Col>
             </Row>

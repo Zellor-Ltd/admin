@@ -189,6 +189,9 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
           )}
         </Link>
       ),
+      sorter: (a, b) => {
+        return a.brandName.localeCompare(b.brandName);
+      },
     },
     {
       title: 'Paused',
@@ -214,6 +217,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
           )}
         </>
       ),
+      sorter: (a, b): any => (a === b ? 0 : !a && b ? 1 : -1),
     },
     {
       title: 'Show Out of Stock',
@@ -228,6 +232,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
           }
         />
       ),
+      sorter: (a, b): any => (a === b ? 0 : !a && b ? 1 : -1),
     },
     {
       title: 'Automated',
@@ -235,6 +240,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
       width: '15%',
       align: 'center',
       render: (value: any) => <b>{value ? 'Yes' : 'No'}</b>,
+      sorter: (a, b): any => (a === b ? 0 : !a && b ? 1 : -1),
     },
     {
       title: ' Master Brand Color',
@@ -253,6 +259,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
       width: '10%',
       align: 'center',
       render: (value: string) => <a href="#">{value}</a>,
+      sorter: (a, b) => a.discoPercentage - b.discoPercentage,
     },
     {
       title: 'C%',
@@ -260,6 +267,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
       width: '10%',
       align: 'center',
       render: (value: string) => <a href="#">{value}</a>,
+      sorter: (a, b) => a.creatorPercentage - b.creatorPercentage,
     },
     {
       title: 'DD%',
@@ -267,6 +275,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
       width: '10%',
       align: 'center',
       render: (value: string) => <a href="#">{value}</a>,
+      sorter: (a, b) => a.maxDiscoDollarPercentage - b.maxDiscoDollarPercentage,
     },
     {
       title: 'Status',
@@ -276,6 +285,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
       render: (value = 'pending') => (
         <Tag color={tagColorByStatus[value]}>{value}</Tag>
       ),
+      sorter: (a, b): any => (a === b ? 0 : a.status === 'pending' ? 1 : -1),
     },
     {
       title: 'Actions',

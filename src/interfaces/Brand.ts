@@ -37,4 +37,6 @@ export interface Brand {
   brandCardUrl?: string;
   checkoutType: string;
   externalCheckoutType: string;
+  creatorPercentage: number;
+  maxDiscoDollarPercentage: number;
 }

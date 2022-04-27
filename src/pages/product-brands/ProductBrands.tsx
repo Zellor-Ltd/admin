@@ -97,6 +97,8 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
       dataIndex: 'externalCode',
       width: '10%',
       align: 'center',
+      sorter: (a, b) =>
+        a.externalCode !== b.externalCode ? a.externalCode - b.externalCode : 0,
     },
     {
       title: 'D%',
@@ -104,6 +106,10 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
       width: '10%',
       align: 'center',
       render: (value: string) => <a href="#">{value}</a>,
+      sorter: (a, b) =>
+        a.discoPercentage !== b.discoPercentage
+          ? a.discoPercentage - b.discoPercentage
+          : 0,
     },
     {
       title: 'C%',
@@ -111,6 +117,10 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
       width: '10%',
       align: 'center',
       render: (value: string) => <a href="#">{value}</a>,
+      sorter: (a, b) =>
+        a.creatorPercentage !== b.creatorPercentage
+          ? a.creatorPercentage - b.creatorPercentage
+          : 0,
     },
     {
       title: 'DD%',
@@ -118,6 +128,10 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
       width: '10%',
       align: 'center',
       render: (value: string) => <a href="#">{value}</a>,
+      sorter: (a, b) =>
+        a.maxDiscoDollarPercentage && b.maxDiscoDollarPercentage
+          ? a.maxDiscoDollarPercentage - b.maxDiscoDollarPercentage
+          : 0,
     },
     {
       title: 'Name',
@@ -131,6 +145,9 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
           {value}
         </Link>
       ),
+      sorter: (a, b) => {
+        return a.brandName.localeCompare(b.brandName);
+      },
     },
     {
       title: 'Creation',
@@ -143,6 +160,8 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
           <div>{moment(value).format('HH:mm')}</div>
         </>
       ),
+      sorter: (a, b) =>
+        moment(a.hCreationDate as Date).unix() - moment(b.hCreationDate).unix(),
     },
     {
       title: 'Actions',
