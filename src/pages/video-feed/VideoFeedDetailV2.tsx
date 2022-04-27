@@ -141,7 +141,8 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
 
   useEffect(() => {
     if (videoTab === 'Links') {
-      getCreators();
+        getCreators();
+        fetch();
     }
   }, [videoTab]);
 
@@ -149,12 +150,6 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
     const { results } = await doFetch(() => fetchLinks(feedItem?.id as string));
     setLinks(results);
   };
-
-  useEffect(() => {
-    if (feedItem && !links?.length) {
-      fetch();
-    }
-  });
 
   useEffect(() => {
     if (feedItem?.selectedOption) {
