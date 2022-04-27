@@ -480,7 +480,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
           if (typeof a.productBrand === 'string') {
             return a.productBrand.localeCompare(
               b.productBrand as string
-            ) as number;
+            ) as any;
           }
           if (
             typeof a.productBrand !== 'string' &&
@@ -488,7 +488,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
           ) {
             return a.productBrand?.brandName.localeCompare(
               b.productBrand?.brandName as string
-            ) as number;
+            ) as any;
           }
         }
         if (
@@ -497,7 +497,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
         ) {
           return a.productBrand.localeCompare(
             b.productBrand?.brandName as any
-          ) as number;
+          ) as any;
         }
         if (
           typeof a.productBrand !== 'string' &&
@@ -505,7 +505,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
         ) {
           return a.productBrand?.brandName.localeCompare(
             b.productBrand as string
-          ) as number;
+          ) as any;
         }
       },
     },
