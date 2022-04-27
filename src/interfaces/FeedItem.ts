@@ -32,4 +32,5 @@ export interface FeedItem {
   selectedIconUrl?: string;
   watermarkVideo?: any;
   videoType?: string[];
+  hCreationDate?: Date;
 }

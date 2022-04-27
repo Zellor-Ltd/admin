@@ -96,15 +96,47 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
   }, [details]);
 
   const columns: ColumnsType<Tag> = [
-    { title: 'Tag', dataIndex: 'tagName', width: '25%' },
+    {
+      title: 'Tag',
+      dataIndex: 'tagName',
+      width: '25%',
+      sorter: (a, b) => {
+        return a.tagName.localeCompare(b.tagName);
+      },
+    },
     {
       title: 'Product',
       dataIndex: ['product', 'name'],
       width: '20%',
+      sorter: (a, b) => {
+        return a.product.name.localeCompare(b.product.name);
+      },
     },
-    { title: 'Brand', dataIndex: ['brand', 'brandName'], width: '20%' },
-    { title: 'Template', dataIndex: 'template', width: '15%' },
-    { title: "DD's", dataIndex: 'discoDollars', width: '10%' },
+    {
+      title: 'Brand',
+      dataIndex: ['brand', 'brandName'],
+      width: '20%',
+      sorter: (a, b) => {
+        return (a.brand?.brandName ?? '').localeCompare(
+          b.brand?.brandName ?? ''
+        );
+      },
+    },
+    {
+      title: 'Template',
+      dataIndex: 'template',
+      width: '15%',
+      sorter: (a, b) => {
+        return (a.template ?? '').localeCompare(b.template ?? '');
+      },
+    },
+    {
+      title: "DD's",
+      dataIndex: 'discoDollars',
+      width: '10%',
+      sorter: (a, b) =>
+        a.discoDollars && b.discoDollars ? a.discoDollars - b.discoDollars : 0,
+    },
   ];
 
   const searchFilterFunction = (filterText: string) => {

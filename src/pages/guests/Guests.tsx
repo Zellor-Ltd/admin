@@ -143,6 +143,9 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
           </div>
         </div>
       ),
+      sorter: (a, b) => {
+        return a.userName.localeCompare(b.userName);
+      },
     },
     {
       title: 'Creation',
@@ -155,6 +158,8 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
           <div>{moment(value).format('HH:mm')}</div>
         </>
       ),
+      sorter: (a, b) =>
+        moment(a.hCreationDate).unix() - moment(b.hCreationDate).unix(),
     },
     {
       title: 'E-mail',
@@ -174,6 +179,9 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
           </div>
         </div>
       ),
+      sorter: (a, b) => {
+        return a.user.localeCompare(b.user);
+      },
     },
     {
       title: 'Profile',
@@ -183,6 +191,9 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
         <Tag color={tagColorByPermission[profile]}>{profile}</Tag>
       ),
       align: 'center',
+      sorter: (a, b) => {
+        return a.profile.localeCompare(b.profile);
+      },
     },
     {
       title: 'Actions',

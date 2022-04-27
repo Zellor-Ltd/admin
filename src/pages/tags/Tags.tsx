@@ -108,15 +108,41 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
           {value}
         </Link>
       ),
+      sorter: (a, b) => {
+        return a.tagName.localeCompare(b.tagName);
+      },
     },
     {
       title: 'Product',
       dataIndex: ['product', 'name'],
       width: '20%',
+      sorter: (a, b) => {
+        return a.product.name.localeCompare(b.product.name);
+      },
     },
-    { title: 'Master Brand', dataIndex: ['brand', 'brandName'], width: '20%' },
-    { title: 'Template', dataIndex: 'template', width: '15%' },
-    { title: "DD's", dataIndex: 'discoDollars', width: '5%' },
+    {
+      title: 'Master Brand',
+      dataIndex: ['brand', 'brandName'],
+      width: '20%',
+      sorter: (a, b) => {
+        return a.brand?.brandName.localeCompare(b.brand?.brandName ?? '');
+      },
+    },
+    {
+      title: 'Template',
+      dataIndex: 'template',
+      width: '15%',
+      sorter: (a, b) => {
+        return (a.template ?? '').localeCompare(b.template ?? '');
+      },
+    },
+    {
+      title: "DD's",
+      dataIndex: 'discoDollars',
+      width: '5%',
+      sorter: (a, b) =>
+        a.discoDollars && b.discoDollars ? a.discoDollars - b.discoDollars : 0,
+    },
     {
       title: 'Actions',
       key: 'action',

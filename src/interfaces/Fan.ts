@@ -22,4 +22,5 @@ export interface Fan {
   profile: string;
   specialLock: boolean;
   group?: string;
+  hCreationDate?: Date;
 }

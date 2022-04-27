@@ -32,8 +32,22 @@ const Users: React.FC<RouteComponentProps> = ({ history }) => {
   }, []);
 
   const columns: ColumnsType<User> = [
-    { title: 'Name', dataIndex: 'name', width: '15%' },
-    { title: 'E-mail', dataIndex: 'user', width: '15%' },
+    {
+      title: 'Name',
+      dataIndex: 'name',
+      width: '15%',
+      sorter: (a, b) => {
+        return a.name.localeCompare(b.name);
+      },
+    },
+    {
+      title: 'E-mail',
+      dataIndex: 'user',
+      width: '15%',
+      sorter: (a, b) => {
+        return a.user.localeCompare(b.user);
+      },
+    },
     {
       title: 'Profile',
       dataIndex: 'profile',
@@ -42,6 +56,9 @@ const Users: React.FC<RouteComponentProps> = ({ history }) => {
         <Tag color={tagColorByPermission[profile]}>{profile}</Tag>
       ),
       align: 'center',
+      sorter: (a, b) => {
+        return a.profile.localeCompare(b.profile);
+      },
     },
     {
       title: 'Actions',

@@ -123,12 +123,18 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
           {value}
         </Link>
       ),
+      sorter: (a, b) => {
+        return a.id.localeCompare(b.id);
+      },
     },
     {
       title: 'Master Brand',
       dataIndex: ['brand', 'brandName'],
       width: '10%',
       align: 'center',
+      sorter: (a, b) => {
+        return a.brand.brandName.localeCompare(b.brand.brandName);
+      },
     },
     {
       title: 'Creation',
@@ -148,6 +154,8 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
           <div>{moment(value).format('HH:mm')}</div>
         </>
       ),
+      sorter: (a, b) =>
+        moment(a.hCreationDate).unix() - moment(b.hCreationDate).unix(),
     },
     {
       title: 'Actions',
