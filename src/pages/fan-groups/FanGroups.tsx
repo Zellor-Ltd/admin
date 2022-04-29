@@ -90,6 +90,9 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
       title: 'Group Name',
       dataIndex: 'name',
       width: '20%',
+      sorter: (a, b) => {
+        return a.name.localeCompare(b.name);
+      },
     },
     {
       title: 'Creation',
@@ -102,6 +105,8 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
           <div>{moment(value).format('HH:mm')}</div>
         </>
       ),
+      sorter: (a, b) =>
+        moment(a.hCreationDate).unix() - moment(b.hCreationDate).unix(),
     },
   ];
 

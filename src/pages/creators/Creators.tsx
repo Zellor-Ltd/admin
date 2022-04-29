@@ -72,12 +72,19 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
           {`${record.firstName} ${record.lastName}`}
         </Link>
       ),
+      sorter: (a, b) => {
+        return a.firstName.localeCompare(b.firstName);
+      },
     },
     {
       title: 'Status',
       dataIndex: 'status',
       width: '10%',
       align: 'center',
+
+      sorter: (a, b) => {
+        return a.status.localeCompare(b.status);
+      },
     },
     {
       title: 'Actions',

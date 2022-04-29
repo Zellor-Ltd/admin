@@ -112,6 +112,9 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
       title: 'HTML',
       dataIndex: 'html',
       width: '20%',
+      sorter: (a, b) => {
+        return (a.html ?? '').localeCompare(b.html ?? '');
+      },
     },
     {
       title: 'Display Start Date',
@@ -123,6 +126,7 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
           <div>{moment(value).format('DD/MM/YYYY')}</div>
         </>
       ),
+      sorter: (a, b) => moment(a.startDate).unix() - moment(b.startDate).unix(),
     },
     {
       title: 'Display Expire Date',
@@ -134,6 +138,8 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
           <div>{moment(value).format('DD/MM/YYYY')}</div>
         </>
       ),
+      sorter: (a, b) =>
+        moment(a.expireDate).unix() - moment(b.expireDate).unix(),
     },
     {
       title: 'Actions',

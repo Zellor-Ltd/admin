@@ -41,9 +41,26 @@ const Endpoints: React.FC<RouteComponentProps> = ({ history, location }) => {
           {record.isActive && `${record.name}`}
         </>
       ),
+      sorter: (a, b) => {
+        return a.name.localeCompare(b.name);
+      },
     },
-    { title: 'Container', dataIndex: 'container', width: '15%' },
-    { title: 'Method', dataIndex: 'action', width: '10%' },
+    {
+      title: 'Container',
+      dataIndex: 'container',
+      width: '15%',
+      sorter: (a, b) => {
+        return a.container.localeCompare(b.container);
+      },
+    },
+    {
+      title: 'Method',
+      dataIndex: 'action',
+      width: '10%',
+      sorter: (a, b) => {
+        return a.action.localeCompare(b.action);
+      },
+    },
     {
       title: 'Actions',
       key: 'action',

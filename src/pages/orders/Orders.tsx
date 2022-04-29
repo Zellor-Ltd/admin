@@ -298,6 +298,9 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       width: '10%',
       align: 'left',
       ...getColumnSearchProps('userid'),
+      sorter: (a, b) => {
+        return a.userid.localeCompare(b.userid);
+      },
     },
     {
       title: 'Paid',
@@ -305,6 +308,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       width: '5%',
       align: 'center',
       render: (value: boolean) => <b>{value ? 'Yes' : 'No'}</b>,
+      sorter: (a, b): any => (a === b ? 0 : !a && b ? 1 : -1),
     },
     {
       title: 'Amount / 100',
@@ -312,6 +316,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       width: '5%',
       align: 'center',
       render: (value: number) => `${value / 100}x`,
+      sorter: (a, b) => (a.amount && b.amount ? a.amount - b.amount : 0),
     },
     {
       title: 'Name',
@@ -323,6 +328,31 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
           : record.cart.brandGroups[0]
           ? record.cart.brandGroups[0].items[0].name
           : 'Empty order',
+      sorter: (a, b) => {
+        if (a.product && b.product) {
+          return a.product.name.localeCompare(b.product.name);
+        }
+        if (a.product && !b.product) {
+          return a.product.name.localeCompare(
+            b.cart.brandGroups[0].items[0].name
+          );
+        }
+        if (!a.product && b.product) {
+          return a.cart.brandGroups[0].items[0].name.localeCompare(
+            b.product.name
+          );
+        }
+        if (!a.product && !b.product) {
+          if (
+            !a.cart.brandGroups[0].items[0].name &&
+            !b.cart.brandGroups[0].items[0].name
+          )
+            return 0;
+          return a.cart.brandGroups[0].items[0].name.localeCompare(
+            b.cart.brandGroups[0].items[0].name
+          );
+        }
+      },
     },
     {
       title: 'Creation',
@@ -342,12 +372,16 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
           <div>{moment(value).format('HH:mm')}</div>
         </>
       ),
+      sorter: (a, b) =>
+        moment(a.hCreationDate).unix() - moment(b.hCreationDate).unix(),
     },
     {
       title: 'Disco Dollars',
       dataIndex: 'discoDollars',
       width: '5%',
       align: 'center',
+      sorter: (a, b) =>
+        a.discoDollars && b.discoDollars ? a.discoDollars - b.discoDollars : 0,
     },
     {
       title: 'Stage',
@@ -372,6 +406,9 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
           ))}
         </Select>
       ),
+      sorter: (a, b) => {
+        return (a.stage ?? '').localeCompare(b.stage ?? '');
+      },
     },
     {
       title: 'Last Update',
@@ -384,6 +421,8 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
           <div>{moment(value).format('HH:mm')}</div>
         </>
       ),
+      sorter: (a, b) =>
+        moment(a.hLastUpdate).unix() - moment(b.hLastUpdate).unix(),
     },
   ];
 

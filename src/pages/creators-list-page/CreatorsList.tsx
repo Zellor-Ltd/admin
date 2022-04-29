@@ -105,6 +105,9 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
           {value}
         </Link>
       ),
+      sorter: (a, b) => {
+        return a.description.localeCompare(b.description);
+      },
     },
     {
       title: 'Image',

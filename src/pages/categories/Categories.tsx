@@ -303,6 +303,13 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
           }
         </Link>
       ),
+      sorter: (a, b) => {
+        return a[
+          categoriesFields[categoriesKeys.indexOf(selectedTab)]
+        ].localeCompare(
+          b[categoriesFields[categoriesKeys.indexOf(selectedTab)]]
+        );
+      },
     },
     {
       title: 'Image',

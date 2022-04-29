@@ -327,7 +327,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
     {
       title: 'Id',
       dataIndex: 'id',
-      width: '6%',
+      width: '1%',
       render: id => <CopyIdToClipboard id={id} />,
       align: 'center',
     },
@@ -462,6 +462,9 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
       responsive: ['sm'],
       shouldCellUpdate: (prevRecord, nextRecord) =>
         prevRecord.status != nextRecord.status,
+      sorter: (a, b) => {
+        return a.name.localeCompare(b.name);
+      },
     },
     {
       title: 'Product Brand',

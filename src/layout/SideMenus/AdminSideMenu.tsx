@@ -68,7 +68,7 @@ const AdminSideMenu = () => {
         <Link to="/preview-products">Preview Products</Link>
       </Menu.Item>
       <Menu.Item key="feed" icon={<HeartFilled />}>
-        <Link to="/feed">Videos Feed</Link>
+        <Link to="/feed">Video Feeds</Link>
       </Menu.Item>
       <Menu.Item key="orders" icon={<ShoppingCartOutlined />}>
         <Link to="/orders">Orders</Link>

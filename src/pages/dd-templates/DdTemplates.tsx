@@ -127,24 +127,34 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
           {value}
         </Link>
       ),
+      sorter: (a, b) => {
+        return a.tagName.localeCompare(b.tagName);
+      },
     },
     {
       title: 'Template',
       dataIndex: 'template',
       width: '12%',
       align: 'center',
+      sorter: (a, b) => {
+        return a.template.localeCompare(b.template);
+      },
     },
     {
       title: 'Disco Gold',
       dataIndex: 'discoGold',
       width: '10%',
       align: 'center',
+      sorter: (a, b) =>
+        a.discoGold && b.discoGold ? a.discoGold - b.discoGold : 0,
     },
     {
       title: 'Disco Dollars',
       dataIndex: 'discoDollars',
       width: '10%',
       align: 'center',
+      sorter: (a, b) =>
+        a.discoDollars && b.discoDollars ? a.discoDollars - b.discoDollars : 0,
     },
     {
       title: 'Creation',
@@ -157,6 +167,8 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
           <div>{moment(value).format('HH:mm')}</div>
         </>
       ),
+      sorter: (a, b) =>
+        moment(a.hCreationDate).unix() - moment(b.hCreationDate).unix(),
     },
     {
       title: 'Actions',

@@ -51,6 +51,7 @@ import {
 import { ProductBrand } from '../../interfaces/ProductBrand';
 import { useRequest } from 'hooks/useRequest';
 import useFilter from 'hooks/useFilter';
+import moment from 'moment';
 
 const { Content } = Layout;
 
@@ -158,6 +159,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
         }
       },
       align: 'center',
+      sorter: (a, b) => (a.index && b.index ? a.index - b.index : 0),
     },
     {
       title: 'Title',
@@ -171,6 +173,9 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
           {value}
         </Link>
       ),
+      sorter: (a, b) => {
+        return a.title.localeCompare(b.title as string);
+      },
     },
     {
       title: 'Segments',
@@ -184,14 +189,25 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       dataIndex: 'lengthTotal',
       width: '5%',
       align: 'center',
+      sorter: (a, b) => {
+        return a.lengthTotal && b.lengthTotal
+          ? a.lengthTotal - b.lengthTotal
+          : 0;
+      },
     },
     {
       title: 'Creation Date',
       dataIndex: 'hCreationDate',
       width: '10%',
       render: (creation: Date) =>
-          creation ? new Date(creation).toLocaleDateString('en-GB') + ' ' + new Date(creation).toLocaleTimeString('en-GB') : '-',
+        creation
+          ? new Date(creation).toLocaleDateString('en-GB') +
+            ' ' +
+            new Date(creation).toLocaleTimeString('en-GB')
+          : '-',
       align: 'center',
+      sorter: (a, b) =>
+        moment(a.hCreationDate).unix() - moment(b.hCreationDate).unix(),
     },
     {
       title: 'Tags',
@@ -201,6 +217,11 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
         <AntTag>{reduceSegmentsTags(pack)}</AntTag>
       ),
       align: 'center',
+      sorter: (a, b) => {
+        return reduceSegmentsTags(a.package) && reduceSegmentsTags(b.package)
+          ? reduceSegmentsTags(a.package) - reduceSegmentsTags(b.package)
+          : 0;
+      },
     },
     {
       title: 'Status',
@@ -208,6 +229,9 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       width: '7%',
       align: 'center',
       responsive: ['sm'],
+      sorter: (a, b) => {
+        return a.status.localeCompare(b.status as string);
+      },
     },
     {
       title: 'Actions',
@@ -424,7 +448,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       format: '',
       gender: [],
       goLiveDate: '',
-      hCreationDate: '',
+      hCreationDate: undefined,
       hLastUpdate: '',
       id: '',
       language: '',

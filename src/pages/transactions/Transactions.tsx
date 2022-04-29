@@ -119,24 +119,33 @@ const Transactions: React.FC<RouteComponentProps> = () => {
           <div>{moment(value).format('HH:mm')}</div>
         </>
       ),
+      sorter: (a, b) =>
+        moment(a.hCreationDate).unix() - moment(b.hCreationDate).unix(),
     },
     {
       title: 'Master Brand',
       dataIndex: 'brandName',
       width: '15%',
       align: 'center',
+      sorter: (a, b) => {
+        return a.brandName.localeCompare(b.brandName);
+      },
     },
     {
       title: 'Disco Dollars',
       dataIndex: 'discoDollars',
       width: '15%',
       align: 'center',
+      sorter: (a, b) =>
+        a.discoDollars && b.discoDollars ? a.discoDollars - b.discoDollars : 0,
     },
     {
       title: 'Disco Gold',
       dataIndex: 'discoGold',
       width: '15%',
       align: 'center',
+      sorter: (a, b) =>
+        a.discoGold && b.discoGold ? a.discoGold - b.discoGold : 0,
     },
   ];
 

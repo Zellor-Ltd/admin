@@ -132,6 +132,8 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
           <div>{moment(value).format('DD/MM/YYYY')}</div>
         </>
       ),
+      sorter: (a, b) =>
+        moment(a.displayStartDate).unix() - moment(b.displayStartDate).unix(),
     },
     {
       title: 'Display Expire Date',
@@ -143,6 +145,8 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
           <div>{moment(value).format('DD/MM/YYYY')}</div>
         </>
       ),
+      sorter: (a, b) =>
+        moment(a.displayExpireDate).unix() - moment(b.displayExpireDate).unix(),
     },
     {
       title: 'Actions',

@@ -122,6 +122,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
           ? a.creatorPercentage - b.creatorPercentage
           : 0,
     },
+
     {
       title: 'DD%',
       dataIndex: 'maxDiscoDollarPercentage',

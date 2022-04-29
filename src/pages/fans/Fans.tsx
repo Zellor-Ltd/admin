@@ -146,6 +146,9 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
           {value}
         </Link>
       ),
+      sorter: (a, b) => {
+        return a.userName.localeCompare(b.userName);
+      },
     },
     {
       title: 'Creation',
@@ -158,8 +161,18 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
           <div>{moment(value).format('HH:mm')}</div>
         </>
       ),
+      sorter: (a, b) =>
+        moment(a.hCreationDate).unix() - moment(b.hCreationDate).unix(),
     },
-    { title: 'E-mail', dataIndex: 'user', width: '25%', align: 'center' },
+    {
+      title: 'E-mail',
+      dataIndex: 'user',
+      width: '25%',
+      align: 'center',
+      sorter: (a, b) => {
+        return a.user.localeCompare(b.user);
+      },
+    },
     {
       title: 'Profile',
       dataIndex: 'profile',
@@ -168,6 +181,9 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
         <Tag color={tagColorByPermission[profile]}>{profile}</Tag>
       ),
       align: 'center',
+      sorter: (a, b) => {
+        return a.profile.localeCompare(b.profile);
+      },
     },
     {
       title: 'Group',
@@ -177,6 +193,9 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
         <Tag color={tagColorByPermission[record.profile]}>{record.group}</Tag>
       ),
       align: 'center',
+      sorter: (a, b) => {
+        return (a.group ?? '').localeCompare(b.group ?? '');
+      },
     },
     {
       title: 'Actions',

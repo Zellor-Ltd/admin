@@ -210,12 +210,17 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
           {value}
         </Link>
       ),
+      sorter: (a, b) => {
+        return a.brandName.localeCompare(b.brandName);
+      },
     },
     {
       title: 'DD Balance',
       dataIndex: 'discoDollars',
       width: '15%',
       align: 'right',
+      sorter: (a, b) =>
+        a.discoDollars && b.discoDollars ? a.discoDollars - b.discoDollars : 0,
     },
   ];
 

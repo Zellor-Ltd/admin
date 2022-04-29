@@ -51,8 +51,18 @@ const Roles: React.FC<RouteComponentProps> = ({ history, location }) => {
       render: (value, record: Role) => (
         <Link to={{ pathname: detailsPathname, state: record }}>{value}</Link>
       ),
+      sorter: (a, b) => {
+        return a.name.localeCompare(b.name);
+      },
     },
-    { title: 'Description', dataIndex: 'description', width: '15%' },
+    {
+      title: 'Description',
+      dataIndex: 'description',
+      width: '15%',
+      sorter: (a, b) => {
+        return (a.description ?? '').localeCompare(b.description ?? '');
+      },
+    },
     {
       title: 'Actions',
       key: 'action',
