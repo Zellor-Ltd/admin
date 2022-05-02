@@ -37,11 +37,8 @@ import scrollIntoView from 'scroll-into-view';
 import FanDetail from 'pages/fans/FanDetail';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useMount } from 'react-use';
-import { useRequest } from 'hooks/useRequest';
-import { identity } from 'lodash';
 
 const Orders: React.FC<RouteComponentProps> = ({ location }) => {
-  const [loading, setLoading] = useState<boolean>(false);
   const [orderUpdateList, setOrderUpdateList] = useState<boolean[]>([]);
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
   const [currentFan, setCurrentFan] = useState<Fan>();
@@ -56,21 +53,41 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   const [eof, setEof] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [ordersSettings, setOrdersSettings] = useState([]);
-  const { doFetch } = useRequest({ setLoading });
-  const [selectedFan, setSelectedFan] = useState<Fan>();
-  const [fanFilter, setFanFilter] = useState<string>();
+  const [fanFilter, setFanFilter] = useState<string>('');
   const [brandFilter, setBrandFilter] = useState<string>();
   const [options, setOptions] = useState<
     { label: string; value: string; key: string }[]
   >([]);
+  const [filter, setFilter] = useState<any[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
 
-  const {
-    arrayList: orders,
-    setArrayList: setOrders,
-    filteredArrayList: filteredOrders,
-    addFilterFunction,
-    removeFilterFunction,
-  } = useFilter<Order>([]);
+  const fetchUsers = async (_query?: string) => {
+    const pageToUse = refreshing ? 0 : page;
+    const response: any = await fetchFans({
+      page: pageToUse,
+      query: _query,
+    });
+
+    setPage(pageToUse + 1);
+
+    const optionFactory = (option: any) => {
+      return {
+        label: option[fanOptionsMapping.label],
+        value: option[fanOptionsMapping.value],
+        key: option[fanOptionsMapping.value],
+      };
+    };
+
+    const validUsers = response.results.filter(
+      (fan: Fan) => !fan.userName?.includes('guest')
+    );
+
+    if (validUsers.length < 30) setEof(true);
+
+    setOptions(validUsers.map(optionFactory));
+
+    setFans(validUsers);
+  };
 
   const optionsMapping: SelectOption = {
     key: 'id',
@@ -91,7 +108,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
 
   const fetch = async () => {
     const { results }: any = await fetchOrders({
-      page: page,
+      page: 0,
       brandId: brandFilter,
       userId: fanFilter,
     });
@@ -144,24 +161,16 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     });
   };
 
-  const handleDateChange = (values: any) => {
-    if (!values) {
-      removeFilterFunction('creationDate');
-      setRefreshing(true);
-      return;
-    }
-    const startDate = moment(values[0], 'DD/MM/YYYY').startOf('day').utc();
-    const endDate = moment(values[1], 'DD/MM/YYYY').endOf('day').utc();
-    addFilterFunction('creationDate', (orders: Order[]) =>
-      orders.filter(({ hCreationDate }) => {
-        return moment(hCreationDate).utc().isBetween(startDate, endDate);
-      })
-    );
-    setRefreshing(true);
-  };
+  const search = rows => {
+    if (filter?.length) {
+      const startDate = moment(filter[0], 'DD/MM/YYYY').startOf('day').utc();
+      const endDate = moment(filter[1], 'DD/MM/YYYY').endOf('day').utc();
 
-  const getFan = (fanId: string) => {
-    return fans.find(fan => fan.id === fanId);
+      return rows.filter(row =>
+        moment(row.hCreationDate).utc().isBetween(startDate, endDate)
+      );
+    }
+    return rows;
   };
 
   useEffect(() => {
@@ -171,8 +180,9 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
           `.scrollable-row-${lastViewedIndex}`
         ) as HTMLElement
       );
+      if (search(orders).length < 10) setEof(true);
     }
-  }, [details]);
+  }, [details, orders]);
 
   const editFan = (index: number, fan?: Fan) => {
     setLastViewedIndex(index);
@@ -274,6 +284,9 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       width: '10%',
       align: 'left',
       ...getColumnSearchProps('userid'),
+      sorter: (a, b) => {
+        return a.userid.localeCompare(b.userid);
+      },
     },
     {
       title: 'Paid',
@@ -281,6 +294,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       width: '5%',
       align: 'center',
       render: (value: boolean) => <b>{value ? 'Yes' : 'No'}</b>,
+      sorter: (a, b): any => (a === b ? 0 : !a && b ? 1 : -1),
     },
     {
       title: 'Amount / 100',
@@ -288,6 +302,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       width: '5%',
       align: 'center',
       render: (value: number) => `${value / 100}x`,
+      sorter: (a, b) => (a.amount && b.amount ? a.amount - b.amount : 0),
     },
     {
       title: 'Name',
@@ -299,6 +314,31 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
           : record.cart.brandGroups[0]
           ? record.cart.brandGroups[0].items[0].name
           : 'Empty order',
+      sorter: (a, b) => {
+        if (a.product && b.product) {
+          return a.product.name.localeCompare(b.product.name);
+        }
+        if (a.product && !b.product) {
+          return a.product.name.localeCompare(
+            b.cart.brandGroups[0].items[0].name
+          );
+        }
+        if (!a.product && b.product) {
+          return a.cart.brandGroups[0].items[0].name.localeCompare(
+            b.product.name
+          );
+        }
+        if (!a.product && !b.product) {
+          if (
+            !a.cart.brandGroups[0].items[0].name &&
+            !b.cart.brandGroups[0].items[0].name
+          )
+            return 0;
+          return a.cart.brandGroups[0].items[0].name.localeCompare(
+            b.cart.brandGroups[0].items[0].name
+          );
+        }
+      },
     },
     {
       title: 'Creation',
@@ -309,7 +349,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       filterDropdown: () => (
         <DatePicker.RangePicker
           style={{ padding: 8 }}
-          onChange={handleDateChange}
+          onChange={values => setFilter(values as any)}
         />
       ),
       render: (value: Date) => (
@@ -318,12 +358,16 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
           <div>{moment(value).format('HH:mm')}</div>
         </>
       ),
+      sorter: (a, b) =>
+        moment(a.hCreationDate).unix() - moment(b.hCreationDate).unix(),
     },
     {
       title: 'Disco Dollars',
       dataIndex: 'discoDollars',
       width: '5%',
       align: 'center',
+      sorter: (a, b) =>
+        a.discoDollars && b.discoDollars ? a.discoDollars - b.discoDollars : 0,
     },
     {
       title: 'Stage',
@@ -348,6 +392,9 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
           ))}
         </Select>
       ),
+      sorter: (a, b) => {
+        return (a.stage ?? '').localeCompare(b.stage ?? '');
+      },
     },
     {
       title: 'Last Update',
@@ -360,6 +407,8 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
           <div>{moment(value).format('HH:mm')}</div>
         </>
       ),
+      sorter: (a, b) =>
+        moment(a.hLastUpdate).unix() - moment(b.hLastUpdate).unix(),
     },
   ];
 
@@ -377,25 +426,23 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     getBrands();
   }, []);
 
-  useEffect(() => {
-    if (loaded) {
-      fetch();
-    }
-  }, [setOrders]);
-
   const onChangeBrand = async (id: string | undefined) => {
     setBrandFilter(id);
     fetch();
   };
 
+  const getFan = (fanUser: string) => {
+    return fans.find(fan => fan.user.includes(fanUser));
+  };
+
   const onChangeFan = async (value: string) => {
-    setFanFilter(value);
+    const id = getFan(value)?.id;
+    setFanFilter(id ?? '');
     fetch();
   };
 
   const onSearch = (value: string) => {
-    setFanFilter(value);
-    getFans();
+    fetchUsers(value);
   };
 
   const onSaveFan = (record: Fan) => {
@@ -404,17 +451,6 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
 
   const onCancelFan = () => {
     setDetails(false);
-  };
-
-  const getFans = async () => {
-    const response = await doFetch(() =>
-      fetchFans({
-        page: 0,
-        query: fanFilter,
-      })
-    );
-
-    setFans(response.results);
   };
 
   return (
@@ -470,7 +506,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
             </Col>
           </Row>
           <InfiniteScroll
-            dataLength={filteredOrders.length}
+            dataLength={orders.length}
             next={loadNext}
             hasMore={!eof}
             loader={
@@ -490,8 +526,8 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
               rowClassName={(_, index) => `scrollable-row-${index}`}
               rowKey="id"
               columns={columns}
-              dataSource={filteredOrders}
-              loading={loading || refreshing}
+              dataSource={search(orders)}
+              loading={refreshing}
               pagination={false}
             />
           </InfiniteScroll>

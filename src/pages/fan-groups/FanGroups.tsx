@@ -1,7 +1,14 @@
-import { Button, Col, PageHeader, Row, Spin, Table } from 'antd';
+import {
+  Button,
+  Col,
+  Input,
+  PageHeader,
+  Row,
+  Spin,
+  Table,
+  Typography,
+} from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import { SearchFilter } from 'components/SearchFilter';
-import useFilter from 'hooks/useFilter';
 import { useRequest } from 'hooks/useRequest';
 import { FanGroup } from 'interfaces/FanGroup';
 import moment from 'moment';
@@ -21,14 +28,8 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
-  const [filteredFanGroups, setFilteredFanGroups] = useState<FanGroup[]>([]);
-
-  const {
-    setArrayList: setFanGroups,
-    filteredArrayList: filteredContent,
-    addFilterFunction,
-    removeFilterFunction,
-  } = useFilter<FanGroup>([]);
+  const [fanGroups, setFanGroups] = useState<FanGroup[]>([]);
+  const [filter, setFilter] = useState<string>('');
 
   useEffect(() => {
     getResources();
@@ -46,23 +47,23 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
   };
 
   const fetchData = () => {
-    if (!filteredContent.length) {
+    if (!fanGroups.length) {
       setEof(true);
       return;
     }
 
     const pageToUse = refreshing ? 0 : page;
-    const results = filteredContent.slice(pageToUse * 10, pageToUse * 10 + 10);
+    const results = fanGroups.slice(pageToUse * 10, pageToUse * 10 + 10);
 
     setPage(pageToUse + 1);
-    setFilteredFanGroups(prev => [...prev.concat(results)]);
+    setFanGroups(prev => [...prev.concat(results)]);
 
     if (results.length < 10) setEof(true);
   };
 
   useEffect(() => {
     if (refreshing) {
-      setFilteredFanGroups([]);
+      setFanGroups([]);
       setEof(false);
       fetchData();
       setRefreshing(false);
@@ -76,8 +77,10 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
           `.scrollable-row-${lastViewedIndex}`
         ) as HTMLElement
       );
+
+      if (search(fanGroups).length < 10) setEof(true);
     }
-  }, [details]);
+  }, [details, fanGroups]);
 
   const editFanGroup = (index: number, fanGroup?: FanGroup) => {
     setLastViewedIndex(index);
@@ -110,23 +113,13 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
     },
   ];
 
-  const searchFilterFunction = (filterText: string) => {
-    if (!filterText) {
-      removeFilterFunction('fanGroupName');
-      setRefreshing(true);
-      return;
-    }
-    addFilterFunction('fanGroupName', fanGroups =>
-      fanGroups.filter(fanGroup =>
-        fanGroup.name.toUpperCase().includes(filterText.toUpperCase())
-      )
-    );
-    setRefreshing(true);
+  const search = rows => {
+    return rows.filter(row => row.name.toLowerCase().indexOf(filter) > -1);
   };
 
   const refreshItem = (record: FanGroup) => {
-    filteredFanGroups[lastViewedIndex] = record;
-    setFanGroups([...filteredFanGroups]);
+    fanGroups[lastViewedIndex] = record;
+    setFanGroups([...fanGroups]);
   };
 
   const onSaveFanGroup = (record: FanGroup) => {
@@ -146,24 +139,25 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
             title="Fan Groups"
             subTitle="List of Fan Groups"
             extra={[
-              <Button
-                key="1"
-                onClick={() => editFanGroup(filteredFanGroups.length)}
-              >
+              <Button key="1" onClick={() => editFanGroup(fanGroups.length)}>
                 New Item
               </Button>,
             ]}
           />
           <Row gutter={8} className={'sticky-filter-box'}>
             <Col lg={8} xs={16}>
-              <SearchFilter
-                filterFunction={searchFilterFunction}
-                label="Search by Name"
+              <Typography.Title level={5}>Search by Name</Typography.Title>
+              <Input
+                className="mb-1"
+                value={filter}
+                onChange={event => {
+                  setFilter(event.target.value);
+                }}
               />
             </Col>
           </Row>
           <InfiniteScroll
-            dataLength={filteredFanGroups.length}
+            dataLength={fanGroups.length}
             next={fetchData}
             hasMore={!eof}
             loader={
@@ -183,7 +177,7 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
               rowClassName={(_, index) => `scrollable-row-${index}`}
               rowKey="id"
               columns={columns}
-              dataSource={filteredFanGroups}
+              dataSource={search(fanGroups)}
               loading={loading || refreshing}
               pagination={false}
             />

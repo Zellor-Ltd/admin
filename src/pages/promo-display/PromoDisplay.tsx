@@ -1,8 +1,16 @@
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import { Button, Col, PageHeader, Popconfirm, Row, Spin, Table } from 'antd';
+import {
+  Button,
+  Col,
+  Input,
+  PageHeader,
+  Popconfirm,
+  Row,
+  Spin,
+  Table,
+  Typography,
+} from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import { SearchFilter } from 'components/SearchFilter';
-import useFilter from 'hooks/useFilter';
 import { useRequest } from 'hooks/useRequest';
 import { PromoDisplay } from 'interfaces/PromoDisplay';
 import moment from 'moment';
@@ -27,16 +35,8 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
-  const [filteredPromoDisplays, setFilteredPromoDisplays] = useState<
-    PromoDisplay[]
-  >([]);
-
-  const {
-    setArrayList: setPromoDisplays,
-    filteredArrayList: filteredContent,
-    addFilterFunction,
-    removeFilterFunction,
-  } = useFilter<PromoDisplay>([]);
+  const [promoDisplays, setPromoDisplays] = useState<PromoDisplay[]>([]);
+  const [filter, setFilter] = useState<string>('');
 
   useEffect(() => {
     getResources();
@@ -54,23 +54,23 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   const fetchData = () => {
-    if (!filteredContent.length) {
+    if (!promoDisplays.length) {
       setEof(true);
       return;
     }
 
     const pageToUse = refreshing ? 0 : page;
-    const results = filteredContent.slice(pageToUse * 10, pageToUse * 10 + 10);
+    const results = promoDisplays.slice(pageToUse * 10, pageToUse * 10 + 10);
 
     setPage(pageToUse + 1);
-    setFilteredPromoDisplays(prev => [...prev.concat(results)]);
+    setPromoDisplays(prev => [...prev.concat(results)]);
 
     if (results.length < 10) setEof(true);
   };
 
   useEffect(() => {
     if (refreshing) {
-      setFilteredPromoDisplays([]);
+      setPromoDisplays([]);
       setEof(false);
       fetchData();
       setRefreshing(false);
@@ -84,8 +84,10 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
           `.scrollable-row-${lastViewedIndex}`
         ) as HTMLElement
       );
+
+      if (search(promoDisplays).length < 10) setEof(true);
     }
-  }, [details]);
+  }, [details, promoDisplays]);
 
   const editPromoDisplay = (index: number, promoDisplay?: PromoDisplay) => {
     setLastViewedIndex(index);
@@ -176,23 +178,13 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
     },
   ];
 
-  const searchFilterFunction = (filterText: string) => {
-    if (!filterText) {
-      removeFilterFunction('promoId');
-      setRefreshing(true);
-      return;
-    }
-    addFilterFunction('promoId', promoDisplays =>
-      promoDisplays.filter(promoDisplay =>
-        promoDisplay.id.toUpperCase().includes(filterText.toUpperCase())
-      )
-    );
-    setRefreshing(true);
+  const search = rows => {
+    return rows.filter(row => row.id.toLowerCase().indexOf(filter) > -1);
   };
 
   const refreshItem = (record: PromoDisplay) => {
-    filteredPromoDisplays[lastViewedIndex] = record;
-    setPromoDisplays([...filteredPromoDisplays]);
+    promoDisplays[lastViewedIndex] = record;
+    setPromoDisplays([...promoDisplays]);
   };
 
   const onSavePromoDisplay = (record: PromoDisplay) => {
@@ -214,7 +206,7 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
             extra={[
               <Button
                 key="1"
-                onClick={() => editPromoDisplay(filteredPromoDisplays.length)}
+                onClick={() => editPromoDisplay(promoDisplays.length)}
               >
                 New Item
               </Button>,
@@ -222,14 +214,18 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
           />
           <Row gutter={8} className={'sticky-filter-box'}>
             <Col lg={8} xs={16}>
-              <SearchFilter
-                filterFunction={searchFilterFunction}
-                label="Search by ID"
+              <Typography.Title level={5}>Search by ID</Typography.Title>
+              <Input
+                className="mb-1"
+                value={filter}
+                onChange={event => {
+                  setFilter(event.target.value);
+                }}
               />
             </Col>
           </Row>
           <InfiniteScroll
-            dataLength={filteredPromoDisplays.length}
+            dataLength={promoDisplays.length}
             next={fetchData}
             hasMore={!eof}
             loader={
@@ -249,7 +245,7 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
               rowClassName={(_, index) => `scrollable-row-${index}`}
               rowKey="id"
               columns={columns}
-              dataSource={filteredPromoDisplays}
+              dataSource={search(promoDisplays)}
               loading={loading || refreshing}
               pagination={false}
             />

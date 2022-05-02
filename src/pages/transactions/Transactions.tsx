@@ -17,7 +17,6 @@ import { useEffect, useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { fetchFans, fetchWalletTransactions } from 'services/DiscoClubService';
 import CopyOrderToClipboard from 'components/CopyOrderToClipboard';
-import SimpleSelect from 'components/select/SimpleSelect';
 import { SelectOption } from 'interfaces/SelectOption';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useRequest } from 'hooks/useRequest';
@@ -26,7 +25,6 @@ const Transactions: React.FC<RouteComponentProps> = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedFan, setSelectedFan] = useState<Fan | undefined>();
   const [isFetchingFans, setIsFetchingFans] = useState(false);
-  const [fans, setFans] = useState<Fan[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [filteredTransactions, setFilteredTransactions] = useState<
     Transaction[]
@@ -35,7 +33,7 @@ const Transactions: React.FC<RouteComponentProps> = () => {
   const [eof, setEof] = useState<boolean>(false);
   const [loaded, setLoaded] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
-  const { doFetch, doRequest } = useRequest({ setLoading });
+  const { doFetch } = useRequest({ setLoading });
   const [searchFilter, setSearchFilter] = useState<string>();
   const [options, setOptions] = useState<
     { label: string; value: string; key: string }[]

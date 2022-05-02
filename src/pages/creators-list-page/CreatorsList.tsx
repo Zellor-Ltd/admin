@@ -3,15 +3,15 @@ import {
   Button,
   Col,
   Image,
+  Input,
   PageHeader,
   Popconfirm,
   Row,
   Spin,
   Table,
+  Typography,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import { SearchFilter } from '../../components/SearchFilter';
-import useFilter from '../../hooks/useFilter';
 import { useRequest } from '../../hooks/useRequest';
 import { Masthead } from '../../interfaces/Masthead';
 import { useCallback, useEffect, useState } from 'react';
@@ -34,14 +34,8 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
-  const [filteredMastheads, setFilteredMastheads] = useState<Masthead[]>([]);
-
-  const {
-    setArrayList: setMastheads,
-    filteredArrayList: filteredContent,
-    addFilterFunction,
-    removeFilterFunction,
-  } = useFilter<Masthead>([]);
+  const [mastheads, setMastheads] = useState<Masthead[]>([]);
+  const [filter, setFilter] = useState<string>('');
 
   const getResources = useCallback(async () => {
     const { results } = await doFetch(fetchMastheads);
@@ -54,23 +48,23 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
   }, [getResources]);
 
   const fetchData = () => {
-    if (!filteredContent.length) {
+    if (!mastheads.length) {
       setEof(true);
       return;
     }
 
     const pageToUse = refreshing ? 0 : page;
-    const results = filteredContent.slice(pageToUse * 10, pageToUse * 10 + 10);
+    const results = mastheads.slice(pageToUse * 10, pageToUse * 10 + 10);
 
     setPage(pageToUse + 1);
-    setFilteredMastheads(prev => [...prev.concat(results)]);
+    setMastheads(prev => [...prev.concat(results)]);
 
     if (results.length < 10) setEof(true);
   };
 
   useEffect(() => {
     if (refreshing) {
-      setFilteredMastheads([]);
+      setMastheads([]);
       setEof(false);
       fetchData();
       setRefreshing(false);
@@ -84,8 +78,10 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
           `.scrollable-row-${lastViewedIndex}`
         ) as HTMLElement
       );
+
+      if (search(mastheads).length < 10) setEof(true);
     }
-  }, [details]);
+  }, [details, mastheads]);
 
   const columns: ColumnsType<Masthead> = [
     {
@@ -141,18 +137,10 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
     },
   ];
 
-  const searchFilterFunction = (filterText: string) => {
-    if (!filterText) {
-      removeFilterFunction('description');
-      setRefreshing(true);
-      return;
-    }
-    addFilterFunction('description', Mastheads =>
-      Mastheads.filter(Masthead =>
-        Masthead.description.toUpperCase().includes(filterText.toUpperCase())
-      )
+  const search = rows => {
+    return rows.filter(
+      row => row.description.toLowerCase().indexOf(filter) > -1
     );
-    setRefreshing(true);
   };
 
   const editItem = (index: number, masthead?: Masthead) => {
@@ -168,8 +156,8 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
     setRefreshing(true);
   };
   const refreshItem = (record: Masthead) => {
-    filteredMastheads[lastViewedIndex] = record;
-    setMastheads([...filteredMastheads]);
+    mastheads[lastViewedIndex] = record;
+    setMastheads([...mastheads]);
   };
 
   const onSaveMasthead = (record: Masthead) => {
@@ -189,24 +177,27 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
             title="Mastheads"
             subTitle="List of Mastheads"
             extra={[
-              <Button
-                key="1"
-                onClick={() => editItem(filteredMastheads.length)}
-              >
+              <Button key="1" onClick={() => editItem(mastheads.length)}>
                 New Item
               </Button>,
             ]}
           />
           <Row gutter={8} className={'sticky-filter-box'}>
             <Col lg={8} xs={16}>
-              <SearchFilter
-                filterFunction={searchFilterFunction}
-                label="Search by Description"
+              <Typography.Title level={5}>
+                Search by Description
+              </Typography.Title>
+              <Input
+                className="mb-1"
+                value={filter}
+                onChange={event => {
+                  setFilter(event.target.value);
+                }}
               />
             </Col>
           </Row>
           <InfiniteScroll
-            dataLength={filteredMastheads.length}
+            dataLength={mastheads.length}
             next={fetchData}
             hasMore={!eof}
             loader={
@@ -226,7 +217,7 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
               rowClassName={(_, index) => `scrollable-row-${index}`}
               rowKey="id"
               columns={columns}
-              dataSource={filteredMastheads}
+              dataSource={search(mastheads)}
               loading={tableloading || refreshing}
               pagination={false}
             />

@@ -48,9 +48,7 @@ import {
   statusList,
   videoTypeList,
 } from '../../components/select/select.utils';
-import { ProductBrand } from '../../interfaces/ProductBrand';
 import { useRequest } from 'hooks/useRequest';
-import useFilter from 'hooks/useFilter';
 import moment from 'moment';
 
 const { Content } = Layout;
@@ -76,7 +74,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const [productBrands, setProductBrands] = useState([]);
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
   const [loaded, setLoaded] = useState<boolean>(false);
-  const [filteredVideoFeeds, setFilteredVideoFeeds] = useState<any[]>([]);
+  const [feedItems, setFeedItems] = useState<any[]>([]);
   const { doFetch } = useRequest({ setLoading });
   const shouldUpdateFeedItemIndex = useRef(false);
   const originalFeedItemsIndex = useRef<Record<string, number | undefined>>({});
@@ -91,13 +89,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const [videoTypeFilter, setVideoTypeFilter] = useState<string>();
   const [titleFilter, setTitleFilter] = useState<string>();
   const [categoryFilter, setCategoryFilter] = useState<string>('');
-
-  const {
-    setArrayList: setFeedItems,
-    filteredArrayList: filteredContent,
-    addFilterFunction,
-    removeFilterFunction,
-  } = useFilter<FeedItem>([]);
+  const [indexFilter, setIndexFilter] = useState<number>();
 
   const masterBrandMapping: SelectOption = {
     key: 'id',
@@ -325,29 +317,15 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     ]);
   };
 
-  const onChangeCategory = (_category?: string, _entity?: any) => {
-    if (!_entity) {
-      removeFilterFunction('category');
-      setCategoryFilter('');
-      return;
+  const search = rows => {
+    if (indexFilter) {
+      return rows.filter(
+        row =>
+          row.category?.indexOf(categoryFilter) > -1 &&
+          row.index === indexFilter
+      );
     }
-    addFilterFunction('category', items =>
-      items.filter(
-        item => item.category.toLowerCase() === _entity.name.toLowerCase()
-      )
-    );
-
-    setCategoryFilter(_entity.name);
-  };
-
-  const onChangeStartIndex = (_startIndex?: number) => {
-    if (!_startIndex) {
-      removeFilterFunction('index');
-      return;
-    }
-    addFilterFunction('index', items =>
-      items.filter(item => item.index === _startIndex)
-    );
+    return rows.filter(row => row.category?.indexOf(categoryFilter) > -1);
   };
 
   const deleteItem = async (_id: string, index: number) => {
@@ -357,8 +335,8 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
 
   const refreshItem = (record: FeedItem) => {
     if (loaded) {
-      filteredVideoFeeds[lastViewedIndex] = record;
-      setFeedItems([...filteredVideoFeeds]);
+      feedItems[lastViewedIndex] = record;
+      setFeedItems([...feedItems]);
     } else {
       setFeedItems([record]);
     }
@@ -374,8 +352,8 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     feedItemIndex: number,
     feedItem: FeedItem
   ) => {
-    for (let i = 0; i < filteredVideoFeeds.length; i++) {
-      if (filteredVideoFeeds[i].id === feedItem.id) {
+    for (let i = 0; i < feedItems.length; i++) {
+      if (feedItems[i].id === feedItem.id) {
         if (originalFeedItemsIndex.current[feedItem.id] === undefined) {
           originalFeedItemsIndex.current[feedItem.id] = feedItem.index;
         }
@@ -383,8 +361,8 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
         shouldUpdateFeedItemIndex.current =
           originalFeedItemsIndex.current[feedItem.id] !== feedItemIndex;
 
-        filteredVideoFeeds[i].index = feedItemIndex;
-        setFeedItems([...filteredVideoFeeds]);
+        feedItems[i].index = feedItemIndex;
+        setFeedItems([...feedItems]);
         break;
       }
     }
@@ -482,7 +460,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
             extra={[
               <Button
                 key="2"
-                onClick={() => onEditFeedItem(filteredVideoFeeds.length - 1)}
+                onClick={() => onEditFeedItem(feedItems.length - 1)}
               >
                 New Item
               </Button>,
@@ -550,8 +528,8 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                   <Typography.Title level={5}>Category</Typography.Title>
                   <SimpleSelect
                     data={categories}
-                    onChange={(name, category) =>
-                      onChangeCategory(name as any, category as any)
+                    onChange={(_, category) =>
+                      setCategoryFilter(category?.name ?? '')
                     }
                     style={{ width: '100%' }}
                     selectedOption={categoryFilter}
@@ -578,7 +556,9 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                   <Typography.Title level={5}>Start Index</Typography.Title>
                   <InputNumber
                     min={0}
-                    onChange={startIndex => onChangeStartIndex(startIndex)}
+                    onChange={startIndex =>
+                      setIndexFilter(startIndex ?? undefined)
+                    }
                   />
                 </Col>
               </Row>
@@ -600,7 +580,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
               size="small"
               columns={feedItemColumns}
               rowKey="id"
-              dataSource={filteredContent}
+              dataSource={search(feedItems)}
               loading={loading}
             />
           </Content>

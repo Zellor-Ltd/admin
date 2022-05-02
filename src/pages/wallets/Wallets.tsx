@@ -44,14 +44,8 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
   const [options, setOptions] = useState<
     { label: string; value: string; key: string }[]
   >([]);
-
-  const {
-    arrayList: wallets,
-    setArrayList: setWallets,
-    filteredArrayList: filteredContent,
-    addFilterFunction,
-    removeFilterFunction,
-  } = useFilter<Wallet>([]);
+  const [filter, setFilter] = useState<string>('');
+  const [wallets, setWallets] = useState<Wallet[]>([]);
 
   const optionsMapping: SelectOption = {
     key: 'id',
@@ -83,12 +77,12 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
     setFilteredWallets([]);
     setEof(false);
     updateDisplayedArray();
-  }, [filteredContent, page]);
+  }, [wallets, page]);
 
   const updateDisplayedArray = () => {
-    if (!filteredContent.length) return;
+    if (!wallets.length) return;
 
-    const results = filteredContent.slice(page * 10, page * 10 + 10);
+    const results = wallets.slice(page * 10, page * 10 + 10);
     setFilteredWallets(prev => [...prev.concat(results)]);
 
     if (results.length < 10) {
@@ -137,8 +131,9 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
           `.scrollable-row-${lastViewedIndex}`
         ) as HTMLElement
       );
+      if (search(wallets).length < 10) setEof(true);
     }
-  }, [details]);
+  }, [details, wallets]);
 
   const editWallet = (index: number) => {
     setLastViewedIndex(index);
@@ -224,17 +219,8 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
     },
   ];
 
-  const onChangeBrand = async (_selectedBrand: Brand | undefined) => {
-    setSelectedBrand(_selectedBrand);
-    if (!_selectedBrand) {
-      removeFilterFunction('brandName');
-      setPage(0);
-      return;
-    }
-    addFilterFunction('brandName', wallets =>
-      wallets.filter(wallet => wallet.brandName === _selectedBrand.brandName)
-    );
-    setPage(0);
+  const search = rows => {
+    return rows.filter(row => row.brandName?.indexOf(filter) > -1);
   };
 
   const onCancelWallet = () => {
@@ -244,6 +230,11 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
   const onSearch = (value: string) => {
     setSearchFilter(value);
     getFans();
+  };
+
+  const onChangeBrand = (brand?: Brand) => {
+    setFilter(brand?.brandName ?? '');
+    setSelectedBrand(brand);
   };
 
   return (
@@ -320,7 +311,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
               rowClassName={(_, index) => `scrollable-row-${index}`}
               rowKey="id"
               columns={columns}
-              dataSource={filteredWallets}
+              dataSource={search(wallets)}
               loading={loading}
               pagination={false}
             />

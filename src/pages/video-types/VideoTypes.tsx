@@ -1,7 +1,14 @@
-import { Button, Col, PageHeader, Row, Spin, Table } from 'antd';
+import {
+  Button,
+  Col,
+  Input,
+  PageHeader,
+  Row,
+  Spin,
+  Table,
+  Typography,
+} from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import { SearchFilter } from 'components/SearchFilter';
-import useFilter from 'hooks/useFilter';
 import { useRequest } from 'hooks/useRequest';
 import { FanGroup } from 'interfaces/FanGroup';
 import moment from 'moment';
@@ -22,14 +29,8 @@ const VideoTypes: React.FC<RouteComponentProps> = props => {
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
-  const [filteredVideoTypes, setFilteredVideoTypes] = useState<VideoType[]>([]);
-
-  const {
-    setArrayList: setVideoTypes,
-    filteredArrayList: filteredContent,
-    addFilterFunction,
-    removeFilterFunction,
-  } = useFilter<FanGroup>([]);
+  const [videoTypes, setVideoTypes] = useState<VideoType[]>([]);
+  const [filter, setFilter] = useState<string>('');
 
   useEffect(() => {
     getResources();
@@ -47,20 +48,20 @@ const VideoTypes: React.FC<RouteComponentProps> = props => {
   };
 
   const fetchData = () => {
-    if (!filteredContent.length) return;
+    if (!videoTypes.length) return;
 
     const pageToUse = refreshing ? 0 : page;
-    const results = filteredContent.slice(pageToUse * 10, pageToUse * 10 + 10);
+    const results = videoTypes.slice(pageToUse * 10, pageToUse * 10 + 10);
 
     setPage(pageToUse + 1);
-    setFilteredVideoTypes(prev => [...prev.concat(results)]);
+    setVideoTypes(prev => [...prev.concat(results)]);
 
     if (results.length < 10) setEof(true);
   };
 
   useEffect(() => {
     if (refreshing) {
-      setFilteredVideoTypes([]);
+      setVideoTypes([]);
       setEof(false);
       fetchData();
       setRefreshing(false);
@@ -74,8 +75,10 @@ const VideoTypes: React.FC<RouteComponentProps> = props => {
           `.scrollable-row-${lastViewedIndex}`
         ) as HTMLElement
       );
+
+      if (search(videoTypes).length < 10) setEof(true);
     }
-  }, [details]);
+  }, [details, videoTypes]);
 
   const editFanGroup = (index: number, videoType?: FanGroup) => {
     setLastViewedIndex(index);
@@ -103,23 +106,13 @@ const VideoTypes: React.FC<RouteComponentProps> = props => {
     },
   ];
 
-  const searchFilterFunction = (filterText: string) => {
-    if (!filterText) {
-      removeFilterFunction('name');
-      setRefreshing(true);
-      return;
-    }
-    addFilterFunction('name', videoTypes =>
-      videoTypes.filter(videoType =>
-        videoType.name.toUpperCase().includes(filterText.toUpperCase())
-      )
-    );
-    setRefreshing(true);
+  const search = rows => {
+    return rows.filter(row => row.name.toLowerCase().indexOf(filter) > -1);
   };
 
   const refreshItem = (record: FanGroup) => {
-    filteredVideoTypes[lastViewedIndex] = record;
-    setVideoTypes([...filteredVideoTypes]);
+    videoTypes[lastViewedIndex] = record;
+    setVideoTypes([...videoTypes]);
   };
 
   const onSaveVideoType = (record: FanGroup) => {
@@ -139,24 +132,25 @@ const VideoTypes: React.FC<RouteComponentProps> = props => {
             title="Video Types"
             subTitle="List of Video Types"
             extra={[
-              <Button
-                key="1"
-                onClick={() => editFanGroup(filteredVideoTypes.length)}
-              >
+              <Button key="1" onClick={() => editFanGroup(videoTypes.length)}>
                 New Item
               </Button>,
             ]}
           />
           <Row gutter={8} className={'sticky-filter-box'}>
             <Col lg={8} xs={16}>
-              <SearchFilter
-                filterFunction={searchFilterFunction}
-                label="Search by Name"
+              <Typography.Title level={5}>Search by Name</Typography.Title>
+              <Input
+                className="mb-1"
+                value={filter}
+                onChange={event => {
+                  setFilter(event.target.value);
+                }}
               />
             </Col>
           </Row>
           <InfiniteScroll
-            dataLength={filteredVideoTypes.length}
+            dataLength={videoTypes.length}
             next={fetchData}
             hasMore={!eof}
             loader={
@@ -176,7 +170,7 @@ const VideoTypes: React.FC<RouteComponentProps> = props => {
               rowClassName={(_, index) => `scrollable-row-${index}`}
               rowKey="id"
               columns={columns}
-              dataSource={filteredVideoTypes}
+              dataSource={search(videoTypes)}
               loading={loading || refreshing}
               pagination={false}
             />
