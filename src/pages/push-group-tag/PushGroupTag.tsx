@@ -1,7 +1,14 @@
-import { Button, Col, PageHeader, Row, Spin, Table, Typography } from 'antd';
+import {
+  Button,
+  Col,
+  Input,
+  PageHeader,
+  Row,
+  Spin,
+  Table,
+  Typography,
+} from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import { SearchFilter } from 'components/SearchFilter';
-import useFilter from 'hooks/useFilter';
 import { useRequest } from 'hooks/useRequest';
 import { Brand } from 'interfaces/Brand';
 import { Tag } from 'interfaces/Tag';
@@ -26,20 +33,15 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
-  const [filteredTags, setFilteredTags] = useState<Tag[]>([]);
+  const [tags, setTags] = useState<Tag[]>([]);
+  const [tagFilter, setTagFilter] = useState<string>('');
+  const [brandFilter, setBrandFilter] = useState<string>('');
 
   const optionsMapping: SelectOption = {
     key: 'id',
     label: 'brandName',
     value: 'id',
   };
-
-  const {
-    setArrayList: setTags,
-    filteredArrayList: filteredContent,
-    addFilterFunction,
-    removeFilterFunction,
-  } = useFilter<Tag>([]);
 
   useEffect(() => {
     getResources();
@@ -65,20 +67,20 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
   };
 
   const fetchData = () => {
-    if (!filteredContent.length) return;
+    if (!tags.length) return;
 
     const pageToUse = refreshing ? 0 : page;
-    const results = filteredContent.slice(pageToUse * 10, pageToUse * 10 + 10);
+    const results = tags.slice(pageToUse * 10, pageToUse * 10 + 10);
 
     setPage(pageToUse + 1);
-    setFilteredTags(prev => [...prev.concat(results)]);
+    setTags(prev => [...prev.concat(results)]);
 
     if (results.length < 10) setEof(true);
   };
 
   useEffect(() => {
     if (refreshing) {
-      setFilteredTags([]);
+      setTags([]);
       setEof(false);
       fetchData();
       setRefreshing(false);
@@ -92,89 +94,89 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
           `.scrollable-row-${lastViewedIndex}`
         ) as HTMLElement
       );
+
+      if (search(tags).length < 10) setEof(true);
     }
-  }, [details]);
+  }, [details, tags]);
 
   const columns: ColumnsType<Tag> = [
     {
       title: 'Tag',
       dataIndex: 'tagName',
       width: '25%',
-      sorter: (a, b) => {
-        return a.tagName.localeCompare(b.tagName);
+      sorter: (a, b): any => {
+        if (a.tagName && b.tagName) return a.tagName.localeCompare(b.tagName);
+        else if (a.tagName) return -1;
+        else if (b.tagName) return 1;
+        else return 0;
       },
     },
     {
       title: 'Product',
       dataIndex: ['product', 'name'],
       width: '20%',
-      sorter: (a, b) => {
-        return a.product.name.localeCompare(b.product.name);
+      sorter: (a, b): any => {
+        if (a.product && b.product)
+          return a.product.name?.localeCompare(b.product.name);
+        else if (a.product) return -1;
+        else if (b.product) return 1;
+        else return 0;
       },
     },
     {
       title: 'Brand',
       dataIndex: ['brand', 'brandName'],
       width: '20%',
-      sorter: (a, b) => {
-        return (a.brand?.brandName ?? '').localeCompare(
-          b.brand?.brandName ?? ''
-        );
+      sorter: (a, b): any => {
+        if (a.brand && b.brand)
+          return a.brand.brandName?.localeCompare(b.brand.brandName);
+        else if (a.brand) return -1;
+        else if (b.brand) return 1;
+        else return 0;
       },
     },
     {
       title: 'Template',
       dataIndex: 'template',
       width: '15%',
-      sorter: (a, b) => {
-        return (a.template ?? '').localeCompare(b.template ?? '');
+      sorter: (a, b): any => {
+        if (a.template && b.template)
+          return a.template.localeCompare(b.template);
+        else if (a.template) return -1;
+        else if (b.template) return 1;
+        else return 0;
       },
     },
     {
       title: "DD's",
       dataIndex: 'discoDollars',
       width: '10%',
-      sorter: (a, b) =>
-        a.discoDollars && b.discoDollars ? a.discoDollars - b.discoDollars : 0,
+      sorter: (a, b): any => {
+        if (a.discoDollars && b.discoDollars)
+          return a.discoDollars - b.discoDollars;
+        else if (a.discoDollars) return -1;
+        else if (b.discoDollars) return 1;
+        else return 0;
+      },
     },
   ];
 
-  const searchFilterFunction = (filterText: string) => {
-    if (!filterText) {
-      removeFilterFunction('tagName');
-      setRefreshing(true);
-      return;
-    }
-    addFilterFunction('tagName', tags =>
-      tags.filter(tag =>
-        tag.tagName.toUpperCase().includes(filterText.toUpperCase())
-      )
+  const search = rows => {
+    return rows.filter(
+      row =>
+        row.tagName.toLowerCase().indexOf(tagFilter) > -1 &&
+        row.brand.brandName.indexOf(brandFilter) > -1
     );
-    setRefreshing(true);
   };
 
   const editTags = () => {
-    setCurrentTags(
-      filteredTags.filter(tag => selectedRowKeys.includes(tag.id))
-    );
+    setCurrentTags(tags.filter(tag => selectedRowKeys.includes(tag.id)));
     setDetails(true);
-  };
-
-  const onChangeBrand = async (_selectedBrand: Brand | undefined) => {
-    if (!_selectedBrand) {
-      removeFilterFunction('brandName');
-      setRefreshing(true);
-      return;
-    }
-    addFilterFunction('brandName', tags =>
-      tags.filter(tag => tag.brand?.brandName === _selectedBrand.brandName)
-    );
-    setRefreshing(true);
   };
 
   const onSelectChange = (selectedRowKeys: any, selectedRows: any) => {
     setSelectedRowKeys(selectedRowKeys);
-    setLastViewedIndex(filteredTags.indexOf(selectedRows[0]));
+    setLastViewedIndex(tags.indexOf(selectedRows[0]));
   };
 
   const rowSelection = {
@@ -198,16 +200,24 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
             <Col lg={16} xs={24}>
               <Row gutter={8}>
                 <Col lg={8} xs={16}>
-                  <SearchFilter
-                    filterFunction={searchFilterFunction}
-                    label="Search by Tag Name"
+                  <Typography.Title level={5}>
+                    Search by Tag Name
+                  </Typography.Title>
+                  <Input
+                    className="mb-1"
+                    value={tagFilter}
+                    onChange={event => {
+                      setTagFilter(event.target.value);
+                    }}
                   />
                 </Col>
                 <Col lg={8} xs={16}>
                   <Typography.Title level={5}>Master Brand</Typography.Title>
                   <SimpleSelect
                     data={brands}
-                    onChange={(_, brand) => onChangeBrand(brand)}
+                    onChange={(_, brand) =>
+                      setBrandFilter(brand?.brandName ?? '')
+                    }
                     style={{ width: '100%' }}
                     selectedOption={''}
                     optionsMapping={optionsMapping}
@@ -230,7 +240,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
             </Col>
           </Row>
           <InfiniteScroll
-            dataLength={filteredTags.length}
+            dataLength={tags.length}
             next={fetchData}
             hasMore={!eof}
             loader={
@@ -251,7 +261,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
               rowSelection={rowSelection}
               rowKey="id"
               columns={columns}
-              dataSource={filteredTags}
+              dataSource={search(tags)}
               loading={loading || refreshing}
               pagination={false}
             />

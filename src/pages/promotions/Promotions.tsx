@@ -7,15 +7,15 @@ import {
   Button,
   Col,
   DatePicker,
+  Input,
   PageHeader,
   Popconfirm,
   Row,
   Spin,
   Table,
+  Typography,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import { SearchFilter } from 'components/SearchFilter';
-import useFilter from 'hooks/useFilter';
 import { useRequest } from 'hooks/useRequest';
 import { Promotion } from 'interfaces/Promotion';
 import moment from 'moment';
@@ -41,14 +41,9 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
-  const [filteredPromotions, setFilteredPromotions] = useState<Promotion[]>([]);
-
-  const {
-    setArrayList: setPromotions,
-    filteredArrayList: filteredContent,
-    addFilterFunction,
-    removeFilterFunction,
-  } = useFilter<Promotion>([]);
+  const [promotions, setPromotions] = useState<Promotion[]>([]);
+  const [dateFilter, setDateFilter] = useState<any[]>([]);
+  const [idFilter, setIdFilter] = useState<string>('');
 
   const getResources = useCallback(async () => {
     await Promise.all([getPromotions(), getPromoStatus()]);
@@ -70,23 +65,23 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
   }, []);
 
   const fetchData = () => {
-    if (!filteredContent.length) {
+    if (!promotions.length) {
       setEof(true);
       return;
     }
 
     const pageToUse = refreshing ? 0 : page;
-    const results = filteredContent.slice(pageToUse * 10, pageToUse * 10 + 10);
+    const results = promotions.slice(pageToUse * 10, pageToUse * 10 + 10);
 
     setPage(pageToUse + 1);
-    setFilteredPromotions(prev => [...prev.concat(results)]);
+    setPromotions(prev => [...prev.concat(results)]);
 
     if (results.length < 10) setEof(true);
   };
 
   useEffect(() => {
     if (refreshing) {
-      setFilteredPromotions([]);
+      setPromotions([]);
       setEof(false);
       fetchData();
       setRefreshing(false);
@@ -100,8 +95,10 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
           `.scrollable-row-${lastViewedIndex}`
         ) as HTMLElement
       );
+
+      if (search(promotions).length < 10) setEof(true);
     }
-  }, [details]);
+  }, [details, promotions]);
 
   const columns: ColumnsType<Promotion> = [
     {
@@ -123,8 +120,11 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
           {value}
         </Link>
       ),
-      sorter: (a, b) => {
-        return a.id.localeCompare(b.id);
+      sorter: (a, b): any => {
+        if (a.id && b.id) return a.id.localeCompare(b.id);
+        else if (a.id) return -1;
+        else if (b.id) return 1;
+        else return 0;
       },
     },
     {
@@ -132,8 +132,12 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
       dataIndex: ['brand', 'brandName'],
       width: '10%',
       align: 'center',
-      sorter: (a, b) => {
-        return a.brand.brandName.localeCompare(b.brand.brandName);
+      sorter: (a, b): any => {
+        if (a.brand && b.brand)
+          return a.brand.brandName.localeCompare(b.brand.brandName);
+        else if (a.brand) return -1;
+        else if (b.brand) return 1;
+        else return 0;
       },
     },
     {
@@ -145,7 +149,7 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
       filterDropdown: () => (
         <DatePicker.RangePicker
           style={{ padding: 8 }}
-          onChange={handleDateChange}
+          onChange={values => setDateFilter(values as any)}
         />
       ),
       render: (value: Date) => (
@@ -154,8 +158,16 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
           <div>{moment(value).format('HH:mm')}</div>
         </>
       ),
-      sorter: (a, b) =>
-        moment(a.hCreationDate).unix() - moment(b.hCreationDate).unix(),
+      sorter: (a, b): any => {
+        if (a.hCreationDate && b.hCreationDate)
+          return (
+            moment(a.hCreationDate as Date).unix() -
+            moment(b.hCreationDate).unix()
+          );
+        else if (a.hCreationDate) return -1;
+        else if (b.hCreationDate) return 1;
+        else return 0;
+      },
     },
     {
       title: 'Actions',
@@ -185,34 +197,20 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
     },
   ];
 
-  const searchFilterFunction = (filterText: string) => {
-    if (!filterText) {
-      removeFilterFunction('promoId');
-      setRefreshing(true);
-      return;
-    }
-    addFilterFunction('promoId', promotions =>
-      promotions.filter(promotion =>
-        promotion.id.toUpperCase().includes(filterText.toUpperCase())
-      )
-    );
-    setRefreshing(true);
-  };
+  const search = rows => {
+    if (dateFilter?.length) {
+      const startDate = moment(dateFilter[0], 'DD/MM/YYYY')
+        .startOf('day')
+        .utc();
+      const endDate = moment(dateFilter[1], 'DD/MM/YYYY').endOf('day').utc();
 
-  const handleDateChange = (values: any) => {
-    if (!values) {
-      removeFilterFunction('creationDate');
-      setRefreshing(true);
-      return;
+      return rows.filter(
+        row =>
+          row.id.toLowerCase().indexOf(idFilter) > -1 &&
+          moment(row.hCreationDate).utc().isBetween(startDate, endDate)
+      );
     }
-    const startDate = moment(values[0], 'DD/MM/YYYY').startOf('day').utc();
-    const endDate = moment(values[1], 'DD/MM/YYYY').endOf('day').utc();
-    addFilterFunction('creationDate', (promotions: Promotion[]) =>
-      promotions.filter(({ hCreationDate }) => {
-        return moment(hCreationDate).utc().isBetween(startDate, endDate);
-      })
-    );
-    setRefreshing(true);
+    return rows.filter(row => row.id.toLowerCase().indexOf(idFilter) > -1);
   };
 
   const editPromotion = (index: number, promotion?: Promotion) => {
@@ -226,8 +224,8 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
     setPromotions(prev => [...prev.slice(0, index), ...prev.slice(index + 1)]);
   };
   const refreshItem = (record: Promotion) => {
-    filteredPromotions[lastViewedIndex] = record;
-    setPromotions([...filteredPromotions]);
+    promotions[lastViewedIndex] = record;
+    setPromotions([...promotions]);
   };
 
   const onSavePromotion = (record: Promotion) => {
@@ -247,24 +245,21 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
             title="Promotions"
             subTitle="List of Promotions"
             extra={[
-              <Button
-                key="1"
-                onClick={() => editPromotion(filteredPromotions.length)}
-              >
+              <Button key="1" onClick={() => editPromotion(promotions.length)}>
                 New Item
               </Button>,
             ]}
           />
           <Row gutter={8} className={'sticky-filter-box'}>
             <Col lg={8} xs={16}>
-              <SearchFilter
-                filterFunction={searchFilterFunction}
-                label="Search by ID"
-              />
+              <Typography.Title level={5} title="Search">
+                Search by ID
+              </Typography.Title>
+              <Input onChange={event => setIdFilter(event.target.value)} />
             </Col>
           </Row>
           <InfiniteScroll
-            dataLength={filteredPromotions.length}
+            dataLength={promotions.length}
             next={fetchData}
             hasMore={!eof}
             loader={
@@ -284,7 +279,7 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
               rowClassName={(_, index) => `scrollable-row-${index}`}
               rowKey="id"
               columns={columns}
-              dataSource={filteredPromotions}
+              dataSource={search(promotions)}
               loading={tableloading || refreshing}
               pagination={false}
             />

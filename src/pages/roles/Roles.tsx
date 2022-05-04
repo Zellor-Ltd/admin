@@ -1,24 +1,17 @@
 import { EditOutlined } from '@ant-design/icons';
-import { Button, Col, PageHeader, Row, Table } from 'antd';
+import { Button, Col, Input, PageHeader, Row, Table, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import { SearchFilter } from 'components/SearchFilter';
-import useFilter from 'hooks/useFilter';
 import { Role } from 'interfaces/Role';
 import { useEffect, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { fetchProfiles } from 'services/DiscoClubService';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
-import { Creator } from '../../interfaces/Creator';
 
 const Roles: React.FC<RouteComponentProps> = ({ history, location }) => {
   const detailsPathname = `${location.pathname}/role`;
   const [loading, setLoading] = useState<boolean>(false);
-
-  const {
-    setArrayList: setRoles,
-    filteredArrayList: filteredRoles,
-    addFilterFunction,
-  } = useFilter<Role>([]);
+  const [filter, setFilter] = useState<string>('');
+  const [roles, setRoles] = useState<Role[]>([]);
 
   async function fetch() {
     setLoading(true);
@@ -51,16 +44,23 @@ const Roles: React.FC<RouteComponentProps> = ({ history, location }) => {
       render: (value, record: Role) => (
         <Link to={{ pathname: detailsPathname, state: record }}>{value}</Link>
       ),
-      sorter: (a, b) => {
-        return a.name.localeCompare(b.name);
+      sorter: (a, b): any => {
+        if (a.name && b.name) return a.name.localeCompare(b.name);
+        else if (a.name) return -1;
+        else if (b.name) return 1;
+        else return 0;
       },
     },
     {
       title: 'Description',
       dataIndex: 'description',
       width: '15%',
-      sorter: (a, b) => {
-        return (a.description ?? '').localeCompare(b.description ?? '');
+      sorter: (a, b): any => {
+        if (a.description && b.description)
+          return a.description.localeCompare(b.description);
+        else if (a.description) return -1;
+        else if (b.description) return 1;
+        else return 0;
       },
     },
     {
@@ -78,12 +78,8 @@ const Roles: React.FC<RouteComponentProps> = ({ history, location }) => {
     },
   ];
 
-  const searchFilterFunction = (filterText: string) => {
-    addFilterFunction('roleName', roles =>
-      roles.filter(role =>
-        role.name.toUpperCase().includes(filterText.toUpperCase())
-      )
-    );
+  const search = rows => {
+    return rows.filter(row => row.name.toLowerCase().indexOf(filter) > -1);
   };
 
   return (
@@ -99,16 +95,20 @@ const Roles: React.FC<RouteComponentProps> = ({ history, location }) => {
       />
       <Row gutter={8} className={'sticky-filter-box'}>
         <Col lg={8} xs={16}>
-          <SearchFilter
-            filterFunction={searchFilterFunction}
-            label="Search by Name"
+          <Typography.Title level={5}>Search by Name</Typography.Title>
+          <Input
+            className="mb-1"
+            value={filter}
+            onChange={event => {
+              setFilter(event.target.value);
+            }}
           />
         </Col>
       </Row>
       <Table
         rowKey="id"
         columns={columns}
-        dataSource={filteredRoles}
+        dataSource={search(roles)}
         loading={loading}
       />
     </div>

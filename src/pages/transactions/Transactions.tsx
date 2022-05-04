@@ -17,7 +17,6 @@ import { useEffect, useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { fetchFans, fetchWalletTransactions } from 'services/DiscoClubService';
 import CopyOrderToClipboard from 'components/CopyOrderToClipboard';
-import SimpleSelect from 'components/select/SimpleSelect';
 import { SelectOption } from 'interfaces/SelectOption';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useRequest } from 'hooks/useRequest';
@@ -26,7 +25,6 @@ const Transactions: React.FC<RouteComponentProps> = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedFan, setSelectedFan] = useState<Fan | undefined>();
   const [isFetchingFans, setIsFetchingFans] = useState(false);
-  const [fans, setFans] = useState<Fan[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [filteredTransactions, setFilteredTransactions] = useState<
     Transaction[]
@@ -35,7 +33,7 @@ const Transactions: React.FC<RouteComponentProps> = () => {
   const [eof, setEof] = useState<boolean>(false);
   const [loaded, setLoaded] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
-  const { doFetch, doRequest } = useRequest({ setLoading });
+  const { doFetch } = useRequest({ setLoading });
   const [searchFilter, setSearchFilter] = useState<string>();
   const [options, setOptions] = useState<
     { label: string; value: string; key: string }[]
@@ -119,8 +117,15 @@ const Transactions: React.FC<RouteComponentProps> = () => {
           <div>{moment(value).format('HH:mm')}</div>
         </>
       ),
-      sorter: (a, b) =>
-        moment(a.hCreationDate).unix() - moment(b.hCreationDate).unix(),
+      sorter: (a, b): any => {
+        if (a.hCreationDate && b.hCreationDate)
+          return (
+            moment(a.hCreationDate).unix() - moment(b.hCreationDate).unix()
+          );
+        else if (a.hCreationDate) return -1;
+        else if (b.hCreationDate) return 1;
+        else return 0;
+      },
     },
     {
       title: 'Master Brand',
@@ -128,7 +133,11 @@ const Transactions: React.FC<RouteComponentProps> = () => {
       width: '15%',
       align: 'center',
       sorter: (a, b) => {
-        return a.brandName.localeCompare(b.brandName);
+        if (a.brandName && b.brandName)
+          return a.brandName.localeCompare(b.brandName);
+        else if (a.brandName) return 1;
+        else if (b.brandName) return -1;
+        else return 0;
       },
     },
     {
@@ -136,16 +145,25 @@ const Transactions: React.FC<RouteComponentProps> = () => {
       dataIndex: 'discoDollars',
       width: '15%',
       align: 'center',
-      sorter: (a, b) =>
-        a.discoDollars && b.discoDollars ? a.discoDollars - b.discoDollars : 0,
+      sorter: (a, b): any => {
+        if (a.discoDollars && b.discoDollars)
+          return a.discoDollars - b.discoDollars;
+        else if (a.discoDollars) return -1;
+        else if (b.discoDollars) return 1;
+        else return 0;
+      },
     },
     {
       title: 'Disco Gold',
       dataIndex: 'discoGold',
       width: '15%',
       align: 'center',
-      sorter: (a, b) =>
-        a.discoGold && b.discoGold ? a.discoGold - b.discoGold : 0,
+      sorter: (a, b): any => {
+        if (a.discoGold && b.discoGold) return a.discoGold - b.discoGold;
+        else if (a.discoGold) return -1;
+        else if (b.discoGold) return 1;
+        else return 0;
+      },
     },
   ];
 

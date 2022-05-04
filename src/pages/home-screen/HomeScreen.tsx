@@ -113,7 +113,10 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
       dataIndex: 'html',
       width: '20%',
       sorter: (a, b) => {
-        return (a.html ?? '').localeCompare(b.html ?? '');
+        if (a.html && b.html) return a.html.localeCompare(b.html);
+        else if (a.html) return 1;
+        else if (b.html) return -1;
+        else return 0;
       },
     },
     {
@@ -126,7 +129,15 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
           <div>{moment(value).format('DD/MM/YYYY')}</div>
         </>
       ),
-      sorter: (a, b) => moment(a.startDate).unix() - moment(b.startDate).unix(),
+      sorter: (a, b): any => {
+        if (a.startDate && b.startDate)
+          return (
+            moment(a.startDate as Date).unix() - moment(b.startDate).unix()
+          );
+        else if (a.startDate) return -1;
+        else if (b.startDate) return 1;
+        else return 0;
+      },
     },
     {
       title: 'Display Expire Date',
@@ -138,8 +149,15 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
           <div>{moment(value).format('DD/MM/YYYY')}</div>
         </>
       ),
-      sorter: (a, b) =>
-        moment(a.expireDate).unix() - moment(b.expireDate).unix(),
+      sorter: (a, b): any => {
+        if (a.expireDate && b.expireDate)
+          return (
+            moment(a.expireDate as Date).unix() - moment(b.expireDate).unix()
+          );
+        else if (a.expireDate) return -1;
+        else if (b.expireDate) return 1;
+        else return 0;
+      },
     },
     {
       title: 'Actions',

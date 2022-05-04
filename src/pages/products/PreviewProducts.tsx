@@ -408,8 +408,11 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
           {value}
         </Link>
       ),
-      sorter: (a, b) => {
-        return a.name.localeCompare(b.name);
+      sorter: (a, b): any => {
+        if (a.name && b.name) return a.name.localeCompare(b.name);
+        else if (a.name) return -1;
+        else if (b.name) return 1;
+        else return 0;
       },
     },
     {
@@ -417,8 +420,12 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
       dataIndex: ['brand', 'brandName'],
       width: '15%',
       align: 'center',
-      sorter: (a, b) => {
-        return a.brand.brandName.localeCompare(b.brand.brandName);
+      sorter: (a, b): any => {
+        if (a.brand && b.brand)
+          return a.brand.brandName.localeCompare(b.brand.brandName);
+        else if (a.brand) return -1;
+        else if (b.brand) return 1;
+        else return 0;
       },
     },
     {
@@ -438,38 +445,42 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
         typeof record.productBrand === 'string'
           ? field
           : record.productBrand?.brandName,
-      sorter: (a, b) => {
-        if (typeof a.productBrand === typeof b.productBrand) {
-          if (typeof a.productBrand === 'string') {
+      sorter: (a, b): any => {
+        if (a.productBrand && b.productBrand) {
+          if (typeof a.productBrand === typeof b.productBrand) {
+            if (typeof a.productBrand === 'string') {
+              return a.productBrand.localeCompare(
+                b.productBrand as string
+              ) as any;
+            }
+            if (
+              typeof a.productBrand !== 'string' &&
+              typeof b.productBrand !== 'string'
+            ) {
+              return a.productBrand?.brandName.localeCompare(
+                b.productBrand?.brandName as string
+              ) as any;
+            }
+          }
+          if (
+            typeof a.productBrand === 'string' &&
+            typeof b.productBrand !== 'string'
+          ) {
             return a.productBrand.localeCompare(
-              b.productBrand as string
+              b.productBrand?.brandName as any
             ) as any;
           }
           if (
             typeof a.productBrand !== 'string' &&
-            typeof b.productBrand !== 'string'
+            typeof b.productBrand === 'string'
           ) {
             return a.productBrand?.brandName.localeCompare(
-              b.productBrand?.brandName as string
+              b.productBrand as string
             ) as any;
           }
-        }
-        if (
-          typeof a.productBrand === 'string' &&
-          typeof b.productBrand !== 'string'
-        ) {
-          return a.productBrand.localeCompare(
-            b.productBrand?.brandName as any
-          ) as any;
-        }
-        if (
-          typeof a.productBrand !== 'string' &&
-          typeof b.productBrand === 'string'
-        ) {
-          return a.productBrand?.brandName.localeCompare(
-            b.productBrand as string
-          ) as any;
-        }
+        } else if (a.productBrand) return -1;
+        else if (b.productBrand) return 1;
+        else return 0;
       },
     },
     {
@@ -484,15 +495,24 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
       width: '7%',
       align: 'center',
       render: (outOfStock: boolean) => (outOfStock ? 'No' : 'Yes'),
-      sorter: (a, b): any => (a === b ? 0 : !a && b ? 1 : -1),
+      sorter: (a, b): any => {
+        if (a.outOfStock && b.outOfStock) return 0;
+        else if (a.outOfStock) return -1;
+        else if (b.outOfStock) return 1;
+        else return 0;
+      },
     },
     {
       title: 'Currency',
       dataIndex: 'currencyIsoCode',
       width: '7%',
       align: 'center',
-      sorter: (a, b) => {
-        return a.currencyIsoCode.localeCompare(b.currencyIsoCode);
+      sorter: (a, b): any => {
+        if (a.currencyIsoCode && b.currencyIsoCode)
+          return a.currencyIsoCode.localeCompare(b.currencyIsoCode);
+        else if (a.currencyIsoCode) return -1;
+        else if (b.currencyIsoCode) return 1;
+        else return 0;
       },
     },
     {
@@ -500,10 +520,13 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
       dataIndex: 'originalPrice',
       width: '7%',
       align: 'center',
-      sorter: (a, b) =>
-        a.originalPrice && b.originalPrice
-          ? a.originalPrice - b.originalPrice
-          : 0,
+      sorter: (a, b): any => {
+        if (a.originalPrice && b.originalPrice)
+          return a.originalPrice - b.originalPrice;
+        else if (a.originalPrice) return -1;
+        else if (b.originalPrice) return 1;
+        else return 0;
+      },
     },
     {
       title: 'Max DD',
@@ -512,10 +535,13 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
       align: 'center',
       editable: true,
       number: true,
-      sorter: (a, b) =>
-        a.maxDiscoDollars && b.maxDiscoDollars
-          ? a.maxDiscoDollars - b.maxDiscoDollars
-          : 0,
+      sorter: (a, b): any => {
+        if (a.maxDiscoDollars && b.maxDiscoDollars)
+          return a.maxDiscoDollars - b.maxDiscoDollars;
+        else if (a.maxDiscoDollars) return -1;
+        else if (b.maxDiscoDollars) return 1;
+        else return 0;
+      },
     },
     {
       title: 'Last Import',
@@ -533,9 +559,16 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
         ) : (
           ''
         ),
-      sorter: (a, b) =>
-        moment(a.offerExpirationDate).unix() -
-        moment(b.offerExpirationDate).unix(),
+      sorter: (a, b): any => {
+        if (a.offerExpirationDate && b.offerExpirationDate)
+          return (
+            moment(a.offerExpirationDate).unix() -
+            moment(b.offerExpirationDate).unix()
+          );
+        else if (a.offerExpirationDate) return -1;
+        else if (b.offerExpirationDate) return 1;
+        else return 0;
+      },
     },
     {
       title: 'Last Go-Live',
@@ -553,9 +586,15 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
         ) : (
           ''
         ),
-      sorter: (a, b) =>
-        moment(a.offerExpirationDate).unix() -
-        moment(b.offerExpirationDate).unix(),
+      sorter: (a, b): any => {
+        if (a.lastGoLiveDate && b.lastGoLiveDate)
+          return (
+            moment(a.lastGoLiveDate).unix() - moment(b.lastGoLiveDate).unix()
+          );
+        else if (a.lastGoLiveDate) return -1;
+        else if (b.lastGoLiveDate) return 1;
+        else return 0;
+      },
     },
     {
       title: 'Actions',

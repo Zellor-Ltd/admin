@@ -190,7 +190,11 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
         </Link>
       ),
       sorter: (a, b) => {
-        return a.brandName.localeCompare(b.brandName);
+        if (a.brandName && b.brandName)
+          return a.brandName.localeCompare(b.brandName);
+        else if (a.brandName) return 1;
+        else if (b.brandName) return -1;
+        else return 0;
       },
     },
     {
@@ -217,7 +221,12 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
           )}
         </>
       ),
-      sorter: (a, b): any => (a === b ? 0 : !a && b ? 1 : -1),
+      sorter: (a, b): any => {
+        if (a.paused && b.paused) return 0;
+        else if (a.paused) return -1;
+        else if (b.paused) return 1;
+        else return 0;
+      },
     },
     {
       title: 'Show Out of Stock',
@@ -232,7 +241,12 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
           }
         />
       ),
-      sorter: (a, b): any => (a === b ? 0 : !a && b ? 1 : -1),
+      sorter: (a, b): any => {
+        if (a.showOutOfStock && b.showOutOfStock) return 0;
+        else if (a.showOutOfStock) return -1;
+        else if (b.showOutOfStock) return 1;
+        else return 0;
+      },
     },
     {
       title: 'Automated',
@@ -240,7 +254,12 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
       width: '15%',
       align: 'center',
       render: (value: any) => <b>{value ? 'Yes' : 'No'}</b>,
-      sorter: (a, b): any => (a === b ? 0 : !a && b ? 1 : -1),
+      sorter: (a, b): any => {
+        if (a.automated && b.automated) return 0;
+        else if (a.automated) return -1;
+        else if (b.automated) return 1;
+        else return 0;
+      },
     },
     {
       title: ' Master Brand Color',
@@ -258,24 +277,42 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
       dataIndex: 'discoPercentage',
       width: '10%',
       align: 'center',
-      render: (value: string) => <a href="#">{value}</a>,
-      sorter: (a, b) => a.discoPercentage - b.discoPercentage,
+      render: (value: string) => <a href=".">{value}</a>,
+      sorter: (a, b): any => {
+        if (a.discoPercentage && b.discoPercentage)
+          return a.discoPercentage - b.discoPercentage;
+        else if (a.discoPercentage) return -1;
+        else if (b.discoPercentage) return 1;
+        else return 0;
+      },
     },
     {
       title: 'C%',
       dataIndex: 'creatorPercentage',
       width: '10%',
       align: 'center',
-      render: (value: string) => <a href="#">{value}</a>,
-      sorter: (a, b) => a.creatorPercentage - b.creatorPercentage,
+      render: (value: string) => <a href=".">{value}</a>,
+      sorter: (a, b): any => {
+        if (a.creatorPercentage && b.creatorPercentage)
+          return a.creatorPercentage - b.creatorPercentage;
+        else if (a.creatorPercentage) return -1;
+        else if (b.creatorPercentage) return 1;
+        else return 0;
+      },
     },
     {
       title: 'DD%',
       dataIndex: 'maxDiscoDollarPercentage',
       width: '10%',
       align: 'center',
-      render: (value: string) => <a href="#">{value}</a>,
-      sorter: (a, b) => a.maxDiscoDollarPercentage - b.maxDiscoDollarPercentage,
+      render: (value: string) => <a href=".">{value}</a>,
+      sorter: (a, b): any => {
+        if (a.maxDiscoDollarPercentage && b.maxDiscoDollarPercentage)
+          return a.maxDiscoDollarPercentage - b.maxDiscoDollarPercentage;
+        else if (a.maxDiscoDollarPercentage) return -1;
+        else if (b.maxDiscoDollarPercentage) return 1;
+        else return 0;
+      },
     },
     {
       title: 'Status',
@@ -285,7 +322,13 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
       render: (value = 'pending') => (
         <Tag color={tagColorByStatus[value]}>{value}</Tag>
       ),
-      sorter: (a, b): any => (a === b ? 0 : a.status === 'pending' ? 1 : -1),
+      sorter: (a, b): any => {
+        if (a.status && b.status)
+          return a.status === b.status ? 0 : a.status === 'pending' ? 1 : -1;
+        else if (a.status) return -1;
+        else if (b.status) return 1;
+        else return 0;
+      },
     },
     {
       title: 'Actions',

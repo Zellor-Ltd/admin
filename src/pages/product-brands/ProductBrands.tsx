@@ -1,8 +1,16 @@
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import { Button, Col, PageHeader, Popconfirm, Row, Spin, Table } from 'antd';
+import {
+  Button,
+  Col,
+  Input,
+  PageHeader,
+  Popconfirm,
+  Row,
+  Spin,
+  Table,
+  Typography,
+} from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import { SearchFilter } from '../../components/SearchFilter';
-import useFilter from '../../hooks/useFilter';
 import { useRequest } from '../../hooks/useRequest';
 import { ProductBrand } from '../../interfaces/ProductBrand';
 import moment from 'moment';
@@ -27,16 +35,8 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
-  const [filteredProductBrands, setFilteredProductBrands] = useState<
-    ProductBrand[]
-  >([]);
-
-  const {
-    setArrayList: setProductBrands,
-    filteredArrayList: filteredContent,
-    addFilterFunction,
-    removeFilterFunction,
-  } = useFilter<ProductBrand>([]);
+  const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
+  const [filter, setFilter] = useState<string>('');
 
   useEffect(() => {
     getResources();
@@ -54,20 +54,20 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   const fetchData = () => {
-    if (!filteredContent.length) return;
+    if (!productBrands.length) return;
 
     const pageToUse = refreshing ? 0 : page;
-    const results = filteredContent.slice(pageToUse * 10, pageToUse * 10 + 10);
+    const results = productBrands.slice(pageToUse * 10, pageToUse * 10 + 10);
 
     setPage(pageToUse + 1);
-    setFilteredProductBrands(prev => [...prev.concat(results)]);
+    setProductBrands(prev => [...prev.concat(results)]);
 
     if (results.length < 10) setEof(true);
   };
 
   useEffect(() => {
     if (refreshing) {
-      setFilteredProductBrands([]);
+      setProductBrands([]);
       setEof(false);
       fetchData();
       setRefreshing(false);
@@ -81,8 +81,10 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
           `.scrollable-row-${lastViewedIndex}`
         ) as HTMLElement
       );
+
+      if (search(productBrands).length < 10) setEof(true);
     }
-  }, [details]);
+  }, [details, productBrands]);
 
   const columns: ColumnsType<ProductBrand> = [
     {
@@ -97,19 +99,32 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
       dataIndex: 'externalCode',
       width: '10%',
       align: 'center',
-      sorter: (a, b) =>
-        a.externalCode !== b.externalCode ? a.externalCode - b.externalCode : 0,
+      sorter: (a, b): any => {
+        if (a.externalCode && b.externalCode)
+          return a.externalCode !== b.externalCode
+            ? a.externalCode - b.externalCode
+            : 0;
+        else if (a.externalCode) return -1;
+        else if (b.externalCode) return 1;
+        else return 0;
+      },
     },
     {
       title: 'D%',
       dataIndex: 'discoPercentage',
       width: '10%',
       align: 'center',
-      render: (value: string) => <a href="#">{value}</a>,
-      sorter: (a, b) =>
-        a.discoPercentage !== b.discoPercentage
-          ? a.discoPercentage - b.discoPercentage
-          : 0,
+      render: (value: string) => <a href=".">{value}</a>,
+
+      sorter: (a, b): any => {
+        if (a.discoPercentage && b.discoPercentage)
+          return a.discoPercentage !== b.discoPercentage
+            ? a.discoPercentage - b.discoPercentage
+            : 0;
+        else if (a.discoPercentage) return -1;
+        else if (b.discoPercentage) return 1;
+        else return 0;
+      },
     },
     {
       title: 'C%',
@@ -117,10 +132,15 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
       width: '10%',
       align: 'center',
       render: (value: string) => <a href="#">{value}</a>,
-      sorter: (a, b) =>
-        a.creatorPercentage !== b.creatorPercentage
-          ? a.creatorPercentage - b.creatorPercentage
-          : 0,
+      sorter: (a, b): any => {
+        if (a.creatorPercentage && b.creatorPercentage)
+          return a.creatorPercentage !== b.creatorPercentage
+            ? a.creatorPercentage - b.creatorPercentage
+            : 0;
+        else if (a.creatorPercentage) return -1;
+        else if (b.creatorPercentage) return 1;
+        else return 0;
+      },
     },
 
     {
@@ -129,10 +149,15 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
       width: '10%',
       align: 'center',
       render: (value: string) => <a href="#">{value}</a>,
-      sorter: (a, b) =>
-        a.maxDiscoDollarPercentage && b.maxDiscoDollarPercentage
-          ? a.maxDiscoDollarPercentage - b.maxDiscoDollarPercentage
-          : 0,
+      sorter: (a, b): any => {
+        if (a.maxDiscoDollarPercentage && b.maxDiscoDollarPercentage)
+          return a.maxDiscoDollarPercentage !== b.maxDiscoDollarPercentage
+            ? a.maxDiscoDollarPercentage - b.maxDiscoDollarPercentage
+            : 0;
+        else if (a.maxDiscoDollarPercentage) return -1;
+        else if (b.maxDiscoDollarPercentage) return 1;
+        else return 0;
+      },
     },
     {
       title: 'Name',
@@ -146,8 +171,12 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
           {value}
         </Link>
       ),
-      sorter: (a, b) => {
-        return a.brandName.localeCompare(b.brandName);
+      sorter: (a, b): any => {
+        if (a.brandName && b.brandName)
+          return a.brandName.localeCompare(b.brandName);
+        else if (a.brandName) return -1;
+        else if (b.brandName) return 1;
+        else return 0;
       },
     },
     {
@@ -161,8 +190,16 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
           <div>{moment(value).format('HH:mm')}</div>
         </>
       ),
-      sorter: (a, b) =>
-        moment(a.hCreationDate as Date).unix() - moment(b.hCreationDate).unix(),
+      sorter: (a, b): any => {
+        if (a.hCreationDate && b.hCreationDate)
+          return (
+            moment(a.hCreationDate as Date).unix() -
+            moment(b.hCreationDate).unix()
+          );
+        else if (a.hCreationDate) return -1;
+        else if (b.hCreationDate) return 1;
+        else return 0;
+      },
     },
     {
       title: 'Actions',
@@ -192,18 +229,8 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
     },
   ];
 
-  const searchFilterFunction = (filterText: string) => {
-    if (!filterText) {
-      removeFilterFunction('productBrandName');
-      setRefreshing(true);
-      return;
-    }
-    addFilterFunction('productBrandName', brands =>
-      brands.filter(brand =>
-        brand.brandName.toUpperCase().includes(filterText.toUpperCase())
-      )
-    );
-    setRefreshing(true);
+  const search = rows => {
+    return rows.filter(row => row.brandName.toLowerCase().indexOf(filter) > -1);
   };
 
   const editProductBrand = (index: number, productBrand?: ProductBrand) => {
@@ -221,8 +248,8 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   const refreshItem = (record: ProductBrand) => {
-    filteredProductBrands[lastViewedIndex] = record;
-    setProductBrands([...filteredProductBrands]);
+    productBrands[lastViewedIndex] = record;
+    setProductBrands([...productBrands]);
   };
 
   const onSaveBrand = (record: ProductBrand) => {
@@ -244,7 +271,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
             extra={[
               <Button
                 key="1"
-                onClick={() => editProductBrand(filteredProductBrands.length)}
+                onClick={() => editProductBrand(productBrands.length)}
               >
                 New Item
               </Button>,
@@ -252,14 +279,18 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
           />
           <Row className="sticky-filter-box" gutter={8}>
             <Col lg={8} xs={16}>
-              <SearchFilter
-                filterFunction={searchFilterFunction}
-                label="Search by Product Brand Name"
+              <Typography.Title level={5}>Search by Name</Typography.Title>
+              <Input
+                className="mb-1"
+                value={filter}
+                onChange={event => {
+                  setFilter(event.target.value);
+                }}
               />
             </Col>
           </Row>
           <InfiniteScroll
-            dataLength={filteredProductBrands.length}
+            dataLength={productBrands.length}
             next={fetchData}
             hasMore={!eof}
             loader={
@@ -279,7 +310,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
               rowClassName={(_, index) => `scrollable-row-${index}`}
               rowKey="id"
               columns={columns}
-              dataSource={filteredProductBrands}
+              dataSource={search(productBrands)}
               loading={loading || refreshing}
               pagination={false}
             />

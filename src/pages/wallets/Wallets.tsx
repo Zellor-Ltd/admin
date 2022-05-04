@@ -9,7 +9,6 @@ import {
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import SimpleSelect from 'components/select/SimpleSelect';
-import useFilter from 'hooks/useFilter';
 import { useRequest } from 'hooks/useRequest';
 import { Brand } from 'interfaces/Brand';
 import { Fan } from 'interfaces/Fan';
@@ -44,14 +43,8 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
   const [options, setOptions] = useState<
     { label: string; value: string; key: string }[]
   >([]);
-
-  const {
-    arrayList: wallets,
-    setArrayList: setWallets,
-    filteredArrayList: filteredContent,
-    addFilterFunction,
-    removeFilterFunction,
-  } = useFilter<Wallet>([]);
+  const [filter, setFilter] = useState<string>('');
+  const [wallets, setWallets] = useState<Wallet[]>([]);
 
   const optionsMapping: SelectOption = {
     key: 'id',
@@ -83,12 +76,12 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
     setFilteredWallets([]);
     setEof(false);
     updateDisplayedArray();
-  }, [filteredContent, page]);
+  }, [wallets, page]);
 
   const updateDisplayedArray = () => {
-    if (!filteredContent.length) return;
+    if (!wallets.length) return;
 
-    const results = filteredContent.slice(page * 10, page * 10 + 10);
+    const results = wallets.slice(page * 10, page * 10 + 10);
     setFilteredWallets(prev => [...prev.concat(results)]);
 
     if (results.length < 10) {
@@ -137,8 +130,9 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
           `.scrollable-row-${lastViewedIndex}`
         ) as HTMLElement
       );
+      if (search(wallets).length < 10) setEof(true);
     }
-  }, [details]);
+  }, [details, wallets]);
 
   const editWallet = (index: number) => {
     setLastViewedIndex(index);
@@ -211,7 +205,11 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
         </Link>
       ),
       sorter: (a, b) => {
-        return a.brandName.localeCompare(b.brandName);
+        if (a.brandName && b.brandName)
+          return a.brandName.localeCompare(b.brandName);
+        else if (a.brandName) return 1;
+        else if (b.brandName) return -1;
+        else return 0;
       },
     },
     {
@@ -219,22 +217,18 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
       dataIndex: 'discoDollars',
       width: '15%',
       align: 'right',
-      sorter: (a, b) =>
-        a.discoDollars && b.discoDollars ? a.discoDollars - b.discoDollars : 0,
+      sorter: (a, b): any => {
+        if (a.discoDollars && b.discoDollars)
+          return a.discoDollars - b.discoDollars;
+        else if (a.discoDollars) return -1;
+        else if (b.discoDollars) return 1;
+        else return 0;
+      },
     },
   ];
 
-  const onChangeBrand = async (_selectedBrand: Brand | undefined) => {
-    setSelectedBrand(_selectedBrand);
-    if (!_selectedBrand) {
-      removeFilterFunction('brandName');
-      setPage(0);
-      return;
-    }
-    addFilterFunction('brandName', wallets =>
-      wallets.filter(wallet => wallet.brandName === _selectedBrand.brandName)
-    );
-    setPage(0);
+  const search = rows => {
+    return rows.filter(row => row.brandName?.indexOf(filter) > -1);
   };
 
   const onCancelWallet = () => {
@@ -244,6 +238,11 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
   const onSearch = (value: string) => {
     setSearchFilter(value);
     getFans();
+  };
+
+  const onChangeBrand = (brand?: Brand) => {
+    setFilter(brand?.brandName ?? '');
+    setSelectedBrand(brand);
   };
 
   return (
@@ -320,7 +319,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
               rowClassName={(_, index) => `scrollable-row-${index}`}
               rowKey="id"
               columns={columns}
-              dataSource={filteredWallets}
+              dataSource={search(wallets)}
               loading={loading}
               pagination={false}
             />

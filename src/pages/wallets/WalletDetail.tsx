@@ -10,7 +10,6 @@ import {
   Typography,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import useFilter from 'hooks/useFilter';
 import { useRequest } from 'hooks/useRequest';
 import {
   WalletDetailParams,
@@ -42,16 +41,8 @@ const WalletDetail: React.FC<WalletDetailProps> = ({
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
-  const [filteredTransactions, setFilteredTransactions] = useState<
-    WalletTransaction[]
-  >([]);
-
-  const {
-    setArrayList: setTransactions,
-    filteredArrayList: filteredContent,
-    addFilterFunction,
-    removeFilterFunction,
-  } = useFilter<WalletTransaction>([]);
+  const [transactions, setTransactions] = useState<WalletTransaction[]>([]);
+  const [filter, setFilter] = useState<any[]>([]);
 
   const wallet = initial
     ? {
@@ -80,25 +71,29 @@ const WalletDetail: React.FC<WalletDetailProps> = ({
   };
 
   const fetchData = () => {
-    if (!filteredContent.length) return;
+    if (!transactions.length) return;
 
     const pageToUse = refreshing ? 0 : page;
-    const results = filteredContent.slice(pageToUse * 10, pageToUse * 10 + 10);
+    const results = transactions.slice(pageToUse * 10, pageToUse * 10 + 10);
 
     setPage(pageToUse + 1);
-    setFilteredTransactions(prev => [...prev.concat(results)]);
+    setTransactions(prev => [...prev.concat(results)]);
 
     if (results.length < 10) setEof(true);
   };
 
   useEffect(() => {
     if (refreshing) {
-      setFilteredTransactions([]);
+      setTransactions([]);
       setEof(false);
       fetchData();
       setRefreshing(false);
     }
   }, [refreshing]);
+
+  useEffect(() => {
+    if (search(transactions).length < 10) setEof(true);
+  }, [transactions]);
 
   const columns: ColumnsType<WalletTransaction> = [
     {
@@ -110,7 +105,7 @@ const WalletDetail: React.FC<WalletDetailProps> = ({
       filterDropdown: () => (
         <DatePicker.RangePicker
           style={{ padding: 8 }}
-          onChange={handleDateChange}
+          onChange={values => setFilter(values as any)}
         />
       ),
       render: (value: Date) =>
@@ -139,20 +134,16 @@ const WalletDetail: React.FC<WalletDetailProps> = ({
     },
   ];
 
-  const handleDateChange = (values: any) => {
-    if (!values) {
-      removeFilterFunction('creationDate');
-      setRefreshing(true);
-      return;
+  const search = rows => {
+    if (filter?.length) {
+      const startDate = moment(filter[0], 'DD/MM/YYYY').startOf('day').utc();
+      const endDate = moment(filter[1], 'DD/MM/YYYY').endOf('day').utc();
+
+      return rows.filter(row =>
+        moment(row.hCreationDate).utc().isBetween(startDate, endDate)
+      );
     }
-    const startDate = moment(values[0], 'DD/MM/YYYY').startOf('day').utc();
-    const endDate = moment(values[1], 'DD/MM/YYYY').endOf('day').utc();
-    addFilterFunction('creationDate', (transactions: WalletTransaction[]) =>
-      transactions.filter(({ hCreationDate }) => {
-        return moment(hCreationDate).utc().isBetween(startDate, endDate);
-      })
-    );
-    setRefreshing(true);
+    return rows;
   };
 
   const onResetWallet = () => {
@@ -161,12 +152,12 @@ const WalletDetail: React.FC<WalletDetailProps> = ({
   };
 
   const onSaveWallet = (balanceToAdd: number) => {
-    filteredTransactions.push({
+    transactions.push({
       discoDollars: balanceToAdd,
       hCreationDate: moment(),
       addedBy: 'admin',
     });
-    setTransactions([...filteredTransactions]);
+    setTransactions([...transactions]);
     onSave?.(balanceToAdd, wallet);
   };
 
@@ -211,7 +202,7 @@ const WalletDetail: React.FC<WalletDetailProps> = ({
         </Col>
       </Row>
       <InfiniteScroll
-        dataLength={filteredTransactions.length}
+        dataLength={transactions.length}
         next={fetchData}
         hasMore={!eof}
         loader={
@@ -230,7 +221,7 @@ const WalletDetail: React.FC<WalletDetailProps> = ({
         <Table
           rowKey="id"
           columns={columns}
-          dataSource={filteredTransactions}
+          dataSource={search(transactions)}
           loading={loading || refreshing}
           pagination={false}
         />

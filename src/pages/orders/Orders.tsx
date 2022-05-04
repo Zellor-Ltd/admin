@@ -15,7 +15,6 @@ import {
   Typography,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import useFilter from 'hooks/useFilter';
 import { Brand } from 'interfaces/Brand';
 import { Fan } from 'interfaces/Fan';
 import { Order } from 'interfaces/Order';
@@ -37,11 +36,8 @@ import scrollIntoView from 'scroll-into-view';
 import FanDetail from 'pages/fans/FanDetail';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useMount } from 'react-use';
-import { useRequest } from 'hooks/useRequest';
-import { identity } from 'lodash';
 
 const Orders: React.FC<RouteComponentProps> = ({ location }) => {
-  const [loading, setLoading] = useState<boolean>(false);
   const [orderUpdateList, setOrderUpdateList] = useState<boolean[]>([]);
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
   const [currentFan, setCurrentFan] = useState<Fan>();
@@ -56,21 +52,13 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   const [eof, setEof] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [ordersSettings, setOrdersSettings] = useState([]);
-  const { doFetch } = useRequest({ setLoading });
-  const [selectedFan, setSelectedFan] = useState<Fan>();
   const [fanFilter, setFanFilter] = useState<string>('');
   const [brandFilter, setBrandFilter] = useState<string>();
   const [options, setOptions] = useState<
     { label: string; value: string; key: string }[]
   >([]);
-
-  const {
-    arrayList: orders,
-    setArrayList: setOrders,
-    filteredArrayList: filteredOrders,
-    addFilterFunction,
-    removeFilterFunction,
-  } = useFilter<Order>([]);
+  const [filter, setFilter] = useState<any[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
 
   const fetchUsers = async (_query?: string) => {
     const pageToUse = refreshing ? 0 : page;
@@ -172,20 +160,16 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     });
   };
 
-  const handleDateChange = (values: any) => {
-    if (!values) {
-      removeFilterFunction('creationDate');
-      setRefreshing(true);
-      return;
+  const search = rows => {
+    if (filter?.length) {
+      const startDate = moment(filter[0], 'DD/MM/YYYY').startOf('day').utc();
+      const endDate = moment(filter[1], 'DD/MM/YYYY').endOf('day').utc();
+
+      return rows.filter(row =>
+        moment(row.hCreationDate).utc().isBetween(startDate, endDate)
+      );
     }
-    const startDate = moment(values[0], 'DD/MM/YYYY').startOf('day').utc();
-    const endDate = moment(values[1], 'DD/MM/YYYY').endOf('day').utc();
-    addFilterFunction('creationDate', (orders: Order[]) =>
-      orders.filter(({ hCreationDate }) => {
-        return moment(hCreationDate).utc().isBetween(startDate, endDate);
-      })
-    );
-    setRefreshing(true);
+    return rows;
   };
 
   useEffect(() => {
@@ -195,8 +179,9 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
           `.scrollable-row-${lastViewedIndex}`
         ) as HTMLElement
       );
+      if (search(orders).length < 10) setEof(true);
     }
-  }, [details]);
+  }, [details, orders]);
 
   const editFan = (index: number, fan?: Fan) => {
     setLastViewedIndex(index);
@@ -298,8 +283,11 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       width: '10%',
       align: 'left',
       ...getColumnSearchProps('userid'),
-      sorter: (a, b) => {
-        return a.userid.localeCompare(b.userid);
+      sorter: (a, b): any => {
+        if (a.userid && b.userid) return a.userid.localeCompare(b.userid);
+        else if (a.userid) return -1;
+        else if (b.userid) return 1;
+        else return 0;
       },
     },
     {
@@ -308,7 +296,12 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       width: '5%',
       align: 'center',
       render: (value: boolean) => <b>{value ? 'Yes' : 'No'}</b>,
-      sorter: (a, b): any => (a === b ? 0 : !a && b ? 1 : -1),
+      sorter: (a, b): any => {
+        if (a.paid && b.paid) return 0;
+        else if (a.paid) return -1;
+        else if (b.paid) return 1;
+        else return 0;
+      },
     },
     {
       title: 'Amount / 100',
@@ -316,7 +309,12 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       width: '5%',
       align: 'center',
       render: (value: number) => `${value / 100}x`,
-      sorter: (a, b) => (a.amount && b.amount ? a.amount - b.amount : 0),
+      sorter: (a, b): any => {
+        if (a.amount && b.amount) return a.amount - b.amount;
+        else if (a.amount) return -1;
+        else if (b.amount) return 1;
+        else return 0;
+      },
     },
     {
       title: 'Name',
@@ -363,7 +361,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       filterDropdown: () => (
         <DatePicker.RangePicker
           style={{ padding: 8 }}
-          onChange={handleDateChange}
+          onChange={values => setFilter(values as any)}
         />
       ),
       render: (value: Date) => (
@@ -372,16 +370,28 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
           <div>{moment(value).format('HH:mm')}</div>
         </>
       ),
-      sorter: (a, b) =>
-        moment(a.hCreationDate).unix() - moment(b.hCreationDate).unix(),
+      sorter: (a, b): any => {
+        if (a.hCreationDate && b.hCreationDate)
+          return (
+            moment(a.hCreationDate).unix() - moment(b.hCreationDate).unix()
+          );
+        else if (a.hCreationDate) return -1;
+        else if (b.hCreationDate) return 1;
+        else return 0;
+      },
     },
     {
       title: 'Disco Dollars',
       dataIndex: 'discoDollars',
       width: '5%',
       align: 'center',
-      sorter: (a, b) =>
-        a.discoDollars && b.discoDollars ? a.discoDollars - b.discoDollars : 0,
+      sorter: (a, b): any => {
+        if (a.discoDollars && b.discoDollars)
+          return a.discoDollars - b.discoDollars;
+        else if (a.discoDollars) return -1;
+        else if (b.discoDollars) return 1;
+        else return 0;
+      },
     },
     {
       title: 'Stage',
@@ -406,8 +416,11 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
           ))}
         </Select>
       ),
-      sorter: (a, b) => {
-        return (a.stage ?? '').localeCompare(b.stage ?? '');
+      sorter: (a, b): any => {
+        if (a.stage && b.stage) return a.stage.localeCompare(b.stage);
+        else if (a.stage) return -1;
+        else if (b.stage) return 1;
+        else return 0;
       },
     },
     {
@@ -421,8 +434,13 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
           <div>{moment(value).format('HH:mm')}</div>
         </>
       ),
-      sorter: (a, b) =>
-        moment(a.hLastUpdate).unix() - moment(b.hLastUpdate).unix(),
+      sorter: (a, b): any => {
+        if (a.hLastUpdate && b.hLastUpdate)
+          return moment(a.hLastUpdate).unix() - moment(b.hLastUpdate).unix();
+        else if (a.hLastUpdate) return -1;
+        else if (b.hLastUpdate) return 1;
+        else return 0;
+      },
     },
   ];
 
@@ -520,7 +538,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
             </Col>
           </Row>
           <InfiniteScroll
-            dataLength={filteredOrders.length}
+            dataLength={orders.length}
             next={loadNext}
             hasMore={!eof}
             loader={
@@ -540,8 +558,8 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
               rowClassName={(_, index) => `scrollable-row-${index}`}
               rowKey="id"
               columns={columns}
-              dataSource={filteredOrders}
-              loading={loading || refreshing}
+              dataSource={search(orders)}
+              loading={refreshing}
               pagination={false}
             />
           </InfiniteScroll>

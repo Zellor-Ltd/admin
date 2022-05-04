@@ -5,13 +5,20 @@ import {
   EditOutlined,
   SearchOutlined,
 } from '@ant-design/icons';
-import { Button, Col, PageHeader, Popconfirm, Row, Table } from 'antd';
+import {
+  Button,
+  Col,
+  Input,
+  PageHeader,
+  Popconfirm,
+  Row,
+  Table,
+  Typography,
+} from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
-import { SearchFilter } from 'components/SearchFilter';
-import useFilter from 'hooks/useFilter';
 import { Creator } from 'interfaces/Creator';
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import {
   deleteCreator,
@@ -34,15 +41,8 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
   const [currentCreator, setCurrentCreator] = useState<Creator>();
   const { doFetch } = useRequest({ setLoading });
   const [loaded, setLoaded] = useState<boolean>(false);
-  const [filteredCreators, setFilteredCreators] = useState<Creator[]>([]);
-  const timeoutRef = useRef<any>();
-
-  const {
-    setArrayList: setCreators,
-    filteredArrayList: filteredContent,
-    addFilterFunction,
-    removeFilterFunction,
-  } = useFilter<Creator>([]);
+  const [creators, setCreators] = useState<Creator[]>([]);
+  const [filter, setFilter] = useState<string>('');
 
   const fetch = async () => {
     const { results }: any = await doFetch(fetchCreators);
@@ -72,8 +72,12 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
           {`${record.firstName} ${record.lastName}`}
         </Link>
       ),
-      sorter: (a, b) => {
-        return a.firstName.localeCompare(b.firstName);
+      sorter: (a, b): any => {
+        if (a.firstName && b.firstName)
+          return a.firstName.localeCompare(b.firstName);
+        else if (a.firstName) return -1;
+        else if (b.firstName) return 1;
+        else return 0;
       },
     },
     {
@@ -81,9 +85,11 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
       dataIndex: 'status',
       width: '10%',
       align: 'center',
-
-      sorter: (a, b) => {
-        return a.status.localeCompare(b.status);
+      sorter: (a, b): any => {
+        if (a.status && b.status) return a.status.localeCompare(b.status);
+        else if (a.status) return -1;
+        else if (b.status) return 1;
+        else return 0;
       },
     },
     {
@@ -145,30 +151,14 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
     setLoading(false);
   };
 
-  const searchFilterFunction = (filterText: string) => {
-    if (timeoutRef.current !== undefined) {
-      clearTimeout(timeoutRef.current);
-    }
-
-    if (!filterText) {
-      removeFilterFunction('fullName');
-    } else {
-      timeoutRef.current = setTimeout(() => {
-        addFilterFunction('fullName', creators =>
-          creators.filter(creator =>
-            `${creator.firstName || ''} ${creator.lastName || ''}`
-              .toUpperCase()
-              .includes(filterText.toUpperCase())
-          )
-        );
-      }, 250);
-    }
+  const search = rows => {
+    return rows.filter(row => row.firstName.toLowerCase().indexOf(filter) > -1);
   };
 
   const refreshItem = (record: Creator) => {
     if (loaded) {
-      filteredCreators[lastViewedIndex] = record;
-      setCreators([...filteredCreators]);
+      creators[lastViewedIndex] = record;
+      setCreators([...creators]);
     } else {
       setCreators([record]);
     }
@@ -202,10 +192,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
             title="Creators"
             subTitle="List of Creators"
             extra={[
-              <Button
-                key="1"
-                onClick={() => editCreator(filteredCreators.length)}
-              >
+              <Button key="1" onClick={() => editCreator(creators.length)}>
                 New Item
               </Button>,
             ]}
@@ -217,9 +204,15 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
             className={'sticky-filter-box'}
           >
             <Col lg={8} xs={16}>
-              <SearchFilter
-                filterFunction={searchFilterFunction}
-                label="Search by First Name"
+              <Typography.Title level={5}>
+                Search by First Name
+              </Typography.Title>
+              <Input
+                className="mb-1"
+                value={filter}
+                onChange={event => {
+                  setFilter(event.target.value);
+                }}
               />
             </Col>
             <Button
@@ -238,7 +231,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
           <Table
             rowKey="id"
             columns={columns}
-            dataSource={filteredContent}
+            dataSource={search(creators)}
             loading={loading}
           />
         </div>

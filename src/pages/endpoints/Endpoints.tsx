@@ -1,8 +1,6 @@
 import { EditOutlined } from '@ant-design/icons';
-import { Button, Col, PageHeader, Row, Table } from 'antd';
+import { Button, Col, Input, PageHeader, Row, Table, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import { SearchFilter } from 'components/SearchFilter';
-import useFilter from 'hooks/useFilter';
 import { Endpoint } from 'interfaces/Endpoint';
 import { useEffect, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
@@ -12,12 +10,8 @@ import CopyIdToClipboard from 'components/CopyIdToClipboard';
 const Endpoints: React.FC<RouteComponentProps> = ({ history, location }) => {
   const detailsPathname = `${location.pathname}/endpoint`;
   const [loading, setLoading] = useState(false);
-
-  const {
-    setArrayList: setEndpoints,
-    filteredArrayList: filteredEndpoints,
-    addFilterFunction,
-  } = useFilter<Endpoint>([]);
+  const [filter, setFilter] = useState<string>('');
+  const [endpoints, setEndpoints] = useState<Endpoint[]>([]);
 
   const columns: ColumnsType<Endpoint> = [
     {
@@ -41,24 +35,34 @@ const Endpoints: React.FC<RouteComponentProps> = ({ history, location }) => {
           {record.isActive && `${record.name}`}
         </>
       ),
-      sorter: (a, b) => {
-        return a.name.localeCompare(b.name);
+      sorter: (a, b): any => {
+        if (a.name && b.name) return a.name.localeCompare(b.name);
+        else if (a.name) return -1;
+        else if (b.name) return 1;
+        else return 0;
       },
     },
     {
       title: 'Container',
       dataIndex: 'container',
       width: '15%',
-      sorter: (a, b) => {
-        return a.container.localeCompare(b.container);
+      sorter: (a, b): any => {
+        if (a.container && b.container)
+          return a.container.localeCompare(b.container);
+        else if (a.container) return -1;
+        else if (b.container) return 1;
+        else return 0;
       },
     },
     {
       title: 'Method',
       dataIndex: 'action',
       width: '10%',
-      sorter: (a, b) => {
-        return a.action.localeCompare(b.action);
+      sorter: (a, b): any => {
+        if (a.action && b.action) return a.action.localeCompare(b.action);
+        else if (a.action) return -1;
+        else if (b.action) return 1;
+        else return 0;
       },
     },
     {
@@ -94,12 +98,8 @@ const Endpoints: React.FC<RouteComponentProps> = ({ history, location }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const searchFilterFunction = (filterText: string) => {
-    addFilterFunction('endpointName', endpoints =>
-      endpoints.filter(endpoint =>
-        endpoint.name.toUpperCase().includes(filterText.toUpperCase())
-      )
-    );
+  const search = rows => {
+    return rows.filter(row => row.name.toLowerCase().indexOf(filter) > -1);
   };
 
   return (
@@ -115,16 +115,20 @@ const Endpoints: React.FC<RouteComponentProps> = ({ history, location }) => {
       />
       <Row gutter={8} className={'sticky-filter-box'}>
         <Col lg={8} xs={16}>
-          <SearchFilter
-            filterFunction={searchFilterFunction}
-            label="Search by Name"
+          <Typography.Title level={5}>Search by Name</Typography.Title>
+          <Input
+            className="mb-1"
+            value={filter}
+            onChange={event => {
+              setFilter(event.target.value);
+            }}
           />
         </Col>
       </Row>
       <Table
         rowKey="id"
         columns={columns}
-        dataSource={filteredEndpoints}
+        dataSource={search(endpoints)}
         loading={loading}
       />
     </div>

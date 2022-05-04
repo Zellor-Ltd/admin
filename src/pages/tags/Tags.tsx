@@ -108,40 +108,60 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
           {value}
         </Link>
       ),
-      sorter: (a, b) => {
-        return a.tagName.localeCompare(b.tagName);
+      sorter: (a, b): any => {
+        if (a.tagName && b.tagName) return a.tagName.localeCompare(b.tagName);
+        else if (a.tagName) return -1;
+        else if (b.tagName) return 1;
+        else return 0;
       },
     },
     {
       title: 'Product',
       dataIndex: ['product', 'name'],
       width: '20%',
-      sorter: (a, b) => {
-        return a.product.name.localeCompare(b.product.name);
+      sorter: (a, b): any => {
+        if (a.product && b.product)
+          return a.product.name?.localeCompare(b.product.name);
+        else if (a.product) return -1;
+        else if (b.product) return 1;
+        else return 0;
       },
     },
     {
       title: 'Master Brand',
       dataIndex: ['brand', 'brandName'],
       width: '20%',
-      sorter: (a, b) => {
-        return a.brand?.brandName.localeCompare(b.brand?.brandName ?? '');
+      sorter: (a, b): any => {
+        if (a.brand && b.brand)
+          return a.brand.brandName?.localeCompare(b.brand.brandName);
+        else if (a.brand) return -1;
+        else if (b.brand) return 1;
+        else return 0;
       },
     },
     {
       title: 'Template',
       dataIndex: 'template',
       width: '15%',
-      sorter: (a, b) => {
-        return (a.template ?? '').localeCompare(b.template ?? '');
+      sorter: (a, b): any => {
+        if (a.template && b.template)
+          return a.template.localeCompare(b.template);
+        else if (a.template) return -1;
+        else if (b.template) return 1;
+        else return 0;
       },
     },
     {
       title: "DD's",
       dataIndex: 'discoDollars',
       width: '5%',
-      sorter: (a, b) =>
-        a.discoDollars && b.discoDollars ? a.discoDollars - b.discoDollars : 0,
+      sorter: (a, b): any => {
+        if (a.discoDollars && b.discoDollars)
+          return a.discoDollars - b.discoDollars;
+        else if (a.discoDollars) return -1;
+        else if (b.discoDollars) return 1;
+        else return 0;
+      },
     },
     {
       title: 'Actions',

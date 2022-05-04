@@ -1,8 +1,16 @@
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import { Button, Col, PageHeader, Popconfirm, Row, Spin, Table } from 'antd';
+import {
+  Button,
+  Col,
+  Input,
+  PageHeader,
+  Popconfirm,
+  Row,
+  Spin,
+  Table,
+  Typography,
+} from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import { SearchFilter } from 'components/SearchFilter';
-import useFilter from 'hooks/useFilter';
 import { useRequest } from 'hooks/useRequest';
 import { DdTemplate } from 'interfaces/DdTemplate';
 import moment from 'moment';
@@ -23,16 +31,8 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
-  const [filteredDdTemplates, setFilteredDdTemplates] = useState<DdTemplate[]>(
-    []
-  );
-
-  const {
-    setArrayList: setDdTemplates,
-    filteredArrayList: filteredContent,
-    addFilterFunction,
-    removeFilterFunction,
-  } = useFilter<DdTemplate>([]);
+  const [ddTemplates, setDdTemplates] = useState<DdTemplate[]>([]);
+  const [filter, setFilter] = useState<string>('');
 
   useEffect(() => {
     getResources();
@@ -49,23 +49,23 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   const fetchData = () => {
-    if (!filteredContent.length) {
+    if (!ddTemplates.length) {
       setEof(true);
       return;
     }
 
     const pageToUse = refreshing ? 0 : page;
-    const results = filteredContent.slice(pageToUse * 10, pageToUse * 10 + 10);
+    const results = ddTemplates.slice(pageToUse * 10, pageToUse * 10 + 10);
 
     setPage(pageToUse + 1);
-    setFilteredDdTemplates(prev => [...prev.concat(results)]);
+    setDdTemplates(prev => [...prev.concat(results)]);
 
     if (results.length < 10) setEof(true);
   };
 
   useEffect(() => {
     if (refreshing) {
-      setFilteredDdTemplates([]);
+      setDdTemplates([]);
       setEof(false);
       fetchData();
       setRefreshing(false);
@@ -79,8 +79,10 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
           `.scrollable-row-${lastViewedIndex}`
         ) as HTMLElement
       );
+
+      if (search(ddTemplates).length < 10) setEof(true);
     }
-  }, [details]);
+  }, [details, ddTemplates]);
 
   const editDdTemplate = (index: number, template?: DdTemplate) => {
     setLastViewedIndex(index);
@@ -89,8 +91,8 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   const refreshItem = (record: DdTemplate) => {
-    filteredDdTemplates[lastViewedIndex] = record;
-    setDdTemplates([...filteredDdTemplates]);
+    ddTemplates[lastViewedIndex] = record;
+    setDdTemplates([...ddTemplates]);
   };
 
   const onSaveDdTemplate = (record: DdTemplate) => {
@@ -127,8 +129,11 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
           {value}
         </Link>
       ),
-      sorter: (a, b) => {
-        return a.tagName.localeCompare(b.tagName);
+      sorter: (a, b): any => {
+        if (a.tagName && b.tagName) return a.tagName.localeCompare(b.tagName);
+        else if (a.tagName) return -1;
+        else if (b.tagName) return 1;
+        else return 0;
       },
     },
     {
@@ -136,8 +141,12 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
       dataIndex: 'template',
       width: '12%',
       align: 'center',
-      sorter: (a, b) => {
-        return a.template.localeCompare(b.template);
+      sorter: (a, b): any => {
+        if (a.template && b.template)
+          return a.template.localeCompare(b.template);
+        else if (a.template) return -1;
+        else if (b.template) return 1;
+        else return 0;
       },
     },
     {
@@ -145,16 +154,25 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
       dataIndex: 'discoGold',
       width: '10%',
       align: 'center',
-      sorter: (a, b) =>
-        a.discoGold && b.discoGold ? a.discoGold - b.discoGold : 0,
+      sorter: (a, b): any => {
+        if (a.discoGold && b.discoGold) return a.discoGold - b.discoGold;
+        else if (a.discoGold) return -1;
+        else if (b.discoGold) return 1;
+        else return 0;
+      },
     },
     {
       title: 'Disco Dollars',
       dataIndex: 'discoDollars',
       width: '10%',
       align: 'center',
-      sorter: (a, b) =>
-        a.discoDollars && b.discoDollars ? a.discoDollars - b.discoDollars : 0,
+      sorter: (a, b): any => {
+        if (a.discoDollars && b.discoDollars)
+          return a.discoDollars - b.discoDollars;
+        else if (a.discoDollars) return -1;
+        else if (b.discoDollars) return 1;
+        else return 0;
+      },
     },
     {
       title: 'Creation',
@@ -167,8 +185,15 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
           <div>{moment(value).format('HH:mm')}</div>
         </>
       ),
-      sorter: (a, b) =>
-        moment(a.hCreationDate).unix() - moment(b.hCreationDate).unix(),
+      sorter: (a, b): any => {
+        if (a.hCreationDate && b.hCreationDate)
+          return (
+            moment(a.hCreationDate).unix() - moment(b.hCreationDate).unix()
+          );
+        else if (a.hCreationDate) return -1;
+        else if (b.hCreationDate) return 1;
+        else return 0;
+      },
     },
     {
       title: 'Actions',
@@ -198,18 +223,8 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
     },
   ];
 
-  const searchFilterFunction = (filterText: string) => {
-    if (!filterText) {
-      removeFilterFunction('ddTagName');
-      setRefreshing(true);
-      return;
-    }
-    addFilterFunction('ddTagName', dds =>
-      dds.filter(dd =>
-        dd.tagName.toUpperCase().includes(filterText.toUpperCase())
-      )
-    );
-    setRefreshing(true);
+  const search = rows => {
+    return rows.filter(row => row.tagName.toLowerCase().indexOf(filter) > -1);
   };
 
   return (
@@ -222,7 +237,7 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
             extra={[
               <Button
                 key="1"
-                onClick={() => editDdTemplate(filteredDdTemplates.length)}
+                onClick={() => editDdTemplate(ddTemplates.length)}
               >
                 New Item
               </Button>,
@@ -230,14 +245,18 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
           />
           <Row gutter={8} className={'sticky-filter-box'}>
             <Col lg={8} xs={16}>
-              <SearchFilter
-                filterFunction={searchFilterFunction}
-                label="Search by Tag Name"
+              <Typography.Title level={5}>Search by Tag Name</Typography.Title>
+              <Input
+                className="mb-1"
+                value={filter}
+                onChange={event => {
+                  setFilter(event.target.value);
+                }}
               />
             </Col>
           </Row>
           <InfiniteScroll
-            dataLength={filteredDdTemplates.length}
+            dataLength={ddTemplates.length}
             next={fetchData}
             hasMore={!eof}
             loader={
@@ -257,7 +276,7 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
               rowClassName={(_, index) => `scrollable-row-${index}`}
               rowKey="id"
               columns={columns}
-              dataSource={filteredDdTemplates}
+              dataSource={search(ddTemplates)}
               loading={loading || refreshing}
               pagination={false}
             />
