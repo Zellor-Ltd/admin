@@ -22,6 +22,11 @@ import {
   UserAddOutlined,
   FolderAddOutlined,
   ToolOutlined,
+  BarsOutlined,
+  LikeOutlined,
+  FileDoneOutlined,
+  ToTopOutlined,
+  LockOutlined,
 } from '@ant-design/icons';
 import { Menu } from 'antd';
 import SubMenu from 'antd/lib/menu/SubMenu';
@@ -86,11 +91,11 @@ const AdminSideMenu = () => {
         <Menu.Item key="marketing_home-screen" icon={<IdcardOutlined />}>
           <Link to="/marketing_home-screen">Home Screen</Link>
         </Menu.Item>
-        <Menu.Item key="marketing_promotions" icon={<SoundOutlined />}>
-          <Link to="/marketing_promotions">Promotions</Link>
-        </Menu.Item>
         <Menu.Item key="marketing_promo-displays" icon={<GiftOutlined />}>
           <Link to="/marketing_promo-displays">Shop Display</Link>
+        </Menu.Item>
+        <Menu.Item key="marketing_promotions" icon={<SoundOutlined />}>
+          <Link to="/marketing_promotions">Promotions</Link>
         </Menu.Item>
       </SubMenu>
       <SubMenu key="users" icon={<TeamOutlined />} title="Users">
@@ -108,6 +113,9 @@ const AdminSideMenu = () => {
         </Menu.Item> */}
       </SubMenu>
       <SubMenu key="settings" icon={<SettingOutlined />} title="Settings">
+        <Menu.Item key="settings_access-control" icon={<ControlOutlined />}>
+          <Link to="/settings_access-control">Access Control</Link>
+        </Menu.Item>
         <Menu.Item key="settings_data-management" icon={<ToolOutlined />}>
           <Link to="/settings_data-management">Data Management</Link>
         </Menu.Item>
@@ -123,28 +131,28 @@ const AdminSideMenu = () => {
         <Menu.Item key="settings_settings" icon={<SettingOutlined />}>
           <Link to="/settings_settings">Settings</Link>
         </Menu.Item>
-        <Menu.Item key="settings_access-control" icon={<ControlOutlined />}>
-          <Link to="/settings_access-control">Access Control</Link>
+        <Menu.Item key="settings_categories" icon={<BarsOutlined />}>
+          <Link to="/settings_categories">Categories</Link>
+        </Menu.Item>
+        <Menu.Item key="settings_interests" icon={<LikeOutlined />}>
+          <Link to="/settings_interests">Interests</Link>
+        </Menu.Item>
+        <Menu.Item key="settings_trends" icon={<LineChartOutlined />}>
+          <Link to="/settings_trends">Trends</Link>
+        </Menu.Item>
+        <Menu.Item key="settings_dd-templates" icon={<FileDoneOutlined />}>
+          <Link to="/settings_dd-templates">DD Templates</Link>
+        </Menu.Item>
+        <Menu.Item key="settings_fan-groups" icon={<TeamOutlined />}>
+          <Link to="/settings_fan-groups">Fan Groups</Link>
         </Menu.Item>
         <Menu.Item key="settings_tags" icon={<TagOutlined />}>
           <Link to="/settings_tags">Tags</Link>
         </Menu.Item>
-        <Menu.Item key="settings_categories" icon={<SwitcherOutlined />}>
-          <Link to="/settings_categories">Categories</Link>
-        </Menu.Item>
-        <Menu.Item key="settings_interests" icon={<SwitcherOutlined />}>
-          <Link to="/settings_interests">Interests</Link>
-        </Menu.Item>
-        <Menu.Item key="settings_dd-templates" icon={<SwitcherOutlined />}>
-          <Link to="/settings_dd-templates">DD Templates</Link>
-        </Menu.Item>
-        <Menu.Item key="settings_fan-groups" icon={<SwitcherOutlined />}>
-          <Link to="/settings_fan-groups">Fan Groups</Link>
-        </Menu.Item>
-        <Menu.Item key="settings_push-group-tag" icon={<SwitcherOutlined />}>
+        <Menu.Item key="settings_push-group-tag" icon={<ToTopOutlined />}>
           <Link to="/settings_push-group-tag">Push Group Tag</Link>
         </Menu.Item>
-        <Menu.Item key="settings_master-password" icon={<SwitcherOutlined />}>
+        <Menu.Item key="settings_master-password" icon={<LockOutlined />}>
           <Link to="/settings_master-password">Master Password</Link>
         </Menu.Item>
       </SubMenu>
