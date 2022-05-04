@@ -143,8 +143,12 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
           </div>
         </div>
       ),
-      sorter: (a, b) => {
-        return a.userName.localeCompare(b.userName);
+      sorter: (a, b): any => {
+        if (a.userName && b.userName)
+          return a.userName.localeCompare(b.userName);
+        else if (a.userName) return -1;
+        else if (b.userName) return 1;
+        else return 0;
       },
     },
     {
@@ -158,8 +162,16 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
           <div>{moment(value).format('HH:mm')}</div>
         </>
       ),
-      sorter: (a, b) =>
-        moment(a.hCreationDate).unix() - moment(b.hCreationDate).unix(),
+      sorter: (a, b): any => {
+        if (a.hCreationDate && b.hCreationDate)
+          return (
+            moment(a.hCreationDate as Date).unix() -
+            moment(b.hCreationDate).unix()
+          );
+        else if (a.hCreationDate) return -1;
+        else if (b.hCreationDate) return 1;
+        else return 0;
+      },
     },
     {
       title: 'E-mail',
@@ -191,8 +203,11 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
         <Tag color={tagColorByPermission[profile]}>{profile}</Tag>
       ),
       align: 'center',
-      sorter: (a, b) => {
-        return a.profile.localeCompare(b.profile);
+      sorter: (a, b): any => {
+        if (a.user && b.user) return a.user.localeCompare(b.user);
+        else if (a.user) return -1;
+        else if (b.user) return 1;
+        else return 0;
       },
     },
     {

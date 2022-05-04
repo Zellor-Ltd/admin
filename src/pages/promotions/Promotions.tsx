@@ -120,8 +120,11 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
           {value}
         </Link>
       ),
-      sorter: (a, b) => {
-        return a.id.localeCompare(b.id);
+      sorter: (a, b): any => {
+        if (a.id && b.id) return a.id.localeCompare(b.id);
+        else if (a.id) return -1;
+        else if (b.id) return 1;
+        else return 0;
       },
     },
     {
@@ -129,8 +132,12 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
       dataIndex: ['brand', 'brandName'],
       width: '10%',
       align: 'center',
-      sorter: (a, b) => {
-        return a.brand.brandName.localeCompare(b.brand.brandName);
+      sorter: (a, b): any => {
+        if (a.brand && b.brand)
+          return a.brand.brandName.localeCompare(b.brand.brandName);
+        else if (a.brand) return -1;
+        else if (b.brand) return 1;
+        else return 0;
       },
     },
     {
@@ -151,8 +158,16 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
           <div>{moment(value).format('HH:mm')}</div>
         </>
       ),
-      sorter: (a, b) =>
-        moment(a.hCreationDate).unix() - moment(b.hCreationDate).unix(),
+      sorter: (a, b): any => {
+        if (a.hCreationDate && b.hCreationDate)
+          return (
+            moment(a.hCreationDate as Date).unix() -
+            moment(b.hCreationDate).unix()
+          );
+        else if (a.hCreationDate) return -1;
+        else if (b.hCreationDate) return 1;
+        else return 0;
+      },
     },
     {
       title: 'Actions',

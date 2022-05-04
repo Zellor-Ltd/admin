@@ -15,7 +15,6 @@ import {
   Typography,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import useFilter from 'hooks/useFilter';
 import { Brand } from 'interfaces/Brand';
 import { Fan } from 'interfaces/Fan';
 import { Order } from 'interfaces/Order';
@@ -284,8 +283,11 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       width: '10%',
       align: 'left',
       ...getColumnSearchProps('userid'),
-      sorter: (a, b) => {
-        return a.userid.localeCompare(b.userid);
+      sorter: (a, b): any => {
+        if (a.userid && b.userid) return a.userid.localeCompare(b.userid);
+        else if (a.userid) return -1;
+        else if (b.userid) return 1;
+        else return 0;
       },
     },
     {
@@ -294,7 +296,12 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       width: '5%',
       align: 'center',
       render: (value: boolean) => <b>{value ? 'Yes' : 'No'}</b>,
-      sorter: (a, b): any => (a === b ? 0 : !a && b ? 1 : -1),
+      sorter: (a, b): any => {
+        if (a.paid && b.paid) return 0;
+        else if (a.paid) return -1;
+        else if (b.paid) return 1;
+        else return 0;
+      },
     },
     {
       title: 'Amount / 100',
@@ -302,7 +309,12 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       width: '5%',
       align: 'center',
       render: (value: number) => `${value / 100}x`,
-      sorter: (a, b) => (a.amount && b.amount ? a.amount - b.amount : 0),
+      sorter: (a, b): any => {
+        if (a.amount && b.amount) return a.amount - b.amount;
+        else if (a.amount) return -1;
+        else if (b.amount) return 1;
+        else return 0;
+      },
     },
     {
       title: 'Name',
@@ -358,16 +370,28 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
           <div>{moment(value).format('HH:mm')}</div>
         </>
       ),
-      sorter: (a, b) =>
-        moment(a.hCreationDate).unix() - moment(b.hCreationDate).unix(),
+      sorter: (a, b): any => {
+        if (a.hCreationDate && b.hCreationDate)
+          return (
+            moment(a.hCreationDate).unix() - moment(b.hCreationDate).unix()
+          );
+        else if (a.hCreationDate) return -1;
+        else if (b.hCreationDate) return 1;
+        else return 0;
+      },
     },
     {
       title: 'Disco Dollars',
       dataIndex: 'discoDollars',
       width: '5%',
       align: 'center',
-      sorter: (a, b) =>
-        a.discoDollars && b.discoDollars ? a.discoDollars - b.discoDollars : 0,
+      sorter: (a, b): any => {
+        if (a.discoDollars && b.discoDollars)
+          return a.discoDollars - b.discoDollars;
+        else if (a.discoDollars) return -1;
+        else if (b.discoDollars) return 1;
+        else return 0;
+      },
     },
     {
       title: 'Stage',
@@ -392,8 +416,11 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
           ))}
         </Select>
       ),
-      sorter: (a, b) => {
-        return (a.stage ?? '').localeCompare(b.stage ?? '');
+      sorter: (a, b): any => {
+        if (a.stage && b.stage) return a.stage.localeCompare(b.stage);
+        else if (a.stage) return -1;
+        else if (b.stage) return 1;
+        else return 0;
       },
     },
     {
@@ -407,8 +434,13 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
           <div>{moment(value).format('HH:mm')}</div>
         </>
       ),
-      sorter: (a, b) =>
-        moment(a.hLastUpdate).unix() - moment(b.hLastUpdate).unix(),
+      sorter: (a, b): any => {
+        if (a.hLastUpdate && b.hLastUpdate)
+          return moment(a.hLastUpdate).unix() - moment(b.hLastUpdate).unix();
+        else if (a.hLastUpdate) return -1;
+        else if (b.hLastUpdate) return 1;
+        else return 0;
+      },
     },
   ];
 

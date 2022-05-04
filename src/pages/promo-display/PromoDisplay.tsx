@@ -134,8 +134,16 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
           <div>{moment(value).format('DD/MM/YYYY')}</div>
         </>
       ),
-      sorter: (a, b) =>
-        moment(a.displayStartDate).unix() - moment(b.displayStartDate).unix(),
+      sorter: (a, b): any => {
+        if (a.displayStartDate && b.displayStartDate)
+          return (
+            moment(a.displayStartDate).unix() -
+            moment(b.displayStartDate).unix()
+          );
+        else if (a.displayStartDate) return -1;
+        else if (b.displayStartDate) return 1;
+        else return 0;
+      },
     },
     {
       title: 'Display Expire Date',
@@ -147,8 +155,16 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
           <div>{moment(value).format('DD/MM/YYYY')}</div>
         </>
       ),
-      sorter: (a, b) =>
-        moment(a.displayExpireDate).unix() - moment(b.displayExpireDate).unix(),
+      sorter: (a, b): any => {
+        if (a.displayExpireDate && b.displayExpireDate)
+          return (
+            moment(a.displayExpireDate).unix() -
+            moment(b.displayExpireDate).unix()
+          );
+        else if (a.displayExpireDate) return -1;
+        else if (b.displayExpireDate) return 1;
+        else return 0;
+      },
     },
     {
       title: 'Actions',

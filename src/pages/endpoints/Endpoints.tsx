@@ -35,24 +35,34 @@ const Endpoints: React.FC<RouteComponentProps> = ({ history, location }) => {
           {record.isActive && `${record.name}`}
         </>
       ),
-      sorter: (a, b) => {
-        return a.name.localeCompare(b.name);
+      sorter: (a, b): any => {
+        if (a.name && b.name) return a.name.localeCompare(b.name);
+        else if (a.name) return -1;
+        else if (b.name) return 1;
+        else return 0;
       },
     },
     {
       title: 'Container',
       dataIndex: 'container',
       width: '15%',
-      sorter: (a, b) => {
-        return a.container.localeCompare(b.container);
+      sorter: (a, b): any => {
+        if (a.container && b.container)
+          return a.container.localeCompare(b.container);
+        else if (a.container) return -1;
+        else if (b.container) return 1;
+        else return 0;
       },
     },
     {
       title: 'Method',
       dataIndex: 'action',
       width: '10%',
-      sorter: (a, b) => {
-        return a.action.localeCompare(b.action);
+      sorter: (a, b): any => {
+        if (a.action && b.action) return a.action.localeCompare(b.action);
+        else if (a.action) return -1;
+        else if (b.action) return 1;
+        else return 0;
       },
     },
     {

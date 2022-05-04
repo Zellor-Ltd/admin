@@ -151,7 +151,12 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
         }
       },
       align: 'center',
-      sorter: (a, b) => (a.index && b.index ? a.index - b.index : 0),
+      sorter: (a, b): any => {
+        if (a.index && b.index) return a.index - b.index;
+        else if (a.index) return -1;
+        else if (b.index) return 1;
+        else return 0;
+      },
     },
     {
       title: 'Title',
@@ -165,8 +170,11 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
           {value}
         </Link>
       ),
-      sorter: (a, b) => {
-        return a.title.localeCompare(b.title as string);
+      sorter: (a, b): any => {
+        if (a.title && b.title) return a.title.localeCompare(b.title as string);
+        else if (a.title) return -1;
+        else if (b.title) return 1;
+        else return 0;
       },
     },
     {
@@ -181,10 +189,12 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       dataIndex: 'lengthTotal',
       width: '5%',
       align: 'center',
-      sorter: (a, b) => {
-        return a.lengthTotal && b.lengthTotal
-          ? a.lengthTotal - b.lengthTotal
-          : 0;
+      sorter: (a, b): any => {
+        if (a.lengthTotal && b.lengthTotal)
+          return a.lengthTotal - b.lengthTotal;
+        else if (a.lengthTotal) return -1;
+        else if (b.lengthTotal) return 1;
+        else return 0;
       },
     },
     {
@@ -198,8 +208,16 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
             new Date(creation).toLocaleTimeString('en-GB')
           : '-',
       align: 'center',
-      sorter: (a, b) =>
-        moment(a.hCreationDate).unix() - moment(b.hCreationDate).unix(),
+      sorter: (a, b): any => {
+        if (a.hCreationDate && b.hCreationDate)
+          return (
+            moment(a.hCreationDate as Date).unix() -
+            moment(b.hCreationDate).unix()
+          );
+        else if (a.hCreationDate) return -1;
+        else if (b.hCreationDate) return 1;
+        else return 0;
+      },
     },
     {
       title: 'Tags',
@@ -209,10 +227,12 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
         <AntTag>{reduceSegmentsTags(pack)}</AntTag>
       ),
       align: 'center',
-      sorter: (a, b) => {
-        return reduceSegmentsTags(a.package) && reduceSegmentsTags(b.package)
-          ? reduceSegmentsTags(a.package) - reduceSegmentsTags(b.package)
-          : 0;
+      sorter: (a, b): any => {
+        if (a.package && b.package)
+          return reduceSegmentsTags(a.package) - reduceSegmentsTags(b.package);
+        else if (a.package) return -1;
+        else if (b.package) return 1;
+        else return 0;
       },
     },
     {
@@ -221,8 +241,12 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       width: '7%',
       align: 'center',
       responsive: ['sm'],
-      sorter: (a, b) => {
-        return a.status.localeCompare(b.status as string);
+      sorter: (a, b): any => {
+        if (a.status && b.status)
+          return a.status.localeCompare(b.status as string);
+        else if (a.status) return -1;
+        else if (b.status) return 1;
+        else return 0;
       },
     },
     {

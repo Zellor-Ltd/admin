@@ -129,8 +129,11 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
           {value}
         </Link>
       ),
-      sorter: (a, b) => {
-        return a.tagName.localeCompare(b.tagName);
+      sorter: (a, b): any => {
+        if (a.tagName && b.tagName) return a.tagName.localeCompare(b.tagName);
+        else if (a.tagName) return -1;
+        else if (b.tagName) return 1;
+        else return 0;
       },
     },
     {
@@ -138,8 +141,12 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
       dataIndex: 'template',
       width: '12%',
       align: 'center',
-      sorter: (a, b) => {
-        return a.template.localeCompare(b.template);
+      sorter: (a, b): any => {
+        if (a.template && b.template)
+          return a.template.localeCompare(b.template);
+        else if (a.template) return -1;
+        else if (b.template) return 1;
+        else return 0;
       },
     },
     {
@@ -147,16 +154,25 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
       dataIndex: 'discoGold',
       width: '10%',
       align: 'center',
-      sorter: (a, b) =>
-        a.discoGold && b.discoGold ? a.discoGold - b.discoGold : 0,
+      sorter: (a, b): any => {
+        if (a.discoGold && b.discoGold) return a.discoGold - b.discoGold;
+        else if (a.discoGold) return -1;
+        else if (b.discoGold) return 1;
+        else return 0;
+      },
     },
     {
       title: 'Disco Dollars',
       dataIndex: 'discoDollars',
       width: '10%',
       align: 'center',
-      sorter: (a, b) =>
-        a.discoDollars && b.discoDollars ? a.discoDollars - b.discoDollars : 0,
+      sorter: (a, b): any => {
+        if (a.discoDollars && b.discoDollars)
+          return a.discoDollars - b.discoDollars;
+        else if (a.discoDollars) return -1;
+        else if (b.discoDollars) return 1;
+        else return 0;
+      },
     },
     {
       title: 'Creation',
@@ -169,8 +185,15 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
           <div>{moment(value).format('HH:mm')}</div>
         </>
       ),
-      sorter: (a, b) =>
-        moment(a.hCreationDate).unix() - moment(b.hCreationDate).unix(),
+      sorter: (a, b): any => {
+        if (a.hCreationDate && b.hCreationDate)
+          return (
+            moment(a.hCreationDate).unix() - moment(b.hCreationDate).unix()
+          );
+        else if (a.hCreationDate) return -1;
+        else if (b.hCreationDate) return 1;
+        else return 0;
+      },
     },
     {
       title: 'Actions',

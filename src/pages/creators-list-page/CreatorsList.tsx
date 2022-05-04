@@ -102,7 +102,11 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
         </Link>
       ),
       sorter: (a, b) => {
-        return a.description.localeCompare(b.description);
+        if (a.description && b.description)
+          return a.description.localeCompare(b.description);
+        else if (a.description) return 1;
+        else if (b.description) return -1;
+        else return 0;
       },
     },
     {

@@ -9,7 +9,6 @@ import {
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import SimpleSelect from 'components/select/SimpleSelect';
-import useFilter from 'hooks/useFilter';
 import { useRequest } from 'hooks/useRequest';
 import { Brand } from 'interfaces/Brand';
 import { Fan } from 'interfaces/Fan';
@@ -206,7 +205,11 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
         </Link>
       ),
       sorter: (a, b) => {
-        return a.brandName.localeCompare(b.brandName);
+        if (a.brandName && b.brandName)
+          return a.brandName.localeCompare(b.brandName);
+        else if (a.brandName) return 1;
+        else if (b.brandName) return -1;
+        else return 0;
       },
     },
     {
@@ -214,8 +217,13 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
       dataIndex: 'discoDollars',
       width: '15%',
       align: 'right',
-      sorter: (a, b) =>
-        a.discoDollars && b.discoDollars ? a.discoDollars - b.discoDollars : 0,
+      sorter: (a, b): any => {
+        if (a.discoDollars && b.discoDollars)
+          return a.discoDollars - b.discoDollars;
+        else if (a.discoDollars) return -1;
+        else if (b.discoDollars) return 1;
+        else return 0;
+      },
     },
   ];
 

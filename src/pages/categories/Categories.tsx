@@ -304,11 +304,22 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
         </Link>
       ),
       sorter: (a, b) => {
-        return a[
-          categoriesFields[categoriesKeys.indexOf(selectedTab)]
-        ].localeCompare(
-          b[categoriesFields[categoriesKeys.indexOf(selectedTab)]]
-        );
+        if (
+          a[
+            categoriesFields[categoriesKeys.indexOf(selectedTab)] &&
+              b[categoriesFields[categoriesKeys.indexOf(selectedTab)]]
+          ]
+        )
+          return a[
+            categoriesFields[categoriesKeys.indexOf(selectedTab)]
+          ].localeCompare(
+            b[categoriesFields[categoriesKeys.indexOf(selectedTab)]]
+          );
+        else if (a[categoriesFields[categoriesKeys.indexOf(selectedTab)]])
+          return 1;
+        else if (b[categoriesFields[categoriesKeys.indexOf(selectedTab)]])
+          return -1;
+        else return 0;
       },
     },
     {

@@ -365,8 +365,11 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
           </span>
         </>
       ),
-      sorter: (a, b) => {
-        return a.name.localeCompare(b.name);
+      sorter: (a, b): any => {
+        if (a.name && b.name) return a.name.localeCompare(b.name);
+        else if (a.name) return -1;
+        else if (b.name) return 1;
+        else return 0;
       },
     },
     {
@@ -377,8 +380,12 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
       responsive: ['sm'],
       shouldCellUpdate: (prevRecord, nextRecord) =>
         prevRecord.brand != nextRecord.brand,
-      sorter: (a, b) => {
-        return a.brand.brandName.localeCompare(b.brand.brandName);
+      sorter: (a, b): any => {
+        if (a.brand && b.brand)
+          return a.brand.brandName.localeCompare(b.brand.brandName);
+        else if (a.brand) return -1;
+        else if (b.brand) return 1;
+        else return 0;
       },
     },
     {
@@ -389,7 +396,12 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
       shouldCellUpdate: (prevRecord, nextRecord) =>
         prevRecord.outOfStock != nextRecord.outOfStock,
       render: (outOfStock: boolean) => (outOfStock ? 'No' : 'Yes'),
-      sorter: (a, b): any => (a === b ? 0 : !a && b ? 1 : -1),
+      sorter: (a, b): any => {
+        if (a.outOfStock && b.outOfStock) return 0;
+        else if (a.outOfStock) return -1;
+        else if (b.outOfStock) return 1;
+        else return 0;
+      },
     },
     {
       title: 'Max DD',
@@ -399,10 +411,13 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
       responsive: ['sm'],
       shouldCellUpdate: (prevRecord, nextRecord) =>
         prevRecord.maxDiscoDollars != nextRecord.maxDiscoDollars,
-      sorter: (a, b) =>
-        a.maxDiscoDollars && b.maxDiscoDollars
-          ? a.maxDiscoDollars - b.maxDiscoDollars
-          : 0,
+      sorter: (a, b): any => {
+        if (a.maxDiscoDollars && b.maxDiscoDollars)
+          return a.maxDiscoDollars - b.maxDiscoDollars;
+        else if (a.maxDiscoDollars) return -1;
+        else if (b.maxDiscoDollars) return 1;
+        else return 0;
+      },
       // editable: true,
       // number: true,
     },
@@ -414,11 +429,13 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
       responsive: ['sm'],
       shouldCellUpdate: (prevRecord, nextRecord) =>
         prevRecord.discoPercentage != nextRecord.discoPercentage,
-
-      sorter: (a, b) =>
-        a.discoPercentage && b.discoPercentage
-          ? a.discoPercentage - b.discoPercentage
-          : 0,
+      sorter: (a, b): any => {
+        if (a.discoPercentage && b.discoPercentage)
+          return a.discoPercentage - b.discoPercentage;
+        else if (a.discoPercentage) return -1;
+        else if (b.discoPercentage) return 1;
+        else return 0;
+      },
       // editable: true,
       // number: true,
     },
@@ -428,8 +445,12 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
       width: '7%',
       align: 'center',
       responsive: ['sm'],
-      sorter: (a, b) => {
-        return a.shopifyUniqueId.localeCompare(b.shopifyUniqueId);
+      sorter: (a, b): any => {
+        if (a.shopifyUniqueId && b.shopifyUniqueId)
+          return a.shopifyUniqueId.localeCompare(b.shopifyUniqueId);
+        else if (a.shopifyUniqueId) return -1;
+        else if (b.shopifyUniqueId) return 1;
+        else return 0;
       },
     },
     {
@@ -450,9 +471,16 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
         prevRecord.offerExpirationDate != nextRecord.offerExpirationDate,
 
       render: (creationDate: Date) => moment(creationDate).format('DD/MM/YYYY'),
-      sorter: (a, b) =>
-        moment(a.offerExpirationDate).unix() -
-        moment(b.offerExpirationDate).unix(),
+      sorter: (a, b): any => {
+        if (a.offerExpirationDate && b.offerExpirationDate)
+          return (
+            moment(a.offerExpirationDate).unix() -
+            moment(b.offerExpirationDate).unix()
+          );
+        else if (a.offerExpirationDate) return -1;
+        else if (b.offerExpirationDate) return 1;
+        else return 0;
+      },
     },
     {
       title: 'Status',
@@ -462,8 +490,11 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
       responsive: ['sm'],
       shouldCellUpdate: (prevRecord, nextRecord) =>
         prevRecord.status != nextRecord.status,
-      sorter: (a, b) => {
-        return a.name.localeCompare(b.name);
+      sorter: (a, b): any => {
+        if (a.name && b.name) return a.name.localeCompare(b.name);
+        else if (a.name) return -1;
+        else if (b.name) return 1;
+        else return 0;
       },
     },
     {
@@ -478,38 +509,42 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
         typeof record.productBrand === 'string'
           ? field
           : record.productBrand?.brandName,
-      sorter: (a, b) => {
-        if (typeof a.productBrand === typeof b.productBrand) {
-          if (typeof a.productBrand === 'string') {
+      sorter: (a, b): any => {
+        if (a.productBrand && b.productBrand) {
+          if (typeof a.productBrand === typeof b.productBrand) {
+            if (typeof a.productBrand === 'string') {
+              return a.productBrand.localeCompare(
+                b.productBrand as string
+              ) as any;
+            }
+            if (
+              typeof a.productBrand !== 'string' &&
+              typeof b.productBrand !== 'string'
+            ) {
+              return a.productBrand?.brandName.localeCompare(
+                b.productBrand?.brandName as string
+              ) as any;
+            }
+          }
+          if (
+            typeof a.productBrand === 'string' &&
+            typeof b.productBrand !== 'string'
+          ) {
             return a.productBrand.localeCompare(
-              b.productBrand as string
+              b.productBrand?.brandName as any
             ) as any;
           }
           if (
             typeof a.productBrand !== 'string' &&
-            typeof b.productBrand !== 'string'
+            typeof b.productBrand === 'string'
           ) {
             return a.productBrand?.brandName.localeCompare(
-              b.productBrand?.brandName as string
+              b.productBrand as string
             ) as any;
           }
-        }
-        if (
-          typeof a.productBrand === 'string' &&
-          typeof b.productBrand !== 'string'
-        ) {
-          return a.productBrand.localeCompare(
-            b.productBrand?.brandName as any
-          ) as any;
-        }
-        if (
-          typeof a.productBrand !== 'string' &&
-          typeof b.productBrand === 'string'
-        ) {
-          return a.productBrand?.brandName.localeCompare(
-            b.productBrand as string
-          ) as any;
-        }
+        } else if (a.productBrand) return -1;
+        else if (b.productBrand) return 1;
+        else return 0;
       },
     },
     {
@@ -531,8 +566,13 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
         ) : (
           ''
         ),
-      sorter: (a, b) =>
-        moment(a.goLiveDate).unix() - moment(b.goLiveDate).unix(),
+      sorter: (a, b): any => {
+        if (a.goLiveDate && b.goLiveDate)
+          return moment(a.goLiveDate).unix() - moment(b.goLiveDate).unix();
+        else if (a.goLiveDate) return -1;
+        else if (b.goLiveDate) return 1;
+        else return 0;
+      },
     },
     {
       title: 'Actions',
