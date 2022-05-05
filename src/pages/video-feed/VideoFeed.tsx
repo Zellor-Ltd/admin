@@ -42,12 +42,9 @@ import { Creator } from 'interfaces/Creator';
 import './VideoFeed.scss';
 import './VideoFeedDetail.scss';
 import SimpleSelect from 'components/select/SimpleSelect';
-import { SelectOption } from '../../interfaces/SelectOption';
+import { SelectOption } from 'interfaces/SelectOption';
 import VideoFeedDetailV2 from './VideoFeedDetailV2';
-import {
-  statusList,
-  videoTypeList,
-} from '../../components/select/select.utils';
+import { statusList, videoTypeList } from 'components/select/select.utils';
 import { useRequest } from 'hooks/useRequest';
 import moment from 'moment';
 
@@ -88,7 +85,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const [productBrandFilter, setProductBrandFilter] = useState<string>();
   const [videoTypeFilter, setVideoTypeFilter] = useState<string>();
   const [titleFilter, setTitleFilter] = useState<string>();
-  const [categoryFilter, setCategoryFilter] = useState<string>('');
+  const [categoryFilter, setCategoryFilter] = useState<string>();
   const [indexFilter, setIndexFilter] = useState<number>();
 
   const masterBrandMapping: SelectOption = {
@@ -349,7 +346,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
           row.index === indexFilter
       );
     }
-    return rows.filter(row => row.category?.indexOf(categoryFilter) > -1);
+    return rows.filter(row => row.category?.indexOf(categoryFilter ?? '') > -1);
   };
 
   const deleteItem = async (_id: string, index: number) => {
@@ -506,6 +503,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                     onChange={event => setTitleFilter(event.target.value)}
                     suffix={<SearchOutlined />}
                     value={titleFilter}
+                    placeholder="Type to search by title"
                   />
                 </Col>
                 <Col lg={4} xs={12}>
@@ -583,6 +581,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                     onChange={startIndex =>
                       setIndexFilter(startIndex ?? undefined)
                     }
+                    placeholder="Select an index"
                   />
                 </Col>
               </Row>
@@ -616,7 +615,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
           onCancel={onCancelItem}
           feedItem={selectedVideoFeed}
           brands={brands}
-          categories={categories}
           influencers={influencers}
           productBrands={productBrands}
           isFetchingProductBrand={isFetchingProductBrands}

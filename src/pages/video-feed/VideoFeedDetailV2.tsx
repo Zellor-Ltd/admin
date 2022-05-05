@@ -1,6 +1,5 @@
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import {
-  AutoComplete,
   Button,
   Checkbox,
   Col,
@@ -50,7 +49,6 @@ import SimpleSelect from 'components/select/SimpleSelect';
 import { ProductBrand } from 'interfaces/ProductBrand';
 import { SelectOption } from 'interfaces/SelectOption';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
-import { noop } from 'lodash';
 
 const { Title } = Typography;
 interface VideoFeedDetailProps {
@@ -58,7 +56,6 @@ interface VideoFeedDetailProps {
   onCancel?: () => void;
   feedItem?: FeedItem;
   brands: Brand[];
-  categories: Category[];
   influencers: Creator[];
   productBrands: ProductBrand[];
   isFetchingProductBrand: boolean;
@@ -88,14 +85,13 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
   onCancel,
   feedItem,
   brands,
-  categories,
   influencers,
   productBrands,
   isFetchingProductBrand,
   setDetails,
 }) => {
   const {
-    settings: { language = [], socialPlatform = [] },
+    settings: { language = [], socialPlatform = [], category = [] },
   } = useSelector((state: any) => state.settings);
   const [feedForm] = Form.useForm();
   const [segmentForm] = Form.useForm();
@@ -492,8 +488,11 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
               </Col>
               <Col lg={24} xs={24}>
                 <Form.Item name="category" label="Category">
-                  <Select placeholder="Please select a category">
-                    {categories.map((category: any) => (
+                  <Select
+                    placeholder="Please select a category"
+                    disabled={!category.length}
+                  >
+                    {category.map((category: any) => (
                       <Select.Option key={category.name} value={category.name}>
                         {category.name}
                       </Select.Option>
