@@ -315,15 +315,30 @@ export const fetchCreators = () => instance.get('Wi/Ep/ListCreators');
 
 export const fetchUsers = () => instance.get('Wi/Ep/ListUsers');
 
-export const resetUser = (id: string)  => instance.get(`Disco/Identity/ResetUser/${id}`);
+export const resetUser = (id: string) =>
+  instance.get(`Disco/Identity/ResetUser/${id}`);
 
-export const fetchFans = ({page = 0, query}:{page: number, query?: string}) => instance.post(`Disco/Identity/Adm/Fans/List/${page}/`, {
-  query
-});
+export const fetchFans = ({
+  page = 0,
+  query,
+}: {
+  page: number;
+  query?: string;
+}) =>
+  instance.post(`Disco/Identity/Adm/Fans/List/${page}/`, {
+    query,
+  });
 
-export const fetchGuests = ({page = 0, query}:{page: number, query?: string}) => instance.post(`Disco/Identity/Adm/Guests/List/${page}/`, {
-  query
-});
+export const fetchGuests = ({
+  page = 0,
+  query,
+}: {
+  page: number;
+  query?: string;
+}) =>
+  instance.post(`Disco/Identity/Adm/Guests/List/${page}/`, {
+    query,
+  });
 
 export const fetchProfiles = () => instance.get('Wi/Ep/ListProfiles');
 
@@ -361,12 +376,12 @@ export const fetchUserFeed = (userId: string) =>
 export const fetchGroupFeed = (groupId: string) =>
   instance.get(`Disco/Feed/GetGroup/${groupId}`);
 
-  export const fetchPromoCodes = () => instance.get('Wi/Ep/ListPromoCodes');
+export const fetchPromoCodes = () => instance.get('Wi/Ep/ListPromoCodes');
 
-  export const fetchVideoTypes = () => instance.get('Wi/Ep/ListVideoTypes');
+export const fetchVideoTypes = () => instance.get('Wi/Ep/ListVideoTypes');
 
 export const saveVideoType = (params: VideoType) => {
-    return instance.put('Disco/Feed/Add', params);
+  return instance.put('Disco/Feed/Add', params);
 };
 
 export const fetchPromotions = () => instance.get('Wi/Ep/ListPromotions');
@@ -394,7 +409,8 @@ export const fetchCurrencies = () => instance.get(`Wi/Ep/GetCurrencies`);
 export const fetchLinks = (id: string) =>
   instance.get(`Disco/Link/Adm/List/${id}`);
 
-export const saveLink = (params: any) => instance.put('Disco/Link/Adm/GenerateExternalLink', params);
+export const saveLink = (params: any) =>
+  instance.put('Disco/Link/Adm/GenerateExternalLink', params);
 
 export const saveVideoFeed = (params: FeedItem) => {
   if (params.id) {
@@ -409,7 +425,7 @@ export const updateManyFans = (groupName: string, fansIds: string[]) => {
 };
 
 export const saveProduct = (params: Product) => {
-    return instance.put('/Disco/Product/Add', params);
+  return instance.put('/Disco/Product/Add', params);
 };
 
 export const saveProductBrand = (params: ProductBrand) => {
@@ -600,11 +616,11 @@ export const deleteDdTemplate = (data: IDelete) =>
 export const deletePromoDisplay = (data: IDelete) =>
   instance.delete(`Wi/Ep/RemovePromoDisplay`, { data });
 
-  export const deleteFanGroup = (data: IDelete) =>
-    instance.delete(`Wi/Ep/RemoveFanGroup`, { data });
+export const deleteFanGroup = (data: IDelete) =>
+  instance.delete(`Wi/Ep/RemoveFanGroup`, { data });
 
-    export const deleteGuest = (id: string) =>
-      instance.delete(`Disco/Identity/Adm/DeleteGuest/${id}`);
+export const deleteGuest = (id: string) =>
+  instance.delete(`Disco/Identity/Adm/DeleteGuest/${id}`);
 
 export const loginService = (login: Login) =>
   instance.put('Disco/Identity/Adm/GetApiToken', login);
@@ -732,4 +748,10 @@ export const uploadImage = (imageFile: File) => {
       Authorization: `Bearer ${localStorage.getItem('token')}`,
     },
   });
+};
+
+export const fetchTrends = () => instance.get('Disco/Trend/Adm/List');
+
+export const saveTrend = (params: any) => {
+  return instance.put('Disco/Trend/Adm/Update', params);
 };

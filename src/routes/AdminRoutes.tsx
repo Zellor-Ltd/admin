@@ -40,6 +40,7 @@ import FanActivities from 'pages/reports/FanActivities';
 import CreatorsList from 'pages/creators-list-page/CreatorsList';
 import DataManagement from 'pages/data-management/DataManagement';
 import VideoTypes from 'pages/video-types/VideoTypes';
+import Trends from 'pages/trends/Trends';
 
 function AdminRoutes() {
   return (
@@ -74,6 +75,11 @@ function AdminRoutes() {
       <AppRoute
         path="/users_creators"
         component={Creators}
+        layout={AuthenticatedLayout}
+      />
+      <AppRoute
+        path="/settings_trends"
+        component={Trends}
         layout={AuthenticatedLayout}
       />
       <AppRoute
