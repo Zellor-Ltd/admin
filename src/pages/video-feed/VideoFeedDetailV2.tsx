@@ -141,8 +141,8 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
 
   useEffect(() => {
     if (videoTab === 'Links') {
-        getCreators();
-        fetch();
+      getCreators();
+      fetch();
     }
   }, [videoTab]);
 
@@ -1081,8 +1081,8 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
             <>
               <Tabs activeKey={segmentTab} onChange={setSegmentTab}>
                 <Tabs.TabPane forceRender tab="Images" key={defaultSegmentTab}>
-                  <Col lg={6} xs={24}>
-                    <Col lg={24} xs={24}>
+                  <Row>
+                    <Col lg={4} xs={24}>
                       <Form.Item label="Video">
                         <Upload.VideoUpload
                           fileList={selectedSegment!.video}
@@ -1091,15 +1091,24 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                         />
                       </Form.Item>
                     </Col>
-                    <Col lg={24} xs={24}>
-                      <Form.Item label="Thumbnail URL">
-                        <Upload.ImageUpload
-                          fileList={selectedSegment!.thumbnail}
-                          formProp={'thumbnail'}
+                    <Col lg={4} xs={24}>
+                      <Form.Item label="Watermark Video">
+                        <Upload.VideoUpload
+                          fileList={selectedSegment!.watermarkVideo}
+                          formProp={'watermarkVideo'}
                           form={segmentForm}
                         />
                       </Form.Item>
                     </Col>
+                  </Row>
+                  <Col lg={24} xs={24}>
+                    <Form.Item label="Thumbnail URL">
+                      <Upload.ImageUpload
+                        fileList={selectedSegment!.thumbnail}
+                        formProp={'thumbnail'}
+                        form={segmentForm}
+                      />
+                    </Form.Item>
                   </Col>
                 </Tabs.TabPane>
                 <Tabs.TabPane
