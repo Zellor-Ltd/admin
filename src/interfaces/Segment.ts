@@ -7,6 +7,7 @@ export interface Segment {
   tags: Tag[];
   brands: Brand[];
   video?: any;
+  watermarkVideo?: any;
   thumbnail?: any;
   selectedOption?: 'creator' | 'productBrand';
   selectedFeedTitle?: string;
