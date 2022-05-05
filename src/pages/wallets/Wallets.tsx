@@ -45,6 +45,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
   >([]);
   const [filter, setFilter] = useState<string>('');
   const [wallets, setWallets] = useState<Wallet[]>([]);
+  const [fans, setFans] = useState<Fan[]>([]);
 
   const optionsMapping: SelectOption = {
     key: 'id',
@@ -69,7 +70,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
     } else {
       setWallets([]);
     }
-    setSelectedFan(_selectedFan);
+    setSelectedFan(fans.find(fan => fan.user === value));
   };
 
   useEffect(() => {
@@ -121,6 +122,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
     };
 
     setOptions(response.results.map(optionFactory));
+    setFans(response.results);
   };
 
   useEffect(() => {
