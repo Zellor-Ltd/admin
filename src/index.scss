@@ -168,3 +168,9 @@
   background: white;
   padding: 14px;
 }
+
+@media (max-width: 992px) {
+  .ant-layout-sider-children {
+    width: 50px;
+  }
+}
