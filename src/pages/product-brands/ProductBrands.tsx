@@ -131,7 +131,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
       dataIndex: 'creatorPercentage',
       width: '10%',
       align: 'center',
-      render: (value: string) => <a href="#">{value}</a>,
+      render: (value: string) => <a href=".">{value}</a>,
       sorter: (a, b): any => {
         if (a.creatorPercentage && b.creatorPercentage)
           return a.creatorPercentage !== b.creatorPercentage
@@ -148,7 +148,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
       dataIndex: 'maxDiscoDollarPercentage',
       width: '10%',
       align: 'center',
-      render: (value: string) => <a href="#">{value}</a>,
+      render: (value: string) => <a href=".">{value}</a>,
       sorter: (a, b): any => {
         if (a.maxDiscoDollarPercentage && b.maxDiscoDollarPercentage)
           return a.maxDiscoDollarPercentage !== b.maxDiscoDollarPercentage
