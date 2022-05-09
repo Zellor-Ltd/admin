@@ -8,6 +8,7 @@ interface SearchFilterDebounceProps {
   initialValue?: string;
   label?: string;
   style?: React.CSSProperties;
+  onPressEnter?: any;
 }
 
 export const SearchFilterDebounce: React.FC<SearchFilterDebounceProps> = ({
@@ -15,6 +16,7 @@ export const SearchFilterDebounce: React.FC<SearchFilterDebounceProps> = ({
   initialValue = '',
   label = 'Search',
   style,
+  onPressEnter,
 }) => {
   const [text, setText] = useState<string>(initialValue);
 
@@ -32,6 +34,7 @@ export const SearchFilterDebounce: React.FC<SearchFilterDebounceProps> = ({
         {label}
       </Typography.Title>
       <Input
+        onPressEnter={onPressEnter}
         onChange={evt => {
           setText(evt.target.value);
         }}

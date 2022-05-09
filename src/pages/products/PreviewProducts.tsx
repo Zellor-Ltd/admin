@@ -823,6 +823,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                     initialValue={searchFilter}
                     filterFunction={setSearchFilter}
                     label="Search by Name"
+                    onPressEnter={() => getResources(true)}
                   />
                 </Col>
                 <Col lg={6} xs={24}>
