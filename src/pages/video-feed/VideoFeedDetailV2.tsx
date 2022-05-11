@@ -849,7 +849,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                   disabled={!creators.length}
                   style={{ width: '100%' }}
                   onSelect={setSelectedCreator}
-                  value={selectedCreator}
+                  defaultValue={feedItem?.creator?.id}
                 >
                   {creators.map((curr: any) => (
                     <Select.Option key={curr.id} value={curr.id}>
