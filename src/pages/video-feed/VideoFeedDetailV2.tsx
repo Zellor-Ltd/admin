@@ -452,28 +452,50 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
             <Row gutter={8}>
               <Col lg={24} xs={24}>
                 <Row>
-                  <Form.Item name="status" label="Status">
-                    <Radio.Group buttonStyle="solid">
-                      <Radio.Button value="live">Live</Radio.Button>
-                      <Radio.Button value="paused">Paused</Radio.Button>
-                    </Radio.Group>
-                  </Form.Item>
-                  <Form.Item
-                    name="index"
-                    label="Index"
-                    className="ml-1"
-                    rules={[
-                      {
-                        required: true,
-                        min: 0,
-                        type: 'number',
-                        message: `Index is required.`,
-                      },
-                    ]}
-                    initialValue={1000}
-                  >
-                    <InputNumber />
-                  </Form.Item>
+                  <Col lg={4} xs={24}>
+                    <Form.Item name="status" label="Status">
+                      <Select placeholder="Please select a status">
+                        <Select.Option key="live" value="live" label="Live">
+                          Live
+                        </Select.Option>
+                        <Select.Option
+                          key="paused"
+                          value="paused"
+                          label="Paused"
+                        >
+                          Paused
+                        </Select.Option>
+                        <Select.Option key="draft" value="draft" label="Draft">
+                          Draft
+                        </Select.Option>
+                        <Select.Option
+                          key="suspended"
+                          value="suspended"
+                          label="Suspended"
+                        >
+                          Suspended
+                        </Select.Option>
+                      </Select>
+                    </Form.Item>
+                  </Col>
+                  <Col lg={4} xs={24}>
+                    <Form.Item
+                      name="index"
+                      label="Index"
+                      className="ml-1"
+                      rules={[
+                        {
+                          required: true,
+                          min: 0,
+                          type: 'number',
+                          message: `Index is required.`,
+                        },
+                      ]}
+                      initialValue={1000}
+                    >
+                      <InputNumber />
+                    </Form.Item>
+                  </Col>
                 </Row>
               </Col>
               <Col lg={24} xs={24}>
