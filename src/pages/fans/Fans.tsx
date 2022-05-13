@@ -282,12 +282,13 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   const onChangeFan = async (value: string, option?: any) => {
-    setSearchFilter(option.name);
-    getResources();
+    setSearchFilter(option?.name);
     if (option) {
       const { index, fan } = findFanInfo(value, option);
       editFan(index, fan);
+      return;
     }
+    getResources();
   };
 
   const onSearch = (value: string) => {

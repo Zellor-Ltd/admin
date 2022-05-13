@@ -243,8 +243,8 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
     setDetails(false);
   };
 
-  const onChangeFan = async (value: string, _selectedFan?: any) => {
-    setSearchFilter(_selectedFan.name);
+  const onChangeFan = async (value: string) => {
+    setSearchFilter(value);
     getResources();
   };
 

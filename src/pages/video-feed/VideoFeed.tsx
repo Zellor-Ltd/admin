@@ -504,6 +504,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                     suffix={<SearchOutlined />}
                     value={titleFilter}
                     placeholder="Type to search by title"
+                    onPressEnter={fetch}
                   />
                 </Col>
                 <Col lg={4} xs={12}>
