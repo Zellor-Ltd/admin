@@ -381,7 +381,7 @@ export const fetchPromoCodes = () => instance.get('Wi/Ep/ListPromoCodes');
 export const fetchVideoTypes = () => instance.get('Wi/Ep/ListVideoTypes');
 
 export const saveVideoType = (params: VideoType) => {
-  return instance.put('Disco/Feed/Add', params);
+  return instance.put('Disco/Feed/Adm/Add', params);
 };
 
 export const fetchPromotions = () => instance.get('Wi/Ep/ListPromotions');
@@ -416,7 +416,7 @@ export const saveVideoFeed = (params: FeedItem) => {
   if (params.id) {
     return instance.put('Disco/Feed/Update', params);
   } else {
-    return instance.put('Disco/Feed/Add', params);
+      return instance.put('Disco/Feed/Adm/Add', params);
   }
 };
 
