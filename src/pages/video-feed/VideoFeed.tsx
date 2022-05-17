@@ -356,8 +356,8 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
 
   const refreshItem = (record: FeedItem) => {
     if (loaded) {
-      feedItems[lastViewedIndex] = record;
-      setFeedItems([...feedItems]);
+      feedItems[lastViewedIndex + 1] = record;
+      setFeedItems(feedItems);
     } else {
       setFeedItems([record]);
     }
