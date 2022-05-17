@@ -9,8 +9,8 @@ import {
 import {
   Button,
   Col,
+  DatePicker,
   Form,
-  Image,
   Input,
   InputNumber,
   message,
@@ -24,11 +24,17 @@ import {
   Typography,
 } from 'antd';
 import { Upload } from 'components';
+import { formatMoment } from 'helpers/formatMoment';
 import { useRequest } from 'hooks/useRequest';
 import { Creator } from 'interfaces/Creator';
+import { Currency } from 'interfaces/Currency';
 import { ServerAlias } from 'interfaces/ServerAlias';
 import { useEffect, useState } from 'react';
-import { fetchServersList, saveCreator } from 'services/DiscoClubService';
+import {
+  fetchCurrencies,
+  fetchServersList,
+  saveCreator,
+} from 'services/DiscoClubService';
 import { RichTextEditor } from '../../components/RichTextEditor';
 
 interface CreatorDetailProps {
@@ -46,11 +52,11 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
   creator,
   onSave,
   onCancel,
-  onRollback,
 }) => {
   const [loading, setLoading] = useState(false);
   const [ageRange, setAgeRange] = useState<[number, number]>([12, 100]);
   const [serversList, setServersList] = useState<ServerAlias[]>([]);
+  const [currencies, setCurrencies] = useState<Currency[]>([]);
   const { doRequest } = useRequest({ setLoading });
 
   const [form] = Form.useForm();
@@ -59,17 +65,27 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
     setLoading(true);
     try {
       const formCreator = form.getFieldsValue(true);
-      const { result } = await doRequest(() => saveCreator(formCreator));
+      const formattedCreator = formatUserData(formCreator);
+      const { result } = await doRequest(() => saveCreator(formattedCreator));
       setLoading(false);
       message.success('Register updated with success.');
-      formCreator.id
-        ? onSave?.(formCreator)
-        : onSave?.({ ...formCreator, id: result });
+      formattedCreator.id
+        ? onSave?.(formattedCreator)
+        : onSave?.({ ...formattedCreator, id: result });
     } catch (error) {
       console.error(error);
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const getCurrencies = async () => {
+      const response: any = await fetchCurrencies();
+      setCurrencies(response.results);
+    };
+
+    getCurrencies();
+  });
 
   useEffect(() => {
     const getServersList = async () => {
@@ -90,6 +106,23 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
     setAgeRange(value);
   };
 
+  const formatUserData = (formUser: any) => {
+    const formattedUser = { ...formUser };
+    if (typeof formUser.birthday === 'string') {
+      formattedUser.birthday = formUser.birthday;
+    }
+    if (typeof formUser.birthday === 'object') {
+      formattedUser.birthday = formUser.birthday.format('DD-MM-YYYY');
+    }
+
+    formattedUser.personalDetails = formattedUser.personalDetails || {};
+    formattedUser.personalDetails.phone =
+      formattedUser.personalDetails.phone || {};
+    formattedUser.personalDetails.phone.number = formUser.phoneNumber;
+
+    return formattedUser;
+  };
+
   return (
     <>
       <PageHeader
@@ -99,6 +132,11 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
         form={form}
         layout="vertical"
         onFinish={onFinish}
+        onFinishFailed={({ errorFields }) => {
+          errorFields.forEach(errorField => {
+            message.error(errorField.errors[0]);
+          });
+        }}
         initialValues={creator}
         autoComplete="off"
       >
@@ -162,6 +200,62 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
               <Col lg={12} xs={24}>
                 <Form.Item label="Password" name="pwd">
                   <Input.Password autoComplete="off" />
+                </Form.Item>
+              </Col>
+              <Col lg={12} xs={24}>
+                <Form.Item
+                  label="Default Currency"
+                  name="currencyCode"
+                  rules={[
+                    {
+                      required: true,
+                      message: 'Currency code is required.',
+                    },
+                  ]}
+                >
+                  <Select defaultValue="EUR" disabled={!currencies.length}>
+                    {currencies.map(currency => (
+                      <Select.Option key={currency.code} value={currency.code}>
+                        {currency.code}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col lg={12} xs={24}>
+                <Form.Item
+                  label="Birthday"
+                  name="birthday"
+                  getValueProps={formatMoment}
+                  rules={[
+                    {
+                      required: true,
+                      message: 'Birthday is required.',
+                    },
+                  ]}
+                >
+                  <DatePicker format="DD/MM/YYYY" />
+                </Form.Item>
+              </Col>
+              <Col lg={12} xs={24}>
+                <Form.Item
+                  name="gender"
+                  label="Gender"
+                  rules={[
+                    {
+                      required: true,
+                      message: 'Gender is required.',
+                    },
+                  ]}
+                >
+                  <Select>
+                    <Select.Option value="Female">Female</Select.Option>
+                    <Select.Option value="Male">Male</Select.Option>
+                    <Select.Option value="Other">Other</Select.Option>
+                    <Select.Option value="Prefer not to say">
+                      Prefer not to say
+                    </Select.Option>
+                  </Select>
                 </Form.Item>
               </Col>
               <Col lg={12} xs={24}>
