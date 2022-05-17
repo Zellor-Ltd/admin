@@ -10,7 +10,6 @@ import {
   IdcardOutlined,
   ShoppingCartOutlined,
   SoundOutlined,
-  SwitcherOutlined,
   TagOutlined,
   TeamOutlined,
   UserOutlined,
@@ -28,6 +27,7 @@ import {
   ToTopOutlined,
   LockOutlined,
   DesktopOutlined,
+  PicCenterOutlined,
 } from '@ant-design/icons';
 import { Menu } from 'antd';
 import SubMenu from 'antd/lib/menu/SubMenu';
@@ -75,6 +75,9 @@ const AdminSideMenu = () => {
       </Menu.Item>
       <Menu.Item key="feed" icon={<HeartFilled />}>
         <Link to="/feed">Video Feeds</Link>
+      </Menu.Item>
+      <Menu.Item key="feed-templates" icon={<PicCenterOutlined />}>
+        <Link to="/feed-templates">Feed Templates</Link>
       </Menu.Item>
       <Menu.Item key="orders" icon={<ShoppingCartOutlined />}>
         <Link to="/orders">Orders</Link>

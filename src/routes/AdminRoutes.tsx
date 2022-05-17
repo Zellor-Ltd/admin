@@ -41,6 +41,7 @@ import CreatorsList from 'pages/creators-list-page/CreatorsList';
 import DataManagement from 'pages/data-management/DataManagement';
 import VideoTypes from 'pages/video-types/VideoTypes';
 import Trends from 'pages/trends/Trends';
+import FeedTemplates from 'pages/video-feed/FeedTemplates';
 
 function AdminRoutes() {
   return (
@@ -57,6 +58,11 @@ function AdminRoutes() {
         layout={AuthenticatedLayout}
       />
       <AppRoute path="/login" component={Login} layout={OpenLayout} />
+      <AppRoute
+        path="/feed-templates"
+        component={FeedTemplates}
+        layout={AuthenticatedLayout}
+      />
       <AppRoute
         path="/feed"
         component={VideoFeed}

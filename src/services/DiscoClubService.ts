@@ -1,4 +1,4 @@
-import { message, Pagination } from 'antd';
+import { message } from 'antd';
 import axios, { AxiosRequestConfig } from 'axios';
 import { Brand } from 'interfaces/Brand';
 import {
@@ -754,4 +754,11 @@ export const fetchTrends = () => instance.get('Disco/Trend/Adm/List');
 
 export const saveTrend = (params: any) => {
   return instance.put('Disco/Trend/Adm/Update', params);
+};
+
+export const fetchFeedTemplates = () =>
+  instance.get('Disco/Feed/Adm/ListTemplates');
+
+export const saveFeedTemplate = (params: any) => {
+  return instance.put('Disco/Feed/Adm/UpdateTemplate', params);
 };
