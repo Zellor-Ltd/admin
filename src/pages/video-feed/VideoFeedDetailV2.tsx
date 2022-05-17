@@ -25,7 +25,6 @@ import { RichTextEditor } from 'components/RichTextEditor';
 import { formatMoment } from 'helpers/formatMoment';
 import { useRequest } from 'hooks/useRequest';
 import { Brand } from 'interfaces/Brand';
-import { Category } from 'interfaces/Category';
 import { Creator } from 'interfaces/Creator';
 import { FeedItem } from 'interfaces/FeedItem';
 import { Segment } from 'interfaces/Segment';
@@ -126,6 +125,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
     useState<string>('');
   const [links, setLinks] = useState<any[]>([]);
   const [segment, setSegment] = useState<number>(0);
+  const [status, setStatus] = useState<string>(feedItem?.status);
 
   const getCreators = async () => {
     const { results }: any = await doFetch(fetchCreators);
@@ -211,6 +211,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
     const item: FeedItem = feedForm.getFieldsValue(true);
     item.goLiveDate = moment(item.goLiveDate).format();
     item.validity = moment(item.validity).format();
+    item.status = status;
 
     item.package = item.package?.map(pack => {
       const segment: any = {
@@ -466,8 +467,12 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
               <Col lg={24} xs={24}>
                 <Row>
                   <Col lg={4} xs={24}>
-                    <Form.Item name="status" label="Status">
-                      <Select placeholder="Please select a status">
+                    <Form.Item label="Status">
+                      <Select
+                        placeholder="Please select a status"
+                        onChange={setStatus}
+                        value={status}
+                      >
                         <Select.Option key="live" value="live" label="Live">
                           Live
                         </Select.Option>
@@ -508,6 +513,20 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                     >
                       <InputNumber />
                     </Form.Item>
+                  </Col>
+                </Row>
+                <Row gutter={8} className="mb-1">
+                  <Col>
+                    <Button
+                      type="primary"
+                      onClick={
+                        status === 'draft'
+                          ? () => setStatus('live')
+                          : () => setStatus('suspended')
+                      }
+                    >
+                      {status === 'draft' ? 'Approve' : 'Suspend'}
+                    </Button>
                   </Col>
                 </Row>
               </Col>
