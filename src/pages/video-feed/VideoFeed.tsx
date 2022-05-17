@@ -346,7 +346,9 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
           row.index === indexFilter
       );
     }
-    return rows.filter(row => row.category?.indexOf(categoryFilter ?? '') > -1);
+    return rows.filter(
+      row => row?.category?.indexOf(categoryFilter ?? '') > -1
+    );
   };
 
   const deleteItem = async (_id: string, index: number) => {
@@ -356,8 +358,8 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
 
   const refreshItem = (record: FeedItem) => {
     if (loaded) {
-      feedItems[lastViewedIndex + 1] = record;
-      setFeedItems(feedItems);
+      feedItems[lastViewedIndex] = record;
+      setFeedItems([...feedItems]);
     } else {
       setFeedItems([record]);
     }
