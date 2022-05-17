@@ -26,7 +26,6 @@ import { formatMoment } from 'helpers/formatMoment';
 import { useRequest } from 'hooks/useRequest';
 import { Brand } from 'interfaces/Brand';
 import { Creator } from 'interfaces/Creator';
-import { FeedItem } from 'interfaces/FeedItem';
 import { Segment } from 'interfaces/Segment';
 import { Tag } from 'interfaces/Tag';
 import React, { useEffect, useState } from 'react';
@@ -50,10 +49,10 @@ import { SelectOption } from 'interfaces/SelectOption';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
 
 const { Title } = Typography;
-interface VideoFeedDetailProps {
-  onSave?: (record: FeedItem) => void;
+interface FeedTemplateDetailProps {
+  onSave?: (record: any) => void;
   onCancel?: () => void;
-  feedItem?: FeedItem;
+  feedTemplate?: any;
   brands: Brand[];
   influencers: Creator[];
   productBrands: ProductBrand[];
@@ -79,10 +78,10 @@ const influencerMapping: SelectOption = {
   value: 'id',
 };
 
-const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
+const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
   onSave,
   onCancel,
-  feedItem,
+  feedTemplate,
   brands,
   influencers,
   productBrands,
@@ -92,7 +91,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
   const {
     settings: { language = [], socialPlatform = [], category = [] },
   } = useSelector((state: any) => state.settings);
-  const [feedForm] = Form.useForm();
+  const [templateForm] = Form.useForm();
   const [segmentForm] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedSegment, setSelectedSegment] = useState<Segment | undefined>();
@@ -106,7 +105,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
   const [showTagForm, setShowTagForm] = useState<boolean>(false);
   const [selectedOptions, setSelectedOptions] = useState<
     'productBrand' | 'creator'
-  >(feedItem?.selectedOption ?? 'productBrand');
+  >(feedTemplate?.selectedOption ?? 'productBrand');
   const [productBrandIconOptions, setProductBrandIconOptions] = useState<any[]>(
     []
   );
@@ -125,7 +124,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
     useState<string>('');
   const [links, setLinks] = useState<any[]>([]);
   const [segment, setSegment] = useState<number>(0);
-  const [status, setStatus] = useState<string>(feedItem?.status);
+  const [status, setStatus] = useState<string>(feedTemplate?.status);
 
   const getCreators = async () => {
     const { results }: any = await doFetch(fetchCreators);
@@ -140,32 +139,34 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
   }, [videoTab]);
 
   const fetch = async () => {
-    const { results } = await doFetch(() => fetchLinks(feedItem?.id as string));
+    const { results } = await doFetch(() =>
+      fetchLinks(feedTemplate?.id as string)
+    );
     setLinks(results);
   };
 
   useEffect(() => {
-    if (feedItem?.selectedOption) {
-      if (feedItem?.selectedOption === 'creator') {
+    if (feedTemplate?.selectedOption) {
+      if (feedTemplate?.selectedOption === 'creator') {
         setCurrentInfluencer(
-          influencers.find(item => item.id === feedItem?.selectedId)
+          influencers.find(item => item.id === feedTemplate?.selectedId)
         );
       } else {
         loadOptions(
-          productBrands.find(item => item.id === feedItem?.selectedId)
+          productBrands.find(item => item.id === feedTemplate?.selectedId)
         );
       }
     }
   }, []);
 
   useEffect(() => {
-    if (feedItem?.ageMin && feedItem?.ageMax)
-      setAgeRange([feedItem?.ageMin, feedItem?.ageMax]);
-  }, [feedItem]);
+    if (feedTemplate?.ageMin && feedTemplate?.ageMax)
+      setAgeRange([feedTemplate?.ageMin, feedTemplate?.ageMax]);
+  }, [feedTemplate]);
 
   useEffect(() => {
-    if (feedItem && feedItem.hashtags) {
-      setHashtags(feedItem.hashtags);
+    if (feedTemplate && feedTemplate.hashtags) {
+      setHashtags(feedTemplate.hashtags);
     } else {
       setHashtags([]);
     }
@@ -185,7 +186,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
           : 'New Segment Tag'
       );
     else if (selectedSegment) {
-      const packages = feedForm.getFieldValue('package');
+      const packages = templateForm.getFieldValue('package');
       setPageTitle(
         selectedSegmentIndex > -1 &&
           (packages ? packages.length !== selectedSegmentIndex : true)
@@ -194,21 +195,21 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
       );
     } else
       setPageTitle(
-        feedItem
-          ? feedItem.title.length > 50
-            ? `${feedItem.title.substr(0, 50)} Update`
-            : `${feedItem.title} Update`
+        feedTemplate
+          ? feedTemplate.title.length > 50
+            ? `${feedTemplate.title.substr(0, 50)} Update`
+            : `${feedTemplate.title} Update`
           : 'New Video Feed'
       );
   }, [selectedSegment, showBrandForm, showTagForm]);
 
   useEffect(() => {
-    if (feedItem?.ageMin && feedItem?.ageMax)
-      setAgeRange([feedItem?.ageMin, feedItem?.ageMax]);
-  }, [feedItem]);
+    if (feedTemplate?.ageMin && feedTemplate?.ageMax)
+      setAgeRange([feedTemplate?.ageMin, feedTemplate?.ageMax]);
+  }, [feedTemplate]);
 
   const onFinish = async () => {
-    const item: FeedItem = feedForm.getFieldsValue(true);
+    const item: any = templateForm.getFieldsValue(true);
     item.goLiveDate = moment(item.goLiveDate).format();
     item.validity = moment(item.validity).format();
     item.status = status;
@@ -230,16 +231,16 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
 
   const onDeleteSegment = (evt: any, index: number) => {
     evt.stopPropagation();
-    const dataSource = [...feedForm.getFieldValue('package')];
+    const dataSource = [...templateForm.getFieldValue('package')];
     dataSource.splice(index, 1);
-    feedForm.setFieldsValue({ package: [...dataSource] });
+    templateForm.setFieldsValue({ package: [...dataSource] });
 
     setSelectedSegment(undefined);
     setSelectedSegmentIndex(-1);
   };
 
   const onAddSegment = (addWatermark?: boolean, segment?: any) => {
-    const packages = feedForm.getFieldValue('package');
+    const packages = templateForm.getFieldValue('package');
     const sequence = packages ? packages.length + 1 : 1;
     if (addWatermark) {
       setSelectedSegment({
@@ -264,7 +265,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
   };
 
   const onChangeAge = (value: [number, number]) => {
-    feedForm.setFieldsValue({
+    templateForm.setFieldsValue({
       ageMin: value[0],
       ageMax: value[1],
     });
@@ -280,12 +281,12 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
 
   const onCreatorChange = (key: string) => {
     const creator = influencers.find(influencer => influencer.id === key);
-    const feedItem = feedForm.getFieldsValue(true) as FeedItem;
-    feedForm.setFieldsValue({
+    const feedTemplate = templateForm.getFieldsValue(true);
+    templateForm.setFieldsValue({
       creator: null,
     });
-    if (feedItem.package) {
-      const segments = feedItem.package.map(segment => {
+    if (feedTemplate.package) {
+      const segments = feedTemplate.package.map(segment => {
         if (!segment.selectedOption || segment.selectedOption === 'creator') {
           segment.selectedFeedTitle = creator?.userName;
           segment.selectedIconUrl = creator?.avatar?.url || undefined;
@@ -293,12 +294,12 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
 
         return segment;
       });
-      feedForm.setFieldsValue({
+      templateForm.setFieldsValue({
         package: [...segments],
         creator: creator,
       });
     }
-    feedForm.setFieldsValue({
+    templateForm.setFieldsValue({
       creator: creator,
     });
   };
@@ -306,29 +307,29 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
   const handleSwitchChange = async () => {
     if (selectedOptions !== 'creator') {
       setSelectedOptions('creator');
-      feedForm.setFieldsValue({ selectedOption: 'creator' });
-      if (feedItem?.selectedOption === 'creator') {
-        feedForm.setFieldsValue({
-          selectedId: feedItem?.selectedId,
-          selectedFeedTitle: feedItem?.selectedFeedTitle,
-          selectedIconUrl: feedItem?.selectedIconUrl,
+      templateForm.setFieldsValue({ selectedOption: 'creator' });
+      if (feedTemplate?.selectedOption === 'creator') {
+        templateForm.setFieldsValue({
+          selectedId: feedTemplate?.selectedId,
+          selectedFeedTitle: feedTemplate?.selectedFeedTitle,
+          selectedIconUrl: feedTemplate?.selectedIconUrl,
         });
       } else {
-        feedForm.setFieldsValue({
+        templateForm.setFieldsValue({
           selectedIconUrl: undefined,
         });
       }
     } else {
       setSelectedOptions('productBrand');
-      feedForm.setFieldsValue({ selectedOption: 'productBrand' });
-      if (feedItem?.selectedOption === 'productBrand') {
-        feedForm.setFieldsValue({
-          selectedId: feedItem?.selectedId,
-          selectedFeedTitle: feedItem?.selectedFeedTitle,
-          selectedIconUrl: feedItem?.selectedIconUrl,
+      templateForm.setFieldsValue({ selectedOption: 'productBrand' });
+      if (feedTemplate?.selectedOption === 'productBrand') {
+        templateForm.setFieldsValue({
+          selectedId: feedTemplate?.selectedId,
+          selectedFeedTitle: feedTemplate?.selectedFeedTitle,
+          selectedIconUrl: feedTemplate?.selectedIconUrl,
         });
       } else {
-        feedForm.setFieldsValue({
+        templateForm.setFieldsValue({
           selectedIconUrl: undefined,
         });
       }
@@ -340,7 +341,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
 
     loadOptions(productBrand);
 
-    feedForm.setFieldsValue({
+    templateForm.setFieldsValue({
       selectedId: value,
       selectedFeedTitle: productBrand?.brandName,
     });
@@ -382,7 +383,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
 
   const onChangeInfluencer = (_: string, entity: Creator) => {
     setCurrentInfluencer(entity);
-    feedForm.setFieldsValue({
+    templateForm.setFieldsValue({
       selectedId: entity.id,
       selectedFeedTitle: entity.firstName,
       selectedIconUrl: entity.avatar?.url,
@@ -390,12 +391,12 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
   };
 
   const onChangeIcon = selectedIconUrl => {
-    feedForm.setFieldsValue({ selectedIconUrl: selectedIconUrl });
+    templateForm.setFieldsValue({ selectedIconUrl: selectedIconUrl });
   };
 
   const handleGenerateLink = async () => {
     const { results }: any = await saveLink({
-      videoFeedId: feedItem?.id as string,
+      videoFeedId: feedTemplate?.id as string,
       creatorId: selectedCreator,
       includeVideo: includeVideo,
       socialPlatform: selectedSocialPlatform,
@@ -585,18 +586,18 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
             <Row gutter={8}>
               <Col lg={24} xs={24}>
                 <Form.Item name="description" label="Long description">
-                  <RichTextEditor formField="description" form={feedForm} />
+                  <RichTextEditor formField="description" form={templateForm} />
                 </Form.Item>
               </Col>
               <Col lg={24} xs={24}>
                 <Form.Item name="creatorHtml" label="Creator Descriptor">
-                  <RichTextEditor formField="creatorHtml" form={feedForm} />
+                  <RichTextEditor formField="creatorHtml" form={templateForm} />
                 </Form.Item>
               </Col>
               <Col lg={24} xs={24}>
                 <Form.Item name={'searchTags'} label="Search Tags">
                   <Select mode="tags" className="product-search-tags">
-                    {feedForm
+                    {templateForm
                       .getFieldValue('searchTags')
                       ?.map((searchTag: any) => (
                         <Select.Option key={searchTag} value={searchTag}>
@@ -693,7 +694,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                     >
                       <DatePicker
                         defaultValue={moment(
-                          feedForm.getFieldValue('goLiveDate')
+                          templateForm.getFieldValue('goLiveDate')
                         )}
                         format="DD/MM/YYYY"
                       />
@@ -707,7 +708,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                     >
                       <DatePicker
                         defaultValue={moment(
-                          feedForm.getFieldValue('validity')
+                          templateForm.getFieldValue('validity')
                         )}
                         format="DD/MM/YYYY"
                       />
@@ -837,7 +838,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                       ))}
                     </Select>
                   </Form.Item>
-                  {feedForm.getFieldValue('selectedId') && (
+                  {templateForm.getFieldValue('selectedId') && (
                     <Form.Item
                       name="selectedIconUrl"
                       label="Product Brand Icon"
@@ -868,9 +869,9 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                       </Select>
                     </Form.Item>
                   )}
-                  {feedForm.getFieldValue('selectedIconUrl') && (
+                  {templateForm.getFieldValue('selectedIconUrl') && (
                     <Image
-                      src={feedForm.getFieldValue('selectedIconUrl')}
+                      src={templateForm.getFieldValue('selectedIconUrl')}
                       style={{ marginBottom: 30 }}
                     ></Image>
                   )}
@@ -902,7 +903,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                       allowClear={true}
                     ></SimpleSelect>
                   </Form.Item>
-                  {feedForm.getFieldValue('selectedId') && (
+                  {templateForm.getFieldValue('selectedId') && (
                     <Image
                       src={currentInfluencer?.avatar?.url}
                       style={{ marginBottom: 30 }}
@@ -911,74 +912,6 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                 </>
               )}
             </Col>
-          </Tabs.TabPane>
-          <Tabs.TabPane forceRender tab="Links" key="Links">
-            <Row gutter={[32, 32]}>
-              <Col span={4}>
-                <Typography.Title level={5}>Creator</Typography.Title>
-                <Select
-                  disabled={!creators.length}
-                  style={{ width: '100%' }}
-                  onSelect={setSelectedCreator}
-                  defaultValue={feedItem?.creator?.id}
-                >
-                  {creators.map((curr: any) => (
-                    <Select.Option key={curr.id} value={curr.id}>
-                      {curr.firstName}
-                    </Select.Option>
-                  ))}
-                </Select>
-              </Col>
-              <Col span={4}>
-                <Typography.Title level={5}>Social platform</Typography.Title>
-                <Select
-                  disabled={!socialPlatform.length}
-                  style={{ width: '100%' }}
-                  onSelect={setSelectedSocialPlatform}
-                  value={selectedSocialPlatform}
-                >
-                  {socialPlatform.map((curr: any) => (
-                    <Select.Option key={curr.value} value={curr.value}>
-                      {curr.value}
-                    </Select.Option>
-                  ))}
-                </Select>
-              </Col>
-              <Col span={4}>
-                <Typography.Title level={5}>Segment</Typography.Title>
-                <InputNumber
-                  defaultValue={0}
-                  title="positive integers"
-                  min={0}
-                  max={100}
-                  onChange={setSegment}
-                />
-              </Col>
-              <Col>
-                <Typography.Title level={5}>Include Video</Typography.Title>
-                <Checkbox
-                  onChange={evt => setIncludeVideo(evt.target.checked)}
-                ></Checkbox>
-              </Col>
-              <Col span={12}></Col>
-              <Col>
-                <Button
-                  type="default"
-                  onClick={handleGenerateLink}
-                  disabled={!selectedCreator || !selectedSocialPlatform}
-                >
-                  Generate Link
-                </Button>
-              </Col>
-              <Col span={24}>
-                <Table
-                  columns={columns}
-                  rowKey="id"
-                  dataSource={links}
-                  loading={loading}
-                />
-              </Col>
-            </Row>
           </Tabs.TabPane>
         </Tabs>
         <Row gutter={8} className="mt-1">
@@ -1262,14 +1195,14 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
       <PageHeader title={pageTitle} />
       <Form.Provider
         onFormFinish={(name, { forms }) => {
-          const { feedForm, segmentForm } = forms;
+          const { templateForm, segmentForm } = forms;
           if (name === 'segmentForm') {
-            const segments: any[] = feedForm.getFieldValue('package') || [];
+            const segments: any[] = templateForm.getFieldValue('package') || [];
             if (selectedSegmentIndex > -1) {
               segments[selectedSegmentIndex] = segmentForm.getFieldsValue(true);
-              feedForm.setFieldsValue({ package: [...segments] });
+              templateForm.setFieldsValue({ package: [...segments] });
             } else {
-              feedForm.setFieldsValue({
+              templateForm.setFieldsValue({
                 package: [...segments, segmentForm.getFieldsValue(true)],
               });
             }
@@ -1314,9 +1247,9 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
       >
         {selectedSegment && <SegmentPage />}
         <Form
-          form={feedForm}
+          form={templateForm}
           onFinish={onFinish}
-          name="feedForm"
+          name="templateForm"
           onFinishFailed={({ errorFields }) => {
             errorFields.forEach(errorField => {
               message.error(errorField.errors[0]);
@@ -1324,7 +1257,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
           }}
           layout="vertical"
           className="video-feed"
-          initialValues={feedItem}
+          initialValues={feedTemplate}
         >
           {!selectedSegment && <VideoUpdatePage />}
         </Form>
@@ -1333,4 +1266,4 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
   );
 };
 
-export default VideoFeedDetailV2;
+export default FeedTemplateDetail;

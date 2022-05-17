@@ -5,6 +5,12 @@ export const statusList = [
   {
     value: 'Paused',
   },
+  {
+    value: 'Draft',
+  },
+  {
+    value: 'Suspended',
+  },
 ];
 
 export const videoTypeList = [
