@@ -38,6 +38,7 @@ import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import scrollIntoView from 'scroll-into-view';
 import { Link } from 'react-router-dom';
 import { noop } from 'lodash';
+import BrandForm from 'pages/video-feed/BrandForm';
 interface BrandDetailProps {
   onSave?: (record: Brand) => void;
   onCancel?: () => void;
@@ -486,7 +487,8 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                     label="External Checkout Type"
                     rules={[
                       {
-                        required: true,
+                        required:
+                          form.getFieldValue('checkoutType') === 'external',
                         message: `External Checkout Type is required.`,
                       },
                     ]}
