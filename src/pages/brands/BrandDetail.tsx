@@ -15,6 +15,7 @@ import {
   Switch,
   Typography,
   Popconfirm,
+  Modal,
 } from 'antd';
 import { Upload } from 'components';
 import { RichTextEditor } from 'components/RichTextEditor';
@@ -59,6 +60,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
   const [form] = Form.useForm();
   const [vaultForm] = Form.useForm();
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
+  const [showModal, setShowModal] = useState<boolean>(false);
 
   const {
     settings: { checkoutType = [] },
@@ -587,7 +589,24 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                         title="positive integers"
                         min={0}
                         max={100}
+                        value={brand?.creatorPercentage}
+                        onChange={() => setShowModal(true)}
                       />
+                      <Modal
+                        title="Apply to all products?"
+                        visible={showModal}
+                        onOk={() =>
+                          console.log('call ep here, setshowmodal false.')
+                        }
+                        onCancel={() => setShowModal(false)}
+                        okText="Ok"
+                        cancelText="Cancel"
+                      >
+                        <p>
+                          Would you like to apply this creator percentage to all{' '}
+                          {brand?.brandName} products?
+                        </p>
+                      </Modal>
                     </Form.Item>
                   </Col>
                 </Row>
