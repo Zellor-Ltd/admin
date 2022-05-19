@@ -85,7 +85,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
     };
 
     getCurrencies();
-  });
+  }, []);
 
   useEffect(() => {
     const getServersList = async () => {
@@ -145,7 +145,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
             <Row gutter={8}>
               <Col lg={24} xs={24}>
                 <Row gutter={24}>
-                  <Col>
+                  <Col lg={6} xs={24}>
                     <Form.Item name="status" label="Status">
                       <Radio.Group buttonStyle="solid">
                         <Radio.Button value="live">Live</Radio.Button>
@@ -153,7 +153,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                       </Radio.Group>
                     </Form.Item>
                   </Col>
-                  <Col>
+                  <Col lg={6} xs={24}>
                     <Form.Item name="approved" label="Approved">
                       <Radio.Group buttonStyle="solid">
                         <Radio.Button value="true">Approved</Radio.Button>
@@ -161,10 +161,20 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                       </Radio.Group>
                     </Form.Item>
                   </Col>
-                  <Col>
+                  <Col lg={6} xs={24}>
                     <Form.Item
                       name="displayInVideoFeed"
                       label="Display in Video Feed"
+                      valuePropName="checked"
+                      initialValue={true}
+                    >
+                      <Switch />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={6} xs={24}>
+                    <Form.Item
+                      name="displayInCreatorGrid"
+                      label="Display in Creator Grid"
                       valuePropName="checked"
                       initialValue={true}
                     >
