@@ -53,6 +53,16 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
     setActiveTabKey(activeKey);
   };
 
+  const onConfirmPropagate = () => {
+    form.setFieldsValue({ propagationNeeded: true });
+    setShowModal(false);
+  };
+
+  const onCancelPropagate = () => {
+    form.setFieldsValue({ propagationNeeded: false });
+    setShowModal(false);
+  };
+
   return (
     <>
       <PageHeader
@@ -145,10 +155,8 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                           <Modal
                             title="Apply to all products?"
                             visible={showModal}
-                            onOk={() =>
-                              console.log('call ep here, setshowmodal false.')
-                            }
-                            onCancel={() => setShowModal(false)}
+                            onOk={onConfirmPropagate}
+                            onCancel={onCancelPropagate}
                             okText="Ok"
                             cancelText="Cancel"
                           >
