@@ -77,8 +77,7 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
         <Content
           className="site-layout-background"
           style={{
-            margin: '24px 16px',
-            padding: 24,
+            padding: '24 0',
             minHeight: 280,
           }}
         >
