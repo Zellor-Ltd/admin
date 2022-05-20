@@ -192,7 +192,7 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
       title: 'Profile',
       dataIndex: 'profile',
       width: '10%',
-      render: (profile = 'Fan') => (
+      render: profile => (
         <Tag color={tagColorByPermission[profile]}>{profile}</Tag>
       ),
       align: 'center',
