@@ -60,6 +60,9 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
   const [form] = Form.useForm();
   const [vaultForm] = Form.useForm();
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
+  const [internalCheckout, setInternalCheckout] = useState<boolean>(
+    brand?.checkoutType === 'internal'
+  );
 
   const {
     settings: { checkoutType = [] },
@@ -251,8 +254,10 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
       form.setFieldsValue({
         checkout: 'Disco',
       });
+      setInternalCheckout(true);
     } else {
       setCheckoutTypeList(checkoutType);
+      setInternalCheckout(false);
     }
   };
 
@@ -483,20 +488,18 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                 </Col>
                 <Col lg={16} xs={24}>
                   <Form.Item
+                    shouldUpdate
                     name="externalCheckoutType"
                     label="External Checkout Type"
                     rules={[
                       {
-                        required:
-                          form.getFieldValue('checkoutType') === 'external',
+                        required: !internalCheckout,
                         message: `External Checkout Type is required.`,
                       },
                     ]}
                   >
                     <Select
-                      disabled={
-                        form.getFieldValue('checkoutType') !== 'external'
-                      }
+                      disabled={internalCheckout}
                       placeholder="Select an external checkout type"
                     >
                       <Select.Option key={1} value={'Option 1'}>
