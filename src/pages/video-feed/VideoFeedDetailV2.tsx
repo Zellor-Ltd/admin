@@ -61,18 +61,6 @@ interface VideoFeedDetailProps {
   setDetails?: (boolean) => void;
 }
 
-const prouctBrandMapping: SelectOption = {
-  key: 'id',
-  label: 'brandName',
-  value: 'id',
-};
-
-const prouctBrandIconMapping: SelectOption = {
-  key: 'value',
-  label: 'label',
-  value: 'value',
-};
-
 const influencerMapping: SelectOption = {
   key: 'id',
   label: 'firstName',
@@ -155,6 +143,10 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
           productBrands.find(item => item.id === feedItem?.selectedId)
         );
       }
+    }
+
+    if (feedItem?.creator) {
+      setSelectedCreator(feedItem?.creator?.id);
     }
   }, []);
 
