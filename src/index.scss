@@ -195,11 +195,13 @@
 
   .site-layout-background {
     margin: 24px 16px 24px 66px;
+    padding: 24px;
   }
 }
 
 @media (min-width: 993px) {
   .site-layout-background {
     margin: 24px 16px;
+    padding: 24px;
   }
 }
