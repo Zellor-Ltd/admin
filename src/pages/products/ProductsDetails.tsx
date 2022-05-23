@@ -718,10 +718,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                 </Form.Item>
               </Col>
               <Col lg={4} xs={8}>
-                <Form.Item
-                  name="creatorCommission"
-                  label="Creator Commission %"
-                >
+                <Form.Item name="creatorPercentage" label="Creator %">
                   <InputNumber disabled={isLive} />
                 </Form.Item>
               </Col>
