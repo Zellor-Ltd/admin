@@ -15,6 +15,7 @@ import {
   Popconfirm,
   Row,
   Spin,
+  Switch,
   Table,
   Tag,
   Typography,
@@ -204,10 +205,10 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
       align: 'center',
       render: (value: any, record: Brand) => (
         <>
-          <SimpleSwitch
-            toggled={!!record.paused}
-            handleSwitchChange={toggled =>
-              handleSwitchChange('paused', record, toggled)
+          <Switch
+            checked={!!record.paused}
+            onChange={() =>
+              handleSwitchChange('paused', record, !!record.paused)
             }
           />
           {showModal && (
