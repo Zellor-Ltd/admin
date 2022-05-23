@@ -291,7 +291,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                   name="currencyCode"
                   rules={[
                     {
-                      required: true,
+                      required: false, //ToDo: review
                       message: 'Currency code is required.',
                     },
                   ]}

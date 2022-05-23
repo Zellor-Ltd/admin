@@ -143,7 +143,7 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
 
   const search = rows => {
     return rows.filter(
-      row => row.description.toLowerCase().indexOf(filter) > -1
+      row => row.description?.toLowerCase().indexOf(filter) > -1
     );
   };
 

@@ -152,7 +152,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   const search = rows => {
-    return rows.filter(row => row.firstName.toLowerCase().indexOf(filter) > -1);
+    return rows.filter(row => row.firstName?.toLowerCase().indexOf(filter) > -1);
   };
 
   const refreshItem = (record: Creator) => {

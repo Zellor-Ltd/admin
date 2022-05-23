@@ -247,7 +247,7 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
         ? record[dataIndex]
             .toString()
             .toLowerCase()
-            .includes(value.toLowerCase())
+            .includes(value?.toLowerCase())
         : '',
     onFilterDropdownVisibleChange: (visible: any) => {
       if (visible) {
