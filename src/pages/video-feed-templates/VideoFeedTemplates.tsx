@@ -1,30 +1,19 @@
-import {
-  DeleteOutlined,
-  EditOutlined,
-  LoadingOutlined,
-  SearchOutlined,
-} from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import {
   Button,
-  Col,
   Form,
-  Input,
-  InputNumber,
   Layout,
   message,
   PageHeader,
   Popconfirm,
-  Row,
-  Spin,
   Table,
   Tag as AntTag,
-  Typography,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
 import { FeedItem } from 'interfaces/FeedItem';
 import { Segment } from 'interfaces/Segment';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 import {
   deleteVideoFeed,
@@ -33,7 +22,6 @@ import {
   fetchCreators,
   fetchProductBrands,
   fetchVideoFeedV2,
-  saveVideoFeed,
 } from 'services/DiscoClubService';
 import { Brand } from 'interfaces/Brand';
 import '@pathofdev/react-tag-input/build/index.css';
@@ -41,10 +29,7 @@ import { Category } from 'interfaces/Category';
 import { Creator } from 'interfaces/Creator';
 import '../video-feed/VideoFeed.scss';
 import '../video-feed/VideoFeedDetail.scss';
-import SimpleSelect from 'components/select/SimpleSelect';
-import { SelectOption } from 'interfaces/SelectOption';
 import VideoFeedDetailV2 from '../video-feed/VideoFeedDetailV2';
-import { statusList, videoTypeList } from 'components/select/select.utils';
 import { useRequest } from 'hooks/useRequest';
 import moment from 'moment';
 
@@ -73,11 +58,6 @@ const VideoFeedTemplates: React.FC<RouteComponentProps> = () => {
   const [loaded, setLoaded] = useState<boolean>(false);
   const [feedItems, setFeedItems] = useState<any[]>([]);
   const { doFetch } = useRequest({ setLoading });
-  const shouldUpdateFeedItemIndex = useRef(false);
-  const originalFeedItemsIndex = useRef<Record<string, number | undefined>>({});
-  const [updatingFeedItemIndex, setUpdatingFeedItemIndex] = useState<
-    Record<string, boolean>
-  >({});
 
   // Filter state
   const [statusFilter, setStatusFilter] = useState<string>();
@@ -91,36 +71,6 @@ const VideoFeedTemplates: React.FC<RouteComponentProps> = () => {
   useEffect(() => {
     fetch();
   });
-
-  const masterBrandMapping: SelectOption = {
-    key: 'id',
-    label: 'brandName',
-    value: 'id',
-  };
-
-  const productBrandMapping: SelectOption = {
-    key: 'id',
-    label: 'brandName',
-    value: 'id',
-  };
-
-  const categoryMapping: SelectOption = {
-    key: 'id',
-    label: 'name',
-    value: 'id',
-  };
-
-  const statusMapping: SelectOption = {
-    key: 'value',
-    label: 'value',
-    value: 'value'.toLowerCase(),
-  };
-
-  const videoTypeMapping: SelectOption = {
-    key: 'value',
-    label: 'value',
-    value: 'value',
-  };
 
   const feedItemColumns: ColumnsType<FeedItem> = [
     {
@@ -322,59 +272,6 @@ const VideoFeedTemplates: React.FC<RouteComponentProps> = () => {
     setLastViewedIndex(index);
     setSelectedVideoFeed(videoFeed);
     setDetails(true);
-  };
-
-  const onFeedItemIndexOnColumnChange = (
-    feedItemIndex: number,
-    feedItem: FeedItem
-  ) => {
-    for (let i = 0; i < feedItems.length; i++) {
-      if (feedItems[i].id === feedItem.id) {
-        if (originalFeedItemsIndex.current[feedItem.id] === undefined) {
-          originalFeedItemsIndex.current[feedItem.id] = feedItem.index;
-        }
-
-        shouldUpdateFeedItemIndex.current =
-          originalFeedItemsIndex.current[feedItem.id] !== feedItemIndex;
-
-        feedItems[i].index = feedItemIndex;
-        setFeedItems([...feedItems]);
-        break;
-      }
-    }
-  };
-
-  const onFeedItemIndexOnColumnBlur = async (feedItem: FeedItem) => {
-    if (!shouldUpdateFeedItemIndex.current) {
-      return;
-    }
-    setUpdatingFeedItemIndex(prev => {
-      const newValue = {
-        ...prev,
-      };
-      newValue[feedItem.id] = true;
-
-      return newValue;
-    });
-    try {
-      await saveVideoFeed(feedItem);
-      message.success('Register updated with success.');
-    } catch (err) {
-      console.error(
-        `Error while trying to update FeedItem[${feedItem.id}] index.`,
-        err
-      );
-      message.success('Error while trying to update FeedItem index.');
-    }
-    setUpdatingFeedItemIndex(prev => {
-      const newValue = {
-        ...prev,
-      };
-      delete newValue[feedItem.id];
-      return newValue;
-    });
-    delete originalFeedItemsIndex.current[feedItem.id];
-    shouldUpdateFeedItemIndex.current = false;
   };
 
   const onSaveItem = (record: FeedItem) => {

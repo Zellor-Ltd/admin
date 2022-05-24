@@ -38,7 +38,6 @@ import {
   deleteStagingProduct,
   fetchBrands,
   fetchProductBrands,
-  fetchProducts,
   fetchStagingProducts,
   saveStagingProduct,
   transferStageProduct,
@@ -47,7 +46,6 @@ import ProductExpandedRow from './ProductExpandedRow';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
 import './Products.scss';
 import { ProductCategory } from 'interfaces/Category';
-import { useSelector } from 'react-redux';
 import { SearchFilterDebounce } from 'components/SearchFilterDebounce';
 import { AppContext } from 'contexts/AppContext';
 import { ProductBrand } from 'interfaces/ProductBrand';
@@ -118,10 +116,6 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
     label: 'brandName',
     value: 'id',
   };
-
-  const {
-    settings: { currency = [] },
-  } = useSelector((state: any) => state.settings);
 
   const productSuperCategoryOptionsMapping: SelectOption = {
     key: 'id',
@@ -643,11 +637,6 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
     _selectedBrand: ProductBrand | undefined
   ) => {
     setProductBrandFilter(_selectedBrand);
-  };
-
-  const handleEditProducts = async () => {
-    await fetchProducts({});
-    setSelectedRowKeys([]);
   };
 
   const editProduct = (
