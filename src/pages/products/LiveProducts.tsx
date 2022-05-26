@@ -691,15 +691,16 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
           >
             <Col lg={16} xs={24}>
               <Row gutter={[8, 8]}>
-                <Col lg={6} xs={16}>
+                <Col lg={6} xs={24}>
                   <SearchFilterDebounce
                     initialValue={searchFilter}
                     filterFunction={setSearchFilter}
-                    label="Search by Name"
+                    label="Product"
                     onPressEnter={getResources}
+                    placeholder="Search by Name"
                   />
                 </Col>
-                <Col lg={6} xs={16}>
+                <Col lg={6} xs={24}>
                   <Typography.Title level={5}>Master Brand</Typography.Title>
                   <SimpleSelect
                     data={brands}
@@ -707,13 +708,13 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                     style={{ width: '100%' }}
                     selectedOption={brandFilter?.brandName}
                     optionsMapping={optionsMapping}
-                    placeholder={'Select a master brand'}
+                    placeholder={'Select a Master Brand'}
                     loading={isFetchingBrands}
                     disabled={isFetchingBrands}
                     allowClear={true}
                   ></SimpleSelect>
                 </Col>
-                <Col lg={6} xs={16}>
+                <Col lg={6} xs={24}>
                   <Typography.Title level={5}>Product Brand</Typography.Title>
                   <SimpleSelect
                     data={productBrands}
@@ -808,7 +809,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                     style={{ width: '100%' }}
                     selectedOption={productSubSubCategoryFilter?.id}
                     optionsMapping={productSubSubCategoryOptionsMapping}
-                    placeholder={'Select a Sub SubCategory'}
+                    placeholder={'Select a Sub Sub Category'}
                     loading={fetchingCategories}
                     disabled={fetchingCategories}
                     allowClear={true}

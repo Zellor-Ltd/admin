@@ -384,12 +384,16 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
             ]}
           />
           <div className="sticky-filter-box" style={{ marginBottom: '16px' }}>
-            <Row>
-              <Col lg={12} xs={24}>
+            <Row gutter={8}>
+              <Col lg={4} xs={24}>
                 <Typography.Title level={5} title="Search">
                   Search
                 </Typography.Title>
-                <Input onChange={onChangeFilter} suffix={<SearchOutlined />} />
+                <Input
+                  onChange={onChangeFilter}
+                  suffix={<SearchOutlined />}
+                  placeholder="Search by Name"
+                />
               </Col>
             </Row>
           </div>

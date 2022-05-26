@@ -822,7 +822,8 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                   <SearchFilterDebounce
                     initialValue={searchFilter}
                     filterFunction={setSearchFilter}
-                    label="Search by Name"
+                    label="Product"
+                    placeholder="Search by Name"
                     onPressEnter={() => getResources(true)}
                   />
                 </Col>
@@ -834,7 +835,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                     style={{ width: '100%' }}
                     selectedOption={brandFilter?.brandName}
                     optionsMapping={optionsMapping}
-                    placeholder={'Select a master brand'}
+                    placeholder={'Select a Master Brand'}
                     loading={isFetchingBrands}
                     disabled={isFetchingBrands}
                     allowClear={true}

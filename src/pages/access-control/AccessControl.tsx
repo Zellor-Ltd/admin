@@ -40,7 +40,7 @@ const AccessControl: React.FC = () => {
 
   const [profiles, setProfiles] = useState<string[]>([]);
 
-  const [selectedProfile, setSelectedProfile] = useState<string>('');
+  const [selectedProfile, setSelectedProfile] = useState<string>();
   const [selectedMethod, setSelectedMethod] = useState<string>('All');
 
   const [endpoints, setEndpoints] = useState<Endpoint[]>([]);
@@ -130,29 +130,35 @@ const AccessControl: React.FC = () => {
   return (
     <>
       <PageHeader title="Access Control" />
-      <Row gutter={8}>
-        <Col xxl={4} lg={6} xs={18}>
-          <Select
-            placeholder="please select a profile"
-            style={{ width: '100%' }}
-            onChange={onChangeProfile}
-            value={selectedProfile}
-          >
-            {profiles.map((profie: any) => (
-              <Select.Option key={profie} value={profie}>
-                {profie}
-              </Select.Option>
-            ))}
-          </Select>
-        </Col>
-        <Col xs={6}>
-          <Button
-            type="primary"
-            onClick={onCloneClick}
-            disabled={!selectedProfile}
-          >
-            Clone
-          </Button>
+      <Row gutter={8} justify="start">
+        <Col lg={16} xs={24}>
+          <Row gutter={8}>
+            <Col lg={6} xs={18}>
+              <Typography.Title level={5}>Profile</Typography.Title>
+              <Select
+                placeholder="Select a profile"
+                style={{ width: '100%' }}
+                onChange={onChangeProfile}
+                value={selectedProfile}
+              >
+                {profiles.map((profile: any) => (
+                  <Select.Option key={profile} value={profile}>
+                    {profile}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Col>
+            <Col xs={6}>
+              <Button
+                type="primary"
+                onClick={onCloneClick}
+                disabled={!selectedProfile}
+                className="mt-2"
+              >
+                Clone
+              </Button>
+            </Col>
+          </Row>
         </Col>
       </Row>
       <Form
@@ -165,6 +171,7 @@ const AccessControl: React.FC = () => {
           defaultActiveKey="template"
           style={{ width: '100%' }}
           onChange={setSelectedMethod}
+          className="mt-1"
         >
           {methodsList.map((method, index) => (
             <TabPane tab={method} key={method}>
@@ -175,7 +182,7 @@ const AccessControl: React.FC = () => {
                   endpointPrivileges.map((data, _index) => (
                     <FunctionPrivilege
                       endpointPrivilege={data}
-                      profile={selectedProfile}
+                      profile={selectedProfile ?? ''}
                       key={`position_${_index}`}
                     />
                   ))

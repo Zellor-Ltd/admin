@@ -62,10 +62,7 @@ const VideoFeedTemplates: React.FC<RouteComponentProps> = () => {
   const [selectedVideoFeed, setSelectedVideoFeed] = useState<FeedItem>();
   const [loading, setLoading] = useState(false);
   const [details, setDetails] = useState<boolean>(false);
-  const [isFetchingCategories, setIsFetchingCategories] = useState(false);
-  const [categories, setCategories] = useState<Category[]>([]);
   const [influencers, setInfluencers] = useState<Creator[]>([]);
-  const [isFetchingBrands, setIsFetchingBrands] = useState(false);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [isFetchingProductBrands, setIsFetchingProductBrands] = useState(false);
   const [productBrands, setProductBrands] = useState([]);
@@ -75,52 +72,10 @@ const VideoFeedTemplates: React.FC<RouteComponentProps> = () => {
   const { doFetch } = useRequest({ setLoading });
   const shouldUpdateFeedItemIndex = useRef(false);
   const originalFeedItemsIndex = useRef<Record<string, number | undefined>>({});
-  const [updatingFeedItemIndex, setUpdatingFeedItemIndex] = useState<
-    Record<string, boolean>
-  >({});
-
-  // Filter state
-  const [statusFilter, setStatusFilter] = useState<string>();
-  const [brandFilter, setBrandFilter] = useState<Brand>();
-  const [productBrandFilter, setProductBrandFilter] = useState<string>();
-  const [videoTypeFilter, setVideoTypeFilter] = useState<string>();
-  const [titleFilter, setTitleFilter] = useState<string>();
-  const [categoryFilter, setCategoryFilter] = useState<string>();
-  const [indexFilter, setIndexFilter] = useState<number>();
 
   useEffect(() => {
     fetch();
   });
-
-  const masterBrandMapping: SelectOption = {
-    key: 'id',
-    label: 'brandName',
-    value: 'id',
-  };
-
-  const productBrandMapping: SelectOption = {
-    key: 'id',
-    label: 'brandName',
-    value: 'id',
-  };
-
-  const categoryMapping: SelectOption = {
-    key: 'id',
-    label: 'name',
-    value: 'id',
-  };
-
-  const statusMapping: SelectOption = {
-    key: 'value',
-    label: 'value',
-    value: 'value'.toLowerCase(),
-  };
-
-  const videoTypeMapping: SelectOption = {
-    key: 'value',
-    label: 'value',
-    value: 'value',
-  };
 
   const feedItemColumns: ColumnsType<FeedItem> = [
     {
@@ -248,11 +203,11 @@ const VideoFeedTemplates: React.FC<RouteComponentProps> = () => {
     try {
       const { results }: any = await doFetch(() =>
         fetchVideoFeedV2({
-          query: titleFilter,
-          brandId: brandFilter?.id,
-          status: statusFilter?.toLowerCase(),
-          videoType: videoTypeFilter,
-          productBrandId: productBrandFilter,
+          query: '',
+          brandId: '',
+          status: '',
+          videoType: '',
+          productBrandId: '',
         })
       );
       setFeedItems(results);
@@ -267,17 +222,9 @@ const VideoFeedTemplates: React.FC<RouteComponentProps> = () => {
       const response: any = await fetchCreators();
       setInfluencers(response.results);
     }
-    async function getCategories() {
-      setIsFetchingCategories(true);
-      const response: any = await fetchCategories();
-      setCategories(response.results);
-      setIsFetchingCategories(false);
-    }
     async function getBrands() {
-      setIsFetchingBrands(true);
       const response: any = await fetchBrands();
       setBrands(response.results);
-      setIsFetchingBrands(false);
     }
     async function getProductBrands() {
       setIsFetchingProductBrands(true);
@@ -285,23 +232,7 @@ const VideoFeedTemplates: React.FC<RouteComponentProps> = () => {
       setProductBrands(response.results);
       setIsFetchingProductBrands(false);
     }
-    await Promise.all([
-      getInfluencers(),
-      getCategories(),
-      getBrands(),
-      getProductBrands(),
-    ]);
-  };
-
-  const search = rows => {
-    if (indexFilter) {
-      return rows.filter(
-        row =>
-          row.category?.indexOf(categoryFilter) > -1 &&
-          row.index === indexFilter
-      );
-    }
-    return rows.filter(row => row.category?.indexOf(categoryFilter ?? '') > -1);
+    await Promise.all([getInfluencers(), getBrands(), getProductBrands()]);
   };
 
   const deleteItem = async (_id: string, index: number) => {
@@ -342,39 +273,6 @@ const VideoFeedTemplates: React.FC<RouteComponentProps> = () => {
         break;
       }
     }
-  };
-
-  const onFeedItemIndexOnColumnBlur = async (feedItem: FeedItem) => {
-    if (!shouldUpdateFeedItemIndex.current) {
-      return;
-    }
-    setUpdatingFeedItemIndex(prev => {
-      const newValue = {
-        ...prev,
-      };
-      newValue[feedItem.id] = true;
-
-      return newValue;
-    });
-    try {
-      await saveVideoFeed(feedItem);
-      message.success('Register updated with success.');
-    } catch (err) {
-      console.error(
-        `Error while trying to update FeedItem[${feedItem.id}] index.`,
-        err
-      );
-      message.success('Error while trying to update FeedItem index.');
-    }
-    setUpdatingFeedItemIndex(prev => {
-      const newValue = {
-        ...prev,
-      };
-      delete newValue[feedItem.id];
-      return newValue;
-    });
-    delete originalFeedItemsIndex.current[feedItem.id];
-    shouldUpdateFeedItemIndex.current = false;
   };
 
   const onSaveItem = (record: FeedItem) => {
@@ -447,10 +345,9 @@ const VideoFeedTemplates: React.FC<RouteComponentProps> = () => {
               rowClassName={(_, index) =>
                 `${index === lastViewedIndex ? 'selected-row' : ''}`
               }
-              size="small"
               columns={feedItemColumns}
               rowKey="id"
-              dataSource={search(feedItems)}
+              dataSource={feedItems}
               loading={loading}
             />
           </Content>

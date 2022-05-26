@@ -40,7 +40,7 @@ const RegsPerDay: React.FC<DashboardProps> = () => {
         </Row>
       </div>
       <Row style={{ height: '300px' }}>
-        <Col style={{ width: '75%' }}>
+        <Col lg={18} xs={24}>
           <ResponsiveContainer>
             <LineChart
               width={500}

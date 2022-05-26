@@ -1,4 +1,4 @@
-import { EditOutlined } from '@ant-design/icons';
+import { EditOutlined, SearchOutlined } from '@ant-design/icons';
 import { Button, Col, Input, PageHeader, Row, Table, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { Endpoint } from 'interfaces/Endpoint';
@@ -114,9 +114,11 @@ const Endpoints: React.FC<RouteComponentProps> = ({ history, location }) => {
         ]}
       />
       <Row gutter={8} className={'sticky-filter-box'}>
-        <Col lg={8} xs={16}>
-          <Typography.Title level={5}>Search by Name</Typography.Title>
+        <Col lg={4} xs={24}>
+          <Typography.Title level={5}>Search</Typography.Title>
           <Input
+            placeholder="Search by Name"
+            suffix={<SearchOutlined />}
             className="mb-1"
             value={filter}
             onChange={event => {

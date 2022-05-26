@@ -141,7 +141,7 @@
 .ant-layout-header {
   position: sticky;
   position: -webkit-sticky;
-  z-index: 2;
+  z-index: 5;
   top: 0px;
 }
 
@@ -188,6 +188,12 @@
   display: none;
 }
 
+.ant-typography {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 @media (max-width: 992px) {
   .ant-layout-sider-children {
     width: 50px;
@@ -196,6 +202,10 @@
   .site-layout-background {
     margin: 24px 16px 24px 66px;
     padding: 24px;
+  }
+
+  .hidden-on-mobile {
+    display: none;
   }
 }
 

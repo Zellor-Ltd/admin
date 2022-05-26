@@ -15,16 +15,12 @@ import { useRequest } from 'hooks/useRequest';
 import { useEffect, useRef, useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { fetchTrends, saveTrend } from 'services/DiscoClubService';
-import scrollIntoView from 'scroll-into-view';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { LoadingOutlined, SearchOutlined } from '@ant-design/icons';
 
 const Trends: React.FC<RouteComponentProps> = props => {
   const [loading, setLoading] = useState<boolean>(false);
   const { doFetch } = useRequest({ setLoading });
-  const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
-  const [details, setDetails] = useState<boolean>(false);
-  const [currentTrend, setCurrentTrend] = useState<any>();
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
@@ -69,18 +65,6 @@ const Trends: React.FC<RouteComponentProps> = props => {
       setRefreshing(false);
     }
   }, [refreshing]);
-
-  useEffect(() => {
-    if (!details) {
-      scrollIntoView(
-        document.querySelector(
-          `.scrollable-row-${lastViewedIndex}`
-        ) as HTMLElement
-      );
-
-      if (search(trends).length < 10) setEof(true);
-    }
-  }, [details, trends]);
 
   const onColumnChange = (trendIndex: number, trend: any) => {
     for (let i = 0; i < trends.length; i++) {
@@ -177,20 +161,6 @@ const Trends: React.FC<RouteComponentProps> = props => {
     return rows.filter(row => row.tag?.toLowerCase().indexOf(filter) > -1);
   };
 
-  const refreshItem = (record: any) => {
-    trends[lastViewedIndex] = record;
-    setTrends([...trends]);
-  };
-
-  const onSaveTrend = (record: any) => {
-    refreshItem(record);
-    setDetails(false);
-  };
-
-  const onCancelTrend = () => {
-    setDetails(false);
-  };
-
   return (
     <>
       <div>
@@ -201,10 +171,11 @@ const Trends: React.FC<RouteComponentProps> = props => {
           justify="space-between"
           className="mb-1 sticky-filter-box"
         >
-          <Col lg={8} xs={16}>
-            <Typography.Title level={5}>Search by Description</Typography.Title>
+          <Col lg={4} xs={16}>
+            <Typography.Title level={5}>Search</Typography.Title>
             <Input
-              className="mb-1"
+              placeholder="Search by Description"
+              suffix={<SearchOutlined />}
               value={filter}
               onChange={event => {
                 setFilter(event.target.value);
@@ -213,12 +184,7 @@ const Trends: React.FC<RouteComponentProps> = props => {
           </Col>
           <Col>
             <Row justify="end">
-              <Button
-                type="primary"
-                onClick={getResources}
-                className="mb-1"
-                loading={loading}
-              >
+              <Button type="primary" onClick={getResources} loading={loading}>
                 Search
                 <SearchOutlined style={{ color: 'white' }} />
               </Button>

@@ -1,4 +1,8 @@
-import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import {
+  DeleteOutlined,
+  EditOutlined,
+  SearchOutlined,
+} from '@ant-design/icons';
 import {
   Button,
   Col,
@@ -187,11 +191,11 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
             ]}
           />
           <Row gutter={8} className={'sticky-filter-box'}>
-            <Col lg={8} xs={16}>
-              <Typography.Title level={5}>
-                Search by Description
-              </Typography.Title>
+            <Col lg={4} xs={24}>
+              <Typography.Title level={5}>Search</Typography.Title>
               <Input
+                placeholder="Search by Description"
+                suffix={<SearchOutlined />}
                 className="mb-1"
                 value={filter}
                 onChange={event => {

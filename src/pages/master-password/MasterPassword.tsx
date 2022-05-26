@@ -28,12 +28,12 @@ const MasterPassword: React.FC<RouteComponentProps> = () => {
       {!masterPassword ? (
         <Form onFinish={onFinish}>
           <Row gutter={8}>
-            <Col lg={8} xs={24}>
+            <Col lg={4} xs={24}>
               <Form.Item label="ID" name="id" rules={[{ required: true }]}>
-                <Input />
+                <Input placeholder="Enter ID" />
               </Form.Item>
             </Col>
-            <Col lg={8} xs={24}>
+            <Col lg={4} xs={24}>
               <Button type="primary" htmlType="submit" loading={loading}>
                 Get Master Password
               </Button>

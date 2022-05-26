@@ -1,4 +1,8 @@
-import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import {
+  DeleteOutlined,
+  EditOutlined,
+  SearchOutlined,
+} from '@ant-design/icons';
 import {
   Button,
   Col,
@@ -36,7 +40,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
   const [eof, setEof] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
-  const [filter, setFilter] = useState<string>('');
+  const [filter, setFilter] = useState<string>();
 
   useEffect(() => {
     getResources();
@@ -230,7 +234,9 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
   ];
 
   const search = rows => {
-    return rows.filter(row => row.brandName.toLowerCase().indexOf(filter) > -1);
+    return rows.filter(
+      row => row.brandName.toLowerCase().indexOf(filter ?? '') > -1
+    );
   };
 
   const editProductBrand = (index: number, productBrand?: ProductBrand) => {
@@ -278,11 +284,13 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
             ]}
           />
           <Row className="sticky-filter-box" gutter={8}>
-            <Col lg={8} xs={16}>
-              <Typography.Title level={5}>Search by Name</Typography.Title>
+            <Col lg={4} xs={24}>
+              <Typography.Title level={5}>Search</Typography.Title>
               <Input
+                placeholder="Search by Name"
                 className="mb-1"
                 value={filter}
+                suffix={<SearchOutlined />}
                 onChange={event => {
                   setFilter(event.target.value);
                 }}

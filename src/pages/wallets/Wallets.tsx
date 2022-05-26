@@ -46,6 +46,19 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
   const [filter, setFilter] = useState<string>('');
   const [wallets, setWallets] = useState<Wallet[]>([]);
   const [fans, setFans] = useState<Fan[]>([]);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 576);
+
+  const handleResize = () => {
+    if (window.innerWidth < 576) {
+      setIsMobile(true);
+    } else {
+      setIsMobile(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+  });
 
   const optionsMapping: SelectOption = {
     key: 'id',
@@ -255,22 +268,22 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
           <Row
             align="bottom"
             justify="space-between"
-            className={'sticky-filter-box'}
+            className="sticky-filter-box mb-1"
           >
             <Col span={24}>
               <Row gutter={8} align="bottom">
-                <Col span={4}>
+                <Col lg={4} xs={24}>
                   <Typography.Title level={5}>Fan Filter</Typography.Title>
                   <AutoComplete
                     style={{ width: '100%' }}
                     options={options}
                     onSelect={onChangeFan}
                     onSearch={onSearch}
-                    placeholder="Type to search a fan"
+                    placeholder="Type to search by E-mail"
                   />
                 </Col>
                 {selectedFan && (
-                  <Col span={4}>
+                  <Col lg={4} xs={24} className={isMobile ? 'mt-05' : ''}>
                     <Typography.Title level={5}>Master Brand</Typography.Title>
                     <SimpleSelect
                       data={brands}
@@ -278,14 +291,22 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
                       style={{ width: '100%' }}
                       selectedOption={selectedBrand?.brandName}
                       optionsMapping={optionsMapping}
-                      placeholder={'Select a master brand'}
+                      placeholder={'Select a Master Brand'}
                       loading={isFetchingBrands}
                       disabled={isFetchingBrands}
                       allowClear={true}
                     ></SimpleSelect>
                   </Col>
                 )}
-                <Col span={6} style={{ position: 'relative', top: '23px' }}>
+                <Col
+                  lg={6}
+                  xs={24}
+                  style={
+                    isMobile
+                      ? { position: 'relative', top: '24px', padding: 0 }
+                      : { position: 'relative', top: '24px' }
+                  }
+                >
                   <WalletEdit
                     disabled={!selectedFan || !selectedBrand}
                     fanId={selectedFan?.id}

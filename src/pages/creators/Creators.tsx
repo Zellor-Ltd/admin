@@ -28,12 +28,6 @@ import {
 import CreatorDetail from './CreatorDetail';
 import { useRequest } from 'hooks/useRequest';
 
-const tagColorByStatus: any = {
-  approved: 'green',
-  rejected: 'red',
-  pending: '',
-};
-
 const Creators: React.FC<RouteComponentProps> = ({ location }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
@@ -152,7 +146,9 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   const search = rows => {
-    return rows.filter(row => row.firstName?.toLowerCase().indexOf(filter) > -1);
+    return rows.filter(
+      row => row.firstName?.toLowerCase().indexOf(filter) > -1
+    );
   };
 
   const refreshItem = (record: Creator) => {
@@ -203,11 +199,11 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
             justify="space-between"
             className={'sticky-filter-box'}
           >
-            <Col lg={8} xs={16}>
-              <Typography.Title level={5}>
-                Search by First Name
-              </Typography.Title>
+            <Col lg={4} xs={16}>
+              <Typography.Title level={5}>Search</Typography.Title>
               <Input
+                placeholder="Search by First Name"
+                suffix={<SearchOutlined />}
                 className="mb-1"
                 value={filter}
                 onChange={event => {

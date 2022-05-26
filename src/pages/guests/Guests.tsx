@@ -262,20 +262,18 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
             align="bottom"
             justify="space-between"
             gutter={8}
-            className="mb-1 sticky-filter-box"
+            className="sticky-filter-box"
           >
             <Col lg={16} xs={24}>
-              <Row gutter={8}>
-                <Col lg={8} xs={16}>
-                  <Typography.Title level={5}>
-                    Search by Guest e-mail
-                  </Typography.Title>
+              <Row gutter={8} className="mb-1">
+                <Col lg={6} xs={24}>
+                  <Typography.Title level={5}>Search</Typography.Title>
                   <AutoComplete
                     style={{ width: '100%' }}
                     options={options}
                     onSelect={onChangeFan}
                     onSearch={onSearch}
-                    placeholder="Type to search a guest"
+                    placeholder="Type to search by E-mail"
                   />
                 </Col>
               </Row>

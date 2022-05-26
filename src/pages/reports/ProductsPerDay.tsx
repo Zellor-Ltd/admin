@@ -38,7 +38,7 @@ const ProductsPerDay: React.FC<DashboardProps> = () => {
         </Row>
       </div>
       <Row style={{ height: '300px', marginTop: '40px' }}>
-        <Col style={{ width: '60%' }}>
+        <Col lg={14} xs={24}>
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
               width={500}

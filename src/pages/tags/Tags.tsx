@@ -222,30 +222,23 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
           <Row
             align="bottom"
             justify="space-between"
-            className={'sticky-filter-box'}
+            className="sticky-filter-box mb-1"
           >
             <Col lg={16} xs={24}>
               <Row gutter={[8, 8]}>
-                <Col lg={8} xs={16}>
+                <Col lg={6} xs={16}>
                   <SearchFilterDebounce
                     initialValue={searchFilter}
                     filterFunction={setSearchFilter}
-                    label="Search by Name"
+                    label="Search"
+                    placeholder="Search by Name"
                     onPressEnter={fetch}
                   />
                 </Col>
               </Row>
             </Col>
             <Col>
-              <Button
-                type="primary"
-                onClick={fetch}
-                loading={loading}
-                style={{
-                  marginBottom: '20px',
-                  marginRight: '25px',
-                }}
-              >
+              <Button type="primary" onClick={fetch} loading={loading}>
                 Search
                 <SearchOutlined style={{ color: 'white' }} />
               </Button>

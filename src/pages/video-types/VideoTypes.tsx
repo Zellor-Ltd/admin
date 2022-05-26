@@ -19,6 +19,7 @@ import scrollIntoView from 'scroll-into-view';
 import VideoTypeDetail from './VideoTypeDetail';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { VideoType } from 'interfaces/VideoType';
+import { SearchOutlined } from '@ant-design/icons';
 
 const VideoTypes: React.FC<RouteComponentProps> = props => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -138,9 +139,11 @@ const VideoTypes: React.FC<RouteComponentProps> = props => {
             ]}
           />
           <Row gutter={8} className={'sticky-filter-box'}>
-            <Col lg={8} xs={16}>
-              <Typography.Title level={5}>Search by Name</Typography.Title>
+            <Col lg={4} xs={16}>
+              <Typography.Title level={5}>Search</Typography.Title>
               <Input
+                placeholder="Search by Name"
+                suffix={<SearchOutlined />}
                 className="mb-1"
                 value={filter}
                 onChange={event => {

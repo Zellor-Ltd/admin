@@ -10,7 +10,6 @@ import {
   Typography,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import { Fan } from 'interfaces/Fan';
 import { Transaction } from 'interfaces/Transaction';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
@@ -23,8 +22,6 @@ import { useRequest } from 'hooks/useRequest';
 
 const Transactions: React.FC<RouteComponentProps> = () => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [selectedFan, setSelectedFan] = useState<Fan | undefined>();
-  const [isFetchingFans, setIsFetchingFans] = useState(false);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [filteredTransactions, setFilteredTransactions] = useState<
     Transaction[]
@@ -46,7 +43,6 @@ const Transactions: React.FC<RouteComponentProps> = () => {
   };
 
   const getFans = async () => {
-    setIsFetchingFans(true);
     const response = await doFetch(() =>
       fetchFans({
         page: 0,
@@ -63,7 +59,6 @@ const Transactions: React.FC<RouteComponentProps> = () => {
     };
 
     setOptions(response.results.map(optionFactory));
-    setIsFetchingFans(false);
   };
 
   useEffect(() => {
@@ -167,26 +162,9 @@ const Transactions: React.FC<RouteComponentProps> = () => {
     },
   ];
 
-  const paginateData = () => {
-    if (!transactions.length) {
-      return;
-    }
-
-    const results = transactions.slice(page * 10, page * 10 + 10);
-
-    setFilteredTransactions(prev => [...prev.concat(results)]);
-
-    if (results.length < 10) {
-      setEof(true);
-    } else {
-      setPage(page + 1);
-    }
-  };
-
   const onChangeFan = async (value: string, _selectedFan?: any) => {
     setLoading(true);
     if (_selectedFan) {
-      setSelectedFan(_selectedFan);
       const { results }: any = await fetchWalletTransactions(_selectedFan.id);
       setTransactions(results);
       setRefreshing(true);
@@ -224,14 +202,14 @@ const Transactions: React.FC<RouteComponentProps> = () => {
         style={{ marginBottom: '20px' }}
         className={'sticky-filter-box'}
       >
-        <Col xxl={40} lg={6} xs={18}>
+        <Col xxl={40} lg={4} xs={24}>
           <Typography.Title level={5}>Fan Filter</Typography.Title>
           <AutoComplete
             style={{ width: '100%' }}
             options={options}
             onSelect={onChangeFan}
             onSearch={onSearch}
-            placeholder="Type to search a fan"
+            placeholder="Type to search by E-mail"
           />
         </Col>
       </Row>

@@ -2,6 +2,7 @@ import {
   CalendarOutlined,
   DeleteOutlined,
   EditOutlined,
+  SearchOutlined,
 } from '@ant-design/icons';
 import {
   Button,
@@ -34,7 +35,6 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
   const [tableloading, setTableLoading] = useState<boolean>(false);
   const { doRequest, doFetch } = useRequest({ setLoading: setTableLoading });
-  const [promoStatusList, setPromoStatusList] = useState<any>();
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
   const [details, setDetails] = useState<boolean>(false);
   const [currentPromotion, setCurrentPromotion] = useState<Promotion>();
@@ -46,7 +46,7 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
   const [idFilter, setIdFilter] = useState<string>('');
 
   const getResources = useCallback(async () => {
-    await Promise.all([getPromotions(), getPromoStatus()]);
+    await getPromotions();
   }, []);
 
   useEffect(() => {
@@ -57,11 +57,6 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
     const { results } = await doFetch(fetchPromotions);
     setPromotions(results);
     setRefreshing(true);
-  }, []);
-
-  const getPromoStatus = useCallback(async () => {
-    const { results } = await doFetch(fetchPromoStatus);
-    setPromoStatusList(results[0]?.promoStatus);
   }, []);
 
   const fetchData = () => {
@@ -251,11 +246,16 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
             ]}
           />
           <Row gutter={8} className={'sticky-filter-box'}>
-            <Col lg={8} xs={16}>
+            <Col lg={4} xs={24}>
               <Typography.Title level={5} title="Search">
-                Search by ID
+                Search
               </Typography.Title>
-              <Input onChange={event => setIdFilter(event.target.value)} />
+              <Input
+                placeholder="Search by ID"
+                suffix={<SearchOutlined />}
+                onChange={event => setIdFilter(event.target.value)}
+                className="mb-1"
+              />
             </Col>
           </Row>
           <InfiniteScroll

@@ -4,6 +4,7 @@ import { Notifications } from 'components/Notifications';
 import jwt from 'helpers/jwt';
 import { useBuildTarget } from 'hooks/useBuildTarget';
 import ErrorPage from 'pages/error/ErrorPage';
+import { useEffect, useState } from 'react';
 import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 import './AuthenticatedLayout.scss';
 import AdminSideMenu from './SideMenus/AdminSideMenu';
@@ -13,6 +14,19 @@ const { Header, Sider, Content } = Layout;
 
 const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
   const { children, history } = props;
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 576);
+
+  const handleResize = () => {
+    if (window.innerWidth < 576) {
+      setIsMobile(true);
+    } else {
+      setIsMobile(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+  });
 
   const appName = useBuildTarget({
     ADMIN: 'Disco Admin',
@@ -36,9 +50,11 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
           <Link to="/">
             {' '}
             {appName}{' '}
-            <small style={{ fontSize: 10 }}>{`${
-              process.env.REACT_APP_BUILD_DATE || ''
-            } ${process.env.REACT_APP_SERVER_ENV}`}</small>
+            <small
+              style={isMobile ? { display: 'none' } : { fontSize: 10 }}
+            >{`${process.env.REACT_APP_BUILD_DATE || ''} ${
+              process.env.REACT_APP_SERVER_ENV
+            }`}</small>
           </Link>
         </h2>
         <Row style={{ width: '35%' }} justify="end" wrap={false}>

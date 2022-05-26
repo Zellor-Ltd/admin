@@ -36,6 +36,7 @@ import scrollIntoView from 'scroll-into-view';
 import FanDetail from 'pages/fans/FanDetail';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useMount } from 'react-use';
+import { useRequest } from 'hooks/useRequest';
 
 const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   const [orderUpdateList, setOrderUpdateList] = useState<boolean[]>([]);
@@ -50,7 +51,8 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   const [loaded, setLoaded] = useState<boolean>(false);
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
-  const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const { doFetch } = useRequest({ setLoading });
   const [ordersSettings, setOrdersSettings] = useState([]);
   const [fanFilter, setFanFilter] = useState<string>('');
   const [brandFilter, setBrandFilter] = useState<string>();
@@ -61,7 +63,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   const [orders, setOrders] = useState<Order[]>([]);
 
   const fetchUsers = async (_query?: string) => {
-    const pageToUse = refreshing ? 0 : page;
+    const pageToUse = loading ? 0 : page;
     const response: any = await fetchFans({
       page: pageToUse,
       query: _query,
@@ -106,11 +108,13 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   });
 
   const fetch = async () => {
-    const { results }: any = await fetchOrders({
-      page: 0,
-      brandId: brandFilter,
-      userId: fanFilter,
-    });
+    const { results }: any = await doFetch(() =>
+      fetchOrders({
+        page: 0,
+        brandId: brandFilter,
+        userId: fanFilter,
+      })
+    );
     const validOrders = results.filter(
       (order: Order) => !!(order.product || order.cart)
     );
@@ -496,29 +500,28 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
             className={'sticky-filter-box'}
           >
             <Col lg={16} xs={24}>
-              <Row gutter={8}>
-                <Col lg={8} xs={16}>
+              <Row gutter={8} className="mb-1">
+                <Col lg={6} xs={24}>
                   <Typography.Title level={5}>Master Brand</Typography.Title>
                   <SimpleSelect
                     data={brands}
                     onChange={id => onChangeBrand(id)}
                     style={{ width: '100%' }}
-                    selectedOption={''}
                     optionsMapping={optionsMapping}
-                    placeholder={'Select a master brand'}
+                    placeholder={'Select a Master Brand'}
                     loading={isFetchingBrands}
                     disabled={isFetchingBrands}
                     allowClear={true}
                   ></SimpleSelect>
                 </Col>
-                <Col lg={8} xs={16}>
+                <Col lg={6} xs={24}>
                   <Typography.Title level={5}>Fan Filter</Typography.Title>
                   <AutoComplete
                     style={{ width: '100%' }}
                     options={options}
                     onSelect={onChangeFan}
                     onSearch={onSearch}
-                    placeholder="Search by fan e-mail"
+                    placeholder="Type to search by E-mail"
                   />
                 </Col>
               </Row>
@@ -559,7 +562,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
               rowKey="id"
               columns={columns}
               dataSource={search(orders)}
-              loading={refreshing}
+              loading={loading}
               pagination={false}
             />
           </InfiniteScroll>

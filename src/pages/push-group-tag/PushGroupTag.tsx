@@ -20,6 +20,7 @@ import { SelectOption } from '../../interfaces/SelectOption';
 import scrollIntoView from 'scroll-into-view';
 import Step2 from './Step2';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import { SearchOutlined } from '@ant-design/icons';
 
 const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -199,11 +200,11 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
           >
             <Col lg={16} xs={24}>
               <Row gutter={8}>
-                <Col lg={8} xs={16}>
-                  <Typography.Title level={5}>
-                    Search by Tag Name
-                  </Typography.Title>
+                <Col lg={6} xs={16}>
+                  <Typography.Title level={5}>Search</Typography.Title>
                   <Input
+                    placeholder="Search by Tag Name"
+                    suffix={<SearchOutlined />}
                     className="mb-1"
                     value={tagFilter}
                     onChange={event => {
@@ -211,7 +212,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
                     }}
                   />
                 </Col>
-                <Col lg={8} xs={16}>
+                <Col lg={6} xs={16}>
                   <Typography.Title level={5}>Master Brand</Typography.Title>
                   <SimpleSelect
                     data={brands}
@@ -219,9 +220,8 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
                       setBrandFilter(brand?.brandName ?? '')
                     }
                     style={{ width: '100%' }}
-                    selectedOption={''}
                     optionsMapping={optionsMapping}
-                    placeholder={'Select a master brand'}
+                    placeholder={'Select a Master Brand'}
                     loading={isFetchingBrands}
                     disabled={isFetchingBrands}
                     allowClear={true}

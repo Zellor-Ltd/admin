@@ -56,6 +56,19 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
     { label: string; value: string; key: string }[]
   >([]);
   const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 576);
+
+  const handleResize = () => {
+    if (window.innerWidth < 576) {
+      setIsMobile(true);
+    } else {
+      setIsMobile(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+  });
 
   const fanOptionsMapping: SelectOption = {
     key: 'id',
@@ -314,39 +327,44 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
             justify="space-between"
             className={'sticky-filter-box'}
           >
-            <Col lg={16} xs={24}>
+            <Col lg={16} xs={24} className="mb-1">
               <Row gutter={8}>
-                <Col lg={8} xs={16}>
-                  <Typography.Title level={5}>Fan Filter</Typography.Title>
+                <Col lg={6} xs={24}>
+                  <Typography.Title level={5}>Search</Typography.Title>
                   <AutoComplete
                     style={{ width: '100%' }}
                     options={options}
                     onSelect={onChangeFan}
                     onSearch={onSearch}
-                    placeholder="Search by fan e-mail"
+                    placeholder="Type to search by E-mail"
                   />
                 </Col>
               </Row>
             </Col>
-            <EditMultipleButton
-              text="Edit Fans"
-              arrayList={fans}
-              ModalComponent={EditFanModal}
-              selectedRowKeys={selectedRowKeys}
-              onOk={handleEditFans}
-            />
-            <Button
-              type="primary"
-              onClick={getResources}
-              loading={loading}
-              style={{
-                marginBottom: '20px',
-                marginRight: '25px',
-              }}
-            >
-              Search
-              <SearchOutlined style={{ color: 'white' }} />
-            </Button>
+            <Col lg={8} xs={24}>
+              <Row gutter={8} justify="end" className="mt-2">
+                <Col>
+                  <EditMultipleButton
+                    text="Edit Fans"
+                    arrayList={fans}
+                    ModalComponent={EditFanModal}
+                    selectedRowKeys={selectedRowKeys}
+                    onOk={handleEditFans}
+                  />
+                </Col>
+                <Col>
+                  <Button
+                    type="primary"
+                    onClick={getResources}
+                    loading={loading}
+                    className="mb-1"
+                  >
+                    Search
+                    <SearchOutlined style={{ color: 'white' }} />
+                  </Button>
+                </Col>
+              </Row>
+            </Col>
           </Row>
           <FanAPITestModal
             selectedRecord={fanAPITest}

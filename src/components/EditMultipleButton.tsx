@@ -43,7 +43,7 @@ const EditMultipleButton: React.FC<EditProductsButtonProps> = ({
   };
 
   return (
-    <div style={{ marginBottom: '16px' }}>
+    <div className="mb-1">
       <Button
         type="primary"
         onClick={() => setShowEditProductModal(true)}
