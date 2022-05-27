@@ -1,5 +1,4 @@
 import {
-  DeleteOutlined,
   EyeOutlined,
   SearchOutlined,
   SettingOutlined,
@@ -11,7 +10,6 @@ import {
   Form,
   Input,
   PageHeader,
-  Popconfirm,
   Row,
   Select,
   Spin,
@@ -48,10 +46,8 @@ import SimpleSelect from 'components/select/SimpleSelect';
 import { SelectOption } from '../../interfaces/SelectOption';
 import ProductsDetails from './ProductsDetails';
 import { ProductCategory } from 'interfaces/Category';
-import { time } from 'console';
 
-const { getSearchTags, getCategories, removeSearchTagsByCategory } =
-  productUtils;
+const { getSearchTags, getCategories } = productUtils;
 
 const LiveProducts: React.FC<RouteComponentProps> = () => {
   const [brands, setBrands] = useState<Brand[]>([]);
@@ -130,10 +126,6 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
     value: 'id',
   };
 
-  const {
-    settings: { currency = [] },
-  } = useSelector((state: any) => state.settings);
-
   const handleFilterOutOfStock = (e: CheckboxChangeEvent) => {
     setOutOfStockFilter(e.target.checked);
   };
@@ -184,14 +176,6 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
     },
     [brands, form, currentProduct]
   );
-
-  const handleMasterBrandChange = (filterMasterBrand: Function) => {
-    filterMasterBrand(form);
-  };
-
-  const handleProductBrandChange = (filterProductBrand: Function) => {
-    filterProductBrand(form);
-  };
 
   const setSearchTagsByCategory = useCallback(
     (
@@ -288,12 +272,6 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
   const getResources = async () => {
     setRefreshing(true);
     setLoaded(true);
-  };
-
-  const refreshProducts = async () => {
-    setSelectedRowKeys([]);
-    setPage(0);
-    setRefreshing(true);
   };
 
   const fetchData = async () => {

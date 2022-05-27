@@ -15,6 +15,7 @@ import {
   PageHeader,
   Popconfirm,
   Row,
+  Select,
   Spin,
   Table,
   Tag as AntTag,
@@ -44,9 +45,9 @@ import './VideoFeedDetail.scss';
 import SimpleSelect from 'components/select/SimpleSelect';
 import { SelectOption } from 'interfaces/SelectOption';
 import VideoFeedDetailV2 from '../VideoFeedDetailV2';
-import { statusList, videoTypeList } from 'components/select/select.utils';
 import { useRequest } from 'hooks/useRequest';
 import moment from 'moment';
+import { useSelector } from 'react-redux';
 
 const { Content } = Layout;
 
@@ -88,6 +89,10 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const [categoryFilter, setCategoryFilter] = useState<string>();
   const [indexFilter, setIndexFilter] = useState<number>();
 
+  const {
+    settings: { videoType = [], feedItemStatus = [] },
+  } = useSelector((state: any) => state.settings);
+
   const masterBrandMapping: SelectOption = {
     key: 'id',
     label: 'brandName',
@@ -104,18 +109,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     key: 'id',
     label: 'name',
     value: 'id',
-  };
-
-  const statusMapping: SelectOption = {
-    key: 'value',
-    label: 'value',
-    value: 'value'.toLowerCase(),
-  };
-
-  const videoTypeMapping: SelectOption = {
-    key: 'value',
-    label: 'value',
-    value: 'value',
   };
 
   const feedItemColumns: ColumnsType<FeedItem> = [
@@ -346,7 +339,9 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
           row.index === indexFilter
       );
     }
-    return rows.filter(row => row.category?.indexOf(categoryFilter ?? '') > -1);
+    return rows.filter(
+      row => row?.category?.indexOf(categoryFilter ?? '') > -1
+    );
   };
 
   const deleteItem = async (_id: string, index: number) => {
@@ -504,6 +499,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                     suffix={<SearchOutlined />}
                     value={titleFilter}
                     placeholder="Type to search by title"
+                    onPressEnter={fetch}
                   />
                 </Col>
                 <Col lg={4} xs={12}>
@@ -536,15 +532,18 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                 </Col>
                 <Col lg={4} xs={12}>
                   <Typography.Title level={5}>Status</Typography.Title>
-                  <SimpleSelect
-                    data={statusList}
+                  <Select
+                    placeholder="Select a status"
                     onChange={status => setStatusFilter(status)}
                     style={{ width: '100%' }}
-                    selectedOption={statusFilter}
-                    optionsMapping={statusMapping}
-                    placeholder={'Select a status'}
-                    allowClear={true}
-                  />
+                    disabled={!feedItemStatus.length}
+                  >
+                    {feedItemStatus.map((curr: any) => (
+                      <Select.Option key={curr.value} value={curr.value}>
+                        {curr.name}
+                      </Select.Option>
+                    ))}
+                  </Select>
                 </Col>
                 <Col lg={4} xs={12}>
                   <Typography.Title level={5}>Category</Typography.Title>
@@ -564,15 +563,18 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                 </Col>
                 <Col lg={4} xs={12}>
                   <Typography.Title level={5}>Video Type</Typography.Title>
-                  <SimpleSelect
-                    data={videoTypeList}
+                  <Select
+                    placeholder="Select a video type"
                     onChange={videoType => setVideoTypeFilter(videoType)}
                     style={{ width: '100%' }}
-                    selectedOption={videoTypeFilter}
-                    optionsMapping={videoTypeMapping}
-                    placeholder={'Select a video type'}
-                    allowClear={true}
-                  />
+                    disabled={!videoType.length}
+                  >
+                    {videoType.map((curr: any) => (
+                      <Select.Option key={curr.value} value={curr.value}>
+                        {curr.name}
+                      </Select.Option>
+                    ))}
+                  </Select>
                 </Col>
                 <Col lg={4} xs={12}>
                   <Typography.Title level={5}>Start Index</Typography.Title>
