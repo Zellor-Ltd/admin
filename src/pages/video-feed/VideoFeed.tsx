@@ -15,6 +15,7 @@ import {
   PageHeader,
   Popconfirm,
   Row,
+  Select,
   Spin,
   Table,
   Tag as AntTag,
@@ -87,6 +88,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const [titleFilter, setTitleFilter] = useState<string>();
   const [categoryFilter, setCategoryFilter] = useState<string>();
   const [indexFilter, setIndexFilter] = useState<number>();
+  const [creatorFilter, setCreatorFilter] = useState<string>();
 
   const masterBrandMapping: SelectOption = {
     key: 'id',
@@ -339,16 +341,21 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   };
 
   const search = rows => {
+    let updatedRows = rows;
     if (indexFilter) {
-      return rows.filter(
-        row =>
-          row.category?.indexOf(categoryFilter) > -1 &&
-          row.index === indexFilter
+      updatedRows = updatedRows.filter(row => row.index === indexFilter);
+    }
+    if (creatorFilter) {
+      updatedRows = updatedRows.filter(
+        row => row?.creator?.firstName?.indexOf(creatorFilter) > -1
       );
     }
-    return rows.filter(
-      row => row?.category?.indexOf(categoryFilter ?? '') > -1
-    );
+    if (categoryFilter) {
+      updatedRows = updatedRows.filter(
+        row => row.category?.indexOf(categoryFilter) > -1
+      );
+    }
+    return updatedRows;
   };
 
   const deleteItem = async (_id: string, index: number) => {
@@ -586,6 +593,21 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                     }
                     placeholder="Select an index"
                   />
+                </Col>
+                <Col lg={4} xs={12}>
+                  <Typography.Title level={5}>Creator</Typography.Title>
+                  <Select
+                    placeholder="Select a creator"
+                    disabled={!influencers.length}
+                    onChange={setCreatorFilter}
+                    style={{ width: '100%' }}
+                  >
+                    {influencers.map((curr: any) => (
+                      <Select.Option key={curr.id} value={curr.firstName}>
+                        {curr.firstName}
+                      </Select.Option>
+                    ))}
+                  </Select>
                 </Col>
               </Row>
             </Col>
