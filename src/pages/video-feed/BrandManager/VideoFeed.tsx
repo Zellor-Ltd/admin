@@ -497,8 +497,8 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
             <Col lg={16} xs={24}>
               <Row gutter={[8, 8]}>
                 <Col lg={6} xs={24}>
-                  <Typography.Title level={5} title="Search">
-                    Search
+                  <Typography.Title level={5} title="Title">
+                    Title
                   </Typography.Title>
                   <Input
                     onChange={event => setTitleFilter(event.target.value)}
