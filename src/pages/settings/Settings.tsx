@@ -61,13 +61,13 @@ const Settings: React.FC = () => {
           <TabPane tab="Language" key="language">
             <ItemList name="language" />
           </TabPane>
-          <TabPane tab="Orders Status" key="orderStatus">
+          <TabPane tab="Order Status" key="orderStatus">
             <ItemList name="orderStatus" />
           </TabPane>
-          <TabPane tab="Feed Items Status" key="feedItemStatus">
+          <TabPane tab="Feed Item Status" key="feedItemStatus">
             <ItemList name="feedItemStatus" />
           </TabPane>
-          <TabPane tab="Status (Promotions)" key="promoStatus">
+          <TabPane tab="Promotion Status" key="promoStatus">
             <ItemList name="promoStatus" />
           </TabPane>
           <TabPane tab="Checkout Type" key="checkoutType">
