@@ -50,6 +50,19 @@ const FeedTemplates: React.FC<RouteComponentProps> = () => {
   const [loaded, setLoaded] = useState<boolean>(false);
   const [feedTemplates, setFeedTemplates] = useState<any[]>([]);
   const { doFetch } = useRequest({ setLoading });
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 769);
+
+  const handleResize = () => {
+    if (window.innerWidth < 769) {
+      setIsMobile(true);
+    } else {
+      setIsMobile(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+  });
 
   const columns: ColumnsType<any> = [
     {
@@ -260,11 +273,12 @@ const FeedTemplates: React.FC<RouteComponentProps> = () => {
       {!details && (
         <div className="video-feed mb-1">
           <PageHeader
-            title="Video Feed Templates"
-            subTitle="List of Feed Templates"
+            title="Feed Templates"
+            subTitle={isMobile ? '' : 'List of Feed Templates'}
             extra={[
               <Button
                 key="2"
+                className={isMobile ? 'mt-05' : ''}
                 onClick={() => onEditFeedTemplate(feedTemplates.length - 1)}
               >
                 New Item

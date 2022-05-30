@@ -19,6 +19,19 @@ const RegsPerDay: React.FC<DashboardProps> = () => {
   const [fansPerDay, setFansPerDay] = useState<any[]>([]);
   const [, setLoading] = useState<boolean>(true);
   const { doFetch } = useRequest({ setLoading });
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 769);
+
+  const handleResize = () => {
+    if (window.innerWidth < 769) {
+      setIsMobile(true);
+    } else {
+      setIsMobile(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+  });
 
   const getFans = async () => {
     const { results } = await doFetch(fetchActiveRegFansPerDay);
@@ -31,15 +44,32 @@ const RegsPerDay: React.FC<DashboardProps> = () => {
   }, []);
 
   return (
-    <>
-      <div style={{ marginBottom: '16px' }}>
-        <Row>
-          <Col lg={12} xs={24}>
-            <Typography.Title level={3}>Registrations per Day</Typography.Title>
-          </Col>
-        </Row>
-      </div>
-      <Row style={{ height: '300px' }}>
+    <div
+      style={
+        isMobile
+          ? {
+              padding: '20px',
+            }
+          : {}
+      }
+    >
+      <Row className="mb-05">
+        <Col lg={12} xs={24}>
+          <Typography.Title
+            level={4}
+            className={isMobile ? 'mb-n1 ant-page-header' : 'ant-page-header'}
+          >
+            Registrations per Day
+          </Typography.Title>
+        </Col>
+      </Row>
+      <Row
+        style={
+          isMobile
+            ? { marginLeft: '-50px', height: '300px' }
+            : { height: '300px' }
+        }
+      >
         <Col lg={18} xs={24}>
           <ResponsiveContainer>
             <LineChart
@@ -48,8 +78,8 @@ const RegsPerDay: React.FC<DashboardProps> = () => {
               data={fansPerDay}
               margin={{
                 top: 5,
-                right: 30,
-                left: 20,
+                right: 0,
+                left: 0,
                 bottom: 5,
               }}
             >
@@ -69,7 +99,7 @@ const RegsPerDay: React.FC<DashboardProps> = () => {
           </ResponsiveContainer>
         </Col>
       </Row>
-    </>
+    </div>
   );
 };
 

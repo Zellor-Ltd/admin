@@ -41,6 +41,19 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [promoDisplays, setPromoDisplays] = useState<PromoDisplay[]>([]);
   const [filter, setFilter] = useState<string>('');
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 769);
+
+  const handleResize = () => {
+    if (window.innerWidth < 769) {
+      setIsMobile(true);
+    } else {
+      setIsMobile(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+  });
 
   useEffect(() => {
     getResources();
@@ -222,10 +235,12 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
         <div>
           <PageHeader
             title="Shop Display"
-            subTitle="List of Shop Displays"
+            subTitle={isMobile ? '' : 'List of Shop Displays'}
+            className={isMobile ? 'mb-n1' : ''}
             extra={[
               <Button
                 key="1"
+                className={isMobile ? 'mt-05' : ''}
                 onClick={() => editPromoDisplay(promoDisplays.length)}
               >
                 New Item

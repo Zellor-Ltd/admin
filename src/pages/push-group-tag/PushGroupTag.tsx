@@ -196,7 +196,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
           <Row
             align="bottom"
             justify="space-between"
-            className={'sticky-filter-box'}
+            className="mb-1 sticky-filter-box"
           >
             <Col lg={16} xs={24}>
               <Row gutter={8}>
@@ -205,7 +205,6 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
                   <Input
                     placeholder="Search by Tag Name"
                     suffix={<SearchOutlined />}
-                    className="mb-1"
                     value={tagFilter}
                     onChange={event => {
                       setTagFilter(event.target.value);
@@ -229,7 +228,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
                 </Col>
               </Row>
             </Col>
-            <Col style={{ marginBottom: '20px', marginRight: '25px' }}>
+            <Col>
               <Button
                 type="primary"
                 disabled={!selectedRowKeys.length}

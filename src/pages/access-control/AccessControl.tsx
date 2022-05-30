@@ -136,7 +136,7 @@ const AccessControl: React.FC = () => {
             <Col lg={6} xs={18}>
               <Typography.Title level={5}>Profile</Typography.Title>
               <Select
-                placeholder="Select a profile"
+                placeholder="Select a Profile"
                 style={{ width: '100%' }}
                 onChange={onChangeProfile}
                 value={selectedProfile}

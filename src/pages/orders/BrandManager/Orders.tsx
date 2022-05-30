@@ -61,6 +61,19 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   >([]);
   const [filter, setFilter] = useState<any[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 769);
+
+  const handleResize = () => {
+    if (window.innerWidth < 769) {
+      setIsMobile(true);
+    } else {
+      setIsMobile(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+  });
 
   const fetchUsers = async (_query?: string) => {
     const pageToUse = loading ? 0 : page;
@@ -493,14 +506,19 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     <>
       {!details && (
         <div className="orders">
-          <PageHeader title="Orders" subTitle="List of Orders" />
+          <PageHeader
+            title="Orders"
+            subTitle={isMobile ? '' : 'List of Orders'}
+            className={isMobile ? 'mb-n1' : ''}
+          />
           <Row
             align="bottom"
             justify="space-between"
-            className={'sticky-filter-box'}
+            className="mb-1 sticky-filter-box"
+            gutter={8}
           >
             <Col lg={16} xs={24}>
-              <Row gutter={8} className="mb-1">
+              <Row gutter={8}>
                 <Col lg={6} xs={24}>
                   <Typography.Title level={5}>Master Brand</Typography.Title>
                   <SimpleSelect
@@ -526,18 +544,15 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
                 </Col>
               </Row>
             </Col>
-            <Col>
-              <Button
-                type="primary"
-                onClick={fetch}
-                style={{
-                  marginBottom: '20px',
-                  marginRight: '25px',
-                }}
-              >
-                Search
-                <SearchOutlined style={{ color: 'white' }} />
-              </Button>
+            <Col lg={24} xs={24}>
+              <Row justify="end" className={isMobile ? 'mt-2' : ''}>
+                <Col>
+                  <Button type="primary" onClick={fetch}>
+                    Search
+                    <SearchOutlined style={{ color: 'white' }} />
+                  </Button>
+                </Col>
+              </Row>
             </Col>
           </Row>
           <InfiniteScroll

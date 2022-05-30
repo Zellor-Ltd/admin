@@ -14,10 +14,10 @@ const { Header, Sider, Content } = Layout;
 
 const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
   const { children, history } = props;
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 576);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 769);
 
   const handleResize = () => {
-    if (window.innerWidth < 576) {
+    if (window.innerWidth < 769) {
       setIsMobile(true);
     } else {
       setIsMobile(false);
@@ -79,7 +79,7 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
       </Header>
       <Layout className="site-layout">
         <Sider
-          breakpoint="lg"
+          breakpoint="md"
           collapsedWidth="0"
           style={{
             minHeight: 'calc(100vh - 64px)',

@@ -94,7 +94,7 @@ const ItemList: React.FC<ItemListProp> = ({ name }) => (
   <Form.List name={name}>
     {(fields, { add, remove }) => (
       <div>
-        <Button onClick={() => add()}>
+        <Button className="mb-1" onClick={() => add()}>
           Add {name.charAt(0).toUpperCase() + name.slice(1)}
         </Button>
         {fields.map(field => (

@@ -36,10 +36,10 @@ const WalletEdit: React.FC<WalletEditProps> = ({
   const [loading, setLoading] = useState<boolean>(false);
   const { doRequest } = useRequest({ setLoading: setLoading });
   const [form] = useForm();
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 576);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 769);
 
   const handleResize = () => {
-    if (window.innerWidth < 576) {
+    if (window.innerWidth < 769) {
       setIsMobile(true);
     } else {
       setIsMobile(false);

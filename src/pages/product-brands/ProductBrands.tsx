@@ -41,6 +41,19 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
   const [filter, setFilter] = useState<string>();
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 769);
+
+  const handleResize = () => {
+    if (window.innerWidth < 769) {
+      setIsMobile(true);
+    } else {
+      setIsMobile(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+  });
 
   useEffect(() => {
     getResources();
@@ -273,22 +286,23 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
         <div>
           <PageHeader
             title="Product Brands"
-            subTitle="List of Product Brands"
+            subTitle={isMobile ? '' : 'List of Product Brands'}
+            className={isMobile ? 'mb-n1' : ''}
             extra={[
               <Button
                 key="1"
+                className={isMobile ? 'mt-05' : ''}
                 onClick={() => editProductBrand(productBrands.length)}
               >
                 New Item
               </Button>,
             ]}
           />
-          <Row className="sticky-filter-box" gutter={8}>
+          <Row className="sticky-filter-box mb-1" gutter={8}>
             <Col lg={4} xs={24}>
               <Typography.Title level={5}>Search</Typography.Title>
               <Input
                 placeholder="Search by Name"
-                className="mb-1"
                 value={filter}
                 suffix={<SearchOutlined />}
                 onChange={event => {

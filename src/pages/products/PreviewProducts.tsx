@@ -119,9 +119,19 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
     value: 'id',
   };
 
-  const {
-    settings: { currency = [] },
-  } = useSelector((state: any) => state.settings);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 769);
+
+  const handleResize = () => {
+    if (window.innerWidth < 769) {
+      setIsMobile(true);
+    } else {
+      setIsMobile(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+  });
 
   const productSuperCategoryOptionsMapping: SelectOption = {
     key: 'id',
@@ -742,6 +752,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                 }
               >
                 <EditableTable
+                  className="mt-2"
                   rowClassName={(_, index) =>
                     `scrollable-row-${index} ${
                       index === lastViewedIndex ? 'selected-row' : ''
@@ -803,10 +814,20 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
           <PageHeader
             title="Preview Products"
             subTitle={
-              viewName === 'default' ? 'Default View' : 'Alternate View'
+              isMobile
+                ? ''
+                : viewName === 'default'
+                ? 'Default View'
+                : 'Alternate View'
             }
+            className={isMobile ? 'mb-n1' : ''}
             extra={[
-              <Button key="1" type="primary" onClick={switchView}>
+              <Button
+                key="1"
+                type="primary"
+                onClick={switchView}
+                className={isMobile ? 'mt-05' : ''}
+              >
                 Switch View
               </Button>,
             ]}
@@ -1010,7 +1031,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                 <Col lg={6} xs={24}>
                   <Checkbox
                     onChange={handleFilterOutOfStock}
-                    style={{ margin: '42px 0 16px 8px' }}
+                    className={isMobile ? 'mt-1 mb-1' : 'mt-2 mb-1 ml-05'}
                   >
                     Out of Stock only
                   </Checkbox>
@@ -1018,27 +1039,33 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                 <Col lg={6} xs={24}>
                   <Checkbox
                     onChange={handleFilterClassified}
-                    style={{ margin: '42px 0 16px 8px' }}
+                    className={isMobile ? 'mb-2' : 'mb-1 ml-05'}
                   >
                     Unclassified only
                   </Checkbox>
                 </Col>
               </Row>
             </Col>
-            <Col>
+            <Col lg={4} xs={24}>
               <Row justify="end">
-                <Button
-                  type="primary"
-                  onClick={() => getResources(true)}
-                  loading={loading}
-                  style={{
-                    position: 'relative',
-                    bottom: '-49px',
-                  }}
-                >
-                  Search
-                  <SearchOutlined style={{ color: 'white' }} />
-                </Button>
+                <Col>
+                  <Button
+                    type="primary"
+                    onClick={() => getResources(true)}
+                    loading={loading}
+                    style={
+                      isMobile
+                        ? {}
+                        : {
+                            position: 'relative',
+                            bottom: '-60px',
+                          }
+                    }
+                  >
+                    Search
+                    <SearchOutlined style={{ color: 'white' }} />
+                  </Button>
+                </Col>
               </Row>
             </Col>
           </Row>

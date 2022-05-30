@@ -40,6 +40,19 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [mastheads, setMastheads] = useState<Masthead[]>([]);
   const [filter, setFilter] = useState<string>('');
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 769);
+
+  const handleResize = () => {
+    if (window.innerWidth < 769) {
+      setIsMobile(true);
+    } else {
+      setIsMobile(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+  });
 
   const getResources = useCallback(async () => {
     const { results } = await doFetch(fetchMastheads);
@@ -183,9 +196,14 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
         <div className="Mastheads">
           <PageHeader
             title="Mastheads"
-            subTitle="List of Mastheads"
+            subTitle={isMobile ? '' : 'List of Mastheads'}
+            className={isMobile ? 'mb-n1' : ''}
             extra={[
-              <Button key="1" onClick={() => editItem(mastheads.length)}>
+              <Button
+                key="1"
+                className={isMobile ? 'mt-05' : ''}
+                onClick={() => editItem(mastheads.length)}
+              >
                 New Item
               </Button>,
             ]}

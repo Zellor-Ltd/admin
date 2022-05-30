@@ -15,6 +15,19 @@ const PreRegisteredUsers: React.FC<DashboardProps> = () => {
   const { doFetch, doRequest } = useRequest({ setLoading });
   const [preRegs, setPreRegs] = useState<PreReg[]>([]);
   const [content, setContent] = useState<any[]>([]);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 769);
+
+  const handleResize = () => {
+    if (window.innerWidth < 769) {
+      setIsMobile(true);
+    } else {
+      setIsMobile(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+  });
 
   const getPreRegs = async () => {
     const { results } = await doFetch(fetchPreRegs);
@@ -79,10 +92,23 @@ const PreRegisteredUsers: React.FC<DashboardProps> = () => {
 
   return (
     <>
-      <div style={{ marginBottom: '16px' }}>
-        <Row>
+      <div
+        style={
+          isMobile
+            ? {
+                padding: '20px',
+              }
+            : {}
+        }
+      >
+        <Row className="mb-05">
           <Col lg={12} xs={24}>
-            <Typography.Title level={3}>Pre Registered Users</Typography.Title>
+            <Typography.Title
+              level={4}
+              className={isMobile ? 'mb-n1 ant-page-header' : 'ant-page-header'}
+            >
+              Pre Registered Users
+            </Typography.Title>
           </Col>
         </Row>
       </div>

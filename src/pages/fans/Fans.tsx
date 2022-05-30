@@ -56,10 +56,10 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
     { label: string; value: string; key: string }[]
   >([]);
   const [refreshing, setRefreshing] = useState<boolean>(false);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 576);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 769);
 
   const handleResize = () => {
-    if (window.innerWidth < 576) {
+    if (window.innerWidth < 769) {
       setIsMobile(true);
     } else {
       setIsMobile(false);
@@ -315,9 +315,14 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
         <div className="fans">
           <PageHeader
             title="Fans"
-            subTitle="List of Fans"
+            subTitle={isMobile ? '' : 'List of Fans'}
+            className={isMobile ? 'mb-n1' : ''}
             extra={[
-              <Button key="1" onClick={() => editFan(fans.length)}>
+              <Button
+                key="1"
+                className={isMobile ? 'mt-05' : ''}
+                onClick={() => editFan(fans.length)}
+              >
                 New Item
               </Button>,
             ]}

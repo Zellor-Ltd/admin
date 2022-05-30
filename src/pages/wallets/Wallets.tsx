@@ -46,10 +46,10 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
   const [filter, setFilter] = useState<string>('');
   const [wallets, setWallets] = useState<Wallet[]>([]);
   const [fans, setFans] = useState<Fan[]>([]);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 576);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 769);
 
   const handleResize = () => {
-    if (window.innerWidth < 576) {
+    if (window.innerWidth < 769) {
       setIsMobile(true);
     } else {
       setIsMobile(false);
@@ -264,7 +264,11 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
     <>
       {!details && (
         <div className="wallets">
-          <PageHeader title="Fan Wallets" subTitle="List of fan wallets" />
+          <PageHeader
+            title="Fan Wallets"
+            subTitle={isMobile ? '' : 'List of Fan wallets'}
+            className={isMobile ? 'mb-n1' : ''}
+          />
           <Row
             align="bottom"
             justify="space-between"

@@ -53,6 +53,19 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 769);
+
+  const handleResize = () => {
+    if (window.innerWidth < 769) {
+      setIsMobile(true);
+    } else {
+      setIsMobile(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+  });
 
   useEffect(() => {
     fetch();
@@ -376,27 +389,30 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
         <>
           <PageHeader
             title="Master Brands"
-            subTitle="List of Master Brands"
+            subTitle={isMobile ? '' : 'List of Master Brands'}
+            className={isMobile ? 'mb-n1' : ''}
             extra={[
-              <Button key="1" onClick={() => editBrand(filterBrand().length)}>
+              <Button
+                key="1"
+                className={isMobile ? 'mt-05' : ''}
+                onClick={() => editBrand(filterBrand().length)}
+              >
                 New Item
               </Button>,
             ]}
           />
-          <div className="sticky-filter-box" style={{ marginBottom: '16px' }}>
-            <Row gutter={8}>
-              <Col lg={4} xs={24}>
-                <Typography.Title level={5} title="Search">
-                  Search
-                </Typography.Title>
-                <Input
-                  onChange={onChangeFilter}
-                  suffix={<SearchOutlined />}
-                  placeholder="Search by Name"
-                />
-              </Col>
-            </Row>
-          </div>
+          <Row gutter={8} className="mb-1 sticky-filter-box">
+            <Col lg={4} xs={24}>
+              <Typography.Title level={5} title="Search">
+                Search
+              </Typography.Title>
+              <Input
+                onChange={onChangeFilter}
+                suffix={<SearchOutlined />}
+                placeholder="Search by Name"
+              />
+            </Col>
+          </Row>
           <InfiniteScroll
             dataLength={filterBrand().length}
             next={fetchData}

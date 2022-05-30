@@ -197,32 +197,29 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
             gutter={8}
             align="bottom"
             justify="space-between"
-            className={'sticky-filter-box'}
+            className="mb-1 sticky-filter-box"
           >
             <Col lg={4} xs={16}>
               <Typography.Title level={5}>Search</Typography.Title>
               <Input
                 placeholder="Search by First Name"
                 suffix={<SearchOutlined />}
-                className="mb-1"
                 value={filter}
                 onChange={event => {
                   setFilter(event.target.value);
                 }}
               />
             </Col>
-            <Button
-              type="primary"
-              onClick={fetch}
-              loading={loading}
-              style={{
-                marginBottom: '16px',
-                marginRight: '25px',
-              }}
-            >
-              Search
-              <SearchOutlined style={{ color: 'white' }} />
-            </Button>
+            <Col lg={8} xs={24}>
+              <Row justify="end">
+                <Col>
+                  <Button type="primary" onClick={fetch} loading={loading}>
+                    Search
+                    <SearchOutlined style={{ color: 'white' }} />
+                  </Button>
+                </Col>
+              </Row>
+            </Col>
           </Row>
           <Table
             rowKey="id"

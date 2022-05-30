@@ -23,6 +23,19 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 769);
+
+  const handleResize = () => {
+    if (window.innerWidth < 769) {
+      setIsMobile(true);
+    } else {
+      setIsMobile(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+  });
 
   const getBanners = async () => {
     const response = await doFetch(() => fetchBanners());
@@ -192,9 +205,14 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
         <div>
           <PageHeader
             title="Banners"
-            subTitle="List of Banners"
+            subTitle={isMobile ? '' : 'List of Banners'}
+            className={isMobile ? 'mb-n1' : ''}
             extra={[
-              <Button key="1" onClick={() => editBanner(banners.length)}>
+              <Button
+                key="1"
+                className={isMobile ? 'mt-05' : ''}
+                onClick={() => editBanner(banners.length)}
+              >
                 New Item
               </Button>,
             ]}

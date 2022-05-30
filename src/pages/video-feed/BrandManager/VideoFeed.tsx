@@ -118,6 +118,20 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     value: 'value',
   };
 
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 769);
+
+  const handleResize = () => {
+    if (window.innerWidth < 769) {
+      setIsMobile(true);
+    } else {
+      setIsMobile(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+  });
+
   const feedItemColumns: ColumnsType<FeedItem> = [
     {
       title: '_id',
@@ -479,10 +493,12 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
         <div className="video-feed mb-1">
           <PageHeader
             title="Video Feeds"
-            subTitle="List of Feeds"
+            subTitle={isMobile ? '' : 'List of Feeds'}
+            className={isMobile ? 'mb-n1' : ''}
             extra={[
               <Button
                 key="2"
+                className={isMobile ? 'mt-05' : ''}
                 onClick={() => onEditFeedItem(feedItems.length - 1)}
               >
                 New Item
@@ -492,7 +508,9 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
           <Row
             align="bottom"
             justify="space-between"
-            className={'sticky-filter-box'}
+            className={
+              isMobile ? 'sticky-filter-box' : 'mb-1 sticky-filter-box'
+            }
           >
             <Col lg={16} xs={24}>
               <Row gutter={[8, 8]}>
@@ -589,11 +607,13 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
               </Row>
             </Col>
             <Col lg={24} xs={24}>
-              <Row justify="end">
-                <Button type="primary" onClick={fetch} loading={loading}>
-                  Search
-                  <SearchOutlined style={{ color: 'white' }} />
-                </Button>
+              <Row justify="end" className={isMobile ? 'mt-2' : ''}>
+                <Col>
+                  <Button type="primary" onClick={fetch} loading={loading}>
+                    Search
+                    <SearchOutlined style={{ color: 'white' }} />
+                  </Button>
+                </Col>
               </Row>
             </Col>
           </Row>

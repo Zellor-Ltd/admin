@@ -44,6 +44,19 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
   const [promotions, setPromotions] = useState<Promotion[]>([]);
   const [dateFilter, setDateFilter] = useState<any[]>([]);
   const [idFilter, setIdFilter] = useState<string>('');
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 769);
+
+  const handleResize = () => {
+    if (window.innerWidth < 769) {
+      setIsMobile(true);
+    } else {
+      setIsMobile(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+  });
 
   const getResources = useCallback(async () => {
     await getPromotions();
@@ -238,9 +251,14 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
         <div className="promotions">
           <PageHeader
             title="Promotions"
-            subTitle="List of Promotions"
+            subTitle={isMobile ? '' : 'List of Promotions'}
+            className={isMobile ? 'mb-n1' : ''}
             extra={[
-              <Button key="1" onClick={() => editPromotion(promotions.length)}>
+              <Button
+                key="1"
+                className={isMobile ? 'mt-05' : ''}
+                onClick={() => editPromotion(promotions.length)}
+              >
                 New Item
               </Button>,
             ]}

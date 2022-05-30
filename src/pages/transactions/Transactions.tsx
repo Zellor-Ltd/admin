@@ -42,6 +42,20 @@ const Transactions: React.FC<RouteComponentProps> = () => {
     value: 'user',
   };
 
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 769);
+
+  const handleResize = () => {
+    if (window.innerWidth < 769) {
+      setIsMobile(true);
+    } else {
+      setIsMobile(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+  });
+
   const getFans = async () => {
     const response = await doFetch(() =>
       fetchFans({
@@ -196,7 +210,11 @@ const Transactions: React.FC<RouteComponentProps> = () => {
 
   return (
     <div className="transactions">
-      <PageHeader title="Transactions" subTitle="List of Transactions" />
+      <PageHeader
+        title="Transactions"
+        subTitle={isMobile ? '' : 'List of Transactions'}
+        className={isMobile ? 'mb-n1' : ''}
+      />
       <Row
         gutter={8}
         style={{ marginBottom: '20px' }}

@@ -23,21 +23,51 @@ const ProductsPerDay: React.FC<DashboardProps> = () => {
     const { results } = await doFetch(fetchProductsPerDay);
     setProductsPerDay(results);
   };
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 769);
+
+  const handleResize = () => {
+    if (window.innerWidth < 769) {
+      setIsMobile(true);
+    } else {
+      setIsMobile(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+  });
 
   useEffect(() => {
     getProducts();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
-    <>
-      <div style={{ marginBottom: '16px' }}>
-        <Row>
-          <Col lg={12} xs={24}>
-            <Typography.Title level={3}>Products per Day</Typography.Title>
-          </Col>
-        </Row>
-      </div>
-      <Row style={{ height: '300px', marginTop: '40px' }}>
+    <div
+      style={
+        isMobile
+          ? {
+              padding: '20px',
+            }
+          : {}
+      }
+    >
+      <Row className="mb-05">
+        <Col lg={12} xs={24}>
+          <Typography.Title
+            level={4}
+            className={isMobile ? 'mb-n1 ant-page-header' : 'ant-page-header'}
+          >
+            Products per Day
+          </Typography.Title>
+        </Col>
+      </Row>
+      <Row
+        style={
+          isMobile
+            ? { marginLeft: '-50px', height: '300px' }
+            : { height: '300px' }
+        }
+      >
         <Col lg={14} xs={24}>
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
@@ -61,7 +91,7 @@ const ProductsPerDay: React.FC<DashboardProps> = () => {
           </ResponsiveContainer>
         </Col>
       </Row>
-    </>
+    </div>
   );
 };
 
