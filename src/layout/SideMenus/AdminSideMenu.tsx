@@ -26,7 +26,6 @@ import {
   FileDoneOutlined,
   ToTopOutlined,
   LockOutlined,
-  DesktopOutlined,
   PicCenterOutlined,
 } from '@ant-design/icons';
 import { Menu } from 'antd';
@@ -152,9 +151,6 @@ const AdminSideMenu = () => {
         </Menu.Item>
         <Menu.Item key="settings_tags" icon={<TagOutlined />}>
           <Link to="/settings_tags">Tags</Link>
-        </Menu.Item>
-        <Menu.Item key="settings_video-types" icon={<DesktopOutlined />}>
-          <Link to="/settings_video-types">Video Types</Link>
         </Menu.Item>
         <Menu.Item key="settings_push-group-tag" icon={<ToTopOutlined />}>
           <Link to="/settings_push-group-tag">Push Group Tag</Link>
