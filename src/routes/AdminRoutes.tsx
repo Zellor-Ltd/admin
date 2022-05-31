@@ -39,7 +39,6 @@ import ProductsPerDay from 'pages/reports/ProductsPerDay';
 import FanActivities from 'pages/reports/FanActivities';
 import CreatorsList from 'pages/creators-list-page/CreatorsList';
 import DataManagement from 'pages/data-management/DataManagement';
-import VideoTypes from 'pages/video-types/VideoTypes';
 import Trends from 'pages/trends/Trends';
 import FeedTemplates from 'pages/video-feed/FeedTemplates';
 
@@ -176,11 +175,6 @@ function AdminRoutes() {
       <AppRoute
         path="/marketing_promotions"
         component={Promotions}
-        layout={AuthenticatedLayout}
-      />
-      <AppRoute
-        path="/settings_video-types"
-        component={VideoTypes}
         layout={AuthenticatedLayout}
       />
       <AppRoute

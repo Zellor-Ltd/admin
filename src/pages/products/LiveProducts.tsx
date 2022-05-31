@@ -124,6 +124,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
     value: 'id',
   };
 
+<<<<<<< HEAD
   const [isMobile, setIsMobile] = useState(window.innerWidth < 991);
 
   const handleResize = () => {
@@ -138,6 +139,8 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
     window.addEventListener('resize', handleResize);
   });
 
+=======
+>>>>>>> master
   const handleFilterOutOfStock = (e: CheckboxChangeEvent) => {
     setOutOfStockFilter(e.target.checked);
   };

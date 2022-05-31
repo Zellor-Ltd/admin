@@ -47,6 +47,7 @@ const Settings: React.FC = () => {
 
   return (
     <>
+<<<<<<< HEAD
       <PageHeader
         title="Settings"
         className={isMobile ? 'mb-n1' : ''}
@@ -103,6 +104,62 @@ const Settings: React.FC = () => {
           </Form>
         </Col>
       </Row>
+=======
+      <PageHeader title="Settings" subTitle="Configuration" />
+      <Form
+        form={form}
+        name="settingsForm"
+        layout="vertical"
+        onFinish={onFinish}
+        initialValues={settings}
+      >
+        <Tabs defaultActiveKey="template">
+          <TabPane tab="Template" key="template">
+            <ItemList name="template" />
+          </TabPane>
+          <TabPane tab="Category" key="category">
+            <ItemList name="category" />
+          </TabPane>
+          <TabPane tab="Click Sound" key="clickSound">
+            <ItemList name="clickSound" />
+          </TabPane>
+          <TabPane tab="Currency" key="currency">
+            <ItemList name="currency" />
+          </TabPane>
+          <TabPane tab="Market" key="market">
+            <ItemList name="market" />
+          </TabPane>
+          <TabPane tab="Language" key="language">
+            <ItemList name="language" />
+          </TabPane>
+          <TabPane tab="Order Status" key="orderStatus">
+            <ItemList name="orderStatus" />
+          </TabPane>
+          <TabPane tab="Feed Item Status" key="feedItemStatus">
+            <ItemList name="feedItemStatus" />
+          </TabPane>
+          <TabPane tab="Promotion Status" key="promoStatus">
+            <ItemList name="promoStatus" />
+          </TabPane>
+          <TabPane tab="Checkout Type" key="checkoutType">
+            <ItemList name="checkoutType" />
+          </TabPane>
+          <TabPane tab="Social Platform" key="socialPlatform">
+            <ItemList name="socialPlatform" />
+          </TabPane>
+          <TabPane tab="Video Type" key="videoType">
+            <ItemList name="videoType" />
+          </TabPane>
+        </Tabs>
+        <Row gutter={8}>
+          <Col>
+            <Button type="primary" htmlType="submit" loading={loading}>
+              Save Settings
+            </Button>
+          </Col>
+        </Row>
+      </Form>
+>>>>>>> master
     </>
   );
 };
