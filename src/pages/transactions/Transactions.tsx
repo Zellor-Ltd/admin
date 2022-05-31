@@ -42,10 +42,10 @@ const Transactions: React.FC<RouteComponentProps> = () => {
     value: 'user',
   };
 
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 769);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 991);
 
   const handleResize = () => {
-    if (window.innerWidth < 769) {
+    if (window.innerWidth < 991) {
       setIsMobile(true);
     } else {
       setIsMobile(false);

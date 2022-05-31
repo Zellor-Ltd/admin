@@ -50,10 +50,10 @@ const FeedTemplates: React.FC<RouteComponentProps> = () => {
   const [loaded, setLoaded] = useState<boolean>(false);
   const [feedTemplates, setFeedTemplates] = useState<any[]>([]);
   const { doFetch } = useRequest({ setLoading });
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 769);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 991);
 
   const handleResize = () => {
-    if (window.innerWidth < 769) {
+    if (window.innerWidth < 991) {
       setIsMobile(true);
     } else {
       setIsMobile(false);
@@ -222,50 +222,12 @@ const FeedTemplates: React.FC<RouteComponentProps> = () => {
   const onSaveItem = (record: any) => {
     refreshItem(record);
     setDetails(false);
-    resetForm();
+    templateForm.resetFields();
+    setselectedFeedTemplate(undefined);
   };
 
   const onCancelItem = () => {
     setDetails(false);
-  };
-
-  const resetForm = () => {
-    const template = {
-      category: '',
-      creator: {
-        id: '',
-        status: '',
-        userName: '',
-        creatorId: '',
-        firstName: '',
-        lastName: '',
-      },
-      description: '',
-      format: '',
-      gender: [],
-      goLiveDate: '',
-      hCreationDate: undefined,
-      hLastUpdate: '',
-      id: '',
-      language: '',
-      package: [],
-      shortDescription: '',
-      status: '',
-      title: '',
-      validity: '',
-      videoType: [],
-      video: {},
-      lengthTotal: 0,
-      market: '',
-      modelRelease: '',
-      target: '',
-      _id: '',
-      selectedOption: 'productBrand' as any,
-      selectedId: '',
-      selectedIconUrl: '',
-      selectedselectedFeedTitle: '',
-    };
-    setselectedFeedTemplate(template);
   };
 
   return (

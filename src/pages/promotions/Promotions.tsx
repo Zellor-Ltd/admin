@@ -22,11 +22,7 @@ import { Promotion } from 'interfaces/Promotion';
 import moment from 'moment';
 import { useCallback, useEffect, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import {
-  deletePromotion,
-  fetchPromoStatus,
-  fetchPromotions,
-} from 'services/DiscoClubService';
+import { deletePromotion, fetchPromotions } from 'services/DiscoClubService';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
 import scrollIntoView from 'scroll-into-view';
 import PromotionDetail from './PromotionDetail';
@@ -44,10 +40,10 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
   const [promotions, setPromotions] = useState<Promotion[]>([]);
   const [dateFilter, setDateFilter] = useState<any[]>([]);
   const [idFilter, setIdFilter] = useState<string>('');
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 769);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 991);
 
   const handleResize = () => {
-    if (window.innerWidth < 769) {
+    if (window.innerWidth < 991) {
       setIsMobile(true);
     } else {
       setIsMobile(false);

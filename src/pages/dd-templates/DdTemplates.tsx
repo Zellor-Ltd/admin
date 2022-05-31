@@ -37,6 +37,19 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [ddTemplates, setDdTemplates] = useState<DdTemplate[]>([]);
   const [filter, setFilter] = useState<string>('');
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 991);
+
+  const handleResize = () => {
+    if (window.innerWidth < 991) {
+      setIsMobile(true);
+    } else {
+      setIsMobile(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+  });
 
   useEffect(() => {
     getResources();
@@ -236,11 +249,13 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
       {!details && (
         <div>
           <PageHeader
-            title="Disco Dollars Templates"
-            subTitle="List of Disco Dollars Templates"
+            title="Disco Dollar Templates"
+            subTitle={isMobile ? '' : 'List of Disco Dollar Templates'}
+            className={isMobile ? 'mb-n1' : ''}
             extra={[
               <Button
                 key="1"
+                className={isMobile ? 'mt-05' : ''}
                 onClick={() => editDdTemplate(ddTemplates.length)}
               >
                 New Item
@@ -248,7 +263,7 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
             ]}
           />
           <Row gutter={8} className={'sticky-filter-box'}>
-            <Col lg={4} xs={16}>
+            <Col lg={4} xs={24}>
               <Typography.Title level={5}>Search</Typography.Title>
               <Input
                 placeholder="Search by Tag Name"

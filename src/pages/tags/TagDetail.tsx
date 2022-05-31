@@ -148,7 +148,7 @@ const TagDetail: React.FC<TagDetailProps> = ({ tag, onSave, onCancel }) => {
                 </Select>
               </Form.Item>
             </Col>
-            <Col xxl={6} md={12} xs={24}>
+            <Col xxl={6} lg={12} xs={24}>
               <Form.Item
                 name="template"
                 label="Template"

@@ -52,6 +52,19 @@ const AccessControl: React.FC = () => {
   const [showCloneModal, setShowCloneModal] = useState<boolean>(false);
 
   const [form] = Form.useForm();
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 991);
+
+  const handleResize = () => {
+    if (window.innerWidth < 991) {
+      setIsMobile(true);
+    } else {
+      setIsMobile(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+  });
 
   const getPrivileges = async (selectedProfile: string) => {
     try {
@@ -129,39 +142,40 @@ const AccessControl: React.FC = () => {
 
   return (
     <>
-      <PageHeader title="Access Control" />
-      <Row gutter={8} justify="start">
-        <Col lg={16} xs={24}>
-          <Row gutter={8}>
-            <Col lg={6} xs={18}>
-              <Typography.Title level={5}>Profile</Typography.Title>
-              <Select
-                placeholder="Select a Profile"
-                style={{ width: '100%' }}
-                onChange={onChangeProfile}
-                value={selectedProfile}
-              >
-                {profiles.map((profile: any) => (
-                  <Select.Option key={profile} value={profile}>
-                    {profile}
-                  </Select.Option>
-                ))}
-              </Select>
-            </Col>
-            <Col xs={6}>
-              <Button
-                type="primary"
-                onClick={onCloneClick}
-                disabled={!selectedProfile}
-                className="mt-2"
-              >
-                Clone
-              </Button>
-            </Col>
-          </Row>
+      <PageHeader title="Access Control" className={isMobile ? 'mb-n1' : ''} />
+      <Row
+        gutter={[8, 8]}
+        justify={isMobile ? 'end' : 'start'}
+        className="sticky-filter-box"
+      >
+        <Col lg={4} xs={24}>
+          <Typography.Title level={5}>Profile</Typography.Title>
+          <Select
+            placeholder="Select a Profile"
+            style={{ width: '100%' }}
+            onChange={onChangeProfile}
+            value={selectedProfile}
+          >
+            {profiles.map((profile: any) => (
+              <Select.Option key={profile} value={profile}>
+                {profile}
+              </Select.Option>
+            ))}
+          </Select>
+        </Col>
+        <Col>
+          <Button
+            type="primary"
+            onClick={onCloneClick}
+            disabled={!selectedProfile}
+            className={isMobile ? '' : 'mt-2'}
+          >
+            Clone
+          </Button>
         </Col>
       </Row>
       <Form
+        className="sticky-filter-box"
         form={form}
         name="accessControlForm"
         layout="vertical"
@@ -240,7 +254,7 @@ const FunctionPrivilege: React.FC<FunctionPrivilegeProps> = ({
   };
 
   return (
-    <Col lg={8} md={12} xs={24} style={{ margin: '8px 0' }}>
+    <Col lg={8} xs={24} className="mt-05 mb-05">
       <Spin spinning={loading}>
         <Checkbox
           checked={privilege.privileges === 'ADULM'}

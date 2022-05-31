@@ -422,7 +422,7 @@ const Dashboard: React.FC<DashboardProps> = () => {
   return (
     <>
       <Row gutter={[32, 32]} align="bottom" className="mb-1">
-        <Col lg={4} xs={24}>
+        <Col lg={6} xs={24}>
           <Card>
             <div className="card-content">
               <Statistic
@@ -434,7 +434,7 @@ const Dashboard: React.FC<DashboardProps> = () => {
             </div>
           </Card>
         </Col>
-        <Col lg={4} xs={24}>
+        <Col lg={6} xs={24}>
           <Card>
             <div className="card-content">
               <Statistic
@@ -446,7 +446,7 @@ const Dashboard: React.FC<DashboardProps> = () => {
             </div>
           </Card>
         </Col>
-        <Col lg={4} xs={24}>
+        <Col lg={6} xs={24}>
           <Card>
             <div className="card-content">
               <Statistic
@@ -458,7 +458,7 @@ const Dashboard: React.FC<DashboardProps> = () => {
             </div>
           </Card>
         </Col>
-        <Col lg={4} xs={24}>
+        <Col lg={6} xs={24}>
           <Card>
             <div className="card-content">
               <Statistic

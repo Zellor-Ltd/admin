@@ -31,6 +31,19 @@ const Trends: React.FC<RouteComponentProps> = props => {
   >({});
   const shouldUpdateTrendIndex = useRef(false);
   const originalTrendsIndex = useRef<Record<string, number | undefined>>({});
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 991);
+
+  const handleResize = () => {
+    if (window.innerWidth < 991) {
+      setIsMobile(true);
+    } else {
+      setIsMobile(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+  });
 
   const getResources = async () => {
     await getTrends();
@@ -164,14 +177,18 @@ const Trends: React.FC<RouteComponentProps> = props => {
   return (
     <>
       <div>
-        <PageHeader title="Trends" subTitle="List of Trends" />
+        <PageHeader
+          title="Trends"
+          subTitle={isMobile ? '' : 'List of Trends'}
+          className={isMobile ? 'mb-n1' : ''}
+        />
         <Row
           gutter={8}
           align="bottom"
           justify="space-between"
           className="mb-1 sticky-filter-box"
         >
-          <Col lg={4} xs={16}>
+          <Col lg={4} xs={24}>
             <Typography.Title level={5}>Search</Typography.Title>
             <Input
               placeholder="Search by Description"
@@ -182,12 +199,14 @@ const Trends: React.FC<RouteComponentProps> = props => {
               }}
             />
           </Col>
-          <Col>
-            <Row justify="end">
-              <Button type="primary" onClick={getResources} loading={loading}>
-                Search
-                <SearchOutlined style={{ color: 'white' }} />
-              </Button>
+          <Col xs={24}>
+            <Row justify="end" className="mt-1">
+              <Col>
+                <Button type="primary" onClick={getResources} loading={loading}>
+                  Search
+                  <SearchOutlined style={{ color: 'white' }} />
+                </Button>
+              </Col>
             </Row>
           </Col>
         </Row>

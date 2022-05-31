@@ -23,10 +23,10 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 769);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 991);
 
   const handleResize = () => {
-    if (window.innerWidth < 769) {
+    if (window.innerWidth < 991) {
       setIsMobile(true);
     } else {
       setIsMobile(false);
@@ -206,7 +206,6 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
           <PageHeader
             title="Banners"
             subTitle={isMobile ? '' : 'List of Banners'}
-            className={isMobile ? 'mb-n1' : ''}
             extra={[
               <Button
                 key="1"

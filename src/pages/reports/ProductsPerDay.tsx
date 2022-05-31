@@ -23,10 +23,10 @@ const ProductsPerDay: React.FC<DashboardProps> = () => {
     const { results } = await doFetch(fetchProductsPerDay);
     setProductsPerDay(results);
   };
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 769);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 991);
 
   const handleResize = () => {
-    if (window.innerWidth < 769) {
+    if (window.innerWidth < 991) {
       setIsMobile(true);
     } else {
       setIsMobile(false);
@@ -52,7 +52,7 @@ const ProductsPerDay: React.FC<DashboardProps> = () => {
       }
     >
       <Row className="mb-05">
-        <Col lg={12} xs={24}>
+        <Col lg={18} xs={24}>
           <Typography.Title
             level={4}
             className={isMobile ? 'mb-n1 ant-page-header' : 'ant-page-header'}
@@ -68,7 +68,7 @@ const ProductsPerDay: React.FC<DashboardProps> = () => {
             : { height: '300px' }
         }
       >
-        <Col lg={14} xs={24}>
+        <Col lg={18} xs={24}>
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
               width={500}

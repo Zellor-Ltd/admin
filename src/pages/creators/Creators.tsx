@@ -18,7 +18,7 @@ import {
 import { ColumnsType } from 'antd/lib/table';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
 import { Creator } from 'interfaces/Creator';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import {
   deleteCreator,
@@ -37,6 +37,19 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
   const [loaded, setLoaded] = useState<boolean>(false);
   const [creators, setCreators] = useState<Creator[]>([]);
   const [filter, setFilter] = useState<string>('');
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 991);
+
+  const handleResize = () => {
+    if (window.innerWidth < 991) {
+      setIsMobile(true);
+    } else {
+      setIsMobile(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+  });
 
   const fetch = async () => {
     const { results }: any = await doFetch(fetchCreators);
@@ -186,7 +199,8 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
         <div className="creators">
           <PageHeader
             title="Creators"
-            subTitle="List of Creators"
+            subTitle={isMobile ? '' : 'List of Creators'}
+            className={isMobile ? 'mb-n1' : ''}
             extra={[
               <Button key="1" onClick={() => editCreator(creators.length)}>
                 New Item
@@ -199,7 +213,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
             justify="space-between"
             className="mb-1 sticky-filter-box"
           >
-            <Col lg={4} xs={16}>
+            <Col lg={4} xs={24}>
               <Typography.Title level={5}>Search</Typography.Title>
               <Input
                 placeholder="Search by First Name"
@@ -211,7 +225,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
               />
             </Col>
             <Col lg={8} xs={24}>
-              <Row justify="end">
+              <Row justify="end" className={isMobile ? 'mt-2' : ''}>
                 <Col>
                   <Button type="primary" onClick={fetch} loading={loading}>
                     Search

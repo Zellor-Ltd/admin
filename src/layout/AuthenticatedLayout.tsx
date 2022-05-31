@@ -14,10 +14,10 @@ const { Header, Sider, Content } = Layout;
 
 const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
   const { children, history } = props;
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 769);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 991);
 
   const handleResize = () => {
-    if (window.innerWidth < 769) {
+    if (window.innerWidth < 991) {
       setIsMobile(true);
     } else {
       setIsMobile(false);
@@ -59,12 +59,12 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
         </h2>
         <Row style={{ width: '35%' }} justify="end" wrap={false}>
           <div>
-            <Col xs={0} md={24} style={{ textAlign: 'end' }}>
+            <Col xs={0} lg={24} style={{ textAlign: 'end' }}>
               <Notifications />
             </Col>
           </div>
           <div>
-            <Col xs={0} md={24} style={{ textAlign: 'end' }}>
+            <Col xs={0} lg={24} style={{ textAlign: 'end' }}>
               <Typography.Text style={{ color: 'white' }}>
                 {getUserName()}
               </Typography.Text>

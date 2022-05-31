@@ -118,10 +118,10 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     value: 'value',
   };
 
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 769);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 991);
 
   const handleResize = () => {
-    if (window.innerWidth < 769) {
+    if (window.innerWidth < 991) {
       setIsMobile(true);
     } else {
       setIsMobile(false);
@@ -441,50 +441,12 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const onSaveItem = (record: FeedItem) => {
     refreshItem(record);
     setDetails(false);
-    resetForm();
+    feedForm.resetFields();
+    setSelectedVideoFeed(undefined);
   };
 
   const onCancelItem = () => {
     setDetails(false);
-  };
-
-  const resetForm = () => {
-    const template = {
-      category: '',
-      creator: {
-        id: '',
-        status: '',
-        userName: '',
-        creatorId: '',
-        firstName: '',
-        lastName: '',
-      },
-      description: '',
-      format: '',
-      gender: [],
-      goLiveDate: '',
-      hCreationDate: undefined,
-      hLastUpdate: '',
-      id: '',
-      language: '',
-      package: [],
-      shortDescription: '',
-      status: '',
-      title: '',
-      validity: '',
-      videoType: [],
-      video: {},
-      lengthTotal: 0,
-      market: '',
-      modelRelease: '',
-      target: '',
-      _id: '',
-      selectedOption: 'productBrand' as any,
-      selectedId: '',
-      selectedIconUrl: '',
-      selectedselectedFeedTitle: '',
-    };
-    setSelectedVideoFeed(template);
   };
 
   return (

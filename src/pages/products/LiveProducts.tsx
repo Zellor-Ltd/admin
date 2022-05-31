@@ -1,5 +1,4 @@
 import {
-  DeleteOutlined,
   EyeOutlined,
   SearchOutlined,
   SettingOutlined,
@@ -11,14 +10,12 @@ import {
   Form,
   Input,
   PageHeader,
-  Popconfirm,
   Row,
   Select,
   Spin,
   Typography,
 } from 'antd';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import './Products.scss';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
@@ -48,17 +45,14 @@ import SimpleSelect from 'components/select/SimpleSelect';
 import { SelectOption } from '../../interfaces/SelectOption';
 import ProductsDetails from './ProductsDetails';
 import { ProductCategory } from 'interfaces/Category';
-import { time } from 'console';
 
-const { getSearchTags, getCategories, removeSearchTagsByCategory } =
-  productUtils;
+const { getSearchTags, getCategories } = productUtils;
 
 const LiveProducts: React.FC<RouteComponentProps> = () => {
   const [brands, setBrands] = useState<Brand[]>([]);
   const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
   const [isFetchingBrands, setIsFetchingBrands] = useState(false);
   const [isFetchingProductBrand, setIsFetchingProductBrand] = useState(false);
-  const [ageRange, setAgeRange] = useState<[number, number]>([12, 100]);
   const [form] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
   const [fetchingCategories, setFetchingCategories] = useState(false);
@@ -130,10 +124,10 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
     value: 'id',
   };
 
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 769);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 991);
 
   const handleResize = () => {
-    if (window.innerWidth < 769) {
+    if (window.innerWidth < 991) {
       setIsMobile(true);
     } else {
       setIsMobile(false);
@@ -143,10 +137,6 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
   useEffect(() => {
     window.addEventListener('resize', handleResize);
   });
-
-  const {
-    settings: { currency = [] },
-  } = useSelector((state: any) => state.settings);
 
   const handleFilterOutOfStock = (e: CheckboxChangeEvent) => {
     setOutOfStockFilter(e.target.checked);
@@ -198,14 +188,6 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
     },
     [brands, form, currentProduct]
   );
-
-  const handleMasterBrandChange = (filterMasterBrand: Function) => {
-    filterMasterBrand(form);
-  };
-
-  const handleProductBrandChange = (filterProductBrand: Function) => {
-    filterProductBrand(form);
-  };
 
   const setSearchTagsByCategory = useCallback(
     (
@@ -270,11 +252,6 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
     setSearchTagsByCategory(true);
   }, [brands, setDiscoPercentageByBrand, setSearchTagsByCategory]);
 
-  useEffect(() => {
-    if (currentProduct?.ageMin && currentProduct?.ageMax)
-      setAgeRange([currentProduct?.ageMin, currentProduct?.ageMax]);
-  }, [currentProduct]);
-
   const _fetchProducts = async () => {
     const pageToUse = refreshing ? 0 : page;
     const response = await doFetch(() =>
@@ -302,12 +279,6 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
   const getResources = async () => {
     setRefreshing(true);
     setLoaded(true);
-  };
-
-  const refreshProducts = async () => {
-    setSelectedRowKeys([]);
-    setPage(0);
-    setRefreshing(true);
   };
 
   const fetchData = async () => {

@@ -61,10 +61,10 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   >([]);
   const [filter, setFilter] = useState<any[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 769);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 991);
 
   const handleResize = () => {
-    if (window.innerWidth < 769) {
+    if (window.innerWidth < 991) {
       setIsMobile(true);
     } else {
       setIsMobile(false);
@@ -518,7 +518,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
             gutter={8}
           >
             <Col lg={16} xs={24}>
-              <Row gutter={8}>
+              <Row gutter={[8, 8]}>
                 <Col lg={6} xs={24}>
                   <Typography.Title level={5}>Master Brand</Typography.Title>
                   <SimpleSelect

@@ -441,7 +441,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
               </Col>
             </Row>
             <Row>
-              <Col lg={8} xs={24} md={24}>
+              <Col lg={8} xs={24}>
                 <Form.Item name="instagram" label="Instagram">
                   <Input prefix={<InstagramFilled />} />
                 </Form.Item>

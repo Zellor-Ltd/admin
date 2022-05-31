@@ -46,10 +46,10 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
   const [filter, setFilter] = useState<string>('');
   const [wallets, setWallets] = useState<Wallet[]>([]);
   const [fans, setFans] = useState<Fan[]>([]);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 769);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 991);
 
   const handleResize = () => {
-    if (window.innerWidth < 769) {
+    if (window.innerWidth < 991) {
       setIsMobile(true);
     } else {
       setIsMobile(false);

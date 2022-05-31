@@ -56,10 +56,10 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
     { label: string; value: string; key: string }[]
   >([]);
   const [refreshing, setRefreshing] = useState<boolean>(false);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 769);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 991);
 
   const handleResize = () => {
-    if (window.innerWidth < 769) {
+    if (window.innerWidth < 991) {
       setIsMobile(true);
     } else {
       setIsMobile(false);
@@ -312,7 +312,7 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
   return (
     <>
       {!details && (
-        <div className="fans">
+        <>
           <PageHeader
             title="Fans"
             subTitle={isMobile ? '' : 'List of Fans'}
@@ -347,7 +347,11 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
               </Row>
             </Col>
             <Col lg={8} xs={24}>
-              <Row gutter={8} justify="end" className="mt-2">
+              <Row
+                gutter={8}
+                justify="end"
+                className={isMobile ? 'mt-1' : 'mt-2'}
+              >
                 <Col>
                   <EditMultipleButton
                     text="Edit Fans"
@@ -409,7 +413,7 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
               }}
             />
           </InfiniteScroll>
-        </div>
+        </>
       )}
       {details && (
         <FanDetail fan={currentFan} onSave={onSaveFan} onCancel={onCancelFan} />

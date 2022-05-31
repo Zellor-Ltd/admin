@@ -31,6 +31,10 @@
   margin-top: 1rem;
 }
 
+.mt-n1 {
+  margin-top: -1rem;
+}
+
 .mt-2 {
   margin-top: 2rem;
 }
@@ -226,6 +230,11 @@
 
   .ant-page-header {
     padding: 16px 14px;
+    white-space: normal;
+    overflow-wrap: normal;
+  }
+
+  .ant-page-header-heading-title {
     white-space: normal;
     overflow-wrap: normal;
   }

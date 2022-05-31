@@ -31,6 +31,19 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [fanGroups, setFanGroups] = useState<FanGroup[]>([]);
   const [filter, setFilter] = useState<string>('');
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 991);
+
+  const handleResize = () => {
+    if (window.innerWidth < 991) {
+      setIsMobile(true);
+    } else {
+      setIsMobile(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+  });
 
   useEffect(() => {
     getResources();
@@ -148,15 +161,20 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
         <div>
           <PageHeader
             title="Fan Groups"
-            subTitle="List of Fan Groups"
+            subTitle={isMobile ? '' : 'List of Fan Groups'}
+            className={isMobile ? 'mb-n1' : ''}
             extra={[
-              <Button key="1" onClick={() => editFanGroup(fanGroups.length)}>
+              <Button
+                key="1"
+                className={isMobile ? 'mt-05' : ''}
+                onClick={() => editFanGroup(fanGroups.length)}
+              >
                 New Item
               </Button>,
             ]}
           />
           <Row gutter={8} className={'sticky-filter-box'}>
-            <Col lg={4} xs={16}>
+            <Col lg={4} xs={24}>
               <Typography.Title level={5}>Search</Typography.Title>
               <Input
                 placeholder="Search by Name"

@@ -38,7 +38,6 @@ import {
   deleteStagingProduct,
   fetchBrands,
   fetchProductBrands,
-  fetchProducts,
   fetchStagingProducts,
   saveStagingProduct,
   transferStageProduct,
@@ -47,7 +46,6 @@ import ProductExpandedRow from './ProductExpandedRow';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
 import './Products.scss';
 import { ProductCategory } from 'interfaces/Category';
-import { useSelector } from 'react-redux';
 import { SearchFilterDebounce } from 'components/SearchFilterDebounce';
 import { AppContext } from 'contexts/AppContext';
 import { ProductBrand } from 'interfaces/ProductBrand';
@@ -119,10 +117,10 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
     value: 'id',
   };
 
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 769);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 991);
 
   const handleResize = () => {
-    if (window.innerWidth < 769) {
+    if (window.innerWidth < 991) {
       setIsMobile(true);
     } else {
       setIsMobile(false);
@@ -655,11 +653,6 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
     setProductBrandFilter(_selectedBrand);
   };
 
-  const handleEditProducts = async () => {
-    await fetchProducts({});
-    setSelectedRowKeys([]);
-  };
-
   const editProduct = (
     product: Product,
     productIndex: number,
@@ -1039,7 +1032,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                 <Col lg={6} xs={24}>
                   <Checkbox
                     onChange={handleFilterClassified}
-                    className={isMobile ? 'mb-2' : 'mb-1 ml-05'}
+                    className={isMobile ? 'mb-2' : 'mt-2 mb-1 ml-05'}
                   >
                     Unclassified only
                   </Checkbox>

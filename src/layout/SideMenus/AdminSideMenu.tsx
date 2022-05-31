@@ -3,9 +3,7 @@ import {
   CloudServerOutlined,
   ControlOutlined,
   DollarOutlined,
-  FireOutlined,
   GiftOutlined,
-  HeartFilled,
   SettingOutlined,
   IdcardOutlined,
   ShoppingCartOutlined,
@@ -15,8 +13,6 @@ import {
   UserOutlined,
   IssuesCloseOutlined,
   DashboardOutlined,
-  DropboxOutlined,
-  CrownOutlined,
   LineChartOutlined,
   UserAddOutlined,
   FolderAddOutlined,
@@ -28,6 +24,11 @@ import {
   LockOutlined,
   DesktopOutlined,
   PicCenterOutlined,
+  RocketOutlined,
+  BarcodeOutlined,
+  ShoppingOutlined,
+  MobileOutlined,
+  ShopOutlined,
 } from '@ant-design/icons';
 import { Menu } from 'antd';
 import SubMenu from 'antd/lib/menu/SubMenu';
@@ -61,34 +62,34 @@ const AdminSideMenu = () => {
           <Link to="/fan-activities">Fan Activities</Link>
         </Menu.Item>
       </SubMenu>
-      <Menu.Item key="brands" icon={<CrownOutlined />}>
+      <Menu.Item key="brands" icon={<ShopOutlined />}>
         <Link to="/brands">Master Brands</Link>
       </Menu.Item>
-      <Menu.Item key="product-brands" icon={<CrownOutlined />}>
+      <Menu.Item key="product-brands" icon={<TagOutlined />}>
         <Link to="/product-brands">Product Brands</Link>
       </Menu.Item>
-      <Menu.Item key="products" icon={<DropboxOutlined />}>
+      <Menu.Item key="products" icon={<ShoppingCartOutlined />}>
         <Link to="/products">Live Products</Link>
       </Menu.Item>
       <Menu.Item key="preview-products" icon={<IssuesCloseOutlined />}>
         <Link to="/preview-products">Preview Products</Link>
       </Menu.Item>
-      <Menu.Item key="feed" icon={<HeartFilled />}>
+      <Menu.Item key="feed" icon={<MobileOutlined />}>
         <Link to="/feed">Video Feeds</Link>
       </Menu.Item>
       <Menu.Item key="feed-templates" icon={<PicCenterOutlined />}>
         <Link to="/feed-templates">Feed Templates</Link>
       </Menu.Item>
-      <Menu.Item key="orders" icon={<ShoppingCartOutlined />}>
+      <Menu.Item key="orders" icon={<ShoppingOutlined />}>
         <Link to="/orders">Orders</Link>
       </Menu.Item>
       <Menu.Item key="wallets" icon={<DollarOutlined />}>
         <Link to="/wallets">Wallets</Link>
       </Menu.Item>
-      <Menu.Item key="transactions" icon={<DollarOutlined />}>
+      <Menu.Item key="transactions" icon={<BarcodeOutlined />}>
         <Link to="/transactions">Transactions</Link>
       </Menu.Item>
-      <SubMenu key="marketing" icon={<FireOutlined />} title="Marketing">
+      <SubMenu key="marketing" icon={<RocketOutlined />} title="Marketing">
         <Menu.Item key="marketing_creators-list" icon={<UserOutlined />}>
           <Link to="/marketing_creators-list">Creator List</Link>
         </Menu.Item>

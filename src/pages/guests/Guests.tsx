@@ -45,6 +45,19 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
     { label: string; value: string; key: string }[]
   >([]);
   const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 991);
+
+  const handleResize = () => {
+    if (window.innerWidth < 991) {
+      setIsMobile(true);
+    } else {
+      setIsMobile(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+  });
 
   const fanOptionsMapping: SelectOption = {
     key: 'id',
@@ -257,7 +270,11 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
     <>
       {!details && (
         <div>
-          <PageHeader title="Guests" subTitle="List of guests" />
+          <PageHeader
+            title="Guests"
+            subTitle={isMobile ? '' : 'List of Guests'}
+            className={isMobile ? 'mb-n1' : ''}
+          />
           <Row
             align="bottom"
             justify="space-between"
@@ -275,7 +292,7 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
               />
             </Col>
             <Col lg={8} xs={24}>
-              <Row justify="end">
+              <Row justify="end" className={isMobile ? 'mt-2' : ''}>
                 <Col>
                   <Button
                     type="primary"

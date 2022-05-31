@@ -12,6 +12,19 @@ const Endpoints: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [loading, setLoading] = useState(false);
   const [filter, setFilter] = useState<string>('');
   const [endpoints, setEndpoints] = useState<Endpoint[]>([]);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 991);
+
+  const handleResize = () => {
+    if (window.innerWidth < 991) {
+      setIsMobile(true);
+    } else {
+      setIsMobile(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+  });
 
   const columns: ColumnsType<Endpoint> = [
     {
@@ -106,9 +119,14 @@ const Endpoints: React.FC<RouteComponentProps> = ({ history, location }) => {
     <div className="endpoints">
       <PageHeader
         title="Endpoints"
-        subTitle="List of Endpoints"
+        subTitle={isMobile ? '' : 'List of Endpoints'}
+        className={isMobile ? 'mb-n1' : ''}
         extra={[
-          <Button key="1" onClick={() => history.push(detailsPathname)}>
+          <Button
+            key="1"
+            className={isMobile ? 'mt-05' : ''}
+            onClick={() => history.push(detailsPathname)}
+          >
             New Endpoint
           </Button>,
         ]}

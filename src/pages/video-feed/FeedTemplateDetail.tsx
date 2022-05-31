@@ -1,7 +1,6 @@
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import {
   Button,
-  Checkbox,
   Col,
   DatePicker,
   Form,
@@ -30,12 +29,7 @@ import { Segment } from 'interfaces/Segment';
 import { Tag } from 'interfaces/Tag';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import {
-  fetchCreators,
-  fetchLinks,
-  saveLink,
-  saveVideoFeed,
-} from 'services/DiscoClubService';
+import { saveVideoFeed } from 'services/DiscoClubService';
 import BrandForm from './BrandForm';
 import TagForm from './TagForm';
 import './VideoFeed.scss';
@@ -46,7 +40,6 @@ import moment from 'moment';
 import SimpleSelect from 'components/select/SimpleSelect';
 import { ProductBrand } from 'interfaces/ProductBrand';
 import { SelectOption } from 'interfaces/SelectOption';
-import CopyIdToClipboard from 'components/CopyIdToClipboard';
 
 const { Title } = Typography;
 interface FeedTemplateDetailProps {
@@ -59,18 +52,6 @@ interface FeedTemplateDetailProps {
   isFetchingProductBrand: boolean;
   setDetails?: (boolean) => void;
 }
-
-const prouctBrandMapping: SelectOption = {
-  key: 'id',
-  label: 'brandName',
-  value: 'id',
-};
-
-const prouctBrandIconMapping: SelectOption = {
-  key: 'value',
-  label: 'label',
-  value: 'value',
-};
 
 const influencerMapping: SelectOption = {
   key: 'id',
@@ -89,7 +70,7 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
   setDetails,
 }) => {
   const {
-    settings: { language = [], socialPlatform = [], category = [] },
+    settings: { language = [], category = [] },
   } = useSelector((state: any) => state.settings);
   const [templateForm] = Form.useForm();
   const [segmentForm] = Form.useForm();
@@ -116,34 +97,8 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
   const [videoTab, setVideoTab] = useState<string>('Video Details');
   const [segmentTab, setSegmentTab] = useState<string>('Images');
   const [pageTitle, setPageTitle] = useState<string>('Video Update');
-  const { doFetch, doRequest } = useRequest({ setLoading });
-  const [creators, setCreators] = useState<Creator[]>([]);
-  const [includeVideo, setIncludeVideo] = useState<boolean>(false);
-  const [selectedCreator, setSelectedCreator] = useState<string>('');
-  const [selectedSocialPlatform, setSelectedSocialPlatform] =
-    useState<string>('');
-  const [links, setLinks] = useState<any[]>([]);
-  const [segment, setSegment] = useState<number>(0);
+  const { doRequest } = useRequest({ setLoading });
   const [status, setStatus] = useState<string>(feedTemplate?.status);
-
-  const getCreators = async () => {
-    const { results }: any = await doFetch(fetchCreators);
-    setCreators(results);
-  };
-
-  useEffect(() => {
-    if (videoTab === 'Links') {
-      getCreators();
-      fetch();
-    }
-  }, [videoTab]);
-
-  const fetch = async () => {
-    const { results } = await doFetch(() =>
-      fetchLinks(feedTemplate?.id as string)
-    );
-    setLinks(results);
-  };
 
   useEffect(() => {
     if (feedTemplate?.selectedOption) {
@@ -393,71 +348,6 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
   const onChangeIcon = selectedIconUrl => {
     templateForm.setFieldsValue({ selectedIconUrl: selectedIconUrl });
   };
-
-  const handleGenerateLink = async () => {
-    const { results }: any = await saveLink({
-      videoFeedId: feedTemplate?.id as string,
-      creatorId: selectedCreator,
-      includeVideo: includeVideo,
-      socialPlatform: selectedSocialPlatform,
-      segment: segment,
-    });
-    setLinks(results);
-  };
-
-  const columns: ColumnsType<any> = [
-    {
-      title: 'ID',
-      dataIndex: 'id',
-      width: '20%',
-      render: link => (
-        <CopyIdToClipboard
-          id={'https://link.discoclub.com/' + link?.substring(0, 7)}
-        />
-      ),
-      align: 'center',
-    },
-    {
-      title: 'Link',
-      dataIndex: 'id',
-      width: '15%',
-      render: id => (
-        <a
-          href={'https://link.discoclub.com/' + id.substring(0, 7)}
-          target="blank"
-        >
-          {id.substring(0, 7)}
-        </a>
-      ),
-      align: 'center',
-    },
-    {
-      title: 'Social Platform',
-      dataIndex: 'socialPlatform',
-      width: '15%',
-      align: 'center',
-    },
-    {
-      title: 'Feed ID',
-      dataIndex: 'videoFeedId',
-      width: '15%',
-      align: 'center',
-      render: videoFeedId => <CopyIdToClipboard id={videoFeedId} />,
-    },
-    {
-      title: 'Segment',
-      dataIndex: 'segment',
-      width: '15%',
-      align: 'center',
-    },
-    {
-      title: 'With Video',
-      dataIndex: 'includeVideo',
-      width: '15%',
-      align: 'center',
-      render: value => (value ? 'Yes' : 'No'),
-    },
-  ];
 
   const VideoUpdatePage = () => {
     return (
@@ -916,21 +806,12 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
         </Tabs>
         <Row gutter={8} className="mt-1">
           <Col>
-            <Button
-              type="default"
-              style={{ display: videoTab === 'Links' ? 'none' : '' }}
-              onClick={() => onCancel?.()}
-            >
+            <Button type="default" onClick={() => onCancel?.()}>
               Cancel
             </Button>
           </Col>
           <Col>
-            <Button
-              type="primary"
-              style={{ display: videoTab === 'Links' ? 'none' : '' }}
-              htmlType="submit"
-              loading={loading}
-            >
+            <Button type="primary" htmlType="submit" loading={loading}>
               Save Changes
             </Button>
           </Col>
