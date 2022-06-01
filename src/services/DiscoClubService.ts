@@ -311,7 +311,7 @@ export const productCategoriesAPI: AllCategoriesAPI = {
   },
 };
 
-export const fetchCreators = () => instance.get('Wi/Ep/ListCreators');
+export const fetchCreators = () => instance.get('Disco/Creator/Adm/List/0');
 
 export const fetchUsers = () => instance.get('Wi/Ep/ListUsers');
 
