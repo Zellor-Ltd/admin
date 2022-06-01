@@ -311,7 +311,16 @@ export const productCategoriesAPI: AllCategoriesAPI = {
   },
 };
 
-export const fetchCreators = () => instance.get('Disco/Creator/Adm/List/0');
+export const fetchCreators = ({
+  page = 0,
+  query,
+}: {
+  page?: number;
+  query?: string;
+}) =>
+  instance.post(`Disco/Creator/Adm/List/${page}/`, {
+    query,
+  });
 
 export const fetchUsers = () => instance.get('Wi/Ep/ListUsers');
 
@@ -416,7 +425,7 @@ export const saveVideoFeed = (params: FeedItem) => {
   if (params.id) {
     return instance.put('Disco/Feed/Update', params);
   } else {
-      return instance.put('Disco/Feed/Adm/Add', params);
+    return instance.put('Disco/Feed/Adm/Add', params);
   }
 };
 

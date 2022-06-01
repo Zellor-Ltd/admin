@@ -175,7 +175,9 @@ const FeedTemplates: React.FC<RouteComponentProps> = () => {
 
   const getDetailsResources = async () => {
     async function getInfluencers() {
-      const response: any = await fetchCreators();
+      const response: any = await fetchCreators({
+        query: '',
+      });
       setInfluencers(response.results);
     }
     async function getBrands() {

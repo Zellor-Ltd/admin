@@ -78,7 +78,9 @@ const UserDetail: React.FC<RouteComponentProps> = props => {
     }
 
     const getCreatores = async () => {
-      const response: any = await fetchCreators();
+      const response: any = await fetchCreators({
+        query: '',
+      });
       setCreators(response.results);
     };
     const getCategories = async () => {

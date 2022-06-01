@@ -1,6 +1,9 @@
 import { Image } from './Image';
 
 export interface Creator {
+  displayInCreatorGrid?: boolean;
+  discountPercentage?: number;
+  couponCode?: string;
   id: string;
   status: string;
   userName: string;
