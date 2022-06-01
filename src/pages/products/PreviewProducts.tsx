@@ -117,7 +117,6 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
     value: 'id',
   };
 
-<<<<<<< HEAD
   const [isMobile, setIsMobile] = useState(window.innerWidth < 991);
 
   const handleResize = () => {
@@ -132,8 +131,6 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
     window.addEventListener('resize', handleResize);
   });
 
-=======
->>>>>>> master
   const productSuperCategoryOptionsMapping: SelectOption = {
     key: 'id',
     label: 'superCategory',

@@ -111,19 +111,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     value: 'id',
   };
 
-<<<<<<< HEAD
-  const statusMapping: SelectOption = {
-    key: 'value',
-    label: 'value',
-    value: 'value'.toLowerCase(),
-  };
-
-  const videoTypeMapping: SelectOption = {
-    key: 'value',
-    label: 'value',
-    value: 'value',
-  };
-
   const [isMobile, setIsMobile] = useState(window.innerWidth < 991);
 
   const handleResize = () => {
@@ -138,8 +125,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     window.addEventListener('resize', handleResize);
   });
 
-=======
->>>>>>> master
   const feedItemColumns: ColumnsType<FeedItem> = [
     {
       title: '_id',
@@ -492,11 +477,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                     onChange={event => setTitleFilter(event.target.value)}
                     suffix={<SearchOutlined />}
                     value={titleFilter}
-<<<<<<< HEAD
                     placeholder="Search by Title"
-=======
-                    placeholder="Type to search by title"
->>>>>>> master
                     onPressEnter={fetch}
                   />
                 </Col>
@@ -534,13 +515,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                     placeholder="Select a status"
                     onChange={status => setStatusFilter(status)}
                     style={{ width: '100%' }}
-<<<<<<< HEAD
-                    selectedOption={statusFilter}
-                    optionsMapping={statusMapping}
-                    placeholder={'Select a Status'}
-                    allowClear={true}
-                  />
-=======
                     disabled={!feedItemStatus.length}
                   >
                     {feedItemStatus.map((curr: any) => (
@@ -549,7 +523,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                       </Select.Option>
                     ))}
                   </Select>
->>>>>>> master
                 </Col>
                 <Col lg={6} xs={24}>
                   <Typography.Title level={5}>Category</Typography.Title>
@@ -573,13 +546,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                     placeholder="Select a video type"
                     onChange={videoType => setVideoTypeFilter(videoType)}
                     style={{ width: '100%' }}
-<<<<<<< HEAD
-                    selectedOption={videoTypeFilter}
-                    optionsMapping={videoTypeMapping}
-                    placeholder={'Select a Video Type'}
-                    allowClear={true}
-                  />
-=======
                     disabled={!videoType.length}
                   >
                     {videoType.map((curr: any) => (
@@ -588,7 +554,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                       </Select.Option>
                     ))}
                   </Select>
->>>>>>> master
                 </Col>
                 <Col lg={6} xs={24}>
                   <Typography.Title level={5}>Start Index</Typography.Title>
