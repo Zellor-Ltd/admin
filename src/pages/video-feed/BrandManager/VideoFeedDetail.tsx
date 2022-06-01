@@ -86,7 +86,9 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = props => {
       setUsers(response.results);
     }
     async function getInfluencers() {
-      const response: any = await fetchCreators();
+      const response: any = await fetchCreators({
+        query: '',
+      });
       setInfluencers(response.results);
     }
     async function getCategories() {
