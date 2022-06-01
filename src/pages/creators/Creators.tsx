@@ -9,6 +9,7 @@ import {
   Button,
   Col,
   Input,
+  message,
   PageHeader,
   Popconfirm,
   Row,
@@ -27,6 +28,7 @@ import {
 } from 'services/DiscoClubService';
 import CreatorDetail from './CreatorDetail';
 import { useRequest } from 'hooks/useRequest';
+import { SimpleSwitch } from 'components/SimpleSwitch';
 
 const tagColorByStatus: any = {
   approved: 'green',
@@ -42,10 +44,20 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
   const { doFetch } = useRequest({ setLoading });
   const [loaded, setLoaded] = useState<boolean>(false);
   const [creators, setCreators] = useState<Creator[]>([]);
-  const [filter, setFilter] = useState<string>('');
+  const [page, setPage] = useState<number>(0);
+  const [searchFilter, setSearchFilter] = useState<string>();
 
   const fetch = async () => {
-    const { results }: any = await doFetch(fetchCreators);
+    const pageToUse = loading ? 0 : page;
+    const { results } = await doFetch(() =>
+      fetchCreators({
+        page: pageToUse,
+        query: searchFilter,
+      })
+    );
+
+    setPage(pageToUse + 1);
+
     setCreators(results);
     setLoaded(true);
   };
@@ -54,6 +66,16 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
     setLastViewedIndex(index);
     setCurrentCreator(creator);
     setDetails(true);
+  };
+
+  const handleSwitchChange = async (creator: Creator, toggled: boolean) => {
+    try {
+      creator.displayInCreatorGrid = toggled;
+      await saveCreator(creator);
+      message.success('Register updated with success.');
+    } catch (error) {
+      message.error("Couldn't set brand property. Try again.");
+    }
   };
 
   const columns: ColumnsType<Creator> = [
@@ -69,7 +91,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
       width: '15%',
       render: (_, record: Creator, index: number) => (
         <Link to={location.pathname} onClick={() => editCreator(index, record)}>
-          {`${record.firstName} ${record.lastName}`}
+          {`${record.firstName ?? ''} ${record.lastName ?? ''}`}
         </Link>
       ),
       sorter: (a, b): any => {
@@ -77,6 +99,63 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
           return a.firstName.localeCompare(b.firstName);
         else if (a.firstName) return -1;
         else if (b.firstName) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: 'Display Name',
+      dataIndex: 'userName',
+      width: '10%',
+      align: 'center',
+      sorter: (a, b): any => {
+        if (a.userName && b.userName)
+          return a.userName.localeCompare(b.userName);
+        else if (a.userName) return -1;
+        else if (b.userName) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: 'Coupon Code',
+      dataIndex: 'couponCode',
+      width: '10%',
+      align: 'center',
+      sorter: (a, b): any => {
+        if (a.couponCode && b.couponCode)
+          return a.couponCode.localeCompare(b.couponCode);
+        else if (a.couponCode) return -1;
+        else if (b.couponCode) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: 'Discount %',
+      dataIndex: 'discountPercentage',
+      width: '5%',
+      align: 'center',
+      sorter: (a, b): any => {
+        if (a.discountPercentage && b.discountPercentage)
+          return a.discountPercentage - b.discountPercentage;
+        else if (a.discountPercentage) return -1;
+        else if (b.discountPercentage) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: 'Display in Creator Grid',
+      dataIndex: 'displayInCreatorGrid',
+      width: '15%',
+      align: 'center',
+      render: (value: any, record: Creator) => (
+        <SimpleSwitch
+          toggled={!!record.displayInCreatorGrid}
+          handleSwitchChange={toggled => handleSwitchChange(record, toggled)}
+        />
+      ),
+      sorter: (a, b): any => {
+        if (a.displayInCreatorGrid && b.displayInCreatorGrid) return 0;
+        else if (a.displayInCreatorGrid) return -1;
+        else if (b.displayInCreatorGrid) return 1;
         else return 0;
       },
     },
@@ -151,10 +230,6 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
     setLoading(false);
   };
 
-  const search = rows => {
-    return rows.filter(row => row.firstName?.toLowerCase().indexOf(filter) > -1);
-  };
-
   const refreshItem = (record: Creator) => {
     if (loaded) {
       creators[lastViewedIndex] = record;
@@ -209,10 +284,11 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
               </Typography.Title>
               <Input
                 className="mb-1"
-                value={filter}
+                value={searchFilter}
                 onChange={event => {
-                  setFilter(event.target.value);
+                  setSearchFilter(event.target.value);
                 }}
+                onPressEnter={fetch}
               />
             </Col>
             <Button
@@ -231,8 +307,9 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
           <Table
             rowKey="id"
             columns={columns}
-            dataSource={search(creators)}
+            dataSource={creators}
             loading={loading}
+            pagination={false}
           />
         </div>
       )}

@@ -64,8 +64,10 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
   useEffect(() => {
     let mounted = true;
 
-    const getCreatores = async () => {
-      const response: any = await fetchCreators();
+    const getCreators = async () => {
+      const response: any = await fetchCreators({
+        query: '',
+      });
       setCreators(response.results);
     };
     const getCategories = async () => {
@@ -80,7 +82,7 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
       const response: any = await fetchCurrencies();
       setCurrencies(response.results);
     };
-    getCreatores();
+    getCreators();
     getCategories();
     getServersList();
     getCurrencies();

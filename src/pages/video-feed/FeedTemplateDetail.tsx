@@ -127,7 +127,11 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
   const [status, setStatus] = useState<string>(feedTemplate?.status);
 
   const getCreators = async () => {
-    const { results }: any = await doFetch(fetchCreators);
+    const { results }: any = await doFetch(() =>
+      fetchCreators({
+        query: '',
+      })
+    );
     setCreators(results);
   };
 

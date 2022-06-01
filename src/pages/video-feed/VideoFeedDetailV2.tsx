@@ -121,7 +121,11 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
   const [status, setStatus] = useState<string>(feedItem?.status);
 
   const getCreators = async () => {
-    const { results }: any = await doFetch(fetchCreators);
+    const { results }: any = await doFetch(() =>
+      fetchCreators({
+        query: '',
+      })
+    );
     setCreators(results);
   };
 
