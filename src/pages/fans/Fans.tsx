@@ -5,9 +5,9 @@ import {
   SearchOutlined,
 } from '@ant-design/icons';
 import {
-  AutoComplete,
   Button,
   Col,
+  Input,
   PageHeader,
   Row,
   Spin,
@@ -30,7 +30,6 @@ import scrollIntoView from 'scroll-into-view';
 import FanDetail from './FanDetail';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import moment from 'moment';
-import { SelectOption } from 'interfaces/SelectOption';
 
 const tagColorByPermission: any = {
   Admin: 'green',
@@ -52,16 +51,7 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
   const [eof, setEof] = useState<boolean>(false);
   const [fans, setFans] = useState<Fan[]>([]);
   const [searchFilter, setSearchFilter] = useState<string>();
-  const [options, setOptions] = useState<
-    { label: string; value: string; key: string }[]
-  >([]);
   const [refreshing, setRefreshing] = useState<boolean>(false);
-
-  const fanOptionsMapping: SelectOption = {
-    key: 'id',
-    label: 'user',
-    value: 'user',
-  };
 
   useEffect(() => {
     if (refreshing) {
@@ -88,21 +78,11 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
 
     setPage(pageToUse + 1);
 
-    const optionFactory = (option: any) => {
-      return {
-        label: option[fanOptionsMapping.label],
-        value: option[fanOptionsMapping.value],
-        key: option[fanOptionsMapping.value],
-      };
-    };
-
     const validUsers = response.results.filter(
       (fan: Fan) => !fan.userName?.includes('guest')
     );
 
     if (validUsers.length < 30) setEof(true);
-
-    setOptions(validUsers.map(optionFactory));
 
     setFans(prev => [...prev.concat(validUsers)]);
   };
@@ -247,8 +227,8 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
     },
   ];
 
-  const handleEditFans = async () => {
-    await getResources();
+  const handleEditFans = () => {
+    getResources();
     setSelectedRowKeys([]);
   };
 
@@ -268,27 +248,6 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
 
   const onCancelFan = () => {
     setDetails(false);
-  };
-
-  const findFanInfo = (id: string, option: any) => {
-    let index: any = undefined;
-    while (!index) {
-      fetchData();
-      index = fans.find(item => item.user === option) ?? undefined;
-      break;
-    }
-    const fan = fans.find(item => (item.id = id));
-    return { index, fan };
-  };
-
-  const onChangeFan = async (value: string, option?: any) => {
-    setSearchFilter(option?.name);
-    if (option) {
-      const { index, fan } = findFanInfo(value, option);
-      editFan(index, fan);
-      return;
-    }
-    getResources();
   };
 
   const onSearch = (value: string) => {
@@ -318,11 +277,9 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
               <Row gutter={8}>
                 <Col lg={8} xs={16}>
                   <Typography.Title level={5}>Fan Filter</Typography.Title>
-                  <AutoComplete
+                  <Input
                     style={{ width: '100%' }}
-                    options={options}
-                    onSelect={onChangeFan}
-                    onSearch={onSearch}
+                    onChange={evt => onSearch(evt.target.value)}
                     placeholder="Search by fan e-mail"
                   />
                 </Col>
