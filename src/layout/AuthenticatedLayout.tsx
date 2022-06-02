@@ -77,19 +77,15 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
           </div>
         </Row>
       </Header>
-      <Layout className="site-layout">
-        <Sider
-          breakpoint="md"
-          collapsedWidth="0"
-          style={{
-            minHeight: 'calc(100vh - 64px)',
-          }}
-        >
-          {useBuildTarget({
-            ADMIN: <AdminSideMenu />,
-            BRAND_MANAGER: <BrandManagerSideMenu />,
-          })}
-        </Sider>
+      <Layout>
+        <div className="sider-container">
+          <Sider breakpoint="lg" collapsedWidth="0">
+            {useBuildTarget({
+              ADMIN: <AdminSideMenu />,
+              BRAND_MANAGER: <BrandManagerSideMenu />,
+            })}
+          </Sider>
+        </div>
         <Content
           className="site-layout-background"
           style={{

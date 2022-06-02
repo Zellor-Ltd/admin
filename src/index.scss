@@ -153,9 +153,9 @@
   overflow: auto;
   height: 90vh;
   left: 0;
-  top: 64px;
   bottom: 0;
   width: 200px;
+  background: #001529;
 }
 
 .ant-layout-header {
@@ -214,14 +214,21 @@
   text-overflow: ellipsis;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 991px) {
   .ant-layout-sider-children {
     width: 50px;
+    top: 60px;
+    height: 100vh;
   }
 
   .site-layout-background {
-    margin: 24px 16px 24px 66px;
+    margin: 24px 16px;
     padding: 5px;
+  }
+
+  .sider-container {
+    background: #001529;
+    width: 52px;
   }
 
   .hidden-on-mobile {
@@ -240,9 +247,23 @@
   }
 }
 
-@media (min-width: 769px) {
+@media (min-width: 992px) {
   .site-layout-background {
     margin: 24px 16px;
     padding: 24px;
+  }
+
+  .sider-container {
+    background: #001529;
+    width: 200px;
+  }
+}
+
+@media screen and (min-height: 700px) {
+  .ant-menu.ant-menu-inline-collapsed {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
   }
 }
