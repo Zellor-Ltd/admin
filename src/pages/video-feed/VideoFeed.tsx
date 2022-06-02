@@ -255,6 +255,38 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       },
     },
     {
+      title: 'InstaLink',
+      width: '18%',
+      render: (_: string, record: FeedItem) => (
+        <Link
+          onClick={() =>
+            window
+              .open(
+                record.package?.find(item => item.shareLink)?.shareLink,
+                '_blank'
+              )
+              ?.focus()
+          }
+          to={{ pathname: window.location.pathname }}
+        >
+          {record.package?.find(item => item.shareLink)?.shareLink ?? ''}
+        </Link>
+      ),
+      sorter: (a, b): any => {
+        if (a.package && b.package) {
+          const linkA = a.package.find(item => item.shareLink)?.shareLink;
+          const linkB = b.package.find(item => item.shareLink)?.shareLink;
+          if (linkA && linkB) return linkA.localeCompare(linkB);
+          else if (linkA) return -1;
+          else if (linkB) return 1;
+          else return 0;
+        } else if (a.package?.find(item => item.shareLink)?.shareLink)
+          return -1;
+        else if (b.package?.find(item => item.shareLink)?.shareLink) return 1;
+        else return 0;
+      },
+    },
+    {
       title: 'Actions',
       key: 'action',
       width: '5%',
