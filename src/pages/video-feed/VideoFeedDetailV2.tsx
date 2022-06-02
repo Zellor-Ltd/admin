@@ -83,6 +83,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
       socialPlatform = [],
       category = [],
       videoType = [],
+      linkType = [],
     },
   } = useSelector((state: any) => state.settings);
   const [feedForm] = Form.useForm();
@@ -114,6 +115,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
   const [creators, setCreators] = useState<Creator[]>([]);
   const [includeVideo, setIncludeVideo] = useState<boolean>(false);
   const [selectedCreator, setSelectedCreator] = useState<string>('');
+  const [selectedLinkType, setSelectedLinkType] = useState<string>('');
   const [selectedSocialPlatform, setSelectedSocialPlatform] =
     useState<string>('');
   const [links, setLinks] = useState<any[]>([]);
@@ -401,6 +403,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
       includeVideo: includeVideo,
       socialPlatform: selectedSocialPlatform,
       segment: segment,
+      linkType: selectedLinkType,
     });
     setLinks(results);
   };
@@ -956,6 +959,21 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                   max={100}
                   onChange={setSegment}
                 />
+              </Col>
+              <Col span={4}>
+                <Typography.Title level={5}>Link Type</Typography.Title>
+                <Select
+                  disabled={!linkType.length}
+                  style={{ width: '100%' }}
+                  onSelect={setSelectedLinkType}
+                  value={selectedLinkType}
+                >
+                  {linkType.map((curr: any) => (
+                    <Select.Option key={curr.value} value={curr.value}>
+                      {curr.value}
+                    </Select.Option>
+                  ))}
+                </Select>
               </Col>
               <Col>
                 <Typography.Title level={5}>Include Video</Typography.Title>
