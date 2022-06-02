@@ -343,6 +343,22 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                   <InputNumber decimalSeparator="." />
                 </Form.Item>
               </Col>
+              <Col lg={24} xs={24}>
+                <Col lg={12}>
+                  <Form.Item name={'?????'} label="?????">
+                    <Select>
+                      {serversList.map(serverAlias => (
+                        <Select.Option
+                          key={serverAlias.alias}
+                          value={serverAlias.alias}
+                        >
+                          {serverAlias.name}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
+                </Col>
+              </Col>
               <Col lg={12} xs={24}>
                 <Form.Item name="linkType" label="Link Type">
                   <Select disabled={!linkType.length}>
