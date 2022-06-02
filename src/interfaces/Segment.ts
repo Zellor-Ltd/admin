@@ -2,6 +2,7 @@ import { Brand } from './Brand';
 import { Tag } from './Tag';
 
 export interface Segment {
+  shareLink?: string;
   id?: string;
   sequence: number;
   tags: Tag[];
