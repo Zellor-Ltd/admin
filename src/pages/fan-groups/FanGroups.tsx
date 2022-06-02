@@ -30,6 +30,7 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [fanGroups, setFanGroups] = useState<FanGroup[]>([]);
   const [filter, setFilter] = useState<string>('');
+  const [content, setContent] = useState<FanGroup[]>([]);
 
   useEffect(() => {
     getResources();
@@ -42,18 +43,18 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
 
   const getFanGroups = async () => {
     const { results } = await doFetch(fetchFanGroups);
-    setFanGroups(results);
+    setContent(results);
     setRefreshing(true);
   };
 
-  const fetchData = () => {
-    if (!fanGroups.length) {
+  const updateDisplayedArray = () => {
+    if (!content.length) {
       setEof(true);
       return;
     }
 
     const pageToUse = refreshing ? 0 : page;
-    const results = fanGroups.slice(pageToUse * 10, pageToUse * 10 + 10);
+    const results = content.slice(pageToUse * 10, pageToUse * 10 + 10);
 
     setPage(pageToUse + 1);
     setFanGroups(prev => [...prev.concat(results)]);
@@ -65,7 +66,7 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
     if (refreshing) {
       setFanGroups([]);
       setEof(false);
-      fetchData();
+      updateDisplayedArray();
       setRefreshing(false);
     }
   }, [refreshing]);
@@ -168,7 +169,7 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
           </Row>
           <InfiniteScroll
             dataLength={fanGroups.length}
-            next={fetchData}
+            next={updateDisplayedArray}
             hasMore={!eof}
             loader={
               page !== 0 && (

@@ -40,7 +40,7 @@ export const PageInfiniteScroll: React.FC<PageInfiniteScrollProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refreshing]);
 
-  const fetchData = async () => {
+  const updateDisplayedArray = async () => {
     if (!tableData.length) return;
     const { results } = await fetchTableData();
     setTableData(prev => [...prev.concat(results)]);
@@ -56,7 +56,7 @@ export const PageInfiniteScroll: React.FC<PageInfiniteScrollProps> = ({
   return (
     <InfiniteScroll
       dataLength={tableData.length}
-      next={fetchData}
+      next={updateDisplayedArray}
       hasMore={!eof}
       loader={
         page !== 0 && (
