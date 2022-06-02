@@ -52,7 +52,7 @@ import { useSelector } from 'react-redux';
 const { Content } = Layout;
 
 const reduceSegmentsTags = (packages: Segment[]) => {
-  return packages.reduce((acc: number, curr: Segment) => {
+  return packages?.reduce((acc: number, curr: Segment) => {
     return acc + curr.tags?.length;
   }, 0);
 };
@@ -171,7 +171,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     {
       title: 'Segments',
       dataIndex: 'package',
-      render: (pack: Array<any> = []) => <AntTag>{pack.length}</AntTag>,
+      render: (pack: Array<any> = []) => <AntTag>{pack?.length ?? '0'}</AntTag>,
       width: '5%',
       align: 'center',
     },
@@ -369,7 +369,9 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const search = rows => {
     let updatedRows = rows;
     if (indexFilter) {
-      updatedRows = updatedRows.filter(row => row.index === indexFilter);
+      updatedRows = updatedRows.filter(row => {
+        return row.index && row.index === indexFilter;
+      });
     }
     if (creatorFilter) {
       updatedRows = updatedRows.filter(
