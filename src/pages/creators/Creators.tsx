@@ -40,7 +40,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
   const [creators, setCreators] = useState<Creator[]>([]);
   const [page, setPage] = useState<number>(0);
   const [searchFilter, setSearchFilter] = useState<string>();
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 991);
+  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
 
   const handleResize = () => {
     if (window.innerWidth < 991) {

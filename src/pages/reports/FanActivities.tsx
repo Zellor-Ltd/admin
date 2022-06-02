@@ -14,7 +14,7 @@ const FanActivities: React.FC<DashboardProps> = () => {
   const [, setLoading] = useState<boolean>(true);
   const { doFetch } = useRequest({ setLoading });
   const [fanActivity, setFanActivity] = useState<FanActivity[]>([]);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 991);
+  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
 
   const handleResize = () => {
     if (window.innerWidth < 991) {

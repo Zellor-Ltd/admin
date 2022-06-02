@@ -53,7 +53,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 991);
+  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
 
   const handleResize = () => {
     if (window.innerWidth < 991) {

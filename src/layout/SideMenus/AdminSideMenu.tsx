@@ -33,7 +33,7 @@ import { Menu } from 'antd';
 import SubMenu from 'antd/lib/menu/SubMenu';
 import { Link, useLocation } from 'react-router-dom';
 
-const AdminSideMenu = () => {
+const AdminSideMenu = isMobile => {
   const [, pathname] = useLocation().pathname.split('/');
   const [parentMenu] = pathname.split('_');
 
@@ -44,7 +44,11 @@ const AdminSideMenu = () => {
       defaultSelectedKeys={[pathname]}
       defaultOpenKeys={[parentMenu]}
     >
-      <Menu.Item key="dashboard" icon={<DashboardOutlined />}>
+      <Menu.Item
+        style={isMobile ? { marginTop: 0 } : {}}
+        key="dashboard"
+        icon={<DashboardOutlined />}
+      >
         <Link to="/dashboard">Dashboard</Link>
       </Menu.Item>
       <SubMenu key="reports" icon={<LineChartOutlined />} title="Reports">

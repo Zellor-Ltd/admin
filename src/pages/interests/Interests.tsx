@@ -38,7 +38,7 @@ const Interests: React.FC<InterestsProps> = () => {
 
   const [interests, setInterests] = useState<any[]>([]);
   const [mergedCategories, setMergedCategories] = useState<any[]>([]);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 991);
+  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
 
   const handleResize = () => {
     if (window.innerWidth < 991) {

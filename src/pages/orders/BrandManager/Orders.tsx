@@ -61,7 +61,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   >([]);
   const [filter, setFilter] = useState<any[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 991);
+  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
 
   const handleResize = () => {
     if (window.innerWidth < 991) {

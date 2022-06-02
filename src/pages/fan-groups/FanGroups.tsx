@@ -31,7 +31,7 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [fanGroups, setFanGroups] = useState<FanGroup[]>([]);
   const [filter, setFilter] = useState<string>('');
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 991);
+  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
 
   const handleResize = () => {
     if (window.innerWidth < 991) {

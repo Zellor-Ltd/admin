@@ -15,7 +15,7 @@ const PreRegisteredUsers: React.FC<DashboardProps> = () => {
   const { doFetch, doRequest } = useRequest({ setLoading });
   const [preRegs, setPreRegs] = useState<PreReg[]>([]);
   const [content, setContent] = useState<any[]>([]);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 991);
+  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
 
   const handleResize = () => {
     if (window.innerWidth < 991) {

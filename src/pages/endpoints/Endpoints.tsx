@@ -12,7 +12,7 @@ const Endpoints: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [loading, setLoading] = useState(false);
   const [filter, setFilter] = useState<string>('');
   const [endpoints, setEndpoints] = useState<Endpoint[]>([]);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 991);
+  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
 
   const handleResize = () => {
     if (window.innerWidth < 991) {

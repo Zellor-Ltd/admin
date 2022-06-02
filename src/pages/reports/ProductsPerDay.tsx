@@ -23,7 +23,7 @@ const ProductsPerDay: React.FC<DashboardProps> = () => {
     const { results } = await doFetch(fetchProductsPerDay);
     setProductsPerDay(results);
   };
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 991);
+  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
 
   const handleResize = () => {
     if (window.innerWidth < 991) {

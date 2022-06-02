@@ -52,7 +52,7 @@ const AccessControl: React.FC = () => {
   const [showCloneModal, setShowCloneModal] = useState<boolean>(false);
 
   const [form] = Form.useForm();
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 991);
+  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
 
   const handleResize = () => {
     if (window.innerWidth < 991) {

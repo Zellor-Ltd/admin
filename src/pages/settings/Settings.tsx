@@ -11,7 +11,7 @@ const Settings: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const { settings } = useSelector((state: any) => state.settings);
   const dispatch = useDispatch();
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 991);
+  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
 
   const handleResize = () => {
     if (window.innerWidth < 991) {
