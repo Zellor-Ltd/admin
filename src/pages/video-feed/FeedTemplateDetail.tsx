@@ -54,7 +54,7 @@ interface FeedTemplateDetailProps {
   onCancel?: () => void;
   feedTemplate?: any;
   brands: Brand[];
-  influencers: Creator[];
+  creators: Creator[];
   productBrands: ProductBrand[];
   isFetchingProductBrand: boolean;
   setDetails?: (boolean) => void;
@@ -83,7 +83,7 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
   onCancel,
   feedTemplate,
   brands,
-  influencers,
+  creators,
   productBrands,
   isFetchingProductBrand,
   setDetails,
@@ -117,7 +117,6 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
   const [segmentTab, setSegmentTab] = useState<string>('Images');
   const [pageTitle, setPageTitle] = useState<string>('Video Update');
   const { doFetch, doRequest } = useRequest({ setLoading });
-  const [creators, setCreators] = useState<Creator[]>([]);
   const [includeVideo, setIncludeVideo] = useState<boolean>(false);
   const [selectedCreator, setSelectedCreator] = useState<string>('');
   const [selectedSocialPlatform, setSelectedSocialPlatform] =
@@ -126,18 +125,8 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
   const [segment, setSegment] = useState<number>(0);
   const [status, setStatus] = useState<string>(feedTemplate?.status);
 
-  const getCreators = async () => {
-    const { results }: any = await doFetch(() =>
-      fetchCreators({
-        query: '',
-      })
-    );
-    setCreators(results);
-  };
-
   useEffect(() => {
     if (videoTab === 'Links') {
-      getCreators();
       fetch();
     }
   }, [videoTab]);
@@ -153,7 +142,7 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
     if (feedTemplate?.selectedOption) {
       if (feedTemplate?.selectedOption === 'creator') {
         setCurrentInfluencer(
-          influencers.find(item => item.id === feedTemplate?.selectedId)
+          creators.find(item => item.id === feedTemplate?.selectedId)
         );
       } else {
         loadOptions(
@@ -284,7 +273,7 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
   };
 
   const onCreatorChange = (key: string) => {
-    const creator = influencers.find(influencer => influencer.id === key);
+    const creator = creators.find(influencer => influencer.id === key);
     const feedTemplate = templateForm.getFieldsValue(true);
     templateForm.setFieldsValue({
       creator: null,
@@ -565,7 +554,7 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
                     placeholder="Please select a creator"
                     onChange={onCreatorChange}
                   >
-                    {influencers.map((influencer: any) => (
+                    {creators.map((influencer: any) => (
                       <Select.Option key={influencer.id} value={influencer.id}>
                         {influencer.firstName} {influencer.lastName}
                       </Select.Option>
@@ -894,7 +883,7 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
                     ]}
                   >
                     <SimpleSelect
-                      data={influencers}
+                      data={creators}
                       onChange={(value, influencer) =>
                         onChangeInfluencer(value, influencer)
                       }

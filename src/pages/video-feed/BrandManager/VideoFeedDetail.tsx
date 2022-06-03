@@ -68,7 +68,7 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = props => {
   const [selectedPositions, setSelectedPositions] = useState<Array<Position>>(
     []
   );
-  const [influencers, setInfluencers] = useState<Creator[]>([]);
+  const [creators, setCreators] = useState<Creator[]>([]);
   const [selectedBrand, setSelectedBrand] = useState<Brand | undefined>();
   const [selectedBrandIndex, setSelectedBrandIndex] = useState<number>(-1);
   const [brandModalVisible, setBrandModalVisible] = useState<boolean>(false);
@@ -89,7 +89,7 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = props => {
       const response: any = await fetchCreators({
         query: '',
       });
-      setInfluencers(response.results);
+      setCreators(response.results);
     }
     async function getCategories() {
       const response: any = await fetchCategories();
@@ -357,13 +357,13 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = props => {
                         placeholder="Please select a creator"
                         onChange={(key: string) =>
                           form.setFieldsValue({
-                            creator: influencers.find(
+                            creator: creators.find(
                               influencer => influencer.id === key
                             ),
                           })
                         }
                       >
-                        {influencers.map((influencer: any) => (
+                        {creators.map((influencer: any) => (
                           <Select.Option
                             key={influencer.id}
                             value={influencer.id}

@@ -64,7 +64,7 @@ const VideoFeedTemplates: React.FC<RouteComponentProps> = () => {
   const [details, setDetails] = useState<boolean>(false);
   const [isFetchingCategories, setIsFetchingCategories] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [influencers, setInfluencers] = useState<Creator[]>([]);
+  const [creators, setCreators] = useState<Creator[]>([]);
   const [isFetchingBrands, setIsFetchingBrands] = useState(false);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [isFetchingProductBrands, setIsFetchingProductBrands] = useState(false);
@@ -267,7 +267,7 @@ const VideoFeedTemplates: React.FC<RouteComponentProps> = () => {
       const response: any = await fetchCreators({
         query: '',
       });
-      setInfluencers(response.results);
+      setCreators(response.results);
     }
     async function getCategories() {
       setIsFetchingCategories(true);
@@ -464,7 +464,7 @@ const VideoFeedTemplates: React.FC<RouteComponentProps> = () => {
           onCancel={onCancelItem}
           feedItem={selectedVideoFeed}
           brands={brands}
-          influencers={influencers}
+          creators={creators}
           productBrands={productBrands}
           isFetchingProductBrand={isFetchingProductBrands}
           setDetails={setDetails}
