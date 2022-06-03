@@ -36,10 +36,11 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [mastheads, setMastheads] = useState<Masthead[]>([]);
   const [filter, setFilter] = useState<string>('');
+  const [content, setContent] = useState<Masthead[]>([]);
 
   const getResources = useCallback(async () => {
     const { results } = await doFetch(fetchMastheads);
-    setMastheads(results);
+    setContent(results);
     setRefreshing(true);
   }, []);
 
@@ -47,14 +48,14 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
     getResources();
   }, [getResources]);
 
-  const fetchData = () => {
-    if (!mastheads.length) {
+  const updateDisplayedArray = () => {
+    if (!content.length) {
       setEof(true);
       return;
     }
 
     const pageToUse = refreshing ? 0 : page;
-    const results = mastheads.slice(pageToUse * 10, pageToUse * 10 + 10);
+    const results = content.slice(pageToUse * 10, pageToUse * 10 + 10);
 
     setPage(pageToUse + 1);
     setMastheads(prev => [...prev.concat(results)]);
@@ -66,7 +67,7 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
     if (refreshing) {
       setMastheads([]);
       setEof(false);
-      fetchData();
+      updateDisplayedArray();
       setRefreshing(false);
     }
   }, [refreshing]);
@@ -202,7 +203,7 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
           </Row>
           <InfiniteScroll
             dataLength={mastheads.length}
-            next={fetchData}
+            next={updateDisplayedArray}
             hasMore={!eof}
             loader={
               page !== 0 && (

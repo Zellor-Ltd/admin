@@ -35,6 +35,7 @@ const Trends: React.FC<RouteComponentProps> = props => {
   >({});
   const shouldUpdateTrendIndex = useRef(false);
   const originalTrendsIndex = useRef<Record<string, number | undefined>>({});
+  const [content, setContent] = useState<any[]>([]);
 
   const getResources = async () => {
     await getTrends();
@@ -42,18 +43,18 @@ const Trends: React.FC<RouteComponentProps> = props => {
 
   const getTrends = async () => {
     const { results } = await doFetch(fetchTrends);
-    setTrends(results);
+    setContent(results);
     setRefreshing(true);
   };
 
-  const fetchData = () => {
-    if (!trends.length) {
+  const updateDisplayedArray = () => {
+    if (!content.length) {
       setEof(true);
       return;
     }
 
     const pageToUse = refreshing ? 0 : page;
-    const results = trends.slice(pageToUse * 10, pageToUse * 10 + 10);
+    const results = content.slice(pageToUse * 10, pageToUse * 10 + 10);
 
     setPage(pageToUse + 1);
     setTrends(prev => [...prev.concat(results)]);
@@ -65,7 +66,7 @@ const Trends: React.FC<RouteComponentProps> = props => {
     if (refreshing) {
       setTrends([]);
       setEof(false);
-      fetchData();
+      updateDisplayedArray();
       setRefreshing(false);
     }
   }, [refreshing]);
@@ -227,7 +228,7 @@ const Trends: React.FC<RouteComponentProps> = props => {
         </Row>
         <InfiniteScroll
           dataLength={trends.length}
-          next={fetchData}
+          next={updateDisplayedArray}
           hasMore={!eof}
           loader={
             page !== 0 && (
