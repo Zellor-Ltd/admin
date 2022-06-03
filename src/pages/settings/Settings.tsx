@@ -76,9 +76,6 @@ const Settings: React.FC = () => {
           <TabPane tab="Social Platform" key="socialPlatform">
             <ItemList name="socialPlatform" />
           </TabPane>
-          <TabPane tab="Video Type" key="videoType">
-            <ItemList name="videoType" />
-          </TabPane>
         </Tabs>
         <Row gutter={8}>
           <Col>
