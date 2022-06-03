@@ -72,7 +72,7 @@ const prouctBrandIconMapping: SelectOption = {
   value: 'value',
 };
 
-const influencerMapping: SelectOption = {
+const creatorMapping: SelectOption = {
   key: 'id',
   label: 'firstName',
   value: 'id',
@@ -109,7 +109,7 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
   const [productBrandIconOptions, setProductBrandIconOptions] = useState<any[]>(
     []
   );
-  const [currentInfluencer, setCurrentInfluencer] = useState<Creator>();
+  const [currentcreator, setCurrentcreator] = useState<Creator>();
   const [hashtags, setHashtags] = useState<string[]>([]);
   const defaultVideoTab = 'Video Details';
   const defaultSegmentTab = 'Images';
@@ -141,7 +141,7 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
   useEffect(() => {
     if (feedTemplate?.selectedOption) {
       if (feedTemplate?.selectedOption === 'creator') {
-        setCurrentInfluencer(
+        setCurrentcreator(
           creators.find(item => item.id === feedTemplate?.selectedId)
         );
       } else {
@@ -273,7 +273,7 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
   };
 
   const onCreatorChange = (key: string) => {
-    const creator = creators.find(influencer => influencer.id === key);
+    const creator = creators.find(creator => creator.id === key);
     const feedTemplate = templateForm.getFieldsValue(true);
     templateForm.setFieldsValue({
       creator: null,
@@ -374,8 +374,8 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
     return option.label?.toLowerCase().includes(input.toLowerCase());
   };
 
-  const onChangeInfluencer = (_: string, entity: Creator) => {
-    setCurrentInfluencer(entity);
+  const onChangecreator = (_: string, entity: Creator) => {
+    setCurrentcreator(entity);
     templateForm.setFieldsValue({
       selectedId: entity.id,
       selectedFeedTitle: entity.firstName,
@@ -554,9 +554,9 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
                     placeholder="Please select a creator"
                     onChange={onCreatorChange}
                   >
-                    {creators.map((influencer: any) => (
-                      <Select.Option key={influencer.id} value={influencer.id}>
-                        {influencer.firstName} {influencer.lastName}
+                    {creators.map((creator: any) => (
+                      <Select.Option key={creator.id} value={creator.id}>
+                        {creator.firstName} {creator.lastName}
                       </Select.Option>
                     ))}
                   </Select>
@@ -884,12 +884,12 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
                   >
                     <SimpleSelect
                       data={creators}
-                      onChange={(value, influencer) =>
-                        onChangeInfluencer(value, influencer)
+                      onChange={(value, creator) =>
+                        onChangecreator(value, creator)
                       }
                       style={{ width: '100%' }}
-                      selectedOption={currentInfluencer?.firstName}
-                      optionsMapping={influencerMapping}
+                      selectedOption={currentcreator?.firstName}
+                      optionsMapping={creatorMapping}
                       placeholder={'Select a creator'}
                       loading={false}
                       disabled={false}
@@ -898,7 +898,7 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
                   </Form.Item>
                   {templateForm.getFieldValue('selectedId') && (
                     <Image
-                      src={currentInfluencer?.avatar?.url}
+                      src={currentcreator?.avatar?.url}
                       style={{ marginBottom: 30 }}
                     ></Image>
                   )}

@@ -85,7 +85,7 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = props => {
 
       setUsers(response.results);
     }
-    async function getInfluencers() {
+    async function getcreators() {
       const response: any = await fetchCreators({
         query: '',
       });
@@ -96,7 +96,7 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = props => {
       setCategories(response.results);
     }
     getUsers();
-    getInfluencers();
+    getcreators();
     getCategories();
   }, []);
 
@@ -358,17 +358,14 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = props => {
                         onChange={(key: string) =>
                           form.setFieldsValue({
                             creator: creators.find(
-                              influencer => influencer.id === key
+                              creator => creator.id === key
                             ),
                           })
                         }
                       >
-                        {creators.map((influencer: any) => (
-                          <Select.Option
-                            key={influencer.id}
-                            value={influencer.id}
-                          >
-                            {influencer.firstName}
+                        {creators.map((creator: any) => (
+                          <Select.Option key={creator.id} value={creator.id}>
+                            {creator.firstName}
                           </Select.Option>
                         ))}
                       </Select>

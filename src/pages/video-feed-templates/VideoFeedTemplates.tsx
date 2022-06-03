@@ -263,7 +263,7 @@ const VideoFeedTemplates: React.FC<RouteComponentProps> = () => {
   };
 
   const getDetailsResources = async () => {
-    async function getInfluencers() {
+    async function getcreators() {
       const response: any = await fetchCreators({
         query: '',
       });
@@ -288,7 +288,7 @@ const VideoFeedTemplates: React.FC<RouteComponentProps> = () => {
       setIsFetchingProductBrands(false);
     }
     await Promise.all([
-      getInfluencers(),
+      getcreators(),
       getCategories(),
       getBrands(),
       getProductBrands(),

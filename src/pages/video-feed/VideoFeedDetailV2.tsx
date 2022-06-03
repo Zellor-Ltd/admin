@@ -95,7 +95,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
   const [pageTitle, setPageTitle] = useState<string>('Video Update');
   const { doFetch, doRequest } = useRequest({ setLoading });
   const [includeVideo, setIncludeVideo] = useState<boolean>(false);
-  const [linkInfluencer, setLinkInfluencer] = useState<string>('');
+  const [linkcreator, setLinkcreator] = useState<string>('');
   const [selectedSocialPlatform, setSelectedSocialPlatform] =
     useState<string>('');
   const [links, setLinks] = useState<any[]>([]);
@@ -135,7 +135,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
     }
 
     if (feedItem?.creator) {
-      setLinkInfluencer(feedItem?.creator?.id);
+      setLinkcreator(feedItem?.creator?.id);
     }
   }, []);
 
@@ -295,7 +295,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
   };
 
   const onCreatorChange = (key: string) => {
-    const creator = creators.find(influencer => influencer.id === key);
+    const creator = creators.find(creator => creator.id === key);
     const feedItem = feedForm.getFieldsValue(true) as FeedItem;
     feedForm.setFieldsValue({
       creator: null,
@@ -360,7 +360,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
   const handleGenerateLink = async () => {
     const { results }: any = await saveLink({
       videoFeedId: feedItem?.id as string,
-      creatorId: linkInfluencer,
+      creatorId: linkcreator,
       includeVideo: includeVideo,
       socialPlatform: selectedSocialPlatform,
       segment: segment,
@@ -524,9 +524,9 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                     placeholder="Please select a creator"
                     onChange={onCreatorChange}
                   >
-                    {creators.map((influencer: any) => (
-                      <Select.Option key={influencer.id} value={influencer.id}>
-                        {influencer.firstName} {influencer.lastName}
+                    {creators.map((creator: any) => (
+                      <Select.Option key={creator.id} value={creator.id}>
+                        {creator.firstName} {creator.lastName}
                       </Select.Option>
                     ))}
                   </Select>
@@ -897,7 +897,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                 <Select
                   disabled={!creators.length}
                   style={{ width: '100%' }}
-                  onSelect={setLinkInfluencer}
+                  onSelect={setLinkcreator}
                   defaultValue={feedItem?.creator?.id}
                 >
                   {creators.map((curr: any) => (
@@ -943,7 +943,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                 <Button
                   type="default"
                   onClick={handleGenerateLink}
-                  disabled={!linkInfluencer || !selectedSocialPlatform}
+                  disabled={!linkcreator || !selectedSocialPlatform}
                 >
                   Generate Link
                 </Button>

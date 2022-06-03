@@ -174,7 +174,7 @@ const FeedTemplates: React.FC<RouteComponentProps> = () => {
   };
 
   const getDetailsResources = async () => {
-    async function getInfluencers() {
+    async function getcreators() {
       const response: any = await fetchCreators({
         query: '',
       });
@@ -190,7 +190,7 @@ const FeedTemplates: React.FC<RouteComponentProps> = () => {
       setProductBrands(response.results);
       setIsFetchingProductBrands(false);
     }
-    await Promise.all([getInfluencers(), getBrands(), getProductBrands()]);
+    await Promise.all([getcreators(), getBrands(), getProductBrands()]);
   };
 
   const refreshItem = (record: any) => {
