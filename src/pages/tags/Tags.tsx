@@ -48,7 +48,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
     if (refreshing) {
       setTags([]);
       setEof(false);
-      fetchData();
+      updateDisplayedArray();
       setRefreshing(false);
     }
   }, [refreshing]);
@@ -57,7 +57,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
     setRefreshing(true);
   }, [searchFilter]);
 
-  const fetchData = async () => {
+  const updateDisplayedArray = async () => {
     const pageToUse = refreshing ? 0 : page;
 
     const { results } = await doFetch(() =>
@@ -80,7 +80,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
       setLoaded(true);
       return;
     }
-    fetchData();
+    updateDisplayedArray();
   };
 
   useEffect(() => {

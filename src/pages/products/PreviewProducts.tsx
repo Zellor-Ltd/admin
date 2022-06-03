@@ -371,7 +371,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
     setViewName(viewName ?? previousViewName.current);
   };
 
-  const fetchData = async searchButton => {
+  const updateDisplayedArray = async searchButton => {
     if (!products.length) return;
     const { results } = await _fetchStagingProducts(searchButton);
     setProducts(prev => [...prev.concat(results)]);
@@ -718,7 +718,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
             onEditProduct={(product, productIndex) =>
               editProduct(product, productIndex, 'alternate')
             }
-            onNextPage={() => fetchData(false)}
+            onNextPage={() => updateDisplayedArray(false)}
             page={page}
             eof={eof}
           ></AlternatePreviewProducts>
@@ -729,7 +729,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
             <>
               <InfiniteScroll
                 dataLength={products.length}
-                next={() => fetchData(false)}
+                next={() => updateDisplayedArray(false)}
                 hasMore={!eof}
                 loader={
                   page !== 0 && (

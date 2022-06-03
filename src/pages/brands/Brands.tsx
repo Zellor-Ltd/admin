@@ -46,13 +46,13 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const { doFetch } = useRequest({ setLoading });
   const [brands, setBrands] = useState<Brand[]>([]);
-  const [content, setContent] = useState<Brand[]>([]);
   const [filterText, setFilterText] = useState('');
   const [showModal, setShowModal] = useState<boolean>(false);
   const [currentBrand, setCurrentBrand] = useState<Brand>();
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [content, setContent] = useState<Brand[]>([]);
   const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
 
   const handleResize = () => {
@@ -75,7 +75,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
     if (refreshing) {
       setBrands([]);
       setEof(false);
-      fetchData();
+      updateDisplayedArray();
       setRefreshing(false);
     }
   }, [refreshing]);
@@ -84,7 +84,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
     setRefreshing(true);
   }, [filterText]);
 
-  const fetchData = async () => {
+  const updateDisplayedArray = async () => {
     if (!content.length) return;
     const pageToUse = refreshing ? 0 : page;
     const results = content.slice(pageToUse * 10, pageToUse * 10 + 10);
@@ -415,7 +415,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
           </Row>
           <InfiniteScroll
             dataLength={filterBrand().length}
-            next={fetchData}
+            next={updateDisplayedArray}
             hasMore={!eof}
             loader={
               page !== 0 && (

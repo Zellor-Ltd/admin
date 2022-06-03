@@ -41,6 +41,7 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [promoDisplays, setPromoDisplays] = useState<PromoDisplay[]>([]);
   const [filter, setFilter] = useState<string>('');
+  const [content, setContent] = useState<PromoDisplay[]>([]);
   const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
 
   const handleResize = () => {
@@ -66,18 +67,18 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
 
   const getPromoDisplays = async () => {
     const { results } = await doFetch(fetchPromoDisplays);
-    setPromoDisplays(results);
+    setContent(results);
     setRefreshing(true);
   };
 
-  const fetchData = () => {
-    if (!promoDisplays.length) {
+  const updateDisplayedArray = () => {
+    if (!content.length) {
       setEof(true);
       return;
     }
 
     const pageToUse = refreshing ? 0 : page;
-    const results = promoDisplays.slice(pageToUse * 10, pageToUse * 10 + 10);
+    const results = content.slice(pageToUse * 10, pageToUse * 10 + 10);
 
     setPage(pageToUse + 1);
     setPromoDisplays(prev => [...prev.concat(results)]);
@@ -89,7 +90,7 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
     if (refreshing) {
       setPromoDisplays([]);
       setEof(false);
-      fetchData();
+      updateDisplayedArray();
       setRefreshing(false);
     }
   }, [refreshing]);
@@ -263,7 +264,7 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
           </Row>
           <InfiniteScroll
             dataLength={promoDisplays.length}
-            next={fetchData}
+            next={updateDisplayedArray}
             hasMore={!eof}
             loader={
               page !== 0 && (

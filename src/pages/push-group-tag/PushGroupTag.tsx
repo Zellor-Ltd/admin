@@ -37,6 +37,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [tags, setTags] = useState<Tag[]>([]);
   const [tagFilter, setTagFilter] = useState<string>('');
   const [brandFilter, setBrandFilter] = useState<string>('');
+  const [content, setContent] = useState<Tag[]>([]);
 
   const optionsMapping: SelectOption = {
     key: 'id',
@@ -77,15 +78,15 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
 
   const getTags = async () => {
     const { results } = await doFetch(() => fetchTags({}));
-    setTags(results);
+    setContent(results);
     setRefreshing(true);
   };
 
-  const fetchData = () => {
-    if (!tags.length) return;
+  const updateDisplayedArray = () => {
+    if (!content.length) return;
 
     const pageToUse = refreshing ? 0 : page;
-    const results = tags.slice(pageToUse * 10, pageToUse * 10 + 10);
+    const results = content.slice(pageToUse * 10, pageToUse * 10 + 10);
 
     setPage(pageToUse + 1);
     setTags(prev => [...prev.concat(results)]);
@@ -97,7 +98,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
     if (refreshing) {
       setTags([]);
       setEof(false);
-      fetchData();
+      updateDisplayedArray();
       setRefreshing(false);
     }
   }, [refreshing]);
@@ -263,7 +264,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
           </Row>
           <InfiniteScroll
             dataLength={tags.length}
-            next={fetchData}
+            next={updateDisplayedArray}
             hasMore={!eof}
             loader={
               page !== 0 && (

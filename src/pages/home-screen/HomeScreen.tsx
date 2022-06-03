@@ -51,12 +51,12 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
     if (refreshing) {
       setBanners([]);
       setEof(false);
-      fetchData();
+      updateDisplayedArray();
       setRefreshing(false);
     }
   }, [refreshing]);
 
-  const fetchData = async () => {
+  const updateDisplayedArray = async () => {
     if (!content.length) return;
     const pageToUse = refreshing ? 0 : page;
     const results = content.slice(pageToUse * 10, pageToUse * 10 + 10);
@@ -218,7 +218,7 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
           />
           <InfiniteScroll
             dataLength={banners.length}
-            next={fetchData}
+            next={updateDisplayedArray}
             hasMore={!eof}
             loader={
               page !== 0 && (

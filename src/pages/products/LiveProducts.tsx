@@ -281,7 +281,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
     setLoaded(true);
   };
 
-  const fetchData = async () => {
+  const updateDisplayedArray = async () => {
     if (!products.length) return;
     const { results } = await _fetchProducts();
     setProducts(prev => [...prev.concat(results)]);
@@ -856,7 +856,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
           />
           <InfiniteScroll
             dataLength={products.length}
-            next={fetchData}
+            next={updateDisplayedArray}
             hasMore={!eof}
             loader={
               page !== 0 && (

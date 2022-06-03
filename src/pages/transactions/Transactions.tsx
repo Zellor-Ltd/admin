@@ -19,6 +19,7 @@ import CopyOrderToClipboard from 'components/CopyOrderToClipboard';
 import { SelectOption } from 'interfaces/SelectOption';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useRequest } from 'hooks/useRequest';
+import { ContentBlock } from 'draft-js';
 
 const Transactions: React.FC<RouteComponentProps> = () => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -35,6 +36,7 @@ const Transactions: React.FC<RouteComponentProps> = () => {
   const [options, setOptions] = useState<
     { label: string; value: string; key: string }[]
   >([]);
+  const [content, setContent] = useState<Transaction[]>([]);
 
   const fanOptionsMapping: SelectOption = {
     key: 'id',
@@ -83,16 +85,16 @@ const Transactions: React.FC<RouteComponentProps> = () => {
     if (refreshing) {
       setFilteredTransactions([]);
       setEof(false);
-      fetchData();
+      updateDisplayedArray();
       setRefreshing(false);
     }
   }, [refreshing]);
 
-  const fetchData = async () => {
-    if (!transactions.length) return;
+  const updateDisplayedArray = async () => {
+    if (!content.length) return;
 
     const pageToUse = refreshing ? 0 : page;
-    const results = transactions.slice(pageToUse * 10, pageToUse * 10 + 10);
+    const results = content.slice(pageToUse * 10, pageToUse * 10 + 10);
 
     setPage(pageToUse + 1);
     setFilteredTransactions(prev => [...prev.concat(results)]);
@@ -180,7 +182,7 @@ const Transactions: React.FC<RouteComponentProps> = () => {
     setLoading(true);
     if (_selectedFan) {
       const { results }: any = await fetchWalletTransactions(_selectedFan.id);
-      setTransactions(results);
+      setContent(results);
       setRefreshing(true);
       if (!loaded) setLoaded(true);
     } else {
@@ -233,7 +235,7 @@ const Transactions: React.FC<RouteComponentProps> = () => {
       </Row>
       <InfiniteScroll
         dataLength={filteredTransactions.length}
-        next={fetchData}
+        next={updateDisplayedArray}
         hasMore={!eof}
         loader={
           page !== 0 && (

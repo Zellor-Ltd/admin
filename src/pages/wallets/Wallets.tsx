@@ -46,6 +46,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
   const [filter, setFilter] = useState<string>('');
   const [wallets, setWallets] = useState<Wallet[]>([]);
   const [fans, setFans] = useState<Fan[]>([]);
+  const [content, setContent] = useState<Wallet[]>([]);
   const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
 
   const handleResize = () => {
@@ -78,10 +79,10 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
         () => fetchBalancePerBrand(_selectedFan.id),
         true
       );
-      setWallets(balance);
+      setContent(balance);
       setPage(0);
     } else {
-      setWallets([]);
+      setContent([]);
     }
     setSelectedFan(fans.find(fan => fan.user === value));
   };
@@ -93,9 +94,9 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
   }, [wallets, page]);
 
   const updateDisplayedArray = () => {
-    if (!wallets.length) return;
+    if (!content.length) return;
 
-    const results = wallets.slice(page * 10, page * 10 + 10);
+    const results = content.slice(page * 10, page * 10 + 10);
     setFilteredWallets(prev => [...prev.concat(results)]);
 
     if (results.length < 10) {

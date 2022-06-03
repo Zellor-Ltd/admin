@@ -80,10 +80,13 @@ const Settings: React.FC = () => {
               <TabPane tab="Language" key="language">
                 <ItemList name="language" isMobile={isMobile} />
               </TabPane>
-              <TabPane tab="Status (Orders)" key="orders">
-                <ItemList name="order" isMobile={isMobile} />
+              <TabPane tab="Order Status" key="orderStatus">
+                <ItemList name="orderStatus" isMobile={isMobile} />
               </TabPane>
-              <TabPane tab="Status (Promotions)" key="promoStatus">
+              <TabPane tab="Feed Item Status" key="feedItemStatus">
+                <ItemList name="feedItemStatus" isMobile={isMobile} />
+              </TabPane>
+              <TabPane tab="Promotion Status" key="promoStatus">
                 <ItemList name="promoStatus" isMobile={isMobile} />
               </TabPane>
               <TabPane tab="Checkout Type" key="checkoutType">

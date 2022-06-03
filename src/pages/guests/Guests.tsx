@@ -104,7 +104,7 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
     setGuests(prev => [...prev.concat(response.results)]);
   };
 
-  const fetchData = () => {
+  const updateDisplayedArray = () => {
     if (!guests.length) return;
     fetchFans();
   };
@@ -308,7 +308,7 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
           </Row>
           <InfiniteScroll
             dataLength={guests.length}
-            next={fetchData}
+            next={updateDisplayedArray}
             hasMore={!eof}
             loader={
               page !== 0 && (

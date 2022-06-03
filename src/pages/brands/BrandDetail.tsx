@@ -37,6 +37,8 @@ import moment from 'moment';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import scrollIntoView from 'scroll-into-view';
 import { Link } from 'react-router-dom';
+import { noop } from 'lodash';
+import BrandForm from 'pages/video-feed/BrandForm';
 interface BrandDetailProps {
   onSave?: (record: Brand) => void;
   onCancel?: () => void;
