@@ -82,7 +82,6 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
       language = [],
       socialPlatform = [],
       category = [],
-      videoType = [],
       linkType = [],
     },
   } = useSelector((state: any) => state.settings);
