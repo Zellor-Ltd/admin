@@ -647,12 +647,12 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                     { required: true, message: `Video Type is required.` },
                   ]}
                 >
-                  <Select placeholder="Please select a video type">
-                    {videoType.map((curr: any) => (
-                      <Select.Option key={curr.value} value={curr.value}>
-                        {curr.name}
-                      </Select.Option>
-                    ))}
+                  <Select mode="multiple">
+                    <Select.Option value="Fan">Fan</Select.Option>
+                    <Select.Option value="Creator">Creator</Select.Option>
+                    <Select.Option value="Feed">Feed</Select.Option>
+                    <Select.Option value="Brand">Store</Select.Option>
+                    <Select.Option value="Review">Review</Select.Option>
                   </Select>
                 </Form.Item>
               </Col>

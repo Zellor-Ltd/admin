@@ -45,9 +45,9 @@ import './VideoFeedDetail.scss';
 import SimpleSelect from 'components/select/SimpleSelect';
 import { SelectOption } from 'interfaces/SelectOption';
 import VideoFeedDetailV2 from './VideoFeedDetailV2';
+import { statusList, videoTypeList } from 'components/select/select.utils';
 import { useRequest } from 'hooks/useRequest';
 import moment from 'moment';
-import { useSelector } from 'react-redux';
 
 const { Content } = Layout;
 
@@ -90,10 +90,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const [indexFilter, setIndexFilter] = useState<number>();
   const [creatorFilter, setCreatorFilter] = useState<string>();
 
-  const {
-    settings: { videoType = [], feedItemStatus = [] },
-  } = useSelector((state: any) => state.settings);
-
   const masterBrandMapping: SelectOption = {
     key: 'id',
     label: 'brandName',
@@ -110,6 +106,18 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     key: 'id',
     label: 'name',
     value: 'id',
+  };
+
+  const statusMapping: SelectOption = {
+    key: 'value',
+    label: 'value',
+    value: 'value'.toLowerCase(),
+  };
+
+  const videoTypeMapping: SelectOption = {
+    key: 'value',
+    label: 'value',
+    value: 'value',
   };
 
   const feedItemColumns: ColumnsType<FeedItem> = [
@@ -369,7 +377,9 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const search = rows => {
     let updatedRows = rows;
     if (indexFilter) {
-      updatedRows = updatedRows.filter(row => row.index === indexFilter);
+      updatedRows = updatedRows.filter(row => {
+        return row.index && row.index === indexFilter;
+      });
     }
     if (creatorFilter) {
       updatedRows = updatedRows.filter(
@@ -572,18 +582,15 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                 </Col>
                 <Col lg={4} xs={12}>
                   <Typography.Title level={5}>Status</Typography.Title>
-                  <Select
-                    placeholder="Select a status"
+                  <SimpleSelect
+                    data={statusList}
                     onChange={status => setStatusFilter(status)}
                     style={{ width: '100%' }}
-                    disabled={!feedItemStatus.length}
-                  >
-                    {feedItemStatus.map((curr: any) => (
-                      <Select.Option key={curr.value} value={curr.value}>
-                        {curr.name}
-                      </Select.Option>
-                    ))}
-                  </Select>
+                    selectedOption={statusFilter}
+                    optionsMapping={statusMapping}
+                    placeholder={'Select a status'}
+                    allowClear={true}
+                  />
                 </Col>
                 <Col lg={4} xs={12}>
                   <Typography.Title level={5}>Category</Typography.Title>
@@ -603,18 +610,15 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                 </Col>
                 <Col lg={4} xs={12}>
                   <Typography.Title level={5}>Video Type</Typography.Title>
-                  <Select
-                    placeholder="Select a video type"
+                  <SimpleSelect
+                    data={videoTypeList}
                     onChange={videoType => setVideoTypeFilter(videoType)}
                     style={{ width: '100%' }}
-                    disabled={!videoType.length}
-                  >
-                    {videoType.map((curr: any) => (
-                      <Select.Option key={curr.value} value={curr.value}>
-                        {curr.name}
-                      </Select.Option>
-                    ))}
-                  </Select>
+                    selectedOption={videoTypeFilter}
+                    optionsMapping={videoTypeMapping}
+                    placeholder={'Select a video type'}
+                    allowClear={true}
+                  />
                 </Col>
                 <Col lg={4} xs={12}>
                   <Typography.Title level={5}>Start Index</Typography.Title>
