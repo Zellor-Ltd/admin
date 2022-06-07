@@ -89,11 +89,14 @@ const Settings: React.FC = () => {
               <TabPane tab="Promotion Status" key="promoStatus">
                 <ItemList name="promoStatus" isMobile={isMobile} />
               </TabPane>
+              <TabPane tab="Social Platform" key="socialPlatform">
+                <ItemList name="socialPlatform" isMobile={isMobile} />
+              </TabPane>
               <TabPane tab="Checkout Type" key="checkoutType">
                 <ItemList name="checkoutType" isMobile={isMobile} />
               </TabPane>
-              <TabPane tab="Social Platform" key="socialPlatform">
-                <ItemList name="socialPlatform" isMobile={isMobile} />
+              <TabPane tab="Video Type" key="videoType">
+                <ItemList name="videoType" isMobile={isMobile} />
               </TabPane>
             </Tabs>
             <Row gutter={8} justify="end">

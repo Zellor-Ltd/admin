@@ -47,13 +47,13 @@ interface FeedTemplateDetailProps {
   onCancel?: () => void;
   feedTemplate?: any;
   brands: Brand[];
-  influencers: Creator[];
+  creators: Creator[];
   productBrands: ProductBrand[];
   isFetchingProductBrand: boolean;
   setDetails?: (boolean) => void;
 }
 
-const influencerMapping: SelectOption = {
+const creatorMapping: SelectOption = {
   key: 'id',
   label: 'firstName',
   value: 'id',
@@ -64,7 +64,7 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
   onCancel,
   feedTemplate,
   brands,
-  influencers,
+  creators,
   productBrands,
   isFetchingProductBrand,
   setDetails,
@@ -90,7 +90,7 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
   const [productBrandIconOptions, setProductBrandIconOptions] = useState<any[]>(
     []
   );
-  const [currentInfluencer, setCurrentInfluencer] = useState<Creator>();
+  const [currentcreator, setCurrentcreator] = useState<Creator>();
   const [hashtags, setHashtags] = useState<string[]>([]);
   const defaultVideoTab = 'Video Details';
   const defaultSegmentTab = 'Images';
@@ -103,8 +103,8 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
   useEffect(() => {
     if (feedTemplate?.selectedOption) {
       if (feedTemplate?.selectedOption === 'creator') {
-        setCurrentInfluencer(
-          influencers.find(item => item.id === feedTemplate?.selectedId)
+        setCurrentcreator(
+          creators.find(item => item.id === feedTemplate?.selectedId)
         );
       } else {
         loadOptions(
@@ -235,7 +235,7 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
   };
 
   const onCreatorChange = (key: string) => {
-    const creator = influencers.find(influencer => influencer.id === key);
+    const creator = creators.find(creator => creator.id === key);
     const feedTemplate = templateForm.getFieldsValue(true);
     templateForm.setFieldsValue({
       creator: null,
@@ -336,8 +336,8 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
     return option.label?.toLowerCase().includes(input.toLowerCase());
   };
 
-  const onChangeInfluencer = (_: string, entity: Creator) => {
-    setCurrentInfluencer(entity);
+  const onChangecreator = (_: string, entity: Creator) => {
+    setCurrentcreator(entity);
     templateForm.setFieldsValue({
       selectedId: entity.id,
       selectedFeedTitle: entity.firstName,
@@ -451,9 +451,9 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
                     placeholder="Please select a creator"
                     onChange={onCreatorChange}
                   >
-                    {influencers.map((influencer: any) => (
-                      <Select.Option key={influencer.id} value={influencer.id}>
-                        {influencer.firstName} {influencer.lastName}
+                    {creators.map((creator: any) => (
+                      <Select.Option key={creator.id} value={creator.id}>
+                        {creator.firstName} {creator.lastName}
                       </Select.Option>
                     ))}
                   </Select>
@@ -780,13 +780,13 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
                     ]}
                   >
                     <SimpleSelect
-                      data={influencers}
-                      onChange={(value, influencer) =>
-                        onChangeInfluencer(value, influencer)
+                      data={creators}
+                      onChange={(value, creator) =>
+                        onChangecreator(value, creator)
                       }
                       style={{ width: '100%' }}
-                      selectedOption={currentInfluencer?.firstName}
-                      optionsMapping={influencerMapping}
+                      selectedOption={currentcreator?.firstName}
+                      optionsMapping={creatorMapping}
                       placeholder={'Select a creator'}
                       loading={false}
                       disabled={false}
@@ -795,7 +795,7 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
                   </Form.Item>
                   {templateForm.getFieldValue('selectedId') && (
                     <Image
-                      src={currentInfluencer?.avatar?.url}
+                      src={currentcreator?.avatar?.url}
                       style={{ marginBottom: 30 }}
                     ></Image>
                   )}
