@@ -44,6 +44,7 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
   const [promotions, setPromotions] = useState<Promotion[]>([]);
   const [dateFilter, setDateFilter] = useState<any[]>([]);
   const [idFilter, setIdFilter] = useState<string>('');
+  const [content, setContent] = useState<Promotion[]>([]);
 
   const getResources = useCallback(async () => {
     await Promise.all([getPromotions(), getPromoStatus()]);
@@ -55,7 +56,7 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
 
   const getPromotions = useCallback(async () => {
     const { results } = await doFetch(fetchPromotions);
-    setPromotions(results);
+    setContent(results);
     setRefreshing(true);
   }, []);
 
@@ -64,14 +65,14 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
     setPromoStatusList(results[0]?.promoStatus);
   }, []);
 
-  const fetchData = () => {
-    if (!promotions.length) {
+  const updateDisplayedArray = () => {
+    if (!content.length) {
       setEof(true);
       return;
     }
 
     const pageToUse = refreshing ? 0 : page;
-    const results = promotions.slice(pageToUse * 10, pageToUse * 10 + 10);
+    const results = content.slice(pageToUse * 10, pageToUse * 10 + 10);
 
     setPage(pageToUse + 1);
     setPromotions(prev => [...prev.concat(results)]);
@@ -83,7 +84,7 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
     if (refreshing) {
       setPromotions([]);
       setEof(false);
-      fetchData();
+      updateDisplayedArray();
       setRefreshing(false);
     }
   }, [refreshing]);
@@ -260,7 +261,7 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
           </Row>
           <InfiniteScroll
             dataLength={promotions.length}
-            next={fetchData}
+            next={updateDisplayedArray}
             hasMore={!eof}
             loader={
               page !== 0 && (

@@ -1,6 +1,7 @@
 import { Button, Col, Form, Input, message, PageHeader, Row } from 'antd';
 import { Order } from 'interfaces/Order';
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { saveOrder } from 'services/DiscoClubService';
 interface OrderDetailProps {
   order: Order | undefined;
@@ -10,6 +11,11 @@ interface OrderDetailProps {
 const OrderDetail: React.FC<OrderDetailProps> = ({ order, setDetails }) => {
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
+
+  const {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    settings: { order: ordersSettings = [] },
+  } = useSelector((state: any) => state.settings);
 
   const onFinish = async () => {
     setLoading(true);

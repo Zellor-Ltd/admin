@@ -43,6 +43,7 @@ const WalletDetail: React.FC<WalletDetailProps> = ({
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [transactions, setTransactions] = useState<WalletTransaction[]>([]);
   const [filter, setFilter] = useState<any[]>([]);
+  const [content, setContent] = useState<WalletTransaction[]>([]);
 
   const wallet = initial
     ? {
@@ -66,14 +67,14 @@ const WalletDetail: React.FC<WalletDetailProps> = ({
     const { results } = await doFetch(() =>
       fetchTransactionsPerBrand(initial.fan.id, initial.brand.id)
     );
-    setTransactions(results);
+    setContent(results);
     setRefreshing(true);
   };
 
-  const fetchData = () => {
-    if (!transactions.length) return;
+  const updateDisplayedArray = () => {
+    if (!content.length) return;
 
-    const pageToUse = refreshing ? 0 : page;
+    const pageToUse = content ? 0 : page;
     const results = transactions.slice(pageToUse * 10, pageToUse * 10 + 10);
 
     setPage(pageToUse + 1);
@@ -86,7 +87,7 @@ const WalletDetail: React.FC<WalletDetailProps> = ({
     if (refreshing) {
       setTransactions([]);
       setEof(false);
-      fetchData();
+      updateDisplayedArray();
       setRefreshing(false);
     }
   }, [refreshing]);
@@ -166,7 +167,9 @@ const WalletDetail: React.FC<WalletDetailProps> = ({
       <PageHeader
         title={
           initial
-            ? `${initial.fan.name}/${initial.brand.name} Transactions`
+            ? initial.fan.name
+              ? `${initial.fan.name}/${initial.brand.name} Transactions`
+              : `${initial.brand.name} Transactions`
             : 'New Item'
         }
       />
@@ -203,7 +206,7 @@ const WalletDetail: React.FC<WalletDetailProps> = ({
       </Row>
       <InfiniteScroll
         dataLength={transactions.length}
-        next={fetchData}
+        next={updateDisplayedArray}
         hasMore={!eof}
         loader={
           page !== 0 && (

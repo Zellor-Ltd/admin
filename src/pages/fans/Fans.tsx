@@ -87,7 +87,7 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
     setFans(prev => [...prev.concat(validUsers)]);
   };
 
-  const fetchData = async () => {
+  const updateDisplayedArray = async () => {
     if (!fans.length) return;
     await fetchUsers();
   };
@@ -315,7 +315,7 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
           />
           <InfiniteScroll
             dataLength={fans.length}
-            next={fetchData}
+            next={updateDisplayedArray}
             hasMore={!eof}
             loader={
               page !== 0 && (
