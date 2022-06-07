@@ -42,7 +42,7 @@ const FeedTemplates: React.FC<RouteComponentProps> = () => {
   const [selectedFeedTemplate, setselectedFeedTemplate] = useState<FeedItem>();
   const [loading, setLoading] = useState(false);
   const [details, setDetails] = useState<boolean>(false);
-  const [influencers, setInfluencers] = useState<Creator[]>([]);
+  const [creators, setCreators] = useState<Creator[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [isFetchingProductBrands, setIsFetchingProductBrands] = useState(false);
   const [productBrands, setProductBrands] = useState([]);
@@ -174,11 +174,11 @@ const FeedTemplates: React.FC<RouteComponentProps> = () => {
   };
 
   const getDetailsResources = async () => {
-    async function getInfluencers() {
+    async function getcreators() {
       const response: any = await fetchCreators({
         query: '',
       });
-      setInfluencers(response.results);
+      setCreators(response.results);
     }
     async function getBrands() {
       const response: any = await fetchBrands();
@@ -190,7 +190,7 @@ const FeedTemplates: React.FC<RouteComponentProps> = () => {
       setProductBrands(response.results);
       setIsFetchingProductBrands(false);
     }
-    await Promise.all([getInfluencers(), getBrands(), getProductBrands()]);
+    await Promise.all([getcreators(), getBrands(), getProductBrands()]);
   };
 
   const refreshItem = (record: any) => {
@@ -293,7 +293,7 @@ const FeedTemplates: React.FC<RouteComponentProps> = () => {
           onCancel={onCancelItem}
           feedTemplate={selectedFeedTemplate}
           brands={brands}
-          influencers={influencers}
+          creators={creators}
           productBrands={productBrands}
           isFetchingProductBrand={isFetchingProductBrands}
           setDetails={setDetails}

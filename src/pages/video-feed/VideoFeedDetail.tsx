@@ -68,7 +68,7 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = props => {
   const [selectedPositions, setSelectedPositions] = useState<Array<Position>>(
     []
   );
-  const [influencers, setInfluencers] = useState<Creator[]>([]);
+  const [creators, setCreators] = useState<Creator[]>([]);
   const [selectedBrand, setSelectedBrand] = useState<Brand | undefined>();
   const [selectedBrandIndex, setSelectedBrandIndex] = useState<number>(-1);
   const [brandModalVisible, setBrandModalVisible] = useState<boolean>(false);
@@ -85,18 +85,18 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = props => {
 
       setUsers(response.results);
     }
-    async function getInfluencers() {
+    async function getcreators() {
       const response: any = await fetchCreators({
         query: '',
       });
-      setInfluencers(response.results);
+      setCreators(response.results);
     }
     async function getCategories() {
       const response: any = await fetchCategories();
       setCategories(response.results);
     }
     getUsers();
-    getInfluencers();
+    getcreators();
     getCategories();
   }, []);
 
@@ -357,18 +357,15 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = props => {
                         placeholder="Please select a creator"
                         onChange={(key: string) =>
                           form.setFieldsValue({
-                            creator: influencers.find(
-                              influencer => influencer.id === key
+                            creator: creators.find(
+                              creator => creator.id === key
                             ),
                           })
                         }
                       >
-                        {influencers.map((influencer: any) => (
-                          <Select.Option
-                            key={influencer.id}
-                            value={influencer.id}
-                          >
-                            {influencer.firstName}
+                        {creators.map((creator: any) => (
+                          <Select.Option key={creator.id} value={creator.id}>
+                            {creator.firstName}
                           </Select.Option>
                         ))}
                       </Select>
