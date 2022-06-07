@@ -78,7 +78,12 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
   setDetails,
 }) => {
   const {
-    settings: { language = [], socialPlatform = [], category = [] },
+    settings: {
+      language = [],
+      socialPlatform = [],
+      category = [],
+      videoType = [],
+    },
   } = useSelector((state: any) => state.settings);
   const [feedForm] = Form.useForm();
   const [segmentForm] = Form.useForm();
@@ -639,12 +644,20 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                     { required: true, message: `Video Type is required.` },
                   ]}
                 >
-                  <Select mode="multiple">
-                    <Select.Option value="Fan">Fan</Select.Option>
-                    <Select.Option value="Creator">Creator</Select.Option>
-                    <Select.Option value="Feed">Feed</Select.Option>
-                    <Select.Option value="Brand">Store</Select.Option>
-                    <Select.Option value="Review">Review</Select.Option>
+                  <Select
+                    mode="multiple"
+                    placeholder="Please select a Video Type"
+                    disabled={!videoType.length}
+                  >
+                    {videoType.map((type: any) => (
+                      <Select.Option
+                        key={type.value}
+                        value={type.value}
+                        label={type.name}
+                      >
+                        {type.name}
+                      </Select.Option>
+                    ))}
                   </Select>
                 </Form.Item>
               </Col>
