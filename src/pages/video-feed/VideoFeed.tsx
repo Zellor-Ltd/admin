@@ -179,7 +179,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     {
       title: 'Segments',
       dataIndex: 'package',
-      render: (pack: Array<any> = []) => <AntTag>{pack?.length ?? '0'}</AntTag>,
+      render: (pack: Array<any> = []) => <AntTag>{pack?.length ?? 0}</AntTag>,
       width: '5%',
       align: 'center',
     },

@@ -15,6 +15,7 @@ import {
   PageHeader,
   Popconfirm,
   Row,
+  Select,
   Spin,
   Table,
   Tag as AntTag,
@@ -51,7 +52,7 @@ import moment from 'moment';
 const { Content } = Layout;
 
 const reduceSegmentsTags = (packages: Segment[]) => {
-  return packages.reduce((acc: number, curr: Segment) => {
+  return packages?.reduce((acc: number, curr: Segment) => {
     return acc + curr.tags?.length;
   }, 0);
 };
@@ -87,6 +88,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const [titleFilter, setTitleFilter] = useState<string>();
   const [categoryFilter, setCategoryFilter] = useState<string>();
   const [indexFilter, setIndexFilter] = useState<number>();
+  const [creatorFilter, setCreatorFilter] = useState<string>();
 
   const masterBrandMapping: SelectOption = {
     key: 'id',
@@ -177,7 +179,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     {
       title: 'Segments',
       dataIndex: 'package',
-      render: (pack: Array<any> = []) => <AntTag>{pack.length}</AntTag>,
+      render: (pack: Array<any> = []) => <AntTag>{pack?.length ?? 0}</AntTag>,
       width: '5%',
       align: 'center',
     },
@@ -243,6 +245,38 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
           return a.status.localeCompare(b.status as string);
         else if (a.status) return -1;
         else if (b.status) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: 'InstaLink',
+      width: '18%',
+      render: (_: string, record: FeedItem) => (
+        <Link
+          onClick={() =>
+            window
+              .open(
+                record.package?.find(item => item.shareLink)?.shareLink,
+                '_blank'
+              )
+              ?.focus()
+          }
+          to={{ pathname: window.location.pathname }}
+        >
+          {record.package?.find(item => item.shareLink)?.shareLink ?? ''}
+        </Link>
+      ),
+      sorter: (a, b): any => {
+        if (a.package && b.package) {
+          const linkA = a.package.find(item => item.shareLink)?.shareLink;
+          const linkB = b.package.find(item => item.shareLink)?.shareLink;
+          if (linkA && linkB) return linkA.localeCompare(linkB);
+          else if (linkA) return -1;
+          else if (linkB) return 1;
+          else return 0;
+        } else if (a.package?.find(item => item.shareLink)?.shareLink)
+          return -1;
+        else if (b.package?.find(item => item.shareLink)?.shareLink) return 1;
         else return 0;
       },
     },
@@ -341,14 +375,23 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   };
 
   const search = rows => {
+    let updatedRows = rows;
     if (indexFilter) {
-      return rows.filter(
-        row =>
-          row.category?.indexOf(categoryFilter) > -1 &&
-          row.index === indexFilter
+      updatedRows = updatedRows.filter(row => {
+        return row.index && row.index === indexFilter;
+      });
+    }
+    if (creatorFilter) {
+      updatedRows = updatedRows.filter(
+        row => row?.creator?.firstName?.indexOf(creatorFilter) > -1
       );
     }
-    return rows.filter(row => row.category?.indexOf(categoryFilter ?? '') > -1);
+    if (categoryFilter) {
+      updatedRows = updatedRows.filter(
+        row => row.category?.indexOf(categoryFilter) > -1
+      );
+    }
+    return updatedRows;
   };
 
   const deleteItem = async (_id: string, index: number) => {
@@ -506,6 +549,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                     suffix={<SearchOutlined />}
                     value={titleFilter}
                     placeholder="Type to search by title"
+                    onPressEnter={fetch}
                   />
                 </Col>
                 <Col lg={4} xs={12}>
@@ -585,6 +629,21 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                     }
                     placeholder="Select an index"
                   />
+                </Col>
+                <Col lg={4} xs={12}>
+                  <Typography.Title level={5}>Creator</Typography.Title>
+                  <Select
+                    placeholder="Select a creator"
+                    disabled={!creators.length}
+                    onChange={setCreatorFilter}
+                    style={{ width: '100%' }}
+                  >
+                    {creators.map((curr: any) => (
+                      <Select.Option key={curr.id} value={curr.firstName}>
+                        {curr.firstName}
+                      </Select.Option>
+                    ))}
+                  </Select>
                 </Col>
               </Row>
             </Col>

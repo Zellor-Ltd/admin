@@ -76,7 +76,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
       language = [],
       socialPlatform = [],
       category = [],
-      videoType = [],
+      linkType = [],
     },
   } = useSelector((state: any) => state.settings);
   const [feedForm] = Form.useForm();
@@ -101,6 +101,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
   const { doFetch, doRequest } = useRequest({ setLoading });
   const [includeVideo, setIncludeVideo] = useState<boolean>(false);
   const [linkcreator, setLinkcreator] = useState<string>('');
+  const [selectedLinkType, setSelectedLinkType] = useState<string>('');
   const [selectedSocialPlatform, setSelectedSocialPlatform] =
     useState<string>('');
   const [links, setLinks] = useState<any[]>([]);
@@ -369,6 +370,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
       includeVideo: includeVideo,
       socialPlatform: selectedSocialPlatform,
       segment: segment,
+      linkType: selectedLinkType,
     });
     setLinks(results);
   };
@@ -606,7 +608,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
               </Col>
               <Col lg={12} xs={24}>
                 <Form.Item
-                  name="videoType"
+                  name="linkType"
                   label="Video Type"
                   rules={[
                     { required: true, message: `Video Type is required.` },
@@ -615,9 +617,9 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                   <Select
                     mode="multiple"
                     placeholder="Please select a Video Type"
-                    disabled={!videoType.length}
+                    disabled={!linkType.length}
                   >
-                    {videoType.map((type: any) => (
+                    {linkType.map((type: any) => (
                       <Select.Option
                         key={type.value}
                         value={type.value}
@@ -944,6 +946,21 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                   max={100}
                   onChange={setSegment}
                 />
+              </Col>
+              <Col span={4}>
+                <Typography.Title level={5}>Link Type</Typography.Title>
+                <Select
+                  disabled={!linkType.length}
+                  style={{ width: '100%' }}
+                  onSelect={setSelectedLinkType}
+                  value={selectedLinkType}
+                >
+                  {linkType.map((curr: any) => (
+                    <Select.Option key={curr.value} value={curr.value}>
+                      {curr.value}
+                    </Select.Option>
+                  ))}
+                </Select>
               </Col>
               <Col>
                 <Typography.Title level={5}>Include Video</Typography.Title>
