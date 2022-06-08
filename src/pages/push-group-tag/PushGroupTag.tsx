@@ -1,6 +1,7 @@
 import {
   Button,
   Col,
+  Collapse,
   Input,
   PageHeader,
   Row,
@@ -21,6 +22,8 @@ import scrollIntoView from 'scroll-into-view';
 import Step2 from './Step2';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { SearchOutlined } from '@ant-design/icons';
+
+const { Panel } = Collapse;
 
 const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -203,6 +206,41 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
     setDetails(false);
   };
 
+  const Filters = () => {
+    return (
+      <>
+        <Col lg={16} xs={24}>
+          <Row gutter={[8, 8]}>
+            <Col lg={6} xs={24}>
+              <Typography.Title level={5}>Search</Typography.Title>
+              <Input
+                placeholder="Search by Tag Name"
+                suffix={<SearchOutlined />}
+                value={tagFilter}
+                onChange={event => {
+                  setTagFilter(event.target.value);
+                }}
+              />
+            </Col>
+            <Col lg={6} xs={24} className={isMobile ? 'mb-05' : ''}>
+              <Typography.Title level={5}>Master Brand</Typography.Title>
+              <SimpleSelect
+                data={brands}
+                onChange={(_, brand) => setBrandFilter(brand?.brandName ?? '')}
+                style={{ width: '100%' }}
+                optionsMapping={optionsMapping}
+                placeholder={'Select a Master Brand'}
+                loading={isFetchingBrands}
+                disabled={isFetchingBrands}
+                allowClear={true}
+              ></SimpleSelect>
+            </Col>
+          </Row>
+        </Col>
+      </>
+    );
+  };
+
   return (
     <>
       {!details && (
@@ -217,36 +255,16 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
             justify="space-between"
             className="mb-1 sticky-filter-box"
           >
-            <Col lg={16} xs={24}>
-              <Row gutter={[8, 8]}>
-                <Col lg={6} xs={24}>
-                  <Typography.Title level={5}>Search</Typography.Title>
-                  <Input
-                    placeholder="Search by Tag Name"
-                    suffix={<SearchOutlined />}
-                    value={tagFilter}
-                    onChange={event => {
-                      setTagFilter(event.target.value);
-                    }}
-                  />
-                </Col>
-                <Col lg={6} xs={24}>
-                  <Typography.Title level={5}>Master Brand</Typography.Title>
-                  <SimpleSelect
-                    data={brands}
-                    onChange={(_, brand) =>
-                      setBrandFilter(brand?.brandName ?? '')
-                    }
-                    style={{ width: '100%' }}
-                    optionsMapping={optionsMapping}
-                    placeholder={'Select a Master Brand'}
-                    loading={isFetchingBrands}
-                    disabled={isFetchingBrands}
-                    allowClear={true}
-                  ></SimpleSelect>
-                </Col>
-              </Row>
-            </Col>
+            {isMobile && (
+              <Col span={24}>
+                <Collapse ghost className="custom-collapse mt-05">
+                  <Panel header="Filter Search" key="1">
+                    <Filters />
+                  </Panel>
+                </Collapse>
+              </Col>
+            )}
+            {!isMobile && <Filters />}
             <Col xs={24}>
               <Row justify="end">
                 <Col>

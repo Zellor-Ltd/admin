@@ -48,8 +48,7 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
       <Header className="header">
         <h2 style={{ width: '65%' }}>
           <Link to="/">
-            {' '}
-            {appName}{' '}
+            {appName}
             <small
               style={isMobile ? { display: 'none' } : { fontSize: 10 }}
             >{`${process.env.REACT_APP_BUILD_DATE || ''} ${

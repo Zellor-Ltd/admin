@@ -1,6 +1,7 @@
 import {
   AutoComplete,
   Col,
+  Collapse,
   PageHeader,
   Row,
   Spin,
@@ -26,6 +27,8 @@ import WalletEdit from './WalletEdit';
 import scrollIntoView from 'scroll-into-view';
 import WalletDetail from './WalletDetail';
 import InfiniteScroll from 'react-infinite-scroll-component';
+
+const { Panel } = Collapse;
 
 const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -261,6 +264,64 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
     setSelectedBrand(brand);
   };
 
+  const Filters = () => {
+    return (
+      <>
+        <Col span={24}>
+          <Row gutter={8} align="bottom" className={isMobile ? 'mb-05' : ''}>
+            <Col lg={4} xs={24}>
+              <Typography.Title level={5}>Fan Filter</Typography.Title>
+              <AutoComplete
+                style={{ width: '100%' }}
+                options={options}
+                onSelect={onChangeFan}
+                onSearch={onSearch}
+                placeholder="Type to search by E-mail"
+              />
+            </Col>
+            {selectedFan && (
+              <Col lg={4} xs={24} className={isMobile ? 'mt-05' : ''}>
+                <Typography.Title level={5}>Master Brand</Typography.Title>
+                <SimpleSelect
+                  data={brands}
+                  onChange={(_, brand) => onChangeBrand(brand)}
+                  style={{ width: '100%' }}
+                  selectedOption={selectedBrand?.brandName}
+                  optionsMapping={optionsMapping}
+                  placeholder={'Select a Master Brand'}
+                  loading={isFetchingBrands}
+                  disabled={isFetchingBrands}
+                  allowClear={true}
+                ></SimpleSelect>
+              </Col>
+            )}
+            <Col
+              lg={6}
+              xs={24}
+              style={
+                isMobile
+                  ? { position: 'relative', top: '24px', padding: 0 }
+                  : { position: 'relative', top: '24px' }
+              }
+              className={isMobile ? 'mb-05' : ''}
+            >
+              <WalletEdit
+                disabled={!selectedFan || !selectedBrand}
+                fanId={selectedFan?.id}
+                brandId={selectedBrand?.id}
+                wallet={filteredWallets.find(
+                  item => item.brandId === selectedBrand?.id
+                )}
+                onSave={onSaveWallet}
+                onReset={onResetWallet}
+              />
+            </Col>
+          </Row>
+        </Col>
+      </>
+    );
+  };
+
   return (
     <>
       {!details && (
@@ -275,56 +336,16 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
             justify="space-between"
             className="sticky-filter-box mb-1"
           >
-            <Col span={24}>
-              <Row gutter={8} align="bottom">
-                <Col lg={4} xs={24}>
-                  <Typography.Title level={5}>Fan Filter</Typography.Title>
-                  <AutoComplete
-                    style={{ width: '100%' }}
-                    options={options}
-                    onSelect={onChangeFan}
-                    onSearch={onSearch}
-                    placeholder="Type to search by E-mail"
-                  />
-                </Col>
-                {selectedFan && (
-                  <Col lg={4} xs={24} className={isMobile ? 'mt-05' : ''}>
-                    <Typography.Title level={5}>Master Brand</Typography.Title>
-                    <SimpleSelect
-                      data={brands}
-                      onChange={(_, brand) => onChangeBrand(brand)}
-                      style={{ width: '100%' }}
-                      selectedOption={selectedBrand?.brandName}
-                      optionsMapping={optionsMapping}
-                      placeholder={'Select a Master Brand'}
-                      loading={isFetchingBrands}
-                      disabled={isFetchingBrands}
-                      allowClear={true}
-                    ></SimpleSelect>
-                  </Col>
-                )}
-                <Col
-                  lg={6}
-                  xs={24}
-                  style={
-                    isMobile
-                      ? { position: 'relative', top: '24px', padding: 0 }
-                      : { position: 'relative', top: '24px' }
-                  }
-                >
-                  <WalletEdit
-                    disabled={!selectedFan || !selectedBrand}
-                    fanId={selectedFan?.id}
-                    brandId={selectedBrand?.id}
-                    wallet={filteredWallets.find(
-                      item => item.brandId === selectedBrand?.id
-                    )}
-                    onSave={onSaveWallet}
-                    onReset={onResetWallet}
-                  />
-                </Col>
-              </Row>
-            </Col>
+            {isMobile && (
+              <Col span={24}>
+                <Collapse ghost className="custom-collapse mt-05">
+                  <Panel header="Filter Search" key="1">
+                    <Filters />
+                  </Panel>
+                </Collapse>
+              </Col>
+            )}
+            {!isMobile && <Filters />}
           </Row>
           <InfiniteScroll
             dataLength={filteredWallets.length}

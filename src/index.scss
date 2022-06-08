@@ -31,6 +31,10 @@
   margin-top: 1rem;
 }
 
+.mt-15 {
+  margin-top: 1.5rem;
+}
+
 .mt-n1 {
   margin-top: -1rem;
 }
@@ -65,6 +69,10 @@
 
 .mb-1 {
   margin-bottom: 1rem;
+}
+
+.mb-15 {
+  margin-bottom: 1.5rem;
 }
 
 .mb-2 {
@@ -193,6 +201,7 @@
 /* width */
 ::-webkit-scrollbar {
   width: 3.4px;
+  z-index: 2;
 }
 
 /* Handle */
@@ -213,6 +222,27 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.custom-collapse {
+  border: 1px solid transparent;
+  border-radius: 2px;
+  border-color: #d9d9d9;
+  background: #fff;
+}
+
+.sider-arrow {
+  background: #fafafa;
+  z-index: 1;
+  color: rgba(0, 0, 0, 0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  bottom: -1px;
+  left: 0px;
+  width: 52px;
+  height: 40px;
 }
 
 @media (max-width: 991px) {

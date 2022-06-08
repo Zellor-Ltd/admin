@@ -3,6 +3,7 @@ import {
   AutoComplete,
   Button,
   Col,
+  Collapse,
   DatePicker,
   Input,
   message,
@@ -37,6 +38,8 @@ import FanDetail from 'pages/fans/FanDetail';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useMount } from 'react-use';
 import { useRequest } from 'hooks/useRequest';
+
+const { Panel } = Collapse;
 
 const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   const [orderUpdateList, setOrderUpdateList] = useState<boolean[]>([]);
@@ -504,6 +507,41 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     setDetails(false);
   };
 
+  const Filters = () => {
+    return (
+      <>
+        <Col lg={16} xs={24}>
+          <Row gutter={[8, 8]}>
+            <Col lg={6} xs={24}>
+              <Typography.Title level={5}>Master Brand</Typography.Title>
+              <SimpleSelect
+                data={brands}
+                onChange={id => onChangeBrand(id)}
+                style={{ width: '100%' }}
+                optionsMapping={optionsMapping}
+                placeholder={'Select a Master Brand'}
+                loading={isFetchingBrands}
+                disabled={isFetchingBrands}
+                allowClear={true}
+              ></SimpleSelect>
+            </Col>
+            <Col lg={6} xs={24}>
+              <Typography.Title level={5}>Fan Filter</Typography.Title>
+              <AutoComplete
+                style={{ width: '100%' }}
+                options={options}
+                onSelect={onChangeFan}
+                onSearch={onSearch}
+                placeholder="Type to search by E-mail"
+                className="mb-05"
+              />
+            </Col>
+          </Row>
+        </Col>
+      </>
+    );
+  };
+
   return (
     <>
       {!details && (
@@ -519,35 +557,18 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
             className="mb-1 sticky-filter-box"
             gutter={8}
           >
-            <Col lg={16} xs={24}>
-              <Row gutter={[8, 8]}>
-                <Col lg={6} xs={24}>
-                  <Typography.Title level={5}>Master Brand</Typography.Title>
-                  <SimpleSelect
-                    data={brands}
-                    onChange={id => onChangeBrand(id)}
-                    style={{ width: '100%' }}
-                    optionsMapping={optionsMapping}
-                    placeholder={'Select a Master Brand'}
-                    loading={isFetchingBrands}
-                    disabled={isFetchingBrands}
-                    allowClear={true}
-                  ></SimpleSelect>
-                </Col>
-                <Col lg={6} xs={24}>
-                  <Typography.Title level={5}>Fan Filter</Typography.Title>
-                  <AutoComplete
-                    style={{ width: '100%' }}
-                    options={options}
-                    onSelect={onChangeFan}
-                    onSearch={onSearch}
-                    placeholder="Type to search by E-mail"
-                  />
-                </Col>
-              </Row>
-            </Col>
+            {isMobile && (
+              <Col span={24}>
+                <Collapse ghost className="custom-collapse mt-05">
+                  <Panel header="Filter Search" key="1">
+                    <Filters />
+                  </Panel>
+                </Collapse>
+              </Col>
+            )}
+            {!isMobile && <Filters />}
             <Col lg={24} xs={24}>
-              <Row justify="end" className={isMobile ? 'mt-2' : ''}>
+              <Row justify="end" className={isMobile ? 'mt-15' : ''}>
                 <Col>
                   <Button type="primary" onClick={fetch}>
                     Search
