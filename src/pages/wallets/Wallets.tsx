@@ -34,7 +34,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
   const [isFetchingBrands, setIsFetchingBrands] = useState(false);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [selectedFan, setSelectedFan] = useState<Fan | undefined>();
-  const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
+  const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [details, setDetails] = useState<boolean>(false);
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);

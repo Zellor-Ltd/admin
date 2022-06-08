@@ -38,7 +38,7 @@ const tagColorByStatus: any = {
 
 const Creators: React.FC<RouteComponentProps> = ({ location }) => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
+  const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [details, setDetails] = useState<boolean>(false);
   const [currentCreator, setCurrentCreator] = useState<Creator>();
   const { doFetch } = useRequest({ setLoading });

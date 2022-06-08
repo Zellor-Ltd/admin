@@ -22,7 +22,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 const FanGroups: React.FC<RouteComponentProps> = props => {
   const [loading, setLoading] = useState<boolean>(false);
   const { doFetch } = useRequest({ setLoading });
-  const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
+  const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [details, setDetails] = useState<boolean>(false);
   const [currentFanGroup, setCurrentFanGroup] = useState<FanGroup>();
   const [page, setPage] = useState<number>(0);

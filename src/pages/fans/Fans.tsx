@@ -43,7 +43,7 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
   const [fanAPITest, setFanAPITest] = useState<Fan | null>(null);
   const [fanFeedModal, setFanFeedModal] = useState<Fan | null>(null);
-  const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
+  const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [details, setDetails] = useState<boolean>(false);
   const [currentFan, setCurrentFan] = useState<Fan>();
   const { doFetch } = useRequest({ setLoading });

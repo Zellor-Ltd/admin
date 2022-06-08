@@ -28,7 +28,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const { doFetch, doRequest } = useRequest({ setLoading });
-  const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
+  const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [details, setDetails] = useState<boolean>(false);
   const [currentProductBrand, setCurrentProductBrand] =
     useState<ProductBrand>();

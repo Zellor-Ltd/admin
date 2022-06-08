@@ -17,7 +17,7 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
   const { doFetch, doRequest } = useRequest({ setLoading });
   const [banners, setBanners] = useState<Banner[]>([]);
   const [content, setContent] = useState<Banner[]>([]);
-  const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
+  const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [details, setDetails] = useState<boolean>(false);
   const [currentBanner, setCurrentBanner] = useState<Banner>();
   const [page, setPage] = useState<number>(0);

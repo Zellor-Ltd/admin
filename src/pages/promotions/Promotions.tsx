@@ -35,7 +35,7 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
   const [tableloading, setTableLoading] = useState<boolean>(false);
   const { doRequest, doFetch } = useRequest({ setLoading: setTableLoading });
   const [promoStatusList, setPromoStatusList] = useState<any>();
-  const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
+  const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [details, setDetails] = useState<boolean>(false);
   const [currentPromotion, setCurrentPromotion] = useState<Promotion>();
   const [page, setPage] = useState<number>(0);
