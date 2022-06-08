@@ -59,7 +59,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
   const { doRequest } = useRequest({ setLoading });
   const [form] = Form.useForm();
   const [vaultForm] = Form.useForm();
-  const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
+  const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [internalCheckout, setInternalCheckout] = useState<boolean>(
     brand?.checkoutType === 'internal'
   );
