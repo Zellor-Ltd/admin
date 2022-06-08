@@ -98,6 +98,9 @@ const Settings: React.FC = () => {
               <TabPane tab="Video Type" key="videoType">
                 <ItemList name="videoType" isMobile={isMobile} />
               </TabPane>
+              <TabPane tab="Link Type" key="linkType">
+                <ItemList name="linkType" isMobile={isMobile} />
+              </TabPane>
             </Tabs>
             <Row gutter={8} justify="end">
               <Col>

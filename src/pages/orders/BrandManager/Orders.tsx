@@ -43,7 +43,7 @@ const { Panel } = Collapse;
 
 const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   const [orderUpdateList, setOrderUpdateList] = useState<boolean[]>([]);
-  const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
+  const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [currentFan, setCurrentFan] = useState<Fan>();
   const [details, setDetails] = useState<boolean>(false);
   const [fans, setFans] = useState<Fan[]>([]);

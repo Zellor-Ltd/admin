@@ -72,7 +72,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const [brands, setBrands] = useState<Brand[]>([]);
   const [isFetchingProductBrands, setIsFetchingProductBrands] = useState(false);
   const [productBrands, setProductBrands] = useState([]);
-  const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
+  const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [loaded, setLoaded] = useState<boolean>(false);
   const [feedItems, setFeedItems] = useState<any[]>([]);
   const { doFetch } = useRequest({ setLoading });
@@ -195,7 +195,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     {
       title: 'Segments',
       dataIndex: 'package',
-      render: (pack: Array<any> = []) => <AntTag>{pack?.length ?? '0'}</AntTag>,
+      render: (pack: Array<any> = []) => <AntTag>{pack?.length ?? 0}</AntTag>,
       width: '5%',
       align: 'center',
     },

@@ -32,7 +32,7 @@ const tagColorByPermission: any = {
 const Guests: React.FC<RouteComponentProps> = ({ location }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
-  const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
+  const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [details, setDetails] = useState<boolean>(false);
   const [currentGuest, setCurrentGuest] = useState<Fan>();
   const { doFetch } = useRequest({ setLoading });

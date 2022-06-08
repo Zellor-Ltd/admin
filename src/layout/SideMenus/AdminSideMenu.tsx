@@ -63,11 +63,11 @@ const AdminSideMenu = isMobile => {
 
   useEffect(() => {
     for (let i = 13; i--; i > 0) {
-      if (
-        isInViewport(
-          document.querySelector(`.scrollable-row-${i}`) as HTMLElement
-        )
-      ) {
+      const menuItem = document.querySelector(
+        `.scrollable-row-${i}`
+      ) as HTMLElement;
+      if (menuItem && isInViewport(menuItem)) {
+        //do what???
       }
     }
   });

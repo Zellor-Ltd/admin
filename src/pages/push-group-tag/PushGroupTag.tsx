@@ -31,7 +31,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
   const [isFetchingBrands, setIsFetchingBrands] = useState(false);
   const [brands, setBrands] = useState<Brand[]>([]);
-  const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
+  const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [details, setDetails] = useState<boolean>(false);
   const [currentTags, setCurrentTags] = useState<Tag[]>([]);
   const [page, setPage] = useState<number>(0);

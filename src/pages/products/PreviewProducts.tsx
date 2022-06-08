@@ -80,7 +80,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
   const [loaded, setLoaded] = useState<boolean>(false);
   const [details, setDetails] = useState<boolean>(false);
   const [currentProduct, setCurrentProduct] = useState<Product>();
-  const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
+  const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
 
   const { usePageFilter } = useContext(AppContext);
   const [searchFilter, setSearchFilter] = usePageFilter<string>('search');

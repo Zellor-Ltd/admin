@@ -18,7 +18,7 @@ import scrollIntoView from 'scroll-into-view';
 import TagDetail from './TagDetail';
 
 const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
-  const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
+  const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [details, setDetails] = useState<boolean>(false);
   const [currentTag, setCurrentTag] = useState<Tag>();
   const { usePageFilter } = useContext(AppContext);

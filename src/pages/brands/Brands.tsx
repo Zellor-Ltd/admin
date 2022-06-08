@@ -42,7 +42,7 @@ const tagColorByStatus: any = {
 
 const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [details, setDetails] = useState<boolean>(false);
-  const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
+  const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [loading, setLoading] = useState<boolean>(false);
   const { doFetch } = useRequest({ setLoading });
   const [brands, setBrands] = useState<Brand[]>([]);

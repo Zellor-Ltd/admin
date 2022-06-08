@@ -32,7 +32,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
   const [tableloading, setTableLoading] = useState<boolean>(false);
   const { doRequest, doFetch } = useRequest({ setLoading: setTableLoading });
-  const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
+  const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [details, setDetails] = useState<boolean>(false);
   const [currentMasthead, setCurrentMasthead] = useState<Masthead>();
   const [page, setPage] = useState<number>(0);
