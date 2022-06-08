@@ -64,8 +64,10 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
   useEffect(() => {
     let mounted = true;
 
-    const getCreatores = async () => {
-      const response: any = await fetchCreators();
+    const getCreators = async () => {
+      const response: any = await fetchCreators({
+        query: '',
+      });
       setCreators(response.results);
     };
     const getCategories = async () => {
@@ -80,7 +82,7 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
       const response: any = await fetchCurrencies();
       setCurrencies(response.results);
     };
-    getCreatores();
+    getCreators();
     getCategories();
     getServersList();
     getCurrencies();
@@ -276,8 +278,20 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
                 </Form.Item>
               </Col>
               <Col lg={8} xs={24}>
-                <span>Profile</span>
-                <span className="info-block mt-05 mb-1">{fan.profile}</span>
+                <Form.Item name="profile" label="Profile">
+                  <Select placeholder="Please select a profile">
+                    <Select.Option key="Fan" value="Fan" label="Fan">
+                      Fan
+                    </Select.Option>
+                    <Select.Option
+                      key="Creator"
+                      value="Creator"
+                      label="Creator"
+                    >
+                      Creator
+                    </Select.Option>
+                  </Select>
+                </Form.Item>
               </Col>
               <Col lg={8} xs={24}>
                 <Form.Item

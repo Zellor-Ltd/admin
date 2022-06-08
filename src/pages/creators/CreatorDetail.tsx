@@ -30,6 +30,7 @@ import { Creator } from 'interfaces/Creator';
 import { Currency } from 'interfaces/Currency';
 import { ServerAlias } from 'interfaces/ServerAlias';
 import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import {
   fetchCurrencies,
   fetchServersList,
@@ -53,6 +54,9 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
   onSave,
   onCancel,
 }) => {
+  const {
+    settings: { linkType = [] },
+  } = useSelector((state: any) => state.settings);
   const [loading, setLoading] = useState(false);
   const [ageRange, setAgeRange] = useState<[number, number]>([12, 100]);
   const [serversList, setServersList] = useState<ServerAlias[]>([]);
@@ -85,7 +89,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
     };
 
     getCurrencies();
-  });
+  }, []);
 
   useEffect(() => {
     const getServersList = async () => {
@@ -145,7 +149,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
             <Row gutter={8}>
               <Col lg={24} xs={24}>
                 <Row gutter={24}>
-                  <Col>
+                  <Col lg={6} xs={24}>
                     <Form.Item name="status" label="Status">
                       <Radio.Group buttonStyle="solid">
                         <Radio.Button value="live">Live</Radio.Button>
@@ -153,7 +157,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                       </Radio.Group>
                     </Form.Item>
                   </Col>
-                  <Col>
+                  <Col lg={6} xs={24}>
                     <Form.Item name="approved" label="Approved">
                       <Radio.Group buttonStyle="solid">
                         <Radio.Button value="true">Approved</Radio.Button>
@@ -161,10 +165,20 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                       </Radio.Group>
                     </Form.Item>
                   </Col>
-                  <Col>
+                  <Col lg={6} xs={24}>
                     <Form.Item
                       name="displayInVideoFeed"
                       label="Display in Video Feed"
+                      valuePropName="checked"
+                      initialValue={true}
+                    >
+                      <Switch />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={6} xs={24}>
+                    <Form.Item
+                      name="displayInCreatorGrid"
+                      label="Display in Creator Grid"
                       valuePropName="checked"
                       initialValue={true}
                     >
@@ -204,41 +218,6 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
               </Col>
               <Col lg={12} xs={24}>
                 <Form.Item
-                  label="Default Currency"
-                  name="currencyCode"
-                  rules={[
-                    {
-                      required: true,
-                      message: 'Currency code is required.',
-                    },
-                  ]}
-                >
-                  <Select defaultValue="EUR" disabled={!currencies.length}>
-                    {currencies.map(currency => (
-                      <Select.Option key={currency.code} value={currency.code}>
-                        {currency.code}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </Form.Item>
-              </Col>
-              <Col lg={12} xs={24}>
-                <Form.Item
-                  label="Birthday"
-                  name="birthday"
-                  getValueProps={formatMoment}
-                  rules={[
-                    {
-                      required: true,
-                      message: 'Birthday is required.',
-                    },
-                  ]}
-                >
-                  <DatePicker format="DD/MM/YYYY" />
-                </Form.Item>
-              </Col>
-              <Col lg={12} xs={24}>
-                <Form.Item
                   name="gender"
                   label="Gender"
                   rules={[
@@ -273,25 +252,6 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                   <Input showCount maxLength={200} />
                 </Form.Item>
               </Col>
-              <Col lg={12} xs={24}>
-                <Form.Item name={'serverAlias'} label="Server Alias">
-                  <Select>
-                    {serversList.map(serverAlias => (
-                      <Select.Option
-                        key={serverAlias.alias}
-                        value={serverAlias.alias}
-                      >
-                        {serverAlias.name}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </Form.Item>
-              </Col>
-              <Col lg={12} xs={24}>
-                <Form.Item label="Agreed Percentage" name="agreedPercentage">
-                  <InputNumber decimalSeparator="." />
-                </Form.Item>
-              </Col>
             </Row>
             <Row gutter={8}>
               <Col lg={4} xs={24}>
@@ -319,6 +279,117 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                     formProp="thumbnail"
                     form={form}
                   />
+                </Form.Item>
+              </Col>
+            </Row>
+          </Tabs.TabPane>
+          <Tabs.TabPane
+            forceRender
+            tab="Extended Details"
+            key="Extended Details"
+          >
+            <Row gutter={8}>
+              <Col lg={12} xs={24}>
+                <Form.Item
+                  label="Default Currency"
+                  name="currencyCode"
+                  rules={[
+                    {
+                      required: false, //ToDo: review
+                      message: 'Currency code is required.',
+                    },
+                  ]}
+                >
+                  <Select defaultValue="EUR" disabled={!currencies.length}>
+                    {currencies.map(currency => (
+                      <Select.Option key={currency.code} value={currency.code}>
+                        {currency.code}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col lg={12} xs={24}>
+                <Form.Item
+                  label="Birthday"
+                  name="birthday"
+                  getValueProps={formatMoment}
+                  rules={[
+                    {
+                      required: true,
+                      message: 'Birthday is required.',
+                    },
+                  ]}
+                >
+                  <DatePicker format="DD/MM/YYYY" />
+                </Form.Item>
+              </Col>
+              <Col lg={12} xs={24}>
+                <Form.Item name={'serverAlias'} label="Server Alias">
+                  <Select>
+                    {serversList.map(serverAlias => (
+                      <Select.Option
+                        key={serverAlias.alias}
+                        value={serverAlias.alias}
+                      >
+                        {serverAlias.name}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col lg={12} xs={24}>
+                <Form.Item label="Commission %" name="comissionPercentage">
+                  <InputNumber decimalSeparator="." />
+                </Form.Item>
+              </Col>
+              <Col lg={12} xs={24}>
+                <Form.Item name="linkType" label="Link Type">
+                  <Select disabled={!linkType.length}>
+                    {linkType.map(linkType => (
+                      <Select.Option
+                        key={linkType.value}
+                        value={linkType.value}
+                      >
+                        {linkType.name}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col lg={12} xs={0}></Col>
+              <Col lg={12} xs={24}>
+                <Form.Item label="Coupon Code" name="couponCode">
+                  <Input />
+                </Form.Item>
+              </Col>
+              <Col lg={12} xs={24}>
+                <Form.Item label="Discount %" name="discountPercentage">
+                  <InputNumber decimalSeparator="." />
+                </Form.Item>
+              </Col>
+            </Row>
+          </Tabs.TabPane>
+          <Tabs.TabPane forceRender tab="Address" key="Address">
+            <Row gutter={8}>
+              <Col lg={12} xs={24}>
+                <Form.Item label="Address" name="line1">
+                  <Input />
+                </Form.Item>
+              </Col>
+              <Col lg={12} xs={24}>
+                <Form.Item label="City" name="city">
+                  <Input />
+                </Form.Item>
+              </Col>
+              <Col lg={12} xs={24}>
+                <Form.Item label="Country" name="country">
+                  <Input />
+                </Form.Item>
+              </Col>
+              <Col lg={12} xs={24}>
+                <Form.Item label="Postal Code" name="postalCode">
+                  <InputNumber />
                 </Form.Item>
               </Col>
             </Row>

@@ -39,7 +39,7 @@ import { useMount } from 'react-use';
 
 const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   const [orderUpdateList, setOrderUpdateList] = useState<boolean[]>([]);
-  const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
+  const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [currentFan, setCurrentFan] = useState<Fan>();
   const [details, setDetails] = useState<boolean>(false);
   const [fans, setFans] = useState<Fan[]>([]);
@@ -279,14 +279,16 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     },
     {
       title: 'User',
-      dataIndex: 'userid',
+      dataIndex: 'customerEmail',
       width: '10%',
-      align: 'left',
-      ...getColumnSearchProps('userid'),
+      align: 'center',
+      ...getColumnSearchProps('customerEmail'),
+      render: (value: string) => `${value}`,
       sorter: (a, b): any => {
-        if (a.userid && b.userid) return a.userid.localeCompare(b.userid);
-        else if (a.userid) return -1;
-        else if (b.userid) return 1;
+        if (a.customerEmail && b.customerEmail)
+          return a.customerEmail.localeCompare(b.customerEmail);
+        else if (a.customerEmail) return -1;
+        else if (b.customerEmail) return 1;
         else return 0;
       },
     },
@@ -304,11 +306,11 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
     {
-      title: 'Amount / 100',
+      title: 'Amount',
       dataIndex: 'amount',
       width: '5%',
       align: 'center',
-      render: (value: number) => `${value / 100}x`,
+      render: (value: number) => `${value / 100}`,
       sorter: (a, b): any => {
         if (a.amount && b.amount) return a.amount - b.amount;
         else if (a.amount) return -1;

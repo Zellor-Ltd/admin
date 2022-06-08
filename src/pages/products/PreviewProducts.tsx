@@ -38,7 +38,6 @@ import {
   deleteStagingProduct,
   fetchBrands,
   fetchProductBrands,
-  fetchProducts,
   fetchStagingProducts,
   saveStagingProduct,
   transferStageProduct,
@@ -47,7 +46,6 @@ import ProductExpandedRow from './ProductExpandedRow';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
 import './Products.scss';
 import { ProductCategory } from 'interfaces/Category';
-import { useSelector } from 'react-redux';
 import { SearchFilterDebounce } from 'components/SearchFilterDebounce';
 import { AppContext } from 'contexts/AppContext';
 import { ProductBrand } from 'interfaces/ProductBrand';
@@ -80,7 +78,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
   const [loaded, setLoaded] = useState<boolean>(false);
   const [details, setDetails] = useState<boolean>(false);
   const [currentProduct, setCurrentProduct] = useState<Product>();
-  const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
+  const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
 
   const { usePageFilter } = useContext(AppContext);
   const [searchFilter, setSearchFilter] = usePageFilter<string>('search');
@@ -118,10 +116,6 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
     label: 'brandName',
     value: 'id',
   };
-
-  const {
-    settings: { currency = [] },
-  } = useSelector((state: any) => state.settings);
 
   const productSuperCategoryOptionsMapping: SelectOption = {
     key: 'id',
@@ -363,7 +357,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
     setViewName(viewName ?? previousViewName.current);
   };
 
-  const fetchData = async searchButton => {
+  const updateDisplayedArray = async searchButton => {
     if (!products.length) return;
     const { results } = await _fetchStagingProducts(searchButton);
     setProducts(prev => [...prev.concat(results)]);
@@ -645,11 +639,6 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
     setProductBrandFilter(_selectedBrand);
   };
 
-  const handleEditProducts = async () => {
-    await fetchProducts({});
-    setSelectedRowKeys([]);
-  };
-
   const editProduct = (
     product: Product,
     productIndex: number,
@@ -715,7 +704,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
             onEditProduct={(product, productIndex) =>
               editProduct(product, productIndex, 'alternate')
             }
-            onNextPage={() => fetchData(false)}
+            onNextPage={() => updateDisplayedArray(false)}
             page={page}
             eof={eof}
           ></AlternatePreviewProducts>
@@ -726,7 +715,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
             <>
               <InfiniteScroll
                 dataLength={products.length}
-                next={() => fetchData(false)}
+                next={() => updateDisplayedArray(false)}
                 hasMore={!eof}
                 loader={
                   page !== 0 && (

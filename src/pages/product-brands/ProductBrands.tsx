@@ -28,7 +28,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const { doFetch, doRequest } = useRequest({ setLoading });
-  const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
+  const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [details, setDetails] = useState<boolean>(false);
   const [currentProductBrand, setCurrentProductBrand] =
     useState<ProductBrand>();
@@ -37,6 +37,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
   const [filter, setFilter] = useState<string>('');
+  const [content, setContent] = useState<ProductBrand[]>([]);
 
   useEffect(() => {
     getResources();
@@ -49,15 +50,15 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
 
   const getProductBrands = async () => {
     const { results } = await doFetch(fetchProductBrands);
-    setProductBrands(results);
+    setContent(results);
     setRefreshing(true);
   };
 
-  const fetchData = () => {
-    if (!productBrands.length) return;
+  const updateDisplayedArray = () => {
+    if (!content.length) return;
 
     const pageToUse = refreshing ? 0 : page;
-    const results = productBrands.slice(pageToUse * 10, pageToUse * 10 + 10);
+    const results = content.slice(pageToUse * 10, pageToUse * 10 + 10);
 
     setPage(pageToUse + 1);
     setProductBrands(prev => [...prev.concat(results)]);
@@ -69,7 +70,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
     if (refreshing) {
       setProductBrands([]);
       setEof(false);
-      fetchData();
+      updateDisplayedArray();
       setRefreshing(false);
     }
   }, [refreshing]);
@@ -84,7 +85,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
 
       if (search(productBrands).length < 10) setEof(true);
     }
-  }, [details, productBrands]);
+  }, [details]);
 
   const columns: ColumnsType<ProductBrand> = [
     {
@@ -291,7 +292,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
           </Row>
           <InfiniteScroll
             dataLength={productBrands.length}
-            next={fetchData}
+            next={updateDisplayedArray}
             hasMore={!eof}
             loader={
               page !== 0 && (

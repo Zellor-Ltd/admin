@@ -5,6 +5,7 @@ import {
   Input,
   InputNumber,
   message,
+  Modal,
   PageHeader,
   Row,
   Tabs,
@@ -31,6 +32,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
   const [form] = Form.useForm();
   const { doRequest } = useRequest({ setLoading });
   const [activeTabKey, setActiveTabKey] = React.useState('Details');
+  const [showModal, setShowModal] = useState<boolean>(false);
 
   const onFinish = async () => {
     try {
@@ -49,6 +51,16 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
 
   const changeTab = (activeKey: string) => {
     setActiveTabKey(activeKey);
+  };
+
+  const onConfirmPropagate = () => {
+    form.setFieldsValue({ propagationNeeded: true });
+    setShowModal(false);
+  };
+
+  const onCancelPropagate = () => {
+    form.setFieldsValue({ propagationNeeded: false });
+    setShowModal(false);
   };
 
   return (
@@ -135,9 +147,24 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                           <InputNumber
                             pattern="^(?:100|\d{1,2})(?:.\d{1,2})?$"
                             title="positive integers"
+                            value={productBrand?.creatorPercentage}
                             min={0}
                             max={100}
+                            onChange={() => setShowModal(true)}
                           />
+                          <Modal
+                            title="Apply to all products?"
+                            visible={showModal}
+                            onOk={onConfirmPropagate}
+                            onCancel={onCancelPropagate}
+                            okText="Ok"
+                            cancelText="Cancel"
+                          >
+                            <p>
+                              Would you like to apply this creator percentage to
+                              all {productBrand?.brandName} products?
+                            </p>
+                          </Modal>
                         </Form.Item>
                       </Col>
                     </Row>

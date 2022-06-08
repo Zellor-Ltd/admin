@@ -25,7 +25,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const { doFetch, doRequest } = useRequest({ setLoading });
-  const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
+  const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [details, setDetails] = useState<boolean>(false);
   const [currentDdTemplate, setCurrentDdTemplate] = useState<DdTemplate>();
   const [page, setPage] = useState<number>(0);
@@ -33,6 +33,7 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [ddTemplates, setDdTemplates] = useState<DdTemplate[]>([]);
   const [filter, setFilter] = useState<string>('');
+  const [content, setContent] = useState<DdTemplate[]>([]);
 
   useEffect(() => {
     getResources();
@@ -44,18 +45,18 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
 
   const getDdTemplates = async () => {
     const { results } = await doFetch(fetchDdTemplates);
-    setDdTemplates(results);
+    setContent(results);
     setRefreshing(true);
   };
 
-  const fetchData = () => {
-    if (!ddTemplates.length) {
+  const updateDisplayedArray = () => {
+    if (!content.length) {
       setEof(true);
       return;
     }
 
     const pageToUse = refreshing ? 0 : page;
-    const results = ddTemplates.slice(pageToUse * 10, pageToUse * 10 + 10);
+    const results = content.slice(pageToUse * 10, pageToUse * 10 + 10);
 
     setPage(pageToUse + 1);
     setDdTemplates(prev => [...prev.concat(results)]);
@@ -67,7 +68,7 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
     if (refreshing) {
       setDdTemplates([]);
       setEof(false);
-      fetchData();
+      updateDisplayedArray();
       setRefreshing(false);
     }
   }, [refreshing]);
@@ -257,7 +258,7 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
           </Row>
           <InfiniteScroll
             dataLength={ddTemplates.length}
-            next={fetchData}
+            next={updateDisplayedArray}
             hasMore={!eof}
             loader={
               page !== 0 && (

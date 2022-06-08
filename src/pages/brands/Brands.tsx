@@ -15,6 +15,7 @@ import {
   Popconfirm,
   Row,
   Spin,
+  Switch,
   Table,
   Tag,
   Typography,
@@ -41,17 +42,17 @@ const tagColorByStatus: any = {
 
 const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [details, setDetails] = useState<boolean>(false);
-  const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
+  const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [loading, setLoading] = useState<boolean>(false);
   const { doFetch } = useRequest({ setLoading });
   const [brands, setBrands] = useState<Brand[]>([]);
-  const [content, setContent] = useState<Brand[]>([]);
   const [filterText, setFilterText] = useState('');
   const [showModal, setShowModal] = useState<boolean>(false);
   const [currentBrand, setCurrentBrand] = useState<Brand>();
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [content, setContent] = useState<Brand[]>([]);
 
   useEffect(() => {
     fetch();
@@ -61,7 +62,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
     if (refreshing) {
       setBrands([]);
       setEof(false);
-      fetchData();
+      updateDisplayedArray();
       setRefreshing(false);
     }
   }, [refreshing]);
@@ -70,7 +71,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
     setRefreshing(true);
   }, [filterText]);
 
-  const fetchData = async () => {
+  const updateDisplayedArray = async () => {
     if (!content.length) return;
     const pageToUse = refreshing ? 0 : page;
     const results = content.slice(pageToUse * 10, pageToUse * 10 + 10);
@@ -204,10 +205,10 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
       align: 'center',
       render: (value: any, record: Brand) => (
         <>
-          <SimpleSwitch
-            toggled={!!record.paused}
-            handleSwitchChange={toggled =>
-              handleSwitchChange('paused', record, toggled)
+          <Switch
+            checked={!!record.paused}
+            onChange={() =>
+              handleSwitchChange('paused', record, !!record.paused)
             }
           />
           {showModal && (
@@ -394,7 +395,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
           </div>
           <InfiniteScroll
             dataLength={filterBrand().length}
-            next={fetchData}
+            next={updateDisplayedArray}
             hasMore={!eof}
             loader={
               page !== 0 && (

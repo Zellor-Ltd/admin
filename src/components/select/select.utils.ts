@@ -15,6 +15,12 @@ export const statusList = [
 
 export const videoTypeList = [
   {
+    value: 'Fan',
+  },
+  {
+    value: 'Creator',
+  },
+  {
     value: 'Feed',
   },
   {

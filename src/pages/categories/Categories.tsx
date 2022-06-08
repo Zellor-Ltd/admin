@@ -37,7 +37,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 
 const Categories: React.FC<RouteComponentProps> = ({ location }) => {
-  const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
+  const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [details, setDetails] = useState<boolean>(false);
   const [currentProductCategory, setCurrentProductCategory] =
     useState<ProductCategory>();
@@ -76,12 +76,12 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
     if (refreshing) {
       setCategories([]);
       setEof(false);
-      fetchData();
+      updateDisplayedArray();
       setRefreshing(false);
     }
   }, [refreshing]);
 
-  const fetchData = async () => {
+  const updateDisplayedArray = async () => {
     if (!content[selectedTab].length) return;
     const pageToUse = refreshing ? 0 : page;
     const results = content[selectedTab].slice(
@@ -247,7 +247,7 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
         ? record[dataIndex]
             .toString()
             .toLowerCase()
-            .includes(value.toLowerCase())
+            .includes(value?.toLowerCase())
         : '',
     onFilterDropdownVisibleChange: (visible: any) => {
       if (visible) {
@@ -423,7 +423,7 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
               <Tabs.TabPane tab={key} key={key}>
                 <InfiniteScroll
                   dataLength={categories.length}
-                  next={fetchData}
+                  next={updateDisplayedArray}
                   hasMore={!eof}
                   loader={
                     page !== 0 && (
