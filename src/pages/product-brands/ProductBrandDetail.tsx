@@ -139,16 +139,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                         </Form.Item>
                       </Col>
                       <Col lg={8} xs={8}>
-                        <Form.Item
-                          name="creatorPercentage"
-                          label="Creator %"
-                          rules={[
-                            {
-                              required: true,
-                              message: `Creator Percentage is required.`,
-                            },
-                          ]}
-                        >
+                        <Form.Item name="creatorPercentage" label="Creator %">
                           <InputNumber
                             pattern="^(?:100|\d{1,2})(?:.\d{1,2})?$"
                             title="positive integers"
