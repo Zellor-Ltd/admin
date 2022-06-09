@@ -639,6 +639,14 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
     setProductBrandFilter(_selectedBrand);
   };
 
+  const createProduct = (index: number) => {
+    setCurrentProduct(undefined);
+    setCurrentMasterBrand(undefined);
+    setCurrentProductBrand(undefined);
+    setLastViewedIndex(index);
+    setDetails(true);
+  };
+
   const editProduct = (
     product: Product,
     productIndex: number,
@@ -795,6 +803,9 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
               viewName === 'default' ? 'Default View' : 'Alternate View'
             }
             extra={[
+              <Button key="1" onClick={() => createProduct(products.length)}>
+                New Item
+              </Button>,
               <Button key="1" type="primary" onClick={switchView}>
                 Switch View
               </Button>,
