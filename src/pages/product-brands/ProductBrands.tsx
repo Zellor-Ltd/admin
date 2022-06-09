@@ -66,17 +66,22 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
       align: 'center',
     },
     {
-      title: 'External Code',
-      dataIndex: 'externalCode',
-      width: '10%',
-      align: 'center',
+      title: 'Name',
+      dataIndex: 'brandName',
+      width: '20%',
+      render: (value: string, record: ProductBrand, index: number) => (
+        <Link
+          to={location.pathname}
+          onClick={() => editProductBrand(index, record)}
+        >
+          {value}
+        </Link>
+      ),
       sorter: (a, b): any => {
-        if (a.externalCode && b.externalCode)
-          return a.externalCode !== b.externalCode
-            ? a.externalCode - b.externalCode
-            : 0;
-        else if (a.externalCode) return -1;
-        else if (b.externalCode) return 1;
+        if (a.brandName && b.brandName)
+          return a.brandName.localeCompare(b.brandName);
+        else if (a.brandName) return -1;
+        else if (b.brandName) return 1;
         else return 0;
       },
     },
@@ -131,22 +136,17 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
     {
-      title: 'Name',
-      dataIndex: 'brandName',
-      width: '20%',
-      render: (value: string, record: ProductBrand, index: number) => (
-        <Link
-          to={location.pathname}
-          onClick={() => editProductBrand(index, record)}
-        >
-          {value}
-        </Link>
-      ),
+      title: 'External Code',
+      dataIndex: 'externalCode',
+      width: '10%',
+      align: 'center',
       sorter: (a, b): any => {
-        if (a.brandName && b.brandName)
-          return a.brandName.localeCompare(b.brandName);
-        else if (a.brandName) return -1;
-        else if (b.brandName) return 1;
+        if (a.externalCode && b.externalCode)
+          return a.externalCode !== b.externalCode
+            ? a.externalCode - b.externalCode
+            : 0;
+        else if (a.externalCode) return -1;
+        else if (b.externalCode) return 1;
         else return 0;
       },
     },

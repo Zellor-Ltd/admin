@@ -63,6 +63,11 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
     setShowModal(false);
   };
 
+  const handleCreatorPercentageChange = (input: number) => {
+    form.setFieldsValue({ creatorPercentage: input });
+    setShowModal(true);
+  };
+
   return (
     <>
       <PageHeader
@@ -147,18 +152,19 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                           <InputNumber
                             pattern="^(?:100|\d{1,2})(?:.\d{1,2})?$"
                             title="positive integers"
-                            value={productBrand?.creatorPercentage}
                             min={0}
                             max={100}
-                            onChange={() => setShowModal(true)}
+                            onChange={input =>
+                              handleCreatorPercentageChange(input)
+                            }
                           />
                           <Modal
                             title="Apply to all products?"
                             visible={showModal}
                             onOk={onConfirmPropagate}
                             onCancel={onCancelPropagate}
-                            okText="Ok"
-                            cancelText="Cancel"
+                            okText="Yes"
+                            cancelText="No"
                           >
                             <p>
                               Would you like to apply this creator percentage to
