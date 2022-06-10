@@ -149,20 +149,20 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                               handleCreatorPercentageChange(input)
                             }
                           />
-                          <Modal
-                            title="Apply to all products?"
-                            visible={showModal}
-                            onOk={onConfirmPropagate}
-                            onCancel={onCancelPropagate}
-                            okText="Yes"
-                            cancelText="No"
-                          >
-                            <p>
-                              Would you like to apply this creator percentage to
-                              all {productBrand?.brandName} products?
-                            </p>
-                          </Modal>
                         </Form.Item>
+                        <Modal
+                          title="Apply to all products?"
+                          visible={showModal}
+                          onOk={onConfirmPropagate}
+                          onCancel={onCancelPropagate}
+                          okText="Yes"
+                          cancelText="No"
+                        >
+                          <p>
+                            Would you like to apply this creator percentage to
+                            all {productBrand?.brandName} products?
+                          </p>
+                        </Modal>
                       </Col>
                     </Row>
                     <Row gutter={4}>
