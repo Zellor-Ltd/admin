@@ -522,7 +522,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                 placeholder={'Select a Master Brand'}
                 loading={isFetchingBrands}
                 disabled={isFetchingBrands}
-                allowClear={true}
+                allowClear
               />
             </Col>
             <Col lg={6} xs={24}>
@@ -536,7 +536,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                 placeholder={'Select a Product Brand'}
                 loading={isFetchingProductBrands}
                 disabled={isFetchingProductBrands}
-                allowClear={true}
+                allowClear
               />
             </Col>
             <Col lg={6} xs={24}>
@@ -548,7 +548,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                 selectedOption={statusFilter}
                 optionsMapping={statusMapping}
                 placeholder={'Select a status'}
-                allowClear={true}
+                allowClear
               />
             </Col>
             <Col lg={6} xs={24}>
@@ -562,7 +562,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                 selectedOption={categoryFilter}
                 optionsMapping={categoryMapping}
                 placeholder={'Select a Category'}
-                allowClear={true}
+                allowClear
                 loading={isFetchingCategories}
                 disabled={isFetchingCategories}
               />
@@ -576,7 +576,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                 selectedOption={videoTypeFilter}
                 optionsMapping={videoTypeMapping}
                 placeholder={'Select a video type'}
-                allowClear={true}
+                allowClear
               />
             </Col>
             <Col lg={6} xs={24}>

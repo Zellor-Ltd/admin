@@ -66,7 +66,7 @@ const PromoDisplaysDetail: React.FC<PromoDisplayDetailProps> = ({
               <RichTextEditor
                 formField="displayHtml"
                 form={form}
-                editableHtml={true}
+                editableHtml
               />
             </Form.Item>
           </Col>
@@ -111,7 +111,7 @@ const PromoDisplaysDetail: React.FC<PromoDisplayDetailProps> = ({
                 placeholder={'Select a Super Category'}
                 loading={fetchingCategories}
                 disabled={fetchingCategories}
-                allowClear={true}
+                allowClear
               ></SimpleSelect>
             </Form.Item>
           </Col>

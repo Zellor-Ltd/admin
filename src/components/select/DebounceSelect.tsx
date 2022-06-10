@@ -92,7 +92,7 @@ const DebounceSelect: React.FC<DebounceSelectProps> = ({
       <Select
         placeholder={placeholder}
         labelInValue
-        showSearch={true}
+        showSearch
         filterOption={false}
         onChange={_onChange}
         onSearch={debounceFetcher}

@@ -291,7 +291,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
                   placeholder={'Select a Master Brand'}
                   loading={isFetchingBrands}
                   disabled={isFetchingBrands}
-                  allowClear={true}
+                  allowClear
                 ></SimpleSelect>
               </Col>
             )}

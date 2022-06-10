@@ -408,7 +408,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                         placeholder={'Select a brand'}
                         loading={isFetchingBrands}
                         disabled={isFetchingBrands || isLive}
-                        allowClear={true}
+                        allowClear
                       ></SimpleSelect>
                     </Form.Item>
                   </Col>
@@ -436,7 +436,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                         placeholder={'Select a brand'}
                         loading={isFetchingProductBrand}
                         disabled={isFetchingProductBrand || isLive}
-                        allowClear={true}
+                        allowClear
                       ></SimpleSelect>
                     </Form.Item>
                   </Col>
@@ -771,7 +771,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                       form={form}
                       onAssignToTag={onAssignToTag}
                       onAssignToThumbnail={onAssignToThumbnail}
-                      cropable={true}
+                      croppable
                       classNames="big-image-height scroll-x"
                       onOrder={onOrder}
                       onFitTo={onFitTo}

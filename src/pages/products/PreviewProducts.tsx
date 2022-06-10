@@ -771,7 +771,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                         allCategories={allCategories}
                         onSaveProduct={onSaveCategories}
                         loading={loadingCategories}
-                        isStaging={true}
+                        isStaging
                         productBrands={productBrands}
                       ></ProductExpandedRow>
                     ),
@@ -827,7 +827,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                 placeholder={'Select a Master Brand'}
                 loading={isFetchingBrands}
                 disabled={isFetchingBrands}
-                allowClear={true}
+                allowClear
               ></SimpleSelect>
             </Col>
             <Col lg={6} xs={24}>
@@ -843,7 +843,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                 placeholder={'Select a Product Brand'}
                 loading={isFetchingProductBrands}
                 disabled={isFetchingProductBrands}
-                allowClear={true}
+                allowClear
               ></SimpleSelect>
             </Col>
             <Col lg={6} xs={24}>
@@ -852,7 +852,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                 placeholder="Select a Status"
                 style={{ width: '100%' }}
                 onChange={(value: string) => setProductStatusFilter(value)}
-                allowClear={true}
+                allowClear
                 defaultValue={productStatusFilter}
               >
                 <Select.Option value="live">Live</Select.Option>
@@ -876,7 +876,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                 placeholder={'Select a Super Category'}
                 loading={fetchingCategories}
                 disabled={fetchingCategories}
-                allowClear={true}
+                allowClear
               ></SimpleSelect>
             </Col>
             <Col lg={6} xs={24}>
@@ -894,7 +894,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                 placeholder={'Select a Category'}
                 loading={fetchingCategories}
                 disabled={fetchingCategories}
-                allowClear={true}
+                allowClear
               ></SimpleSelect>
             </Col>
             <Col lg={6} xs={24}>
@@ -931,7 +931,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                     );
                   }).length
                 }
-                allowClear={true}
+                allowClear
               ></SimpleSelect>
             </Col>
             <Col lg={6} xs={24}>
@@ -974,7 +974,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                     );
                   }).length
                 }
-                allowClear={true}
+                allowClear
               ></SimpleSelect>
             </Col>
             <Col lg={6} xs={24}>

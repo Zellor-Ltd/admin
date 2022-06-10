@@ -464,8 +464,8 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
                   <ReactTagInput
                     tags={hashtags}
                     placeholder="Type and press enter"
-                    removeOnBackspace={true}
-                    editable={true}
+                    removeOnBackspace
+                    editable
                     onChange={newTags => setHashtags(newTags)}
                   />
                 </Form.Item>
@@ -790,7 +790,7 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
                       placeholder={'Select a creator'}
                       loading={false}
                       disabled={false}
-                      allowClear={true}
+                      allowClear
                     ></SimpleSelect>
                   </Form.Item>
                   {templateForm.getFieldValue('selectedId') && (

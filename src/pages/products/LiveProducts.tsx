@@ -683,7 +683,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                 placeholder={'Select a Master Brand'}
                 loading={isFetchingBrands}
                 disabled={isFetchingBrands}
-                allowClear={true}
+                allowClear
               ></SimpleSelect>
             </Col>
             <Col lg={6} xs={24}>
@@ -699,7 +699,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                 placeholder={'Select a Product Brand'}
                 loading={isFetchingProductBrand}
                 disabled={isFetchingProductBrand}
-                allowClear={true}
+                allowClear
               ></SimpleSelect>
             </Col>
             <Col lg={6} xs={24}>
@@ -708,7 +708,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                 placeholder="Select a Status"
                 style={{ width: '100%' }}
                 onChange={(value: string) => setProductStatusFilter(value)}
-                allowClear={true}
+                allowClear
                 defaultValue={productStatusFilter}
               >
                 <Select.Option value="live">Live</Select.Option>
@@ -734,7 +734,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                 placeholder={'Select a Super Category'}
                 loading={fetchingCategories}
                 disabled={fetchingCategories}
-                allowClear={true}
+                allowClear
               ></SimpleSelect>
             </Col>
             <Col lg={6} xs={24}>
@@ -748,7 +748,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                 placeholder={'Select a Category'}
                 loading={fetchingCategories}
                 disabled={fetchingCategories}
-                allowClear={true}
+                allowClear
               ></SimpleSelect>
             </Col>
             <Col lg={6} xs={24}>
@@ -764,7 +764,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                 placeholder={'Select a Sub Category'}
                 loading={fetchingCategories}
                 disabled={fetchingCategories}
-                allowClear={true}
+                allowClear
               ></SimpleSelect>
             </Col>
             <Col lg={6} xs={24}>
@@ -780,7 +780,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                 placeholder={'Select a Sub Sub Category'}
                 loading={fetchingCategories}
                 disabled={fetchingCategories}
-                allowClear={true}
+                allowClear
               ></SimpleSelect>
             </Col>
             <Col lg={6} xs={24}>
@@ -932,7 +932,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
           brand={currentMasterBrand}
           isFetchingBrands={isFetchingBrands}
           isFetchingProductBrand={isFetchingProductBrand}
-          isLive={true}
+          isLive
         />
       )}
     </>

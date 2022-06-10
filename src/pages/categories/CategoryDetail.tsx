@@ -107,7 +107,7 @@ const CategoryDetail: React.FC<CategoryDetailProps> = ({
                       disabled={
                         !filteredCategories[key as keyof AllCategories].length
                       }
-                      // allowClear={true}
+                      // allowClear
                       placeholder="Please select a category"
                       onChange={(_, option: any) =>
                         filterCategory(

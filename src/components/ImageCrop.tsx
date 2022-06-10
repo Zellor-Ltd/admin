@@ -61,13 +61,13 @@ const ImageCrop: React.FC<ImageCropProps> = ({
         minCropBoxHeight={10}
         minCropBoxWidth={10}
         background={false}
-        responsive={true}
+        responsive
         autoCropArea={1}
         checkOrientation={false} // https://github.com/fengyuanchen/cropperjs/issues/671
         onInitialized={instance => {
           setCropper(instance);
         }}
-        guides={true}
+        guides
       />
     </Modal>
   );

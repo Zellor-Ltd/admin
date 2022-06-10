@@ -544,8 +544,8 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                   <ReactTagInput
                     tags={hashtags}
                     placeholder="Type and press enter"
-                    removeOnBackspace={true}
-                    editable={true}
+                    removeOnBackspace
+                    editable
                     onChange={newTags => setHashtags(newTags)}
                   />
                 </Form.Item>

@@ -170,7 +170,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                       name="displayInVideoFeed"
                       label="Display in Video Feed"
                       valuePropName="checked"
-                      initialValue={true}
+                      initialValue
                     >
                       <Switch />
                     </Form.Item>
@@ -180,7 +180,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                       name="displayInCreatorGrid"
                       label="Display in Creator Grid"
                       valuePropName="checked"
-                      initialValue={true}
+                      initialValue
                     >
                       <Switch />
                     </Form.Item>
