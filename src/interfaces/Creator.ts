@@ -14,4 +14,5 @@ export interface Creator {
   avatar?: Image;
   masthead?: Image[];
   activeMasthead?: Image;
+  user?: string;
 }

@@ -41,6 +41,7 @@ import CreatorsList from 'pages/creators-list-page/CreatorsList';
 import DataManagement from 'pages/data-management/DataManagement';
 import Trends from 'pages/trends/Trends';
 import FeedTemplates from 'pages/video-feed/FeedTemplates';
+import FanVideos from 'pages/fan-videos/FanVideos';
 
 function AdminRoutes() {
   return (
@@ -60,6 +61,11 @@ function AdminRoutes() {
       <AppRoute
         path="/feed-templates"
         component={FeedTemplates}
+        layout={AuthenticatedLayout}
+      />
+      <AppRoute
+        path="/fan-videos"
+        component={FanVideos}
         layout={AuthenticatedLayout}
       />
       <AppRoute

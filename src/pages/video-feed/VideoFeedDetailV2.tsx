@@ -59,6 +59,7 @@ interface VideoFeedDetailProps {
   productBrands: ProductBrand[];
   isFetchingProductBrand: boolean;
   setDetails?: (boolean) => void;
+  isFanVideo?: boolean;
 }
 
 const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
@@ -70,6 +71,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
   productBrands,
   isFetchingProductBrand,
   setDetails,
+  isFanVideo,
 }) => {
   const {
     settings: {
@@ -100,7 +102,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
   const [pageTitle, setPageTitle] = useState<string>('Video Update');
   const { doFetch, doRequest } = useRequest({ setLoading });
   const [includeVideo, setIncludeVideo] = useState<boolean>(false);
-  const [linkcreator, setLinkcreator] = useState<string>('');
+  const [videoCreator, setVideoCreator] = useState<Creator>();
   const [selectedLinkType, setSelectedLinkType] = useState<string>('');
   const [selectedSocialPlatform, setSelectedSocialPlatform] =
     useState<string>('');
@@ -141,7 +143,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
     }
 
     if (feedItem?.creator) {
-      setLinkcreator(feedItem?.creator?.id);
+      setVideoCreator(feedItem?.creator);
     }
   }, []);
 
@@ -163,6 +165,10 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
       selectedIconUrl: currentCreator?.avatar?.url,
     });
   }, [currentCreator]);
+
+  useEffect(() => {
+    feedForm.setFieldsValue({ selectedIconUrl: currentBrandIcon });
+  }, [currentBrandIcon]);
 
   const onChangeCreator = (value: string) => {
     const selectedCreator = creators.find(item => item.id === value);
@@ -302,6 +308,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
 
   const onCreatorChange = (key: string) => {
     const creator = creators.find(creator => creator.id === key);
+    setVideoCreator(creator);
     const feedItem = feedForm.getFieldsValue(true) as FeedItem;
     feedForm.setFieldsValue({
       creator: null,
@@ -331,6 +338,10 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
     } else {
       setSelectedOption('productBrand');
     }
+  };
+
+  const onSearch = (input: string, option: any) => {
+    return option.label.toLowerCase().includes(input?.toLowerCase());
   };
 
   const loadProductBrandIcons = (productBrand?: ProductBrand) => {
@@ -366,7 +377,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
   const handleGenerateLink = async () => {
     const { results }: any = await saveLink({
       videoFeedId: feedItem?.id as string,
-      creatorId: linkcreator,
+      creatorId: videoCreator?.id,
       includeVideo: includeVideo,
       socialPlatform: selectedSocialPlatform,
       segment: segment,
@@ -428,6 +439,11 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
       render: value => (value ? 'Yes' : 'No'),
     },
   ];
+
+  const onSelectCreator = (value: string) => {
+    const creator = creators.find(item => item.id === value);
+    setVideoCreator(creator);
+  };
 
   const VideoUpdatePage = () => {
     return (
@@ -525,20 +541,50 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                   </Select>
                 </Form.Item>
               </Col>
-              <Col lg={24} xs={24}>
-                <Form.Item name={['creator', 'id']} label="Creator">
-                  <Select
-                    placeholder="Please select a creator"
-                    onChange={onCreatorChange}
-                  >
-                    {creators.map((creator: any) => (
-                      <Select.Option key={creator.id} value={creator.id}>
-                        {creator.firstName} {creator.lastName}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </Form.Item>
-              </Col>
+              {!isFanVideo && (
+                <Col lg={24} xs={24}>
+                  <Form.Item label="Creator">
+                    <Select
+                      placeholder="Please select a creator"
+                      onChange={onCreatorChange}
+                      value={videoCreator?.id}
+                      disabled={!creators.length}
+                      filterOption={onSearch}
+                      allowClear
+                      showSearch
+                    >
+                      {creators.map((creator: any) => (
+                        <Select.Option
+                          key={creator.id}
+                          value={creator.id}
+                          label={creator.firstName}
+                        >
+                          {creator.firstName} {creator.lastName}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
+                </Col>
+              )}
+              {isFanVideo && (
+                <>
+                  <Col lg={24} xs={24}>
+                    <Form.Item label="Creator Name">
+                      <Input
+                        value={
+                          videoCreator?.firstName ?? videoCreator?.userName
+                        }
+                        disabled
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={24} xs={24}>
+                    <Form.Item label="Creator Email">
+                      <Input value={videoCreator?.user} disabled />
+                    </Form.Item>
+                  </Col>
+                </>
+              )}
               <Col lg={24} xs={24}>
                 <Form.Item name="hashtags" label="Hashtags">
                   <ReactTagInput
@@ -912,11 +958,15 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                 <Select
                   disabled={!creators.length}
                   style={{ width: '100%' }}
-                  onSelect={setLinkcreator}
-                  defaultValue={feedItem?.creator?.id}
+                  onSelect={onSelectCreator}
+                  value={videoCreator?.id}
                 >
                   {creators.map((curr: any) => (
-                    <Select.Option key={curr.id} value={curr.id}>
+                    <Select.Option
+                      key={curr.id}
+                      value={curr.id}
+                      label={curr.firstName}
+                    >
                       {curr.firstName}
                     </Select.Option>
                   ))}
@@ -973,7 +1023,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                 <Button
                   type="default"
                   onClick={handleGenerateLink}
-                  disabled={!linkcreator || !selectedSocialPlatform}
+                  disabled={!videoCreator || !selectedSocialPlatform}
                 >
                   Generate Link
                 </Button>
