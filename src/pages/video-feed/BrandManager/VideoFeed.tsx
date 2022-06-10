@@ -516,6 +516,10 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     setSelectedVideoFeed(template);
   };
 
+  const onSearch = (input: string, option: any) => {
+    return option.label.toLowerCase().includes(input?.toLowerCase());
+  };
+
   return (
     <>
       {!details && (
@@ -637,9 +641,16 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                     disabled={!creators.length}
                     onChange={setCreatorFilter}
                     style={{ width: '100%' }}
+                    filterOption={onSearch}
+                    allowClear={true}
+                    showSearch={true}
                   >
                     {creators.map((curr: any) => (
-                      <Select.Option key={curr.id} value={curr.firstName}>
+                      <Select.Option
+                        key={curr.id}
+                        value={curr.firstName}
+                        label={curr.firstName}
+                      >
                         {curr.firstName}
                       </Select.Option>
                     ))}
