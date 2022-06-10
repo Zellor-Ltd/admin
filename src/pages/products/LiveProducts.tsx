@@ -318,7 +318,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
       render: (value: string, record, index) => (
         <>
           <Link
-            onClick={() => editProduct(index, record)}
+            onClick={() => viewProduct(index, record)}
             to={{ pathname: window.location.pathname, state: record }}
           >
             {value}
@@ -561,7 +561,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
         <>
           <Link
             to={{ pathname: window.location.pathname, state: record }}
-            onClick={() => editProduct(index, record)}
+            onClick={() => viewProduct(index, record)}
           >
             <EyeOutlined />
           </Link>
@@ -611,7 +611,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
     }
   }, [details]);
 
-  const editProduct = (index: number, record?: Product) => {
+  const viewProduct = (index: number, record?: Product) => {
     setCurrentProduct(record);
     setLastViewedIndex(index);
     if (record) {
@@ -653,15 +653,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
     <>
       {!details && (
         <>
-          <PageHeader
-            title="Products"
-            subTitle="List of Live Products"
-            extra={[
-              <Button key="1" onClick={() => editProduct(products.length)}>
-                New Item
-              </Button>,
-            ]}
-          />
+          <PageHeader title="Products" subTitle="List of Live Products" />
           <Row
             align="bottom"
             justify="space-between"
