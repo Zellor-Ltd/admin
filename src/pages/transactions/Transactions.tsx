@@ -60,7 +60,7 @@ const Transactions: React.FC<RouteComponentProps> = () => {
       return {
         label: option[fanOptionMapping.label],
         value: option[fanOptionMapping.value],
-        key: option[fanOptionMapping.value],
+        key: option[fanOptionMapping.key],
       };
     };
 

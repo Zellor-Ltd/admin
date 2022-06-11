@@ -82,7 +82,7 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
       return {
         label: option[fanOptionMapping.label],
         value: option[fanOptionMapping.value],
-        key: option[fanOptionMapping.value],
+        key: option[fanOptionMapping.key],
       };
     };
 
