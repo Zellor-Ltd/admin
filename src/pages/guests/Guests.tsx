@@ -46,7 +46,7 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
   >([]);
   const [refreshing, setRefreshing] = useState<boolean>(false);
 
-  const fanOptionsMapping: SelectOption = {
+  const fanOptionMapping: SelectOption = {
     key: 'id',
     label: 'user',
     value: 'user',
@@ -80,9 +80,9 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
 
     const optionFactory = (option: any) => {
       return {
-        label: option[fanOptionsMapping.label],
-        value: option[fanOptionsMapping.value],
-        key: option[fanOptionsMapping.value],
+        label: option[fanOptionMapping.label],
+        value: option[fanOptionMapping.value],
+        key: option[fanOptionMapping.value],
       };
     };
 

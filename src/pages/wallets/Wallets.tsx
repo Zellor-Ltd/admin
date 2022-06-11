@@ -1,12 +1,4 @@
-import {
-  AutoComplete,
-  Col,
-  PageHeader,
-  Row,
-  Spin,
-  Table,
-  Typography,
-} from 'antd';
+import { Col, PageHeader, Row, Spin, Table, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import SimpleSelect from 'components/select/SimpleSelect';
 import { useRequest } from 'hooks/useRequest';
@@ -26,6 +18,7 @@ import WalletEdit from './WalletEdit';
 import scrollIntoView from 'scroll-into-view';
 import WalletDetail from './WalletDetail';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import DebounceSelect from 'components/select/DebounceSelect';
 
 const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -39,58 +32,22 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
   const [filteredWallets, setFilteredWallets] = useState<Wallet[]>([]);
-  const [searchFilter, setSearchFilter] = useState<string>();
-  const [options, setOptions] = useState<
-    { label: string; value: string; key: string }[]
-  >([]);
+  const [optionsPage, setOptionsPage] = useState<number>(0);
   const [filter, setFilter] = useState<string>('');
   const [wallets, setWallets] = useState<Wallet[]>([]);
   const [fans, setFans] = useState<Fan[]>([]);
   const [content, setContent] = useState<Wallet[]>([]);
 
-  const optionsMapping: SelectOption = {
+  const optionMapping: SelectOption = {
     key: 'id',
     label: 'brandName',
     value: 'id',
   };
 
-  const fanOptionsMapping: SelectOption = {
+  const fanOptionMapping: SelectOption = {
     key: 'id',
     label: 'user',
     value: 'user',
-  };
-
-  const onChangeFan = async (value: string, _selectedFan?: any) => {
-    if (_selectedFan) {
-      const { balance }: any = await doFetch(
-        () => fetchBalancePerBrand(_selectedFan.id),
-        true
-      );
-      setContent(balance);
-      setPage(0);
-    } else {
-      setContent([]);
-    }
-    setSelectedFan(fans.find(fan => fan.user === value));
-  };
-
-  useEffect(() => {
-    setFilteredWallets([]);
-    setEof(false);
-    updateDisplayedArray();
-  }, [wallets, page]);
-
-  const updateDisplayedArray = () => {
-    if (!content.length) return;
-
-    const results = content.slice(page * 10, page * 10 + 10);
-    setFilteredWallets(prev => [...prev.concat(results)]);
-
-    if (results.length < 10) {
-      setEof(true);
-    } else {
-      setPage(page + 1);
-    }
   };
 
   useEffect(() => {
@@ -106,26 +63,6 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
     getBrands();
   }, []);
 
-  const getFans = async () => {
-    const response = await doFetch(() =>
-      fetchFans({
-        page: 0,
-        query: searchFilter,
-      })
-    );
-
-    const optionFactory = (option: any) => {
-      return {
-        label: option[fanOptionsMapping.label],
-        value: option[fanOptionsMapping.value],
-        key: option[fanOptionsMapping.value],
-      };
-    };
-
-    setOptions(response.results.map(optionFactory));
-    setFans(response.results);
-  };
-
   useEffect(() => {
     if (!details) {
       scrollIntoView(
@@ -137,12 +74,31 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
     }
   }, [details, wallets]);
 
-  const editWallet = (index: number) => {
+  useEffect(() => {
+    setFilteredWallets([]);
+    setEof(false);
+    updateDisplayedWallets();
+  }, [wallets, page]);
+
+  const updateDisplayedWallets = () => {
+    if (!content.length) return;
+
+    const results = content.slice(page * 10, page * 10 + 10);
+    setFilteredWallets(prev => [...prev.concat(results)]);
+
+    if (results.length < 10) {
+      setEof(true);
+    } else {
+      setPage(page + 1);
+    }
+  };
+
+  const handleEditWallet = (index: number) => {
     setLastViewedIndex(index);
     setDetails(true);
   };
 
-  const onResetWallet = (record?: Wallet) => {
+  const handleResetWallet = (record?: Wallet) => {
     if (record) {
       const index = wallets.indexOf(
         wallets.find(item => item.brandId === record.brandId) as Wallet
@@ -151,14 +107,18 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
     }
   };
 
-  const onSaveWallet = (balanceToAdd: number, record?: Wallet) => {
+  const handleSaveWallet = (balanceToAdd: number, record?: Wallet) => {
     if (record) {
       record.discoDollars += balanceToAdd;
     }
-    refreshItem(balanceToAdd, record);
+    handleRefreshWallet(balanceToAdd, record);
   };
 
-  const refreshItem = (balanceToAdd: number, record?: Wallet) => {
+  const handleCancelWallet = () => {
+    setDetails(false);
+  };
+
+  const handleRefreshWallet = (balanceToAdd: number, record?: Wallet) => {
     if (record) {
       wallets[
         wallets.indexOf(
@@ -202,7 +162,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
               },
             } as WalletDetailParams,
           }}
-          onClick={() => editWallet(index)}
+          onClick={() => handleEditWallet(index)}
         >
           {value}
         </Link>
@@ -230,22 +190,40 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
     },
   ];
 
-  const search = rows => {
-    return rows.filter(row => row.brandName?.indexOf(filter) > -1);
-  };
-
-  const onCancelWallet = () => {
-    setDetails(false);
-  };
-
-  const onSearch = (value: string) => {
-    setSearchFilter(value);
-    getFans();
-  };
-
-  const onChangeBrand = (brand?: Brand) => {
+  const handleChangeBrand = (brand?: Brand) => {
     setFilter(brand?.brandName ?? '');
     setSelectedBrand(brand);
+  };
+
+  const getFans = async (input?: string, loadNextPage?: boolean) => {
+    const pageToUse = !loadNextPage ? 0 : optionsPage;
+    const response: any = await fetchFans({
+      page: pageToUse,
+      query: input,
+    });
+    setOptionsPage(pageToUse + 1);
+
+    setFans(prev => [...prev.concat(response.results)]);
+    return response.results;
+  };
+
+  const handleChangeFan = async (value?: string, option?: any) => {
+    if (option) {
+      const { balance }: any = await doFetch(
+        () => fetchBalancePerBrand(option.id),
+        true
+      );
+      setContent(balance);
+      setPage(0);
+      setSelectedFan(fans.find(fan => fan.user === value));
+    } else {
+      setContent([]);
+      setSelectedFan(undefined);
+    }
+  };
+
+  const search = rows => {
+    return rows.filter(row => row.brandName?.indexOf(filter) > -1);
   };
 
   return (
@@ -262,23 +240,28 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
               <Row gutter={8} align="bottom">
                 <Col span={4}>
                   <Typography.Title level={5}>Fan Filter</Typography.Title>
-                  <AutoComplete
+                  <DebounceSelect
                     style={{ width: '100%' }}
-                    options={options}
-                    onSelect={onChangeFan}
-                    onSearch={onSearch}
-                    placeholder="Type to search a fan"
-                  />
+                    fetchOptions={getFans}
+                    onChange={handleChangeFan}
+                    optionMapping={fanOptionMapping}
+                    placeholder="Select a Fan"
+                    value={{
+                      key: selectedFan?.id ?? '',
+                      value: selectedFan?.user ?? '',
+                      label: selectedFan?.user ?? '',
+                    }}
+                  ></DebounceSelect>
                 </Col>
                 {selectedFan && (
                   <Col span={4}>
                     <Typography.Title level={5}>Master Brand</Typography.Title>
                     <SimpleSelect
                       data={brands}
-                      onChange={(_, brand) => onChangeBrand(brand)}
+                      onChange={(_, brand) => handleChangeBrand(brand)}
                       style={{ width: '100%' }}
                       selectedOption={selectedBrand?.brandName}
-                      optionsMapping={optionsMapping}
+                      optionMapping={optionMapping}
                       placeholder={'Select a master brand'}
                       loading={isFetchingBrands}
                       disabled={isFetchingBrands}
@@ -294,8 +277,8 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
                     wallet={filteredWallets.find(
                       item => item.brandId === selectedBrand?.id
                     )}
-                    onSave={onSaveWallet}
-                    onReset={onResetWallet}
+                    onSave={handleSaveWallet}
+                    onReset={handleResetWallet}
                   />
                 </Col>
               </Row>
@@ -303,7 +286,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
           </Row>
           <InfiniteScroll
             dataLength={filteredWallets.length}
-            next={updateDisplayedArray}
+            next={updateDisplayedWallets}
             hasMore={!eof}
             loader={
               page !== 0 && (
@@ -332,9 +315,9 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
       {details && (
         <WalletDetail
           location={location}
-          onCancel={onCancelWallet}
-          onSave={onSaveWallet}
-          onReset={onResetWallet}
+          onCancel={handleCancelWallet}
+          onSave={handleSaveWallet}
+          onReset={handleResetWallet}
         />
       )}
     </>

@@ -138,9 +138,9 @@ const AccessControl: React.FC = () => {
             onChange={onChangeProfile}
             value={selectedProfile}
           >
-            {profiles.map((profie: any) => (
-              <Select.Option key={profie} value={profie}>
-                {profie}
+            {profiles.map((profile: any) => (
+              <Select.Option key={profile} value={profile}>
+                {profile}
               </Select.Option>
             ))}
           </Select>

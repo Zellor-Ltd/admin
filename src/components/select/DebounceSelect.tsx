@@ -1,16 +1,16 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-
 import { Select, Spin } from 'antd';
 import debounce from 'lodash/debounce';
 import { SelectOption } from '../../interfaces/SelectOption';
+import { LoadingOutlined } from '@ant-design/icons';
 
 interface DebounceSelectProps {
-  fetchOptions: (search: string) => Promise<any[]>;
-  onChange: (value: string, entity?: any) => void;
-  optionsMapping: SelectOption;
+  fetchOptions: (search?: string, loadNextPage?: boolean) => Promise<any[]>;
+  onChange: (value?: string, entity?: any) => void;
+  optionMapping: SelectOption;
   placeholder: string;
   disabled?: boolean;
-  value?: string;
+  value?: SelectOption;
   debounceTimeout?: number;
   style?: React.CSSProperties;
 }
@@ -18,91 +18,133 @@ interface DebounceSelectProps {
 const DebounceSelect: React.FC<DebounceSelectProps> = ({
   fetchOptions,
   onChange,
-  optionsMapping,
+  optionMapping,
   placeholder,
   disabled,
   value,
   debounceTimeout = 800,
   style,
 }) => {
-  const [fetching, setFetching] = useState(false);
+  const [notFirstRender, setNotFirstRender] = useState(false);
+  const [isFetching, setIsFetching] = useState(false);
   const [options, setOptions] = useState<SelectOption[]>([]);
-  const [_selectedOption, _setSelectedOption] = useState<SelectOption>();
+  const [eoo, setEoo] = useState<boolean>(false);
+  const [_value, _setValue] = useState<SelectOption | undefined>(value);
   const fetchedEntities = useRef<any[]>([]);
-  const fetchRef = useRef(0);
+  const counter = useRef(0);
+  const currentCounterValue = useRef<number>();
+  const [searchFilter, setSearchFilter] = useState<string>();
+  const loadNextPage = useRef(false);
 
   const optionFactory = (option: any) => {
     return {
-      label: option[optionsMapping.label],
-      value: option[optionsMapping.value],
-      key: option[optionsMapping.value],
+      label: option[optionMapping.label],
+      value: option[optionMapping.value],
+      key: option[optionMapping.key],
     };
   };
 
   useEffect(() => {
-    if (value) {
-      debounceFetcher(value, true);
+    if (isFetching) {
+      getOptions();
+      setIsFetching(false);
     }
-  }, [value]);
+  }, [isFetching]);
 
-  const debounceFetcher = useMemo(() => {
-    const loadOptions = (value: string, isInit?: boolean) => {
-      fetchRef.current += 1;
-      const fetchId = fetchRef.current;
+  useEffect(() => {
+    if (notFirstRender) {
+      debounceSearch();
+    } else {
+      setNotFirstRender(true);
+    }
+  }, [searchFilter]);
+
+  const debounceSearch = useMemo(() => {
+    const loadOptions = () => {
+      counter.current += 1;
+      currentCounterValue.current = counter.current;
       setOptions([]);
-      setFetching(true);
-
-      fetchOptions(value.toUpperCase()).then(entities => {
-        if (fetchId !== fetchRef.current) {
-          // for fetch callback order
-          return;
-        }
-
-        fetchedEntities.current = entities;
-        const options = entities.map(optionFactory);
-        setOptions(options);
-
-        if (isInit) {
-          const selectedOption = options.find(option =>
-            (option.label as string).toUpperCase().includes(value.toUpperCase())
-          );
-          _setSelectedOption(selectedOption);
-        } else {
-          _setSelectedOption(undefined);
-        }
-
-        setFetching(false);
-      });
+      setIsFetching(true);
     };
 
-    return debounce(loadOptions, debounceTimeout);
-  }, [fetchOptions, debounceTimeout]);
+    _setValue({
+      key: searchFilter ?? '',
+      label: searchFilter ?? '',
+      value: searchFilter ?? '',
+    });
 
-  const _onChange = (option: { value: string; label: string; key: string }) => {
+    return debounce(loadOptions, debounceTimeout);
+  }, [searchFilter]);
+
+  const getOptions = () => {
+    fetchOptions(searchFilter, loadNextPage.current).then(entities => {
+      if (currentCounterValue.current !== counter.current) {
+        // for fetch callback order
+        return;
+      }
+
+      if (loadNextPage.current) loadNextPage.current = false;
+      if (entities.length < 30) setEoo(true);
+
+      fetchedEntities.current = entities;
+      const fetchedOptions = entities?.map(optionFactory);
+      setOptions(prev => [...prev.concat(fetchedOptions)]);
+    });
+  };
+
+  const _onChange = (option?: {
+    value: string;
+    label: string;
+    key: string;
+  }) => {
+    if (!option) {
+      debounceSearch();
+      onChange();
+      return;
+    }
     const selectedEntity = fetchedEntities.current.find(entity =>
-      entity[optionsMapping.value]
+      entity[optionMapping.value]
         .toUpperCase()
         .includes(option.value.toUpperCase())
     );
     onChange(option.value, selectedEntity);
   };
 
+  const handlePopupScroll = (target: any) => {
+    //following check makes sure getOptions isn't called midfetch, there's still more fans to fetch, user has scrolled all the way down
+    if (
+      target.scrollTop + target.offsetHeight === target.scrollHeight &&
+      !isFetching &&
+      !eoo
+    ) {
+      loadNextPage.current = true;
+      setIsFetching(true);
+      target.scrollTo(0, target.scrollHeight);
+    }
+  };
+
   return (
-    <div style={style}>
-      <Select
-        placeholder={placeholder}
-        labelInValue
-        showSearch={true}
-        filterOption={false}
-        onChange={_onChange}
-        onSearch={debounceFetcher}
-        notFoundContent={fetching ? <Spin size="small" /> : null}
-        options={options}
-        disabled={disabled}
-        value={_selectedOption}
-        loading={fetching}
-      />
-    </div>
+    <Select
+      style={style}
+      placeholder={placeholder}
+      labelInValue
+      showSearch
+      allowClear
+      filterOption={false}
+      onFocus={() => debounceSearch()}
+      onChange={_onChange}
+      onSearch={setSearchFilter}
+      onPopupScroll={event => handlePopupScroll(event.target)}
+      notFoundContent={
+        isFetching ? (
+          <Spin spinning size="small" indicator={<LoadingOutlined spin />} />
+        ) : null
+      }
+      options={options}
+      disabled={disabled}
+      value={_value}
+      loading={isFetching}
+    ></Select>
   );
 };
 

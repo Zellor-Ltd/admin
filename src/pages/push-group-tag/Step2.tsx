@@ -55,7 +55,7 @@ const Step2: React.FC<Step2Props> = ({ selectedTags, onReturn }) => {
             onChange={(_, fanGroup) => handleFanGroupChange(fanGroup)}
             style={{ width: '100%', marginBottom: '16px' }}
             selectedOption={selectedFanGroup?.name}
-            optionsMapping={fanGroupMapping}
+            optionMapping={fanGroupMapping}
             placeholder={'Select a fan group'}
             loading={isFetchingFanGroups}
             disabled={isFetchingFanGroups}

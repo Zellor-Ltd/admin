@@ -71,9 +71,9 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
 
     const optionFactory = (option: any) => {
       return {
-        label: option[fanOptionsMapping.label],
-        value: option[fanOptionsMapping.value],
-        key: option[fanOptionsMapping.value],
+        label: option[fanOptionMapping.label],
+        value: option[fanOptionMapping.value],
+        key: option[fanOptionMapping.value],
       };
     };
 
@@ -88,13 +88,13 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     setFans(validUsers);
   };
 
-  const optionsMapping: SelectOption = {
+  const optionMapping: SelectOption = {
     key: 'id',
     label: 'brandName',
     value: 'id',
   };
 
-  const fanOptionsMapping: SelectOption = {
+  const fanOptionMapping: SelectOption = {
     key: 'id',
     label: 'user',
     value: 'user',
@@ -506,7 +506,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
                     onChange={id => onChangeBrand(id)}
                     style={{ width: '100%' }}
                     selectedOption={''}
-                    optionsMapping={optionsMapping}
+                    optionMapping={optionMapping}
                     placeholder={'Select a master brand'}
                     loading={isFetchingBrands}
                     disabled={isFetchingBrands}

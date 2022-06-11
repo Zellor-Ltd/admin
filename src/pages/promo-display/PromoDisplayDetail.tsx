@@ -28,7 +28,7 @@ const PromoDisplaysDetail: React.FC<PromoDisplayDetailProps> = ({
     setLoading: setFetchingCategories,
   });
 
-  const optionsMapping: SelectOption = {
+  const optionMapping: SelectOption = {
     key: 'id',
     label: 'superCategory',
     value: 'id',
@@ -107,7 +107,7 @@ const PromoDisplaysDetail: React.FC<PromoDisplayDetailProps> = ({
                 })}
                 style={{ width: '100%' }}
                 selectedOption={promoDisplay?.superCategoryId}
-                optionsMapping={optionsMapping}
+                optionMapping={optionMapping}
                 placeholder={'Select a Super Category'}
                 loading={fetchingCategories}
                 disabled={fetchingCategories}
