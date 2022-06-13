@@ -657,6 +657,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                   <Select
                     mode="multiple"
                     placeholder="Please select a Video Type"
+                    disabled={!videoType.length}
                   >
                     {videoType.map((type: any) => (
                       <Select.Option
