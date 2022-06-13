@@ -18,7 +18,7 @@ import WalletEdit from './WalletEdit';
 import scrollIntoView from 'scroll-into-view';
 import WalletDetail from './WalletDetail';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import DebounceSelect from 'components/select/DebounceSelect';
+import MultipleFetchDebounceSelect from 'components/select/MultipleFetchDebounceSelect';
 
 const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -46,8 +46,8 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
 
   const fanOptionMapping: SelectOption = {
     key: 'id',
-    label: 'user',
-    value: 'user',
+    label: 'userName',
+    value: 'userName',
   };
 
   useEffect(() => {
@@ -240,18 +240,13 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
               <Row gutter={8} align="bottom">
                 <Col span={4}>
                   <Typography.Title level={5}>Fan Filter</Typography.Title>
-                  <DebounceSelect
+                  <MultipleFetchDebounceSelect
                     style={{ width: '100%' }}
                     fetchOptions={getFans}
                     onChange={handleChangeFan}
                     optionMapping={fanOptionMapping}
                     placeholder="Select a Fan"
-                    value={{
-                      key: selectedFan?.id ?? '',
-                      value: selectedFan?.user ?? '',
-                      label: selectedFan?.user ?? '',
-                    }}
-                  ></DebounceSelect>
+                  ></MultipleFetchDebounceSelect>
                 </Col>
                 {selectedFan && (
                   <Col span={4}>
