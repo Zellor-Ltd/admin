@@ -424,7 +424,37 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
         else if (b.stage) return 1;
         else return 0;
       },
-    },
+      },
+      {
+          title: 'Int. Status',
+          dataIndex: 'commissionInternalStatus',
+          width: '15%',
+          align: 'center',
+          render: (value: string, order, index) => (
+              <Select
+                  loading={orderUpdateList[index]}
+                  disabled={orderUpdateList[index]}
+                  defaultValue={value}
+                  style={{ width: '175px' }}
+                  onChange={value => handleSelectChange(value, order, index)}
+              >
+                  {ordersSettings.map((ordersSetting: any) => (
+                      <Select.Option
+                          key={ordersSetting.value}
+                          value={ordersSetting.value}
+                      >
+                          {ordersSetting.name}
+                      </Select.Option>
+                  ))}
+              </Select>
+          ),
+          sorter: (a, b): any => {
+              if (a.commissionInternalStatus && b.commissionInternalStatus) return a.commissionInternalStatus.localeCompare(b.commissionInternalStatus);
+              else if (a.commissionInternalStatus) return -1;
+              else if (b.commissionInternalStatus) return 1;
+              else return 0;
+          },
+      },
     {
       title: 'Last Update',
       dataIndex: 'hLastUpdate',
