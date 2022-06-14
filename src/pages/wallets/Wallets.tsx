@@ -47,7 +47,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
   const fanOptionMapping: SelectOption = {
     key: 'id',
     label: 'userName',
-    value: 'userName',
+    value: 'user',
   };
 
   useEffect(() => {

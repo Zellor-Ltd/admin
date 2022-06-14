@@ -43,7 +43,7 @@ const Transactions: React.FC<RouteComponentProps> = () => {
 
   const fanOptionMapping: SelectOption = {
     key: 'id',
-    label: 'user',
+    label: 'userName',
     value: 'user',
   };
 

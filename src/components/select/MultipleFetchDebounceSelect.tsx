@@ -4,7 +4,6 @@ import Spin from 'antd/es/spin';
 import 'antd/es/spin/style/css';
 import debounce from 'lodash/debounce';
 import { SelectOption } from '../../interfaces/SelectOption';
-import { LoadingOutlined } from '@ant-design/icons';
 
 interface MultipleFetchDebounceSelectProps {
   fetchOptions: (search?: string, loadNextPage?: boolean) => Promise<any[]>;
@@ -26,10 +25,10 @@ const MultipleFetchDebounceSelect: React.FC<
   optionMapping,
   placeholder,
   disabled,
-  debounceTimeout = 800,
+  debounceTimeout = 1000,
   style,
 }) => {
-  const notFirstRender = useRef(false);
+  const didMount = useRef(false);
   const [isFetching, setIsFetching] = useState(false);
   const [options, setOptions] = useState<SelectOption[]>([]);
   const [eoo, setEoo] = useState<boolean>(false);
@@ -52,11 +51,8 @@ const MultipleFetchDebounceSelect: React.FC<
   }, [isFetching]);
 
   useEffect(() => {
-    if (notFirstRender.current) {
-      debounceFetcher();
-    } else {
-      notFirstRender.current = true;
-    }
+    if (!didMount.current) didMount.current = true;
+    else debounceFetcher();
   }, [searchFilter]);
 
   const debounceFetcher = useMemo(() => {
@@ -66,7 +62,7 @@ const MultipleFetchDebounceSelect: React.FC<
     };
 
     return debounce(loadOptions, debounceTimeout);
-  }, [fetchOptions, debounceTimeout]);
+  }, [fetchOptions, debounceTimeout, searchFilter]);
 
   const getOptions = () => {
     fetchOptions(searchFilter?.toLowerCase(), loadNextPage.current).then(
@@ -118,7 +114,7 @@ const MultipleFetchDebounceSelect: React.FC<
       showSearch
       allowClear
       filterOption={false}
-      onFocus={() => debounceFetcher()}
+      onFocus={() => setSearchFilter('')}
       onChange={_onChange}
       onClear={_onClear}
       onSearch={setSearchFilter}

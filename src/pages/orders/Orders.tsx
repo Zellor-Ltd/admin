@@ -96,7 +96,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
 
   const fanOptionMapping: SelectOption = {
     key: 'id',
-    label: 'user',
+    label: 'userName',
     value: 'user',
   };
 
