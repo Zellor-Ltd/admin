@@ -1,6 +1,5 @@
 import { CalendarOutlined } from '@ant-design/icons';
 import {
-  AutoComplete,
   Col,
   DatePicker,
   PageHeader,
@@ -10,7 +9,6 @@ import {
   Typography,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import { Fan } from 'interfaces/Fan';
 import { Transaction } from 'interfaces/Transaction';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
@@ -19,13 +17,10 @@ import { fetchFans, fetchWalletTransactions } from 'services/DiscoClubService';
 import CopyOrderToClipboard from 'components/CopyOrderToClipboard';
 import { SelectOption } from 'interfaces/SelectOption';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { useRequest } from 'hooks/useRequest';
-import { ContentBlock } from 'draft-js';
+import MultipleFetchDebounceSelect from 'components/select/MultipleFetchDebounceSelect';
 
 const Transactions: React.FC<RouteComponentProps> = () => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [selectedFan, setSelectedFan] = useState<Fan | undefined>();
-  const [isFetchingFans, setIsFetchingFans] = useState(false);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [filteredTransactions, setFilteredTransactions] = useState<
     Transaction[]
@@ -34,38 +29,24 @@ const Transactions: React.FC<RouteComponentProps> = () => {
   const [eof, setEof] = useState<boolean>(false);
   const [loaded, setLoaded] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
-  const { doFetch } = useRequest({ setLoading });
-  const [searchFilter, setSearchFilter] = useState<string>();
-  const [options, setOptions] = useState<
-    { label: string; value: string; key: string }[]
-  >([]);
+  const [optionsPage, setOptionsPage] = useState<number>(0);
   const [content, setContent] = useState<Transaction[]>([]);
 
   const fanOptionMapping: SelectOption = {
     key: 'id',
-    label: 'userName',
+    label: 'user',
     value: 'user',
   };
 
-  const getFans = async () => {
-    setIsFetchingFans(true);
-    const response = await doFetch(() =>
-      fetchFans({
-        page: 0,
-        query: searchFilter,
-      })
-    );
+  const getFans = async (input?: string, loadNextPage?: boolean) => {
+    const pageToUse = !loadNextPage ? 0 : optionsPage;
+    const response: any = await fetchFans({
+      page: pageToUse,
+      query: input,
+    });
+    setOptionsPage(pageToUse + 1);
 
-    const optionFactory = (option: any) => {
-      return {
-        label: option[fanOptionMapping.label],
-        value: option[fanOptionMapping.value],
-        key: option[fanOptionMapping.key],
-      };
-    };
-
-    setOptions(response.results.map(optionFactory));
-    setIsFetchingFans(false);
+    return response.results;
   };
 
   useEffect(() => {
@@ -82,7 +63,10 @@ const Transactions: React.FC<RouteComponentProps> = () => {
   }, [refreshing]);
 
   const updateDisplayedArray = async () => {
-    if (!content.length) return;
+    if (!content.length) {
+      setEof(true);
+      return;
+    }
 
     const pageToUse = refreshing ? 0 : page;
     const results = content.slice(pageToUse * 10, pageToUse * 10 + 10);
@@ -169,16 +153,17 @@ const Transactions: React.FC<RouteComponentProps> = () => {
     },
   ];
 
-  const onChangeFan = async (value: string, _selectedFan?: any) => {
+  const onChangeFan = async (value?: string, _selectedFan?: any) => {
     setLoading(true);
     if (_selectedFan) {
-      setSelectedFan(_selectedFan);
       const { results }: any = await fetchWalletTransactions(_selectedFan.id);
       setContent(results);
       setRefreshing(true);
       if (!loaded) setLoaded(true);
     } else {
       setTransactions([]);
+      setFilteredTransactions([]);
+      setEof(true);
     }
     setLoading(false);
   };
@@ -197,11 +182,6 @@ const Transactions: React.FC<RouteComponentProps> = () => {
     );
   };
 
-  const onSearch = (value: string) => {
-    setSearchFilter(value);
-    getFans();
-  };
-
   return (
     <div className="transactions">
       <PageHeader title="Transactions" subTitle="List of Transactions" />
@@ -212,13 +192,14 @@ const Transactions: React.FC<RouteComponentProps> = () => {
       >
         <Col xxl={40} lg={6} xs={18}>
           <Typography.Title level={5}>Fan Filter</Typography.Title>
-          <AutoComplete
+          <MultipleFetchDebounceSelect
             style={{ width: '100%' }}
-            options={options}
-            onSelect={onChangeFan}
-            onSearch={onSearch}
-            placeholder="Type to search a fan"
-          />
+            fetchOptions={getFans}
+            onChange={onChangeFan}
+            onClear={() => onChangeFan()}
+            optionMapping={fanOptionMapping}
+            placeholder="Select a Fan"
+          ></MultipleFetchDebounceSelect>
         </Col>
       </Row>
       <InfiniteScroll
