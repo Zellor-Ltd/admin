@@ -79,6 +79,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
       socialPlatform = [],
       category = [],
       linkType = [],
+      videoType = [],
     },
   } = useSelector((state: any) => state.settings);
   const [feedForm] = Form.useForm();
@@ -654,7 +655,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
               </Col>
               <Col lg={12} xs={24}>
                 <Form.Item
-                  name="linkType"
+                  name="videoType"
                   label="Video Type"
                   rules={[
                     { required: true, message: `Video Type is required.` },
@@ -665,7 +666,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                     placeholder="Please select a Video Type"
                     disabled={!linkType.length}
                   >
-                    {linkType.map((type: any) => (
+                    {videoType.map((type: any) => (
                       <Select.Option
                         key={type.value}
                         value={type.value}
