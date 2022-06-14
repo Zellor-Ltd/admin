@@ -188,6 +188,11 @@
   display: none;
 }
 
+.ant-menu-dark .ant-menu-item-disabled.test-mode-banner {
+  background: orange;
+  color: #373737 !important;
+}
+
 @media (max-width: 992px) {
   .ant-layout-sider-children {
     width: 50px;

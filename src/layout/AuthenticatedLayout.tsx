@@ -4,6 +4,7 @@ import { Notifications } from 'components/Notifications';
 import jwt from 'helpers/jwt';
 import { useBuildTarget } from 'hooks/useBuildTarget';
 import ErrorPage from 'pages/error/ErrorPage';
+import { useEffect, useRef } from 'react';
 import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 import './AuthenticatedLayout.scss';
 import AdminSideMenu from './SideMenus/AdminSideMenu';
@@ -13,6 +14,9 @@ const { Header, Sider, Content } = Layout;
 
 const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
   const { children, history } = props;
+  const testMode = useRef(
+    process.env.REACT_APP_SERVER_ENV?.toString() === 'development'
+  );
 
   const appName = useBuildTarget({
     ADMIN: 'Disco Admin',
@@ -70,8 +74,8 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
           }}
         >
           {useBuildTarget({
-            ADMIN: <AdminSideMenu />,
-            BRAND_MANAGER: <BrandManagerSideMenu />,
+            ADMIN: <AdminSideMenu testMode />,
+            BRAND_MANAGER: <BrandManagerSideMenu testMode />,
           })}
         </Sider>
         <Content
