@@ -9,6 +9,7 @@ interface MultipleFetchDebounceSelectProps {
   fetchOptions: (search?: string, loadNextPage?: boolean) => Promise<any[]>;
   onChange: (value?: string, entity?: any) => void;
   onClear?: () => void;
+  onInputKeyDown?: any;
   optionMapping: SelectOption;
   placeholder: string;
   disabled?: boolean;
@@ -22,6 +23,7 @@ const MultipleFetchDebounceSelect: React.FC<
   fetchOptions,
   onChange,
   onClear,
+  onInputKeyDown,
   optionMapping,
   placeholder,
   disabled,
@@ -57,6 +59,7 @@ const MultipleFetchDebounceSelect: React.FC<
 
   const debounceFetcher = useMemo(() => {
     const loadOptions = () => {
+      setEoo(false);
       setIsFetching(true);
       setOptions([]);
     };
@@ -80,10 +83,9 @@ const MultipleFetchDebounceSelect: React.FC<
 
   const _onChange = (option?: SelectOption) => {
     if (!option) return;
-    const selectedEntity = fetchedEntities.current.find(entity =>
-      entity[optionMapping.value]
-        .toLowerCase()
-        .includes(option.value.toLowerCase())
+    const selectedEntity = fetchedEntities.current.find(
+      entity =>
+        entity[optionMapping.value].toLowerCase() === option.value.toLowerCase()
     );
     onChange(option.value, selectedEntity);
   };
@@ -114,10 +116,12 @@ const MultipleFetchDebounceSelect: React.FC<
       showSearch
       allowClear
       filterOption={false}
+      defaultActiveFirstOption={false}
       onFocus={() => setSearchFilter('')}
       onChange={_onChange}
       onClear={_onClear}
       onSearch={setSearchFilter}
+      onInputKeyDown={onInputKeyDown}
       onPopupScroll={event => handlePopupScroll(event.target)}
       notFoundContent={isFetching ? <Spin size="small" /> : null}
       options={

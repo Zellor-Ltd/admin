@@ -1,6 +1,5 @@
 import { EditOutlined, SearchOutlined } from '@ant-design/icons';
 import {
-  AutoComplete,
   Button,
   Col,
   PageHeader,
@@ -14,7 +13,7 @@ import { ColumnsType } from 'antd/lib/table';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
 import { useRequest } from 'hooks/useRequest';
 import { Fan } from 'interfaces/Fan';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { fetchGuests } from 'services/DiscoClubService';
 import scrollIntoView from 'scroll-into-view';
@@ -22,6 +21,7 @@ import GuestDetail from './GuestDetail';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import moment from 'moment';
 import { SelectOption } from 'interfaces/SelectOption';
+import MultipleFetchDebounceSelect from 'components/select/MultipleFetchDebounceSelect';
 
 const tagColorByPermission: any = {
   Admin: 'green',
@@ -37,63 +37,19 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
   const [currentGuest, setCurrentGuest] = useState<Fan>();
   const { doFetch } = useRequest({ setLoading });
   const [loaded, setLoaded] = useState<boolean>(false);
-  const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
   const [guests, setGuests] = useState<Fan[]>([]);
-  const [searchFilter, setSearchFilter] = useState<string>();
-  const [options, setOptions] = useState<
-    { label: string; value: string; key: string }[]
-  >([]);
+  const [guestBuffer, setGuestBuffer] = useState<Fan[]>([]);
+  const [searchFilter, setSearchFilter] = useState<string>('');
+  const [optionsPage, setOptionsPage] = useState<number>(0);
+  const [page, setPage] = useState<number>(0);
   const [refreshing, setRefreshing] = useState<boolean>(false);
+  const loadingGuests = useRef(false);
 
   const fanOptionMapping: SelectOption = {
     key: 'id',
     label: 'user',
     value: 'user',
-  };
-
-  useEffect(() => {
-    if (refreshing) {
-      setGuests([]);
-      fetchFans();
-      setEof(false);
-      setRefreshing(false);
-    }
-  }, [refreshing]);
-
-  const getResources = async () => {
-    setRefreshing(true);
-    setLoaded(true);
-  };
-
-  const fetchFans = async () => {
-    const pageToUse = refreshing ? 0 : page;
-    const response = await doFetch(() =>
-      fetchGuests({
-        page: pageToUse,
-        query: searchFilter,
-      })
-    );
-
-    setPage(pageToUse + 1);
-    if (response.results.length < 30) setEof(true);
-
-    const optionFactory = (option: any) => {
-      return {
-        label: option[fanOptionMapping.label],
-        value: option[fanOptionMapping.value],
-        key: option[fanOptionMapping.key],
-      };
-    };
-
-    setOptions(response.results.map(optionFactory));
-
-    setGuests(prev => [...prev.concat(response.results)]);
-  };
-
-  const updateDisplayedArray = () => {
-    if (!guests.length) return;
-    fetchFans();
   };
 
   useEffect(() => {
@@ -106,11 +62,21 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
     }
   }, [details]);
 
-  const viewGuest = (index: number, fan?: Fan) => {
-    setLastViewedIndex(index);
-    setCurrentGuest(fan);
-    setDetails(true);
-  };
+  useEffect(() => {
+    if (refreshing) {
+      setEof(false);
+      getGuests();
+      setRefreshing(false);
+    }
+  }, [refreshing]);
+
+  useEffect(() => {
+    if (loadingGuests.current) {
+      if (!loaded) setLoaded(true);
+      setGuests(guestBuffer);
+      loadingGuests.current = false;
+    }
+  }, [guestBuffer]);
 
   const columns: ColumnsType<Fan> = [
     {
@@ -225,6 +191,45 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
     },
   ];
 
+  const loadGuests = (shouldResetArray: boolean) => {
+    if (shouldResetArray) setGuestBuffer([]);
+    loadingGuests.current = true;
+    setRefreshing(true);
+  };
+
+  const getGuests = async (input?: string, loadNextPage?: boolean) => {
+    const pageToUse = loadingGuests.current
+      ? page
+      : !loadNextPage
+      ? 0
+      : optionsPage;
+
+    const response: any = await doFetch(() =>
+      fetchGuests({
+        page: pageToUse,
+        query: input ?? searchFilter,
+      })
+    );
+
+    setGuestBuffer(prev => [...prev.concat(response.results)]);
+
+    if (loadingGuests.current) {
+      setPage(pageToUse + 1);
+      if (response.results.length < 30) setEof(true);
+    } else {
+      setOptionsPage(pageToUse + 1);
+    }
+
+    return response.results;
+  };
+
+  const viewGuest = (index: number, fan: Fan) => {
+    setLastViewedIndex(index);
+    setCurrentGuest(fan);
+    setDetails(true);
+    loadingGuests.current = true;
+  };
+
   const refreshItem = (record: Fan) => {
     if (loaded) {
       guests[lastViewedIndex] = record;
@@ -243,21 +248,29 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
     setDetails(false);
   };
 
-  const onChangeFan = async (value: string) => {
-    setSearchFilter(value);
-    getResources();
+  const handleChangeFan = async (value?: string) => {
+    if (value) {
+      const entity = guestBuffer.find(guest => guest.user === value);
+      if (entity) viewGuest(-1, entity as Fan);
+    } else {
+      setGuests([]);
+    }
   };
 
-  const onSearch = (value: string) => {
-    setSearchFilter(value);
-    getResources();
+  const handleKeyDown = (event: any) => {
+    if (event.code.toString().startsWith('Key' || 'Space'))
+      setSearchFilter(prev => prev?.concat(event.key));
+    if (event.key === 'Enter' && searchFilter) {
+      loadGuests(true);
+      setSearchFilter('');
+    }
   };
 
   return (
     <>
       {!details && (
         <div>
-          <PageHeader title="Guests" subTitle="List of guests" />
+          <PageHeader title="Guests" subTitle="List of Guests" />
           <Row
             align="bottom"
             justify="space-between"
@@ -270,13 +283,14 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
                   <Typography.Title level={5}>
                     Search by Guest e-mail
                   </Typography.Title>
-                  <AutoComplete
+                  <MultipleFetchDebounceSelect
                     style={{ width: '100%' }}
-                    options={options}
-                    onSelect={onChangeFan}
-                    onSearch={onSearch}
+                    fetchOptions={getGuests}
+                    onChange={handleChangeFan}
+                    onInputKeyDown={event => handleKeyDown(event)}
+                    optionMapping={fanOptionMapping}
                     placeholder="Type to search a guest"
-                  />
+                  ></MultipleFetchDebounceSelect>
                 </Col>
               </Row>
             </Col>
@@ -285,7 +299,7 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
                 <Col lg={8} xs={16}>
                   <Button
                     type="primary"
-                    onClick={getResources}
+                    onClick={() => loadGuests(true)}
                     loading={loading}
                     style={{
                       marginBottom: '20px',
@@ -301,7 +315,7 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
           </Row>
           <InfiniteScroll
             dataLength={guests.length}
-            next={updateDisplayedArray}
+            next={() => loadGuests(false)}
             hasMore={!eof}
             loader={
               page !== 0 && (
@@ -333,7 +347,7 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
       )}
       {details && (
         <GuestDetail
-          fan={currentGuest}
+          fan={currentGuest as Fan}
           onSave={onSaveFan}
           onCancel={onCancelFan}
         />

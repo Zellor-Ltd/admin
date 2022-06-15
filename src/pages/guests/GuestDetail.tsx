@@ -4,13 +4,13 @@ import { Creator } from '../../interfaces/Creator';
 import { Fan } from '../../interfaces/Fan';
 import { useState } from 'react';
 import { saveUser } from '../../services/DiscoClubService';
-interface FanDetailProps {
-  fan: any;
+interface GuestDetailProps {
+  fan: Fan;
   onSave?: (record: Fan) => void;
   onCancel?: () => void;
 }
 
-const GuestDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
+const GuestDetail: React.FC<GuestDetailProps> = ({ fan, onSave, onCancel }) => {
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
   const { doRequest } = useRequest({ setLoading });

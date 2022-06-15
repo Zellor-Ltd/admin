@@ -198,7 +198,7 @@ const Transactions: React.FC<RouteComponentProps> = () => {
             onChange={onChangeFan}
             onClear={() => onChangeFan()}
             optionMapping={fanOptionMapping}
-            placeholder="Select a Fan"
+            placeholder="Search by fan e-mail"
           ></MultipleFetchDebounceSelect>
         </Col>
       </Row>
