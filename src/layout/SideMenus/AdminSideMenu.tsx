@@ -28,12 +28,14 @@ import {
   LockOutlined,
   PicCenterOutlined,
   UsergroupAddOutlined,
+  WarningOutlined,
 } from '@ant-design/icons';
 import { Menu } from 'antd';
 import SubMenu from 'antd/lib/menu/SubMenu';
+import { useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
-const AdminSideMenu = () => {
+const AdminSideMenu = testMode => {
   const [, pathname] = useLocation().pathname.split('/');
   const [parentMenu] = pathname.split('_');
 
@@ -44,6 +46,16 @@ const AdminSideMenu = () => {
       defaultSelectedKeys={[pathname]}
       defaultOpenKeys={[parentMenu]}
     >
+      {testMode.testMode && (
+        <Menu.Item
+          key="testMode"
+          disabled
+          icon={<WarningOutlined />}
+          className="test-mode-banner"
+        >
+          Test Mode
+        </Menu.Item>
+      )}
       <Menu.Item key="dashboard" icon={<DashboardOutlined />}>
         <Link to="/dashboard">Dashboard</Link>
       </Menu.Item>
