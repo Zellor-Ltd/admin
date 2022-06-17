@@ -1,6 +1,5 @@
 import { CalendarOutlined, SearchOutlined } from '@ant-design/icons';
 import {
-  AutoComplete,
   Button,
   Col,
   DatePicker,
@@ -78,7 +77,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   });
 
   const getFans = async (input?: string, loadNextPage?: boolean) => {
-    const pageToUse = !loadNextPage ? 0 : optionsPage;
+    const pageToUse = !!!loadNextPage ? 0 : optionsPage;
     const response: any = await fetchFans({
       page: pageToUse,
       query: input,
@@ -507,7 +506,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
                   <Typography.Title level={5}>Fan Filter</Typography.Title>
                   <MultipleFetchDebounceSelect
                     style={{ width: '100%' }}
-                    fetchOptions={getFans}
+                    onInput={getFans}
                     onChange={onChangeFan}
                     onClear={() => onChangeFan()}
                     optionMapping={fanOptionMapping}

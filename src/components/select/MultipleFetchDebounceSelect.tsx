@@ -6,36 +6,51 @@ import debounce from 'lodash/debounce';
 import { SelectOption } from '../../interfaces/SelectOption';
 
 interface MultipleFetchDebounceSelectProps {
-  fetchOptions: (search?: string, loadNextPage?: boolean) => Promise<any[]>;
+  onInput: (search?: string, loadNextPage?: boolean) => any;
   onChange: (value?: string, entity?: any) => void;
   onClear?: () => void;
+  onFocus?: () => any;
+  onBlur?: () => any;
   onInputKeyDown?: any;
   optionMapping: SelectOption;
   placeholder: string;
   disabled?: boolean;
   debounceTimeout?: number;
   style?: React.CSSProperties;
+  buffer?: any;
+  setEof?: (eof: boolean) => void;
+  loaded?: boolean;
+  input?: string;
 }
 
 const MultipleFetchDebounceSelect: React.FC<
   MultipleFetchDebounceSelectProps
 > = ({
-  fetchOptions,
+  onInput,
   onChange,
   onClear,
+  onFocus,
+  onBlur,
   onInputKeyDown,
   optionMapping,
   placeholder,
   disabled,
   debounceTimeout = 1000,
   style,
+  buffer,
+  setEof,
+  loaded,
+  input,
 }) => {
-  const didMount = useRef(false);
+  const mounted = useRef(false);
   const [isFetching, setIsFetching] = useState(false);
   const [options, setOptions] = useState<SelectOption[]>([]);
   const [eoo, setEoo] = useState<boolean>(false);
   const fetchedEntities = useRef<any[]>([]);
-  const [searchFilter, setSearchFilter] = useState<string>();
+  const [userInput, setUserInput] = useState<string | undefined>(input);
+  const searchFilter = useRef<string | undefined>();
+  const blurred = useRef(false);
+  const pressedEnter = useRef(false);
   const loadNextPage = useRef(false);
 
   const optionFactory = (option: any) => {
@@ -53,9 +68,18 @@ const MultipleFetchDebounceSelect: React.FC<
   }, [isFetching]);
 
   useEffect(() => {
-    if (!didMount.current) didMount.current = true;
-    else debounceFetcher();
-  }, [searchFilter]);
+    if (!mounted.current) mounted.current = true;
+    else {
+      //filter is not updated if user presses enter or until he clicks away from the selectbox
+      if (!pressedEnter.current || blurred.current) {
+        searchFilter.current = userInput;
+        blurred.current = false;
+      } else {
+        pressedEnter.current = false;
+      }
+      debounceFetcher();
+    }
+  }, [userInput]);
 
   const debounceFetcher = useMemo(() => {
     const loadOptions = () => {
@@ -65,13 +89,16 @@ const MultipleFetchDebounceSelect: React.FC<
     };
 
     return debounce(loadOptions, debounceTimeout);
-  }, [fetchOptions, debounceTimeout, searchFilter]);
+  }, [onInput, debounceTimeout, searchFilter.current]);
 
   const getOptions = () => {
-    fetchOptions(searchFilter?.toLowerCase(), loadNextPage.current).then(
+    onInput(searchFilter.current?.toLowerCase(), loadNextPage.current).then(
       entities => {
         if (loadNextPage.current) loadNextPage.current = false;
-        if (entities.length < 30) setEoo(true);
+        if (entities.length < 30) {
+          setEoo(true);
+          if (loaded) setEof?.(true);
+        }
 
         fetchedEntities.current = entities;
         const fetchedOptions = entities?.map(optionFactory);
@@ -91,7 +118,7 @@ const MultipleFetchDebounceSelect: React.FC<
   };
 
   const _onClear = () => {
-    setSearchFilter('');
+    setUserInput('');
     onClear?.();
   };
 
@@ -108,6 +135,29 @@ const MultipleFetchDebounceSelect: React.FC<
     }
   };
 
+  const _onFocus = () => {
+    if (!mounted.current) return;
+    if (!buffer || !buffer.length) setUserInput('');
+    else setOptions(buffer.map(optionFactory));
+    onFocus?.();
+  };
+
+  const _onBlur = () => {
+    onBlur?.();
+  };
+
+  const _onInputKeyDown = (event: any) => {
+    if (event.key === 'Enter') pressedEnter.current = true;
+    onInputKeyDown?.(event);
+  };
+
+  const filter = rows => {
+    return rows.filter(
+      row =>
+        row.label?.toLowerCase().indexOf(userInput?.toLowerCase() ?? '') > -1
+    );
+  };
+
   return (
     <Select
       style={style}
@@ -117,21 +167,31 @@ const MultipleFetchDebounceSelect: React.FC<
       allowClear
       filterOption={false}
       defaultActiveFirstOption={false}
-      onFocus={() => setSearchFilter('')}
+      onBlur={_onBlur}
+      onFocus={_onFocus}
       onChange={_onChange}
       onClear={_onClear}
-      onSearch={setSearchFilter}
-      onInputKeyDown={onInputKeyDown}
+      onSearch={setUserInput}
+      value={
+        userInput?.length
+          ? ({
+              key: userInput,
+              value: userInput,
+              label: userInput,
+            } as SelectOption)
+          : undefined
+      }
+      onInputKeyDown={_onInputKeyDown}
       onPopupScroll={event => handlePopupScroll(event.target)}
       notFoundContent={isFetching ? <Spin size="small" /> : null}
       options={
         isFetching
-          ? options.concat({
+          ? filter(options).concat({
               label: (<Spin size="small" />) as unknown as string,
               value: 'loading',
               key: 'loading',
             })
-          : options
+          : filter(options)
       }
       disabled={disabled}
     ></Select>

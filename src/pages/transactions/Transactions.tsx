@@ -39,7 +39,7 @@ const Transactions: React.FC<RouteComponentProps> = () => {
   };
 
   const getFans = async (input?: string, loadNextPage?: boolean) => {
-    const pageToUse = !loadNextPage ? 0 : optionsPage;
+    const pageToUse = !!!loadNextPage ? 0 : optionsPage;
     const response: any = await fetchFans({
       page: pageToUse,
       query: input,
@@ -194,7 +194,7 @@ const Transactions: React.FC<RouteComponentProps> = () => {
           <Typography.Title level={5}>Fan Filter</Typography.Title>
           <MultipleFetchDebounceSelect
             style={{ width: '100%' }}
-            fetchOptions={getFans}
+            onInput={getFans}
             onChange={onChangeFan}
             onClear={() => onChangeFan()}
             optionMapping={fanOptionMapping}

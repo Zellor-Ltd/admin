@@ -30,53 +30,26 @@ const tagColorByPermission: any = {
 };
 
 const Guests: React.FC<RouteComponentProps> = ({ location }) => {
-  const [loading, setLoading] = useState<boolean>(false);
+  const [, setLoading] = useState<boolean>(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [details, setDetails] = useState<boolean>(false);
   const [currentGuest, setCurrentGuest] = useState<Fan>();
   const { doFetch } = useRequest({ setLoading });
-  const [loaded, setLoaded] = useState<boolean>(false);
   const [eof, setEof] = useState<boolean>(false);
-  const [guests, setGuests] = useState<Fan[]>([]);
-  const [guestBuffer, setGuestBuffer] = useState<Fan[]>([]);
-  const [searchFilter, setSearchFilter] = useState<string>('');
-  const [optionsPage, setOptionsPage] = useState<number>(0);
+  const [loaded, setLoaded] = useState<boolean>(false);
+  const [userInput, setUserInput] = useState<string>();
   const [page, setPage] = useState<number>(0);
-  const [refreshing, setRefreshing] = useState<boolean>(false);
-  const loadingGuests = useRef(false);
+  const [fetchingGuests, setFetchingGuests] = useState<boolean>(false);
+  const updatingTable = useRef(false);
+  const [guests, setGuests] = useState<Fan[]>([]);
+  const [buffer, setBuffer] = useState<Fan[]>([]);
 
   const fanOptionMapping: SelectOption = {
     key: 'id',
     label: 'user',
     value: 'user',
   };
-
-  useEffect(() => {
-    if (!details) {
-      scrollIntoView(
-        document.querySelector(
-          `.scrollable-row-${lastViewedIndex}`
-        ) as HTMLElement
-      );
-    }
-  }, [details]);
-
-  useEffect(() => {
-    if (refreshing) {
-      setEof(false);
-      getGuests();
-      setRefreshing(false);
-    }
-  }, [refreshing]);
-
-  useEffect(() => {
-    if (loadingGuests.current) {
-      if (!loaded) setLoaded(true);
-      setGuests(guestBuffer);
-      loadingGuests.current = false;
-    }
-  }, [guestBuffer]);
 
   const columns: ColumnsType<Fan> = [
     {
@@ -191,43 +164,27 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
     },
   ];
 
-  const loadGuests = (shouldResetArray: boolean) => {
-    if (shouldResetArray) setGuestBuffer([]);
-    loadingGuests.current = true;
-    setRefreshing(true);
-  };
-
-  const getGuests = async (input?: string, loadNextPage?: boolean) => {
-    const pageToUse = loadingGuests.current
-      ? page
-      : !loadNextPage
-      ? 0
-      : optionsPage;
-
-    const response: any = await doFetch(() =>
-      fetchGuests({
-        page: pageToUse,
-        query: input ?? searchFilter,
-      })
-    );
-
-    setGuestBuffer(prev => [...prev.concat(response.results)]);
-
-    if (loadingGuests.current) {
-      setPage(pageToUse + 1);
-      if (response.results.length < 30) setEof(true);
-    } else {
-      setOptionsPage(pageToUse + 1);
+  useEffect(() => {
+    if (!details) {
+      scrollIntoView(
+        document.querySelector(
+          `.scrollable-row-${lastViewedIndex}`
+        ) as HTMLElement
+      );
     }
+  }, [details]);
 
-    return response.results;
+  useEffect(() => {
+    if (!loaded && guests.length) setLoaded(true);
+  }, [guests]);
+
+  const onSaveFan = (record: Fan) => {
+    refreshItem(record);
+    setDetails(false);
   };
 
-  const viewGuest = (index: number, fan: Fan) => {
-    setLastViewedIndex(index);
-    setCurrentGuest(fan);
-    setDetails(true);
-    loadingGuests.current = true;
+  const onCancelFan = () => {
+    setDetails(false);
   };
 
   const refreshItem = (record: Fan) => {
@@ -239,30 +196,63 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
     }
   };
 
-  const onSaveFan = (record: Fan) => {
-    refreshItem(record);
-    setDetails(false);
+  const viewGuest = (index: number, fan: Fan) => {
+    setLastViewedIndex(index);
+    setCurrentGuest(fan);
+    setDetails(true);
+    if (loaded && buffer.length > guests.length) setGuests(buffer);
   };
 
-  const onCancelFan = () => {
-    setDetails(false);
+  const searchGuests = () => {
+    if (buffer.length) setGuests(buffer);
+    else loadGuests();
+  };
+
+  const loadGuests = () => {
+    updatingTable.current = true;
+    setEof(false);
+    setFetchingGuests(true);
+    fetchToBuffer(userInput?.toLowerCase()).then(data => {
+      setGuests(buffer.concat(data));
+      setFetchingGuests(false);
+    });
   };
 
   const handleChangeFan = async (value?: string) => {
     if (value) {
-      const entity = guestBuffer.find(guest => guest.user === value);
-      if (entity) viewGuest(-1, entity as Fan);
-    } else {
-      setGuests([]);
+      const entity = buffer.find(guest => guest.user === value);
+      const index = buffer.indexOf(entity as Fan);
+      if (entity) viewGuest(index, entity as Fan);
     }
   };
 
+  const fetchToBuffer = async (input?: string, loadNextPage?: boolean) => {
+    if (userInput !== input) setUserInput(input);
+    const pageToUse = updatingTable.current ? page : !!!loadNextPage ? 0 : page;
+
+    if (pageToUse === 0) setBuffer([]);
+
+    const response = await doFetch(() =>
+      fetchGuests({
+        page: pageToUse,
+        query: input,
+      })
+    );
+
+    setBuffer(prev => [...prev.concat(response.results)]);
+    setPage(pageToUse + 1);
+
+    if (response.results.length < 30 && updatingTable.current) setEof(true);
+    updatingTable.current = false;
+
+    return response.results;
+  };
+
   const handleKeyDown = (event: any) => {
-    if (event.code.toString().startsWith('Key' || 'Space'))
-      setSearchFilter(prev => prev?.concat(event.key));
-    if (event.key === 'Enter' && searchFilter) {
-      loadGuests(true);
-      setSearchFilter('');
+    if (event.key === 'Enter' && userInput) {
+      //buffer was set as input was typed
+      setGuests(buffer);
+      setPage(0);
     }
   };
 
@@ -285,9 +275,16 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
                   </Typography.Title>
                   <MultipleFetchDebounceSelect
                     style={{ width: '100%' }}
-                    fetchOptions={getGuests}
+                    input={userInput}
+                    loaded={loaded}
+                    onInput={fetchToBuffer}
                     onChange={handleChangeFan}
-                    onInputKeyDown={event => handleKeyDown(event)}
+                    onClear={() => setUserInput('')}
+                    buffer={buffer}
+                    onInputKeyDown={(event: HTMLInputElement) =>
+                      handleKeyDown(event)
+                    }
+                    setEof={setEof}
                     optionMapping={fanOptionMapping}
                     placeholder="Type to search a guest"
                   ></MultipleFetchDebounceSelect>
@@ -299,8 +296,8 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
                 <Col lg={8} xs={16}>
                   <Button
                     type="primary"
-                    onClick={() => loadGuests(true)}
-                    loading={loading}
+                    onClick={searchGuests}
+                    disabled={fetchingGuests}
                     style={{
                       marginBottom: '20px',
                       marginRight: '25px',
@@ -315,10 +312,11 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
           </Row>
           <InfiniteScroll
             dataLength={guests.length}
-            next={() => loadGuests(false)}
+            next={loadGuests}
             hasMore={!eof}
             loader={
-              page !== 0 && (
+              page !== 0 &&
+              fetchingGuests && (
                 <div className="scroll-message">
                   <Spin />
                 </div>
@@ -335,7 +333,7 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
               rowKey="id"
               columns={columns}
               dataSource={guests}
-              loading={refreshing}
+              loading={fetchingGuests}
               pagination={false}
               rowSelection={{
                 selectedRowKeys,

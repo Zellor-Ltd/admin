@@ -1,6 +1,5 @@
 import { CalendarOutlined, SearchOutlined } from '@ant-design/icons';
 import {
-  AutoComplete,
   Button,
   Col,
   DatePicker,
@@ -78,7 +77,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   });
 
   const getFans = async (input?: string, loadNextPage?: boolean) => {
-    const pageToUse = !loadNextPage ? 0 : optionsPage;
+    const pageToUse = !!!loadNextPage ? 0 : optionsPage;
     const response: any = await fetchFans({
       page: pageToUse,
       query: input,
@@ -106,7 +105,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       (order: Order) => !!(order.product || order.cart)
     );
     setOrders(prev => [...prev.concat(validOrders)]);
-    if (validOrders.length < 10) setEof(true);
+    if (validOrders.length < 50) setEof(true);
     setLoaded(true);
   };
 
@@ -451,8 +450,8 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     getBrands();
   }, []);
 
-  const onChangeBrand = async (id: string | undefined) => {
-    setBrandFilter(id);
+  const onChangeBrand = async (_?: string, brand?: Brand) => {
+    setBrandFilter(brand?.id);
     setOrders([]);
     fetch();
   };
@@ -461,12 +460,10 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     return fans.find(fan => fan.user.includes(fanUser));
   };
 
-  const onChangeFan = async (value?: string) => {
+  const onChangeFan = async (_?: string, fan?: Fan) => {
     setOrders([]);
-    if (value) {
-      const entity = fans.find(fan => fan.user === value);
-      fetch(entity?.id);
-    }
+    if (!fan) fetch();
+    else fetch(fan?.id);
   };
 
   const onSaveFan = (record: Fan) => {
@@ -493,9 +490,9 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
                   <Typography.Title level={5}>Master Brand</Typography.Title>
                   <SimpleSelect
                     data={brands}
-                    onChange={id => onChangeBrand(id)}
+                    onChange={onChangeBrand}
                     style={{ width: '100%' }}
-                    selectedOption={''}
+                    selectedOption={brandFilter}
                     optionMapping={optionMapping}
                     placeholder={'Select a master brand'}
                     loading={isFetchingBrands}
@@ -507,7 +504,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
                   <Typography.Title level={5}>Fan Filter</Typography.Title>
                   <MultipleFetchDebounceSelect
                     style={{ width: '100%' }}
-                    fetchOptions={getFans}
+                    onInput={getFans}
                     onChange={onChangeFan}
                     onClear={() => onChangeFan()}
                     optionMapping={fanOptionMapping}
