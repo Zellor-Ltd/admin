@@ -29,10 +29,12 @@ import {
   PicCenterOutlined,
   UsergroupAddOutlined,
   WarningOutlined,
+  CalendarOutlined,
+  UserSwitchOutlined,
+  ScheduleOutlined,
 } from '@ant-design/icons';
 import { Menu } from 'antd';
 import SubMenu from 'antd/lib/menu/SubMenu';
-import { useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 const AdminSideMenu = testMode => {
@@ -85,6 +87,18 @@ const AdminSideMenu = testMode => {
       <Menu.Item key="preview-products" icon={<IssuesCloseOutlined />}>
         <Link to="/preview-products">Preview Products</Link>
       </Menu.Item>
+      <SubMenu
+        key="commissions"
+        icon={<UserSwitchOutlined />}
+        title="Commissions"
+      >
+        <Menu.Item key="commissions_due" icon={<CalendarOutlined />}>
+          <Link to="/commissions_due">Commissions Due</Link>
+        </Menu.Item>
+        <Menu.Item key="commissions_payments" icon={<ScheduleOutlined />}>
+          <Link to="/commissions_payments">Payments</Link>
+        </Menu.Item>
+      </SubMenu>
       <Menu.Item key="feed" icon={<HeartFilled />}>
         <Link to="/feed">Video Feeds</Link>
       </Menu.Item>
