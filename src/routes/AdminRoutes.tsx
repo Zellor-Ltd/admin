@@ -42,6 +42,7 @@ import DataManagement from 'pages/data-management/DataManagement';
 import Trends from 'pages/trends/Trends';
 import FeedTemplates from 'pages/video-feed/FeedTemplates';
 import FanVideos from 'pages/fan-videos/FanVideos';
+import Commissions from 'pages/commissions/Commissions';
 
 function AdminRoutes() {
   return (
@@ -58,6 +59,11 @@ function AdminRoutes() {
         layout={AuthenticatedLayout}
       />
       <AppRoute path="/login" component={Login} layout={OpenLayout} />
+      <AppRoute
+        path="/commissions_due"
+        component={Commissions}
+        layout={AuthenticatedLayout}
+      />
       <AppRoute
         path="/feed-templates"
         component={FeedTemplates}

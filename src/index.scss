@@ -23,6 +23,14 @@
   margin-top: 16px;
 }
 
+.mr-2 {
+  margin-right: 2rem;
+}
+
+.mt-03 {
+  margin-top: 0.3rem;
+}
+
 .mt-05 {
   margin-top: 0.5rem;
 }
@@ -186,6 +194,11 @@
 
 .ant-layout-sider-zero-width-trigger {
   display: none;
+}
+
+.ant-menu-dark .ant-menu-item-disabled.test-mode-banner {
+  background: orange;
+  color: #373737 !important;
 }
 
 @media (max-width: 992px) {

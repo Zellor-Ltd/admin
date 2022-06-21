@@ -31,12 +31,7 @@ import { Segment } from 'interfaces/Segment';
 import { Tag } from 'interfaces/Tag';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import {
-  fetchCreators,
-  fetchLinks,
-  saveLink,
-  saveVideoFeed,
-} from 'services/DiscoClubService';
+import { fetchLinks, saveLink, saveVideoFeed } from 'services/DiscoClubService';
 import BrandForm from './BrandForm';
 import TagForm from './TagForm';
 import './VideoFeed.scss';
@@ -44,9 +39,7 @@ import './VideoFeedDetail.scss';
 import ReactTagInput from '@pathofdev/react-tag-input';
 import '@pathofdev/react-tag-input/build/index.css';
 import moment from 'moment';
-import SimpleSelect from 'components/select/SimpleSelect';
 import { ProductBrand } from 'interfaces/ProductBrand';
-import { SelectOption } from 'interfaces/SelectOption';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
 
 const { Title } = Typography;
@@ -79,6 +72,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
       socialPlatform = [],
       category = [],
       linkType = [],
+      videoType = [],
     },
   } = useSelector((state: any) => state.settings);
   const [feedForm] = Form.useForm();
@@ -654,7 +648,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
               </Col>
               <Col lg={12} xs={24}>
                 <Form.Item
-                  name="linkType"
+                  name="videoType"
                   label="Video Type"
                   rules={[
                     { required: true, message: `Video Type is required.` },
@@ -663,9 +657,9 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                   <Select
                     mode="multiple"
                     placeholder="Please select a Video Type"
-                    disabled={!linkType.length}
+                    disabled={!videoType.length}
                   >
-                    {linkType.map((type: any) => (
+                    {videoType.map((type: any) => (
                       <Select.Option
                         key={type.value}
                         value={type.value}

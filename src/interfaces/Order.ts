@@ -5,6 +5,7 @@ export interface Order {
   amount?: number;
   paid?: boolean;
   stage?: string;
+  commissionInternalStatus?: string;
   hCreationDate?: string;
   hLastUpdate?: string;
   customerEmail?: string;
