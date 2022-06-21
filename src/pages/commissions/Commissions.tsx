@@ -123,8 +123,7 @@ const Commissions: React.FC<RouteComponentProps> = ({ history, location }) => {
       responsive: ['sm'],
       shouldCellUpdate: (prevRecord, nextRecord) =>
         prevRecord.dueDate != nextRecord.dueDate,
-      render: (creationdueDate: Date) =>
-        moment(creationdueDate).format('DD/MM/YYYY'),
+      render: (dueDate: Date) => moment(dueDate).format('DD/MM/YYYY'),
       sorter: (a, b): any => {
         if (a.dueDate && b.dueDate)
           return moment(a.dueDate).unix() - moment(b.dueDate).unix();
@@ -150,13 +149,14 @@ const Commissions: React.FC<RouteComponentProps> = ({ history, location }) => {
       dataIndex: ['item', 'id'],
       width: '25%',
       sorter: (a, b): any => {
-        if (a.item.id && b.item.id) return a.item.id.localeCompare(b.item.id);
-        else if (a.item.id) return -1;
-        else if (b.item.id) return 1;
+        if (a.item?.id && b.item?.id)
+          return a.item?.id.localeCompare(b.item?.id);
+        else if (a.item?.id) return -1;
+        else if (b.item?.id) return 1;
         else return 0;
       },
       render: (_, record: Commission) => (
-        <CopyIdToClipboard id={record.item.id} />
+        <CopyIdToClipboard id={record.item?.id} />
       ),
     },
     {
@@ -164,24 +164,24 @@ const Commissions: React.FC<RouteComponentProps> = ({ history, location }) => {
       dataIndex: ['item', 'description'],
       width: '15%',
       sorter: (a, b): any => {
-        if (a.item.description && b.item.description)
-          return a.item.description.localeCompare(b.item.description);
-        else if (a.item.description) return -1;
-        else if (b.item.description) return 1;
+        if (a.item?.description && b.item?.description)
+          return a.item?.description.localeCompare(b.item?.description);
+        else if (a.item?.description) return -1;
+        else if (b.item?.description) return 1;
         else return 0;
       },
       render: (value: string) =>
-        value.length > 50 ? `${value.toString().slice(0, 50)}(...)` : value,
+        value?.length > 50 ? `${value.toString().slice(0, 50)}(...)` : value,
     },
     {
       title: 'Quantity',
       dataIndex: ['item', 'quantity'],
       width: '10%',
       sorter: (a, b): any => {
-        if (a.item.quantity && b.item.quantity)
-          return a.item.quantity - b.item.quantity;
-        else if (a.item.quantity) return -1;
-        else if (b.item.quantity) return 1;
+        if (a.item?.quantity && b.item?.quantity)
+          return a.item?.quantity - b.item?.quantity;
+        else if (a.item?.quantity) return -1;
+        else if (b.item?.quantity) return 1;
         else return 0;
       },
     },
@@ -201,10 +201,10 @@ const Commissions: React.FC<RouteComponentProps> = ({ history, location }) => {
       dataIndex: ['item', 'totalPrice'],
       width: '10%',
       sorter: (a, b): any => {
-        if (a.item.totalPrice && b.item.totalPrice)
-          return a.item.totalPrice - b.item.totalPrice;
-        else if (a.item.totalPrice) return -1;
-        else if (b.item.totalPrice) return 1;
+        if (a.item?.totalPrice && b.item?.totalPrice)
+          return a.item?.totalPrice - b.item?.totalPrice;
+        else if (a.item?.totalPrice) return -1;
+        else if (b.item?.totalPrice) return 1;
         else return 0;
       },
       render: (value: number) => `€${value}`,
@@ -214,16 +214,17 @@ const Commissions: React.FC<RouteComponentProps> = ({ history, location }) => {
       dataIndex: ['item', 'totalPrice'],
       width: '10%',
       sorter: (a, b): any => {
-        if (a.item.totalPrice && b.item.totalPrice)
-          return a.item.totalPrice - b.item.totalPrice;
-        else if (a.item.totalPrice) return -1;
-        else if (b.item.totalPrice) return 1;
+        if (a.item?.totalPrice && b.item?.totalPrice)
+          return a.item?.totalPrice - b.item?.totalPrice;
+        else if (a.item?.totalPrice) return -1;
+        else if (b.item?.totalPrice) return 1;
         else return 0;
       },
       render: (_: number, entity: Commission) =>
         `${
-          ((entity.item.totalDiscountedPrice - entity.item.totalPrice) * 100) /
-          entity.item.totalPrice
+          ((entity.item?.totalDiscountedPrice - entity.item?.totalPrice) *
+            100) /
+          entity.item?.totalPrice
         }%`,
     },
     {
@@ -231,10 +232,10 @@ const Commissions: React.FC<RouteComponentProps> = ({ history, location }) => {
       dataIndex: ['item', 'totalDiscountedPrice'],
       width: '10%',
       sorter: (a, b): any => {
-        if (a.item.totalDiscountedPrice && b.item.totalDiscountedPrice)
-          return a.item.totalDiscountedPrice - b.item.totalDiscountedPrice;
-        else if (a.item.totalDiscountedPrice) return -1;
-        else if (b.item.totalDiscountedPrice) return 1;
+        if (a.item?.totalDiscountedPrice && b.item?.totalDiscountedPrice)
+          return a.item?.totalDiscountedPrice - b.item?.totalDiscountedPrice;
+        else if (a.item?.totalDiscountedPrice) return -1;
+        else if (b.item?.totalDiscountedPrice) return 1;
         else return 0;
       },
       render: (value: number) => `€${value}`,
@@ -277,10 +278,10 @@ const Commissions: React.FC<RouteComponentProps> = ({ history, location }) => {
     selectedRows.forEach(
       ({ item, commissionAmount, commissionPercentage, status }) => {
         if (status === 'Returned') {
-          setTotalSalePrice(prev => prev - item.totalDiscountedPrice);
+          setTotalSalePrice(prev => prev - item?.totalDiscountedPrice);
           setTotalCommissionAmount(prev => prev - commissionAmount);
         } else {
-          setTotalSalePrice(prev => prev + item.totalDiscountedPrice);
+          setTotalSalePrice(prev => prev + item?.totalDiscountedPrice);
           setTotalCommissionAmount(prev => prev + commissionAmount);
         }
 
