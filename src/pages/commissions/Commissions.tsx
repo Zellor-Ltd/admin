@@ -339,6 +339,7 @@ const Commissions: React.FC<RouteComponentProps> = ({ history, location }) => {
                     style={{ width: '100%' }}
                     onChange={setCurrentStatus}
                     value={currentStatus}
+                    disabled={!creators.length}
                     showSearch
                     filterOption={(input, option) =>
                       !!option?.children
