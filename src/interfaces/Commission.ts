@@ -3,13 +3,7 @@ export interface Commission {
   dueDate?: Date;
   id: string;
   item: any;
-  productId: any;
-  description?: string;
-  quantity: number;
   status: string;
-  price: number;
-  discount: number;
-  salePrice: number;
   commissionAmount: number;
   commissionPercentage: number;
 }
