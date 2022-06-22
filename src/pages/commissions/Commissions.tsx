@@ -1,4 +1,13 @@
-import { Button, Col, PageHeader, Row, Select, Table, Typography } from 'antd';
+import {
+  Button,
+  Col,
+  message,
+  PageHeader,
+  Row,
+  Select,
+  Table,
+  Typography,
+} from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { useRequest } from '../../hooks/useRequest';
 import { useEffect, useState } from 'react';
@@ -86,6 +95,10 @@ const Commissions: React.FC<RouteComponentProps> = ({ history, location }) => {
   };
 
   const payCommissions = async () => {
+    if (totalCommissionAmount < 0) {
+      message.warning('Warning: Cannot send negative payments!');
+      return;
+    }
     await doRequest(() =>
       saveCommission({
         creatorId: currentCreator as string,
