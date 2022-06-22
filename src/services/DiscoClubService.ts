@@ -776,8 +776,8 @@ export const fetchCommissions = ({
   creatorId,
   status,
 }: {
-  creatorId: string;
-  status: string;
+  creatorId?: string;
+  status?: string;
 }) =>
   instance.post(`Disco/Creator/Adm/Commission/List`, {
     creatorId,

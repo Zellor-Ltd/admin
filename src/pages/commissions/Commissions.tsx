@@ -19,8 +19,8 @@ const Commissions: React.FC<RouteComponentProps> = ({ history, location }) => {
   const { doFetch, doRequest } = useRequest({ setLoading });
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
   const [details, setDetails] = useState<boolean>(false);
-  const [currentStatus, setCurrentStatus] = useState<string>('Status');
-  const [currentCreator, setCurrentCreator] = useState<string>('Creator');
+  const [currentStatus, setCurrentStatus] = useState<string>();
+  const [currentCreator, setCurrentCreator] = useState<string>();
   const [creators, setCreators] = useState<Creator[]>([]);
   const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
   const [commissions, setCommissions] = useState<Commission[]>([]);
@@ -60,29 +60,26 @@ const Commissions: React.FC<RouteComponentProps> = ({ history, location }) => {
   }
 
   const resetPage = () => {
-    setCurrentCreator('Creator');
-    setCurrentStatus('Status');
+    setCurrentCreator(undefined);
+    setCurrentStatus(undefined);
   };
 
   useEffect(() => {
+    setTotalSalePrice(0);
     setTotalCommissionAmount(0);
-    if (currentCreator === 'Creator') {
+    if (!currentCreator) {
       setCommissions([]);
       return;
     }
     getCommissions();
-  }, [currentCreator]);
-
-  const filterCommissions = (rows: any) => {
-    if (currentStatus === 'Status') return rows;
-    return rows.filter(row => row.status?.indexOf(currentStatus) > -1);
-  };
+  }, [currentCreator, currentStatus]);
 
   const getCommissions = async () => {
+    setSelectedRowKeys([]);
     const { results } = await doFetch(() =>
       fetchCommissions({
-        creatorId: currentCreator,
-        status: currentStatus !== 'Status' ? currentStatus : '',
+        creatorId: currentCreator ?? '',
+        status: currentStatus ?? '',
       })
     );
     setCommissions(results);
@@ -91,11 +88,13 @@ const Commissions: React.FC<RouteComponentProps> = ({ history, location }) => {
   const payCommissions = async () => {
     await doRequest(() =>
       saveCommission({
-        creatorId: currentCreator,
+        creatorId: currentCreator as string,
         totalDue: totalCommissionAmount,
         items: selectedRowKeys,
       })
     );
+    setSelectedRowKeys([]);
+    setCommissions([]);
   };
 
   const columns: ColumnsType<Commission> = [
@@ -124,8 +123,7 @@ const Commissions: React.FC<RouteComponentProps> = ({ history, location }) => {
       responsive: ['sm'],
       shouldCellUpdate: (prevRecord, nextRecord) =>
         prevRecord.dueDate != nextRecord.dueDate,
-      render: (creationdueDate: Date) =>
-        moment(creationdueDate).format('DD/MM/YYYY'),
+      render: (dueDate: Date) => moment(dueDate).format('DD/MM/YYYY'),
       sorter: (a, b): any => {
         if (a.dueDate && b.dueDate)
           return moment(a.dueDate).unix() - moment(b.dueDate).unix();
@@ -151,13 +149,14 @@ const Commissions: React.FC<RouteComponentProps> = ({ history, location }) => {
       dataIndex: ['item', 'id'],
       width: '25%',
       sorter: (a, b): any => {
-        if (a.item.id && b.item.id) return a.item.id.localeCompare(b.item.id);
-        else if (a.item.id) return -1;
-        else if (b.item.id) return 1;
+        if (a.item?.id && b.item?.id)
+          return a.item?.id.localeCompare(b.item?.id);
+        else if (a.item?.id) return -1;
+        else if (b.item?.id) return 1;
         else return 0;
       },
       render: (_, record: Commission) => (
-        <CopyIdToClipboard id={record.item.id} />
+        <CopyIdToClipboard id={record.item?.id} />
       ),
     },
     {
@@ -165,24 +164,24 @@ const Commissions: React.FC<RouteComponentProps> = ({ history, location }) => {
       dataIndex: ['item', 'description'],
       width: '15%',
       sorter: (a, b): any => {
-        if (a.item.description && b.item.description)
-          return a.item.description.localeCompare(b.item.description);
-        else if (a.item.description) return -1;
-        else if (b.item.description) return 1;
+        if (a.item?.description && b.item?.description)
+          return a.item?.description.localeCompare(b.item?.description);
+        else if (a.item?.description) return -1;
+        else if (b.item?.description) return 1;
         else return 0;
       },
       render: (value: string) =>
-        value.length > 75 ? `${value.toString().slice(0, 75)}(...)` : value,
+        value?.length > 50 ? `${value.toString().slice(0, 50)}(...)` : value,
     },
     {
       title: 'Quantity',
       dataIndex: ['item', 'quantity'],
       width: '10%',
       sorter: (a, b): any => {
-        if (a.item.quantity && b.item.quantity)
-          return a.item.quantity - b.item.quantity;
-        else if (a.item.quantity) return -1;
-        else if (b.item.quantity) return 1;
+        if (a.item?.quantity && b.item?.quantity)
+          return a.item?.quantity - b.item?.quantity;
+        else if (a.item?.quantity) return -1;
+        else if (b.item?.quantity) return 1;
         else return 0;
       },
     },
@@ -202,10 +201,10 @@ const Commissions: React.FC<RouteComponentProps> = ({ history, location }) => {
       dataIndex: ['item', 'totalPrice'],
       width: '10%',
       sorter: (a, b): any => {
-        if (a.item.totalPrice && b.item.totalPrice)
-          return a.item.totalPrice - b.item.totalPrice;
-        else if (a.item.totalPrice) return -1;
-        else if (b.item.totalPrice) return 1;
+        if (a.item?.totalPrice && b.item?.totalPrice)
+          return a.item?.totalPrice - b.item?.totalPrice;
+        else if (a.item?.totalPrice) return -1;
+        else if (b.item?.totalPrice) return 1;
         else return 0;
       },
       render: (value: number) => `€${value}`,
@@ -215,16 +214,17 @@ const Commissions: React.FC<RouteComponentProps> = ({ history, location }) => {
       dataIndex: ['item', 'totalPrice'],
       width: '10%',
       sorter: (a, b): any => {
-        if (a.item.totalPrice && b.item.totalPrice)
-          return a.item.totalPrice - b.item.totalPrice;
-        else if (a.item.totalPrice) return -1;
-        else if (b.item.totalPrice) return 1;
+        if (a.item?.totalPrice && b.item?.totalPrice)
+          return a.item?.totalPrice - b.item?.totalPrice;
+        else if (a.item?.totalPrice) return -1;
+        else if (b.item?.totalPrice) return 1;
         else return 0;
       },
       render: (_: number, entity: Commission) =>
         `${
-          ((entity.item.totalDiscountedPrice - entity.item.totalPrice) * 100) /
-          entity.item.totalPrice
+          ((entity.item?.totalDiscountedPrice - entity.item?.totalPrice) *
+            100) /
+          entity.item?.totalPrice
         }%`,
     },
     {
@@ -232,10 +232,10 @@ const Commissions: React.FC<RouteComponentProps> = ({ history, location }) => {
       dataIndex: ['item', 'totalDiscountedPrice'],
       width: '10%',
       sorter: (a, b): any => {
-        if (a.item.totalDiscountedPrice && b.item.totalDiscountedPrice)
-          return a.item.totalDiscountedPrice - b.item.totalDiscountedPrice;
-        else if (a.item.totalDiscountedPrice) return -1;
-        else if (b.item.totalDiscountedPrice) return 1;
+        if (a.item?.totalDiscountedPrice && b.item?.totalDiscountedPrice)
+          return a.item?.totalDiscountedPrice - b.item?.totalDiscountedPrice;
+        else if (a.item?.totalDiscountedPrice) return -1;
+        else if (b.item?.totalDiscountedPrice) return 1;
         else return 0;
       },
       render: (value: number) => `€${value}`,
@@ -275,19 +275,27 @@ const Commissions: React.FC<RouteComponentProps> = ({ history, location }) => {
     setSmallestCommissionPercentage(selectedRows[0]?.commissionPercentage);
     setBiggestCommissionPercentage(selectedRows[0]?.commissionPercentage);
 
-    selectedRows.forEach(({ item, commissionAmount, commissionPercentage }) => {
-      setTotalSalePrice(prev => prev + item.totalDiscountedPrice);
-      setTotalCommissionAmount(prev => prev + commissionAmount);
+    selectedRows.forEach(
+      ({ item, commissionAmount, commissionPercentage, status }) => {
+        if (status === 'Returned') {
+          setTotalSalePrice(prev => prev - item?.totalDiscountedPrice);
+          setTotalCommissionAmount(prev => prev - commissionAmount);
+        } else {
+          setTotalSalePrice(prev => prev + item?.totalDiscountedPrice);
+          setTotalCommissionAmount(prev => prev + commissionAmount);
+        }
 
-      let currentCommissionPercentage = commissionPercentage;
-      if (smallestCommissionPercentage > currentCommissionPercentage)
-        setSmallestCommissionPercentage(currentCommissionPercentage);
-      if (biggestCommissionPercentage < currentCommissionPercentage)
-        setBiggestCommissionPercentage(currentCommissionPercentage);
-    });
+        let currentCommissionPercentage = commissionPercentage;
+        if (smallestCommissionPercentage > currentCommissionPercentage)
+          setSmallestCommissionPercentage(currentCommissionPercentage);
+        if (biggestCommissionPercentage < currentCommissionPercentage)
+          setBiggestCommissionPercentage(currentCommissionPercentage);
+      }
+    );
   };
 
   const rowSelection = {
+    selectedRowKeys: selectedRowKeys,
     onChange: onSelectChange,
     getCheckboxProps: (record: Commission) => ({
       disabled: record.status === 'Pending',
@@ -318,7 +326,9 @@ const Commissions: React.FC<RouteComponentProps> = ({ history, location }) => {
                     style={{ width: '100%' }}
                     onChange={setCurrentCreator}
                     value={currentCreator}
+                    placeholder="Creator"
                     showSearch
+                    allowClear
                     disabled={!creators.length}
                     filterOption={(input, option) =>
                       !!option?.children
@@ -339,7 +349,10 @@ const Commissions: React.FC<RouteComponentProps> = ({ history, location }) => {
                     style={{ width: '100%' }}
                     onChange={setCurrentStatus}
                     value={currentStatus}
+                    placeholder="Status"
+                    disabled={!creators.length}
                     showSearch
+                    allowClear
                     filterOption={(input, option) =>
                       !!option?.children
                         ?.toString()
@@ -347,10 +360,7 @@ const Commissions: React.FC<RouteComponentProps> = ({ history, location }) => {
                         .includes(input.toLowerCase())
                     }
                   >
-                    <Select.Option key={1} value={'Pending'}>
-                      <Typography.Text type="danger">Pending</Typography.Text>
-                    </Select.Option>
-                    <Select.Option key={2} value={'Cleared'}>
+                    <Select.Option key={1} value={'Cleared'}>
                       Cleared
                     </Select.Option>
                     <Select.Option key={2} value={'Returned'}>
@@ -366,7 +376,7 @@ const Commissions: React.FC<RouteComponentProps> = ({ history, location }) => {
             rowSelection={rowSelection}
             rowKey="id"
             columns={columns}
-            dataSource={filterCommissions(commissions)}
+            dataSource={commissions}
             loading={loading}
             pagination={false}
             summary={pageData => {
@@ -387,7 +397,9 @@ const Commissions: React.FC<RouteComponentProps> = ({ history, location }) => {
                     <Table.Summary.Cell index={9}></Table.Summary.Cell>
                     <Table.Summary.Cell index={10}>
                       <Typography.Text>
-                        €{totalSalePrice.toFixed(2)}
+                        {totalSalePrice > 0
+                          ? `€${totalSalePrice.toFixed(2)}`
+                          : `-€${Math.abs(totalSalePrice).toFixed(2)}`}
                       </Typography.Text>
                     </Table.Summary.Cell>
                     <Table.Summary.Cell index={11}>
@@ -402,7 +414,9 @@ const Commissions: React.FC<RouteComponentProps> = ({ history, location }) => {
                     </Table.Summary.Cell>
                     <Table.Summary.Cell index={12}>
                       <Typography.Text>
-                        €{totalCommissionAmount.toFixed(2)}
+                        {totalCommissionAmount > 0
+                          ? `€${totalCommissionAmount.toFixed(2)}`
+                          : `-€${Math.abs(totalCommissionAmount).toFixed(2)}`}
                       </Typography.Text>
                     </Table.Summary.Cell>
                   </Table.Summary.Row>
