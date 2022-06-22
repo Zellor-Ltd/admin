@@ -39,7 +39,8 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
   const [eof, setEof] = useState<boolean>(false);
   const [loaded, setLoaded] = useState<boolean>(false);
   const [userInput, setUserInput] = useState<string>();
-  const [page, setPage] = useState<number>(0);
+  const [optionsPage, setOptionsPage] = useState<number>(0);
+  const [guestsPage, setGuestsPage] = useState<number>(0);
   const [fetchingGuests, setFetchingGuests] = useState<boolean>(false);
   const updatingTable = useRef(false);
   const [guests, setGuests] = useState<Fan[]>([]);
@@ -171,6 +172,11 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
           `.scrollable-row-${lastViewedIndex}`
         ) as HTMLElement
       );
+
+      if (!loaded && buffer.length > guests.length) {
+        setGuests(buffer);
+        setGuestsPage(optionsPage);
+      }
     }
   }, [details]);
 
@@ -200,18 +206,21 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
     setLastViewedIndex(index);
     setCurrentGuest(fan);
     setDetails(true);
-    if (loaded && buffer.length > guests.length) setGuests(buffer);
   };
 
   const searchGuests = () => {
-    if (buffer.length) setGuests(buffer);
-    else loadGuests();
+    if (buffer.length) {
+      setGuests(buffer);
+      setGuestsPage(optionsPage);
+    } else loadGuests();
   };
 
   const loadGuests = () => {
     updatingTable.current = true;
     setEof(false);
     setFetchingGuests(true);
+
+    //automatically sets options with newly loaded guests. no need for more backend calls
     fetchToBuffer(userInput?.toLowerCase()).then(data => {
       setGuests(buffer.concat(data));
       setFetchingGuests(false);
@@ -228,7 +237,11 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
 
   const fetchToBuffer = async (input?: string, loadNextPage?: boolean) => {
     if (userInput !== input) setUserInput(input);
-    const pageToUse = updatingTable.current ? page : !!!loadNextPage ? 0 : page;
+    const pageToUse = updatingTable.current
+      ? guestsPage
+      : !!loadNextPage
+      ? optionsPage
+      : 0;
 
     if (pageToUse === 0) setBuffer([]);
 
@@ -240,7 +253,8 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
     );
 
     setBuffer(prev => [...prev.concat(response.results)]);
-    setPage(pageToUse + 1);
+    setOptionsPage(pageToUse + 1);
+    setGuestsPage(pageToUse + 1);
 
     if (response.results.length < 30 && updatingTable.current) setEof(true);
     updatingTable.current = false;
@@ -252,7 +266,7 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
     if (event.key === 'Enter' && userInput) {
       //buffer was set as input was typed
       setGuests(buffer);
-      setPage(0);
+      setGuestsPage(optionsPage);
     }
   };
 
@@ -315,7 +329,7 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
             next={loadGuests}
             hasMore={!eof}
             loader={
-              page !== 0 &&
+              guestsPage !== 0 &&
               fetchingGuests && (
                 <div className="scroll-message">
                   <Spin />

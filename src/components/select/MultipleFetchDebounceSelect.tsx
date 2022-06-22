@@ -52,6 +52,7 @@ const MultipleFetchDebounceSelect: React.FC<
   const blurred = useRef(false);
   const pressedEnter = useRef(false);
   const loadNextPage = useRef(false);
+  const [_value, _setValue] = useState<SelectOption>();
 
   const optionFactory = (option: any) => {
     return {
@@ -70,13 +71,24 @@ const MultipleFetchDebounceSelect: React.FC<
   useEffect(() => {
     if (!mounted.current) mounted.current = true;
     else {
-      //filter is not updated if user presses enter or until he clicks away from the selectbox
-      if (!pressedEnter.current || blurred.current) {
-        searchFilter.current = userInput;
-        blurred.current = false;
-      } else {
+      //on enter or on blur, no fetches or renders necessary.
+      if (pressedEnter.current) {
         pressedEnter.current = false;
+        return;
       }
+      if (blurred.current) {
+        blurred.current = false;
+        return;
+      }
+      //searchFilter used for fetches and is equal to userInput updated correctly (not changed on blur or on enter)
+      //_value used for rerendering the select value
+      searchFilter.current = userInput;
+      _setValue({
+        key: userInput ?? '',
+        value: userInput ?? '',
+        label: userInput ?? '',
+      });
+      //on every other case, we fetch.
       debounceFetcher();
     }
   }, [userInput]);
@@ -119,6 +131,7 @@ const MultipleFetchDebounceSelect: React.FC<
 
   const _onClear = () => {
     setUserInput('');
+    setOptions(buffer.map(optionFactory));
     onClear?.();
   };
 
@@ -142,11 +155,17 @@ const MultipleFetchDebounceSelect: React.FC<
     onFocus?.();
   };
 
-  const _onBlur = () => {
-    onBlur?.();
+  const _onBlur = (event: any) => {
+    //continue here tomorrow
+    if (event.target !== event.relatedTarget) {
+      //flag used not to fetch on blur
+      blurred.current = true;
+      onBlur?.();
+    }
   };
 
   const _onInputKeyDown = (event: any) => {
+    //flag not to fetch on enter
     if (event.key === 'Enter') pressedEnter.current = true;
     onInputKeyDown?.(event);
   };
@@ -172,15 +191,7 @@ const MultipleFetchDebounceSelect: React.FC<
       onChange={_onChange}
       onClear={_onClear}
       onSearch={setUserInput}
-      value={
-        userInput?.length
-          ? ({
-              key: userInput,
-              value: userInput,
-              label: userInput,
-            } as SelectOption)
-          : undefined
-      }
+      value={searchFilter.current?.length ? _value : undefined}
       onInputKeyDown={_onInputKeyDown}
       onPopupScroll={event => handlePopupScroll(event.target)}
       notFoundContent={isFetching ? <Spin size="small" /> : null}
