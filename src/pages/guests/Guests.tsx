@@ -22,6 +22,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import moment from 'moment';
 import { SelectOption } from 'interfaces/SelectOption';
 import MultipleFetchDebounceSelect from 'components/select/MultipleFetchDebounceSelect';
+import { usePrevious } from 'react-use';
 
 const tagColorByPermission: any = {
   Admin: 'green',
@@ -30,19 +31,23 @@ const tagColorByPermission: any = {
 };
 
 const Guests: React.FC<RouteComponentProps> = ({ location }) => {
+  const mounted = useRef(false);
   const [, setLoading] = useState<boolean>(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [details, setDetails] = useState<boolean>(false);
+  const prevPageIsDetails = useRef<boolean>(false);
   const [currentGuest, setCurrentGuest] = useState<Fan>();
   const { doFetch } = useRequest({ setLoading });
   const [eof, setEof] = useState<boolean>(false);
   const [loaded, setLoaded] = useState<boolean>(false);
   const [userInput, setUserInput] = useState<string>();
+  const persistentUserInput = usePrevious(userInput);
   const [optionsPage, setOptionsPage] = useState<number>(0);
   const [guestsPage, setGuestsPage] = useState<number>(0);
   const [fetchingGuests, setFetchingGuests] = useState<boolean>(false);
   const updatingTable = useRef(false);
+  const scrolling = useRef(false);
   const [guests, setGuests] = useState<Fan[]>([]);
   const [buffer, setBuffer] = useState<Fan[]>([]);
 
@@ -51,6 +56,43 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
     label: 'user',
     value: 'user',
   };
+
+  useEffect(() => {
+    if (!mounted.current) {
+      mounted.current = true;
+      return;
+    }
+
+    prevPageIsDetails.current = false;
+
+    if (!details) {
+      prevPageIsDetails.current = true;
+
+      if (guests.length) {
+        setUserInput(persistentUserInput);
+        setLoaded(true);
+      }
+
+      scrollIntoView(
+        document.querySelector(
+          `.scrollable-row-${lastViewedIndex}`
+        ) as HTMLElement
+      );
+
+      if (!loaded && buffer.length > guests.length) {
+        setGuests(buffer);
+        setGuestsPage(optionsPage);
+      }
+    }
+  }, [details]);
+
+  useEffect(() => {
+    if (!loaded && guests.length) setLoaded(true);
+  }, [guests]);
+
+  useEffect(() => {
+    if (loaded && scrolling.current) setGuests([...buffer]);
+  }, [buffer]);
 
   const columns: ColumnsType<Fan> = [
     {
@@ -165,25 +207,6 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
     },
   ];
 
-  useEffect(() => {
-    if (!details) {
-      scrollIntoView(
-        document.querySelector(
-          `.scrollable-row-${lastViewedIndex}`
-        ) as HTMLElement
-      );
-
-      if (!loaded && buffer.length > guests.length) {
-        setGuests(buffer);
-        setGuestsPage(optionsPage);
-      }
-    }
-  }, [details]);
-
-  useEffect(() => {
-    if (!loaded && guests.length) setLoaded(true);
-  }, [guests]);
-
   const onSaveFan = (record: Fan) => {
     refreshItem(record);
     setDetails(false);
@@ -216,13 +239,13 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   const loadGuests = () => {
+    if (prevPageIsDetails.current) return;
     updatingTable.current = true;
     setEof(false);
     setFetchingGuests(true);
 
-    //automatically sets options with newly loaded guests. no need for more backend calls
     fetchToBuffer(userInput?.toLowerCase()).then(data => {
-      setGuests(buffer.concat(data));
+      setGuests([...buffer].concat(data));
       setFetchingGuests(false);
     });
   };
@@ -236,6 +259,7 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   const fetchToBuffer = async (input?: string, loadNextPage?: boolean) => {
+    if (loadNextPage) scrolling.current = true;
     if (userInput !== input) setUserInput(input);
     const pageToUse = updatingTable.current
       ? guestsPage
@@ -258,6 +282,7 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
 
     if (response.results.length < 30 && updatingTable.current) setEof(true);
     updatingTable.current = false;
+    scrolling.current = false;
 
     return response.results;
   };

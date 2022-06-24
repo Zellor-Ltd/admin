@@ -71,27 +71,32 @@ const MultipleFetchDebounceSelect: React.FC<
   useEffect(() => {
     if (!mounted.current) mounted.current = true;
     else {
-      //on enter or on blur, no fetches or renders necessary.
+      //on enter, no fetches or renders necessary.
       if (pressedEnter.current) {
         pressedEnter.current = false;
         return;
       }
-      if (blurred.current) {
-        blurred.current = false;
-        return;
-      }
-      //searchFilter used for fetches and is equal to userInput updated correctly (not changed on blur or on enter)
-      //_value used for rerendering the select value
-      searchFilter.current = userInput;
-      _setValue({
-        key: userInput ?? '',
-        value: userInput ?? '',
-        label: userInput ?? '',
-      });
-      //on every other case, we fetch.
+      updateValues(userInput);
       debounceFetcher();
     }
   }, [userInput]);
+
+  useEffect(() => {
+    //hello, fellow coder. following code keeps track of input and updates rendered value inside select component.
+    //i agree this looks redundant. spent hours trying to figure it out. couldn't. this works, though.
+    updateValues(input);
+  }, [input]);
+
+  const updateValues = (value?: string) => {
+    //searchFilter is used for fetches and is equal to userInput updated correctly (not changed on blur or on enter)
+    //_value used for rerendering
+    searchFilter.current = value;
+    _setValue({
+      key: value ?? '',
+      value: value ?? '',
+      label: value ?? '',
+    });
+  };
 
   const debounceFetcher = useMemo(() => {
     const loadOptions = () => {
@@ -104,6 +109,11 @@ const MultipleFetchDebounceSelect: React.FC<
   }, [onInput, debounceTimeout, searchFilter.current]);
 
   const getOptions = () => {
+    if (blurred.current) {
+      blurred.current = false;
+      setIsFetching(false);
+      return;
+    }
     onInput(searchFilter.current?.toLowerCase(), loadNextPage.current).then(
       entities => {
         if (loadNextPage.current) loadNextPage.current = false;
@@ -150,18 +160,15 @@ const MultipleFetchDebounceSelect: React.FC<
 
   const _onFocus = () => {
     if (!mounted.current) return;
-    if (!buffer || !buffer.length) setUserInput('');
+    if (!buffer?.length) setUserInput('');
     else setOptions(buffer.map(optionFactory));
     onFocus?.();
   };
 
-  const _onBlur = (event: any) => {
-    //continue here tomorrow
-    if (event.target !== event.relatedTarget) {
-      //flag used not to fetch on blur
-      blurred.current = true;
-      onBlur?.();
-    }
+  const _onBlur = () => {
+    blurred.current = true;
+    updateValues(input);
+    onBlur?.();
   };
 
   const _onInputKeyDown = (event: any) => {
