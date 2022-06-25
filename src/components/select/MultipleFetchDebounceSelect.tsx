@@ -17,7 +17,7 @@ interface MultipleFetchDebounceSelectProps {
   disabled?: boolean;
   debounceTimeout?: number;
   style?: React.CSSProperties;
-  buffer?: any;
+  options?: any;
   setEof?: (eof: boolean) => void;
   loaded?: boolean;
   input?: string;
@@ -37,17 +37,17 @@ const MultipleFetchDebounceSelect: React.FC<
   disabled,
   debounceTimeout = 1000,
   style,
-  buffer,
+  options,
   setEof,
   loaded,
   input,
 }) => {
   const mounted = useRef(false);
   const [isFetching, setIsFetching] = useState(false);
-  const [options, setOptions] = useState<SelectOption[]>([]);
+  const [_options, _setOptions] = useState<SelectOption[]>([]);
   const [eoo, setEoo] = useState<boolean>(false);
   const fetchedEntities = useRef<any[]>([]);
-  const [userInput, setUserInput] = useState<string | undefined>(input);
+  const [_userInput, _setUserInput] = useState<string | undefined>(input);
   const searchFilter = useRef<string | undefined>();
   const blurred = useRef(false);
   const pressedEnter = useRef(false);
@@ -76,10 +76,10 @@ const MultipleFetchDebounceSelect: React.FC<
         pressedEnter.current = false;
         return;
       }
-      updateValues(userInput);
+      updateValues(_userInput);
       debounceFetcher();
     }
-  }, [userInput]);
+  }, [_userInput]);
 
   useEffect(() => {
     //hello, fellow coder. following code keeps track of input and updates rendered value inside select component.
@@ -88,7 +88,7 @@ const MultipleFetchDebounceSelect: React.FC<
   }, [input]);
 
   const updateValues = (value?: string) => {
-    //searchFilter is used for fetches and is equal to userInput updated correctly (not changed on blur or on enter)
+    //searchFilter is used for fetches and is equal to _userInput updated correctly (not changed on blur or on enter)
     //_value used for rerendering
     searchFilter.current = value;
     _setValue({
@@ -102,7 +102,7 @@ const MultipleFetchDebounceSelect: React.FC<
     const loadOptions = () => {
       setEoo(false);
       setIsFetching(true);
-      setOptions([]);
+      _setOptions([]);
     };
 
     return debounce(loadOptions, debounceTimeout);
@@ -124,7 +124,7 @@ const MultipleFetchDebounceSelect: React.FC<
 
         fetchedEntities.current = entities;
         const fetchedOptions = entities?.map(optionFactory);
-        setOptions(prev => [...prev.concat(fetchedOptions)]);
+        _setOptions(prev => [...prev.concat(fetchedOptions)]);
         setIsFetching(false);
       }
     );
@@ -140,8 +140,8 @@ const MultipleFetchDebounceSelect: React.FC<
   };
 
   const _onClear = () => {
-    setUserInput('');
-    setOptions(buffer.map(optionFactory));
+    _setUserInput('');
+    _setOptions(options.map(optionFactory));
     onClear?.();
   };
 
@@ -160,8 +160,8 @@ const MultipleFetchDebounceSelect: React.FC<
 
   const _onFocus = () => {
     if (!mounted.current) return;
-    if (!buffer?.length) setUserInput('');
-    else setOptions(buffer.map(optionFactory));
+    if (!options?.length) _setUserInput('');
+    else _setOptions(options.map(optionFactory));
     onFocus?.();
   };
 
@@ -180,7 +180,7 @@ const MultipleFetchDebounceSelect: React.FC<
   const filter = rows => {
     return rows.filter(
       row =>
-        row.label?.toLowerCase().indexOf(userInput?.toLowerCase() ?? '') > -1
+        row.label?.toLowerCase().indexOf(_userInput?.toLowerCase() ?? '') > -1
     );
   };
 
@@ -197,19 +197,19 @@ const MultipleFetchDebounceSelect: React.FC<
       onFocus={_onFocus}
       onChange={_onChange}
       onClear={_onClear}
-      onSearch={setUserInput}
+      onSearch={_setUserInput}
       value={searchFilter.current?.length ? _value : undefined}
       onInputKeyDown={_onInputKeyDown}
       onPopupScroll={event => handlePopupScroll(event.target)}
       notFoundContent={isFetching ? <Spin size="small" /> : null}
       options={
         isFetching
-          ? filter(options).concat({
+          ? filter(_options).concat({
               label: (<Spin size="small" />) as unknown as string,
               value: 'loading',
               key: 'loading',
             })
-          : filter(options)
+          : filter(_options)
       }
       disabled={disabled}
     ></Select>

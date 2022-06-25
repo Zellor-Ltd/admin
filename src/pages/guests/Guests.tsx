@@ -267,8 +267,6 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
       ? optionsPage
       : 0;
 
-    if (pageToUse === 0) setBuffer([]);
-
     const response = await doFetch(() =>
       fetchGuests({
         page: pageToUse,
@@ -276,7 +274,8 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
       })
     );
 
-    setBuffer(prev => [...prev.concat(response.results)]);
+    if (pageToUse === 0) setBuffer(response.results);
+    else setBuffer(prev => [...prev.concat(response.results)]);
     setOptionsPage(pageToUse + 1);
     setGuestsPage(pageToUse + 1);
 
@@ -319,7 +318,7 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
                     onInput={fetchToBuffer}
                     onChange={handleChangeFan}
                     onClear={() => setUserInput('')}
-                    buffer={buffer}
+                    options={buffer}
                     onInputKeyDown={(event: HTMLInputElement) =>
                       handleKeyDown(event)
                     }

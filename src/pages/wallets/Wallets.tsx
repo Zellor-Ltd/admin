@@ -1,4 +1,4 @@
-import { Col, PageHeader, Row, Spin, Table, Typography } from 'antd';
+import { Col, PageHeader, Row, Table, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import SimpleSelect from 'components/select/SimpleSelect';
 import { useRequest } from 'hooks/useRequest';
@@ -7,7 +7,7 @@ import { Fan } from 'interfaces/Fan';
 import { SelectOption } from 'interfaces/SelectOption';
 import { Wallet } from 'interfaces/Wallet';
 import { WalletDetailParams } from 'interfaces/WalletTransactions';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import {
   fetchBalancePerBrand,
@@ -17,26 +17,20 @@ import {
 import WalletEdit from './WalletEdit';
 import scrollIntoView from 'scroll-into-view';
 import WalletDetail from './WalletDetail';
-import InfiniteScroll from 'react-infinite-scroll-component';
 import MultipleFetchDebounceSelect from 'components/select/MultipleFetchDebounceSelect';
 
 const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
-  const [loading, setLoading] = useState<boolean>(false);
   const [selectedBrand, setSelectedBrand] = useState<Brand>();
-  const { doFetch } = useRequest({ setLoading: setLoading });
   const [isFetchingBrands, setIsFetchingBrands] = useState(false);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [selectedFan, setSelectedFan] = useState<Fan | undefined>();
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [details, setDetails] = useState<boolean>(false);
-  const [page, setPage] = useState<number>(0);
-  const [eof, setEof] = useState<boolean>(false);
-  const [filteredWallets, setFilteredWallets] = useState<Wallet[]>([]);
   const [optionsPage, setOptionsPage] = useState<number>(0);
   const [filter, setFilter] = useState<string>('');
   const [wallets, setWallets] = useState<Wallet[]>([]);
   const [fans, setFans] = useState<Fan[]>([]);
-  const [content, setContent] = useState<Wallet[]>([]);
+  const [userInput, setUserInput] = useState<string>();
 
   const optionMapping: SelectOption = {
     key: 'id',
@@ -70,28 +64,10 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
           `.scrollable-row-${lastViewedIndex}`
         ) as HTMLElement
       );
-      if (search(wallets).length < 10) setEof(true);
     }
   }, [details, wallets]);
 
-  useEffect(() => {
-    setFilteredWallets([]);
-    setEof(false);
-    updateDisplayedWallets();
-  }, [wallets, page]);
-
-  const updateDisplayedWallets = () => {
-    if (!content.length) return;
-
-    const results = content.slice(page * 10, page * 10 + 10);
-    setFilteredWallets(prev => [...prev.concat(results)]);
-
-    if (results.length < 10) {
-      setEof(true);
-    } else {
-      setPage(page + 1);
-    }
-  };
+  useEffect(() => {});
 
   const handleEditWallet = (index: number) => {
     setLastViewedIndex(index);
@@ -120,6 +96,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
 
   const handleRefreshWallet = (balanceToAdd: number, record?: Wallet) => {
     if (record) {
+      //updating: array at index of record
       wallets[
         wallets.indexOf(
           wallets.find(item => item.brandId === record.brandId) as Wallet
@@ -196,6 +173,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   const getFans = async (input?: string, loadNextPage?: boolean) => {
+    setUserInput(input);
     const pageToUse = !!!loadNextPage ? 0 : optionsPage;
     const response: any = await fetchFans({
       page: pageToUse,
@@ -203,27 +181,31 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
     });
     setOptionsPage(pageToUse + 1);
 
-    setFans(prev => [...prev.concat(response.results)]);
+    if (pageToUse === 0) setFans(response.results);
+    else setFans(prev => [...prev.concat(response.results)]);
     return response.results;
   };
 
   const handleChangeFan = async (value?: string, option?: any) => {
     if (option) {
-      const { balance }: any = await doFetch(
-        () => fetchBalancePerBrand(option.id),
-        true
-      );
-      setContent(balance);
-      setPage(0);
+      const { balance }: any = await fetchBalancePerBrand(option.id);
+      setWallets(balance);
       setSelectedFan(fans.find(fan => fan.user === value));
+      setUserInput(value);
     } else {
-      setContent([]);
+      setWallets([]);
       setSelectedFan(undefined);
     }
   };
 
+  const handleClearFan = () => {
+    setUserInput('');
+    setSelectedFan(undefined);
+    getFans();
+  };
+
   const search = rows => {
-    return rows.filter(row => row.brandName?.indexOf(filter) > -1);
+    return rows?.filter(row => row.brandName?.indexOf(filter) > -1);
   };
 
   return (
@@ -242,10 +224,13 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
                   <Typography.Title level={5}>Fan Filter</Typography.Title>
                   <MultipleFetchDebounceSelect
                     style={{ width: '100%' }}
+                    input={userInput}
                     onInput={getFans}
                     onChange={handleChangeFan}
                     optionMapping={fanOptionMapping}
                     placeholder="Select a Fan"
+                    options={fans}
+                    onClear={handleClearFan}
                   ></MultipleFetchDebounceSelect>
                 </Col>
                 {selectedFan && (
@@ -269,7 +254,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
                     disabled={!selectedFan || !selectedBrand}
                     fanId={selectedFan?.id}
                     brandId={selectedBrand?.id}
-                    wallet={filteredWallets.find(
+                    wallet={search(wallets)?.find(
                       item => item.brandId === selectedBrand?.id
                     )}
                     onSave={handleSaveWallet}
@@ -279,32 +264,13 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
               </Row>
             </Col>
           </Row>
-          <InfiniteScroll
-            dataLength={filteredWallets.length}
-            next={updateDisplayedWallets}
-            hasMore={!eof}
-            loader={
-              page !== 0 && (
-                <div className="scroll-message">
-                  <Spin />
-                </div>
-              )
-            }
-            endMessage={
-              <div className="scroll-message">
-                <b>End of results.</b>
-              </div>
-            }
-          >
-            <Table
-              rowClassName={(_, index) => `scrollable-row-${index}`}
-              rowKey="id"
-              columns={columns}
-              dataSource={search(wallets)}
-              loading={loading}
-              pagination={false}
-            />
-          </InfiniteScroll>
+          <Table
+            rowClassName={(_, index) => `scrollable-row-${index}`}
+            rowKey="id"
+            columns={columns}
+            dataSource={search(wallets)}
+            pagination={false}
+          />
         </div>
       )}
       {details && (
