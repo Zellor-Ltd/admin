@@ -54,7 +54,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
     );
 
     setPage(pageToUse + 1);
-    if (results.length < 10) setEof(true);
+    if (results.length < 30) setEof(true);
 
     if (pageToUse === 0) setCreators(results);
     else setCreators(prev => [...prev.concat(results)]);
