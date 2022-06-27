@@ -4,6 +4,7 @@ import { Video } from './Video';
 import { ProductBrand } from './ProductBrand';
 
 export interface FeedItem {
+  searchTags?: any;
   video: Video;
   id: string;
   index?: number;

@@ -99,7 +99,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
   const [selectedTagIndex, setSelectedTagIndex] = useState<number>(-1);
   const [showTagForm, setShowTagForm] = useState<boolean>(false);
   const [productBrandIcons, setProductBrandIcons] = useState<any[]>([]);
-  const [hashtags, setHashtags] = useState<string[]>([]);
+  const [searchTags, setSearchTags] = useState<string[]>([]);
   const defaultVideoTab = 'Video Details';
   const defaultSegmentTab = 'Images';
   const [videoTab, setVideoTab] = useState<string>('Video Details');
@@ -271,10 +271,10 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
   }, [feedItem]);
 
   useEffect(() => {
-    if (feedItem && feedItem.hashtags) {
-      setHashtags(feedItem.hashtags);
+    if (feedItem && feedItem.searchTags) {
+      setSearchTags(feedItem.searchTags);
     } else {
-      setHashtags([]);
+      setSearchTags([]);
     }
   }, []);
 
@@ -666,13 +666,13 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                 </>
               )}
               <Col lg={24} xs={24}>
-                <Form.Item name="hashtags" label="Hashtags">
+                <Form.Item name="searchTags" label="Hashtags">
                   <ReactTagInput
-                    tags={hashtags}
+                    tags={searchTags}
                     placeholder="Type and press enter"
                     removeOnBackspace={true}
                     editable={true}
-                    onChange={newTags => setHashtags(newTags)}
+                    onChange={newTags => setSearchTags(newTags)}
                   />
                 </Form.Item>
               </Col>
