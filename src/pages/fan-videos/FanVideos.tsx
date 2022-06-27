@@ -40,11 +40,11 @@ import { Brand } from 'interfaces/Brand';
 import '@pathofdev/react-tag-input/build/index.css';
 import { Category } from 'interfaces/Category';
 import { Creator } from 'interfaces/Creator';
-import './VideoFeed.scss';
-import './VideoFeedDetail.scss';
+import 'pages/video-feed/VideoFeed.scss';
+import 'pages/video-feed/VideoFeedDetail.scss';
 import SimpleSelect from 'components/select/SimpleSelect';
 import { SelectOption } from 'interfaces/SelectOption';
-import VideoFeedDetailV2 from './VideoFeedDetailV2';
+import VideoFeedDetailV2 from 'pages/video-feed/VideoFeedDetailV2';
 import { statusList, videoTypeList } from 'components/select/select.utils';
 import { useRequest } from 'hooks/useRequest';
 import moment from 'moment';
@@ -57,7 +57,7 @@ const reduceSegmentsTags = (packages: Segment[]) => {
   }, 0);
 };
 
-const VideoFeed: React.FC<RouteComponentProps> = () => {
+const FanVideos: React.FC<RouteComponentProps> = () => {
   const [feedForm] = Form.useForm();
   const [segmentForm] = Form.useForm();
   const [selectedVideoFeed, setSelectedVideoFeed] = useState<FeedItem>();
@@ -330,7 +330,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
           query: titleFilter,
           brandId: brandFilter?.id,
           status: statusFilter?.toLowerCase(),
-          videoType: videoTypeFilter,
+          videoType: 'Fan',
           productBrandId: productBrandFilter,
         })
       );
@@ -516,10 +516,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     setSelectedVideoFeed(template);
   };
 
-  const onSearch = (input: string, option: any) => {
-    return option.label.toLowerCase().includes(input?.toLowerCase());
-  };
-
   return (
     <>
       {!details && (
@@ -613,18 +609,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                   />
                 </Col>
                 <Col lg={4} xs={12}>
-                  <Typography.Title level={5}>Video Type</Typography.Title>
-                  <SimpleSelect
-                    data={videoTypeList}
-                    onChange={videoType => setVideoTypeFilter(videoType)}
-                    style={{ width: '100%' }}
-                    selectedOption={videoTypeFilter}
-                    optionsMapping={videoTypeMapping}
-                    placeholder={'Select a video type'}
-                    allowClear={true}
-                  />
-                </Col>
-                <Col lg={4} xs={12}>
                   <Typography.Title level={5}>Start Index</Typography.Title>
                   <InputNumber
                     min={0}
@@ -641,16 +625,9 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                     disabled={!creators.length}
                     onChange={setCreatorFilter}
                     style={{ width: '100%' }}
-                    filterOption={onSearch}
-                    allowClear={true}
-                    showSearch={true}
                   >
                     {creators.map((curr: any) => (
-                      <Select.Option
-                        key={curr.id}
-                        value={curr.firstName}
-                        label={curr.firstName}
-                      >
+                      <Select.Option key={curr.id} value={curr.firstName}>
                         {curr.firstName}
                       </Select.Option>
                     ))}
@@ -691,10 +668,11 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
           productBrands={productBrands}
           isFetchingProductBrand={isFetchingProductBrands}
           setDetails={setDetails}
+          isFanVideo
         />
       )}
     </>
   );
 };
 
-export default withRouter(VideoFeed);
+export default withRouter(FanVideos);

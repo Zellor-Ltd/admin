@@ -26,14 +26,18 @@ import {
   FileDoneOutlined,
   ToTopOutlined,
   LockOutlined,
-  DesktopOutlined,
   PicCenterOutlined,
+  UsergroupAddOutlined,
+  WarningOutlined,
+  CalendarOutlined,
+  UserSwitchOutlined,
+  ScheduleOutlined,
 } from '@ant-design/icons';
 import { Menu } from 'antd';
 import SubMenu from 'antd/lib/menu/SubMenu';
 import { Link, useLocation } from 'react-router-dom';
 
-const AdminSideMenu = () => {
+const AdminSideMenu = testMode => {
   const [, pathname] = useLocation().pathname.split('/');
   const [parentMenu] = pathname.split('_');
 
@@ -44,6 +48,16 @@ const AdminSideMenu = () => {
       defaultSelectedKeys={[pathname]}
       defaultOpenKeys={[parentMenu]}
     >
+      {testMode.testMode && (
+        <Menu.Item
+          key="testMode"
+          disabled
+          icon={<WarningOutlined />}
+          className="test-mode-banner"
+        >
+          Test Mode
+        </Menu.Item>
+      )}
       <Menu.Item key="dashboard" icon={<DashboardOutlined />}>
         <Link to="/dashboard">Dashboard</Link>
       </Menu.Item>
@@ -73,8 +87,23 @@ const AdminSideMenu = () => {
       <Menu.Item key="preview-products" icon={<IssuesCloseOutlined />}>
         <Link to="/preview-products">Preview Products</Link>
       </Menu.Item>
+      <SubMenu
+        key="commissions"
+        icon={<UserSwitchOutlined />}
+        title="Commissions"
+      >
+        <Menu.Item key="commissions_due" icon={<CalendarOutlined />}>
+          <Link to="/commissions_due">Commissions Due</Link>
+        </Menu.Item>
+        <Menu.Item key="commissions_payments" icon={<ScheduleOutlined />}>
+          <Link to="/commissions_payments">Payments</Link>
+        </Menu.Item>
+      </SubMenu>
       <Menu.Item key="feed" icon={<HeartFilled />}>
         <Link to="/feed">Video Feeds</Link>
+      </Menu.Item>
+      <Menu.Item key="fan-videos" icon={<UsergroupAddOutlined />}>
+        <Link to="/fan-videos">Fan Videos</Link>
       </Menu.Item>
       <Menu.Item key="feed-templates" icon={<PicCenterOutlined />}>
         <Link to="/feed-templates">Feed Templates</Link>
@@ -152,9 +181,6 @@ const AdminSideMenu = () => {
         </Menu.Item>
         <Menu.Item key="settings_tags" icon={<TagOutlined />}>
           <Link to="/settings_tags">Tags</Link>
-        </Menu.Item>
-        <Menu.Item key="settings_video-types" icon={<DesktopOutlined />}>
-          <Link to="/settings_video-types">Video Types</Link>
         </Menu.Item>
         <Menu.Item key="settings_push-group-tag" icon={<ToTopOutlined />}>
           <Link to="/settings_push-group-tag">Push Group Tag</Link>

@@ -23,6 +23,14 @@
   margin-top: 16px;
 }
 
+.mr-2 {
+  margin-right: 2rem;
+}
+
+.mt-03 {
+  margin-top: 0.3rem;
+}
+
 .mt-05 {
   margin-top: 0.5rem;
 }
@@ -188,6 +196,19 @@
   display: none;
 }
 
+.ant-menu-dark .ant-menu-item-disabled.test-mode-banner {
+  background: orange;
+  color: #373737 !important;
+}
+
+#components-table-demo-drag-sorting tr.drop-over-downward td {
+  border-bottom: 2px dashed #1890ff;
+}
+
+#components-table-demo-drag-sorting tr.drop-over-upward td {
+  border-top: 2px dashed #1890ff;
+}
+
 @media (max-width: 992px) {
   .ant-layout-sider-children {
     width: 50px;
@@ -195,11 +216,13 @@
 
   .site-layout-background {
     margin: 24px 16px 24px 66px;
+    padding: 24px;
   }
 }
 
 @media (min-width: 993px) {
   .site-layout-background {
     margin: 24px 16px;
+    padding: 24px;
   }
 }

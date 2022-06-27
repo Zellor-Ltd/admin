@@ -6,7 +6,6 @@ import {
   PageHeader,
   Popconfirm,
   Row,
-  Spin,
   Table,
   Typography,
 } from 'antd';
@@ -23,18 +22,14 @@ import {
 import CopyIdToClipboard from '../../components/CopyIdToClipboard';
 import ProductBrandDetail from './ProductBrandDetail';
 import scrollIntoView from 'scroll-into-view';
-import InfiniteScroll from 'react-infinite-scroll-component';
 
 const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const { doFetch, doRequest } = useRequest({ setLoading });
-  const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
+  const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [details, setDetails] = useState<boolean>(false);
   const [currentProductBrand, setCurrentProductBrand] =
     useState<ProductBrand>();
-  const [page, setPage] = useState<number>(0);
-  const [eof, setEof] = useState<boolean>(false);
-  const [refreshing, setRefreshing] = useState<boolean>(false);
   const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
   const [filter, setFilter] = useState<string>('');
 
@@ -50,29 +45,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
   const getProductBrands = async () => {
     const { results } = await doFetch(fetchProductBrands);
     setProductBrands(results);
-    setRefreshing(true);
   };
-
-  const fetchData = () => {
-    if (!productBrands.length) return;
-
-    const pageToUse = refreshing ? 0 : page;
-    const results = productBrands.slice(pageToUse * 10, pageToUse * 10 + 10);
-
-    setPage(pageToUse + 1);
-    setProductBrands(prev => [...prev.concat(results)]);
-
-    if (results.length < 10) setEof(true);
-  };
-
-  useEffect(() => {
-    if (refreshing) {
-      setProductBrands([]);
-      setEof(false);
-      fetchData();
-      setRefreshing(false);
-    }
-  }, [refreshing]);
 
   useEffect(() => {
     if (!details) {
@@ -81,10 +54,8 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
           `.scrollable-row-${lastViewedIndex}`
         ) as HTMLElement
       );
-
-      if (search(productBrands).length < 10) setEof(true);
     }
-  }, [details, productBrands]);
+  }, [details]);
 
   const columns: ColumnsType<ProductBrand> = [
     {
@@ -95,17 +66,22 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
       align: 'center',
     },
     {
-      title: 'External Code',
-      dataIndex: 'externalCode',
-      width: '10%',
-      align: 'center',
+      title: 'Name',
+      dataIndex: 'brandName',
+      width: '20%',
+      render: (value: string, record: ProductBrand, index: number) => (
+        <Link
+          to={location.pathname}
+          onClick={() => editProductBrand(index, record)}
+        >
+          {value}
+        </Link>
+      ),
       sorter: (a, b): any => {
-        if (a.externalCode && b.externalCode)
-          return a.externalCode !== b.externalCode
-            ? a.externalCode - b.externalCode
-            : 0;
-        else if (a.externalCode) return -1;
-        else if (b.externalCode) return 1;
+        if (a.brandName && b.brandName)
+          return a.brandName.localeCompare(b.brandName);
+        else if (a.brandName) return -1;
+        else if (b.brandName) return 1;
         else return 0;
       },
     },
@@ -160,22 +136,17 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
     {
-      title: 'Name',
-      dataIndex: 'brandName',
-      width: '20%',
-      render: (value: string, record: ProductBrand, index: number) => (
-        <Link
-          to={location.pathname}
-          onClick={() => editProductBrand(index, record)}
-        >
-          {value}
-        </Link>
-      ),
+      title: 'External Code',
+      dataIndex: 'externalCode',
+      width: '10%',
+      align: 'center',
       sorter: (a, b): any => {
-        if (a.brandName && b.brandName)
-          return a.brandName.localeCompare(b.brandName);
-        else if (a.brandName) return -1;
-        else if (b.brandName) return 1;
+        if (a.externalCode && b.externalCode)
+          return a.externalCode !== b.externalCode
+            ? a.externalCode - b.externalCode
+            : 0;
+        else if (a.externalCode) return -1;
+        else if (b.externalCode) return 1;
         else return 0;
       },
     },
@@ -289,32 +260,13 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
               />
             </Col>
           </Row>
-          <InfiniteScroll
-            dataLength={productBrands.length}
-            next={fetchData}
-            hasMore={!eof}
-            loader={
-              page !== 0 && (
-                <div className="scroll-message">
-                  <Spin />
-                </div>
-              )
-            }
-            endMessage={
-              <div className="scroll-message">
-                <b>End of results.</b>
-              </div>
-            }
-          >
-            <Table
-              rowClassName={(_, index) => `scrollable-row-${index}`}
-              rowKey="id"
-              columns={columns}
-              dataSource={search(productBrands)}
-              loading={loading || refreshing}
-              pagination={false}
-            />
-          </InfiniteScroll>
+          <Table
+            rowClassName={(_, index) => `scrollable-row-${index}`}
+            rowKey="id"
+            columns={columns}
+            dataSource={search(productBrands)}
+            loading={loading}
+          />
         </div>
       )}
       {details && (

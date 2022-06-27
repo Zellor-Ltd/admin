@@ -15,6 +15,7 @@ import {
   PageHeader,
   Popconfirm,
   Row,
+  Select,
   Spin,
   Table,
   Tag as AntTag,
@@ -51,7 +52,7 @@ import moment from 'moment';
 const { Content } = Layout;
 
 const reduceSegmentsTags = (packages: Segment[]) => {
-  return packages.reduce((acc: number, curr: Segment) => {
+  return packages?.reduce((acc: number, curr: Segment) => {
     return acc + curr.tags?.length;
   }, 0);
 };
@@ -64,12 +65,12 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const [details, setDetails] = useState<boolean>(false);
   const [isFetchingCategories, setIsFetchingCategories] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [influencers, setInfluencers] = useState<Creator[]>([]);
+  const [creators, setCreators] = useState<Creator[]>([]);
   const [isFetchingBrands, setIsFetchingBrands] = useState(false);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [isFetchingProductBrands, setIsFetchingProductBrands] = useState(false);
   const [productBrands, setProductBrands] = useState([]);
-  const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
+  const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [loaded, setLoaded] = useState<boolean>(false);
   const [feedItems, setFeedItems] = useState<any[]>([]);
   const { doFetch } = useRequest({ setLoading });
@@ -87,6 +88,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const [titleFilter, setTitleFilter] = useState<string>();
   const [categoryFilter, setCategoryFilter] = useState<string>();
   const [indexFilter, setIndexFilter] = useState<number>();
+  const [creatorFilter, setCreatorFilter] = useState<string>();
 
   const masterBrandMapping: SelectOption = {
     key: 'id',
@@ -177,7 +179,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     {
       title: 'Segments',
       dataIndex: 'package',
-      render: (pack: Array<any> = []) => <AntTag>{pack.length}</AntTag>,
+      render: (pack: Array<any> = []) => <AntTag>{pack?.length ?? 0}</AntTag>,
       width: '5%',
       align: 'center',
     },
@@ -247,6 +249,38 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       },
     },
     {
+      title: 'InstaLink',
+      width: '18%',
+      render: (_: string, record: FeedItem) => (
+        <Link
+          onClick={() =>
+            window
+              .open(
+                record.package?.find(item => item.shareLink)?.shareLink,
+                '_blank'
+              )
+              ?.focus()
+          }
+          to={{ pathname: window.location.pathname }}
+        >
+          {record.package?.find(item => item.shareLink)?.shareLink ?? ''}
+        </Link>
+      ),
+      sorter: (a, b): any => {
+        if (a.package && b.package) {
+          const linkA = a.package.find(item => item.shareLink)?.shareLink;
+          const linkB = b.package.find(item => item.shareLink)?.shareLink;
+          if (linkA && linkB) return linkA.localeCompare(linkB);
+          else if (linkA) return -1;
+          else if (linkB) return 1;
+          else return 0;
+        } else if (a.package?.find(item => item.shareLink)?.shareLink)
+          return -1;
+        else if (b.package?.find(item => item.shareLink)?.shareLink) return 1;
+        else return 0;
+      },
+    },
+    {
       title: 'Actions',
       key: 'action',
       width: '5%',
@@ -308,9 +342,11 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   };
 
   const getDetailsResources = async () => {
-    async function getInfluencers() {
-      const response: any = await fetchCreators();
-      setInfluencers(response.results);
+    async function getcreators() {
+      const response: any = await fetchCreators({
+        query: '',
+      });
+      setCreators(response.results);
     }
     async function getCategories() {
       setIsFetchingCategories(true);
@@ -331,7 +367,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       setIsFetchingProductBrands(false);
     }
     await Promise.all([
-      getInfluencers(),
+      getcreators(),
       getCategories(),
       getBrands(),
       getProductBrands(),
@@ -339,14 +375,23 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   };
 
   const search = rows => {
+    let updatedRows = rows;
     if (indexFilter) {
-      return rows.filter(
-        row =>
-          row.category?.indexOf(categoryFilter) > -1 &&
-          row.index === indexFilter
+      updatedRows = updatedRows.filter(row => {
+        return row.index && row.index === indexFilter;
+      });
+    }
+    if (creatorFilter) {
+      updatedRows = updatedRows.filter(
+        row => row?.creator?.firstName?.indexOf(creatorFilter) > -1
       );
     }
-    return rows.filter(row => row.category?.indexOf(categoryFilter ?? '') > -1);
+    if (categoryFilter) {
+      updatedRows = updatedRows.filter(
+        row => row.category?.indexOf(categoryFilter) > -1
+      );
+    }
+    return updatedRows;
   };
 
   const deleteItem = async (_id: string, index: number) => {
@@ -471,6 +516,10 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     setSelectedVideoFeed(template);
   };
 
+  const onSearch = (input: string, option: any) => {
+    return option.label.toLowerCase().includes(input?.toLowerCase());
+  };
+
   return (
     <>
       {!details && (
@@ -504,6 +553,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                     suffix={<SearchOutlined />}
                     value={titleFilter}
                     placeholder="Type to search by title"
+                    onPressEnter={fetch}
                   />
                 </Col>
                 <Col lg={4} xs={12}>
@@ -584,6 +634,28 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                     placeholder="Select an index"
                   />
                 </Col>
+                <Col lg={4} xs={12}>
+                  <Typography.Title level={5}>Creator</Typography.Title>
+                  <Select
+                    placeholder="Select a creator"
+                    disabled={!creators.length}
+                    onChange={setCreatorFilter}
+                    style={{ width: '100%' }}
+                    filterOption={onSearch}
+                    allowClear={true}
+                    showSearch={true}
+                  >
+                    {creators.map((curr: any) => (
+                      <Select.Option
+                        key={curr.id}
+                        value={curr.firstName}
+                        label={curr.firstName}
+                      >
+                        {curr.firstName}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Col>
               </Row>
             </Col>
             <Col lg={24} xs={24}>
@@ -615,7 +687,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
           onCancel={onCancelItem}
           feedItem={selectedVideoFeed}
           brands={brands}
-          influencers={influencers}
+          creators={creators}
           productBrands={productBrands}
           isFetchingProductBrand={isFetchingProductBrands}
           setDetails={setDetails}

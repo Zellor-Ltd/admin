@@ -34,7 +34,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
   const [isFetchingBrands, setIsFetchingBrands] = useState(false);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [selectedFan, setSelectedFan] = useState<Fan | undefined>();
-  const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
+  const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [details, setDetails] = useState<boolean>(false);
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
@@ -46,6 +46,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
   const [filter, setFilter] = useState<string>('');
   const [wallets, setWallets] = useState<Wallet[]>([]);
   const [fans, setFans] = useState<Fan[]>([]);
+  const [content, setContent] = useState<Wallet[]>([]);
 
   const optionsMapping: SelectOption = {
     key: 'id',
@@ -65,10 +66,10 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
         () => fetchBalancePerBrand(_selectedFan.id),
         true
       );
-      setWallets(balance);
+      setContent(balance);
       setPage(0);
     } else {
-      setWallets([]);
+      setContent([]);
     }
     setSelectedFan(fans.find(fan => fan.user === value));
   };
@@ -80,9 +81,9 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
   }, [wallets, page]);
 
   const updateDisplayedArray = () => {
-    if (!wallets.length) return;
+    if (!content.length) return;
 
-    const results = wallets.slice(page * 10, page * 10 + 10);
+    const results = content.slice(page * 10, page * 10 + 10);
     setFilteredWallets(prev => [...prev.concat(results)]);
 
     if (results.length < 10) {

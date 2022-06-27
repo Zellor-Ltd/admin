@@ -1,5 +1,4 @@
 import {
-  DeleteOutlined,
   EyeOutlined,
   SearchOutlined,
   SettingOutlined,
@@ -11,7 +10,6 @@ import {
   Form,
   Input,
   PageHeader,
-  Popconfirm,
   Row,
   Select,
   Spin,
@@ -48,10 +46,8 @@ import SimpleSelect from 'components/select/SimpleSelect';
 import { SelectOption } from '../../interfaces/SelectOption';
 import ProductsDetails from './ProductsDetails';
 import { ProductCategory } from 'interfaces/Category';
-import { time } from 'console';
 
-const { getSearchTags, getCategories, removeSearchTagsByCategory } =
-  productUtils;
+const { getSearchTags, getCategories } = productUtils;
 
 const LiveProducts: React.FC<RouteComponentProps> = () => {
   const [brands, setBrands] = useState<Brand[]>([]);
@@ -85,7 +81,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
   const [loaded, setLoaded] = useState<boolean>(false);
   const [details, setDetails] = useState<boolean>(false);
   const [currentProduct, setCurrentProduct] = useState<Product>();
-  const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
+  const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [products, setProducts] = useState<Product[]>([]);
   const [productStatusFilter, setProductStatusFilter] =
     useState<string>('live');
@@ -129,10 +125,6 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
     label: 'subSubCategory',
     value: 'id',
   };
-
-  const {
-    settings: { currency = [] },
-  } = useSelector((state: any) => state.settings);
 
   const handleFilterOutOfStock = (e: CheckboxChangeEvent) => {
     setOutOfStockFilter(e.target.checked);
@@ -184,14 +176,6 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
     },
     [brands, form, currentProduct]
   );
-
-  const handleMasterBrandChange = (filterMasterBrand: Function) => {
-    filterMasterBrand(form);
-  };
-
-  const handleProductBrandChange = (filterProductBrand: Function) => {
-    filterProductBrand(form);
-  };
 
   const setSearchTagsByCategory = useCallback(
     (
@@ -290,13 +274,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
     setLoaded(true);
   };
 
-  const refreshProducts = async () => {
-    setSelectedRowKeys([]);
-    setPage(0);
-    setRefreshing(true);
-  };
-
-  const fetchData = async () => {
+  const updateDisplayedArray = async () => {
     if (!products.length) return;
     const { results } = await _fetchProducts();
     setProducts(prev => [...prev.concat(results)]);
@@ -340,7 +318,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
       render: (value: string, record, index) => (
         <>
           <Link
-            onClick={() => editProduct(index, record)}
+            onClick={() => viewProduct(index, record)}
             to={{ pathname: window.location.pathname, state: record }}
           >
             {value}
@@ -583,7 +561,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
         <>
           <Link
             to={{ pathname: window.location.pathname, state: record }}
-            onClick={() => editProduct(index, record)}
+            onClick={() => viewProduct(index, record)}
           >
             <EyeOutlined />
           </Link>
@@ -633,7 +611,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
     }
   }, [details]);
 
-  const editProduct = (index: number, record?: Product) => {
+  const viewProduct = (index: number, record?: Product) => {
     setCurrentProduct(record);
     setLastViewedIndex(index);
     if (record) {
@@ -675,15 +653,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
     <>
       {!details && (
         <>
-          <PageHeader
-            title="Products"
-            subTitle="List of Live Products"
-            extra={[
-              <Button key="1" onClick={() => editProduct(products.length)}>
-                New Item
-              </Button>,
-            ]}
-          />
+          <PageHeader title="Products" subTitle="List of Live Products" />
           <Row
             align="bottom"
             justify="space-between"
@@ -858,7 +828,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
           />
           <InfiniteScroll
             dataLength={products.length}
-            next={fetchData}
+            next={updateDisplayedArray}
             hasMore={!eof}
             loader={
               page !== 0 && (

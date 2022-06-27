@@ -18,7 +18,7 @@ import scrollIntoView from 'scroll-into-view';
 import TagDetail from './TagDetail';
 
 const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
-  const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
+  const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [details, setDetails] = useState<boolean>(false);
   const [currentTag, setCurrentTag] = useState<Tag>();
   const { usePageFilter } = useContext(AppContext);
@@ -35,7 +35,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
     if (refreshing) {
       setTags([]);
       setEof(false);
-      fetchData();
+      updateDisplayedArray();
       setRefreshing(false);
     }
   }, [refreshing]);
@@ -44,7 +44,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
     setRefreshing(true);
   }, [searchFilter]);
 
-  const fetchData = async () => {
+  const updateDisplayedArray = async () => {
     const pageToUse = refreshing ? 0 : page;
 
     const { results } = await doFetch(() =>
@@ -67,7 +67,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
       setLoaded(true);
       return;
     }
-    fetchData();
+    updateDisplayedArray();
   };
 
   useEffect(() => {

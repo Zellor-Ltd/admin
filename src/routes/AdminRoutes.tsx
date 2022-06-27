@@ -39,9 +39,10 @@ import ProductsPerDay from 'pages/reports/ProductsPerDay';
 import FanActivities from 'pages/reports/FanActivities';
 import CreatorsList from 'pages/creators-list-page/CreatorsList';
 import DataManagement from 'pages/data-management/DataManagement';
-import VideoTypes from 'pages/video-types/VideoTypes';
 import Trends from 'pages/trends/Trends';
 import FeedTemplates from 'pages/video-feed/FeedTemplates';
+import FanVideos from 'pages/fan-videos/FanVideos';
+import Commissions from 'pages/commissions/Commissions';
 
 function AdminRoutes() {
   return (
@@ -59,8 +60,18 @@ function AdminRoutes() {
       />
       <AppRoute path="/login" component={Login} layout={OpenLayout} />
       <AppRoute
+        path="/commissions_due"
+        component={Commissions}
+        layout={AuthenticatedLayout}
+      />
+      <AppRoute
         path="/feed-templates"
         component={FeedTemplates}
+        layout={AuthenticatedLayout}
+      />
+      <AppRoute
+        path="/fan-videos"
+        component={FanVideos}
         layout={AuthenticatedLayout}
       />
       <AppRoute
@@ -176,11 +187,6 @@ function AdminRoutes() {
       <AppRoute
         path="/marketing_promotions"
         component={Promotions}
-        layout={AuthenticatedLayout}
-      />
-      <AppRoute
-        path="/settings_video-types"
-        component={VideoTypes}
         layout={AuthenticatedLayout}
       />
       <AppRoute

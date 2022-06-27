@@ -63,6 +63,11 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
     setShowModal(false);
   };
 
+  const handleCreatorPercentageChange = (input: number) => {
+    form.setFieldsValue({ creatorPercentage: input });
+    setShowModal(true);
+  };
+
   return (
     <>
       <PageHeader
@@ -134,38 +139,30 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                         </Form.Item>
                       </Col>
                       <Col lg={8} xs={8}>
-                        <Form.Item
-                          name="creatorPercentage"
-                          label="Creator %"
-                          rules={[
-                            {
-                              required: true,
-                              message: `Creator Percentage is required.`,
-                            },
-                          ]}
-                        >
+                        <Form.Item name="creatorPercentage" label="Creator %">
                           <InputNumber
                             pattern="^(?:100|\d{1,2})(?:.\d{1,2})?$"
                             title="positive integers"
-                            value={productBrand?.creatorPercentage}
                             min={0}
                             max={100}
-                            onChange={() => setShowModal(true)}
+                            onChange={input =>
+                              handleCreatorPercentageChange(input)
+                            }
                           />
-                          <Modal
-                            title="Apply to all products?"
-                            visible={showModal}
-                            onOk={onConfirmPropagate}
-                            onCancel={onCancelPropagate}
-                            okText="Ok"
-                            cancelText="Cancel"
-                          >
-                            <p>
-                              Would you like to apply this creator percentage to
-                              all {productBrand?.brandName} products?
-                            </p>
-                          </Modal>
                         </Form.Item>
+                        <Modal
+                          title="Apply to all products?"
+                          visible={showModal}
+                          onOk={onConfirmPropagate}
+                          onCancel={onCancelPropagate}
+                          okText="Yes"
+                          cancelText="No"
+                        >
+                          <p>
+                            Would you like to apply this creator percentage to
+                            all {productBrand?.brandName} products?
+                          </p>
+                        </Modal>
                       </Col>
                     </Row>
                     <Row gutter={4}>

@@ -30,6 +30,7 @@ import { Creator } from 'interfaces/Creator';
 import { Currency } from 'interfaces/Currency';
 import { ServerAlias } from 'interfaces/ServerAlias';
 import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import {
   fetchCurrencies,
   fetchServersList,
@@ -53,6 +54,9 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
   onSave,
   onCancel,
 }) => {
+  const {
+    settings: { linkType = [] },
+  } = useSelector((state: any) => state.settings);
   const [loading, setLoading] = useState(false);
   const [ageRange, setAgeRange] = useState<[number, number]>([12, 100]);
   const [serversList, setServersList] = useState<ServerAlias[]>([]);
@@ -291,7 +295,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                   name="currencyCode"
                   rules={[
                     {
-                      required: true,
+                      required: false, //ToDo: review
                       message: 'Currency code is required.',
                     },
                   ]}
@@ -339,6 +343,21 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                   <InputNumber decimalSeparator="." />
                 </Form.Item>
               </Col>
+              <Col lg={12} xs={24}>
+                <Form.Item name="linkType" label="Link Type">
+                  <Select disabled={!linkType.length}>
+                    {linkType.map(linkType => (
+                      <Select.Option
+                        key={linkType.value}
+                        value={linkType.value}
+                      >
+                        {linkType.name}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col lg={12} xs={0}></Col>
               <Col lg={12} xs={24}>
                 <Form.Item label="Coupon Code" name="couponCode">
                   <Input />

@@ -15,6 +15,7 @@ import {
   Switch,
   Typography,
   Popconfirm,
+  Modal,
 } from 'antd';
 import { Upload } from 'components';
 import { RichTextEditor } from 'components/RichTextEditor';
@@ -59,7 +60,11 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
   const { doRequest } = useRequest({ setLoading });
   const [form] = Form.useForm();
   const [vaultForm] = Form.useForm();
-  const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
+  const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const [internalCheckout, setInternalCheckout] = useState<boolean>(
+    brand?.checkoutType === 'internal'
+  );
 
   const {
     settings: { checkoutType = [] },
@@ -251,8 +256,10 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
       form.setFieldsValue({
         checkout: 'Disco',
       });
+      setInternalCheckout(true);
     } else {
       setCheckoutTypeList(checkoutType);
+      setInternalCheckout(false);
     }
   };
 
@@ -358,6 +365,21 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
         )}
       </>
     );
+  };
+
+  const onConfirmPropagate = () => {
+    form.setFieldsValue({ propagationNeeded: true });
+    setShowModal(false);
+  };
+
+  const onCancelPropagate = () => {
+    form.setFieldsValue({ propagationNeeded: false });
+    setShowModal(false);
+  };
+
+  const handleCreatorPercentageChange = (input: number) => {
+    form.setFieldsValue({ creatorPercentage: input });
+    setShowModal(true);
   };
 
   return (
@@ -483,20 +505,18 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                 </Col>
                 <Col lg={16} xs={24}>
                   <Form.Item
+                    shouldUpdate
                     name="externalCheckoutType"
                     label="External Checkout Type"
                     rules={[
                       {
-                        required:
-                          form.getFieldValue('checkoutType') === 'external',
+                        required: !internalCheckout,
                         message: `External Checkout Type is required.`,
                       },
                     ]}
                   >
                     <Select
-                      disabled={
-                        form.getFieldValue('checkoutType') !== 'external'
-                      }
+                      disabled={internalCheckout}
                       placeholder="Select an external checkout type"
                     >
                       <Select.Option key={1} value={'Option 1'}>
@@ -589,7 +609,21 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                         title="positive integers"
                         min={0}
                         max={100}
+                        onChange={input => handleCreatorPercentageChange(input)}
                       />
+                      <Modal
+                        title="Apply to all products?"
+                        visible={showModal}
+                        onOk={onConfirmPropagate}
+                        onCancel={onCancelPropagate}
+                        okText="Yes"
+                        cancelText="No"
+                      >
+                        <p>
+                          Would you like to apply this creator percentage to all{' '}
+                          {brand?.brandName} products?
+                        </p>
+                      </Modal>
                     </Form.Item>
                   </Col>
                 </Row>

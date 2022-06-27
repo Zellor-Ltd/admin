@@ -17,7 +17,7 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
   const { doFetch, doRequest } = useRequest({ setLoading });
   const [banners, setBanners] = useState<Banner[]>([]);
   const [content, setContent] = useState<Banner[]>([]);
-  const [lastViewedIndex, setLastViewedIndex] = useState<number>(1);
+  const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [details, setDetails] = useState<boolean>(false);
   const [currentBanner, setCurrentBanner] = useState<Banner>();
   const [page, setPage] = useState<number>(0);
@@ -38,12 +38,12 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
     if (refreshing) {
       setBanners([]);
       setEof(false);
-      fetchData();
+      updateDisplayedArray();
       setRefreshing(false);
     }
   }, [refreshing]);
 
-  const fetchData = async () => {
+  const updateDisplayedArray = async () => {
     if (!content.length) return;
     const pageToUse = refreshing ? 0 : page;
     const results = content.slice(pageToUse * 10, pageToUse * 10 + 10);
@@ -201,7 +201,7 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
           />
           <InfiniteScroll
             dataLength={banners.length}
-            next={fetchData}
+            next={updateDisplayedArray}
             hasMore={!eof}
             loader={
               page !== 0 && (

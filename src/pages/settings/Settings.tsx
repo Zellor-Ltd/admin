@@ -61,10 +61,13 @@ const Settings: React.FC = () => {
           <TabPane tab="Language" key="language">
             <ItemList name="language" />
           </TabPane>
-          <TabPane tab="Status (Orders)" key="orders">
-            <ItemList name="order" />
+          <TabPane tab="Order Status" key="orderStatus">
+            <ItemList name="orderStatus" />
           </TabPane>
-          <TabPane tab="Status (Promotions)" key="promoStatus">
+          <TabPane tab="Feed Item Status" key="feedItemStatus">
+            <ItemList name="feedItemStatus" />
+          </TabPane>
+          <TabPane tab="Promotion Status" key="promoStatus">
             <ItemList name="promoStatus" />
           </TabPane>
           <TabPane tab="Checkout Type" key="checkoutType">
@@ -72,6 +75,12 @@ const Settings: React.FC = () => {
           </TabPane>
           <TabPane tab="Social Platform" key="socialPlatform">
             <ItemList name="socialPlatform" />
+          </TabPane>
+          <TabPane tab="Video Type" key="videoType">
+            <ItemList name="videoType" />
+          </TabPane>
+          <TabPane tab="Link Type" key="linkType">
+            <ItemList name="linkType" />
           </TabPane>
         </Tabs>
         <Row gutter={8}>
