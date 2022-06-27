@@ -1,13 +1,5 @@
 import { CalendarOutlined } from '@ant-design/icons';
-import {
-  Col,
-  DatePicker,
-  PageHeader,
-  Row,
-  Spin,
-  Table,
-  Typography,
-} from 'antd';
+import { Col, DatePicker, PageHeader, Row, Table, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { Transaction } from 'interfaces/Transaction';
 import moment from 'moment';
@@ -16,21 +8,16 @@ import { RouteComponentProps } from 'react-router-dom';
 import { fetchFans, fetchWalletTransactions } from 'services/DiscoClubService';
 import CopyOrderToClipboard from 'components/CopyOrderToClipboard';
 import { SelectOption } from 'interfaces/SelectOption';
-import InfiniteScroll from 'react-infinite-scroll-component';
 import MultipleFetchDebounceSelect from 'components/select/MultipleFetchDebounceSelect';
+import { Fan } from 'interfaces/Fan';
 
 const Transactions: React.FC<RouteComponentProps> = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [filteredTransactions, setFilteredTransactions] = useState<
-    Transaction[]
-  >([]);
-  const [page, setPage] = useState<number>(0);
-  const [eof, setEof] = useState<boolean>(false);
   const [loaded, setLoaded] = useState<boolean>(false);
-  const [refreshing, setRefreshing] = useState<boolean>(false);
   const [optionsPage, setOptionsPage] = useState<number>(0);
-  const [content, setContent] = useState<Transaction[]>([]);
+  const [fans, setFans] = useState<Fan[]>([]);
+  const [userInput, setUserInput] = useState<string>();
 
   const fanOptionMapping: SelectOption = {
     key: 'id',
@@ -39,6 +26,7 @@ const Transactions: React.FC<RouteComponentProps> = () => {
   };
 
   const getFans = async (input?: string, loadNextPage?: boolean) => {
+    setUserInput(input);
     const pageToUse = !!!loadNextPage ? 0 : optionsPage;
     const response: any = await fetchFans({
       page: pageToUse,
@@ -46,35 +34,10 @@ const Transactions: React.FC<RouteComponentProps> = () => {
     });
     setOptionsPage(pageToUse + 1);
 
+    if (pageToUse === 0) setFans(response.results);
+    else setFans(prev => [...prev.concat(response.results)]);
+
     return response.results;
-  };
-
-  useEffect(() => {
-    getFans();
-  }, []);
-
-  useEffect(() => {
-    if (refreshing) {
-      setFilteredTransactions([]);
-      setEof(false);
-      updateDisplayedArray();
-      setRefreshing(false);
-    }
-  }, [refreshing]);
-
-  const updateDisplayedArray = async () => {
-    if (!content.length) {
-      setEof(true);
-      return;
-    }
-
-    const pageToUse = refreshing ? 0 : page;
-    const results = content.slice(pageToUse * 10, pageToUse * 10 + 10);
-
-    setPage(pageToUse + 1);
-    setFilteredTransactions(prev => [...prev.concat(results)]);
-
-    if (results.length < 10) setEof(true);
   };
 
   const columns: ColumnsType<Transaction> = [
@@ -153,29 +116,29 @@ const Transactions: React.FC<RouteComponentProps> = () => {
     },
   ];
 
-  const onChangeFan = async (value?: string, _selectedFan?: any) => {
+  const handleChangeFan = async (value?: string, _selectedFan?: any) => {
     setLoading(true);
     if (_selectedFan) {
       const { results }: any = await fetchWalletTransactions(_selectedFan.id);
-      setContent(results);
-      setRefreshing(true);
+      setTransactions(results);
       if (!loaded) setLoaded(true);
+      setUserInput(value);
     } else {
+      setUserInput('');
       setTransactions([]);
-      setFilteredTransactions([]);
-      setEof(true);
+      getFans();
     }
     setLoading(false);
   };
 
   const handleDateChange = (values: any) => {
     if (!values) {
-      setFilteredTransactions(transactions);
+      setTransactions(transactions);
       return;
     }
     const startDate = moment(values[0], 'DD/MM/YYYY').startOf('day').utc();
     const endDate = moment(values[1], 'DD/MM/YYYY').endOf('day').utc();
-    setFilteredTransactions(
+    setTransactions(
       transactions.filter(({ hCreationDate }) => {
         return moment(hCreationDate).utc().isBetween(startDate, endDate);
       })
@@ -195,38 +158,21 @@ const Transactions: React.FC<RouteComponentProps> = () => {
           <MultipleFetchDebounceSelect
             style={{ width: '100%' }}
             onInput={getFans}
-            onChange={onChangeFan}
-            onClear={() => onChangeFan()}
+            onChange={handleChangeFan}
+            onClear={handleChangeFan}
             optionMapping={fanOptionMapping}
             placeholder="Search by fan e-mail"
+            input={userInput}
+            options={fans}
           ></MultipleFetchDebounceSelect>
         </Col>
       </Row>
-      <InfiniteScroll
-        dataLength={filteredTransactions.length}
-        next={updateDisplayedArray}
-        hasMore={!eof}
-        loader={
-          page !== 0 && (
-            <div className="scroll-message">
-              <Spin />
-            </div>
-          )
-        }
-        endMessage={
-          <div className="scroll-message">
-            <b>End of results.</b>
-          </div>
-        }
-      >
-        <Table
-          rowKey="id"
-          columns={columns}
-          dataSource={filteredTransactions}
-          loading={loading || refreshing}
-          pagination={false}
-        />
-      </InfiniteScroll>
+      <Table
+        rowKey="id"
+        columns={columns}
+        dataSource={transactions}
+        loading={loading}
+      />
     </div>
   );
 };
