@@ -29,7 +29,6 @@ import {
   saveOrder,
 } from 'services/DiscoClubService';
 import CopyOrderToClipboard from 'components/CopyOrderToClipboard';
-import SimpleSelect from 'components/select/SimpleSelect';
 import { SelectOption } from 'interfaces/SelectOption';
 import scrollIntoView from 'scroll-into-view';
 import FanDetail from 'pages/fans/FanDetail';
@@ -37,6 +36,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import { useMount } from 'react-use';
 import MultipleFetchDebounceSelect from 'components/select/MultipleFetchDebounceSelect';
 import { useRequest } from 'hooks/useRequest';
+import { BaseOptionType } from 'antd/lib/cascader';
 
 const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -44,6 +44,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   const [orderUpdateList, setOrderUpdateList] = useState<boolean[]>([]);
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [currentFan, setCurrentFan] = useState<Fan>();
+  const [selectedUser, setSelectedUser] = useState<Fan>();
   const [details, setDetails] = useState<boolean>(false);
   const [fans, setFans] = useState<Fan[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
@@ -54,16 +55,12 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
   const [ordersSettings, setOrdersSettings] = useState([]);
-  const [brandFilter, setBrandFilter] = useState<string>();
+  const [brandId, setBrandId] = useState<string>();
   const [optionsPage, setOptionsPage] = useState<number>(0);
   const [filter, setFilter] = useState<any[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
-
-  const optionMapping: SelectOption = {
-    key: 'id',
-    label: 'brandName',
-    value: 'id',
-  };
+  const [fanFilterInput, setFanFilterInput] = useState<string>();
+  const [refreshing, setRefreshing] = useState<boolean>(false);
 
   const fanOptionMapping: SelectOption = {
     key: 'id',
@@ -76,8 +73,25 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     setOrdersSettings(response.results[0].order);
   });
 
+  useEffect(() => {
+    if (refreshing) {
+      setOrders([]);
+      setEof(false);
+      fetch();
+      setRefreshing(false);
+    }
+  }, [refreshing]);
+
+  useEffect(() => {
+    if (loaded || brandId || selectedUser) {
+      setPage(0);
+      setRefreshing(true);
+    }
+  }, [brandId, selectedUser]);
+
   const getFans = async (input?: string, loadNextPage?: boolean) => {
     const pageToUse = !!!loadNextPage ? 0 : optionsPage;
+    if (fanFilterInput !== input) setFanFilterInput(input);
     const response: any = await fetchFans({
       page: pageToUse,
       query: input,
@@ -88,30 +102,32 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       (fan: Fan) => !fan.userName?.includes('guest')
     );
 
-    if (validUsers.length < 30) setEof(true);
-    setFans(prev => [...prev.concat(validUsers)]);
+    if (pageToUse === 0) setFans(validUsers);
+    else setFans(prev => [...prev.concat(validUsers)]);
     return response.results;
   };
 
-  const fetch = async (userId?: string) => {
+  const fetch = async (loadNextPage?: boolean) => {
+    const pageToUse = loadNextPage ? page : 0;
     const { results }: any = await doFetch(() =>
       fetchOrders({
-        page: 0,
-        brandId: brandFilter,
-        userId: userId,
+        page: pageToUse,
+        brandId: brandId,
+        userId: selectedUser?.id,
       })
     );
+    setPage(pageToUse + 1);
+    if (results.length < 50) setEof(true);
     const validOrders = results.filter(
       (order: Order) => !!(order.product || order.cart)
     );
-    setOrders(prev => [...prev.concat(validOrders)]);
-    if (validOrders.length < 50) setEof(true);
+    if (pageToUse === 0) setOrders(validOrders);
+    else setOrders(prev => [...prev.concat(validOrders)]);
     setLoaded(true);
   };
 
   const loadNext = async () => {
-    if (loaded) setPage(prev => prev + 1);
-    fetch();
+    fetch(true);
   };
 
   const handleSearch = (selectedKeys: any, confirm: any, dataIndex: any) => {
@@ -169,7 +185,6 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
           `.scrollable-row-${lastViewedIndex}`
         ) as HTMLElement
       );
-      if (search(orders).length < 10) setEof(true);
     }
   }, [details, orders]);
 
@@ -300,7 +315,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       dataIndex: 'amount',
       width: '5%',
       align: 'center',
-      render: (value: number) => `${value / 100}`,
+      render: (value: number) => `${Math.round(value / 100).toFixed(2)}`,
       sorter: (a, b): any => {
         if (a.amount && b.amount) return a.amount - b.amount;
         else if (a.amount) return -1;
@@ -414,37 +429,40 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
         else if (b.stage) return 1;
         else return 0;
       },
+    },
+    {
+      title: 'Int. Status',
+      dataIndex: 'commissionInternalStatus',
+      width: '15%',
+      align: 'center',
+      render: (value: string, order, index) => (
+        <Select
+          loading={orderUpdateList[index]}
+          disabled={orderUpdateList[index]}
+          defaultValue={value}
+          style={{ width: '175px' }}
+          onChange={value => handleSelectChange(value, order, index)}
+        >
+          {ordersSettings.map((ordersSetting: any) => (
+            <Select.Option
+              key={ordersSetting.value}
+              value={ordersSetting.value}
+            >
+              {ordersSetting.name}
+            </Select.Option>
+          ))}
+        </Select>
+      ),
+      sorter: (a, b): any => {
+        if (a.commissionInternalStatus && b.commissionInternalStatus)
+          return a.commissionInternalStatus.localeCompare(
+            b.commissionInternalStatus
+          );
+        else if (a.commissionInternalStatus) return -1;
+        else if (b.commissionInternalStatus) return 1;
+        else return 0;
       },
-      {
-          title: 'Int. Status',
-          dataIndex: 'commissionInternalStatus',
-          width: '15%',
-          align: 'center',
-          render: (value: string, order, index) => (
-              <Select
-                  loading={orderUpdateList[index]}
-                  disabled={orderUpdateList[index]}
-                  defaultValue={value}
-                  style={{ width: '175px' }}
-                  onChange={value => handleSelectChange(value, order, index)}
-              >
-                  {ordersSettings.map((ordersSetting: any) => (
-                      <Select.Option
-                          key={ordersSetting.value}
-                          value={ordersSetting.value}
-                      >
-                          {ordersSetting.name}
-                      </Select.Option>
-                  ))}
-              </Select>
-          ),
-          sorter: (a, b): any => {
-              if (a.commissionInternalStatus && b.commissionInternalStatus) return a.commissionInternalStatus.localeCompare(b.commissionInternalStatus);
-              else if (a.commissionInternalStatus) return -1;
-              else if (b.commissionInternalStatus) return 1;
-              else return 0;
-          },
-      },
+    },
     {
       title: 'Last Update',
       dataIndex: 'hLastUpdate',
@@ -480,20 +498,30 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     getBrands();
   }, []);
 
-  const onChangeBrand = async (_?: string, brand?: Brand) => {
-    setBrandFilter(brand?.id);
+  const handleChangeBrand = async (_?: string, option?: BaseOptionType) => {
     setOrders([]);
-    fetch();
+    const selectedEntity = brands.find(item => item.id === option?.value);
+    setBrandId(selectedEntity?.id);
   };
 
   const getFan = (fanUser: string) => {
     return fans.find(fan => fan.user.includes(fanUser));
   };
 
-  const onChangeFan = async (_?: string, fan?: Fan) => {
+  const onChangeFan = async (input?: string, fan?: Fan) => {
     setOrders([]);
-    if (!fan) fetch();
-    else fetch(fan?.id);
+    if (!fan) {
+      setFanFilterInput('');
+      setSelectedUser(undefined);
+    } else {
+      setFanFilterInput(input);
+      setSelectedUser(fan);
+    }
+  };
+
+  const onClearFan = () => {
+    setFanFilterInput('');
+    setSelectedUser(undefined);
   };
 
   const onSaveFan = (record: Fan) => {
@@ -502,6 +530,11 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
 
   const onCancelFan = () => {
     setDetails(false);
+  };
+
+  const handleKeyDown = (event: any) => {
+    if (event.key === 'Enter')
+      setSelectedUser(fans?.find(item => item.user === fanFilterInput));
   };
 
   return (
@@ -518,17 +551,32 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
               <Row gutter={8}>
                 <Col lg={8} xs={16}>
                   <Typography.Title level={5}>Master Brand</Typography.Title>
-                  <SimpleSelect
-                    data={brands}
-                    onChange={onChangeBrand}
+                  <Select
+                    allowClear
+                    onChange={handleChangeBrand}
                     style={{ width: '100%' }}
-                    selectedOption={brandFilter}
-                    optionMapping={optionMapping}
                     placeholder={'Select a master brand'}
+                    value={brandId}
                     loading={isFetchingBrands}
                     disabled={isFetchingBrands}
-                    allowClear={true}
-                  ></SimpleSelect>
+                    showSearch
+                    filterOption={(input, option) =>
+                      !!option?.children
+                        ?.toString()
+                        .toLowerCase()
+                        .includes(input.toLowerCase())
+                    }
+                  >
+                    {brands.map(curr => (
+                      <Select.Option
+                        key={curr.id}
+                        value={curr.id}
+                        label={curr.brandName}
+                      >
+                        {curr.brandName}
+                      </Select.Option>
+                    ))}
+                  </Select>
                 </Col>
                 <Col lg={8} xs={16}>
                   <Typography.Title level={5}>Fan Filter</Typography.Title>
@@ -536,9 +584,15 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
                     style={{ width: '100%' }}
                     onInput={getFans}
                     onChange={onChangeFan}
-                    onClear={() => onChangeFan()}
+                    onClear={onClearFan}
                     optionMapping={fanOptionMapping}
                     placeholder="Search by fan e-mail"
+                    options={fans}
+                    input={fanFilterInput}
+                    disabled={isFetchingBrands}
+                    onInputKeyDown={(event: HTMLInputElement) =>
+                      handleKeyDown(event)
+                    }
                   ></MultipleFetchDebounceSelect>
                 </Col>
               </Row>
@@ -546,7 +600,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
             <Col>
               <Button
                 type="primary"
-                onClick={() => fetch()}
+                onClick={() => setRefreshing(true)}
                 style={{
                   marginBottom: '20px',
                   marginRight: '25px',
@@ -558,9 +612,15 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
             </Col>
           </Row>
           <InfiniteScroll
-            dataLength={orders.length}
+            dataLength={search(orders).length}
             next={loadNext}
-            hasMore={!eof}
+            hasMore={page > 0 && !eof}
+            //posso setar page pra 0 no changefilters. assim tranco aqui
+            //isso n vai prestar. depois do primeiro fetch, page sempre sera >=1.
+            //se loaded e page>1 ou page>0
+            //pos primeiro load: page=1
+            //2 loads de is sem filtro: page=2
+            //troca filtro de brand: antes da query, page=2. depois da query, page query = 0, page vira 1
             loader={
               page !== 0 && (
                 <div className="scroll-message">
@@ -579,7 +639,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
               rowKey="id"
               columns={columns}
               dataSource={search(orders)}
-              loading={loading}
+              loading={loading || refreshing}
               pagination={false}
             />
           </InfiniteScroll>
