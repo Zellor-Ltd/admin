@@ -29,7 +29,7 @@ import { Creator } from 'interfaces/Creator';
 import { FeedItem } from 'interfaces/FeedItem';
 import { Segment } from 'interfaces/Segment';
 import { Tag } from 'interfaces/Tag';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { fetchLinks, saveLink, saveVideoFeed } from 'services/DiscoClubService';
 import BrandForm from './BrandForm';
@@ -41,8 +41,19 @@ import '@pathofdev/react-tag-input/build/index.css';
 import moment from 'moment';
 import { ProductBrand } from 'interfaces/ProductBrand';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
+import { DndProvider, useDrag, useDrop } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+import update from 'immutability-helper';
 
 const { Title } = Typography;
+
+interface DraggableBodyRowProps
+  extends React.HTMLAttributes<HTMLTableRowElement> {
+  index: number;
+  moveRow: (dragIndex: number, hoverIndex: number) => void;
+}
+
+const type = 'DraggableBodyRow';
 interface VideoFeedDetailProps {
   onSave?: (record: FeedItem) => void;
   onCancel?: () => void;
@@ -110,6 +121,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
   const [currentProductBrand, setCurrentProductBrand] =
     useState<ProductBrand>();
   const [currentBrandIcon, setCurrentBrandIcon] = useState<any>();
+  const [tagBuffer, setTagBuffer] = useState<any[]>([]);
 
   useEffect(() => {
     if (videoTab === 'Links') {
@@ -163,6 +175,80 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
   useEffect(() => {
     feedForm.setFieldsValue({ selectedIconUrl: currentBrandIcon });
   }, [currentBrandIcon]);
+
+  const DraggableBodyRow = ({
+    index,
+    moveRow,
+    className,
+    style,
+    ...restProps
+  }: DraggableBodyRowProps) => {
+    const ref = useRef<HTMLTableRowElement>(null);
+    const [{ isOver, dropClassName }, drop] = useDrop({
+      accept: type,
+      collect: monitor => {
+        const { index: dragIndex } = (monitor.getItem() || {}) as any;
+        if (dragIndex === index) {
+          return {};
+        }
+        return {
+          isOver: monitor.isOver(),
+          dropClassName:
+            dragIndex < index ? ' drop-over-downward' : ' drop-over-upward',
+        };
+      },
+      drop: (item: { index: number }) => {
+        moveRow(item.index, index);
+      },
+    });
+    const [, drag] = useDrag({
+      type,
+      item: { index },
+      collect: monitor => ({
+        isDragging: monitor.isDragging(),
+      }),
+    });
+    drop(drag(ref));
+
+    return (
+      <tr
+        ref={ref}
+        className={`${className}${isOver ? dropClassName : ''}`}
+        style={{ cursor: 'move', ...style }}
+        {...restProps}
+      />
+    );
+  };
+
+  const components = {
+    body: {
+      row: DraggableBodyRow,
+    },
+  };
+
+  const moveRow = useCallback(
+    (dragIndex: number, hoverIndex: number) => {
+      const dragRow = tagBuffer[dragIndex];
+      setTagBuffer(
+        update(tagBuffer, {
+          $splice: [
+            [dragIndex, 1],
+            [hoverIndex, 0, dragRow],
+          ],
+        })
+      );
+    },
+    [tagBuffer]
+  );
+
+  useEffect(() => {
+    segmentForm.setFieldsValue({ tags: [...tagBuffer] });
+  }, [tagBuffer]);
+
+  useEffect(() => {
+    if (tagBuffer !== segmentForm.getFieldValue('tags'))
+      setTagBuffer(segmentForm.getFieldValue('tags'));
+  }, [selectedSegment]);
 
   const onChangeCreator = (value: string) => {
     const selectedCreator = creators.find(item => item.id === value);
@@ -238,7 +324,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
     item.package = item.package?.map(pack => {
       const segment: any = {
         ...pack,
-        tags: pack.tags ? pack.tags : [],
+        tags: pack.tags ?? [],
       };
       // TODO: FIND THE ROOT CAUSE FOR THIS SELF REFERENCE
       delete segment.package;
@@ -1275,13 +1361,22 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                   >
                     New Tag
                   </Button>
-                  <Table
-                    rowKey="id"
-                    columns={tagsColumns}
-                    dataSource={selectedSegment!.tags}
-                    loading={loading}
-                    pagination={false}
-                  />
+                  <DndProvider backend={HTML5Backend}>
+                    <Table
+                      rowKey="id"
+                      columns={tagsColumns}
+                      dataSource={tagBuffer}
+                      components={components}
+                      onRow={(_, index) => {
+                        const attr = {
+                          index,
+                          moveRow,
+                        };
+                        return attr as React.HTMLAttributes<any>;
+                      }}
+                      pagination={false}
+                    />
+                  </DndProvider>
                 </Tabs.TabPane>
               </Tabs>
               <Row gutter={8} style={{ marginTop: '20px' }}>
