@@ -5,7 +5,6 @@ import {
   DatePicker,
   PageHeader,
   Row,
-  Spin,
   Table,
   Typography,
 } from 'antd';
@@ -21,7 +20,6 @@ import { fetchTransactionsPerBrand } from 'services/DiscoClubService';
 import WalletEdit from './WalletEdit';
 import * as H from 'history';
 import { Wallet } from 'interfaces/Wallet';
-import InfiniteScroll from 'react-infinite-scroll-component';
 interface WalletDetailProps {
   location: H.Location<H.LocationState>;
   onCancel?: () => void;
@@ -38,12 +36,8 @@ const WalletDetail: React.FC<WalletDetailProps> = ({
   const [loading, setLoading] = useState<boolean>(false);
   const { doFetch } = useRequest({ setLoading: setLoading });
   const initial = location.state as unknown as WalletDetailParams;
-  const [page, setPage] = useState<number>(0);
-  const [eof, setEof] = useState<boolean>(false);
-  const [refreshing, setRefreshing] = useState<boolean>(false);
   const [transactions, setTransactions] = useState<WalletTransaction[]>([]);
   const [filter, setFilter] = useState<any[]>([]);
-  const [content, setContent] = useState<WalletTransaction[]>([]);
 
   const wallet = initial
     ? {
@@ -67,34 +61,8 @@ const WalletDetail: React.FC<WalletDetailProps> = ({
     const { results } = await doFetch(() =>
       fetchTransactionsPerBrand(initial.fan.id, initial.brand.id)
     );
-    setContent(results);
-    setRefreshing(true);
+    setTransactions(results);
   };
-
-  const updateDisplayedArray = () => {
-    if (!content.length) return;
-
-    const pageToUse = content ? 0 : page;
-    const results = transactions.slice(pageToUse * 10, pageToUse * 10 + 10);
-
-    setPage(pageToUse + 1);
-    setTransactions(prev => [...prev.concat(results)]);
-
-    if (results.length < 10) setEof(true);
-  };
-
-  useEffect(() => {
-    if (refreshing) {
-      setTransactions([]);
-      setEof(false);
-      updateDisplayedArray();
-      setRefreshing(false);
-    }
-  }, [refreshing]);
-
-  useEffect(() => {
-    if (search(transactions).length < 10) setEof(true);
-  }, [transactions]);
 
   const columns: ColumnsType<WalletTransaction> = [
     {
@@ -204,31 +172,13 @@ const WalletDetail: React.FC<WalletDetailProps> = ({
           </Row>
         </Col>
       </Row>
-      <InfiniteScroll
-        dataLength={transactions.length}
-        next={updateDisplayedArray}
-        hasMore={!eof}
-        loader={
-          page !== 0 && (
-            <div className="scroll-message">
-              <Spin />
-            </div>
-          )
-        }
-        endMessage={
-          <div className="scroll-message">
-            <b>End of results.</b>
-          </div>
-        }
-      >
-        <Table
-          rowKey="id"
-          columns={columns}
-          dataSource={search(transactions)}
-          loading={loading || refreshing}
-          pagination={false}
-        />
-      </InfiniteScroll>
+      <Table
+        rowKey="id"
+        columns={columns}
+        dataSource={search(transactions)}
+        loading={loading}
+        pagination={false}
+      />
     </div>
   );
 };

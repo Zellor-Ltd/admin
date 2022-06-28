@@ -209,6 +209,7 @@ const MultipleFetchDebounceSelect: React.FC<
               label: (<Spin size="small" />) as unknown as string,
               value: 'loading',
               key: 'loading',
+              disabled: true,
             })
           : filter(_options)
       }

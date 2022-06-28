@@ -1,13 +1,12 @@
 import { Col, PageHeader, Row, Table, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import SimpleSelect from 'components/select/SimpleSelect';
-import { useRequest } from 'hooks/useRequest';
 import { Brand } from 'interfaces/Brand';
 import { Fan } from 'interfaces/Fan';
 import { SelectOption } from 'interfaces/SelectOption';
 import { Wallet } from 'interfaces/Wallet';
 import { WalletDetailParams } from 'interfaces/WalletTransactions';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import {
   fetchBalancePerBrand,
@@ -85,23 +84,11 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
 
   const handleSaveWallet = (balanceToAdd: number, record?: Wallet) => {
     if (record) {
-      record.discoDollars += balanceToAdd;
-    }
-    handleRefreshWallet(balanceToAdd, record);
-  };
-
-  const handleCancelWallet = () => {
-    setDetails(false);
-  };
-
-  const handleRefreshWallet = (balanceToAdd: number, record?: Wallet) => {
-    if (record) {
-      //updating: array at index of record
-      wallets[
-        wallets.indexOf(
-          wallets.find(item => item.brandId === record.brandId) as Wallet
-        )
-      ] = record;
+      const updatedValue = (record.discoDollars += balanceToAdd);
+      wallets[wallets.indexOf(record)] = {
+        ...record,
+        discoDollars: updatedValue,
+      };
     } else {
       wallets.push({
         discoDollars: balanceToAdd,
@@ -115,6 +102,10 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
       });
     }
     setWallets([...wallets]);
+  };
+
+  const handleCancelWallet = () => {
+    setDetails(false);
   };
 
   const columns: ColumnsType<Wallet> = [
@@ -199,6 +190,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   const handleClearFan = () => {
+    setWallets([]);
     setUserInput('');
     setSelectedFan(undefined);
     getFans();

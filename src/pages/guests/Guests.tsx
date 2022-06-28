@@ -2,6 +2,7 @@ import { EditOutlined, SearchOutlined } from '@ant-design/icons';
 import {
   Button,
   Col,
+  message,
   PageHeader,
   Row,
   Spin,
@@ -291,6 +292,11 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
       //buffer was set as input was typed
       setGuests(buffer);
       setGuestsPage(optionsPage);
+      const selectedEntity = guests?.find(item => item.user === userInput);
+      if (!selectedEntity)
+        message.warning(
+          "Can't filter Guests with incomplete Fan Filter! Please select a Fan."
+        );
     }
   };
 

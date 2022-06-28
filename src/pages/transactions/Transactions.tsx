@@ -1,9 +1,17 @@
 import { CalendarOutlined } from '@ant-design/icons';
-import { Col, DatePicker, PageHeader, Row, Table, Typography } from 'antd';
+import {
+  Col,
+  DatePicker,
+  message,
+  PageHeader,
+  Row,
+  Table,
+  Typography,
+} from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { Transaction } from 'interfaces/Transaction';
 import moment from 'moment';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { fetchFans, fetchWalletTransactions } from 'services/DiscoClubService';
 import CopyOrderToClipboard from 'components/CopyOrderToClipboard';
@@ -145,6 +153,16 @@ const Transactions: React.FC<RouteComponentProps> = () => {
     );
   };
 
+  const handleKeyDown = (event: any) => {
+    if (event.key === 'Enter') {
+      const selectedEntity = fans?.find(item => item.user === userInput);
+      if (!selectedEntity)
+        message.warning(
+          "Can't list transactions with incomplete Fan Filter! Please select a Fan."
+        );
+    }
+  };
+
   return (
     <div className="transactions">
       <PageHeader title="Transactions" subTitle="List of Transactions" />
@@ -164,6 +182,7 @@ const Transactions: React.FC<RouteComponentProps> = () => {
             placeholder="Search by fan e-mail"
             input={userInput}
             options={fans}
+            onInputKeyDown={(event: HTMLInputElement) => handleKeyDown(event)}
           ></MultipleFetchDebounceSelect>
         </Col>
       </Row>
