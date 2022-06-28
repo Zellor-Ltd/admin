@@ -32,7 +32,7 @@ const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
 }) => {
   const [form] = Form.useForm();
 
-  const optionsMapping: SelectOption = {
+  const optionMapping: SelectOption = {
     key: 'id',
     label: 'brandName',
     value: 'id',
@@ -175,7 +175,7 @@ const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
                   ? record.productBrand
                   : record.productBrand?.brandName
               }
-              optionsMapping={optionsMapping}
+              optionMapping={optionMapping}
               placeholder={'Select a brand'}
               loading={false}
               disabled={false}

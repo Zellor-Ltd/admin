@@ -38,7 +38,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [brandFilter, setBrandFilter] = useState<string>('');
   const [content, setContent] = useState<Tag[]>([]);
 
-  const optionsMapping: SelectOption = {
+  const optionMapping: SelectOption = {
     key: 'id',
     label: 'brandName',
     value: 'id',
@@ -221,7 +221,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
                     }
                     style={{ width: '100%' }}
                     selectedOption={''}
-                    optionsMapping={optionsMapping}
+                    optionMapping={optionMapping}
                     placeholder={'Select a master brand'}
                     loading={isFetchingBrands}
                     disabled={isFetchingBrands}

@@ -889,7 +889,7 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
                       }
                       style={{ width: '100%' }}
                       selectedOption={currentcreator?.firstName}
-                      optionsMapping={creatorMapping}
+                      optionMapping={creatorMapping}
                       placeholder={'Select a creator'}
                       loading={false}
                       disabled={false}

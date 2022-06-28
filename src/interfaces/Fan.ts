@@ -12,6 +12,20 @@ export interface FanFilter {
   group?: string;
 }
 export interface Fan {
+  addresses?: any[];
+  personalDetails?: any;
+  pwd?: string;
+  birthday?: any;
+  gender?: string;
+  phoneNumber?: string;
+  currencyCode?: string;
+  line1?: string;
+  city?: any;
+  country?: any;
+  postalCode?: any;
+  serverAlias?: any;
+  followingCreators?: any;
+  followingCategories?: any;
   id: string;
   name: string;
   userName: string;

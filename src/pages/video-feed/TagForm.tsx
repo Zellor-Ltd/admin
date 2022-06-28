@@ -35,7 +35,7 @@ const TagForm: React.FC<FormProps> = ({
   const [tags, setTags] = useState<any[]>([]);
   const [filteredTags, setFilteredTags] = useState<any[]>([]);
 
-  const tagOptionsMapping: SelectOption = {
+  const tagOptionMapping: SelectOption = {
     label: 'tagName',
     value: 'tagName',
     key: 'id',
@@ -43,9 +43,9 @@ const TagForm: React.FC<FormProps> = ({
 
   const optionFactory = (option: any) => {
     return {
-      label: option[tagOptionsMapping.label],
-      value: option[tagOptionsMapping.value],
-      key: option[tagOptionsMapping.value],
+      label: option[tagOptionMapping.label],
+      value: option[tagOptionMapping.value],
+      key: option[tagOptionMapping.value],
     };
   };
 

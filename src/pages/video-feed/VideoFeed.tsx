@@ -563,7 +563,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                     onChange={(_, brand) => setBrandFilter(brand)}
                     style={{ width: '100%' }}
                     selectedOption={brandFilter?.id}
-                    optionsMapping={masterBrandMapping}
+                    optionMapping={masterBrandMapping}
                     placeholder={'Select a master brand'}
                     loading={isFetchingBrands}
                     disabled={isFetchingBrands}
@@ -577,7 +577,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                     onChange={id => setProductBrandFilter(id as any)}
                     style={{ width: '100%' }}
                     selectedOption={productBrandFilter}
-                    optionsMapping={productBrandMapping}
+                    optionMapping={productBrandMapping}
                     placeholder={'Select a product brand'}
                     loading={isFetchingProductBrands}
                     disabled={isFetchingProductBrands}
@@ -591,7 +591,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                     onChange={status => setStatusFilter(status)}
                     style={{ width: '100%' }}
                     selectedOption={statusFilter}
-                    optionsMapping={statusMapping}
+                    optionMapping={statusMapping}
                     placeholder={'Select a status'}
                     allowClear={true}
                   />
@@ -605,7 +605,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                     }
                     style={{ width: '100%' }}
                     selectedOption={categoryFilter}
-                    optionsMapping={categoryMapping}
+                    optionMapping={categoryMapping}
                     placeholder={'Select a category'}
                     allowClear={true}
                     loading={isFetchingCategories}
@@ -619,7 +619,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                     onChange={videoType => setVideoTypeFilter(videoType)}
                     style={{ width: '100%' }}
                     selectedOption={videoTypeFilter}
-                    optionsMapping={videoTypeMapping}
+                    optionMapping={videoTypeMapping}
                     placeholder={'Select a video type'}
                     allowClear={true}
                   />

@@ -243,7 +243,16 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                 </Form.Item>
               </Col>
               <Col lg={12} xs={24}>
-                <Form.Item label="Display name (@unique)" name="userName">
+                <Form.Item
+                  label="Display name (@unique)"
+                  name="userName"
+                  rules={[
+                    {
+                      required: true,
+                      message: 'Display name is required.',
+                    },
+                  ]}
+                >
                   <Input prefix="@" autoComplete="off" />
                 </Form.Item>
               </Col>

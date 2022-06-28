@@ -111,31 +111,31 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
   const { doRequest: saveCategories, loading: loadingCategories } =
     useRequest();
 
-  const optionsMapping: SelectOption = {
+  const optionMapping: SelectOption = {
     key: 'id',
     label: 'brandName',
     value: 'id',
   };
 
-  const productSuperCategoryOptionsMapping: SelectOption = {
+  const productSuperCategoryOptionMapping: SelectOption = {
     key: 'id',
     label: 'superCategory',
     value: 'id',
   };
 
-  const productCategoryOptionsMapping: SelectOption = {
+  const productCategoryOptionMapping: SelectOption = {
     key: 'id',
     label: 'category',
     value: 'id',
   };
 
-  const productSubCategoryOptionsMapping: SelectOption = {
+  const productSubCategoryOptionMapping: SelectOption = {
     key: 'id',
     label: 'subCategory',
     value: 'id',
   };
 
-  const productSubSubCategoryOptionsMapping: SelectOption = {
+  const productSubSubCategoryOptionMapping: SelectOption = {
     key: 'id',
     label: 'subSubCategory',
     value: 'id',
@@ -833,7 +833,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                     onChange={(_, brand) => onChangeBrand(brand)}
                     style={{ width: '100%' }}
                     selectedOption={brandFilter?.brandName}
-                    optionsMapping={optionsMapping}
+                    optionMapping={optionMapping}
                     placeholder={'Select a master brand'}
                     loading={isFetchingBrands}
                     disabled={isFetchingBrands}
@@ -849,7 +849,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                     }
                     style={{ width: '100%' }}
                     selectedOption={productBrandFilter?.brandName}
-                    optionsMapping={optionsMapping}
+                    optionMapping={optionMapping}
                     placeholder={'Select a Product Brand'}
                     loading={isFetchingProductBrands}
                     disabled={isFetchingProductBrands}
@@ -884,7 +884,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                     }
                     style={{ width: '100%' }}
                     selectedOption={currentSuperCategory?.id}
-                    optionsMapping={productSuperCategoryOptionsMapping}
+                    optionMapping={productSuperCategoryOptionMapping}
                     placeholder={'Select a Super Category'}
                     loading={fetchingCategories}
                     disabled={fetchingCategories}
@@ -903,7 +903,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                     onChange={(_, category) => setCurrentCategory(category)}
                     style={{ width: '100%' }}
                     selectedOption={currentCategory?.id ?? null}
-                    optionsMapping={productCategoryOptionsMapping}
+                    optionMapping={productCategoryOptionMapping}
                     placeholder={'Select a Category'}
                     loading={fetchingCategories}
                     disabled={fetchingCategories}
@@ -927,7 +927,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                     onChange={(_, category) => setCurrentSubCategory(category)}
                     style={{ width: '100%' }}
                     selectedOption={currentSubCategory?.id ?? null}
-                    optionsMapping={productSubCategoryOptionsMapping}
+                    optionMapping={productSubCategoryOptionMapping}
                     placeholder={'Select a Sub Category'}
                     loading={fetchingCategories}
                     disabled={
@@ -971,7 +971,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                     }
                     style={{ width: '100%' }}
                     selectedOption={currentSubSubCategory?.id ?? null}
-                    optionsMapping={productSubSubCategoryOptionsMapping}
+                    optionMapping={productSubSubCategoryOptionMapping}
                     placeholder={'Select a Sub Sub Category'}
                     loading={fetchingCategories}
                     disabled={

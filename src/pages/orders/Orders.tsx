@@ -1,6 +1,5 @@
 import { CalendarOutlined, SearchOutlined } from '@ant-design/icons';
 import {
-  AutoComplete,
   Button,
   Col,
   DatePicker,
@@ -30,17 +29,22 @@ import {
   saveOrder,
 } from 'services/DiscoClubService';
 import CopyOrderToClipboard from 'components/CopyOrderToClipboard';
-import SimpleSelect from 'components/select/SimpleSelect';
 import { SelectOption } from 'interfaces/SelectOption';
 import scrollIntoView from 'scroll-into-view';
 import FanDetail from 'pages/fans/FanDetail';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useMount } from 'react-use';
+import MultipleFetchDebounceSelect from 'components/select/MultipleFetchDebounceSelect';
+import { useRequest } from 'hooks/useRequest';
+import { BaseOptionType } from 'antd/lib/cascader';
 
 const Orders: React.FC<RouteComponentProps> = ({ location }) => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const { doFetch } = useRequest({ setLoading: setLoading });
   const [orderUpdateList, setOrderUpdateList] = useState<boolean[]>([]);
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [currentFan, setCurrentFan] = useState<Fan>();
+  const [selectedUser, setSelectedUser] = useState<Fan>();
   const [details, setDetails] = useState<boolean>(false);
   const [fans, setFans] = useState<Fan[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
@@ -50,51 +54,15 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   const [loaded, setLoaded] = useState<boolean>(false);
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
-  const [refreshing, setRefreshing] = useState<boolean>(false);
   const [ordersSettings, setOrdersSettings] = useState([]);
-  const [fanFilter, setFanFilter] = useState<string>('');
-  const [brandFilter, setBrandFilter] = useState<string>();
-  const [options, setOptions] = useState<
-    { label: string; value: string; key: string }[]
-  >([]);
+  const [brandId, setBrandId] = useState<string>();
+  const [optionsPage, setOptionsPage] = useState<number>(0);
   const [filter, setFilter] = useState<any[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
+  const [fanFilterInput, setFanFilterInput] = useState<string>();
+  const [refreshing, setRefreshing] = useState<boolean>(false);
 
-  const fetchUsers = async (_query?: string) => {
-    const pageToUse = refreshing ? 0 : page;
-    const response: any = await fetchFans({
-      page: pageToUse,
-      query: _query,
-    });
-
-    setPage(pageToUse + 1);
-
-    const optionFactory = (option: any) => {
-      return {
-        label: option[fanOptionsMapping.label],
-        value: option[fanOptionsMapping.value],
-        key: option[fanOptionsMapping.value],
-      };
-    };
-
-    const validUsers = response.results.filter(
-      (fan: Fan) => !fan.userName?.includes('guest')
-    );
-
-    if (validUsers.length < 30) setEof(true);
-
-    setOptions(validUsers.map(optionFactory));
-
-    setFans(validUsers);
-  };
-
-  const optionsMapping: SelectOption = {
-    key: 'id',
-    label: 'brandName',
-    value: 'id',
-  };
-
-  const fanOptionsMapping: SelectOption = {
+  const fanOptionMapping: SelectOption = {
     key: 'id',
     label: 'user',
     value: 'user',
@@ -105,23 +73,61 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     setOrdersSettings(response.results[0].order);
   });
 
-  const fetch = async () => {
-    const { results }: any = await fetchOrders({
-      page: 0,
-      brandId: brandFilter,
-      userId: fanFilter,
+  useEffect(() => {
+    if (refreshing) {
+      setOrders([]);
+      setEof(false);
+      fetch();
+      setRefreshing(false);
+    }
+  }, [refreshing]);
+
+  useEffect(() => {
+    if (loaded || brandId || selectedUser) {
+      setPage(0);
+      setRefreshing(true);
+    }
+  }, [brandId, selectedUser]);
+
+  const getFans = async (input?: string, loadNextPage?: boolean) => {
+    const pageToUse = !!!loadNextPage ? 0 : optionsPage;
+    if (fanFilterInput !== input) setFanFilterInput(input);
+    const response: any = await fetchFans({
+      page: pageToUse,
+      query: input,
     });
+    setOptionsPage(pageToUse + 1);
+
+    const validUsers = response.results.filter(
+      (fan: Fan) => !fan.userName?.includes('guest')
+    );
+
+    if (pageToUse === 0) setFans(validUsers);
+    else setFans(prev => [...prev.concat(validUsers)]);
+    return response.results;
+  };
+
+  const fetch = async (loadNextPage?: boolean) => {
+    const pageToUse = loadNextPage ? page : 0;
+    const { results }: any = await doFetch(() =>
+      fetchOrders({
+        page: pageToUse,
+        brandId: brandId,
+        userId: selectedUser?.id,
+      })
+    );
+    setPage(pageToUse + 1);
+    if (results.length < 50) setEof(true);
     const validOrders = results.filter(
       (order: Order) => !!(order.product || order.cart)
     );
-    setOrders(prev => [...prev.concat(validOrders)]);
-    if (validOrders.length < 10) setEof(true);
+    if (pageToUse === 0) setOrders(validOrders);
+    else setOrders(prev => [...prev.concat(validOrders)]);
     setLoaded(true);
   };
 
   const loadNext = async () => {
-    if (loaded) setPage(prev => prev + 1);
-    fetch();
+    fetch(true);
   };
 
   const handleSearch = (selectedKeys: any, confirm: any, dataIndex: any) => {
@@ -179,7 +185,6 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
           `.scrollable-row-${lastViewedIndex}`
         ) as HTMLElement
       );
-      if (search(orders).length < 10) setEof(true);
     }
   }, [details, orders]);
 
@@ -310,7 +315,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       dataIndex: 'amount',
       width: '5%',
       align: 'center',
-      render: (value: number) => `${value / 100}`,
+      render: (value: number) => `${Math.round(value / 100).toFixed(2)}`,
       sorter: (a, b): any => {
         if (a.amount && b.amount) return a.amount - b.amount;
         else if (a.amount) return -1;
@@ -424,37 +429,40 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
         else if (b.stage) return 1;
         else return 0;
       },
+    },
+    {
+      title: 'Int. Status',
+      dataIndex: 'commissionInternalStatus',
+      width: '15%',
+      align: 'center',
+      render: (value: string, order, index) => (
+        <Select
+          loading={orderUpdateList[index]}
+          disabled={orderUpdateList[index]}
+          defaultValue={value}
+          style={{ width: '175px' }}
+          onChange={value => handleSelectChange(value, order, index)}
+        >
+          {ordersSettings.map((ordersSetting: any) => (
+            <Select.Option
+              key={ordersSetting.value}
+              value={ordersSetting.value}
+            >
+              {ordersSetting.name}
+            </Select.Option>
+          ))}
+        </Select>
+      ),
+      sorter: (a, b): any => {
+        if (a.commissionInternalStatus && b.commissionInternalStatus)
+          return a.commissionInternalStatus.localeCompare(
+            b.commissionInternalStatus
+          );
+        else if (a.commissionInternalStatus) return -1;
+        else if (b.commissionInternalStatus) return 1;
+        else return 0;
       },
-      {
-          title: 'Int. Status',
-          dataIndex: 'commissionInternalStatus',
-          width: '15%',
-          align: 'center',
-          render: (value: string, order, index) => (
-              <Select
-                  loading={orderUpdateList[index]}
-                  disabled={orderUpdateList[index]}
-                  defaultValue={value}
-                  style={{ width: '175px' }}
-                  onChange={value => handleSelectChange(value, order, index)}
-              >
-                  {ordersSettings.map((ordersSetting: any) => (
-                      <Select.Option
-                          key={ordersSetting.value}
-                          value={ordersSetting.value}
-                      >
-                          {ordersSetting.name}
-                      </Select.Option>
-                  ))}
-              </Select>
-          ),
-          sorter: (a, b): any => {
-              if (a.commissionInternalStatus && b.commissionInternalStatus) return a.commissionInternalStatus.localeCompare(b.commissionInternalStatus);
-              else if (a.commissionInternalStatus) return -1;
-              else if (b.commissionInternalStatus) return 1;
-              else return 0;
-          },
-      },
+    },
     {
       title: 'Last Update',
       dataIndex: 'hLastUpdate',
@@ -490,23 +498,30 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     getBrands();
   }, []);
 
-  const onChangeBrand = async (id: string | undefined) => {
-    setBrandFilter(id);
-    fetch();
+  const handleChangeBrand = async (_?: string, option?: BaseOptionType) => {
+    setOrders([]);
+    const selectedEntity = brands.find(item => item.id === option?.value);
+    setBrandId(selectedEntity?.id);
   };
 
   const getFan = (fanUser: string) => {
     return fans.find(fan => fan.user.includes(fanUser));
   };
 
-  const onChangeFan = async (value: string) => {
-    const id = getFan(value)?.id;
-    setFanFilter(id ?? '');
-    fetch();
+  const onChangeFan = async (input?: string, fan?: Fan) => {
+    setOrders([]);
+    if (!fan) {
+      setFanFilterInput('');
+      setSelectedUser(undefined);
+    } else {
+      setFanFilterInput(input);
+      setSelectedUser(fan);
+    }
   };
 
-  const onSearch = (value: string) => {
-    fetchUsers(value);
+  const onClearFan = () => {
+    setFanFilterInput('');
+    setSelectedUser(undefined);
   };
 
   const onSaveFan = (record: Fan) => {
@@ -515,6 +530,17 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
 
   const onCancelFan = () => {
     setDetails(false);
+  };
+
+  const handleKeyDown = (event: any) => {
+    if (event.key === 'Enter') {
+      const selectedEntity = fans?.find(item => item.user === fanFilterInput);
+      setSelectedUser(selectedEntity);
+      if (!selectedEntity)
+        message.warning(
+          "Can't filter orders with incomplete Fan Filter! Please select a Fan."
+        );
+    }
   };
 
   return (
@@ -531,34 +557,56 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
               <Row gutter={8}>
                 <Col lg={8} xs={16}>
                   <Typography.Title level={5}>Master Brand</Typography.Title>
-                  <SimpleSelect
-                    data={brands}
-                    onChange={id => onChangeBrand(id)}
+                  <Select
+                    allowClear
+                    onChange={handleChangeBrand}
                     style={{ width: '100%' }}
-                    selectedOption={''}
-                    optionsMapping={optionsMapping}
                     placeholder={'Select a master brand'}
+                    value={brandId}
                     loading={isFetchingBrands}
                     disabled={isFetchingBrands}
-                    allowClear={true}
-                  ></SimpleSelect>
+                    showSearch
+                    filterOption={(input, option) =>
+                      !!option?.children
+                        ?.toString()
+                        .toLowerCase()
+                        .includes(input.toLowerCase())
+                    }
+                  >
+                    {brands.map(curr => (
+                      <Select.Option
+                        key={curr.id}
+                        value={curr.id}
+                        label={curr.brandName}
+                      >
+                        {curr.brandName}
+                      </Select.Option>
+                    ))}
+                  </Select>
                 </Col>
                 <Col lg={8} xs={16}>
                   <Typography.Title level={5}>Fan Filter</Typography.Title>
-                  <AutoComplete
+                  <MultipleFetchDebounceSelect
                     style={{ width: '100%' }}
-                    options={options}
-                    onSelect={onChangeFan}
-                    onSearch={onSearch}
+                    onInput={getFans}
+                    onChange={onChangeFan}
+                    onClear={onClearFan}
+                    optionMapping={fanOptionMapping}
                     placeholder="Search by fan e-mail"
-                  />
+                    options={fans}
+                    input={fanFilterInput}
+                    disabled={isFetchingBrands}
+                    onInputKeyDown={(event: HTMLInputElement) =>
+                      handleKeyDown(event)
+                    }
+                  ></MultipleFetchDebounceSelect>
                 </Col>
               </Row>
             </Col>
             <Col>
               <Button
                 type="primary"
-                onClick={fetch}
+                onClick={() => setRefreshing(true)}
                 style={{
                   marginBottom: '20px',
                   marginRight: '25px',
@@ -570,9 +618,9 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
             </Col>
           </Row>
           <InfiniteScroll
-            dataLength={orders.length}
+            dataLength={search(orders).length}
             next={loadNext}
-            hasMore={!eof}
+            hasMore={page > 0 && !eof}
             loader={
               page !== 0 && (
                 <div className="scroll-message">
@@ -581,9 +629,11 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
               )
             }
             endMessage={
-              <div className="scroll-message">
-                <b>End of results.</b>
-              </div>
+              page !== 0 && (
+                <div className="scroll-message">
+                  <b>End of results.</b>
+                </div>
+              )
             }
           >
             <Table
@@ -591,7 +641,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
               rowKey="id"
               columns={columns}
               dataSource={search(orders)}
-              loading={refreshing}
+              loading={loading || refreshing}
               pagination={false}
             />
           </InfiniteScroll>
