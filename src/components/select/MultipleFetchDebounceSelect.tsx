@@ -8,7 +8,7 @@ import { SelectOption } from '../../interfaces/SelectOption';
 interface MultipleFetchDebounceSelectProps {
   onInput: (search?: string, loadNextPage?: boolean) => any;
   onChange: (value?: string, entity?: any) => void;
-  onClear?: () => void;
+  onClear?: Function;
   onFocus?: () => any;
   onBlur?: () => any;
   onInputKeyDown?: any;
@@ -141,7 +141,7 @@ const MultipleFetchDebounceSelect: React.FC<
 
   const _onClear = () => {
     _setUserInput('');
-    _setOptions(options.map(optionFactory));
+    debounceFetcher();
     onClear?.();
   };
 
@@ -160,6 +160,7 @@ const MultipleFetchDebounceSelect: React.FC<
 
   const _onFocus = () => {
     if (!mounted.current) return;
+    blurred.current = false;
     if (!options?.length) _setUserInput('');
     else _setOptions(options.map(optionFactory));
     onFocus?.();

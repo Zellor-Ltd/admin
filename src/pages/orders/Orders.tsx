@@ -533,8 +533,14 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   const handleKeyDown = (event: any) => {
-    if (event.key === 'Enter')
-      setSelectedUser(fans?.find(item => item.user === fanFilterInput));
+    if (event.key === 'Enter') {
+      const selectedEntity = fans?.find(item => item.user === fanFilterInput);
+      setSelectedUser(selectedEntity);
+      if (!selectedEntity)
+        message.warning(
+          "Can't filter orders with incomplete Fan Filter! Please select a Fan."
+        );
+    }
   };
 
   return (
@@ -615,12 +621,6 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
             dataLength={search(orders).length}
             next={loadNext}
             hasMore={page > 0 && !eof}
-            //posso setar page pra 0 no changefilters. assim tranco aqui
-            //isso n vai prestar. depois do primeiro fetch, page sempre sera >=1.
-            //se loaded e page>1 ou page>0
-            //pos primeiro load: page=1
-            //2 loads de is sem filtro: page=2
-            //troca filtro de brand: antes da query, page=2. depois da query, page query = 0, page vira 1
             loader={
               page !== 0 && (
                 <div className="scroll-message">
@@ -629,9 +629,11 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
               )
             }
             endMessage={
-              <div className="scroll-message">
-                <b>End of results.</b>
-              </div>
+              page !== 0 && (
+                <div className="scroll-message">
+                  <b>End of results.</b>
+                </div>
+              )
             }
           >
             <Table
