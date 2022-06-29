@@ -666,6 +666,28 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                     </Form.Item>
                   </Col>
                 </Row>
+                <Row gutter={4}>
+                  <Col lg={8} xs={8}>
+                    <Form.Item
+                      name="returnPeriod"
+                      label="Return Period (days)"
+                      initialValue={14}
+                      rules={[
+                        {
+                          required: true,
+                          message: `'Return Period' is required.`,
+                        },
+                      ]}
+                    >
+                      <InputNumber
+                        pattern="^(?:100|\d{1,2})(?:.\d{1,2})?$"
+                        title="positive integers"
+                        min={1}
+                        max={100}
+                      />
+                    </Form.Item>
+                  </Col>
+                </Row>
                 <Col lg={16} xs={24}>
                   <Form.Item
                     name="shopName"
