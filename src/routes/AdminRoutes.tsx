@@ -60,7 +60,7 @@ function AdminRoutes() {
       />
       <AppRoute path="/login" component={Login} layout={OpenLayout} />
       <AppRoute
-        path="/commissions_due"
+        path="/commissions"
         component={Commissions}
         layout={AuthenticatedLayout}
       />

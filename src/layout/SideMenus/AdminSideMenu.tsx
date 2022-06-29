@@ -29,9 +29,10 @@ import {
   PicCenterOutlined,
   UsergroupAddOutlined,
   WarningOutlined,
-  CalendarOutlined,
-  UserSwitchOutlined,
   ScheduleOutlined,
+  WalletOutlined,
+  UserSwitchOutlined,
+  UnorderedListOutlined,
 } from '@ant-design/icons';
 import { Menu } from 'antd';
 import SubMenu from 'antd/lib/menu/SubMenu';
@@ -87,18 +88,6 @@ const AdminSideMenu = testMode => {
       <Menu.Item key="preview-products" icon={<IssuesCloseOutlined />}>
         <Link to="/preview-products">Preview Products</Link>
       </Menu.Item>
-      <SubMenu
-        key="commissions"
-        icon={<UserSwitchOutlined />}
-        title="Commissions"
-      >
-        <Menu.Item key="commissions_due" icon={<CalendarOutlined />}>
-          <Link to="/commissions_due">Commissions Due</Link>
-        </Menu.Item>
-        <Menu.Item key="commissions_payments" icon={<ScheduleOutlined />}>
-          <Link to="/commissions_payments">Payments</Link>
-        </Menu.Item>
-      </SubMenu>
       <Menu.Item key="feed" icon={<HeartFilled />}>
         <Link to="/feed">Video Feeds</Link>
       </Menu.Item>
@@ -108,13 +97,21 @@ const AdminSideMenu = testMode => {
       <Menu.Item key="feed-templates" icon={<PicCenterOutlined />}>
         <Link to="/feed-templates">Feed Templates</Link>
       </Menu.Item>
-      <Menu.Item key="orders" icon={<ShoppingCartOutlined />}>
-        <Link to="/orders">Orders</Link>
-      </Menu.Item>
-      <Menu.Item key="wallets" icon={<DollarOutlined />}>
-        <Link to="/wallets">Wallets</Link>
-      </Menu.Item>
-      <Menu.Item key="transactions" icon={<DollarOutlined />}>
+      <SubMenu key="finance" icon={<DollarOutlined />} title="Finance">
+        <Menu.Item key="commissions" icon={<UserSwitchOutlined />}>
+          <Link to="/commissions">Commissions</Link>
+        </Menu.Item>
+        <Menu.Item key="payment_history" icon={<ScheduleOutlined />}>
+          <Link to="/payment_history">Payment History</Link>
+        </Menu.Item>
+        <Menu.Item key="orders" icon={<ShoppingCartOutlined />}>
+          <Link to="/orders">Orders</Link>
+        </Menu.Item>
+        <Menu.Item key="wallets" icon={<WalletOutlined />}>
+          <Link to="/wallets">Wallets</Link>
+        </Menu.Item>
+      </SubMenu>
+      <Menu.Item key="transactions" icon={<UnorderedListOutlined />}>
         <Link to="/transactions">Transactions</Link>
       </Menu.Item>
       <SubMenu key="marketing" icon={<FireOutlined />} title="Marketing">
