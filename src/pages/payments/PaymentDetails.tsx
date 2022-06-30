@@ -19,13 +19,13 @@ interface PaymentDetailsProps {
   onSave?: (record: Banner) => void;
   onCancel?: () => void;
   setShowModal: (value: boolean) => void;
-  setOneOffDetails: (value: boolean) => void;
+  setOneOffPaymentDetails: (value: boolean) => void;
 }
 
 const PaymentDetails: React.FC<PaymentDetailsProps> = ({
   creators,
   setShowModal,
-  setOneOffDetails,
+  setOneOffPaymentDetails,
 }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [form] = Form.useForm();
@@ -42,7 +42,7 @@ const PaymentDetails: React.FC<PaymentDetailsProps> = ({
 
   const handleCancel = () => {
     setShowModal(false);
-    setOneOffDetails(false);
+    setOneOffPaymentDetails(false);
   };
 
   return (
