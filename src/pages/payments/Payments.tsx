@@ -19,10 +19,10 @@ import {
   fetchCreators,
   saveCommission,
 } from '../../services/DiscoClubService';
-import { Creator } from 'interfaces/Creator';
+import { Creator } from '../../interfaces/Creator';
 import moment from 'moment';
-import { Commission } from 'interfaces/Commission';
-import CopyIdToClipboard from 'components/CopyIdToClipboard';
+import { Commission } from '../../interfaces/Commission';
+import CopyIdToClipboard from '../../components/CopyIdToClipboard';
 import PaymentDetails from './PaymentDetails';
 
 const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
@@ -115,7 +115,7 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
     setCommissions([]);
   };
 
-  const columns: ColumnsType<Commission> = [
+  const commissionColumns: ColumnsType<Commission> = [
     {
       title: 'Date',
       dataIndex: 'date',
@@ -286,6 +286,107 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
     },
   ];
 
+  const paymentColumns: ColumnsType<Payment> = [
+    {
+      title: 'Date',
+      dataIndex: 'date',
+      width: '10%',
+      align: 'left',
+      responsive: ['sm'],
+      shouldCellUpdate: (prevRecord, nextRecord) =>
+        prevRecord.date != nextRecord.date,
+      render: (creationdate: Date) => moment(creationdate).format('DD/MM/YYYY'),
+      sorter: (a, b): any => {
+        if (a.date && b.date)
+          return moment(a.date).unix() - moment(b.date).unix();
+        else if (a.date) return -1;
+        else if (b.date) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: 'Description',
+      dataIndex: 'description',
+      width: '15%',
+      sorter: (a, b): any => {
+        if (a.description && b.description)
+          return a.description.localeCompare(b.description);
+        else if (a.description) return -1;
+        else if (b.description) return 1;
+        else return 0;
+      },
+      render: (value: string) =>
+        value?.length > 50 ? `${value.toString().slice(0, 50)}(...)` : value,
+    },
+    {
+      title: 'Creator Name',
+      dataIndex: 'creatorId',
+      width: '15%',
+      sorter: (a, b): any => {
+        if (a.creatorId && b.creatorId)
+          return a.creatorId.localeCompare(b.creatorId);
+        else if (a.creatorId) return -1;
+        else if (b.creatorId) return 1;
+        else return 0;
+      },
+      render: (value: string) => {
+        return creators.find(item => item.id === value)?.firstName;
+      },
+    },
+    {
+      title: 'Creator Email',
+      dataIndex: 'creatorId',
+      width: '15%',
+      sorter: (a, b): any => {
+        if (a.creatorId && b.creatorId)
+          return a.creatorId.localeCompare(b.creatorId);
+        else if (a.creatorId) return -1;
+        else if (b.creatorId) return 1;
+        else return 0;
+      },
+      render: (value: string) => {
+        return creators.find(item => item.id === value)?.user;
+      },
+    },
+    {
+      title: 'Creator Paypal',
+      dataIndex: 'creatorId',
+      width: '15%',
+      sorter: (a, b): any => {
+        if (a.creatorId && b.creatorId)
+          return a.creatorId.localeCompare(b.creatorId);
+        else if (a.creatorId) return -1;
+        else if (b.creatorId) return 1;
+        else return 0;
+      },
+      render: (value: string) => {
+        return creators.find(item => item.id === value)?.paypal;
+      },
+    },
+    {
+      title: 'Amount',
+      dataIndex: 'payment',
+      width: '10%',
+      sorter: (a, b): any => {
+        if (a.payment && b.payment) return a.payment - b.payment;
+        else if (a.payment) return -1;
+        else if (b.payment) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: 'Number of Items',
+      dataIndex: 'quantity',
+      width: '10%',
+      sorter: (a, b): any => {
+        if (a.quantity && b.quantity) return a.quantity - b.quantity;
+        else if (a.quantity) return -1;
+        else if (b.quantity) return 1;
+        else return 0;
+      },
+    },
+  ];
+
   const onSelectChange = (selectedRowKeys: any, selectedRows: any) => {
     setSelectedRowKeys(selectedRowKeys);
     setTotalSalePrice(0);
@@ -447,7 +548,7 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
                   rowClassName={(_, index) => `scrollable-row-${index}`}
                   rowSelection={rowSelection}
                   rowKey="id"
-                  columns={columns}
+                  commissionColumns={commissionColumns}
                   dataSource={commissions}
                   loading={loading}
                   pagination={false}
@@ -533,7 +634,7 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
                   rowClassName={(_, index) => `scrollable-row-${index}`}
                   rowSelection={rowSelection}
                   rowKey="id"
-                  columns={columns}
+                  commissionColumns={commissionColumns}
                   dataSource={commissions}
                   loading={loading}
                   pagination={false}
