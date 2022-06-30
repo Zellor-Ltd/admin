@@ -814,3 +814,19 @@ export const saveCommission = ({
     items,
   });
 };
+
+export const savePayment = ({
+  creatorId,
+  description,
+  amount,
+}: {
+  creatorId: string;
+  description: string;
+  amount: number;
+}) => {
+  return instance.put('Disco/Creator/Adm/Payment/Pay', {
+    creatorId,
+    description,
+    amount,
+  });
+};
