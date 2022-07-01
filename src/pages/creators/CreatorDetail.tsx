@@ -366,7 +366,20 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                   </Select>
                 </Form.Item>
               </Col>
-              <Col lg={12} xs={0}></Col>
+              <Col lg={12} xs={24}>
+                <Form.Item
+                  label="Paypal Account"
+                  name="payPalEmail"
+                  rules={[
+                    {
+                      type: 'email',
+                      message: 'Please use a valid e-mail address.',
+                    },
+                  ]}
+                >
+                  <Input />
+                </Form.Item>
+              </Col>
               <Col lg={12} xs={24}>
                 <Form.Item label="Coupon Code" name="couponCode">
                   <Input />
@@ -375,6 +388,14 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
               <Col lg={12} xs={24}>
                 <Form.Item label="Discount %" name="discountPercentage">
                   <InputNumber decimalSeparator="." />
+                </Form.Item>
+              </Col>
+              <Col lg={12} xs={24}>
+                <Form.Item label="Value Added Tax" name="valueAddedTax">
+                  <Input
+                    pattern="^[A-Za-z0-9]*"
+                    title="VAT must contain only letters and numbers."
+                  />
                 </Form.Item>
               </Col>
             </Row>
