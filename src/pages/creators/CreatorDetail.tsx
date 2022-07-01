@@ -391,7 +391,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                 </Form.Item>
               </Col>
               <Col lg={12} xs={24}>
-                <Form.Item label="Value Added Tax" name="valueAddedTax">
+                <Form.Item label="Value Added Tax" name="vat">
                   <Input
                     pattern="^[A-Za-z0-9]*"
                     title="VAT must contain only letters and numbers."
