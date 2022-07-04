@@ -797,16 +797,7 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
             <Col sm={12} lg={6}>
               {selectedOptions === 'productBrand' && (
                 <>
-                  <Form.Item
-                    name="selectedId"
-                    label="Product Brand"
-                    rules={[
-                      {
-                        required: true,
-                        message: `Product Brand is required.`,
-                      },
-                    ]}
-                  >
+                  <Form.Item name="selectedId" label="Product Brand">
                     <Select
                       placeholder="Select a brand"
                       disabled={isFetchingProductBrand}
@@ -835,12 +826,6 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
                     <Form.Item
                       name="selectedIconUrl"
                       label="Product Brand Icon"
-                      rules={[
-                        {
-                          required: true,
-                          message: `Product Brand Icon is required.`,
-                        },
-                      ]}
                     >
                       <Select
                         placeholder="Select an icon"
