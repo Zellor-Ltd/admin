@@ -15,4 +15,5 @@ export interface Creator {
   masthead?: Image[];
   activeMasthead?: Image;
   user?: string;
+  paypal?: string;
 }

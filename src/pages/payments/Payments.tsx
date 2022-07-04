@@ -2,6 +2,7 @@ import {
   Button,
   Col,
   message,
+  Modal,
   PageHeader,
   Row,
   Select,
@@ -17,17 +18,17 @@ import {
   fetchCreators,
   saveCommission,
 } from '../../services/DiscoClubService';
-import Step2 from '../push-group-tag/Step2';
-import { Creator } from 'interfaces/Creator';
+import CopyIdToClipboard from '../../components/CopyIdToClipboard';
+import { Creator } from '../../interfaces/Creator';
+import { Commission } from '../../interfaces/Commission';
+import PaymentDetails from './PaymentDetails';
 import moment from 'moment';
-import { Commission } from 'interfaces/Commission';
-import CopyIdToClipboard from 'components/CopyIdToClipboard';
 
-const Commissions: React.FC<RouteComponentProps> = ({ history, location }) => {
+const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const { doFetch, doRequest } = useRequest({ setLoading });
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
-  const [details, setDetails] = useState<boolean>(false);
+  const [paymentDetails, setPaymentDetails] = useState<boolean>(false);
   const [currentStatus, setCurrentStatus] = useState<string>();
   const [currentCreator, setCurrentCreator] = useState<string>();
   const [creators, setCreators] = useState<Creator[]>([]);
@@ -39,6 +40,7 @@ const Commissions: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [biggestCommissionPercentage, setBiggestCommissionPercentage] =
     useState<number>(0);
   const [totalSalePrice, setTotalSalePrice] = useState<number>(0);
+  const [showModal, setShowModal] = useState<boolean>(false);
 
   const handleResize = () => {
     if (window.innerWidth < 991) {
@@ -53,15 +55,11 @@ const Commissions: React.FC<RouteComponentProps> = ({ history, location }) => {
   });
 
   useEffect(() => {
-    getResources();
+    getCreators();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const getResources = async () => {
-    await getcreators();
-  };
-
-  async function getcreators() {
+  async function getCreators() {
     const response: any = await fetchCreators({
       query: '',
     });
@@ -113,18 +111,20 @@ const Commissions: React.FC<RouteComponentProps> = ({ history, location }) => {
   const columns: ColumnsType<Commission> = [
     {
       title: 'Date',
-      dataIndex: 'date',
+      dataIndex: 'hCreationDate',
       width: '10%',
       align: 'center',
       responsive: ['sm'],
       shouldCellUpdate: (prevRecord, nextRecord) =>
-        prevRecord.date != nextRecord.date,
-      render: (creationdate: Date) => moment(creationdate).format('DD/MM/YYYY'),
+        prevRecord.hCreationDate != nextRecord.hCreationDate,
+      render: (value: Date) => moment(value).format('DD/MM/YYYY'),
       sorter: (a, b): any => {
-        if (a.date && b.date)
-          return moment(a.date).unix() - moment(b.date).unix();
-        else if (a.date) return -1;
-        else if (b.date) return 1;
+        if (a.hCreationDate && b.hCreationDate)
+          return (
+            moment(a.hCreationDate).unix() - moment(b.hCreationDate).unix()
+          );
+        else if (a.hCreationDate) return -1;
+        else if (b.hCreationDate) return 1;
         else return 0;
       },
     },
@@ -315,18 +315,43 @@ const Commissions: React.FC<RouteComponentProps> = ({ history, location }) => {
     }),
   };
 
-  const onReturnStep2 = () => {
-    setDetails(false);
-  };
-
   return (
     <>
-      {!details && (
-        <div>
-          <PageHeader title="Commission" />
-          <Row align="bottom" justify="end" className="sticky-filter-box">
+      {!paymentDetails && (
+        <>
+          <PageHeader
+            title="Commission Payments"
+            subTitle="List of Commission Payments"
+            extra={[
+              <Button
+                key="1"
+                type="primary"
+                danger
+                className="mt-1"
+                onClick={() => setShowModal(true)}
+              >
+                New One-Off Payment
+              </Button>,
+              <Modal
+                title="Are you sure?"
+                visible={showModal}
+                onOk={() => setPaymentDetails(true)}
+                onCancel={() => setShowModal(false)}
+                okText="Proceed"
+                cancelText="Cancel"
+              >
+                <p>
+                  One off payments are visible to creators as soon as they are
+                  included, please make sure it is right and that the actual
+                  payment was made to the creator PayPal account before
+                  including it here.
+                </p>
+              </Modal>,
+            ]}
+          />
+          <Row justify="end" align="bottom" className="sticky-filter-box">
             <Col lg={16} xs={24}>
-              <Row gutter={[8, 8]} justify="end">
+              <Row justify="end" gutter={[8, 8]}>
                 <Col lg={6} xs={24}>
                   <Row justify="end" className={isMobile ? '' : 'mr-2 mt-03'}>
                     <Col>
@@ -384,88 +409,94 @@ const Commissions: React.FC<RouteComponentProps> = ({ history, location }) => {
               </Row>
             </Col>
           </Row>
-          <Table
-            rowClassName={(_, index) => `scrollable-row-${index}`}
-            rowSelection={rowSelection}
-            rowKey="id"
-            columns={columns}
-            dataSource={commissions}
-            loading={loading}
-            pagination={false}
-            summary={pageData => {
-              return (
-                <>
-                  <Table.Summary.Row>
-                    <Table.Summary.Cell index={0}></Table.Summary.Cell>
-                    <Table.Summary.Cell index={1}>
-                      <Typography.Text strong>Total</Typography.Text>
-                    </Table.Summary.Cell>
-                    <Table.Summary.Cell index={2}></Table.Summary.Cell>
-                    <Table.Summary.Cell index={3}></Table.Summary.Cell>
-                    <Table.Summary.Cell index={4}></Table.Summary.Cell>
-                    <Table.Summary.Cell index={5}></Table.Summary.Cell>
-                    <Table.Summary.Cell index={6}></Table.Summary.Cell>
-                    <Table.Summary.Cell index={7}></Table.Summary.Cell>
-                    <Table.Summary.Cell index={8}></Table.Summary.Cell>
-                    <Table.Summary.Cell index={9}></Table.Summary.Cell>
-                    <Table.Summary.Cell index={10}>
-                      <Typography.Text>
-                        {totalSalePrice > 0
-                          ? `€${totalSalePrice.toFixed(2)}`
-                          : `-€${Math.abs(totalSalePrice).toFixed(2)}`}
-                      </Typography.Text>
-                    </Table.Summary.Cell>
-                    <Table.Summary.Cell index={11}>
-                      <Typography.Text>
-                        {smallestCommissionPercentage
-                          ? smallestCommissionPercentage ===
-                            biggestCommissionPercentage
-                            ? `${smallestCommissionPercentage}%`
-                            : `${smallestCommissionPercentage}% - ${biggestCommissionPercentage}%`
-                          : '-'}
-                      </Typography.Text>
-                    </Table.Summary.Cell>
-                    <Table.Summary.Cell index={12}>
-                      <Typography.Text>
-                        {totalCommissionAmount > 0
-                          ? `€${totalCommissionAmount.toFixed(2)}`
-                          : `-€${Math.abs(totalCommissionAmount).toFixed(2)}`}
-                      </Typography.Text>
-                    </Table.Summary.Cell>
-                  </Table.Summary.Row>
-                </>
-              );
-            }}
-          />
-          <Row justify="end" className="mr-1 mt-2" gutter={[8, 8]}>
-            <Col>
-              <Button
-                type="default"
-                disabled={
-                  currentStatus === 'Status' && currentCreator === 'Creator'
-                }
-                onClick={resetPage}
-              >
-                Cancel
-              </Button>
-            </Col>
-            <Col>
-              <Button
-                type="primary"
-                disabled={!selectedRowKeys.length}
-                onClick={payCommissions}
-              >
-                Pay
-              </Button>
-            </Col>
-          </Row>
-        </div>
+          <>
+            <Table
+              rowClassName={(_, index) => `scrollable-row-${index}`}
+              rowSelection={rowSelection}
+              rowKey="id"
+              columns={columns}
+              dataSource={commissions}
+              loading={loading}
+              pagination={false}
+              summary={pageData => {
+                return (
+                  <>
+                    <Table.Summary.Row>
+                      <Table.Summary.Cell index={0}></Table.Summary.Cell>
+                      <Table.Summary.Cell index={1}>
+                        <Typography.Text strong>Total</Typography.Text>
+                      </Table.Summary.Cell>
+                      <Table.Summary.Cell index={2}></Table.Summary.Cell>
+                      <Table.Summary.Cell index={3}></Table.Summary.Cell>
+                      <Table.Summary.Cell index={4}></Table.Summary.Cell>
+                      <Table.Summary.Cell index={5}></Table.Summary.Cell>
+                      <Table.Summary.Cell index={6}></Table.Summary.Cell>
+                      <Table.Summary.Cell index={7}></Table.Summary.Cell>
+                      <Table.Summary.Cell index={8}></Table.Summary.Cell>
+                      <Table.Summary.Cell index={9}></Table.Summary.Cell>
+                      <Table.Summary.Cell index={10}>
+                        <Typography.Text>
+                          {totalSalePrice >= 0
+                            ? `€${totalSalePrice.toFixed(2)}`
+                            : `-€${Math.abs(totalSalePrice).toFixed(2)}`}
+                        </Typography.Text>
+                      </Table.Summary.Cell>
+                      <Table.Summary.Cell index={11}>
+                        <Typography.Text>
+                          {smallestCommissionPercentage
+                            ? smallestCommissionPercentage ===
+                              biggestCommissionPercentage
+                              ? `${smallestCommissionPercentage}%`
+                              : `${smallestCommissionPercentage}% - ${biggestCommissionPercentage}%`
+                            : '-'}
+                        </Typography.Text>
+                      </Table.Summary.Cell>
+                      <Table.Summary.Cell index={12}>
+                        <Typography.Text>
+                          {totalCommissionAmount >= 0
+                            ? `€${totalCommissionAmount.toFixed(2)}`
+                            : `-€${Math.abs(totalCommissionAmount).toFixed(2)}`}
+                        </Typography.Text>
+                      </Table.Summary.Cell>
+                    </Table.Summary.Row>
+                  </>
+                );
+              }}
+            />
+            <Row justify="end" className="mr-1 mt-2" gutter={[8, 8]}>
+              <Col>
+                <Button
+                  type="default"
+                  disabled={
+                    currentStatus === 'Status' && currentCreator === 'Creator'
+                  }
+                  onClick={resetPage}
+                >
+                  Cancel
+                </Button>
+              </Col>
+              <Col>
+                <Button
+                  type="primary"
+                  disabled={!selectedRowKeys.length}
+                  onClick={payCommissions}
+                >
+                  Pay
+                </Button>
+              </Col>
+            </Row>
+          </>
+        </>
       )}
-      {details && (
-        <Step2 selectedTags={selectedRowKeys} onReturn={onReturnStep2} />
+      {paymentDetails && (
+        <PaymentDetails
+          creators={creators}
+          setShowModal={setShowModal}
+          setPaymentDetails={setPaymentDetails}
+        />
       )}
     </>
   );
 };
 
-export default Commissions;
+export default Payments;

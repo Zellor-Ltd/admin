@@ -814,3 +814,40 @@ export const saveCommission = ({
     items,
   });
 };
+
+export const fetchPayments = ({
+  creatorId,
+  status,
+  dateFrom,
+  dateTo,
+  page = 0,
+}: {
+  creatorId?: string;
+  status?: string;
+  dateFrom?: string;
+  dateTo?: string;
+  page?: number;
+}) =>
+  instance.post(`Disco/Creator/Adm/Payment/List/${page}`, {
+    creatorId,
+    status,
+    dateFrom,
+    dateTo,
+    page,
+  });
+
+export const savePayment = ({
+  creatorId,
+  description,
+  amount,
+}: {
+  creatorId: string;
+  description: string;
+  amount: number;
+}) => {
+  return instance.put('Disco/Creator/Adm/Payment/Pay', {
+    creatorId,
+    description,
+    amount,
+  });
+};
