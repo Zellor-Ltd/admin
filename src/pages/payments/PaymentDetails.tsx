@@ -19,13 +19,13 @@ interface PaymentDetailsProps {
   onSave?: (record: Banner) => void;
   onCancel?: () => void;
   setShowModal: (value: boolean) => void;
-  setOneOffPaymentDetails: (value: boolean) => void;
+  setPaymentDetails: (value: boolean) => void;
 }
 
 const PaymentDetails: React.FC<PaymentDetailsProps> = ({
   creators,
   setShowModal,
-  setOneOffPaymentDetails,
+  setPaymentDetails,
 }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [form] = Form.useForm();
@@ -35,14 +35,16 @@ const PaymentDetails: React.FC<PaymentDetailsProps> = ({
   const onFinish = async () => {
     const paymentForm = form.getFieldsValue(true);
 
-    if (paymentForm.amount == 0)
+    if (paymentForm.amount == 0) {
       message.warning('Warning: Cannot send zero value payments!');
+      return;
+    }
     await doRequest(() => savePayment(paymentForm));
   };
 
   const handleCancel = () => {
     setShowModal(false);
-    setOneOffPaymentDetails(false);
+    setPaymentDetails(false);
   };
 
   return (

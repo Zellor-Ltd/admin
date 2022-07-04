@@ -43,6 +43,7 @@ import Trends from 'pages/trends/Trends';
 import FeedTemplates from 'pages/video-feed/FeedTemplates';
 import FanVideos from 'pages/fan-videos/FanVideos';
 import Payments from 'pages/payments/Payments';
+import PaymentHistory from 'pages/payments/PaymentHistory';
 
 function AdminRoutes() {
   return (
@@ -62,6 +63,11 @@ function AdminRoutes() {
       <AppRoute
         path="/payments"
         component={Payments}
+        layout={AuthenticatedLayout}
+      />
+      <AppRoute
+        path="/payment-history"
+        component={PaymentHistory}
         layout={AuthenticatedLayout}
       />
       <AppRoute

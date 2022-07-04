@@ -1,15 +1,12 @@
 import {
   Button,
   Col,
-  DatePicker,
   message,
   Modal,
   PageHeader,
   Row,
   Select,
-  Spin,
   Table,
-  Tabs,
   Typography,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
@@ -19,47 +16,31 @@ import { RouteComponentProps } from 'react-router-dom';
 import {
   fetchCommissions,
   fetchCreators,
-  fetchPayments,
   saveCommission,
 } from '../../services/DiscoClubService';
 import CopyIdToClipboard from '../../components/CopyIdToClipboard';
 import { Creator } from '../../interfaces/Creator';
 import { Commission } from '../../interfaces/Commission';
 import PaymentDetails from './PaymentDetails';
-import { Payment } from 'interfaces/Payment';
-import InfiniteScroll from 'react-infinite-scroll-component';
 import moment from 'moment';
 
 const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const { doFetch, doRequest } = useRequest({ setLoading });
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
-  const [oneOffPaymentDetails, setOneOffPaymentDetails] =
-    useState<boolean>(false);
+  const [paymentDetails, setPaymentDetails] = useState<boolean>(false);
   const [currentStatus, setCurrentStatus] = useState<string>();
-  const [commissionCreator, setCommissionCreator] = useState<string>();
-  const [oneOffCreator, setOneOffCreator] = useState<Creator>();
-  const [currentCreator, setCurrentCreator] = useState<Creator>();
-  const [dateFrom, setDateFrom] = useState<string>();
-  const [dateTo, setDateTo] = useState<string>();
+  const [currentCreator, setCurrentCreator] = useState<string>();
   const [creators, setCreators] = useState<Creator[]>([]);
   const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
   const [commissions, setCommissions] = useState<Commission[]>([]);
-  const [payments, setPayments] = useState<Payment[]>([]);
   const [totalCommissionAmount, setTotalCommissionAmount] = useState<number>(0);
   const [smallestCommissionPercentage, setSmallestCommissionPercentage] =
     useState<number>(0);
   const [biggestCommissionPercentage, setBiggestCommissionPercentage] =
     useState<number>(0);
   const [totalSalePrice, setTotalSalePrice] = useState<number>(0);
-  const [totalAmount, setTotalAmount] = useState<number>(0);
-  const [activeTabKey, setActiveTabKey] =
-    useState<string>('commissionPayments');
   const [showModal, setShowModal] = useState<boolean>(false);
-  const [page, setPage] = useState<number>(0);
-  const [refreshingPayments, setRefreshingPayments] = useState<boolean>(false);
-  const [eof, setEof] = useState<boolean>(false);
-  const [currentDateRange, setCurrentDateRange] = useState<any>();
 
   const handleResize = () => {
     if (window.innerWidth < 991) {
@@ -73,27 +54,10 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
     window.addEventListener('resize', handleResize);
   });
 
-  //  useEffect(() => {
-  //    if (activeTabKey === '') set
-  //  }, [currentCreator])
-
   useEffect(() => {
-    if (refreshingPayments) {
-      getPayments();
-      setEof(false);
-      setRefreshingPayments(false);
-    }
-  }, [refreshingPayments]);
-
-  useEffect(() => {
-    getResources();
+    getCreators();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const getResources = () => {
-    getCreators();
-    getPayments();
-  };
 
   async function getCreators() {
     const response: any = await fetchCreators({
@@ -103,45 +67,29 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
   }
 
   const resetPage = () => {
-    setCommissionCreator(undefined);
+    setCurrentCreator(undefined);
     setCurrentStatus(undefined);
   };
 
   useEffect(() => {
     setTotalSalePrice(0);
     setTotalCommissionAmount(0);
-    if (!commissionCreator) {
+    if (!currentCreator) {
       setCommissions([]);
       return;
     }
     getCommissions();
-  }, [commissionCreator, currentStatus]);
+  }, [currentCreator, currentStatus]);
 
   const getCommissions = async () => {
     setSelectedRowKeys([]);
     const { results } = await doFetch(() =>
       fetchCommissions({
-        creatorId: commissionCreator ?? '',
+        creatorId: currentCreator ?? '',
         status: currentStatus ?? '',
       })
     );
     setCommissions(results);
-  };
-
-  const getPayments = async () => {
-    const pageToUse = refreshingPayments ? 0 : page;
-    const { results } = await doFetch(() =>
-      fetchPayments({
-        creatorId: oneOffCreator?.id ?? '',
-        dateFrom: dateFrom,
-        dateTo: dateTo,
-        page: pageToUse,
-      })
-    );
-    setPage(pageToUse + 1);
-    if (pageToUse === 0) setPayments(results);
-    else setPayments(prev => prev.concat(results));
-    if (results.length < 30) setEof(true);
   };
 
   const payCommissions = async () => {
@@ -151,7 +99,7 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
     }
     await doRequest(() =>
       saveCommission({
-        creatorId: commissionCreator as string,
+        creatorId: currentCreator as string,
         totalDue: totalCommissionAmount,
         items: selectedRowKeys,
       })
@@ -160,21 +108,23 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
     setCommissions([]);
   };
 
-  const commissionColumns: ColumnsType<Commission> = [
+  const columns: ColumnsType<Commission> = [
     {
       title: 'Date',
-      dataIndex: 'date',
+      dataIndex: 'hCreationDate',
       width: '10%',
       align: 'center',
       responsive: ['sm'],
       shouldCellUpdate: (prevRecord, nextRecord) =>
-        prevRecord.date != nextRecord.date,
-      render: (creationdate: Date) => moment(creationdate).format('DD/MM/YYYY'),
+        prevRecord.hCreationDate != nextRecord.hCreationDate,
+      render: (value: Date) => moment(value).format('DD/MM/YYYY'),
       sorter: (a, b): any => {
-        if (a.date && b.date)
-          return moment(a.date).unix() - moment(b.date).unix();
-        else if (a.date) return -1;
-        else if (b.date) return 1;
+        if (a.hCreationDate && b.hCreationDate)
+          return (
+            moment(a.hCreationDate).unix() - moment(b.hCreationDate).unix()
+          );
+        else if (a.hCreationDate) return -1;
+        else if (b.hCreationDate) return 1;
         else return 0;
       },
     },
@@ -331,117 +281,6 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
     },
   ];
 
-  const oneOffPaymentColumns: ColumnsType<Payment> = [
-    {
-      title: 'Date',
-      dataIndex: 'date',
-      width: '10%',
-      align: 'left',
-      responsive: ['sm'],
-      shouldCellUpdate: (prevRecord, nextRecord) =>
-        prevRecord.date != nextRecord.date,
-      render: (creationdate: Date) => moment(creationdate).format('DD/MM/YYYY'),
-      sorter: (a, b): any => {
-        if (a.date && b.date)
-          return moment(a.date).unix() - moment(b.date).unix();
-        else if (a.date) return -1;
-        else if (b.date) return 1;
-        else return 0;
-      },
-    },
-    {
-      title: 'Description',
-      dataIndex: 'description',
-      width: '15%',
-      sorter: (a, b): any => {
-        if (a.description && b.description)
-          return a.description.localeCompare(b.description);
-        else if (a.description) return -1;
-        else if (b.description) return 1;
-        else return 0;
-      },
-      render: (value: string) =>
-        value?.length > 50 ? `${value.toString().slice(0, 50)}(...)` : value,
-    },
-    {
-      title: 'Creator Name',
-      dataIndex: 'creatorId',
-      width: '15%',
-      sorter: (a, b): any => {
-        if (a.creatorId && b.creatorId)
-          return a.creatorId.localeCompare(b.creatorId);
-        else if (a.creatorId) return -1;
-        else if (b.creatorId) return 1;
-        else return 0;
-      },
-      render: (value: string) => {
-        return creators.find(item => item.id === value)?.firstName;
-      },
-    },
-    {
-      title: 'Creator Email',
-      dataIndex: 'creatorId',
-      width: '15%',
-      sorter: (a, b): any => {
-        if (a.creatorId && b.creatorId)
-          return a.creatorId.localeCompare(b.creatorId);
-        else if (a.creatorId) return -1;
-        else if (b.creatorId) return 1;
-        else return 0;
-      },
-      render: (value: string) => {
-        return creators.find(item => item.id === value)?.user;
-      },
-    },
-    {
-      title: 'Creator Paypal',
-      dataIndex: 'creatorId',
-      width: '15%',
-      sorter: (a, b): any => {
-        if (a.creatorId && b.creatorId)
-          return a.creatorId.localeCompare(b.creatorId);
-        else if (a.creatorId) return -1;
-        else if (b.creatorId) return 1;
-        else return 0;
-      },
-      render: (value: string) => {
-        return creators.find(item => item.id === value)?.paypal;
-      },
-    },
-    {
-      title: 'Amount',
-      dataIndex: 'payment',
-      width: '10%',
-      sorter: (a, b): any => {
-        if (a.payment && b.payment) return a.payment - b.payment;
-        else if (a.payment) return -1;
-        else if (b.payment) return 1;
-        else return 0;
-      },
-    },
-    {
-      title: 'Number of Items',
-      dataIndex: 'quantity',
-      width: '10%',
-      sorter: (a, b): any => {
-        if (a.quantity && b.quantity) return a.quantity - b.quantity;
-        else if (a.quantity) return -1;
-        else if (b.quantity) return 1;
-        else return 0;
-      },
-    },
-  ];
-
-  const onChangeRangePicker = (_, dateStrings) => {
-    //assign to start/end, filter on frontend
-    if (dateStrings) {
-      setCurrentDateRange(dateStrings);
-    } else {
-      console.log('Clear');
-    }
-    console.log(currentDateRange);
-  };
-
   const onSelectChange = (selectedRowKeys: any, selectedRows: any) => {
     setSelectedRowKeys(selectedRowKeys);
     setTotalSalePrice(0);
@@ -476,28 +315,43 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
     }),
   };
 
-  const changeTab = (activeKey: string) => {
-    setActiveTabKey(activeKey);
-  };
-
-  const onChangeCreator = (value: string, option: Creator) => {};
-
   return (
     <>
-      {!oneOffPaymentDetails && (
+      {!paymentDetails && (
         <>
-          <Row>
-            <Col lg={activeTabKey === 'commissionPayments' ? 8 : 24} xs={24}>
-              <PageHeader title="Payments" subTitle="List of Payments" />
-            </Col>
-
-            <Col lg={16} xs={24}>
-              <Row
-                gutter={[8, 8]}
-                justify="end"
-                align="bottom"
-                className="sticky-filter-box mt-1"
+          <PageHeader
+            title="Commission Payments"
+            subTitle="List of Commission Payments"
+            extra={[
+              <Button
+                key="1"
+                type="primary"
+                danger
+                className="mt-1"
+                onClick={() => setShowModal(true)}
               >
+                New One-Off Payment
+              </Button>,
+              <Modal
+                title="Are you sure?"
+                visible={showModal}
+                onOk={() => setPaymentDetails(true)}
+                onCancel={() => setShowModal(false)}
+                okText="Proceed"
+                cancelText="Cancel"
+              >
+                <p>
+                  One off payments are visible to creators as soon as they are
+                  included, please make sure it is right and that the actual
+                  payment was made to the creator PayPal account before
+                  including it here.
+                </p>
+              </Modal>,
+            ]}
+          />
+          <Row justify="end" align="bottom" className="sticky-filter-box">
+            <Col lg={16} xs={24}>
+              <Row justify="end" gutter={[8, 8]}>
                 <Col lg={6} xs={24}>
                   <Row justify="end" className={isMobile ? '' : 'mr-2 mt-03'}>
                     <Col>
@@ -508,8 +362,8 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
                 <Col lg={6} xs={24}>
                   <Select
                     style={{ width: '100%' }}
-                    onChange={setCommissionCreator}
-                    value={commissionCreator}
+                    onChange={setCurrentCreator}
+                    value={currentCreator}
                     placeholder="Creator"
                     showSearch
                     allowClear
@@ -555,271 +409,90 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
               </Row>
             </Col>
           </Row>
-          <Tabs
-            defaultActiveKey="commissionPayments"
-            activeKey={activeTabKey}
-            onChange={changeTab}
-            tabBarExtraContent={
-              activeTabKey === 'oneOffPayments' && (
-                <>
-                  <Button
-                    key="1"
-                    type="primary"
-                    danger
-                    className="mt-1"
-                    onClick={() => setShowModal(true)}
-                  >
-                    New One-Off Payment
-                  </Button>
-                  <Modal
-                    title="Are you sure?"
-                    visible={showModal}
-                    onOk={() => setOneOffPaymentDetails(true)}
-                    onCancel={() => setShowModal(false)}
-                    okText="Proceed"
-                    cancelText="Cancel"
-                  >
-                    <p>
-                      One off payments are visible to creators as soon as they
-                      are included, please make sure it is right and that the
-                      actual payment was made to the creator PayPal account
-                      before including it here.
-                    </p>
-                  </Modal>
-                </>
-              )
-            }
-          >
-            <Tabs.TabPane
-              forceRender
-              tab="Commission Payments"
-              key="commissionPayments"
-            >
-              <>
-                <Table
-                  rowClassName={(_, index) => `scrollable-row-${index}`}
-                  rowSelection={rowSelection}
-                  rowKey="id"
-                  columns={commissionColumns}
-                  dataSource={commissions}
-                  loading={loading}
-                  pagination={false}
-                  summary={pageData => {
-                    return (
-                      <>
-                        <Table.Summary.Row>
-                          <Table.Summary.Cell index={0}></Table.Summary.Cell>
-                          <Table.Summary.Cell index={1}>
-                            <Typography.Text strong>Total</Typography.Text>
-                          </Table.Summary.Cell>
-                          <Table.Summary.Cell index={2}></Table.Summary.Cell>
-                          <Table.Summary.Cell index={3}></Table.Summary.Cell>
-                          <Table.Summary.Cell index={4}></Table.Summary.Cell>
-                          <Table.Summary.Cell index={5}></Table.Summary.Cell>
-                          <Table.Summary.Cell index={6}></Table.Summary.Cell>
-                          <Table.Summary.Cell index={7}></Table.Summary.Cell>
-                          <Table.Summary.Cell index={8}></Table.Summary.Cell>
-                          <Table.Summary.Cell index={9}></Table.Summary.Cell>
-                          <Table.Summary.Cell index={10}>
-                            <Typography.Text>
-                              {totalSalePrice >= 0
-                                ? `€${totalSalePrice.toFixed(2)}`
-                                : `-€${Math.abs(totalSalePrice).toFixed(2)}`}
-                            </Typography.Text>
-                          </Table.Summary.Cell>
-                          <Table.Summary.Cell index={11}>
-                            <Typography.Text>
-                              {smallestCommissionPercentage
-                                ? smallestCommissionPercentage ===
-                                  biggestCommissionPercentage
-                                  ? `${smallestCommissionPercentage}%`
-                                  : `${smallestCommissionPercentage}% - ${biggestCommissionPercentage}%`
-                                : '-'}
-                            </Typography.Text>
-                          </Table.Summary.Cell>
-                          <Table.Summary.Cell index={12}>
-                            <Typography.Text>
-                              {totalCommissionAmount >= 0
-                                ? `€${totalCommissionAmount.toFixed(2)}`
-                                : `-€${Math.abs(totalCommissionAmount).toFixed(
-                                    2
-                                  )}`}
-                            </Typography.Text>
-                          </Table.Summary.Cell>
-                        </Table.Summary.Row>
-                      </>
-                    );
-                  }}
-                />
-                <Row justify="end" className="mr-1 mt-2" gutter={[8, 8]}>
-                  <Col>
-                    <Button
-                      type="default"
-                      disabled={
-                        currentStatus === 'Status' &&
-                        commissionCreator === 'Creator'
-                      }
-                      onClick={resetPage}
-                    >
-                      Cancel
-                    </Button>
-                  </Col>
-                  <Col>
-                    <Button
-                      type="primary"
-                      disabled={!selectedRowKeys.length}
-                      onClick={payCommissions}
-                    >
-                      Pay
-                    </Button>
-                  </Col>
-                </Row>
-              </>
-            </Tabs.TabPane>
-            <Tabs.TabPane forceRender tab="One-Off Payments" key="payments">
-              <Row align="bottom" justify="end" className="sticky-filter-box">
-                <Col lg={16} xs={24}>
-                  <Row gutter={[8, 8]} justify="end">
-                    <Col lg={6} xs={24}>
-                      <Row
-                        justify="end"
-                        className={isMobile ? '' : 'mr-2 mt-03'}
-                      >
-                        <Col>
-                          <Typography.Text type="secondary">
-                            Filter
-                          </Typography.Text>
-                        </Col>
-                      </Row>
-                    </Col>
-                    <Col lg={6} xs={24}>
-                      <Select
-                        style={{ width: '100%' }}
-                        onChange={value =>
-                          setOneOffCreator(
-                            creators.find(item => item.id === value)
-                          )
-                        }
-                        value={oneOffCreator?.id}
-                        placeholder="Creator"
-                        showSearch
-                        allowClear
-                        disabled={!creators.length}
-                        filterOption={(input, option) =>
-                          !!option?.children
-                            ?.toString()
-                            .toLowerCase()
-                            .includes(input.toLowerCase())
-                        }
-                      >
-                        {creators.map((curr: any) => (
-                          <Select.Option key={curr.id} value={curr.id}>
-                            {curr.firstName}
-                          </Select.Option>
-                        ))}
-                      </Select>
-                    </Col>
-                    <Col lg={6} xs={24}>
-                      <DatePicker.RangePicker
-                        onChange={onChangeRangePicker}
-                        value={currentDateRange}
-                        disabled={!creators.length}
-                        ranges={{
-                          Today: [moment(), moment()],
-                          'This Month': [
-                            moment().startOf('month'),
-                            moment().endOf('month'),
-                          ],
-                        }}
-                        format="DD/MM/YYYY"
-                      />
-                    </Col>
-                  </Row>
-                </Col>
-              </Row>
-              <InfiniteScroll
-                dataLength={payments.length}
-                next={getPayments}
-                hasMore={!eof}
-                loader={
-                  page !== 0 && (
-                    <div className="scroll-message">
-                      <Spin />
-                    </div>
-                  )
-                }
-                endMessage={
-                  <div className="scroll-message">
-                    <b>End of results.</b>
-                  </div>
-                }
-              >
-                <Table
-                  rowClassName={(_, index) => `scrollable-row-${index}`}
-                  rowKey="id"
-                  columns={oneOffPaymentColumns}
-                  dataSource={payments}
-                  loading={refreshingPayments}
-                  pagination={false}
-                  summary={pageData => {
-                    pageData.forEach(({ payment }) => {
-                      setTotalAmount(prev => prev + payment);
-                    });
-
-                    return (
-                      <>
-                        <Table.Summary.Row>
-                          <Table.Summary.Cell index={0}></Table.Summary.Cell>
-                          <Table.Summary.Cell index={1}>
-                            <Typography.Text strong>Total</Typography.Text>
-                          </Table.Summary.Cell>
-                          <Table.Summary.Cell index={2}></Table.Summary.Cell>
-                          <Table.Summary.Cell index={3}></Table.Summary.Cell>
-                          <Table.Summary.Cell index={4}></Table.Summary.Cell>
-                          <Table.Summary.Cell index={5}>
-                            €${totalAmount.toFixed(2)}
-                          </Table.Summary.Cell>
-                          <Table.Summary.Cell index={6}></Table.Summary.Cell>
-                        </Table.Summary.Row>
-                      </>
-                    );
-                  }}
-                />
-              </InfiniteScroll>
-              <>
-                <Row justify="end" className="mr-1 mt-2" gutter={[8, 8]}>
-                  <Col>
-                    <Button
-                      type="default"
-                      disabled={
-                        currentStatus === 'Status' &&
-                        commissionCreator === 'Creator'
-                      }
-                      onClick={resetPage}
-                    >
-                      Cancel
-                    </Button>
-                  </Col>
-                  <Col>
-                    <Button
-                      type="primary"
-                      disabled={!selectedRowKeys.length}
-                      onClick={payCommissions}
-                    >
-                      Pay
-                    </Button>
-                  </Col>
-                </Row>
-              </>
-            </Tabs.TabPane>
-          </Tabs>
+          <>
+            <Table
+              rowClassName={(_, index) => `scrollable-row-${index}`}
+              rowSelection={rowSelection}
+              rowKey="id"
+              columns={columns}
+              dataSource={commissions}
+              loading={loading}
+              pagination={false}
+              summary={pageData => {
+                return (
+                  <>
+                    <Table.Summary.Row>
+                      <Table.Summary.Cell index={0}></Table.Summary.Cell>
+                      <Table.Summary.Cell index={1}>
+                        <Typography.Text strong>Total</Typography.Text>
+                      </Table.Summary.Cell>
+                      <Table.Summary.Cell index={2}></Table.Summary.Cell>
+                      <Table.Summary.Cell index={3}></Table.Summary.Cell>
+                      <Table.Summary.Cell index={4}></Table.Summary.Cell>
+                      <Table.Summary.Cell index={5}></Table.Summary.Cell>
+                      <Table.Summary.Cell index={6}></Table.Summary.Cell>
+                      <Table.Summary.Cell index={7}></Table.Summary.Cell>
+                      <Table.Summary.Cell index={8}></Table.Summary.Cell>
+                      <Table.Summary.Cell index={9}></Table.Summary.Cell>
+                      <Table.Summary.Cell index={10}>
+                        <Typography.Text>
+                          {totalSalePrice >= 0
+                            ? `€${totalSalePrice.toFixed(2)}`
+                            : `-€${Math.abs(totalSalePrice).toFixed(2)}`}
+                        </Typography.Text>
+                      </Table.Summary.Cell>
+                      <Table.Summary.Cell index={11}>
+                        <Typography.Text>
+                          {smallestCommissionPercentage
+                            ? smallestCommissionPercentage ===
+                              biggestCommissionPercentage
+                              ? `${smallestCommissionPercentage}%`
+                              : `${smallestCommissionPercentage}% - ${biggestCommissionPercentage}%`
+                            : '-'}
+                        </Typography.Text>
+                      </Table.Summary.Cell>
+                      <Table.Summary.Cell index={12}>
+                        <Typography.Text>
+                          {totalCommissionAmount >= 0
+                            ? `€${totalCommissionAmount.toFixed(2)}`
+                            : `-€${Math.abs(totalCommissionAmount).toFixed(2)}`}
+                        </Typography.Text>
+                      </Table.Summary.Cell>
+                    </Table.Summary.Row>
+                  </>
+                );
+              }}
+            />
+            <Row justify="end" className="mr-1 mt-2" gutter={[8, 8]}>
+              <Col>
+                <Button
+                  type="default"
+                  disabled={
+                    currentStatus === 'Status' && currentCreator === 'Creator'
+                  }
+                  onClick={resetPage}
+                >
+                  Cancel
+                </Button>
+              </Col>
+              <Col>
+                <Button
+                  type="primary"
+                  disabled={!selectedRowKeys.length}
+                  onClick={payCommissions}
+                >
+                  Pay
+                </Button>
+              </Col>
+            </Row>
+          </>
         </>
       )}
-      {oneOffPaymentDetails && (
+      {paymentDetails && (
         <PaymentDetails
           creators={creators}
           setShowModal={setShowModal}
-          setOneOffPaymentDetails={setOneOffPaymentDetails}
+          setPaymentDetails={setPaymentDetails}
         />
       )}
     </>

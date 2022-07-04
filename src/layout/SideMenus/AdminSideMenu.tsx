@@ -101,8 +101,8 @@ const AdminSideMenu = testMode => {
         <Menu.Item key="payments" icon={<UserSwitchOutlined />}>
           <Link to="/payments">Payments</Link>
         </Menu.Item>
-        <Menu.Item key="payment_history" icon={<ScheduleOutlined />}>
-          <Link to="/payment_history">Payment History</Link>
+        <Menu.Item key="payment-history" icon={<ScheduleOutlined />}>
+          <Link to="/payment-history">Payment History</Link>
         </Menu.Item>
         <Menu.Item key="orders" icon={<ShoppingCartOutlined />}>
           <Link to="/orders">Orders</Link>
