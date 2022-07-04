@@ -815,6 +815,28 @@ export const saveCommission = ({
   });
 };
 
+export const saveManualCommission = ({
+  date,
+  feedId,
+  creatorId,
+  productId,
+  quantity,
+}: {
+  date: string;
+  feedId: string;
+  creatorId: string;
+  productId: string;
+  quantity: number;
+}) => {
+  return instance.put('Disco/Creator/Adm/ManualCommission/Pay', {
+    date,
+    feedId,
+    creatorId,
+    productId,
+    quantity,
+  });
+};
+
 export const fetchPayments = ({
   creatorId,
   status,
