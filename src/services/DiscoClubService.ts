@@ -784,6 +784,9 @@ export const fetchCommissions = ({
     status,
   });
 
+export const fetchCommissionDetails = (id: string) =>
+  instance.get(`Disco/Creator/Adm/Commission/List/${id}`);
+
 export const fetchCommissionedItem = ({
   creatorId,
   commissionId,
@@ -867,7 +870,7 @@ export const savePayment = ({
   description: string;
   amount: number;
 }) => {
-    return instance.put('Disco/Creator/Adm/OneOffPayment', {
+  return instance.put('Disco/Creator/Adm/OneOffPayment', {
     creatorId,
     description,
     amount,

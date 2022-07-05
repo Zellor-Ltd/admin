@@ -21,7 +21,7 @@ import {
 import CopyIdToClipboard from '../../components/CopyIdToClipboard';
 import { Creator } from '../../interfaces/Creator';
 import { Commission } from '../../interfaces/Commission';
-import PaymentDetails from './PaymentDetails';
+import ManualPayment from './ManualPayment';
 import moment from 'moment';
 import ManualCommission from './ManualCommission';
 
@@ -29,7 +29,7 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const { doFetch, doRequest } = useRequest({ setLoading });
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
-  const [paymentDetails, setPaymentDetails] = useState<boolean>(false);
+  const [manualPayment, setManualPayment] = useState<boolean>(false);
   const [currentStatus, setCurrentStatus] = useState<string>();
   const [currentCreator, setCurrentCreator] = useState<string>();
   const [creators, setCreators] = useState<Creator[]>([]);
@@ -319,7 +319,7 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
 
   return (
     <>
-      {!paymentDetails && !manualCommission && (
+      {!manualPayment && !manualCommission && (
         <>
           <PageHeader
             title="Commission Payments"
@@ -344,7 +344,7 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
               <Modal
                 title="Are you sure?"
                 visible={showModal}
-                onOk={() => setPaymentDetails(true)}
+                onOk={() => setManualPayment(true)}
                 onCancel={() => setShowModal(false)}
                 okText="Proceed"
                 cancelText="Cancel"
@@ -497,11 +497,11 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
           </>
         </>
       )}
-      {paymentDetails && (
-        <PaymentDetails
+      {manualPayment && (
+        <ManualPayment
           creators={creators}
           setShowModal={setShowModal}
-          setPaymentDetails={setPaymentDetails}
+          setManualPayment={setManualPayment}
         />
       )}
       {manualCommission && (
