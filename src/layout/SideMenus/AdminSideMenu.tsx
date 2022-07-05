@@ -49,16 +49,6 @@ const AdminSideMenu = testMode => {
       defaultSelectedKeys={[pathname]}
       defaultOpenKeys={[parentMenu]}
     >
-      {testMode.testMode && (
-        <Menu.Item
-          key="testMode"
-          disabled
-          icon={<WarningOutlined />}
-          className="test-mode-banner"
-        >
-          Test Mode
-        </Menu.Item>
-      )}
       <Menu.Item key="dashboard" icon={<DashboardOutlined />}>
         <Link to="/dashboard">Dashboard</Link>
       </Menu.Item>

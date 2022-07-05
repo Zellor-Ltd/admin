@@ -828,7 +828,7 @@ export const saveManualCommission = ({
   productId: string;
   quantity: number;
 }) => {
-  return instance.put('Disco/Creator/Adm/ManualCommission/Pay', {
+  return instance.put('Disco/Creator/Adm/Commission/Add', {
     date,
     feedId,
     creatorId,
@@ -867,7 +867,7 @@ export const savePayment = ({
   description: string;
   amount: number;
 }) => {
-  return instance.put('Disco/Creator/Adm/Payment/Pay', {
+    return instance.put('Disco/Creator/Adm/OneOffPayment', {
     creatorId,
     description,
     amount,
