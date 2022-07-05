@@ -666,7 +666,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                 </>
               )}
               <Col lg={24} xs={24}>
-                <Form.Item name="searchTags" label="Hashtags">
+                <Form.Item name="searchTags" label="Search Tags">
                   <ReactTagInput
                     tags={searchTags}
                     placeholder="Type and press enter"
