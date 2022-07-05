@@ -23,6 +23,7 @@ import { Creator } from '../../interfaces/Creator';
 import { Commission } from '../../interfaces/Commission';
 import PaymentDetails from './PaymentDetails';
 import moment from 'moment';
+import ManualCommission from './ManualCommission';
 
 const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -41,6 +42,7 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
     useState<number>(0);
   const [totalSalePrice, setTotalSalePrice] = useState<number>(0);
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [manualCommission, setManualCommission] = useState<boolean>(false);
 
   const handleResize = () => {
     if (window.innerWidth < 991) {
@@ -317,7 +319,7 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
 
   return (
     <>
-      {!paymentDetails && (
+      {!paymentDetails && !manualCommission && (
         <>
           <PageHeader
             title="Commission Payments"
@@ -325,6 +327,13 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
             extra={[
               <Button
                 key="1"
+                className="mt-1"
+                onClick={() => setManualCommission(true)}
+              >
+                New Manual Commission
+              </Button>,
+              <Button
+                key="2"
                 type="primary"
                 danger
                 className="mt-1"
@@ -493,6 +502,13 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
           creators={creators}
           setShowModal={setShowModal}
           setPaymentDetails={setPaymentDetails}
+        />
+      )}
+      {manualCommission && (
+        <ManualCommission
+          creators={creators}
+          defaultCreator={currentCreator}
+          setManualCommission={setManualCommission}
         />
       )}
     </>
