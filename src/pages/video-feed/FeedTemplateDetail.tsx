@@ -528,13 +528,7 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
                 </Form.Item>
               </Col>
               <Col lg={12} xs={24}>
-                <Form.Item
-                  name="videoType"
-                  label="Video Type"
-                  rules={[
-                    { required: true, message: `Video Type is required.` },
-                  ]}
-                >
+                <Form.Item name="videoType" label="Video Type">
                   <Select mode="multiple">
                     <Select.Option value="Feed">Feed</Select.Option>
                     <Select.Option value="Brand">Store</Select.Option>
