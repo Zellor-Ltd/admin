@@ -165,7 +165,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
   const search = rows => {
     return rows.filter(
       row =>
-        row.tagName.toLowerCase().indexOf(tagFilter) > -1 &&
+        row.tagName.toUpperCase().indexOf(tagFilter) > -1 &&
         row.brand.brandName.indexOf(brandFilter) > -1
     );
   };

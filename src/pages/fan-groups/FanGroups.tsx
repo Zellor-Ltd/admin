@@ -125,7 +125,7 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
   ];
 
   const search = rows => {
-    return rows.filter(row => row.name.toLowerCase().indexOf(filter) > -1);
+    return rows.filter(row => row.name.toUpperCase().indexOf(filter) > -1);
   };
 
   const refreshItem = (record: FanGroup) => {

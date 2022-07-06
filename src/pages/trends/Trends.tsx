@@ -175,7 +175,7 @@ const Trends: React.FC<RouteComponentProps> = props => {
   ];
 
   const search = rows => {
-    return rows.filter(row => row.tag?.toLowerCase().indexOf(filter) > -1);
+    return rows.filter(row => row.tag?.toUpperCase().indexOf(filter) > -1);
   };
 
   const refreshItem = (record: any) => {

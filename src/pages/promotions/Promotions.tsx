@@ -207,11 +207,11 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
 
       return rows.filter(
         row =>
-          row.id.toLowerCase().indexOf(idFilter) > -1 &&
+          row.id.toUpperCase().indexOf(idFilter) > -1 &&
           moment(row.hCreationDate).utc().isBetween(startDate, endDate)
       );
     }
-    return rows.filter(row => row.id.toLowerCase().indexOf(idFilter) > -1);
+    return rows.filter(row => row.id.toUpperCase().indexOf(idFilter) > -1);
   };
 
   const editPromotion = (index: number, promotion?: Promotion) => {

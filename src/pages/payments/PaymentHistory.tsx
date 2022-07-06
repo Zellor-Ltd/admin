@@ -247,8 +247,8 @@ const PaymentHistory: React.FC<PaymentHistoryProps> = props => {
                 filterOption={(input, option) =>
                   !!option?.children
                     ?.toString()
-                    .toLowerCase()
-                    .includes(input.toLowerCase())
+                    .toUpperCase()
+                    .includes(input.toUpperCase())
                 }
               >
                 {creators.map((curr: any) => (
