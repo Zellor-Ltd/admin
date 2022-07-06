@@ -6,7 +6,6 @@ import {
   PageHeader,
   Popconfirm,
   Row,
-  Spin,
   Table,
   Typography,
 } from 'antd';
@@ -20,7 +19,6 @@ import { deleteDdTemplate, fetchDdTemplates } from 'services/DiscoClubService';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
 import scrollIntoView from 'scroll-into-view';
 import DdTemplateDetail from './DdTemplateDetail';
-import InfiniteScroll from 'react-infinite-scroll-component';
 
 const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -28,12 +26,8 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [details, setDetails] = useState<boolean>(false);
   const [currentDdTemplate, setCurrentDdTemplate] = useState<DdTemplate>();
-  const [page, setPage] = useState<number>(0);
-  const [eof, setEof] = useState<boolean>(false);
-  const [refreshing, setRefreshing] = useState<boolean>(false);
   const [ddTemplates, setDdTemplates] = useState<DdTemplate[]>([]);
   const [filter, setFilter] = useState<string>('');
-  const [content, setContent] = useState<DdTemplate[]>([]);
 
   useEffect(() => {
     getResources();
@@ -45,33 +39,8 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
 
   const getDdTemplates = async () => {
     const { results } = await doFetch(fetchDdTemplates);
-    setContent(results);
-    setRefreshing(true);
+    setDdTemplates(results);
   };
-
-  const updateDisplayedArray = () => {
-    if (!content.length) {
-      setEof(true);
-      return;
-    }
-
-    const pageToUse = refreshing ? 0 : page;
-    const results = content.slice(pageToUse * 10, pageToUse * 10 + 10);
-
-    setPage(pageToUse + 1);
-    setDdTemplates(prev => [...prev.concat(results)]);
-
-    if (results.length < 10) setEof(true);
-  };
-
-  useEffect(() => {
-    if (refreshing) {
-      setDdTemplates([]);
-      setEof(false);
-      updateDisplayedArray();
-      setRefreshing(false);
-    }
-  }, [refreshing]);
 
   useEffect(() => {
     if (!details) {
@@ -80,8 +49,6 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
           `.scrollable-row-${lastViewedIndex}`
         ) as HTMLElement
       );
-
-      if (search(ddTemplates).length < 10) setEof(true);
     }
   }, [details, ddTemplates]);
 
@@ -256,32 +223,14 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
               />
             </Col>
           </Row>
-          <InfiniteScroll
-            dataLength={ddTemplates.length}
-            next={updateDisplayedArray}
-            hasMore={!eof}
-            loader={
-              page !== 0 && (
-                <div className="scroll-message">
-                  <Spin />
-                </div>
-              )
-            }
-            endMessage={
-              <div className="scroll-message">
-                <b>End of results.</b>
-              </div>
-            }
-          >
-            <Table
-              rowClassName={(_, index) => `scrollable-row-${index}`}
-              rowKey="id"
-              columns={columns}
-              dataSource={search(ddTemplates)}
-              loading={loading || refreshing}
-              pagination={false}
-            />
-          </InfiniteScroll>
+          <Table
+            rowClassName={(_, index) => `scrollable-row-${index}`}
+            rowKey="id"
+            columns={columns}
+            dataSource={search(ddTemplates)}
+            loading={loading}
+            pagination={false}
+          />
         </div>
       )}
       {details && (

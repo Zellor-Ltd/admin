@@ -11,7 +11,6 @@ import {
   PageHeader,
   Popconfirm,
   Row,
-  Spin,
   Table,
   Typography,
 } from 'antd';
@@ -21,33 +20,23 @@ import { Promotion } from 'interfaces/Promotion';
 import moment from 'moment';
 import { useCallback, useEffect, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import {
-  deletePromotion,
-  fetchPromoStatus,
-  fetchPromotions,
-} from 'services/DiscoClubService';
+import { deletePromotion, fetchPromotions } from 'services/DiscoClubService';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
 import scrollIntoView from 'scroll-into-view';
 import PromotionDetail from './PromotionDetail';
-import InfiniteScroll from 'react-infinite-scroll-component';
 
 const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
-  const [tableloading, setTableLoading] = useState<boolean>(false);
-  const { doRequest, doFetch } = useRequest({ setLoading: setTableLoading });
-  const [promoStatusList, setPromoStatusList] = useState<any>();
+  const [loading, setloading] = useState<boolean>(false);
+  const { doRequest, doFetch } = useRequest({ setLoading: setloading });
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [details, setDetails] = useState<boolean>(false);
   const [currentPromotion, setCurrentPromotion] = useState<Promotion>();
-  const [page, setPage] = useState<number>(0);
-  const [eof, setEof] = useState<boolean>(false);
-  const [refreshing, setRefreshing] = useState<boolean>(false);
   const [promotions, setPromotions] = useState<Promotion[]>([]);
   const [dateFilter, setDateFilter] = useState<any[]>([]);
   const [idFilter, setIdFilter] = useState<string>('');
-  const [content, setContent] = useState<Promotion[]>([]);
 
   const getResources = useCallback(async () => {
-    await Promise.all([getPromotions(), getPromoStatus()]);
+    await getPromotions();
   }, []);
 
   useEffect(() => {
@@ -56,38 +45,8 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
 
   const getPromotions = useCallback(async () => {
     const { results } = await doFetch(fetchPromotions);
-    setContent(results);
-    setRefreshing(true);
+    setPromotions(results);
   }, []);
-
-  const getPromoStatus = useCallback(async () => {
-    const { results } = await doFetch(fetchPromoStatus);
-    setPromoStatusList(results[0]?.promoStatus);
-  }, []);
-
-  const updateDisplayedArray = () => {
-    if (!content.length) {
-      setEof(true);
-      return;
-    }
-
-    const pageToUse = refreshing ? 0 : page;
-    const results = content.slice(pageToUse * 10, pageToUse * 10 + 10);
-
-    setPage(pageToUse + 1);
-    setPromotions(prev => [...prev.concat(results)]);
-
-    if (results.length < 10) setEof(true);
-  };
-
-  useEffect(() => {
-    if (refreshing) {
-      setPromotions([]);
-      setEof(false);
-      updateDisplayedArray();
-      setRefreshing(false);
-    }
-  }, [refreshing]);
 
   useEffect(() => {
     if (!details) {
@@ -96,8 +55,6 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
           `.scrollable-row-${lastViewedIndex}`
         ) as HTMLElement
       );
-
-      if (search(promotions).length < 10) setEof(true);
     }
   }, [details, promotions]);
 
@@ -259,32 +216,14 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
               <Input onChange={event => setIdFilter(event.target.value)} />
             </Col>
           </Row>
-          <InfiniteScroll
-            dataLength={promotions.length}
-            next={updateDisplayedArray}
-            hasMore={!eof}
-            loader={
-              page !== 0 && (
-                <div className="scroll-message">
-                  <Spin />
-                </div>
-              )
-            }
-            endMessage={
-              <div className="scroll-message">
-                <b>End of results.</b>
-              </div>
-            }
-          >
-            <Table
-              rowClassName={(_, index) => `scrollable-row-${index}`}
-              rowKey="id"
-              columns={columns}
-              dataSource={search(promotions)}
-              loading={tableloading || refreshing}
-              pagination={false}
-            />
-          </InfiniteScroll>
+          <Table
+            rowClassName={(_, index) => `scrollable-row-${index}`}
+            rowKey="id"
+            columns={columns}
+            dataSource={search(promotions)}
+            loading={loading}
+            pagination={false}
+          />
         </div>
       )}
       {details && (
