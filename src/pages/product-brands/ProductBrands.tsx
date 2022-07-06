@@ -201,7 +201,9 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
   ];
 
   const search = rows => {
-    return rows.filter(row => row.brandName.toLowerCase().indexOf(filter) > -1);
+    return rows.filter(
+      row => row.brandName.toUpperCase().indexOf(filter.toUpperCase()) > -1
+    );
   };
 
   const editProductBrand = (index: number, productBrand?: ProductBrand) => {

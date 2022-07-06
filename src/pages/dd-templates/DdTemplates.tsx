@@ -225,7 +225,9 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
   ];
 
   const search = rows => {
-    return rows.filter(row => row.tagName.toLowerCase().indexOf(filter) > -1);
+    return rows.filter(
+      row => row.tagName.toUpperCase().indexOf(filter.toUpperCase()) > -1
+    );
   };
 
   return (
