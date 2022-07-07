@@ -3,7 +3,9 @@ import {
   Button,
   Col,
   DatePicker,
+  Descriptions,
   Input,
+  List,
   message,
   PageHeader,
   Row,
@@ -11,6 +13,7 @@ import {
   Space,
   Spin,
   Table,
+  Tooltip,
   Typography,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
@@ -275,6 +278,254 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   });
 
   const columns: ColumnsType<Order> = [
+    {
+      title: '_id',
+      dataIndex: 'id',
+      width: '6%',
+      render: id => <CopyOrderToClipboard order={id} />,
+      align: 'center',
+    },
+    {
+      title: 'User',
+      dataIndex: 'customerEmail',
+      width: '15%',
+      align: 'center',
+      ...getColumnSearchProps('customerEmail'),
+      render: (value: string) => {
+        return (
+          <div style={{ display: 'grid', placeItems: 'stretch' }}>
+            <div
+              style={{
+                textOverflow: 'ellipsis',
+                overflow: 'hidden',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              <Tooltip title={value}>{value}</Tooltip>
+            </div>
+          </div>
+        );
+      },
+      sorter: (a, b): any => {
+        if (a.customerEmail && b.customerEmail)
+          return a.customerEmail.localeCompare(b.customerEmail);
+        else if (a.customerEmail) return -1;
+        else if (b.customerEmail) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: 'Paid',
+      dataIndex: 'paid',
+      width: '5%',
+      align: 'center',
+      render: (value: boolean) => <b>{value ? 'Yes' : 'No'}</b>,
+      sorter: (a, b): any => {
+        if (a.paid && b.paid) return 0;
+        else if (a.paid) return -1;
+        else if (b.paid) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: 'Amount',
+      dataIndex: 'amount',
+      width: '5%',
+      align: 'center',
+      render: (value: number) => `${Math.round(value / 100).toFixed(2)}`,
+      sorter: (a, b): any => {
+        if (a.amount && b.amount) return a.amount - b.amount;
+        else if (a.amount) return -1;
+        else if (b.amount) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: 'Name',
+      width: '12%',
+      align: 'center',
+      render: (_, record) =>
+        record.product
+          ? record.product?.name
+          : record.cart.brandGroups[0]
+          ? record.cart.brandGroups[0].items[0].name
+          : 'Empty order',
+      sorter: (a, b) => {
+        if (a.product && b.product) {
+          return a.product.name.localeCompare(b.product.name);
+        }
+        if (a.product && !b.product) {
+          return a.product.name.localeCompare(
+            b.cart.brandGroups[0].items[0].name
+          );
+        }
+        if (!a.product && b.product) {
+          return a.cart.brandGroups[0].items[0].name.localeCompare(
+            b.product.name
+          );
+        }
+        if (!a.product && !b.product) {
+          if (
+            !a.cart.brandGroups[0].items[0].name &&
+            !b.cart.brandGroups[0].items[0].name
+          )
+            return 0;
+          return a.cart.brandGroups[0].items[0].name.localeCompare(
+            b.cart.brandGroups[0].items[0].name
+          );
+        }
+      },
+    },
+    {
+      title: 'Creation',
+      dataIndex: 'hCreationDate',
+      width: '10%',
+      align: 'center',
+      filterIcon: <CalendarOutlined />,
+      filterDropdown: () => (
+        <DatePicker.RangePicker
+          style={{ padding: 8 }}
+          onChange={values => setFilter(values as any)}
+        />
+      ),
+      render: (value: Date) => (
+        <>
+          <div>{moment(value).format('DD/MM/YYYY')}</div>
+          <div>{moment(value).format('HH:mm')}</div>
+        </>
+      ),
+      sorter: (a, b): any => {
+        if (a.hCreationDate && b.hCreationDate)
+          return (
+            moment(a.hCreationDate).unix() - moment(b.hCreationDate).unix()
+          );
+        else if (a.hCreationDate) return -1;
+        else if (b.hCreationDate) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: 'Disco Dollars',
+      dataIndex: 'discoDollars',
+      width: '5%',
+      align: 'center',
+      sorter: (a, b): any => {
+        if (a.discoDollars && b.discoDollars)
+          return a.discoDollars - b.discoDollars;
+        else if (a.discoDollars) return -1;
+        else if (b.discoDollars) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: 'Stage',
+      dataIndex: 'stage',
+      width: '12%',
+      align: 'center',
+      render: (value: string, order, index) => (
+        <Select
+          loading={orderUpdateList[index]}
+          disabled={orderUpdateList[index]}
+          defaultValue={value}
+          style={{ width: '100%' }}
+          onChange={value => handleSelectChange(value, order, index)}
+        >
+          {ordersSettings.map((ordersSetting: any) => (
+            <Select.Option
+              key={ordersSetting.value}
+              value={ordersSetting.value}
+            >
+              <div style={{ display: 'grid', placeItems: 'stretch' }}>
+                <div
+                  style={{
+                    textOverflow: 'ellipsis',
+                    overflow: 'hidden',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  <Tooltip title={ordersSetting.name}>
+                    {ordersSetting.name}
+                  </Tooltip>
+                </div>
+              </div>
+            </Select.Option>
+          ))}
+        </Select>
+      ),
+      sorter: (a, b): any => {
+        if (a.stage && b.stage) return a.stage.localeCompare(b.stage);
+        else if (a.stage) return -1;
+        else if (b.stage) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: 'Int. Status',
+      dataIndex: 'commissionInternalStatus',
+      width: '12%',
+      align: 'center',
+      render: (value: string, order, index) => (
+        <Select
+          loading={orderUpdateList[index]}
+          disabled={orderUpdateList[index]}
+          defaultValue={value}
+          style={{ width: '100%' }}
+          onChange={value => handleSelectChange(value, order, index)}
+        >
+          {ordersSettings.map((ordersSetting: any) => (
+            <Select.Option
+              key={ordersSetting.value}
+              value={ordersSetting.value}
+            >
+              <div style={{ display: 'grid', placeItems: 'stretch' }}>
+                <div
+                  style={{
+                    textOverflow: 'ellipsis',
+                    overflow: 'hidden',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  <Tooltip title={ordersSetting.name}>
+                    {ordersSetting.name}
+                  </Tooltip>
+                </div>
+              </div>
+            </Select.Option>
+          ))}
+        </Select>
+      ),
+      sorter: (a, b): any => {
+        if (a.commissionInternalStatus && b.commissionInternalStatus)
+          return a.commissionInternalStatus.localeCompare(
+            b.commissionInternalStatus
+          );
+        else if (a.commissionInternalStatus) return -1;
+        else if (b.commissionInternalStatus) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: 'Last Update',
+      dataIndex: 'hLastUpdate',
+      width: '10%',
+      align: 'center',
+      render: (value: Date) => (
+        <>
+          <div>{moment(value).format('DD/MM/YYYY')}</div>
+          <div>{moment(value).format('HH:mm')}</div>
+        </>
+      ),
+      sorter: (a, b): any => {
+        if (a.hLastUpdate && b.hLastUpdate)
+          return moment(a.hLastUpdate).unix() - moment(b.hLastUpdate).unix();
+        else if (a.hLastUpdate) return -1;
+        else if (b.hLastUpdate) return 1;
+        else return 0;
+      },
+    },
+  ];
+
+  const cartColumns: ColumnsType<Order> = [
     {
       title: '_id',
       dataIndex: 'id',
@@ -643,6 +894,75 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
               dataSource={search(orders)}
               loading={loading || refreshing}
               pagination={false}
+              expandable={{
+                expandedRowRender: record => (
+                  <>
+                    <Row justify="center">
+                      <Col span={22}>
+                        <Descriptions title="Details">
+                          <Descriptions.Item label="Order ID" className="mt-05">
+                            {record.id}
+                          </Descriptions.Item>
+                          <Descriptions.Item label="User">
+                            {record.customerEmail}
+                          </Descriptions.Item>
+                          <Descriptions.Item label="Paid Status">
+                            {record.paid ? 'Paid' : 'Not paid'}
+                          </Descriptions.Item>
+                          <Descriptions.Item label="Order Amount">
+                            {((record.amount ?? 0) / 100).toFixed(2)}
+                          </Descriptions.Item>
+                          <Descriptions.Item label="Date">
+                            {moment(record.hCreationDate).format('DD/MM/YYYY')}
+                          </Descriptions.Item>
+                        </Descriptions>
+                      </Col>
+                    </Row>
+                    <Row justify="center" className="mt-15">
+                      <Col span={22}>
+                        <Descriptions
+                          title="Responsive Descriptions"
+                          bordered
+                          column={{ xxl: 4, xl: 3, lg: 3, md: 3, sm: 2, xs: 1 }}
+                        >
+                          <Descriptions.Item label="Product">
+                            Cloud Database
+                          </Descriptions.Item>
+                          <Descriptions.Item label="Billing">
+                            Prepaid
+                          </Descriptions.Item>
+                          <Descriptions.Item label="time">
+                            18:00:00
+                          </Descriptions.Item>
+                          <Descriptions.Item label="Amount">
+                            $80.00
+                          </Descriptions.Item>
+                          <Descriptions.Item label="Discount">
+                            $20.00
+                          </Descriptions.Item>
+                          <Descriptions.Item label="Official">
+                            $60.00
+                          </Descriptions.Item>
+                          <Descriptions.Item label="Config Info">
+                            Data disk type: MongoDB
+                            <br />
+                            Database version: 3.4
+                            <br />
+                            Package: dds.mongo.mid
+                            <br />
+                            Storage space: 10 GB
+                            <br />
+                            Replication factor: 3
+                            <br />
+                            Region: East China 1
+                          </Descriptions.Item>
+                        </Descriptions>
+                      </Col>
+                    </Row>
+                  </>
+                ),
+                rowExpandable: record => record.cart || record.product,
+              }}
             />
           </InfiniteScroll>
         </div>
