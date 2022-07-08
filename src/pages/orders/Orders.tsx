@@ -64,6 +64,8 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [fanFilterInput, setFanFilterInput] = useState<string>();
   const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [cartTableContent, setCartTableContent] = useState<any>();
+  const [expandedRowKeys, setExpandedRowKeys] = useState<string[]>();
 
   const fanOptionMapping: SelectOption = {
     key: 'id',
@@ -534,206 +536,168 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       align: 'center',
     },
     {
-      title: 'User',
-      dataIndex: 'customerEmail',
-      width: '10%',
-      align: 'center',
-      ...getColumnSearchProps('customerEmail'),
-      render: (value: string) => `${value}`,
-      sorter: (a, b): any => {
-        if (a.customerEmail && b.customerEmail)
-          return a.customerEmail.localeCompare(b.customerEmail);
-        else if (a.customerEmail) return -1;
-        else if (b.customerEmail) return 1;
-        else return 0;
-      },
-    },
-    {
-      title: 'Paid',
-      dataIndex: 'paid',
-      width: '5%',
-      align: 'center',
-      render: (value: boolean) => <b>{value ? 'Yes' : 'No'}</b>,
-      sorter: (a, b): any => {
-        if (a.paid && b.paid) return 0;
-        else if (a.paid) return -1;
-        else if (b.paid) return 1;
-        else return 0;
-      },
-    },
-    {
-      title: 'Amount',
-      dataIndex: 'amount',
-      width: '5%',
-      align: 'center',
-      render: (value: number) => `${Math.round(value / 100).toFixed(2)}`,
-      sorter: (a, b): any => {
-        if (a.amount && b.amount) return a.amount - b.amount;
-        else if (a.amount) return -1;
-        else if (b.amount) return 1;
-        else return 0;
-      },
-    },
-    {
-      title: 'Name',
-      width: '12%',
-      align: 'center',
-      render: (_, record) =>
-        record.product
-          ? record.product?.name
-          : record.cart.brandGroups[0]
-          ? record.cart.brandGroups[0].items[0].name
-          : 'Empty order',
-      sorter: (a, b) => {
-        if (a.product && b.product) {
-          return a.product.name.localeCompare(b.product.name);
-        }
-        if (a.product && !b.product) {
-          return a.product.name.localeCompare(
-            b.cart.brandGroups[0].items[0].name
-          );
-        }
-        if (!a.product && b.product) {
-          return a.cart.brandGroups[0].items[0].name.localeCompare(
-            b.product.name
-          );
-        }
-        if (!a.product && !b.product) {
-          if (
-            !a.cart.brandGroups[0].items[0].name &&
-            !b.cart.brandGroups[0].items[0].name
-          )
-            return 0;
-          return a.cart.brandGroups[0].items[0].name.localeCompare(
-            b.cart.brandGroups[0].items[0].name
-          );
-        }
-      },
-    },
-    {
-      title: 'Creation',
-      dataIndex: 'hCreationDate',
-      width: '10%',
-      align: 'center',
-      filterIcon: <CalendarOutlined />,
-      filterDropdown: () => (
-        <DatePicker.RangePicker
-          style={{ padding: 8 }}
-          onChange={values => setFilter(values as any)}
-        />
-      ),
-      render: (value: Date) => (
-        <>
-          <div>{moment(value).format('DD/MM/YYYY')}</div>
-          <div>{moment(value).format('HH:mm')}</div>
-        </>
-      ),
-      sorter: (a, b): any => {
-        if (a.hCreationDate && b.hCreationDate)
-          return (
-            moment(a.hCreationDate).unix() - moment(b.hCreationDate).unix()
-          );
-        else if (a.hCreationDate) return -1;
-        else if (b.hCreationDate) return 1;
-        else return 0;
-      },
-    },
-    {
-      title: 'Disco Dollars',
-      dataIndex: 'discoDollars',
-      width: '5%',
-      align: 'center',
-      sorter: (a, b): any => {
-        if (a.discoDollars && b.discoDollars)
-          return a.discoDollars - b.discoDollars;
-        else if (a.discoDollars) return -1;
-        else if (b.discoDollars) return 1;
-        else return 0;
-      },
-    },
-    {
-      title: 'Stage',
-      dataIndex: 'stage',
+      title: 'Description',
+      dataIndex: 'description',
       width: '15%',
       align: 'center',
-      render: (value: string, order, index) => (
-        <Select
-          loading={orderUpdateList[index]}
-          disabled={orderUpdateList[index]}
-          defaultValue={value}
-          style={{ width: '175px' }}
-          onChange={value => handleSelectChange(value, order, index)}
-        >
-          {ordersSettings.map((ordersSetting: any) => (
-            <Select.Option
-              key={ordersSetting.value}
-              value={ordersSetting.value}
+      ...getColumnSearchProps('description'),
+      render: (value: string) => {
+        return (
+          <div style={{ display: 'grid', placeItems: 'stretch' }}>
+            <div
+              style={{
+                textOverflow: 'ellipsis',
+                overflow: 'hidden',
+                whiteSpace: 'nowrap',
+              }}
             >
-              {ordersSetting.name}
-            </Select.Option>
-          ))}
-        </Select>
-      ),
+              <Tooltip title={value}>{value}</Tooltip>
+            </div>
+          </div>
+        );
+      },
       sorter: (a, b): any => {
-        if (a.stage && b.stage) return a.stage.localeCompare(b.stage);
-        else if (a.stage) return -1;
-        else if (b.stage) return 1;
+        if (a.description && b.description)
+          return a.description.localeCompare(b.description);
+        else if (a.description) return -1;
+        else if (b.description) return 1;
         else return 0;
       },
     },
     {
-      title: 'Int. Status',
-      dataIndex: 'commissionInternalStatus',
-      width: '15%',
+      title: 'Quantity',
+      dataIndex: 'quantity',
+      width: '5%',
       align: 'center',
-      render: (value: string, order, index) => (
-        <Select
-          loading={orderUpdateList[index]}
-          disabled={orderUpdateList[index]}
-          defaultValue={value}
-          style={{ width: '175px' }}
-          onChange={value => handleSelectChange(value, order, index)}
-        >
-          {ordersSettings.map((ordersSetting: any) => (
-            <Select.Option
-              key={ordersSetting.value}
-              value={ordersSetting.value}
-            >
-              {ordersSetting.name}
-            </Select.Option>
-          ))}
-        </Select>
-      ),
       sorter: (a, b): any => {
-        if (a.commissionInternalStatus && b.commissionInternalStatus)
-          return a.commissionInternalStatus.localeCompare(
-            b.commissionInternalStatus
-          );
-        else if (a.commissionInternalStatus) return -1;
-        else if (b.commissionInternalStatus) return 1;
+        if (a.quantity && b.quantity) return a.quantity - b.quantity;
+        else if (a.quantity) return -1;
+        else if (b.quantity) return 1;
         else return 0;
       },
     },
     {
-      title: 'Last Update',
-      dataIndex: 'hLastUpdate',
+      title: 'Price',
+      dataIndex: 'originalPrice',
+      width: '5%',
+      align: 'center',
+      render: (value: number) => `${value.toFixed(2)}`,
+      sorter: (a, b): any => {
+        if (a.originalPrice && b.originalPrice)
+          return a.originalPrice - b.originalPrice;
+        else if (a.originalPrice) return -1;
+        else if (b.originalPrice) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: 'Discount',
+      dataIndex: 'discount',
+      width: '5%',
+      align: 'center',
+      render: (value: number) => `${value.toFixed(2)}`,
+      sorter: (a, b): any => {
+        if (a.discount && b.discount) return a.discount - b.discount;
+        else if (a.discount) return -1;
+        else if (b.discount) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: 'Sale Price',
+      dataIndex: 'discountedPrice',
+      width: '5%',
+      align: 'center',
+      render: (value: number) => `${value.toFixed(2)}`,
+      sorter: (a, b): any => {
+        if (a.discountedPrice && b.discountedPrice)
+          return a.discountedPrice - b.discountedPrice;
+        else if (a.discountedPrice) return -1;
+        else if (b.discountedPrice) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: 'Return Date',
+      dataIndex: 'returnDate',
       width: '10%',
       align: 'center',
-      render: (value: Date) => (
-        <>
-          <div>{moment(value).format('DD/MM/YYYY')}</div>
-          <div>{moment(value).format('HH:mm')}</div>
-        </>
-      ),
+      render: (value: Date) =>
+        value ? (
+          <>
+            <div>{moment(value).format('DD/MM/YYYY')}</div>
+            <div>{moment(value).format('HH:mm')}</div>
+          </>
+        ) : (
+          '-'
+        ),
       sorter: (a, b): any => {
-        if (a.hLastUpdate && b.hLastUpdate)
-          return moment(a.hLastUpdate).unix() - moment(b.hLastUpdate).unix();
-        else if (a.hLastUpdate) return -1;
-        else if (b.hLastUpdate) return 1;
+        if (a.returnDate && b.returnDate)
+          return moment(a.returnDate).unix() - moment(b.returnDate).unix();
+        else if (a.returnDate) return -1;
+        else if (b.returnDate) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: 'Return Quantity',
+      dataIndex: 'returnQuantity',
+      width: '5%',
+      align: 'center',
+      render: (value: number) => (value ? value : '-'),
+      sorter: (a, b): any => {
+        if (a.returnQuantity && b.returnQuantity)
+          return a.returnQuantity - b.returnQuantity;
+        else if (a.returnQuantity) return -1;
+        else if (b.returnQuantity) return 1;
         else return 0;
       },
     },
   ];
+
+  const CartTable = () => {
+    const validData: any[] = [];
+    if (cartTableContent?.product) {
+      validData.push({
+        id: cartTableContent.product.id,
+        description: cartTableContent.product.description,
+        quantity: 1,
+        originalPrice: cartTableContent.product.originalPrice,
+        discount:
+          cartTableContent.product.originalPrice -
+          cartTableContent.product.discountedPrice,
+        discountedPrice: cartTableContent.product.discountedPrice,
+        returnDate: cartTableContent.return?.date,
+        returnQuantity: cartTableContent.return ? 1 : '-',
+      });
+    } else {
+      cartTableContent?.cart?.brandGroups.forEach(brand =>
+        brand.items.forEach(item =>
+          validData.push({
+            id: item.id,
+            description: item.description,
+            quantity: item.quantity,
+            originalPrice: item.totalPrice,
+            discount: item.totalPrice - item.totalDiscountedPrice,
+            discountedPrice: item.totalDiscountedPrice,
+            returnDate: cartTableContent.return?.date,
+            returnQuantity: cartTableContent.return?.quantity,
+          })
+        )
+      );
+    }
+
+    return (
+      <>
+        <Table
+          rowKey="id"
+          columns={cartColumns}
+          dataSource={validData}
+          pagination={false}
+        />
+      </>
+    );
+  };
 
   useEffect(() => {
     const getBrands = async () => {
@@ -894,7 +858,18 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
               dataSource={search(orders)}
               loading={loading || refreshing}
               pagination={false}
+              expandedRowKeys={expandedRowKeys}
               expandable={{
+                onExpand: (expanded, record) => {
+                  const keys: string[] = [];
+                  if (expanded) {
+                    keys.push(record?.id!);
+                    setCartTableContent(record);
+                  } else {
+                    setCartTableContent(undefined);
+                  }
+                  setExpandedRowKeys(keys);
+                },
                 expandedRowRender: record => (
                   <>
                     <Row justify="center">
@@ -920,41 +895,9 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
                     </Row>
                     <Row justify="center" className="mt-15">
                       <Col span={22}>
-                        <Descriptions
-                          title="Responsive Descriptions"
-                          bordered
-                          column={{ xxl: 4, xl: 3, lg: 3, md: 3, sm: 2, xs: 1 }}
-                        >
-                          <Descriptions.Item label="Product">
-                            Cloud Database
-                          </Descriptions.Item>
-                          <Descriptions.Item label="Billing">
-                            Prepaid
-                          </Descriptions.Item>
-                          <Descriptions.Item label="time">
-                            18:00:00
-                          </Descriptions.Item>
-                          <Descriptions.Item label="Amount">
-                            $80.00
-                          </Descriptions.Item>
-                          <Descriptions.Item label="Discount">
-                            $20.00
-                          </Descriptions.Item>
-                          <Descriptions.Item label="Official">
-                            $60.00
-                          </Descriptions.Item>
-                          <Descriptions.Item label="Config Info">
-                            Data disk type: MongoDB
-                            <br />
-                            Database version: 3.4
-                            <br />
-                            Package: dds.mongo.mid
-                            <br />
-                            Storage space: 10 GB
-                            <br />
-                            Replication factor: 3
-                            <br />
-                            Region: East China 1
+                        <Descriptions title="Cart">
+                          <Descriptions.Item>
+                            <CartTable />
                           </Descriptions.Item>
                         </Descriptions>
                       </Col>
