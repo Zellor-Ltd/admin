@@ -7,6 +7,7 @@ import {
 import {
   Button,
   Col,
+  DatePicker,
   Form,
   Input,
   InputNumber,
@@ -89,6 +90,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const [categoryFilter, setCategoryFilter] = useState<string>();
   const [indexFilter, setIndexFilter] = useState<number>();
   const [creatorFilter, setCreatorFilter] = useState<string>();
+  const [dateSortFilter, setDateSortFilter] = useState<string>();
 
   const masterBrandMapping: SelectOption = {
     key: 'id',
@@ -332,6 +334,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
           status: statusFilter?.toUpperCase(),
           videoType: videoTypeFilter,
           productBrandId: productBrandFilter,
+          dateSort: dateSortFilter,
         })
       );
       setFeedItems(results);
@@ -655,6 +658,41 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                         {curr.firstName}
                       </Select.Option>
                     ))}
+                  </Select>
+                </Col>
+                <Col lg={4} xs={12}>
+                  <Typography.Title level={5}>Date Sort</Typography.Title>
+
+                  <Select
+                    onChange={setDateSortFilter}
+                    placeholder="Select a sorting option"
+                    style={{ width: '100%' }}
+                    filterOption={(input, option) =>
+                      !!option?.children
+                        ?.toString()
+                        .toLowerCase()
+                        .includes(input.toLowerCase())
+                    }
+                    allowClear={true}
+                    showSearch={true}
+                  >
+                    <Select.Option
+                      key="newestFirst"
+                      value="Newest First"
+                      label="Newest First"
+                    >
+                      Newest First
+                    </Select.Option>
+                    <Select.Option
+                      key="oldestFirst"
+                      value="Oldest First"
+                      label="Oldest First"
+                    >
+                      Oldest First
+                    </Select.Option>
+                    <Select.Option key="none" value="None" label="None">
+                      None
+                    </Select.Option>
                   </Select>
                 </Col>
               </Row>
