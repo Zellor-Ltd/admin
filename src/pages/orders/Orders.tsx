@@ -7,7 +7,9 @@ import {
   Button,
   Col,
   DatePicker,
+  Descriptions,
   Input,
+  List,
   message,
   PageHeader,
   Row,
@@ -15,6 +17,7 @@ import {
   Space,
   Spin,
   Table,
+  Tooltip,
   Typography,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
@@ -70,6 +73,8 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   const [updatingOrderDueDate, setUpdatingOrderDueDate] = useState<
     Record<string, boolean>
   >({});
+  const [cartTableContent, setCartTableContent] = useState<any>();
+  const [expandedRowKeys, setExpandedRowKeys] = useState<string[]>();
 
   const fanOptionMapping: SelectOption = {
     key: 'id',
@@ -261,7 +266,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     ),
     onFilter: (value: any, record: any) => {
       const fan = getFan(record.userid);
-      return fan?.user.includes(value.toLowerCase()) || false;
+      return fan?.user.includes(value.toUpperCase()) || false;
     },
     onFilterDropdownVisibleChange: (visible: any) => {
       if (visible) {
@@ -383,7 +388,21 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       width: '9%',
       align: 'center',
       ...getColumnSearchProps('customerEmail'),
-      render: (value: string) => `${value}`,
+      render: (value: string) => {
+        return (
+          <div style={{ display: 'grid', placeItems: 'stretch' }}>
+            <div
+              style={{
+                textOverflow: 'ellipsis',
+                overflow: 'hidden',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              <Tooltip title={value}>{value}</Tooltip>
+            </div>
+          </div>
+        );
+      },
       sorter: (a, b): any => {
         if (a.customerEmail && b.customerEmail)
           return a.customerEmail.localeCompare(b.customerEmail);
@@ -469,7 +488,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
           loading={orderUpdateList[index]}
           disabled={orderUpdateList[index]}
           defaultValue={value}
-          style={{ width: '175px' }}
+          style={{ width: '100%' }}
           onChange={value => handleSelectChange(value, order, index)}
         >
           {ordersSettings.map((ordersSetting: any) => (
@@ -477,7 +496,19 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
               key={ordersSetting.value}
               value={ordersSetting.value}
             >
-              {ordersSetting.name}
+              <div style={{ display: 'grid', placeItems: 'stretch' }}>
+                <div
+                  style={{
+                    textOverflow: 'ellipsis',
+                    overflow: 'hidden',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  <Tooltip title={ordersSetting.name}>
+                    {ordersSetting.name}
+                  </Tooltip>
+                </div>
+              </div>
             </Select.Option>
           ))}
         </Select>
@@ -547,7 +578,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
           loading={orderUpdateList[index]}
           disabled={orderUpdateList[index]}
           defaultValue={value}
-          style={{ width: '175px' }}
+          style={{ width: '100%' }}
           onChange={value => handleSelectChange(value, order, index)}
         >
           {ordersSettings.map((ordersSetting: any) => (
@@ -555,7 +586,19 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
               key={ordersSetting.value}
               value={ordersSetting.value}
             >
-              {ordersSetting.name}
+              <div style={{ display: 'grid', placeItems: 'stretch' }}>
+                <div
+                  style={{
+                    textOverflow: 'ellipsis',
+                    overflow: 'hidden',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  <Tooltip title={ordersSetting.name}>
+                    {ordersSetting.name}
+                  </Tooltip>
+                </div>
+              </div>
             </Select.Option>
           ))}
         </Select>
@@ -590,6 +633,178 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
   ];
+
+  const cartColumns: ColumnsType<Order> = [
+    {
+      title: '_id',
+      dataIndex: 'id',
+      width: '6%',
+      render: id => <CopyOrderToClipboard order={id} />,
+      align: 'center',
+    },
+    {
+      title: 'Description',
+      dataIndex: 'description',
+      width: '15%',
+      align: 'center',
+      ...getColumnSearchProps('description'),
+      render: (value: string) => {
+        return (
+          <div style={{ display: 'grid', placeItems: 'stretch' }}>
+            <div
+              style={{
+                textOverflow: 'ellipsis',
+                overflow: 'hidden',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              <Tooltip title={value}>{value}</Tooltip>
+            </div>
+          </div>
+        );
+      },
+      sorter: (a, b): any => {
+        if (a.description && b.description)
+          return a.description.localeCompare(b.description);
+        else if (a.description) return -1;
+        else if (b.description) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: 'Quantity',
+      dataIndex: 'quantity',
+      width: '5%',
+      align: 'center',
+      sorter: (a, b): any => {
+        if (a.quantity && b.quantity) return a.quantity - b.quantity;
+        else if (a.quantity) return -1;
+        else if (b.quantity) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: 'Price',
+      dataIndex: 'originalPrice',
+      width: '5%',
+      align: 'center',
+      render: (value: number) => `${value.toFixed(2)}`,
+      sorter: (a, b): any => {
+        if (a.originalPrice && b.originalPrice)
+          return a.originalPrice - b.originalPrice;
+        else if (a.originalPrice) return -1;
+        else if (b.originalPrice) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: 'Discount',
+      dataIndex: 'discount',
+      width: '5%',
+      align: 'center',
+      render: (value: number) => `${value.toFixed(2)}`,
+      sorter: (a, b): any => {
+        if (a.discount && b.discount) return a.discount - b.discount;
+        else if (a.discount) return -1;
+        else if (b.discount) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: 'Sale Price',
+      dataIndex: 'discountedPrice',
+      width: '5%',
+      align: 'center',
+      render: (value: number) => `${value.toFixed(2)}`,
+      sorter: (a, b): any => {
+        if (a.discountedPrice && b.discountedPrice)
+          return a.discountedPrice - b.discountedPrice;
+        else if (a.discountedPrice) return -1;
+        else if (b.discountedPrice) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: 'Return Date',
+      dataIndex: 'returnDate',
+      width: '10%',
+      align: 'center',
+      render: (value: Date) =>
+        value ? (
+          <>
+            <div>{moment(value).format('DD/MM/YYYY')}</div>
+            <div>{moment(value).format('HH:mm')}</div>
+          </>
+        ) : (
+          '-'
+        ),
+      sorter: (a, b): any => {
+        if (a.returnDate && b.returnDate)
+          return moment(a.returnDate).unix() - moment(b.returnDate).unix();
+        else if (a.returnDate) return -1;
+        else if (b.returnDate) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: 'Return Quantity',
+      dataIndex: 'returnQuantity',
+      width: '5%',
+      align: 'center',
+      render: (value: number) => (value ? value : '-'),
+      sorter: (a, b): any => {
+        if (a.returnQuantity && b.returnQuantity)
+          return a.returnQuantity - b.returnQuantity;
+        else if (a.returnQuantity) return -1;
+        else if (b.returnQuantity) return 1;
+        else return 0;
+      },
+    },
+  ];
+
+  const CartTable = () => {
+    const validData: any[] = [];
+    if (cartTableContent?.product) {
+      validData.push({
+        id: cartTableContent.product.id,
+        description: cartTableContent.product.description,
+        quantity: 1,
+        originalPrice: cartTableContent.product.originalPrice,
+        discount:
+          cartTableContent.product.originalPrice -
+          cartTableContent.product.discountedPrice,
+        discountedPrice: cartTableContent.product.discountedPrice,
+        returnDate: cartTableContent.return?.date,
+        returnQuantity: cartTableContent.return ? 1 : '-',
+      });
+    } else {
+      cartTableContent?.cart?.brandGroups.forEach(brand =>
+        brand.items.forEach(item =>
+          validData.push({
+            id: item.id,
+            description: item.description,
+            quantity: item.quantity,
+            originalPrice: item.totalPrice,
+            discount: item.totalPrice - item.totalDiscountedPrice,
+            discountedPrice: item.totalDiscountedPrice,
+            returnDate: cartTableContent.return?.date,
+            returnQuantity: cartTableContent.return?.quantity,
+          })
+        )
+      );
+    }
+
+    return (
+      <>
+        <Table
+          rowKey="id"
+          columns={cartColumns}
+          dataSource={validData}
+          pagination={false}
+        />
+      </>
+    );
+  };
 
   useEffect(() => {
     const getBrands = async () => {
@@ -676,8 +891,8 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
                     filterOption={(input, option) =>
                       !!option?.children
                         ?.toString()
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
+                        .toUpperCase()
+                        .includes(input.toUpperCase())
                     }
                   >
                     {brands.map(curr => (
@@ -750,6 +965,54 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
               dataSource={search(orders)}
               loading={loading || refreshing}
               pagination={false}
+              expandedRowKeys={expandedRowKeys}
+              expandable={{
+                onExpand: (expanded, record) => {
+                  const keys: string[] = [];
+                  if (expanded) {
+                    keys.push(record?.id!);
+                    setCartTableContent(record);
+                  } else {
+                    setCartTableContent(undefined);
+                  }
+                  setExpandedRowKeys(keys);
+                },
+                expandedRowRender: record => (
+                  <>
+                    <Row justify="center">
+                      <Col span={22}>
+                        <Descriptions title="Details">
+                          <Descriptions.Item label="Order ID" className="mt-05">
+                            {record.id}
+                          </Descriptions.Item>
+                          <Descriptions.Item label="User">
+                            {record.customerEmail}
+                          </Descriptions.Item>
+                          <Descriptions.Item label="Paid Status">
+                            {record.paid ? 'Paid' : 'Not paid'}
+                          </Descriptions.Item>
+                          <Descriptions.Item label="Order Amount">
+                            {((record.amount ?? 0) / 100).toFixed(2)}
+                          </Descriptions.Item>
+                          <Descriptions.Item label="Date">
+                            {moment(record.hCreationDate).format('DD/MM/YYYY')}
+                          </Descriptions.Item>
+                        </Descriptions>
+                      </Col>
+                    </Row>
+                    <Row justify="center" className="mt-15">
+                      <Col span={22}>
+                        <Descriptions title="Cart">
+                          <Descriptions.Item>
+                            <CartTable />
+                          </Descriptions.Item>
+                        </Descriptions>
+                      </Col>
+                    </Row>
+                  </>
+                ),
+                rowExpandable: record => record.cart || record.product,
+              }}
             />
           </InfiniteScroll>
         </div>
