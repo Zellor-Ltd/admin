@@ -111,7 +111,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
   const statusMapping: SelectOption = {
     key: 'value',
     label: 'value',
-    value: 'value'.toLowerCase(),
+    value: 'value'.toUpperCase(),
   };
 
   const videoTypeMapping: SelectOption = {
@@ -329,7 +329,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
         fetchVideoFeedV2({
           query: titleFilter,
           brandId: brandFilter?.id,
-          status: statusFilter?.toLowerCase(),
+          status: statusFilter?.toUpperCase(),
           videoType: 'Fan',
           productBrandId: productBrandFilter,
         })
@@ -521,8 +521,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
       {!details && (
         <div className="video-feed mb-1">
           <PageHeader
-            title="Video Feeds"
-            subTitle="List of Feeds"
+            title="Fan Videos"
             extra={[
               <Button
                 key="2"

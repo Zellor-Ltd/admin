@@ -421,7 +421,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
   };
 
   const onSearch = (input: string, option: any) => {
-    return option.label.toLowerCase().includes(input?.toLowerCase());
+    return option.label.toUpperCase().includes(input?.toUpperCase());
   };
 
   const loadProductBrandIcons = (productBrand?: ProductBrand) => {
@@ -666,7 +666,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                 </>
               )}
               <Col lg={24} xs={24}>
-                <Form.Item name="searchTags" label="Hashtags">
+                <Form.Item name="searchTags" label="Search Tags">
                   <ReactTagInput
                     tags={searchTags}
                     placeholder="Type and press enter"
@@ -928,8 +928,8 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                       filterOption={(input, option) =>
                         !!option?.label
                           ?.toString()
-                          .toLowerCase()
-                          .includes(input.toLowerCase())
+                          .toUpperCase()
+                          .includes(input.toUpperCase())
                       }
                       value={currentProductBrand?.id}
                     >
@@ -963,8 +963,8 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                         filterOption={(input, option) =>
                           !!option?.label
                             ?.toString()
-                            .toLowerCase()
-                            .includes(input.toLowerCase())
+                            .toUpperCase()
+                            .includes(input.toUpperCase())
                         }
                         value={currentBrandIcon}
                       >
@@ -1005,8 +1005,8 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                       filterOption={(input, option) =>
                         !!option?.label
                           ?.toString()
-                          .toLowerCase()
-                          .includes(input.toLowerCase())
+                          .toUpperCase()
+                          .includes(input.toUpperCase())
                       }
                       value={currentCreator?.id}
                     >

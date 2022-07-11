@@ -114,7 +114,7 @@ const MultipleFetchDebounceSelect: React.FC<
       setIsFetching(false);
       return;
     }
-    onInput(searchFilter.current?.toLowerCase(), loadNextPage.current).then(
+    onInput(searchFilter.current?.toUpperCase(), loadNextPage.current).then(
       entities => {
         if (loadNextPage.current) loadNextPage.current = false;
         if (entities.length < 30) {
@@ -134,7 +134,7 @@ const MultipleFetchDebounceSelect: React.FC<
     if (!option) return;
     const selectedEntity = fetchedEntities.current.find(
       entity =>
-        entity[optionMapping.value].toLowerCase() === option.value.toLowerCase()
+        entity[optionMapping.value].toUpperCase() === option.value.toUpperCase()
     );
     onChange(option.value, selectedEntity);
   };
@@ -181,7 +181,7 @@ const MultipleFetchDebounceSelect: React.FC<
   const filter = rows => {
     return rows.filter(
       row =>
-        row.label?.toLowerCase().indexOf(_userInput?.toLowerCase() ?? '') > -1
+        row.label?.toUpperCase().indexOf(_userInput?.toUpperCase() ?? '') > -1
     );
   };
 

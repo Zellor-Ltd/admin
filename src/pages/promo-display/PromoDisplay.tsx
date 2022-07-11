@@ -6,7 +6,6 @@ import {
   PageHeader,
   Popconfirm,
   Row,
-  Spin,
   Table,
   Typography,
 } from 'antd';
@@ -23,7 +22,6 @@ import {
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
 import scrollIntoView from 'scroll-into-view';
 import PromoDisplayDetail from './PromoDisplayDetail';
-import InfiniteScroll from 'react-infinite-scroll-component';
 
 const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -32,12 +30,8 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
   const [details, setDetails] = useState<boolean>(false);
   const [currentPromoDisplay, setCurrentPromoDisplay] =
     useState<PromoDisplay>();
-  const [page, setPage] = useState<number>(0);
-  const [eof, setEof] = useState<boolean>(false);
-  const [refreshing, setRefreshing] = useState<boolean>(false);
   const [promoDisplays, setPromoDisplays] = useState<PromoDisplay[]>([]);
   const [filter, setFilter] = useState<string>('');
-  const [content, setContent] = useState<PromoDisplay[]>([]);
 
   useEffect(() => {
     getResources();
@@ -50,33 +44,8 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
 
   const getPromoDisplays = async () => {
     const { results } = await doFetch(fetchPromoDisplays);
-    setContent(results);
-    setRefreshing(true);
+    setPromoDisplays(results);
   };
-
-  const updateDisplayedArray = () => {
-    if (!content.length) {
-      setEof(true);
-      return;
-    }
-
-    const pageToUse = refreshing ? 0 : page;
-    const results = content.slice(pageToUse * 10, pageToUse * 10 + 10);
-
-    setPage(pageToUse + 1);
-    setPromoDisplays(prev => [...prev.concat(results)]);
-
-    if (results.length < 10) setEof(true);
-  };
-
-  useEffect(() => {
-    if (refreshing) {
-      setPromoDisplays([]);
-      setEof(false);
-      updateDisplayedArray();
-      setRefreshing(false);
-    }
-  }, [refreshing]);
 
   useEffect(() => {
     if (!details) {
@@ -85,8 +54,6 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
           `.scrollable-row-${lastViewedIndex}`
         ) as HTMLElement
       );
-
-      if (search(promoDisplays).length < 10) setEof(true);
     }
   }, [details, promoDisplays]);
 
@@ -243,32 +210,14 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
               />
             </Col>
           </Row>
-          <InfiniteScroll
-            dataLength={promoDisplays.length}
-            next={updateDisplayedArray}
-            hasMore={!eof}
-            loader={
-              page !== 0 && (
-                <div className="scroll-message">
-                  <Spin />
-                </div>
-              )
-            }
-            endMessage={
-              <div className="scroll-message">
-                <b>End of results.</b>
-              </div>
-            }
-          >
-            <Table
-              rowClassName={(_, index) => `scrollable-row-${index}`}
-              rowKey="id"
-              columns={columns}
-              dataSource={search(promoDisplays)}
-              loading={loading || refreshing}
-              pagination={false}
-            />
-          </InfiniteScroll>
+          <Table
+            rowClassName={(_, index) => `scrollable-row-${index}`}
+            rowKey="id"
+            columns={columns}
+            dataSource={search(promoDisplays)}
+            loading={loading}
+            pagination={false}
+          />
         </div>
       )}
       {details && (
