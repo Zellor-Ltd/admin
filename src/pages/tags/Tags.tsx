@@ -18,7 +18,7 @@ import scrollIntoView from 'scroll-into-view';
 import TagDetail from './TagDetail';
 
 const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
-  const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
+  const [lastViewedIndex, setLastViewedIndex] = useState<number>(0);
   const [details, setDetails] = useState<boolean>(false);
   const [currentTag, setCurrentTag] = useState<Tag>();
   const { usePageFilter } = useContext(AppContext);
@@ -29,7 +29,6 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
   const [tags, setTags] = useState<Tag[]>([]);
-  const [loaded, setLoaded] = useState<boolean>(false);
 
   useEffect(() => {
     if (refreshing) {
@@ -62,11 +61,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
   };
 
   const fetch = () => {
-    if (!loaded) {
-      setRefreshing(true);
-      setLoaded(true);
-      return;
-    }
+    setRefreshing(true);
     updateDisplayedArray();
   };
 
@@ -189,12 +184,8 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
   ];
 
   const refreshItem = (record: Tag) => {
-    if (loaded) {
-      tags[lastViewedIndex] = record;
-      setTags([...tags]);
-    } else {
-      setTags([record]);
-    }
+    tags[lastViewedIndex] = record;
+    setTags([...tags]);
   };
 
   const onSaveTag = (record: Tag) => {
