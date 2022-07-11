@@ -245,7 +245,7 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
     setEof(false);
     setFetchingGuests(true);
 
-    fetchToBuffer(userInput?.toLowerCase()).then(data => {
+    fetchToBuffer(userInput?.toUpperCase()).then(data => {
       setGuests([...buffer].concat(data));
       setFetchingGuests(false);
     });

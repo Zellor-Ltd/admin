@@ -196,7 +196,7 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
   ];
 
   const search = rows => {
-    return rows.filter(row => row.id.toLowerCase().indexOf(filter) > -1);
+    return rows.filter(row => row.id.toUpperCase().indexOf(filter) > -1);
   };
 
   const refreshItem = (record: PromoDisplay) => {

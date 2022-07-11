@@ -334,7 +334,7 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
   };
 
   const onSearch = (input: any, option: any) => {
-    return option.label?.toLowerCase().includes(input.toLowerCase());
+    return option.label?.toUpperCase().includes(input.toUpperCase());
   };
 
   const onChangecreator = (_: string, entity: Creator) => {

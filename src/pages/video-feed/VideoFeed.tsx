@@ -111,7 +111,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const statusMapping: SelectOption = {
     key: 'value',
     label: 'value',
-    value: 'value'.toLowerCase(),
+    value: 'value'.toUpperCase(),
   };
 
   const videoTypeMapping: SelectOption = {
@@ -329,7 +329,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
         fetchVideoFeedV2({
           query: titleFilter,
           brandId: brandFilter?.id,
-          status: statusFilter?.toLowerCase(),
+          status: statusFilter?.toUpperCase(),
           videoType: videoTypeFilter,
           productBrandId: productBrandFilter,
         })
@@ -640,8 +640,8 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                     filterOption={(input, option) =>
                       !!option?.children
                         ?.toString()
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
+                        .toUpperCase()
+                        .includes(input.toUpperCase())
                     }
                     allowClear={true}
                     showSearch={true}
