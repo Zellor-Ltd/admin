@@ -127,6 +127,7 @@ export const fetchVideoFeedV2 = ({
   productBrandId,
   startIndex,
   categoryId,
+  dateSort,
 }: {
   query?: string;
   brandId?: string;
@@ -135,6 +136,7 @@ export const fetchVideoFeedV2 = ({
   productBrandId?: string;
   startIndex?: number;
   categoryId?: string;
+  dateSort?: string;
 }) =>
   instance.put(`Disco/Feed/Adm/List/`, {
     query,
@@ -144,6 +146,7 @@ export const fetchVideoFeedV2 = ({
     productBrandId,
     startIndex,
     categoryId,
+    dateSort,
   });
 
 export const fetchVideoFeed2 = () => instance.get('Wi/Ep/GetVideoFeed');

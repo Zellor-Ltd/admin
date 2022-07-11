@@ -78,8 +78,8 @@ const ManualPayment: React.FC<ManualPaymentProps> = ({
                   filterOption={(input, option) =>
                     !!option?.children
                       ?.toString()
-                      .toLowerCase()
-                      .includes(input.toLowerCase())
+                      .toUpperCase()
+                      .includes(input.toUpperCase())
                   }
                 >
                   {creators.map((curr: any) => (
