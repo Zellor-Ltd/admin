@@ -521,8 +521,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
       {!details && (
         <div className="video-feed mb-1">
           <PageHeader
-            title="Video Feeds"
-            subTitle="List of Feeds"
+            title="Fan Videos"
             extra={[
               <Button
                 key="2"
