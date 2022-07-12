@@ -1,18 +1,9 @@
-import {
-  Button,
-  Col,
-  Input,
-  PageHeader,
-  Row,
-  Spin,
-  Table,
-  Typography,
-} from 'antd';
+import { Button, Col, PageHeader, Row, Spin, Table, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { useRequest } from 'hooks/useRequest';
 import { Brand } from 'interfaces/Brand';
 import { Tag } from 'interfaces/Tag';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { fetchBrands, fetchTags } from 'services/DiscoClubService';
 import SimpleSelect from 'components/select/SimpleSelect';
@@ -20,9 +11,11 @@ import { SelectOption } from '../../interfaces/SelectOption';
 import scrollIntoView from 'scroll-into-view';
 import Step2 from './Step2';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import MultipleFetchDebounceSelect from 'components/select/MultipleFetchDebounceSelect';
+import { usePrevious } from 'react-use';
 
 const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
-  const [loading, setLoading] = useState<boolean>(false);
+  const [, setLoading] = useState<boolean>(false);
   const { doFetch } = useRequest({ setLoading });
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
   const [isFetchingBrands, setIsFetchingBrands] = useState(false);
@@ -30,13 +23,20 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [details, setDetails] = useState<boolean>(false);
   const [currentTags, setCurrentTags] = useState<Tag[]>([]);
-  const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
-  const [refreshing, setRefreshing] = useState<boolean>(false);
   const [tags, setTags] = useState<Tag[]>([]);
-  const [tagFilter, setTagFilter] = useState<string>('');
   const [brandFilter, setBrandFilter] = useState<string>('');
-  const [content, setContent] = useState<Tag[]>([]);
+  const [userInput, setUserInput] = useState<string>();
+  const [optionsPage, setOptionsPage] = useState<number>(0);
+  const [tagsPage, setTagsPage] = useState<number>(0);
+  const persistentUserInput = usePrevious(userInput);
+  const [fetchingTags, setFetchingTags] = useState<boolean>(false);
+  const [buffer, setBuffer] = useState<Tag[]>([]);
+  const [loaded, setLoaded] = useState<boolean>(false);
+  const prevPageIsDetails = useRef<boolean>(false);
+  const updatingTable = useRef(false);
+  const scrolling = useRef(false);
+  const mounted = useRef(false);
 
   const optionMapping: SelectOption = {
     key: 'id',
@@ -44,49 +44,11 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
     value: 'id',
   };
 
-  useEffect(() => {
-    getResources();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const getResources = async () => {
-    await getBrands();
-    await getTags();
+  const tagOptionMapping: SelectOption = {
+    key: 'id',
+    label: 'tagName',
+    value: 'id',
   };
-
-  const getBrands = async () => {
-    setIsFetchingBrands(true);
-    const { results }: any = await doFetch(fetchBrands);
-    setIsFetchingBrands(false);
-    setBrands(results);
-  };
-
-  const getTags = async () => {
-    const { results } = await doFetch(() => fetchTags({}));
-    setContent(results);
-    setRefreshing(true);
-  };
-
-  const updateDisplayedArray = () => {
-    if (!content.length) return;
-
-    const pageToUse = refreshing ? 0 : page;
-    const results = content.slice(pageToUse * 10, pageToUse * 10 + 10);
-
-    setPage(pageToUse + 1);
-    setTags(prev => [...prev.concat(results)]);
-
-    if (results.length < 10) setEof(true);
-  };
-
-  useEffect(() => {
-    if (refreshing) {
-      setTags([]);
-      setEof(false);
-      updateDisplayedArray();
-      setRefreshing(false);
-    }
-  }, [refreshing]);
 
   useEffect(() => {
     if (!details) {
@@ -99,6 +61,60 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
       if (search(tags).length < 10) setEof(true);
     }
   }, [details, tags]);
+
+  useEffect(() => {
+    if (loaded && scrolling.current) setTags([...buffer]);
+  }, [buffer]);
+
+  useEffect(() => {
+    if (!mounted.current) {
+      mounted.current = true;
+      return;
+    }
+
+    prevPageIsDetails.current = false;
+
+    if (!details) {
+      prevPageIsDetails.current = true;
+
+      if (tags.length) {
+        setUserInput(persistentUserInput);
+        setLoaded(true);
+      }
+
+      scrollIntoView(
+        document.querySelector(
+          `.scrollable-row-${lastViewedIndex}`
+        ) as HTMLElement
+      );
+
+      if (!loaded && buffer.length > tags.length) {
+        setTags(buffer);
+        setTagsPage(optionsPage);
+      }
+    }
+  }, [details]);
+
+  useEffect(() => {
+    if (!loaded && tags.length) setLoaded(true);
+  }, [tags]);
+
+  useEffect(() => {
+    getResources();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const getResources = async () => {
+    await getBrands();
+    searchTags();
+  };
+
+  const getBrands = async () => {
+    setIsFetchingBrands(true);
+    const { results }: any = await doFetch(fetchBrands);
+    setIsFetchingBrands(false);
+    setBrands(results);
+  };
 
   const columns: ColumnsType<Tag> = [
     {
@@ -165,8 +181,8 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
   const search = rows => {
     return rows.filter(
       row =>
-        row.tagName.toLowerCase().indexOf(tagFilter) > -1 &&
-        row.brand.brandName.indexOf(brandFilter) > -1
+        row.brand.brandName.toUpperCase().indexOf(brandFilter.toUpperCase()) >
+        -1
     );
   };
 
@@ -188,6 +204,71 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
     setDetails(false);
   };
 
+  const handleChangeTag = async (value?: string) => {
+    if (value) {
+      const entity = buffer.find(
+        tag => tag.tagName.toUpperCase() === value.toUpperCase()
+      );
+      if (entity) setTags([entity]);
+    }
+  };
+
+  const searchTags = () => {
+    if (buffer.length) {
+      setTags(buffer);
+      setTagsPage(optionsPage);
+    } else loadTags();
+  };
+
+  const loadTags = () => {
+    if (prevPageIsDetails.current) return;
+    updatingTable.current = true;
+    setEof(false);
+    setFetchingTags(true);
+
+    fetchToBuffer(userInput?.toLowerCase()).then(data => {
+      setTags([...buffer].concat(data));
+      setFetchingTags(false);
+    });
+  };
+
+  const fetchToBuffer = async (input?: string, loadNextPage?: boolean) => {
+    if (loadNextPage) scrolling.current = true;
+    if (userInput !== input) setUserInput(input);
+    const pageToUse = updatingTable.current
+      ? tagsPage
+      : !!loadNextPage
+      ? optionsPage
+      : 0;
+
+    const response = await doFetch(() =>
+      fetchTags({
+        page: pageToUse,
+        query: input,
+        limit: 30,
+      })
+    );
+
+    if (pageToUse === 0) setBuffer(response.results);
+    else setBuffer(prev => [...prev.concat(response.results)]);
+    setOptionsPage(pageToUse + 1);
+    setTagsPage(pageToUse + 1);
+
+    if (response.results.length < 30 && updatingTable.current) setEof(true);
+    updatingTable.current = false;
+    scrolling.current = false;
+
+    return response.results;
+  };
+
+  const handleKeyDown = (event: any) => {
+    if (event.key === 'Enter' && userInput) {
+      //buffer was set as input was typed
+      setTags(buffer);
+      setTagsPage(optionsPage);
+    }
+  };
+
   return (
     <>
       {!details && (
@@ -204,13 +285,21 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
                   <Typography.Title level={5}>
                     Search by Tag Name
                   </Typography.Title>
-                  <Input
-                    className="mb-1"
-                    value={tagFilter}
-                    onChange={event => {
-                      setTagFilter(event.target.value);
-                    }}
-                  />
+                  <MultipleFetchDebounceSelect
+                    style={{ width: '100%' }}
+                    input={userInput}
+                    loaded={loaded}
+                    onInput={fetchToBuffer}
+                    onChange={handleChangeTag}
+                    onClear={() => setUserInput('')}
+                    options={buffer}
+                    onInputKeyDown={(event: HTMLInputElement) =>
+                      handleKeyDown(event)
+                    }
+                    setEof={setEof}
+                    optionMapping={tagOptionMapping}
+                    placeholder="Type to search a tag"
+                  ></MultipleFetchDebounceSelect>
                 </Col>
                 <Col lg={8} xs={16}>
                   <Typography.Title level={5}>Master Brand</Typography.Title>
@@ -242,10 +331,11 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
           </Row>
           <InfiniteScroll
             dataLength={tags.length}
-            next={updateDisplayedArray}
+            next={loadTags}
             hasMore={!eof}
             loader={
-              page !== 0 && (
+              tagsPage !== 0 &&
+              fetchingTags && (
                 <div className="scroll-message">
                   <Spin />
                 </div>
@@ -263,7 +353,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
               rowKey="id"
               columns={columns}
               dataSource={search(tags)}
-              loading={loading || refreshing}
+              loading={fetchingTags}
               pagination={false}
             />
           </InfiniteScroll>
