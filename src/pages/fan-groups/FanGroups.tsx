@@ -1,13 +1,4 @@
-import {
-  Button,
-  Col,
-  Input,
-  PageHeader,
-  Row,
-  Spin,
-  Table,
-  Typography,
-} from 'antd';
+import { Button, Col, Input, PageHeader, Row, Table, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { useRequest } from 'hooks/useRequest';
 import { FanGroup } from 'interfaces/FanGroup';
@@ -17,7 +8,6 @@ import { RouteComponentProps } from 'react-router-dom';
 import { fetchFanGroups } from 'services/DiscoClubService';
 import scrollIntoView from 'scroll-into-view';
 import FanGroupDetail from './FanGroupDetail';
-import InfiniteScroll from 'react-infinite-scroll-component';
 
 const FanGroups: React.FC<RouteComponentProps> = props => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -25,12 +15,8 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [details, setDetails] = useState<boolean>(false);
   const [currentFanGroup, setCurrentFanGroup] = useState<FanGroup>();
-  const [page, setPage] = useState<number>(0);
-  const [eof, setEof] = useState<boolean>(false);
-  const [refreshing, setRefreshing] = useState<boolean>(false);
   const [fanGroups, setFanGroups] = useState<FanGroup[]>([]);
   const [filter, setFilter] = useState<string>('');
-  const [content, setContent] = useState<FanGroup[]>([]);
 
   useEffect(() => {
     getResources();
@@ -43,33 +29,8 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
 
   const getFanGroups = async () => {
     const { results } = await doFetch(fetchFanGroups);
-    setContent(results);
-    setRefreshing(true);
+    setFanGroups(results);
   };
-
-  const updateDisplayedArray = () => {
-    if (!content.length) {
-      setEof(true);
-      return;
-    }
-
-    const pageToUse = refreshing ? 0 : page;
-    const results = content.slice(pageToUse * 10, pageToUse * 10 + 10);
-
-    setPage(pageToUse + 1);
-    setFanGroups(prev => [...prev.concat(results)]);
-
-    if (results.length < 10) setEof(true);
-  };
-
-  useEffect(() => {
-    if (refreshing) {
-      setFanGroups([]);
-      setEof(false);
-      updateDisplayedArray();
-      setRefreshing(false);
-    }
-  }, [refreshing]);
 
   useEffect(() => {
     if (!details) {
@@ -78,8 +39,6 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
           `.scrollable-row-${lastViewedIndex}`
         ) as HTMLElement
       );
-
-      if (search(fanGroups).length < 10) setEof(true);
     }
   }, [details, fanGroups]);
 
@@ -125,7 +84,9 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
   ];
 
   const search = rows => {
-    return rows.filter(row => row.name.toLowerCase().indexOf(filter) > -1);
+    return rows.filter(
+      row => row.name.toUpperCase().indexOf(filter.toUpperCase()) > -1
+    );
   };
 
   const refreshItem = (record: FanGroup) => {
@@ -167,32 +128,14 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
               />
             </Col>
           </Row>
-          <InfiniteScroll
-            dataLength={fanGroups.length}
-            next={updateDisplayedArray}
-            hasMore={!eof}
-            loader={
-              page !== 0 && (
-                <div className="scroll-message">
-                  <Spin />
-                </div>
-              )
-            }
-            endMessage={
-              <div className="scroll-message">
-                <b>End of results.</b>
-              </div>
-            }
-          >
-            <Table
-              rowClassName={(_, index) => `scrollable-row-${index}`}
-              rowKey="id"
-              columns={columns}
-              dataSource={search(fanGroups)}
-              loading={loading || refreshing}
-              pagination={false}
-            />
-          </InfiniteScroll>
+          <Table
+            rowClassName={(_, index) => `scrollable-row-${index}`}
+            rowKey="id"
+            columns={columns}
+            dataSource={search(fanGroups)}
+            loading={loading}
+            pagination={false}
+          />
         </div>
       )}
       {details && (

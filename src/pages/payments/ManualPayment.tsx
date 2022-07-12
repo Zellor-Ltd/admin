@@ -14,18 +14,18 @@ import { savePayment } from '../../services/DiscoClubService';
 import { Banner } from 'interfaces/Banner';
 import { Creator } from 'interfaces/Creator';
 
-interface PaymentDetailsProps {
+interface ManualPaymentProps {
   creators: Creator[];
   onSave?: (record: Banner) => void;
   onCancel?: () => void;
   setShowModal: (value: boolean) => void;
-  setPaymentDetails: (value: boolean) => void;
+  setManualPayment: (value: boolean) => void;
 }
 
-const PaymentDetails: React.FC<PaymentDetailsProps> = ({
+const ManualPayment: React.FC<ManualPaymentProps> = ({
   creators,
   setShowModal,
-  setPaymentDetails,
+  setManualPayment,
 }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [form] = Form.useForm();
@@ -44,7 +44,7 @@ const PaymentDetails: React.FC<PaymentDetailsProps> = ({
 
   const handleCancel = () => {
     setShowModal(false);
-    setPaymentDetails(false);
+    setManualPayment(false);
   };
 
   return (
@@ -78,8 +78,8 @@ const PaymentDetails: React.FC<PaymentDetailsProps> = ({
                   filterOption={(input, option) =>
                     !!option?.children
                       ?.toString()
-                      .toLowerCase()
-                      .includes(input.toLowerCase())
+                      .toUpperCase()
+                      .includes(input.toUpperCase())
                   }
                 >
                   {creators.map((curr: any) => (
@@ -141,4 +141,4 @@ const PaymentDetails: React.FC<PaymentDetailsProps> = ({
   );
 };
 
-export default PaymentDetails;
+export default ManualPayment;

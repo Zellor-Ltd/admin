@@ -106,8 +106,8 @@ const BrandForm: React.FC<FormProps> = ({
               filterOption={(input, option) =>
                 !!option?.children
                   ?.toString()
-                  .toLowerCase()
-                  .includes(input.toLowerCase())
+                  .toUpperCase()
+                  .includes(input.toUpperCase())
               }
               onChange={(brandId: string) => onChangeBrand(brandId)}
             >
@@ -130,8 +130,8 @@ const BrandForm: React.FC<FormProps> = ({
               filterOption={(input, option) =>
                 !!option?.children
                   ?.toString()
-                  .toLowerCase()
-                  .includes(input.toLowerCase())
+                  .toUpperCase()
+                  .includes(input.toUpperCase())
               }
               onChange={(productBrandName: string) =>
                 onChangeProductBrand(productBrandName)
