@@ -5,7 +5,7 @@ import { Brand } from 'interfaces/Brand';
 import { Tag } from 'interfaces/Tag';
 import { fetchTags } from '../../services/DiscoClubService';
 import { SelectOption } from '../../interfaces/SelectOption';
-import MultipleFetchDebounceSelect from 'components/select/MultipleFetchDebounceSelect';
+import MultipleFetchDebounceSelect from '../../components/select/MultipleFetchDebounceSelect';
 
 interface FormProps {
   setTag: any;
@@ -23,9 +23,10 @@ const TagForm: React.FC<FormProps> = ({
   const [selectedBrandId, setSelectedBrandId] = useState<string>(
     tag?.brand?.id || ''
   );
-  const [selectedTag, setSelectedTag] = useState<string>(tag?.tagName || '');
   const [form] = Form.useForm();
   const [tags, setTags] = useState<any[]>([]);
+  const [userInput, setUserInput] = useState<string | undefined>(tag?.tagName);
+  const [optionsPage, setOptionsPage] = useState<number>(0);
 
   const tagOptionMapping: SelectOption = {
     label: 'tagName',
@@ -33,21 +34,26 @@ const TagForm: React.FC<FormProps> = ({
     key: 'id',
   };
 
-  const getTags = async (query?: string) => {
-    setSelectedTag(query ?? '');
+  const getTags = async (input?: string, loadNextPage?: boolean) => {
+    setUserInput(input);
+    const pageToUse = !!!loadNextPage ? 0 : optionsPage;
     const response: any = await fetchTags({
-      query,
+      page: pageToUse,
+      query: input,
       brandId: selectedBrandId,
       limit: 30,
     });
+    setOptionsPage(pageToUse + 1);
 
-    setTags(response.results);
+    if (pageToUse === 0) setTags(response.results);
+    else setTags(prev => [...prev.concat(response.results)]);
+
     return response.results;
   };
 
   const onChangeTag = (value?: string, _selectedTag?: any) => {
     if (_selectedTag) {
-      setSelectedTag(_selectedTag.label);
+      setUserInput(value);
       const position = _selectedTag.position?.map(position => {
         return {
           x: position.x ?? form.getFieldValue(['position', 0, 'x']),
@@ -62,9 +68,8 @@ const TagForm: React.FC<FormProps> = ({
       });
       form.setFieldsValue({ position: position });
       setTag(_selectedTag);
-      setSelectedTag(value ?? '');
     } else {
-      setSelectedTag('');
+      setUserInput('');
       setTags([]);
       getTags();
     }
@@ -114,7 +119,7 @@ const TagForm: React.FC<FormProps> = ({
               optionMapping={tagOptionMapping}
               placeholder="Type to search a Tag"
               disabled={!selectedBrandId}
-              input={selectedTag}
+              input={userInput}
               options={tags}
             ></MultipleFetchDebounceSelect>
           </Form.Item>

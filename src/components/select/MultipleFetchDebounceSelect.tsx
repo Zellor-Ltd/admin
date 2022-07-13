@@ -114,20 +114,18 @@ const MultipleFetchDebounceSelect: React.FC<
       setIsFetching(false);
       return;
     }
-    onInput(searchFilter.current?.toUpperCase(), loadNextPage.current).then(
-      entities => {
-        if (loadNextPage.current) loadNextPage.current = false;
-        if (entities.length < 30) {
-          setEoo(true);
-          if (loaded) setEof?.(true);
-        }
-
-        fetchedEntities.current = entities;
-        const fetchedOptions = entities?.map(optionFactory);
-        _setOptions(prev => [...prev.concat(fetchedOptions)]);
-        setIsFetching(false);
+    onInput(searchFilter.current, loadNextPage.current).then(entities => {
+      if (loadNextPage.current) loadNextPage.current = false;
+      if (entities.length < 30) {
+        setEoo(true);
+        if (loaded) setEof?.(true);
       }
-    );
+
+      fetchedEntities.current = entities;
+      const fetchedOptions = entities?.map(optionFactory);
+      _setOptions(prev => [...prev.concat(fetchedOptions)]);
+      setIsFetching(false);
+    });
   };
 
   const _onChange = (option?: SelectOption) => {
