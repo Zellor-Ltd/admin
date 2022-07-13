@@ -127,6 +127,7 @@ export const fetchVideoFeedV2 = ({
   productBrandId,
   startIndex,
   categoryId,
+  dateSort,
 }: {
   query?: string;
   brandId?: string;
@@ -135,6 +136,7 @@ export const fetchVideoFeedV2 = ({
   productBrandId?: string;
   startIndex?: number;
   categoryId?: string;
+  dateSort?: string;
 }) =>
   instance.put(`Disco/Feed/Adm/List/`, {
     query,
@@ -144,6 +146,7 @@ export const fetchVideoFeedV2 = ({
     productBrandId,
     startIndex,
     categoryId,
+    dateSort,
   });
 
 export const fetchVideoFeed2 = () => instance.get('Wi/Ep/GetVideoFeed');
@@ -770,4 +773,109 @@ export const fetchFeedTemplates = () =>
 
 export const saveFeedTemplate = (params: any) => {
   return instance.put('Disco/Feed/Adm/UpdateTemplate', params);
+};
+
+export const fetchCommissions = ({
+  creatorId,
+  status,
+}: {
+  creatorId?: string;
+  status?: string;
+}) =>
+  instance.post(`Disco/Creator/Adm/Commission/List`, {
+    creatorId,
+    status,
+  });
+
+export const fetchCommissionDetails = (id: string) =>
+  instance.get(`Disco/Creator/Adm/Commission/List/${id}`);
+
+export const fetchCommissionedItem = ({
+  creatorId,
+  commissionId,
+  quantity,
+}: {
+  creatorId: string;
+  commissionId: string;
+  quantity: number;
+}) =>
+  instance.put(`Disco/Creator/Adm/Commission/List`, {
+    creatorId,
+    commissionId,
+    quantity,
+  });
+
+export const saveCommission = ({
+  creatorId,
+  totalDue,
+  items,
+}: {
+  creatorId: string;
+  totalDue: number;
+  items: string[];
+}) => {
+  return instance.put('Disco/Creator/Adm/Commission/Pay', {
+    creatorId,
+    totalDue,
+    items,
+  });
+};
+
+export const saveManualCommission = ({
+  date,
+  feedId,
+  creatorId,
+  productId,
+  quantity,
+}: {
+  date: string;
+  feedId: string;
+  creatorId: string;
+  productId: string;
+  quantity: number;
+}) => {
+  return instance.put('Disco/Creator/Adm/Commission/Add', {
+    date,
+    feedId,
+    creatorId,
+    productId,
+    quantity,
+  });
+};
+
+export const fetchPayments = ({
+  creatorId,
+  status,
+  dateFrom,
+  dateTo,
+  page = 0,
+}: {
+  creatorId?: string;
+  status?: string;
+  dateFrom?: string;
+  dateTo?: string;
+  page?: number;
+}) =>
+  instance.post(`Disco/Creator/Adm/Payment/List/${page}`, {
+    creatorId,
+    status,
+    dateFrom,
+    dateTo,
+    page,
+  });
+
+export const savePayment = ({
+  creatorId,
+  description,
+  amount,
+}: {
+  creatorId: string;
+  description: string;
+  amount: number;
+}) => {
+  return instance.put('Disco/Creator/Adm/OneOffPayment', {
+    creatorId,
+    description,
+    amount,
+  });
 };

@@ -1,18 +1,11 @@
 import React, { useState } from 'react';
 
-import {
-  AutoComplete,
-  Button,
-  Col,
-  Form,
-  InputNumber,
-  Row,
-  Select,
-} from 'antd';
+import { Button, Col, Form, InputNumber, Row, Select } from 'antd';
 import { Brand } from 'interfaces/Brand';
 import { Tag } from 'interfaces/Tag';
 import { fetchTags } from '../../services/DiscoClubService';
 import { SelectOption } from '../../interfaces/SelectOption';
+import MultipleFetchDebounceSelect from '../../components/select/MultipleFetchDebounceSelect';
 
 interface FormProps {
   setTag: any;
@@ -30,38 +23,37 @@ const TagForm: React.FC<FormProps> = ({
   const [selectedBrandId, setSelectedBrandId] = useState<string>(
     tag?.brand?.id || ''
   );
-  const [selectedTag, setSelectedTag] = useState<string>(tag?.tagName || '');
   const [form] = Form.useForm();
   const [tags, setTags] = useState<any[]>([]);
-  const [filteredTags, setFilteredTags] = useState<any[]>([]);
+  const [userInput, setUserInput] = useState<string | undefined>(tag?.tagName);
+  const [optionsPage, setOptionsPage] = useState<number>(0);
 
-  const tagOptionsMapping: SelectOption = {
+  const tagOptionMapping: SelectOption = {
     label: 'tagName',
     value: 'tagName',
     key: 'id',
   };
 
-  const optionFactory = (option: any) => {
-    return {
-      label: option[tagOptionsMapping.label],
-      value: option[tagOptionsMapping.value],
-      key: option[tagOptionsMapping.value],
-    };
-  };
-
-  const getTags = async (query: string) => {
+  const getTags = async (input?: string, loadNextPage?: boolean) => {
+    setUserInput(input);
+    const pageToUse = !!!loadNextPage ? 0 : optionsPage;
     const response: any = await fetchTags({
-      query,
+      page: pageToUse,
+      query: input,
       brandId: selectedBrandId,
       limit: 30,
     });
+    setOptionsPage(pageToUse + 1);
+
+    if (pageToUse === 0) setTags(response.results);
+    else setTags(prev => [...prev.concat(response.results)]);
 
     return response.results;
   };
 
-  const onChangeTag = (key: string, _selectedTag: any) => {
-    setSelectedTag(_selectedTag.label);
+  const onChangeTag = (value?: string, _selectedTag?: any) => {
     if (_selectedTag) {
+      setUserInput(value);
       const position = _selectedTag.position?.map(position => {
         return {
           x: position.x ?? form.getFieldValue(['position', 0, 'x']),
@@ -76,6 +68,10 @@ const TagForm: React.FC<FormProps> = ({
       });
       form.setFieldsValue({ position: position });
       setTag(_selectedTag);
+    } else {
+      setUserInput('');
+      setTags([]);
+      getTags();
     }
   };
 
@@ -86,19 +82,6 @@ const TagForm: React.FC<FormProps> = ({
       form.setFieldsValue({ brand: selectedBrand });
     }
     form.setFieldsValue({ tagName: '' });
-  };
-
-  const onSearchTag = (input: string) => {
-    setTimeout(async () => {
-      const validTags = await getTags(input);
-      validTags.forEach(tag => {
-        tag.value = tag.tagName;
-        tag.key = tag.id;
-        tag.label = tag.tagName;
-      });
-      setTags(validTags);
-      setFilteredTags(validTags);
-    }, 500);
   };
 
   return (
@@ -128,16 +111,17 @@ const TagForm: React.FC<FormProps> = ({
         </Col>
         <Col lg={12} xs={24}>
           <Form.Item name={'tagName'} label="Tag" rules={[{ required: true }]}>
-            <AutoComplete
-              onFocus={() => getTags('')}
+            <MultipleFetchDebounceSelect
               style={{ width: '100%' }}
-              options={filteredTags}
-              onSelect={(_, tag) => onChangeTag(_, tag)}
-              onSearch={onSearchTag}
+              onInput={getTags}
+              onChange={onChangeTag}
+              onClear={onChangeTag}
+              optionMapping={tagOptionMapping}
               placeholder="Type to search a Tag"
               disabled={!selectedBrandId}
-              value={selectedTag}
-            />
+              input={userInput}
+              options={tags}
+            ></MultipleFetchDebounceSelect>
           </Form.Item>
         </Col>
         <Col lg={3} xs={24}>

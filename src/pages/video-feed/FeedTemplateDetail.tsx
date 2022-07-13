@@ -29,7 +29,7 @@ import { Segment } from 'interfaces/Segment';
 import { Tag } from 'interfaces/Tag';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { saveVideoFeed } from 'services/DiscoClubService';
+import { fetchLinks, saveFeedTemplate } from 'services/DiscoClubService';
 import BrandForm from './BrandForm';
 import TagForm from './TagForm';
 import './VideoFeed.scss';
@@ -179,7 +179,7 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
       return segment;
     });
 
-    const response = await doRequest(() => saveVideoFeed(item));
+    const response = await doRequest(() => saveFeedTemplate(item));
     item.id ? onSave?.(item) : onSave?.({ ...item, id: response.result });
     if (!response.result) setDetails?.(false);
   };
@@ -299,6 +299,7 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
     templateForm.setFieldsValue({
       selectedId: value,
       selectedFeedTitle: productBrand?.brandName,
+      selectedIconUrl: undefined,
     });
   };
 
@@ -333,7 +334,7 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
   };
 
   const onSearch = (input: any, option: any) => {
-    return option.label?.toLowerCase().includes(input.toLowerCase());
+    return option.label?.toUpperCase().includes(input.toUpperCase());
   };
 
   const onChangecreator = (_: string, entity: Creator) => {
@@ -527,13 +528,7 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
                 </Form.Item>
               </Col>
               <Col lg={12} xs={24}>
-                <Form.Item
-                  name="videoType"
-                  label="Video Type"
-                  rules={[
-                    { required: true, message: `Video Type is required.` },
-                  ]}
-                >
+                <Form.Item name="videoType" label="Video Type">
                   <Select mode="multiple">
                     <Select.Option value="Feed">Feed</Select.Option>
                     <Select.Option value="Brand">Store</Select.Option>
@@ -694,16 +689,7 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
             <Col sm={12} lg={6}>
               {selectedOptions === 'productBrand' && (
                 <>
-                  <Form.Item
-                    name="selectedId"
-                    label="Product Brand"
-                    rules={[
-                      {
-                        required: true,
-                        message: `Product Brand is required.`,
-                      },
-                    ]}
-                  >
+                  <Form.Item name="selectedId" label="Product Brand">
                     <Select
                       placeholder="Select a brand"
                       disabled={isFetchingProductBrand}
@@ -732,12 +718,6 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
                     <Form.Item
                       name="selectedIconUrl"
                       label="Product Brand Icon"
-                      rules={[
-                        {
-                          required: true,
-                          message: `Product Brand Icon is required.`,
-                        },
-                      ]}
                     >
                       <Select
                         placeholder="Select an icon"
@@ -786,7 +766,7 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
                       }
                       style={{ width: '100%' }}
                       selectedOption={currentcreator?.firstName}
-                      optionsMapping={creatorMapping}
+                      optionMapping={creatorMapping}
                       placeholder={'Select a creator'}
                       loading={false}
                       disabled={false}

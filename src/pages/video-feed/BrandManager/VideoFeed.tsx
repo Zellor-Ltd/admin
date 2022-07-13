@@ -7,7 +7,7 @@ import {
 import {
   Button,
   Col,
-  Collapse,
+  DatePicker,
   Form,
   Input,
   InputNumber,
@@ -51,7 +51,6 @@ import { useRequest } from 'hooks/useRequest';
 import moment from 'moment';
 
 const { Content } = Layout;
-const { Panel } = Collapse;
 
 const reduceSegmentsTags = (packages: Segment[]) => {
   return packages?.reduce((acc: number, curr: Segment) => {
@@ -91,6 +90,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const [categoryFilter, setCategoryFilter] = useState<string>();
   const [indexFilter, setIndexFilter] = useState<number>();
   const [creatorFilter, setCreatorFilter] = useState<string>();
+  const [dateSortFilter, setDateSortFilter] = useState<string>();
 
   const masterBrandMapping: SelectOption = {
     key: 'id',
@@ -113,7 +113,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const statusMapping: SelectOption = {
     key: 'value',
     label: 'value',
-    value: 'value'.toLowerCase(),
+    value: 'value'.toUpperCase(),
   };
 
   const videoTypeMapping: SelectOption = {
@@ -195,7 +195,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     {
       title: 'Segments',
       dataIndex: 'package',
-      render: (pack: Array<any> = []) => <AntTag>{pack?.length ?? '0'}</AntTag>,
+      render: (pack: Array<any> = []) => <AntTag>{pack?.length ?? 0}</AntTag>,
       width: '5%',
       align: 'center',
     },
@@ -345,9 +345,10 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
         fetchVideoFeedV2({
           query: titleFilter,
           brandId: brandFilter?.id,
-          status: statusFilter?.toLowerCase(),
+          status: statusFilter?.toUpperCase(),
           videoType: videoTypeFilter,
           productBrandId: productBrandFilter,
+          dateSort: dateSortFilter,
         })
       );
       setFeedItems(results);
@@ -518,7 +519,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                 onChange={(_, brand) => setBrandFilter(brand)}
                 style={{ width: '100%' }}
                 selectedOption={brandFilter?.id}
-                optionsMapping={masterBrandMapping}
+                optionMapping={masterBrandMapping}
                 placeholder={'Select a Master Brand'}
                 loading={isFetchingBrands}
                 disabled={isFetchingBrands}
@@ -532,7 +533,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                 onChange={id => setProductBrandFilter(id as any)}
                 style={{ width: '100%' }}
                 selectedOption={productBrandFilter}
-                optionsMapping={productBrandMapping}
+                optionMapping={productBrandMapping}
                 placeholder={'Select a Product Brand'}
                 loading={isFetchingProductBrands}
                 disabled={isFetchingProductBrands}
@@ -546,7 +547,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                 onChange={status => setStatusFilter(status)}
                 style={{ width: '100%' }}
                 selectedOption={statusFilter}
-                optionsMapping={statusMapping}
+                optionMapping={statusMapping}
                 placeholder={'Select a status'}
                 allowClear
               />
@@ -560,7 +561,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                 }
                 style={{ width: '100%' }}
                 selectedOption={categoryFilter}
-                optionsMapping={categoryMapping}
+                optionMapping={categoryMapping}
                 placeholder={'Select a Category'}
                 allowClear
                 loading={isFetchingCategories}
@@ -574,7 +575,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                 onChange={videoType => setVideoTypeFilter(videoType)}
                 style={{ width: '100%' }}
                 selectedOption={videoTypeFilter}
-                optionsMapping={videoTypeMapping}
+                optionMapping={videoTypeMapping}
                 placeholder={'Select a video type'}
                 allowClear
               />
@@ -634,24 +635,156 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
               isMobile ? 'sticky-filter-box' : 'mb-1 sticky-filter-box'
             }
           >
-            {isMobile && (
-              <Col span={24}>
-                <Collapse ghost className="custom-collapse mt-05">
-                  <Panel header="Filter Search" key="1">
-                    <Filters />
-                  </Panel>
-                </Collapse>
-              </Col>
-            )}
-            {!isMobile && <Filters />}
             <Col lg={24} xs={24}>
               <Row justify="end" className={isMobile ? 'mt-15' : ''}>
-                <Col>
-                  <Button type="primary" onClick={fetch} loading={loading}>
-                    Search
-                    <SearchOutlined style={{ color: 'white' }} />
-                  </Button>
+                <Col lg={4} xs={12}>
+                  <Typography.Title level={5}>Master Brand</Typography.Title>
+                  <SimpleSelect
+                    data={brands}
+                    onChange={(_, brand) => setBrandFilter(brand)}
+                    style={{ width: '100%' }}
+                    selectedOption={brandFilter?.id}
+                    optionMapping={masterBrandMapping}
+                    placeholder={'Select a master brand'}
+                    loading={isFetchingBrands}
+                    disabled={isFetchingBrands}
+                    allowClear={true}
+                  />
                 </Col>
+                <Col lg={4} xs={12}>
+                  <Typography.Title level={5}>Product Brand</Typography.Title>
+                  <SimpleSelect
+                    data={productBrands}
+                    onChange={id => setProductBrandFilter(id as any)}
+                    style={{ width: '100%' }}
+                    selectedOption={productBrandFilter}
+                    optionMapping={productBrandMapping}
+                    placeholder={'Select a product brand'}
+                    loading={isFetchingProductBrands}
+                    disabled={isFetchingProductBrands}
+                    allowClear={true}
+                  />
+                </Col>
+                <Col lg={4} xs={12}>
+                  <Typography.Title level={5}>Status</Typography.Title>
+                  <SimpleSelect
+                    data={statusList}
+                    onChange={status => setStatusFilter(status)}
+                    style={{ width: '100%' }}
+                    selectedOption={statusFilter}
+                    optionMapping={statusMapping}
+                    placeholder={'Select a status'}
+                    allowClear={true}
+                  />
+                </Col>
+                <Col lg={4} xs={12}>
+                  <Typography.Title level={5}>Category</Typography.Title>
+                  <SimpleSelect
+                    data={categories}
+                    onChange={(_, category) =>
+                      setCategoryFilter(category?.name ?? '')
+                    }
+                    style={{ width: '100%' }}
+                    selectedOption={categoryFilter}
+                    optionMapping={categoryMapping}
+                    placeholder={'Select a category'}
+                    allowClear={true}
+                    loading={isFetchingCategories}
+                    disabled={isFetchingCategories}
+                  />
+                </Col>
+                <Col lg={4} xs={12}>
+                  <Typography.Title level={5}>Video Type</Typography.Title>
+                  <SimpleSelect
+                    data={videoTypeList}
+                    onChange={videoType => setVideoTypeFilter(videoType)}
+                    style={{ width: '100%' }}
+                    selectedOption={videoTypeFilter}
+                    optionMapping={videoTypeMapping}
+                    placeholder={'Select a video type'}
+                    allowClear={true}
+                  />
+                </Col>
+                <Col lg={4} xs={12}>
+                  <Typography.Title level={5}>Start Index</Typography.Title>
+                  <InputNumber
+                    min={0}
+                    onChange={startIndex =>
+                      setIndexFilter(startIndex ?? undefined)
+                    }
+                    placeholder="Select an index"
+                  />
+                </Col>
+                <Col lg={4} xs={12}>
+                  <Typography.Title level={5}>Creator</Typography.Title>
+                  <Select
+                    placeholder="Select a creator"
+                    disabled={!creators.length}
+                    onChange={setCreatorFilter}
+                    style={{ width: '100%' }}
+                    filterOption={(input, option) =>
+                      !!option?.children
+                        ?.toString()
+                        .toUpperCase()
+                        .includes(input.toUpperCase())
+                    }
+                    allowClear={true}
+                    showSearch={true}
+                  >
+                    {creators.map((curr: any) => (
+                      <Select.Option
+                        key={curr.id}
+                        value={curr.firstName}
+                        label={curr.firstName}
+                      >
+                        {curr.firstName}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Col>
+                <Col lg={4} xs={12}>
+                  <Typography.Title level={5}>Date Sort</Typography.Title>
+
+                  <Select
+                    onChange={setDateSortFilter}
+                    placeholder="Select a sorting option"
+                    style={{ width: '100%' }}
+                    filterOption={(input, option) =>
+                      !!option?.children
+                        ?.toString()
+                        .toLowerCase()
+                        .includes(input.toLowerCase())
+                    }
+                    allowClear={true}
+                    showSearch={true}
+                  >
+                    <Select.Option
+                      key="newestFirst"
+                      value="Newest First"
+                      label="Newest First"
+                    >
+                      Newest First
+                    </Select.Option>
+                    <Select.Option
+                      key="oldestFirst"
+                      value="Oldest First"
+                      label="Oldest First"
+                    >
+                      Oldest First
+                    </Select.Option>
+                    <Select.Option key="none" value="None" label="None">
+                      None
+                    </Select.Option>
+                  </Select>
+                </Col>
+              </Row>
+            </Col>
+            <Col lg={24} xs={24}>
+              <Row justify="end">
+                <Button type="primary" onClick={fetch} loading={loading}>
+                  Search
+                  <SearchOutlined style={{ color: 'white' }} />
+                </Button>
               </Row>
             </Col>
           </Row>

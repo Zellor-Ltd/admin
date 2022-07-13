@@ -1,11 +1,16 @@
-import { CalendarOutlined, SearchOutlined } from '@ant-design/icons';
 import {
-  AutoComplete,
+  CalendarOutlined,
+  LoadingOutlined,
+  SearchOutlined,
+} from '@ant-design/icons';
+import {
   Button,
   Col,
   Collapse,
   DatePicker,
+  Descriptions,
   Input,
+  List,
   message,
   PageHeader,
   Row,
@@ -13,6 +18,7 @@ import {
   Space,
   Spin,
   Table,
+  Tooltip,
   Typography,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
@@ -31,20 +37,22 @@ import {
   saveOrder,
 } from 'services/DiscoClubService';
 import CopyOrderToClipboard from 'components/CopyOrderToClipboard';
-import SimpleSelect from 'components/select/SimpleSelect';
 import { SelectOption } from 'interfaces/SelectOption';
 import scrollIntoView from 'scroll-into-view';
 import FanDetail from 'pages/fans/FanDetail';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useMount } from 'react-use';
+import MultipleFetchDebounceSelect from 'components/select/MultipleFetchDebounceSelect';
 import { useRequest } from 'hooks/useRequest';
-
-const { Panel } = Collapse;
+import { BaseOptionType } from 'antd/lib/cascader';
 
 const Orders: React.FC<RouteComponentProps> = ({ location }) => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const { doFetch } = useRequest({ setLoading: setLoading });
   const [orderUpdateList, setOrderUpdateList] = useState<boolean[]>([]);
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [currentFan, setCurrentFan] = useState<Fan>();
+  const [selectedUser, setSelectedUser] = useState<Fan>();
   const [details, setDetails] = useState<boolean>(false);
   const [fans, setFans] = useState<Fan[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
@@ -54,16 +62,26 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   const [loaded, setLoaded] = useState<boolean>(false);
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
-  const { doFetch } = useRequest({ setLoading });
   const [ordersSettings, setOrdersSettings] = useState([]);
-  const [fanFilter, setFanFilter] = useState<string>('');
-  const [brandFilter, setBrandFilter] = useState<string>();
-  const [options, setOptions] = useState<
-    { label: string; value: string; key: string }[]
-  >([]);
+  const [brandId, setBrandId] = useState<string>();
+  const [optionsPage, setOptionsPage] = useState<number>(0);
   const [filter, setFilter] = useState<any[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
+  const [fanFilterInput, setFanFilterInput] = useState<string>();
+  const [refreshing, setRefreshing] = useState<boolean>(false);
+  const shouldUpdateDueDate = useRef(false);
+  const originalOrderDueDate = useRef<Record<string, Date | undefined>>({});
+  const [updatingOrderDueDate, setUpdatingOrderDueDate] = useState<
+    Record<string, boolean>
+  >({});
+  const [cartTableContent, setCartTableContent] = useState<any>();
+  const [expandedRowKeys, setExpandedRowKeys] = useState<string[]>();
+
+  const fanOptionMapping: SelectOption = {
+    key: 'id',
+    label: 'user',
+    value: 'user',
+  };
   const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
 
   const handleResize = () => {
@@ -78,70 +96,66 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     window.addEventListener('resize', handleResize);
   });
 
-  const fetchUsers = async (_query?: string) => {
-    const pageToUse = loading ? 0 : page;
-    const response: any = await fetchFans({
-      page: pageToUse,
-      query: _query,
-    });
-
-    setPage(pageToUse + 1);
-
-    const optionFactory = (option: any) => {
-      return {
-        label: option[fanOptionsMapping.label],
-        value: option[fanOptionsMapping.value],
-        key: option[fanOptionsMapping.value],
-      };
-    };
-
-    const validUsers = response.results.filter(
-      (fan: Fan) => !fan.userName?.includes('guest')
-    );
-
-    if (validUsers.length < 30) setEof(true);
-
-    setOptions(validUsers.map(optionFactory));
-
-    setFans(validUsers);
-  };
-
-  const optionsMapping: SelectOption = {
-    key: 'id',
-    label: 'brandName',
-    value: 'id',
-  };
-
-  const fanOptionsMapping: SelectOption = {
-    key: 'id',
-    label: 'user',
-    value: 'user',
-  };
-
   useMount(async () => {
     const response: any = await fetchSettings();
     setOrdersSettings(response.results[0].order);
   });
 
-  const fetch = async () => {
+  useEffect(() => {
+    if (refreshing) {
+      setOrders([]);
+      setEof(false);
+      fetch();
+      setRefreshing(false);
+    }
+  }, [refreshing]);
+
+  useEffect(() => {
+    if (loaded || brandId || selectedUser) {
+      setPage(0);
+      setRefreshing(true);
+    }
+  }, [brandId, selectedUser]);
+
+  const getFans = async (input?: string, loadNextPage?: boolean) => {
+    const pageToUse = !!!loadNextPage ? 0 : optionsPage;
+    if (fanFilterInput !== input) setFanFilterInput(input);
+    const response: any = await fetchFans({
+      page: pageToUse,
+      query: input,
+    });
+    setOptionsPage(pageToUse + 1);
+
+    const validUsers = response.results.filter(
+      (fan: Fan) => !fan.userName?.includes('guest')
+    );
+
+    if (pageToUse === 0) setFans(validUsers);
+    else setFans(prev => [...prev.concat(validUsers)]);
+    return response.results;
+  };
+
+  const fetch = async (loadNextPage?: boolean) => {
+    const pageToUse = loadNextPage ? page : 0;
     const { results }: any = await doFetch(() =>
       fetchOrders({
-        page: 0,
-        brandId: brandFilter,
-        userId: fanFilter,
+        page: pageToUse,
+        brandId: brandId,
+        userId: selectedUser?.id,
       })
     );
+    setPage(pageToUse + 1);
+    if (results.length < 50) setEof(true);
     const validOrders = results.filter(
       (order: Order) => !!(order.product || order.cart)
     );
-    setOrders(prev => [...prev.concat(validOrders)]);
-    if (validOrders.length < 10) setEof(true);
+    if (pageToUse === 0) setOrders(validOrders);
+    else setOrders(prev => [...prev.concat(validOrders)]);
     setLoaded(true);
   };
 
   const loadNext = async () => {
-    if (loaded) setPage(prev => prev + 1);
-    fetch();
+    fetch(true);
   };
 
   const handleSearch = (selectedKeys: any, confirm: any, dataIndex: any) => {
@@ -157,10 +171,10 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   const handleSelectChange = async (
     value: string,
     order: Order,
-    orderIndex: number
+    index: number
   ) => {
     const currentOrderUpdateList = [...orderUpdateList];
-    currentOrderUpdateList[orderIndex] = true;
+    currentOrderUpdateList[index] = true;
     setOrderUpdateList(currentOrderUpdateList);
     await saveOrder({
       ...order,
@@ -168,14 +182,14 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     });
 
     const _orders = [...orders];
-    _orders[orderIndex].hLastUpdate = moment
+    _orders[index].hLastUpdate = moment
       .utc()
       .format('YYYY-MM-DDTHH:mm:ss.SSSSSSSZ');
     setOrders(_orders);
 
     message.success('Changes saved!');
     setOrderUpdateList(prev => {
-      prev[orderIndex] = false;
+      prev[index] = false;
       return [...prev];
     });
   };
@@ -199,7 +213,6 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
           `.scrollable-row-${lastViewedIndex}`
         ) as HTMLElement
       );
-      if (search(orders).length < 10) setEof(true);
     }
   }, [details, orders]);
 
@@ -267,7 +280,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     ),
     onFilter: (value: any, record: any) => {
       const fan = getFan(record.userid);
-      return fan?.user.includes(value.toLowerCase()) || false;
+      return fan?.user.includes(value.toUpperCase()) || false;
     },
     onFilterDropdownVisibleChange: (visible: any) => {
       if (visible) {
@@ -289,6 +302,56 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     },
   });
 
+  const onChangeColumnDate = (value: Date, order: Order) => {
+    for (let i = 0; i < orders.length; i++) {
+      if (orders[i].id === order.id) {
+        if (originalOrderDueDate.current[order.id!] === undefined) {
+          originalOrderDueDate.current[order.id!] = order.index;
+        }
+
+        shouldUpdateDueDate.current =
+          originalOrderDueDate.current[order.id!] !== value;
+
+        orders[i].dueDate = value;
+        setOrders([...orders]);
+        break;
+      }
+    }
+  };
+
+  const onBlurColumnDate = async (order: Order) => {
+    if (!shouldUpdateDueDate.current) {
+      return;
+    }
+    setUpdatingOrderDueDate(prev => {
+      const newValue = {
+        ...prev,
+      };
+      newValue[order.id!] = true;
+
+      return newValue;
+    });
+    try {
+      await saveOrder(order);
+      message.success('Register updated with success.');
+    } catch (err) {
+      console.error(
+        `Error while trying to update Order[${order.id}] index.`,
+        err
+      );
+      message.success('Error while trying to update order index.');
+    }
+    setUpdatingOrderDueDate(prev => {
+      const newValue = {
+        ...prev,
+      };
+      delete newValue[order.id!];
+      return newValue;
+    });
+    delete originalOrderDueDate.current[order.id!];
+    shouldUpdateDueDate.current = false;
+  };
+
   const columns: ColumnsType<Order> = [
     {
       title: '_id',
@@ -298,49 +361,8 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       align: 'center',
     },
     {
-      title: 'User',
-      dataIndex: 'customerEmail',
-      width: '10%',
-      align: 'center',
-      ...getColumnSearchProps('customerEmail'),
-      render: (value: string) => `${value}`,
-      sorter: (a, b): any => {
-        if (a.customerEmail && b.customerEmail)
-          return a.customerEmail.localeCompare(b.customerEmail);
-        else if (a.customerEmail) return -1;
-        else if (b.customerEmail) return 1;
-        else return 0;
-      },
-    },
-    {
-      title: 'Paid',
-      dataIndex: 'paid',
-      width: '5%',
-      align: 'center',
-      render: (value: boolean) => <b>{value ? 'Yes' : 'No'}</b>,
-      sorter: (a, b): any => {
-        if (a.paid && b.paid) return 0;
-        else if (a.paid) return -1;
-        else if (b.paid) return 1;
-        else return 0;
-      },
-    },
-    {
-      title: 'Amount',
-      dataIndex: 'amount',
-      width: '5%',
-      align: 'center',
-      render: (value: number) => `${value / 100}`,
-      sorter: (a, b): any => {
-        if (a.amount && b.amount) return a.amount - b.amount;
-        else if (a.amount) return -1;
-        else if (b.amount) return 1;
-        else return 0;
-      },
-    },
-    {
       title: 'Name',
-      width: '12%',
+      width: '9%',
       align: 'center',
       render: (_, record) =>
         record.product
@@ -375,9 +397,77 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
     {
+      title: 'User',
+      dataIndex: 'customerEmail',
+      width: '9%',
+      align: 'center',
+      ...getColumnSearchProps('customerEmail'),
+      render: (value: string) => {
+        return (
+          <div style={{ display: 'grid', placeItems: 'stretch' }}>
+            <div
+              style={{
+                textOverflow: 'ellipsis',
+                overflow: 'hidden',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              <Tooltip title={value}>{value}</Tooltip>
+            </div>
+          </div>
+        );
+      },
+      sorter: (a, b): any => {
+        if (a.customerEmail && b.customerEmail)
+          return a.customerEmail.localeCompare(b.customerEmail);
+        else if (a.customerEmail) return -1;
+        else if (b.customerEmail) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: 'Paid',
+      dataIndex: 'paid',
+      width: '5%',
+      align: 'center',
+      render: (value: boolean) => <b>{value ? 'Yes' : 'No'}</b>,
+      sorter: (a, b): any => {
+        if (a.paid && b.paid) return 0;
+        else if (a.paid) return -1;
+        else if (b.paid) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: 'Amount',
+      dataIndex: 'amount',
+      width: '5%',
+      align: 'center',
+      render: (value: number) => `${Math.round(value / 100).toFixed(2)}`,
+      sorter: (a, b): any => {
+        if (a.amount && b.amount) return a.amount - b.amount;
+        else if (a.amount) return -1;
+        else if (b.amount) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: 'Disco Dollars',
+      dataIndex: 'discoDollars',
+      width: '5%',
+      align: 'center',
+      sorter: (a, b): any => {
+        if (a.discoDollars && b.discoDollars)
+          return a.discoDollars - b.discoDollars;
+        else if (a.discoDollars) return -1;
+        else if (b.discoDollars) return 1;
+        else return 0;
+      },
+    },
+    {
       title: 'Creation',
       dataIndex: 'hCreationDate',
-      width: '10%',
+      width: '9%',
       align: 'center',
       filterIcon: <CalendarOutlined />,
       filterDropdown: () => (
@@ -403,29 +493,16 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
     {
-      title: 'Disco Dollars',
-      dataIndex: 'discoDollars',
-      width: '5%',
-      align: 'center',
-      sorter: (a, b): any => {
-        if (a.discoDollars && b.discoDollars)
-          return a.discoDollars - b.discoDollars;
-        else if (a.discoDollars) return -1;
-        else if (b.discoDollars) return 1;
-        else return 0;
-      },
-    },
-    {
       title: 'Stage',
       dataIndex: 'stage',
-      width: '15%',
+      width: '9%',
       align: 'center',
       render: (value: string, order, index) => (
         <Select
           loading={orderUpdateList[index]}
           disabled={orderUpdateList[index]}
           defaultValue={value}
-          style={{ width: '175px' }}
+          style={{ width: '100%' }}
           onChange={value => handleSelectChange(value, order, index)}
         >
           {ordersSettings.map((ordersSetting: any) => (
@@ -433,7 +510,19 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
               key={ordersSetting.value}
               value={ordersSetting.value}
             >
-              {ordersSetting.name}
+              <div style={{ display: 'grid', placeItems: 'stretch' }}>
+                <div
+                  style={{
+                    textOverflow: 'ellipsis',
+                    overflow: 'hidden',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  <Tooltip title={ordersSetting.name}>
+                    {ordersSetting.name}
+                  </Tooltip>
+                </div>
+              </div>
             </Select.Option>
           ))}
         </Select>
@@ -442,6 +531,99 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
         if (a.stage && b.stage) return a.stage.localeCompare(b.stage);
         else if (a.stage) return -1;
         else if (b.stage) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: 'Due Date',
+      dataIndex: 'dueDate',
+      width: '9%',
+      align: 'center',
+      filterIcon: <CalendarOutlined />,
+      filterDropdown: () => (
+        <DatePicker.RangePicker
+          style={{ padding: 8 }}
+          onChange={values => setFilter(values as any)}
+        />
+      ),
+      render: (value: Date, entity: Order) => {
+        if (updatingOrderDueDate[entity.id!]) {
+          const antIcon = <LoadingOutlined spin />;
+          return <Spin indicator={antIcon} />;
+        } else {
+          if (entity.stage !== 'shipped') {
+            return value ? (
+              <>
+                <div>{moment(value).format('DD/MM/YYYY')}</div>
+                <div>{moment(value).format('HH:mm')}</div>
+              </>
+            ) : (
+              '-'
+            );
+          } else {
+            return (
+              <DatePicker
+                value={moment(value)}
+                format="DD/MM/YYYY"
+                onChange={value => onChangeColumnDate(value as any, entity)}
+                onBlur={() => onBlurColumnDate(entity)}
+              />
+            );
+          }
+        }
+      },
+      sorter: (a, b): any => {
+        if (a.hCreationDate && b.hCreationDate)
+          return (
+            moment(a.hCreationDate).unix() - moment(b.hCreationDate).unix()
+          );
+        else if (a.hCreationDate) return -1;
+        else if (b.hCreationDate) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: 'Int. Status',
+      dataIndex: 'commissionInternalStatus',
+      width: '9%',
+      align: 'center',
+      render: (value: string, order, index) => (
+        <Select
+          loading={orderUpdateList[index]}
+          disabled={orderUpdateList[index]}
+          defaultValue={value}
+          style={{ width: '100%' }}
+          onChange={value => handleSelectChange(value, order, index)}
+        >
+          {ordersSettings.map((ordersSetting: any) => (
+            <Select.Option
+              key={ordersSetting.value}
+              value={ordersSetting.value}
+            >
+              <div style={{ display: 'grid', placeItems: 'stretch' }}>
+                <div
+                  style={{
+                    textOverflow: 'ellipsis',
+                    overflow: 'hidden',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  <Tooltip title={ordersSetting.name}>
+                    {ordersSetting.name}
+                  </Tooltip>
+                </div>
+              </div>
+            </Select.Option>
+          ))}
+        </Select>
+      ),
+      sorter: (a, b): any => {
+        if (a.commissionInternalStatus && b.commissionInternalStatus)
+          return a.commissionInternalStatus.localeCompare(
+            b.commissionInternalStatus
+          );
+        else if (a.commissionInternalStatus) return -1;
+        else if (b.commissionInternalStatus) return 1;
         else return 0;
       },
     },
@@ -466,6 +648,178 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     },
   ];
 
+  const cartColumns: ColumnsType<Order> = [
+    {
+      title: '_id',
+      dataIndex: 'id',
+      width: '6%',
+      render: id => <CopyOrderToClipboard order={id} />,
+      align: 'center',
+    },
+    {
+      title: 'Description',
+      dataIndex: 'description',
+      width: '15%',
+      align: 'center',
+      ...getColumnSearchProps('description'),
+      render: (value: string) => {
+        return (
+          <div style={{ display: 'grid', placeItems: 'stretch' }}>
+            <div
+              style={{
+                textOverflow: 'ellipsis',
+                overflow: 'hidden',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              <Tooltip title={value}>{value}</Tooltip>
+            </div>
+          </div>
+        );
+      },
+      sorter: (a, b): any => {
+        if (a.description && b.description)
+          return a.description.localeCompare(b.description);
+        else if (a.description) return -1;
+        else if (b.description) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: 'Quantity',
+      dataIndex: 'quantity',
+      width: '5%',
+      align: 'center',
+      sorter: (a, b): any => {
+        if (a.quantity && b.quantity) return a.quantity - b.quantity;
+        else if (a.quantity) return -1;
+        else if (b.quantity) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: 'Price',
+      dataIndex: 'originalPrice',
+      width: '5%',
+      align: 'center',
+      render: (value: number) => `${value.toFixed(2)}`,
+      sorter: (a, b): any => {
+        if (a.originalPrice && b.originalPrice)
+          return a.originalPrice - b.originalPrice;
+        else if (a.originalPrice) return -1;
+        else if (b.originalPrice) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: 'Discount',
+      dataIndex: 'discount',
+      width: '5%',
+      align: 'center',
+      render: (value: number) => `${value.toFixed(2)}`,
+      sorter: (a, b): any => {
+        if (a.discount && b.discount) return a.discount - b.discount;
+        else if (a.discount) return -1;
+        else if (b.discount) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: 'Sale Price',
+      dataIndex: 'discountedPrice',
+      width: '5%',
+      align: 'center',
+      render: (value: number) => `${value.toFixed(2)}`,
+      sorter: (a, b): any => {
+        if (a.discountedPrice && b.discountedPrice)
+          return a.discountedPrice - b.discountedPrice;
+        else if (a.discountedPrice) return -1;
+        else if (b.discountedPrice) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: 'Return Date',
+      dataIndex: 'returnDate',
+      width: '10%',
+      align: 'center',
+      render: (value: Date) =>
+        value ? (
+          <>
+            <div>{moment(value).format('DD/MM/YYYY')}</div>
+            <div>{moment(value).format('HH:mm')}</div>
+          </>
+        ) : (
+          '-'
+        ),
+      sorter: (a, b): any => {
+        if (a.returnDate && b.returnDate)
+          return moment(a.returnDate).unix() - moment(b.returnDate).unix();
+        else if (a.returnDate) return -1;
+        else if (b.returnDate) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: 'Return Quantity',
+      dataIndex: 'returnQuantity',
+      width: '5%',
+      align: 'center',
+      render: (value: number) => (value ? value : '-'),
+      sorter: (a, b): any => {
+        if (a.returnQuantity && b.returnQuantity)
+          return a.returnQuantity - b.returnQuantity;
+        else if (a.returnQuantity) return -1;
+        else if (b.returnQuantity) return 1;
+        else return 0;
+      },
+    },
+  ];
+
+  const CartTable = () => {
+    const validData: any[] = [];
+    if (cartTableContent?.product) {
+      validData.push({
+        id: cartTableContent.product.id,
+        description: cartTableContent.product.description,
+        quantity: 1,
+        originalPrice: cartTableContent.product.originalPrice,
+        discount:
+          cartTableContent.product.originalPrice -
+          cartTableContent.product.discountedPrice,
+        discountedPrice: cartTableContent.product.discountedPrice,
+        returnDate: cartTableContent.return?.date,
+        returnQuantity: cartTableContent.return ? 1 : '-',
+      });
+    } else {
+      cartTableContent?.cart?.brandGroups.forEach(brand =>
+        brand.items.forEach(item =>
+          validData.push({
+            id: item.id,
+            description: item.description,
+            quantity: item.quantity,
+            originalPrice: item.totalPrice,
+            discount: item.totalPrice - item.totalDiscountedPrice,
+            discountedPrice: item.totalDiscountedPrice,
+            returnDate: cartTableContent.return?.date,
+            returnQuantity: cartTableContent.return?.quantity,
+          })
+        )
+      );
+    }
+
+    return (
+      <>
+        <Table
+          rowKey="id"
+          columns={cartColumns}
+          dataSource={validData}
+          pagination={false}
+        />
+      </>
+    );
+  };
+
   useEffect(() => {
     const getBrands = async () => {
       try {
@@ -480,23 +834,30 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     getBrands();
   }, []);
 
-  const onChangeBrand = async (id: string | undefined) => {
-    setBrandFilter(id);
-    fetch();
+  const handleChangeBrand = async (_?: string, option?: BaseOptionType) => {
+    setOrders([]);
+    const selectedEntity = brands.find(item => item.id === option?.value);
+    setBrandId(selectedEntity?.id);
   };
 
   const getFan = (fanUser: string) => {
     return fans.find(fan => fan.user.includes(fanUser));
   };
 
-  const onChangeFan = async (value: string) => {
-    const id = getFan(value)?.id;
-    setFanFilter(id ?? '');
-    fetch();
+  const onChangeFan = async (input?: string, fan?: Fan) => {
+    setOrders([]);
+    if (!fan) {
+      setFanFilterInput('');
+      setSelectedUser(undefined);
+    } else {
+      setFanFilterInput(input);
+      setSelectedUser(fan);
+    }
   };
 
-  const onSearch = (value: string) => {
-    fetchUsers(value);
+  const onClearFan = () => {
+    setFanFilterInput('');
+    setSelectedUser(undefined);
   };
 
   const onSaveFan = (record: Fan) => {
@@ -507,39 +868,15 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     setDetails(false);
   };
 
-  const Filters = () => {
-    return (
-      <>
-        <Col lg={16} xs={24}>
-          <Row gutter={[8, 8]}>
-            <Col lg={6} xs={24}>
-              <Typography.Title level={5}>Master Brand</Typography.Title>
-              <SimpleSelect
-                data={brands}
-                onChange={id => onChangeBrand(id)}
-                style={{ width: '100%' }}
-                optionsMapping={optionsMapping}
-                placeholder={'Select a Master Brand'}
-                loading={isFetchingBrands}
-                disabled={isFetchingBrands}
-                allowClear
-              ></SimpleSelect>
-            </Col>
-            <Col lg={6} xs={24}>
-              <Typography.Title level={5}>Fan Filter</Typography.Title>
-              <AutoComplete
-                style={{ width: '100%' }}
-                options={options}
-                onSelect={onChangeFan}
-                onSearch={onSearch}
-                placeholder="Type to search by E-mail"
-                className="mb-05"
-              />
-            </Col>
-          </Row>
-        </Col>
-      </>
-    );
+  const handleKeyDown = (event: any) => {
+    if (event.key === 'Enter') {
+      const selectedEntity = fans?.find(item => item.user === fanFilterInput);
+      setSelectedUser(selectedEntity);
+      if (!selectedEntity)
+        message.warning(
+          "Can't filter orders with incomplete Fan Filter! Please select a Fan."
+        );
+    }
   };
 
   return (
@@ -557,31 +894,74 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
             className="mb-1 sticky-filter-box"
             gutter={8}
           >
-            {isMobile && (
-              <Col span={24}>
-                <Collapse ghost className="custom-collapse mt-05">
-                  <Panel header="Filter Search" key="1">
-                    <Filters />
-                  </Panel>
-                </Collapse>
-              </Col>
-            )}
-            {!isMobile && <Filters />}
-            <Col lg={24} xs={24}>
-              <Row justify="end" className={isMobile ? 'mt-15' : ''}>
-                <Col>
-                  <Button type="primary" onClick={fetch}>
-                    Search
-                    <SearchOutlined style={{ color: 'white' }} />
-                  </Button>
+            <Col lg={16} xs={24}>
+              <Row gutter={8}>
+                <Col lg={8} xs={16}>
+                  <Typography.Title level={5}>Master Brand</Typography.Title>
+                  <Select
+                    allowClear
+                    onChange={handleChangeBrand}
+                    style={{ width: '100%' }}
+                    placeholder={'Select a master brand'}
+                    value={brandId}
+                    loading={isFetchingBrands}
+                    disabled={isFetchingBrands}
+                    showSearch
+                    filterOption={(input, option) =>
+                      !!option?.children
+                        ?.toString()
+                        .toUpperCase()
+                        .includes(input.toUpperCase())
+                    }
+                  >
+                    {brands.map(curr => (
+                      <Select.Option
+                        key={curr.id}
+                        value={curr.id}
+                        label={curr.brandName}
+                      >
+                        {curr.brandName}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Col>
+                <Col lg={8} xs={16}>
+                  <Typography.Title level={5}>Fan Filter</Typography.Title>
+                  <MultipleFetchDebounceSelect
+                    style={{ width: '100%' }}
+                    onInput={getFans}
+                    onChange={onChangeFan}
+                    onClear={onClearFan}
+                    optionMapping={fanOptionMapping}
+                    placeholder="Search by fan e-mail"
+                    options={fans}
+                    input={fanFilterInput}
+                    disabled={isFetchingBrands}
+                    onInputKeyDown={(event: HTMLInputElement) =>
+                      handleKeyDown(event)
+                    }
+                  ></MultipleFetchDebounceSelect>
                 </Col>
               </Row>
             </Col>
+            <Col>
+              <Button
+                type="primary"
+                onClick={() => setRefreshing(true)}
+                style={{
+                  marginBottom: '20px',
+                  marginRight: '25px',
+                }}
+              >
+                Search
+                <SearchOutlined style={{ color: 'white' }} />
+              </Button>
+            </Col>
           </Row>
           <InfiniteScroll
-            dataLength={orders.length}
+            dataLength={search(orders).length}
             next={loadNext}
-            hasMore={!eof}
+            hasMore={page > 0 && !eof}
             loader={
               page !== 0 && (
                 <div className="scroll-message">
@@ -590,9 +970,11 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
               )
             }
             endMessage={
-              <div className="scroll-message">
-                <b>End of results.</b>
-              </div>
+              page !== 0 && (
+                <div className="scroll-message">
+                  <b>End of results.</b>
+                </div>
+              )
             }
           >
             <Table
@@ -600,8 +982,56 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
               rowKey="id"
               columns={columns}
               dataSource={search(orders)}
-              loading={loading}
+              loading={loading || refreshing}
               pagination={false}
+              expandedRowKeys={expandedRowKeys}
+              expandable={{
+                onExpand: (expanded, record) => {
+                  const keys: string[] = [];
+                  if (expanded) {
+                    keys.push(record?.id!);
+                    setCartTableContent(record);
+                  } else {
+                    setCartTableContent(undefined);
+                  }
+                  setExpandedRowKeys(keys);
+                },
+                expandedRowRender: record => (
+                  <>
+                    <Row justify="center">
+                      <Col span={22}>
+                        <Descriptions title="Details">
+                          <Descriptions.Item label="Order ID" className="mt-05">
+                            {record.id}
+                          </Descriptions.Item>
+                          <Descriptions.Item label="User">
+                            {record.customerEmail}
+                          </Descriptions.Item>
+                          <Descriptions.Item label="Paid Status">
+                            {record.paid ? 'Paid' : 'Not paid'}
+                          </Descriptions.Item>
+                          <Descriptions.Item label="Order Amount">
+                            {((record.amount ?? 0) / 100).toFixed(2)}
+                          </Descriptions.Item>
+                          <Descriptions.Item label="Date">
+                            {moment(record.hCreationDate).format('DD/MM/YYYY')}
+                          </Descriptions.Item>
+                        </Descriptions>
+                      </Col>
+                    </Row>
+                    <Row justify="center" className="mt-15">
+                      <Col span={22}>
+                        <Descriptions title="Cart">
+                          <Descriptions.Item>
+                            <CartTable />
+                          </Descriptions.Item>
+                        </Descriptions>
+                      </Col>
+                    </Row>
+                  </>
+                ),
+                rowExpandable: record => record.cart || record.product,
+              }}
             />
           </InfiniteScroll>
         </div>

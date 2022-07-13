@@ -7,7 +7,6 @@ import {
 import {
   Button,
   Col,
-  DatePicker,
   Form,
   Input,
   InputNumber,
@@ -41,11 +40,11 @@ import { Brand } from 'interfaces/Brand';
 import '@pathofdev/react-tag-input/build/index.css';
 import { Category } from 'interfaces/Category';
 import { Creator } from 'interfaces/Creator';
-import './VideoFeed.scss';
-import './VideoFeedDetail.scss';
+import 'pages/video-feed/VideoFeed.scss';
+import 'pages/video-feed/VideoFeedDetail.scss';
 import SimpleSelect from 'components/select/SimpleSelect';
 import { SelectOption } from 'interfaces/SelectOption';
-import VideoFeedDetailV2 from './VideoFeedDetailV2';
+import VideoFeedDetailV2 from 'pages/video-feed/VideoFeedDetailV2';
 import { statusList, videoTypeList } from 'components/select/select.utils';
 import { useRequest } from 'hooks/useRequest';
 import moment from 'moment';
@@ -58,7 +57,7 @@ const reduceSegmentsTags = (packages: Segment[]) => {
   }, 0);
 };
 
-const VideoFeed: React.FC<RouteComponentProps> = () => {
+const FanVideos: React.FC<RouteComponentProps> = () => {
   const [feedForm] = Form.useForm();
   const [segmentForm] = Form.useForm();
   const [selectedVideoFeed, setSelectedVideoFeed] = useState<FeedItem>();
@@ -90,7 +89,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const [categoryFilter, setCategoryFilter] = useState<string>();
   const [indexFilter, setIndexFilter] = useState<number>();
   const [creatorFilter, setCreatorFilter] = useState<string>();
-  const [dateSortFilter, setDateSortFilter] = useState<string>();
 
   const masterBrandMapping: SelectOption = {
     key: 'id',
@@ -121,20 +119,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     label: 'value',
     value: 'value',
   };
-
-  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
-
-  const handleResize = () => {
-    if (window.innerWidth < 991) {
-      setIsMobile(true);
-    } else {
-      setIsMobile(false);
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener('resize', handleResize);
-  });
 
   const feedItemColumns: ColumnsType<FeedItem> = [
     {
@@ -346,9 +330,8 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
           query: titleFilter,
           brandId: brandFilter?.id,
           status: statusFilter?.toUpperCase(),
-          videoType: videoTypeFilter,
+          videoType: 'Fan',
           productBrandId: productBrandFilter,
-          dateSort: dateSortFilter,
         })
       );
       setFeedItems(results);
@@ -487,127 +470,50 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const onSaveItem = (record: FeedItem) => {
     refreshItem(record);
     setDetails(false);
-    feedForm.resetFields();
-    setSelectedVideoFeed(undefined);
+    resetForm();
   };
 
   const onCancelItem = () => {
     setDetails(false);
   };
 
-  const Filters = () => {
-    return (
-      <>
-        <Col lg={16} xs={24}>
-          <Row gutter={[8, 8]}>
-            <Col lg={6} xs={24}>
-              <Typography.Title level={5} title="Title">
-                Title
-              </Typography.Title>
-              <Input
-                onChange={event => setTitleFilter(event.target.value)}
-                suffix={<SearchOutlined />}
-                value={titleFilter}
-                placeholder="Search by Title"
-                onPressEnter={fetch}
-              />
-            </Col>
-            <Col lg={6} xs={24}>
-              <Typography.Title level={5}>Master Brand</Typography.Title>
-              <SimpleSelect
-                data={brands}
-                onChange={(_, brand) => setBrandFilter(brand)}
-                style={{ width: '100%' }}
-                selectedOption={brandFilter?.id}
-                optionMapping={masterBrandMapping}
-                placeholder={'Select a Master Brand'}
-                loading={isFetchingBrands}
-                disabled={isFetchingBrands}
-                allowClear
-              />
-            </Col>
-            <Col lg={6} xs={24}>
-              <Typography.Title level={5}>Product Brand</Typography.Title>
-              <SimpleSelect
-                data={productBrands}
-                onChange={id => setProductBrandFilter(id as any)}
-                style={{ width: '100%' }}
-                selectedOption={productBrandFilter}
-                optionMapping={productBrandMapping}
-                placeholder={'Select a Product Brand'}
-                loading={isFetchingProductBrands}
-                disabled={isFetchingProductBrands}
-                allowClear
-              />
-            </Col>
-            <Col lg={6} xs={24}>
-              <Typography.Title level={5}>Status</Typography.Title>
-              <SimpleSelect
-                data={statusList}
-                onChange={status => setStatusFilter(status)}
-                style={{ width: '100%' }}
-                selectedOption={statusFilter}
-                optionMapping={statusMapping}
-                placeholder={'Select a status'}
-                allowClear
-              />
-            </Col>
-            <Col lg={6} xs={24}>
-              <Typography.Title level={5}>Category</Typography.Title>
-              <SimpleSelect
-                data={categories}
-                onChange={(_, category) =>
-                  setCategoryFilter(category?.name ?? '')
-                }
-                style={{ width: '100%' }}
-                selectedOption={categoryFilter}
-                optionMapping={categoryMapping}
-                placeholder={'Select a Category'}
-                allowClear
-                loading={isFetchingCategories}
-                disabled={isFetchingCategories}
-              />
-            </Col>
-            <Col lg={6} xs={24}>
-              <Typography.Title level={5}>Video Type</Typography.Title>
-              <SimpleSelect
-                data={videoTypeList}
-                onChange={videoType => setVideoTypeFilter(videoType)}
-                style={{ width: '100%' }}
-                selectedOption={videoTypeFilter}
-                optionMapping={videoTypeMapping}
-                placeholder={'Select a video type'}
-                allowClear
-              />
-            </Col>
-            <Col lg={6} xs={24}>
-              <Typography.Title level={5}>Start Index</Typography.Title>
-              <InputNumber
-                min={0}
-                onChange={startIndex => setIndexFilter(startIndex ?? undefined)}
-                placeholder="Enter an Index"
-              />
-            </Col>
-            <Col lg={4} xs={12}>
-              <Typography.Title level={5}>Creator</Typography.Title>
-              <Select
-                placeholder="Select a creator"
-                disabled={!creators.length}
-                onChange={setCreatorFilter}
-                style={{ width: '100%' }}
-                className="mb-05"
-              >
-                {creators.map((curr: any) => (
-                  <Select.Option key={curr.id} value={curr.firstName}>
-                    {curr.firstName}
-                  </Select.Option>
-                ))}
-              </Select>
-            </Col>
-          </Row>
-        </Col>
-      </>
-    );
+  const resetForm = () => {
+    const template = {
+      category: '',
+      creator: {
+        id: '',
+        status: '',
+        userName: '',
+        creatorId: '',
+        firstName: '',
+        lastName: '',
+      },
+      description: '',
+      format: '',
+      gender: [],
+      goLiveDate: '',
+      hCreationDate: undefined,
+      hLastUpdate: '',
+      id: '',
+      language: '',
+      package: [],
+      shortDescription: '',
+      status: '',
+      title: '',
+      validity: '',
+      videoType: [],
+      video: {},
+      lengthTotal: 0,
+      market: '',
+      modelRelease: '',
+      target: '',
+      _id: '',
+      selectedOption: 'productBrand' as any,
+      selectedId: '',
+      selectedIconUrl: '',
+      selectedselectedFeedTitle: '',
+    };
+    setSelectedVideoFeed(template);
   };
 
   return (
@@ -615,13 +521,10 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       {!details && (
         <div className="video-feed mb-1">
           <PageHeader
-            title="Video Feeds"
-            subTitle={isMobile ? '' : 'List of Feeds'}
-            className={isMobile ? 'mb-n1' : ''}
+            title="Fan Videos"
             extra={[
               <Button
                 key="2"
-                className={isMobile ? 'mt-05' : ''}
                 onClick={() => onEditFeedItem(feedItems.length - 1)}
               >
                 New Item
@@ -631,12 +534,23 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
           <Row
             align="bottom"
             justify="space-between"
-            className={
-              isMobile ? 'sticky-filter-box' : 'mb-1 sticky-filter-box'
-            }
+            gutter={[8, 8]}
+            className={'sticky-filter-box'}
           >
             <Col lg={24} xs={24}>
-              <Row justify="end" className={isMobile ? 'mt-15' : ''}>
+              <Row gutter={8}>
+                <Col lg={4} xs={12}>
+                  <Typography.Title level={5} title="Search">
+                    Search
+                  </Typography.Title>
+                  <Input
+                    onChange={event => setTitleFilter(event.target.value)}
+                    suffix={<SearchOutlined />}
+                    value={titleFilter}
+                    placeholder="Type to search by title"
+                    onPressEnter={fetch}
+                  />
+                </Col>
                 <Col lg={4} xs={12}>
                   <Typography.Title level={5}>Master Brand</Typography.Title>
                   <SimpleSelect
@@ -694,18 +608,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                   />
                 </Col>
                 <Col lg={4} xs={12}>
-                  <Typography.Title level={5}>Video Type</Typography.Title>
-                  <SimpleSelect
-                    data={videoTypeList}
-                    onChange={videoType => setVideoTypeFilter(videoType)}
-                    style={{ width: '100%' }}
-                    selectedOption={videoTypeFilter}
-                    optionMapping={videoTypeMapping}
-                    placeholder={'Select a video type'}
-                    allowClear={true}
-                  />
-                </Col>
-                <Col lg={4} xs={12}>
                   <Typography.Title level={5}>Start Index</Typography.Title>
                   <InputNumber
                     min={0}
@@ -722,59 +624,12 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                     disabled={!creators.length}
                     onChange={setCreatorFilter}
                     style={{ width: '100%' }}
-                    filterOption={(input, option) =>
-                      !!option?.children
-                        ?.toString()
-                        .toUpperCase()
-                        .includes(input.toUpperCase())
-                    }
-                    allowClear={true}
-                    showSearch={true}
                   >
                     {creators.map((curr: any) => (
-                      <Select.Option
-                        key={curr.id}
-                        value={curr.firstName}
-                        label={curr.firstName}
-                      >
+                      <Select.Option key={curr.id} value={curr.firstName}>
                         {curr.firstName}
                       </Select.Option>
                     ))}
-                  </Select>
-                </Col>
-                <Col lg={4} xs={12}>
-                  <Typography.Title level={5}>Date Sort</Typography.Title>
-
-                  <Select
-                    onChange={setDateSortFilter}
-                    placeholder="Select a sorting option"
-                    style={{ width: '100%' }}
-                    filterOption={(input, option) =>
-                      !!option?.children
-                        ?.toString()
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                    allowClear={true}
-                    showSearch={true}
-                  >
-                    <Select.Option
-                      key="newestFirst"
-                      value="Newest First"
-                      label="Newest First"
-                    >
-                      Newest First
-                    </Select.Option>
-                    <Select.Option
-                      key="oldestFirst"
-                      value="Oldest First"
-                      label="Oldest First"
-                    >
-                      Oldest First
-                    </Select.Option>
-                    <Select.Option key="none" value="None" label="None">
-                      None
-                    </Select.Option>
                   </Select>
                 </Col>
               </Row>
@@ -812,10 +667,11 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
           productBrands={productBrands}
           isFetchingProductBrand={isFetchingProductBrands}
           setDetails={setDetails}
+          isFanVideo
         />
       )}
     </>
   );
 };
 
-export default withRouter(VideoFeed);
+export default withRouter(FanVideos);

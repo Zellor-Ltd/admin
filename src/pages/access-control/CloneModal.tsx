@@ -82,9 +82,9 @@ const CloneModal: React.FC<CloneModalProps> = ({
           >
             {profiles
               .filter(profile => profile !== selectedProfile)
-              .map((profie: any) => (
-                <Select.Option key={profie} value={profie}>
-                  {profie}
+              .map((profile: any) => (
+                <Select.Option key={profile} value={profile}>
+                  {profile}
                 </Select.Option>
               ))}
           </Select>

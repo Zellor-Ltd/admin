@@ -7,7 +7,7 @@ import { SelectOption } from '../../interfaces/SelectOption';
 interface DebounceSelectProps {
   fetchOptions: (search: string) => Promise<any[]>;
   onChange: (value: string, entity?: any) => void;
-  optionsMapping: SelectOption;
+  optionMapping: SelectOption;
   placeholder: string;
   disabled?: boolean;
   value?: string;
@@ -18,7 +18,7 @@ interface DebounceSelectProps {
 const DebounceSelect: React.FC<DebounceSelectProps> = ({
   fetchOptions,
   onChange,
-  optionsMapping,
+  optionMapping,
   placeholder,
   disabled,
   value,
@@ -33,9 +33,9 @@ const DebounceSelect: React.FC<DebounceSelectProps> = ({
 
   const optionFactory = (option: any) => {
     return {
-      label: option[optionsMapping.label],
-      value: option[optionsMapping.value],
-      key: option[optionsMapping.value],
+      label: option[optionMapping.label],
+      value: option[optionMapping.value],
+      key: option[optionMapping.value],
     };
   };
 
@@ -80,7 +80,7 @@ const DebounceSelect: React.FC<DebounceSelectProps> = ({
 
   const _onChange = (option: { value: string; label: string; key: string }) => {
     const selectedEntity = fetchedEntities.current.find(entity =>
-      entity[optionsMapping.value]
+      entity[optionMapping.value]
         .toUpperCase()
         .includes(option.value.toUpperCase())
     );

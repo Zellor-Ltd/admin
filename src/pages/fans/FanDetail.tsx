@@ -251,6 +251,11 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
             : undefined
         }
         onFinish={onFinish}
+        onFinishFailed={({ errorFields }) => {
+          errorFields.forEach(errorField => {
+            message.error(errorField.errors[0]);
+          });
+        }}
       >
         <Tabs defaultActiveKey="Details">
           <Tabs.TabPane forceRender tab="Details" key="Details">
@@ -263,7 +268,16 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
                 </Col>
               )}
               <Col lg={8} xs={24}>
-                <Form.Item label="Name" name="userName">
+                <Form.Item
+                  label="Name"
+                  name="userName"
+                  rules={[
+                    {
+                      required: true,
+                      message: 'Username is required.',
+                    },
+                  ]}
+                >
                   <Input />
                 </Form.Item>
               </Col>

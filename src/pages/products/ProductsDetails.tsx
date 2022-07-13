@@ -77,7 +77,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
     settings: { currency = [] },
   } = useSelector((state: any) => state.settings);
 
-  const optionsMapping: SelectOption = {
+  const optionMapping: SelectOption = {
     key: 'id',
     label: 'brandName',
     value: 'id',
@@ -404,7 +404,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                         }
                         style={{ width: '100%' }}
                         selectedOption={brand}
-                        optionsMapping={optionsMapping}
+                        optionMapping={optionMapping}
                         placeholder={'Select a brand'}
                         loading={isFetchingBrands}
                         disabled={isFetchingBrands || isLive}
@@ -432,7 +432,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                         }
                         style={{ width: '100%' }}
                         selectedOption={productBrand}
-                        optionsMapping={optionsMapping}
+                        optionMapping={optionMapping}
                         placeholder={'Select a brand'}
                         loading={isFetchingProductBrand}
                         disabled={isFetchingProductBrand || isLive}

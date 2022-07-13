@@ -161,8 +161,8 @@ const Interests: React.FC<InterestsProps> = () => {
       record[dataIndex]
         ? record[dataIndex]
             .toString()
-            .toLowerCase()
-            .includes(value.toLowerCase())
+            .toUpperCase()
+            .includes(value.toUpperCase())
         : '',
     onFilterDropdownVisibleChange: (visible: any) => {
       if (visible) {

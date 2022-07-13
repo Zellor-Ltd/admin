@@ -4,7 +4,7 @@ import { Select } from 'antd';
 
 interface SimpleSelectProps {
   data: any[];
-  optionsMapping: SelectOption;
+  optionMapping: SelectOption;
   onChange?: (value: string, entity?: any) => void;
   selectedOption?: string | null;
   allowClear?: boolean;
@@ -17,7 +17,7 @@ interface SimpleSelectProps {
 
 const SimpleSelect: React.FC<SimpleSelectProps> = ({
   data,
-  optionsMapping,
+  optionMapping,
   onChange,
   selectedOption,
   allowClear,
@@ -32,9 +32,9 @@ const SimpleSelect: React.FC<SimpleSelectProps> = ({
 
   const optionFactory = (option: any) => {
     return {
-      label: option[optionsMapping.label],
-      value: option[optionsMapping.value],
-      key: option[optionsMapping.value],
+      label: option[optionMapping.label],
+      value: option[optionMapping.value],
+      key: option[optionMapping.value],
     };
   };
 
@@ -47,12 +47,12 @@ const SimpleSelect: React.FC<SimpleSelectProps> = ({
   }, [selectedOption]);
 
   const _onSearch = (input: any, option: any) => {
-    return option.label.toLowerCase().includes(input?.toLowerCase());
+    return option.label.toUpperCase().includes(input?.toUpperCase());
   };
 
   const _onChange = (value: string) => {
     const selectedEntity = data.find(
-      entity => entity[optionsMapping.value] === value
+      entity => entity[optionMapping.value] === value
     );
     _setSelectedOption(value);
     onChange?.(value, selectedEntity);

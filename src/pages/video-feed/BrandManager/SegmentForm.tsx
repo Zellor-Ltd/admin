@@ -213,8 +213,8 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                             filterOption={(input, option) =>
                               !!option?.value
                                 ?.toString()
-                                .toLowerCase()
-                                .includes(input.toLowerCase())
+                                .toUpperCase()
+                                .includes(input.toUpperCase())
                             }
                             onChange={(key: string) =>
                               onChangeBrand(key, field.name)
@@ -383,8 +383,8 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                             filterOption={(input, option) =>
                               !!option?.value
                                 ?.toString()
-                                .toLowerCase()
-                                .includes(input.toLowerCase())
+                                .toUpperCase()
+                                .includes(input.toUpperCase())
                             }
                             loading={loading}
                             onChange={v => handleBrandFilter(v, index)}

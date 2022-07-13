@@ -15,15 +15,11 @@ import { useRequest } from 'hooks/useRequest';
 import { useEffect, useRef, useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { fetchTrends, saveTrend } from 'services/DiscoClubService';
-import InfiniteScroll from 'react-infinite-scroll-component';
 import { LoadingOutlined, SearchOutlined } from '@ant-design/icons';
 
 const Trends: React.FC<RouteComponentProps> = props => {
   const [loading, setLoading] = useState<boolean>(false);
   const { doFetch } = useRequest({ setLoading });
-  const [page, setPage] = useState<number>(0);
-  const [eof, setEof] = useState<boolean>(false);
-  const [refreshing, setRefreshing] = useState<boolean>(false);
   const [trends, setTrends] = useState<any[]>([]);
   const [filter, setFilter] = useState<string>('');
   const [updatingTrendIndex, setUpdatingTrendIndex] = useState<
@@ -52,33 +48,8 @@ const Trends: React.FC<RouteComponentProps> = props => {
 
   const getTrends = async () => {
     const { results } = await doFetch(fetchTrends);
-    setContent(results);
-    setRefreshing(true);
+    setTrends(results);
   };
-
-  const updateDisplayedArray = () => {
-    if (!content.length) {
-      setEof(true);
-      return;
-    }
-
-    const pageToUse = refreshing ? 0 : page;
-    const results = content.slice(pageToUse * 10, pageToUse * 10 + 10);
-
-    setPage(pageToUse + 1);
-    setTrends(prev => [...prev.concat(results)]);
-
-    if (results.length < 10) setEof(true);
-  };
-
-  useEffect(() => {
-    if (refreshing) {
-      setTrends([]);
-      setEof(false);
-      updateDisplayedArray();
-      setRefreshing(false);
-    }
-  }, [refreshing]);
 
   const onColumnChange = (trendIndex: number, trend: any) => {
     for (let i = 0; i < trends.length; i++) {
@@ -172,7 +143,9 @@ const Trends: React.FC<RouteComponentProps> = props => {
   ];
 
   const search = rows => {
-    return rows.filter(row => row.tag?.toLowerCase().indexOf(filter) > -1);
+    return rows.filter(
+      row => row.tag?.toUpperCase().indexOf(filter.toUpperCase()) > -1
+    );
   };
 
   return (
@@ -211,32 +184,14 @@ const Trends: React.FC<RouteComponentProps> = props => {
             </Row>
           </Col>
         </Row>
-        <InfiniteScroll
-          dataLength={trends.length}
-          next={updateDisplayedArray}
-          hasMore={!eof}
-          loader={
-            page !== 0 && (
-              <div className="scroll-message">
-                <Spin />
-              </div>
-            )
-          }
-          endMessage={
-            <div className="scroll-message">
-              <b>End of results.</b>
-            </div>
-          }
-        >
-          <Table
-            rowClassName={(_, index) => `scrollable-row-${index}`}
-            rowKey="id"
-            columns={columns}
-            dataSource={search(trends)}
-            loading={loading || refreshing}
-            pagination={false}
-          />
-        </InfiniteScroll>
+        <Table
+          rowClassName={(_, index) => `scrollable-row-${index}`}
+          rowKey="id"
+          columns={columns}
+          dataSource={search(trends)}
+          loading={loading}
+          pagination={false}
+        />
       </div>
     </>
   );

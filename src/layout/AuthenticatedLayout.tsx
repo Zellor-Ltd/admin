@@ -4,7 +4,7 @@ import { Notifications } from 'components/Notifications';
 import jwt from 'helpers/jwt';
 import { useBuildTarget } from 'hooks/useBuildTarget';
 import ErrorPage from 'pages/error/ErrorPage';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 import './AuthenticatedLayout.scss';
 import AdminSideMenu from './SideMenus/AdminSideMenu';
@@ -15,6 +15,9 @@ const { Header, Sider, Content } = Layout;
 const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
   const { children, history } = props;
   const [isMobile, setIsMobile] = useState(window.innerWidth < 991);
+  const testMode = useRef(
+    process.env.REACT_APP_SERVER_ENV?.toString() === 'development'
+  );
 
   const handleResize = () => {
     if (window.innerWidth < 991) {
@@ -80,8 +83,8 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
         <div className="sider-container">
           <Sider breakpoint="lg" collapsedWidth="0">
             {useBuildTarget({
-              ADMIN: <AdminSideMenu isMobile={isMobile} />,
-              BRAND_MANAGER: <BrandManagerSideMenu />,
+              ADMIN: <AdminSideMenu isMobile={isMobile} testMode />,
+              BRAND_MANAGER: <BrandManagerSideMenu testMode />,
             })}
           </Sider>
         </div>

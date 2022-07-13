@@ -23,6 +23,14 @@
   margin-top: 16px;
 }
 
+.mr-2 {
+  margin-right: 2rem;
+}
+
+.mt-03 {
+  margin-top: 0.3rem;
+}
+
 .mt-05 {
   margin-top: 0.5rem;
 }
@@ -245,7 +253,20 @@
   height: 40px;
 }
 
-@media (max-width: 991px) {
+.ant-menu-dark .ant-menu-item-disabled.test-mode-banner {
+  background: orange;
+  color: #373737 !important;
+}
+
+#components-table-demo-drag-sorting tr.drop-over-downward td {
+  border-bottom: 2px dashed #1890ff;
+}
+
+#components-table-demo-drag-sorting tr.drop-over-upward td {
+  border-top: 2px dashed #1890ff;
+}
+
+@media (max-width: 992px) {
   .ant-layout-sider-children {
     width: 50px;
     top: 64px;

@@ -1,11 +1,10 @@
 import { CalendarOutlined } from '@ant-design/icons';
 import {
-  AutoComplete,
   Col,
   DatePicker,
+  message,
   PageHeader,
   Row,
-  Spin,
   Table,
   Typography,
 } from 'antd';
@@ -17,28 +16,18 @@ import { RouteComponentProps } from 'react-router-dom';
 import { fetchFans, fetchWalletTransactions } from 'services/DiscoClubService';
 import CopyOrderToClipboard from 'components/CopyOrderToClipboard';
 import { SelectOption } from 'interfaces/SelectOption';
-import InfiniteScroll from 'react-infinite-scroll-component';
-import { useRequest } from 'hooks/useRequest';
-import { ContentBlock } from 'draft-js';
+import MultipleFetchDebounceSelect from 'components/select/MultipleFetchDebounceSelect';
+import { Fan } from 'interfaces/Fan';
 
 const Transactions: React.FC<RouteComponentProps> = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [filteredTransactions, setFilteredTransactions] = useState<
-    Transaction[]
-  >([]);
-  const [page, setPage] = useState<number>(0);
-  const [eof, setEof] = useState<boolean>(false);
   const [loaded, setLoaded] = useState<boolean>(false);
-  const [refreshing, setRefreshing] = useState<boolean>(false);
-  const { doFetch } = useRequest({ setLoading });
-  const [searchFilter, setSearchFilter] = useState<string>();
-  const [options, setOptions] = useState<
-    { label: string; value: string; key: string }[]
-  >([]);
-  const [content, setContent] = useState<Transaction[]>([]);
+  const [optionsPage, setOptionsPage] = useState<number>(0);
+  const [fans, setFans] = useState<Fan[]>([]);
+  const [userInput, setUserInput] = useState<string>();
 
-  const fanOptionsMapping: SelectOption = {
+  const fanOptionMapping: SelectOption = {
     key: 'id',
     label: 'user',
     value: 'user',
@@ -58,48 +47,16 @@ const Transactions: React.FC<RouteComponentProps> = () => {
     window.addEventListener('resize', handleResize);
   });
 
-  const getFans = async () => {
-    const response = await doFetch(() =>
-      fetchFans({
-        page: 0,
-        query: searchFilter,
-      })
-    );
+  const getFans = async (input?: string, loadNextPage?: boolean) => {
+    setUserInput(input);
+    const pageToUse = !!!loadNextPage ? 0 : optionsPage;
+    const response: any = await fetchFans({
+      page: pageToUse,
+      query: input,
+    });
+    setOptionsPage(pageToUse + 1);
 
-    const optionFactory = (option: any) => {
-      return {
-        label: option[fanOptionsMapping.label],
-        value: option[fanOptionsMapping.value],
-        key: option[fanOptionsMapping.value],
-      };
-    };
-
-    setOptions(response.results.map(optionFactory));
-  };
-
-  useEffect(() => {
-    getFans();
-  }, []);
-
-  useEffect(() => {
-    if (refreshing) {
-      setFilteredTransactions([]);
-      setEof(false);
-      updateDisplayedArray();
-      setRefreshing(false);
-    }
-  }, [refreshing]);
-
-  const updateDisplayedArray = async () => {
-    if (!content.length) return;
-
-    const pageToUse = refreshing ? 0 : page;
-    const results = content.slice(pageToUse * 10, pageToUse * 10 + 10);
-
-    setPage(pageToUse + 1);
-    setFilteredTransactions(prev => [...prev.concat(results)]);
-
-    if (results.length < 10) setEof(true);
+    return response.results;
   };
 
   const columns: ColumnsType<Transaction> = [
@@ -178,36 +135,43 @@ const Transactions: React.FC<RouteComponentProps> = () => {
     },
   ];
 
-  const onChangeFan = async (value: string, _selectedFan?: any) => {
+  const handleChangeFan = async (value?: string, _selectedFan?: any) => {
     setLoading(true);
     if (_selectedFan) {
       const { results }: any = await fetchWalletTransactions(_selectedFan.id);
-      setContent(results);
-      setRefreshing(true);
+      setTransactions(results);
       if (!loaded) setLoaded(true);
+      setUserInput(value);
     } else {
+      setUserInput('');
       setTransactions([]);
+      getFans();
     }
     setLoading(false);
   };
 
   const handleDateChange = (values: any) => {
     if (!values) {
-      setFilteredTransactions(transactions);
+      setTransactions(transactions);
       return;
     }
     const startDate = moment(values[0], 'DD/MM/YYYY').startOf('day').utc();
     const endDate = moment(values[1], 'DD/MM/YYYY').endOf('day').utc();
-    setFilteredTransactions(
+    setTransactions(
       transactions.filter(({ hCreationDate }) => {
         return moment(hCreationDate).utc().isBetween(startDate, endDate);
       })
     );
   };
 
-  const onSearch = (value: string) => {
-    setSearchFilter(value);
-    getFans();
+  const handleKeyDown = (event: any) => {
+    if (event.key === 'Enter') {
+      const selectedEntity = fans?.find(item => item.user === userInput);
+      if (!selectedEntity)
+        message.warning(
+          "Can't list transactions with incomplete Fan Filter! Please select a Fan."
+        );
+    }
   };
 
   return (
@@ -224,40 +188,25 @@ const Transactions: React.FC<RouteComponentProps> = () => {
       >
         <Col xxl={40} lg={4} xs={24}>
           <Typography.Title level={5}>Fan Filter</Typography.Title>
-          <AutoComplete
+          <MultipleFetchDebounceSelect
             style={{ width: '100%' }}
-            options={options}
-            onSelect={onChangeFan}
-            onSearch={onSearch}
-            placeholder="Type to search by E-mail"
-          />
+            onInput={getFans}
+            onChange={handleChangeFan}
+            onClear={handleChangeFan}
+            optionMapping={fanOptionMapping}
+            placeholder="Search by fan e-mail"
+            input={userInput}
+            options={fans}
+            onInputKeyDown={(event: HTMLInputElement) => handleKeyDown(event)}
+          ></MultipleFetchDebounceSelect>
         </Col>
       </Row>
-      <InfiniteScroll
-        dataLength={filteredTransactions.length}
-        next={updateDisplayedArray}
-        hasMore={!eof}
-        loader={
-          page !== 0 && (
-            <div className="scroll-message">
-              <Spin />
-            </div>
-          )
-        }
-        endMessage={
-          <div className="scroll-message">
-            <b>End of results.</b>
-          </div>
-        }
-      >
-        <Table
-          rowKey="id"
-          columns={columns}
-          dataSource={filteredTransactions}
-          loading={loading || refreshing}
-          pagination={false}
-        />
-      </InfiniteScroll>
+      <Table
+        rowKey="id"
+        columns={columns}
+        dataSource={transactions}
+        loading={loading}
+      />
     </div>
   );
 };

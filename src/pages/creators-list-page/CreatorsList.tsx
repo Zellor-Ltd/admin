@@ -11,7 +11,6 @@ import {
   PageHeader,
   Popconfirm,
   Row,
-  Spin,
   Table,
   Typography,
 } from 'antd';
@@ -27,17 +26,13 @@ import {
 import CopyIdToClipboard from '../../components/CopyIdToClipboard';
 import scrollIntoView from 'scroll-into-view';
 import CreatorsPageDetail from './CreatorsListDetail';
-import InfiniteScroll from 'react-infinite-scroll-component';
 
 const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
-  const [tableloading, setTableLoading] = useState<boolean>(false);
-  const { doRequest, doFetch } = useRequest({ setLoading: setTableLoading });
+  const [loading, setLoading] = useState<boolean>(false);
+  const { doRequest, doFetch } = useRequest({ setLoading: setLoading });
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [details, setDetails] = useState<boolean>(false);
   const [currentMasthead, setCurrentMasthead] = useState<Masthead>();
-  const [page, setPage] = useState<number>(0);
-  const [eof, setEof] = useState<boolean>(false);
-  const [refreshing, setRefreshing] = useState<boolean>(false);
   const [mastheads, setMastheads] = useState<Masthead[]>([]);
   const [filter, setFilter] = useState<string>('');
   const [content, setContent] = useState<Masthead[]>([]);
@@ -57,37 +52,12 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
 
   const getResources = useCallback(async () => {
     const { results } = await doFetch(fetchMastheads);
-    setContent(results);
-    setRefreshing(true);
+    setMastheads(results);
   }, []);
 
   useEffect(() => {
     getResources();
   }, [getResources]);
-
-  const updateDisplayedArray = () => {
-    if (!content.length) {
-      setEof(true);
-      return;
-    }
-
-    const pageToUse = refreshing ? 0 : page;
-    const results = content.slice(pageToUse * 10, pageToUse * 10 + 10);
-
-    setPage(pageToUse + 1);
-    setMastheads(prev => [...prev.concat(results)]);
-
-    if (results.length < 10) setEof(true);
-  };
-
-  useEffect(() => {
-    if (refreshing) {
-      setMastheads([]);
-      setEof(false);
-      updateDisplayedArray();
-      setRefreshing(false);
-    }
-  }, [refreshing]);
 
   useEffect(() => {
     if (!details) {
@@ -96,8 +66,6 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
           `.scrollable-row-${lastViewedIndex}`
         ) as HTMLElement
       );
-
-      if (search(mastheads).length < 10) setEof(true);
     }
   }, [details, mastheads]);
 
@@ -161,7 +129,7 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
 
   const search = rows => {
     return rows.filter(
-      row => row.description?.toLowerCase().indexOf(filter) > -1
+      row => row.description?.toUpperCase().indexOf(filter.toUpperCase()) > -1
     );
   };
 
@@ -169,13 +137,13 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
     setLastViewedIndex(index);
     setCurrentMasthead(masthead);
     setDetails(true);
-    setRefreshing(true);
+    setLoading(true);
   };
 
   const deleteItem = async (id: string, index: number) => {
     await doRequest(() => deleteMasthead({ id }));
     setMastheads(prev => [...prev.slice(0, index), ...prev.slice(index + 1)]);
-    setRefreshing(true);
+    setLoading(true);
   };
   const refreshItem = (record: Masthead) => {
     mastheads[lastViewedIndex] = record;
@@ -223,32 +191,14 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
               />
             </Col>
           </Row>
-          <InfiniteScroll
-            dataLength={mastheads.length}
-            next={updateDisplayedArray}
-            hasMore={!eof}
-            loader={
-              page !== 0 && (
-                <div className="scroll-message">
-                  <Spin />
-                </div>
-              )
-            }
-            endMessage={
-              <div className="scroll-message">
-                <b>End of results.</b>
-              </div>
-            }
-          >
-            <Table
-              rowClassName={(_, index) => `scrollable-row-${index}`}
-              rowKey="id"
-              columns={columns}
-              dataSource={search(mastheads)}
-              loading={tableloading || refreshing}
-              pagination={false}
-            />
-          </InfiniteScroll>
+          <Table
+            rowClassName={(_, index) => `scrollable-row-${index}`}
+            rowKey="id"
+            columns={columns}
+            dataSource={search(mastheads)}
+            loading={loading}
+            pagination={false}
+          />
         </div>
       )}
       {details && (

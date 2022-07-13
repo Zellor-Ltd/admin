@@ -14,7 +14,6 @@ import {
   PageHeader,
   Popconfirm,
   Row,
-  Spin,
   Switch,
   Table,
   Tag,
@@ -31,7 +30,6 @@ import { SimpleSwitch } from '../../components/SimpleSwitch';
 import { PauseModal } from './PauseModal';
 import BrandDetail from './BrandDetail';
 import scrollIntoView from 'scroll-into-view';
-import InfiniteScroll from 'react-infinite-scroll-component';
 import { useRequest } from 'hooks/useRequest';
 
 const tagColorByStatus: any = {
@@ -71,34 +69,9 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
     fetch();
   }, []);
 
-  useEffect(() => {
-    if (refreshing) {
-      setBrands([]);
-      setEof(false);
-      updateDisplayedArray();
-      setRefreshing(false);
-    }
-  }, [refreshing]);
-
-  useEffect(() => {
-    setRefreshing(true);
-  }, [filterText]);
-
-  const updateDisplayedArray = async () => {
-    if (!content.length) return;
-    const pageToUse = refreshing ? 0 : page;
-    const results = content.slice(pageToUse * 10, pageToUse * 10 + 10);
-
-    setPage(pageToUse + 1);
-    setBrands(prev => [...prev.concat(results)]);
-
-    if (results.length < 10) setEof(true);
-  };
-
   const fetch = async () => {
     const { results }: any = await doFetch(fetchBrands);
-    setContent(results);
-    setRefreshing(true);
+    setBrands(results);
   };
 
   useEffect(() => {
@@ -406,39 +379,17 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
               <Typography.Title level={5} title="Search">
                 Search
               </Typography.Title>
-              <Input
-                onChange={onChangeFilter}
-                suffix={<SearchOutlined />}
-                placeholder="Search by Name"
-              />
+              <Input onChange={onChangeFilter} suffix={<SearchOutlined />} />
             </Col>
           </Row>
-          <InfiniteScroll
-            dataLength={filterBrand().length}
-            next={updateDisplayedArray}
-            hasMore={!eof}
-            loader={
-              page !== 0 && (
-                <div className="scroll-message">
-                  <Spin />
-                </div>
-              )
-            }
-            endMessage={
-              <div className="scroll-message">
-                <b>End of results.</b>
-              </div>
-            }
-          >
-            <Table
-              rowClassName={(_, index) => `scrollable-row-${index}`}
-              rowKey="id"
-              columns={columns}
-              dataSource={filterBrand()}
-              loading={loading || refreshing}
-              pagination={false}
-            />
-          </InfiniteScroll>
+          <Table
+            rowClassName={(_, index) => `scrollable-row-${index}`}
+            rowKey="id"
+            columns={columns}
+            dataSource={filterBrand()}
+            loading={loading}
+            pagination={false}
+          />
         </>
       )}
       {details && (

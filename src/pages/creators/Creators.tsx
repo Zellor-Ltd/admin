@@ -13,13 +13,14 @@ import {
   PageHeader,
   Popconfirm,
   Row,
+  Spin,
   Table,
   Typography,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
 import { Creator } from 'interfaces/Creator';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import {
   deleteCreator,
@@ -29,6 +30,7 @@ import {
 import CreatorDetail from './CreatorDetail';
 import { useRequest } from 'hooks/useRequest';
 import { SimpleSwitch } from 'components/SimpleSwitch';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 const Creators: React.FC<RouteComponentProps> = ({ location }) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -39,6 +41,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
   const [loaded, setLoaded] = useState<boolean>(false);
   const [creators, setCreators] = useState<Creator[]>([]);
   const [page, setPage] = useState<number>(0);
+  const [eof, setEof] = useState<boolean>(false);
   const [searchFilter, setSearchFilter] = useState<string>();
   const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
 
@@ -54,8 +57,8 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
     window.addEventListener('resize', handleResize);
   });
 
-  const fetch = async () => {
-    const pageToUse = loading ? 0 : page;
+  const fetch = async (loadNextPage?: boolean) => {
+    const pageToUse = loadNextPage ? page : 0;
     const { results } = await doFetch(() =>
       fetchCreators({
         page: pageToUse,
@@ -64,8 +67,10 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
     );
 
     setPage(pageToUse + 1);
+    if (results.length < 100) setEof(true);
 
-    setCreators(results);
+    if (pageToUse === 0) setCreators(results);
+    else setCreators(prev => [...prev.concat(results)]);
     setLoaded(true);
   };
 
@@ -296,13 +301,18 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
                 onChange={event => {
                   setSearchFilter(event.target.value);
                 }}
-                onPressEnter={fetch}
+                allowClear
+                onPressEnter={() => fetch()}
               />
             </Col>
             <Col lg={8} xs={24}>
               <Row justify="end" className={isMobile ? 'mt-2' : ''}>
                 <Col>
-                  <Button type="primary" onClick={fetch} loading={loading}>
+                  <Button
+                    type="primary"
+                    onClick={() => fetch()}
+                    loading={loading}
+                  >
                     Search
                     <SearchOutlined style={{ color: 'white' }} />
                   </Button>
@@ -310,13 +320,32 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
               </Row>
             </Col>
           </Row>
-          <Table
-            rowKey="id"
-            columns={columns}
-            dataSource={creators}
-            loading={loading}
-            pagination={false}
-          />
+          <InfiniteScroll
+            dataLength={creators.length}
+            next={() => fetch(true)}
+            hasMore={!eof}
+            loader={
+              page !== 0 && (
+                <div className="scroll-message">
+                  <Spin />
+                </div>
+              )
+            }
+            endMessage={
+              <div className="scroll-message">
+                <b>End of results.</b>
+              </div>
+            }
+          >
+            <Table
+              rowClassName={(_, index) => `scrollable-row-${index}`}
+              rowKey="id"
+              columns={columns}
+              dataSource={creators}
+              loading={loading}
+              pagination={false}
+            />
+          </InfiniteScroll>
         </div>
       )}
       {details && (

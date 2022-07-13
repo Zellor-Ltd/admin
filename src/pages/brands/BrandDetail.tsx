@@ -15,6 +15,7 @@ import {
   Switch,
   Typography,
   Popconfirm,
+  Modal,
 } from 'antd';
 import { Upload } from 'components';
 import { RichTextEditor } from 'components/RichTextEditor';
@@ -60,6 +61,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
   const [form] = Form.useForm();
   const [vaultForm] = Form.useForm();
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
+  const [showModal, setShowModal] = useState<boolean>(false);
   const [internalCheckout, setInternalCheckout] = useState<boolean>(
     brand?.checkoutType === 'internal'
   );
@@ -358,6 +360,21 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
     );
   };
 
+  const onConfirmPropagate = () => {
+    form.setFieldsValue({ propagationNeeded: true });
+    setShowModal(false);
+  };
+
+  const onCancelPropagate = () => {
+    form.setFieldsValue({ propagationNeeded: false });
+    setShowModal(false);
+  };
+
+  const handleCreatorPercentageChange = (input: number) => {
+    form.setFieldsValue({ creatorPercentage: input });
+    setShowModal(true);
+  };
+
   return (
     <>
       <PageHeader
@@ -585,7 +602,21 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                         title="positive integers"
                         min={0}
                         max={100}
+                        onChange={input => handleCreatorPercentageChange(input)}
                       />
+                      <Modal
+                        title="Apply to all products?"
+                        visible={showModal}
+                        onOk={onConfirmPropagate}
+                        onCancel={onCancelPropagate}
+                        okText="Yes"
+                        cancelText="No"
+                      >
+                        <p>
+                          Would you like to apply this creator percentage to all{' '}
+                          {brand?.brandName} products?
+                        </p>
+                      </Modal>
                     </Form.Item>
                   </Col>
                 </Row>
@@ -624,6 +655,28 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                         pattern="^[0-9]*$"
                         title="positive integers"
                         min={0}
+                      />
+                    </Form.Item>
+                  </Col>
+                </Row>
+                <Row gutter={4}>
+                  <Col lg={8} xs={8}>
+                    <Form.Item
+                      name="returnPeriod"
+                      label="Return Period (days)"
+                      initialValue={14}
+                      rules={[
+                        {
+                          required: true,
+                          message: `'Return Period' is required.`,
+                        },
+                      ]}
+                    >
+                      <InputNumber
+                        pattern="^(?:100|\d{1,2})(?:.\d{1,2})?$"
+                        title="positive integers"
+                        min={1}
+                        max={100}
                       />
                     </Form.Item>
                   </Col>
