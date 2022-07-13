@@ -36,7 +36,6 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
     useState<PromoDisplay>();
   const [promoDisplays, setPromoDisplays] = useState<PromoDisplay[]>([]);
   const [filter, setFilter] = useState<string>('');
-  const [content, setContent] = useState<PromoDisplay[]>([]);
   const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
 
   const handleResize = () => {
@@ -233,6 +232,7 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
             </Col>
           </Row>
           <Table
+            scroll={{ x: true }}
             rowClassName={(_, index) => `scrollable-row-${index}`}
             rowKey="id"
             columns={columns}

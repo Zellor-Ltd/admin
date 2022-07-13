@@ -200,7 +200,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
     );
   };
 
-  const editTags = () => {
+  const selectTags = () => {
     setCurrentTags(tags.filter(tag => selectedRowKeys.includes(tag.id)));
     setDetails(true);
   };
@@ -337,6 +337,15 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
                 </Col>
               </Row>
             </Col>
+            <Col style={{ marginBottom: '20px', marginRight: '25px' }}>
+              <Button
+                type="primary"
+                disabled={!selectedRowKeys.length}
+                onClick={selectTags}
+              >
+                Next
+              </Button>
+            </Col>
           </Row>
           <InfiniteScroll
             dataLength={tags.length}
@@ -357,6 +366,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
             }
           >
             <Table
+              scroll={{ x: true }}
               rowClassName={(_, index) => `scrollable-row-${index}`}
               rowSelection={rowSelection}
               rowKey="id"

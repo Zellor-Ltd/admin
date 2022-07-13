@@ -6,11 +6,9 @@ import {
 import {
   Button,
   Col,
-  Collapse,
   DatePicker,
   Descriptions,
   Input,
-  List,
   message,
   PageHeader,
   Row,
@@ -811,6 +809,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     return (
       <>
         <Table
+          scroll={{ x: true }}
           rowKey="id"
           columns={cartColumns}
           dataSource={validData}

@@ -146,6 +146,7 @@ const Endpoints: React.FC<RouteComponentProps> = ({ history, location }) => {
         </Col>
       </Row>
       <Table
+        scroll={{ x: true }}
         rowKey="id"
         columns={columns}
         dataSource={search(endpoints)}

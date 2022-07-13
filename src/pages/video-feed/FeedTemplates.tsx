@@ -251,6 +251,7 @@ const FeedTemplates: React.FC<RouteComponentProps> = () => {
           />
           <Content>
             <Table
+              scroll={{ x: true }}
               rowClassName={(_, index) =>
                 `${index === lastViewedIndex ? 'selected-row' : ''}`
               }

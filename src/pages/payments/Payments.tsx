@@ -420,6 +420,7 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
           </Row>
           <>
             <Table
+              scroll={{ x: true }}
               rowClassName={(_, index) => `scrollable-row-${index}`}
               rowSelection={rowSelection}
               rowKey="id"

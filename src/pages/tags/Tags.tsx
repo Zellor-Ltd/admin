@@ -29,7 +29,6 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
   const [tags, setTags] = useState<Tag[]>([]);
-  const [loaded, setLoaded] = useState<boolean>(false);
   const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
 
   const handleResize = () => {
@@ -277,6 +276,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
             }
           >
             <Table
+              scroll={{ x: true }}
               rowClassName={(_, index) => `scrollable-row-${index}`}
               rowKey="id"
               columns={columns}

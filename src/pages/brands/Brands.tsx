@@ -47,10 +47,6 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [filterText, setFilterText] = useState('');
   const [showModal, setShowModal] = useState<boolean>(false);
   const [currentBrand, setCurrentBrand] = useState<Brand>();
-  const [page, setPage] = useState<number>(0);
-  const [eof, setEof] = useState<boolean>(false);
-  const [refreshing, setRefreshing] = useState<boolean>(false);
-  const [content, setContent] = useState<Brand[]>([]);
   const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
 
   const handleResize = () => {
@@ -383,6 +379,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
             </Col>
           </Row>
           <Table
+            scroll={{ x: true }}
             rowClassName={(_, index) => `scrollable-row-${index}`}
             rowKey="id"
             columns={columns}

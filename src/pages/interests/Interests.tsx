@@ -284,6 +284,7 @@ const Interests: React.FC<InterestsProps> = () => {
           >
             <Tabs.TabPane tab="Interests" key="Interests">
               <SortableTable
+                scroll={{ x: true }}
                 rowKey="id"
                 columns={columns}
                 dataSource={interests}
@@ -293,6 +294,7 @@ const Interests: React.FC<InterestsProps> = () => {
             </Tabs.TabPane>
             <Tabs.TabPane tab="All Categories" key="All Categories">
               <Table
+                scroll={{ x: true }}
                 rowKey="id"
                 columns={columns}
                 dataSource={mergedCategories}

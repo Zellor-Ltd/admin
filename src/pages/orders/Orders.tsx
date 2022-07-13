@@ -6,11 +6,9 @@ import {
 import {
   Button,
   Col,
-  Collapse,
   DatePicker,
   Descriptions,
   Input,
-  List,
   message,
   PageHeader,
   Row,
@@ -978,6 +976,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
             }
           >
             <Table
+              scroll={{ x: true }}
               rowClassName={(_, index) => `scrollable-row-${index}`}
               rowKey="id"
               columns={columns}

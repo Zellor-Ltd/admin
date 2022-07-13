@@ -1,13 +1,4 @@
-import {
-  AutoComplete,
-  Col,
-  Collapse,
-  PageHeader,
-  Row,
-  Spin,
-  Table,
-  Typography,
-} from 'antd';
+import { Col, Collapse, PageHeader, Row, Table, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import SimpleSelect from 'components/select/SimpleSelect';
 import { Brand } from 'interfaces/Brand';
@@ -285,6 +276,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
             </Col>
           </Row>
           <Table
+            scroll={{ x: true }}
             rowClassName={(_, index) => `scrollable-row-${index}`}
             rowKey="id"
             columns={columns}

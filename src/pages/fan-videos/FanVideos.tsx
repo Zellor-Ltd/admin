@@ -45,7 +45,7 @@ import 'pages/video-feed/VideoFeedDetail.scss';
 import SimpleSelect from 'components/select/SimpleSelect';
 import { SelectOption } from 'interfaces/SelectOption';
 import VideoFeedDetailV2 from 'pages/video-feed/VideoFeedDetailV2';
-import { statusList, videoTypeList } from 'components/select/select.utils';
+import { statusList } from 'components/select/select.utils';
 import { useRequest } from 'hooks/useRequest';
 import moment from 'moment';
 
@@ -84,7 +84,6 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
   const [statusFilter, setStatusFilter] = useState<string>();
   const [brandFilter, setBrandFilter] = useState<Brand>();
   const [productBrandFilter, setProductBrandFilter] = useState<string>();
-  const [videoTypeFilter, setVideoTypeFilter] = useState<string>();
   const [titleFilter, setTitleFilter] = useState<string>();
   const [categoryFilter, setCategoryFilter] = useState<string>();
   const [indexFilter, setIndexFilter] = useState<number>();
@@ -112,12 +111,6 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
     key: 'value',
     label: 'value',
     value: 'value'.toUpperCase(),
-  };
-
-  const videoTypeMapping: SelectOption = {
-    key: 'value',
-    label: 'value',
-    value: 'value',
   };
 
   const feedItemColumns: ColumnsType<FeedItem> = [
@@ -645,6 +638,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
           </Row>
           <Content>
             <Table
+              scroll={{ x: true }}
               rowClassName={(_, index) =>
                 `${index === lastViewedIndex ? 'selected-row' : ''}`
               }

@@ -35,7 +35,6 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
   const [promotions, setPromotions] = useState<Promotion[]>([]);
   const [dateFilter, setDateFilter] = useState<any[]>([]);
   const [idFilter, setIdFilter] = useState<string>('');
-  const [content, setContent] = useState<Promotion[]>([]);
   const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
 
   const handleResize = () => {
@@ -244,6 +243,7 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
             </Col>
           </Row>
           <Table
+            scroll={{ x: true }}
             rowClassName={(_, index) => `scrollable-row-${index}`}
             rowKey="id"
             columns={columns}

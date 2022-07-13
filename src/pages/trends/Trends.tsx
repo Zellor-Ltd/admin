@@ -27,7 +27,6 @@ const Trends: React.FC<RouteComponentProps> = props => {
   >({});
   const shouldUpdateTrendIndex = useRef(false);
   const originalTrendsIndex = useRef<Record<string, number | undefined>>({});
-  const [content, setContent] = useState<any[]>([]);
   const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
 
   const handleResize = () => {
@@ -185,6 +184,7 @@ const Trends: React.FC<RouteComponentProps> = props => {
           </Col>
         </Row>
         <Table
+          scroll={{ x: true }}
           rowClassName={(_, index) => `scrollable-row-${index}`}
           rowKey="id"
           columns={columns}

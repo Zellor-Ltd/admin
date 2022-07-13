@@ -7,7 +7,6 @@ import {
 import {
   Button,
   Col,
-  DatePicker,
   Form,
   Input,
   InputNumber,
@@ -790,6 +789,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
           </Row>
           <Content>
             <Table
+              scroll={{ x: true }}
               rowClassName={(_, index) =>
                 `${index === lastViewedIndex ? 'selected-row' : ''}`
               }

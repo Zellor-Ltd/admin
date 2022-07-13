@@ -11,7 +11,7 @@ import { ColumnsType } from 'antd/lib/table';
 interface DashboardProps {}
 
 const PreRegisteredUsers: React.FC<DashboardProps> = () => {
-  const [, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(true);
   const { doFetch, doRequest } = useRequest({ setLoading });
   const [preRegs, setPreRegs] = useState<PreReg[]>([]);
   const [content, setContent] = useState<any[]>([]);
@@ -113,7 +113,13 @@ const PreRegisteredUsers: React.FC<DashboardProps> = () => {
         </Row>
       </div>
       <div>
-        <Table rowKey="id" columns={preRegistered} dataSource={preRegs} />
+        <Table
+          scroll={{ x: true }}
+          loading={loading}
+          rowKey="id"
+          columns={preRegistered}
+          dataSource={preRegs}
+        />
       </div>
     </>
   );

@@ -276,31 +276,31 @@
     }
 
     @media screen and (min-height: 450px) and (max-height: 549px) {
-      height: 87vh;
-    }
-
-    @media screen and (min-height: 550px) and (max-height: 649px) {
       height: 89vh;
     }
 
-    @media screen and (min-height: 650px) and (max-height: 749px) {
+    @media screen and (min-height: 550px) and (max-height: 649px) {
       height: 91vh;
     }
 
-    @media screen and (min-height: 750px) and (max-height: 849px) {
+    @media screen and (min-height: 650px) and (max-height: 749px) {
       height: 92vh;
     }
 
-    @media screen and (min-height: 850px) and (max-height: 949px) {
+    @media screen and (min-height: 750px) and (max-height: 849px) {
       height: 93vh;
     }
 
-    @media screen and (min-height: 950px) and (max-height: 1049px) {
+    @media screen and (min-height: 850px) and (max-height: 949px) {
       height: 94vh;
     }
 
-    @media screen and (min-height: 1050px) {
+    @media screen and (min-height: 950px) and (max-height: 1049px) {
       height: 95vh;
+    }
+
+    @media screen and (min-height: 1050px) {
+      height: 96vh;
     }
   }
 

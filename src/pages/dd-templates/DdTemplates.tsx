@@ -32,7 +32,6 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
   const [currentDdTemplate, setCurrentDdTemplate] = useState<DdTemplate>();
   const [ddTemplates, setDdTemplates] = useState<DdTemplate[]>([]);
   const [filter, setFilter] = useState<string>('');
-  const [content, setContent] = useState<DdTemplate[]>([]);
   const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
 
   const handleResize = () => {
@@ -248,6 +247,7 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
             </Col>
           </Row>
           <Table
+            scroll={{ x: true }}
             rowClassName={(_, index) => `scrollable-row-${index}`}
             rowKey="id"
             columns={columns}

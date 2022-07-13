@@ -442,6 +442,7 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
                   }
                 >
                   <Table
+                    scroll={{ x: true }}
                     rowClassName={(_, index) => `scrollable-row-${index}`}
                     rowKey="id"
                     columns={columns}

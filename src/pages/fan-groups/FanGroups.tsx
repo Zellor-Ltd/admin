@@ -18,7 +18,6 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
   const [currentFanGroup, setCurrentFanGroup] = useState<FanGroup>();
   const [fanGroups, setFanGroups] = useState<FanGroup[]>([]);
   const [filter, setFilter] = useState<string>('');
-  const [content, setContent] = useState<FanGroup[]>([]);
   const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
 
   const handleResize = () => {
@@ -151,6 +150,7 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
             </Col>
           </Row>
           <Table
+            scroll={{ x: true }}
             rowClassName={(_, index) => `scrollable-row-${index}`}
             rowKey="id"
             columns={columns}

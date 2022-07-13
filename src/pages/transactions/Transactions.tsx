@@ -56,6 +56,9 @@ const Transactions: React.FC<RouteComponentProps> = () => {
     });
     setOptionsPage(pageToUse + 1);
 
+    if (pageToUse === 0) setFans(response.results);
+    else setFans(prev => [...prev.concat(response.results)]);
+
     return response.results;
   };
 
@@ -202,6 +205,7 @@ const Transactions: React.FC<RouteComponentProps> = () => {
         </Col>
       </Row>
       <Table
+        scroll={{ x: true }}
         rowKey="id"
         columns={columns}
         dataSource={transactions}
