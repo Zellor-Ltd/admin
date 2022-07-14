@@ -1,6 +1,7 @@
 import {
   Button,
   Col,
+  Collapse,
   message,
   Modal,
   PageHeader,
@@ -25,6 +26,8 @@ import { Commission } from '../../interfaces/Commission';
 import ManualPayment from './ManualPayment';
 import moment from 'moment';
 import ManualCommission from './ManualCommission';
+
+const { Panel } = Collapse;
 
 const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -306,6 +309,80 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
     }),
   };
 
+  const Filters = () => {
+    return (
+      <>
+        <Collapse ghost>
+          <Panel
+            header={<Typography.Title level={5}>Filters</Typography.Title>}
+            key="1"
+          >
+            <Row
+              justify="end"
+              align="bottom"
+              className="sticky-filter-box pt-0"
+            >
+              <Col lg={16} xs={24}>
+                <Row justify="end" gutter={[8, 8]}>
+                  <Col lg={6} xs={24}>
+                    <Typography.Title level={5}>Creator</Typography.Title>
+                    <Select
+                      style={{ width: '100%' }}
+                      onChange={setCurrentCreator}
+                      value={currentCreator}
+                      placeholder="Creator"
+                      showSearch
+                      allowClear
+                      disabled={!creators.length}
+                      filterOption={(input, option) =>
+                        !!option?.children
+                          ?.toString()
+                          .toUpperCase()
+                          .includes(input.toUpperCase())
+                      }
+                    >
+                      {creators.map((curr: any) => (
+                        <Select.Option key={curr.id} value={curr.id}>
+                          {curr.firstName}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </Col>
+                  <Col lg={6} xs={24}>
+                    <Typography.Title level={5}>Status</Typography.Title>
+                    <Select
+                      style={{ width: '100%' }}
+                      onChange={setCurrentStatus}
+                      value={currentStatus}
+                      placeholder="Status"
+                      className={isMobile ? 'mb-1' : ''}
+                      disabled={!creators.length}
+                      showSearch
+                      allowClear
+                      filterOption={(input, option) =>
+                        !!option?.children
+                          ?.toString()
+                          .toUpperCase()
+                          .includes(input.toUpperCase())
+                      }
+                    >
+                      <Select.Option key={1} value={'Cleared'}>
+                        Cleared
+                      </Select.Option>
+                      <Select.Option key={2} value={'Returned'}>
+                        Returned
+                      </Select.Option>
+                    </Select>
+                  </Col>
+                </Row>
+              </Col>
+            </Row>
+          </Panel>
+        </Collapse>
+      </>
+    );
+  };
+
   return (
     <>
       {!manualPayment && !manualCommission && (
@@ -347,10 +424,10 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
               </Modal>,
             ]}
           />
-          <Row justify="end" align="bottom" className="sticky-filter-box">
-            <Col lg={16} xs={24}>
-              <Row justify="end" gutter={[8, 8]}>
-                {!isMobile && (
+          {!isMobile && (
+            <Row justify="end" align="bottom" className="sticky-filter-box">
+              <Col lg={16} xs={24}>
+                <Row justify="end" gutter={[8, 8]}>
                   <Col lg={6} xs={24}>
                     <Row justify="end" className={isMobile ? '' : 'mr-2 mt-03'}>
                       <Col>
@@ -360,64 +437,59 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
                       </Col>
                     </Row>
                   </Col>
-                )}
-                <Col lg={6} xs={24}>
-                  {isMobile && (
-                    <Typography.Title level={5}>Creator</Typography.Title>
-                  )}
-                  <Select
-                    style={{ width: '100%' }}
-                    onChange={setCurrentCreator}
-                    value={currentCreator}
-                    placeholder="Creator"
-                    showSearch
-                    allowClear
-                    disabled={!creators.length}
-                    filterOption={(input, option) =>
-                      !!option?.children
-                        ?.toString()
-                        .toUpperCase()
-                        .includes(input.toUpperCase())
-                    }
-                  >
-                    {creators.map((curr: any) => (
-                      <Select.Option key={curr.id} value={curr.id}>
-                        {curr.firstName}
+                  <Col lg={6} xs={24}>
+                    <Select
+                      style={{ width: '100%' }}
+                      onChange={setCurrentCreator}
+                      value={currentCreator}
+                      placeholder="Creator"
+                      showSearch
+                      allowClear
+                      disabled={!creators.length}
+                      filterOption={(input, option) =>
+                        !!option?.children
+                          ?.toString()
+                          .toUpperCase()
+                          .includes(input.toUpperCase())
+                      }
+                    >
+                      {creators.map((curr: any) => (
+                        <Select.Option key={curr.id} value={curr.id}>
+                          {curr.firstName}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </Col>
+                  <Col lg={6} xs={24}>
+                    <Select
+                      style={{ width: '100%' }}
+                      onChange={setCurrentStatus}
+                      value={currentStatus}
+                      placeholder="Status"
+                      className={isMobile ? 'mb-1' : ''}
+                      disabled={!creators.length}
+                      showSearch
+                      allowClear
+                      filterOption={(input, option) =>
+                        !!option?.children
+                          ?.toString()
+                          .toUpperCase()
+                          .includes(input.toUpperCase())
+                      }
+                    >
+                      <Select.Option key={1} value={'Cleared'}>
+                        Cleared
                       </Select.Option>
-                    ))}
-                  </Select>
-                </Col>
-                <Col lg={6} xs={24}>
-                  {isMobile && (
-                    <Typography.Title level={5}>Status</Typography.Title>
-                  )}
-                  <Select
-                    style={{ width: '100%' }}
-                    onChange={setCurrentStatus}
-                    value={currentStatus}
-                    placeholder="Status"
-                    className={isMobile ? 'mb-1' : ''}
-                    disabled={!creators.length}
-                    showSearch
-                    allowClear
-                    filterOption={(input, option) =>
-                      !!option?.children
-                        ?.toString()
-                        .toUpperCase()
-                        .includes(input.toUpperCase())
-                    }
-                  >
-                    <Select.Option key={1} value={'Cleared'}>
-                      Cleared
-                    </Select.Option>
-                    <Select.Option key={2} value={'Returned'}>
-                      Returned
-                    </Select.Option>
-                  </Select>
-                </Col>
-              </Row>
-            </Col>
-          </Row>
+                      <Select.Option key={2} value={'Returned'}>
+                        Returned
+                      </Select.Option>
+                    </Select>
+                  </Col>
+                </Row>
+              </Col>
+            </Row>
+          )}
+          {isMobile && <Filters />}
           <>
             <Table
               scroll={{ x: true }}

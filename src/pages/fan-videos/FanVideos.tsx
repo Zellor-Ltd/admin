@@ -7,6 +7,7 @@ import {
 import {
   Button,
   Col,
+  Collapse,
   Form,
   Input,
   InputNumber,
@@ -51,6 +52,7 @@ import { useRequest } from 'hooks/useRequest';
 import moment from 'moment';
 
 const { Content } = Layout;
+const { Panel } = Collapse;
 
 const reduceSegmentsTags = (packages: Segment[]) => {
   return packages?.reduce((acc: number, curr: Segment) => {
@@ -512,29 +514,13 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
     setSelectedVideoFeed(template);
   };
 
-  return (
-    <>
-      {!details && (
-        <div className="video-feed mb-1">
-          <PageHeader
-            title="Fan Videos"
-            subTitle={isMobile ? '' : 'List of Fan Videos'}
-            extra={[
-              <Button
-                key="2"
-                className={isMobile ? 'mt-05' : ''}
-                onClick={() => onEditFeedItem(feedItems.length - 1)}
-              >
-                New Item
-              </Button>,
-            ]}
-          />
-          <Row
-            align="bottom"
-            justify="space-between"
-            className={
-              isMobile ? 'sticky-filter-box' : 'mb-1 sticky-filter-box'
-            }
+  const Filters = () => {
+    return (
+      <>
+        <Collapse ghost>
+          <Panel
+            header={<Typography.Title level={5}>Filters</Typography.Title>}
+            key="1"
           >
             <Col lg={16} xs={24}>
               <Row gutter={[8, 8]}>
@@ -633,6 +619,39 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
                 </Col>
               </Row>
             </Col>
+          </Panel>
+        </Collapse>
+      </>
+    );
+  };
+
+  return (
+    <>
+      {!details && (
+        <div className="video-feed mb-1">
+          <PageHeader
+            title="Fan Videos"
+            subTitle={isMobile ? '' : 'List of Fan Videos'}
+            extra={[
+              <Button
+                key="2"
+                className={isMobile ? 'mt-05' : ''}
+                onClick={() => onEditFeedItem(feedItems.length - 1)}
+              >
+                New Item
+              </Button>,
+            ]}
+          />
+          <Row
+            align="bottom"
+            justify="space-between"
+            className={
+              isMobile
+                ? 'sticky-filter-box pt-0'
+                : 'mb-1 sticky-filter-box pt-0'
+            }
+          >
+            <Filters />
             <Col lg={24} xs={24}>
               <Row justify="end" className={isMobile ? 'mt-2' : ''}>
                 <Button type="primary" onClick={fetch} loading={loading}>

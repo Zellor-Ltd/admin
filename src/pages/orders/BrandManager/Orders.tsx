@@ -6,6 +6,7 @@ import {
 import {
   Button,
   Col,
+  Collapse,
   DatePicker,
   Descriptions,
   Input,
@@ -24,7 +25,7 @@ import { Brand } from 'interfaces/Brand';
 import { Fan } from 'interfaces/Fan';
 import { Order } from 'interfaces/Order';
 import moment from 'moment';
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useContext, useRef, useState, useEffect } from 'react';
 import { AppContext } from 'contexts/AppContext';
 import Highlighter from 'react-highlight-words';
 import { Link, RouteComponentProps } from 'react-router-dom';
@@ -44,6 +45,8 @@ import { useMount } from 'react-use';
 import MultipleFetchDebounceSelect from 'components/select/MultipleFetchDebounceSelect';
 import { useRequest } from 'hooks/useRequest';
 import { BaseOptionType } from 'antd/lib/cascader';
+
+const { Panel } = Collapse;
 
 const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -866,20 +869,13 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     }
   };
 
-  return (
-    <>
-      {!details && (
-        <div className="orders">
-          <PageHeader
-            title="Orders"
-            subTitle={isMobile ? '' : 'List of Orders'}
-            className={isMobile ? 'mb-n1' : ''}
-          />
-          <Row
-            align="bottom"
-            justify="space-between"
-            className="mb-1 sticky-filter-box"
-            gutter={8}
+  const Filters = () => {
+    return (
+      <Col span={24}>
+        <Collapse ghost>
+          <Panel
+            header={<Typography.Title level={5}>Filters</Typography.Title>}
+            key="1"
           >
             <Col lg={16} xs={24}>
               <Row gutter={[8, 8]}>
@@ -931,6 +927,27 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
                 </Col>
               </Row>
             </Col>
+          </Panel>
+        </Collapse>
+      </Col>
+    );
+  };
+
+  return (
+    <>
+      {!details && (
+        <>
+          <PageHeader
+            title="Orders"
+            subTitle={isMobile ? '' : 'List of Orders'}
+            className={isMobile ? 'mb-n1' : ''}
+          />
+          <Row
+            align="bottom"
+            justify="space-between"
+            className="mb-1 sticky-filter-box"
+          >
+            <Filters />
             <Col lg={24} xs={24}>
               <Row justify="end" className={isMobile ? 'mt-2' : ''}>
                 <Col>
@@ -1019,7 +1036,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
               }}
             />
           </InfiniteScroll>
-        </div>
+        </>
       )}
       {details && (
         <FanDetail fan={currentFan} onSave={onSaveFan} onCancel={onCancelFan} />

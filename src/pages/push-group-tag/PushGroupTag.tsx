@@ -1,4 +1,13 @@
-import { Button, Col, PageHeader, Row, Spin, Table, Typography } from 'antd';
+import {
+  Button,
+  Col,
+  Collapse,
+  PageHeader,
+  Row,
+  Spin,
+  Table,
+  Typography,
+} from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { useRequest } from 'hooks/useRequest';
 import { Brand } from 'interfaces/Brand';
@@ -14,6 +23,8 @@ import Step2 from './Step2';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import MultipleFetchDebounceSelect from 'components/select/MultipleFetchDebounceSelect';
 import { usePrevious } from 'react-use';
+
+const { Panel } = Collapse;
 
 const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [, setLoading] = useState<boolean>(false);
@@ -272,19 +283,13 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
     }
   };
 
-  return (
-    <>
-      {!details && (
-        <div>
-          <PageHeader
-            title={isMobile ? 'Push Tags to User Groups' : 'Tags'}
-            subTitle={isMobile ? '' : 'Push Tags to user groups'}
-            className={isMobile ? 'mb-n1' : ''}
-          />
-          <Row
-            align="bottom"
-            justify="space-between"
-            className="mb-1 sticky-filter-box"
+  const Filters = () => {
+    return (
+      <Col span={24}>
+        <Collapse ghost>
+          <Panel
+            header={<Typography.Title level={5}>Filters</Typography.Title>}
+            key="1"
           >
             <Col lg={16} xs={24}>
               <Row gutter={[8, 8]}>
@@ -325,6 +330,27 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
                 </Col>
               </Row>
             </Col>
+          </Panel>
+        </Collapse>
+      </Col>
+    );
+  };
+
+  return (
+    <>
+      {!details && (
+        <div>
+          <PageHeader
+            title={isMobile ? 'Push Tags to User Groups' : 'Tags'}
+            subTitle={isMobile ? '' : 'Push Tags to user groups'}
+            className={isMobile ? 'mb-n1' : ''}
+          />
+          <Row
+            align="bottom"
+            justify="space-between"
+            className="mb-1 sticky-filter-box"
+          >
+            <Filters />
             <Col xs={24}>
               <Row justify="end">
                 <Col>

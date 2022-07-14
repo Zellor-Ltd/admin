@@ -7,6 +7,7 @@ import {
 import {
   Button,
   Col,
+  Collapse,
   Form,
   Input,
   InputNumber,
@@ -51,6 +52,7 @@ import { useRequest } from 'hooks/useRequest';
 import moment from 'moment';
 
 const { Content } = Layout;
+const { Panel } = Collapse;
 
 const reduceSegmentsTags = (packages: Segment[]) => {
   return packages?.reduce((acc: number, curr: Segment) => {
@@ -486,142 +488,10 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const Filters = () => {
     return (
       <>
-        <Col lg={16} xs={24}>
-          <Row gutter={[8, 8]}>
-            <Col lg={6} xs={24}>
-              <Typography.Title level={5} title="Title">
-                Title
-              </Typography.Title>
-              <Input
-                onChange={event => setTitleFilter(event.target.value)}
-                suffix={<SearchOutlined />}
-                value={titleFilter}
-                placeholder="Search by Title"
-                onPressEnter={fetch}
-              />
-            </Col>
-            <Col lg={6} xs={24}>
-              <Typography.Title level={5}>Master Brand</Typography.Title>
-              <SimpleSelect
-                data={brands}
-                onChange={(_, brand) => setBrandFilter(brand)}
-                style={{ width: '100%' }}
-                selectedOption={brandFilter?.id}
-                optionMapping={masterBrandMapping}
-                placeholder={'Select a Master Brand'}
-                loading={isFetchingBrands}
-                disabled={isFetchingBrands}
-                allowClear
-              />
-            </Col>
-            <Col lg={6} xs={24}>
-              <Typography.Title level={5}>Product Brand</Typography.Title>
-              <SimpleSelect
-                data={productBrands}
-                onChange={id => setProductBrandFilter(id as any)}
-                style={{ width: '100%' }}
-                selectedOption={productBrandFilter}
-                optionMapping={productBrandMapping}
-                placeholder={'Select a Product Brand'}
-                loading={isFetchingProductBrands}
-                disabled={isFetchingProductBrands}
-                allowClear
-              />
-            </Col>
-            <Col lg={6} xs={24}>
-              <Typography.Title level={5}>Status</Typography.Title>
-              <SimpleSelect
-                data={statusList}
-                onChange={status => setStatusFilter(status)}
-                style={{ width: '100%' }}
-                selectedOption={statusFilter}
-                optionMapping={statusMapping}
-                placeholder={'Select a status'}
-                allowClear
-              />
-            </Col>
-            <Col lg={6} xs={24}>
-              <Typography.Title level={5}>Category</Typography.Title>
-              <SimpleSelect
-                data={categories}
-                onChange={(_, category) =>
-                  setCategoryFilter(category?.name ?? '')
-                }
-                style={{ width: '100%' }}
-                selectedOption={categoryFilter}
-                optionMapping={categoryMapping}
-                placeholder={'Select a Category'}
-                allowClear
-                loading={isFetchingCategories}
-                disabled={isFetchingCategories}
-              />
-            </Col>
-            <Col lg={6} xs={24}>
-              <Typography.Title level={5}>Video Type</Typography.Title>
-              <SimpleSelect
-                data={videoTypeList}
-                onChange={videoType => setVideoTypeFilter(videoType)}
-                style={{ width: '100%' }}
-                selectedOption={videoTypeFilter}
-                optionMapping={videoTypeMapping}
-                placeholder={'Select a video type'}
-                allowClear
-              />
-            </Col>
-            <Col lg={6} xs={24}>
-              <Typography.Title level={5}>Start Index</Typography.Title>
-              <InputNumber
-                min={0}
-                onChange={startIndex => setIndexFilter(startIndex ?? undefined)}
-                placeholder="Enter an Index"
-              />
-            </Col>
-            <Col lg={4} xs={12}>
-              <Typography.Title level={5}>Creator</Typography.Title>
-              <Select
-                placeholder="Select a creator"
-                disabled={!creators.length}
-                onChange={setCreatorFilter}
-                style={{ width: '100%' }}
-                className="mb-05"
-              >
-                {creators.map((curr: any) => (
-                  <Select.Option key={curr.id} value={curr.firstName}>
-                    {curr.firstName}
-                  </Select.Option>
-                ))}
-              </Select>
-            </Col>
-          </Row>
-        </Col>
-      </>
-    );
-  };
-
-  return (
-    <>
-      {!details && (
-        <div className="video-feed mb-1">
-          <PageHeader
-            title="Video Feeds"
-            subTitle={isMobile ? '' : 'List of Feeds'}
-            className={isMobile ? 'mb-n1' : ''}
-            extra={[
-              <Button
-                key="2"
-                className={isMobile ? 'mt-05' : ''}
-                onClick={() => onEditFeedItem(feedItems.length - 1)}
-              >
-                New Item
-              </Button>,
-            ]}
-          />
-          <Row
-            align="bottom"
-            justify="space-between"
-            className={
-              isMobile ? 'sticky-filter-box' : 'mb-1 sticky-filter-box'
-            }
+        <Collapse ghost>
+          <Panel
+            header={<Typography.Title level={5}>Filters</Typography.Title>}
+            key="1"
           >
             <Col lg={16} xs={24}>
               <Row gutter={[8, 8]}>
@@ -779,6 +649,40 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                 </Col>
               </Row>
             </Col>
+          </Panel>
+        </Collapse>
+      </>
+    );
+  };
+
+  return (
+    <>
+      {!details && (
+        <div className="video-feed mb-1">
+          <PageHeader
+            title="Video Feeds"
+            subTitle={isMobile ? '' : 'List of Feeds'}
+            className={isMobile ? 'mb-n1' : ''}
+            extra={[
+              <Button
+                key="2"
+                className={isMobile ? 'mt-05' : ''}
+                onClick={() => onEditFeedItem(feedItems.length - 1)}
+              >
+                New Item
+              </Button>,
+            ]}
+          />
+          <Row
+            align="bottom"
+            justify="space-between"
+            className={
+              isMobile
+                ? 'sticky-filter-box pt-0'
+                : 'mb-1 sticky-filter-box pt-0'
+            }
+          >
+            <Filters />
             <Col lg={24} xs={24}>
               <Row justify="end" className={isMobile ? 'mt-2' : ''}>
                 <Button type="primary" onClick={fetch} loading={loading}>

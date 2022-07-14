@@ -218,6 +218,10 @@
   padding: 14px;
 }
 
+.pt-0 {
+  padding-top: 0;
+}
+
 /* width */
 ::-webkit-scrollbar {
   width: 3.4px;
@@ -367,4 +371,8 @@
     justify-content: space-between;
     height: 100%;
   }
+}
+
+.ant-collapse-mobile {
+  padding-top: 14px;
 }
