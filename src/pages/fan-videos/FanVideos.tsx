@@ -653,12 +653,12 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
           <Row
             align="bottom"
             justify="space-between"
-            className="sticky-filter-box pt-0"
+            className="sticky-filter-box"
           >
             <Filters />
             {isMobile && (
               <Col lg={24} xs={24}>
-                <Row justify="end" className="mt-2 mb-1">
+                <Row justify="end" className="mb-1">
                   <Button type="primary" onClick={fetch} loading={loading}>
                     Search
                     <SearchOutlined style={{ color: 'white' }} />

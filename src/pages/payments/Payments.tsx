@@ -312,16 +312,12 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
   const Filters = () => {
     return (
       <>
-        <Collapse ghost>
+        <Collapse ghost className="sticky-filter-box">
           <Panel
             header={<Typography.Title level={5}>Filters</Typography.Title>}
             key="1"
           >
-            <Row
-              justify="end"
-              align="bottom"
-              className="sticky-filter-box pt-0"
-            >
+            <Row justify="end" align="bottom" className="pt-0">
               <Col lg={16} xs={24}>
                 <Row justify="end" gutter={[8, 8]}>
                   <Col lg={6} xs={24}>
@@ -425,7 +421,7 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
             ]}
           />
           {!isMobile && (
-            <Row justify="end" align="bottom" className="sticky-filter-box">
+            <Row justify="end" align="bottom" className="custom-filter-box">
               <Col lg={16} xs={24}>
                 <Row justify="end" gutter={[8, 8]}>
                   <Col lg={6} xs={24}>

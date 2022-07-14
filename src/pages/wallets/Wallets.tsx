@@ -207,16 +207,12 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
   const Filters = () => {
     return (
       <>
-        <Collapse ghost>
+        <Collapse ghost className="sticky-filter-box">
           <Panel
             header={<Typography.Title level={5}>Filters</Typography.Title>}
             key="1"
           >
-            <Row
-              align="bottom"
-              justify="space-between"
-              className="sticky-filter-box mb-1 pt-0"
-            >
+            <Row align="bottom" justify="space-between" className="mb-1 pt-0">
               <Col span={24}>
                 <Row gutter={8} align="bottom">
                   <Col lg={4} xs={24}>

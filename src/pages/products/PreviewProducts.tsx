@@ -802,7 +802,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
   const Filters = () => {
     return (
       <>
-        <Collapse ghost>
+        <Collapse ghost className="sticky-filter-box">
           <Panel
             header={<Typography.Title level={5}>Filters</Typography.Title>}
             key="1"
@@ -812,10 +812,6 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                   type="primary"
                   onClick={() => getResources(true)}
                   loading={loading}
-                  style={{
-                    position: 'relative',
-                    bottom: '-60px',
-                  }}
                 >
                   Search
                   <SearchOutlined style={{ color: 'white' }} />
@@ -823,11 +819,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
               )
             }
           >
-            <Row
-              align="bottom"
-              justify="space-between"
-              className="mb-1 sticky-filter-box pt-0"
-            >
+            <Row align="bottom" justify="space-between" className="mb-1 pt-0">
               <Col lg={16} xs={24}>
                 <Row gutter={[8, 8]}>
                   <Col lg={6} xs={24}>

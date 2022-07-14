@@ -229,16 +229,12 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
   const Filters = () => {
     return (
       <>
-        <Collapse ghost>
+        <Collapse ghost className="sticky-filter-box">
           <Panel
             header={<Typography.Title level={5}>Filters</Typography.Title>}
             key="1"
           >
-            <Row
-              align="bottom"
-              justify="end"
-              className="sticky-filter-box pt-0"
-            >
+            <Row align="bottom" justify="end" className="pt-0">
               <Col lg={16} xs={24}>
                 <Row gutter={[8, 8]} justify="end">
                   <Col lg={6} xs={24}>
@@ -303,7 +299,7 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
             subTitle={isMobile ? '' : 'List of Previous Payments'}
           />
           {!isMobile && (
-            <Row align="bottom" justify="end" className="sticky-filter-box">
+            <Row align="bottom" justify="end" className="custom-filter-box">
               <Col lg={16} xs={24}>
                 <Row gutter={[8, 8]} justify="end">
                   <Col lg={6} xs={24}>

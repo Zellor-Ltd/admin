@@ -487,17 +487,21 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
 
   const Filters = () => {
     return (
-      <>
+      <Col span={24}>
         <Collapse ghost>
           <Panel
             header={<Typography.Title level={5}>Filters</Typography.Title>}
             key="1"
             extra={
               !isMobile && (
-                <Button type="primary" onClick={fetch} loading={loading}>
-                  Search
-                  <SearchOutlined style={{ color: 'white' }} />
-                </Button>
+                <Row justify="end">
+                  <Col>
+                    <Button type="primary" onClick={fetch} loading={loading}>
+                      Search
+                      <SearchOutlined style={{ color: 'white' }} />
+                    </Button>
+                  </Col>
+                </Row>
               )
             }
           >
@@ -659,7 +663,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
             </Col>
           </Panel>
         </Collapse>
-      </>
+      </Col>
     );
   };
 
@@ -685,9 +689,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
             align="bottom"
             justify="space-between"
             className={
-              isMobile
-                ? 'sticky-filter-box pt-0'
-                : 'mb-1 sticky-filter-box pt-0'
+              isMobile ? 'sticky-filter-box pt-0' : 'mb-1 sticky-filter-box'
             }
           >
             <Filters />

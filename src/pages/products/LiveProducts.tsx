@@ -648,21 +648,13 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
 
   const Filters = () => {
     return (
-      <Collapse ghost>
+      <Collapse ghost className="sticky-filter-box">
         <Panel
           header={<Typography.Title level={5}>Filters</Typography.Title>}
           key="1"
           extra={
             !isMobile && (
-              <Button
-                type="primary"
-                onClick={getResources}
-                loading={loading}
-                style={{
-                  position: 'relative',
-                  bottom: '-60px',
-                }}
-              >
+              <Button type="primary" onClick={getResources} loading={loading}>
                 Search
                 <SearchOutlined style={{ color: 'white' }} />
               </Button>
@@ -672,7 +664,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
           <Row
             align="bottom"
             justify="space-between"
-            className="mb-1 sticky-filter-box pt-0"
+            className="mb-1 pt-0"
             gutter={8}
           >
             <Col lg={16} xs={24}>
