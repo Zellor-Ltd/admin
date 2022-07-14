@@ -240,19 +240,26 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
         <>
           <PageHeader
             title="Payment History"
-            subTitle="List of Previous Payments"
+            subTitle={isMobile ? '' : 'List of Previous Payments'}
           />
           <Row align="bottom" justify="end" className="sticky-filter-box">
             <Col lg={16} xs={24}>
               <Row gutter={[8, 8]} justify="end">
+                {!isMobile && (
+                  <Col lg={6} xs={24}>
+                    <Row justify="end" className={isMobile ? '' : 'mr-2 mt-03'}>
+                      <Col>
+                        <Typography.Text type="secondary">
+                          Filter
+                        </Typography.Text>
+                      </Col>
+                    </Row>
+                  </Col>
+                )}
                 <Col lg={6} xs={24}>
-                  <Row justify="end" className={isMobile ? '' : 'mr-2 mt-03'}>
-                    <Col>
-                      <Typography.Text type="secondary">Filter</Typography.Text>
-                    </Col>
-                  </Row>
-                </Col>
-                <Col lg={6} xs={24}>
+                  {isMobile && (
+                    <Typography.Title level={5}>Creator</Typography.Title>
+                  )}
                   <Select
                     style={{ width: '100%' }}
                     onChange={value =>
@@ -280,8 +287,12 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
                   </Select>
                 </Col>
                 <Col lg={6} xs={24}>
+                  {isMobile && (
+                    <Typography.Title level={5}>Status</Typography.Title>
+                  )}
                   <DatePicker.RangePicker
                     onChange={onChangeRangePicker}
+                    className={isMobile ? 'mb-1' : ''}
                     disabled={!creators.length}
                     ranges={{
                       Today: [moment(), moment()],

@@ -1062,7 +1062,8 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                   <SearchFilterDebounce
                     initialValue={searchFilter}
                     filterFunction={setSearchFilter}
-                    label="Search by Name"
+                    placeholder="Search by Name"
+                    label="Product Name"
                     onPressEnter={() => getResources(true)}
                   />
                 </Col>
@@ -1074,7 +1075,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                     style={{ width: '100%' }}
                     selectedOption={brandFilter?.brandName}
                     optionMapping={optionMapping}
-                    placeholder={'Select a master brand'}
+                    placeholder={'Select a Master Brand'}
                     loading={isFetchingBrands}
                     disabled={isFetchingBrands}
                     allowClear={true}
@@ -1249,7 +1250,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                 <Col lg={6} xs={24}>
                   <Checkbox
                     onChange={handleFilterOutOfStock}
-                    style={{ margin: '42px 0 16px 8px' }}
+                    className={isMobile ? 'mt-1 mb-1' : 'mt-2 mb-1 ml-05'}
                   >
                     Out of Stock only
                   </Checkbox>
@@ -1257,7 +1258,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                 <Col lg={6} xs={24}>
                   <Checkbox
                     onChange={handleFilterClassified}
-                    style={{ margin: '42px 0 16px 8px' }}
+                    className={isMobile ? 'mb-2' : 'mt-2 mb-1 ml-05'}
                   >
                     Unclassified only
                   </Checkbox>

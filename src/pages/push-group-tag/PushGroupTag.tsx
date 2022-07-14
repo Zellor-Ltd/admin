@@ -298,8 +298,8 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
             className="mb-1 sticky-filter-box"
           >
             <Col lg={16} xs={24}>
-              <Row gutter={8}>
-                <Col lg={8} xs={16}>
+              <Row gutter={[8, 8]}>
+                <Col lg={6} xs={24}>
                   <Typography.Title level={5}>
                     Search by Tag Name
                   </Typography.Title>
@@ -316,10 +316,10 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
                     }
                     setEof={setEof}
                     optionMapping={tagOptionMapping}
-                    placeholder="Type to search a tag"
+                    placeholder="Type to search a Tag"
                   ></MultipleFetchDebounceSelect>
                 </Col>
-                <Col lg={8} xs={16}>
+                <Col lg={6} xs={24}>
                   <Typography.Title level={5}>Master Brand</Typography.Title>
                   <SimpleSelect
                     data={brands}
@@ -327,9 +327,8 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
                       setBrandFilter(brand?.brandName ?? '')
                     }
                     style={{ width: '100%' }}
-                    selectedOption={''}
                     optionMapping={optionMapping}
-                    placeholder={'Select a master brand'}
+                    placeholder={'Select a Master Brand'}
                     loading={isFetchingBrands}
                     disabled={isFetchingBrands}
                     allowClear={true}
@@ -337,14 +336,19 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
                 </Col>
               </Row>
             </Col>
-            <Col style={{ marginBottom: '20px', marginRight: '25px' }}>
-              <Button
-                type="primary"
-                disabled={!selectedRowKeys.length}
-                onClick={selectTags}
-              >
-                Next
-              </Button>
+            <Col xs={24}>
+              <Row justify="end">
+                <Col>
+                  <Button
+                    className={isMobile ? 'mt-1' : ''}
+                    type="primary"
+                    disabled={!selectedRowKeys.length}
+                    onClick={selectTags}
+                  >
+                    Next
+                  </Button>
+                </Col>
+              </Row>
             </Col>
           </Row>
           <InfiniteScroll

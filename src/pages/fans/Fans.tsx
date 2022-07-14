@@ -293,12 +293,12 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
           >
             <Col lg={16} xs={24} className="mb-1">
               <Row gutter={8}>
-                <Col lg={8} xs={16}>
+                <Col lg={6} xs={24}>
                   <Typography.Title level={5}>Fan Filter</Typography.Title>
                   <Input
                     style={{ width: '100%' }}
                     onChange={evt => onSearch(evt.target.value)}
-                    placeholder="Search by fan e-mail"
+                    placeholder="Search by Fan E-mail"
                   />
                 </Col>
               </Row>

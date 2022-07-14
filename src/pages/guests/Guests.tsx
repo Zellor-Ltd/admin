@@ -320,17 +320,16 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
           <PageHeader
             title="Guests"
             subTitle={isMobile ? '' : 'List of Guests'}
-            className={isMobile ? 'mb-n1' : ''}
+            className={isMobile ? 'mb-n1 mt-05' : ''}
           />
           <Row
             align="bottom"
             justify="space-between"
-            gutter={8}
             className="mb-1 sticky-filter-box"
           >
             <Col lg={16} xs={24}>
               <Row gutter={8}>
-                <Col lg={8} xs={16}>
+                <Col lg={6} xs={24}>
                   <Typography.Title level={5}>
                     Search by Guest e-mail
                   </Typography.Title>
@@ -347,7 +346,7 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
                     }
                     setEof={setEof}
                     optionMapping={fanOptionMapping}
-                    placeholder="Type to search a guest"
+                    placeholder="Type to search a Guest"
                   ></MultipleFetchDebounceSelect>
                 </Col>
               </Row>
@@ -359,10 +358,6 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
                     type="primary"
                     onClick={searchGuests}
                     disabled={fetchingGuests}
-                    style={{
-                      marginBottom: '20px',
-                      marginRight: '25px',
-                    }}
                   >
                     Search
                     <SearchOutlined style={{ color: 'white' }} />

@@ -375,7 +375,11 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
               <Typography.Title level={5} title="Search">
                 Search
               </Typography.Title>
-              <Input onChange={onChangeFilter} suffix={<SearchOutlined />} />
+              <Input
+                onChange={onChangeFilter}
+                placeholder="Search by Name"
+                suffix={<SearchOutlined />}
+              />
             </Col>
           </Row>
           <Table

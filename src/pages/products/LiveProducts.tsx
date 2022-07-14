@@ -825,15 +825,16 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
           >
             <Col lg={16} xs={24}>
               <Row gutter={[8, 8]}>
-                <Col lg={6} xs={16}>
+                <Col lg={6} xs={24}>
                   <SearchFilterDebounce
                     initialValue={searchFilter}
                     filterFunction={setSearchFilter}
-                    label="Search by Name"
+                    label="Product Name"
+                    placeholder="Search by Name"
                     onPressEnter={getResources}
                   />
                 </Col>
-                <Col lg={6} xs={16}>
+                <Col lg={6} xs={24}>
                   <Typography.Title level={5}>Master Brand</Typography.Title>
                   <SimpleSelect
                     data={brands}
@@ -841,13 +842,13 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                     style={{ width: '100%' }}
                     selectedOption={brandFilter?.brandName}
                     optionMapping={optionMapping}
-                    placeholder={'Select a master brand'}
+                    placeholder={'Select a Master Brand'}
                     loading={isFetchingBrands}
                     disabled={isFetchingBrands}
                     allowClear={true}
                   ></SimpleSelect>
                 </Col>
-                <Col lg={6} xs={16}>
+                <Col lg={6} xs={24}>
                   <Typography.Title level={5}>Product Brand</Typography.Title>
                   <SimpleSelect
                     data={productBrands}
@@ -942,7 +943,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                     style={{ width: '100%' }}
                     selectedOption={productSubSubCategoryFilter?.id}
                     optionMapping={productSubSubCategoryOptionMapping}
-                    placeholder={'Select a Sub SubCategory'}
+                    placeholder={'Select a Sub Sub Category'}
                     loading={fetchingCategories}
                     disabled={fetchingCategories}
                     allowClear={true}
@@ -962,7 +963,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                 <Col lg={6} xs={24}>
                   <Checkbox
                     onChange={handleFilterOutOfStock}
-                    style={{ margin: '42px 0 16px 8px' }}
+                    className={isMobile ? 'mt-1 mb-2' : 'mt-2 mb-1 ml-05'}
                   >
                     Out of Stock only
                   </Checkbox>

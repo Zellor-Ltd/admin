@@ -809,7 +809,6 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     return (
       <>
         <Table
-          scroll={{ x: true }}
           rowKey="id"
           columns={cartColumns}
           dataSource={validData}
@@ -894,14 +893,14 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
             gutter={8}
           >
             <Col lg={16} xs={24}>
-              <Row gutter={8}>
-                <Col lg={8} xs={16}>
+              <Row gutter={[8, 8]}>
+                <Col lg={6} xs={24}>
                   <Typography.Title level={5}>Master Brand</Typography.Title>
                   <Select
                     allowClear
                     onChange={handleChangeBrand}
                     style={{ width: '100%' }}
-                    placeholder={'Select a master brand'}
+                    placeholder={'Select a Master Brand'}
                     value={brandId}
                     loading={isFetchingBrands}
                     disabled={isFetchingBrands}
@@ -924,7 +923,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
                     ))}
                   </Select>
                 </Col>
-                <Col lg={8} xs={16}>
+                <Col lg={6} xs={24}>
                   <Typography.Title level={5}>Fan Filter</Typography.Title>
                   <MultipleFetchDebounceSelect
                     style={{ width: '100%' }}
@@ -932,7 +931,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
                     onChange={onChangeFan}
                     onClear={onClearFan}
                     optionMapping={fanOptionMapping}
-                    placeholder="Search by fan e-mail"
+                    placeholder="Search by Fan E-mail"
                     options={fans}
                     input={fanFilterInput}
                     disabled={isFetchingBrands}
@@ -943,18 +942,15 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
                 </Col>
               </Row>
             </Col>
-            <Col>
-              <Button
-                type="primary"
-                onClick={() => setRefreshing(true)}
-                style={{
-                  marginBottom: '20px',
-                  marginRight: '25px',
-                }}
-              >
-                Search
-                <SearchOutlined style={{ color: 'white' }} />
-              </Button>
+            <Col lg={24} xs={24}>
+              <Row justify="end" className={isMobile ? 'mt-2' : ''}>
+                <Col>
+                  <Button type="primary" onClick={() => setRefreshing(true)}>
+                    Search
+                    <SearchOutlined style={{ color: 'white' }} />
+                  </Button>
+                </Col>
+              </Row>
             </Col>
           </Row>
           <InfiniteScroll
@@ -977,6 +973,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
             }
           >
             <Table
+              scroll={{ x: true }}
               rowClassName={(_, index) => `scrollable-row-${index}`}
               rowKey="id"
               columns={columns}

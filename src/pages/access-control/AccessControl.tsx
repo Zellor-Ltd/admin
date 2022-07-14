@@ -168,7 +168,7 @@ const AccessControl: React.FC = () => {
             type="primary"
             onClick={onCloneClick}
             disabled={!selectedProfile}
-            className={isMobile ? '' : 'mt-2'}
+            className={isMobile ? 'mt-1' : 'mt-2'}
           >
             Clone
           </Button>

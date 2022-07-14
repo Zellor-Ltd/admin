@@ -634,9 +634,21 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
               isMobile ? 'sticky-filter-box' : 'mb-1 sticky-filter-box'
             }
           >
-            <Col lg={24} xs={24}>
-              <Row justify="end" className={isMobile ? 'mt-15' : ''}>
-                <Col lg={4} xs={12}>
+            <Col lg={16} xs={24}>
+              <Row gutter={[8, 8]}>
+                <Col lg={6} xs={24}>
+                  <Typography.Title level={5} title="Title">
+                    Title
+                  </Typography.Title>
+                  <Input
+                    onChange={event => setTitleFilter(event.target.value)}
+                    suffix={<SearchOutlined />}
+                    value={titleFilter}
+                    placeholder="Search by Title"
+                    onPressEnter={fetch}
+                  />
+                </Col>
+                <Col lg={6} xs={24}>
                   <Typography.Title level={5}>Master Brand</Typography.Title>
                   <SimpleSelect
                     data={brands}
@@ -644,13 +656,13 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                     style={{ width: '100%' }}
                     selectedOption={brandFilter?.id}
                     optionMapping={masterBrandMapping}
-                    placeholder={'Select a master brand'}
+                    placeholder={'Select a Master Brand'}
                     loading={isFetchingBrands}
                     disabled={isFetchingBrands}
                     allowClear={true}
                   />
                 </Col>
-                <Col lg={4} xs={12}>
+                <Col lg={6} xs={24}>
                   <Typography.Title level={5}>Product Brand</Typography.Title>
                   <SimpleSelect
                     data={productBrands}
@@ -658,13 +670,13 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                     style={{ width: '100%' }}
                     selectedOption={productBrandFilter}
                     optionMapping={productBrandMapping}
-                    placeholder={'Select a product brand'}
+                    placeholder={'Select a Product Brand'}
                     loading={isFetchingProductBrands}
                     disabled={isFetchingProductBrands}
                     allowClear={true}
                   />
                 </Col>
-                <Col lg={4} xs={12}>
+                <Col lg={6} xs={24}>
                   <Typography.Title level={5}>Status</Typography.Title>
                   <SimpleSelect
                     data={statusList}
@@ -672,11 +684,11 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                     style={{ width: '100%' }}
                     selectedOption={statusFilter}
                     optionMapping={statusMapping}
-                    placeholder={'Select a status'}
+                    placeholder={'Select a Status'}
                     allowClear={true}
                   />
                 </Col>
-                <Col lg={4} xs={12}>
+                <Col lg={6} xs={24}>
                   <Typography.Title level={5}>Category</Typography.Title>
                   <SimpleSelect
                     data={categories}
@@ -686,13 +698,13 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                     style={{ width: '100%' }}
                     selectedOption={categoryFilter}
                     optionMapping={categoryMapping}
-                    placeholder={'Select a category'}
+                    placeholder={'Select a Category'}
                     allowClear={true}
                     loading={isFetchingCategories}
                     disabled={isFetchingCategories}
                   />
                 </Col>
-                <Col lg={4} xs={12}>
+                <Col lg={6} xs={24}>
                   <Typography.Title level={5}>Video Type</Typography.Title>
                   <SimpleSelect
                     data={videoTypeList}
@@ -700,24 +712,24 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                     style={{ width: '100%' }}
                     selectedOption={videoTypeFilter}
                     optionMapping={videoTypeMapping}
-                    placeholder={'Select a video type'}
+                    placeholder={'Select a Video Type'}
                     allowClear={true}
                   />
                 </Col>
-                <Col lg={4} xs={12}>
+                <Col lg={6} xs={24}>
                   <Typography.Title level={5}>Start Index</Typography.Title>
                   <InputNumber
                     min={0}
                     onChange={startIndex =>
                       setIndexFilter(startIndex ?? undefined)
                     }
-                    placeholder="Select an index"
+                    placeholder="Select an Index"
                   />
                 </Col>
-                <Col lg={4} xs={12}>
+                <Col lg={6} xs={24}>
                   <Typography.Title level={5}>Creator</Typography.Title>
                   <Select
-                    placeholder="Select a creator"
+                    placeholder="Select a Creator"
                     disabled={!creators.length}
                     onChange={setCreatorFilter}
                     style={{ width: '100%' }}
@@ -741,12 +753,12 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                     ))}
                   </Select>
                 </Col>
-                <Col lg={4} xs={12}>
+                <Col lg={6} xs={24}>
                   <Typography.Title level={5}>Date Sort</Typography.Title>
 
                   <Select
                     onChange={setDateSortFilter}
-                    placeholder="Select a sorting option"
+                    placeholder="Select a Sorting Option"
                     style={{ width: '100%' }}
                     filterOption={(input, option) =>
                       !!option?.children
@@ -779,7 +791,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
               </Row>
             </Col>
             <Col lg={24} xs={24}>
-              <Row justify="end">
+              <Row justify="end" className={isMobile ? 'mt-2' : ''}>
                 <Button type="primary" onClick={fetch} loading={loading}>
                   Search
                   <SearchOutlined style={{ color: 'white' }} />

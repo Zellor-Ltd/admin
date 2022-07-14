@@ -197,7 +197,7 @@ const Transactions: React.FC<RouteComponentProps> = () => {
             onChange={handleChangeFan}
             onClear={handleChangeFan}
             optionMapping={fanOptionMapping}
-            placeholder="Search by fan e-mail"
+            placeholder="Search by Fan E-mail"
             input={userInput}
             options={fans}
             onInputKeyDown={(event: HTMLInputElement) => handleKeyDown(event)}

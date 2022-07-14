@@ -280,7 +280,11 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
             subTitle={isMobile ? '' : 'List of Creators'}
             className={isMobile ? 'mb-n1' : ''}
             extra={[
-              <Button key="1" onClick={() => editCreator(creators.length)}>
+              <Button
+                key="1"
+                className={isMobile ? 'mt-05' : ''}
+                onClick={() => editCreator(creators.length)}
+              >
                 New Item
               </Button>,
             ]}
@@ -296,7 +300,6 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
               <Input
                 placeholder="Search by First Name"
                 suffix={<SearchOutlined />}
-                className="mb-1"
                 value={searchFilter}
                 onChange={event => {
                   setSearchFilter(event.target.value);

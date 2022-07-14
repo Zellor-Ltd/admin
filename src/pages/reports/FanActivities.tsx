@@ -85,6 +85,7 @@ const FanActivities: React.FC<DashboardProps> = () => {
           </Col>
         </Row>
         <EditableTable
+          scroll={{ x: true }}
           rowKey="id"
           columns={fanActs}
           dataSource={fanActivity}

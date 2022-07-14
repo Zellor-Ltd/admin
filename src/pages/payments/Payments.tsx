@@ -323,7 +323,7 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
         <>
           <PageHeader
             title="Commission Payments"
-            subTitle="List of Commission Payments"
+            subTitle={isMobile ? '' : 'List of Commission Payments'}
             extra={[
               <Button
                 key="1"
@@ -361,14 +361,21 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
           <Row justify="end" align="bottom" className="sticky-filter-box">
             <Col lg={16} xs={24}>
               <Row justify="end" gutter={[8, 8]}>
+                {!isMobile && (
+                  <Col lg={6} xs={24}>
+                    <Row justify="end" className={isMobile ? '' : 'mr-2 mt-03'}>
+                      <Col>
+                        <Typography.Text type="secondary">
+                          Filter
+                        </Typography.Text>
+                      </Col>
+                    </Row>
+                  </Col>
+                )}
                 <Col lg={6} xs={24}>
-                  <Row justify="end" className={isMobile ? '' : 'mr-2 mt-03'}>
-                    <Col>
-                      <Typography.Text type="secondary">Filter</Typography.Text>
-                    </Col>
-                  </Row>
-                </Col>
-                <Col lg={6} xs={24}>
+                  {isMobile && (
+                    <Typography.Title level={5}>Creator</Typography.Title>
+                  )}
                   <Select
                     style={{ width: '100%' }}
                     onChange={setCurrentCreator}
@@ -392,11 +399,15 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
                   </Select>
                 </Col>
                 <Col lg={6} xs={24}>
+                  {isMobile && (
+                    <Typography.Title level={5}>Status</Typography.Title>
+                  )}
                   <Select
                     style={{ width: '100%' }}
                     onChange={setCurrentStatus}
                     value={currentStatus}
                     placeholder="Status"
+                    className={isMobile ? 'mb-1' : ''}
                     disabled={!creators.length}
                     showSearch
                     allowClear
@@ -442,16 +453,14 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
                       <Table.Summary.Cell index={5}></Table.Summary.Cell>
                       <Table.Summary.Cell index={6}></Table.Summary.Cell>
                       <Table.Summary.Cell index={7}></Table.Summary.Cell>
-                      <Table.Summary.Cell index={8}></Table.Summary.Cell>
-                      <Table.Summary.Cell index={9}></Table.Summary.Cell>
-                      <Table.Summary.Cell index={10}>
+                      <Table.Summary.Cell index={8}>
                         <Typography.Text>
                           {totalSalePrice >= 0
                             ? `€${totalSalePrice.toFixed(2)}`
                             : `-€${Math.abs(totalSalePrice).toFixed(2)}`}
                         </Typography.Text>
                       </Table.Summary.Cell>
-                      <Table.Summary.Cell index={11}>
+                      <Table.Summary.Cell index={9}>
                         <Typography.Text>
                           {smallestCommissionPercentage
                             ? smallestCommissionPercentage ===
@@ -461,7 +470,7 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
                             : '-'}
                         </Typography.Text>
                       </Table.Summary.Cell>
-                      <Table.Summary.Cell index={12}>
+                      <Table.Summary.Cell index={10}>
                         <Typography.Text>
                           {totalCommissionAmount >= 0
                             ? `€${totalCommissionAmount.toFixed(2)}`
