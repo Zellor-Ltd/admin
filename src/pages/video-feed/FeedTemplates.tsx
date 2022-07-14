@@ -50,6 +50,19 @@ const FeedTemplates: React.FC<RouteComponentProps> = () => {
   const [loaded, setLoaded] = useState<boolean>(false);
   const [feedTemplates, setFeedTemplates] = useState<any[]>([]);
   const { doFetch } = useRequest({ setLoading });
+  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
+
+  const handleResize = () => {
+    if (window.innerWidth < 991) {
+      setIsMobile(true);
+    } else {
+      setIsMobile(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+  });
 
   const columns: ColumnsType<any> = [
     {
@@ -211,50 +224,12 @@ const FeedTemplates: React.FC<RouteComponentProps> = () => {
   const onSaveItem = (record: any) => {
     refreshItem(record);
     setDetails(false);
-    resetForm();
+    templateForm.resetFields();
+    setselectedFeedTemplate(undefined);
   };
 
   const onCancelItem = () => {
     setDetails(false);
-  };
-
-  const resetForm = () => {
-    const template = {
-      category: '',
-      creator: {
-        id: '',
-        status: '',
-        userName: '',
-        creatorId: '',
-        firstName: '',
-        lastName: '',
-      },
-      description: '',
-      format: '',
-      gender: [],
-      goLiveDate: '',
-      hCreationDate: undefined,
-      hLastUpdate: '',
-      id: '',
-      language: '',
-      package: [],
-      shortDescription: '',
-      status: '',
-      title: '',
-      validity: '',
-      videoType: [],
-      video: {},
-      lengthTotal: 0,
-      market: '',
-      modelRelease: '',
-      target: '',
-      _id: '',
-      selectedOption: 'productBrand' as any,
-      selectedId: '',
-      selectedIconUrl: '',
-      selectedselectedFeedTitle: '',
-    };
-    setselectedFeedTemplate(template);
   };
 
   return (
@@ -262,11 +237,12 @@ const FeedTemplates: React.FC<RouteComponentProps> = () => {
       {!details && (
         <div className="video-feed mb-1">
           <PageHeader
-            title="Video Feed Templates"
-            subTitle="List of Feed Templates"
+            title="Feed Templates"
+            subTitle={isMobile ? '' : 'List of Feed Templates'}
             extra={[
               <Button
                 key="2"
+                className={isMobile ? 'mt-05' : ''}
                 onClick={() => onEditFeedTemplate(feedTemplates.length - 1)}
               >
                 New Item
@@ -275,6 +251,7 @@ const FeedTemplates: React.FC<RouteComponentProps> = () => {
           />
           <Content>
             <Table
+              scroll={{ x: true }}
               rowClassName={(_, index) =>
                 `${index === lastViewedIndex ? 'selected-row' : ''}`
               }

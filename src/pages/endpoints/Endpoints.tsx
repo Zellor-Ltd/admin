@@ -1,4 +1,4 @@
-import { EditOutlined } from '@ant-design/icons';
+import { EditOutlined, SearchOutlined } from '@ant-design/icons';
 import { Button, Col, Input, PageHeader, Row, Table, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { Endpoint } from 'interfaces/Endpoint';
@@ -12,6 +12,19 @@ const Endpoints: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [loading, setLoading] = useState(false);
   const [filter, setFilter] = useState<string>('');
   const [endpoints, setEndpoints] = useState<Endpoint[]>([]);
+  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
+
+  const handleResize = () => {
+    if (window.innerWidth < 991) {
+      setIsMobile(true);
+    } else {
+      setIsMobile(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+  });
 
   const columns: ColumnsType<Endpoint> = [
     {
@@ -106,17 +119,24 @@ const Endpoints: React.FC<RouteComponentProps> = ({ history, location }) => {
     <div className="endpoints">
       <PageHeader
         title="Endpoints"
-        subTitle="List of Endpoints"
+        subTitle={isMobile ? '' : 'List of Endpoints'}
+        className={isMobile ? 'mb-n1' : ''}
         extra={[
-          <Button key="1" onClick={() => history.push(detailsPathname)}>
+          <Button
+            key="1"
+            className={isMobile ? 'mt-05' : ''}
+            onClick={() => history.push(detailsPathname)}
+          >
             New Endpoint
           </Button>,
         ]}
       />
       <Row gutter={8} className={'sticky-filter-box'}>
-        <Col lg={8} xs={16}>
-          <Typography.Title level={5}>Search by Name</Typography.Title>
+        <Col lg={4} xs={24}>
+          <Typography.Title level={5}>Search</Typography.Title>
           <Input
+            placeholder="Search by Name"
+            suffix={<SearchOutlined />}
             className="mb-1"
             value={filter}
             onChange={event => {
@@ -126,6 +146,7 @@ const Endpoints: React.FC<RouteComponentProps> = ({ history, location }) => {
         </Col>
       </Row>
       <Table
+        scroll={{ x: true }}
         rowKey="id"
         columns={columns}
         dataSource={search(endpoints)}

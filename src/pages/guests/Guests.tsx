@@ -51,6 +51,19 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
   const scrolling = useRef(false);
   const [guests, setGuests] = useState<Fan[]>([]);
   const [buffer, setBuffer] = useState<Fan[]>([]);
+  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
+
+  const handleResize = () => {
+    if (window.innerWidth < 991) {
+      setIsMobile(true);
+    } else {
+      setIsMobile(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+  });
 
   const fanOptionMapping: SelectOption = {
     key: 'id',
@@ -304,16 +317,19 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
     <>
       {!details && (
         <div>
-          <PageHeader title="Guests" subTitle="List of Guests" />
+          <PageHeader
+            title="Guests"
+            subTitle={isMobile ? '' : 'List of Guests'}
+            className={isMobile ? 'mb-n1 mt-05' : ''}
+          />
           <Row
             align="bottom"
             justify="space-between"
-            gutter={8}
             className="mb-1 sticky-filter-box"
           >
             <Col lg={16} xs={24}>
               <Row gutter={8}>
-                <Col lg={8} xs={16}>
+                <Col lg={6} xs={24}>
                   <Typography.Title level={5}>
                     Search by Guest e-mail
                   </Typography.Title>
@@ -330,22 +346,18 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
                     }
                     setEof={setEof}
                     optionMapping={fanOptionMapping}
-                    placeholder="Type to search a guest"
+                    placeholder="Type to search a Guest"
                   ></MultipleFetchDebounceSelect>
                 </Col>
               </Row>
             </Col>
             <Col lg={8} xs={24}>
-              <Row gutter={8} justify="end" className="mt-1">
-                <Col lg={8} xs={16}>
+              <Row justify="end" className={isMobile ? 'mt-2' : ''}>
+                <Col>
                   <Button
                     type="primary"
                     onClick={searchGuests}
                     disabled={fetchingGuests}
-                    style={{
-                      marginBottom: '20px',
-                      marginRight: '25px',
-                    }}
                   >
                     Search
                     <SearchOutlined style={{ color: 'white' }} />
@@ -373,6 +385,7 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
             }
           >
             <Table
+              scroll={{ x: true }}
               rowClassName={(_, index) => `scrollable-row-${index}`}
               rowKey="id"
               columns={columns}

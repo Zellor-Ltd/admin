@@ -9,7 +9,6 @@ import {
   DatePicker,
   Descriptions,
   Input,
-  List,
   message,
   PageHeader,
   Row,
@@ -81,6 +80,19 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     label: 'user',
     value: 'user',
   };
+  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
+
+  const handleResize = () => {
+    if (window.innerWidth < 991) {
+      setIsMobile(true);
+    } else {
+      setIsMobile(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+  });
 
   useMount(async () => {
     const response: any = await fetchSettings();
@@ -869,21 +881,26 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     <>
       {!details && (
         <div className="orders">
-          <PageHeader title="Orders" subTitle="List of Orders" />
+          <PageHeader
+            title="Orders"
+            subTitle={isMobile ? '' : 'List of Orders'}
+            className={isMobile ? 'mb-n1' : ''}
+          />
           <Row
             align="bottom"
             justify="space-between"
-            className={'sticky-filter-box'}
+            className="mb-1 sticky-filter-box"
+            gutter={8}
           >
             <Col lg={16} xs={24}>
-              <Row gutter={8}>
-                <Col lg={8} xs={16}>
+              <Row gutter={[8, 8]}>
+                <Col lg={6} xs={24}>
                   <Typography.Title level={5}>Master Brand</Typography.Title>
                   <Select
                     allowClear
                     onChange={handleChangeBrand}
                     style={{ width: '100%' }}
-                    placeholder={'Select a master brand'}
+                    placeholder={'Select a Master Brand'}
                     value={brandId}
                     loading={isFetchingBrands}
                     disabled={isFetchingBrands}
@@ -906,7 +923,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
                     ))}
                   </Select>
                 </Col>
-                <Col lg={8} xs={16}>
+                <Col lg={6} xs={24}>
                   <Typography.Title level={5}>Fan Filter</Typography.Title>
                   <MultipleFetchDebounceSelect
                     style={{ width: '100%' }}
@@ -914,7 +931,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
                     onChange={onChangeFan}
                     onClear={onClearFan}
                     optionMapping={fanOptionMapping}
-                    placeholder="Search by fan e-mail"
+                    placeholder="Search by Fan E-mail"
                     options={fans}
                     input={fanFilterInput}
                     disabled={isFetchingBrands}
@@ -925,18 +942,15 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
                 </Col>
               </Row>
             </Col>
-            <Col>
-              <Button
-                type="primary"
-                onClick={() => setRefreshing(true)}
-                style={{
-                  marginBottom: '20px',
-                  marginRight: '25px',
-                }}
-              >
-                Search
-                <SearchOutlined style={{ color: 'white' }} />
-              </Button>
+            <Col lg={24} xs={24}>
+              <Row justify="end" className={isMobile ? 'mt-2' : ''}>
+                <Col>
+                  <Button type="primary" onClick={() => setRefreshing(true)}>
+                    Search
+                    <SearchOutlined style={{ color: 'white' }} />
+                  </Button>
+                </Col>
+              </Row>
             </Col>
           </Row>
           <InfiniteScroll
@@ -959,6 +973,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
             }
           >
             <Table
+              scroll={{ x: true }}
               rowClassName={(_, index) => `scrollable-row-${index}`}
               rowKey="id"
               columns={columns}

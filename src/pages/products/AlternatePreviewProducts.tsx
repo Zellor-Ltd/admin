@@ -284,8 +284,8 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
                   onAssignToThumbnail={file =>
                     onAssignToThumbnail(file, record)
                   }
-                  cropable={true}
-                  scrollOverflow={true}
+                  croppable
+                  scrollOverflow
                   onImageChange={(image, sourceProp, removed) =>
                     onImageChange(image, sourceProp, record, removed)
                   }
@@ -390,7 +390,7 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
                 allCategories={allCategories}
                 onSaveProduct={onSaveCategories}
                 loading={loadingCategories}
-                isStaging={true}
+                isStaging
                 productBrands={productBrands}
               ></ProductExpandedRow>
             ),

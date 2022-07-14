@@ -20,7 +20,7 @@ import {
 import { ColumnsType } from 'antd/lib/table';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
 import { Creator } from 'interfaces/Creator';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import {
   deleteCreator,
@@ -43,6 +43,19 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
   const [searchFilter, setSearchFilter] = useState<string>();
+  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
+
+  const handleResize = () => {
+    if (window.innerWidth < 991) {
+      setIsMobile(true);
+    } else {
+      setIsMobile(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+  });
 
   const fetch = async (loadNextPage?: boolean) => {
     const pageToUse = loadNextPage ? page : 0;
@@ -264,9 +277,14 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
         <div className="creators">
           <PageHeader
             title="Creators"
-            subTitle="List of Creators"
+            subTitle={isMobile ? '' : 'List of Creators'}
+            className={isMobile ? 'mb-n1' : ''}
             extra={[
-              <Button key="1" onClick={() => editCreator(creators.length)}>
+              <Button
+                key="1"
+                className={isMobile ? 'mt-05' : ''}
+                onClick={() => editCreator(creators.length)}
+              >
                 New Item
               </Button>,
             ]}
@@ -275,14 +293,13 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
             gutter={8}
             align="bottom"
             justify="space-between"
-            className={'sticky-filter-box'}
+            className="mb-1 sticky-filter-box"
           >
-            <Col lg={8} xs={16}>
-              <Typography.Title level={5}>
-                Search by First Name
-              </Typography.Title>
+            <Col lg={4} xs={24}>
+              <Typography.Title level={5}>Search</Typography.Title>
               <Input
-                className="mb-1"
+                placeholder="Search by First Name"
+                suffix={<SearchOutlined />}
                 value={searchFilter}
                 onChange={event => {
                   setSearchFilter(event.target.value);
@@ -291,18 +308,20 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
                 onPressEnter={() => fetch()}
               />
             </Col>
-            <Button
-              type="primary"
-              onClick={() => fetch()}
-              loading={loading}
-              style={{
-                marginBottom: '16px',
-                marginRight: '25px',
-              }}
-            >
-              Search
-              <SearchOutlined style={{ color: 'white' }} />
-            </Button>
+            <Col lg={8} xs={24}>
+              <Row justify="end" className={isMobile ? 'mt-2' : ''}>
+                <Col>
+                  <Button
+                    type="primary"
+                    onClick={() => fetch()}
+                    loading={loading}
+                  >
+                    Search
+                    <SearchOutlined style={{ color: 'white' }} />
+                  </Button>
+                </Col>
+              </Row>
+            </Col>
           </Row>
           <InfiniteScroll
             dataLength={creators.length}
@@ -322,6 +341,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
             }
           >
             <Table
+              scroll={{ x: true }}
               rowClassName={(_, index) => `scrollable-row-${index}`}
               rowKey="id"
               columns={columns}

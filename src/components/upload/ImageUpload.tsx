@@ -45,7 +45,7 @@ interface ImageUploadProps {
   onAssignToMasthead?: CallableFunction;
   onAssignToThumbnail?: CallableFunction;
   onAssignToTag?: CallableFunction;
-  cropable?: boolean;
+  croppable?: boolean;
   scrollOverflow?: boolean;
   classNames?: string;
   onImageChange?: (
@@ -75,7 +75,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   onAssignToMasthead,
   onAssignToThumbnail,
   onAssignToTag,
-  cropable,
+  croppable,
   scrollOverflow,
   classNames = '',
   onImageChange,
@@ -380,7 +380,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
       );
     }
 
-    if (cropable) {
+    if (croppable) {
       actionButtons.push(
         <Col lg={6} xs={6}>
           <Tooltip title="Crop">
@@ -445,7 +445,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
       onRollback ||
       onAssignToTag ||
       onAssignToThumbnail ||
-      cropable
+      croppable
     ) {
       return (
         <ImageDnD

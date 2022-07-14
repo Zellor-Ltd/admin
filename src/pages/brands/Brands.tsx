@@ -47,6 +47,19 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [filterText, setFilterText] = useState('');
   const [showModal, setShowModal] = useState<boolean>(false);
   const [currentBrand, setCurrentBrand] = useState<Brand>();
+  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
+
+  const handleResize = () => {
+    if (window.innerWidth < 991) {
+      setIsMobile(true);
+    } else {
+      setIsMobile(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+  });
 
   useEffect(() => {
     fetch();
@@ -345,24 +358,32 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
         <>
           <PageHeader
             title="Master Brands"
-            subTitle="List of Master Brands"
+            subTitle={isMobile ? '' : 'List of Master Brands'}
+            className={isMobile ? 'mb-n1' : ''}
             extra={[
-              <Button key="1" onClick={() => editBrand(filterBrand().length)}>
+              <Button
+                key="1"
+                className={isMobile ? 'mt-05' : ''}
+                onClick={() => editBrand(filterBrand().length)}
+              >
                 New Item
               </Button>,
             ]}
           />
-          <div className="sticky-filter-box" style={{ marginBottom: '16px' }}>
-            <Row>
-              <Col lg={12} xs={24}>
-                <Typography.Title level={5} title="Search">
-                  Search
-                </Typography.Title>
-                <Input onChange={onChangeFilter} suffix={<SearchOutlined />} />
-              </Col>
-            </Row>
-          </div>
+          <Row gutter={8} className="mb-1 sticky-filter-box">
+            <Col lg={4} xs={24}>
+              <Typography.Title level={5} title="Search">
+                Search
+              </Typography.Title>
+              <Input
+                onChange={onChangeFilter}
+                placeholder="Search by Name"
+                suffix={<SearchOutlined />}
+              />
+            </Col>
+          </Row>
           <Table
+            scroll={{ x: true }}
             rowClassName={(_, index) => `scrollable-row-${index}`}
             rowKey="id"
             columns={columns}

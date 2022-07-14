@@ -29,6 +29,19 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
   const [tags, setTags] = useState<Tag[]>([]);
+  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
+
+  const handleResize = () => {
+    if (window.innerWidth < 991) {
+      setIsMobile(true);
+    } else {
+      setIsMobile(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+  });
 
   useEffect(() => {
     if (refreshing) {
@@ -203,9 +216,14 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
         <>
           <PageHeader
             title="Tags"
-            subTitle="List of Tags"
+            subTitle={isMobile ? '' : 'List of Tags'}
+            className={isMobile ? 'mb-n1' : ''}
             extra={[
-              <Button key="1" onClick={() => editTag(tags.length)}>
+              <Button
+                key="1"
+                className={isMobile ? 'mt-05' : ''}
+                onClick={() => editTag(tags.length)}
+              >
                 New Item
               </Button>,
             ]}
@@ -213,33 +231,31 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
           <Row
             align="bottom"
             justify="space-between"
-            className={'sticky-filter-box'}
+            className="sticky-filter-box mb-1"
           >
-            <Col lg={16} xs={24}>
-              <Row gutter={[8, 8]}>
-                <Col lg={8} xs={16}>
-                  <SearchFilterDebounce
-                    initialValue={searchFilter}
-                    filterFunction={setSearchFilter}
-                    label="Search by Name"
-                    onPressEnter={fetch}
-                  />
+            <Col lg={4} xs={24}>
+              <SearchFilterDebounce
+                initialValue={searchFilter}
+                filterFunction={setSearchFilter}
+                label="Search"
+                placeholder="Search by Name"
+                onPressEnter={fetch}
+              />
+            </Col>
+            <Col xs={24}>
+              <Row justify="end">
+                <Col>
+                  <Button
+                    type="primary"
+                    className="mt-1"
+                    onClick={fetch}
+                    loading={loading}
+                  >
+                    Search
+                    <SearchOutlined style={{ color: 'white' }} />
+                  </Button>
                 </Col>
               </Row>
-            </Col>
-            <Col>
-              <Button
-                type="primary"
-                onClick={fetch}
-                loading={loading}
-                style={{
-                  marginBottom: '20px',
-                  marginRight: '25px',
-                }}
-              >
-                Search
-                <SearchOutlined style={{ color: 'white' }} />
-              </Button>
             </Col>
           </Row>
           <InfiniteScroll
@@ -260,6 +276,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
             }
           >
             <Table
+              scroll={{ x: true }}
               rowClassName={(_, index) => `scrollable-row-${index}`}
               rowKey="id"
               columns={columns}

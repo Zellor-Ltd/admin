@@ -1,4 +1,8 @@
-import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import {
+  DeleteOutlined,
+  EditOutlined,
+  SearchOutlined,
+} from '@ant-design/icons';
 import {
   Button,
   Col,
@@ -32,6 +36,19 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
     useState<ProductBrand>();
   const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
   const [filter, setFilter] = useState<string>('');
+  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
+
+  const handleResize = () => {
+    if (window.innerWidth < 991) {
+      setIsMobile(true);
+    } else {
+      setIsMobile(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+  });
 
   useEffect(() => {
     getResources();
@@ -240,22 +257,25 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
         <div>
           <PageHeader
             title="Product Brands"
-            subTitle="List of Product Brands"
+            subTitle={isMobile ? '' : 'List of Product Brands'}
+            className={isMobile ? 'mb-n1' : ''}
             extra={[
               <Button
                 key="1"
+                className={isMobile ? 'mt-05' : ''}
                 onClick={() => editProductBrand(productBrands.length)}
               >
                 New Item
               </Button>,
             ]}
           />
-          <Row className="sticky-filter-box" gutter={8}>
-            <Col lg={8} xs={16}>
-              <Typography.Title level={5}>Search by Name</Typography.Title>
+          <Row className="sticky-filter-box mb-1" gutter={8}>
+            <Col lg={4} xs={24}>
+              <Typography.Title level={5}>Search</Typography.Title>
               <Input
-                className="mb-1"
+                placeholder="Search by Name"
                 value={filter}
+                suffix={<SearchOutlined />}
                 onChange={event => {
                   setFilter(event.target.value);
                 }}
@@ -263,6 +283,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
             </Col>
           </Row>
           <Table
+            scroll={{ x: true }}
             rowClassName={(_, index) => `scrollable-row-${index}`}
             rowKey="id"
             columns={columns}

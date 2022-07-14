@@ -1,6 +1,7 @@
 import { MinusOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import {
   Button,
+  Col,
   Image as AntImage,
   Input,
   message,
@@ -37,6 +38,19 @@ const Interests: React.FC<InterestsProps> = () => {
 
   const [interests, setInterests] = useState<any[]>([]);
   const [mergedCategories, setMergedCategories] = useState<any[]>([]);
+  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
+
+  const handleResize = () => {
+    if (window.innerWidth < 991) {
+      setIsMobile(true);
+    } else {
+      setIsMobile(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+  });
 
   useEffect(() => {
     if (!allCategories['Super Category'].length) return;
@@ -248,39 +262,48 @@ const Interests: React.FC<InterestsProps> = () => {
 
   return (
     <div className="interests">
-      <PageHeader title="Interests" />
-      <Row>
-        <Button
-          onClick={saveChanges}
-          style={{
-            marginBottom: '16px',
-            color: 'white',
-            borderColor: '#4CAF50',
-            backgroundColor: '#4CAF50',
-          }}
-        >
-          Save Changes
-        </Button>
+      <PageHeader title="Interests" className={isMobile ? 'mb-n1' : ''} />
+      <Row className="sticky-filter-box">
+        <Col>
+          <Button
+            onClick={saveChanges}
+            style={{
+              color: 'white',
+              borderColor: '#4CAF50',
+              backgroundColor: '#4CAF50',
+            }}
+          >
+            Save Changes
+          </Button>
+        </Col>
+        <Col span={24}>
+          <Tabs
+            className="mt-05"
+            defaultActiveKey="Interests"
+            onChange={handleTabChange}
+          >
+            <Tabs.TabPane tab="Interests" key="Interests">
+              <SortableTable
+                scroll={{ x: true }}
+                rowKey="id"
+                columns={columns}
+                dataSource={interests}
+                setDataSource={setInterests}
+                loading={loading}
+              />
+            </Tabs.TabPane>
+            <Tabs.TabPane tab="All Categories" key="All Categories">
+              <Table
+                scroll={{ x: true }}
+                rowKey="id"
+                columns={columns}
+                dataSource={mergedCategories}
+                loading={loading}
+              />
+            </Tabs.TabPane>
+          </Tabs>
+        </Col>
       </Row>
-      <Tabs defaultActiveKey="Interests" onChange={handleTabChange}>
-        <Tabs.TabPane tab="Interests" key="Interests">
-          <SortableTable
-            rowKey="id"
-            columns={columns}
-            dataSource={interests}
-            setDataSource={setInterests}
-            loading={loading}
-          />
-        </Tabs.TabPane>
-        <Tabs.TabPane tab="All Categories" key="All Categories">
-          <Table
-            rowKey="id"
-            columns={columns}
-            dataSource={mergedCategories}
-            loading={loading}
-          />
-        </Tabs.TabPane>
-      </Tabs>
     </div>
   );
 };

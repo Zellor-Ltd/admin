@@ -14,6 +14,19 @@ const FanActivities: React.FC<DashboardProps> = () => {
   const [, setLoading] = useState<boolean>(true);
   const { doFetch } = useRequest({ setLoading });
   const [fanActivity, setFanActivity] = useState<FanActivity[]>([]);
+  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
+
+  const handleResize = () => {
+    if (window.innerWidth < 991) {
+      setIsMobile(true);
+    } else {
+      setIsMobile(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+  });
 
   const getFanActivity = async () => {
     const { results } = await doFetch(fetchFanActivity);
@@ -52,15 +65,27 @@ const FanActivities: React.FC<DashboardProps> = () => {
 
   return (
     <>
-      <div style={{ marginBottom: '16px' }}>
-        <Row>
+      <div
+        style={
+          isMobile
+            ? {
+                padding: '20px',
+              }
+            : {}
+        }
+      >
+        <Row className="mb-05">
           <Col lg={12} xs={24}>
-            <Typography.Title level={3}>Fan Activities</Typography.Title>
+            <Typography.Title
+              level={4}
+              className={isMobile ? 'mb-n1 ant-page-header' : 'ant-page-header'}
+            >
+              Fan Activities
+            </Typography.Title>
           </Col>
         </Row>
-      </div>
-      <div>
         <EditableTable
+          scroll={{ x: true }}
           rowKey="id"
           columns={fanActs}
           dataSource={fanActivity}

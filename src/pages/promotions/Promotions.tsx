@@ -2,6 +2,7 @@ import {
   CalendarOutlined,
   DeleteOutlined,
   EditOutlined,
+  SearchOutlined,
 } from '@ant-design/icons';
 import {
   Button,
@@ -34,6 +35,19 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
   const [promotions, setPromotions] = useState<Promotion[]>([]);
   const [dateFilter, setDateFilter] = useState<any[]>([]);
   const [idFilter, setIdFilter] = useState<string>('');
+  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
+
+  const handleResize = () => {
+    if (window.innerWidth < 991) {
+      setIsMobile(true);
+    } else {
+      setIsMobile(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+  });
 
   const getResources = useCallback(async () => {
     await getPromotions();
@@ -203,22 +217,33 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
         <div className="promotions">
           <PageHeader
             title="Promotions"
-            subTitle="List of Promotions"
+            subTitle={isMobile ? '' : 'List of Promotions'}
+            className={isMobile ? 'mb-n1' : ''}
             extra={[
-              <Button key="1" onClick={() => editPromotion(promotions.length)}>
+              <Button
+                key="1"
+                className={isMobile ? 'mt-05' : ''}
+                onClick={() => editPromotion(promotions.length)}
+              >
                 New Item
               </Button>,
             ]}
           />
           <Row gutter={8} className={'sticky-filter-box'}>
-            <Col lg={8} xs={16}>
+            <Col lg={4} xs={24}>
               <Typography.Title level={5} title="Search">
-                Search by ID
+                Search
               </Typography.Title>
-              <Input onChange={event => setIdFilter(event.target.value)} />
+              <Input
+                placeholder="Search by ID"
+                suffix={<SearchOutlined />}
+                onChange={event => setIdFilter(event.target.value)}
+                className="mb-1"
+              />
             </Col>
           </Row>
           <Table
+            scroll={{ x: true }}
             rowClassName={(_, index) => `scrollable-row-${index}`}
             rowKey="id"
             columns={columns}

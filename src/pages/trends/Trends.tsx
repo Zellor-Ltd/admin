@@ -12,7 +12,7 @@ import {
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { useRequest } from 'hooks/useRequest';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { fetchTrends, saveTrend } from 'services/DiscoClubService';
 import { LoadingOutlined, SearchOutlined } from '@ant-design/icons';
@@ -27,6 +27,19 @@ const Trends: React.FC<RouteComponentProps> = props => {
   >({});
   const shouldUpdateTrendIndex = useRef(false);
   const originalTrendsIndex = useRef<Record<string, number | undefined>>({});
+  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
+
+  const handleResize = () => {
+    if (window.innerWidth < 991) {
+      setIsMobile(true);
+    } else {
+      setIsMobile(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+  });
 
   const getResources = async () => {
     await getTrends();
@@ -137,38 +150,41 @@ const Trends: React.FC<RouteComponentProps> = props => {
   return (
     <>
       <div>
-        <PageHeader title="Trends" subTitle="List of Trends" />
+        <PageHeader
+          title="Trends"
+          subTitle={isMobile ? '' : 'List of Trends'}
+          className={isMobile ? 'mb-n1' : ''}
+        />
         <Row
           gutter={8}
           align="bottom"
           justify="space-between"
           className="mb-1 sticky-filter-box"
         >
-          <Col lg={8} xs={16}>
-            <Typography.Title level={5}>Search by Description</Typography.Title>
+          <Col lg={4} xs={24}>
+            <Typography.Title level={5}>Search</Typography.Title>
             <Input
-              className="mb-1"
+              placeholder="Search by Description"
+              suffix={<SearchOutlined />}
               value={filter}
               onChange={event => {
                 setFilter(event.target.value);
               }}
             />
           </Col>
-          <Col>
-            <Row justify="end">
-              <Button
-                type="primary"
-                onClick={getResources}
-                className="mb-1"
-                loading={loading}
-              >
-                Search
-                <SearchOutlined style={{ color: 'white' }} />
-              </Button>
+          <Col xs={24}>
+            <Row justify="end" className="mt-1">
+              <Col>
+                <Button type="primary" onClick={getResources} loading={loading}>
+                  Search
+                  <SearchOutlined style={{ color: 'white' }} />
+                </Button>
+              </Col>
             </Row>
           </Col>
         </Row>
         <Table
+          scroll={{ x: true }}
           rowClassName={(_, index) => `scrollable-row-${index}`}
           rowKey="id"
           columns={columns}

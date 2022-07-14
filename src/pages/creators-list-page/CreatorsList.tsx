@@ -1,4 +1,8 @@
-import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import {
+  DeleteOutlined,
+  EditOutlined,
+  SearchOutlined,
+} from '@ant-design/icons';
 import {
   Button,
   Col,
@@ -31,6 +35,19 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
   const [currentMasthead, setCurrentMasthead] = useState<Masthead>();
   const [mastheads, setMastheads] = useState<Masthead[]>([]);
   const [filter, setFilter] = useState<string>('');
+  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
+
+  const handleResize = () => {
+    if (window.innerWidth < 991) {
+      setIsMobile(true);
+    } else {
+      setIsMobile(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+  });
 
   const getResources = useCallback(async () => {
     const { results } = await doFetch(fetchMastheads);
@@ -147,19 +164,24 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
         <div className="Mastheads">
           <PageHeader
             title="Mastheads"
-            subTitle="List of Mastheads"
+            subTitle={isMobile ? '' : 'List of Mastheads'}
+            className={isMobile ? 'mb-n1' : ''}
             extra={[
-              <Button key="1" onClick={() => editItem(mastheads.length)}>
+              <Button
+                key="1"
+                className={isMobile ? 'mt-05' : ''}
+                onClick={() => editItem(mastheads.length)}
+              >
                 New Item
               </Button>,
             ]}
           />
           <Row gutter={8} className={'sticky-filter-box'}>
-            <Col lg={8} xs={16}>
-              <Typography.Title level={5}>
-                Search by Description
-              </Typography.Title>
+            <Col lg={4} xs={24}>
+              <Typography.Title level={5}>Search</Typography.Title>
               <Input
+                placeholder="Search by Description"
+                suffix={<SearchOutlined />}
                 className="mb-1"
                 value={filter}
                 onChange={event => {
@@ -169,6 +191,7 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
             </Col>
           </Row>
           <Table
+            scroll={{ x: true }}
             rowClassName={(_, index) => `scrollable-row-${index}`}
             rowKey="id"
             columns={columns}

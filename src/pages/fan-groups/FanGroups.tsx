@@ -8,6 +8,7 @@ import { RouteComponentProps } from 'react-router-dom';
 import { fetchFanGroups } from 'services/DiscoClubService';
 import scrollIntoView from 'scroll-into-view';
 import FanGroupDetail from './FanGroupDetail';
+import { SearchOutlined } from '@ant-design/icons';
 
 const FanGroups: React.FC<RouteComponentProps> = props => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -17,6 +18,19 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
   const [currentFanGroup, setCurrentFanGroup] = useState<FanGroup>();
   const [fanGroups, setFanGroups] = useState<FanGroup[]>([]);
   const [filter, setFilter] = useState<string>('');
+  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
+
+  const handleResize = () => {
+    if (window.innerWidth < 991) {
+      setIsMobile(true);
+    } else {
+      setIsMobile(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+  });
 
   useEffect(() => {
     getResources();
@@ -109,17 +123,24 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
         <div>
           <PageHeader
             title="Fan Groups"
-            subTitle="List of Fan Groups"
+            subTitle={isMobile ? '' : 'List of Fan Groups'}
+            className={isMobile ? 'mb-n1' : ''}
             extra={[
-              <Button key="1" onClick={() => editFanGroup(fanGroups.length)}>
+              <Button
+                key="1"
+                className={isMobile ? 'mt-05' : ''}
+                onClick={() => editFanGroup(fanGroups.length)}
+              >
                 New Item
               </Button>,
             ]}
           />
           <Row gutter={8} className={'sticky-filter-box'}>
-            <Col lg={8} xs={16}>
-              <Typography.Title level={5}>Search by Name</Typography.Title>
+            <Col lg={4} xs={24}>
+              <Typography.Title level={5}>Search</Typography.Title>
               <Input
+                placeholder="Search by Name"
+                suffix={<SearchOutlined />}
                 className="mb-1"
                 value={filter}
                 onChange={event => {
@@ -129,6 +150,7 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
             </Col>
           </Row>
           <Table
+            scroll={{ x: true }}
             rowClassName={(_, index) => `scrollable-row-${index}`}
             rowKey="id"
             columns={columns}

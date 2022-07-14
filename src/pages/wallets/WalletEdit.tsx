@@ -11,7 +11,7 @@ import {
 import { useForm } from 'antd/lib/form/Form';
 import { useRequest } from 'hooks/useRequest';
 import { Wallet } from 'interfaces/Wallet';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { addBalanceToUser, resetUserBalance } from 'services/DiscoClubService';
 
 interface WalletEditProps {
@@ -36,6 +36,19 @@ const WalletEdit: React.FC<WalletEditProps> = ({
   const [loading, setLoading] = useState<boolean>(false);
   const { doRequest } = useRequest({ setLoading: setLoading });
   const [form] = useForm();
+  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
+
+  const handleResize = () => {
+    if (window.innerWidth < 991) {
+      setIsMobile(true);
+    } else {
+      setIsMobile(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+  });
 
   const addBalance = async ({ balanceToAdd }: { balanceToAdd: number }) => {
     await doRequest(() =>
@@ -67,8 +80,20 @@ const WalletEdit: React.FC<WalletEditProps> = ({
               {label}
             </Typography.Title>
           )}
-          <Row gutter={2} style={{ display: 'flex', flexWrap: 'nowrap' }}>
-            <Col span={12}>
+          <Row
+            gutter={2}
+            className={isMobile ? 'mb-1' : ''}
+            style={
+              isMobile
+                ? {
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    justifyContent: 'flex-end',
+                  }
+                : { display: 'flex', flexWrap: 'nowrap' }
+            }
+          >
+            <Col lg={12} xs={24}>
               <Form.Item
                 rules={[
                   {
@@ -79,7 +104,10 @@ const WalletEdit: React.FC<WalletEditProps> = ({
                 ]}
                 name="balanceToAdd"
               >
-                <InputNumber disabled={disabled}></InputNumber>
+                <InputNumber
+                  disabled={disabled}
+                  placeholder="Enter a Value"
+                ></InputNumber>
               </Form.Item>
             </Col>
             <Col>

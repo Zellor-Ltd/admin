@@ -3,9 +3,7 @@ import {
   CloudServerOutlined,
   ControlOutlined,
   DollarOutlined,
-  FireOutlined,
   GiftOutlined,
-  HeartFilled,
   SettingOutlined,
   IdcardOutlined,
   ShoppingCartOutlined,
@@ -15,8 +13,6 @@ import {
   UserOutlined,
   IssuesCloseOutlined,
   DashboardOutlined,
-  DropboxOutlined,
-  CrownOutlined,
   LineChartOutlined,
   UserAddOutlined,
   FolderAddOutlined,
@@ -28,17 +24,19 @@ import {
   LockOutlined,
   PicCenterOutlined,
   UsergroupAddOutlined,
-  WarningOutlined,
   ScheduleOutlined,
   WalletOutlined,
   UserSwitchOutlined,
   UnorderedListOutlined,
+  ShopOutlined,
+  MobileOutlined,
+  RocketOutlined,
 } from '@ant-design/icons';
 import { Menu } from 'antd';
 import SubMenu from 'antd/lib/menu/SubMenu';
 import { Link, useLocation } from 'react-router-dom';
 
-const AdminSideMenu = testMode => {
+const AdminSideMenu = ({ isMobile, testMode }) => {
   const [, pathname] = useLocation().pathname.split('/');
   const [parentMenu] = pathname.split('_');
 
@@ -49,7 +47,11 @@ const AdminSideMenu = testMode => {
       defaultSelectedKeys={[pathname]}
       defaultOpenKeys={[parentMenu]}
     >
-      <Menu.Item key="dashboard" icon={<DashboardOutlined />}>
+      <Menu.Item
+        style={isMobile ? { marginTop: 0 } : {}}
+        key="dashboard"
+        icon={<DashboardOutlined />}
+      >
         <Link to="/dashboard">Dashboard</Link>
       </Menu.Item>
       <SubMenu key="reports" icon={<LineChartOutlined />} title="Reports">
@@ -66,19 +68,19 @@ const AdminSideMenu = testMode => {
           <Link to="/fan-activities">Fan Activities</Link>
         </Menu.Item>
       </SubMenu>
-      <Menu.Item key="brands" icon={<CrownOutlined />}>
+      <Menu.Item key="brands" icon={<ShopOutlined />}>
         <Link to="/brands">Master Brands</Link>
       </Menu.Item>
-      <Menu.Item key="product-brands" icon={<CrownOutlined />}>
+      <Menu.Item key="product-brands" icon={<TagOutlined />}>
         <Link to="/product-brands">Product Brands</Link>
       </Menu.Item>
-      <Menu.Item key="products" icon={<DropboxOutlined />}>
+      <Menu.Item key="products" icon={<ShoppingCartOutlined />}>
         <Link to="/products">Live Products</Link>
       </Menu.Item>
       <Menu.Item key="preview-products" icon={<IssuesCloseOutlined />}>
         <Link to="/preview-products">Preview Products</Link>
       </Menu.Item>
-      <Menu.Item key="feed" icon={<HeartFilled />}>
+      <Menu.Item key="feed" icon={<MobileOutlined />}>
         <Link to="/feed">Video Feeds</Link>
       </Menu.Item>
       <Menu.Item key="fan-videos" icon={<UsergroupAddOutlined />}>
@@ -104,7 +106,7 @@ const AdminSideMenu = testMode => {
       <Menu.Item key="transactions" icon={<UnorderedListOutlined />}>
         <Link to="/transactions">Transactions</Link>
       </Menu.Item>
-      <SubMenu key="marketing" icon={<FireOutlined />} title="Marketing">
+      <SubMenu key="marketing" icon={<RocketOutlined />} title="Marketing">
         <Menu.Item key="marketing_creators-list" icon={<UserOutlined />}>
           <Link to="/marketing_creators-list">Creator List</Link>
         </Menu.Item>

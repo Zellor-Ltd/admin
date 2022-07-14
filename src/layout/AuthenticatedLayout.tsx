@@ -4,7 +4,7 @@ import { Notifications } from 'components/Notifications';
 import jwt from 'helpers/jwt';
 import { useBuildTarget } from 'hooks/useBuildTarget';
 import ErrorPage from 'pages/error/ErrorPage';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 import './AuthenticatedLayout.scss';
 import AdminSideMenu from './SideMenus/AdminSideMenu';
@@ -14,9 +14,22 @@ const { Header, Sider, Content } = Layout;
 
 const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
   const { children, history } = props;
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 991);
   const testMode = useRef(
     process.env.REACT_APP_SERVER_ENV?.toString() === 'development'
   );
+
+  const handleResize = () => {
+    if (window.innerWidth < 991) {
+      setIsMobile(true);
+    } else {
+      setIsMobile(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+  });
 
   const appName = useBuildTarget({
     ADMIN: 'Disco Admin',
@@ -38,21 +51,22 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
       <Header className="header">
         <h2 style={{ width: '65%' }}>
           <Link to="/">
-            {' '}
-            {appName}{' '}
-            <small style={{ fontSize: 10 }}>{`${
-              process.env.REACT_APP_BUILD_DATE || ''
-            } ${process.env.REACT_APP_SERVER_ENV}`}</small>
+            {appName}
+            <small
+              style={isMobile ? { display: 'none' } : { fontSize: 10 }}
+            >{`${process.env.REACT_APP_BUILD_DATE || ''} ${
+              process.env.REACT_APP_SERVER_ENV
+            }`}</small>
           </Link>
         </h2>
         <Row style={{ width: '35%' }} justify="end" wrap={false}>
           <div>
-            <Col xs={0} md={24} style={{ textAlign: 'end' }}>
+            <Col xs={0} lg={24} style={{ textAlign: 'end' }}>
               <Notifications />
             </Col>
           </div>
           <div>
-            <Col xs={0} md={24} style={{ textAlign: 'end' }}>
+            <Col xs={0} lg={24} style={{ textAlign: 'end' }}>
               <Typography.Text style={{ color: 'white' }}>
                 {getUserName()}
               </Typography.Text>
@@ -65,19 +79,15 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
           </div>
         </Row>
       </Header>
-      <Layout className="site-layout">
-        <Sider
-          breakpoint="lg"
-          collapsedWidth="0"
-          style={{
-            minHeight: 'calc(100vh - 64px)',
-          }}
-        >
-          {useBuildTarget({
-            ADMIN: <AdminSideMenu testMode />,
-            BRAND_MANAGER: <BrandManagerSideMenu testMode />,
-          })}
-        </Sider>
+      <Layout>
+        <div className="sider-container">
+          <Sider breakpoint="lg" collapsedWidth="0">
+            {useBuildTarget({
+              ADMIN: <AdminSideMenu isMobile={isMobile} testMode />,
+              BRAND_MANAGER: <BrandManagerSideMenu testMode />,
+            })}
+          </Sider>
+        </div>
         <Content
           className="site-layout-background"
           style={{

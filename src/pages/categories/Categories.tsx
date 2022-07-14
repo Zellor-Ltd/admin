@@ -62,6 +62,19 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
     'Sub Sub Category': [],
   });
   const [categories, setCategories] = useState<any>([]);
+  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
+
+  const handleResize = () => {
+    if (window.innerWidth < 991) {
+      setIsMobile(true);
+    } else {
+      setIsMobile(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+  });
 
   useEffect(() => {
     fetchAllCategories();
@@ -131,24 +144,7 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
       const selectedKey = categoriesKeys[
         categoriesKeys.indexOf(selectedTab)
       ] as keyof AllCategoriesAPI;
-
-      let selectedKeyIndex = -1;
       let index = -1;
-
-      switch (selectedKey.toString) {
-        case () => 'Super Category':
-          selectedKeyIndex = 0;
-          break;
-        case () => 'Category':
-          selectedKeyIndex = 1;
-          break;
-        case () => 'Sub Category':
-          selectedKeyIndex = 2;
-          break;
-        case () => 'Sub Sub Category':
-          selectedKeyIndex = 3;
-          break;
-      }
 
       const contentArray: any[] = Object.values(content);
 
@@ -206,7 +202,8 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
             setSelectedKeys(e.target.value ? [e.target.value] : [])
           }
           onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
-          style={{ marginBottom: 8, display: 'block' }}
+          className="mb-05"
+          style={{ display: 'block' }}
         />
         <Space>
           <Button
@@ -389,9 +386,11 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
         <div className="categories">
           <PageHeader
             title="Categories"
-            subTitle="List of categories"
+            subTitle={isMobile ? '' : 'List of Categories'}
+            className={isMobile ? 'mb-n1' : ''}
             extra={[
               <Dropdown
+                className={isMobile ? 'mt-05' : ''}
                 overlay={
                   <Menu>
                     {categoriesKeys.map((key, index) => (
@@ -418,7 +417,11 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
               </Dropdown>,
             ]}
           />
-          <Tabs onChange={handleTabChange} activeKey={selectedTab}>
+          <Tabs
+            className="sticky-filter-box"
+            onChange={handleTabChange}
+            activeKey={selectedTab}
+          >
             {categoriesKeys.map(key => (
               <Tabs.TabPane tab={key} key={key}>
                 <InfiniteScroll
@@ -439,6 +442,7 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
                   }
                 >
                   <Table
+                    scroll={{ x: true }}
                     rowClassName={(_, index) => `scrollable-row-${index}`}
                     rowKey="id"
                     columns={columns}

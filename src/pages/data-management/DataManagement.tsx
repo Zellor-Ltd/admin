@@ -312,7 +312,7 @@ const DataManagement: React.FC<RouteComponentProps> = ({}) => {
                 forceRender
                 tab={pane.title}
                 key={pane.key}
-                closable={true}
+                closable
                 className="requests"
               >
                 {pane.content}

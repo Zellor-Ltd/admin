@@ -11,7 +11,7 @@ import {
 import { ColumnsType } from 'antd/lib/table';
 import { Transaction } from 'interfaces/Transaction';
 import moment from 'moment';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { fetchFans, fetchWalletTransactions } from 'services/DiscoClubService';
 import CopyOrderToClipboard from 'components/CopyOrderToClipboard';
@@ -32,6 +32,20 @@ const Transactions: React.FC<RouteComponentProps> = () => {
     label: 'user',
     value: 'user',
   };
+
+  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
+
+  const handleResize = () => {
+    if (window.innerWidth < 991) {
+      setIsMobile(true);
+    } else {
+      setIsMobile(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+  });
 
   const getFans = async (input?: string, loadNextPage?: boolean) => {
     setUserInput(input);
@@ -165,13 +179,17 @@ const Transactions: React.FC<RouteComponentProps> = () => {
 
   return (
     <div className="transactions">
-      <PageHeader title="Transactions" subTitle="List of Transactions" />
+      <PageHeader
+        title="Transactions"
+        subTitle={isMobile ? '' : 'List of Transactions'}
+        className={isMobile ? 'mb-n1' : ''}
+      />
       <Row
         gutter={8}
         style={{ marginBottom: '20px' }}
         className={'sticky-filter-box'}
       >
-        <Col xxl={40} lg={6} xs={18}>
+        <Col xxl={40} lg={4} xs={24}>
           <Typography.Title level={5}>Fan Filter</Typography.Title>
           <MultipleFetchDebounceSelect
             style={{ width: '100%' }}
@@ -179,7 +197,7 @@ const Transactions: React.FC<RouteComponentProps> = () => {
             onChange={handleChangeFan}
             onClear={handleChangeFan}
             optionMapping={fanOptionMapping}
-            placeholder="Search by fan e-mail"
+            placeholder="Search by Fan E-mail"
             input={userInput}
             options={fans}
             onInputKeyDown={(event: HTMLInputElement) => handleKeyDown(event)}
@@ -187,6 +205,7 @@ const Transactions: React.FC<RouteComponentProps> = () => {
         </Col>
       </Row>
       <Table
+        scroll={{ x: true }}
         rowKey="id"
         columns={columns}
         dataSource={transactions}

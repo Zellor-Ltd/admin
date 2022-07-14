@@ -1,4 +1,4 @@
-import { Col, PageHeader, Row, Table, Typography } from 'antd';
+import { Col, Collapse, PageHeader, Row, Table, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import SimpleSelect from 'components/select/SimpleSelect';
 import { Brand } from 'interfaces/Brand';
@@ -16,7 +16,9 @@ import {
 import WalletEdit from './WalletEdit';
 import scrollIntoView from 'scroll-into-view';
 import WalletDetail from './WalletDetail';
-import MultipleFetchDebounceSelect from 'components/select/MultipleFetchDebounceSelect';
+import MultipleFetchDebounceSelect from '../../components/select/MultipleFetchDebounceSelect';
+
+const { Panel } = Collapse;
 
 const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
   const [selectedBrand, setSelectedBrand] = useState<Brand>();
@@ -30,6 +32,19 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
   const [wallets, setWallets] = useState<Wallet[]>([]);
   const [fans, setFans] = useState<Fan[]>([]);
   const [userInput, setUserInput] = useState<string>();
+  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
+
+  const handleResize = () => {
+    if (window.innerWidth < 991) {
+      setIsMobile(true);
+    } else {
+      setIsMobile(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+  });
 
   const optionMapping: SelectOption = {
     key: 'id',
@@ -204,15 +219,19 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
     <>
       {!details && (
         <div className="wallets">
-          <PageHeader title="Fan Wallets" subTitle="List of fan wallets" />
+          <PageHeader
+            title="Fan Wallets"
+            subTitle={isMobile ? '' : 'List of Fan wallets'}
+            className={isMobile ? 'mb-n1' : ''}
+          />
           <Row
             align="bottom"
             justify="space-between"
-            className={'sticky-filter-box'}
+            className="sticky-filter-box mb-1"
           >
             <Col span={24}>
               <Row gutter={8} align="bottom">
-                <Col span={4}>
+                <Col lg={4} xs={24}>
                   <Typography.Title level={5}>Fan Filter</Typography.Title>
                   <MultipleFetchDebounceSelect
                     style={{ width: '100%' }}
@@ -226,7 +245,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
                   ></MultipleFetchDebounceSelect>
                 </Col>
                 {selectedFan && (
-                  <Col span={4}>
+                  <Col lg={4} xs={24} className={isMobile ? 'mt-05' : ''}>
                     <Typography.Title level={5}>Master Brand</Typography.Title>
                     <SimpleSelect
                       data={brands}
@@ -241,7 +260,15 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
                     ></SimpleSelect>
                   </Col>
                 )}
-                <Col span={6} style={{ position: 'relative', top: '23px' }}>
+                <Col
+                  lg={6}
+                  xs={24}
+                  style={
+                    isMobile
+                      ? { position: 'relative', top: '24px', padding: 0 }
+                      : { position: 'relative', top: '24px' }
+                  }
+                >
                   <WalletEdit
                     disabled={!selectedFan || !selectedBrand}
                     fanId={selectedFan?.id}
@@ -257,6 +284,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
             </Col>
           </Row>
           <Table
+            scroll={{ x: true }}
             rowClassName={(_, index) => `scrollable-row-${index}`}
             rowKey="id"
             columns={columns}

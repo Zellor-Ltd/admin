@@ -465,8 +465,8 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
                   <ReactTagInput
                     tags={hashtags}
                     placeholder="Type and press enter"
-                    removeOnBackspace={true}
-                    editable={true}
+                    removeOnBackspace
+                    editable
                     onChange={newTags => setHashtags(newTags)}
                   />
                 </Form.Item>
@@ -770,7 +770,7 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
                       placeholder={'Select a creator'}
                       loading={false}
                       disabled={false}
-                      allowClear={true}
+                      allowClear
                     ></SimpleSelect>
                   </Form.Item>
                   {templateForm.getFieldValue('selectedId') && (
@@ -786,21 +786,12 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
         </Tabs>
         <Row gutter={8} className="mt-1">
           <Col>
-            <Button
-              type="default"
-              style={{ display: videoTab === 'Links' ? 'none' : '' }}
-              onClick={() => onCancel?.()}
-            >
+            <Button type="default" onClick={() => onCancel?.()}>
               Cancel
             </Button>
           </Col>
           <Col>
-            <Button
-              type="primary"
-              style={{ display: videoTab === 'Links' ? 'none' : '' }}
-              htmlType="submit"
-              loading={loading}
-            >
+            <Button type="primary" htmlType="submit" loading={loading}>
               Save Changes
             </Button>
           </Col>

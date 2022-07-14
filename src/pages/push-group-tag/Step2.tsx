@@ -59,7 +59,7 @@ const Step2: React.FC<Step2Props> = ({ selectedTags, onReturn }) => {
             placeholder={'Select a fan group'}
             loading={isFetchingFanGroups}
             disabled={isFetchingFanGroups}
-            allowClear={true}
+            allowClear
           ></SimpleSelect>
         </Col>
       </Row>

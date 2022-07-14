@@ -52,6 +52,19 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
   const [fans, setFans] = useState<Fan[]>([]);
   const [searchFilter, setSearchFilter] = useState<string>();
   const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
+
+  const handleResize = () => {
+    if (window.innerWidth < 991) {
+      setIsMobile(true);
+    } else {
+      setIsMobile(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+  });
 
   useEffect(() => {
     if (refreshing) {
@@ -258,12 +271,17 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
   return (
     <>
       {!details && (
-        <div className="fans">
+        <>
           <PageHeader
             title="Fans"
-            subTitle="List of Fans"
+            subTitle={isMobile ? '' : 'List of Fans'}
+            className={isMobile ? 'mb-n1' : ''}
             extra={[
-              <Button key="1" onClick={() => editFan(fans.length)}>
+              <Button
+                key="1"
+                className={isMobile ? 'mt-05' : ''}
+                onClick={() => editFan(fans.length)}
+              >
                 New Item
               </Button>,
             ]}
@@ -273,37 +291,46 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
             justify="space-between"
             className={'sticky-filter-box'}
           >
-            <Col lg={16} xs={24}>
+            <Col lg={16} xs={24} className="mb-1">
               <Row gutter={8}>
-                <Col lg={8} xs={16}>
+                <Col lg={6} xs={24}>
                   <Typography.Title level={5}>Fan Filter</Typography.Title>
                   <Input
                     style={{ width: '100%' }}
                     onChange={evt => onSearch(evt.target.value)}
-                    placeholder="Search by fan e-mail"
+                    placeholder="Search by Fan E-mail"
                   />
                 </Col>
               </Row>
             </Col>
-            <EditMultipleButton
-              text="Edit Fans"
-              arrayList={fans}
-              ModalComponent={EditFanModal}
-              selectedRowKeys={selectedRowKeys}
-              onOk={handleEditFans}
-            />
-            <Button
-              type="primary"
-              onClick={getResources}
-              loading={loading}
-              style={{
-                marginBottom: '20px',
-                marginRight: '25px',
-              }}
-            >
-              Search
-              <SearchOutlined style={{ color: 'white' }} />
-            </Button>
+            <Col lg={8} xs={24}>
+              <Row
+                gutter={8}
+                justify="end"
+                className={isMobile ? 'mt-1' : 'mt-2'}
+              >
+                <Col>
+                  <EditMultipleButton
+                    text="Edit Fans"
+                    arrayList={fans}
+                    ModalComponent={EditFanModal}
+                    selectedRowKeys={selectedRowKeys}
+                    onOk={handleEditFans}
+                  />
+                </Col>
+                <Col>
+                  <Button
+                    type="primary"
+                    onClick={getResources}
+                    loading={loading}
+                    className="mb-1"
+                  >
+                    Search
+                    <SearchOutlined style={{ color: 'white' }} />
+                  </Button>
+                </Col>
+              </Row>
+            </Col>
           </Row>
           <FanAPITestModal
             selectedRecord={fanAPITest}
@@ -331,6 +358,7 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
             }
           >
             <Table
+              scroll={{ x: true }}
               rowClassName={(_, index) => `scrollable-row-${index}`}
               rowKey="id"
               columns={columns}
@@ -343,7 +371,7 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
               }}
             />
           </InfiniteScroll>
-        </div>
+        </>
       )}
       {details && (
         <FanDetail fan={currentFan} onSave={onSaveFan} onCancel={onCancelFan} />

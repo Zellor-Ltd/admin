@@ -44,6 +44,20 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
     value: 'id',
   };
 
+  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
+
+  const handleResize = () => {
+    if (window.innerWidth < 991) {
+      setIsMobile(true);
+    } else {
+      setIsMobile(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+  });
+
   const tagOptionMapping: SelectOption = {
     key: 'id',
     label: 'tagName',
@@ -186,7 +200,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
     );
   };
 
-  const editTags = () => {
+  const selectTags = () => {
     setCurrentTags(tags.filter(tag => selectedRowKeys.includes(tag.id)));
     setDetails(true);
   };
@@ -273,15 +287,19 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
     <>
       {!details && (
         <div>
-          <PageHeader title="Tags" subTitle="Push Tags to user groups" />
+          <PageHeader
+            title={isMobile ? 'Push Tags to User Groups' : 'Tags'}
+            subTitle={isMobile ? '' : 'Push Tags to user groups'}
+            className={isMobile ? 'mb-n1' : ''}
+          />
           <Row
             align="bottom"
             justify="space-between"
-            className={'sticky-filter-box'}
+            className="mb-1 sticky-filter-box"
           >
             <Col lg={16} xs={24}>
-              <Row gutter={8}>
-                <Col lg={8} xs={16}>
+              <Row gutter={[8, 8]}>
+                <Col lg={6} xs={24}>
                   <Typography.Title level={5}>
                     Search by Tag Name
                   </Typography.Title>
@@ -298,10 +316,10 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
                     }
                     setEof={setEof}
                     optionMapping={tagOptionMapping}
-                    placeholder="Type to search a tag"
+                    placeholder="Type to search a Tag"
                   ></MultipleFetchDebounceSelect>
                 </Col>
-                <Col lg={8} xs={16}>
+                <Col lg={6} xs={24}>
                   <Typography.Title level={5}>Master Brand</Typography.Title>
                   <SimpleSelect
                     data={brands}
@@ -309,9 +327,8 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
                       setBrandFilter(brand?.brandName ?? '')
                     }
                     style={{ width: '100%' }}
-                    selectedOption={''}
                     optionMapping={optionMapping}
-                    placeholder={'Select a master brand'}
+                    placeholder={'Select a Master Brand'}
                     loading={isFetchingBrands}
                     disabled={isFetchingBrands}
                     allowClear={true}
@@ -319,14 +336,19 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
                 </Col>
               </Row>
             </Col>
-            <Col style={{ marginBottom: '20px', marginRight: '25px' }}>
-              <Button
-                type="primary"
-                disabled={!selectedRowKeys.length}
-                onClick={editTags}
-              >
-                Next
-              </Button>
+            <Col xs={24}>
+              <Row justify="end">
+                <Col>
+                  <Button
+                    className={isMobile ? 'mt-1' : ''}
+                    type="primary"
+                    disabled={!selectedRowKeys.length}
+                    onClick={selectTags}
+                  >
+                    Next
+                  </Button>
+                </Col>
+              </Row>
             </Col>
           </Row>
           <InfiniteScroll
@@ -348,6 +370,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
             }
           >
             <Table
+              scroll={{ x: true }}
               rowClassName={(_, index) => `scrollable-row-${index}`}
               rowSelection={rowSelection}
               rowKey="id"

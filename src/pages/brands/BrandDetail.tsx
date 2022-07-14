@@ -53,7 +53,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
 }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [vaults, setVaults] = useState<BrandVault[]>([]);
-  const [currentVault, setCurrentVault] = useState<BrandVault>();
+  const [currentVault, setCurrentVault] = useState<any>();
   const [activeTabKey, setActiveTabKey] = React.useState('Details');
   const [vaultOptions, setVaultOptions] = useState<boolean>(false);
   const { doFetch } = useRequest({ setLoading });
@@ -150,14 +150,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
 
   const newItem = () => {
     setLastViewedIndex(vaults.length);
-    const template = {
-      shopName: brand ? brand.shopName : '',
-      id: '',
-      apiShopName: '',
-      tokenType: '',
-      token: '',
-    };
-    setCurrentVault(template as BrandVault);
+    setCurrentVault({ shopName: brand?.shopName ?? '' });
     vaultForm.resetFields();
     setVaultOptions(true);
   };

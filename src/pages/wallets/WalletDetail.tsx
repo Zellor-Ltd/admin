@@ -173,6 +173,7 @@ const WalletDetail: React.FC<WalletDetailProps> = ({
         </Col>
       </Row>
       <Table
+        scroll={{ x: true }}
         rowKey="id"
         columns={columns}
         dataSource={search(transactions)}

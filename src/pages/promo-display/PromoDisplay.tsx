@@ -1,4 +1,8 @@
-import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import {
+  DeleteOutlined,
+  EditOutlined,
+  SearchOutlined,
+} from '@ant-design/icons';
 import {
   Button,
   Col,
@@ -32,6 +36,19 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
     useState<PromoDisplay>();
   const [promoDisplays, setPromoDisplays] = useState<PromoDisplay[]>([]);
   const [filter, setFilter] = useState<string>('');
+  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
+
+  const handleResize = () => {
+    if (window.innerWidth < 991) {
+      setIsMobile(true);
+    } else {
+      setIsMobile(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+  });
 
   useEffect(() => {
     getResources();
@@ -188,10 +205,12 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
         <div>
           <PageHeader
             title="Shop Display"
-            subTitle="List of Shop Displays"
+            subTitle={isMobile ? '' : 'List of Shop Displays'}
+            className={isMobile ? 'mb-n1' : ''}
             extra={[
               <Button
                 key="1"
+                className={isMobile ? 'mt-05' : ''}
                 onClick={() => editPromoDisplay(promoDisplays.length)}
               >
                 New Item
@@ -199,9 +218,11 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
             ]}
           />
           <Row gutter={8} className={'sticky-filter-box'}>
-            <Col lg={8} xs={16}>
-              <Typography.Title level={5}>Search by ID</Typography.Title>
+            <Col lg={4} xs={24}>
+              <Typography.Title level={5}>Search</Typography.Title>
               <Input
+                placeholder="Search by ID"
+                suffix={<SearchOutlined />}
                 className="mb-1"
                 value={filter}
                 onChange={event => {
@@ -211,6 +232,7 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
             </Col>
           </Row>
           <Table
+            scroll={{ x: true }}
             rowClassName={(_, index) => `scrollable-row-${index}`}
             rowKey="id"
             columns={columns}

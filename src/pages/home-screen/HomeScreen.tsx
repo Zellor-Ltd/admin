@@ -18,6 +18,19 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [details, setDetails] = useState<boolean>(false);
   const [currentBanner, setCurrentBanner] = useState<Banner>();
+  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
+
+  const handleResize = () => {
+    if (window.innerWidth < 991) {
+      setIsMobile(true);
+    } else {
+      setIsMobile(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+  });
 
   const getBanners = async () => {
     const response = await doFetch(() => fetchBanners());
@@ -166,14 +179,19 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
         <div>
           <PageHeader
             title="Banners"
-            subTitle="List of Banners"
+            subTitle={isMobile ? '' : 'List of Banners'}
             extra={[
-              <Button key="1" onClick={() => editBanner(banners.length)}>
+              <Button
+                key="1"
+                className={isMobile ? 'mt-05' : ''}
+                onClick={() => editBanner(banners.length)}
+              >
                 New Item
               </Button>,
             ]}
           />
           <Table
+            scroll={{ x: true }}
             rowClassName={(_, index) => `scrollable-row-${index}`}
             rowKey="id"
             columns={columns}

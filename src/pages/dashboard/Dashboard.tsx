@@ -255,7 +255,7 @@ const Dashboard: React.FC<DashboardProps> = () => {
       data,
       angleField: 'value',
       colorField: 'type',
-      radius: 40,
+      radius: 30,
       innerRadius: 2,
       interactions: [
         {
@@ -422,7 +422,7 @@ const Dashboard: React.FC<DashboardProps> = () => {
   return (
     <>
       <Row gutter={[32, 32]} align="bottom" className="mb-1">
-        <Col span={4}>
+        <Col lg={6} xs={24}>
           <Card>
             <div className="card-content">
               <Statistic
@@ -434,7 +434,7 @@ const Dashboard: React.FC<DashboardProps> = () => {
             </div>
           </Card>
         </Col>
-        <Col span={4}>
+        <Col lg={6} xs={24}>
           <Card>
             <div className="card-content">
               <Statistic
@@ -446,7 +446,7 @@ const Dashboard: React.FC<DashboardProps> = () => {
             </div>
           </Card>
         </Col>
-        <Col span={4}>
+        <Col lg={6} xs={24}>
           <Card>
             <div className="card-content">
               <Statistic
@@ -458,7 +458,7 @@ const Dashboard: React.FC<DashboardProps> = () => {
             </div>
           </Card>
         </Col>
-        <Col span={4}>
+        <Col lg={6} xs={24}>
           <Card>
             <div className="card-content">
               <Statistic
@@ -472,7 +472,7 @@ const Dashboard: React.FC<DashboardProps> = () => {
         </Col>
       </Row>
       <Row gutter={[32, 32]} align="top">
-        <Col span={16}>
+        <Col lg={16} xs={24}>
           <div className="dashboard-items">
             <span>
               Revenue
@@ -484,7 +484,7 @@ const Dashboard: React.FC<DashboardProps> = () => {
             <Revenue />
           </div>
         </Col>
-        <Col span={8}>
+        <Col lg={8} xs={24}>
           <Col span={24}>
             <Tabs defaultActiveKey="1" onChange={callback}>
               <Tabs.TabPane tab="Creators" key="1">
@@ -503,7 +503,7 @@ const Dashboard: React.FC<DashboardProps> = () => {
         align="bottom"
         className="mt-1"
       >
-        <Col span={12}>
+        <Col lg={12} xs={24}>
           <div className="dashboard-items">
             <List
               header={<div>Purchases</div>}
@@ -518,7 +518,7 @@ const Dashboard: React.FC<DashboardProps> = () => {
             />
           </div>
         </Col>
-        <Col span={12}>
+        <Col lg={12} xs={24}>
           <div className="dashboard-items">
             <span>
               Video Quantity

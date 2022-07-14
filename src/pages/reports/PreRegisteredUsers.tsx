@@ -11,10 +11,23 @@ import { ColumnsType } from 'antd/lib/table';
 interface DashboardProps {}
 
 const PreRegisteredUsers: React.FC<DashboardProps> = () => {
-  const [, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(true);
   const { doFetch, doRequest } = useRequest({ setLoading });
   const [preRegs, setPreRegs] = useState<PreReg[]>([]);
   const [content, setContent] = useState<any[]>([]);
+  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
+
+  const handleResize = () => {
+    if (window.innerWidth < 991) {
+      setIsMobile(true);
+    } else {
+      setIsMobile(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+  });
 
   const getPreRegs = async () => {
     const { results } = await doFetch(fetchPreRegs);
@@ -79,15 +92,34 @@ const PreRegisteredUsers: React.FC<DashboardProps> = () => {
 
   return (
     <>
-      <div style={{ marginBottom: '16px' }}>
-        <Row>
+      <div
+        style={
+          isMobile
+            ? {
+                padding: '20px',
+              }
+            : {}
+        }
+      >
+        <Row className="mb-05">
           <Col lg={12} xs={24}>
-            <Typography.Title level={3}>Pre Registered Users</Typography.Title>
+            <Typography.Title
+              level={4}
+              className={isMobile ? 'mb-n1 ant-page-header' : 'ant-page-header'}
+            >
+              Pre Registered Users
+            </Typography.Title>
           </Col>
         </Row>
       </div>
       <div>
-        <Table rowKey="id" columns={preRegistered} dataSource={preRegs} />
+        <Table
+          scroll={{ x: true }}
+          loading={loading}
+          rowKey="id"
+          columns={preRegistered}
+          dataSource={preRegs}
+        />
       </div>
     </>
   );
