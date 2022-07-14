@@ -20,7 +20,8 @@ import {
 import { ColumnsType } from 'antd/lib/table';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
 import { Creator } from 'interfaces/Creator';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
+import { AppContext } from 'contexts/AppContext';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import {
   deleteCreator,
@@ -43,19 +44,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
   const [searchFilter, setSearchFilter] = useState<string>();
-  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
-
-  const handleResize = () => {
-    if (window.innerWidth < 991) {
-      setIsMobile(true);
-    } else {
-      setIsMobile(false);
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener('resize', handleResize);
-  });
+  const { isMobile } = useContext(AppContext);
 
   const fetch = async (loadNextPage?: boolean) => {
     const pageToUse = loadNextPage ? page : 0;

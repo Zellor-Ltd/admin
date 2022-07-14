@@ -10,7 +10,8 @@ import {
   Typography,
 } from 'antd';
 import { useRequest } from '../../hooks/useRequest';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { AppContext } from 'contexts/AppContext';
 import { fetchCreators, fetchPayments } from '../../services/DiscoClubService';
 import { Creator } from 'interfaces/Creator';
 import moment from 'moment';
@@ -24,7 +25,7 @@ import CommissionDetails from './CommissionDetails';
 const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
   const [, setLoading] = useState<boolean>(false);
   const { doFetch } = useRequest({ setLoading });
-  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
+  const { isMobile } = useContext(AppContext);
   const [creators, setCreators] = useState<Creator[]>([]);
   const [payments, setPayments] = useState<Payment[]>([]);
   const [page, setPage] = useState<number>(0);
@@ -37,18 +38,6 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
   const [currentCreator, setCurrentCreator] = useState<Creator>();
   const [dateFrom, setDateFrom] = useState<string>();
   const [dateTo, setDateTo] = useState<string>();
-
-  const handleResize = () => {
-    if (window.innerWidth < 991) {
-      setIsMobile(true);
-    } else {
-      setIsMobile(false);
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener('resize', handleResize);
-  });
 
   useEffect(() => {
     if (!details) {

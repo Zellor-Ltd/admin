@@ -25,7 +25,8 @@ import { ColumnsType } from 'antd/lib/table';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
 import { FeedItem } from 'interfaces/FeedItem';
 import { Segment } from 'interfaces/Segment';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
+import { AppContext } from 'contexts/AppContext';
 import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 import {
   deleteVideoFeed,
@@ -121,19 +122,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     value: 'value',
   };
 
-  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
-
-  const handleResize = () => {
-    if (window.innerWidth < 991) {
-      setIsMobile(true);
-    } else {
-      setIsMobile(false);
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener('resize', handleResize);
-  });
+  const { isMobile } = useContext(AppContext);
 
   const feedItemColumns: ColumnsType<FeedItem> = [
     {

@@ -3,7 +3,8 @@ import { ColumnsType } from 'antd/lib/table';
 import { useRequest } from 'hooks/useRequest';
 import { FanGroup } from 'interfaces/FanGroup';
 import moment from 'moment';
-import { useEffect, useState } from 'react';
+import { useContext, useState, useEffect } from 'react';
+import { AppContext } from 'contexts/AppContext';
 import { RouteComponentProps } from 'react-router-dom';
 import { fetchFanGroups } from 'services/DiscoClubService';
 import scrollIntoView from 'scroll-into-view';
@@ -18,19 +19,7 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
   const [currentFanGroup, setCurrentFanGroup] = useState<FanGroup>();
   const [fanGroups, setFanGroups] = useState<FanGroup[]>([]);
   const [filter, setFilter] = useState<string>('');
-  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
-
-  const handleResize = () => {
-    if (window.innerWidth < 991) {
-      setIsMobile(true);
-    } else {
-      setIsMobile(false);
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener('resize', handleResize);
-  });
+  const { isMobile } = useContext(AppContext);
 
   useEffect(() => {
     getResources();

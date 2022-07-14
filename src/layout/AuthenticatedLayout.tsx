@@ -4,7 +4,8 @@ import { Notifications } from 'components/Notifications';
 import jwt from 'helpers/jwt';
 import { useBuildTarget } from 'hooks/useBuildTarget';
 import ErrorPage from 'pages/error/ErrorPage';
-import { useEffect, useRef, useState } from 'react';
+import React, { useContext, useRef } from 'react';
+import { AppContext } from 'contexts/AppContext';
 import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 import './AuthenticatedLayout.scss';
 import AdminSideMenu from './SideMenus/AdminSideMenu';
@@ -13,23 +14,11 @@ import BrandManagerSideMenu from './SideMenus/BrandManagerSideMenu';
 const { Header, Sider, Content } = Layout;
 
 const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
+  const { isMobile } = useContext(AppContext);
   const { children, history } = props;
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 991);
   const testMode = useRef(
     process.env.REACT_APP_SERVER_ENV?.toString() === 'development'
   );
-
-  const handleResize = () => {
-    if (window.innerWidth < 991) {
-      setIsMobile(true);
-    } else {
-      setIsMobile(false);
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener('resize', handleResize);
-  });
 
   const appName = useBuildTarget({
     ADMIN: 'Disco Admin',

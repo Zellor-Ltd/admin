@@ -2,7 +2,8 @@ import { EditOutlined, SearchOutlined } from '@ant-design/icons';
 import { Button, Col, Input, PageHeader, Row, Table, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { Endpoint } from 'interfaces/Endpoint';
-import { useEffect, useState } from 'react';
+import { useContext, useState, useEffect } from 'react';
+import { AppContext } from 'contexts/AppContext';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { fetchEndpoints } from 'services/DiscoClubService';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
@@ -12,19 +13,7 @@ const Endpoints: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [loading, setLoading] = useState(false);
   const [filter, setFilter] = useState<string>('');
   const [endpoints, setEndpoints] = useState<Endpoint[]>([]);
-  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
-
-  const handleResize = () => {
-    if (window.innerWidth < 991) {
-      setIsMobile(true);
-    } else {
-      setIsMobile(false);
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener('resize', handleResize);
-  });
+  const { isMobile } = useContext(AppContext);
 
   const columns: ColumnsType<Endpoint> = [
     {

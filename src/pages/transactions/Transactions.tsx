@@ -11,7 +11,8 @@ import {
 import { ColumnsType } from 'antd/lib/table';
 import { Transaction } from 'interfaces/Transaction';
 import moment from 'moment';
-import { useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
+import { AppContext } from 'contexts/AppContext';
 import { RouteComponentProps } from 'react-router-dom';
 import { fetchFans, fetchWalletTransactions } from 'services/DiscoClubService';
 import CopyOrderToClipboard from 'components/CopyOrderToClipboard';
@@ -33,19 +34,7 @@ const Transactions: React.FC<RouteComponentProps> = () => {
     value: 'user',
   };
 
-  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
-
-  const handleResize = () => {
-    if (window.innerWidth < 991) {
-      setIsMobile(true);
-    } else {
-      setIsMobile(false);
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener('resize', handleResize);
-  });
+  const { isMobile } = useContext(AppContext);
 
   const getFans = async (input?: string, loadNextPage?: boolean) => {
     setUserInput(input);

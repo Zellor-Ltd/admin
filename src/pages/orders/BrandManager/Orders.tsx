@@ -24,7 +24,8 @@ import { Brand } from 'interfaces/Brand';
 import { Fan } from 'interfaces/Fan';
 import { Order } from 'interfaces/Order';
 import moment from 'moment';
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
+import { AppContext } from 'contexts/AppContext';
 import Highlighter from 'react-highlight-words';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import {
@@ -80,19 +81,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     label: 'user',
     value: 'user',
   };
-  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
-
-  const handleResize = () => {
-    if (window.innerWidth < 991) {
-      setIsMobile(true);
-    } else {
-      setIsMobile(false);
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener('resize', handleResize);
-  });
+  const { isMobile } = useContext(AppContext);
 
   useMount(async () => {
     const response: any = await fetchSettings();

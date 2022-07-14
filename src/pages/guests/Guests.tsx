@@ -14,7 +14,8 @@ import { ColumnsType } from 'antd/lib/table';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
 import { useRequest } from 'hooks/useRequest';
 import { Fan } from 'interfaces/Fan';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
+import { AppContext } from 'contexts/AppContext';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { fetchGuests } from 'services/DiscoClubService';
 import scrollIntoView from 'scroll-into-view';
@@ -51,19 +52,7 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
   const scrolling = useRef(false);
   const [guests, setGuests] = useState<Fan[]>([]);
   const [buffer, setBuffer] = useState<Fan[]>([]);
-  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
-
-  const handleResize = () => {
-    if (window.innerWidth < 991) {
-      setIsMobile(true);
-    } else {
-      setIsMobile(false);
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener('resize', handleResize);
-  });
+  const { isMobile } = useContext(AppContext);
 
   const fanOptionMapping: SelectOption = {
     key: 'id',

@@ -12,7 +12,8 @@ import { ColumnsType } from 'antd/lib/table';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
 import { FeedItem } from 'interfaces/FeedItem';
 import { Segment } from 'interfaces/Segment';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import { AppContext } from 'contexts/AppContext';
 import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 import {
   fetchBrands,
@@ -50,19 +51,7 @@ const FeedTemplates: React.FC<RouteComponentProps> = () => {
   const [loaded, setLoaded] = useState<boolean>(false);
   const [feedTemplates, setFeedTemplates] = useState<any[]>([]);
   const { doFetch } = useRequest({ setLoading });
-  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
-
-  const handleResize = () => {
-    if (window.innerWidth < 991) {
-      setIsMobile(true);
-    } else {
-      setIsMobile(false);
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener('resize', handleResize);
-  });
+  const { isMobile } = useContext(AppContext);
 
   const columns: ColumnsType<any> = [
     {

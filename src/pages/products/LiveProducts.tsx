@@ -126,19 +126,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
     value: 'id',
   };
 
-  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
-
-  const handleResize = () => {
-    if (window.innerWidth < 991) {
-      setIsMobile(true);
-    } else {
-      setIsMobile(false);
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener('resize', handleResize);
-  });
+  const { isMobile } = useContext(AppContext);
 
   const handleFilterOutOfStock = (e: CheckboxChangeEvent) => {
     setOutOfStockFilter(e.target.checked);

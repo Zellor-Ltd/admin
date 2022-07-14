@@ -21,7 +21,8 @@ import EditMultipleButton from 'components/EditMultipleButton';
 import { useRequest } from 'hooks/useRequest';
 import { Fan } from 'interfaces/Fan';
 import EditFanModal from 'pages/fans/EditFanModal';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
+import { AppContext } from 'contexts/AppContext';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { fetchFans } from 'services/DiscoClubService';
 import FanAPITestModal from './FanAPITestModal';
@@ -52,19 +53,7 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
   const [fans, setFans] = useState<Fan[]>([]);
   const [searchFilter, setSearchFilter] = useState<string>();
   const [refreshing, setRefreshing] = useState<boolean>(false);
-  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
-
-  const handleResize = () => {
-    if (window.innerWidth < 991) {
-      setIsMobile(true);
-    } else {
-      setIsMobile(false);
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener('resize', handleResize);
-  });
+  const { isMobile } = useContext(AppContext);
 
   useEffect(() => {
     if (refreshing) {

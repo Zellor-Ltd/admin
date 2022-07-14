@@ -11,7 +11,8 @@ import {
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { useRequest } from '../../hooks/useRequest';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { AppContext } from 'contexts/AppContext';
 import { RouteComponentProps } from 'react-router-dom';
 import {
   fetchCommissions,
@@ -33,7 +34,7 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [currentStatus, setCurrentStatus] = useState<string>();
   const [currentCreator, setCurrentCreator] = useState<string>();
   const [creators, setCreators] = useState<Creator[]>([]);
-  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
+  const { isMobile } = useContext(AppContext);
   const [commissions, setCommissions] = useState<Commission[]>([]);
   const [totalCommissionAmount, setTotalCommissionAmount] = useState<number>(0);
   const [smallestCommissionPercentage, setSmallestCommissionPercentage] =
@@ -43,18 +44,6 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [totalSalePrice, setTotalSalePrice] = useState<number>(0);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [manualCommission, setManualCommission] = useState<boolean>(false);
-
-  const handleResize = () => {
-    if (window.innerWidth < 991) {
-      setIsMobile(true);
-    } else {
-      setIsMobile(false);
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener('resize', handleResize);
-  });
 
   useEffect(() => {
     getCreators();

@@ -1,6 +1,7 @@
 import { Button, Col, Form, Input, message, PageHeader, Row, Tabs } from 'antd';
 import { MinusCircleOutlined } from '@ant-design/icons';
-import { useEffect, useState } from 'react';
+import { useContext, useState, useEffect } from 'react';
+import { AppContext } from 'contexts/AppContext';
 import { saveSettings } from 'services/DiscoClubService';
 import { useDispatch, useSelector } from 'react-redux';
 import { getSettings } from 'reducers/settings';
@@ -11,19 +12,7 @@ const Settings: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const { settings } = useSelector((state: any) => state.settings);
   const dispatch = useDispatch();
-  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
-
-  const handleResize = () => {
-    if (window.innerWidth < 991) {
-      setIsMobile(true);
-    } else {
-      setIsMobile(false);
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener('resize', handleResize);
-  });
+  const { isMobile } = useContext(AppContext);
 
   useEffect(() => {
     form.resetFields();

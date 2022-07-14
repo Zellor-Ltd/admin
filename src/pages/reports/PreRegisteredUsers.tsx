@@ -3,7 +3,8 @@ import { useRequest } from '../../hooks/useRequest';
 import { DeleteOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import CopyIdToClipboard from '../../components/CopyIdToClipboard';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import { AppContext } from 'contexts/AppContext';
 import { fetchPreRegs, deletePreReg } from '../../services/DiscoClubService';
 import { PreReg } from '../../interfaces/PreReg';
 import { ColumnsType } from 'antd/lib/table';
@@ -15,19 +16,7 @@ const PreRegisteredUsers: React.FC<DashboardProps> = () => {
   const { doFetch, doRequest } = useRequest({ setLoading });
   const [preRegs, setPreRegs] = useState<PreReg[]>([]);
   const [content, setContent] = useState<any[]>([]);
-  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
-
-  const handleResize = () => {
-    if (window.innerWidth < 991) {
-      setIsMobile(true);
-    } else {
-      setIsMobile(false);
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener('resize', handleResize);
-  });
+  const { isMobile } = useContext(AppContext);
 
   const getPreRegs = async () => {
     const { results } = await doFetch(fetchPreRegs);

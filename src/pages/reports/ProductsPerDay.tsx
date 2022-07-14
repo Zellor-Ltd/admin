@@ -1,6 +1,7 @@
 import { Col, Row, Typography } from 'antd';
 import { useRequest } from '../../hooks/useRequest';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import { AppContext } from 'contexts/AppContext';
 import {
   Bar,
   BarChart,
@@ -23,19 +24,7 @@ const ProductsPerDay: React.FC<DashboardProps> = () => {
     const { results } = await doFetch(fetchProductsPerDay);
     setProductsPerDay(results);
   };
-  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
-
-  const handleResize = () => {
-    if (window.innerWidth < 991) {
-      setIsMobile(true);
-    } else {
-      setIsMobile(false);
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener('resize', handleResize);
-  });
+  const { isMobile } = useContext(AppContext);
 
   useEffect(() => {
     getProducts();

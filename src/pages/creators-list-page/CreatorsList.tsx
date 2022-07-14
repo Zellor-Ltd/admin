@@ -17,7 +17,8 @@ import {
 import { ColumnsType } from 'antd/lib/table';
 import { useRequest } from '../../hooks/useRequest';
 import { Masthead } from '../../interfaces/Masthead';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useContext, useState, useEffect } from 'react';
+import { AppContext } from 'contexts/AppContext';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import {
   deleteMasthead,
@@ -35,19 +36,7 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
   const [currentMasthead, setCurrentMasthead] = useState<Masthead>();
   const [mastheads, setMastheads] = useState<Masthead[]>([]);
   const [filter, setFilter] = useState<string>('');
-  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
-
-  const handleResize = () => {
-    if (window.innerWidth < 991) {
-      setIsMobile(true);
-    } else {
-      setIsMobile(false);
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener('resize', handleResize);
-  });
+  const { isMobile } = useContext(AppContext);
 
   const getResources = useCallback(async () => {
     const { results } = await doFetch(fetchMastheads);

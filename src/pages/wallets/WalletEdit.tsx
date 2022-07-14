@@ -9,9 +9,10 @@ import {
   Typography,
 } from 'antd';
 import { useForm } from 'antd/lib/form/Form';
+import { useContext, useState } from 'react';
+import { AppContext } from 'contexts/AppContext';
 import { useRequest } from 'hooks/useRequest';
 import { Wallet } from 'interfaces/Wallet';
-import { useEffect, useState } from 'react';
 import { addBalanceToUser, resetUserBalance } from 'services/DiscoClubService';
 
 interface WalletEditProps {
@@ -36,19 +37,7 @@ const WalletEdit: React.FC<WalletEditProps> = ({
   const [loading, setLoading] = useState<boolean>(false);
   const { doRequest } = useRequest({ setLoading: setLoading });
   const [form] = useForm();
-  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
-
-  const handleResize = () => {
-    if (window.innerWidth < 991) {
-      setIsMobile(true);
-    } else {
-      setIsMobile(false);
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener('resize', handleResize);
-  });
+  const { isMobile } = useContext(AppContext);
 
   const addBalance = async ({ balanceToAdd }: { balanceToAdd: number }) => {
     await doRequest(() =>

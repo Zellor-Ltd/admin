@@ -12,7 +12,8 @@ import {
   Typography,
 } from 'antd';
 import { Role } from 'interfaces/Role';
-import { useEffect, useState, useCallback } from 'react';
+import { useContext, useState, useCallback, useEffect } from 'react';
+import { AppContext } from 'contexts/AppContext';
 import {
   fetchPrivileges,
   fetchProfiles,
@@ -52,19 +53,7 @@ const AccessControl: React.FC = () => {
   const [showCloneModal, setShowCloneModal] = useState<boolean>(false);
 
   const [form] = Form.useForm();
-  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
-
-  const handleResize = () => {
-    if (window.innerWidth < 991) {
-      setIsMobile(true);
-    } else {
-      setIsMobile(false);
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener('resize', handleResize);
-  });
+  const { isMobile } = useContext(AppContext);
 
   const getPrivileges = async (selectedProfile: string) => {
     try {

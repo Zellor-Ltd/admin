@@ -2,7 +2,8 @@ import { Col, Row, Typography } from 'antd';
 import { useRequest } from '../../hooks/useRequest';
 import EditableTable from '../../components/EditableTable';
 import CopyIdToClipboard from '../../components/CopyIdToClipboard';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import { AppContext } from 'contexts/AppContext';
 import { fetchFanActivity } from '../../services/DiscoClubService';
 import { PreReg } from '../../interfaces/PreReg';
 import { FanActivity } from '../../interfaces/FanActivity';
@@ -14,19 +15,7 @@ const FanActivities: React.FC<DashboardProps> = () => {
   const [, setLoading] = useState<boolean>(true);
   const { doFetch } = useRequest({ setLoading });
   const [fanActivity, setFanActivity] = useState<FanActivity[]>([]);
-  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
-
-  const handleResize = () => {
-    if (window.innerWidth < 991) {
-      setIsMobile(true);
-    } else {
-      setIsMobile(false);
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener('resize', handleResize);
-  });
+  const { isMobile } = useContext(AppContext);
 
   const getFanActivity = async () => {
     const { results } = await doFetch(fetchFanActivity);

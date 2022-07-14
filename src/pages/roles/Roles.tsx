@@ -2,7 +2,8 @@ import { EditOutlined, SearchOutlined } from '@ant-design/icons';
 import { Button, Col, Input, PageHeader, Row, Table, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { Role } from 'interfaces/Role';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { AppContext } from 'contexts/AppContext';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { fetchProfiles } from 'services/DiscoClubService';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
@@ -12,19 +13,7 @@ const Roles: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [filter, setFilter] = useState<string>('');
   const [roles, setRoles] = useState<Role[]>([]);
-  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
-
-  const handleResize = () => {
-    if (window.innerWidth < 991) {
-      setIsMobile(true);
-    } else {
-      setIsMobile(false);
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener('resize', handleResize);
-  });
+  const { isMobile } = useContext(AppContext);
 
   async function fetch() {
     setLoading(true);

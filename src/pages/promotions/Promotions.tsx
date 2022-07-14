@@ -19,7 +19,8 @@ import { ColumnsType } from 'antd/lib/table';
 import { useRequest } from 'hooks/useRequest';
 import { Promotion } from 'interfaces/Promotion';
 import moment from 'moment';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
+import { AppContext } from 'contexts/AppContext';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { deletePromotion, fetchPromotions } from 'services/DiscoClubService';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
@@ -35,19 +36,7 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
   const [promotions, setPromotions] = useState<Promotion[]>([]);
   const [dateFilter, setDateFilter] = useState<any[]>([]);
   const [idFilter, setIdFilter] = useState<string>('');
-  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
-
-  const handleResize = () => {
-    if (window.innerWidth < 991) {
-      setIsMobile(true);
-    } else {
-      setIsMobile(false);
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener('resize', handleResize);
-  });
+  const { isMobile } = useContext(AppContext);
 
   const getResources = useCallback(async () => {
     await getPromotions();

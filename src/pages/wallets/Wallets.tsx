@@ -6,7 +6,8 @@ import { Fan } from 'interfaces/Fan';
 import { SelectOption } from 'interfaces/SelectOption';
 import { Wallet } from 'interfaces/Wallet';
 import { WalletDetailParams } from 'interfaces/WalletTransactions';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { AppContext } from 'contexts/AppContext';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import {
   fetchBalancePerBrand,
@@ -32,19 +33,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
   const [wallets, setWallets] = useState<Wallet[]>([]);
   const [fans, setFans] = useState<Fan[]>([]);
   const [userInput, setUserInput] = useState<string>();
-  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
-
-  const handleResize = () => {
-    if (window.innerWidth < 991) {
-      setIsMobile(true);
-    } else {
-      setIsMobile(false);
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener('resize', handleResize);
-  });
+  const { isMobile } = useContext(AppContext);
 
   const optionMapping: SelectOption = {
     key: 'id',

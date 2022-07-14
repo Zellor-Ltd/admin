@@ -3,7 +3,8 @@ import { ColumnsType } from 'antd/lib/table';
 import { useRequest } from 'hooks/useRequest';
 import { Brand } from 'interfaces/Brand';
 import { Tag } from 'interfaces/Tag';
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useState, useRef } from 'react';
+import { AppContext } from 'contexts/AppContext';
 import { RouteComponentProps } from 'react-router-dom';
 import { fetchBrands, fetchTags } from 'services/DiscoClubService';
 import SimpleSelect from 'components/select/SimpleSelect';
@@ -44,19 +45,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
     value: 'id',
   };
 
-  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
-
-  const handleResize = () => {
-    if (window.innerWidth < 991) {
-      setIsMobile(true);
-    } else {
-      setIsMobile(false);
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener('resize', handleResize);
-  });
+  const { isMobile } = useContext(AppContext);
 
   const tagOptionMapping: SelectOption = {
     key: 'id',

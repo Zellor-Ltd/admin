@@ -17,7 +17,8 @@ import { ColumnsType } from 'antd/lib/table';
 import { useRequest } from 'hooks/useRequest';
 import { PromoDisplay } from 'interfaces/PromoDisplay';
 import moment from 'moment';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { AppContext } from 'contexts/AppContext';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import {
   deletePromoDisplay,
@@ -36,19 +37,7 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
     useState<PromoDisplay>();
   const [promoDisplays, setPromoDisplays] = useState<PromoDisplay[]>([]);
   const [filter, setFilter] = useState<string>('');
-  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
-
-  const handleResize = () => {
-    if (window.innerWidth < 991) {
-      setIsMobile(true);
-    } else {
-      setIsMobile(false);
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener('resize', handleResize);
-  });
+  const { isMobile } = useContext(AppContext);
 
   useEffect(() => {
     getResources();

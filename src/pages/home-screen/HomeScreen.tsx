@@ -4,7 +4,8 @@ import { ColumnsType } from 'antd/lib/table';
 import { useRequest } from '../../hooks/useRequest';
 import { Banner } from '../../interfaces/Banner';
 import moment from 'moment';
-import { useEffect, useState } from 'react';
+import { useContext, useState, useEffect } from 'react';
+import { AppContext } from 'contexts/AppContext';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { fetchBanners, deleteBanner } from 'services/DiscoClubService';
 import CopyIdToClipboard from '../../components/CopyIdToClipboard';
@@ -18,19 +19,7 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [details, setDetails] = useState<boolean>(false);
   const [currentBanner, setCurrentBanner] = useState<Banner>();
-  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
-
-  const handleResize = () => {
-    if (window.innerWidth < 991) {
-      setIsMobile(true);
-    } else {
-      setIsMobile(false);
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener('resize', handleResize);
-  });
+  const { isMobile } = useContext(AppContext);
 
   const getBanners = async () => {
     const response = await doFetch(() => fetchBanners());
