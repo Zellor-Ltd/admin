@@ -950,13 +950,63 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
             subTitle={isMobile ? '' : 'List of Orders'}
             className={isMobile ? 'mb-n1' : ''}
           />
-          <Row
-            align="bottom"
-            justify="space-between"
-            className="mb-1 sticky-filter-box"
-          >
-            <Filters />
-            {isMobile && (
+          {!isMobile && (
+            <Row
+              align="bottom"
+              justify="space-between"
+              className="mb-1 sticky-filter-box"
+              gutter={8}
+            >
+              <Col lg={16} xs={24}>
+                <Row gutter={[8, 8]}>
+                  <Col lg={6} xs={24}>
+                    <Typography.Title level={5}>Master Brand</Typography.Title>
+                    <Select
+                      allowClear
+                      onChange={handleChangeBrand}
+                      style={{ width: '100%' }}
+                      placeholder={'Select a Master Brand'}
+                      value={brandId}
+                      loading={isFetchingBrands}
+                      disabled={isFetchingBrands}
+                      showSearch
+                      filterOption={(input, option) =>
+                        !!option?.children
+                          ?.toString()
+                          .toUpperCase()
+                          .includes(input.toUpperCase())
+                      }
+                    >
+                      {brands.map(curr => (
+                        <Select.Option
+                          key={curr.id}
+                          value={curr.id}
+                          label={curr.brandName}
+                        >
+                          {curr.brandName}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </Col>
+                  <Col lg={6} xs={24}>
+                    <Typography.Title level={5}>Fan Filter</Typography.Title>
+                    <MultipleFetchDebounceSelect
+                      style={{ width: '100%' }}
+                      onInput={getFans}
+                      onChange={onChangeFan}
+                      onClear={onClearFan}
+                      optionMapping={fanOptionMapping}
+                      placeholder="Search by Fan E-mail"
+                      options={fans}
+                      input={fanFilterInput}
+                      disabled={isFetchingBrands}
+                      onInputKeyDown={(event: HTMLInputElement) =>
+                        handleKeyDown(event)
+                      }
+                    ></MultipleFetchDebounceSelect>
+                  </Col>
+                </Row>
+              </Col>
               <Col lg={24} xs={24}>
                 <Row justify="end" className={isMobile ? 'mt-2' : ''}>
                   <Col>
@@ -967,8 +1017,27 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
                   </Col>
                 </Row>
               </Col>
-            )}
-          </Row>
+            </Row>
+          )}
+          {isMobile && (
+            <Row
+              align="bottom"
+              justify="space-between"
+              className="mb-1 sticky-filter-box"
+            >
+              <Filters />
+              <Col lg={24} xs={24}>
+                <Row justify="end" className={isMobile ? 'mt-2' : ''}>
+                  <Col>
+                    <Button type="primary" onClick={() => setRefreshing(true)}>
+                      Search
+                      <SearchOutlined style={{ color: 'white' }} />
+                    </Button>
+                  </Col>
+                </Row>
+              </Col>
+            </Row>
+          )}
           <InfiniteScroll
             dataLength={search(orders).length}
             next={loadNext}

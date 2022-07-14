@@ -284,7 +284,70 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
             subTitle={isMobile ? '' : 'List of Fan wallets'}
             className={isMobile ? 'mb-n1' : ''}
           />
-          <Filters />
+          {isMobile && <Filters />}
+          {!isMobile && (
+            <Row
+              align="bottom"
+              justify="space-between"
+              className="sticky-filter-box mb-1"
+            >
+              <Col span={24}>
+                <Row gutter={8} align="bottom">
+                  <Col lg={4} xs={24}>
+                    <Typography.Title level={5}>Fan Filter</Typography.Title>
+                    <MultipleFetchDebounceSelect
+                      style={{ width: '100%' }}
+                      input={userInput}
+                      onInput={getFans}
+                      onChange={handleChangeFan}
+                      optionMapping={fanOptionMapping}
+                      placeholder="Select a Fan"
+                      options={fans}
+                      onClear={handleClearFan}
+                    ></MultipleFetchDebounceSelect>
+                  </Col>
+                  {selectedFan && (
+                    <Col lg={4} xs={24} className={isMobile ? 'mt-05' : ''}>
+                      <Typography.Title level={5}>
+                        Master Brand
+                      </Typography.Title>
+                      <SimpleSelect
+                        data={brands}
+                        onChange={(_, brand) => handleChangeBrand(brand)}
+                        style={{ width: '100%' }}
+                        selectedOption={selectedBrand?.brandName}
+                        optionMapping={optionMapping}
+                        placeholder={'Select a master brand'}
+                        loading={isFetchingBrands}
+                        disabled={isFetchingBrands}
+                        allowClear={true}
+                      ></SimpleSelect>
+                    </Col>
+                  )}
+                  <Col
+                    lg={6}
+                    xs={24}
+                    style={
+                      isMobile
+                        ? { position: 'relative', top: '24px', padding: 0 }
+                        : { position: 'relative', top: '24px' }
+                    }
+                  >
+                    <WalletEdit
+                      disabled={!selectedFan || !selectedBrand}
+                      fanId={selectedFan?.id}
+                      brandId={selectedBrand?.id}
+                      wallet={search(wallets)?.find(
+                        item => item.brandId === selectedBrand?.id
+                      )}
+                      onSave={handleSaveWallet}
+                      onReset={handleResetWallet}
+                    />
+                  </Col>
+                </Row>
+              </Col>
+            </Row>
+          )}
           <Table
             scroll={{ x: true }}
             rowClassName={(_, index) => `scrollable-row-${index}`}
