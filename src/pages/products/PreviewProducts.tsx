@@ -806,6 +806,22 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
           <Panel
             header={<Typography.Title level={5}>Filters</Typography.Title>}
             key="1"
+            extra={
+              !isMobile && (
+                <Button
+                  type="primary"
+                  onClick={() => getResources(true)}
+                  loading={loading}
+                  style={{
+                    position: 'relative',
+                    bottom: '-60px',
+                  }}
+                >
+                  Search
+                  <SearchOutlined style={{ color: 'white' }} />
+                </Button>
+              )
+            }
           >
             <Row
               align="bottom"
@@ -1028,28 +1044,22 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                   </Col>
                 </Row>
               </Col>
-              <Col>
-                <Row justify="end">
-                  <Col>
-                    <Button
-                      type="primary"
-                      onClick={() => getResources(true)}
-                      loading={loading}
-                      style={
-                        isMobile
-                          ? {}
-                          : {
-                              position: 'relative',
-                              bottom: '-60px',
-                            }
-                      }
-                    >
-                      Search
-                      <SearchOutlined style={{ color: 'white' }} />
-                    </Button>
-                  </Col>
-                </Row>
-              </Col>
+              {isMobile && (
+                <Col>
+                  <Row justify="end">
+                    <Col>
+                      <Button
+                        type="primary"
+                        onClick={() => getResources(true)}
+                        loading={loading}
+                      >
+                        Search
+                        <SearchOutlined style={{ color: 'white' }} />
+                      </Button>
+                    </Col>
+                  </Row>
+                </Col>
+              )}
             </Row>
           </Panel>
         </Collapse>

@@ -492,6 +492,14 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
           <Panel
             header={<Typography.Title level={5}>Filters</Typography.Title>}
             key="1"
+            extra={
+              !isMobile && (
+                <Button type="primary" onClick={fetch} loading={loading}>
+                  Search
+                  <SearchOutlined style={{ color: 'white' }} />
+                </Button>
+              )
+            }
           >
             <Col lg={16} xs={24}>
               <Row gutter={[8, 8]}>
@@ -683,14 +691,16 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
             }
           >
             <Filters />
-            <Col lg={24} xs={24}>
-              <Row justify="end" className={isMobile ? 'mt-2' : ''}>
-                <Button type="primary" onClick={fetch} loading={loading}>
-                  Search
-                  <SearchOutlined style={{ color: 'white' }} />
-                </Button>
-              </Row>
-            </Col>
+            {isMobile && (
+              <Col lg={24} xs={24}>
+                <Row justify="end" className="mt-2">
+                  <Button type="primary" onClick={fetch} loading={loading}>
+                    Search
+                    <SearchOutlined style={{ color: 'white' }} />
+                  </Button>
+                </Row>
+              </Col>
+            )}
           </Row>
           <Content>
             <Table

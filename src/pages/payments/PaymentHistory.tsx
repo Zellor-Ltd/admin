@@ -273,7 +273,7 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
                     <Typography.Title level={5}>Status</Typography.Title>
                     <DatePicker.RangePicker
                       onChange={onChangeRangePicker}
-                      className={isMobile ? 'mb-1' : ''}
+                      className="mb-1"
                       disabled={!creators.length}
                       ranges={{
                         Today: [moment(), moment()],
@@ -307,7 +307,7 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
               <Col lg={16} xs={24}>
                 <Row gutter={[8, 8]} justify="end">
                   <Col lg={6} xs={24}>
-                    <Row justify="end" className={isMobile ? '' : 'mr-2 mt-03'}>
+                    <Row justify="end" className="mr-2 mt-03">
                       <Col>
                         <Typography.Text type="secondary">
                           Filter
@@ -345,7 +345,6 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
                   <Col lg={6} xs={24}>
                     <DatePicker.RangePicker
                       onChange={onChangeRangePicker}
-                      className={isMobile ? 'mb-1' : ''}
                       disabled={!creators.length}
                       ranges={{
                         Today: [moment(), moment()],

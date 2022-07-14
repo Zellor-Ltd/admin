@@ -876,6 +876,14 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
           <Panel
             header={<Typography.Title level={5}>Filters</Typography.Title>}
             key="1"
+            extra={
+              !isMobile && (
+                <Button type="primary" onClick={() => setRefreshing(true)}>
+                  Search
+                  <SearchOutlined style={{ color: 'white' }} />
+                </Button>
+              )
+            }
           >
             <Col lg={16} xs={24}>
               <Row gutter={[8, 8]}>
@@ -948,16 +956,18 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
             className="mb-1 sticky-filter-box"
           >
             <Filters />
-            <Col lg={24} xs={24}>
-              <Row justify="end" className={isMobile ? 'mt-2' : ''}>
-                <Col>
-                  <Button type="primary" onClick={() => setRefreshing(true)}>
-                    Search
-                    <SearchOutlined style={{ color: 'white' }} />
-                  </Button>
-                </Col>
-              </Row>
-            </Col>
+            {isMobile && (
+              <Col lg={24} xs={24}>
+                <Row justify="end" className={isMobile ? 'mt-2' : ''}>
+                  <Col>
+                    <Button type="primary" onClick={() => setRefreshing(true)}>
+                      Search
+                      <SearchOutlined style={{ color: 'white' }} />
+                    </Button>
+                  </Col>
+                </Row>
+              </Col>
+            )}
           </Row>
           <InfiniteScroll
             dataLength={search(orders).length}

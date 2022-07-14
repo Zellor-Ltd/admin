@@ -290,6 +290,17 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
           <Panel
             header={<Typography.Title level={5}>Filters</Typography.Title>}
             key="1"
+            extra={
+              !isMobile && (
+                <Button
+                  type="primary"
+                  disabled={!selectedRowKeys.length}
+                  onClick={selectTags}
+                >
+                  Next
+                </Button>
+              )
+            }
           >
             <Col lg={16} xs={24}>
               <Row gutter={[8, 8]}>
@@ -351,20 +362,22 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
             className="mb-1 sticky-filter-box"
           >
             <Filters />
-            <Col xs={24}>
-              <Row justify="end">
-                <Col>
-                  <Button
-                    className={isMobile ? 'mt-1' : ''}
-                    type="primary"
-                    disabled={!selectedRowKeys.length}
-                    onClick={selectTags}
-                  >
-                    Next
-                  </Button>
-                </Col>
-              </Row>
-            </Col>
+            {isMobile && (
+              <Col xs={24}>
+                <Row justify="end">
+                  <Col>
+                    <Button
+                      className="mt-1"
+                      type="primary"
+                      disabled={!selectedRowKeys.length}
+                      onClick={selectTags}
+                    >
+                      Next
+                    </Button>
+                  </Col>
+                </Row>
+              </Col>
+            )}
           </Row>
           <InfiniteScroll
             dataLength={tags.length}
