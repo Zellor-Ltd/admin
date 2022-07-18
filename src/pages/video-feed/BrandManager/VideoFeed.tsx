@@ -695,7 +695,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
             <Filters />
             {isMobile && (
               <Col lg={24} xs={24}>
-                <Row justify="end" className="mt-2">
+                <Row justify="end" className="mt-1 mb-1 mr-1">
                   <Button type="primary" onClick={fetch} loading={loading}>
                     Search
                     <SearchOutlined style={{ color: 'white' }} />

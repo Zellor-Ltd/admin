@@ -285,64 +285,38 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
 
   const Filters = () => {
     return (
-      <Col span={24}>
-        <Collapse ghost>
-          <Panel
-            header={<Typography.Title level={5}>Filters</Typography.Title>}
-            key="1"
-            extra={
-              !isMobile && (
-                <Button
-                  type="primary"
-                  disabled={!selectedRowKeys.length}
-                  onClick={selectTags}
-                >
-                  Next
-                </Button>
-              )
-            }
-          >
-            <Col lg={16} xs={24}>
-              <Row gutter={[8, 8]}>
-                <Col lg={6} xs={24}>
-                  <Typography.Title level={5}>
-                    Search by Tag Name
-                  </Typography.Title>
-                  <MultipleFetchDebounceSelect
-                    style={{ width: '100%' }}
-                    input={userInput}
-                    loaded={loaded}
-                    onInput={fetchToBuffer}
-                    onChange={handleChangeTag}
-                    onClear={() => setUserInput('')}
-                    options={buffer}
-                    onInputKeyDown={(event: HTMLInputElement) =>
-                      handleKeyDown(event)
-                    }
-                    setEof={setEof}
-                    optionMapping={tagOptionMapping}
-                    placeholder="Type to search a Tag"
-                  ></MultipleFetchDebounceSelect>
-                </Col>
-                <Col lg={6} xs={24}>
-                  <Typography.Title level={5}>Master Brand</Typography.Title>
-                  <SimpleSelect
-                    data={brands}
-                    onChange={(_, brand) =>
-                      setBrandFilter(brand?.brandName ?? '')
-                    }
-                    style={{ width: '100%' }}
-                    optionMapping={optionMapping}
-                    placeholder={'Select a Master Brand'}
-                    loading={isFetchingBrands}
-                    disabled={isFetchingBrands}
-                    allowClear={true}
-                  ></SimpleSelect>
-                </Col>
-              </Row>
-            </Col>
-          </Panel>
-        </Collapse>
+      <Col lg={16} xs={24}>
+        <Row gutter={[8, 8]}>
+          <Col lg={6} xs={24}>
+            <Typography.Title level={5}>Search by Tag Name</Typography.Title>
+            <MultipleFetchDebounceSelect
+              style={{ width: '100%' }}
+              input={userInput}
+              loaded={loaded}
+              onInput={fetchToBuffer}
+              onChange={handleChangeTag}
+              onClear={() => setUserInput('')}
+              options={buffer}
+              onInputKeyDown={(event: HTMLInputElement) => handleKeyDown(event)}
+              setEof={setEof}
+              optionMapping={tagOptionMapping}
+              placeholder="Type to search a Tag"
+            ></MultipleFetchDebounceSelect>
+          </Col>
+          <Col lg={6} xs={24}>
+            <Typography.Title level={5}>Master Brand</Typography.Title>
+            <SimpleSelect
+              data={brands}
+              onChange={(_, brand) => setBrandFilter(brand?.brandName ?? '')}
+              style={{ width: '100%' }}
+              optionMapping={optionMapping}
+              placeholder={'Select a Master Brand'}
+              loading={isFetchingBrands}
+              disabled={isFetchingBrands}
+              allowClear={true}
+            ></SimpleSelect>
+          </Col>
+        </Row>
       </Col>
     );
   };
@@ -356,90 +330,53 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
             subTitle={isMobile ? '' : 'Push Tags to user groups'}
             className={isMobile ? 'mb-n1' : ''}
           />
-          {isMobile && (
-            <Row
-              align="bottom"
-              justify="space-between"
-              className="mb-1 sticky-filter-box"
-            >
-              <Filters />
-              <Col xs={24}>
-                <Row justify="end">
-                  <Col>
-                    <Button
-                      className="mt-1"
-                      type="primary"
-                      disabled={!selectedRowKeys.length}
-                      onClick={selectTags}
-                    >
-                      Next
-                    </Button>
-                  </Col>
-                </Row>
+          <Row
+            align="bottom"
+            justify="space-between"
+            className="mb-1 sticky-filter-box"
+          >
+            {!isMobile && <Filters />}
+            {isMobile && (
+              <Col span={24}>
+                <Collapse ghost>
+                  <Panel
+                    className="mb-1"
+                    header={
+                      <Typography.Title level={5}>Filters</Typography.Title>
+                    }
+                    key="1"
+                    extra={
+                      !isMobile && (
+                        <Button
+                          type="primary"
+                          disabled={!selectedRowKeys.length}
+                          onClick={selectTags}
+                        >
+                          Next
+                        </Button>
+                      )
+                    }
+                  >
+                    <Filters />
+                  </Panel>
+                </Collapse>
               </Col>
-            </Row>
-          )}
-          {!isMobile && (
-            <Row
-              align="bottom"
-              justify="space-between"
-              className="mb-1 sticky-filter-box"
-            >
-              <Col lg={16} xs={24}>
-                <Row gutter={[8, 8]}>
-                  <Col lg={6} xs={24}>
-                    <Typography.Title level={5}>
-                      Search by Tag Name
-                    </Typography.Title>
-                    <MultipleFetchDebounceSelect
-                      style={{ width: '100%' }}
-                      input={userInput}
-                      loaded={loaded}
-                      onInput={fetchToBuffer}
-                      onChange={handleChangeTag}
-                      onClear={() => setUserInput('')}
-                      options={buffer}
-                      onInputKeyDown={(event: HTMLInputElement) =>
-                        handleKeyDown(event)
-                      }
-                      setEof={setEof}
-                      optionMapping={tagOptionMapping}
-                      placeholder="Type to search a Tag"
-                    ></MultipleFetchDebounceSelect>
-                  </Col>
-                  <Col lg={6} xs={24}>
-                    <Typography.Title level={5}>Master Brand</Typography.Title>
-                    <SimpleSelect
-                      data={brands}
-                      onChange={(_, brand) =>
-                        setBrandFilter(brand?.brandName ?? '')
-                      }
-                      style={{ width: '100%' }}
-                      optionMapping={optionMapping}
-                      placeholder={'Select a Master Brand'}
-                      loading={isFetchingBrands}
-                      disabled={isFetchingBrands}
-                      allowClear={true}
-                    ></SimpleSelect>
-                  </Col>
-                </Row>
-              </Col>
-              <Col xs={24}>
-                <Row justify="end">
-                  <Col>
-                    <Button
-                      className={isMobile ? 'mt-1' : ''}
-                      type="primary"
-                      disabled={!selectedRowKeys.length}
-                      onClick={selectTags}
-                    >
-                      Next
-                    </Button>
-                  </Col>
-                </Row>
-              </Col>
-            </Row>
-          )}
+            )}
+            <Col xs={24}>
+              <Row justify="end">
+                <Col>
+                  <Button
+                    className={isMobile ? 'mt-1 mr-1' : ''}
+                    type="primary"
+                    disabled={!selectedRowKeys.length}
+                    onClick={selectTags}
+                  >
+                    Next
+                  </Button>
+                </Col>
+              </Row>
+            </Col>
+          </Row>
           <InfiniteScroll
             dataLength={tags.length}
             next={loadTags}

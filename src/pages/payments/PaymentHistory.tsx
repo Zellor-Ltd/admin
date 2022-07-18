@@ -229,63 +229,66 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
   const Filters = () => {
     return (
       <>
-        <Collapse ghost className="sticky-filter-box">
-          <Panel
-            header={<Typography.Title level={5}>Filters</Typography.Title>}
-            key="1"
-          >
-            <Row align="bottom" justify="end" className="pt-0">
-              <Col lg={16} xs={24}>
-                <Row gutter={[8, 8]} justify="end">
-                  <Col lg={6} xs={24}>
-                    <Typography.Title level={5}>Creator</Typography.Title>
-                    <Select
-                      style={{ width: '100%' }}
-                      onChange={value =>
-                        setCurrentCreator(
-                          creators.find(item => item.id === value)
-                        )
-                      }
-                      value={currentCreator?.id}
-                      placeholder="Creator"
-                      showSearch
-                      allowClear
-                      disabled={!creators.length}
-                      filterOption={(input, option) =>
-                        !!option?.children
-                          ?.toString()
-                          .toLowerCase()
-                          .includes(input.toLowerCase())
-                      }
-                    >
-                      {creators.map((curr: any) => (
-                        <Select.Option key={curr.id} value={curr.id}>
-                          {curr.firstName}
-                        </Select.Option>
-                      ))}
-                    </Select>
-                  </Col>
-                  <Col lg={6} xs={24}>
-                    <Typography.Title level={5}>Status</Typography.Title>
-                    <DatePicker.RangePicker
-                      onChange={onChangeRangePicker}
-                      className="mb-1"
-                      disabled={!creators.length}
-                      ranges={{
-                        Today: [moment(), moment()],
-                        'This Month': [
-                          moment().startOf('month'),
-                          moment().endOf('month'),
-                        ],
-                      }}
-                      format="YYYY-MM-DD"
-                    />
+        <Col lg={16} xs={24}>
+          <Row gutter={[8, 8]} justify="end">
+            {' '}
+            {!isMobile && (
+              <Col lg={6} xs={24}>
+                <Row justify="end" className="mr-2 mt-03">
+                  <Col>
+                    <Typography.Text type="secondary">Filter</Typography.Text>
                   </Col>
                 </Row>
               </Col>
-            </Row>
-          </Panel>
-        </Collapse>
+            )}
+            <Col lg={6} xs={24}>
+              {isMobile && (
+                <Typography.Title level={5}>Creator</Typography.Title>
+              )}
+              <Select
+                style={{ width: '100%' }}
+                onChange={value =>
+                  setCurrentCreator(creators.find(item => item.id === value))
+                }
+                value={currentCreator?.id}
+                placeholder="Creator"
+                showSearch
+                allowClear
+                disabled={!creators.length}
+                filterOption={(input, option) =>
+                  !!option?.children
+                    ?.toString()
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
+                }
+              >
+                {creators.map((curr: any) => (
+                  <Select.Option key={curr.id} value={curr.id}>
+                    {curr.firstName}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Col>
+            <Col lg={6} xs={24}>
+              {isMobile && (
+                <Typography.Title level={5}>Status</Typography.Title>
+              )}
+              <DatePicker.RangePicker
+                onChange={onChangeRangePicker}
+                className="mb-1"
+                disabled={!creators.length}
+                ranges={{
+                  Today: [moment(), moment()],
+                  'This Month': [
+                    moment().startOf('month'),
+                    moment().endOf('month'),
+                  ],
+                }}
+                format="YYYY-MM-DD"
+              />
+            </Col>
+          </Row>
+        </Col>
       </>
     );
   };
@@ -300,63 +303,21 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
           />
           {!isMobile && (
             <Row align="bottom" justify="end" className="custom-filter-box">
-              <Col lg={16} xs={24}>
-                <Row gutter={[8, 8]} justify="end">
-                  <Col lg={6} xs={24}>
-                    <Row justify="end" className="mr-2 mt-03">
-                      <Col>
-                        <Typography.Text type="secondary">
-                          Filter
-                        </Typography.Text>
-                      </Col>
-                    </Row>
-                  </Col>
-                  <Col lg={6} xs={24}>
-                    <Select
-                      style={{ width: '100%' }}
-                      onChange={value =>
-                        setCurrentCreator(
-                          creators.find(item => item.id === value)
-                        )
-                      }
-                      value={currentCreator?.id}
-                      placeholder="Creator"
-                      showSearch
-                      allowClear
-                      disabled={!creators.length}
-                      filterOption={(input, option) =>
-                        !!option?.children
-                          ?.toString()
-                          .toLowerCase()
-                          .includes(input.toLowerCase())
-                      }
-                    >
-                      {creators.map((curr: any) => (
-                        <Select.Option key={curr.id} value={curr.id}>
-                          {curr.firstName}
-                        </Select.Option>
-                      ))}
-                    </Select>
-                  </Col>
-                  <Col lg={6} xs={24}>
-                    <DatePicker.RangePicker
-                      onChange={onChangeRangePicker}
-                      disabled={!creators.length}
-                      ranges={{
-                        Today: [moment(), moment()],
-                        'This Month': [
-                          moment().startOf('month'),
-                          moment().endOf('month'),
-                        ],
-                      }}
-                      format="YYYY-MM-DD"
-                    />
-                  </Col>
-                </Row>
-              </Col>
+              <Filters />
             </Row>
           )}
-          {isMobile && <Filters />}
+          {isMobile && (
+            <Collapse ghost className="sticky-filter-box">
+              <Panel
+                header={<Typography.Title level={5}>Filters</Typography.Title>}
+                key="1"
+              >
+                <Row align="bottom" justify="end" className="pt-0">
+                  <Filters />
+                </Row>
+              </Panel>
+            </Collapse>
+          )}
           <InfiniteScroll
             dataLength={payments.length}
             next={getPayments}

@@ -516,119 +516,100 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
 
   const Filters = () => {
     return (
-      <Col span={24}>
-        <Collapse ghost>
-          <Panel
-            header={<Typography.Title level={5}>Filters</Typography.Title>}
-            key="1"
-            extra={
-              !isMobile && (
-                <Button type="primary" onClick={fetch} loading={loading}>
-                  Search
-                  <SearchOutlined style={{ color: 'white' }} />
-                </Button>
-              )
-            }
-          >
-            <Col lg={16} xs={24}>
-              <Row gutter={[8, 8]}>
-                <Col lg={6} xs={24}>
-                  <Typography.Title level={5} title="Search">
-                    Search
-                  </Typography.Title>
-                  <Input
-                    onChange={event => setTitleFilter(event.target.value)}
-                    suffix={<SearchOutlined />}
-                    value={titleFilter}
-                    placeholder="Type to search by Title"
-                    onPressEnter={fetch}
-                  />
-                </Col>
-                <Col lg={6} xs={24}>
-                  <Typography.Title level={5}>Master Brand</Typography.Title>
-                  <SimpleSelect
-                    data={brands}
-                    onChange={(_, brand) => setBrandFilter(brand)}
-                    style={{ width: '100%' }}
-                    selectedOption={brandFilter?.id}
-                    optionMapping={masterBrandMapping}
-                    placeholder={'Select a Master Brand'}
-                    loading={isFetchingBrands}
-                    disabled={isFetchingBrands}
-                    allowClear={true}
-                  />
-                </Col>
-                <Col lg={6} xs={24}>
-                  <Typography.Title level={5}>Product Brand</Typography.Title>
-                  <SimpleSelect
-                    data={productBrands}
-                    onChange={id => setProductBrandFilter(id as any)}
-                    style={{ width: '100%' }}
-                    selectedOption={productBrandFilter}
-                    optionMapping={productBrandMapping}
-                    placeholder={'Select a Product Brand'}
-                    loading={isFetchingProductBrands}
-                    disabled={isFetchingProductBrands}
-                    allowClear={true}
-                  />
-                </Col>
-                <Col lg={6} xs={24}>
-                  <Typography.Title level={5}>Status</Typography.Title>
-                  <SimpleSelect
-                    data={statusList}
-                    onChange={status => setStatusFilter(status)}
-                    style={{ width: '100%' }}
-                    selectedOption={statusFilter}
-                    optionMapping={statusMapping}
-                    placeholder={'Select a Status'}
-                    allowClear={true}
-                  />
-                </Col>
-                <Col lg={6} xs={24}>
-                  <Typography.Title level={5}>Category</Typography.Title>
-                  <SimpleSelect
-                    data={categories}
-                    onChange={(_, category) =>
-                      setCategoryFilter(category?.name ?? '')
-                    }
-                    style={{ width: '100%' }}
-                    selectedOption={categoryFilter}
-                    optionMapping={categoryMapping}
-                    placeholder={'Select a Category'}
-                    allowClear={true}
-                    loading={isFetchingCategories}
-                    disabled={isFetchingCategories}
-                  />
-                </Col>
-                <Col lg={6} xs={24}>
-                  <Typography.Title level={5}>Start Index</Typography.Title>
-                  <InputNumber
-                    min={0}
-                    onChange={startIndex =>
-                      setIndexFilter(startIndex ?? undefined)
-                    }
-                    placeholder="Select an Index"
-                  />
-                </Col>
-                <Col lg={6} xs={24}>
-                  <Typography.Title level={5}>Creator</Typography.Title>
-                  <Select
-                    placeholder="Select a Creator"
-                    disabled={!creators.length}
-                    onChange={setCreatorFilter}
-                    style={{ width: '100%' }}
-                  >
-                    {creators.map((curr: any) => (
-                      <Select.Option key={curr.id} value={curr.firstName}>
-                        {curr.firstName}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </Col>
-              </Row>
-            </Col>
-          </Panel>
-        </Collapse>
+      <Col lg={16} xs={24}>
+        <Row gutter={[8, 8]}>
+          <Col lg={6} xs={24}>
+            <Typography.Title level={5} title="Search">
+              Search
+            </Typography.Title>
+            <Input
+              onChange={event => setTitleFilter(event.target.value)}
+              suffix={<SearchOutlined />}
+              value={titleFilter}
+              placeholder="Type to search by Title"
+              onPressEnter={fetch}
+            />
+          </Col>
+          <Col lg={6} xs={24}>
+            <Typography.Title level={5}>Master Brand</Typography.Title>
+            <SimpleSelect
+              data={brands}
+              onChange={(_, brand) => setBrandFilter(brand)}
+              style={{ width: '100%' }}
+              selectedOption={brandFilter?.id}
+              optionMapping={masterBrandMapping}
+              placeholder={'Select a Master Brand'}
+              loading={isFetchingBrands}
+              disabled={isFetchingBrands}
+              allowClear={true}
+            />
+          </Col>
+          <Col lg={6} xs={24}>
+            <Typography.Title level={5}>Product Brand</Typography.Title>
+            <SimpleSelect
+              data={productBrands}
+              onChange={id => setProductBrandFilter(id as any)}
+              style={{ width: '100%' }}
+              selectedOption={productBrandFilter}
+              optionMapping={productBrandMapping}
+              placeholder={'Select a Product Brand'}
+              loading={isFetchingProductBrands}
+              disabled={isFetchingProductBrands}
+              allowClear={true}
+            />
+          </Col>
+          <Col lg={6} xs={24}>
+            <Typography.Title level={5}>Status</Typography.Title>
+            <SimpleSelect
+              data={statusList}
+              onChange={status => setStatusFilter(status)}
+              style={{ width: '100%' }}
+              selectedOption={statusFilter}
+              optionMapping={statusMapping}
+              placeholder={'Select a Status'}
+              allowClear={true}
+            />
+          </Col>
+          <Col lg={6} xs={24}>
+            <Typography.Title level={5}>Category</Typography.Title>
+            <SimpleSelect
+              data={categories}
+              onChange={(_, category) =>
+                setCategoryFilter(category?.name ?? '')
+              }
+              style={{ width: '100%' }}
+              selectedOption={categoryFilter}
+              optionMapping={categoryMapping}
+              placeholder={'Select a Category'}
+              allowClear={true}
+              loading={isFetchingCategories}
+              disabled={isFetchingCategories}
+            />
+          </Col>
+          <Col lg={6} xs={24}>
+            <Typography.Title level={5}>Start Index</Typography.Title>
+            <InputNumber
+              min={0}
+              onChange={startIndex => setIndexFilter(startIndex ?? undefined)}
+              placeholder="Select an Index"
+            />
+          </Col>
+          <Col lg={6} xs={24}>
+            <Typography.Title level={5}>Creator</Typography.Title>
+            <Select
+              placeholder="Select a Creator"
+              disabled={!creators.length}
+              onChange={setCreatorFilter}
+              style={{ width: '100%' }}
+            >
+              {creators.map((curr: any) => (
+                <Select.Option key={curr.id} value={curr.firstName}>
+                  {curr.firstName}
+                </Select.Option>
+              ))}
+            </Select>
+          </Col>
+        </Row>
       </Col>
     );
   };
@@ -655,10 +636,30 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
             justify="space-between"
             className="sticky-filter-box"
           >
-            <Filters />
+            <Col span={24}>
+              <Collapse ghost>
+                <Panel
+                  className="mb-1"
+                  header={
+                    <Typography.Title level={5}>Filters</Typography.Title>
+                  }
+                  key="1"
+                  extra={
+                    !isMobile && (
+                      <Button type="primary" onClick={fetch} loading={loading}>
+                        Search
+                        <SearchOutlined style={{ color: 'white' }} />
+                      </Button>
+                    )
+                  }
+                >
+                  <Filters />
+                </Panel>
+              </Collapse>
+            </Col>
             {isMobile && (
               <Col lg={24} xs={24}>
-                <Row justify="end" className="mb-1">
+                <Row justify="end" className="mb-1 mt-1 mr-1">
                   <Button type="primary" onClick={fetch} loading={loading}>
                     Search
                     <SearchOutlined style={{ color: 'white' }} />
