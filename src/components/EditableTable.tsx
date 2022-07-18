@@ -82,6 +82,9 @@ const EditableTable: React.FC<EditableTableProps<any>> = (
         fields,
         fileName: 'Disco Products',
         showColumnPicker: true,
+        btnProps: {
+          className: 'ml-1',
+        },
       }}
       columns={configuredColumns as ColumnTypesEscapeColumns}
       components={{

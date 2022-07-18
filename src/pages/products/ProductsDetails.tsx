@@ -350,8 +350,8 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
           <Tabs.TabPane forceRender tab="Details" key="Details">
             <Row gutter={8}>
               <Col lg={12} xs={24}>
-                <Row gutter={8}>
-                  <Col lg={20} xs={24}>
+                <Row gutter={8} align="bottom">
+                  <Col lg={12} xs={12}>
                     <Form.Item name="status" label="Status">
                       <Radio.Group disabled={isLive} buttonStyle="solid">
                         <Radio.Button value="live">Live</Radio.Button>
@@ -359,7 +359,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                       </Radio.Group>
                     </Form.Item>
                   </Col>
-                  <Col lg={4} xs={24}>
+                  <Col lg={12} xs={12}>
                     <Form.Item
                       name="outOfStock"
                       label="Out of stock"
@@ -414,7 +414,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                   </Col>
                 </Row>
                 <Row gutter={8}>
-                  <Col lg={12} xs={24}>
+                  <Col lg={24} xs={24}>
                     <Form.Item
                       name="productBrand"
                       label="Product Brand"
@@ -473,7 +473,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
               handleCategoryDelete={handleCategoryDelete}
               disabled={isLive}
             />
-            <Col lg={16} xs={24}>
+            <Col lg={24} xs={24}>
               <Form.Item
                 shouldUpdate={(prevValues, curValues) =>
                   prevValues.category !== curValues.category
@@ -500,7 +500,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
               <Col lg={24} xs={24}>
                 <Typography.Title level={4}>Target</Typography.Title>
               </Col>
-              <Col lg={12} xs={24}>
+              <Col lg={24} xs={24}>
                 <Form.Item label="Age Range">
                   <Slider
                     range
@@ -515,7 +515,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
               </Col>
             </Row>
             <Row gutter={8}>
-              <Col lg={12} xs={24}>
+              <Col lg={24} xs={24}>
                 <Form.Item
                   name="gender"
                   label="Gender"
@@ -535,7 +535,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
           </Tabs.TabPane>
           <Tabs.TabPane forceRender tab="Checkout" key="Checkout">
             <Row gutter={8}>
-              <Col lg={8} xs={24}>
+              <Col lg={12} xs={24}>
                 <Form.Item name="currencyIsoCode" label="Default Currency">
                   <Select
                     placeholder="Please select a currency"
@@ -549,7 +549,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                   </Select>
                 </Form.Item>
               </Col>
-              <Col lg={8} xs={24}>
+              <Col lg={12} xs={24}>
                 <Form.Item
                   name="originalPrice"
                   label="Default Price"
@@ -562,7 +562,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
               </Col>
             </Row>
             <Row gutter={8}>
-              <Col lg={8} xs={24}>
+              <Col lg={12} xs={24}>
                 <Form.Item name="currencyIsoCodeUS" label="Currency US">
                   <Select
                     placeholder="Please select a currency"
@@ -576,14 +576,14 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                   </Select>
                 </Form.Item>
               </Col>
-              <Col lg={8} xs={24}>
+              <Col lg={12} xs={24}>
                 <Form.Item name="originalPriceUS" label="Price US" rules={[{}]}>
                   <InputNumber disabled={isLive} />
                 </Form.Item>
               </Col>
             </Row>
             <Row gutter={8}>
-              <Col lg={8} xs={24}>
+              <Col lg={12} xs={24}>
                 <Form.Item name="currencyIsoCodeGB" label="Currency UK">
                   <Select
                     placeholder="Please select a currency"
@@ -597,14 +597,14 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                   </Select>
                 </Form.Item>
               </Col>
-              <Col lg={8} xs={24}>
+              <Col lg={12} xs={24}>
                 <Form.Item name="originalPriceGB" label="Price UK" rules={[{}]}>
                   <InputNumber disabled={isLive} />
                 </Form.Item>
               </Col>
             </Row>
             <Row gutter={8}>
-              <Col lg={8} xs={24}>
+              <Col lg={12} xs={24}>
                 <Form.Item name="currencyIsoCodeIE" label="Currency Europe">
                   <Select
                     placeholder="Please select a currency"
@@ -618,7 +618,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                   </Select>
                 </Form.Item>
               </Col>
-              <Col lg={8} xs={24}>
+              <Col lg={12} xs={24}>
                 <Form.Item
                   name="originalPriceIE"
                   label="Price Europe"
@@ -628,8 +628,8 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                 </Form.Item>
               </Col>
             </Row>
-            <Row gutter={8}>
-              <Col lg={4} xs={8}>
+            <Row gutter={8} align="bottom">
+              <Col lg={6} xs={12}>
                 <Form.Item
                   name="displayDiscountPage"
                   label="Allow Use of DD?"
@@ -638,7 +638,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                   <Switch disabled={isLive} />
                 </Form.Item>
               </Col>
-              <Col lg={4} xs={8}>
+              <Col lg={6} xs={12}>
                 <Form.Item
                   name="onSale"
                   label="On Sale"
@@ -647,7 +647,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                   <Switch disabled={isLive} />
                 </Form.Item>
               </Col>
-              <Col lg={4} xs={8}>
+              <Col lg={6} xs={24}>
                 <Form.Item
                   name="maxDiscoDollars"
                   label="Max Discount in DD"
@@ -691,14 +691,14 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                   />
                 </Form.Item>
               </Col>
-              <Col lg={4} xs={8}>
+              <Col lg={6} xs={24}>
                 <Form.Item name="discoPercentage" label="Disco Percentage %">
                   <InputNumber disabled={isLive} />
                 </Form.Item>
               </Col>
             </Row>
-            <Row gutter={8}>
-              <Col lg={4} xs={8}>
+            <Row gutter={8} align="bottom">
+              <Col lg={6} xs={24}>
                 <Form.Item
                   name="shopifyUniqueId"
                   label="Shopify Uid"
@@ -707,24 +707,24 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                   <InputNumber disabled={isLive} />
                 </Form.Item>
               </Col>
-              <Col lg={4} xs={8}>
+              <Col lg={6} xs={24}>
                 <Form.Item name="magentoId" label="Magento Id">
                   <InputNumber disabled={isLive} />
                 </Form.Item>
               </Col>
-              <Col lg={4} xs={8}>
+              <Col lg={6} xs={24}>
                 <Form.Item name="sku" label="SKU">
                   <InputNumber disabled={isLive} />
                 </Form.Item>
               </Col>
-              <Col lg={4} xs={8}>
+              <Col lg={6} xs={24}>
                 <Form.Item name="creatorPercentage" label="Creator %">
                   <InputNumber disabled={isLive} />
                 </Form.Item>
               </Col>
             </Row>
             <Row>
-              <Col lg={4} xs={8}>
+              <Col lg={6} xs={24}>
                 <Form.Item name="weight" label="Weight">
                   <InputNumber placeholder="Weight in Kg" disabled={isLive} />
                 </Form.Item>
@@ -733,7 +733,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
           </Tabs.TabPane>
           <Tabs.TabPane forceRender tab="Images" key="Images">
             <Row gutter={8}>
-              <Col lg={24} xs={24}>
+              <Col lg={24} xs={12}>
                 <Form.Item label="Tag Image">
                   <Upload.ImageUpload
                     fileList={form.getFieldValue('tagImage')}
@@ -745,7 +745,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                   />
                 </Form.Item>
               </Col>
-              <Col lg={24} xs={24}>
+              <Col lg={24} xs={12}>
                 <Form.Item label="Thumbnail">
                   <Upload.ImageUpload
                     fileList={form.getFieldValue('thumbnailUrl')}
@@ -785,14 +785,19 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
           </Tabs.TabPane>
         </Tabs>
 
-        <Row gutter={8}>
+        <Row gutter={8} justify="end">
           <Col>
-            <Button type="default" onClick={() => onCancel?.()}>
+            <Button
+              type="default"
+              onClick={() => onCancel?.()}
+              className="mb-1"
+            >
               Cancel
             </Button>
           </Col>
           <Col>
             <Button
+              className="mb-1 mr-1"
               disabled={isLive}
               type="primary"
               htmlType="submit"

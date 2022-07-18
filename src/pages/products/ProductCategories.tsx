@@ -1,4 +1,4 @@
-import { Form, Select } from 'antd';
+import { Col, Form, Select } from 'antd';
 import { FormInstance } from 'antd/lib/form';
 import { categoriesSettings } from 'helpers/utils';
 import useAllCategories from 'hooks/useAllCategories';
@@ -8,6 +8,8 @@ import {
   SelectedCategories,
   SelectedProductCategories,
 } from 'interfaces/Category';
+import { useContext } from 'react';
+import { AppContext } from 'contexts/AppContext';
 
 const { categoriesArray } = categoriesSettings;
 
@@ -43,6 +45,7 @@ const ProductCategories: React.FC<ProductCategoriesProps> = ({
   handleCategoryChange,
   disabled = false,
 }) => {
+  const { isMobile } = useContext(AppContext);
   const { filteredCategories, filterCategory } = useAllCategories({
     initialValues: formatProductCategories(initialValues[productCategoryIndex]),
     allCategories,
@@ -74,38 +77,52 @@ const ProductCategories: React.FC<ProductCategoriesProps> = ({
     );
   };
 
+  const CategoryList = () => {
+    return (
+      <>
+        {categoriesArray.map(({ key, field }, _index) => (
+          <Form.Item
+            key={_index}
+            label={key}
+            name={['categories', productCategoryIndex, field, 'id']}
+            rules={[{ required: _index < 2, message: `${key} is required` }]}
+          >
+            <Select
+              disabled={
+                disabled ||
+                !filteredCategories[key as keyof AllCategories].length
+              }
+              allowClear={_index >= 2}
+              placeholder="Please select a category"
+              style={isMobile ? { width: '100%' } : { width: '180px' }}
+              onChange={(_, option: any) =>
+                _handleCategoryChange(option?.children as string, key)
+              }
+            >
+              {(
+                filteredCategories[
+                  key as keyof AllCategories
+                ] as unknown as ProductCategory[]
+              ).map(category => (
+                <Select.Option key={category.id} value={category.id}>
+                  {category[field as keyof ProductCategory]}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+        ))}
+      </>
+    );
+  };
+
   return (
     <>
-      {categoriesArray.map(({ key, field }, _index) => (
-        <Form.Item
-          key={_index}
-          label={key}
-          name={['categories', productCategoryIndex, field, 'id']}
-          rules={[{ required: _index < 2, message: `${key} is required` }]}
-        >
-          <Select
-            disabled={
-              disabled || !filteredCategories[key as keyof AllCategories].length
-            }
-            allowClear={_index >= 2}
-            placeholder="Please select a category"
-            style={{ width: '180px' }}
-            onChange={(_, option: any) =>
-              _handleCategoryChange(option?.children as string, key)
-            }
-          >
-            {(
-              filteredCategories[
-                key as keyof AllCategories
-              ] as unknown as ProductCategory[]
-            ).map(category => (
-              <Select.Option key={category.id} value={category.id}>
-                {category[field as keyof ProductCategory]}
-              </Select.Option>
-            ))}
-          </Select>
-        </Form.Item>
-      ))}
+      {isMobile && (
+        <Col lg={24} xs={24}>
+          <CategoryList />
+        </Col>
+      )}
+      {!isMobile && <CategoryList />}
     </>
   );
 };

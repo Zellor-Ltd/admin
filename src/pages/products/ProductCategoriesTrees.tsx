@@ -43,7 +43,7 @@ const ProductCategoriesTrees: React.FC<ProductCategoriesTreesProps> = ({
 
   return (
     <>
-      <Col lg={24} xs={12}>
+      <Col lg={24} xs={24}>
         {_categories.map((_: any, index: number) => (
           <Row
             key={index}
