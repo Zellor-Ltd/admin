@@ -532,8 +532,8 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
           <Tabs.TabPane forceRender tab="Video Details" key={defaultVideoTab}>
             <Row gutter={8}>
               <Col lg={24} xs={24}>
-                <Row>
-                  <Col lg={4} xs={24}>
+                <Row gutter={8}>
+                  <Col lg={12} xs={24}>
                     <Form.Item label="Status">
                       <Select
                         placeholder="Please select a status"
@@ -563,11 +563,10 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                       </Select>
                     </Form.Item>
                   </Col>
-                  <Col lg={4} xs={24}>
+                  <Col lg={12} xs={24}>
                     <Form.Item
                       name="index"
                       label="Index"
-                      className="ml-1"
                       rules={[
                         {
                           required: true,
@@ -1032,8 +1031,8 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
             </Col>
           </Tabs.TabPane>
           <Tabs.TabPane forceRender tab="Links" key="Links">
-            <Row gutter={[32, 32]}>
-              <Col span={4}>
+            <Row gutter={[32, 32]} align="bottom">
+              <Col lg={4} xs={24}>
                 <Typography.Title level={5}>Creator</Typography.Title>
                 <Select
                   disabled={!creators.length}
@@ -1052,7 +1051,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                   ))}
                 </Select>
               </Col>
-              <Col span={4}>
+              <Col lg={4} xs={24}>
                 <Typography.Title level={5}>Social platform</Typography.Title>
                 <Select
                   disabled={!socialPlatform.length}
@@ -1067,7 +1066,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                   ))}
                 </Select>
               </Col>
-              <Col span={4}>
+              <Col lg={4} xs={24}>
                 <Typography.Title level={5}>Segment</Typography.Title>
                 <InputNumber
                   defaultValue={0}
@@ -1077,7 +1076,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                   onChange={setSegment}
                 />
               </Col>
-              <Col span={4}>
+              <Col lg={4} xs={24}>
                 <Typography.Title level={5}>Link Type</Typography.Title>
                 <Select
                   disabled={!linkType.length}
@@ -1092,14 +1091,13 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                   ))}
                 </Select>
               </Col>
-              <Col>
+              <Col lg={4} xs={24}>
                 <Typography.Title level={5}>Include Video</Typography.Title>
                 <Checkbox
                   onChange={evt => setIncludeVideo(evt.target.checked)}
                 ></Checkbox>
               </Col>
-              <Col span={12}></Col>
-              <Col>
+              <Col lg={4} xs={24}>
                 <Button
                   type="default"
                   onClick={handleGenerateLink}
@@ -1119,7 +1117,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
             </Row>
           </Tabs.TabPane>
         </Tabs>
-        <Row gutter={8} className="mt-1">
+        <Row gutter={8} justify="end">
           <Col>
             <Button
               type="default"
@@ -1135,6 +1133,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
               style={{ display: videoTab === 'Links' ? 'none' : '' }}
               htmlType="submit"
               loading={loading}
+              className="mb-1"
             >
               Save Changes
             </Button>

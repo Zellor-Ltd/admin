@@ -1,5 +1,6 @@
 import {
   Col,
+  Collapse,
   DatePicker,
   message,
   PageHeader,
@@ -10,7 +11,8 @@ import {
   Typography,
 } from 'antd';
 import { useRequest } from '../../hooks/useRequest';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { AppContext } from 'contexts/AppContext';
 import { fetchCreators, fetchPayments } from '../../services/DiscoClubService';
 import { Creator } from 'interfaces/Creator';
 import moment from 'moment';
@@ -21,10 +23,12 @@ import { ColumnsType } from 'antd/lib/table';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import CommissionDetails from './CommissionDetails';
 
+const { Panel } = Collapse;
+
 const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
   const [, setLoading] = useState<boolean>(false);
   const { doFetch } = useRequest({ setLoading });
-  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
+  const { isMobile } = useContext(AppContext);
   const [creators, setCreators] = useState<Creator[]>([]);
   const [payments, setPayments] = useState<Payment[]>([]);
   const [page, setPage] = useState<number>(0);
@@ -37,18 +41,6 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
   const [currentCreator, setCurrentCreator] = useState<Creator>();
   const [dateFrom, setDateFrom] = useState<string>();
   const [dateTo, setDateTo] = useState<string>();
-
-  const handleResize = () => {
-    if (window.innerWidth < 991) {
-      setIsMobile(true);
-    } else {
-      setIsMobile(false);
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener('resize', handleResize);
-  });
 
   useEffect(() => {
     if (!details) {
@@ -234,6 +226,73 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
     },
   ];
 
+  const Filters = () => {
+    return (
+      <>
+        <Col lg={16} xs={24}>
+          <Row gutter={[8, 8]} justify="end">
+            {' '}
+            {!isMobile && (
+              <Col lg={6} xs={24}>
+                <Row justify="end" className="mr-2 mt-03">
+                  <Col>
+                    <Typography.Text type="secondary">Filter</Typography.Text>
+                  </Col>
+                </Row>
+              </Col>
+            )}
+            <Col lg={6} xs={24}>
+              {isMobile && (
+                <Typography.Title level={5}>Creator</Typography.Title>
+              )}
+              <Select
+                style={{ width: '100%' }}
+                onChange={value =>
+                  setCurrentCreator(creators.find(item => item.id === value))
+                }
+                value={currentCreator?.id}
+                placeholder="Creator"
+                showSearch
+                allowClear
+                disabled={!creators.length}
+                filterOption={(input, option) =>
+                  !!option?.children
+                    ?.toString()
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
+                }
+              >
+                {creators.map((curr: any) => (
+                  <Select.Option key={curr.id} value={curr.id}>
+                    {curr.firstName}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Col>
+            <Col lg={6} xs={24}>
+              {isMobile && (
+                <Typography.Title level={5}>Status</Typography.Title>
+              )}
+              <DatePicker.RangePicker
+                onChange={onChangeRangePicker}
+                className="mb-1"
+                disabled={!creators.length}
+                ranges={{
+                  Today: [moment(), moment()],
+                  'This Month': [
+                    moment().startOf('month'),
+                    moment().endOf('month'),
+                  ],
+                }}
+                format="YYYY-MM-DD"
+              />
+            </Col>
+          </Row>
+        </Col>
+      </>
+    );
+  };
+
   return (
     <>
       {!details && (
@@ -242,71 +301,23 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
             title="Payment History"
             subTitle={isMobile ? '' : 'List of Previous Payments'}
           />
-          <Row align="bottom" justify="end" className="sticky-filter-box">
-            <Col lg={16} xs={24}>
-              <Row gutter={[8, 8]} justify="end">
-                {!isMobile && (
-                  <Col lg={6} xs={24}>
-                    <Row justify="end" className={isMobile ? '' : 'mr-2 mt-03'}>
-                      <Col>
-                        <Typography.Text type="secondary">
-                          Filter
-                        </Typography.Text>
-                      </Col>
-                    </Row>
-                  </Col>
-                )}
-                <Col lg={6} xs={24}>
-                  {isMobile && (
-                    <Typography.Title level={5}>Creator</Typography.Title>
-                  )}
-                  <Select
-                    style={{ width: '100%' }}
-                    onChange={value =>
-                      setCurrentCreator(
-                        creators.find(item => item.id === value)
-                      )
-                    }
-                    value={currentCreator?.id}
-                    placeholder="Creator"
-                    showSearch
-                    allowClear
-                    disabled={!creators.length}
-                    filterOption={(input, option) =>
-                      !!option?.children
-                        ?.toString()
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                  >
-                    {creators.map((curr: any) => (
-                      <Select.Option key={curr.id} value={curr.id}>
-                        {curr.firstName}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </Col>
-                <Col lg={6} xs={24}>
-                  {isMobile && (
-                    <Typography.Title level={5}>Status</Typography.Title>
-                  )}
-                  <DatePicker.RangePicker
-                    onChange={onChangeRangePicker}
-                    className={isMobile ? 'mb-1' : ''}
-                    disabled={!creators.length}
-                    ranges={{
-                      Today: [moment(), moment()],
-                      'This Month': [
-                        moment().startOf('month'),
-                        moment().endOf('month'),
-                      ],
-                    }}
-                    format="YYYY-MM-DD"
-                  />
-                </Col>
-              </Row>
-            </Col>
-          </Row>
+          {!isMobile && (
+            <Row align="bottom" justify="end" className="custom-filter-box">
+              <Filters />
+            </Row>
+          )}
+          {isMobile && (
+            <Collapse ghost className="sticky-filter-box">
+              <Panel
+                header={<Typography.Title level={5}>Filters</Typography.Title>}
+                key="1"
+              >
+                <Row align="bottom" justify="end" className="pt-0">
+                  <Filters />
+                </Row>
+              </Panel>
+            </Collapse>
+          )}
           <InfiniteScroll
             dataLength={payments.length}
             next={getPayments}
@@ -350,7 +361,7 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
                       <Table.Summary.Cell index={3}></Table.Summary.Cell>
                       <Table.Summary.Cell index={4}></Table.Summary.Cell>
                       <Table.Summary.Cell index={5}>
-                        €${totalAmount.toFixed(2)}
+                        €{totalAmount.toFixed(2)}
                       </Table.Summary.Cell>
                       <Table.Summary.Cell index={6}></Table.Summary.Cell>
                     </Table.Summary.Row>

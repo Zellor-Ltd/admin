@@ -1,4 +1,6 @@
 import { Button, Col, Form, Input, PageHeader, Row, Switch } from 'antd';
+import React, { useContext } from 'react';
+import { AppContext } from 'contexts/AppContext';
 import { Masthead } from '../../interfaces/Masthead';
 import { Upload } from '../../components';
 import { useRequest } from '../../hooks/useRequest';
@@ -15,6 +17,7 @@ const CreatorsPageDetail: React.FC<MastheadDetailProps> = ({
   onSave,
   onCancel,
 }) => {
+  const { isMobile } = useContext(AppContext);
   const [form] = Form.useForm();
   const { doRequest, loading } = useRequest();
 
@@ -42,7 +45,7 @@ const CreatorsPageDetail: React.FC<MastheadDetailProps> = ({
               <Switch />
             </Form.Item>
           </Col>
-          <Col lg={12} xs={24}>
+          <Col lg={8} xs={24}>
             <Form.Item label="Description" name="description">
               <Input />
             </Form.Item>
@@ -61,14 +64,23 @@ const CreatorsPageDetail: React.FC<MastheadDetailProps> = ({
             </Form.Item>
           </Col>
         </Row>
-        <Row gutter={8}>
+        <Row gutter={8} justify={isMobile ? 'end' : undefined}>
           <Col>
-            <Button type="default" onClick={() => onCancel?.()}>
+            <Button
+              type="default"
+              className="mt-n2 mb-1"
+              onClick={() => onCancel?.()}
+            >
               Cancel
             </Button>
           </Col>
           <Col>
-            <Button loading={loading} type="primary" htmlType="submit">
+            <Button
+              loading={loading}
+              type="primary"
+              htmlType="submit"
+              className="mt-n2 mb-1"
+            >
               Save Changes
             </Button>
           </Col>

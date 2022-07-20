@@ -13,7 +13,8 @@ import {
 } from 'antd';
 import { Upload } from 'components';
 import { useRequest } from '../../hooks/useRequest';
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
+import { AppContext } from 'contexts/AppContext';
 import { saveProductBrand } from '../../services/DiscoClubService';
 import { TwitterPicker } from 'react-color';
 import { ProductBrand } from 'interfaces/ProductBrand';
@@ -28,6 +29,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
   onSave,
   onCancel,
 }) => {
+  const { isMobile } = useContext(AppContext);
   const [loading, setLoading] = useState<boolean>(false);
   const [form] = Form.useForm();
   const { doRequest } = useRequest({ setLoading });
@@ -119,7 +121,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                   </Col>
                   <Col>
                     <Row gutter={4}>
-                      <Col lg={8} xs={8}>
+                      <Col lg={8} xs={24}>
                         <Form.Item
                           name="discoPercentage"
                           label="Disco Percentage %"
@@ -138,7 +140,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                           />
                         </Form.Item>
                       </Col>
-                      <Col lg={8} xs={8}>
+                      <Col lg={8} xs={24}>
                         <Form.Item name="creatorPercentage" label="Creator %">
                           <InputNumber
                             pattern="^(?:100|\d{1,2})(?:.\d{1,2})?$"
@@ -166,7 +168,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                       </Col>
                     </Row>
                     <Row gutter={4}>
-                      <Col lg={8} xs={8}>
+                      <Col lg={8} xs={24}>
                         <Form.Item
                           name="maxDiscoDollarPercentage"
                           label="Max Disco Dollar %"
@@ -209,7 +211,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
             <Tabs.TabPane forceRender tab="Images" key="Images">
               <Col lg={16} xs={24}>
                 <Row gutter={8}>
-                  <Col lg={6} xs={24}>
+                  <Col lg={6} xs={12}>
                     <Form.Item label="Colour">
                       <Upload.ImageUpload
                         maxCount={1}
@@ -219,7 +221,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                       />
                     </Form.Item>
                   </Col>
-                  <Col lg={6} xs={24}>
+                  <Col lg={6} xs={12}>
                     <Form.Item label="Black">
                       <Upload.ImageUpload
                         maxCount={1}
@@ -229,7 +231,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                       />
                     </Form.Item>
                   </Col>
-                  <Col lg={6} xs={24}>
+                  <Col lg={6} xs={12}>
                     <Form.Item label="White">
                       <Upload.ImageUpload
                         maxCount={1}
@@ -239,7 +241,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                       />
                     </Form.Item>
                   </Col>
-                  <Col lg={6} xs={24}>
+                  <Col lg={6} xs={12}>
                     <Form.Item
                       label="Logo Round"
                       rules={[
@@ -257,7 +259,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                   </Col>
                 </Row>
                 <Row gutter={8}>
-                  <Col lg={6} xs={24}>
+                  <Col lg={6} xs={12}>
                     <Form.Item
                       label="Thumbnail"
                       name="thumbnail"
@@ -271,7 +273,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                       />
                     </Form.Item>
                   </Col>
-                  <Col lg={12} xs={24}>
+                  <Col lg={12} xs={12}>
                     <Form.Item
                       label="Product Brand Video Logo"
                       name="videoLogo"
@@ -290,7 +292,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                   Brand Page Display
                 </Typography.Title>
                 <Row gutter={8}>
-                  <Col lg={6} xs={24}>
+                  <Col lg={6} xs={12}>
                     <Form.Item
                       label="Mast Head Image"
                       name="mastHead"
@@ -309,7 +311,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                       />
                     </Form.Item>
                   </Col>
-                  <Col lg={6} xs={24}>
+                  <Col lg={6} xs={12}>
                     <Form.Item
                       label="Avatar"
                       name="avatar"
@@ -329,14 +331,23 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
               </Col>
             </Tabs.TabPane>
           </Tabs>
-          <Row gutter={8}>
+          <Row gutter={8} justify={isMobile ? 'end' : undefined}>
             <Col>
-              <Button type="default" onClick={() => onCancel?.()}>
+              <Button
+                type="default"
+                onClick={() => onCancel?.()}
+                className="mb-1"
+              >
                 Cancel
               </Button>
             </Col>
             <Col>
-              <Button loading={loading} type="primary" htmlType="submit">
+              <Button
+                loading={loading}
+                type="primary"
+                htmlType="submit"
+                className="mb-1"
+              >
                 Save Changes
               </Button>
             </Col>

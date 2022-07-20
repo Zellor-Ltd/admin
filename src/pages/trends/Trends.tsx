@@ -12,7 +12,8 @@ import {
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { useRequest } from 'hooks/useRequest';
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useRef, useState } from 'react';
+import { AppContext } from 'contexts/AppContext';
 import { RouteComponentProps } from 'react-router-dom';
 import { fetchTrends, saveTrend } from 'services/DiscoClubService';
 import { LoadingOutlined, SearchOutlined } from '@ant-design/icons';
@@ -27,19 +28,7 @@ const Trends: React.FC<RouteComponentProps> = props => {
   >({});
   const shouldUpdateTrendIndex = useRef(false);
   const originalTrendsIndex = useRef<Record<string, number | undefined>>({});
-  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
-
-  const handleResize = () => {
-    if (window.innerWidth < 991) {
-      setIsMobile(true);
-    } else {
-      setIsMobile(false);
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener('resize', handleResize);
-  });
+  const { isMobile } = useContext(AppContext);
 
   const getResources = async () => {
     await getTrends();
@@ -172,7 +161,7 @@ const Trends: React.FC<RouteComponentProps> = props => {
               }}
             />
           </Col>
-          <Col xs={24}>
+          <Col lg={4} xs={24}>
             <Row justify="end" className="mt-1">
               <Col>
                 <Button type="primary" onClick={getResources} loading={loading}>

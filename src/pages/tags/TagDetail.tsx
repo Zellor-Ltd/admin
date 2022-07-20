@@ -14,7 +14,8 @@ import { useRequest } from 'hooks/useRequest';
 import { Brand } from 'interfaces/Brand';
 import { Product } from 'interfaces/Product';
 import { Tag } from 'interfaces/Tag';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import { AppContext } from 'contexts/AppContext';
 import { useSelector } from 'react-redux';
 import { fetchBrands, fetchProducts, saveTag } from 'services/DiscoClubService';
 interface TagDetailProps {
@@ -24,6 +25,7 @@ interface TagDetailProps {
 }
 
 const TagDetail: React.FC<TagDetailProps> = ({ tag, onSave, onCancel }) => {
+  const { isMobile } = useContext(AppContext);
   const [loading, setLoading] = useState(false);
   const { doRequest } = useRequest({ setLoading });
 
@@ -246,16 +248,23 @@ const TagDetail: React.FC<TagDetailProps> = ({ tag, onSave, onCancel }) => {
         <Input.Group>
           <Row gutter={8}></Row>
         </Input.Group>
-        <Row gutter={8}>
+        <Row gutter={8} justify={isMobile ? 'end' : undefined}>
           <Col>
             <Button type="default" onClick={() => onCancel?.()}>
               Cancel
             </Button>
           </Col>
           <Col>
-            <Button type="primary" htmlType="submit" loading={loading}>
-              Save Changes
-            </Button>
+            <Col>
+              <Button
+                type="primary"
+                htmlType="submit"
+                loading={loading}
+                className="mb-1"
+              >
+                Save Changes
+              </Button>
+            </Col>
           </Col>
         </Row>
       </Form>

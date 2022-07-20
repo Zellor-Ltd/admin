@@ -9,7 +9,8 @@ import {
   Select,
 } from 'antd';
 import { useRequest } from '../../hooks/useRequest';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
+import { AppContext } from 'contexts/AppContext';
 import { savePayment } from '../../services/DiscoClubService';
 import { Banner } from 'interfaces/Banner';
 import { Creator } from 'interfaces/Creator';
@@ -27,6 +28,7 @@ const ManualPayment: React.FC<ManualPaymentProps> = ({
   setShowModal,
   setManualPayment,
 }) => {
+  const { isMobile } = useContext(AppContext);
   const [loading, setLoading] = useState<boolean>(false);
   const [form] = Form.useForm();
   const { doRequest } = useRequest({ setLoading });
@@ -51,7 +53,7 @@ const ManualPayment: React.FC<ManualPaymentProps> = ({
     <>
       <PageHeader
         title="New One-Off Payment"
-        subTitle="Send non-commission payment to Creator"
+        subTitle={isMobile ? '' : 'Send non-commission payment to Creator'}
       />
       <Form
         form={form}
@@ -122,15 +124,20 @@ const ManualPayment: React.FC<ManualPaymentProps> = ({
             </Col>
           </Col>
           <Col lg={16} xs={24}>
-            <Row gutter={8}>
+            <Row gutter={8} justify={isMobile ? 'end' : undefined}>
               <Col>
                 <Button type="default" onClick={handleCancel}>
                   Cancel
                 </Button>
               </Col>
               <Col>
-                <Button loading={loading} type="primary" htmlType="submit">
-                  Save
+                <Button
+                  loading={loading}
+                  type="primary"
+                  htmlType="submit"
+                  className="mb-1"
+                >
+                  Send
                 </Button>
               </Col>
             </Row>

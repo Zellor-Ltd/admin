@@ -8,12 +8,14 @@ interface FanGroupDropdownProps {
   form: FormInstance<any>;
   loading: boolean;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  style?: any;
 }
 
 const FanGroupDropdown: React.FC<FanGroupDropdownProps> = ({
   form,
   loading,
   setLoading,
+  style = { width: 240 },
 }) => {
   const { doFetch, doRequest } = useRequest({ setLoading });
   const [fanGroups, setFanGroups] = useState<FanGroup[]>([]);
@@ -49,7 +51,7 @@ const FanGroupDropdown: React.FC<FanGroupDropdownProps> = ({
   return (
     <Form.Item label="Group">
       <Select
-        style={{ width: 240 }}
+        style={style}
         placeholder="Group"
         allowClear
         onChange={(value = '') => {

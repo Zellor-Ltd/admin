@@ -53,7 +53,6 @@ const prefixSelector = (prefix: string) => (
 
 const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
   const [loading, setLoading] = useState(false);
-  const [roles, setRoles] = useState<Role[]>([]);
   const [creators, setCreators] = useState<Creator[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [serversList, setServersList] = useState<ServerAlias[]>([]);
@@ -386,6 +385,7 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
                   form={form}
                   loading={loading}
                   setLoading={setLoading}
+                  style={{ width: '100%' }}
                 />
               </Col>
               <Col lg={8} xs={24}>
@@ -524,14 +524,19 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
             </Row>
           </Tabs.TabPane>
         </Tabs>
-        <Row gutter={8}>
+        <Row gutter={8} justify="end">
           <Col>
             <Button type="default" onClick={() => onCancel?.()}>
               Cancel
             </Button>
           </Col>
           <Col>
-            <Button loading={loading} type="primary" htmlType="submit">
+            <Button
+              loading={loading}
+              type="primary"
+              htmlType="submit"
+              className="mb-1"
+            >
               Save Changes
             </Button>
           </Col>

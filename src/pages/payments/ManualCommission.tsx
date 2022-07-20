@@ -9,7 +9,8 @@ import {
   Select,
 } from 'antd';
 import { useRequest } from '../../hooks/useRequest';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
+import { AppContext } from 'contexts/AppContext';
 import { saveManualCommission } from '../../services/DiscoClubService';
 import { Banner } from 'interfaces/Banner';
 import { Creator } from 'interfaces/Creator';
@@ -27,6 +28,7 @@ const ManualCommission: React.FC<PaymentDetailsProps> = ({
   defaultCreator,
   setManualCommission,
 }) => {
+  const { isMobile } = useContext(AppContext);
   const [loading, setLoading] = useState<boolean>(false);
   const [form] = Form.useForm();
   const { doRequest } = useRequest({ setLoading });
@@ -41,7 +43,7 @@ const ManualCommission: React.FC<PaymentDetailsProps> = ({
     <>
       <PageHeader
         title="New Manual Commission"
-        subTitle="Send manual commission to Creator"
+        subTitle={isMobile ? '' : 'Send manual commission to Creator'}
       />
       <Form
         form={form}
@@ -135,7 +137,7 @@ const ManualCommission: React.FC<PaymentDetailsProps> = ({
             </Col>
           </Col>
           <Col lg={16} xs={24}>
-            <Row gutter={8}>
+            <Row gutter={8} justify={isMobile ? 'end' : undefined}>
               <Col>
                 <Button
                   type="default"
@@ -145,8 +147,13 @@ const ManualCommission: React.FC<PaymentDetailsProps> = ({
                 </Button>
               </Col>
               <Col>
-                <Button loading={loading} type="primary" htmlType="submit">
-                  Save
+                <Button
+                  loading={loading}
+                  type="primary"
+                  htmlType="submit"
+                  className="mb-1"
+                >
+                  Send
                 </Button>
               </Col>
             </Row>

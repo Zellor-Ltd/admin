@@ -1,6 +1,7 @@
 import {
   Button,
   Col,
+  Collapse,
   message,
   Modal,
   PageHeader,
@@ -11,7 +12,8 @@ import {
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { useRequest } from '../../hooks/useRequest';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { AppContext } from 'contexts/AppContext';
 import { RouteComponentProps } from 'react-router-dom';
 import {
   fetchCommissions,
@@ -25,6 +27,8 @@ import ManualPayment from './ManualPayment';
 import moment from 'moment';
 import ManualCommission from './ManualCommission';
 
+const { Panel } = Collapse;
+
 const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const { doFetch, doRequest } = useRequest({ setLoading });
@@ -33,7 +37,7 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [currentStatus, setCurrentStatus] = useState<string>();
   const [currentCreator, setCurrentCreator] = useState<string>();
   const [creators, setCreators] = useState<Creator[]>([]);
-  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
+  const { isMobile } = useContext(AppContext);
   const [commissions, setCommissions] = useState<Commission[]>([]);
   const [totalCommissionAmount, setTotalCommissionAmount] = useState<number>(0);
   const [smallestCommissionPercentage, setSmallestCommissionPercentage] =
@@ -43,18 +47,6 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [totalSalePrice, setTotalSalePrice] = useState<number>(0);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [manualCommission, setManualCommission] = useState<boolean>(false);
-
-  const handleResize = () => {
-    if (window.innerWidth < 991) {
-      setIsMobile(true);
-    } else {
-      setIsMobile(false);
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener('resize', handleResize);
-  });
 
   useEffect(() => {
     getCreators();
@@ -317,6 +309,80 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
     }),
   };
 
+  const Filters = () => {
+    return (
+      <>
+        <Col lg={16} xs={24}>
+          <Row justify="end" gutter={[8, 8]}>
+            {!isMobile && (
+              <Col lg={6} xs={24}>
+                <Row justify="end" className="mr-2 mt-03">
+                  <Col>
+                    <Typography.Text type="secondary">Filter</Typography.Text>
+                  </Col>
+                </Row>
+              </Col>
+            )}
+            <Col lg={6} xs={24}>
+              {isMobile && (
+                <Typography.Title level={5}>Creator</Typography.Title>
+              )}
+              <Select
+                style={{ width: '100%' }}
+                onChange={setCurrentCreator}
+                value={currentCreator}
+                placeholder="Creator"
+                showSearch
+                allowClear
+                disabled={!creators.length}
+                filterOption={(input, option) =>
+                  !!option?.children
+                    ?.toString()
+                    .toUpperCase()
+                    .includes(input.toUpperCase())
+                }
+              >
+                {creators.map((curr: any) => (
+                  <Select.Option key={curr.id} value={curr.id}>
+                    {curr.firstName}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Col>
+            <Col lg={6} xs={24}>
+              {isMobile && (
+                <Typography.Title level={5}>Status</Typography.Title>
+              )}
+              <Select
+                style={{ width: '100%' }}
+                onChange={setCurrentStatus}
+                value={currentStatus}
+                placeholder="Status"
+                className="mb-1"
+                disabled={!creators.length}
+                showSearch
+                allowClear
+                filterOption={(input, option) =>
+                  !!option?.children
+                    ?.toString()
+                    .toUpperCase()
+                    .includes(input.toUpperCase())
+                }
+              >
+                <Select.Option key={1} value={'Cleared'}>
+                  Cleared
+                </Select.Option>
+                <Select.Option key={2} value={'Returned'}>
+                  Returned
+                </Select.Option>
+              </Select>
+            </Col>
+          </Row>
+        </Col>
+      </>
+    );
+  };
+
   return (
     <>
       {!manualPayment && !manualCommission && (
@@ -325,22 +391,28 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
             title="Commission Payments"
             subTitle={isMobile ? '' : 'List of Commission Payments'}
             extra={[
-              <Button
-                key="1"
-                className="mt-1"
-                onClick={() => setManualCommission(true)}
-              >
-                New Manual Commission
-              </Button>,
-              <Button
-                key="2"
-                type="primary"
-                danger
-                className="mt-1"
-                onClick={() => setShowModal(true)}
-              >
-                New One-Off Payment
-              </Button>,
+              <Row gutter={8} justify="end">
+                <Col>
+                  <Button
+                    key="1"
+                    className="mt-1"
+                    onClick={() => setManualCommission(true)}
+                  >
+                    New Manual Commission
+                  </Button>
+                </Col>
+                <Col>
+                  <Button
+                    key="2"
+                    type="primary"
+                    danger
+                    className="mt-1"
+                    onClick={() => setShowModal(true)}
+                  >
+                    New One-Off Payment
+                  </Button>
+                </Col>
+              </Row>,
               <Modal
                 title="Are you sure?"
                 visible={showModal}
@@ -358,77 +430,27 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
               </Modal>,
             ]}
           />
-          <Row justify="end" align="bottom" className="sticky-filter-box">
-            <Col lg={16} xs={24}>
-              <Row justify="end" gutter={[8, 8]}>
-                {!isMobile && (
-                  <Col lg={6} xs={24}>
-                    <Row justify="end" className={isMobile ? '' : 'mr-2 mt-03'}>
-                      <Col>
-                        <Typography.Text type="secondary">
-                          Filter
-                        </Typography.Text>
-                      </Col>
-                    </Row>
-                  </Col>
-                )}
-                <Col lg={6} xs={24}>
-                  {isMobile && (
-                    <Typography.Title level={5}>Creator</Typography.Title>
-                  )}
-                  <Select
-                    style={{ width: '100%' }}
-                    onChange={setCurrentCreator}
-                    value={currentCreator}
-                    placeholder="Creator"
-                    showSearch
-                    allowClear
-                    disabled={!creators.length}
-                    filterOption={(input, option) =>
-                      !!option?.children
-                        ?.toString()
-                        .toUpperCase()
-                        .includes(input.toUpperCase())
-                    }
-                  >
-                    {creators.map((curr: any) => (
-                      <Select.Option key={curr.id} value={curr.id}>
-                        {curr.firstName}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </Col>
-                <Col lg={6} xs={24}>
-                  {isMobile && (
-                    <Typography.Title level={5}>Status</Typography.Title>
-                  )}
-                  <Select
-                    style={{ width: '100%' }}
-                    onChange={setCurrentStatus}
-                    value={currentStatus}
-                    placeholder="Status"
-                    className={isMobile ? 'mb-1' : ''}
-                    disabled={!creators.length}
-                    showSearch
-                    allowClear
-                    filterOption={(input, option) =>
-                      !!option?.children
-                        ?.toString()
-                        .toUpperCase()
-                        .includes(input.toUpperCase())
-                    }
-                  >
-                    <Select.Option key={1} value={'Cleared'}>
-                      Cleared
-                    </Select.Option>
-                    <Select.Option key={2} value={'Returned'}>
-                      Returned
-                    </Select.Option>
-                  </Select>
-                </Col>
-              </Row>
-            </Col>
-          </Row>
+          {!isMobile && (
+            <Row
+              justify="end"
+              align="bottom"
+              className="custom-filter-box mr-06"
+            >
+              <Filters />
+            </Row>
+          )}
+          {isMobile && (
+            <Collapse ghost className="sticky-filter-box">
+              <Panel
+                header={<Typography.Title level={5}>Filters</Typography.Title>}
+                key="1"
+              >
+                <Row justify="end" align="bottom" className="pt-0">
+                  <Filters />
+                </Row>
+              </Panel>
+            </Collapse>
+          )}
           <>
             <Table
               scroll={{ x: true }}

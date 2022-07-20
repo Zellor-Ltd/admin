@@ -72,7 +72,7 @@ const PromoDisplaysDetail: React.FC<PromoDisplayDetailProps> = ({
           </Col>
         </Row>
         <Row gutter={8}>
-          <Col lg={6} xs={24}>
+          <Col lg={8} xs={24}>
             <Form.Item
               name="displayStartDate"
               label="Display Start Date"
@@ -84,7 +84,7 @@ const PromoDisplaysDetail: React.FC<PromoDisplayDetailProps> = ({
               <DatePicker format="DD/MM/YYYY" />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={24}>
+          <Col lg={8} xs={24}>
             <Form.Item
               name="displayExpireDate"
               label="Display Expire Date"
@@ -96,7 +96,7 @@ const PromoDisplaysDetail: React.FC<PromoDisplayDetailProps> = ({
               <DatePicker format="DD/MM/YYYY" />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={24}>
+          <Col lg={8} xs={24}>
             <Form.Item label="Super Category" name="superCategoryId">
               <SimpleSelect
                 data={allCategories['Super Category'].filter(item => {
@@ -116,14 +116,19 @@ const PromoDisplaysDetail: React.FC<PromoDisplayDetailProps> = ({
             </Form.Item>
           </Col>
         </Row>
-        <Row gutter={8}>
+        <Row gutter={8} justify="end">
           <Col>
             <Button type="default" onClick={() => onCancel?.()}>
               Cancel
             </Button>
           </Col>
           <Col>
-            <Button loading={loading} type="primary" htmlType="submit">
+            <Button
+              loading={loading}
+              type="primary"
+              htmlType="submit"
+              className="mb-1"
+            >
               Save Changes
             </Button>
           </Col>

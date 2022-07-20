@@ -38,8 +38,6 @@ import moment from 'moment';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import scrollIntoView from 'scroll-into-view';
 import { Link } from 'react-router-dom';
-import { noop } from 'lodash';
-import BrandForm from 'pages/video-feed/BrandForm';
 interface BrandDetailProps {
   onSave?: (record: Brand) => void;
   onCancel?: () => void;
@@ -337,13 +335,6 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
         ) : (
           <Col>
             <Row gutter={8}>
-              <Col>
-                <Button key="1" onClick={() => newItem()}>
-                  New Item
-                </Button>
-              </Col>
-            </Row>
-            <Row gutter={8}>
               <Col span={24}>
                 <Table
                   rowClassName={(_, index) => `scrollable-row-${index}`}
@@ -387,6 +378,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
         }
       />
       <Form
+        className=""
         name="brandForm"
         layout="vertical"
         form={form}
@@ -402,10 +394,18 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
           defaultActiveKey="Details"
           activeKey={activeTabKey}
           onChange={changeTab}
+          tabBarExtraContent={
+            activeTabKey === 'Secrets' &&
+            !vaultOptions && (
+              <Button key="1" onClick={() => newItem()}>
+                New Vault
+              </Button>
+            )
+          }
         >
           <Tabs.TabPane forceRender tab="Details" key="Details">
-            <Row gutter={8}>
-              <Col lg={4} xs={4}>
+            <Row gutter={8} align="bottom">
+              <Col lg={4} xs={8}>
                 <Form.Item
                   name="automated"
                   label="Automated"
@@ -414,7 +414,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                   <Switch />
                 </Form.Item>
               </Col>
-              <Col lg={4} xs={4}>
+              <Col lg={4} xs={8}>
                 <Form.Item
                   name="showOutOfStock"
                   label="Show Out of Stock"
@@ -423,7 +423,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                   <Switch />
                 </Form.Item>
               </Col>
-              <Col lg={5} xs={5}>
+              <Col lg={5} xs={8}>
                 <Form.Item
                   name="removeVideo"
                   label="Remove video if no product"
@@ -567,7 +567,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                   </Form.Item>
                 </Col>
                 <Row gutter={4}>
-                  <Col lg={8} xs={8}>
+                  <Col lg={8} xs={24}>
                     <Form.Item
                       name="discoPercentage"
                       label="Disco Percentage %"
@@ -586,7 +586,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                       />
                     </Form.Item>
                   </Col>
-                  <Col lg={8} xs={8}>
+                  <Col lg={8} xs={24}>
                     <Form.Item
                       name="creatorPercentage"
                       label="Creator %"
@@ -621,7 +621,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                   </Col>
                 </Row>
                 <Row gutter={4}>
-                  <Col lg={8} xs={8}>
+                  <Col lg={8} xs={24}>
                     <Form.Item
                       name="maxDiscoDollarPercentage"
                       label="Max Disco Dollar %"
@@ -640,7 +640,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                       />
                     </Form.Item>
                   </Col>
-                  <Col lg={8} xs={8}>
+                  <Col lg={8} xs={24}>
                     <Form.Item
                       name="initialFreeDdAmount"
                       label="Initial Free Disco Dollars"
@@ -660,7 +660,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                   </Col>
                 </Row>
                 <Row gutter={4}>
-                  <Col lg={8} xs={8}>
+                  <Col lg={8} xs={24}>
                     <Form.Item
                       name="returnPeriod"
                       label="Return Period (days)"
@@ -716,8 +716,8 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
 
           <Tabs.TabPane forceRender tab="Images" key="Images">
             <Col lg={16} xs={24}>
-              <Row>
-                <Col lg={6} xs={24}>
+              <Row className="mx-1">
+                <Col lg={6} xs={12}>
                   <Form.Item label="Colour">
                     <Upload.ImageUpload
                       maxCount={1}
@@ -727,7 +727,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                     />
                   </Form.Item>
                 </Col>
-                <Col lg={6} xs={24}>
+                <Col lg={6} xs={12}>
                   <Form.Item label="Black">
                     <Upload.ImageUpload
                       maxCount={1}
@@ -737,7 +737,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                     />
                   </Form.Item>
                 </Col>
-                <Col lg={6} xs={24}>
+                <Col lg={6} xs={12}>
                   <Form.Item label="White">
                     <Upload.ImageUpload
                       maxCount={1}
@@ -747,7 +747,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                     />
                   </Form.Item>
                 </Col>
-                <Col lg={6} xs={24}>
+                <Col lg={6} xs={12}>
                   <Form.Item
                     label="Logo Round"
                     rules={[
@@ -763,7 +763,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                     />
                   </Form.Item>
                 </Col>
-                <Col lg={6} xs={24}>
+                <Col lg={6} xs={12}>
                   <Form.Item
                     label="Upload Card"
                     name="brandCard"
@@ -779,7 +779,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                     />
                   </Form.Item>
                 </Col>
-                <Col lg={6} xs={24}>
+                <Col lg={6} xs={12}>
                   <Form.Item
                     label="Thumbnail"
                     name="thumbnail"
@@ -799,8 +799,8 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
               <Typography.Title style={{ marginBottom: '4vh' }} level={5}>
                 Store Page Display
               </Typography.Title>
-              <Row>
-                <Col lg={6} xs={24}>
+              <Row className="mx-1">
+                <Col lg={6} xs={12}>
                   <Form.Item
                     label="Mast Head Image"
                     name="mastHead"
@@ -819,7 +819,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                     />
                   </Form.Item>
                 </Col>
-                <Col lg={6} xs={24}>
+                <Col lg={6} xs={12}>
                   <Form.Item
                     label="Avatar"
                     name="avatar"
@@ -841,14 +841,19 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
           </Tabs.TabPane>
         </Tabs>
         {activeTabKey !== 'Secrets' && (
-          <Row gutter={8}>
+          <Row gutter={8} justify="end">
             <Col>
               <Button type="default" onClick={() => onCancel?.()}>
                 Cancel
               </Button>
             </Col>
             <Col>
-              <Button loading={loading} type="primary" htmlType="submit">
+              <Button
+                loading={loading}
+                type="primary"
+                htmlType="submit"
+                className="mb-1"
+              >
                 Save Changes
               </Button>
             </Col>

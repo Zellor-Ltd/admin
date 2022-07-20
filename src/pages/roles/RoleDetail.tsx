@@ -1,9 +1,11 @@
 import { Button, Col, Form, Input, message, PageHeader, Row } from 'antd';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
+import { AppContext } from 'contexts/AppContext';
 import { RouteComponentProps } from 'react-router-dom';
 import { saveRole } from 'services/DiscoClubService';
 
 const RoleDetail: React.FC<RouteComponentProps> = props => {
+  const { isMobile } = useContext(AppContext);
   const { history, location } = props;
   const [loading, setLoading] = useState(false);
   const initial: any = location.state;
@@ -34,26 +36,35 @@ const RoleDetail: React.FC<RouteComponentProps> = props => {
       >
         <Row gutter={8}>
           <Col lg={8} xs={24}>
-            <Form.Item label="Name" name="name">
-              <Input />
-            </Form.Item>
-          </Col>
-          <Col lg={24} xs={24}>
-            <Form.Item label="Description" name="description">
-              <Input.TextArea />
-            </Form.Item>
+            <Col lg={24} xs={24}>
+              <Form.Item label="Name" name="name">
+                <Input />
+              </Form.Item>
+            </Col>
+            <Col lg={24} xs={24}>
+              <Form.Item label="Description" name="description">
+                <Input.TextArea />
+              </Form.Item>
+            </Col>
           </Col>
         </Row>
-        <Row gutter={8}>
+        <Row gutter={8} justify={isMobile ? 'end' : undefined}>
           <Col>
             <Button type="default" onClick={() => history.goBack()}>
               Cancel
             </Button>
           </Col>
           <Col>
-            <Button type="primary" htmlType="submit" loading={loading}>
-              Save Changes
-            </Button>
+            <Col>
+              <Button
+                type="primary"
+                htmlType="submit"
+                loading={loading}
+                className="mb-1"
+              >
+                Save Changes
+              </Button>
+            </Col>
           </Col>
         </Row>
       </Form>

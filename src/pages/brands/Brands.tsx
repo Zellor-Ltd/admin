@@ -23,7 +23,8 @@ import { ColumnsType } from 'antd/lib/table';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
 import { discoBrandId } from 'helpers/constants';
 import { Brand } from 'interfaces/Brand';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { AppContext } from 'contexts/AppContext';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { deleteBrand, fetchBrands, saveBrand } from 'services/DiscoClubService';
 import { SimpleSwitch } from '../../components/SimpleSwitch';
@@ -47,19 +48,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [filterText, setFilterText] = useState('');
   const [showModal, setShowModal] = useState<boolean>(false);
   const [currentBrand, setCurrentBrand] = useState<Brand>();
-  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
-
-  const handleResize = () => {
-    if (window.innerWidth < 991) {
-      setIsMobile(true);
-    } else {
-      setIsMobile(false);
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener('resize', handleResize);
-  });
+  const { isMobile } = useContext(AppContext);
 
   useEffect(() => {
     fetch();

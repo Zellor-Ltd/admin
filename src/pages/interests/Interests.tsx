@@ -17,7 +17,8 @@ import { useRequest } from 'hooks/useRequest';
 import { ProductCategory } from 'interfaces/Category';
 import { FeedItem } from 'interfaces/FeedItem';
 import { Image } from 'interfaces/Image';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
+import { AppContext } from 'contexts/AppContext';
 import Highlighter from 'react-highlight-words';
 import { fetchInterests, saveInterests } from 'services/DiscoClubService';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
@@ -38,19 +39,7 @@ const Interests: React.FC<InterestsProps> = () => {
 
   const [interests, setInterests] = useState<any[]>([]);
   const [mergedCategories, setMergedCategories] = useState<any[]>([]);
-  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
-
-  const handleResize = () => {
-    if (window.innerWidth < 991) {
-      setIsMobile(true);
-    } else {
-      setIsMobile(false);
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener('resize', handleResize);
-  });
+  const { isMobile } = useContext(AppContext);
 
   useEffect(() => {
     if (!allCategories['Super Category'].length) return;

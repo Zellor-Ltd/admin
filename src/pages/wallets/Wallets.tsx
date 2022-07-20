@@ -6,7 +6,8 @@ import { Fan } from 'interfaces/Fan';
 import { SelectOption } from 'interfaces/SelectOption';
 import { Wallet } from 'interfaces/Wallet';
 import { WalletDetailParams } from 'interfaces/WalletTransactions';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { AppContext } from 'contexts/AppContext';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import {
   fetchBalancePerBrand,
@@ -32,19 +33,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
   const [wallets, setWallets] = useState<Wallet[]>([]);
   const [fans, setFans] = useState<Fan[]>([]);
   const [userInput, setUserInput] = useState<string>();
-  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
-
-  const handleResize = () => {
-    if (window.innerWidth < 991) {
-      setIsMobile(true);
-    } else {
-      setIsMobile(false);
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener('resize', handleResize);
-  });
+  const { isMobile } = useContext(AppContext);
 
   const optionMapping: SelectOption = {
     key: 'id',
@@ -215,6 +204,66 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
     return rows?.filter(row => row.brandName?.indexOf(filter) > -1);
   };
 
+  const Filters = () => {
+    return (
+      <>
+        <Col span={24}>
+          <Row gutter={8} align="bottom">
+            <Col lg={4} xs={24}>
+              <Typography.Title level={5}>Fan Filter</Typography.Title>
+              <MultipleFetchDebounceSelect
+                style={{ width: '100%' }}
+                input={userInput}
+                onInput={getFans}
+                onChange={handleChangeFan}
+                optionMapping={fanOptionMapping}
+                placeholder="Select a Fan"
+                options={fans}
+                onClear={handleClearFan}
+              ></MultipleFetchDebounceSelect>
+            </Col>
+            {selectedFan && (
+              <Col lg={4} xs={24} className={isMobile ? 'mt-05' : ''}>
+                <Typography.Title level={5}>Master Brand</Typography.Title>
+                <SimpleSelect
+                  data={brands}
+                  onChange={(_, brand) => handleChangeBrand(brand)}
+                  style={{ width: '100%' }}
+                  selectedOption={selectedBrand?.brandName}
+                  optionMapping={optionMapping}
+                  placeholder={'Select a master brand'}
+                  loading={isFetchingBrands}
+                  disabled={isFetchingBrands}
+                  allowClear={true}
+                ></SimpleSelect>
+              </Col>
+            )}
+            <Col
+              lg={6}
+              xs={24}
+              style={
+                isMobile
+                  ? { position: 'relative', top: '24px', padding: 0 }
+                  : { position: 'relative', top: '24px' }
+              }
+            >
+              <WalletEdit
+                disabled={!selectedFan || !selectedBrand}
+                fanId={selectedFan?.id}
+                brandId={selectedBrand?.id}
+                wallet={search(wallets)?.find(
+                  item => item.brandId === selectedBrand?.id
+                )}
+                onSave={handleSaveWallet}
+                onReset={handleResetWallet}
+              />
+            </Col>
+          </Row>
+        </Col>
+      </>
+    );
+  };
+
   return (
     <>
       {!details && (
@@ -224,65 +273,31 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
             subTitle={isMobile ? '' : 'List of Fan wallets'}
             className={isMobile ? 'mb-n1' : ''}
           />
-          <Row
-            align="bottom"
-            justify="space-between"
-            className="sticky-filter-box mb-1"
-          >
-            <Col span={24}>
-              <Row gutter={8} align="bottom">
-                <Col lg={4} xs={24}>
-                  <Typography.Title level={5}>Fan Filter</Typography.Title>
-                  <MultipleFetchDebounceSelect
-                    style={{ width: '100%' }}
-                    input={userInput}
-                    onInput={getFans}
-                    onChange={handleChangeFan}
-                    optionMapping={fanOptionMapping}
-                    placeholder="Select a Fan"
-                    options={fans}
-                    onClear={handleClearFan}
-                  ></MultipleFetchDebounceSelect>
-                </Col>
-                {selectedFan && (
-                  <Col lg={4} xs={24} className={isMobile ? 'mt-05' : ''}>
-                    <Typography.Title level={5}>Master Brand</Typography.Title>
-                    <SimpleSelect
-                      data={brands}
-                      onChange={(_, brand) => handleChangeBrand(brand)}
-                      style={{ width: '100%' }}
-                      selectedOption={selectedBrand?.brandName}
-                      optionMapping={optionMapping}
-                      placeholder={'Select a master brand'}
-                      loading={isFetchingBrands}
-                      disabled={isFetchingBrands}
-                      allowClear={true}
-                    ></SimpleSelect>
-                  </Col>
-                )}
-                <Col
-                  lg={6}
-                  xs={24}
-                  style={
-                    isMobile
-                      ? { position: 'relative', top: '24px', padding: 0 }
-                      : { position: 'relative', top: '24px' }
-                  }
+          {isMobile && (
+            <Collapse ghost className="sticky-filter-box">
+              <Panel
+                header={<Typography.Title level={5}>Filters</Typography.Title>}
+                key="1"
+              >
+                <Row
+                  align="bottom"
+                  justify="space-between"
+                  className="mb-1 pt-0"
                 >
-                  <WalletEdit
-                    disabled={!selectedFan || !selectedBrand}
-                    fanId={selectedFan?.id}
-                    brandId={selectedBrand?.id}
-                    wallet={search(wallets)?.find(
-                      item => item.brandId === selectedBrand?.id
-                    )}
-                    onSave={handleSaveWallet}
-                    onReset={handleResetWallet}
-                  />
-                </Col>
-              </Row>
-            </Col>
-          </Row>
+                  <Filters />
+                </Row>
+              </Panel>
+            </Collapse>
+          )}
+          {!isMobile && (
+            <Row
+              align="bottom"
+              justify="space-between"
+              className="sticky-filter-box mb-1"
+            >
+              <Filters />
+            </Row>
+          )}
           <Table
             scroll={{ x: true }}
             rowClassName={(_, index) => `scrollable-row-${index}`}

@@ -1,7 +1,8 @@
 import { Button, Col, Form, Input, InputNumber, PageHeader, Row } from 'antd';
 import { useRequest } from 'hooks/useRequest';
 import { DdTemplate } from 'interfaces/DdTemplate';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
+import { AppContext } from 'contexts/AppContext';
 import { saveDdTemplate } from 'services/DiscoClubService';
 interface DdTemplatesDetailProps {
   template: DdTemplate | undefined;
@@ -14,6 +15,7 @@ const DdTemplatesDetail: React.FC<DdTemplatesDetailProps> = ({
   onSave,
   onCancel,
 }) => {
+  const { isMobile } = useContext(AppContext);
   const [loading, setLoading] = useState<boolean>(false);
   const [form] = Form.useForm();
   const { doRequest } = useRequest({ setLoading });
@@ -82,16 +84,23 @@ const DdTemplatesDetail: React.FC<DdTemplatesDetailProps> = ({
             </Col>
           </Col>
         </Row>
-        <Row gutter={8}>
+        <Row gutter={8} justify={isMobile ? 'end' : undefined}>
           <Col>
             <Button type="default" onClick={() => onCancel?.()}>
               Cancel
             </Button>
           </Col>
           <Col>
-            <Button loading={loading} type="primary" htmlType="submit">
-              Save Changes
-            </Button>
+            <Col>
+              <Button
+                loading={loading}
+                type="primary"
+                htmlType="submit"
+                className="mb-1"
+              >
+                Save Changes
+              </Button>
+            </Col>
           </Col>
         </Row>
       </Form>

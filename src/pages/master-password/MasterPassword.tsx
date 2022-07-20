@@ -1,7 +1,8 @@
 import { CopyOutlined } from '@ant-design/icons';
 import { Button, Col, Form, Input, message, PageHeader, Row } from 'antd';
 import { useRequest } from 'hooks/useRequest';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
+import { AppContext } from 'contexts/AppContext';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import { RouteComponentProps } from 'react-router-dom';
 import { getMasterPassword } from 'services/DiscoClubService';
@@ -10,19 +11,7 @@ const MasterPassword: React.FC<RouteComponentProps> = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const { doFetch } = useRequest({ setLoading });
   const [masterPassword, setMasterPassword] = useState<string>('');
-  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
-
-  const handleResize = () => {
-    if (window.innerWidth < 991) {
-      setIsMobile(true);
-    } else {
-      setIsMobile(false);
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener('resize', handleResize);
-  });
+  const { isMobile } = useContext(AppContext);
 
   const onFinish = async (values: any) => {
     const response: any = await doFetch(
@@ -47,8 +36,8 @@ const MasterPassword: React.FC<RouteComponentProps> = () => {
                 <Input placeholder="Enter ID" />
               </Form.Item>
             </Col>
-            <Col lg={4} xs={24}>
-              <Row justify="end">
+            <Col lg={6} xs={24}>
+              <Row justify={isMobile ? 'end' : undefined}>
                 <Col>
                   <Button type="primary" htmlType="submit" loading={loading}>
                     Get Master Password

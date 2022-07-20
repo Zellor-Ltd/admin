@@ -25,7 +25,8 @@ import {
   ProductCategory,
 } from 'interfaces/Category';
 import { Image } from 'interfaces/Image';
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useState, useEffect, useRef } from 'react';
+import { AppContext } from 'contexts/AppContext';
 import Highlighter from 'react-highlight-words';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { productCategoriesAPI } from 'services/DiscoClubService';
@@ -62,19 +63,7 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
     'Sub Sub Category': [],
   });
   const [categories, setCategories] = useState<any>([]);
-  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
-
-  const handleResize = () => {
-    if (window.innerWidth < 991) {
-      setIsMobile(true);
-    } else {
-      setIsMobile(false);
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener('resize', handleResize);
-  });
+  const { isMobile } = useContext(AppContext);
 
   useEffect(() => {
     fetchAllCategories();

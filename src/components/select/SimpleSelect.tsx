@@ -13,6 +13,7 @@ interface SimpleSelectProps {
   loading?: boolean;
   disabled?: boolean;
   showSearch?: boolean;
+  className?: string;
 }
 
 const SimpleSelect: React.FC<SimpleSelectProps> = ({
@@ -26,6 +27,7 @@ const SimpleSelect: React.FC<SimpleSelectProps> = ({
   loading,
   disabled,
   showSearch = true,
+  className,
 }) => {
   const [options, setOptions] = useState<SelectOption[]>([]);
   const [_selectedOption, _setSelectedOption] = useState<string | null>();
@@ -70,6 +72,7 @@ const SimpleSelect: React.FC<SimpleSelectProps> = ({
       disabled={disabled}
       showSearch={showSearch}
       filterOption={_onSearch}
+      className={className}
     ></Select>
   );
 };

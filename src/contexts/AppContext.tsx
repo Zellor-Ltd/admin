@@ -1,6 +1,6 @@
 import { useRequest, DoRequest, DoFetch } from 'hooks/useRequest';
 import { PageInfiniteScrollProvider } from './PageInfiniteScrollContext';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 type FilterValue = {
   [key: string]: any;
@@ -29,6 +29,7 @@ interface AppContextProps {
   doFetch: DoFetch;
   doRequest: DoRequest;
   refreshContext: Function;
+  isMobile: boolean;
 }
 
 export const AppContext = React.createContext({} as AppContextProps);
@@ -40,6 +41,19 @@ export const AppProvider = ({ children }: { children: JSX.Element }) => {
   const [filterValues, setFilterValues] = useState<FilterValue>({});
   const [lastVisitedPage, setLastVisitedPage] = useState<string>('');
   const [tableData, setTableData] = useState<any[]>([]);
+  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
+
+  const handleResize = () => {
+    if (window.innerWidth < 991) {
+      setIsMobile(true);
+    } else {
+      setIsMobile(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+  });
 
   const setFilterValue: SetFilterValue = (key, value) => {
     setFilterValues(prev => ({ ...prev, [key]: value }));
@@ -73,6 +87,7 @@ export const AppProvider = ({ children }: { children: JSX.Element }) => {
         doFetch,
         doRequest,
         refreshContext,
+        isMobile,
       }}
     >
       <PageInfiniteScrollProvider>{children}</PageInfiniteScrollProvider>

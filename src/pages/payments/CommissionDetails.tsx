@@ -163,11 +163,11 @@ const CommissionDetails: React.FC<CommissionDetailProps> = ({
                     <Table.Summary.Cell index={2}></Table.Summary.Cell>
                     <Table.Summary.Cell index={3}></Table.Summary.Cell>
                     <Table.Summary.Cell index={4}>
-                      €${totalSalePrice?.toFixed(2)}
+                      €{totalSalePrice?.toFixed(2)}
                     </Table.Summary.Cell>
                     <Table.Summary.Cell index={5}></Table.Summary.Cell>
                     <Table.Summary.Cell index={6}>
-                      €${totalAmount?.toFixed(2)}
+                      €{totalAmount?.toFixed(2)}
                     </Table.Summary.Cell>
                   </Table.Summary.Row>
                 </>
@@ -176,7 +176,11 @@ const CommissionDetails: React.FC<CommissionDetailProps> = ({
           />
         </Col>
         <Col>
-          <Button type="default" onClick={() => setDetails(false)}>
+          <Button
+            type="default"
+            onClick={() => setDetails(false)}
+            className="mt-1"
+          >
             Return
           </Button>
         </Col>

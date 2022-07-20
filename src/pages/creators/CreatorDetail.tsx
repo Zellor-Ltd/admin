@@ -148,7 +148,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
           <Tabs.TabPane forceRender tab="Details" key="Details">
             <Row gutter={8}>
               <Col lg={24} xs={24}>
-                <Row gutter={24}>
+                <Row gutter={24} align="bottom">
                   <Col lg={6} xs={24}>
                     <Form.Item name="status" label="Status">
                       <Radio.Group buttonStyle="solid">
@@ -165,7 +165,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                       </Radio.Group>
                     </Form.Item>
                   </Col>
-                  <Col lg={6} xs={24}>
+                  <Col lg={6} xs={12}>
                     <Form.Item
                       name="displayInVideoFeed"
                       label="Display in Video Feed"
@@ -175,7 +175,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                       <Switch />
                     </Form.Item>
                   </Col>
-                  <Col lg={6} xs={24}>
+                  <Col lg={6} xs={12}>
                     <Form.Item
                       name="displayInCreatorGrid"
                       label="Display in Creator Grid"
@@ -513,14 +513,19 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
             </Row>
           </Tabs.TabPane>
         </Tabs>
-        <Row gutter={[8, 8]} className="mt-1">
+        <Row gutter={[8, 8]} justify="end">
           <Col>
             <Button type="default" onClick={() => onCancel?.()}>
               Cancel
             </Button>
           </Col>
           <Col>
-            <Button loading={loading} type="primary" htmlType="submit">
+            <Button
+              loading={loading}
+              type="primary"
+              htmlType="submit"
+              className="mb-1"
+            >
               Save Changes
             </Button>
           </Col>
