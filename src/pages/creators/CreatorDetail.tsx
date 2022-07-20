@@ -218,6 +218,21 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
               </Col>
               <Col lg={12} xs={24}>
                 <Form.Item
+                  label="Creator's Address"
+                  name="creatorsAddress"
+                  rules={[
+                    {
+                      type: 'email',
+                      message: 'Please use a valid address.',
+                    },
+                  ]}
+                >
+                  <Input />
+                </Form.Item>
+              </Col>
+              <Col lg={12} xs={0}></Col>
+              <Col lg={12} xs={24}>
+                <Form.Item
                   name="gender"
                   label="Gender"
                   rules={[
@@ -449,7 +464,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
               </Col>
               <Col lg={24} xs={24}>
                 <Form.Item label="Creator Profile" name="creatorProfile">
-                  <RichTextEditor formField="creatorProfile" form={form} />
+                  <Input />
                 </Form.Item>
               </Col>
             </Row>
