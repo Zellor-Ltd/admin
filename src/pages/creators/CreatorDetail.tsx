@@ -464,7 +464,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
               </Col>
               <Col lg={24} xs={24}>
                 <Form.Item label="Creator Profile" name="creatorProfile">
-                  <RichTextEditor formField="creatorProfile" form={form} />
+                  <Input />
                 </Form.Item>
               </Col>
             </Row>
