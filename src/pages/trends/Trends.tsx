@@ -161,7 +161,7 @@ const Trends: React.FC<RouteComponentProps> = props => {
               }}
             />
           </Col>
-          <Col xs={24}>
+          <Col lg={4} xs={24}>
             <Row justify="end" className="mt-1">
               <Col>
                 <Button type="primary" onClick={getResources} loading={loading}>

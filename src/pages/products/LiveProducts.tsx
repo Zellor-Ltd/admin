@@ -648,155 +648,152 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
 
   const Filters = () => {
     return (
-      <Row
-        align="bottom"
-        justify="space-between"
-        className="mb-1 pt-0"
-        gutter={8}
-      >
-        <Col lg={16} xs={24}>
-          <Row gutter={[8, 8]}>
-            <Col lg={6} xs={24}>
-              <SearchFilterDebounce
-                initialValue={searchFilter}
-                filterFunction={setSearchFilter}
-                label="Product Name"
-                placeholder="Search by Name"
-                onPressEnter={getResources}
-              />
-            </Col>
-            <Col lg={6} xs={24}>
-              <Typography.Title level={5}>Master Brand</Typography.Title>
-              <SimpleSelect
-                data={brands}
-                onChange={(_, brand) => onChangeBrand(brand)}
-                style={{ width: '100%' }}
-                selectedOption={brandFilter?.brandName}
-                optionMapping={optionMapping}
-                placeholder={'Select a Master Brand'}
-                loading={isFetchingBrands}
-                disabled={isFetchingBrands}
-                allowClear={true}
-              ></SimpleSelect>
-            </Col>
-            <Col lg={6} xs={24}>
-              <Typography.Title level={5}>Product Brand</Typography.Title>
-              <SimpleSelect
-                data={productBrands}
-                onChange={(_, productBrand) =>
-                  onChangeProductBrand(productBrand)
-                }
-                style={{ width: '100%' }}
-                selectedOption={productBrandFilter?.brandName}
-                optionMapping={optionMapping}
-                placeholder={'Select a Product Brand'}
-                loading={isFetchingProductBrand}
-                disabled={isFetchingProductBrand}
-                allowClear={true}
-              ></SimpleSelect>
-            </Col>
-            <Col lg={6} xs={24}>
-              <Typography.Title level={5}>Status</Typography.Title>
-              <Select
-                placeholder="Select a Status"
-                style={{ width: '100%' }}
-                onChange={(value: string) => setProductStatusFilter(value)}
-                allowClear={true}
-                defaultValue={productStatusFilter}
-              >
-                <Select.Option value="live">Live</Select.Option>
-                <Select.Option value="paused">Paused</Select.Option>
-              </Select>
-            </Col>
-            <Col lg={6} xs={24}>
-              <Typography.Title level={5}>Super Category</Typography.Title>
-              <SimpleSelect
-                data={allCategories['Super Category'].filter(item => {
-                  return (
-                    item.superCategory === 'Women' ||
-                    item.superCategory === 'Men' ||
-                    item.superCategory === 'Children'
-                  );
-                })}
-                onChange={(_, category) =>
-                  setProductSuperCategoryFilter(category)
-                }
-                style={{ width: '100%' }}
-                selectedOption={productSuperCategoryFilter?.id}
-                optionMapping={productSuperCategoryOptionMapping}
-                placeholder={'Select a Super Category'}
-                loading={fetchingCategories}
-                disabled={fetchingCategories}
-                allowClear={true}
-              ></SimpleSelect>
-            </Col>
-            <Col lg={6} xs={24}>
-              <Typography.Title level={5}>Category</Typography.Title>
-              <SimpleSelect
-                data={allCategories.Category}
-                onChange={(_, category) => setProductCategoryFilter(category)}
-                style={{ width: '100%' }}
-                selectedOption={productCategoryFilter?.id}
-                optionMapping={productCategoryOptionMapping}
-                placeholder={'Select a Category'}
-                loading={fetchingCategories}
-                disabled={fetchingCategories}
-                allowClear={true}
-              ></SimpleSelect>
-            </Col>
-            <Col lg={6} xs={24}>
-              <Typography.Title level={5}>Sub Category</Typography.Title>
-              <SimpleSelect
-                data={allCategories['Sub Category']}
-                onChange={(_, category) =>
-                  setProductSubCategoryFilter(category)
-                }
-                style={{ width: '100%' }}
-                selectedOption={productSubCategoryFilter?.id}
-                optionMapping={productSubCategoryOptionMapping}
-                placeholder={'Select a Sub Category'}
-                loading={fetchingCategories}
-                disabled={fetchingCategories}
-                allowClear={true}
-              ></SimpleSelect>
-            </Col>
-            <Col lg={6} xs={24}>
-              <Typography.Title level={5}>Sub Sub Category</Typography.Title>
-              <SimpleSelect
-                data={allCategories['Sub Sub Category']}
-                onChange={(_, category) =>
-                  setProductSubSubCategoryFilter(category)
-                }
-                style={{ width: '100%' }}
-                selectedOption={productSubSubCategoryFilter?.id}
-                optionMapping={productSubSubCategoryOptionMapping}
-                placeholder={'Select a Sub Sub Category'}
-                loading={fetchingCategories}
-                disabled={fetchingCategories}
-                allowClear={true}
-              ></SimpleSelect>
-            </Col>
-            <Col lg={6} xs={24}>
-              <Typography.Title level={5}>Run ID</Typography.Title>
-              <Input
-                onChange={evt => {
-                  setRunIdFilter(evt.target.value);
-                }}
-                value={runIdFilter}
-                suffix={<SearchOutlined />}
-                placeholder="Search by Run ID"
-              />
-            </Col>
-            <Col lg={6} xs={24}>
-              <Checkbox
-                onChange={handleFilterOutOfStock}
-                className={isMobile ? 'mt-1 mb-2' : 'mt-2 mb-1 ml-05'}
-              >
-                Out of Stock only
-              </Checkbox>
-            </Col>
-          </Row>
-        </Col>
+      <>
+        <Row align="bottom" justify="space-between" className="pt-0" gutter={8}>
+          <Col lg={20} xs={24}>
+            <Row gutter={[8, 8]}>
+              <Col lg={5} xs={24}>
+                <SearchFilterDebounce
+                  initialValue={searchFilter}
+                  filterFunction={setSearchFilter}
+                  label="Product Name"
+                  placeholder="Search by Name"
+                  onPressEnter={getResources}
+                />
+              </Col>
+              <Col lg={5} xs={24}>
+                <Typography.Title level={5}>Master Brand</Typography.Title>
+                <SimpleSelect
+                  data={brands}
+                  onChange={(_, brand) => onChangeBrand(brand)}
+                  style={{ width: '100%' }}
+                  selectedOption={brandFilter?.brandName}
+                  optionMapping={optionMapping}
+                  placeholder={'Select a Master Brand'}
+                  loading={isFetchingBrands}
+                  disabled={isFetchingBrands}
+                  allowClear={true}
+                ></SimpleSelect>
+              </Col>
+              <Col lg={5} xs={24}>
+                <Typography.Title level={5}>Product Brand</Typography.Title>
+                <SimpleSelect
+                  data={productBrands}
+                  onChange={(_, productBrand) =>
+                    onChangeProductBrand(productBrand)
+                  }
+                  style={{ width: '100%' }}
+                  selectedOption={productBrandFilter?.brandName}
+                  optionMapping={optionMapping}
+                  placeholder={'Select a Product Brand'}
+                  loading={isFetchingProductBrand}
+                  disabled={isFetchingProductBrand}
+                  allowClear={true}
+                ></SimpleSelect>
+              </Col>
+              <Col lg={5} xs={24}>
+                <Typography.Title level={5}>Status</Typography.Title>
+                <Select
+                  placeholder="Select a Status"
+                  style={{ width: '100%' }}
+                  onChange={(value: string) => setProductStatusFilter(value)}
+                  allowClear={true}
+                  defaultValue={productStatusFilter}
+                >
+                  <Select.Option value="live">Live</Select.Option>
+                  <Select.Option value="paused">Paused</Select.Option>
+                </Select>
+              </Col>
+              <Col lg={5} xs={24}>
+                <Typography.Title level={5}>Super Category</Typography.Title>
+                <SimpleSelect
+                  data={allCategories['Super Category'].filter(item => {
+                    return (
+                      item.superCategory === 'Women' ||
+                      item.superCategory === 'Men' ||
+                      item.superCategory === 'Children'
+                    );
+                  })}
+                  onChange={(_, category) =>
+                    setProductSuperCategoryFilter(category)
+                  }
+                  style={{ width: '100%' }}
+                  selectedOption={productSuperCategoryFilter?.id}
+                  optionMapping={productSuperCategoryOptionMapping}
+                  placeholder={'Select a Super Category'}
+                  loading={fetchingCategories}
+                  disabled={fetchingCategories}
+                  allowClear={true}
+                ></SimpleSelect>
+              </Col>
+              <Col lg={5} xs={24}>
+                <Typography.Title level={5}>Category</Typography.Title>
+                <SimpleSelect
+                  data={allCategories.Category}
+                  onChange={(_, category) => setProductCategoryFilter(category)}
+                  style={{ width: '100%' }}
+                  selectedOption={productCategoryFilter?.id}
+                  optionMapping={productCategoryOptionMapping}
+                  placeholder={'Select a Category'}
+                  loading={fetchingCategories}
+                  disabled={fetchingCategories}
+                  allowClear={true}
+                ></SimpleSelect>
+              </Col>
+              <Col lg={5} xs={24}>
+                <Typography.Title level={5}>Sub Category</Typography.Title>
+                <SimpleSelect
+                  data={allCategories['Sub Category']}
+                  onChange={(_, category) =>
+                    setProductSubCategoryFilter(category)
+                  }
+                  style={{ width: '100%' }}
+                  selectedOption={productSubCategoryFilter?.id}
+                  optionMapping={productSubCategoryOptionMapping}
+                  placeholder={'Select a Sub Category'}
+                  loading={fetchingCategories}
+                  disabled={fetchingCategories}
+                  allowClear={true}
+                ></SimpleSelect>
+              </Col>
+              <Col lg={5} xs={24}>
+                <Typography.Title level={5}>Sub Sub Category</Typography.Title>
+                <SimpleSelect
+                  data={allCategories['Sub Sub Category']}
+                  onChange={(_, category) =>
+                    setProductSubSubCategoryFilter(category)
+                  }
+                  style={{ width: '100%' }}
+                  selectedOption={productSubSubCategoryFilter?.id}
+                  optionMapping={productSubSubCategoryOptionMapping}
+                  placeholder={'Select a Sub Sub Category'}
+                  loading={fetchingCategories}
+                  disabled={fetchingCategories}
+                  allowClear={true}
+                ></SimpleSelect>
+              </Col>
+              <Col lg={5} xs={24}>
+                <Typography.Title level={5}>Run ID</Typography.Title>
+                <Input
+                  onChange={evt => {
+                    setRunIdFilter(evt.target.value);
+                  }}
+                  value={runIdFilter}
+                  suffix={<SearchOutlined />}
+                  placeholder="Search by Run ID"
+                />
+              </Col>
+              <Col lg={5} xs={24}>
+                <Checkbox
+                  onChange={handleFilterOutOfStock}
+                  className={isMobile ? 'mt-1 mb-2' : 'mt-2 mb-1 ml-05'}
+                >
+                  Out of Stock only
+                </Checkbox>
+              </Col>
+            </Row>
+          </Col>
+        </Row>
         {isMobile && (
           <Col>
             <Row justify="end">
@@ -809,7 +806,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
             </Row>
           </Col>
         )}
-      </Row>
+      </>
     );
   };
 
@@ -843,6 +840,24 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
               <Filters />
             </Panel>
           </Collapse>
+          {isMobile && (
+            <Col>
+              <Row justify="end">
+                <Col className="mt-n2">
+                  <Button
+                    type="primary"
+                    onClick={getResources}
+                    loading={loading}
+                    style={{ position: 'relative', top: '32px' }}
+                    className="mr-1"
+                  >
+                    Search
+                    <SearchOutlined style={{ color: 'white' }} />
+                  </Button>
+                </Col>
+              </Row>
+            </Col>
+          )}
           <ProductAPITestModal
             selectedRecord={productAPITest}
             setSelectedRecord={setProductAPITest}

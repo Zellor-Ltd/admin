@@ -332,7 +332,8 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
     return response;
   };
 
-  const getResources = async searchButton => {
+  const getResources = async (event?: any, searchButton?: boolean) => {
+    if (!isMobile && event) event.stopPropagation();
     setLoading(true);
     const { results } = await _fetchStagingProducts(searchButton);
 
@@ -802,10 +803,14 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
   const Filters = () => {
     return (
       <>
-        <Row align="bottom" justify="space-between" className="mb-1 pt-0">
-          <Col lg={16} xs={24}>
+        <Row
+          align="bottom"
+          justify={isMobile ? 'end' : 'space-between'}
+          className="pt-0"
+        >
+          <Col lg={20} xs={24}>
             <Row gutter={[8, 8]}>
-              <Col lg={6} xs={24}>
+              <Col lg={5} xs={24}>
                 <SearchFilterDebounce
                   initialValue={searchFilter}
                   filterFunction={setSearchFilter}
@@ -814,7 +819,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                   onPressEnter={() => getResources(true)}
                 />
               </Col>
-              <Col lg={6} xs={24}>
+              <Col lg={5} xs={24}>
                 <Typography.Title level={5}>Master Brand</Typography.Title>
                 <SimpleSelect
                   data={brands}
@@ -828,7 +833,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                   allowClear={true}
                 ></SimpleSelect>
               </Col>
-              <Col lg={6} xs={24}>
+              <Col lg={5} xs={24}>
                 <Typography.Title level={5}>Product Brand</Typography.Title>
                 <SimpleSelect
                   data={productBrands}
@@ -844,7 +849,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                   allowClear={true}
                 ></SimpleSelect>
               </Col>
-              <Col lg={6} xs={24}>
+              <Col lg={5} xs={24}>
                 <Typography.Title level={5}>Status</Typography.Title>
                 <Select
                   placeholder="Select a Status"
@@ -857,7 +862,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                   <Select.Option value="paused">Paused</Select.Option>
                 </Select>
               </Col>
-              <Col lg={6} xs={24}>
+              <Col lg={5} xs={24}>
                 <Typography.Title level={5}>Super Category</Typography.Title>
                 <SimpleSelect
                   data={allCategories['Super Category'].filter(item => {
@@ -877,7 +882,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                   allowClear={true}
                 ></SimpleSelect>
               </Col>
-              <Col lg={6} xs={24}>
+              <Col lg={5} xs={24}>
                 <Typography.Title level={5}>Category</Typography.Title>
                 <SimpleSelect
                   data={allCategories.Category.filter(item => {
@@ -896,7 +901,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                   allowClear={true}
                 ></SimpleSelect>
               </Col>
-              <Col lg={6} xs={24}>
+              <Col lg={5} xs={24}>
                 <Typography.Title level={5}>Sub Category</Typography.Title>
                 <SimpleSelect
                   data={allCategories['Sub Category'].filter(item => {
@@ -933,7 +938,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                   allowClear={true}
                 ></SimpleSelect>
               </Col>
-              <Col lg={6} xs={24}>
+              <Col lg={5} xs={24}>
                 <Typography.Title level={5}>Sub Sub Category</Typography.Title>
                 <SimpleSelect
                   data={allCategories['Sub Sub Category'].filter(item => {
@@ -976,7 +981,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                   allowClear={true}
                 ></SimpleSelect>
               </Col>
-              <Col lg={6} xs={24}>
+              <Col lg={5} xs={24}>
                 <Typography.Title level={5}>Run ID</Typography.Title>
                 <Input
                   onChange={evt => {
@@ -987,7 +992,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                   placeholder="Search by Run ID"
                 />
               </Col>
-              <Col lg={6} xs={24}>
+              <Col lg={5} xs={24}>
                 <Checkbox
                   onChange={handleFilterOutOfStock}
                   className={isMobile ? 'mt-1 mb-1' : 'mt-2 mb-1 ml-05'}
@@ -995,7 +1000,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                   Out of Stock only
                 </Checkbox>
               </Col>
-              <Col lg={6} xs={24}>
+              <Col lg={5} xs={24}>
                 <Checkbox
                   onChange={handleFilterClassified}
                   className={isMobile ? 'mb-2' : 'mt-2 mb-1 ml-05'}
@@ -1011,7 +1016,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                 <Col>
                   <Button
                     type="primary"
-                    onClick={() => getResources(true)}
+                    onClick={event => getResources(event, true)}
                     loading={loading}
                   >
                     Search
@@ -1041,21 +1046,27 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
             }
             className={isMobile ? 'mb-n1' : ''}
             extra={[
-              <Button
-                key="1"
-                className={isMobile ? 'mt-05' : ''}
-                onClick={() => createProduct(products.length)}
-              >
-                New Item
-              </Button>,
-              <Button
-                key="1"
-                type="primary"
-                className={isMobile ? 'mt-05' : ''}
-                onClick={switchView}
-              >
-                Switch View
-              </Button>,
+              <Row gutter={8} justify="end">
+                <Col>
+                  <Button
+                    key="1"
+                    className={isMobile ? 'mt-05' : ''}
+                    onClick={() => createProduct(products.length)}
+                  >
+                    New Item
+                  </Button>
+                </Col>
+                <Col>
+                  <Button
+                    key="1"
+                    type="primary"
+                    className={isMobile ? 'mt-05' : ''}
+                    onClick={switchView}
+                  >
+                    Switch View
+                  </Button>
+                </Col>
+              </Row>,
             ]}
           />
           <Collapse ghost className="sticky-filter-box">
@@ -1066,7 +1077,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                 !isMobile && (
                   <Button
                     type="primary"
-                    onClick={() => getResources(true)}
+                    onClick={event => getResources(event, true)}
                     loading={loading}
                   >
                     Search
@@ -1078,6 +1089,22 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
               <Filters />
             </Panel>
           </Collapse>
+          {isMobile && (
+            <Row justify="end">
+              <Col className="mt-n2">
+                <Button
+                  type="primary"
+                  onClick={getResources}
+                  loading={loading}
+                  style={{ position: 'relative', top: '32px' }}
+                  className="mr-1"
+                >
+                  Search
+                  <SearchOutlined style={{ color: 'white' }} />
+                </Button>
+              </Col>
+            </Row>
+          )}
         </>
       )}
       {buildView()}

@@ -797,7 +797,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
           </Col>
           <Col>
             <Button
-              className="mb-1 mr-1"
+              className="mb-1"
               disabled={isLive}
               type="primary"
               htmlType="submit"

@@ -87,14 +87,19 @@ const PromotionDetail: React.FC<PromotionDetailProps> = ({
             </Form.Item>
           </Col>
         </Row>
-        <Row gutter={8}>
+        <Row gutter={8} justify="end">
           <Col>
             <Button type="default" onClick={() => onCancel?.()}>
               Cancel
             </Button>
           </Col>
           <Col>
-            <Button loading={loading} type="primary" htmlType="submit">
+            <Button
+              loading={loading}
+              type="primary"
+              htmlType="submit"
+              className="mb-1"
+            >
               Save Changes
             </Button>
           </Col>

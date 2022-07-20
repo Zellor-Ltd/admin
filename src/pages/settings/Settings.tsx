@@ -1,4 +1,14 @@
-import { Button, Col, Form, Input, message, PageHeader, Row, Tabs } from 'antd';
+import {
+  Button,
+  Col,
+  Form,
+  Input,
+  message,
+  PageHeader,
+  Row,
+  Tabs,
+  Typography,
+} from 'antd';
 import { MinusCircleOutlined } from '@ant-design/icons';
 import { useContext, useState, useEffect } from 'react';
 import { AppContext } from 'contexts/AppContext';
@@ -114,12 +124,12 @@ const ItemList: React.FC<ItemListProp> = ({ name, isMobile }) => (
   <Form.List name={name}>
     {(fields, { add, remove }) => (
       <div>
-        <Button className="mb-1" onClick={() => add()}>
+        <Button className="mb-1 mt-05" onClick={() => add()}>
           Add {name.charAt(0).toUpperCase() + name.slice(1)}
         </Button>
         {fields.map(field => (
           <Row gutter={8} key={Math.random()}>
-            <Col lg={6} xs={24}>
+            <Col lg={12} xs={24}>
               <Form.Item
                 name={[field.name, 'name']}
                 fieldKey={[field.key, 'name']}
@@ -128,24 +138,26 @@ const ItemList: React.FC<ItemListProp> = ({ name, isMobile }) => (
                 <Input />
               </Form.Item>
             </Col>
-            <Col lg={6} xs={24}>
+            <Col lg={12} xs={24}>
+              <Row justify="space-between">
+                <Col>
+                  <Typography.Text>Value</Typography.Text>
+                </Col>
+                <Col>
+                  <Typography.Text>
+                    <MinusCircleOutlined
+                      onClick={() => remove(field.name)}
+                      className="mr-06 mb-08"
+                    />
+                  </Typography.Text>
+                </Col>
+              </Row>
               <Form.Item
                 name={[field.name, 'value']}
                 fieldKey={[field.key, 'value']}
-                label="Value"
               >
                 <Input />
               </Form.Item>
-            </Col>
-            <Col lg={6} xs={24}>
-              <Row justify={isMobile ? 'end' : 'start'}>
-                <Col style={{ display: 'flex', alignItems: 'center' }}>
-                  <MinusCircleOutlined
-                    onClick={() => remove(field.name)}
-                    className="mb-1"
-                  />
-                </Col>
-              </Row>
             </Col>
           </Row>
         ))}

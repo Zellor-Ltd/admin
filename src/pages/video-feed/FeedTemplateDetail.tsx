@@ -29,7 +29,7 @@ import { Segment } from 'interfaces/Segment';
 import { Tag } from 'interfaces/Tag';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { fetchLinks, saveFeedTemplate } from 'services/DiscoClubService';
+import { saveFeedTemplate } from 'services/DiscoClubService';
 import BrandForm from './BrandForm';
 import TagForm from './TagForm';
 import './VideoFeed.scss';
@@ -355,10 +355,10 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
       <>
         <Tabs activeKey={videoTab} onChange={setVideoTab}>
           <Tabs.TabPane forceRender tab="Video Details" key={defaultVideoTab}>
-            <Row gutter={8}>
+            <Row>
               <Col lg={24} xs={24}>
-                <Row>
-                  <Col lg={4} xs={24}>
+                <Row gutter={8}>
+                  <Col lg={12} xs={24}>
                     <Form.Item label="Status">
                       <Select
                         placeholder="Please select a status"
@@ -388,11 +388,10 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
                       </Select>
                     </Form.Item>
                   </Col>
-                  <Col lg={4} xs={24}>
+                  <Col lg={12} xs={24}>
                     <Form.Item
                       name="index"
                       label="Index"
-                      className="ml-1"
                       rules={[
                         {
                           required: true,
@@ -784,14 +783,19 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
             </Col>
           </Tabs.TabPane>
         </Tabs>
-        <Row gutter={8} className="mt-1">
+        <Row gutter={8} justify="end">
           <Col>
             <Button type="default" onClick={() => onCancel?.()}>
               Cancel
             </Button>
           </Col>
           <Col>
-            <Button type="primary" htmlType="submit" loading={loading}>
+            <Button
+              type="primary"
+              htmlType="submit"
+              className="mb-1"
+              loading={loading}
+            >
               Save Changes
             </Button>
           </Col>

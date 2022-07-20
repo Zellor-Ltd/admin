@@ -298,7 +298,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
               />
             </Col>
             <Col lg={8} xs={24}>
-              <Row justify="end" className={isMobile ? 'mt-2' : ''}>
+              <Row justify="end" className={isMobile ? 'mt-2' : 'mr-06'}>
                 <Col>
                   <Button
                     type="primary"

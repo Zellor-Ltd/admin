@@ -36,8 +36,8 @@ const MasterPassword: React.FC<RouteComponentProps> = () => {
                 <Input placeholder="Enter ID" />
               </Form.Item>
             </Col>
-            <Col lg={4} xs={24}>
-              <Row justify="end">
+            <Col lg={6} xs={24}>
+              <Row justify={isMobile ? 'end' : undefined}>
                 <Col>
                   <Button type="primary" htmlType="submit" loading={loading}>
                     Get Master Password

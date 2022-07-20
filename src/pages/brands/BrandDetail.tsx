@@ -38,8 +38,6 @@ import moment from 'moment';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import scrollIntoView from 'scroll-into-view';
 import { Link } from 'react-router-dom';
-import { noop } from 'lodash';
-import BrandForm from 'pages/video-feed/BrandForm';
 interface BrandDetailProps {
   onSave?: (record: Brand) => void;
   onCancel?: () => void;
@@ -380,6 +378,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
         }
       />
       <Form
+        className=""
         name="brandForm"
         layout="vertical"
         form={form}
@@ -396,7 +395,8 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
           activeKey={activeTabKey}
           onChange={changeTab}
           tabBarExtraContent={
-            activeTabKey === 'Secrets' && (
+            activeTabKey === 'Secrets' &&
+            !vaultOptions && (
               <Button key="1" onClick={() => newItem()}>
                 New Vault
               </Button>
@@ -843,11 +843,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
         {activeTabKey !== 'Secrets' && (
           <Row gutter={8} justify="end">
             <Col>
-              <Button
-                type="default"
-                onClick={() => onCancel?.()}
-                className="mb-1"
-              >
+              <Button type="default" onClick={() => onCancel?.()}>
                 Cancel
               </Button>
             </Col>
@@ -856,7 +852,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                 loading={loading}
                 type="primary"
                 htmlType="submit"
-                className="mr-1 mb-1"
+                className="mb-1"
               >
                 Save Changes
               </Button>

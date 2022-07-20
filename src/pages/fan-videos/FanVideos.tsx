@@ -321,8 +321,9 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
     segmentForm.setFieldsValue(selectedVideoFeed);
   }, [selectedVideoFeed]);
 
-  const fetch = async () => {
+  const fetch = async (event?: any) => {
     try {
+      if (!isMobile && event) event.stopPropagation();
       const { results }: any = await doFetch(() =>
         fetchVideoFeedV2({
           query: titleFilter,
@@ -516,9 +517,9 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
 
   const Filters = () => {
     return (
-      <Col lg={16} xs={24}>
+      <Col lg={20} xs={24}>
         <Row gutter={[8, 8]}>
-          <Col lg={6} xs={24}>
+          <Col lg={5} xs={24}>
             <Typography.Title level={5} title="Search">
               Search
             </Typography.Title>
@@ -530,7 +531,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
               onPressEnter={fetch}
             />
           </Col>
-          <Col lg={6} xs={24}>
+          <Col lg={5} xs={24}>
             <Typography.Title level={5}>Master Brand</Typography.Title>
             <SimpleSelect
               data={brands}
@@ -544,7 +545,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
               allowClear={true}
             />
           </Col>
-          <Col lg={6} xs={24}>
+          <Col lg={5} xs={24}>
             <Typography.Title level={5}>Product Brand</Typography.Title>
             <SimpleSelect
               data={productBrands}
@@ -558,7 +559,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
               allowClear={true}
             />
           </Col>
-          <Col lg={6} xs={24}>
+          <Col lg={5} xs={24}>
             <Typography.Title level={5}>Status</Typography.Title>
             <SimpleSelect
               data={statusList}
@@ -570,7 +571,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
               allowClear={true}
             />
           </Col>
-          <Col lg={6} xs={24}>
+          <Col lg={5} xs={24}>
             <Typography.Title level={5}>Category</Typography.Title>
             <SimpleSelect
               data={categories}
@@ -586,7 +587,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
               disabled={isFetchingCategories}
             />
           </Col>
-          <Col lg={6} xs={24}>
+          <Col lg={5} xs={24}>
             <Typography.Title level={5}>Start Index</Typography.Title>
             <InputNumber
               min={0}
@@ -594,7 +595,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
               placeholder="Select an Index"
             />
           </Col>
-          <Col lg={6} xs={24}>
+          <Col lg={5} xs={24}>
             <Typography.Title level={5}>Creator</Typography.Title>
             <Select
               placeholder="Select a Creator"
@@ -639,7 +640,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
             <Col span={24}>
               <Collapse ghost>
                 <Panel
-                  className="mb-1"
+                  className={isMobile ? '' : 'mb-1'}
                   header={
                     <Typography.Title level={5}>Filters</Typography.Title>
                   }
@@ -659,7 +660,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
             </Col>
             {isMobile && (
               <Col lg={24} xs={24}>
-                <Row justify="end" className="mb-1 mt-1 mr-1">
+                <Row justify="end" className="mb-1">
                   <Button type="primary" onClick={fetch} loading={loading}>
                     Search
                     <SearchOutlined style={{ color: 'white' }} />

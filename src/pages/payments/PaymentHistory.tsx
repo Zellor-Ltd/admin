@@ -361,7 +361,7 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
                       <Table.Summary.Cell index={3}></Table.Summary.Cell>
                       <Table.Summary.Cell index={4}></Table.Summary.Cell>
                       <Table.Summary.Cell index={5}>
-                        €${totalAmount.toFixed(2)}
+                        €{totalAmount.toFixed(2)}
                       </Table.Summary.Cell>
                       <Table.Summary.Cell index={6}></Table.Summary.Cell>
                     </Table.Summary.Row>

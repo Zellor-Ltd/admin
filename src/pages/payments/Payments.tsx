@@ -391,22 +391,28 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
             title="Commission Payments"
             subTitle={isMobile ? '' : 'List of Commission Payments'}
             extra={[
-              <Button
-                key="1"
-                className="mt-1"
-                onClick={() => setManualCommission(true)}
-              >
-                New Manual Commission
-              </Button>,
-              <Button
-                key="2"
-                type="primary"
-                danger
-                className="mt-1"
-                onClick={() => setShowModal(true)}
-              >
-                New One-Off Payment
-              </Button>,
+              <Row gutter={8} justify="end">
+                <Col>
+                  <Button
+                    key="1"
+                    className="mt-1"
+                    onClick={() => setManualCommission(true)}
+                  >
+                    New Manual Commission
+                  </Button>
+                </Col>
+                <Col>
+                  <Button
+                    key="2"
+                    type="primary"
+                    danger
+                    className="mt-1"
+                    onClick={() => setShowModal(true)}
+                  >
+                    New One-Off Payment
+                  </Button>
+                </Col>
+              </Row>,
               <Modal
                 title="Are you sure?"
                 visible={showModal}
@@ -425,7 +431,11 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
             ]}
           />
           {!isMobile && (
-            <Row justify="end" align="bottom" className="custom-filter-box">
+            <Row
+              justify="end"
+              align="bottom"
+              className="custom-filter-box mr-06"
+            >
               <Filters />
             </Row>
           )}

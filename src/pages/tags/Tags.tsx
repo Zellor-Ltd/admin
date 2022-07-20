@@ -230,12 +230,12 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
                 onPressEnter={fetch}
               />
             </Col>
-            <Col xs={24}>
+            <Col lg={4} xs={24}>
               <Row justify="end">
                 <Col>
                   <Button
                     type="primary"
-                    className="mt-1"
+                    className={isMobile ? 'mt-1' : 'mt-1 mr-06'}
                     onClick={fetch}
                     loading={loading}
                   >

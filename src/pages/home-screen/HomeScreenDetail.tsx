@@ -1,7 +1,8 @@
 import { Button, Col, DatePicker, Form, Input, PageHeader, Row } from 'antd';
 import { formatMoment } from '../../helpers/formatMoment';
 import { useRequest } from '../../hooks/useRequest';
-import { useState } from 'react';
+import { useState, useContext } from 'react';
+import { AppContext } from 'contexts/AppContext';
 import { saveBanner } from '../../services/DiscoClubService';
 import { Banner } from 'interfaces/Banner';
 interface HomeScreenDetailProps {
@@ -15,6 +16,7 @@ const HomeScreenDetail: React.FC<HomeScreenDetailProps> = ({
   onSave,
   onCancel,
 }) => {
+  const { isMobile } = useContext(AppContext);
   const [loading, setLoading] = useState<boolean>(false);
   const [form] = Form.useForm();
   const { doRequest } = useRequest({ setLoading });
@@ -66,14 +68,19 @@ const HomeScreenDetail: React.FC<HomeScreenDetailProps> = ({
             </Form.Item>
           </Col>
         </Row>
-        <Row gutter={8}>
+        <Row gutter={8} justify={isMobile ? 'end' : undefined}>
           <Col>
             <Button type="default" onClick={() => onCancel?.()}>
               Cancel
             </Button>
           </Col>
           <Col>
-            <Button loading={loading} type="primary" htmlType="submit">
+            <Button
+              loading={loading}
+              type="primary"
+              htmlType="submit"
+              className="mb-1"
+            >
               Save Changes
             </Button>
           </Col>

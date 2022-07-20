@@ -495,7 +495,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
             extra={
               !isMobile && (
                 <Row justify="end">
-                  <Col>
+                  <Col onClick={e => e.stopPropagation()}>
                     <Button type="primary" onClick={fetch} loading={loading}>
                       Search
                       <SearchOutlined style={{ color: 'white' }} />
@@ -505,9 +505,9 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
               )
             }
           >
-            <Col lg={16} xs={24}>
+            <Col lg={20} xs={24}>
               <Row gutter={[8, 8]}>
-                <Col lg={6} xs={24}>
+                <Col lg={5} xs={24}>
                   <Typography.Title level={5} title="Title">
                     Title
                   </Typography.Title>
@@ -519,7 +519,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                     onPressEnter={fetch}
                   />
                 </Col>
-                <Col lg={6} xs={24}>
+                <Col lg={5} xs={24}>
                   <Typography.Title level={5}>Master Brand</Typography.Title>
                   <SimpleSelect
                     data={brands}
@@ -533,7 +533,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                     allowClear={true}
                   />
                 </Col>
-                <Col lg={6} xs={24}>
+                <Col lg={5} xs={24}>
                   <Typography.Title level={5}>Product Brand</Typography.Title>
                   <SimpleSelect
                     data={productBrands}
@@ -547,7 +547,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                     allowClear={true}
                   />
                 </Col>
-                <Col lg={6} xs={24}>
+                <Col lg={5} xs={24}>
                   <Typography.Title level={5}>Status</Typography.Title>
                   <SimpleSelect
                     data={statusList}
@@ -559,7 +559,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                     allowClear={true}
                   />
                 </Col>
-                <Col lg={6} xs={24}>
+                <Col lg={5} xs={24}>
                   <Typography.Title level={5}>Category</Typography.Title>
                   <SimpleSelect
                     data={categories}
@@ -575,7 +575,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                     disabled={isFetchingCategories}
                   />
                 </Col>
-                <Col lg={6} xs={24}>
+                <Col lg={5} xs={24}>
                   <Typography.Title level={5}>Video Type</Typography.Title>
                   <SimpleSelect
                     data={videoTypeList}
@@ -587,7 +587,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                     allowClear={true}
                   />
                 </Col>
-                <Col lg={6} xs={24}>
+                <Col lg={5} xs={24}>
                   <Typography.Title level={5}>Start Index</Typography.Title>
                   <InputNumber
                     min={0}
@@ -597,7 +597,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                     placeholder="Select an Index"
                   />
                 </Col>
-                <Col lg={6} xs={24}>
+                <Col lg={5} xs={24}>
                   <Typography.Title level={5}>Creator</Typography.Title>
                   <Select
                     placeholder="Select a Creator"
@@ -624,7 +624,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                     ))}
                   </Select>
                 </Col>
-                <Col lg={6} xs={24}>
+                <Col lg={5} xs={24}>
                   <Typography.Title level={5}>Date Sort</Typography.Title>
 
                   <Select
@@ -695,7 +695,11 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
             <Filters />
             {isMobile && (
               <Col lg={24} xs={24}>
-                <Row justify="end" className="mt-1 mb-1 mr-1">
+                <Row
+                  justify="end"
+                  className="mb-1"
+                  onClick={e => e.stopPropagation()}
+                >
                   <Button type="primary" onClick={fetch} loading={loading}>
                     Search
                     <SearchOutlined style={{ color: 'white' }} />

@@ -312,7 +312,7 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
                     type="primary"
                     onClick={getResources}
                     loading={loading}
-                    className="mb-1"
+                    className={isMobile ? 'mb-1' : 'mb-1 mr-06'}
                   >
                     Search
                     <SearchOutlined style={{ color: 'white' }} />

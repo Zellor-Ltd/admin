@@ -945,25 +945,14 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
                       <Typography.Title level={5}>Filters</Typography.Title>
                     }
                     key="1"
-                    extra={
-                      !isMobile && (
-                        <Button
-                          type="primary"
-                          onClick={() => setRefreshing(true)}
-                        >
-                          Search
-                          <SearchOutlined style={{ color: 'white' }} />
-                        </Button>
-                      )
-                    }
                   >
                     <Filters />
                   </Panel>
                 </Collapse>
               </Col>
             )}
-            <Col lg={24} xs={24}>
-              <Row justify="end" className={isMobile ? 'mt-2 mr-1' : ''}>
+            <Col lg={4} xs={24}>
+              <Row justify="end" className={isMobile ? 'mr-1' : ''}>
                 <Col>
                   <Button type="primary" onClick={() => setRefreshing(true)}>
                     Search
