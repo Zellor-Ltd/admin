@@ -26,11 +26,14 @@ import {
   UsergroupAddOutlined,
   ScheduleOutlined,
   WalletOutlined,
-  UserSwitchOutlined,
   UnorderedListOutlined,
   ShopOutlined,
   MobileOutlined,
   RocketOutlined,
+  AppstoreOutlined,
+  PartitionOutlined,
+  PercentageOutlined,
+  ProfileOutlined,
 } from '@ant-design/icons';
 import { Menu } from 'antd';
 import SubMenu from 'antd/lib/menu/SubMenu';
@@ -80,6 +83,14 @@ const AdminSideMenu = ({ isMobile, testMode }) => {
       <Menu.Item key="preview-products" icon={<IssuesCloseOutlined />}>
         <Link to="/preview-products">Preview Products</Link>
       </Menu.Item>
+      <SubMenu key="variants" icon={<PartitionOutlined />} title="Variants">
+        <Menu.Item key="variant_group-names" icon={<ProfileOutlined />}>
+          <Link to="/variant_group-names">Variant Group Names</Link>
+        </Menu.Item>
+        <Menu.Item key="variant_grouping" icon={<AppstoreOutlined />}>
+          <Link to="/variant_grouping">Variant Grouping</Link>
+        </Menu.Item>
+      </SubMenu>
       <Menu.Item key="feed" icon={<MobileOutlined />}>
         <Link to="/feed">Video Feeds</Link>
       </Menu.Item>
@@ -90,7 +101,7 @@ const AdminSideMenu = ({ isMobile, testMode }) => {
         <Link to="/feed-templates">Feed Templates</Link>
       </Menu.Item>
       <SubMenu key="finance" icon={<DollarOutlined />} title="Finance">
-        <Menu.Item key="payments" icon={<UserSwitchOutlined />}>
+        <Menu.Item key="payments" icon={<PercentageOutlined />}>
           <Link to="/payments">Payments</Link>
         </Menu.Item>
         <Menu.Item key="payment-history" icon={<ScheduleOutlined />}>
