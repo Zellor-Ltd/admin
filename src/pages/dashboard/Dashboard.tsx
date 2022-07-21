@@ -25,7 +25,9 @@ import {
   fetchPreRegs,
   deletePreReg,
   fetchFanActivity,
-  fetchInstaPagesStats,
+  fetchLinkStats,
+  fetchLinkEngagement,
+  fetchProductEngagement,
 } from 'services/DiscoClubService';
 import { PreReg } from 'interfaces/PreReg';
 import { FanActivity } from 'interfaces/FanActivity';
@@ -42,6 +44,63 @@ const Dashboard: React.FC<DashboardProps> = () => {
   const [productsPerDay, setProductsPerDay] = useState<any[]>([]);
   const [preRegs, setPreRegs] = useState<PreReg[]>([]);
   const [fanActivity, setFanActivity] = useState<FanActivity[]>([]);
+  const [linkStats, setLinkStats] = useState([]);
+  const [linkEngagement, setLinkEngagement] = useState([]);
+  const [productEngagement, setProductEngagement] = useState([]);
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    getFans();
+    getProducts();
+    getPreRegs();
+    getFanActivity();
+    getLinkStats();
+    getLinkEngagement();
+    getProductEngagement();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const getLinkStats = async () => {
+    const { results }: any = await doFetch(() => fetchLinkStats());
+
+    const formattedJSON: any = [];
+    results.forEach(item => {
+      var currDate = item.date;
+      for (let field in item) {
+        if (field !== 'date')
+          formattedJSON.push({
+            date: currDate,
+            category: field,
+            value: item[field],
+          });
+      }
+    });
+    setLinkStats(formattedJSON);
+  };
+
+  const getLinkEngagement = async () => {
+    const { results }: any = await doFetch(() => fetchLinkEngagement());
+
+    const formattedJSON: any = [];
+    results.forEach(item => {
+      var currDate = item.date;
+      for (let field in item) {
+        if (field !== 'date')
+          formattedJSON.push({
+            date: currDate,
+            category: field,
+            value: item[field],
+          });
+      }
+    });
+
+    setLinkEngagement(formattedJSON);
+  };
+
+  const getProductEngagement = async () => {
+    const { results }: any = await doFetch(() => fetchProductEngagement());
+    setProductEngagement(results);
+  };
 
   const getFans = async () => {
     const { results } = await doFetch(fetchActiveRegFansPerDay);
@@ -62,14 +121,6 @@ const Dashboard: React.FC<DashboardProps> = () => {
     const { results } = await doFetch(fetchFanActivity);
     setFanActivity(results);
   };
-
-  useEffect(() => {
-    getFans();
-    getProducts();
-    getPreRegs();
-    getFanActivity();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const preRegistered: ColumnsType<PreReg> = [
     {
@@ -420,32 +471,119 @@ const Dashboard: React.FC<DashboardProps> = () => {
     console.log(key);
   };
 
-  const InstaPages = () => {
-    const [pagesStats, setPagesStats] = useState([]);
-
-    useEffect(() => {
-      getInstaPagesStats();
-    }, []);
-
-    const getInstaPagesStats = async () => {
-      const { results }: any = await doFetch(() => fetchInstaPagesStats());
-      setPagesStats(results);
-    };
-
+  const LinkStats = () => {
     const config = {
-      pagesStats,
-      xField: 'day',
+      linkStats,
+      xField: 'date',
       yField: 'value',
       seriesField: 'category',
-      yAxis: {
-        label: {
-          formatter: v => `${v}`,
+      isGroup: true,
+      legend: {
+        flipPage: false,
+      },
+      meta: {
+        date: {
+          formatter: (value: string) => {
+            return `${
+              value.slice(6, 8) +
+              '/' +
+              value.slice(4, 6) +
+              '/' +
+              value.slice(0, 4)
+            }`;
+          },
+        },
+        category: {
+          formatter(value: any) {
+            switch (value) {
+              case 'preview':
+                return 'Previews';
+              case 'watch':
+                return 'Video Views';
+              case 'c30s':
+                return '30s Views';
+              case 'c60s':
+                return '60s Views';
+              case 'c90s':
+                return '90s Views';
+              case 'c120s':
+                return '120s Views';
+              default:
+                return 'Products Clicked';
+            }
+          },
         },
       },
-      color: ['#1979C9', '#D62A0D', '#FAA219'],
     };
 
-    return <Line {...{ ...config, data: pagesStats }} />;
+    return <Column {...{ ...config, data: linkStats }} />;
+  };
+
+  const LinkEngagement = () => {
+    const config = {
+      linkEngagement,
+      xField: 'date',
+      yField: 'value',
+      seriesField: 'category',
+      isGroup: true,
+      legend: {
+        flipPage: false,
+      },
+      meta: {
+        date: {
+          formatter: (value: string) => {
+            return `${
+              value.slice(6, 8) +
+              '/' +
+              value.slice(4, 6) +
+              '/' +
+              value.slice(0, 4)
+            }`;
+          },
+        },
+        category: {
+          formatter(value: any) {
+            switch (value) {
+              case 'pageLoad':
+                return 'Page Loads';
+              case 'productClick':
+                return 'Product Clicks';
+              default:
+                return 'Video Plays';
+            }
+          },
+        },
+      },
+    };
+
+    return <Column {...{ ...config, data: linkEngagement }} />;
+  };
+
+  const ProductEngagement = () => {
+    const config = {
+      productEngagement,
+      xField: 'date',
+      yField: 'productClick',
+      seriesField: 'productId',
+      legend: {
+        flipPage: false,
+      },
+      meta: {
+        date: {
+          formatter: (value: string) => {
+            return `${
+              value.slice(6, 8) +
+              '/' +
+              value.slice(4, 6) +
+              '/' +
+              value.slice(0, 4)
+            }`;
+          },
+        },
+      },
+    };
+
+    return <Line {...{ ...config, data: productEngagement }} />;
   };
 
   return (
@@ -527,20 +665,47 @@ const Dashboard: React.FC<DashboardProps> = () => {
         </Col>
       </Row>
       <Row gutter={[32, 32]} align="top">
-        <Col lg={16} xs={24}>
+        <Col lg={8} xs={24}>
           <div className="dashboard-items">
-            <span>
-              InstaLink Pages Statistics
-              <br />
-              <hr />
-              <br />
-              <br />
-            </span>
-            <InstaPages />
+            <div className="mb-n2">
+              <span>
+                InstaLink Pages Statistics
+                <br />
+                <hr />
+                <br />
+                <br />
+              </span>
+            </div>
+            <LinkStats />
           </div>
         </Col>
         <Col lg={8} xs={24}>
-          <Col span={24}></Col>
+          <div className="dashboard-items">
+            <div className="mb-n2">
+              <span>
+                InstaLink Pages Engagement
+                <br />
+                <hr />
+                <br />
+                <br />
+              </span>
+            </div>
+            <LinkEngagement />
+          </div>
+        </Col>
+        <Col lg={8} xs={24}>
+          <div className="dashboard-items">
+            <div className="mb-n2">
+              <span>
+                InstaLink Product Engagement
+                <br />
+                <hr />
+                <br />
+                <br />
+              </span>
+            </div>
+            <ProductEngagement />
+          </div>
         </Col>
       </Row>
       <Row
