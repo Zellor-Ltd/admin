@@ -879,3 +879,6 @@ export const savePayment = ({
     amount,
   });
 };
+
+export const fetchInstaPagesStats = () =>
+  instance.get(`Disco/Analytics/GetLinkStats`);

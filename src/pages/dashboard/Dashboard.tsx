@@ -25,12 +25,13 @@ import {
   fetchPreRegs,
   deletePreReg,
   fetchFanActivity,
+  fetchInstaPagesStats,
 } from 'services/DiscoClubService';
 import { PreReg } from 'interfaces/PreReg';
 import { FanActivity } from 'interfaces/FanActivity';
 import { ColumnsType } from 'antd/lib/table';
 import '@ant-design/flowchart/dist/index.css';
-import { Column, Pie, Sunburst } from '@ant-design/plots';
+import { Column, Line, Pie, Sunburst } from '@ant-design/plots';
 
 interface DashboardProps {}
 
@@ -419,6 +420,34 @@ const Dashboard: React.FC<DashboardProps> = () => {
     console.log(key);
   };
 
+  const InstaPages = () => {
+    const [pagesStats, setPagesStats] = useState([]);
+
+    useEffect(() => {
+      getInstaPagesStats();
+    }, []);
+
+    const getInstaPagesStats = async () => {
+      const { results }: any = await doFetch(() => fetchInstaPagesStats());
+      setPagesStats(results);
+    };
+
+    const config = {
+      pagesStats,
+      xField: 'day',
+      yField: 'value',
+      seriesField: 'category',
+      yAxis: {
+        label: {
+          formatter: v => `${v}`,
+        },
+      },
+      color: ['#1979C9', '#D62A0D', '#FAA219'],
+    };
+
+    return <Line {...{ ...config, data: pagesStats }} />;
+  };
+
   return (
     <>
       <Row gutter={[32, 32]} align="bottom" className="mb-1">
@@ -495,6 +524,23 @@ const Dashboard: React.FC<DashboardProps> = () => {
               </Tabs.TabPane>
             </Tabs>
           </Col>
+        </Col>
+      </Row>
+      <Row gutter={[32, 32]} align="top">
+        <Col lg={16} xs={24}>
+          <div className="dashboard-items">
+            <span>
+              InstaLink Pages Statistics
+              <br />
+              <hr />
+              <br />
+              <br />
+            </span>
+            <InstaPages />
+          </div>
+        </Col>
+        <Col lg={8} xs={24}>
+          <Col span={24}></Col>
         </Col>
       </Row>
       <Row
