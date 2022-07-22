@@ -879,3 +879,12 @@ export const savePayment = ({
     amount,
   });
 };
+
+export const fetchLinkStats = () =>
+  instance.get(`Disco/Analytics/GetLinkStats`);
+
+export const fetchLinkEngagement = () =>
+  instance.get(`Disco/Analytics/GetLinkEngagement`);
+
+export const fetchProductEngagement = () =>
+  instance.get(`Disco/Analytics/GetProductEngagement`);
