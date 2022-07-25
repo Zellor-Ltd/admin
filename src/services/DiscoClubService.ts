@@ -24,6 +24,7 @@ import { Tag } from 'interfaces/Tag';
 import { User } from 'interfaces/User';
 import { Banner } from 'interfaces/Banner';
 import { VideoType } from 'interfaces/VideoType';
+import { VariantGroup } from 'interfaces/VariantGroup';
 
 export const instance = axios.create({
   baseURL: process.env.REACT_APP_HOST_ENDPOINT,
@@ -888,3 +889,20 @@ export const fetchLinkEngagement = () =>
 
 export const fetchProductEngagement = () =>
   instance.get(`Disco/Analytics/GetProductEngagement`);
+
+export const fetchVariantGroups = () =>
+  instance.get('Disco/Product/VariantGroup/List');
+
+export const saveVariantGroup = (params: VariantGroup) => {
+  if (params.id) {
+    return instance.put('Disco/Product/VariantGroup/Update', params);
+  } else {
+    return instance.put('Disco/Product/VariantGroup/Add', params);
+  }
+};
+
+export const deleteVariantGroup = (id: string) => {
+  if (id) {
+    return instance.get(`Disco/Product/VariantGroup/Delete/${id}`);
+  }
+};
