@@ -44,6 +44,7 @@ import FeedTemplates from 'pages/video-feed/FeedTemplates';
 import FanVideos from 'pages/fan-videos/FanVideos';
 import Payments from 'pages/payments/Payments';
 import PaymentHistory from 'pages/payments/PaymentHistory';
+import VariantGroups from 'pages/variants/VariantGroups';
 
 function AdminRoutes() {
   return (
@@ -60,6 +61,11 @@ function AdminRoutes() {
         layout={AuthenticatedLayout}
       />
       <AppRoute path="/login" component={Login} layout={OpenLayout} />
+      <AppRoute
+        path="/variant_group-names"
+        component={VariantGroups}
+        layout={AuthenticatedLayout}
+      />
       <AppRoute
         path="/payments"
         component={Payments}
