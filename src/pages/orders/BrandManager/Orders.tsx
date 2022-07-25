@@ -6,7 +6,6 @@ import {
 import {
   Button,
   Col,
-  Collapse,
   DatePicker,
   Descriptions,
   Input,
@@ -45,8 +44,6 @@ import { useMount } from 'react-use';
 import MultipleFetchDebounceSelect from 'components/select/MultipleFetchDebounceSelect';
 import { useRequest } from 'hooks/useRequest';
 import { BaseOptionType } from 'antd/lib/cascader';
-
-const { Panel } = Collapse;
 
 const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -869,63 +866,10 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     }
   };
 
-  const Filters = () => {
-    return (
-      <Col lg={16} xs={24}>
-        <Row gutter={[8, 8]}>
-          <Col lg={6} xs={24}>
-            <Typography.Title level={5}>Master Brand</Typography.Title>
-            <Select
-              allowClear
-              onChange={handleChangeBrand}
-              style={{ width: '100%' }}
-              placeholder={'Select a Master Brand'}
-              value={brandId}
-              loading={isFetchingBrands}
-              disabled={isFetchingBrands}
-              showSearch
-              filterOption={(input, option) =>
-                !!option?.children
-                  ?.toString()
-                  .toUpperCase()
-                  .includes(input.toUpperCase())
-              }
-            >
-              {brands.map(curr => (
-                <Select.Option
-                  key={curr.id}
-                  value={curr.id}
-                  label={curr.brandName}
-                >
-                  {curr.brandName}
-                </Select.Option>
-              ))}
-            </Select>
-          </Col>
-          <Col lg={6} xs={24}>
-            <Typography.Title level={5}>Fan Filter</Typography.Title>
-            <MultipleFetchDebounceSelect
-              style={{ width: '100%' }}
-              onInput={getFans}
-              onChange={onChangeFan}
-              onClear={onClearFan}
-              optionMapping={fanOptionMapping}
-              placeholder="Search by Fan E-mail"
-              options={fans}
-              input={fanFilterInput}
-              disabled={isFetchingBrands}
-              onInputKeyDown={(event: HTMLInputElement) => handleKeyDown(event)}
-            ></MultipleFetchDebounceSelect>
-          </Col>
-        </Row>
-      </Col>
-    );
-  };
-
   return (
     <>
       {!details && (
-        <>
+        <div className="orders">
           <PageHeader
             title="Orders"
             subTitle={isMobile ? '' : 'List of Orders'}
@@ -935,35 +879,60 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
             align="bottom"
             justify="space-between"
             className="mb-1 sticky-filter-box"
+            gutter={8}
           >
-            {!isMobile && <Filters />}
-            {isMobile && (
-              <Col span={24}>
-                <Collapse ghost>
-                  <Panel
-                    header={
-                      <Typography.Title level={5}>Filters</Typography.Title>
-                    }
-                    key="1"
-                    extra={
-                      !isMobile && (
-                        <Button
-                          type="primary"
-                          onClick={() => setRefreshing(true)}
-                        >
-                          Search
-                          <SearchOutlined style={{ color: 'white' }} />
-                        </Button>
-                      )
+            <Col lg={16} xs={24}>
+              <Row gutter={[8, 8]}>
+                <Col lg={6} xs={24}>
+                  <Typography.Title level={5}>Master Brand</Typography.Title>
+                  <Select
+                    allowClear
+                    onChange={handleChangeBrand}
+                    style={{ width: '100%' }}
+                    placeholder={'Select a Master Brand'}
+                    value={brandId}
+                    loading={isFetchingBrands}
+                    disabled={isFetchingBrands}
+                    showSearch
+                    filterOption={(input, option) =>
+                      !!option?.children
+                        ?.toString()
+                        .toUpperCase()
+                        .includes(input.toUpperCase())
                     }
                   >
-                    <Filters />
-                  </Panel>
-                </Collapse>
-              </Col>
-            )}
+                    {brands.map(curr => (
+                      <Select.Option
+                        key={curr.id}
+                        value={curr.id}
+                        label={curr.brandName}
+                      >
+                        {curr.brandName}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Col>
+                <Col lg={6} xs={24}>
+                  <Typography.Title level={5}>Fan Filter</Typography.Title>
+                  <MultipleFetchDebounceSelect
+                    style={{ width: '100%' }}
+                    onInput={getFans}
+                    onChange={onChangeFan}
+                    onClear={onClearFan}
+                    optionMapping={fanOptionMapping}
+                    placeholder="Search by Fan E-mail"
+                    options={fans}
+                    input={fanFilterInput}
+                    disabled={isFetchingBrands}
+                    onInputKeyDown={(event: HTMLInputElement) =>
+                      handleKeyDown(event)
+                    }
+                  ></MultipleFetchDebounceSelect>
+                </Col>
+              </Row>
+            </Col>
             <Col lg={24} xs={24}>
-              <Row justify="end" className={isMobile ? 'mt-2 mr-1' : ''}>
+              <Row justify="end" className={isMobile ? 'mt-2' : ''}>
                 <Col>
                   <Button type="primary" onClick={() => setRefreshing(true)}>
                     Search
@@ -1050,7 +1019,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
               }}
             />
           </InfiniteScroll>
-        </>
+        </div>
       )}
       {details && (
         <FanDetail fan={currentFan} onSave={onSaveFan} onCancel={onCancelFan} />
