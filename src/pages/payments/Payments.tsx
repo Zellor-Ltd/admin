@@ -2,23 +2,26 @@ import {
   Button,
   Col,
   Collapse,
+  DatePicker,
   message,
   Modal,
   PageHeader,
   Row,
   Select,
+  Spin,
   Table,
   Typography,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { useRequest } from '../../hooks/useRequest';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { AppContext } from 'contexts/AppContext';
 import { RouteComponentProps } from 'react-router-dom';
 import {
   fetchCommissions,
   fetchCreators,
   saveCommission,
+  updateCommission,
 } from '../../services/DiscoClubService';
 import CopyIdToClipboard from '../../components/CopyIdToClipboard';
 import { Creator } from '../../interfaces/Creator';
@@ -26,6 +29,7 @@ import { Commission } from '../../interfaces/Commission';
 import ManualPayment from './ManualPayment';
 import moment from 'moment';
 import ManualCommission from './ManualCommission';
+import { LoadingOutlined } from '@ant-design/icons';
 
 const { Panel } = Collapse;
 
@@ -47,6 +51,8 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [totalSalePrice, setTotalSalePrice] = useState<number>(0);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [manualCommission, setManualCommission] = useState<boolean>(false);
+  const shouldUpdateDueDate = useRef(false);
+  const [updatingDueDate, setUpdatingDueDate] = useState<boolean>(false);
 
   useEffect(() => {
     getCreators();
@@ -102,6 +108,27 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
     setCommissions([]);
   };
 
+  const onChangeDueDate = (value: Date, record: Commission, index: number) => {
+    shouldUpdateDueDate.current = record.dueDate! !== value;
+    commissions[index].dueDate = value;
+    setCommissions([...commissions]);
+  };
+
+  const onBlurDueDate = async (commission: Commission) => {
+    if (!shouldUpdateDueDate.current) {
+      return;
+    }
+    setUpdatingDueDate(true);
+    try {
+      await updateCommission(commission);
+      message.success('Register updated with success.');
+    } catch (err) {
+      console.error(`Error while trying to update Due Date.`, err);
+    }
+    setUpdatingDueDate(false);
+    shouldUpdateDueDate.current = false;
+  };
+
   const columns: ColumnsType<Commission> = [
     {
       title: 'Date',
@@ -130,7 +157,22 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
       responsive: ['sm'],
       shouldCellUpdate: (prevRecord, nextRecord) =>
         prevRecord.dueDate != nextRecord.dueDate,
-      render: (dueDate: Date) => moment(dueDate).format('DD/MM/YYYY'),
+      render: (value: Date, entity: Commission, index: number) => {
+        if (updatingDueDate[entity.id]) {
+          const antIcon = <LoadingOutlined spin />;
+          return <Spin indicator={antIcon} />;
+        } else {
+          return (
+            <DatePicker
+              style={{ width: '100px' }}
+              defaultValue={moment(value)}
+              format="DD/MM/YY"
+              onChange={value => onChangeDueDate(value as any, entity, index)}
+              onBlur={() => onBlurDueDate(entity)}
+            />
+          );
+        }
+      },
       sorter: (a, b): any => {
         if (a.dueDate && b.dueDate)
           return moment(a.dueDate).unix() - moment(b.dueDate).unix();
@@ -140,7 +182,7 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
       },
     },
     {
-      title: 'Order ID',
+      title: 'Commission ID',
       dataIndex: 'id',
       width: '25%',
       sorter: (a, b): any => {
@@ -228,11 +270,11 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
         else return 0;
       },
       render: (_: number, entity: Commission) =>
-        `${
+        `${(
           ((entity.item?.totalDiscountedPrice - entity.item?.totalPrice) *
             100) /
           entity.item?.totalPrice
-        }%`,
+        ).toFixed(2)}%`,
     },
     {
       title: 'Sale Price',
@@ -258,7 +300,7 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
         else if (b.commissionPercentage) return 1;
         else return 0;
       },
-      render: (value: number) => `${value}%`,
+      render: (value: number) => `${value.toFixed(2)}%`,
     },
     {
       title: 'Commission',
@@ -487,8 +529,12 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
                           {smallestCommissionPercentage
                             ? smallestCommissionPercentage ===
                               biggestCommissionPercentage
-                              ? `${smallestCommissionPercentage}%`
-                              : `${smallestCommissionPercentage}% - ${biggestCommissionPercentage}%`
+                              ? `${smallestCommissionPercentage.toFixed(2)}%`
+                              : `${smallestCommissionPercentage.toFixed(
+                                  2
+                                )}% - ${biggestCommissionPercentage.toFixed(
+                                  2
+                                )}%`
                             : '-'}
                         </Typography.Text>
                       </Table.Summary.Cell>
