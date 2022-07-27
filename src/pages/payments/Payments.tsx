@@ -120,7 +120,10 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
     }
     setUpdatingDueDate(true);
     try {
-      await updateCommission(commission);
+      await updateCommission({
+        id: commission.id,
+        dueDate: commission.dueDate,
+      });
       message.success('Register updated with success.');
     } catch (err) {
       console.error(`Error while trying to update Due Date.`, err);
@@ -138,7 +141,7 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
       responsive: ['sm'],
       shouldCellUpdate: (prevRecord, nextRecord) =>
         prevRecord.hCreationDate != nextRecord.hCreationDate,
-      render: (value: Date) => moment(value).format('DD/MM/YYYY'),
+      render: (value: Date) => moment(value).format('DD/MM/YY'),
       sorter: (a, b): any => {
         if (a.hCreationDate && b.hCreationDate)
           return (

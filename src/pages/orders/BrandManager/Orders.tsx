@@ -72,10 +72,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   const [fanFilterInput, setFanFilterInput] = useState<string>();
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const shouldUpdateDueDate = useRef(false);
-  const originalOrderDueDate = useRef<Record<string, Date | undefined>>({});
-  const [updatingOrderDueDate, setUpdatingOrderDueDate] = useState<
-    Record<string, boolean>
-  >({});
+  const [updatingDueDate, setUpdatingDueDate] = useState<boolean>(false);
   const [cartTableContent, setCartTableContent] = useState<any>();
   const [expandedRowKeys, setExpandedRowKeys] = useState<string[]>();
 
@@ -292,53 +289,24 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     },
   });
 
-  const onChangeColumnDate = (value: Date, order: Order) => {
-    for (let i = 0; i < orders.length; i++) {
-      if (orders[i].id === order.id) {
-        if (originalOrderDueDate.current[order.id!] === undefined) {
-          originalOrderDueDate.current[order.id!] = order.index;
-        }
-
-        shouldUpdateDueDate.current =
-          originalOrderDueDate.current[order.id!] !== value;
-
-        orders[i].dueDate = value;
-        setOrders([...orders]);
-        break;
-      }
-    }
+  const onChangeColumnDueDate = (value: Date, order: Order, index: number) => {
+    shouldUpdateDueDate.current = order.dueDate! !== value;
+    orders[index].dueDate = value;
+    setOrders([...orders]);
   };
 
-  const onBlurColumnDate = async (order: Order) => {
+  const onBlurDueDate = async (order: Order) => {
     if (!shouldUpdateDueDate.current) {
       return;
     }
-    setUpdatingOrderDueDate(prev => {
-      const newValue = {
-        ...prev,
-      };
-      newValue[order.id!] = true;
-
-      return newValue;
-    });
+    setUpdatingDueDate(true);
     try {
       await saveOrder(order);
       message.success('Register updated with success.');
     } catch (err) {
-      console.error(
-        `Error while trying to update Order[${order.id}] index.`,
-        err
-      );
-      message.success('Error while trying to update order index.');
+      console.error(`Error while trying to update Due Date`, err);
     }
-    setUpdatingOrderDueDate(prev => {
-      const newValue = {
-        ...prev,
-      };
-      delete newValue[order.id!];
-      return newValue;
-    });
-    delete originalOrderDueDate.current[order.id!];
+    setUpdatingDueDate(false);
     shouldUpdateDueDate.current = false;
   };
 
@@ -536,8 +504,8 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
           onChange={values => setFilter(values as any)}
         />
       ),
-      render: (value: Date, entity: Order) => {
-        if (updatingOrderDueDate[entity.id!]) {
+      render: (value: Date, entity: Order, index: number) => {
+        if (updatingDueDate[entity.id!]) {
           const antIcon = <LoadingOutlined spin />;
           return <Spin indicator={antIcon} />;
         } else {
@@ -555,8 +523,10 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
               <DatePicker
                 value={moment(value)}
                 format="DD/MM/YYYY"
-                onChange={value => onChangeColumnDate(value as any, entity)}
-                onBlur={() => onBlurColumnDate(entity)}
+                onChange={value =>
+                  onChangeColumnDueDate(value as any, entity, index)
+                }
+                onBlur={() => onBlurDueDate(entity)}
               />
             );
           }
@@ -945,25 +915,14 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
                       <Typography.Title level={5}>Filters</Typography.Title>
                     }
                     key="1"
-                    extra={
-                      !isMobile && (
-                        <Button
-                          type="primary"
-                          onClick={() => setRefreshing(true)}
-                        >
-                          Search
-                          <SearchOutlined style={{ color: 'white' }} />
-                        </Button>
-                      )
-                    }
                   >
                     <Filters />
                   </Panel>
                 </Collapse>
               </Col>
             )}
-            <Col lg={24} xs={24}>
-              <Row justify="end" className={isMobile ? 'mt-2 mr-1' : ''}>
+            <Col lg={4} xs={24}>
+              <Row justify="end" className={isMobile ? 'mr-1' : ''}>
                 <Col>
                   <Button type="primary" onClick={() => setRefreshing(true)}>
                     Search

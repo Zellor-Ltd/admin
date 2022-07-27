@@ -823,7 +823,7 @@ export const saveCommission = ({
   });
 };
 
-export const updateCommission = (params: Commission) => {
+export const updateCommission = (params: any) => {
   return instance.put('Disco/Creator/Adm/Commission/Update', params);
 };
 
