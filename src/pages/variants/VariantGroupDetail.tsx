@@ -1,12 +1,7 @@
 import {
-  ArrowLeftOutlined,
-  ArrowRightOutlined,
   CloseOutlined,
-  DeleteOutlined,
-  EditOutlined,
   MenuOutlined,
   PlusOutlined,
-  RightOutlined,
   SearchOutlined,
 } from '@ant-design/icons';
 import {
@@ -14,12 +9,9 @@ import {
   Checkbox,
   Col,
   Collapse,
-  Form,
   Input,
   List,
-  message,
   PageHeader,
-  Popconfirm,
   Row,
   Select,
   Spin,
@@ -27,48 +19,25 @@ import {
   Typography,
 } from 'antd';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
-import EditableTable, { EditableColumnType } from 'components/EditableTable';
+import { EditableColumnType } from 'components/EditableTable';
 import useAllCategories from 'hooks/useAllCategories';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useRequest } from 'hooks/useRequest';
 import { Brand } from 'interfaces/Brand';
 import { Product } from 'interfaces/Product';
-import moment from 'moment';
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   fetchVariants,
   addVariant,
   removeVariant,
-  deleteStagingProduct,
-  fetchBrands,
-  fetchProductBrands,
   fetchStagingProducts,
-  saveStagingProduct,
-  transferStageProduct,
 } from 'services/DiscoClubService';
-import ProductExpandedRow from '../../pages/products/ProductExpandedRow';
-import CopyIdToClipboard from 'components/CopyIdToClipboard';
 import '../../pages/products/Products.scss';
-import { AllCategories, ProductCategory } from 'interfaces/Category';
-import { SearchFilterDebounce } from 'components/SearchFilterDebounce';
+import { ProductCategory } from 'interfaces/Category';
 import { AppContext } from 'contexts/AppContext';
 import { ProductBrand } from 'interfaces/ProductBrand';
-import { productUtils } from '../../helpers/product-utils';
-import scrollIntoView from 'scroll-into-view';
-import { useMount } from 'react-use';
-import AlternatePreviewProducts from '../../pages/products/AlternatePreviewProducts';
 import SimpleSelect from '../../components/select/SimpleSelect';
 import { SelectOption } from '../../interfaces/SelectOption';
-import ProductsDetails from '../../pages/products/ProductsDetails';
-
-const { getSearchTags, getCategories } = productUtils;
 const { Panel } = Collapse;
 interface VariantGroupDetailProps {
   variantGroup: Product;
@@ -88,21 +57,12 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
 }) => {
   const [showMore, setShowMore] = useState<boolean>(false);
   const [variants, setVariants] = useState<Product[]>([]);
-  const [viewName, setViewName] = useState<'alternate' | 'default'>('default');
-  const previousViewName = useRef<'alternate' | 'default'>('default');
-  const [isFetchingBrands, setIsFetchingBrands] = useState(false);
-  const [isFetchingProductBrands, setIsFetchingProductBrands] = useState(false);
-  const [form] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
   const [fetchingCategories, setFetchingCategories] = useState(false);
   const { allCategories } = useAllCategories({
     setLoading: setFetchingCategories,
   });
-
-  const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
   const [loaded, setLoaded] = useState<boolean>(false);
-  const [currentProduct, setCurrentProduct] = useState<Product>();
-  const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
 
   const { usePageFilter } = useContext(AppContext);
   const [searchFilter, setSearchFilter] = usePageFilter<string>('search');
@@ -117,9 +77,6 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
   const [eof, setEof] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [products, setProducts] = useState<Product[]>([]);
-
-  const [currentMasterBrand, setCurrentMasterBrand] = useState<string>();
-  const [currentProductBrand, setCurrentProductBrand] = useState<string>();
   const [productStatusFilter, setProductStatusFilter] =
     useState<string>('live');
 
@@ -132,7 +89,6 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
     useState<ProductCategory>();
 
   const { doFetch, doRequest } = useRequest({ setLoading });
-  const { doRequest: saveCategories } = useRequest();
 
   const optionMapping: SelectOption = {
     key: 'id',
@@ -190,90 +146,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
     setCurrentSubSubCategory(undefined);
   }, [currentSubCategory]);
 
-  const setSearchTagsByCategory = useCallback(
-    (
-      useInitialValue: boolean,
-      selectedCategories: any[] = [],
-      categoryKey?: string,
-      productCategoryIndex?: number
-    ) => {
-      const currentCategories = getCategories(form, allCategories);
-      let previousTags: string[] = [];
-
-      if (
-        productCategoryIndex !== undefined &&
-        categoryKey !== undefined &&
-        currentProduct &&
-        currentProduct?.categories
-      ) {
-        previousTags = getSearchTags(
-          currentProduct.categories[productCategoryIndex],
-          categoryKey
-        );
-      }
-
-      const selectedCategoriesSearchTags = selectedCategories
-        .filter(v => v && v.searchTags)
-        .map(v => v.searchTags)
-        .reduce((prev, curr) => {
-          return prev?.concat(curr || []);
-        }, []);
-
-      let searchTags = form.getFieldValue('searchTags') || [];
-      const finalValue = Array.from(
-        new Set([
-          ...searchTags.filter(tag => previousTags.indexOf(tag) === -1),
-          ...selectedCategoriesSearchTags,
-        ])
-      );
-      if (useInitialValue && currentProduct) {
-        searchTags = currentProduct.searchTags || finalValue;
-      } else {
-        searchTags = finalValue;
-      }
-
-      if (
-        !!selectedCategories &&
-        !!currentProduct &&
-        !!currentProduct.categories &&
-        productCategoryIndex !== undefined
-      ) {
-        currentProduct.categories[productCategoryIndex] = currentCategories;
-        currentProduct.searchTags = searchTags;
-      }
-
-      form.setFieldsValue({
-        searchTags,
-      });
-    },
-    [form, currentProduct]
-  );
-
-  const setDiscoPercentageByBrand = useCallback(
-    (useInitialValue: boolean) => {
-      const product = form.getFieldsValue(true);
-      const selectedBrand = brands?.find(
-        (brand: Brand) => brand.id === product.brand?.id
-      );
-
-      let discoPercentage;
-
-      if (useInitialValue && currentProduct) {
-        discoPercentage =
-          currentProduct.discoPercentage || selectedBrand?.discoPercentage;
-      } else {
-        discoPercentage = selectedBrand?.discoPercentage;
-      }
-
-      form.setFieldsValue({
-        discoPercentage,
-      });
-    },
-    [brands, form, currentProduct]
-  );
-
   const refreshProducts = async () => {
-    setSelectedRowKeys([]);
     setPage(0);
     setRefreshing(true);
   };
@@ -284,11 +157,6 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchFilter]);
-
-  useEffect(() => {
-    setDiscoPercentageByBrand(true);
-    setSearchTagsByCategory(true);
-  }, [brands, setDiscoPercentageByBrand, setSearchTagsByCategory]);
 
   useEffect(() => {
     if (refreshing) {
@@ -431,8 +299,6 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
                   selectedOption={brandFilter?.brandName}
                   optionMapping={optionMapping}
                   placeholder={'Select a Master Brand'}
-                  loading={isFetchingBrands}
-                  disabled={isFetchingBrands}
                   allowClear={true}
                 ></SimpleSelect>
               </Col>
@@ -447,8 +313,6 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
                   selectedOption={productBrandFilter?.brandName}
                   optionMapping={optionMapping}
                   placeholder={'Select a Product Brand'}
-                  loading={isFetchingProductBrands}
-                  disabled={isFetchingProductBrands}
                   allowClear={true}
                 ></SimpleSelect>
               </Col>
