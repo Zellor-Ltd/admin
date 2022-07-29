@@ -62,7 +62,7 @@ function AdminRoutes() {
       />
       <AppRoute path="/login" component={Login} layout={OpenLayout} />
       <AppRoute
-        path="/variant_group-names"
+        path="/variant_groups"
         component={VariantGroups}
         layout={AuthenticatedLayout}
       />

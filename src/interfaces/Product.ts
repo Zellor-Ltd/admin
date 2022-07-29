@@ -6,6 +6,7 @@ import { ProductBrand } from './ProductBrand';
 import { Image } from './Image';
 
 export interface Product {
+  variantId?: string;
   creatorPercentage?: number;
   id: string;
   image: Image[];
