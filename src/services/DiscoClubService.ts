@@ -25,6 +25,7 @@ import { User } from 'interfaces/User';
 import { Banner } from 'interfaces/Banner';
 import { VideoType } from 'interfaces/VideoType';
 import { VariantGroup } from 'interfaces/VariantGroup';
+import { Commission } from 'interfaces/Commission';
 
 export const instance = axios.create({
   baseURL: process.env.REACT_APP_HOST_ENDPOINT,
@@ -820,6 +821,10 @@ export const saveCommission = ({
     totalDue,
     items,
   });
+};
+
+export const updateCommission = (params: any) => {
+  return instance.put('Disco/Creator/Adm/Commission/Update', params);
 };
 
 export const saveManualCommission = ({
