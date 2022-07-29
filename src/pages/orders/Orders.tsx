@@ -398,7 +398,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       dataIndex: 'amount',
       width: '5%',
       align: 'center',
-      render: (value: number) => `${Math.round(value / 100).toFixed(2)}`,
+      render: (value: number) => `${(value / 100).toFixed(2)}`,
       sorter: (a, b): any => {
         if (a.amount && b.amount) return a.amount - b.amount;
         else if (a.amount) return -1;
