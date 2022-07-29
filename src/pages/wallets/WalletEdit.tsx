@@ -57,6 +57,7 @@ const WalletEdit: React.FC<WalletEditProps> = ({
       <Col span={24}>
         <Form
           form={form}
+          className={isMobile ? 'mx-0' : ''}
           onFinish={addBalance}
           onFinishFailed={({ errorFields }) => {
             errorFields.forEach(errorField => {
