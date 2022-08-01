@@ -6,7 +6,6 @@ import {
 import {
   Button,
   Col,
-  Collapse,
   DatePicker,
   Descriptions,
   Input,
@@ -46,8 +45,6 @@ import MultipleFetchDebounceSelect from 'components/select/MultipleFetchDebounce
 import { useRequest } from 'hooks/useRequest';
 import { BaseOptionType } from 'antd/lib/cascader';
 
-const { Panel } = Collapse;
-
 const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const { doFetch } = useRequest({ setLoading: setLoading });
@@ -72,10 +69,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   const [fanFilterInput, setFanFilterInput] = useState<string>();
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const shouldUpdateDueDate = useRef(false);
-  const originalOrderDueDate = useRef<Record<string, Date | undefined>>({});
-  const [updatingOrderDueDate, setUpdatingOrderDueDate] = useState<
-    Record<string, boolean>
-  >({});
+  const [updatingDueDate, setUpdatingDueDate] = useState<boolean>(false);
   const [cartTableContent, setCartTableContent] = useState<any>();
   const [expandedRowKeys, setExpandedRowKeys] = useState<string[]>();
 
@@ -292,53 +286,24 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     },
   });
 
-  const onChangeColumnDate = (value: Date, order: Order) => {
-    for (let i = 0; i < orders.length; i++) {
-      if (orders[i].id === order.id) {
-        if (originalOrderDueDate.current[order.id!] === undefined) {
-          originalOrderDueDate.current[order.id!] = order.index;
-        }
-
-        shouldUpdateDueDate.current =
-          originalOrderDueDate.current[order.id!] !== value;
-
-        orders[i].dueDate = value;
-        setOrders([...orders]);
-        break;
-      }
-    }
+  const onChangeColumnDueDate = (value: Date, order: Order, index: number) => {
+    shouldUpdateDueDate.current = order.dueDate! !== value;
+    orders[index].dueDate = value;
+    setOrders([...orders]);
   };
 
-  const onBlurColumnDate = async (order: Order) => {
+  const onBlurDueDate = async (order: Order) => {
     if (!shouldUpdateDueDate.current) {
       return;
     }
-    setUpdatingOrderDueDate(prev => {
-      const newValue = {
-        ...prev,
-      };
-      newValue[order.id!] = true;
-
-      return newValue;
-    });
+    setUpdatingDueDate(true);
     try {
       await saveOrder(order);
       message.success('Register updated with success.');
     } catch (err) {
-      console.error(
-        `Error while trying to update Order[${order.id}] index.`,
-        err
-      );
-      message.success('Error while trying to update order index.');
+      console.error(`Error while trying to update Due Date`, err);
     }
-    setUpdatingOrderDueDate(prev => {
-      const newValue = {
-        ...prev,
-      };
-      delete newValue[order.id!];
-      return newValue;
-    });
-    delete originalOrderDueDate.current[order.id!];
+    setUpdatingDueDate(false);
     shouldUpdateDueDate.current = false;
   };
 
@@ -433,7 +398,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       dataIndex: 'amount',
       width: '5%',
       align: 'center',
-      render: (value: number) => `${Math.round(value / 100).toFixed(2)}`,
+      render: (value: number) => `${(value / 100).toFixed(2)}`,
       sorter: (a, b): any => {
         if (a.amount && b.amount) return a.amount - b.amount;
         else if (a.amount) return -1;
@@ -536,8 +501,8 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
           onChange={values => setFilter(values as any)}
         />
       ),
-      render: (value: Date, entity: Order) => {
-        if (updatingOrderDueDate[entity.id!]) {
+      render: (value: Date, entity: Order, index: number) => {
+        if (updatingDueDate[entity.id!]) {
           const antIcon = <LoadingOutlined spin />;
           return <Spin indicator={antIcon} />;
         } else {
@@ -555,8 +520,10 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
               <DatePicker
                 value={moment(value)}
                 format="DD/MM/YYYY"
-                onChange={value => onChangeColumnDate(value as any, entity)}
-                onBlur={() => onBlurColumnDate(entity)}
+                onChange={value =>
+                  onChangeColumnDueDate(value as any, entity, index)
+                }
+                onBlur={() => onBlurDueDate(entity)}
               />
             );
           }
@@ -869,63 +836,10 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     }
   };
 
-  const Filters = () => {
-    return (
-      <Col lg={16} xs={24}>
-        <Row gutter={[8, 8]}>
-          <Col lg={6} xs={24}>
-            <Typography.Title level={5}>Master Brand</Typography.Title>
-            <Select
-              allowClear
-              onChange={handleChangeBrand}
-              style={{ width: '100%' }}
-              placeholder={'Select a Master Brand'}
-              value={brandId}
-              loading={isFetchingBrands}
-              disabled={isFetchingBrands}
-              showSearch
-              filterOption={(input, option) =>
-                !!option?.children
-                  ?.toString()
-                  .toUpperCase()
-                  .includes(input.toUpperCase())
-              }
-            >
-              {brands.map(curr => (
-                <Select.Option
-                  key={curr.id}
-                  value={curr.id}
-                  label={curr.brandName}
-                >
-                  {curr.brandName}
-                </Select.Option>
-              ))}
-            </Select>
-          </Col>
-          <Col lg={6} xs={24}>
-            <Typography.Title level={5}>Fan Filter</Typography.Title>
-            <MultipleFetchDebounceSelect
-              style={{ width: '100%' }}
-              onInput={getFans}
-              onChange={onChangeFan}
-              onClear={onClearFan}
-              optionMapping={fanOptionMapping}
-              placeholder="Search by Fan E-mail"
-              options={fans}
-              input={fanFilterInput}
-              disabled={isFetchingBrands}
-              onInputKeyDown={(event: HTMLInputElement) => handleKeyDown(event)}
-            ></MultipleFetchDebounceSelect>
-          </Col>
-        </Row>
-      </Col>
-    );
-  };
-
   return (
     <>
       {!details && (
-        <>
+        <div className="orders">
           <PageHeader
             title="Orders"
             subTitle={isMobile ? '' : 'List of Orders'}
@@ -935,24 +849,60 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
             align="bottom"
             justify="space-between"
             className="mb-1 sticky-filter-box"
+            gutter={8}
           >
-            {!isMobile && <Filters />}
-            {isMobile && (
-              <Col span={24}>
-                <Collapse ghost>
-                  <Panel
-                    header={
-                      <Typography.Title level={5}>Filters</Typography.Title>
+            <Col lg={16} xs={24}>
+              <Row gutter={[8, 8]}>
+                <Col lg={6} xs={24}>
+                  <Typography.Title level={5}>Master Brand</Typography.Title>
+                  <Select
+                    allowClear
+                    onChange={handleChangeBrand}
+                    style={{ width: '100%' }}
+                    placeholder={'Select a Master Brand'}
+                    value={brandId}
+                    loading={isFetchingBrands}
+                    disabled={isFetchingBrands}
+                    showSearch
+                    filterOption={(input, option) =>
+                      !!option?.children
+                        ?.toString()
+                        .toUpperCase()
+                        .includes(input.toUpperCase())
                     }
-                    key="1"
                   >
-                    <Filters />
-                  </Panel>
-                </Collapse>
-              </Col>
-            )}
-            <Col lg={4} xs={24}>
-              <Row justify="end" className={isMobile ? 'mr-1' : ''}>
+                    {brands.map(curr => (
+                      <Select.Option
+                        key={curr.id}
+                        value={curr.id}
+                        label={curr.brandName}
+                      >
+                        {curr.brandName}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Col>
+                <Col lg={6} xs={24}>
+                  <Typography.Title level={5}>Fan Filter</Typography.Title>
+                  <MultipleFetchDebounceSelect
+                    style={{ width: '100%' }}
+                    onInput={getFans}
+                    onChange={onChangeFan}
+                    onClear={onClearFan}
+                    optionMapping={fanOptionMapping}
+                    placeholder="Search by Fan E-mail"
+                    options={fans}
+                    input={fanFilterInput}
+                    disabled={isFetchingBrands}
+                    onInputKeyDown={(event: HTMLInputElement) =>
+                      handleKeyDown(event)
+                    }
+                  ></MultipleFetchDebounceSelect>
+                </Col>
+              </Row>
+            </Col>
+            <Col lg={24} xs={24}>
+              <Row justify="end" className={isMobile ? 'mt-2' : ''}>
                 <Col>
                   <Button type="primary" onClick={() => setRefreshing(true)}>
                     Search
@@ -1039,7 +989,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
               }}
             />
           </InfiniteScroll>
-        </>
+        </div>
       )}
       {details && (
         <FanDetail fan={currentFan} onSave={onSaveFan} onCancel={onCancelFan} />

@@ -187,7 +187,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
               showPauseModal={showModal}
               setShowPauseModal={setShowModal}
               brandId={currentBrand?.id as string}
-              isBrandPaused={!!currentBrand?.paused}
+              isBrandPaused={!!!currentBrand?.paused}
               onOk={onCompletePausedAction}
             />
           )}
