@@ -668,12 +668,14 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                 </Panel>
               </Collapse>
             )}
-          </Row>
-          <Row justify="end" className="mb-2">
-            <Button type="primary" onClick={fetch} loading={loading}>
-              Search
-              <SearchOutlined style={{ color: 'white' }} />
-            </Button>
+            <Col span={24}>
+              <Row justify="end" className="mb-1 mt-1">
+                <Button type="primary" onClick={fetch} loading={loading}>
+                  Search
+                  <SearchOutlined style={{ color: 'white' }} />
+                </Button>
+              </Row>
+            </Col>
           </Row>
           <Content>
             <Table
