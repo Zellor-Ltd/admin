@@ -93,6 +93,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
   const [categoryFilter, setCategoryFilter] = useState<string>();
   const [indexFilter, setIndexFilter] = useState<number>();
   const [creatorFilter, setCreatorFilter] = useState<string>();
+  const inputRef = useRef<any>(null);
 
   const masterBrandMapping: SelectOption = {
     key: 'id',
@@ -117,6 +118,13 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
     label: 'value',
     value: 'value'.toUpperCase(),
   };
+
+  useEffect(() => {
+    if (inputRef.current)
+      inputRef.current.focus({
+        cursor: 'end',
+      });
+  }, [titleFilter]);
 
   const feedItemColumns: ColumnsType<FeedItem> = [
     {
@@ -479,13 +487,14 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
 
   const Filters = () => {
     return (
-      <Col lg={20} xs={24}>
+      <Col lg={16} xs={24}>
         <Row gutter={[8, 8]}>
-          <Col lg={5} xs={24}>
+          <Col lg={6} xs={24}>
             <Typography.Title level={5} title="Search">
               Search
             </Typography.Title>
             <Input
+              ref={inputRef}
               onChange={event => setTitleFilter(event.target.value)}
               suffix={<SearchOutlined />}
               value={titleFilter}
@@ -493,7 +502,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
               onPressEnter={fetch}
             />
           </Col>
-          <Col lg={5} xs={24}>
+          <Col lg={6} xs={24}>
             <Typography.Title level={5}>Master Brand</Typography.Title>
             <SimpleSelect
               data={brands}
@@ -507,7 +516,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
               allowClear={true}
             />
           </Col>
-          <Col lg={5} xs={24}>
+          <Col lg={6} xs={24}>
             <Typography.Title level={5}>Product Brand</Typography.Title>
             <SimpleSelect
               data={productBrands}
@@ -521,7 +530,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
               allowClear={true}
             />
           </Col>
-          <Col lg={5} xs={24}>
+          <Col lg={6} xs={24}>
             <Typography.Title level={5}>Status</Typography.Title>
             <SimpleSelect
               data={statusList}
@@ -533,7 +542,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
               allowClear={true}
             />
           </Col>
-          <Col lg={5} xs={24}>
+          <Col lg={6} xs={24}>
             <Typography.Title level={5}>Category</Typography.Title>
             <SimpleSelect
               data={categories}
@@ -549,7 +558,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
               disabled={isFetchingCategories}
             />
           </Col>
-          <Col lg={5} xs={24}>
+          <Col lg={6} xs={24}>
             <Typography.Title level={5}>Start Index</Typography.Title>
             <InputNumber
               min={0}
@@ -557,7 +566,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
               placeholder="Select an Index"
             />
           </Col>
-          <Col lg={5} xs={24}>
+          <Col lg={6} xs={24}>
             <Typography.Title level={5}>Creator</Typography.Title>
             <Select
               placeholder="Select a Creator"
@@ -599,37 +608,34 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
             justify="space-between"
             className="sticky-filter-box"
           >
-            <Col span={24}>
-              <Collapse ghost>
-                <Panel
-                  className={isMobile ? '' : 'mb-1'}
-                  header={
-                    <Typography.Title level={5}>Filters</Typography.Title>
-                  }
-                  key="1"
-                  extra={
-                    !isMobile && (
-                      <Button type="primary" onClick={fetch} loading={loading}>
-                        Search
-                        <SearchOutlined style={{ color: 'white' }} />
-                      </Button>
-                    )
-                  }
-                >
-                  <Filters />
-                </Panel>
-              </Collapse>
-            </Col>
+            {!isMobile && <Filters />}
             {isMobile && (
               <Col lg={24} xs={24}>
-                <Row justify="end" className="mb-1">
-                  <Button type="primary" onClick={fetch} loading={loading}>
-                    Search
-                    <SearchOutlined style={{ color: 'white' }} />
-                  </Button>
-                </Row>
+                <Collapse ghost>
+                  <Panel
+                    header={
+                      <Typography.Title level={5}>Filter</Typography.Title>
+                    }
+                    key="1"
+                  >
+                    <Filters />
+                  </Panel>
+                </Collapse>
               </Col>
             )}
+          </Row>
+          <Row justify="end">
+            <Col>
+              <Button
+                type="primary"
+                onClick={fetch}
+                loading={loading}
+                className="mb-1 mr-1"
+              >
+                Search
+                <SearchOutlined style={{ color: 'white' }} />
+              </Button>
+            </Col>
           </Row>
           <Content>
             <Table
