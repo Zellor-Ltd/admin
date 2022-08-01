@@ -58,6 +58,7 @@ const { Panel } = Collapse;
 
 const LiveProducts: React.FC<RouteComponentProps> = () => {
   const inputRef = useRef<any>(null);
+  const [activeKey, setActiveKey] = useState<string>('0');
   const [brands, setBrands] = useState<Brand[]>([]);
   const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
   const [isFetchingBrands, setIsFetchingBrands] = useState(false);
@@ -280,7 +281,10 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
     return response;
   };
 
-  const getResources = async () => {
+  const getResources = async (event?: any) => {
+    if (isMobile && event) {
+      if (activeKey === '1') setActiveKey('0');
+    }
     setRefreshing(true);
     setLoaded(true);
   };
@@ -840,7 +844,16 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
           >
             {!isMobile && <Filters />}
             {isMobile && (
-              <Collapse ghost accordion>
+              <Collapse
+                ghost
+                accordion
+                activeKey={activeKey}
+                onChange={() => {
+                  if (activeKey === '0') setActiveKey('1');
+                  else setActiveKey('0');
+                }}
+                destroyInactivePanel
+              >
                 <Panel
                   header={<Typography.Title level={5}>Filter</Typography.Title>}
                   key="1"

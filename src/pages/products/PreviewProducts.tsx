@@ -63,6 +63,7 @@ const { Panel } = Collapse;
 
 const PreviewProducts: React.FC<RouteComponentProps> = () => {
   const inputRef = useRef<any>(null);
+  const [activeKey, setActiveKey] = useState<string>('0');
   const [viewName, setViewName] = useState<'alternate' | 'default'>('default');
   const previousViewName = useRef<'alternate' | 'default'>('default');
   const saveProductFn = saveStagingProduct;
@@ -341,6 +342,9 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
   };
 
   const getResources = async (event?: any, searchButton?: boolean) => {
+    if (isMobile && event) {
+      if (activeKey === '1') setActiveKey('0');
+    }
     setLoading(true);
     const { results } = await _fetchStagingProducts(searchButton);
 
@@ -1078,7 +1082,15 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
           >
             {!isMobile && <Filters />}
             {isMobile && (
-              <Collapse ghost>
+              <Collapse
+                ghost
+                activeKey={activeKey}
+                onChange={() => {
+                  if (activeKey === '0') setActiveKey('1');
+                  else setActiveKey('0');
+                }}
+                destroyInactivePanel
+              >
                 <Panel
                   header={<Typography.Title level={5}>Filter</Typography.Title>}
                   key="1"

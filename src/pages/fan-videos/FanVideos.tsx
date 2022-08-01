@@ -94,6 +94,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
   const [indexFilter, setIndexFilter] = useState<number>();
   const [creatorFilter, setCreatorFilter] = useState<string>();
   const inputRef = useRef<any>(null);
+  const [activeKey, setActiveKey] = useState<string>('0');
 
   const masterBrandMapping: SelectOption = {
     key: 'id',
@@ -331,6 +332,9 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
 
   const fetch = async (event?: any) => {
     try {
+      if (isMobile && event) {
+        if (activeKey === '1') setActiveKey('0');
+      }
       const { results }: any = await doFetch(() =>
         fetchVideoFeedV2({
           query: titleFilter,
@@ -610,7 +614,16 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
             {!isMobile && <Filters />}
             {isMobile && (
               <Col lg={24} xs={24}>
-                <Collapse ghost>
+                <Collapse
+                  ghost
+                  className="mb-1"
+                  activeKey={activeKey}
+                  onChange={() => {
+                    if (activeKey === '0') setActiveKey('1');
+                    else setActiveKey('0');
+                  }}
+                  destroyInactivePanel
+                >
                   <Panel
                     header={
                       <Typography.Title level={5}>Filter</Typography.Title>
@@ -622,20 +635,23 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
                 </Collapse>
               </Col>
             )}
-          </Row>
-          <Row justify="end">
-            <Col>
-              <Button
-                type="primary"
-                onClick={fetch}
-                loading={loading}
-                className="mb-1 mr-1"
-              >
-                Search
-                <SearchOutlined style={{ color: 'white' }} />
-              </Button>
+            <Col span={24}>
+              <Row justify="end">
+                <Col>
+                  <Button
+                    type="primary"
+                    onClick={fetch}
+                    loading={loading}
+                    className="mb-1"
+                  >
+                    Search
+                    <SearchOutlined style={{ color: 'white' }} />
+                  </Button>
+                </Col>
+              </Row>
             </Col>
           </Row>
+
           <Content>
             <Table
               scroll={{ x: true }}

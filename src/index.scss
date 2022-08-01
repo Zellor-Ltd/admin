@@ -139,9 +139,9 @@
   position: sticky;
   position: -webkit-sticky;
   z-index: 2;
-  top: 64px;
+  top: 5rem;
   background: white;
-  padding: 14px;
+  padding: 1rem;
 }
 
 .custom-filter-box {
@@ -296,6 +296,19 @@
 
   .bottom-right-button {
     margin: 0 0.5rem 1rem 0;
+  }
+
+  .ant-collapse-content > .ant-collapse-content-box {
+    padding: 16px 0;
+  }
+
+  .ant-collapse-header {
+    position: relative;
+    right: 16px;
+  }
+
+  .ant-layout-content {
+    padding: 4px 16px;
   }
 }
 

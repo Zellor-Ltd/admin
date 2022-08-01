@@ -62,6 +62,7 @@ const reduceSegmentsTags = (packages: Segment[]) => {
 
 const VideoFeed: React.FC<RouteComponentProps> = () => {
   const inputRef = useRef<any>(null);
+  const [activeKey, setActiveKey] = useState<string>('0');
   const [feedForm] = Form.useForm();
   const [segmentForm] = Form.useForm();
   const [selectedVideoFeed, setSelectedVideoFeed] = useState<FeedItem>();
@@ -335,8 +336,11 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     segmentForm.setFieldsValue(selectedVideoFeed);
   }, [selectedVideoFeed]);
 
-  const fetch = async () => {
+  const fetch = async (event?: any) => {
     try {
+      if (isMobile && event) {
+        if (activeKey === '1') setActiveKey('0');
+      }
       const { results }: any = await doFetch(() =>
         fetchVideoFeedV2({
           query: titleFilter,
@@ -642,12 +646,20 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
             align="bottom"
             justify="space-between"
             className={
-              isMobile ? 'sticky-filter-box pt-0' : 'mb-1 sticky-filter-box'
+              isMobile ? 'sticky-filter-box pt-0' : 'sticky-filter-box'
             }
           >
             {!isMobile && <Filters />}
             {isMobile && (
-              <Collapse ghost>
+              <Collapse
+                ghost
+                activeKey={activeKey}
+                onChange={() => {
+                  if (activeKey === '0') setActiveKey('1');
+                  else setActiveKey('0');
+                }}
+                destroyInactivePanel
+              >
                 <Panel
                   header={<Typography.Title level={5}>Filter</Typography.Title>}
                   key="1"
@@ -657,7 +669,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
               </Collapse>
             )}
           </Row>
-          <Row justify="end" className="mb-1">
+          <Row justify="end" className="mb-2">
             <Button type="primary" onClick={fetch} loading={loading}>
               Search
               <SearchOutlined style={{ color: 'white' }} />
