@@ -657,11 +657,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
               </Collapse>
             )}
           </Row>
-          <Row
-            justify="end"
-            className="mb-1"
-            onClick={e => e.stopPropagation()}
-          >
+          <Row justify="end" className="mb-1">
             <Button type="primary" onClick={fetch} loading={loading}>
               Search
               <SearchOutlined style={{ color: 'white' }} />

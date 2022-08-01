@@ -341,7 +341,6 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
   };
 
   const getResources = async (event?: any, searchButton?: boolean) => {
-    if (!isMobile && event) event.stopPropagation();
     setLoading(true);
     const { results } = await _fetchStagingProducts(searchButton);
 

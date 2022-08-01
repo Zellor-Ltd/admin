@@ -331,7 +331,6 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
 
   const fetch = async (event?: any) => {
     try {
-      if (!isMobile && event) event.stopPropagation();
       const { results }: any = await doFetch(() =>
         fetchVideoFeedV2({
           query: titleFilter,
@@ -498,7 +497,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
               onChange={event => setTitleFilter(event.target.value)}
               suffix={<SearchOutlined />}
               value={titleFilter}
-              placeholder="Type to search by Title"
+              placeholder="Enter a Title"
               onPressEnter={fetch}
             />
           </Col>
