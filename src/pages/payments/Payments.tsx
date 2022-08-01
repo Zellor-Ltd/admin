@@ -487,7 +487,7 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
           {isMobile && (
             <Collapse ghost className="sticky-filter-box">
               <Panel
-                header={<Typography.Title level={5}>Filters</Typography.Title>}
+                header={<Typography.Title level={5}>Filter</Typography.Title>}
                 key="1"
               >
                 <Row justify="end" align="bottom" className="pt-0">
