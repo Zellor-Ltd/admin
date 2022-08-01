@@ -3,6 +3,7 @@ import {
   EditOutlined,
   LoadingOutlined,
   SearchOutlined,
+  UpOutlined,
 } from '@ant-design/icons';
 import {
   Button,
@@ -338,9 +339,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
 
   const fetch = async (event?: any) => {
     try {
-      if (isMobile && event) {
-        if (activeKey === '1') setActiveKey('0');
-      }
+      collapse(event);
       const { results }: any = await doFetch(() =>
         fetchVideoFeedV2({
           query: titleFilter,
@@ -624,6 +623,12 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     );
   };
 
+  const collapse = (event?: any) => {
+    if (event && isMobile) {
+      if (activeKey === '1') setActiveKey('0');
+    }
+  };
+
   return (
     <>
       {!details && (
@@ -669,7 +674,19 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
               </Collapse>
             )}
             <Col span={24}>
-              <Row justify="end" className="mb-1 mt-1">
+              <Row justify="space-between" align="top" className="mb-1 mt-1">
+                <Col flex="auto">
+                  <Button
+                    type="text"
+                    onClick={collapse}
+                    style={{
+                      display: activeKey === '1' ? 'block' : 'none',
+                      background: 'none',
+                    }}
+                  >
+                    <UpOutlined />
+                  </Button>
+                </Col>
                 <Button type="primary" onClick={fetch} loading={loading}>
                   Search
                   <SearchOutlined style={{ color: 'white' }} />

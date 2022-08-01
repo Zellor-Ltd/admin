@@ -3,6 +3,7 @@ import {
   DeleteOutlined,
   EditOutlined,
   SearchOutlined,
+  UpOutlined,
 } from '@ant-design/icons';
 import {
   Button,
@@ -342,9 +343,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
   };
 
   const getResources = async (event?: any, searchButton?: boolean) => {
-    if (isMobile && event) {
-      if (activeKey === '1') setActiveKey('0');
-    }
+    collapse(event);
     setLoading(true);
     const { results } = await _fetchStagingProducts(searchButton);
 
@@ -1017,24 +1016,14 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
             </Col>
           </Row>
         </Col>
-        {isMobile && (
-          <Col>
-            <Row justify="end">
-              <Col>
-                <Button
-                  type="primary"
-                  onClick={event => getResources(event, true)}
-                  loading={loading}
-                >
-                  Search
-                  <SearchOutlined style={{ color: 'white' }} />
-                </Button>
-              </Col>
-            </Row>
-          </Col>
-        )}
       </>
     );
+  };
+
+  const collapse = (event?: any) => {
+    if (event && isMobile) {
+      if (activeKey === '1') setActiveKey('0');
+    }
   };
 
   return (
@@ -1094,36 +1083,38 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                 <Panel
                   header={<Typography.Title level={5}>Filter</Typography.Title>}
                   key="1"
-                  extra={
-                    !isMobile && (
-                      <Button
-                        type="primary"
-                        onClick={event => getResources(event, true)}
-                        loading={loading}
-                      >
-                        Search
-                        <SearchOutlined style={{ color: 'white' }} />
-                      </Button>
-                    )
-                  }
                 >
                   <Filters />
                 </Panel>
               </Collapse>
             )}
-          </Row>
-          <Row justify="end">
-            <Col className="mt-n2">
-              <Button
-                type="primary"
-                onClick={getResources}
-                loading={loading}
-                style={{ position: 'relative', top: '32px' }}
-                className="mr-1"
-              >
-                Search
-                <SearchOutlined style={{ color: 'white' }} />
-              </Button>
+            <Col span={24}>
+              <Row justify="space-between" align="top">
+                <Col flex="auto">
+                  <Button
+                    type="text"
+                    onClick={collapse}
+                    style={{
+                      display: activeKey === '1' ? 'block' : 'none',
+                      background: 'none',
+                    }}
+                  >
+                    <UpOutlined />
+                  </Button>
+                </Col>
+                <Col className="mt-n2">
+                  <Button
+                    type="primary"
+                    onClick={getResources}
+                    loading={loading}
+                    style={{ position: 'relative', top: '32px' }}
+                    className="mr-1"
+                  >
+                    Search
+                    <SearchOutlined style={{ color: 'white' }} />
+                  </Button>
+                </Col>
+              </Row>
             </Col>
           </Row>
         </>
