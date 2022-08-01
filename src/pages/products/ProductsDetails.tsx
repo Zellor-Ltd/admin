@@ -518,7 +518,18 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                     </Col>
                     <Col lg={24} xs={24}>
                       <Form.Item name="size" label="Size">
-                        <Select placeholder="Size" disabled={isLive}>
+                        <Select
+                          placeholder="Size"
+                          disabled={isLive}
+                          allowClear
+                          showSearch
+                          filterOption={(input, option) =>
+                            !!option?.children
+                              ?.toString()
+                              .toUpperCase()
+                              .includes(input.toUpperCase())
+                          }
+                        >
                           {size.map((curr: any) => (
                             <Select.Option key={curr.value} value={curr.value}>
                               {curr.name}
