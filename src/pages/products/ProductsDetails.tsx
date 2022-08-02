@@ -23,14 +23,9 @@ import { Brand } from 'interfaces/Brand';
 import { ProductBrand } from '../../interfaces/ProductBrand';
 import { AllCategories } from 'interfaces/Category';
 import { Product } from 'interfaces/Product';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { AppContext } from 'contexts/AppContext';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import {
-  fetchVariantGroups,
-  saveProduct,
-  saveStagingProduct,
-} from 'services/DiscoClubService';
+import { saveProduct, saveStagingProduct } from 'services/DiscoClubService';
 import ProductCategoriesTrees from './ProductCategoriesTrees';
 import './Products.scss';
 import SimpleSelect from 'components/select/SimpleSelect';
@@ -40,7 +35,6 @@ import { Image } from '../../interfaces/Image';
 import { useRequest } from 'hooks/useRequest';
 import update from 'immutability-helper';
 import { SketchPicker } from 'react-color';
-import { VariantGroup } from 'interfaces/VariantGroup';
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 const { getSearchTags, getCategories, removeSearchTagsByCategory } =
@@ -72,22 +66,18 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
   isFetchingProductBrand,
   isLive,
 }) => {
-  const { isMobile } = useContext(AppContext);
   const saveProductFn = isLive ? saveProduct : saveStagingProduct;
   const [loading, setLoading] = useState<boolean>(false);
   const [ageRange, setAgeRange] = useState<[number, number]>([12, 100]);
   const [form] = Form.useForm();
-  const [variantForm] = Form.useForm();
   const [maxDiscountAlert, setMaxDiscountAlert] = useState<boolean>(false);
-  const { doFetch, doRequest } = useRequest({ setLoading });
+  const { doRequest } = useRequest({ setLoading });
   const [_product, _setProduct] = useState(product);
-  const [showNewVariant, setShowNewVariant] = useState<boolean>(false);
   const [showPicker, setShowPicker] = useState<boolean>(false);
-  const [variantGroups, setVariantGroups] = useState<VariantGroup[]>([]);
-  const [color, setColor] = useState<string>('#F2C590');
+  const [color, setColor] = useState<string>(product?.colour ?? '#F2C590');
 
   const {
-    settings: { currency = [] },
+    settings: { currency = [], size = [] },
   } = useSelector((state: any) => state.settings);
 
   const optionMapping: SelectOption = {
@@ -97,19 +87,14 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
   };
 
   useEffect(() => {
-    getVariantGroups();
-  }, []);
-
-  const getVariantGroups = async () => {
-    const { results } = await doFetch(fetchVariantGroups);
-    setVariantGroups(results);
-  };
-
-  useEffect(() => {
     if (product) {
       _setProduct(product);
     }
   }, [product]);
+
+  useEffect(() => {
+    form.setFieldsValue({ colour: color });
+  }, [color]);
 
   const setDiscoPercentageByBrand = useCallback(
     (useInitialValue: boolean) => {
@@ -234,14 +219,6 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
     setLoading(true);
     try {
       const formProduct = form.getFieldsValue(true);
-
-      const variantItem = variantForm.getFieldsValue(true);
-      if (variantItem) {
-        variantItem.color = color;
-        formProduct.variants
-          ? formProduct.variants.push(variantItem)
-          : (formProduct.variants = [variantItem]);
-      }
 
       formProduct.brand = brands?.find(
         brand => brand.id === formProduct.brand?.id
@@ -490,6 +467,77 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                     >
                       <DatePicker format="DD/MM/YYYY" disabled={isLive} />
                     </Form.Item>
+                  </Col>
+                  <Col lg={12} xs={24}>
+                    <Col>
+                      <div
+                        className="color-variant"
+                        style={{ background: color }}
+                      >
+                        <Button
+                          onClick={() => setShowPicker(prev => !prev)}
+                          ghost
+                          block
+                          style={{
+                            height: '100%',
+                            color: color,
+                          }}
+                        >
+                          {color}
+                        </Button>
+                      </div>
+                    </Col>
+                    {showPicker && (
+                      <Col lg={24} xs={24}>
+                        <SketchPicker
+                          className="mt-1"
+                          color={color}
+                          disableAlpha
+                          onChangeComplete={selectedColor =>
+                            setColor(selectedColor.hex)
+                          }
+                          presetColors={[
+                            '#4a2f10',
+                            '#704818',
+                            '#9e6521',
+                            '#C37D2A',
+                            '#E5AC69',
+                            '#F2C590',
+                            '#FFD6A6',
+                            '#FFF0CB',
+                          ]}
+                        />
+                      </Col>
+                    )}
+                  </Col>
+                  <Col lg={12} xs={24}>
+                    <Col lg={24} xs={24}>
+                      <Form.Item name="colourTitle" label="Colour">
+                        <Input placeholder="Colour name" disabled={isLive} />
+                      </Form.Item>
+                    </Col>
+                    <Col lg={24} xs={24}>
+                      <Form.Item name="size" label="Size">
+                        <Select
+                          placeholder="Size"
+                          disabled={isLive}
+                          allowClear
+                          showSearch
+                          filterOption={(input, option) =>
+                            !!option?.children
+                              ?.toString()
+                              .toUpperCase()
+                              .includes(input.toUpperCase())
+                          }
+                        >
+                          {size.map((curr: any) => (
+                            <Select.Option key={curr.value} value={curr.value}>
+                              {curr.name}
+                            </Select.Option>
+                          ))}
+                        </Select>
+                      </Form.Item>
+                    </Col>
                   </Col>
                 </Row>
               </Col>
@@ -812,110 +860,6 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                   </div>
                 </Form.Item>
               </Col>
-            </Row>
-          </Tabs.TabPane>
-          <Tabs.TabPane forceRender tab="Variants" key="Variants">
-            <Row gutter={[8, 8]}>
-              <Col lg={24} xs={24}>
-                <Col>
-                  Show colour Swatch
-                  <Switch
-                    disabled={isLive}
-                    className="ml-1 my-1"
-                    onChange={setShowNewVariant}
-                  />
-                </Col>
-              </Col>
-              {showNewVariant && (
-                <Col lg={8} xs={24}>
-                  <Row gutter={8} justify={isMobile ? 'end' : undefined}>
-                    <Col>
-                      <Col>
-                        <div
-                          className="color-variant"
-                          style={{ background: color }}
-                        >
-                          <Button
-                            onClick={evt => setShowPicker(prev => !prev)}
-                            ghost
-                            block
-                            style={{
-                              height: '100%',
-                              color: color,
-                            }}
-                          >
-                            {color}
-                          </Button>
-                        </div>
-                      </Col>
-                    </Col>
-                    <Form
-                      form={variantForm}
-                      name="variantForm"
-                      initialValues={
-                        product?.variants ? product?.variants[0] : undefined
-                      }
-                      onFinishFailed={({ errorFields }) => {
-                        errorFields.forEach(errorField => {
-                          message.error(errorField.errors[0]);
-                        });
-                      }}
-                    >
-                      <Col lg={16} xs={24}>
-                        <Col lg={24} xs={24}>
-                          <Form.Item name="colorName">
-                            <Input
-                              placeholder="Colour name"
-                              disabled={isLive}
-                            />
-                          </Form.Item>
-                        </Col>
-                        <Col lg={24} xs={24}>
-                          <Form.Item name="variantGroup">
-                            <Select
-                              placeholder="Variant Group"
-                              disabled={isLive}
-                            >
-                              {variantGroups.map((curr: any) => (
-                                <Select.Option key={curr.id} value={curr.id}>
-                                  {curr.name}
-                                </Select.Option>
-                              ))}
-                            </Select>
-                          </Form.Item>
-                        </Col>
-                        <Col lg={24} xs={24}>
-                          <Form.Item name="size">
-                            <Input placeholder="Size" disabled={isLive} />
-                          </Form.Item>
-                        </Col>
-                      </Col>
-                    </Form>
-                    {showPicker && (
-                      <Col lg={24} xs={24}>
-                        <SketchPicker
-                          className="mt-1"
-                          color={color}
-                          disableAlpha
-                          onChangeComplete={selectedColor =>
-                            setColor(selectedColor.hex)
-                          }
-                          presetColors={[
-                            '#4a2f10',
-                            '#704818',
-                            '#9e6521',
-                            '#C37D2A',
-                            '#E5AC69',
-                            '#F2C590',
-                            '#FFD6A6',
-                            '#FFF0CB',
-                          ]}
-                        />
-                      </Col>
-                    )}
-                  </Row>
-                </Col>
-              )}
             </Row>
           </Tabs.TabPane>
         </Tabs>

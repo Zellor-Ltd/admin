@@ -37,5 +37,5 @@ export interface Product {
   outOfStock?: boolean;
   status?: string;
   shopifyUniqueId: string;
-  variants?: any[];
+  colour?: string;
 }
