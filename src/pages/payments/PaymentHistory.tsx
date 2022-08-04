@@ -21,7 +21,7 @@ import scrollIntoView from 'scroll-into-view';
 import { Payment } from 'interfaces/Payment';
 import { ColumnsType } from 'antd/lib/table';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import CommissionDetails from './CommissionDetails';
+import CommissionDetail from './CommissionDetail';
 
 const { Panel } = Collapse;
 
@@ -373,10 +373,7 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
         </>
       )}
       {details && (
-        <CommissionDetails
-          setDetails={setDetails}
-          commission={currentPayment}
-        />
+        <CommissionDetail setDetails={setDetails} commission={currentPayment} />
       )}
     </>
   );

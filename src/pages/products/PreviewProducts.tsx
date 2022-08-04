@@ -56,7 +56,7 @@ import { useMount } from 'react-use';
 import AlternatePreviewProducts from './AlternatePreviewProducts';
 import SimpleSelect from '../../components/select/SimpleSelect';
 import { SelectOption } from '../../interfaces/SelectOption';
-import ProductsDetails from './ProductsDetails';
+import ProductDetail from './ProductDetail';
 
 const { getSearchTags, getCategories } = productUtils;
 const { Panel } = Collapse;
@@ -780,7 +780,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
           );
         } else {
           return (
-            <ProductsDetails
+            <ProductDetail
               brands={brands}
               productBrands={productBrands}
               allCategories={allCategories}

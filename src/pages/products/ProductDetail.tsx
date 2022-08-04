@@ -39,7 +39,7 @@ import { SketchPicker } from 'react-color';
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 const { getSearchTags, getCategories, removeSearchTagsByCategory } =
   productUtils;
-interface ProductDetailsProps {
+interface ProductDetailProps {
   brands: Brand[];
   productBrands: ProductBrand[];
   allCategories: any;
@@ -53,7 +53,7 @@ interface ProductDetailsProps {
   isLive: boolean;
 }
 
-const ProductDetails: React.FC<ProductDetailsProps> = ({
+const ProductDetail: React.FC<ProductDetailProps> = ({
   brands,
   productBrands,
   allCategories,
@@ -891,4 +891,4 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
   );
 };
 
-export default ProductDetails;
+export default ProductDetail;

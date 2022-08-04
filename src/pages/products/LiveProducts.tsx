@@ -44,7 +44,7 @@ import scrollIntoView from 'scroll-into-view';
 import { useMount } from 'react-use';
 import SimpleSelect from 'components/select/SimpleSelect';
 import { SelectOption } from '../../interfaces/SelectOption';
-import ProductsDetails from './ProductsDetails';
+import ProductDetail from './ProductDetail';
 import { ProductCategory } from 'interfaces/Category';
 
 const { getSearchTags, getCategories } = productUtils;
@@ -915,7 +915,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
         </>
       )}
       {details && (
-        <ProductsDetails
+        <ProductDetail
           brands={brands}
           productBrands={productBrands}
           allCategories={allCategories}
