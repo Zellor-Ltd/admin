@@ -572,7 +572,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                           required: true,
                           min: 0,
                           type: 'number',
-                          message: `Index is required.`,
+                          message: 'Index is required.',
                         },
                       ]}
                       initialValue={1000}
@@ -736,7 +736,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                   name="videoType"
                   label="Video Type"
                   rules={[
-                    { required: true, message: `Video Type is required.` },
+                    { required: true, message: 'Video Type is required.' },
                   ]}
                 >
                   <Select
@@ -914,7 +914,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                     rules={[
                       {
                         required: true,
-                        message: `Product Brand is required.`,
+                        message: 'Product Brand is required.',
                       },
                     ]}
                   >
@@ -949,7 +949,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                       rules={[
                         {
                           required: true,
-                          message: `Product Brand Icon is required.`,
+                          message: 'Product Brand Icon is required.',
                         },
                       ]}
                     >
@@ -991,7 +991,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                     rules={[
                       {
                         required: true,
-                        message: `Creator is required.`,
+                        message: 'Creator is required.',
                       },
                     ]}
                   >

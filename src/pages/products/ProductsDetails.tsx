@@ -401,7 +401,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                       rules={[
                         {
                           required: true,
-                          message: `Master Brand is required.`,
+                          message: 'Master Brand is required.',
                         },
                       ]}
                     >
@@ -429,7 +429,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                       rules={[
                         {
                           required: true,
-                          message: `Product Brand is required.`,
+                          message: 'Product Brand is required.',
                         },
                       ]}
                     >
@@ -598,7 +598,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                 <Form.Item
                   name="gender"
                   label="Gender"
-                  rules={[{ required: true, message: `Gender is required.` }]}
+                  rules={[{ required: true, message: 'Gender is required.' }]}
                 >
                   <Select mode="multiple" disabled={isLive}>
                     <Select.Option value="Female">Female</Select.Option>
@@ -633,7 +633,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                   name="originalPrice"
                   label="Default Price"
                   rules={[
-                    { required: true, message: `Default Price is required.` },
+                    { required: true, message: 'Default Price is required.' },
                   ]}
                 >
                   <InputNumber disabled={isLive} />
@@ -656,7 +656,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                 </Form.Item>
               </Col>
               <Col lg={12} xs={24}>
-                <Form.Item name="originalPriceUS" label="Price US" rules={[{}]}>
+                <Form.Item name="originalPriceUS" label="Price US">
                   <InputNumber disabled={isLive} />
                 </Form.Item>
               </Col>
@@ -677,7 +677,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                 </Form.Item>
               </Col>
               <Col lg={12} xs={24}>
-                <Form.Item name="originalPriceGB" label="Price UK" rules={[{}]}>
+                <Form.Item name="originalPriceGB" label="Price UK">
                   <InputNumber disabled={isLive} />
                 </Form.Item>
               </Col>
@@ -698,11 +698,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                 </Form.Item>
               </Col>
               <Col lg={12} xs={24}>
-                <Form.Item
-                  name="originalPriceIE"
-                  label="Price Europe"
-                  rules={[{}]}
-                >
+                <Form.Item name="originalPriceIE" label="Price Europe">
                   <InputNumber disabled={isLive} />
                 </Form.Item>
               </Col>
@@ -778,11 +774,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
             </Row>
             <Row gutter={8} align="bottom">
               <Col lg={6} xs={24}>
-                <Form.Item
-                  name="shopifyUniqueId"
-                  label="Shopify Uid"
-                  rules={[{}]}
-                >
+                <Form.Item name="shopifyUniqueId" label="Shopify Uid">
                   <InputNumber disabled={isLive} />
                 </Form.Item>
               </Col>

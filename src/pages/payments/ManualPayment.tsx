@@ -67,7 +67,7 @@ const ManualPayment: React.FC<ManualPaymentProps> = ({
               <Form.Item
                 name="creatorId"
                 label="Creator"
-                rules={[{ required: true, message: `Creator is required.` }]}
+                rules={[{ required: true, message: 'Creator is required.' }]}
               >
                 <Select
                   style={{ width: '100%' }}
@@ -99,7 +99,7 @@ const ManualPayment: React.FC<ManualPaymentProps> = ({
                 rules={[
                   {
                     required: true,
-                    message: `Description is required.`,
+                    message: 'Description is required.',
                   },
                 ]}
               >

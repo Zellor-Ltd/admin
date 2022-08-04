@@ -397,7 +397,7 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
                           required: true,
                           min: 0,
                           type: 'number',
-                          message: `Index is required.`,
+                          message: 'Index is required.',
                         },
                       ]}
                       initialValue={1000}
@@ -754,7 +754,7 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
                     rules={[
                       {
                         required: true,
-                        message: `Creator is required.`,
+                        message: 'Creator is required.',
                       },
                     ]}
                   >
