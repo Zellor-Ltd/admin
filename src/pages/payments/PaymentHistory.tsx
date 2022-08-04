@@ -83,7 +83,7 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
 
   const getPayments = async () => {
     if (!currentCreator) {
-      message.warning('Cannot get Payments without selecting a Fan!');
+      message.warning('Warning: Cannot get Payments without selecting a Fan!');
       return;
     }
     const pageToUse = refreshing ? 0 : page;

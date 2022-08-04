@@ -47,7 +47,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
         : onSave?.({ ...formProductBrand, id: result });
     } catch (err: any) {
       console.log(err);
-      message.error(err.error);
+      message.error('Error: ' + err.error);
     }
   };
 
@@ -87,7 +87,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
         onFinish={onFinish}
         onFinishFailed={({ errorFields }) => {
           errorFields.forEach(errorField => {
-            message.error(errorField.errors[0]);
+            message.error('Error: ' + errorField.errors[0]);
           });
         }}
       >

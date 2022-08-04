@@ -46,7 +46,7 @@ const PromotionDetail: React.FC<PromotionDetailProps> = ({
     try {
       await getPackages();
     } catch {
-      message.error("Couldn't fetch packages.");
+      message.error("Error: Couldn't fetch packages.");
     } // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

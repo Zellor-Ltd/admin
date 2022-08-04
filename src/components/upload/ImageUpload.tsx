@@ -185,7 +185,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
         onImageChange?.(imageData, formProp as any);
         message.success(`${info.file.name} file uploaded successfully`);
       } else if (info.file.status === 'error') {
-        message.error(`${info.file.name} file upload failed.`);
+        message.error(`Error: ${info.file.name} file upload failed.`);
       }
     }
   };
@@ -225,10 +225,10 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
           };
           setFileListLocal([...fileListLocal, imageData]);
           updateForm(imageData);
-          message.success(`Image cropped successfully.`);
+          message.success('Image cropped successfully.');
         } catch (e) {
           console.error(e);
-          message.error(`Failed to crop image.`);
+          message.error('Error: Failed to crop image.');
         } finally {
           setIsCropping(false);
           setIsUploadingCrop(false);

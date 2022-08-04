@@ -297,7 +297,7 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
       const selectedEntity = guests?.find(item => item.user === userInput);
       if (!selectedEntity)
         message.warning(
-          "Can't filter Guests with incomplete Fan Filter! Please select a Fan."
+          "Warning: Can't filter Guests with incomplete Fan Filter! Please select a Fan."
         );
     }
   };

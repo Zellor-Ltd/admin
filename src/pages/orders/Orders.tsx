@@ -831,7 +831,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       setSelectedUser(selectedEntity);
       if (!selectedEntity)
         message.warning(
-          "Can't filter orders with incomplete Fan Filter! Please select a Fan."
+          "Warning: Can't filter orders with incomplete Fan Filter! Please select a Fan."
         );
     }
   };

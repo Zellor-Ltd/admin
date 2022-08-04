@@ -1117,7 +1117,7 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
           name="templateForm"
           onFinishFailed={({ errorFields }) => {
             errorFields.forEach(errorField => {
-              message.error(errorField.errors[0]);
+              message.error('Error: ' + errorField.errors[0]);
             });
           }}
           layout="vertical"
