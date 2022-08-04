@@ -82,10 +82,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
   const [updatingFeedItemIndex, setUpdatingFeedItemIndex] = useState<
     Record<string, boolean>
   >({});
-
   const { isMobile } = useContext(AppContext);
-
-  // Filter state
   const [statusFilter, setStatusFilter] = useState<string>();
   const [brandFilter, setBrandFilter] = useState<Brand>();
   const [productBrandFilter, setProductBrandFilter] = useState<string>();

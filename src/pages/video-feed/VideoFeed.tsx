@@ -80,8 +80,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const shouldUpdateFeedItemIndex = useRef(false);
   const [updatingFeedItemIndex, setUpdatingFeedItemIndex] =
     useState<boolean>(false);
-
-  // Filter state
   const [statusFilter, setStatusFilter] = useState<string>();
   const [brandFilter, setBrandFilter] = useState<Brand>();
   const [productBrandFilter, setProductBrandFilter] = useState<string>();

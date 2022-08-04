@@ -48,9 +48,6 @@ const FanFeedModal: React.FC<FanFeedModalProps> = ({
       title: 'Title',
       dataIndex: 'title',
       width: '15%',
-      // render: (value: string, record: FeedItem) => (
-      //   <Link to={{ pathname: `/video-feed`, state: record }}>{value}</Link>
-      // ),
       align: 'center',
     },
     {

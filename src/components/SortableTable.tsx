@@ -74,7 +74,7 @@ const SortableTable: React.FC<SortableTableProps> = (
     style: any;
     'data-row-key': any;
   }) => {
-    // function findIndex base on Table rowKey props and should always be a right array index
+    // function findIndex based on Table rowKey props and should always be a right array index
     const index = dataSource.findIndex(
       (x: any) => x.index === restProps['data-row-key']
     );

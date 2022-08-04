@@ -9,14 +9,6 @@ import { Editor } from 'react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 
 const { TextArea } = Input;
-
-/*
-The package "react-draft-wysiwyg" is throwing this warning to console:
-Warning: Can't call setState on a component that is not yet mounted. This is a no-op, but it might indicate a bug in your application. Instead, assign to `this.state` directly or define a `state = {};` class property with the desired state in the r component.
-
-It seems this package is not compatible with react strictMode yet.
-*/
-
 interface RichTextEditorProps {
   formField: string;
   form: FormInstance;
@@ -59,7 +51,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
 
   const onOk = () => {
     setShowModal(false);
-    // Envolve htmlValue content with a <p></p> to prevent RichTextEditor from crashing.
+    // Involve htmlValue content with a <p></p> to prevent RichTextEditor from crashing.
     const formattedHtmlValue =
       htmlValue.substr(0, 3) === '<p>' ? htmlValue : `<p>${htmlValue}</p>`;
     setHtmlValue(formattedHtmlValue);
