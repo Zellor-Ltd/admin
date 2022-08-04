@@ -184,7 +184,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
   const search = rows => {
     return rows.filter(
       row =>
-        row.brand.brandName.toUpperCase().indexOf(brandFilter.toUpperCase()) >
+        row.brand.brandName?.toUpperCase().indexOf(brandFilter?.toUpperCase()) >
         -1
     );
   };
@@ -210,7 +210,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
   const handleChangeTag = async (value?: string) => {
     if (value) {
       const entity = buffer.find(
-        tag => tag.tagName.toUpperCase() === value.toUpperCase()
+        tag => tag.tagName?.toUpperCase() === value?.toUpperCase()
       );
       if (entity) setTags([entity]);
     }

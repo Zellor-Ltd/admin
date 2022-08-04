@@ -167,12 +167,12 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
 
       return rows.filter(
         row =>
-          row.id.toUpperCase().indexOf(idFilter.toUpperCase()) > -1 &&
+          row.id?.toUpperCase().indexOf(idFilter?.toUpperCase()) > -1 &&
           moment(row.hCreationDate).utc().isBetween(startDate, endDate)
       );
     }
     return rows.filter(
-      row => row.id.toUpperCase().indexOf(idFilter.toUpperCase()) > -1
+      row => row.id?.toUpperCase().indexOf(idFilter?.toUpperCase()) > -1
     );
   };
 

@@ -383,8 +383,8 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
                 filterOption={(input, option) =>
                   !!option?.children
                     ?.toString()
-                    .toUpperCase()
-                    .includes(input.toUpperCase())
+                    ?.toUpperCase()
+                    .includes(input?.toUpperCase())
                 }
               >
                 {creators.map((curr: any) => (
@@ -410,8 +410,8 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
                 filterOption={(input, option) =>
                   !!option?.children
                     ?.toString()
-                    .toUpperCase()
-                    .includes(input.toUpperCase())
+                    ?.toUpperCase()
+                    .includes(input?.toUpperCase())
                 }
               >
                 <Select.Option key={1} value={'Cleared'}>

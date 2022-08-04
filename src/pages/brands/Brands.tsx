@@ -93,7 +93,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
 
   const filterBrand = () => {
     return brands.filter(brand =>
-      brand.brandName?.toUpperCase().includes(filterText.toUpperCase())
+      brand.brandName?.toUpperCase().includes(filterText?.toUpperCase())
     );
   };
 

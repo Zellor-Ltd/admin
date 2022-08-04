@@ -128,7 +128,7 @@ const ItemList: React.FC<ItemListProp> = ({ name, isMobile }) => (
     {(fields, { add, remove }) => (
       <div>
         <Button className="mb-1 mt-05" onClick={() => add()}>
-          Add {name.charAt(0).toUpperCase() + name.slice(1)}
+          Add {name.charAt(0)?.toUpperCase() + name.slice(1)}
         </Button>
         {fields.map(field => (
           <Row gutter={8} key={Math.random()}>

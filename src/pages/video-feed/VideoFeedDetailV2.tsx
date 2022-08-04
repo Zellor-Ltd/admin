@@ -421,7 +421,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
   };
 
   const onSearch = (input: string, option: any) => {
-    return option.label.toUpperCase().includes(input?.toUpperCase());
+    return option.label?.toUpperCase().includes(input?.toUpperCase());
   };
 
   const loadProductBrandIcons = (productBrand?: ProductBrand) => {
@@ -927,8 +927,8 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                       filterOption={(input, option) =>
                         !!option?.label
                           ?.toString()
-                          .toUpperCase()
-                          .includes(input.toUpperCase())
+                          ?.toUpperCase()
+                          .includes(input?.toUpperCase())
                       }
                       value={currentProductBrand?.id}
                     >
@@ -962,8 +962,8 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                         filterOption={(input, option) =>
                           !!option?.label
                             ?.toString()
-                            .toUpperCase()
-                            .includes(input.toUpperCase())
+                            ?.toUpperCase()
+                            .includes(input?.toUpperCase())
                         }
                         value={currentBrandIcon}
                       >
@@ -1004,8 +1004,8 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                       filterOption={(input, option) =>
                         !!option?.label
                           ?.toString()
-                          .toUpperCase()
-                          .includes(input.toUpperCase())
+                          ?.toUpperCase()
+                          .includes(input?.toUpperCase())
                       }
                       value={currentCreator?.id}
                     >

@@ -115,7 +115,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
   const statusMapping: SelectOption = {
     key: 'value',
     label: 'value',
-    value: 'value'.toUpperCase(),
+    value: 'value'?.toUpperCase(),
   };
 
   const feedItemColumns: ColumnsType<FeedItem> = [
