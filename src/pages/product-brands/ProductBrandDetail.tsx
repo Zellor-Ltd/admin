@@ -107,7 +107,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                       rules={[
                         {
                           required: true,
-                          message: `Product Brand Name is required.`,
+                          message: 'Product Brand Name is required.',
                         },
                       ]}
                     >
@@ -128,7 +128,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                           rules={[
                             {
                               required: true,
-                              message: `Disco Percentage is required.`,
+                              message: 'Disco Percentage is required.',
                             },
                           ]}
                         >
@@ -175,7 +175,8 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                           rules={[
                             {
                               required: true,
-                              message: `'Max Disco Dollar percentage' is required.`,
+                              message:
+                                'Max Disco Dollar percentage is required.',
                             },
                           ]}
                         >
@@ -196,7 +197,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                       rules={[
                         {
                           required: true,
-                          message: `Product Brand Color is required.`,
+                          message: 'Product Brand Color is required.',
                         },
                       ]}
                       valuePropName="color"
@@ -245,7 +246,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                     <Form.Item
                       label="Logo Round"
                       rules={[
-                        { required: true, message: `Logo Round is required.` },
+                        { required: true, message: 'Logo Round is required.' },
                       ]}
                       name="brandLogo"
                     >
@@ -294,12 +295,12 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                 <Row gutter={8}>
                   <Col lg={6} xs={12}>
                     <Form.Item
-                      label="Mast Head Image"
+                      label="Masthead Image"
                       name="mastHead"
                       rules={[
                         {
                           required: true,
-                          message: `Mast Head Image is required.`,
+                          message: 'Masthead Image is required.',
                         },
                       ]}
                     >
@@ -316,7 +317,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                       label="Avatar"
                       name="avatar"
                       rules={[
-                        { required: true, message: `Avatar is required.` },
+                        { required: true, message: 'Avatar is required.' },
                       ]}
                     >
                       <Upload.ImageUpload

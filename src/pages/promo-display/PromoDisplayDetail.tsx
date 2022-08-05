@@ -78,7 +78,7 @@ const PromoDisplaysDetail: React.FC<PromoDisplayDetailProps> = ({
               label="Display Start Date"
               getValueProps={formatMoment}
               rules={[
-                { required: true, message: `Display Start Date is required.` },
+                { required: true, message: 'Display Start Date is required.' },
               ]}
             >
               <DatePicker format="DD/MM/YYYY" />
@@ -90,7 +90,7 @@ const PromoDisplaysDetail: React.FC<PromoDisplayDetailProps> = ({
               label="Display Expire Date"
               getValueProps={formatMoment}
               rules={[
-                { required: true, message: `Display Expire Date is required.` },
+                { required: true, message: 'Display Expire Date is required.' },
               ]}
             >
               <DatePicker format="DD/MM/YYYY" />
