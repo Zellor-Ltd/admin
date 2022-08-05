@@ -526,8 +526,8 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                           filterOption={(input, option) =>
                             !!option?.children
                               ?.toString()
-                              .toUpperCase()
-                              .includes(input.toUpperCase())
+                              ?.toUpperCase()
+                              .includes(input?.toUpperCase())
                           }
                         >
                           {size.map((curr: any) => (

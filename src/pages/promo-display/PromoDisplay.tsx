@@ -170,7 +170,7 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
 
   const search = rows => {
     return rows.filter(
-      row => row.id.toUpperCase().indexOf(filter.toUpperCase()) > -1
+      row => row.id?.toUpperCase().indexOf(filter?.toUpperCase()) > -1
     );
   };
 

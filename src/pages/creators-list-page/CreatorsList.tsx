@@ -117,7 +117,7 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
 
   const search = rows => {
     return rows.filter(
-      row => row.description?.toUpperCase().indexOf(filter.toUpperCase()) > -1
+      row => row.description?.toUpperCase().indexOf(filter?.toUpperCase()) > -1
     );
   };
 

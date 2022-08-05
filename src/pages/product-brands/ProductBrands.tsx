@@ -208,7 +208,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
 
   const search = rows => {
     return rows.filter(
-      row => row.brandName.toUpperCase().indexOf(filter.toUpperCase()) > -1
+      row => row.brandName?.toUpperCase().indexOf(filter?.toUpperCase()) > -1
     );
   };
 

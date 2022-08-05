@@ -88,7 +88,7 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
 
   const search = rows => {
     return rows.filter(
-      row => row.name.toUpperCase().indexOf(filter.toUpperCase()) > -1
+      row => row.name?.toUpperCase().indexOf(filter?.toUpperCase()) > -1
     );
   };
 

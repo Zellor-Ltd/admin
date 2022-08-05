@@ -264,7 +264,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     ),
     onFilter: (value: any, record: any) => {
       const fan = getFan(record.userid);
-      return fan?.user.includes(value.toUpperCase()) || false;
+      return fan?.user.includes(value?.toUpperCase()) || false;
     },
     onFilterDropdownVisibleChange: (visible: any) => {
       if (visible) {
@@ -867,8 +867,8 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
                     filterOption={(input, option) =>
                       !!option?.children
                         ?.toString()
-                        .toUpperCase()
-                        .includes(input.toUpperCase())
+                        ?.toUpperCase()
+                        .includes(input?.toUpperCase())
                     }
                   >
                     {brands.map(curr => (

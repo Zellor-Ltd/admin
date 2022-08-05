@@ -132,7 +132,8 @@ const MultipleFetchDebounceSelect: React.FC<
     if (!option) return;
     const selectedEntity = fetchedEntities.current.find(
       entity =>
-        entity[optionMapping.value].toUpperCase() === option.value.toUpperCase()
+        entity[optionMapping.value]?.toUpperCase() ===
+        option.value?.toUpperCase()
     );
     onChange(option.value, selectedEntity);
   };

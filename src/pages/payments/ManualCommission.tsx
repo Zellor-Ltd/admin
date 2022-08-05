@@ -95,8 +95,8 @@ const ManualCommission: React.FC<PaymentDetailsProps> = ({
                   filterOption={(input, option) =>
                     !!option?.children
                       ?.toString()
-                      .toUpperCase()
-                      .includes(input.toUpperCase())
+                      ?.toUpperCase()
+                      .includes(input?.toUpperCase())
                   }
                 >
                   {creators.map((curr: any) => (
