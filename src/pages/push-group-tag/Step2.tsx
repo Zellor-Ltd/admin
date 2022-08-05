@@ -29,7 +29,6 @@ const Step2: React.FC<Step2Props> = ({ selectedTags, onReturn }) => {
 
   const getResources = async () => {
     setIsFetchingFanGroups(true);
-    // const { results: fansResults } = await doFetch(() => fetchFans());
     const { results }: { results: FanGroup[] } = await doFetch(() =>
       fetchFanGroups()
     );

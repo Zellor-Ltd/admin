@@ -54,7 +54,6 @@ const TagDetail: React.FC<TagDetailProps> = ({ tag, onSave, onCancel }) => {
   useEffect(() => {
     getProducts(true, selectedBrand);
     setProductOptions(productsBySelectedBrand());
-    console.log(productOptions);
   }, [selectedBrand]);
 
   useEffect(() => {

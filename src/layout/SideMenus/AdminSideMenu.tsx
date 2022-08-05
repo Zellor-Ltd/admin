@@ -136,9 +136,6 @@ const AdminSideMenu = ({ isMobile, testMode }) => {
         <Menu.Item key="creators" icon={<UserOutlined />}>
           <Link to="/users_creators">Creators</Link>
         </Menu.Item>
-        {/* <Menu.Item key="brand-managers" icon={<UserOutlined />}>
-          <Link to="/brand-managers">Brand Managers</Link>
-        </Menu.Item> */}
       </SubMenu>
       <SubMenu key="settings" icon={<SettingOutlined />} title="Settings">
         <Menu.Item key="settings_access-control" icon={<ControlOutlined />}>
@@ -150,9 +147,6 @@ const AdminSideMenu = ({ isMobile, testMode }) => {
         <Menu.Item key="settings_endpoints" icon={<CloudServerOutlined />}>
           <Link to="/settings_endpoints">Endpoints</Link>
         </Menu.Item>
-        {/* <Menu.Item key="interfaces" icon={<AppstoreAddOutlined />}>
-        <Link to="/interfaces">Interfaces</Link>
-      </Menu.Item> */}
         <Menu.Item key="settings_roles" icon={<ApartmentOutlined />}>
           <Link to="/settings_roles">Roles</Link>
         </Menu.Item>

@@ -393,8 +393,6 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
         else if (b.maxDiscoDollars) return 1;
         else return 0;
       },
-      // editable: true,
-      // number: true,
     },
     {
       title: 'Disco %',
@@ -411,8 +409,6 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
         else if (b.discoPercentage) return 1;
         else return 0;
       },
-      // editable: true,
-      // number: true,
     },
     {
       title: 'Shopify Id',

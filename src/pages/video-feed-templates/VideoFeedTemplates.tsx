@@ -78,8 +78,6 @@ const VideoFeedTemplates: React.FC<RouteComponentProps> = () => {
   const [updatingFeedItemIndex, setUpdatingFeedItemIndex] = useState<
     Record<string, boolean>
   >({});
-
-  // Filter state
   const [statusFilter, setStatusFilter] = useState<string>();
   const [brandFilter, setBrandFilter] = useState<Brand>();
   const [productBrandFilter, setProductBrandFilter] = useState<string>();

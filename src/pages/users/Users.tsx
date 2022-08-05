@@ -70,15 +70,6 @@ const Users: React.FC<RouteComponentProps> = ({ history }) => {
           <Link to={{ pathname: `/user`, state: record }}>
             <EditOutlined />
           </Link>
-          {/* <Popconfirm
-            title="Are you sure？"
-            okText="Yes"
-            cancelText="No"
-            onConfirm={() => deleteItem(record.id)}>
-            <Button type="link" style={{ padding: 0, margin: 6 }}>
-              <DeleteOutlined />
-            </Button>
-          </Popconfirm> */}
         </>
       ),
     },
