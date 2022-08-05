@@ -597,7 +597,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
   return (
     <>
       {!details && (
-        <div className="video-feed mb-1">
+        <>
           <PageHeader
             title="Fan Videos"
             subTitle={isMobile ? '' : 'List of Fan Videos'}
@@ -668,7 +668,6 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
               </Row>
             </Col>
           </Row>
-
           <Content>
             <Table
               scroll={{ x: true }}
@@ -682,7 +681,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
               loading={loading}
             />
           </Content>
-        </div>
+        </>
       )}
       {details && (
         <VideoFeedDetailV2

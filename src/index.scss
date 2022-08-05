@@ -139,9 +139,9 @@
   position: sticky;
   position: -webkit-sticky;
   z-index: 2;
-  top: 5rem;
+  top: 4rem;
   background: white;
-  padding: 1rem;
+  padding: 1.5rem 1rem 1rem 1rem;
 }
 
 .custom-filter-box {
@@ -308,7 +308,7 @@
   }
 
   .ant-layout-content {
-    padding: 4px 16px;
+    padding: 16px;
   }
 }
 
