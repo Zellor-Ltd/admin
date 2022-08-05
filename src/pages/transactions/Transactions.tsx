@@ -161,7 +161,7 @@ const Transactions: React.FC<RouteComponentProps> = () => {
       const selectedEntity = fans?.find(item => item.user === userInput);
       if (!selectedEntity)
         message.warning(
-          "Can't list transactions with incomplete Fan Filter! Please select a Fan."
+          "Warning: Can't list transactions with incomplete Fan Filter! Please select a Fan."
         );
     }
   };

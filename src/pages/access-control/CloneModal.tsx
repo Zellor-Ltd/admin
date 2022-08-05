@@ -54,7 +54,7 @@ const CloneModal: React.FC<CloneModalProps> = ({
       profilesToSave.forEach(async profile => {
         const response: any = await savePrivileges(profile);
         if (response.success) message.success('Profile clone was successfull');
-        else message.error(response.error);
+        else message.error('Error: ' + response.error);
       });
 
       setShowCloneModal(false);

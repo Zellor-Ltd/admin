@@ -82,7 +82,7 @@ const errorHandler = (
   responseData?: any
 ) => {
   if (errorCounter < MAX_STACKED_ERRORS) {
-    message.error(errorMsg);
+    message.error('Error: ' + errorMsg);
     errorCounter++;
     setTimeout(() => {
       errorCounter--;

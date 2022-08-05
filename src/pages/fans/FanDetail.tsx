@@ -252,7 +252,7 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
         onFinish={onFinish}
         onFinishFailed={({ errorFields }) => {
           errorFields.forEach(errorField => {
-            message.error(errorField.errors[0]);
+            message.error('Error: ' + errorField.errors[0]);
           });
         }}
       >

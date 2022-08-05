@@ -386,7 +386,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
         onFinish={onFinish}
         onFinishFailed={({ errorFields }) => {
           errorFields.forEach(errorField => {
-            message.error(errorField.errors[0]);
+            message.error('Error: ' + errorField.errors[0]);
           });
         }}
       >

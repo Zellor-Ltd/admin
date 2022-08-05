@@ -306,7 +306,7 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = props => {
             initialValues={initial}
             onFinishFailed={({ errorFields }) => {
               errorFields.forEach(errorField => {
-                message.error(errorField.errors[0]);
+                message.error('Error: ' + errorField.errors[0]);
               });
             }}
             layout="vertical"
