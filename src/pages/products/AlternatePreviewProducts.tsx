@@ -66,7 +66,6 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
   const [form] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
   const [_products, _setProducts] = useState<Product[]>([]);
-  const currentProduct = useRef<Product>();
   const viewPicker = useRef<boolean>(false);
 
   const {
@@ -107,6 +106,11 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
   const onSaveProduct = async (record: Product) => {
     await doRequest(() => saveStagingProduct(record));
     onRefreshItem(record);
+  };
+
+  const refreshTable = (item: Product, index: number) => {
+    _products[index] = item;
+    _setProducts([..._products]);
   };
 
   const handleThumbnailOrTagReplacement = (
@@ -216,13 +220,17 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
     }
   };
 
-  const handleColourFocus = (product: Product) => {
+  const handleColourFocus = () => {
     viewPicker.current = true;
-    currentProduct.current = product;
   };
 
-  const handleColourChange = (value: string, product: Product) => {
+  const handleColourChange = (
+    value: string,
+    product: Product,
+    index: number
+  ) => {
     product.colour = value;
+    refreshTable(product, index);
   };
 
   const columns: EditableColumnType<Product>[] = [
@@ -335,24 +343,14 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
       title: 'Colour',
       dataIndex: 'colour',
       width: '10%',
-      render: (value: string, record: Product) => (
+      render: (value: string, record: Product, index: number) => (
         <div
           className="grid-color"
           style={{
-            background:
-              record.id === currentProduct.current?.id
-                ? currentProduct.current?.colour
-                : record.colour ?? '#FFFFFF',
+            background: record.colour ?? '#FFFFFF',
           }}
         >
-          <Tooltip
-            placement="topLeft"
-            title={
-              record.id === currentProduct.current?.id
-                ? currentProduct.current?.colour
-                : record.colour ?? '#FFFFFF'
-            }
-          >
+          <Tooltip placement="topLeft" title={record.colour ?? '#FFFFFF'}>
             <Popover
               placement="bottomLeft"
               content={
@@ -363,7 +361,7 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
                       color={record.colour ?? '#FFFFFF'}
                       disableAlpha
                       onChangeComplete={selectedColour =>
-                        handleColourChange(selectedColour.hex, record)
+                        handleColourChange(selectedColour.hex, record, index)
                       }
                       presetColors={[
                         '#4a2f10',
@@ -382,20 +380,15 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
               trigger="click"
             >
               <Button
-                onClick={() => handleColourFocus(record)}
+                onClick={handleColourFocus}
                 ghost
                 block
                 style={{
                   height: '100%',
-                  color:
-                    record.id === currentProduct.current?.id
-                      ? currentProduct.current?.colour
-                      : record.colour ?? '#FFFFFF',
+                  color: record.colour ?? '#FFFFFF',
                 }}
               >
-                {record.id === currentProduct.current?.id
-                  ? currentProduct.current?.colour
-                  : record.colour ?? '#FFFFFF'}
+                {record.colour ?? '#FFFFFF'}
               </Button>
             </Popover>
           </Tooltip>
