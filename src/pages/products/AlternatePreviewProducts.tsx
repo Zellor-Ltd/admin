@@ -41,6 +41,10 @@ interface AlternatePreviewProductsProps {
   onNextPage: () => void;
   page: number;
   eof: boolean;
+  disabled: boolean;
+  selectedRowKeys: any[];
+  setSelectedRowKeys: (keys: string[]) => void;
+  setSelectedRows: (rows: Product[]) => void;
 }
 
 const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
@@ -54,10 +58,13 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
   onNextPage,
   page,
   eof,
+  disabled,
+  selectedRowKeys,
+  setSelectedRowKeys,
+  setSelectedRows,
 }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
-  const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
   const [_products, _setProducts] = useState<Product[]>([]);
   const currentProduct = useRef<Product>();
   const viewPicker = useRef<boolean>(false);
@@ -330,7 +337,7 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
       width: '10%',
       render: (value: string, record: Product) => (
         <div
-          className="grid-color-variant"
+          className="grid-color"
           style={{
             background:
               record.id === currentProduct.current?.id
@@ -400,7 +407,11 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
       dataIndex: 'colourTitle',
       width: '10%',
       render: (value: string, record: Product) => (
-        <Tooltip placement="topLeft" title={record.colourTitle}>
+        <Tooltip
+          placement="topLeft"
+          title={record.colourTitle}
+          className="repositioned-grid-item"
+        >
           <Input
             onChange={event => (record.colourTitle = event.target.value)}
             placeholder="Colour name"
@@ -414,7 +425,11 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
       dataIndex: 'size',
       width: '10%',
       render: (value: string, record: Product) => (
-        <Tooltip placement="topLeft" title={record.size}>
+        <Tooltip
+          placement="topLeft"
+          title={record.size}
+          className="repositioned-grid-item"
+        >
           <Select
             onChange={optionValue => (record.size = optionValue)}
             placeholder="Size"
@@ -477,6 +492,11 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
     );
   });
 
+  const onSelectChange = (selectedRowKeys: any, selectedRows: any) => {
+    setSelectedRowKeys(selectedRowKeys);
+    setSelectedRows(selectedRows);
+  };
+
   return (
     <Form
       form={form}
@@ -514,12 +534,12 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
           rowKey="id"
           columns={columns}
           dataSource={_products}
-          loading={loading}
+          loading={loading || disabled}
           onSave={onSaveProduct}
           pagination={false}
           rowSelection={{
             selectedRowKeys,
-            onChange: setSelectedRowKeys,
+            onChange: onSelectChange,
           }}
           expandable={{
             expandedRowRender: (record: Product) => (
