@@ -12,7 +12,7 @@ interface CommissionDetailProps {
   commission?: any;
 }
 
-const CommissionDetails: React.FC<CommissionDetailProps> = ({
+const CommissionDetail: React.FC<CommissionDetailProps> = ({
   setDetails,
   commission,
 }) => {
@@ -189,4 +189,4 @@ const CommissionDetails: React.FC<CommissionDetailProps> = ({
   );
 };
 
-export default CommissionDetails;
+export default CommissionDetail;
