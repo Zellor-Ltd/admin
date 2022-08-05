@@ -71,6 +71,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
   const [isFetchingProductBrands, setIsFetchingProductBrands] = useState(false);
   const [form] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
+  const [disabled, setDisabled] = useState<boolean>(false);
   const [fetchingCategories, setFetchingCategories] = useState(false);
   const { fetchAllCategories, allCategories } = useAllCategories({
     setLoading: setFetchingCategories,
@@ -287,7 +288,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
   }, [refreshing]);
 
   const onAlternateViewSaveChanges = async (entity: Product) => {
-    setLoading(true);
+    setDisabled(true);
     try {
       const response = (await saveProductFn(entity)) as any;
       refreshItem(response.result, 'alternate');
@@ -296,7 +297,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
     } catch (error) {
       console.error(error);
     } finally {
-      setLoading(false);
+      setDisabled(false);
     }
   };
 
@@ -1018,6 +1019,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                     type="primary"
                     onClick={event => getResources(event, true)}
                     loading={loading}
+                    disabled={disabled}
                   >
                     Search
                     <SearchOutlined style={{ color: 'white' }} />

@@ -1,12 +1,21 @@
 import { Upload } from 'components';
-import { Button, Form, message, Spin } from 'antd';
+import {
+  Button,
+  Form,
+  Input,
+  message,
+  Popover,
+  Select,
+  Spin,
+  Tooltip,
+} from 'antd';
 import EditableTable, {
   EditableColumnType,
 } from '../../components/EditableTable';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useRequest } from '../../hooks/useRequest';
 import { Product } from '../../interfaces/Product';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   saveStagingProduct,
@@ -18,6 +27,8 @@ import { ProductBrand } from '../../interfaces/ProductBrand';
 import { Image } from '../../interfaces/Image';
 import scrollIntoView from 'scroll-into-view';
 import { useMount } from 'react-use';
+import { useSelector } from 'react-redux';
+import { SketchPicker } from 'react-color';
 
 interface AlternatePreviewProductsProps {
   products: Product[];
@@ -46,9 +57,14 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
 }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
-
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
   const [_products, _setProducts] = useState<Product[]>([]);
+  const currentProduct = useRef<Product>();
+  const viewPicker = useRef<boolean>(false);
+
+  const {
+    settings: { size = [] },
+  } = useSelector((state: any) => state.settings);
 
   useEffect(() => {
     const productsMap = new Map<string, Product>();
@@ -193,11 +209,20 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
     }
   };
 
+  const handleColourFocus = (product: Product) => {
+    viewPicker.current = true;
+    currentProduct.current = product;
+  };
+
+  const handleColourChange = (value: string, product: Product) => {
+    product.colour = value;
+  };
+
   const columns: EditableColumnType<Product>[] = [
     {
       title: 'Id',
       dataIndex: 'id',
-      width: '6%',
+      width: '5%',
       render: id => <CopyIdToClipboard id={id} />,
       align: 'center',
     },
@@ -217,10 +242,10 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
     {
       title: 'Tag Image',
       dataIndex: ['tagImage'],
-      width: '15%',
+      width: '10%',
       align: 'center',
       render: (_, record) => (
-        <Form.Item>
+        <Form.Item style={{ marginBottom: '-5px' }}>
           <Upload.ImageUpload
             fileList={record.tagImage}
             formProp="tagImage"
@@ -241,11 +266,11 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
     {
       title: 'Thumbnail',
       dataIndex: ['thumbnailUrl'],
-      width: '15%',
+      width: '10%',
       align: 'center',
       render: (_, record) => (
         <div className="images-content">
-          <Form.Item>
+          <Form.Item style={{ marginBottom: '-5px' }}>
             <Upload.ImageUpload
               fileList={record.thumbnailUrl}
               formProp="thumbnailUrl"
@@ -267,14 +292,14 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
     {
       title: 'Image',
       dataIndex: ['image'],
-      width: '40%',
+      width: '23%',
       align: 'left',
       ellipsis: true,
       render: (_, record) => {
         return (
           <div className="images-wrapper">
             <div className="images-content">
-              <Form.Item>
+              <Form.Item style={{ marginBottom: '-5px' }}>
                 <Upload.ImageUpload
                   maxCount={20}
                   fileList={record.image}
@@ -300,9 +325,123 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
       },
     },
     {
+      title: 'Colour',
+      dataIndex: 'colour',
+      width: '10%',
+      render: (value: string, record: Product) => (
+        <div
+          className="grid-color-variant"
+          style={{
+            background:
+              record.id === currentProduct.current?.id
+                ? currentProduct.current?.colour
+                : record.colour ?? '#FFFFFF',
+          }}
+        >
+          <Tooltip
+            placement="topLeft"
+            title={
+              record.id === currentProduct.current?.id
+                ? currentProduct.current?.colour
+                : record.colour ?? '#FFFFFF'
+            }
+          >
+            <Popover
+              placement="bottomLeft"
+              content={
+                viewPicker && (
+                  <div onBlur={() => (viewPicker.current = false)}>
+                    <SketchPicker
+                      className="mt-1"
+                      color={record.colour ?? '#FFFFFF'}
+                      disableAlpha
+                      onChangeComplete={selectedColour =>
+                        handleColourChange(selectedColour.hex, record)
+                      }
+                      presetColors={[
+                        '#4a2f10',
+                        '#704818',
+                        '#9e6521',
+                        '#C37D2A',
+                        '#E5AC69',
+                        '#F2C590',
+                        '#FFD6A6',
+                        '#FFF0CB',
+                      ]}
+                    />
+                  </div>
+                )
+              }
+              trigger="click"
+            >
+              <Button
+                onClick={() => handleColourFocus(record)}
+                ghost
+                block
+                style={{
+                  height: '100%',
+                  color:
+                    record.id === currentProduct.current?.id
+                      ? currentProduct.current?.colour
+                      : record.colour ?? '#FFFFFF',
+                }}
+              >
+                {record.id === currentProduct.current?.id
+                  ? currentProduct.current?.colour
+                  : record.colour ?? '#FFFFFF'}
+              </Button>
+            </Popover>
+          </Tooltip>
+        </div>
+      ),
+    },
+    {
+      title: 'Colour Title',
+      dataIndex: 'colourTitle',
+      width: '10%',
+      render: (value: string, record: Product) => (
+        <Tooltip placement="topLeft" title={record.colourTitle}>
+          <Input
+            onChange={event => (record.colourTitle = event.target.value)}
+            placeholder="Colour name"
+            defaultValue={value}
+          />
+        </Tooltip>
+      ),
+    },
+    {
+      title: 'Size',
+      dataIndex: 'size',
+      width: '10%',
+      render: (value: string, record: Product) => (
+        <Tooltip placement="topLeft" title={record.size}>
+          <Select
+            onChange={optionValue => (record.size = optionValue)}
+            placeholder="Size"
+            allowClear
+            showSearch
+            defaultValue={value}
+            style={{ width: '100%' }}
+            filterOption={(input, option) =>
+              !!option?.children
+                ?.toString()
+                ?.toUpperCase()
+                .includes(input?.toUpperCase())
+            }
+          >
+            {size.map((curr: any) => (
+              <Select.Option key={curr.value} value={curr.value}>
+                {curr.name}
+              </Select.Option>
+            ))}
+          </Select>
+        </Tooltip>
+      ),
+    },
+    {
       title: 'Actions',
       key: 'action',
-      width: '15%',
+      width: '12%',
       align: 'center',
       render: (_, record, index) => (
         <>
