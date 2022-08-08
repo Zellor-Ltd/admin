@@ -449,6 +449,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     ) {
       return (
         <ImageDnD
+          key={file.uid}
           originNode={originNode}
           file={file}
           fileList={currFileList}
