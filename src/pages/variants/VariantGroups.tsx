@@ -576,7 +576,7 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
       {details && (
         <VariantGroupDetail
           variantGroup={currentGroup as Product}
-          groups={products}
+          variantList={products}
           brands={brands}
           productBrands={productBrands}
           setDetails={setDetails}

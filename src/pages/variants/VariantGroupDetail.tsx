@@ -41,7 +41,7 @@ import { SelectOption } from '../../interfaces/SelectOption';
 const { Panel } = Collapse;
 interface VariantGroupDetailProps {
   variantGroup: Product;
-  groups: Product[];
+  variantList: Product[];
   brands: Brand[];
   productBrands: ProductBrand[];
   setDetails: (boolean) => void;
@@ -51,6 +51,7 @@ interface VariantGroupDetailProps {
 
 const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
   variantGroup,
+  variantList,
   brands,
   productBrands,
   setDetails,
@@ -76,7 +77,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<Product[]>(variantList);
   const [productStatusFilter, setProductStatusFilter] =
     useState<string>('live');
 
@@ -128,7 +129,9 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
 
   const getGroupItems = async () => {
     const { results } = await doFetch(() => fetchVariants(variantGroup.id));
-    setVariants(results);
+    if (!results.find(item => item.id === variantGroup.id))
+      setVariants([variantGroup, ...results]);
+    else setVariants(results);
   };
 
   useEffect(() => {
@@ -246,7 +249,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
         <>
           <Button
             disabled={record.id === variantGroup.id}
-            onClick={() => handleAdd(record.id)}
+            onClick={() => handleAdd(record)}
             type="link"
             style={
               record.id === variantGroup.id
@@ -498,12 +501,17 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
     );
   };
 
-  const handleRemove = async (itemId: string) => {
-    await doRequest(() => removeVariant(itemId, variantGroup.id));
+  const handleRemove = async (item: Product) => {
+    await doRequest(() => removeVariant(item.id, variantGroup.id));
+    setVariants(prev => [
+      ...prev.slice(0, variants.indexOf(item)),
+      ...prev.slice(variants.indexOf(item) + 1),
+    ]);
   };
 
-  const handleAdd = async (itemId: string) => {
-    await doRequest(() => addVariant(itemId, variantGroup.id));
+  const handleAdd = async (item: Product) => {
+    await doRequest(() => addVariant(item.id, variantGroup.id));
+    setVariants([...variants, item]);
   };
 
   return (
@@ -523,6 +531,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
       />
       <Collapse ghost>
         <Panel
+          className="ml-1 mt-1"
           showArrow={false}
           header={
             <Typography.Title level={5}>
@@ -544,7 +553,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
                   <Col>
                     <Button
                       disabled={item.id === variantGroup.id}
-                      onClick={() => handleRemove(item.id)}
+                      onClick={() => handleRemove(item)}
                       type="link"
                       style={
                         item.id === variantGroup.id
@@ -565,7 +574,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
         type="text"
         style={{ background: 'none' }}
         onClick={() => setShowMore(prev => !prev)}
-        className="mb-1"
+        className="mb-1 ml-1 mt-05"
       >
         <Typography.Title
           level={5}
