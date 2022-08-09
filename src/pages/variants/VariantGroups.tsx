@@ -35,6 +35,7 @@ import { useMount } from 'react-use';
 import SimpleSelect from '../../components/select/SimpleSelect';
 import { SelectOption } from '../../interfaces/SelectOption';
 import VariantGroupDetail from './VariantGroupDetail';
+import scrollIntoView from 'scroll-into-view';
 const { Panel } = Collapse;
 
 const VariantGroups: React.FC<RouteComponentProps> = () => {
@@ -140,20 +141,18 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
     await Promise.all([getBrands(), getProductBrands(), fetchAllCategories()]);
   });
 
-  useEffect(() => {
-    if (loaded.current) {
-      setPage(0);
-      setEof(false);
-      getProducts(true);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchFilter]);
-
   const handleFilterClassified = (e: CheckboxChangeEvent) => {
     setUnclassifiedFilter(e.target.checked);
   };
 
+  const scrollToCenter = (index: number) => {
+    scrollIntoView(
+      document.querySelector(`.scrollable-row-${index}`) as HTMLElement
+    );
+  };
+
   const _fetchStagingProducts = async (resetResults?: boolean) => {
+    scrollToCenter(0);
     const pageToUse = resetResults ? 0 : page;
     const response = await doFetch(() =>
       fetchStagingProducts({
@@ -487,32 +486,40 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
             subTitle={isMobile ? '' : 'Select group to edit'}
             className={isMobile ? 'mb-n1' : ''}
           />
-          {!isMobile && <Filters />}
-          {isMobile && (
-            <>
-              <Collapse ghost className="sticky-filter-box">
-                <Panel
-                  header={
-                    <Typography.Title level={5}>Filters</Typography.Title>
-                  }
-                  key="1"
-                >
-                  <Filters />
-                </Panel>
-              </Collapse>
-            </>
-          )}
-          <Row justify="end">
-            <Col>
-              <Button
-                type="primary"
-                onClick={() => getProducts(true)}
-                loading={loading}
-                className="mb-1 mr-1"
-              >
-                Search
-                <SearchOutlined style={{ color: 'white' }} />
-              </Button>
+          <Row
+            align="bottom"
+            justify="space-between"
+            className="sticky-filter-box"
+          >
+            {!isMobile && <Filters />}
+            {isMobile && (
+              <>
+                <Collapse ghost className="sticky-filter-box">
+                  <Panel
+                    header={
+                      <Typography.Title level={5}>Filters</Typography.Title>
+                    }
+                    key="1"
+                  >
+                    <Filters />
+                  </Panel>
+                </Collapse>
+              </>
+            )}
+            <Col span={24}>
+              <Row justify="end">
+                <Col>
+                  <Button
+                    type="primary"
+                    onClick={() => getProducts(true)}
+                    loading={loading}
+                    className="mb-1 mr-1"
+                  >
+                    Search
+                    <SearchOutlined style={{ color: 'white' }} />
+                  </Button>
+                </Col>
+              </Row>
             </Col>
           </Row>
           <InfiniteScroll
@@ -535,6 +542,7 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
             <Table
               scroll={{ x: true }}
               className="mt-2"
+              rowClassName={(_, index) => `scrollable-row-${index}`}
               rowKey="id"
               columns={columns}
               dataSource={products}

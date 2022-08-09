@@ -39,6 +39,7 @@ import { AppContext } from 'contexts/AppContext';
 import { ProductBrand } from 'interfaces/ProductBrand';
 import SimpleSelect from '../../components/select/SimpleSelect';
 import { SelectOption } from '../../interfaces/SelectOption';
+import scrollIntoView from 'scroll-into-view';
 const { Panel } = Collapse;
 interface VariantGroupDetailProps {
   variantGroup: Product;
@@ -158,7 +159,14 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
     setUnclassifiedFilter(e.target.checked);
   };
 
+  const scrollToCenter = (index: number) => {
+    scrollIntoView(
+      document.querySelector(`.scrollable-row-${index}`) as HTMLElement
+    );
+  };
+
   const _fetchStagingProducts = async (resetResults?: boolean) => {
+    scrollToCenter(0);
     const pageToUse = resetResults ? 0 : page;
     const response = await doFetch(() =>
       fetchStagingProducts({
@@ -559,32 +567,40 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
       </Button>
       {showMore && (
         <>
-          {!isMobile && <Filters />}
-          {isMobile && (
-            <>
-              <Collapse ghost className="sticky-filter-box">
-                <Panel
-                  header={
-                    <Typography.Title level={5}>Filters</Typography.Title>
-                  }
-                  key="1"
-                >
-                  <Filters />
-                </Panel>
-              </Collapse>
-            </>
-          )}
-          <Row justify="end">
-            <Col>
-              <Button
-                type="primary"
-                onClick={() => getProducts(true)}
-                loading={loading}
-                className="mb-1 mr-1"
-              >
-                Search
-                <SearchOutlined style={{ color: 'white' }} />
-              </Button>
+          <Row
+            align="bottom"
+            justify="space-between"
+            className="sticky-filter-box"
+          >
+            {!isMobile && <Filters />}
+            {isMobile && (
+              <>
+                <Collapse ghost>
+                  <Panel
+                    header={
+                      <Typography.Title level={5}>Filters</Typography.Title>
+                    }
+                    key="1"
+                  >
+                    <Filters />
+                  </Panel>
+                </Collapse>
+              </>
+            )}
+            <Col span={24}>
+              <Row justify="end">
+                <Col>
+                  <Button
+                    type="primary"
+                    onClick={() => getProducts(true)}
+                    loading={loading}
+                    className="mb-1 mr-1"
+                  >
+                    Search
+                    <SearchOutlined style={{ color: 'white' }} />
+                  </Button>
+                </Col>
+              </Row>
             </Col>
           </Row>
           <InfiniteScroll
@@ -607,6 +623,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
             <Table
               scroll={{ x: true }}
               className="mt-2"
+              rowClassName={(_, index) => `scrollable-row-${index}`}
               rowKey="id"
               columns={columns}
               dataSource={products}
