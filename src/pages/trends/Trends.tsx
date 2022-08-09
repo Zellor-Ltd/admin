@@ -17,6 +17,7 @@ import { AppContext } from 'contexts/AppContext';
 import { RouteComponentProps } from 'react-router-dom';
 import { fetchTrends, saveTrend } from 'services/DiscoClubService';
 import { LoadingOutlined, SearchOutlined } from '@ant-design/icons';
+import scrollIntoView from 'scroll-into-view';
 
 const Trends: React.FC<RouteComponentProps> = props => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -30,11 +31,18 @@ const Trends: React.FC<RouteComponentProps> = props => {
   const originalTrendsIndex = useRef<Record<string, number | undefined>>({});
   const { isMobile } = useContext(AppContext);
 
+  const scrollToCenter = (index: number) => {
+    scrollIntoView(
+      document.querySelector(`.scrollable-row-${index}`) as HTMLElement
+    );
+  };
+
   const getResources = async () => {
     await getTrends();
   };
 
   const getTrends = async () => {
+    scrollToCenter(0);
     const { results } = await doFetch(fetchTrends);
     setTrends(results);
   };

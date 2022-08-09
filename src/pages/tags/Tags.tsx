@@ -45,6 +45,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
   }, [searchFilter]);
 
   const updateDisplayedArray = async () => {
+    scrollToCenter(0);
     const pageToUse = refreshing ? 0 : page;
 
     const { results } = await doFetch(() =>
@@ -63,16 +64,17 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
 
   const fetch = () => {
     setRefreshing(true);
-    updateDisplayedArray();
+  };
+
+  const scrollToCenter = (index: number) => {
+    scrollIntoView(
+      document.querySelector(`.scrollable-row-${index}`) as HTMLElement
+    );
   };
 
   useEffect(() => {
     if (!details) {
-      scrollIntoView(
-        document.querySelector(
-          `.scrollable-row-${lastViewedIndex}`
-        ) as HTMLElement
-      );
+      scrollToCenter(lastViewedIndex);
     }
   }, [details]);
 

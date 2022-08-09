@@ -50,6 +50,7 @@ import VideoFeedDetailV2 from '../VideoFeedDetailV2';
 import { statusList, videoTypeList } from 'components/select/select.utils';
 import { useRequest } from 'hooks/useRequest';
 import moment from 'moment';
+import scrollIntoView from 'scroll-into-view';
 
 const { Content } = Layout;
 const { Panel } = Collapse;
@@ -78,10 +79,8 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const [feedItems, setFeedItems] = useState<any[]>([]);
   const { doFetch } = useRequest({ setLoading });
   const shouldUpdateFeedItemIndex = useRef(false);
-  const originalFeedItemsIndex = useRef<Record<string, number | undefined>>({});
-  const [updatingFeedItemIndex, setUpdatingFeedItemIndex] = useState<
-    Record<string, boolean>
-  >({});
+  const [updatingFeedItemIndex, setUpdatingFeedItemIndex] =
+    useState<boolean>(false);
   const [statusFilter, setStatusFilter] = useState<string>();
   const [brandFilter, setBrandFilter] = useState<Brand>();
   const [productBrandFilter, setProductBrandFilter] = useState<string>();
@@ -136,7 +135,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       title: 'Index',
       dataIndex: 'index',
       width: '3%',
-      render: (_, feedItem) => {
+      render: (_, feedItem, index) => {
         if (updatingFeedItemIndex[feedItem.id]) {
           const antIcon = <LoadingOutlined spin />;
           return <Spin indicator={antIcon} />;
@@ -146,9 +145,9 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
               type="number"
               value={feedItem.index}
               onChange={feedItemIndex =>
-                onFeedItemIndexOnColumnChange(feedItemIndex, feedItem)
+                onIndexChange(feedItemIndex, feedItem, index)
               }
-              onBlur={() => onFeedItemIndexOnColumnBlur(feedItem)}
+              onBlur={() => onIndexBlur(feedItem)}
             />
           );
         }
@@ -327,8 +326,15 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     segmentForm.setFieldsValue(selectedVideoFeed);
   }, [selectedVideoFeed]);
 
+  const scrollToCenter = (index: number) => {
+    scrollIntoView(
+      document.querySelector(`.scrollable-row-${index}`) as HTMLElement
+    );
+  };
+
   const fetch = async () => {
     try {
+      scrollToCenter(0);
       const { results }: any = await doFetch(() =>
         fetchVideoFeedV2({
           query: titleFilter,
@@ -419,56 +425,25 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     setDetails(true);
   };
 
-  const onFeedItemIndexOnColumnChange = (
-    feedItemIndex: number,
-    feedItem: FeedItem
-  ) => {
-    for (let i = 0; i < feedItems.length; i++) {
-      if (feedItems[i].id === feedItem.id) {
-        if (originalFeedItemsIndex.current[feedItem.id] === undefined) {
-          originalFeedItemsIndex.current[feedItem.id] = feedItem.index;
-        }
+  const onIndexChange = (value: number, record: FeedItem, index: number) => {
+    shouldUpdateFeedItemIndex.current = record.index! !== value;
 
-        shouldUpdateFeedItemIndex.current =
-          originalFeedItemsIndex.current[feedItem.id] !== feedItemIndex;
-
-        feedItems[i].index = feedItemIndex;
-        setFeedItems([...feedItems]);
-        break;
-      }
-    }
+    feedItems[index].index = value;
+    setFeedItems([...feedItems]);
   };
 
-  const onFeedItemIndexOnColumnBlur = async (feedItem: FeedItem) => {
+  const onIndexBlur = async (record: FeedItem) => {
     if (!shouldUpdateFeedItemIndex.current) {
       return;
     }
-    setUpdatingFeedItemIndex(prev => {
-      const newValue = {
-        ...prev,
-      };
-      newValue[feedItem.id] = true;
-
-      return newValue;
-    });
+    setUpdatingFeedItemIndex(true);
     try {
-      await saveVideoFeed(feedItem);
+      await saveVideoFeed(record);
       message.success('Register updated with success.');
     } catch (err) {
-      console.error(
-        `Error while trying to update FeedItem[${feedItem.id}] index.`,
-        err
-      );
-      message.success('Error while trying to update FeedItem index.');
+      console.error(`Error while trying to update index.`, err);
     }
-    setUpdatingFeedItemIndex(prev => {
-      const newValue = {
-        ...prev,
-      };
-      delete newValue[feedItem.id];
-      return newValue;
-    });
-    delete originalFeedItemsIndex.current[feedItem.id];
+    setUpdatingFeedItemIndex(false);
     shouldUpdateFeedItemIndex.current = false;
   };
 
@@ -709,9 +684,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
           <Content>
             <Table
               scroll={{ x: true }}
-              rowClassName={(_, index) =>
-                `${index === lastViewedIndex ? 'selected-row' : ''}`
-              }
+              rowClassName={(_, index) => `scrollable-row-${index}`}
               size="small"
               columns={feedItemColumns}
               rowKey="id"

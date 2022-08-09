@@ -120,6 +120,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   const fetch = async (loadNextPage?: boolean) => {
+    scrollToCenter(0);
     const pageToUse = loadNextPage ? page : 0;
     const { results }: any = await doFetch(() =>
       fetchOrders({
@@ -190,13 +191,15 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     return rows;
   };
 
+  const scrollToCenter = (index: number) => {
+    scrollIntoView(
+      document.querySelector(`.scrollable-row-${index}`) as HTMLElement
+    );
+  };
+
   useEffect(() => {
     if (!details) {
-      scrollIntoView(
-        document.querySelector(
-          `.scrollable-row-${lastViewedIndex}`
-        ) as HTMLElement
-      );
+      scrollToCenter(lastViewedIndex);
     }
   }, [details, orders]);
 
