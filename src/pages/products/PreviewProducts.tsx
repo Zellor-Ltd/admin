@@ -295,6 +295,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
   };
 
   const _fetchStagingProducts = async (resetResults?: boolean) => {
+    scrollToCenter(0);
     const pageToUse = resetResults ? 0 : page;
     const response = await doFetch(() =>
       fetchStagingProducts({
@@ -650,13 +651,15 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
     setDetails(true);
   };
 
+  const scrollToCenter = (index: number) => {
+    scrollIntoView(
+      document.querySelector(`.scrollable-row-${index}`) as HTMLElement
+    );
+  };
+
   useEffect(() => {
     if (!details) {
-      scrollIntoView(
-        document.querySelector(
-          `.scrollable-row-${lastViewedIndex}`
-        ) as HTMLElement
-      );
+      scrollToCenter(lastViewedIndex);
     }
   }, [details]);
 

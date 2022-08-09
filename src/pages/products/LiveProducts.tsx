@@ -259,6 +259,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
   }, [brands, setDiscoPercentageByBrand, setSearchTagsByCategory]);
 
   const _fetchProducts = async (resetResults?: boolean) => {
+    scrollToCenter(0);
     const pageToUse = resetResults ? 0 : page;
     const response = await doFetch(() =>
       fetchProducts({
@@ -596,13 +597,15 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
     setSelectedRowKeys(selectedRows);
   };
 
+  const scrollToCenter = (index: number) => {
+    scrollIntoView(
+      document.querySelector(`.scrollable-row-${index}`) as HTMLElement
+    );
+  };
+
   useEffect(() => {
     if (!details) {
-      scrollIntoView(
-        document.querySelector(
-          `.scrollable-row-${lastViewedIndex}`
-        ) as HTMLElement
-      );
+      scrollToCenter(lastViewedIndex);
     }
   }, [details]);
 
