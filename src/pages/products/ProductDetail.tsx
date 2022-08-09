@@ -785,7 +785,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
               </Col>
               <Col lg={6} xs={24}>
                 <Form.Item name="sku" label="SKU">
-                  <InputNumber disabled={isLive} />
+                  <Input disabled={isLive} />
                 </Form.Item>
               </Col>
               <Col lg={6} xs={24}>
@@ -794,7 +794,12 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                 </Form.Item>
               </Col>
             </Row>
-            <Row>
+                      <Row>
+                          <Col lg={6} xs={24}>
+                              <Form.Item name="urlKey" label="urlKey">
+                                  <Input placeholder="Product Key" disabled={isLive} />
+                              </Form.Item>
+                          </Col>
               <Col lg={6} xs={24}>
                 <Form.Item name="weight" label="Weight">
                   <InputNumber placeholder="Weight in Kg" disabled={isLive} />
