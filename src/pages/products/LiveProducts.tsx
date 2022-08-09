@@ -874,7 +874,10 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                     type="primary"
                     onClick={getResources}
                     loading={loading}
-                    style={{ position: 'relative', top: '32px' }}
+                    style={{
+                      position: 'relative',
+                      top: activeKey === '1' ? '2rem' : '3.5rem',
+                    }}
                     className="mr-1"
                   >
                     Search
