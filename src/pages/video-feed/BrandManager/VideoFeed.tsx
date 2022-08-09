@@ -94,6 +94,32 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const [indexFilter, setIndexFilter] = useState<number>();
   const [creatorFilter, setCreatorFilter] = useState<string>();
   const [dateSortFilter, setDateSortFilter] = useState<string>();
+  const [filterOffset, setFilterOffset] = useState<number>(64);
+  const [filterPanel, setFilterPanel] = useState<any>();
+  const filterPanelHeight = useRef<number>();
+  const windowHeight = window.innerHeight;
+
+  const handleResize = () => {
+    if (activeKey === '1') {
+      filterPanelHeight.current = filterPanel!.offsetHeight;
+      if (filterPanelHeight.current! > windowHeight) {
+        const heightDifference = filterPanelHeight.current! - windowHeight;
+        const quarterWindowHeight = windowHeight / 4;
+        setFilterOffset(-heightDifference - quarterWindowHeight);
+      }
+    } else setFilterOffset(64);
+  };
+
+  useEffect(() => {
+    if (filterPanel) filterPanel.addEventListener('resize', handleResize);
+  });
+
+  useEffect(() => {
+    if (inputRef.current)
+      inputRef.current.focus({
+        cursor: 'end',
+      });
+  }, [titleFilter]);
 
   const masterBrandMapping: SelectOption = {
     key: 'id',
@@ -116,7 +142,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const statusMapping: SelectOption = {
     key: 'value',
     label: 'value',
-    value: 'value'.toUpperCase(),
+    value: 'value'?.toUpperCase(),
   };
 
   const videoTypeMapping: SelectOption = {
@@ -124,13 +150,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     label: 'value',
     value: 'value',
   };
-
-  useEffect(() => {
-    if (inputRef.current)
-      inputRef.current.focus({
-        cursor: 'end',
-      });
-  }, [titleFilter]);
 
   const { isMobile } = useContext(AppContext);
 
@@ -465,161 +484,162 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
 
   const Filters = () => {
     return (
-      <Col lg={20} xs={24}>
-        <Row gutter={[8, 8]}>
-          <Col lg={5} xs={24}>
-            <Typography.Title level={5} title="Title">
-              Title
-            </Typography.Title>
-            <Input
-              ref={inputRef}
-              onChange={event => setTitleFilter(event.target.value)}
-              suffix={<SearchOutlined />}
-              value={titleFilter}
-              placeholder="Search by Title"
-              onPressEnter={fetch}
-            />
-          </Col>
-          <Col lg={5} xs={24}>
-            <Typography.Title level={5}>Master Brand</Typography.Title>
-            <SimpleSelect
-              data={brands}
-              onChange={(_, brand) => setBrandFilter(brand)}
-              style={{ width: '100%' }}
-              selectedOption={brandFilter?.id}
-              optionMapping={masterBrandMapping}
-              placeholder={'Select a Master Brand'}
-              loading={isFetchingBrands}
-              disabled={isFetchingBrands}
-              allowClear={true}
-            />
-          </Col>
-          <Col lg={5} xs={24}>
-            <Typography.Title level={5}>Product Brand</Typography.Title>
-            <SimpleSelect
-              data={productBrands}
-              onChange={id => setProductBrandFilter(id as any)}
-              style={{ width: '100%' }}
-              selectedOption={productBrandFilter}
-              optionMapping={productBrandMapping}
-              placeholder={'Select a Product Brand'}
-              loading={isFetchingProductBrands}
-              disabled={isFetchingProductBrands}
-              allowClear={true}
-            />
-          </Col>
-          <Col lg={5} xs={24}>
-            <Typography.Title level={5}>Status</Typography.Title>
-            <SimpleSelect
-              data={statusList}
-              onChange={status => setStatusFilter(status)}
-              style={{ width: '100%' }}
-              selectedOption={statusFilter}
-              optionMapping={statusMapping}
-              placeholder={'Select a Status'}
-              allowClear={true}
-            />
-          </Col>
-          <Col lg={5} xs={24}>
-            <Typography.Title level={5}>Category</Typography.Title>
-            <SimpleSelect
-              data={categories}
-              onChange={(_, category) =>
-                setCategoryFilter(category?.name ?? '')
-              }
-              style={{ width: '100%' }}
-              selectedOption={categoryFilter}
-              optionMapping={categoryMapping}
-              placeholder={'Select a Category'}
-              allowClear={true}
-              loading={isFetchingCategories}
-              disabled={isFetchingCategories}
-            />
-          </Col>
-          <Col lg={5} xs={24}>
-            <Typography.Title level={5}>Video Type</Typography.Title>
-            <SimpleSelect
-              data={videoTypeList}
-              onChange={videoType => setVideoTypeFilter(videoType)}
-              style={{ width: '100%' }}
-              selectedOption={videoTypeFilter}
-              optionMapping={videoTypeMapping}
-              placeholder={'Select a Video Type'}
-              allowClear={true}
-            />
-          </Col>
-          <Col lg={5} xs={24}>
-            <Typography.Title level={5}>Start Index</Typography.Title>
-            <InputNumber
-              min={0}
-              onChange={startIndex => setIndexFilter(startIndex ?? undefined)}
-              placeholder="Select an Index"
-            />
-          </Col>
-          <Col lg={5} xs={24}>
-            <Typography.Title level={5}>Creator</Typography.Title>
-            <Select
-              placeholder="Select a Creator"
-              disabled={!creators.length}
-              onChange={setCreatorFilter}
-              style={{ width: '100%' }}
-              filterOption={(input, option) =>
-                !!option?.children
-                  ?.toString()
-                  .toUpperCase()
-                  .includes(input.toUpperCase())
-              }
-              allowClear={true}
-              showSearch={true}
-            >
-              {creators.map((curr: any) => (
+      <>
+        <Col lg={20} xs={24}>
+          <Row gutter={[8, 8]}>
+            <Col lg={5} xs={24}>
+              <Typography.Title level={5} title="Title">
+                Title
+              </Typography.Title>
+              <Input
+                ref={inputRef}
+                onChange={event => setTitleFilter(event.target.value)}
+                suffix={<SearchOutlined />}
+                value={titleFilter}
+                placeholder="Search by Title"
+                onPressEnter={fetch}
+              />
+            </Col>
+            <Col lg={5} xs={24}>
+              <Typography.Title level={5}>Master Brand</Typography.Title>
+              <SimpleSelect
+                data={brands}
+                onChange={(_, brand) => setBrandFilter(brand)}
+                style={{ width: '100%' }}
+                selectedOption={brandFilter?.id}
+                optionMapping={masterBrandMapping}
+                placeholder={'Select a Master Brand'}
+                loading={isFetchingBrands}
+                disabled={isFetchingBrands}
+                allowClear={true}
+              />
+            </Col>
+            <Col lg={5} xs={24}>
+              <Typography.Title level={5}>Product Brand</Typography.Title>
+              <SimpleSelect
+                data={productBrands}
+                onChange={id => setProductBrandFilter(id as any)}
+                style={{ width: '100%' }}
+                selectedOption={productBrandFilter}
+                optionMapping={productBrandMapping}
+                placeholder={'Select a Product Brand'}
+                loading={isFetchingProductBrands}
+                disabled={isFetchingProductBrands}
+                allowClear={true}
+              />
+            </Col>
+            <Col lg={5} xs={24}>
+              <Typography.Title level={5}>Status</Typography.Title>
+              <SimpleSelect
+                data={statusList}
+                onChange={status => setStatusFilter(status)}
+                style={{ width: '100%' }}
+                selectedOption={statusFilter}
+                optionMapping={statusMapping}
+                placeholder={'Select a Status'}
+                allowClear={true}
+              />
+            </Col>
+            <Col lg={5} xs={24}>
+              <Typography.Title level={5}>Category</Typography.Title>
+              <SimpleSelect
+                data={categories}
+                onChange={(_, category) =>
+                  setCategoryFilter(category?.name ?? '')
+                }
+                style={{ width: '100%' }}
+                selectedOption={categoryFilter}
+                optionMapping={categoryMapping}
+                placeholder={'Select a Category'}
+                allowClear={true}
+                loading={isFetchingCategories}
+                disabled={isFetchingCategories}
+              />
+            </Col>
+            <Col lg={5} xs={24}>
+              <Typography.Title level={5}>Video Type</Typography.Title>
+              <SimpleSelect
+                data={videoTypeList}
+                onChange={videoType => setVideoTypeFilter(videoType)}
+                style={{ width: '100%' }}
+                selectedOption={videoTypeFilter}
+                optionMapping={videoTypeMapping}
+                placeholder={'Select a Video Type'}
+                allowClear={true}
+              />
+            </Col>
+            <Col lg={5} xs={24}>
+              <Typography.Title level={5}>Start Index</Typography.Title>
+              <InputNumber
+                min={0}
+                onChange={startIndex => setIndexFilter(startIndex ?? undefined)}
+                placeholder="Select an Index"
+              />
+            </Col>
+            <Col lg={5} xs={24}>
+              <Typography.Title level={5}>Creator</Typography.Title>
+              <Select
+                placeholder="Select a Creator"
+                disabled={!creators.length}
+                onChange={setCreatorFilter}
+                style={{ width: '100%' }}
+                filterOption={(input, option) =>
+                  !!option?.children
+                    ?.toString()
+                    ?.toUpperCase()
+                    .includes(input?.toUpperCase())
+                }
+                allowClear={true}
+                showSearch={true}
+              >
+                {creators.map((curr: any) => (
+                  <Select.Option
+                    key={curr.id}
+                    value={curr.firstName}
+                    label={curr.firstName}
+                  >
+                    {curr.firstName}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Col>
+            <Col lg={5} xs={24}>
+              <Typography.Title level={5}>Date Sort</Typography.Title>
+              <Select
+                onChange={setDateSortFilter}
+                placeholder="Select a Sorting Option"
+                style={{ width: '100%' }}
+                filterOption={(input, option) =>
+                  !!option?.children
+                    ?.toString()
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
+                }
+                allowClear={true}
+                showSearch={true}
+              >
                 <Select.Option
-                  key={curr.id}
-                  value={curr.firstName}
-                  label={curr.firstName}
+                  key="newestFirst"
+                  value="Newest First"
+                  label="Newest First"
                 >
-                  {curr.firstName}
+                  Newest First
                 </Select.Option>
-              ))}
-            </Select>
-          </Col>
-          <Col lg={5} xs={24}>
-            <Typography.Title level={5}>Date Sort</Typography.Title>
-
-            <Select
-              onChange={setDateSortFilter}
-              placeholder="Select a Sorting Option"
-              style={{ width: '100%' }}
-              filterOption={(input, option) =>
-                !!option?.children
-                  ?.toString()
-                  .toLowerCase()
-                  .includes(input.toLowerCase())
-              }
-              allowClear={true}
-              showSearch={true}
-            >
-              <Select.Option
-                key="newestFirst"
-                value="Newest First"
-                label="Newest First"
-              >
-                Newest First
-              </Select.Option>
-              <Select.Option
-                key="oldestFirst"
-                value="Oldest First"
-                label="Oldest First"
-              >
-                Oldest First
-              </Select.Option>
-              <Select.Option key="none" value="None" label="None">
-                None
-              </Select.Option>
-            </Select>
-          </Col>
-        </Row>
-      </Col>
+                <Select.Option
+                  key="oldestFirst"
+                  value="Oldest First"
+                  label="Oldest First"
+                >
+                  Oldest First
+                </Select.Option>
+                <Select.Option key="none" value="None" label="None">
+                  None
+                </Select.Option>
+              </Select>
+            </Col>
+          </Row>
+        </Col>
+      </>
     );
   };
 
@@ -627,6 +647,12 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     if (event && isMobile) {
       if (activeKey === '1') setActiveKey('0');
     }
+  };
+
+  const handleCollapseChange = () => {
+    if (activeKey === '0') setActiveKey('1');
+    else setActiveKey('0');
+    setFilterPanel(document.getElementById('filterPanel'));
   };
 
   return (
@@ -650,26 +676,25 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
           <Row
             align="bottom"
             justify="space-between"
-            className={
-              isMobile ? 'sticky-filter-box pt-0' : 'sticky-filter-box'
-            }
+            className="sticky-filter-box"
+            id="filterPanel"
+            style={{ top: filterOffset }}
           >
             {!isMobile && <Filters />}
             {isMobile && (
               <Collapse
                 ghost
                 activeKey={activeKey}
-                onChange={() => {
-                  if (activeKey === '0') setActiveKey('1');
-                  else setActiveKey('0');
-                }}
+                onChange={handleCollapseChange}
                 destroyInactivePanel
               >
                 <Panel
                   header={<Typography.Title level={5}>Filter</Typography.Title>}
                   key="1"
                 >
-                  <Filters />
+                  <div id="filterFields">
+                    <Filters />
+                  </div>
                 </Panel>
               </Collapse>
             )}

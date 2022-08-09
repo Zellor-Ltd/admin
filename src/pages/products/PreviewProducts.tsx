@@ -37,6 +37,7 @@ import React, {
 } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import {
+  addVariant,
   deleteStagingProduct,
   fetchBrands,
   fetchProductBrands,
@@ -57,7 +58,7 @@ import { useMount } from 'react-use';
 import AlternatePreviewProducts from './AlternatePreviewProducts';
 import SimpleSelect from '../../components/select/SimpleSelect';
 import { SelectOption } from '../../interfaces/SelectOption';
-import ProductsDetails from './ProductsDetails';
+import ProductDetail from './ProductDetail';
 
 const { getSearchTags, getCategories } = productUtils;
 const { Panel } = Collapse;
@@ -74,12 +75,14 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
   const [isFetchingProductBrands, setIsFetchingProductBrands] = useState(false);
   const [form] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
+  const [disabled, setDisabled] = useState<boolean>(false);
   const [fetchingCategories, setFetchingCategories] = useState(false);
   const { fetchAllCategories, allCategories } = useAllCategories({
     setLoading: setFetchingCategories,
   });
 
-  const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
+  const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
+  const [selectedRows, setSelectedRows] = useState<Product[]>([]);
   const [loaded, setLoaded] = useState<boolean>(false);
   const [details, setDetails] = useState<boolean>(false);
   const [currentProduct, setCurrentProduct] = useState<Product>();
@@ -297,7 +300,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
   }, [refreshing]);
 
   const onAlternateViewSaveChanges = async (entity: Product) => {
-    setLoading(true);
+    setDisabled(true);
     try {
       const response = (await saveProductFn(entity)) as any;
       refreshItem(response.result, 'alternate');
@@ -306,7 +309,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
     } catch (error) {
       console.error(error);
     } finally {
-      setLoading(false);
+      setDisabled(false);
     }
   };
 
@@ -713,6 +716,11 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
     }
   };
 
+  const onSelectChange = (selectedRowKeys: any, selectedRows: any) => {
+    setSelectedRowKeys(selectedRowKeys);
+    setSelectedRows(selectedRows);
+  };
+
   const buildView = () => {
     switch (viewName) {
       case 'alternate':
@@ -730,6 +738,10 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
             onNextPage={() => updateDisplayedArray(false)}
             page={page}
             eof={eof}
+            disabled={disabled}
+            selectedRowKeys={selectedRowKeys}
+            setSelectedRowKeys={setSelectedRowKeys}
+            setSelectedRows={setSelectedRows}
           ></AlternatePreviewProducts>
         );
       case 'default':
@@ -764,12 +776,12 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                   rowKey="id"
                   columns={columns}
                   dataSource={products}
-                  loading={loading}
+                  loading={loading || disabled}
                   onSave={onSaveItem}
                   pagination={false}
                   rowSelection={{
                     selectedRowKeys,
-                    onChange: setSelectedRowKeys,
+                    onChange: onSelectChange,
                   }}
                   expandable={{
                     expandedRowRender: (record: Product) => (
@@ -790,7 +802,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
           );
         } else {
           return (
-            <ProductsDetails
+            <ProductDetail
               brands={brands}
               productBrands={productBrands}
               allCategories={allCategories}
@@ -808,6 +820,13 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
       default:
         return <h1>Houston...</h1>;
     }
+  };
+
+  const handleGroupItems = () => {
+    selectedRows.forEach(
+      async item =>
+        await doRequest(() => addVariant(item.id, selectedRowKeys[0]))
+    );
   };
 
   const Filters = () => {
