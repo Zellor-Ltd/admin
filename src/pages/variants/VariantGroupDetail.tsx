@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import {
   CloseOutlined,
   MenuOutlined,
@@ -42,6 +43,7 @@ const { Panel } = Collapse;
 interface VariantGroupDetailProps {
   variantGroup: Product;
   variantList: Product[];
+  searchPage: number;
   brands: Brand[];
   productBrands: ProductBrand[];
   setDetails: (boolean) => void;
@@ -52,6 +54,7 @@ interface VariantGroupDetailProps {
 const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
   variantGroup,
   variantList,
+  searchPage,
   brands,
   productBrands,
   setDetails,
@@ -63,8 +66,6 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
   const { allCategories } = useAllCategories({
     setLoading: setFetchingCategories,
   });
-  const [loaded, setLoaded] = useState<boolean>(false);
-
   const { usePageFilter } = useContext(AppContext);
   const [searchFilter, setSearchFilter] = usePageFilter<string>('search');
   const [runIdFilter, setRunIdFilter] = useState<string>();
@@ -74,13 +75,11 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
   >();
   const [outOfStockFilter, setOutOfStockFilter] = useState<boolean>(false);
   const [unclassifiedFilter, setUnclassifiedFilter] = useState<boolean>(false);
-  const [page, setPage] = useState<number>(0);
+  const [page, setPage] = useState<number>(searchPage);
   const [eof, setEof] = useState<boolean>(false);
-  const [refreshing, setRefreshing] = useState<boolean>(false);
   const [products, setProducts] = useState<Product[]>(variantList);
   const [productStatusFilter, setProductStatusFilter] =
     useState<string>('live');
-
   const [currentSuperCategory, setCurrentSuperCategory] =
     useState<ProductCategory>();
   const [currentCategory, setCurrentCategory] = useState<ProductCategory>();
@@ -88,7 +87,6 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
     useState<ProductCategory>();
   const [currentSubSubCategory, setCurrentSubSubCategory] =
     useState<ProductCategory>();
-
   const { doFetch, doRequest } = useRequest({ setLoading });
 
   const optionMapping: SelectOption = {
@@ -149,32 +147,19 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
     setCurrentSubSubCategory(undefined);
   }, [currentSubCategory]);
 
-  const refreshProducts = async () => {
-    setPage(0);
-    setRefreshing(true);
-  };
-
   useEffect(() => {
-    if (loaded) {
-      refreshProducts();
-    }
+    setPage(0);
+    setEof(false);
+    getProducts(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchFilter]);
-
-  useEffect(() => {
-    if (refreshing) {
-      setEof(false);
-      getProducts(true);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [refreshing]);
 
   const handleFilterClassified = (e: CheckboxChangeEvent) => {
     setUnclassifiedFilter(e.target.checked);
   };
 
-  const _fetchStagingProducts = async searchButton => {
-    const pageToUse = refreshing ? 0 : page;
+  const _fetchStagingProducts = async (resetResults?: boolean) => {
+    const pageToUse = resetResults ? 0 : page;
     const response = await doFetch(() =>
       fetchStagingProducts({
         limit: 30,
@@ -192,36 +177,19 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
         runId: runIdFilter,
       })
     );
-    if (searchButton) {
-      setPage(0);
-    } else {
-      setPage(pageToUse + 1);
-    }
+    setPage(pageToUse + 1);
+
     if (response.results.length < 30) setEof(true);
     return response;
   };
 
-  const getResources = async (event?: any, searchButton?: boolean) => {
-    if (!isMobile && event) event.stopPropagation();
-    setLoading(true);
-    const { results } = await _fetchStagingProducts(searchButton);
-
-    setLoaded(true);
-    setProducts(results);
-    setLoading(false);
-  };
-
-  const getProducts = async searchButton => {
+  const getProducts = async (resetResults?: boolean) => {
+    if (!resetResults && !products.length) return;
     const { results } = await doFetch(() =>
-      _fetchStagingProducts(searchButton)
+      _fetchStagingProducts(resetResults)
     );
-    setProducts(results);
-  };
-
-  const updateDisplayedArray = async searchButton => {
-    if (!products.length) return;
-    const { results } = await _fetchStagingProducts(searchButton);
-    setProducts(prev => [...prev.concat(results)]);
+    if (resetResults) setProducts(results);
+    else setProducts(prev => [...prev.concat(results)]);
   };
 
   const handleFilterOutOfStock = (e: CheckboxChangeEvent) => {
@@ -248,11 +216,11 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
       render: (_, record: Product) => (
         <>
           <Button
-            disabled={record.id === variantGroup.id}
+            disabled={record.variantId === variantGroup.id}
             onClick={() => handleAdd(record)}
             type="link"
             style={
-              record.id === variantGroup.id
+              record.variantId === variantGroup.id
                 ? { color: 'gray' }
                 : { color: 'green' }
             }
@@ -290,7 +258,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
                   value={searchFilter}
                   onChange={event => setSearchFilter(event.target.value)}
                   placeholder="Search by Name"
-                  onPressEnter={() => getResources(true)}
+                  onPressEnter={() => getProducts(true)}
                 />
               </Col>
               <Col lg={6} xs={24}>
@@ -486,7 +454,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
                 <Col>
                   <Button
                     type="primary"
-                    onClick={event => getResources(event, true)}
+                    onClick={() => getProducts(true)}
                     loading={loading}
                   >
                     Search
@@ -610,7 +578,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
             <Col>
               <Button
                 type="primary"
-                onClick={getResources}
+                onClick={() => getProducts(true)}
                 loading={loading}
                 className="mb-1 mr-1"
               >
@@ -621,7 +589,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
           </Row>
           <InfiniteScroll
             dataLength={products.length}
-            next={() => updateDisplayedArray(false)}
+            next={getProducts}
             hasMore={!eof}
             loader={
               page !== 0 && (
