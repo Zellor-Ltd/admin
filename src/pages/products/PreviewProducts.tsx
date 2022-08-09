@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import {
   ArrowRightOutlined,
   DeleteOutlined,
@@ -49,7 +50,6 @@ import ProductExpandedRow from './ProductExpandedRow';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
 import './Products.scss';
 import { ProductCategory } from 'interfaces/Category';
-import { SearchFilterDebounce } from 'components/SearchFilterDebounce';
 import { AppContext } from 'contexts/AppContext';
 import { ProductBrand } from 'interfaces/ProductBrand';
 import { productUtils } from '../../helpers/product-utils';
@@ -83,7 +83,6 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
 
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
   const [selectedRows, setSelectedRows] = useState<Product[]>([]);
-  const [loaded, setLoaded] = useState<boolean>(false);
   const [details, setDetails] = useState<boolean>(false);
   const [currentProduct, setCurrentProduct] = useState<Product>();
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
@@ -99,7 +98,6 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
   const [unclassifiedFilter, setUnclassifiedFilter] = useState<boolean>(false);
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
-  const [refreshing, setRefreshing] = useState<boolean>(false);
   const [products, setProducts] = useState<Product[]>([]);
 
   const [currentMasterBrand, setCurrentMasterBrand] = useState<string>();
@@ -255,12 +253,6 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
     [brands, form, currentProduct]
   );
 
-  const refreshProducts = async () => {
-    setSelectedRowKeys([]);
-    setPage(0);
-    setRefreshing(true);
-  };
-
   useMount(async () => {
     const getProductBrands = async () => {
       setIsFetchingProductBrands(true);
@@ -280,24 +272,9 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
   });
 
   useEffect(() => {
-    if (loaded) {
-      refreshProducts();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchFilter]);
-
-  useEffect(() => {
     setDiscoPercentageByBrand(true);
     setSearchTagsByCategory(true);
   }, [brands, setDiscoPercentageByBrand, setSearchTagsByCategory]);
-
-  useEffect(() => {
-    if (refreshing) {
-      setEof(false);
-      getProducts(true);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [refreshing]);
 
   const onAlternateViewSaveChanges = async (entity: Product) => {
     setDisabled(true);
@@ -317,8 +294,8 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
     setUnclassifiedFilter(e.target.checked);
   };
 
-  const _fetchStagingProducts = async searchButton => {
-    const pageToUse = refreshing ? 0 : page;
+  const _fetchStagingProducts = async (resetResults?: boolean) => {
+    const pageToUse = resetResults ? 0 : page;
     const response = await doFetch(() =>
       fetchStagingProducts({
         limit: 30,
@@ -336,32 +313,24 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
         runId: runIdFilter,
       })
     );
-    if (searchButton) {
-      setPage(0);
-    } else {
-      setPage(pageToUse + 1);
-    }
+    setPage(pageToUse + 1);
+
     if (response.results.length < 30) setEof(true);
     return response;
   };
 
-  const getResources = async (event?: any, searchButton?: boolean) => {
-    collapse(event);
-    setLoading(true);
-    const { results } = await _fetchStagingProducts(searchButton);
-
-    setLoaded(true);
-    setProducts(results);
-    setLoading(false);
-  };
-
-  const getProducts = async searchButton => {
+  const getProducts = async (resetResults?: boolean) => {
+    if (!resetResults && !products.length) return;
     const { results } = await doFetch(() =>
-      _fetchStagingProducts(searchButton)
+      _fetchStagingProducts(resetResults)
     );
-    setProducts(results);
+    if (resetResults) {
+      setEof(false);
+      setProducts(results);
+    } else setProducts(prev => [...prev.concat(results)]);
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => form.resetFields(), [currentProduct]);
 
   const deleteItem = async (_id: string, index: number) => {
@@ -373,12 +342,6 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
     products[lastViewedIndex] = record;
     setProducts([...products]);
     setViewName(viewName ?? previousViewName.current);
-  };
-
-  const updateDisplayedArray = async searchButton => {
-    if (!products.length) return;
-    const { results } = await _fetchStagingProducts(searchButton);
-    setProducts(prev => [...prev.concat(results)]);
   };
 
   const onSaveCategories = async (record: Product) => {
@@ -735,7 +698,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
             onEditProduct={(product, productIndex) =>
               editProduct(product, productIndex, 'alternate')
             }
-            onNextPage={() => updateDisplayedArray(false)}
+            onNextPage={getProducts}
             page={page}
             eof={eof}
             disabled={disabled}
@@ -750,7 +713,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
             <>
               <InfiniteScroll
                 dataLength={products.length}
-                next={() => updateDisplayedArray(false)}
+                next={getProducts}
                 hasMore={!eof}
                 loader={
                   page !== 0 && (
@@ -842,7 +805,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                 suffix={<SearchOutlined />}
                 value={searchFilter}
                 placeholder="Search by Name"
-                onPressEnter={() => getResources(true)}
+                onPressEnter={() => getProducts(true)}
               />
             </Col>
             <Col lg={6} xs={24}>
@@ -1137,7 +1100,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                   </Button>
                   <Button
                     type="primary"
-                    onClick={getResources}
+                    onClick={() => getProducts(true)}
                     loading={loading}
                     className="mx-1"
                   >

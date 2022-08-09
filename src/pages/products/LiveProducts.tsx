@@ -1,3 +1,5 @@
+/* eslint-disable eqeqeq */
+/* eslint-disable react-hooks/exhaustive-deps */
 import {
   EyeOutlined,
   SearchOutlined,
@@ -28,7 +30,6 @@ import { Link, RouteComponentProps } from 'react-router-dom';
 import './Products.scss';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
 import EditableTable, { EditableColumnType } from 'components/EditableTable';
-import { SearchFilterDebounce } from 'components/SearchFilterDebounce';
 import { AppContext } from 'contexts/AppContext';
 import useAllCategories from 'hooks/useAllCategories';
 import { useRequest } from 'hooks/useRequest';
@@ -71,7 +72,6 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
     setLoading: setFetchingCategories,
   });
   const { usePageFilter } = useContext(AppContext);
-  const [refreshing, setRefreshing] = useState<boolean>(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
   const [productAPITest, setProductAPITest] = useState<Product | null>(null);
   const { doFetch, doRequest } = useRequest({ setLoading });
@@ -87,7 +87,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
   const [currentProductBrand, setCurrentProductBrand] = useState<string>();
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
-  const [loaded, setLoaded] = useState<boolean>(false);
+  const loaded = useRef<boolean>(false);
   const [details, setDetails] = useState<boolean>(false);
   const [currentProduct, setCurrentProduct] = useState<Product>();
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
@@ -258,8 +258,8 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
     setSearchTagsByCategory(true);
   }, [brands, setDiscoPercentageByBrand, setSearchTagsByCategory]);
 
-  const _fetchProducts = async () => {
-    const pageToUse = refreshing ? 0 : page;
+  const _fetchProducts = async (resetResults?: boolean) => {
+    const pageToUse = resetResults ? 0 : page;
     const response = await doFetch(() =>
       fetchProducts({
         limit: 30,
@@ -282,32 +282,17 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
     return response;
   };
 
-  const getResources = async (event?: any) => {
-    collapse(event);
-    setRefreshing(true);
-    setLoaded(true);
-  };
-
-  const updateDisplayedArray = async () => {
-    if (!products.length) return;
-    const { results } = await _fetchProducts();
-    setProducts(prev => [...prev.concat(results)]);
+  const getProducts = async (resetResults?: boolean) => {
+    if (!resetResults && !products.length) return;
+    const { results } = await doFetch(() => _fetchProducts(resetResults));
+    if (resetResults) {
+      setEof(false);
+      setProducts(results);
+    } else setProducts(prev => [...prev.concat(results)]);
+    if (!loaded.current) loaded.current = true;
   };
 
   useEffect(() => form.resetFields(), [currentProduct]);
-
-  useEffect(() => {
-    const getProducts = async () => {
-      const { results } = await _fetchProducts();
-      setProducts(results);
-      setRefreshing(false);
-    };
-    if (refreshing) {
-      setEof(false);
-      getProducts();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [refreshing]);
 
   const onSaveOnRowEdition = async (record: Product) => {
     setCurrentProduct(record);
@@ -641,7 +626,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
   };
 
   const refreshItem = (record: Product) => {
-    if (loaded) {
+    if (loaded.current) {
       products[lastViewedIndex] = record;
       setProducts([...products]);
     } else {
@@ -672,7 +657,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                 suffix={<SearchOutlined />}
                 value={searchFilter}
                 placeholder="Search by Name"
-                onPressEnter={getResources}
+                onPressEnter={() => getProducts(true)}
               />
             </Col>
             <Col lg={6} xs={24}>
@@ -868,7 +853,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                 <Col className="mt-n2">
                   <Button
                     type="primary"
-                    onClick={getResources}
+                    onClick={() => getProducts(true)}
                     loading={loading}
                     style={{
                       position: 'relative',
@@ -889,7 +874,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
           />
           <InfiniteScroll
             dataLength={products.length}
-            next={updateDisplayedArray}
+            next={getProducts}
             hasMore={!eof}
             loader={
               page !== 0 && (
@@ -915,7 +900,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
               rowKey="id"
               columns={columns}
               dataSource={products}
-              loading={refreshing || (!products.length && loading)}
+              loading={!products.length && loading}
               onSave={onSaveItem}
               pagination={false}
               rowSelection={{
