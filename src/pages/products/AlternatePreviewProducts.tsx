@@ -1,12 +1,21 @@
 import { Upload } from 'components';
-import { Button, Form, message, Spin } from 'antd';
+import {
+  Button,
+  Form,
+  Input,
+  message,
+  Popover,
+  Select,
+  Spin,
+  Tooltip,
+} from 'antd';
 import EditableTable, {
   EditableColumnType,
 } from '../../components/EditableTable';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useRequest } from '../../hooks/useRequest';
 import { Product } from '../../interfaces/Product';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   saveStagingProduct,
@@ -18,6 +27,8 @@ import { ProductBrand } from '../../interfaces/ProductBrand';
 import { Image } from '../../interfaces/Image';
 import scrollIntoView from 'scroll-into-view';
 import { useMount } from 'react-use';
+import { useSelector } from 'react-redux';
+import { SketchPicker } from 'react-color';
 
 interface AlternatePreviewProductsProps {
   products: Product[];
@@ -30,6 +41,10 @@ interface AlternatePreviewProductsProps {
   onNextPage: () => void;
   page: number;
   eof: boolean;
+  disabled: boolean;
+  selectedRowKeys: any[];
+  setSelectedRowKeys: (keys: string[]) => void;
+  setSelectedRows: (rows: Product[]) => void;
 }
 
 const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
@@ -43,12 +58,19 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
   onNextPage,
   page,
   eof,
+  disabled,
+  selectedRowKeys,
+  setSelectedRowKeys,
+  setSelectedRows,
 }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
-
-  const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
   const [_products, _setProducts] = useState<Product[]>([]);
+  const viewPicker = useRef<boolean>(false);
+
+  const {
+    settings: { size = [] },
+  } = useSelector((state: any) => state.settings);
 
   useEffect(() => {
     const productsMap = new Map<string, Product>();
@@ -84,6 +106,11 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
   const onSaveProduct = async (record: Product) => {
     await doRequest(() => saveStagingProduct(record));
     onRefreshItem(record);
+  };
+
+  const refreshTable = (item: Product, index: number) => {
+    _products[index] = item;
+    _setProducts([..._products]);
   };
 
   const handleThumbnailOrTagReplacement = (
@@ -193,11 +220,24 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
     }
   };
 
+  const handleColourFocus = () => {
+    viewPicker.current = true;
+  };
+
+  const handleColourChange = (
+    value: string,
+    product: Product,
+    index: number
+  ) => {
+    product.colour = value;
+    refreshTable(product, index);
+  };
+
   const columns: EditableColumnType<Product>[] = [
     {
       title: 'Id',
       dataIndex: 'id',
-      width: '6%',
+      width: '5%',
       render: id => <CopyIdToClipboard id={id} />,
       align: 'center',
     },
@@ -217,10 +257,10 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
     {
       title: 'Tag Image',
       dataIndex: ['tagImage'],
-      width: '15%',
+      width: '10%',
       align: 'center',
       render: (_, record) => (
-        <Form.Item>
+        <Form.Item style={{ marginBottom: '-5px' }}>
           <Upload.ImageUpload
             fileList={record.tagImage}
             formProp="tagImage"
@@ -241,11 +281,11 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
     {
       title: 'Thumbnail',
       dataIndex: ['thumbnailUrl'],
-      width: '15%',
+      width: '10%',
       align: 'center',
       render: (_, record) => (
         <div className="images-content">
-          <Form.Item>
+          <Form.Item style={{ marginBottom: '-5px' }}>
             <Upload.ImageUpload
               fileList={record.thumbnailUrl}
               formProp="thumbnailUrl"
@@ -267,14 +307,14 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
     {
       title: 'Image',
       dataIndex: ['image'],
-      width: '40%',
+      width: '23%',
       align: 'left',
       ellipsis: true,
       render: (_, record) => {
         return (
           <div className="images-wrapper">
             <div className="images-content">
-              <Form.Item>
+              <Form.Item style={{ marginBottom: '-5px' }}>
                 <Upload.ImageUpload
                   maxCount={20}
                   fileList={record.image}
@@ -300,9 +340,116 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
       },
     },
     {
+      title: 'Colour',
+      dataIndex: 'colour',
+      width: '10%',
+      render: (value: string, record: Product, index: number) => (
+        <div
+          className="grid-color"
+          style={{
+            background: record.colour ?? '#FFFFFF',
+          }}
+        >
+          <Tooltip placement="topLeft" title={record.colour ?? '#FFFFFF'}>
+            <Popover
+              placement="bottomLeft"
+              content={
+                viewPicker && (
+                  <div onBlur={() => (viewPicker.current = false)}>
+                    <SketchPicker
+                      className="mt-1"
+                      color={record.colour ?? '#FFFFFF'}
+                      disableAlpha
+                      onChangeComplete={selectedColour =>
+                        handleColourChange(selectedColour.hex, record, index)
+                      }
+                      presetColors={[
+                        '#4a2f10',
+                        '#704818',
+                        '#9e6521',
+                        '#C37D2A',
+                        '#E5AC69',
+                        '#F2C590',
+                        '#FFD6A6',
+                        '#FFF0CB',
+                      ]}
+                    />
+                  </div>
+                )
+              }
+              trigger="click"
+            >
+              <Button
+                onClick={handleColourFocus}
+                ghost
+                block
+                style={{
+                  height: '100%',
+                  color: record.colour ?? '#FFFFFF',
+                }}
+              >
+                {record.colour ?? '#FFFFFF'}
+              </Button>
+            </Popover>
+          </Tooltip>
+        </div>
+      ),
+    },
+    {
+      title: 'Colour Title',
+      dataIndex: 'colourTitle',
+      width: '10%',
+      render: (value: string, record: Product) => (
+        <Tooltip
+          placement="topLeft"
+          title={record.colourTitle}
+          className="repositioned-grid-item"
+        >
+          <Input
+            onChange={event => (record.colourTitle = event.target.value)}
+            placeholder="Colour name"
+            defaultValue={value}
+          />
+        </Tooltip>
+      ),
+    },
+    {
+      title: 'Size',
+      dataIndex: 'size',
+      width: '10%',
+      render: (value: string, record: Product) => (
+        <Tooltip
+          placement="topLeft"
+          title={record.size}
+          className="repositioned-grid-item"
+        >
+          <Select
+            onChange={optionValue => (record.size = optionValue)}
+            placeholder="Size"
+            allowClear
+            showSearch
+            defaultValue={value}
+            style={{ width: '100%' }}
+            filterOption={(input, option) =>
+              !!option?.children
+                ?.toString()
+                ?.toUpperCase()
+                .includes(input?.toUpperCase())
+            }
+          >
+            {size.map((curr: any) => (
+              <Select.Option key={curr.value} value={curr.value}>
+                {curr.name}
+              </Select.Option>
+            ))}
+          </Select>
+        </Tooltip>
+      ),
+    },
+    {
       title: 'Actions',
       key: 'action',
-      width: '15%',
+      width: '12%',
       align: 'center',
       render: (_, record, index) => (
         <>
@@ -338,6 +485,11 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
     );
   });
 
+  const onSelectChange = (selectedRowKeys: any, selectedRows: any) => {
+    setSelectedRowKeys(selectedRowKeys);
+    setSelectedRows(selectedRows);
+  };
+
   return (
     <Form
       form={form}
@@ -345,7 +497,7 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
       onFinish={onFormFinish}
       onFinishFailed={({ errorFields }) => {
         errorFields.forEach(errorField => {
-          message.error(errorField.errors[0]);
+          message.error('Error: ' + errorField.errors[0]);
         });
       }}
     >
@@ -375,12 +527,12 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
           rowKey="id"
           columns={columns}
           dataSource={_products}
-          loading={loading}
+          loading={loading || disabled}
           onSave={onSaveProduct}
           pagination={false}
           rowSelection={{
             selectedRowKeys,
-            onChange: setSelectedRowKeys,
+            onChange: onSelectChange,
           }}
           expandable={{
             expandedRowRender: (record: Product) => (

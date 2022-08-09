@@ -53,7 +53,7 @@ const CreatorsPageDetail: React.FC<MastheadDetailProps> = ({
           <Col lg={24} xs={24}>
             <Form.Item
               label="Masthead"
-              rules={[{ required: true, message: `Masthead is required.` }]}
+              rules={[{ required: true, message: 'Masthead is required.' }]}
             >
               <Upload.ImageUpload
                 maxCount={1}

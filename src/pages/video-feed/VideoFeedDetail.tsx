@@ -147,7 +147,6 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = props => {
       ...pack,
       tags: pack.tags ? pack.tags : [],
     }));
-    // item.validity = moment(item.validity).format("DD/MM/YYYY");
     await doRequest(() => saveVideoFeed(item));
     history.goBack();
   };
@@ -307,7 +306,7 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = props => {
             initialValues={initial}
             onFinishFailed={({ errorFields }) => {
               errorFields.forEach(errorField => {
-                message.error(errorField.errors[0]);
+                message.error('Error: ' + errorField.errors[0]);
               });
             }}
             layout="vertical"

@@ -52,7 +52,7 @@ const DebounceSelect: React.FC<DebounceSelectProps> = ({
       setOptions([]);
       setFetching(true);
 
-      fetchOptions(value.toUpperCase()).then(entities => {
+      fetchOptions(value?.toUpperCase()).then(entities => {
         if (fetchId !== fetchRef.current) {
           // for fetch callback order
           return;
@@ -64,7 +64,9 @@ const DebounceSelect: React.FC<DebounceSelectProps> = ({
 
         if (isInit) {
           const selectedOption = options.find(option =>
-            (option.label as string).toUpperCase().includes(value.toUpperCase())
+            (option.label as string)
+              ?.toUpperCase()
+              .includes(value?.toUpperCase())
           );
           _setSelectedOption(selectedOption);
         } else {
@@ -81,8 +83,8 @@ const DebounceSelect: React.FC<DebounceSelectProps> = ({
   const _onChange = (option: { value: string; label: string; key: string }) => {
     const selectedEntity = fetchedEntities.current.find(entity =>
       entity[optionMapping.value]
-        .toUpperCase()
-        .includes(option.value.toUpperCase())
+        ?.toUpperCase()
+        .includes(option.value?.toUpperCase())
     );
     onChange(option.value, selectedEntity);
   };

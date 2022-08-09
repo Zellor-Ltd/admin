@@ -93,7 +93,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
 
   const filterBrand = () => {
     return brands.filter(brand =>
-      brand.brandName?.toUpperCase().includes(filterText.toUpperCase())
+      brand.brandName?.toUpperCase().includes(filterText?.toUpperCase())
     );
   };
 
@@ -108,7 +108,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
         await saveBrand(brand);
         message.success('Register updated with success.');
       } catch (error) {
-        message.error("Couldn't set brand property. Try again.");
+        message.error("Error: Couldn't set brand property. Try again.");
       }
     } else {
       setCurrentBrand(brand);

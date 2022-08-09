@@ -52,7 +52,7 @@ const HomeScreenDetail: React.FC<HomeScreenDetailProps> = ({
               name="startDate"
               label="Start Date"
               getValueProps={formatMoment}
-              rules={[{ required: true, message: `Start Date is required.` }]}
+              rules={[{ required: true, message: 'Start Date is required.' }]}
             >
               <DatePicker format="DD/MM/YYYY" />
             </Form.Item>
@@ -62,7 +62,7 @@ const HomeScreenDetail: React.FC<HomeScreenDetailProps> = ({
               name="expireDate"
               label="Expire Date"
               getValueProps={formatMoment}
-              rules={[{ required: true, message: `Expire Date is required.` }]}
+              rules={[{ required: true, message: 'Expire Date is required.' }]}
             >
               <DatePicker format="DD/MM/YYYY" />
             </Form.Item>

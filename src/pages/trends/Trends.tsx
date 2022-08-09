@@ -132,7 +132,7 @@ const Trends: React.FC<RouteComponentProps> = props => {
 
   const search = rows => {
     return rows.filter(
-      row => row.tag?.toUpperCase().indexOf(filter.toUpperCase()) > -1
+      row => row.tag?.toUpperCase().indexOf(filter?.toUpperCase()) > -1
     );
   };
 

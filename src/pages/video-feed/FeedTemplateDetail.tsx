@@ -334,7 +334,7 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
   };
 
   const onSearch = (input: any, option: any) => {
-    return option.label?.toUpperCase().includes(input.toUpperCase());
+    return option.label?.toUpperCase().includes(input?.toUpperCase());
   };
 
   const onChangecreator = (_: string, entity: Creator) => {
@@ -397,7 +397,7 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
                           required: true,
                           min: 0,
                           type: 'number',
-                          message: `Index is required.`,
+                          message: 'Index is required.',
                         },
                       ]}
                       initialValue={1000}
@@ -754,7 +754,7 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
                     rules={[
                       {
                         required: true,
-                        message: `Creator is required.`,
+                        message: 'Creator is required.',
                       },
                     ]}
                   >
@@ -1117,7 +1117,7 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
           name="templateForm"
           onFinishFailed={({ errorFields }) => {
             errorFields.forEach(errorField => {
-              message.error(errorField.errors[0]);
+              message.error('Error: ' + errorField.errors[0]);
             });
           }}
           layout="vertical"

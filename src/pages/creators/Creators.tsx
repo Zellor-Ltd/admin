@@ -75,7 +75,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
       await saveCreator(creator);
       message.success('Register updated with success.');
     } catch (error) {
-      message.error("Couldn't set brand property. Try again.");
+      message.error("Error: Couldn't set brand property. Try again.");
     }
   };
 

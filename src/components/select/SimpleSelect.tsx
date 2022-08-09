@@ -49,7 +49,7 @@ const SimpleSelect: React.FC<SimpleSelectProps> = ({
   }, [selectedOption]);
 
   const _onSearch = (input: any, option: any) => {
-    return option.label.toUpperCase().includes(input?.toUpperCase());
+    return option.label?.toUpperCase().includes(input?.toUpperCase());
   };
 
   const _onChange = (value: string) => {

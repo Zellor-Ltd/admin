@@ -59,7 +59,7 @@ const VideoUpload: React.FC<VideoUploadProps> = props => {
   //     });
   //     message.success(`${info.file.name} file uploaded successfully`);
   //   } else if (info.file.status === "error") {
-  //     message.error(`${info.file.name} file upload failed.`);
+  //     message.error(`Error: ${info.file.name} file upload failed.`);
   //   }
   // };
 

@@ -67,7 +67,7 @@ const ManualPayment: React.FC<ManualPaymentProps> = ({
               <Form.Item
                 name="creatorId"
                 label="Creator"
-                rules={[{ required: true, message: `Creator is required.` }]}
+                rules={[{ required: true, message: 'Creator is required.' }]}
               >
                 <Select
                   style={{ width: '100%' }}
@@ -80,8 +80,8 @@ const ManualPayment: React.FC<ManualPaymentProps> = ({
                   filterOption={(input, option) =>
                     !!option?.children
                       ?.toString()
-                      .toUpperCase()
-                      .includes(input.toUpperCase())
+                      ?.toUpperCase()
+                      .includes(input?.toUpperCase())
                   }
                 >
                   {creators.map((curr: any) => (
@@ -99,7 +99,7 @@ const ManualPayment: React.FC<ManualPaymentProps> = ({
                 rules={[
                   {
                     required: true,
-                    message: `Description is required.`,
+                    message: 'Description is required.',
                   },
                 ]}
               >

@@ -82,7 +82,7 @@ const errorHandler = (
   responseData?: any
 ) => {
   if (errorCounter < MAX_STACKED_ERRORS) {
-    message.error(errorMsg);
+    message.error('Error: ' + errorMsg);
     errorCounter++;
     setTimeout(() => {
       errorCounter--;
@@ -911,3 +911,14 @@ export const deleteVariantGroup = (id: string) => {
     return instance.get(`Disco/Product/VariantGroup/Delete/${id}`);
   }
 };
+
+export const fetchVariants = (variantId: string) =>
+  instance.get(`Disco/Product/GetVariants/${variantId}`);
+
+export const addVariant = (productId: string, variantId: string) =>
+  instance.get(`Disco/Product/AddToVariantGroup/${productId}/${variantId}`);
+
+export const removeVariant = (productId: string, variantId: string) =>
+  instance.get(
+    `Disco/Product/RemoveFromVariantGroup/${productId}/${variantId}`
+  );

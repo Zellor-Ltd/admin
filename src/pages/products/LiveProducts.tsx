@@ -51,7 +51,7 @@ import scrollIntoView from 'scroll-into-view';
 import { useMount } from 'react-use';
 import SimpleSelect from 'components/select/SimpleSelect';
 import { SelectOption } from '../../interfaces/SelectOption';
-import ProductsDetails from './ProductsDetails';
+import ProductDetail from './ProductDetail';
 import { ProductCategory } from 'interfaces/Category';
 
 const { getSearchTags, getCategories } = productUtils;
@@ -410,8 +410,6 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
         else if (b.maxDiscoDollars) return 1;
         else return 0;
       },
-      // editable: true,
-      // number: true,
     },
     {
       title: 'Disco %',
@@ -428,8 +426,6 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
         else if (b.discoPercentage) return 1;
         else return 0;
       },
-      // editable: true,
-      // number: true,
     },
     {
       title: 'Shopify Id',
@@ -944,7 +940,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
         </>
       )}
       {details && (
-        <ProductsDetails
+        <ProductDetail
           brands={brands}
           productBrands={productBrands}
           allCategories={allCategories}

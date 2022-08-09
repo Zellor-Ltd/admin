@@ -16,7 +16,6 @@ import {
   LineChartOutlined,
   UserAddOutlined,
   FolderAddOutlined,
-  ToolOutlined,
   BarsOutlined,
   LikeOutlined,
   FileDoneOutlined,
@@ -30,10 +29,8 @@ import {
   ShopOutlined,
   MobileOutlined,
   RocketOutlined,
-  AppstoreOutlined,
   PartitionOutlined,
   PercentageOutlined,
-  ProfileOutlined,
 } from '@ant-design/icons';
 import { Menu } from 'antd';
 import SubMenu from 'antd/lib/menu/SubMenu';
@@ -83,14 +80,9 @@ const AdminSideMenu = ({ isMobile, testMode }) => {
       <Menu.Item key="preview-products" icon={<IssuesCloseOutlined />}>
         <Link to="/preview-products">Preview Products</Link>
       </Menu.Item>
-      <SubMenu key="variants" icon={<PartitionOutlined />} title="Variants">
-        <Menu.Item key="variant_group-names" icon={<ProfileOutlined />}>
-          <Link to="/variant_group-names">Variant Group Names</Link>
-        </Menu.Item>
-        <Menu.Item key="variant_grouping" icon={<AppstoreOutlined />}>
-          <Link to="/variant_grouping">Variant Grouping</Link>
-        </Menu.Item>
-      </SubMenu>
+      <Menu.Item key="variant_groups" icon={<PartitionOutlined />}>
+        <Link to="/variant_groups">Variant Groups</Link>
+      </Menu.Item>
       <Menu.Item key="feed" icon={<MobileOutlined />}>
         <Link to="/feed">Video Feeds</Link>
       </Menu.Item>
@@ -141,23 +133,14 @@ const AdminSideMenu = ({ isMobile, testMode }) => {
         <Menu.Item key="creators" icon={<UserOutlined />}>
           <Link to="/users_creators">Creators</Link>
         </Menu.Item>
-        {/* <Menu.Item key="brand-managers" icon={<UserOutlined />}>
-          <Link to="/brand-managers">Brand Managers</Link>
-        </Menu.Item> */}
       </SubMenu>
       <SubMenu key="settings" icon={<SettingOutlined />} title="Settings">
         <Menu.Item key="settings_access-control" icon={<ControlOutlined />}>
           <Link to="/settings_access-control">Access Control</Link>
         </Menu.Item>
-        <Menu.Item key="settings_data-management" icon={<ToolOutlined />}>
-          <Link to="/settings_data-management">Data Management</Link>
-        </Menu.Item>
         <Menu.Item key="settings_endpoints" icon={<CloudServerOutlined />}>
           <Link to="/settings_endpoints">Endpoints</Link>
         </Menu.Item>
-        {/* <Menu.Item key="interfaces" icon={<AppstoreAddOutlined />}>
-        <Link to="/interfaces">Interfaces</Link>
-      </Menu.Item> */}
         <Menu.Item key="settings_roles" icon={<ApartmentOutlined />}>
           <Link to="/settings_roles">Roles</Link>
         </Menu.Item>

@@ -91,38 +91,22 @@ const ModalBrand: React.FC<ModalFormProps> = ({ brand, visible, onCancel }) => {
               </Form.Item>
             </Col>
             <Col lg={6} xs={24}>
-              <Form.Item
-                name="opacity"
-                label="Opacity"
-                // rules={[{ required: true }]}
-              >
+              <Form.Item name="opacity" label="Opacity">
                 <InputNumber style={{ width: '100%' }} />
               </Form.Item>
             </Col>
             <Col lg={8} xs={24}>
-              <Form.Item
-                name="x"
-                label="Position X"
-                // rules={[{ required: true }]}
-              >
+              <Form.Item name="x" label="Position X">
                 <InputNumber style={{ width: '100%' }} />
               </Form.Item>
             </Col>
             <Col lg={8} xs={24}>
-              <Form.Item
-                name="y"
-                label="Position Y"
-                // rules={[{ required: true }]}
-              >
+              <Form.Item name="y" label="Position Y">
                 <InputNumber style={{ width: '100%' }} />
               </Form.Item>
             </Col>
             <Col lg={8} xs={24}>
-              <Form.Item
-                name="z"
-                label="Z Index"
-                // rules={[{ required: true }]}
-              >
+              <Form.Item name="z" label="Z Index">
                 <InputNumber style={{ width: '100%' }} />
               </Form.Item>
             </Col>

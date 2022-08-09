@@ -386,7 +386,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
         onFinish={onFinish}
         onFinishFailed={({ errorFields }) => {
           errorFields.forEach(errorField => {
-            message.error(errorField.errors[0]);
+            message.error('Error: ' + errorField.errors[0]);
           });
         }}
       >
@@ -446,7 +446,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                   rules={[
                     {
                       required: true,
-                      message: `Master Brand Color is required.`,
+                      message: 'Master Brand Color is required.',
                     },
                   ]}
                 >
@@ -484,7 +484,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                     name="checkoutType"
                     label="Checkout Type"
                     rules={[
-                      { required: true, message: `Checkout Type is required.` },
+                      { required: true, message: 'Checkout Type is required.' },
                     ]}
                   >
                     <Radio.Group
@@ -504,7 +504,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                     rules={[
                       {
                         required: !internalCheckout,
-                        message: `External Checkout Type is required.`,
+                        message: 'External Checkout Type is required.',
                       },
                     ]}
                   >
@@ -526,7 +526,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                     name="checkout"
                     label="Checkout"
                     rules={[
-                      { required: true, message: `Checkout is required.` },
+                      { required: true, message: 'Checkout is required.' },
                     ]}
                   >
                     <Select placeholder="Select a checkout type">
@@ -545,7 +545,8 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                     rules={[
                       {
                         required: true,
-                        message: `External Payment Confirmation URL is required.`,
+                        message:
+                          'External Payment Confirmation URL is required.',
                       },
                     ]}
                   >
@@ -559,7 +560,8 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                     rules={[
                       {
                         required: true,
-                        message: `External Payment Cancelation URL is required.`,
+                        message:
+                          'External Payment Cancelation URL is required.',
                       },
                     ]}
                   >
@@ -574,7 +576,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                       rules={[
                         {
                           required: true,
-                          message: `Disco Percentage is required.`,
+                          message: 'Disco Percentage is required.',
                         },
                       ]}
                     >
@@ -593,7 +595,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                       rules={[
                         {
                           required: true,
-                          message: `Creator Percentage is required.`,
+                          message: 'Creator Percentage is required.',
                         },
                       ]}
                     >
@@ -628,7 +630,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                       rules={[
                         {
                           required: true,
-                          message: `'Max Disco Dollar percentage' is required.`,
+                          message: 'Max Disco Dollar percentage is required.',
                         },
                       ]}
                     >
@@ -647,7 +649,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                       rules={[
                         {
                           required: true,
-                          message: `'Initial Free Disco Dollars' is required.`,
+                          message: 'Initial Free Disco Dollars is required.',
                         },
                       ]}
                     >
@@ -668,7 +670,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                       rules={[
                         {
                           required: true,
-                          message: `'Return Period' is required.`,
+                          message: 'Return Period is required.',
                         },
                       ]}
                     >
@@ -686,7 +688,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                     name="shopName"
                     label="Shop Name (without https:// or spaces)"
                     rules={[
-                      { required: true, message: `Shop Name is required.` },
+                      { required: true, message: 'Shop Name is required.' },
                     ]}
                   >
                     <Input placeholder="casey-temp.myshopify.com" />
@@ -751,7 +753,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                   <Form.Item
                     label="Logo Round"
                     rules={[
-                      { required: true, message: `Logo Round is required.` },
+                      { required: true, message: 'Logo Round is required.' },
                     ]}
                     name="brandLogo"
                   >
@@ -768,7 +770,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                     label="Upload Card"
                     name="brandCard"
                     rules={[
-                      { required: true, message: `Upload Card is required.` },
+                      { required: true, message: 'Upload Card is required.' },
                     ]}
                   >
                     <Upload.ImageUpload
@@ -802,12 +804,12 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
               <Row className="mx-1">
                 <Col lg={6} xs={12}>
                   <Form.Item
-                    label="Mast Head Image"
+                    label="Masthead Image"
                     name="mastHead"
                     rules={[
                       {
                         required: true,
-                        message: `Mast Head Image is required.`,
+                        message: 'Masthead Image is required.',
                       },
                     ]}
                   >
@@ -823,7 +825,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                   <Form.Item
                     label="Avatar"
                     name="avatar"
-                    rules={[{ required: true, message: `Avatar is required.` }]}
+                    rules={[{ required: true, message: 'Avatar is required.' }]}
                   >
                     <Upload.ImageUpload
                       maxCount={1}

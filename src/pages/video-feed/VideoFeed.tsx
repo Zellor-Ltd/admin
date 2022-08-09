@@ -586,8 +586,8 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                 filterOption={(input, option) =>
                   !!option?.children
                     ?.toString()
-                        ?.toUpperCase()
-                        .includes(input?.toUpperCase())
+                    ?.toUpperCase()
+                    .includes(input?.toUpperCase())
                 }
                 allowClear={true}
                 showSearch={true}

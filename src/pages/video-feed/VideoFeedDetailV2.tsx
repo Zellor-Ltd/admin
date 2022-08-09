@@ -421,7 +421,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
   };
 
   const onSearch = (input: string, option: any) => {
-    return option.label.toUpperCase().includes(input?.toUpperCase());
+    return option.label?.toUpperCase().includes(input?.toUpperCase());
   };
 
   const loadProductBrandIcons = (productBrand?: ProductBrand) => {
@@ -572,7 +572,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                           required: true,
                           min: 0,
                           type: 'number',
-                          message: `Index is required.`,
+                          message: 'Index is required.',
                         },
                       ]}
                       initialValue={1000}
@@ -736,7 +736,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                   name="videoType"
                   label="Video Type"
                   rules={[
-                    { required: true, message: `Video Type is required.` },
+                    { required: true, message: 'Video Type is required.' },
                   ]}
                 >
                   <Select
@@ -914,7 +914,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                     rules={[
                       {
                         required: true,
-                        message: `Product Brand is required.`,
+                        message: 'Product Brand is required.',
                       },
                     ]}
                   >
@@ -927,8 +927,8 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                       filterOption={(input, option) =>
                         !!option?.label
                           ?.toString()
-                          .toUpperCase()
-                          .includes(input.toUpperCase())
+                          ?.toUpperCase()
+                          .includes(input?.toUpperCase())
                       }
                       value={currentProductBrand?.id}
                     >
@@ -949,7 +949,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                       rules={[
                         {
                           required: true,
-                          message: `Product Brand Icon is required.`,
+                          message: 'Product Brand Icon is required.',
                         },
                       ]}
                     >
@@ -962,8 +962,8 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                         filterOption={(input, option) =>
                           !!option?.label
                             ?.toString()
-                            .toUpperCase()
-                            .includes(input.toUpperCase())
+                            ?.toUpperCase()
+                            .includes(input?.toUpperCase())
                         }
                         value={currentBrandIcon}
                       >
@@ -991,7 +991,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                     rules={[
                       {
                         required: true,
-                        message: `Creator is required.`,
+                        message: 'Creator is required.',
                       },
                     ]}
                   >
@@ -1004,8 +1004,8 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                       filterOption={(input, option) =>
                         !!option?.label
                           ?.toString()
-                          .toUpperCase()
-                          .includes(input.toUpperCase())
+                          ?.toUpperCase()
+                          .includes(input?.toUpperCase())
                       }
                       value={currentCreator?.id}
                     >
@@ -1465,7 +1465,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
           name="feedForm"
           onFinishFailed={({ errorFields }) => {
             errorFields.forEach(errorField => {
-              message.error(errorField.errors[0]);
+              message.error('Error: ' + errorField.errors[0]);
             });
           }}
           layout="vertical"

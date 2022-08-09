@@ -21,7 +21,7 @@ import scrollIntoView from 'scroll-into-view';
 import { Payment } from 'interfaces/Payment';
 import { ColumnsType } from 'antd/lib/table';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import CommissionDetails from './CommissionDetails';
+import CommissionDetail from './CommissionDetail';
 
 const { Panel } = Collapse;
 
@@ -83,7 +83,7 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
 
   const getPayments = async () => {
     if (!currentCreator) {
-      message.warning('Cannot get Payments without selecting a Fan!');
+      message.warning('Warning: Cannot get Payments without selecting a Fan!');
       return;
     }
     const pageToUse = refreshing ? 0 : page;
@@ -373,10 +373,7 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
         </>
       )}
       {details && (
-        <CommissionDetails
-          setDetails={setDetails}
-          commission={currentPayment}
-        />
+        <CommissionDetail setDetails={setDetails} commission={currentPayment} />
       )}
     </>
   );

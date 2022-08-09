@@ -2,7 +2,7 @@ import AppRoute from './AppRoute';
 import AuthenticatedLayout from 'layout/AuthenticatedLayout';
 import OpenLayout from 'layout/OpenLayout';
 import Login from 'pages/login/Login';
-import ProductDetails from 'pages/products/ProductsDetails';
+import ProductDetail from 'pages/products/ProductDetail';
 import PreviewProducts from 'pages/products/PreviewProducts';
 import { Redirect, Switch } from 'react-router-dom';
 import Orders from 'pages/orders/BrandManager/Orders';
@@ -23,12 +23,12 @@ function BrandManagerRoutes() {
       <AppRoute path="/login" component={Login} layout={OpenLayout} />
       <AppRoute
         path="/products/product/:productMode"
-        component={ProductDetails}
+        component={ProductDetail}
         layout={AuthenticatedLayout}
       />
       <AppRoute
         path="/preview-list/product/:productMode"
-        component={ProductDetails}
+        component={ProductDetail}
         layout={AuthenticatedLayout}
       />
       <AppRoute

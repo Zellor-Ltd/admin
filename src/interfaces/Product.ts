@@ -6,6 +6,9 @@ import { ProductBrand } from './ProductBrand';
 import { Image } from './Image';
 
 export interface Product {
+  size?: string;
+  colourTitle?: string;
+  variantId?: string;
   creatorPercentage?: number;
   id: string;
   image: Image[];
@@ -37,5 +40,5 @@ export interface Product {
   outOfStock?: boolean;
   status?: string;
   shopifyUniqueId: string;
-  variants?: any[];
+  colour?: string;
 }

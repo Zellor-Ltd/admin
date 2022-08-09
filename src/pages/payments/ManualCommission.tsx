@@ -58,7 +58,7 @@ const ManualCommission: React.FC<PaymentDetailsProps> = ({
                 name="date"
                 label="Date"
                 getValueProps={formatMoment}
-                rules={[{ required: true, message: `Date is required.` }]}
+                rules={[{ required: true, message: 'Date is required.' }]}
               >
                 <DatePicker format="DD/MM/YYYY" />
               </Form.Item>
@@ -70,7 +70,7 @@ const ManualCommission: React.FC<PaymentDetailsProps> = ({
                 rules={[
                   {
                     required: true,
-                    message: `Feed ID is required.`,
+                    message: 'Feed ID is required.',
                   },
                 ]}
               >
@@ -81,7 +81,7 @@ const ManualCommission: React.FC<PaymentDetailsProps> = ({
               <Form.Item
                 name="creatorId"
                 label="Creator"
-                rules={[{ required: true, message: `Creator is required.` }]}
+                rules={[{ required: true, message: 'Creator is required.' }]}
               >
                 <Select
                   style={{ width: '100%' }}
@@ -95,8 +95,8 @@ const ManualCommission: React.FC<PaymentDetailsProps> = ({
                   filterOption={(input, option) =>
                     !!option?.children
                       ?.toString()
-                      .toUpperCase()
-                      .includes(input.toUpperCase())
+                      ?.toUpperCase()
+                      .includes(input?.toUpperCase())
                   }
                 >
                   {creators.map((curr: any) => (
@@ -114,7 +114,7 @@ const ManualCommission: React.FC<PaymentDetailsProps> = ({
                 rules={[
                   {
                     required: true,
-                    message: `Product ID is required.`,
+                    message: 'Product ID is required.',
                   },
                 ]}
               >

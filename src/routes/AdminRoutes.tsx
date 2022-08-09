@@ -38,7 +38,6 @@ import PreRegisteredUsers from 'pages/reports/PreRegisteredUsers';
 import ProductsPerDay from 'pages/reports/ProductsPerDay';
 import FanActivities from 'pages/reports/FanActivities';
 import CreatorsList from 'pages/creators-list-page/CreatorsList';
-import DataManagement from 'pages/data-management/DataManagement';
 import Trends from 'pages/trends/Trends';
 import FeedTemplates from 'pages/video-feed/FeedTemplates';
 import FanVideos from 'pages/fan-videos/FanVideos';
@@ -62,7 +61,7 @@ function AdminRoutes() {
       />
       <AppRoute path="/login" component={Login} layout={OpenLayout} />
       <AppRoute
-        path="/variant_group-names"
+        path="/variant_groups"
         component={VariantGroups}
         layout={AuthenticatedLayout}
       />
@@ -109,11 +108,6 @@ function AdminRoutes() {
       <AppRoute
         path="/settings_trends"
         component={Trends}
-        layout={AuthenticatedLayout}
-      />
-      <AppRoute
-        path="/settings_data-management"
-        component={DataManagement}
         layout={AuthenticatedLayout}
       />
       <AppRoute
