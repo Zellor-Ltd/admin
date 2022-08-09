@@ -1121,16 +1121,25 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                     <UpOutlined />
                   </Button>
                 </Col>
-                <Col className="mt-n2">
+                <Col
+                  className="mt-n2"
+                  style={{
+                    position: 'relative',
+                    top: activeKey === '1' ? '2rem' : '3.5rem',
+                  }}
+                >
+                  <Button
+                    onClick={handleGroupItems}
+                    loading={loading}
+                    disabled={selectedRowKeys.length < 2}
+                  >
+                    Group
+                  </Button>
                   <Button
                     type="primary"
                     onClick={getResources}
                     loading={loading}
-                    style={{
-                      position: 'relative',
-                      top: activeKey === '1' ? '2rem' : '3.5rem',
-                    }}
-                    className="mr-1"
+                    className="mx-1"
                   >
                     Search
                     <SearchOutlined style={{ color: 'white' }} />
