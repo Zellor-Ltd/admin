@@ -60,6 +60,12 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
     value: 'user',
   };
 
+  const scrollToCenter = (index: number) => {
+    scrollIntoView(
+      document.querySelector(`.scrollable-row-${index}`) as HTMLElement
+    );
+  };
+
   useEffect(() => {
     if (!mounted.current) {
       mounted.current = true;
@@ -76,11 +82,7 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
         setLoaded(true);
       }
 
-      scrollIntoView(
-        document.querySelector(
-          `.scrollable-row-${lastViewedIndex}`
-        ) as HTMLElement
-      );
+      scrollToCenter(lastViewedIndex);
 
       if (!loaded && buffer.length > guests.length) {
         setGuests(buffer);
@@ -263,6 +265,7 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
 
   const fetchToBuffer = async (input?: string, loadNextPage?: boolean) => {
     if (loadNextPage) scrolling.current = true;
+    else scrollToCenter(0);
     if (userInput !== input) setUserInput(input);
     const pageToUse = updatingTable.current
       ? guestsPage

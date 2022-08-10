@@ -51,6 +51,7 @@ import VideoFeedDetailV2 from 'pages/video-feed/VideoFeedDetailV2';
 import { statusList } from 'components/select/select.utils';
 import { useRequest } from 'hooks/useRequest';
 import moment from 'moment';
+import scrollIntoView from 'scroll-into-view';
 
 const { Content } = Layout;
 const { Panel } = Collapse;
@@ -328,9 +329,16 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
     segmentForm.setFieldsValue(selectedVideoFeed);
   }, [selectedVideoFeed]);
 
+  const scrollToCenter = (index: number) => {
+    scrollIntoView(
+      document.querySelector(`.scrollable-row-${index}`) as HTMLElement
+    );
+  };
+
   const fetch = async (event?: any) => {
     try {
-      collapse(event);
+      scrollToCenter(0);
+      if (event) collapse(event);
       const { results }: any = await doFetch(() =>
         fetchVideoFeedV2({
           query: titleFilter,
@@ -668,9 +676,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
           <Content>
             <Table
               scroll={{ x: true }}
-              rowClassName={(_, index) =>
-                `${index === lastViewedIndex ? 'selected-row' : ''}`
-              }
+              rowClassName={(_, index) => `scrollable-row-${index}`}
               size="small"
               columns={feedItemColumns}
               rowKey="id"

@@ -20,7 +20,7 @@ import {
 import { ColumnsType } from 'antd/lib/table';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
 import { Creator } from 'interfaces/Creator';
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { AppContext } from 'contexts/AppContext';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import {
@@ -32,6 +32,7 @@ import CreatorDetail from './CreatorDetail';
 import { useRequest } from 'hooks/useRequest';
 import { SimpleSwitch } from 'components/SimpleSwitch';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import scrollIntoView from 'scroll-into-view';
 
 const Creators: React.FC<RouteComponentProps> = ({ location }) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -46,7 +47,20 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
   const [searchFilter, setSearchFilter] = useState<string>();
   const { isMobile } = useContext(AppContext);
 
+  const scrollToCenter = (index: number) => {
+    scrollIntoView(
+      document.querySelector(`.scrollable-row-${index}`) as HTMLElement
+    );
+  };
+
+  useEffect(() => {
+    if (!details) {
+      scrollToCenter(lastViewedIndex);
+    }
+  }, [details]);
+
   const fetch = async (loadNextPage?: boolean) => {
+    scrollToCenter(0);
     const pageToUse = loadNextPage ? page : 0;
     const { results } = await doFetch(() =>
       fetchCreators({
