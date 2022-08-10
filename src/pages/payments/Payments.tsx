@@ -1,3 +1,4 @@
+/* eslint-disable eqeqeq */
 import {
   Button,
   Col,
@@ -79,6 +80,7 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
       return;
     }
     getCommissions();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentCreator, currentStatus]);
 
   const getCommissions = async () => {
