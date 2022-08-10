@@ -370,7 +370,7 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
                       className="mt-1"
                       color={record.colour ?? '#FFFFFF'}
                       disableAlpha
-                      onChangeComplete={selectedColour =>
+                      onChange={selectedColour =>
                         handleColourChange(selectedColour.hex, record, index)
                       }
                       presetColors={[
