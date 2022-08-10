@@ -70,6 +70,7 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   const fetchUsers = async () => {
+    scrollToCenter(0);
     const pageToUse = refreshing ? 0 : page;
     const response = await doFetch(() =>
       fetchFans({
@@ -94,13 +95,15 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
     await fetchUsers();
   };
 
+  const scrollToCenter = (index: number) => {
+    scrollIntoView(
+      document.querySelector(`.scrollable-row-${index}`) as HTMLElement
+    );
+  };
+
   useEffect(() => {
     if (!details) {
-      scrollIntoView(
-        document.querySelector(
-          `.scrollable-row-${lastViewedIndex}`
-        ) as HTMLElement
-      );
+      scrollToCenter(lastViewedIndex);
     }
   }, [details]);
 
