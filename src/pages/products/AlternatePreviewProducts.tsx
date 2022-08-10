@@ -238,13 +238,15 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
       title: 'Id',
       dataIndex: 'id',
       width: '5%',
-      render: id => <CopyIdToClipboard id={id} />,
       align: 'center',
+      shouldCellUpdate: () => false,
+      render: id => <CopyIdToClipboard id={id} />,
     },
     {
       title: 'Name',
       dataIndex: 'name',
       width: '10%',
+      shouldCellUpdate: () => false,
       render: (value: string, record: Product, index: number) => (
         <Link
           onClick={() => onEditProduct(record, index)}
@@ -259,6 +261,8 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
       dataIndex: ['tagImage'],
       width: '10%',
       align: 'center',
+      shouldCellUpdate: (prevRecord, nextRecord) =>
+        prevRecord['tagImage'] !== nextRecord['tagImage'],
       render: (_, record) => (
         <Form.Item style={{ marginBottom: '-5px' }}>
           <Upload.ImageUpload
@@ -283,6 +287,8 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
       dataIndex: ['thumbnailUrl'],
       width: '10%',
       align: 'center',
+      shouldCellUpdate: (prevRecord, nextRecord) =>
+        prevRecord['thumbnailUrl'] !== nextRecord['thumbnailUrl'],
       render: (_, record) => (
         <div className="images-content">
           <Form.Item style={{ marginBottom: '-5px' }}>
@@ -310,6 +316,8 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
       width: '23%',
       align: 'left',
       ellipsis: true,
+      shouldCellUpdate: (prevRecord, nextRecord) =>
+        prevRecord['image'] !== nextRecord['image'],
       render: (_, record) => {
         return (
           <div className="images-wrapper">
@@ -343,6 +351,8 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
       title: 'Colour',
       dataIndex: 'colour',
       width: '10%',
+      shouldCellUpdate: (prevRecord, nextRecord) =>
+        prevRecord.colour !== nextRecord.colour,
       render: (value: string, record: Product, index: number) => (
         <div
           className="grid-color"
@@ -399,6 +409,8 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
       title: 'Colour Title',
       dataIndex: 'colourTitle',
       width: '10%',
+      shouldCellUpdate: (prevRecord, nextRecord) =>
+        prevRecord.colourTitle !== nextRecord.colourTitle,
       render: (value: string, record: Product) => (
         <Tooltip
           placement="topLeft"
@@ -417,6 +429,8 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
       title: 'Size',
       dataIndex: 'size',
       width: '10%',
+      shouldCellUpdate: (prevRecord, nextRecord) =>
+        prevRecord.size !== nextRecord.size,
       render: (value: string, record: Product) => (
         <Tooltip
           placement="topLeft"
@@ -451,6 +465,7 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
       key: 'action',
       width: '12%',
       align: 'center',
+      shouldCellUpdate: () => false,
       render: (_, record, index) => (
         <>
           <Button
