@@ -1,7 +1,10 @@
+/* eslint-disable eqeqeq */
+/* eslint-disable react-hooks/exhaustive-deps */
 import {
   EyeOutlined,
   SearchOutlined,
   SettingOutlined,
+  UpOutlined,
 } from '@ant-design/icons';
 import {
   Button,
@@ -16,12 +19,17 @@ import {
   Spin,
   Typography,
 } from 'antd';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import './Products.scss';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
 import EditableTable, { EditableColumnType } from 'components/EditableTable';
-import { SearchFilterDebounce } from 'components/SearchFilterDebounce';
 import { AppContext } from 'contexts/AppContext';
 import useAllCategories from 'hooks/useAllCategories';
 import { useRequest } from 'hooks/useRequest';
@@ -51,6 +59,8 @@ const { getSearchTags, getCategories } = productUtils;
 const { Panel } = Collapse;
 
 const LiveProducts: React.FC<RouteComponentProps> = () => {
+  const inputRef = useRef<any>(null);
+  const [activeKey, setActiveKey] = useState<string>('0');
   const [brands, setBrands] = useState<Brand[]>([]);
   const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
   const [isFetchingBrands, setIsFetchingBrands] = useState(false);
@@ -62,7 +72,6 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
     setLoading: setFetchingCategories,
   });
   const { usePageFilter } = useContext(AppContext);
-  const [refreshing, setRefreshing] = useState<boolean>(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
   const [productAPITest, setProductAPITest] = useState<Product | null>(null);
   const { doFetch, doRequest } = useRequest({ setLoading });
@@ -78,7 +87,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
   const [currentProductBrand, setCurrentProductBrand] = useState<string>();
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
-  const [loaded, setLoaded] = useState<boolean>(false);
+  const loaded = useRef<boolean>(false);
   const [details, setDetails] = useState<boolean>(false);
   const [currentProduct, setCurrentProduct] = useState<Product>();
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
@@ -151,6 +160,13 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
 
     await Promise.all([getBrands(), getProductBrands(), fetchAllCategories()]);
   });
+
+  useEffect(() => {
+    if (inputRef.current)
+      inputRef.current.focus({
+        cursor: 'end',
+      });
+  }, [searchFilter]);
 
   useEffect(() => {
     form.setFieldsValue(currentProduct);
@@ -242,8 +258,9 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
     setSearchTagsByCategory(true);
   }, [brands, setDiscoPercentageByBrand, setSearchTagsByCategory]);
 
-  const _fetchProducts = async () => {
-    const pageToUse = refreshing ? 0 : page;
+  const _fetchProducts = async (resetResults?: boolean) => {
+    scrollToCenter(0);
+    const pageToUse = resetResults ? 0 : page;
     const response = await doFetch(() =>
       fetchProducts({
         limit: 30,
@@ -266,31 +283,17 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
     return response;
   };
 
-  const getResources = async () => {
-    setRefreshing(true);
-    setLoaded(true);
-  };
-
-  const updateDisplayedArray = async () => {
-    if (!products.length) return;
-    const { results } = await _fetchProducts();
-    setProducts(prev => [...prev.concat(results)]);
+  const getProducts = async (resetResults?: boolean) => {
+    if (!resetResults && !products.length) return;
+    const { results } = await doFetch(() => _fetchProducts(resetResults));
+    if (resetResults) {
+      setEof(false);
+      setProducts(results);
+    } else setProducts(prev => [...prev.concat(results)]);
+    if (!loaded.current) loaded.current = true;
   };
 
   useEffect(() => form.resetFields(), [currentProduct]);
-
-  useEffect(() => {
-    const getProducts = async () => {
-      const { results } = await _fetchProducts();
-      setProducts(results);
-      setRefreshing(false);
-    };
-    if (refreshing) {
-      setEof(false);
-      getProducts();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [refreshing]);
 
   const onSaveOnRowEdition = async (record: Product) => {
     setCurrentProduct(record);
@@ -594,13 +597,15 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
     setSelectedRowKeys(selectedRows);
   };
 
+  const scrollToCenter = (index: number) => {
+    scrollIntoView(
+      document.querySelector(`.scrollable-row-${index}`) as HTMLElement
+    );
+  };
+
   useEffect(() => {
     if (!details) {
-      scrollIntoView(
-        document.querySelector(
-          `.scrollable-row-${lastViewedIndex}`
-        ) as HTMLElement
-      );
+      scrollToCenter(lastViewedIndex);
     }
   }, [details]);
 
@@ -624,7 +629,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
   };
 
   const refreshItem = (record: Product) => {
-    if (loaded) {
+    if (loaded.current) {
       products[lastViewedIndex] = record;
       setProducts([...products]);
     } else {
@@ -645,165 +650,159 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
   const Filters = () => {
     return (
       <>
-        <Row align="bottom" justify="space-between" className="pt-0" gutter={8}>
-          <Col lg={20} xs={24}>
-            <Row gutter={[8, 8]}>
-              <Col lg={5} xs={24}>
-                <SearchFilterDebounce
-                  initialValue={searchFilter}
-                  filterFunction={setSearchFilter}
-                  label="Product Name"
-                  placeholder="Search by Name"
-                  onPressEnter={getResources}
-                />
-              </Col>
-              <Col lg={5} xs={24}>
-                <Typography.Title level={5}>Master Brand</Typography.Title>
-                <SimpleSelect
-                  data={brands}
-                  onChange={(_, brand) => onChangeBrand(brand)}
-                  style={{ width: '100%' }}
-                  selectedOption={brandFilter?.brandName}
-                  optionMapping={optionMapping}
-                  placeholder={'Select a Master Brand'}
-                  loading={isFetchingBrands}
-                  disabled={isFetchingBrands}
-                  allowClear={true}
-                ></SimpleSelect>
-              </Col>
-              <Col lg={5} xs={24}>
-                <Typography.Title level={5}>Product Brand</Typography.Title>
-                <SimpleSelect
-                  data={productBrands}
-                  onChange={(_, productBrand) =>
-                    onChangeProductBrand(productBrand)
-                  }
-                  style={{ width: '100%' }}
-                  selectedOption={productBrandFilter?.brandName}
-                  optionMapping={optionMapping}
-                  placeholder={'Select a Product Brand'}
-                  loading={isFetchingProductBrand}
-                  disabled={isFetchingProductBrand}
-                  allowClear={true}
-                ></SimpleSelect>
-              </Col>
-              <Col lg={5} xs={24}>
-                <Typography.Title level={5}>Status</Typography.Title>
-                <Select
-                  placeholder="Select a Status"
-                  style={{ width: '100%' }}
-                  onChange={(value: string) => setProductStatusFilter(value)}
-                  allowClear={true}
-                  defaultValue={productStatusFilter}
-                >
-                  <Select.Option value="live">Live</Select.Option>
-                  <Select.Option value="paused">Paused</Select.Option>
-                </Select>
-              </Col>
-              <Col lg={5} xs={24}>
-                <Typography.Title level={5}>Super Category</Typography.Title>
-                <SimpleSelect
-                  data={allCategories['Super Category'].filter(item => {
-                    return (
-                      item.superCategory === 'Women' ||
-                      item.superCategory === 'Men' ||
-                      item.superCategory === 'Children'
-                    );
-                  })}
-                  onChange={(_, category) =>
-                    setProductSuperCategoryFilter(category)
-                  }
-                  style={{ width: '100%' }}
-                  selectedOption={productSuperCategoryFilter?.id}
-                  optionMapping={productSuperCategoryOptionMapping}
-                  placeholder={'Select a Super Category'}
-                  loading={fetchingCategories}
-                  disabled={fetchingCategories}
-                  allowClear={true}
-                ></SimpleSelect>
-              </Col>
-              <Col lg={5} xs={24}>
-                <Typography.Title level={5}>Category</Typography.Title>
-                <SimpleSelect
-                  data={allCategories.Category}
-                  onChange={(_, category) => setProductCategoryFilter(category)}
-                  style={{ width: '100%' }}
-                  selectedOption={productCategoryFilter?.id}
-                  optionMapping={productCategoryOptionMapping}
-                  placeholder={'Select a Category'}
-                  loading={fetchingCategories}
-                  disabled={fetchingCategories}
-                  allowClear={true}
-                ></SimpleSelect>
-              </Col>
-              <Col lg={5} xs={24}>
-                <Typography.Title level={5}>Sub Category</Typography.Title>
-                <SimpleSelect
-                  data={allCategories['Sub Category']}
-                  onChange={(_, category) =>
-                    setProductSubCategoryFilter(category)
-                  }
-                  style={{ width: '100%' }}
-                  selectedOption={productSubCategoryFilter?.id}
-                  optionMapping={productSubCategoryOptionMapping}
-                  placeholder={'Select a Sub Category'}
-                  loading={fetchingCategories}
-                  disabled={fetchingCategories}
-                  allowClear={true}
-                ></SimpleSelect>
-              </Col>
-              <Col lg={5} xs={24}>
-                <Typography.Title level={5}>Sub Sub Category</Typography.Title>
-                <SimpleSelect
-                  data={allCategories['Sub Sub Category']}
-                  onChange={(_, category) =>
-                    setProductSubSubCategoryFilter(category)
-                  }
-                  style={{ width: '100%' }}
-                  selectedOption={productSubSubCategoryFilter?.id}
-                  optionMapping={productSubSubCategoryOptionMapping}
-                  placeholder={'Select a Sub Sub Category'}
-                  loading={fetchingCategories}
-                  disabled={fetchingCategories}
-                  allowClear={true}
-                ></SimpleSelect>
-              </Col>
-              <Col lg={5} xs={24}>
-                <Typography.Title level={5}>Run ID</Typography.Title>
-                <Input
-                  onChange={evt => {
-                    setRunIdFilter(evt.target.value);
-                  }}
-                  value={runIdFilter}
-                  suffix={<SearchOutlined />}
-                  placeholder="Search by Run ID"
-                />
-              </Col>
-              <Col lg={5} xs={24}>
-                <Checkbox
-                  onChange={handleFilterOutOfStock}
-                  className={isMobile ? 'mt-1 mb-2' : 'mt-2 mb-1 ml-05'}
-                >
-                  Out of Stock only
-                </Checkbox>
-              </Col>
-            </Row>
-          </Col>
-        </Row>
-        {isMobile && (
-          <Col>
-            <Row justify="end">
-              <Col>
-                <Button type="primary" onClick={getResources} loading={loading}>
-                  Search
-                  <SearchOutlined style={{ color: 'white' }} />
-                </Button>
-              </Col>
-            </Row>
-          </Col>
-        )}
+        <Col lg={16} xs={24}>
+          <Row gutter={[8, 8]}>
+            <Col lg={6} xs={24}>
+              <Typography.Title level={5}>Product Name</Typography.Title>
+              <Input
+                ref={inputRef}
+                onChange={event => setSearchFilter(event.target.value)}
+                suffix={<SearchOutlined />}
+                value={searchFilter}
+                placeholder="Search by Name"
+                onPressEnter={() => getProducts(true)}
+              />
+            </Col>
+            <Col lg={6} xs={24}>
+              <Typography.Title level={5}>Master Brand</Typography.Title>
+              <SimpleSelect
+                data={brands}
+                onChange={(_, brand) => onChangeBrand(brand)}
+                style={{ width: '100%' }}
+                selectedOption={brandFilter?.brandName}
+                optionMapping={optionMapping}
+                placeholder={'Select a Master Brand'}
+                loading={isFetchingBrands}
+                disabled={isFetchingBrands}
+                allowClear={true}
+              ></SimpleSelect>
+            </Col>
+            <Col lg={6} xs={24}>
+              <Typography.Title level={5}>Product Brand</Typography.Title>
+              <SimpleSelect
+                data={productBrands}
+                onChange={(_, productBrand) =>
+                  onChangeProductBrand(productBrand)
+                }
+                style={{ width: '100%' }}
+                selectedOption={productBrandFilter?.brandName}
+                optionMapping={optionMapping}
+                placeholder={'Select a Product Brand'}
+                loading={isFetchingProductBrand}
+                disabled={isFetchingProductBrand}
+                allowClear={true}
+              ></SimpleSelect>
+            </Col>
+            <Col lg={6} xs={24}>
+              <Typography.Title level={5}>Status</Typography.Title>
+              <Select
+                placeholder="Select a Status"
+                style={{ width: '100%' }}
+                onChange={(value: string) => setProductStatusFilter(value)}
+                allowClear={true}
+                defaultValue={productStatusFilter}
+              >
+                <Select.Option value="live">Live</Select.Option>
+                <Select.Option value="paused">Paused</Select.Option>
+              </Select>
+            </Col>
+            <Col lg={6} xs={24}>
+              <Typography.Title level={5}>Super Category</Typography.Title>
+              <SimpleSelect
+                data={allCategories['Super Category'].filter(item => {
+                  return (
+                    item.superCategory === 'Women' ||
+                    item.superCategory === 'Men' ||
+                    item.superCategory === 'Children'
+                  );
+                })}
+                onChange={(_, category) =>
+                  setProductSuperCategoryFilter(category)
+                }
+                style={{ width: '100%' }}
+                selectedOption={productSuperCategoryFilter?.id}
+                optionMapping={productSuperCategoryOptionMapping}
+                placeholder={'Select a Super Category'}
+                loading={fetchingCategories}
+                disabled={fetchingCategories}
+                allowClear={true}
+              ></SimpleSelect>
+            </Col>
+            <Col lg={6} xs={24}>
+              <Typography.Title level={5}>Category</Typography.Title>
+              <SimpleSelect
+                data={allCategories.Category}
+                onChange={(_, category) => setProductCategoryFilter(category)}
+                style={{ width: '100%' }}
+                selectedOption={productCategoryFilter?.id}
+                optionMapping={productCategoryOptionMapping}
+                placeholder={'Select a Category'}
+                loading={fetchingCategories}
+                disabled={fetchingCategories}
+                allowClear={true}
+              ></SimpleSelect>
+            </Col>
+            <Col lg={6} xs={24}>
+              <Typography.Title level={5}>Sub Category</Typography.Title>
+              <SimpleSelect
+                data={allCategories['Sub Category']}
+                onChange={(_, category) =>
+                  setProductSubCategoryFilter(category)
+                }
+                style={{ width: '100%' }}
+                selectedOption={productSubCategoryFilter?.id}
+                optionMapping={productSubCategoryOptionMapping}
+                placeholder={'Select a Sub Category'}
+                loading={fetchingCategories}
+                disabled={fetchingCategories}
+                allowClear={true}
+              ></SimpleSelect>
+            </Col>
+            <Col lg={6} xs={24}>
+              <Typography.Title level={5}>Sub Sub Category</Typography.Title>
+              <SimpleSelect
+                data={allCategories['Sub Sub Category']}
+                onChange={(_, category) =>
+                  setProductSubSubCategoryFilter(category)
+                }
+                style={{ width: '100%' }}
+                selectedOption={productSubSubCategoryFilter?.id}
+                optionMapping={productSubSubCategoryOptionMapping}
+                placeholder={'Select a Sub Sub Category'}
+                loading={fetchingCategories}
+                disabled={fetchingCategories}
+                allowClear={true}
+              ></SimpleSelect>
+            </Col>
+            <Col lg={6} xs={24}>
+              <Typography.Title level={5}>Run ID</Typography.Title>
+              <Input
+                onChange={evt => {
+                  setRunIdFilter(evt.target.value);
+                }}
+                value={runIdFilter}
+                suffix={<SearchOutlined />}
+                placeholder="Search by Run ID"
+              />
+            </Col>
+            <Col lg={6} xs={24}>
+              <Checkbox
+                onChange={handleFilterOutOfStock}
+                className={isMobile ? 'mt-1 mb-2' : 'mt-2 mb-1 ml-05'}
+              >
+                Out of Stock only
+              </Checkbox>
+            </Col>
+          </Row>
+        </Col>
       </>
     );
+  };
+
+  const collapse = (event?: any) => {
+    if (event && isMobile) {
+      if (activeKey === '1') setActiveKey('0');
+    }
   };
 
   return (
@@ -815,36 +814,54 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
             subTitle={isMobile ? '' : 'List of Live Products'}
             className={isMobile ? 'mb-n1' : ''}
           />
-
-          <Collapse ghost accordion className="sticky-filter-box">
-            <Panel
-              header={<Typography.Title level={5}>Filters</Typography.Title>}
-              key="1"
-              extra={
-                !isMobile && (
+          <Row
+            align="bottom"
+            justify="space-between"
+            className="sticky-filter-box"
+          >
+            {!isMobile && <Filters />}
+            {isMobile && (
+              <Collapse
+                ghost
+                accordion
+                activeKey={activeKey}
+                onChange={() => {
+                  if (activeKey === '0') setActiveKey('1');
+                  else setActiveKey('0');
+                }}
+                destroyInactivePanel
+              >
+                <Panel
+                  header={<Typography.Title level={5}>Filter</Typography.Title>}
+                  key="1"
+                >
+                  <Filters />
+                </Panel>
+              </Collapse>
+            )}
+            <Col span={24}>
+              <Row justify="space-between" align="top">
+                <Col flex="auto">
                   <Button
-                    type="primary"
-                    onClick={getResources}
-                    loading={loading}
+                    type="text"
+                    onClick={collapse}
+                    style={{
+                      display: activeKey === '1' ? 'block' : 'none',
+                      background: 'none',
+                    }}
                   >
-                    Search
-                    <SearchOutlined style={{ color: 'white' }} />
+                    <UpOutlined />
                   </Button>
-                )
-              }
-            >
-              <Filters />
-            </Panel>
-          </Collapse>
-          {isMobile && (
-            <Col>
-              <Row justify="end">
+                </Col>
                 <Col className="mt-n2">
                   <Button
                     type="primary"
-                    onClick={getResources}
+                    onClick={() => getProducts(true)}
                     loading={loading}
-                    style={{ position: 'relative', top: '32px' }}
+                    style={{
+                      position: 'relative',
+                      top: activeKey === '1' ? '2rem' : '3.5rem',
+                    }}
                     className="mr-1"
                   >
                     Search
@@ -853,14 +870,14 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                 </Col>
               </Row>
             </Col>
-          )}
+          </Row>
           <ProductAPITestModal
             selectedRecord={productAPITest}
             setSelectedRecord={setProductAPITest}
           />
           <InfiniteScroll
             dataLength={products.length}
-            next={updateDisplayedArray}
+            next={getProducts}
             hasMore={!eof}
             loader={
               page !== 0 && (
@@ -886,7 +903,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
               rowKey="id"
               columns={columns}
               dataSource={products}
-              loading={refreshing || (!products.length && loading)}
+              loading={!products.length && loading}
               onSave={onSaveItem}
               pagination={false}
               rowSelection={{
