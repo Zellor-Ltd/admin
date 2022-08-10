@@ -30,6 +30,7 @@ interface AppContextProps {
   doRequest: DoRequest;
   refreshContext: Function;
   isMobile: boolean;
+  needsMargin: boolean;
 }
 
 export const AppContext = React.createContext({} as AppContextProps);
@@ -42,12 +43,21 @@ export const AppProvider = ({ children }: { children: JSX.Element }) => {
   const [lastVisitedPage, setLastVisitedPage] = useState<string>('');
   const [tableData, setTableData] = useState<any[]>([]);
   const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
+  const [needsMargin, setNeedsMargin] = useState<boolean>(
+    window.innerWidth < 1716 && window.innerWidth > 1376
+  );
 
   const handleResize = () => {
-    if (window.innerWidth < 991) {
-      setIsMobile(true);
+    if (window.innerWidth < 1716 && window.innerWidth > 1376) {
+      setNeedsMargin(true);
     } else {
-      setIsMobile(false);
+      setNeedsMargin(false);
+
+      if (window.innerWidth < 991) {
+        setIsMobile(true);
+      } else {
+        setIsMobile(false);
+      }
     }
   };
 
@@ -88,6 +98,7 @@ export const AppProvider = ({ children }: { children: JSX.Element }) => {
         doRequest,
         refreshContext,
         isMobile,
+        needsMargin,
       }}
     >
       <PageInfiniteScrollProvider>{children}</PageInfiniteScrollProvider>
