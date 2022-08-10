@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import {
   CloseOutlined,
   MenuOutlined,
@@ -38,10 +39,12 @@ import { AppContext } from 'contexts/AppContext';
 import { ProductBrand } from 'interfaces/ProductBrand';
 import SimpleSelect from '../../components/select/SimpleSelect';
 import { SelectOption } from '../../interfaces/SelectOption';
+import scrollIntoView from 'scroll-into-view';
 const { Panel } = Collapse;
 interface VariantGroupDetailProps {
   variantGroup: Product;
-  groups: Product[];
+  variantList: Product[];
+  searchPage: number;
   brands: Brand[];
   productBrands: ProductBrand[];
   setDetails: (boolean) => void;
@@ -51,6 +54,8 @@ interface VariantGroupDetailProps {
 
 const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
   variantGroup,
+  variantList,
+  searchPage,
   brands,
   productBrands,
   setDetails,
@@ -62,8 +67,6 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
   const { allCategories } = useAllCategories({
     setLoading: setFetchingCategories,
   });
-  const [loaded, setLoaded] = useState<boolean>(false);
-
   const { usePageFilter } = useContext(AppContext);
   const [searchFilter, setSearchFilter] = usePageFilter<string>('search');
   const [runIdFilter, setRunIdFilter] = useState<string>();
@@ -73,13 +76,11 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
   >();
   const [outOfStockFilter, setOutOfStockFilter] = useState<boolean>(false);
   const [unclassifiedFilter, setUnclassifiedFilter] = useState<boolean>(false);
-  const [page, setPage] = useState<number>(0);
+  const [page, setPage] = useState<number>(searchPage);
   const [eof, setEof] = useState<boolean>(false);
-  const [refreshing, setRefreshing] = useState<boolean>(false);
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<Product[]>(variantList);
   const [productStatusFilter, setProductStatusFilter] =
     useState<string>('live');
-
   const [currentSuperCategory, setCurrentSuperCategory] =
     useState<ProductCategory>();
   const [currentCategory, setCurrentCategory] = useState<ProductCategory>();
@@ -87,7 +88,6 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
     useState<ProductCategory>();
   const [currentSubSubCategory, setCurrentSubSubCategory] =
     useState<ProductCategory>();
-
   const { doFetch, doRequest } = useRequest({ setLoading });
 
   const optionMapping: SelectOption = {
@@ -128,7 +128,9 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
 
   const getGroupItems = async () => {
     const { results } = await doFetch(() => fetchVariants(variantGroup.id));
-    setVariants(results);
+    if (!results.find(item => item.id === variantGroup.id))
+      setVariants([variantGroup, ...results]);
+    else setVariants(results);
   };
 
   useEffect(() => {
@@ -146,32 +148,26 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
     setCurrentSubSubCategory(undefined);
   }, [currentSubCategory]);
 
-  const refreshProducts = async () => {
-    setPage(0);
-    setRefreshing(true);
-  };
-
   useEffect(() => {
-    if (loaded) {
-      refreshProducts();
-    }
+    setPage(0);
+    setEof(false);
+    getProducts(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchFilter]);
-
-  useEffect(() => {
-    if (refreshing) {
-      setEof(false);
-      getProducts(true);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [refreshing]);
 
   const handleFilterClassified = (e: CheckboxChangeEvent) => {
     setUnclassifiedFilter(e.target.checked);
   };
 
-  const _fetchStagingProducts = async searchButton => {
-    const pageToUse = refreshing ? 0 : page;
+  const scrollToCenter = (index: number) => {
+    scrollIntoView(
+      document.querySelector(`.scrollable-row-${index}`) as HTMLElement
+    );
+  };
+
+  const _fetchStagingProducts = async (resetResults?: boolean) => {
+    scrollToCenter(0);
+    const pageToUse = resetResults ? 0 : page;
     const response = await doFetch(() =>
       fetchStagingProducts({
         limit: 30,
@@ -189,36 +185,19 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
         runId: runIdFilter,
       })
     );
-    if (searchButton) {
-      setPage(0);
-    } else {
-      setPage(pageToUse + 1);
-    }
+    setPage(pageToUse + 1);
+
     if (response.results.length < 30) setEof(true);
     return response;
   };
 
-  const getResources = async (event?: any, searchButton?: boolean) => {
-    if (!isMobile && event) event.stopPropagation();
-    setLoading(true);
-    const { results } = await _fetchStagingProducts(searchButton);
-
-    setLoaded(true);
-    setProducts(results);
-    setLoading(false);
-  };
-
-  const getProducts = async searchButton => {
+  const getProducts = async (resetResults?: boolean) => {
+    if (!resetResults && !products.length) return;
     const { results } = await doFetch(() =>
-      _fetchStagingProducts(searchButton)
+      _fetchStagingProducts(resetResults)
     );
-    setProducts(results);
-  };
-
-  const updateDisplayedArray = async searchButton => {
-    if (!products.length) return;
-    const { results } = await _fetchStagingProducts(searchButton);
-    setProducts(prev => [...prev.concat(results)]);
+    if (resetResults) setProducts(results);
+    else setProducts(prev => [...prev.concat(results)]);
   };
 
   const handleFilterOutOfStock = (e: CheckboxChangeEvent) => {
@@ -245,11 +224,11 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
       render: (_, record: Product) => (
         <>
           <Button
-            disabled={record.id === variantGroup.id}
-            onClick={() => handleAdd(record.id)}
+            disabled={record.variantId === variantGroup.id}
+            onClick={() => handleAdd(record)}
             type="link"
             style={
-              record.id === variantGroup.id
+              record.variantId === variantGroup.id
                 ? { color: 'gray' }
                 : { color: 'green' }
             }
@@ -287,7 +266,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
                   value={searchFilter}
                   onChange={event => setSearchFilter(event.target.value)}
                   placeholder="Search by Name"
-                  onPressEnter={() => getResources(true)}
+                  onPressEnter={() => getProducts(true)}
                 />
               </Col>
               <Col lg={6} xs={24}>
@@ -483,7 +462,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
                 <Col>
                   <Button
                     type="primary"
-                    onClick={event => getResources(event, true)}
+                    onClick={() => getProducts(true)}
                     loading={loading}
                   >
                     Search
@@ -498,12 +477,17 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
     );
   };
 
-  const handleRemove = async (itemId: string) => {
-    await doRequest(() => removeVariant(itemId, variantGroup.id));
+  const handleRemove = async (item: Product) => {
+    await doRequest(() => removeVariant(item.id, variantGroup.id));
+    setVariants(prev => [
+      ...prev.slice(0, variants.indexOf(item)),
+      ...prev.slice(variants.indexOf(item) + 1),
+    ]);
   };
 
-  const handleAdd = async (itemId: string) => {
-    await doRequest(() => addVariant(itemId, variantGroup.id));
+  const handleAdd = async (item: Product) => {
+    await doRequest(() => addVariant(item.id, variantGroup.id));
+    setVariants([...variants, item]);
   };
 
   return (
@@ -523,6 +507,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
       />
       <Collapse ghost>
         <Panel
+          className="ml-1 mt-1"
           showArrow={false}
           header={
             <Typography.Title level={5}>
@@ -544,7 +529,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
                   <Col>
                     <Button
                       disabled={item.id === variantGroup.id}
-                      onClick={() => handleRemove(item.id)}
+                      onClick={() => handleRemove(item)}
                       type="link"
                       style={
                         item.id === variantGroup.id
@@ -565,7 +550,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
         type="text"
         style={{ background: 'none' }}
         onClick={() => setShowMore(prev => !prev)}
-        className="mb-1"
+        className="mb-1 ml-1 mt-05"
       >
         <Typography.Title
           level={5}
@@ -582,37 +567,45 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
       </Button>
       {showMore && (
         <>
-          {!isMobile && <Filters />}
-          {isMobile && (
-            <>
-              <Collapse ghost className="sticky-filter-box">
-                <Panel
-                  header={
-                    <Typography.Title level={5}>Filters</Typography.Title>
-                  }
-                  key="1"
-                >
-                  <Filters />
-                </Panel>
-              </Collapse>
-            </>
-          )}
-          <Row justify="end">
-            <Col>
-              <Button
-                type="primary"
-                onClick={getResources}
-                loading={loading}
-                className="mb-1 mr-1"
-              >
-                Search
-                <SearchOutlined style={{ color: 'white' }} />
-              </Button>
+          <Row
+            align="bottom"
+            justify="space-between"
+            className="sticky-filter-box"
+          >
+            {!isMobile && <Filters />}
+            {isMobile && (
+              <>
+                <Collapse ghost>
+                  <Panel
+                    header={
+                      <Typography.Title level={5}>Filters</Typography.Title>
+                    }
+                    key="1"
+                  >
+                    <Filters />
+                  </Panel>
+                </Collapse>
+              </>
+            )}
+            <Col span={24}>
+              <Row justify="end">
+                <Col>
+                  <Button
+                    type="primary"
+                    onClick={() => getProducts(true)}
+                    loading={loading}
+                    className="mb-1 mr-1"
+                  >
+                    Search
+                    <SearchOutlined style={{ color: 'white' }} />
+                  </Button>
+                </Col>
+              </Row>
             </Col>
           </Row>
           <InfiniteScroll
             dataLength={products.length}
-            next={() => updateDisplayedArray(false)}
+            next={getProducts}
             hasMore={!eof}
             loader={
               page !== 0 && (
@@ -630,6 +623,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
             <Table
               scroll={{ x: true }}
               className="mt-2"
+              rowClassName={(_, index) => `scrollable-row-${index}`}
               rowKey="id"
               columns={columns}
               dataSource={products}

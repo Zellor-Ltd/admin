@@ -19,7 +19,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import { useRequest } from 'hooks/useRequest';
 import { Brand } from 'interfaces/Brand';
 import { Product } from 'interfaces/Product';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import {
   fetchBrands,
@@ -29,14 +29,13 @@ import {
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
 import '../../pages/products/Products.scss';
 import { ProductCategory } from 'interfaces/Category';
-import { SearchFilterDebounce } from 'components/SearchFilterDebounce';
 import { AppContext } from 'contexts/AppContext';
 import { ProductBrand } from 'interfaces/ProductBrand';
 import { useMount } from 'react-use';
 import SimpleSelect from '../../components/select/SimpleSelect';
 import { SelectOption } from '../../interfaces/SelectOption';
 import VariantGroupDetail from './VariantGroupDetail';
-import { InputFiled } from '@ant-design/flowchart/es/components/editor-panel/control-map-service/components/fields';
+import scrollIntoView from 'scroll-into-view';
 const { Panel } = Collapse;
 
 const VariantGroups: React.FC<RouteComponentProps> = () => {
@@ -50,7 +49,7 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
   const { fetchAllCategories, allCategories } = useAllCategories({
     setLoading: setFetchingCategories,
   });
-  const [loaded, setLoaded] = useState<boolean>(false);
+  const loaded = useRef<boolean>(false);
   const [details, setDetails] = useState<boolean>(false);
   const { usePageFilter } = useContext(AppContext);
   const [searchFilter, setSearchFilter] = usePageFilter<string>('search');
@@ -63,7 +62,6 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
   const [unclassifiedFilter, setUnclassifiedFilter] = useState<boolean>(false);
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
-  const [refreshing, setRefreshing] = useState<boolean>(false);
   const [products, setProducts] = useState<Product[]>([]);
   const [productStatusFilter, setProductStatusFilter] =
     useState<string>('live');
@@ -125,11 +123,6 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
     setCurrentSubSubCategory(undefined);
   }, [currentSubCategory]);
 
-  const refreshProducts = async () => {
-    setPage(0);
-    setRefreshing(true);
-  };
-
   useMount(async () => {
     const getProductBrands = async () => {
       setIsFetchingProductBrands(true);
@@ -148,27 +141,19 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
     await Promise.all([getBrands(), getProductBrands(), fetchAllCategories()]);
   });
 
-  useEffect(() => {
-    if (loaded) {
-      refreshProducts();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchFilter]);
-
-  useEffect(() => {
-    if (refreshing) {
-      setEof(false);
-      getProducts(true);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [refreshing]);
-
   const handleFilterClassified = (e: CheckboxChangeEvent) => {
     setUnclassifiedFilter(e.target.checked);
   };
 
-  const _fetchStagingProducts = async searchButton => {
-    const pageToUse = refreshing ? 0 : page;
+  const scrollToCenter = (index: number) => {
+    scrollIntoView(
+      document.querySelector(`.scrollable-row-${index}`) as HTMLElement
+    );
+  };
+
+  const _fetchStagingProducts = async (resetResults?: boolean) => {
+    scrollToCenter(0);
+    const pageToUse = resetResults ? 0 : page;
     const response = await doFetch(() =>
       fetchStagingProducts({
         limit: 30,
@@ -186,35 +171,20 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
         runId: runIdFilter,
       })
     );
-    if (searchButton) {
-      setPage(0);
-    } else {
-      setPage(pageToUse + 1);
-    }
+    setPage(pageToUse + 1);
+
     if (response.results.length < 30) setEof(true);
     return response;
   };
 
-  const getResources = async (event?: any, searchButton?: boolean) => {
-    setLoading(true);
-    const { results } = await _fetchStagingProducts(searchButton);
-
-    setLoaded(true);
-    setProducts(results);
-    setLoading(false);
-  };
-
-  const getProducts = async searchButton => {
+  const getProducts = async (resetResults?: boolean) => {
+    if (!resetResults && !products.length) return;
     const { results } = await doFetch(() =>
-      _fetchStagingProducts(searchButton)
+      _fetchStagingProducts(resetResults)
     );
-    setProducts(results);
-  };
-
-  const updateDisplayedArray = async searchButton => {
-    if (!products.length) return;
-    const { results } = await _fetchStagingProducts(searchButton);
-    setProducts(prev => [...prev.concat(results)]);
+    if (resetResults) setProducts(results);
+    else setProducts(prev => [...prev.concat(results)]);
+    if (!loaded.current) loaded.current = true;
   };
 
   const handleEdit = (product: Product) => {
@@ -291,7 +261,7 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
                   value={searchFilter}
                   onChange={event => setSearchFilter(event.target.value)}
                   placeholder="Search by Name"
-                  onPressEnter={() => getResources(true)}
+                  onPressEnter={() => getProducts(true)}
                 />
               </Col>
               <Col lg={6} xs={24}>
@@ -491,7 +461,7 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
                 <Col>
                   <Button
                     type="primary"
-                    onClick={event => getResources(event, true)}
+                    onClick={() => getProducts(true)}
                     loading={loading}
                     className="mb-1"
                   >
@@ -516,37 +486,45 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
             subTitle={isMobile ? '' : 'Select group to edit'}
             className={isMobile ? 'mb-n1' : ''}
           />
-          {!isMobile && <Filters />}
-          {isMobile && (
-            <>
-              <Collapse ghost className="sticky-filter-box">
-                <Panel
-                  header={
-                    <Typography.Title level={5}>Filters</Typography.Title>
-                  }
-                  key="1"
-                >
-                  <Filters />
-                </Panel>
-              </Collapse>
-            </>
-          )}
-          <Row justify="end">
-            <Col>
-              <Button
-                type="primary"
-                onClick={getResources}
-                loading={loading}
-                className="mb-1 mr-1"
-              >
-                Search
-                <SearchOutlined style={{ color: 'white' }} />
-              </Button>
+          <Row
+            align="bottom"
+            justify="space-between"
+            className="sticky-filter-box"
+          >
+            {!isMobile && <Filters />}
+            {isMobile && (
+              <>
+                <Collapse ghost className="sticky-filter-box">
+                  <Panel
+                    header={
+                      <Typography.Title level={5}>Filters</Typography.Title>
+                    }
+                    key="1"
+                  >
+                    <Filters />
+                  </Panel>
+                </Collapse>
+              </>
+            )}
+            <Col span={24}>
+              <Row justify="end">
+                <Col>
+                  <Button
+                    type="primary"
+                    onClick={() => getProducts(true)}
+                    loading={loading}
+                    className="mb-1 mr-1"
+                  >
+                    Search
+                    <SearchOutlined style={{ color: 'white' }} />
+                  </Button>
+                </Col>
+              </Row>
             </Col>
           </Row>
           <InfiniteScroll
             dataLength={products.length}
-            next={() => updateDisplayedArray(false)}
+            next={getProducts}
             hasMore={!eof}
             loader={
               page !== 0 && (
@@ -564,6 +542,7 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
             <Table
               scroll={{ x: true }}
               className="mt-2"
+              rowClassName={(_, index) => `scrollable-row-${index}`}
               rowKey="id"
               columns={columns}
               dataSource={products}
@@ -576,7 +555,8 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
       {details && (
         <VariantGroupDetail
           variantGroup={currentGroup as Product}
-          groups={products}
+          variantList={products}
+          searchPage={page}
           brands={brands}
           productBrands={productBrands}
           setDetails={setDetails}
