@@ -1,50 +1,33 @@
-import {
-  DeleteOutlined,
-  EditOutlined,
-  LoadingOutlined,
-  SearchOutlined,
-} from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import {
   Button,
-  Col,
   Form,
-  Input,
-  InputNumber,
   Layout,
   message,
   PageHeader,
   Popconfirm,
-  Row,
-  Spin,
   Table,
   Tag as AntTag,
-  Typography,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
 import { FeedItem } from 'interfaces/FeedItem';
 import { Segment } from 'interfaces/Segment';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 import {
   deleteVideoFeed,
   fetchBrands,
-  fetchCategories,
   fetchCreators,
   fetchProductBrands,
   fetchVideoFeedV2,
-  saveVideoFeed,
 } from 'services/DiscoClubService';
 import { Brand } from 'interfaces/Brand';
 import '@pathofdev/react-tag-input/build/index.css';
-import { Category } from 'interfaces/Category';
 import { Creator } from 'interfaces/Creator';
 import '../video-feed/VideoFeed.scss';
 import '../video-feed/VideoFeedDetail.scss';
-import SimpleSelect from 'components/select/SimpleSelect';
-import { SelectOption } from 'interfaces/SelectOption';
 import VideoFeedDetailV2 from '../video-feed/VideoFeedDetailV2';
-import { statusList, videoTypeList } from 'components/select/select.utils';
 import { useRequest } from 'hooks/useRequest';
 import moment from 'moment';
 
@@ -62,10 +45,7 @@ const VideoFeedTemplates: React.FC<RouteComponentProps> = () => {
   const [selectedVideoFeed, setSelectedVideoFeed] = useState<FeedItem>();
   const [loading, setLoading] = useState(false);
   const [details, setDetails] = useState<boolean>(false);
-  const [isFetchingCategories, setIsFetchingCategories] = useState(false);
-  const [categories, setCategories] = useState<Category[]>([]);
   const [creators, setCreators] = useState<Creator[]>([]);
-  const [isFetchingBrands, setIsFetchingBrands] = useState(false);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [isFetchingProductBrands, setIsFetchingProductBrands] = useState(false);
   const [productBrands, setProductBrands] = useState([]);
@@ -73,52 +53,10 @@ const VideoFeedTemplates: React.FC<RouteComponentProps> = () => {
   const [loaded, setLoaded] = useState<boolean>(false);
   const [feedItems, setFeedItems] = useState<any[]>([]);
   const { doFetch } = useRequest({ setLoading });
-  const shouldUpdateFeedItemIndex = useRef(false);
-  const originalFeedItemsIndex = useRef<Record<string, number | undefined>>({});
-  const [updatingFeedItemIndex, setUpdatingFeedItemIndex] = useState<
-    Record<string, boolean>
-  >({});
-  const [statusFilter, setStatusFilter] = useState<string>();
-  const [brandFilter, setBrandFilter] = useState<Brand>();
-  const [productBrandFilter, setProductBrandFilter] = useState<string>();
-  const [videoTypeFilter, setVideoTypeFilter] = useState<string>();
-  const [titleFilter, setTitleFilter] = useState<string>();
-  const [categoryFilter, setCategoryFilter] = useState<string>();
-  const [indexFilter, setIndexFilter] = useState<number>();
 
   useEffect(() => {
     fetch();
   });
-
-  const masterBrandMapping: SelectOption = {
-    key: 'id',
-    label: 'brandName',
-    value: 'id',
-  };
-
-  const productBrandMapping: SelectOption = {
-    key: 'id',
-    label: 'brandName',
-    value: 'id',
-  };
-
-  const categoryMapping: SelectOption = {
-    key: 'id',
-    label: 'name',
-    value: 'id',
-  };
-
-  const statusMapping: SelectOption = {
-    key: 'value',
-    label: 'value',
-    value: 'value'?.toUpperCase(),
-  };
-
-  const videoTypeMapping: SelectOption = {
-    key: 'value',
-    label: 'value',
-    value: 'value',
-  };
 
   const feedItemColumns: ColumnsType<FeedItem> = [
     {
@@ -240,17 +178,18 @@ const VideoFeedTemplates: React.FC<RouteComponentProps> = () => {
     }
     feedForm.setFieldsValue(selectedVideoFeed);
     segmentForm.setFieldsValue(selectedVideoFeed);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedVideoFeed]);
 
   const fetch = async () => {
     try {
       const { results }: any = await doFetch(() =>
         fetchVideoFeedV2({
-          query: titleFilter,
-          brandId: brandFilter?.id,
-          status: statusFilter?.toUpperCase(),
-          videoType: videoTypeFilter,
-          productBrandId: productBrandFilter,
+          query: undefined,
+          brandId: undefined,
+          status: undefined,
+          videoType: undefined,
+          productBrandId: undefined,
         })
       );
       setFeedItems(results);
@@ -267,17 +206,9 @@ const VideoFeedTemplates: React.FC<RouteComponentProps> = () => {
       });
       setCreators(response.results);
     }
-    async function getCategories() {
-      setIsFetchingCategories(true);
-      const response: any = await fetchCategories();
-      setCategories(response.results);
-      setIsFetchingCategories(false);
-    }
     async function getBrands() {
-      setIsFetchingBrands(true);
       const response: any = await fetchBrands();
       setBrands(response.results);
-      setIsFetchingBrands(false);
     }
     async function getProductBrands() {
       setIsFetchingProductBrands(true);
@@ -285,23 +216,7 @@ const VideoFeedTemplates: React.FC<RouteComponentProps> = () => {
       setProductBrands(response.results);
       setIsFetchingProductBrands(false);
     }
-    await Promise.all([
-      getcreators(),
-      getCategories(),
-      getBrands(),
-      getProductBrands(),
-    ]);
-  };
-
-  const search = rows => {
-    if (indexFilter) {
-      return rows.filter(
-        row =>
-          row.category?.indexOf(categoryFilter) > -1 &&
-          row.index === indexFilter
-      );
-    }
-    return rows.filter(row => row.category?.indexOf(categoryFilter ?? '') > -1);
+    await Promise.all([getcreators(), getBrands(), getProductBrands()]);
   };
 
   const deleteItem = async (_id: string, index: number) => {
@@ -322,59 +237,6 @@ const VideoFeedTemplates: React.FC<RouteComponentProps> = () => {
     setLastViewedIndex(index);
     setSelectedVideoFeed(videoFeed);
     setDetails(true);
-  };
-
-  const onFeedItemIndexOnColumnChange = (
-    feedItemIndex: number,
-    feedItem: FeedItem
-  ) => {
-    for (let i = 0; i < feedItems.length; i++) {
-      if (feedItems[i].id === feedItem.id) {
-        if (originalFeedItemsIndex.current[feedItem.id] === undefined) {
-          originalFeedItemsIndex.current[feedItem.id] = feedItem.index;
-        }
-
-        shouldUpdateFeedItemIndex.current =
-          originalFeedItemsIndex.current[feedItem.id] !== feedItemIndex;
-
-        feedItems[i].index = feedItemIndex;
-        setFeedItems([...feedItems]);
-        break;
-      }
-    }
-  };
-
-  const onFeedItemIndexOnColumnBlur = async (feedItem: FeedItem) => {
-    if (!shouldUpdateFeedItemIndex.current) {
-      return;
-    }
-    setUpdatingFeedItemIndex(prev => {
-      const newValue = {
-        ...prev,
-      };
-      newValue[feedItem.id] = true;
-
-      return newValue;
-    });
-    try {
-      await saveVideoFeed(feedItem);
-      message.success('Register updated with success.');
-    } catch (err) {
-      console.error(
-        `Error while trying to update FeedItem[${feedItem.id}] index.`,
-        err
-      );
-      message.success('Error while trying to update FeedItem index.');
-    }
-    setUpdatingFeedItemIndex(prev => {
-      const newValue = {
-        ...prev,
-      };
-      delete newValue[feedItem.id];
-      return newValue;
-    });
-    delete originalFeedItemsIndex.current[feedItem.id];
-    shouldUpdateFeedItemIndex.current = false;
   };
 
   const onSaveItem = (record: FeedItem) => {
@@ -450,7 +312,7 @@ const VideoFeedTemplates: React.FC<RouteComponentProps> = () => {
               size="small"
               columns={feedItemColumns}
               rowKey="id"
-              dataSource={search(feedItems)}
+              dataSource={feedItems}
               loading={loading}
             />
           </Content>

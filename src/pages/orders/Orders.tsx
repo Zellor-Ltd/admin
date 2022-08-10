@@ -1,8 +1,5 @@
-import {
-  CalendarOutlined,
-  LoadingOutlined,
-  SearchOutlined,
-} from '@ant-design/icons';
+/* eslint-disable react-hooks/exhaustive-deps */
+import { CalendarOutlined, SearchOutlined } from '@ant-design/icons';
 import {
   Button,
   Col,
@@ -68,8 +65,6 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [fanFilterInput, setFanFilterInput] = useState<string>();
   const [refreshing, setRefreshing] = useState<boolean>(false);
-  const shouldUpdateDueDate = useRef(false);
-  const [updatingDueDate, setUpdatingDueDate] = useState<boolean>(false);
   const [cartTableContent, setCartTableContent] = useState<any>();
   const [expandedRowKeys, setExpandedRowKeys] = useState<string[]>();
 
@@ -289,27 +284,6 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     },
   });
 
-  const onChangeColumnDueDate = (value: Date, order: Order, index: number) => {
-    shouldUpdateDueDate.current = order.dueDate! !== value;
-    orders[index].dueDate = value;
-    setOrders([...orders]);
-  };
-
-  const onBlurDueDate = async (order: Order) => {
-    if (!shouldUpdateDueDate.current) {
-      return;
-    }
-    setUpdatingDueDate(true);
-    try {
-      await saveOrder(order);
-      message.success('Register updated with success.');
-    } catch (err) {
-      console.error(`Error while trying to update Due Date`, err);
-    }
-    setUpdatingDueDate(false);
-    shouldUpdateDueDate.current = false;
-  };
-
   const columns: ColumnsType<Order> = [
     {
       title: '_id',
@@ -320,7 +294,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     },
     {
       title: 'Name',
-      width: '9%',
+      width: '14%',
       align: 'center',
       render: (_, record) =>
         record.product
@@ -357,7 +331,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     {
       title: 'User',
       dataIndex: 'customerEmail',
-      width: '9%',
+      width: '12%',
       align: 'center',
       ...getColumnSearchProps('customerEmail'),
       render: (value: string) => {
@@ -453,7 +427,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     {
       title: 'Stage',
       dataIndex: 'stage',
-      width: '9%',
+      width: '12%',
       align: 'center',
       render: (value: string, order, index) => (
         <Select
@@ -493,59 +467,9 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
     {
-      title: 'Due Date',
-      dataIndex: 'dueDate',
-      width: '9%',
-      align: 'center',
-      filterIcon: <CalendarOutlined />,
-      filterDropdown: () => (
-        <DatePicker.RangePicker
-          style={{ padding: 8 }}
-          onChange={values => setFilter(values as any)}
-        />
-      ),
-      render: (value: Date, entity: Order, index: number) => {
-        if (updatingDueDate[entity.id!]) {
-          const antIcon = <LoadingOutlined spin />;
-          return <Spin indicator={antIcon} />;
-        } else {
-          if (entity.stage !== 'shipped') {
-            return value ? (
-              <>
-                <div>{moment(value).format('DD/MM/YYYY')}</div>
-                <div>{moment(value).format('HH:mm')}</div>
-              </>
-            ) : (
-              '-'
-            );
-          } else {
-            return (
-              <DatePicker
-                value={moment(value)}
-                format="DD/MM/YYYY"
-                onChange={value =>
-                  onChangeColumnDueDate(value as any, entity, index)
-                }
-                onBlur={() => onBlurDueDate(entity)}
-              />
-            );
-          }
-        }
-      },
-      sorter: (a, b): any => {
-        if (a.hCreationDate && b.hCreationDate)
-          return (
-            moment(a.hCreationDate).unix() - moment(b.hCreationDate).unix()
-          );
-        else if (a.hCreationDate) return -1;
-        else if (b.hCreationDate) return 1;
-        else return 0;
-      },
-    },
-    {
       title: 'Int. Status',
       dataIndex: 'commissionInternalStatus',
-      width: '9%',
+      width: '12%',
       align: 'center',
       render: (value: string, order, index) => (
         <Select
