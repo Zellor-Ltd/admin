@@ -1,3 +1,4 @@
+import { InputNumberFiled } from '@ant-design/flowchart/es/components/editor-panel/control-map-service/components/fields';
 import {
   FacebookFilled,
   GlobalOutlined,
@@ -24,19 +25,19 @@ import {
   Typography,
 } from 'antd';
 import { Upload } from 'components';
+import { AppContext } from 'contexts/AppContext';
 import { formatMoment } from 'helpers/formatMoment';
 import { useRequest } from 'hooks/useRequest';
 import { Creator } from 'interfaces/Creator';
 import { Currency } from 'interfaces/Currency';
 import { ServerAlias } from 'interfaces/ServerAlias';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import {
   fetchCurrencies,
   fetchServersList,
   saveCreator,
 } from 'services/DiscoClubService';
-import { RichTextEditor } from '../../components/RichTextEditor';
 
 interface CreatorDetailProps {
   creator: any;
@@ -62,6 +63,8 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
   const [serversList, setServersList] = useState<ServerAlias[]>([]);
   const [currencies, setCurrencies] = useState<Currency[]>([]);
   const { doRequest } = useRequest({ setLoading });
+  const { isMobile } = useContext(AppContext);
+  const inputRef = useRef<any>(null);
 
   const [form] = Form.useForm();
 
@@ -127,6 +130,12 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
     return formattedUser;
   };
 
+  const handleInstaLinkFocus = (event: any) => {
+    console.log(event);
+    window.open(event.target.value);
+    inputRef.current.blur();
+  };
+
   return (
     <>
       <PageHeader
@@ -148,8 +157,12 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
           <Tabs.TabPane forceRender tab="Details" key="Details">
             <Row gutter={8}>
               <Col lg={24} xs={24}>
-                <Row gutter={24} align="bottom">
-                  <Col lg={6} xs={24}>
+                <Row
+                  gutter={24}
+                  align="bottom"
+                  justify={isMobile ? 'space-between' : undefined}
+                >
+                  <Col lg={6}>
                     <Form.Item name="status" label="Status">
                       <Radio.Group buttonStyle="solid">
                         <Radio.Button value="live">Live</Radio.Button>
@@ -157,7 +170,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                       </Radio.Group>
                     </Form.Item>
                   </Col>
-                  <Col lg={6} xs={24}>
+                  <Col lg={6}>
                     <Form.Item name="approved" label="Approved">
                       <Radio.Group buttonStyle="solid">
                         <Radio.Button value="true">Approved</Radio.Button>
@@ -217,6 +230,11 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                 </Form.Item>
               </Col>
               <Col lg={12} xs={24}>
+                <Form.Item label="Description" name="description">
+                  <Input showCount maxLength={200} />
+                </Form.Item>
+              </Col>
+              <Col lg={12} xs={24}>
                 <Form.Item
                   label="Creator's Address"
                   name="creatorsAddress"
@@ -230,7 +248,6 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                   <Input />
                 </Form.Item>
               </Col>
-              <Col lg={12} xs={0}></Col>
               <Col lg={12} xs={24}>
                 <Form.Item
                   name="gender"
@@ -272,13 +289,23 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                 </Form.Item>
               </Col>
               <Col lg={12} xs={24}>
-                <Form.Item label="Description" name="description">
-                  <Input showCount maxLength={200} />
+                <Form.Item label="Creator's InstaLink">
+                  <Input
+                    ref={inputRef}
+                    type="url"
+                    className="instalink-input"
+                    value={`https://ie.discoclub.com/c/${creator.userName}`}
+                    onFocus={event => handleInstaLinkFocus(event)}
+                  />
                 </Form.Item>
               </Col>
             </Row>
-            <Row gutter={8}>
-              <Col lg={4} xs={24}>
+            <Row
+              gutter={8}
+              justify={isMobile ? 'space-between' : undefined}
+              className={isMobile ? 'mb-n2' : ''}
+            >
+              <Col lg={4}>
                 <Form.Item label="Cover Picture">
                   <Upload.ImageUpload
                     fileList={creator?.coverPictureUrl}
@@ -287,7 +314,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                   />
                 </Form.Item>
               </Col>
-              <Col lg={4} xs={24}>
+              <Col lg={4}>
                 <Form.Item label="Avatar">
                   <Upload.ImageUpload
                     fileList={creator?.avatar}
@@ -296,7 +323,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                   />
                 </Form.Item>
               </Col>
-              <Col lg={4} xs={24}>
+              <Col lg={4}>
                 <Form.Item label="Thumbnail">
                   <Upload.ImageUpload
                     fileList={creator?.thumbnail}
@@ -485,7 +512,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                 </Form.Item>
               </Col>
               <Col lg={12} xs={24}>
-                <Form.Item name="gender" label="Gender">
+                <Form.Item name="targetGender" label="Gender">
                   <Select mode="multiple">
                     <Select.Option value="Female">Female</Select.Option>
                     <Select.Option value="Male">Male</Select.Option>

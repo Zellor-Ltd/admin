@@ -236,6 +236,16 @@
   padding: 0 12px;
 }
 
+.instalink-input {
+  color: #1890ff;
+  text-decoration: none;
+  background-color: transparent;
+  outline: none;
+  cursor: pointer;
+  transition: color 0.3s;
+  border: 1px solid #d9d9d9;
+}
+
 @media (max-width: 992px) {
   .ant-layout-sider-children {
     width: 50px;
