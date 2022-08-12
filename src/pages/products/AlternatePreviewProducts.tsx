@@ -238,30 +238,39 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
       title: 'Id',
       dataIndex: 'id',
       width: '5%',
-      render: id => <CopyIdToClipboard id={id} />,
       align: 'center',
+      shouldCellUpdate: () => false,
+      render: id => <CopyIdToClipboard id={id} />,
     },
     {
       title: 'Name',
       dataIndex: 'name',
       width: '10%',
+      ellipsis: true,
+      shouldCellUpdate: () => false,
       render: (value: string, record: Product, index: number) => (
-        <Link
-          onClick={() => onEditProduct(record, index)}
-          to={{ pathname: window.location.pathname, state: record }}
-        >
-          {value}
-        </Link>
+        <Tooltip title={value}>
+          <Link
+            onClick={() => onEditProduct(record, index)}
+            to={{ pathname: window.location.pathname, state: record }}
+          >
+            {value}
+          </Link>
+        </Tooltip>
       ),
     },
     {
       title: 'Tag Image',
       dataIndex: ['tagImage'],
       width: '10%',
-      align: 'center',
+      align: 'left',
+      ellipsis: true,
+      shouldCellUpdate: (prevRecord, nextRecord) =>
+        prevRecord['tagImage'] !== nextRecord['tagImage'],
       render: (_, record) => (
-        <Form.Item style={{ marginBottom: '-5px' }}>
+        <Form.Item className="mb-0 mt-1">
           <Upload.ImageUpload
+            scrollOverflow
             fileList={record.tagImage}
             formProp="tagImage"
             form={form}
@@ -282,26 +291,28 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
       title: 'Thumbnail',
       dataIndex: ['thumbnailUrl'],
       width: '10%',
-      align: 'center',
+      align: 'left',
+      ellipsis: true,
+      shouldCellUpdate: (prevRecord, nextRecord) =>
+        prevRecord['thumbnailUrl'] !== nextRecord['thumbnailUrl'],
       render: (_, record) => (
-        <div className="images-content">
-          <Form.Item style={{ marginBottom: '-5px' }}>
-            <Upload.ImageUpload
-              fileList={record.thumbnailUrl}
-              formProp="thumbnailUrl"
-              form={form}
-              onFitTo={(fitTo, sourceProp, imageIndex) => {
-                onFitTo(fitTo, sourceProp, imageIndex, record);
-              }}
-              onRollback={(oldUrl, sourceProp, imageIndex) =>
-                onRollback(oldUrl, sourceProp, imageIndex, record)
-              }
-              onImageChange={(image, sourceProp, removed) =>
-                onImageChange(image, sourceProp, record, removed)
-              }
-            />
-          </Form.Item>
-        </div>
+        <Form.Item className="mb-0 mt-1">
+          <Upload.ImageUpload
+            scrollOverflow
+            fileList={record.thumbnailUrl}
+            formProp="thumbnailUrl"
+            form={form}
+            onFitTo={(fitTo, sourceProp, imageIndex) => {
+              onFitTo(fitTo, sourceProp, imageIndex, record);
+            }}
+            onRollback={(oldUrl, sourceProp, imageIndex) =>
+              onRollback(oldUrl, sourceProp, imageIndex, record)
+            }
+            onImageChange={(image, sourceProp, removed) =>
+              onImageChange(image, sourceProp, record, removed)
+            }
+          />
+        </Form.Item>
       ),
     },
     {
@@ -310,32 +321,28 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
       width: '23%',
       align: 'left',
       ellipsis: true,
+      shouldCellUpdate: (prevRecord, nextRecord) =>
+        prevRecord['image'] !== nextRecord['image'],
       render: (_, record) => {
         return (
-          <div className="images-wrapper">
-            <div className="images-content">
-              <Form.Item style={{ marginBottom: '-5px' }}>
-                <Upload.ImageUpload
-                  maxCount={20}
-                  fileList={record.image}
-                  formProp="image"
-                  form={form}
-                  onAssignToTag={file => onAssignToTag(file, record)}
-                  onAssignToThumbnail={file =>
-                    onAssignToThumbnail(file, record)
-                  }
-                  croppable
-                  scrollOverflow
-                  onImageChange={(image, sourceProp, removed) =>
-                    onImageChange(image, sourceProp, record, removed)
-                  }
-                  onRollback={(oldUrl, sourceProp, imageIndex) =>
-                    onRollback(oldUrl, sourceProp, imageIndex, record)
-                  }
-                />
-              </Form.Item>
-            </div>
-          </div>
+          <Form.Item className={'mb-0 mt-1'}>
+            <Upload.ImageUpload
+              maxCount={20}
+              fileList={record.image}
+              formProp="image"
+              form={form}
+              onAssignToTag={file => onAssignToTag(file, record)}
+              onAssignToThumbnail={file => onAssignToThumbnail(file, record)}
+              croppable
+              scrollOverflow
+              onImageChange={(image, sourceProp, removed) =>
+                onImageChange(image, sourceProp, record, removed)
+              }
+              onRollback={(oldUrl, sourceProp, imageIndex) =>
+                onRollback(oldUrl, sourceProp, imageIndex, record)
+              }
+            />
+          </Form.Item>
         );
       },
     },
@@ -343,9 +350,12 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
       title: 'Colour',
       dataIndex: 'colour',
       width: '10%',
+      ellipsis: true,
+      shouldCellUpdate: (prevRecord, nextRecord) =>
+        prevRecord.colour !== nextRecord.colour,
       render: (value: string, record: Product, index: number) => (
         <div
-          className="grid-color"
+          className="grid-color mb-0 mt-1"
           style={{
             background: record.colour ?? '#FFFFFF',
           }}
@@ -360,7 +370,7 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
                       className="mt-1"
                       color={record.colour ?? '#FFFFFF'}
                       disableAlpha
-                      onChangeComplete={selectedColour =>
+                      onChange={selectedColour =>
                         handleColourChange(selectedColour.hex, record, index)
                       }
                       presetColors={[
@@ -386,6 +396,7 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
                 style={{
                   height: '100%',
                   color: record.colour ?? '#FFFFFF',
+                  border: '1px solid #d9d9d9',
                 }}
               >
                 {record.colour ?? '#FFFFFF'}
@@ -399,6 +410,8 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
       title: 'Colour Title',
       dataIndex: 'colourTitle',
       width: '10%',
+      shouldCellUpdate: (prevRecord, nextRecord) =>
+        prevRecord.colourTitle !== nextRecord.colourTitle,
       render: (value: string, record: Product) => (
         <Tooltip
           placement="topLeft"
@@ -417,6 +430,8 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
       title: 'Size',
       dataIndex: 'size',
       width: '10%',
+      shouldCellUpdate: (prevRecord, nextRecord) =>
+        prevRecord.size !== nextRecord.size,
       render: (value: string, record: Product) => (
         <Tooltip
           placement="topLeft"
@@ -451,6 +466,7 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
       key: 'action',
       width: '12%',
       align: 'center',
+      shouldCellUpdate: () => false,
       render: (_, record, index) => (
         <>
           <Button
