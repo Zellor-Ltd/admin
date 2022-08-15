@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import {
   Button,
   Col,
@@ -73,11 +74,10 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
   const [maxDiscountAlert, setMaxDiscountAlert] = useState<boolean>(false);
   const { doRequest } = useRequest({ setLoading });
   const [_product, _setProduct] = useState(product);
-  const [showPicker, setShowPicker] = useState<boolean>(false);
-  const [color, setColor] = useState<string>(product?.colour ?? '#F2C590');
+  const [color, setColor] = useState<string | undefined>(product?.colour);
 
   const {
-    settings: { currency = [], size = [] },
+    settings: { currency = [] },
   } = useSelector((state: any) => state.settings);
 
   const optionMapping: SelectOption = {
@@ -469,48 +469,15 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                     </Form.Item>
                   </Col>
                   <Col lg={12} xs={24}>
-                    <Col>
-                      <div
-                        className="color-variant"
-                        style={{ background: color }}
-                      >
-                        <Button
-                          onClick={() => setShowPicker(prev => !prev)}
-                          ghost
-                          block
-                          style={{
-                            height: '100%',
-                            color: color,
-                          }}
-                        >
-                          {color}
-                        </Button>
-                      </div>
-                    </Col>
-                    {showPicker && (
-                      <Col lg={24} xs={24}>
-                        <SketchPicker
-                          className="mt-1"
-                          color={color}
-                          disableAlpha
-                          onChangeComplete={selectedColor =>
-                            setColor(selectedColor.hex)
-                          }
-                          presetColors={[
-                            '#4a2f10',
-                            '#704818',
-                            '#9e6521',
-                            '#C37D2A',
-                            '#E5AC69',
-                            '#F2C590',
-                            '#FFD6A6',
-                            '#FFF0CB',
-                          ]}
+                    <Col lg={24} xs={24}>
+                      <Form.Item name="variantId" label="Variant">
+                        <Input
+                          placeholder="Variant ID"
+                          disabled={isLive}
+                          pattern="^.{8}-.{4}-.{4}-.{4}-.{12}_STR$"
                         />
-                      </Col>
-                    )}
-                  </Col>
-                  <Col lg={12} xs={24}>
+                      </Form.Item>
+                    </Col>
                     <Col lg={24} xs={24}>
                       <Form.Item name="colourTitle" label="Colour">
                         <Input placeholder="Colour name" disabled={isLive} />
@@ -518,25 +485,27 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                     </Col>
                     <Col lg={24} xs={24}>
                       <Form.Item name="size" label="Size">
-                        <Select
-                          placeholder="Size"
-                          disabled={isLive}
-                          allowClear
-                          showSearch
-                          filterOption={(input, option) =>
-                            !!option?.children
-                              ?.toString()
-                              ?.toUpperCase()
-                              .includes(input?.toUpperCase())
-                          }
-                        >
-                          {size.map((curr: any) => (
-                            <Select.Option key={curr.value} value={curr.value}>
-                              {curr.name}
-                            </Select.Option>
-                          ))}
-                        </Select>
+                        <Input placeholder="Size" disabled={isLive} />
                       </Form.Item>
+                    </Col>
+                  </Col>
+                  <Col lg={12} xs={24}>
+                    <Col lg={24} xs={24}>
+                      <SketchPicker
+                        className="mt-1"
+                        color={color}
+                        onChange={selectedColor => setColor(selectedColor.hex)}
+                        presetColors={[
+                          '#4a2f10',
+                          '#704818',
+                          '#9e6521',
+                          '#C37D2A',
+                          '#E5AC69',
+                          '#F2C590',
+                          '#FFD6A6',
+                          '#FFF0CB',
+                        ]}
+                      />
                     </Col>
                   </Col>
                 </Row>
@@ -794,12 +763,12 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                 </Form.Item>
               </Col>
             </Row>
-                      <Row>
-                          <Col lg={6} xs={24}>
-                              <Form.Item name="urlKey" label="urlKey">
-                                  <Input placeholder="Product Key" disabled={isLive} />
-                              </Form.Item>
-                          </Col>
+            <Row>
+              <Col lg={6} xs={24}>
+                <Form.Item name="urlKey" label="urlKey">
+                  <Input placeholder="Product Key" disabled={isLive} />
+                </Form.Item>
+              </Col>
               <Col lg={6} xs={24}>
                 <Form.Item name="weight" label="Weight">
                   <InputNumber placeholder="Weight in Kg" disabled={isLive} />
