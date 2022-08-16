@@ -26,7 +26,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import { useRequest } from 'hooks/useRequest';
 import { Brand } from 'interfaces/Brand';
 import { Product } from 'interfaces/Product';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import {
   fetchVariants,
   addVariant,
@@ -121,6 +121,47 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
     label: 'subSubCategory',
     value: 'id',
   };
+  const [activeKey, setActiveKey] = useState<string>('-1');
+
+  const [offset, setOffset] = useState<number>(64);
+  const [panelStyle, setPanelStyle] = useState<React.CSSProperties>({
+    top: 64,
+  });
+  const filterPanelHeight = useRef<number>();
+  const windowHeight = window.innerHeight;
+
+  useEffect(() => {
+    if (isMobile) {
+      const panel = document.getElementById('filterPanel');
+      // Code for Chrome, Safari and Opera
+      panel!.addEventListener('webkitTransitionEnd', updateOffset);
+      // Standard syntax
+      panel!.addEventListener('transitionend', updateOffset);
+
+      return () => {
+        // Code for Chrome, Safari and Opera
+        panel!.removeEventListener('webkitTransitionEnd', updateOffset);
+        // Standard syntax
+        panel!.removeEventListener('transitionend', updateOffset);
+      };
+    }
+  });
+
+  const updateOffset = () => {
+    if (activeKey === '1') {
+      filterPanelHeight.current =
+        document.getElementById('filterPanel')!.offsetHeight;
+      if (filterPanelHeight.current! > windowHeight) {
+        const heightDifference = filterPanelHeight.current! - windowHeight;
+        const seventhWindowHeight = windowHeight / 7;
+        setOffset(-heightDifference - seventhWindowHeight);
+      }
+    } else setOffset(64);
+  };
+
+  useEffect(() => {
+    setPanelStyle({ top: offset });
+  }, [offset]);
 
   useEffect(() => {
     getGroupItems();
@@ -490,11 +531,23 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
     setVariants([...variants, item]);
   };
 
+  const collapse = (event?: any) => {
+    if (event && isMobile) {
+      if (activeKey === '1') setActiveKey('0');
+    }
+  };
+
+  const handleCollapseChange = () => {
+    if (activeKey === '1') setActiveKey('0');
+    else setActiveKey('1');
+  };
+
   return (
     <>
       <PageHeader
         title={`Editing ${variantGroup.name}`}
         subTitle={isMobile ? '' : 'Add/Remove Variants'}
+        className={isMobile ? 'mb-n1' : ''}
         extra={
           <Row justify={isMobile ? 'end' : undefined}>
             <Col>
@@ -571,11 +624,18 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
             align="bottom"
             justify="space-between"
             className="sticky-filter-box"
+            id="filterPanel"
+            style={panelStyle}
           >
             {!isMobile && <Filters />}
             {isMobile && (
               <>
-                <Collapse ghost>
+                <Collapse
+                  ghost
+                  activeKey={activeKey}
+                  onChange={handleCollapseChange}
+                  destroyInactivePanel
+                >
                   <Panel
                     header={
                       <Typography.Title level={5}>Filters</Typography.Title>

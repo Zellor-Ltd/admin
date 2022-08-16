@@ -678,8 +678,8 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   };
 
   const handleCollapseChange = () => {
-    if (activeKey === '0') setActiveKey('1');
-    else setActiveKey('0');
+    if (activeKey === '1') setActiveKey('0');
+    else setActiveKey('1');
   };
 
   return (
@@ -706,7 +706,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
             className="sticky-filter-box"
             id="filterPanel"
             style={panelStyle}
-            onAnimationEnd={updateOffset}
           >
             {!isMobile && <Filters />}
             {isMobile && (
