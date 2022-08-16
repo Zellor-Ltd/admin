@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import {
   DeleteOutlined,
   EditOutlined,
@@ -63,8 +64,9 @@ const reduceSegmentsTags = (packages: Segment[]) => {
 };
 
 const VideoFeed: React.FC<RouteComponentProps> = () => {
+  const { isMobile } = useContext(AppContext);
   const inputRef = useRef<any>(null);
-  const [activeKey, setActiveKey] = useState<string>('0');
+  const [activeKey, setActiveKey] = useState<string>('-1');
   const [feedForm] = Form.useForm();
   const [segmentForm] = Form.useForm();
   const [selectedVideoFeed, setSelectedVideoFeed] = useState<FeedItem>();
@@ -95,25 +97,45 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const [indexFilter, setIndexFilter] = useState<number>();
   const [creatorFilter, setCreatorFilter] = useState<string>();
   const [dateSortFilter, setDateSortFilter] = useState<string>();
-  const [filterOffset, setFilterOffset] = useState<number>(64);
-  const [filterPanel, setFilterPanel] = useState<any>();
+  const [offset, setOffset] = useState<number>(64);
+  const [panelStyle, setPanelStyle] = useState<React.CSSProperties>({
+    top: 64,
+  });
   const filterPanelHeight = useRef<number>();
   const windowHeight = window.innerHeight;
 
-  const handleResize = () => {
+  useEffect(() => {
+    if (isMobile) {
+      const panel = document.getElementById('filterPanel');
+      // Code for Chrome, Safari and Opera
+      panel!.addEventListener('webkitTransitionEnd', updateOffset);
+      // Standard syntax
+      panel!.addEventListener('transitionend', updateOffset);
+
+      return () => {
+        // Code for Chrome, Safari and Opera
+        panel!.removeEventListener('webkitTransitionEnd', updateOffset);
+        // Standard syntax
+        panel!.removeEventListener('transitionend', updateOffset);
+      };
+    }
+  });
+
+  const updateOffset = () => {
     if (activeKey === '1') {
-      filterPanelHeight.current = filterPanel!.offsetHeight;
+      filterPanelHeight.current =
+        document.getElementById('filterPanel')!.offsetHeight;
       if (filterPanelHeight.current! > windowHeight) {
         const heightDifference = filterPanelHeight.current! - windowHeight;
-        const quarterWindowHeight = windowHeight / 4;
-        setFilterOffset(-heightDifference - quarterWindowHeight);
+        const seventhWindowHeight = windowHeight / 7;
+        setOffset(-heightDifference - seventhWindowHeight);
       }
-    } else setFilterOffset(64);
+    } else setOffset(64);
   };
 
   useEffect(() => {
-    if (filterPanel) filterPanel.addEventListener('resize', handleResize);
-  });
+    setPanelStyle({ top: offset });
+  }, [offset]);
 
   useEffect(() => {
     if (inputRef.current)
@@ -151,8 +173,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     label: 'value',
     value: 'value',
   };
-
-  const { isMobile } = useContext(AppContext);
 
   const feedItemColumns: ColumnsType<FeedItem> = [
     {
@@ -660,7 +680,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const handleCollapseChange = () => {
     if (activeKey === '0') setActiveKey('1');
     else setActiveKey('0');
-    setFilterPanel(document.getElementById('filterPanel'));
   };
 
   return (
@@ -686,7 +705,8 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
             justify="space-between"
             className="sticky-filter-box"
             id="filterPanel"
-            style={{ top: filterOffset }}
+            style={panelStyle}
+            onAnimationEnd={updateOffset}
           >
             {!isMobile && <Filters />}
             {isMobile && (
@@ -700,9 +720,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                   header={<Typography.Title level={5}>Filter</Typography.Title>}
                   key="1"
                 >
-                  <div id="filterFields">
-                    <Filters />
-                  </div>
+                  <Filters />
                 </Panel>
               </Collapse>
             )}
