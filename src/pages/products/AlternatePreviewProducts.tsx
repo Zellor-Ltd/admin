@@ -1,14 +1,5 @@
 import { Upload } from 'components';
-import {
-  Button,
-  Form,
-  Input,
-  message,
-  Popover,
-  Select,
-  Spin,
-  Tooltip,
-} from 'antd';
+import { Button, Form, Input, message, Popover, Spin, Tooltip } from 'antd';
 import EditableTable, {
   EditableColumnType,
 } from '../../components/EditableTable';
@@ -27,7 +18,6 @@ import { ProductBrand } from '../../interfaces/ProductBrand';
 import { Image } from '../../interfaces/Image';
 import scrollIntoView from 'scroll-into-view';
 import { useMount } from 'react-use';
-import { useSelector } from 'react-redux';
 import { SketchPicker } from 'react-color';
 
 interface AlternatePreviewProductsProps {
@@ -67,10 +57,6 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
   const [loading, setLoading] = useState<boolean>(false);
   const [_products, _setProducts] = useState<Product[]>([]);
   const viewPicker = useRef<boolean>(false);
-
-  const {
-    settings: { size = [] },
-  } = useSelector((state: any) => state.settings);
 
   useEffect(() => {
     const productsMap = new Map<string, Product>();
@@ -318,7 +304,7 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
     {
       title: 'Image',
       dataIndex: ['image'],
-      width: '23%',
+      width: '20%',
       align: 'left',
       ellipsis: true,
       shouldCellUpdate: (prevRecord, nextRecord) =>
@@ -347,6 +333,27 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
       },
     },
     {
+      title: 'Variant',
+      dataIndex: 'variantId',
+      width: '10%',
+      shouldCellUpdate: (prevRecord, nextRecord) =>
+        prevRecord.variantId !== nextRecord.variantId,
+      render: (value: string, record: Product) => (
+        <Tooltip
+          placement="topLeft"
+          title={record.variantId}
+          className="repositioned-grid-item"
+        >
+          <Input
+            onChange={event => (record.variantId = event.target.value)}
+            placeholder="Variant ID"
+            defaultValue={value}
+            pattern="^.{8}-.{4}-.{4}-.{4}-.{12}_STR$"
+          />
+        </Tooltip>
+      ),
+    },
+    {
       title: 'Colour',
       dataIndex: 'colour',
       width: '10%',
@@ -360,7 +367,7 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
             background: record.colour ?? '#FFFFFF',
           }}
         >
-          <Tooltip placement="topLeft" title={record.colour ?? '#FFFFFF'}>
+          <Tooltip placement="topLeft" title={record.colour ?? 'null'}>
             <Popover
               placement="bottomLeft"
               content={
@@ -395,11 +402,11 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
                 block
                 style={{
                   height: '100%',
-                  color: record.colour ?? '#FFFFFF',
+                  color: record.colour ?? 'gray',
                   border: '1px solid #d9d9d9',
                 }}
               >
-                {record.colour ?? '#FFFFFF'}
+                {record.colour ?? 'null'}
               </Button>
             </Popover>
           </Tooltip>
@@ -438,26 +445,11 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
           title={record.size}
           className="repositioned-grid-item"
         >
-          <Select
-            onChange={optionValue => (record.size = optionValue)}
+          <Input
+            onChange={event => (record.size = event.target.value)}
             placeholder="Size"
-            allowClear
-            showSearch
             defaultValue={value}
-            style={{ width: '100%' }}
-            filterOption={(input, option) =>
-              !!option?.children
-                ?.toString()
-                ?.toUpperCase()
-                .includes(input?.toUpperCase())
-            }
-          >
-            {size.map((curr: any) => (
-              <Select.Option key={curr.value} value={curr.value}>
-                {curr.name}
-              </Select.Option>
-            ))}
-          </Select>
+          />
         </Tooltip>
       ),
     },

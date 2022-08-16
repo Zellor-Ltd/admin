@@ -1074,7 +1074,11 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
               </Collapse>
             )}
             <Col span={24}>
-              <Row justify="space-between" align="top">
+              <Row
+                justify="space-between"
+                align="top"
+                style={{ background: 'white' }}
+              >
                 <Col flex="auto">
                   <Button
                     type="text"
