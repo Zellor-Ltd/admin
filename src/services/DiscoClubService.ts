@@ -25,7 +25,6 @@ import { User } from 'interfaces/User';
 import { Banner } from 'interfaces/Banner';
 import { VideoType } from 'interfaces/VideoType';
 import { VariantGroup } from 'interfaces/VariantGroup';
-import { Commission } from 'interfaces/Commission';
 
 export const instance = axios.create({
   baseURL: process.env.REACT_APP_HOST_ENDPOINT,
@@ -99,7 +98,7 @@ const errorHandler = (
 instance.interceptors.response.use(
   response => {
     const { error, message, success, results } = response?.data;
-    if (error) {
+    if (error && error.response?.data !== 'Invalid Token') {
       errorHandler(error, message || error, response.data);
     } else if (success === false && !(results && !results.length)) {
       errorHandler(new Error('Request failed'), 'Request failed.');
