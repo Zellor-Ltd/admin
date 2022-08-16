@@ -102,18 +102,19 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
   const windowHeight = window.innerHeight;
 
   useEffect(() => {
-    if (isMobile) {
-      const panel = document.getElementById('filterPanel');
+    const panel = document.getElementById('filterPanel');
+
+    if (isMobile && panel) {
       // Code for Chrome, Safari and Opera
-      panel!.addEventListener('webkitTransitionEnd', updateOffset);
+      panel.addEventListener('webkitTransitionEnd', updateOffset);
       // Standard syntax
-      panel!.addEventListener('transitionend', updateOffset);
+      panel.addEventListener('transitionend', updateOffset);
 
       return () => {
         // Code for Chrome, Safari and Opera
-        panel!.removeEventListener('webkitTransitionEnd', updateOffset);
+        panel.removeEventListener('webkitTransitionEnd', updateOffset);
         // Standard syntax
-        panel!.removeEventListener('transitionend', updateOffset);
+        panel.removeEventListener('transitionend', updateOffset);
       };
     }
   });

@@ -1,4 +1,8 @@
-import { ArrowRightOutlined, SearchOutlined } from '@ant-design/icons';
+import {
+  ArrowRightOutlined,
+  SearchOutlined,
+  UpOutlined,
+} from '@ant-design/icons';
 import {
   Button,
   Checkbox,
@@ -116,18 +120,19 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
   const windowHeight = window.innerHeight;
 
   useEffect(() => {
-    if (isMobile) {
-      const panel = document.getElementById('filterPanel');
+    const panel = document.getElementById('filterPanel');
+
+    if (isMobile && panel) {
       // Code for Chrome, Safari and Opera
-      panel!.addEventListener('webkitTransitionEnd', updateOffset);
+      panel.addEventListener('webkitTransitionEnd', updateOffset);
       // Standard syntax
-      panel!.addEventListener('transitionend', updateOffset);
+      panel.addEventListener('transitionend', updateOffset);
 
       return () => {
         // Code for Chrome, Safari and Opera
-        panel!.removeEventListener('webkitTransitionEnd', updateOffset);
+        panel.removeEventListener('webkitTransitionEnd', updateOffset);
         // Standard syntax
-        panel!.removeEventListener('transitionend', updateOffset);
+        panel.removeEventListener('transitionend', updateOffset);
       };
     }
   });
@@ -548,7 +553,19 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
               </>
             )}
             <Col span={24}>
-              <Row justify="end">
+              <Row justify="space-between" align="top">
+                <Col flex="auto">
+                  <Button
+                    type="text"
+                    onClick={collapse}
+                    style={{
+                      display: activeKey === '1' ? 'block' : 'none',
+                      background: 'none',
+                    }}
+                  >
+                    <UpOutlined />
+                  </Button>
+                </Col>
                 <Col>
                   <Button
                     type="primary"

@@ -4,6 +4,7 @@ import {
   MenuOutlined,
   PlusOutlined,
   SearchOutlined,
+  UpOutlined,
 } from '@ant-design/icons';
 import {
   Button,
@@ -131,18 +132,19 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
   const windowHeight = window.innerHeight;
 
   useEffect(() => {
-    if (isMobile) {
-      const panel = document.getElementById('filterPanel');
+    const panel = document.getElementById('filterPanel');
+
+    if (isMobile && panel) {
       // Code for Chrome, Safari and Opera
-      panel!.addEventListener('webkitTransitionEnd', updateOffset);
+      panel.addEventListener('webkitTransitionEnd', updateOffset);
       // Standard syntax
-      panel!.addEventListener('transitionend', updateOffset);
+      panel.addEventListener('transitionend', updateOffset);
 
       return () => {
         // Code for Chrome, Safari and Opera
-        panel!.removeEventListener('webkitTransitionEnd', updateOffset);
+        panel.removeEventListener('webkitTransitionEnd', updateOffset);
         // Standard syntax
-        panel!.removeEventListener('transitionend', updateOffset);
+        panel.removeEventListener('transitionend', updateOffset);
       };
     }
   });
@@ -497,22 +499,6 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
               </Col>
             </Row>
           </Col>
-          {isMobile && (
-            <Col>
-              <Row justify="end">
-                <Col>
-                  <Button
-                    type="primary"
-                    onClick={() => getProducts(true)}
-                    loading={loading}
-                  >
-                    Search
-                    <SearchOutlined style={{ color: 'white' }} />
-                  </Button>
-                </Col>
-              </Row>
-            </Col>
-          )}
         </Row>
       </>
     );
@@ -603,7 +589,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
         type="text"
         style={{ background: 'none' }}
         onClick={() => setShowMore(prev => !prev)}
-        className="mb-1 ml-1 mt-05"
+        className="mt-05"
       >
         <Typography.Title
           level={5}
@@ -628,8 +614,10 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
             style={panelStyle}
           >
             {!isMobile && <Filters />}
-            {isMobile && (
-              <>
+            {
+              <div
+                style={isMobile ? { display: 'block' } : { display: 'none' }}
+              >
                 <Collapse
                   ghost
                   activeKey={activeKey}
@@ -645,16 +633,27 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
                     <Filters />
                   </Panel>
                 </Collapse>
-              </>
-            )}
+              </div>
+            }
             <Col span={24}>
-              <Row justify="end">
+              <Row justify="space-between" align="top">
+                <Col flex="auto">
+                  <Button
+                    type="text"
+                    onClick={collapse}
+                    style={{
+                      display: activeKey === '1' ? 'block' : 'none',
+                      background: 'none',
+                    }}
+                  >
+                    <UpOutlined />
+                  </Button>
+                </Col>
                 <Col>
                   <Button
                     type="primary"
                     onClick={() => getProducts(true)}
                     loading={loading}
-                    className="mb-1 mr-1"
                   >
                     Search
                     <SearchOutlined style={{ color: 'white' }} />
