@@ -473,7 +473,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
       width: '20%',
       render: link => (
         <CopyIdToClipboard
-          id={'https://link.discoclub.com/' + link?.substring(0, 7)}
+          id={'https://link.discoclub.com/' + link?.substring(0, 9)}
         />
       ),
       align: 'center',
@@ -484,10 +484,10 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
       width: '15%',
       render: id => (
         <a
-          href={'https://link.discoclub.com/' + id.substring(0, 7)}
+              href={'https://link.discoclub.com/' + id.replace("_STR", "")}
           target="blank"
         >
-          {id.substring(0, 7)}
+              {id.replace("_STR", "")}
         </a>
       ),
       align: 'center',
