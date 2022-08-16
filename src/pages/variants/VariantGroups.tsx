@@ -223,6 +223,7 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
   };
 
   const getProducts = async (resetResults?: boolean) => {
+    if (resetResults) collapse(resetResults);
     if (!resetResults && !products.length) return;
     const { results } = await doFetch(() =>
       _fetchStagingProducts(resetResults)
@@ -480,6 +481,7 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
                   value={runIdFilter}
                   suffix={<SearchOutlined />}
                   placeholder="Search by Run ID"
+                  onPressEnter={() => getProducts(true)}
                 />
               </Col>
               <Col lg={6} xs={24}>
@@ -505,8 +507,8 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
     );
   };
 
-  const collapse = (event?: any) => {
-    if (event && isMobile) {
+  const collapse = (shouldCollapse?: any) => {
+    if (shouldCollapse && isMobile) {
       if (activeKey === '1') setActiveKey('0');
     }
   };

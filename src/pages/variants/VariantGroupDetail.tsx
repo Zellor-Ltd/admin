@@ -235,6 +235,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
   };
 
   const getProducts = async (resetResults?: boolean) => {
+    if (resetResults) collapse(resetResults);
     if (!resetResults && !products.length) return;
     const { results } = await doFetch(() =>
       _fetchStagingProducts(resetResults)
@@ -479,6 +480,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
                   value={runIdFilter}
                   suffix={<SearchOutlined />}
                   placeholder="Search by Run ID"
+                  onPressEnter={() => getProducts(true)}
                 />
               </Col>
               <Col lg={6} xs={24}>
@@ -517,8 +519,8 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
     setVariants([...variants, item]);
   };
 
-  const collapse = (event?: any) => {
-    if (event && isMobile) {
+  const collapse = (shouldCollapse?: any) => {
+    if (shouldCollapse && isMobile) {
       if (activeKey === '1') setActiveKey('0');
     }
   };
