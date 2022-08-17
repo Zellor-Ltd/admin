@@ -71,9 +71,10 @@ instance.interceptors.request.use((config: AxiosRequestConfig) => {
   return config;
 });
 
-const MAX_STACKED_ERRORS = 3;
+const MAX_STACKED_ERRORS = 1;
 const ERROR_MESSAGE_DURATION = 3000;
 let errorCounter = 0;
+let loggingOut = false;
 
 const errorHandler = (
   error: any,
@@ -98,20 +99,25 @@ const errorHandler = (
 instance.interceptors.response.use(
   response => {
     const { error, message, success, results } = response?.data;
-    if (error && error.response?.data !== 'Invalid Token') {
-      errorHandler(error, message || error, response.data);
-    } else if (success === false && !(results && !results.length)) {
-      errorHandler(new Error('Request failed'), 'Request failed.');
+    if (!loggingOut) {
+      if (error && error.response?.data !== 'Invalid Token') {
+        errorHandler(error, message || error, response.data);
+      } else if (success === false && !(results && !results.length)) {
+        errorHandler(new Error('Request failed'), 'Request failed.');
+      }
     }
     return replaceIdRecursively(response.data);
   },
   error => {
-    if (error.response?.data === 'Invalid Token') {
-      message.error('Your session has expired, please login');
-      localStorage.clear();
-      window.location.replace('/login');
-    } else {
-      errorHandler(error);
+    if (!loggingOut) {
+      if (error.response?.data === 'Invalid Token') {
+        loggingOut = true;
+        message.error('Your session has expired, please login');
+        localStorage.clear();
+        window.location.replace('/login');
+      } else {
+        errorHandler(error);
+      }
     }
   }
 );
