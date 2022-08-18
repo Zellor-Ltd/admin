@@ -1,10 +1,10 @@
-import { Button, Col, Layout, Row, Typography } from 'antd';
+import { Button, Col, Layout, message, Row, Typography } from 'antd';
 import ErrorBoundary from 'components/ErrorBoundary';
 import { Notifications } from 'components/Notifications';
 import jwt from 'helpers/jwt';
 import { useBuildTarget } from 'hooks/useBuildTarget';
 import ErrorPage from 'pages/error/ErrorPage';
-import React, { useContext, useRef } from 'react';
+import React, { useContext } from 'react';
 import { AppContext } from 'contexts/AppContext';
 import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 import './AuthenticatedLayout.scss';
@@ -16,9 +16,6 @@ const { Header, Sider, Content } = Layout;
 const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
   const { isMobile } = useContext(AppContext);
   const { children, history } = props;
-  const testMode = useRef(
-    process.env.REACT_APP_SERVER_ENV?.toString() === 'development'
-  );
 
   const appName = useBuildTarget({
     ADMIN: 'Disco Admin',
@@ -32,7 +29,11 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
 
   const getUserName = () => {
     const user: any = jwt.decode(localStorage.getItem('token') || '');
-    return user.name;
+    if (user) return user.name;
+    else {
+      message.error('Your session has expired, please login');
+      logout();
+    }
   };
 
   return (
