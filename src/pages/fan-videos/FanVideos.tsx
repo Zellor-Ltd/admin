@@ -93,7 +93,47 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
   const [indexFilter, setIndexFilter] = useState<number>();
   const [creatorFilter, setCreatorFilter] = useState<string>();
   const inputRef = useRef<any>(null);
-  const [activeKey, setActiveKey] = useState<string>('0');
+  const [activeKey, setActiveKey] = useState<string>('-1');
+  const [offset, setOffset] = useState<number>(64);
+  const [panelStyle, setPanelStyle] = useState<React.CSSProperties>({
+    top: 64,
+  });
+  const filterPanelHeight = useRef<number>();
+  const windowHeight = window.innerHeight;
+
+  useEffect(() => {
+    const panel = document.getElementById('filterPanel');
+
+    if (isMobile && panel) {
+      // Code for Chrome, Safari and Opera
+      panel.addEventListener('webkitTransitionEnd', updateOffset);
+      // Standard syntax
+      panel.addEventListener('transitionend', updateOffset);
+
+      return () => {
+        // Code for Chrome, Safari and Opera
+        panel.removeEventListener('webkitTransitionEnd', updateOffset);
+        // Standard syntax
+        panel.removeEventListener('transitionend', updateOffset);
+      };
+    }
+  });
+
+  const updateOffset = () => {
+    if (activeKey === '1') {
+      filterPanelHeight.current =
+        document.getElementById('filterPanel')!.offsetHeight;
+      if (filterPanelHeight.current! > windowHeight) {
+        const heightDifference = filterPanelHeight.current! - windowHeight;
+        const seventhWindowHeight = windowHeight / 7;
+        setOffset(-heightDifference - seventhWindowHeight);
+      }
+    } else setOffset(64);
+  };
+
+  useEffect(() => {
+    setPanelStyle({ top: offset });
+  }, [offset]);
 
   const masterBrandMapping: SelectOption = {
     key: 'id',
@@ -599,6 +639,11 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
     }
   };
 
+  const handleCollapseChange = () => {
+    if (activeKey === '1') setActiveKey('0');
+    else setActiveKey('1');
+  };
+
   return (
     <>
       {!details && (
@@ -606,6 +651,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
           <PageHeader
             title="Fan Videos"
             subTitle={isMobile ? '' : 'List of Fan Videos'}
+            className={isMobile ? 'mb-n1' : ''}
             extra={[
               <Button
                 key="2"
@@ -620,6 +666,8 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
             align="bottom"
             justify="space-between"
             className="sticky-filter-box"
+            id="filterPanel"
+            style={panelStyle}
           >
             {!isMobile && <Filters />}
             {isMobile && (
@@ -628,10 +676,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
                   ghost
                   className="mb-1"
                   activeKey={activeKey}
-                  onChange={() => {
-                    if (activeKey === '0') setActiveKey('1');
-                    else setActiveKey('0');
-                  }}
+                  onChange={handleCollapseChange}
                   destroyInactivePanel
                 >
                   <Panel

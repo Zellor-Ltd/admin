@@ -4,6 +4,7 @@ import {
   MenuOutlined,
   PlusOutlined,
   SearchOutlined,
+  UpOutlined,
 } from '@ant-design/icons';
 import {
   Button,
@@ -26,7 +27,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import { useRequest } from 'hooks/useRequest';
 import { Brand } from 'interfaces/Brand';
 import { Product } from 'interfaces/Product';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import {
   fetchVariants,
   addVariant,
@@ -121,6 +122,48 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
     label: 'subSubCategory',
     value: 'id',
   };
+  const [activeKey, setActiveKey] = useState<string>('-1');
+
+  const [offset, setOffset] = useState<number>(64);
+  const [panelStyle, setPanelStyle] = useState<React.CSSProperties>({
+    top: 64,
+  });
+  const filterPanelHeight = useRef<number>();
+  const windowHeight = window.innerHeight;
+
+  useEffect(() => {
+    const panel = document.getElementById('filterPanel');
+
+    if (isMobile && panel) {
+      // Code for Chrome, Safari and Opera
+      panel.addEventListener('webkitTransitionEnd', updateOffset);
+      // Standard syntax
+      panel.addEventListener('transitionend', updateOffset);
+
+      return () => {
+        // Code for Chrome, Safari and Opera
+        panel.removeEventListener('webkitTransitionEnd', updateOffset);
+        // Standard syntax
+        panel.removeEventListener('transitionend', updateOffset);
+      };
+    }
+  });
+
+  const updateOffset = () => {
+    if (activeKey === '1') {
+      filterPanelHeight.current =
+        document.getElementById('filterPanel')!.offsetHeight;
+      if (filterPanelHeight.current! > windowHeight) {
+        const heightDifference = filterPanelHeight.current! - windowHeight;
+        const seventhWindowHeight = windowHeight / 7;
+        setOffset(-heightDifference - seventhWindowHeight);
+      }
+    } else setOffset(64);
+  };
+
+  useEffect(() => {
+    setPanelStyle({ top: offset });
+  }, [offset]);
 
   useEffect(() => {
     getGroupItems();
@@ -192,6 +235,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
   };
 
   const getProducts = async (resetResults?: boolean) => {
+    if (resetResults) collapse(resetResults);
     if (!resetResults && !products.length) return;
     const { results } = await doFetch(() =>
       _fetchStagingProducts(resetResults)
@@ -436,6 +480,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
                   value={runIdFilter}
                   suffix={<SearchOutlined />}
                   placeholder="Search by Run ID"
+                  onPressEnter={() => getProducts(true)}
                 />
               </Col>
               <Col lg={6} xs={24}>
@@ -456,22 +501,6 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
               </Col>
             </Row>
           </Col>
-          {isMobile && (
-            <Col>
-              <Row justify="end">
-                <Col>
-                  <Button
-                    type="primary"
-                    onClick={() => getProducts(true)}
-                    loading={loading}
-                  >
-                    Search
-                    <SearchOutlined style={{ color: 'white' }} />
-                  </Button>
-                </Col>
-              </Row>
-            </Col>
-          )}
         </Row>
       </>
     );
@@ -490,11 +519,23 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
     setVariants([...variants, item]);
   };
 
+  const collapse = (shouldCollapse?: any) => {
+    if (shouldCollapse && isMobile) {
+      if (activeKey === '1') setActiveKey('0');
+    }
+  };
+
+  const handleCollapseChange = () => {
+    if (activeKey === '1') setActiveKey('0');
+    else setActiveKey('1');
+  };
+
   return (
     <>
       <PageHeader
         title={`Editing ${variantGroup.name}`}
         subTitle={isMobile ? '' : 'Add/Remove Variants'}
+        className={isMobile ? 'mb-n1' : ''}
         extra={
           <Row justify={isMobile ? 'end' : undefined}>
             <Col>
@@ -550,7 +591,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
         type="text"
         style={{ background: 'none' }}
         onClick={() => setShowMore(prev => !prev)}
-        className="mb-1 ml-1 mt-05"
+        className="mt-05"
       >
         <Typography.Title
           level={5}
@@ -571,11 +612,20 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
             align="bottom"
             justify="space-between"
             className="sticky-filter-box"
+            id="filterPanel"
+            style={panelStyle}
           >
             {!isMobile && <Filters />}
-            {isMobile && (
-              <>
-                <Collapse ghost>
+            {
+              <div
+                style={isMobile ? { display: 'block' } : { display: 'none' }}
+              >
+                <Collapse
+                  ghost
+                  activeKey={activeKey}
+                  onChange={handleCollapseChange}
+                  destroyInactivePanel
+                >
                   <Panel
                     header={
                       <Typography.Title level={5}>Filters</Typography.Title>
@@ -585,16 +635,27 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
                     <Filters />
                   </Panel>
                 </Collapse>
-              </>
-            )}
+              </div>
+            }
             <Col span={24}>
-              <Row justify="end">
+              <Row justify="space-between" align="top">
+                <Col flex="auto">
+                  <Button
+                    type="text"
+                    onClick={collapse}
+                    style={{
+                      display: activeKey === '1' ? 'block' : 'none',
+                      background: 'none',
+                    }}
+                  >
+                    <UpOutlined />
+                  </Button>
+                </Col>
                 <Col>
                   <Button
                     type="primary"
                     onClick={() => getProducts(true)}
                     loading={loading}
-                    className="mb-1 mr-1"
                   >
                     Search
                     <SearchOutlined style={{ color: 'white' }} />

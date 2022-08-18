@@ -1,4 +1,8 @@
-import { ArrowRightOutlined, SearchOutlined } from '@ant-design/icons';
+import {
+  ArrowRightOutlined,
+  SearchOutlined,
+  UpOutlined,
+} from '@ant-design/icons';
 import {
   Button,
   Checkbox,
@@ -38,13 +42,45 @@ import VariantGroupDetail from './VariantGroupDetail';
 import scrollIntoView from 'scroll-into-view';
 const { Panel } = Collapse;
 
+const optionMapping: SelectOption = {
+  key: 'id',
+  label: 'brandName',
+  value: 'id',
+};
+
+const productSuperCategoryOptionMapping: SelectOption = {
+  key: 'id',
+  label: 'superCategory',
+  value: 'id',
+};
+
+const productCategoryOptionMapping: SelectOption = {
+  key: 'id',
+  label: 'category',
+  value: 'id',
+};
+
+const productSubCategoryOptionMapping: SelectOption = {
+  key: 'id',
+  label: 'subCategory',
+  value: 'id',
+};
+
+const productSubSubCategoryOptionMapping: SelectOption = {
+  key: 'id',
+  label: 'subSubCategory',
+  value: 'id',
+};
+
 const VariantGroups: React.FC<RouteComponentProps> = () => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const { isMobile } = useContext(AppContext);
+  const { doFetch } = useRequest({ setLoading });
   const [currentGroup, setCurrentGroup] = useState<Product>();
   const [brands, setBrands] = useState<Brand[]>([]);
   const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
   const [isFetchingBrands, setIsFetchingBrands] = useState(false);
   const [isFetchingProductBrands, setIsFetchingProductBrands] = useState(false);
-  const [loading, setLoading] = useState<boolean>(false);
   const [fetchingCategories, setFetchingCategories] = useState(false);
   const { fetchAllCategories, allCategories } = useAllCategories({
     setLoading: setFetchingCategories,
@@ -74,39 +110,48 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
   const [currentSubSubCategory, setCurrentSubSubCategory] =
     useState<ProductCategory>();
 
-  const { doFetch } = useRequest({ setLoading });
+  const [activeKey, setActiveKey] = useState<string>('-1');
 
-  const optionMapping: SelectOption = {
-    key: 'id',
-    label: 'brandName',
-    value: 'id',
+  const [offset, setOffset] = useState<number>(64);
+  const [panelStyle, setPanelStyle] = useState<React.CSSProperties>({
+    top: 64,
+  });
+  const filterPanelHeight = useRef<number>();
+  const windowHeight = window.innerHeight;
+
+  useEffect(() => {
+    const panel = document.getElementById('filterPanel');
+
+    if (isMobile && panel) {
+      // Code for Chrome, Safari and Opera
+      panel.addEventListener('webkitTransitionEnd', updateOffset);
+      // Standard syntax
+      panel.addEventListener('transitionend', updateOffset);
+
+      return () => {
+        // Code for Chrome, Safari and Opera
+        panel.removeEventListener('webkitTransitionEnd', updateOffset);
+        // Standard syntax
+        panel.removeEventListener('transitionend', updateOffset);
+      };
+    }
+  });
+
+  const updateOffset = () => {
+    if (activeKey === '1') {
+      filterPanelHeight.current =
+        document.getElementById('filterPanel')!.offsetHeight;
+      if (filterPanelHeight.current! > windowHeight) {
+        const heightDifference = filterPanelHeight.current! - windowHeight;
+        const seventhWindowHeight = windowHeight / 7;
+        setOffset(-heightDifference - seventhWindowHeight);
+      }
+    } else setOffset(64);
   };
 
-  const { isMobile } = useContext(AppContext);
-
-  const productSuperCategoryOptionMapping: SelectOption = {
-    key: 'id',
-    label: 'superCategory',
-    value: 'id',
-  };
-
-  const productCategoryOptionMapping: SelectOption = {
-    key: 'id',
-    label: 'category',
-    value: 'id',
-  };
-
-  const productSubCategoryOptionMapping: SelectOption = {
-    key: 'id',
-    label: 'subCategory',
-    value: 'id',
-  };
-
-  const productSubSubCategoryOptionMapping: SelectOption = {
-    key: 'id',
-    label: 'subSubCategory',
-    value: 'id',
-  };
+  useEffect(() => {
+    setPanelStyle({ top: offset });
+  }, [offset]);
 
   useEffect(() => {
     setCurrentCategory(undefined);
@@ -178,6 +223,7 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
   };
 
   const getProducts = async (resetResults?: boolean) => {
+    if (resetResults) collapse(resetResults);
     if (!resetResults && !products.length) return;
     const { results } = await doFetch(() =>
       _fetchStagingProducts(resetResults)
@@ -435,6 +481,7 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
                   value={runIdFilter}
                   suffix={<SearchOutlined />}
                   placeholder="Search by Run ID"
+                  onPressEnter={() => getProducts(true)}
                 />
               </Col>
               <Col lg={6} xs={24}>
@@ -455,26 +502,20 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
               </Col>
             </Row>
           </Col>
-          {isMobile && (
-            <Col>
-              <Row justify="end">
-                <Col>
-                  <Button
-                    type="primary"
-                    onClick={() => getProducts(true)}
-                    loading={loading}
-                    className="mb-1"
-                  >
-                    Search
-                    <SearchOutlined style={{ color: 'white' }} />
-                  </Button>
-                </Col>
-              </Row>
-            </Col>
-          )}
         </Row>
       </>
     );
+  };
+
+  const collapse = (shouldCollapse?: any) => {
+    if (shouldCollapse && isMobile) {
+      if (activeKey === '1') setActiveKey('0');
+    }
+  };
+
+  const handleCollapseChange = () => {
+    if (activeKey === '1') setActiveKey('0');
+    else setActiveKey('1');
   };
 
   return (
@@ -490,11 +531,18 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
             align="bottom"
             justify="space-between"
             className="sticky-filter-box"
+            id="filterPanel"
+            style={panelStyle}
           >
             {!isMobile && <Filters />}
             {isMobile && (
               <>
-                <Collapse ghost className="sticky-filter-box">
+                <Collapse
+                  ghost
+                  activeKey={activeKey}
+                  onChange={handleCollapseChange}
+                  destroyInactivePanel
+                >
                   <Panel
                     header={
                       <Typography.Title level={5}>Filters</Typography.Title>
@@ -507,7 +555,19 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
               </>
             )}
             <Col span={24}>
-              <Row justify="end">
+              <Row justify="space-between" align="top">
+                <Col flex="auto">
+                  <Button
+                    type="text"
+                    onClick={collapse}
+                    style={{
+                      display: activeKey === '1' ? 'block' : 'none',
+                      background: 'none',
+                    }}
+                  >
+                    <UpOutlined />
+                  </Button>
+                </Col>
                 <Col>
                   <Button
                     type="primary"

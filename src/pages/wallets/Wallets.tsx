@@ -1,4 +1,5 @@
-import { Col, Collapse, PageHeader, Row, Table, Typography } from 'antd';
+/* eslint-disable react-hooks/exhaustive-deps */
+import { Col, PageHeader, Row, Table, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import SimpleSelect from 'components/select/SimpleSelect';
 import { Brand } from 'interfaces/Brand';
@@ -18,8 +19,6 @@ import WalletEdit from './WalletEdit';
 import scrollIntoView from 'scroll-into-view';
 import WalletDetail from './WalletDetail';
 import MultipleFetchDebounceSelect from '../../components/select/MultipleFetchDebounceSelect';
-
-const { Panel } = Collapse;
 
 const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
   const [selectedBrand, setSelectedBrand] = useState<Brand>();

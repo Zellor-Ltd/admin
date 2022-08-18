@@ -59,8 +59,8 @@ const { getSearchTags, getCategories } = productUtils;
 const { Panel } = Collapse;
 
 const LiveProducts: React.FC<RouteComponentProps> = () => {
+  const { isMobile } = useContext(AppContext);
   const inputRef = useRef<any>(null);
-  const [activeKey, setActiveKey] = useState<string>('0');
   const [brands, setBrands] = useState<Brand[]>([]);
   const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
   const [isFetchingBrands, setIsFetchingBrands] = useState(false);
@@ -134,8 +134,48 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
     label: 'subSubCategory',
     value: 'id',
   };
+  const [activeKey, setActiveKey] = useState<string>('-1');
 
-  const { isMobile } = useContext(AppContext);
+  const [offset, setOffset] = useState<number>(64);
+  const [panelStyle, setPanelStyle] = useState<React.CSSProperties>({
+    top: 64,
+  });
+  const filterPanelHeight = useRef<number>();
+  const windowHeight = window.innerHeight;
+
+  useEffect(() => {
+    const panel = document.getElementById('filterPanel');
+
+    if (isMobile && panel) {
+      // Code for Chrome, Safari and Opera
+      panel.addEventListener('webkitTransitionEnd', updateOffset);
+      // Standard syntax
+      panel.addEventListener('transitionend', updateOffset);
+
+      return () => {
+        // Code for Chrome, Safari and Opera
+        panel.removeEventListener('webkitTransitionEnd', updateOffset);
+        // Standard syntax
+        panel.removeEventListener('transitionend', updateOffset);
+      };
+    }
+  });
+
+  const updateOffset = () => {
+    if (activeKey === '1') {
+      filterPanelHeight.current =
+        document.getElementById('filterPanel')!.offsetHeight;
+      if (filterPanelHeight.current! > windowHeight) {
+        const heightDifference = filterPanelHeight.current! - windowHeight;
+        const seventhWindowHeight = windowHeight / 7;
+        setOffset(-heightDifference - seventhWindowHeight);
+      }
+    } else setOffset(64);
+  };
+
+  useEffect(() => {
+    setPanelStyle({ top: offset });
+  }, [offset]);
 
   const handleFilterOutOfStock = (e: CheckboxChangeEvent) => {
     setOutOfStockFilter(e.target.checked);
@@ -284,6 +324,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
   };
 
   const getProducts = async (resetResults?: boolean) => {
+    if (resetResults) collapse(resetResults);
     if (!resetResults && !products.length) return;
     const { results } = await doFetch(() => _fetchProducts(resetResults));
     if (resetResults) {
@@ -783,6 +824,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                 value={runIdFilter}
                 suffix={<SearchOutlined />}
                 placeholder="Search by Run ID"
+                onPressEnter={() => getProducts(true)}
               />
             </Col>
             <Col lg={6} xs={24}>
@@ -799,10 +841,15 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
     );
   };
 
-  const collapse = (event?: any) => {
-    if (event && isMobile) {
+  const collapse = (shouldCollapse?: any) => {
+    if (shouldCollapse && isMobile) {
       if (activeKey === '1') setActiveKey('0');
     }
+  };
+
+  const handleCollapseChange = () => {
+    if (activeKey === '1') setActiveKey('0');
+    else setActiveKey('1');
   };
 
   return (
@@ -818,6 +865,8 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
             align="bottom"
             justify="space-between"
             className="sticky-filter-box"
+            id="filterPanel"
+            style={panelStyle}
           >
             {!isMobile && <Filters />}
             {isMobile && (
@@ -825,10 +874,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                 ghost
                 accordion
                 activeKey={activeKey}
-                onChange={() => {
-                  if (activeKey === '0') setActiveKey('1');
-                  else setActiveKey('0');
-                }}
+                onChange={handleCollapseChange}
                 destroyInactivePanel
               >
                 <Panel
