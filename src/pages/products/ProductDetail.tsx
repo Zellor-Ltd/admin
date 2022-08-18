@@ -694,10 +694,12 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                     </Form.Item>
                   </Col>
                   <Col lg={12} xs={24}>
-                    <Form.Item name="weight" label="x">
+                    <Form.Item name="barcode" label="Barcode">
                       <InputNumber
-                        placeholder="Weight in Kg"
+                        pattern="^[0-9]*$"
+                        placeholder="Barcode number"
                         disabled={isLive}
+                        title="numbers only"
                       />
                     </Form.Item>
                   </Col>
