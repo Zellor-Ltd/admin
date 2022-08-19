@@ -13,6 +13,7 @@ import {
   Select,
   Slider,
   Switch,
+  Table,
   Tabs,
   Typography,
 } from 'antd';
@@ -24,9 +25,14 @@ import { Brand } from 'interfaces/Brand';
 import { ProductBrand } from '../../interfaces/ProductBrand';
 import { AllCategories } from 'interfaces/Category';
 import { Product } from 'interfaces/Product';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { saveProduct, saveStagingProduct } from 'services/DiscoClubService';
+import {
+  fetchBrands,
+  saveProduct,
+  saveProductStore,
+  saveStagingProduct,
+} from 'services/DiscoClubService';
 import ProductCategoriesTrees from './ProductCategoriesTrees';
 import './Products.scss';
 import SimpleSelect from 'components/select/SimpleSelect';
@@ -36,6 +42,9 @@ import { Image } from '../../interfaces/Image';
 import { useRequest } from 'hooks/useRequest';
 import update from 'immutability-helper';
 import { SketchPicker } from 'react-color';
+import { ColumnsType } from 'antd/lib/table';
+import { currencyRender } from 'helpers/currencyRender';
+import EditableTable, { EditableColumnType } from 'components/EditableTable';
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 const { getSearchTags, getCategories, removeSearchTagsByCategory } =
@@ -72,9 +81,11 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
   const [ageRange, setAgeRange] = useState<[number, number]>([12, 100]);
   const [form] = Form.useForm();
   const [maxDiscountAlert, setMaxDiscountAlert] = useState<boolean>(false);
-  const { doRequest } = useRequest({ setLoading });
+  const { doFetch, doRequest } = useRequest({ setLoading });
+  const [stores, setStores] = useState<any[]>();
   const [_product, _setProduct] = useState(product);
   const [color, setColor] = useState<string | undefined>(product?.colour);
+  const [selectedStore, setSelectedStore] = useState<any>();
 
   const {
     settings: { currency = [] },
@@ -85,6 +96,15 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
     label: 'brandName',
     value: 'id',
   };
+
+  const getStores = async () => {
+    const { results }: any = await doFetch(() => fetchBrands());
+    setStores(results);
+  };
+
+  useEffect(() => {
+    getStores();
+  }, []);
 
   useEffect(() => {
     if (product) {
@@ -335,6 +355,89 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
       form.setFieldsValue({ ..._product });
       _setProduct({ ..._product });
     }
+  };
+
+  const storeColumns: EditableColumnType<any>[] = [
+    {
+      title: 'Name',
+      dataIndex: 'name',
+      width: '25%',
+      align: 'center',
+      editable: true,
+      sorter: (a, b): any => {
+        if (a.name && b.name) return a.name.localeCompare(b.name);
+        else if (a.name) return -1;
+        else if (b.name) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: 'Country',
+      dataIndex: 'country',
+      width: '20%',
+      align: 'center',
+      editable: true,
+      sorter: (a, b): any => {
+        if (a.country && b.country) return a.country.localeCompare(b.country);
+        else if (a.country) return -1;
+        else if (b.country) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: 'Currency',
+      dataIndex: 'currency',
+      width: '15%',
+      align: 'center',
+      editable: true,
+      sorter: (a, b): any => {
+        if (a.currency && b.currency)
+          return a.currency.localeCompare(b.currency);
+        else if (a.currency) return -1;
+        else if (b.currency) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: 'Price',
+      dataIndex: 'price',
+      width: '15%',
+      align: 'center',
+      editable: true,
+      sorter: (a, b): any => {
+        if (a.price && b.price) return a.price - b.price;
+        else if (a.price) return -1;
+        else if (b.price) return 1;
+        else return 0;
+      },
+      render: (_: number, entity: any) => currencyRender(entity, 'price'),
+    },
+    {
+      title: 'Link',
+      dataIndex: 'link',
+      width: '20%',
+      align: 'center',
+      editable: true,
+      sorter: (a, b): any => {
+        if (a.link && b.link) return a.link.localeCompare(b.link);
+        else if (a.link) return -1;
+        else if (b.link) return 1;
+        else return 0;
+      },
+    },
+  ];
+
+  const rowSelection = {
+    onChange: (_: any, selectedRow: any) => {
+      setSelectedStore(selectedRow[0]);
+    },
+    getCheckboxProps: () => ({
+      disabled: isLive,
+    }),
+  };
+
+  const handleSelectStore = async () => {
+    await saveProductStore(_product!.id, selectedStore);
   };
 
   return (
@@ -775,6 +878,45 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                 </Form.Item>
               </Col>
             </Row>
+          </Tabs.TabPane>
+          <Tabs.TabPane forceRender tab="Stores" key="Stores">
+            <Row justify="end">
+              <Col>
+                <Button
+                  type="default"
+                  disabled={isLive}
+                  className="mb-1"
+                  loading={loading}
+                  onClick={() => {
+                    console.log(true);
+                  }}
+                >
+                  New Store
+                </Button>
+              </Col>
+              <Col>
+                <Button
+                  disabled={isLive || !selectedStore}
+                  type="primary"
+                  className="mb-1 ml-1"
+                  loading={loading}
+                  onClick={handleSelectStore}
+                >
+                  Select Store
+                </Button>
+              </Col>
+            </Row>
+            <EditableTable
+              rowKey="id"
+              columns={storeColumns}
+              dataSource={stores}
+              rowSelection={{
+                type: 'radio',
+                ...rowSelection,
+              }}
+              pagination={false}
+              exportable={false}
+            />
           </Tabs.TabPane>
           <Tabs.TabPane forceRender tab="Images" key="Images">
             <Row gutter={8}>
