@@ -24,7 +24,7 @@ import { Brand } from 'interfaces/Brand';
 import { ProductBrand } from '../../interfaces/ProductBrand';
 import { AllCategories } from 'interfaces/Category';
 import { Product } from 'interfaces/Product';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { saveProduct, saveStagingProduct } from 'services/DiscoClubService';
 import ProductCategoriesTrees from './ProductCategoriesTrees';
@@ -36,6 +36,7 @@ import { Image } from '../../interfaces/Image';
 import { useRequest } from 'hooks/useRequest';
 import update from 'immutability-helper';
 import { SketchPicker } from 'react-color';
+import { AppContext } from 'contexts/AppContext';
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 const { getSearchTags, getCategories, removeSearchTagsByCategory } =
@@ -67,6 +68,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
   isFetchingProductBrand,
   isLive,
 }) => {
+  const { isMobile } = useContext(AppContext);
   const saveProductFn = isLive ? saveProduct : saveStagingProduct;
   const [loading, setLoading] = useState<boolean>(false);
   const [ageRange, setAgeRange] = useState<[number, number]>([12, 100]);
@@ -584,195 +586,223 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
           <Tabs.TabPane forceRender tab="Checkout" key="Checkout">
             <Row gutter={8}>
               <Col lg={12} xs={24}>
-                <Form.Item name="currencyIsoCode" label="Default Currency">
-                  <Select
-                    placeholder="Please select a currency"
-                    disabled={isLive}
-                  >
-                    {currency.map((curr: any) => (
-                      <Select.Option key={curr.value} value={curr.value}>
-                        {curr.name}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </Form.Item>
+                <Row gutter={8}>
+                  <Col span={24}>
+                    <Form.Item name="currencyIsoCode" label="Default Currency">
+                      <Select
+                        placeholder="Please select a currency"
+                        disabled={isLive}
+                      >
+                        {currency.map((curr: any) => (
+                          <Select.Option key={curr.value} value={curr.value}>
+                            {curr.name}
+                          </Select.Option>
+                        ))}
+                      </Select>
+                    </Form.Item>
+                  </Col>
+                  <Col span={24}>
+                    <Form.Item name="currencyIsoCodeUS" label="Currency US">
+                      <Select
+                        placeholder="Please select a currency"
+                        disabled={isLive}
+                      >
+                        {currency.map((curr: any) => (
+                          <Select.Option key={curr.value} value={curr.value}>
+                            {curr.name}
+                          </Select.Option>
+                        ))}
+                      </Select>
+                    </Form.Item>
+                  </Col>
+                  <Col span={24}>
+                    <Form.Item name="currencyIsoCodeGB" label="Currency UK">
+                      <Select
+                        placeholder="Please select a currency"
+                        disabled={isLive}
+                      >
+                        {currency.map((curr: any) => (
+                          <Select.Option key={curr.value} value={curr.value}>
+                            {curr.name}
+                          </Select.Option>
+                        ))}
+                      </Select>
+                    </Form.Item>
+                  </Col>
+                  <Col span={24}>
+                    <Form.Item name="currencyIsoCodeIE" label="Currency Europe">
+                      <Select
+                        placeholder="Please select a currency"
+                        disabled={isLive}
+                      >
+                        {currency.map((curr: any) => (
+                          <Select.Option key={curr.value} value={curr.value}>
+                            {curr.name}
+                          </Select.Option>
+                        ))}
+                      </Select>
+                    </Form.Item>
+                  </Col>
+
+                  <Col span={24}>
+                    <Row
+                      gutter={8}
+                      justify={isMobile ? 'space-between' : undefined}
+                    >
+                      <Col lg={12}>
+                        <Form.Item
+                          name="displayDiscountPage"
+                          label="Allow Use of DD?"
+                          valuePropName="checked"
+                        >
+                          <Switch disabled={isLive} />
+                        </Form.Item>
+                      </Col>
+                      <Col lg={12}>
+                        <Form.Item
+                          name="onSale"
+                          label="On Sale"
+                          valuePropName="checked"
+                        >
+                          <Switch disabled={isLive} />
+                        </Form.Item>
+                      </Col>
+                    </Row>
+                  </Col>
+
+                  <Col lg={12} xs={24}>
+                    <Form.Item name="shopifyUniqueId" label="Shopify UID">
+                      <InputNumber disabled={isLive} />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={12} xs={24}>
+                    <Form.Item name="magentoId" label="Magento Id">
+                      <InputNumber disabled={isLive} />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={12} xs={24}>
+                    <Form.Item name="urlKey" label="URL Key">
+                      <Input placeholder="Product Key" disabled={isLive} />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={12} xs={24}>
+                    <Form.Item name="weight" label="Weight">
+                      <InputNumber
+                        placeholder="Weight in Kg"
+                        disabled={isLive}
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={12} xs={24}>
+                    <Form.Item name="barcode" label="Barcode">
+                      <InputNumber
+                        pattern="^[0-9]*$"
+                        placeholder="Barcode number"
+                        disabled={isLive}
+                        title="numbers only"
+                      />
+                    </Form.Item>
+                  </Col>
+                </Row>
               </Col>
               <Col lg={12} xs={24}>
-                <Form.Item
-                  name="originalPrice"
-                  label="Default Price"
-                  rules={[
-                    { required: true, message: 'Default Price is required.' },
-                  ]}
-                >
-                  <InputNumber disabled={isLive} />
-                </Form.Item>
-              </Col>
-            </Row>
-            <Row gutter={8}>
-              <Col lg={12} xs={24}>
-                <Form.Item name="currencyIsoCodeUS" label="Currency US">
-                  <Select
-                    placeholder="Please select a currency"
-                    disabled={isLive}
-                  >
-                    {currency.map((curr: any) => (
-                      <Select.Option key={curr.value} value={curr.value}>
-                        {curr.name}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </Form.Item>
-              </Col>
-              <Col lg={12} xs={24}>
-                <Form.Item name="originalPriceUS" label="Price US">
-                  <InputNumber disabled={isLive} />
-                </Form.Item>
-              </Col>
-            </Row>
-            <Row gutter={8}>
-              <Col lg={12} xs={24}>
-                <Form.Item name="currencyIsoCodeGB" label="Currency UK">
-                  <Select
-                    placeholder="Please select a currency"
-                    disabled={isLive}
-                  >
-                    {currency.map((curr: any) => (
-                      <Select.Option key={curr.value} value={curr.value}>
-                        {curr.name}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </Form.Item>
-              </Col>
-              <Col lg={12} xs={24}>
-                <Form.Item name="originalPriceGB" label="Price UK">
-                  <InputNumber disabled={isLive} />
-                </Form.Item>
-              </Col>
-            </Row>
-            <Row gutter={8}>
-              <Col lg={12} xs={24}>
-                <Form.Item name="currencyIsoCodeIE" label="Currency Europe">
-                  <Select
-                    placeholder="Please select a currency"
-                    disabled={isLive}
-                  >
-                    {currency.map((curr: any) => (
-                      <Select.Option key={curr.value} value={curr.value}>
-                        {curr.name}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </Form.Item>
-              </Col>
-              <Col lg={12} xs={24}>
-                <Form.Item name="originalPriceIE" label="Price Europe">
-                  <InputNumber disabled={isLive} />
-                </Form.Item>
-              </Col>
-            </Row>
-            <Row gutter={8} align="bottom">
-              <Col lg={6} xs={12}>
-                <Form.Item
-                  name="displayDiscountPage"
-                  label="Allow Use of DD?"
-                  valuePropName="checked"
-                >
-                  <Switch disabled={isLive} />
-                </Form.Item>
-              </Col>
-              <Col lg={6} xs={12}>
-                <Form.Item
-                  name="onSale"
-                  label="On Sale"
-                  valuePropName="checked"
-                >
-                  <Switch disabled={isLive} />
-                </Form.Item>
-              </Col>
-              <Col lg={6} xs={24}>
-                <Form.Item
-                  name="maxDiscoDollars"
-                  label="Max Discount in DD"
-                  dependencies={['originalPrice']}
-                  rules={[
-                    {
-                      required: true,
-                      message: 'Max Discount is required.',
-                    },
-                    ({ getFieldValue }) => ({
-                      validator(_, maxDiscount) {
-                        // 3x the price
-                        const maxPossibleDiscount = Math.trunc(
-                          Number(getFieldValue('originalPrice')) * 3
-                        );
-                        if (maxDiscount && maxDiscount > maxPossibleDiscount) {
-                          if (!maxDiscountAlert) {
-                            setTimeout(
-                              () =>
-                                alert(
-                                  `The largest amount of DD you can apply for this price is ${maxPossibleDiscount}.`
-                                ),
-                              100
+                <Row gutter={8}>
+                  <Col span={24}>
+                    <Form.Item
+                      name="originalPrice"
+                      label="Default Price"
+                      rules={[
+                        {
+                          required: true,
+                          message: 'Default Price is required.',
+                        },
+                      ]}
+                    >
+                      <InputNumber disabled={isLive} />
+                    </Form.Item>
+                  </Col>
+                  <Col span={24}>
+                    <Form.Item name="originalPriceUS" label="Price US">
+                      <InputNumber disabled={isLive} />
+                    </Form.Item>
+                  </Col>
+                  <Col span={24}>
+                    <Form.Item name="originalPriceGB" label="Price UK">
+                      <InputNumber disabled={isLive} />
+                    </Form.Item>
+                  </Col>
+                  <Col span={24}>
+                    <Form.Item name="originalPriceIE" label="Price Europe">
+                      <InputNumber disabled={isLive} />
+                    </Form.Item>
+                  </Col>
+
+                  <Col lg={12} xs={24}>
+                    <Form.Item
+                      name="maxDiscoDollars"
+                      label="Max Discount in DD"
+                      dependencies={['originalPrice']}
+                      rules={[
+                        {
+                          required: true,
+                          message: 'Max Discount is required.',
+                        },
+                        ({ getFieldValue }) => ({
+                          validator(_, maxDiscount) {
+                            // 3x the price
+                            const maxPossibleDiscount = Math.trunc(
+                              Number(getFieldValue('originalPrice')) * 3
                             );
-                          }
-                          setMaxDiscountAlert(true);
-                          return Promise.reject(
-                            new Error('Max discount not allowed.')
-                          );
-                        }
-                        setMaxDiscountAlert(false);
-                        return Promise.resolve();
-                      },
-                    }),
-                  ]}
-                >
-                  <InputNumber
-                    parser={value => (value || '').replace(/-/g, '')}
-                    precision={0}
-                    disabled={isLive}
-                  />
-                </Form.Item>
-              </Col>
-              <Col lg={6} xs={24}>
-                <Form.Item name="discoPercentage" label="Disco Percentage %">
-                  <InputNumber disabled={isLive} />
-                </Form.Item>
-              </Col>
-            </Row>
-            <Row gutter={8} align="bottom">
-              <Col lg={6} xs={24}>
-                <Form.Item name="shopifyUniqueId" label="Shopify Uid">
-                  <InputNumber disabled={isLive} />
-                </Form.Item>
-              </Col>
-              <Col lg={6} xs={24}>
-                <Form.Item name="magentoId" label="Magento Id">
-                  <InputNumber disabled={isLive} />
-                </Form.Item>
-              </Col>
-              <Col lg={6} xs={24}>
-                <Form.Item name="sku" label="SKU">
-                  <Input disabled={isLive} />
-                </Form.Item>
-              </Col>
-              <Col lg={6} xs={24}>
-                <Form.Item name="creatorPercentage" label="Creator %">
-                  <InputNumber disabled={isLive} />
-                </Form.Item>
-              </Col>
-            </Row>
-            <Row>
-              <Col lg={6} xs={24}>
-                <Form.Item name="urlKey" label="urlKey">
-                  <Input placeholder="Product Key" disabled={isLive} />
-                </Form.Item>
-              </Col>
-              <Col lg={6} xs={24}>
-                <Form.Item name="weight" label="Weight">
-                  <InputNumber placeholder="Weight in Kg" disabled={isLive} />
-                </Form.Item>
+                            if (
+                              maxDiscount &&
+                              maxDiscount > maxPossibleDiscount
+                            ) {
+                              if (!maxDiscountAlert) {
+                                setTimeout(
+                                  () =>
+                                    alert(
+                                      `The largest amount of DD you can apply for this price is ${maxPossibleDiscount}.`
+                                    ),
+                                  100
+                                );
+                              }
+                              setMaxDiscountAlert(true);
+                              return Promise.reject(
+                                new Error('Max discount not allowed.')
+                              );
+                            }
+                            setMaxDiscountAlert(false);
+                            return Promise.resolve();
+                          },
+                        }),
+                      ]}
+                    >
+                      <InputNumber
+                        parser={value => (value || '').replace(/-/g, '')}
+                        precision={0}
+                        disabled={isLive}
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={12} xs={24}>
+                    <Form.Item
+                      name="discoPercentage"
+                      label="Disco Percentage %"
+                    >
+                      <InputNumber disabled={isLive} />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={12} xs={24}>
+                    <Form.Item name="sku" label="SKU">
+                      <Input disabled={isLive} />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={12} xs={24}>
+                    <Form.Item name="creatorPercentage" label="Creator %">
+                      <InputNumber disabled={isLive} />
+                    </Form.Item>
+                  </Col>
+                </Row>
               </Col>
             </Row>
           </Tabs.TabPane>
