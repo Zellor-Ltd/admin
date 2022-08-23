@@ -17,6 +17,7 @@ import {
   Row,
   Select,
   Spin,
+  Table,
   Typography,
 } from 'antd';
 import React, {
@@ -29,7 +30,7 @@ import React, {
 import { Link, RouteComponentProps } from 'react-router-dom';
 import './Products.scss';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
-import EditableTable, { EditableColumnType } from 'components/EditableTable';
+import { EditableColumnType } from 'components/EditableTable';
 import { AppContext } from 'contexts/AppContext';
 import useAllCategories from 'hooks/useAllCategories';
 import { useRequest } from 'hooks/useRequest';
@@ -41,7 +42,6 @@ import {
   fetchBrands,
   fetchProductBrands,
   fetchProducts,
-  saveProduct,
 } from 'services/DiscoClubService';
 import ProductAPITestModal from './ProductAPITestModal';
 import ProductExpandedRow from './ProductExpandedRow';
@@ -74,9 +74,8 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
   const { usePageFilter } = useContext(AppContext);
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
   const [productAPITest, setProductAPITest] = useState<Product | null>(null);
-  const { doFetch, doRequest } = useRequest({ setLoading });
-  const { doRequest: saveCategories, loading: loadingCategories } =
-    useRequest();
+  const { doFetch } = useRequest({ setLoading });
+  const { loading: loadingCategories } = useRequest();
   const [searchFilter, setSearchFilter] = usePageFilter<string>('search');
   const [brandFilter, setBrandFilter] = useState<Brand | undefined>();
   const [productBrandFilter, setProductBrandFilter] = useState<
@@ -335,12 +334,6 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
   };
 
   useEffect(() => form.resetFields(), [currentProduct]);
-
-  const onSaveOnRowEdition = async (record: Product) => {
-    setCurrentProduct(record);
-    await saveCategories(() => saveProduct(record));
-    refreshItem(record);
-  };
 
   const columns: EditableColumnType<Product>[] = [
     {
@@ -613,11 +606,6 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
       ),
     },
   ];
-
-  const onSaveItem = async (record: Product) => {
-    await doRequest(() => saveProduct(record));
-    refreshItem(record);
-  };
 
   const onChangeBrand = async (_selectedBrand: Brand | undefined) => {
     setBrandFilter(_selectedBrand);
@@ -938,7 +926,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
               </div>
             }
           >
-            <EditableTable
+            <Table
               scroll={{ x: true }}
               className="mt-2"
               rowClassName={(_, index) =>
@@ -950,7 +938,6 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
               columns={columns}
               dataSource={products}
               loading={!products.length && loading}
-              onSave={onSaveItem}
               pagination={false}
               rowSelection={{
                 selectedRowKeys,
@@ -962,7 +949,6 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                     key={record.id}
                     record={record}
                     allCategories={allCategories}
-                    onSaveProduct={onSaveOnRowEdition}
                     loading={loadingCategories}
                     isStaging={false}
                     productBrands={productBrands}

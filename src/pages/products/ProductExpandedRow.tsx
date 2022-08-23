@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Button, Col, Form, Radio, Row } from 'antd';
 import { categoriesSettings } from 'helpers/utils';
 import { AllCategories } from 'interfaces/Category';
@@ -16,7 +17,7 @@ const { getSearchTags, getCategories, removeSearchTagsByCategory } =
 interface ProductExpandedRowProps {
   record: Product;
   allCategories: AllCategories;
-  onSaveProduct: Function;
+  onSaveProduct?: Function;
   loading: boolean;
   isStaging: boolean;
   productBrands: ProductBrand[];
@@ -51,7 +52,7 @@ const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
     const searchTags = form.getFieldValue('searchTags');
     const productBrand = form.getFieldValue('productBrand');
 
-    await onSaveProduct({
+    await onSaveProduct?.({
       ...record,
       categories: _categories,
       searchTags: searchTags,
@@ -128,10 +129,6 @@ const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
       categoryKey,
       _productCategoryIndex
     );
-  };
-
-  const handleProductBrandChange = (filterProductBrand: Function) => {
-    filterProductBrand(form);
   };
 
   const updateForm = (
