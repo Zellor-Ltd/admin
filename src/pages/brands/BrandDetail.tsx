@@ -797,6 +797,25 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                     />
                   </Form.Item>
                 </Col>
+                <Col lg={6} xs={12}>
+                  <Form.Item
+                    label="Store Buy Button"
+                    name="storeBuyButton"
+                    rules={[
+                      {
+                        required: false,
+                        message: `Store Buy Button is required.`,
+                      },
+                    ]}
+                  >
+                    <Upload.ImageUpload
+                      maxCount={1}
+                      fileList={brand?.storeBuyButton}
+                      form={form}
+                      formProp="storeBuyButton"
+                    />
+                  </Form.Item>
+                </Col>
               </Row>
               <Typography.Title style={{ marginBottom: '4vh' }} level={5}>
                 Store Page Display
