@@ -13,8 +13,7 @@ import {
 } from 'antd';
 import { Upload } from 'components';
 import { useRequest } from '../../hooks/useRequest';
-import React, { useState, useContext } from 'react';
-import { AppContext } from 'contexts/AppContext';
+import React, { useState } from 'react';
 import { saveProductBrand } from '../../services/DiscoClubService';
 import { TwitterPicker } from 'react-color';
 import { ProductBrand } from 'interfaces/ProductBrand';
@@ -29,7 +28,6 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
   onSave,
   onCancel,
 }) => {
-  const { isMobile } = useContext(AppContext);
   const [loading, setLoading] = useState<boolean>(false);
   const [form] = Form.useForm();
   const { doRequest } = useRequest({ setLoading });
@@ -332,7 +330,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
               </Col>
             </Tabs.TabPane>
           </Tabs>
-          <Row gutter={8} justify={isMobile ? 'end' : undefined}>
+          <Row gutter={8} justify="end">
             <Col>
               <Button
                 type="default"
