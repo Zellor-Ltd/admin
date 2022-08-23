@@ -816,6 +816,9 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                     ]}
                   >
                     <Upload.ImageUpload
+                      onImageChange={() =>
+                        form.setFieldsValue({ propagationNeeded: true })
+                      }
                       maxCount={1}
                       fileList={brand?.storeBuyButton}
                       form={form}
