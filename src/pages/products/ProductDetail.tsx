@@ -26,7 +26,7 @@ import { AllCategories } from 'interfaces/Category';
 import { Product } from 'interfaces/Product';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { saveProduct, saveStagingProduct } from 'services/DiscoClubService';
+import { saveStagingProduct } from 'services/DiscoClubService';
 import ProductCategoriesTrees from './ProductCategoriesTrees';
 import './Products.scss';
 import SimpleSelect from 'components/select/SimpleSelect';
@@ -69,7 +69,6 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
   isLive,
 }) => {
   const { isMobile } = useContext(AppContext);
-  const saveProductFn = isLive ? saveProduct : saveStagingProduct;
   const [loading, setLoading] = useState<boolean>(false);
   const [ageRange, setAgeRange] = useState<[number, number]>([12, 100]);
   const [form] = Form.useForm();
@@ -234,7 +233,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
         });
       });
 
-      const { result } = await doRequest(() => saveProductFn(formProduct));
+      const { result } = await doRequest(() => saveStagingProduct(formProduct));
 
       setLoading(false);
       formProduct.id

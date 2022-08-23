@@ -443,10 +443,6 @@ export const updateManyFans = (groupName: string, fansIds: string[]) => {
   return instance.post(`/Disco/Fan/SetUsersGroup/${groupName}`, fansIds);
 };
 
-export const saveProduct = (params: Product) => {
-  return instance.put('/Disco/Product/Add', params);
-};
-
 export const saveProductBrand = (params: ProductBrand) => {
   if (params.id) {
     return instance.put('Disco/ProductBrand/Adm/Update', params);
@@ -455,8 +451,13 @@ export const saveProductBrand = (params: ProductBrand) => {
   }
 };
 
-export const saveStagingProduct = (params: Product) =>
-  instance.post('Disco/Staging/Product/Update', params);
+export const saveStagingProduct = (params: Product) => {
+  if (params.id) {
+    return instance.put('Disco/Product/Adm/Update', params);
+  } else {
+    return instance.put('Disco/Product/Adm/Add', params);
+  }
+};
 
 export const saveCreator = (params: Creator) => {
   if (params.id) {
