@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import {
   DeleteOutlined,
   EditOutlined,
@@ -225,6 +226,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
           >
             <Col lg={4} xs={24}>
               <SearchFilterDebounce
+                disabled={refreshing || loading}
                 initialValue={searchFilter}
                 filterFunction={setSearchFilter}
                 label="Search"

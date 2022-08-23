@@ -381,7 +381,7 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
                 placeholder="Creator"
                 showSearch
                 allowClear
-                disabled={!creators.length}
+                disabled={!creators.length || loading}
                 filterOption={(input, option) =>
                   !!option?.children
                     ?.toString()
@@ -406,7 +406,7 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
                 value={currentStatus}
                 placeholder="Status"
                 className="mb-1"
-                disabled={!creators.length}
+                disabled={!creators.length || loading}
                 showSearch
                 allowClear
                 filterOption={(input, option) =>

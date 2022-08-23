@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import {
   CheckOutlined,
   CloseOutlined,
@@ -365,6 +366,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
                 Search
               </Typography.Title>
               <Input
+                disabled={loading}
                 onChange={onChangeFilter}
                 placeholder="Search by Name"
                 suffix={<SearchOutlined />}

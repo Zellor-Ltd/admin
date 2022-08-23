@@ -181,6 +181,7 @@ const Transactions: React.FC<RouteComponentProps> = () => {
         <Col xxl={40} lg={4} xs={24}>
           <Typography.Title level={5}>Fan Filter</Typography.Title>
           <MultipleFetchDebounceSelect
+            disabled={loading}
             style={{ width: '100%' }}
             onInput={getFans}
             onChange={handleChangeFan}

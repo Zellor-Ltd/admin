@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { Button, PageHeader, Popconfirm, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
@@ -28,16 +29,19 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
 
   useEffect(() => {
     getBanners();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     if (!details) {
       scrollIntoView(
         document.querySelector(
+          // eslint-disable-next-line react-hooks/exhaustive-deps
           `.scrollable-row-${lastViewedIndex}`
         ) as HTMLElement
       );
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [details]);
 
   const editBanner = (index: number, banner?: Banner) => {
@@ -196,7 +200,7 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
           onSave={onSaveBanner}
           onCancel={onCancelBanner}
         />
-      )}{' '}
+      )}
     </>
   );
 };

@@ -1,4 +1,3 @@
-import { InputNumberFiled } from '@ant-design/flowchart/es/components/editor-panel/control-map-service/components/fields';
 import {
   FacebookFilled,
   GlobalOutlined,

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Button, Col, PageHeader, Row, Spin, Table, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { useRequest } from 'hooks/useRequest';
@@ -293,6 +294,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
                     Search by Tag Name
                   </Typography.Title>
                   <MultipleFetchDebounceSelect
+                    disabled={fetchingTags || isFetchingBrands}
                     style={{ width: '100%' }}
                     input={userInput}
                     loaded={loaded}
@@ -319,7 +321,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
                     optionMapping={optionMapping}
                     placeholder={'Select a Master Brand'}
                     loading={isFetchingBrands}
-                    disabled={isFetchingBrands}
+                    disabled={fetchingTags || isFetchingBrands}
                     allowClear={true}
                   ></SimpleSelect>
                 </Col>

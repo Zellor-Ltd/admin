@@ -684,6 +684,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
             <Col lg={6} xs={24}>
               <Typography.Title level={5}>Product Name</Typography.Title>
               <Input
+                disabled={loading}
                 ref={inputRef}
                 onChange={event => setSearchFilter(event.target.value)}
                 suffix={<SearchOutlined />}
@@ -702,7 +703,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                 optionMapping={optionMapping}
                 placeholder={'Select a Master Brand'}
                 loading={isFetchingBrands}
-                disabled={isFetchingBrands}
+                disabled={isFetchingBrands || loading}
                 allowClear={true}
               ></SimpleSelect>
             </Col>
@@ -718,13 +719,14 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                 optionMapping={optionMapping}
                 placeholder={'Select a Product Brand'}
                 loading={isFetchingProductBrand}
-                disabled={isFetchingProductBrand}
+                disabled={isFetchingProductBrand || loading}
                 allowClear={true}
               ></SimpleSelect>
             </Col>
             <Col lg={6} xs={24}>
               <Typography.Title level={5}>Status</Typography.Title>
               <Select
+                disabled={loading}
                 placeholder="Select a Status"
                 style={{ width: '100%' }}
                 onChange={(value: string) => setProductStatusFilter(value)}
@@ -753,7 +755,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                 optionMapping={productSuperCategoryOptionMapping}
                 placeholder={'Select a Super Category'}
                 loading={fetchingCategories}
-                disabled={fetchingCategories}
+                disabled={fetchingCategories || loading}
                 allowClear={true}
               ></SimpleSelect>
             </Col>
@@ -767,7 +769,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                 optionMapping={productCategoryOptionMapping}
                 placeholder={'Select a Category'}
                 loading={fetchingCategories}
-                disabled={fetchingCategories}
+                disabled={fetchingCategories || loading}
                 allowClear={true}
               ></SimpleSelect>
             </Col>
@@ -783,7 +785,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                 optionMapping={productSubCategoryOptionMapping}
                 placeholder={'Select a Sub Category'}
                 loading={fetchingCategories}
-                disabled={fetchingCategories}
+                disabled={fetchingCategories || loading}
                 allowClear={true}
               ></SimpleSelect>
             </Col>
@@ -799,13 +801,14 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                 optionMapping={productSubSubCategoryOptionMapping}
                 placeholder={'Select a Sub Sub Category'}
                 loading={fetchingCategories}
-                disabled={fetchingCategories}
+                disabled={fetchingCategories || loading}
                 allowClear={true}
               ></SimpleSelect>
             </Col>
             <Col lg={6} xs={24}>
               <Typography.Title level={5}>Run ID</Typography.Title>
               <Input
+                disabled={loading}
                 onChange={evt => {
                   setRunIdFilter(evt.target.value);
                 }}
@@ -817,6 +820,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
             </Col>
             <Col lg={6} xs={24}>
               <Checkbox
+                disabled={loading}
                 onChange={handleFilterOutOfStock}
                 className={isMobile ? 'mt-1 mb-2' : 'mt-2 mb-1 ml-05'}
               >

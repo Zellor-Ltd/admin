@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import {
   Button,
@@ -127,6 +128,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
     if (videoTab === 'Links') {
       fetch();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [videoTab]);
 
   const fetch = async () => {
