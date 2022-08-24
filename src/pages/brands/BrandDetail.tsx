@@ -765,6 +765,9 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                     name="brandLogo"
                   >
                     <Upload.ImageUpload
+                      onImageChange={() =>
+                        form.setFieldsValue({ propagationNeeded: true })
+                      }
                       fileList={brand?.brandLogo}
                       maxCount={1}
                       form={form}
@@ -781,6 +784,9 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                     ]}
                   >
                     <Upload.ImageUpload
+                      onImageChange={() =>
+                        form.setFieldsValue({ propagationNeeded: true })
+                      }
                       maxCount={1}
                       fileList={brand?.brandCard}
                       form={form}
@@ -847,6 +853,9 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                     ]}
                   >
                     <Upload.ImageUpload
+                      onImageChange={() =>
+                        form.setFieldsValue({ propagationNeeded: true })
+                      }
                       maxCount={1}
                       fileList={brand?.mastHead}
                       form={form}
@@ -861,6 +870,9 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                     rules={[{ required: true, message: 'Avatar is required.' }]}
                   >
                     <Upload.ImageUpload
+                      onImageChange={() =>
+                        form.setFieldsValue({ propagationNeeded: true })
+                      }
                       maxCount={1}
                       fileList={brand?.avatar}
                       form={form}
