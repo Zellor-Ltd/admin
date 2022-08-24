@@ -182,6 +182,7 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
 
     const response = await doRequest(() => saveFeedTemplate(item));
     item.id ? onSave?.(item) : onSave?.({ ...item, id: response.result });
+    templateForm.resetFields();
     if (!response.result) setDetails?.(false);
   };
 

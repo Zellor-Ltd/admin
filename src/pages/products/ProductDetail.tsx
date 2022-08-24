@@ -91,6 +91,8 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
     if (product) {
       _setProduct(product);
     }
+    setDiscoPercentageByBrand(true);
+    setSearchTagsByCategory(true);
   }, [product]);
 
   useEffect(() => {
@@ -196,11 +198,6 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
       _productCategoryIndex
     );
   };
-
-  useEffect(() => {
-    setDiscoPercentageByBrand(true);
-    setSearchTagsByCategory(true);
-  }, [brands, setDiscoPercentageByBrand, setSearchTagsByCategory]);
 
   useEffect(() => {
     if (product?.ageMin && product?.ageMax)

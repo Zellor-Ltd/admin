@@ -2,7 +2,6 @@
 import { EditOutlined } from '@ant-design/icons';
 import {
   Button,
-  Form,
   Layout,
   message,
   PageHeader,
@@ -40,7 +39,6 @@ const reduceSegmentsTags = (packages: Segment[]) => {
 };
 
 const FeedTemplates: React.FC<RouteComponentProps> = () => {
-  const [templateForm] = Form.useForm();
   const [selectedFeedTemplate, setselectedFeedTemplate] = useState<FeedItem>();
   const [loading, setLoading] = useState(false);
   const [details, setDetails] = useState<boolean>(false);
@@ -156,16 +154,6 @@ const FeedTemplates: React.FC<RouteComponentProps> = () => {
     getDetailsResources();
   }, []);
 
-  useEffect(() => {
-    if (selectedFeedTemplate) {
-      selectedFeedTemplate.index =
-        selectedFeedTemplate?.index !== undefined
-          ? selectedFeedTemplate?.index
-          : 1000;
-    }
-    templateForm.setFieldsValue(selectedFeedTemplate);
-  }, [selectedFeedTemplate]);
-
   const fetch = async () => {
     try {
       const { results }: any = await doFetch(() => fetchFeedTemplates());
@@ -214,7 +202,6 @@ const FeedTemplates: React.FC<RouteComponentProps> = () => {
   const onSaveItem = (record: any) => {
     refreshItem(record);
     setDetails(false);
-    templateForm.resetFields();
     setselectedFeedTemplate(undefined);
   };
 
