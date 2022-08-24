@@ -694,11 +694,11 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                   </Col>
                   <Col lg={12} xs={24}>
                     <Form.Item name="barcode" label="Barcode">
-                      <InputNumber
-                        pattern="^[0-9]*$"
+                      <Input
+                        pattern="^[0-9]{12}$"
                         placeholder="Barcode number"
                         disabled={isLive}
-                        title="numbers only"
+                        title="numbers only, 12 digits"
                       />
                     </Form.Item>
                   </Col>
