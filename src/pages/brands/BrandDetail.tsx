@@ -385,7 +385,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
         name="brandForm"
         layout="vertical"
         form={form}
-        initialValues={brand}
+        initialValues={{ ...brand, returnPeriod: brand?.returnPeriod ?? 14 }}
         onFinish={onFinish}
         onFinishFailed={({ errorFields }) => {
           errorFields.forEach(errorField => {
@@ -624,20 +624,20 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                         max={100}
                         onChange={input => handleCreatorPercentageChange(input)}
                       />
-                      <Modal
-                        title="Apply to all products?"
-                        visible={showModal}
-                        onOk={onConfirmPropagate}
-                        onCancel={onCancelPropagate}
-                        okText="Yes"
-                        cancelText="No"
-                      >
-                        <p>
-                          Would you like to apply this creator percentage to all{' '}
-                          {brand?.brandName} products?
-                        </p>
-                      </Modal>
                     </Form.Item>
+                    <Modal
+                      title="Apply to all products?"
+                      visible={showModal}
+                      onOk={onConfirmPropagate}
+                      onCancel={onCancelPropagate}
+                      okText="Yes"
+                      cancelText="No"
+                    >
+                      <p>
+                        Would you like to apply this creator percentage to all{' '}
+                        {brand?.brandName} products?
+                      </p>
+                    </Modal>
                   </Col>
                 </Row>
                 <Row gutter={4}>
@@ -684,7 +684,6 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                     <Form.Item
                       name="returnPeriod"
                       label="Return Period (days)"
-                      initialValue={14}
                       rules={[
                         {
                           required: true,

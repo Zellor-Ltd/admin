@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { EditOutlined, SearchOutlined } from '@ant-design/icons';
 import {
   Button,
@@ -329,6 +330,7 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
                     style={{ width: '100%' }}
                     input={userInput}
                     loaded={loaded}
+                    disabled={fetchingGuests}
                     onInput={fetchToBuffer}
                     onChange={handleChangeFan}
                     onClear={() => setUserInput('')}

@@ -37,7 +37,7 @@ const ManualPayment: React.FC<ManualPaymentProps> = ({
   const onFinish = async () => {
     const paymentForm = form.getFieldsValue(true);
 
-    if (paymentForm.amount == 0) {
+    if (paymentForm.amount === 0) {
       message.warning('Warning: Cannot send zero value payments!');
       return;
     }

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Button, Col, Input, PageHeader, Row, Table, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { useRequest } from 'hooks/useRequest';
@@ -128,6 +129,7 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
             <Col lg={4} xs={24}>
               <Typography.Title level={5}>Search</Typography.Title>
               <Input
+                disabled={loading}
                 placeholder="Search by Name"
                 suffix={<SearchOutlined />}
                 className="mb-1"

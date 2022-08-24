@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Button, Col, Table, PageHeader, Row, Typography } from 'antd';
 import { useState, useEffect } from 'react';
 import React from 'react';
@@ -48,7 +49,7 @@ const CommissionDetail: React.FC<CommissionDetailProps> = ({
       align: 'center',
       responsive: ['sm'],
       shouldCellUpdate: (prevRecord, nextRecord) =>
-        prevRecord.description != nextRecord.description,
+        prevRecord.description !== nextRecord.description,
       sorter: (a, b): any => {
         if (a.description && b.description)
           return a.description.localeCompare(b.description);

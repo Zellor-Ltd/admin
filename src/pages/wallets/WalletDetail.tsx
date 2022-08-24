@@ -156,7 +156,7 @@ const WalletDetail: React.FC<WalletDetailProps> = ({
           <Row justify="space-between">
             <Col lg={20} xs={12}>
               <WalletEdit
-                disabled={false}
+                disabled={loading}
                 fanId={initial.fan.id}
                 brandId={initial.brand.id}
                 wallet={initial as unknown as Wallet}
