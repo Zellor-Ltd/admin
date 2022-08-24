@@ -634,7 +634,7 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
                                     danger
                                     type="primary"
                                     className="remove-button"
-                                    key={`botao_${segment.thumbnail?.url}`}
+                                    key={`${segment.thumbnail?.url}_button`}
                                     onClick={evt =>
                                       onDeleteSegment(evt, segmentIndex)
                                     }
@@ -642,6 +642,7 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
                                 ]
                               : [
                                   <Button
+                                    key={`${segment.thumbnail?.url}_button`}
                                     icon={<DeleteOutlined />}
                                     shape="circle"
                                     type="primary"
@@ -650,7 +651,7 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
                                       onDeleteSegment(evt, segmentIndex)
                                     }
                                   />,
-                                  <div>No Thumbnail</div>,
+                                  <div key="noThumbnailDiv">No Thumbnail</div>,
                                 ]}
                           </div>
                         ))}

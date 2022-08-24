@@ -984,12 +984,12 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
             }
             className={isMobile ? 'mb-n1' : ''}
             extra={[
-              <Row justify="end">
+              <Row justify="end" key="headerRow">
                 <Col>
                   <Row gutter={8}>
                     <Col>
                       <Button
-                        key="1"
+                        key="2"
                         className={isMobile ? 'mt-05' : ''}
                         onClick={() => createProduct(products.length)}
                       >
@@ -998,7 +998,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                     </Col>
                     <Col>
                       <Button
-                        key="1"
+                        key="3"
                         type="primary"
                         className={isMobile ? 'mt-05' : ''}
                         onClick={switchView}

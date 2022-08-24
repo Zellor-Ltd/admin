@@ -100,6 +100,7 @@ const CategoryDetail: React.FC<CategoryDetailProps> = ({
               .filter((_, index) => index < categoryLevel + 1)
               .map(({ key, field }, _index) => (
                 <Form.Item
+                  key={_index}
                   label={key}
                   name={field}
                   rules={[{ required: true, message: `${field} is required.` }]}

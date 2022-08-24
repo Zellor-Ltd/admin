@@ -66,7 +66,7 @@ const VideoUpload: React.FC<VideoUploadProps> = props => {
   // const action = `${process.env.REACT_APP_HOST_ENDPOINT}/Wi/Upload`;
 
   return (
-    <ImageUpload {...props} accept={accept} />
+    <ImageUpload type="video" {...props} accept={accept} />
     // <Upload
     //   action={action}
     //   headers={{

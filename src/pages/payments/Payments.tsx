@@ -444,7 +444,7 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
             title="Commission Payments"
             subTitle={isMobile ? '' : 'List of Commission Payments'}
             extra={[
-              <Row gutter={8} justify="end">
+              <Row gutter={8} justify="end" key="headerRow">
                 <Col>
                   <Button
                     key="1"
@@ -467,6 +467,7 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
                 </Col>
               </Row>,
               <Modal
+                key="headerModal"
                 title="Are you sure?"
                 visible={showModal}
                 onOk={() => setManualPayment(true)}

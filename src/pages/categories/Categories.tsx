@@ -380,11 +380,12 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
             className={isMobile ? 'mb-n1' : ''}
             extra={[
               <Dropdown
+                key="headerDropdown"
                 className={isMobile ? 'mt-05' : ''}
                 overlay={
                   <Menu>
                     {categoriesKeys.map((key, index) => (
-                      <Menu.Item>
+                      <Menu.Item key={index}>
                         <Link
                           to={location.pathname}
                           onClick={() =>
