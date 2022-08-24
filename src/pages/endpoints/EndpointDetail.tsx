@@ -98,7 +98,9 @@ const EndpointDetail: React.FC<RouteComponentProps> = ({
           </Col>
           <Col lg={6} xs={24}>
             <Form.Item name="isActive">
-              <Checkbox disabled>isActive</Checkbox>
+              <Checkbox disabled checked={initial?.isActive ?? false}>
+                isActive
+              </Checkbox>
             </Form.Item>
           </Col>
         </Row>
