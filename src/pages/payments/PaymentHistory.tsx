@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import {
   Col,
   Collapse,
@@ -26,7 +27,7 @@ import CommissionDetail from './CommissionDetail';
 const { Panel } = Collapse;
 
 const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
-  const [, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const { doFetch } = useRequest({ setLoading });
   const { isMobile } = useContext(AppContext);
   const [creators, setCreators] = useState<Creator[]>([]);
@@ -125,7 +126,7 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
       align: 'left',
       responsive: ['sm'],
       shouldCellUpdate: (prevRecord, nextRecord) =>
-        prevRecord.hCreationDate != nextRecord.hCreationDate,
+        prevRecord.hCreationDate !== nextRecord.hCreationDate,
       render: (value: Date) => moment(value).format('DD/MM/YYYY'),
       sorter: (a, b): any => {
         if (a.hCreationDate && b.hCreationDate)
@@ -231,7 +232,6 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
       <>
         <Col lg={16} xs={24}>
           <Row gutter={[8, 8]} justify="end">
-            {' '}
             {!isMobile && (
               <Col lg={6} xs={24}>
                 <Row justify="end" className="mr-2 mt-03">
@@ -254,7 +254,7 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
                 placeholder="Creator"
                 showSearch
                 allowClear
-                disabled={!creators.length}
+                disabled={!creators.length || loading || refreshing}
                 filterOption={(input, option) =>
                   !!option?.children
                     ?.toString()
@@ -276,7 +276,7 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
               <DatePicker.RangePicker
                 onChange={onChangeRangePicker}
                 className="mb-1"
-                disabled={!creators.length}
+                disabled={!creators.length || loading || refreshing}
                 ranges={{
                   Today: [moment(), moment()],
                   'This Month': [

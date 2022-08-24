@@ -20,7 +20,6 @@ import { Category } from 'interfaces/Category';
 import { Creator } from 'interfaces/Creator';
 import { Currency } from 'interfaces/Currency';
 import { Fan } from 'interfaces/Fan';
-import { Role } from 'interfaces/Role';
 import { ServerAlias } from 'interfaces/ServerAlias';
 import { useEffect, useState } from 'react';
 import {
@@ -61,8 +60,6 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
   const { doRequest } = useRequest({ setLoading });
 
   useEffect(() => {
-    let mounted = true;
-
     const getCreators = async () => {
       const response: any = await fetchCreators({
         query: '',
@@ -85,9 +82,6 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
     getCategories();
     getServersList();
     getCurrencies();
-    return () => {
-      mounted = false;
-    };
   }, [form]);
 
   const onChangeCreator = (key: string) => {

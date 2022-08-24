@@ -223,6 +223,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
                   <Typography.Title level={5}>Fan Filter</Typography.Title>
                   <MultipleFetchDebounceSelect
                     style={{ width: '100%' }}
+                    disabled={isFetchingBrands}
                     input={userInput}
                     onInput={getFans}
                     onChange={handleChangeFan}

@@ -104,6 +104,7 @@ const Roles: React.FC<RouteComponentProps> = ({ history, location }) => {
         <Col lg={4} xs={24}>
           <Typography.Title level={5}>Search</Typography.Title>
           <Input
+            disabled={loading}
             placeholder="Search by Name"
             suffix={<SearchOutlined />}
             className="mb-1"

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import {
   Button,
@@ -127,6 +128,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
     if (videoTab === 'Links') {
       fetch();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [videoTab]);
 
   const fetch = async () => {
@@ -484,10 +486,10 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
       width: '15%',
       render: id => (
         <a
-              href={'https://link.discoclub.com/' + id.replace("_STR", "")}
+          href={'https://link.discoclub.com/' + id.replace('_STR', '')}
           target="blank"
         >
-              {id.replace("_STR", "")}
+          {id.replace('_STR', '')}
         </a>
       ),
       align: 'center',
@@ -575,7 +577,6 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                           message: 'Index is required.',
                         },
                       ]}
-                      initialValue={1000}
                     >
                       <InputNumber />
                     </Form.Item>
@@ -721,7 +722,6 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                   <Select
                     placeholder="Please select a language"
                     disabled={!language.length}
-                    defaultValue="English"
                   >
                     {language.map((lang: any) => (
                       <Select.Option key={lang.value} value={lang.value}>
@@ -797,12 +797,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                       label="Go Live Date"
                       getValueProps={formatMoment}
                     >
-                      <DatePicker
-                        defaultValue={moment(
-                          feedForm.getFieldValue('goLiveDate')
-                        )}
-                        format="DD/MM/YYYY"
-                      />
+                      <DatePicker format="DD/MM/YYYY" />
                     </Form.Item>
                   </Col>
                   <Col lg={12} xs={24}>
@@ -811,12 +806,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                       label="Expiration Date"
                       getValueProps={formatMoment}
                     >
-                      <DatePicker
-                        defaultValue={moment(
-                          feedForm.getFieldValue('validity')
-                        )}
-                        format="DD/MM/YYYY"
-                      />
+                      <DatePicker format="DD/MM/YYYY" />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -900,7 +890,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
             </Row>
           </Tabs.TabPane>
           <Tabs.TabPane forceRender tab="Listing" key="listing">
-            <Form.Item name="selectedOption" initialValue={selectedOption}>
+            <Form.Item name="selectedOption">
               <Radio.Group buttonStyle="solid" onChange={handleSwitchChange}>
                 <Radio.Button value="productBrand">Product Brand</Radio.Button>
                 <Radio.Button value="creator">Creator</Radio.Button>
@@ -1470,7 +1460,18 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
           }}
           layout="vertical"
           className="video-feed"
-          initialValues={feedItem}
+          initialValues={{
+            ...feedItem,
+            language: feedItem?.language ?? 'English',
+            index: feedItem?.index ?? 1000,
+            selectedOption: feedItem?.selectedOption ?? selectedOption,
+            goLiveDate: feedItem?.['goLiveDate']
+              ? moment(feedItem?.['goLiveDate'])
+              : undefined,
+            validity: feedItem?.['validity']
+              ? moment(feedItem?.['validity'])
+              : undefined,
+          }}
         >
           {!selectedSegment && <VideoUpdatePage />}
         </Form>

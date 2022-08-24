@@ -43,7 +43,7 @@ import { useRequest } from 'hooks/useRequest';
 import { BaseOptionType } from 'antd/lib/cascader';
 
 const Orders: React.FC<RouteComponentProps> = ({ location }) => {
-  const [loading, setLoading] = useState<boolean>(false);
+  const [, setLoading] = useState<boolean>(false);
   const { doFetch } = useRequest({ setLoading: setLoading });
   const [orderUpdateList, setOrderUpdateList] = useState<boolean[]>([]);
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
@@ -789,7 +789,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
                     placeholder={'Select a Master Brand'}
                     value={brandId}
                     loading={isFetchingBrands}
-                    disabled={isFetchingBrands}
+                    disabled={isFetchingBrands || refreshing}
                     showSearch
                     filterOption={(input, option) =>
                       !!option?.children
@@ -820,7 +820,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
                     placeholder="Search by Fan E-mail"
                     options={fans}
                     input={fanFilterInput}
-                    disabled={isFetchingBrands}
+                    disabled={isFetchingBrands || refreshing}
                     onInputKeyDown={(event: HTMLInputElement) =>
                       handleKeyDown(event)
                     }
@@ -864,7 +864,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
               rowKey="id"
               columns={columns}
               dataSource={search(orders)}
-              loading={loading || refreshing}
+              loading={refreshing}
               pagination={false}
               expandedRowKeys={expandedRowKeys}
               expandable={{

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import {
   DeleteOutlined,
   EditOutlined,
@@ -262,6 +263,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
             <Col lg={4} xs={24}>
               <Typography.Title level={5}>Search</Typography.Title>
               <Input
+                disabled={loading}
                 placeholder="Search by Name"
                 value={filter}
                 suffix={<SearchOutlined />}

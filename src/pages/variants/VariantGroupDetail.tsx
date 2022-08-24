@@ -591,7 +591,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
         type="text"
         style={{ background: 'none' }}
         onClick={() => setShowMore(prev => !prev)}
-        className="mt-05"
+        className="mt-05 ml-1"
       >
         <Typography.Title
           level={5}
