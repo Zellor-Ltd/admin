@@ -1,6 +1,6 @@
 import { AppContext } from 'contexts/AppContext';
 import { isAuthenticated } from 'helpers/authFunctions';
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import { Redirect, Route, useHistory } from 'react-router-dom';
 import { LastLocationProvider } from 'react-router-last-location';
 
@@ -9,11 +9,14 @@ const AppRoute: React.FC<any> = props => {
     useContext(AppContext);
   const pathname = useHistory().location.pathname;
   const dirName = pathname.split('/')[1];
-  if (dirName !== lastVisitedPage) {
-    refreshContext();
-  }
 
-  setLastVisitedPage(dirName);
+  useEffect(() => {
+    if (dirName !== lastVisitedPage) {
+      setLastVisitedPage(dirName);
+      refreshContext();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dirName]);
 
   const {
     children,
