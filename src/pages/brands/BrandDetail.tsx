@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import {
   Button,
   Col,
@@ -20,7 +21,7 @@ import {
 import { Upload } from 'components';
 import { RichTextEditor } from 'components/RichTextEditor';
 import { Brand } from 'interfaces/Brand';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import React from 'react';
 import { useRequest } from 'hooks/useRequest';
 import { TwitterPicker } from 'react-color';
@@ -38,6 +39,7 @@ import moment from 'moment';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import scrollIntoView from 'scroll-into-view';
 import { Link } from 'react-router-dom';
+import { AppContext } from 'contexts/AppContext';
 interface BrandDetailProps {
   onSave?: (record: Brand) => void;
   onCancel?: () => void;
@@ -49,6 +51,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
   onSave,
   onCancel,
 }) => {
+  const { isMobile } = useContext(AppContext);
   const [loading, setLoading] = useState<boolean>(false);
   const [vaults, setVaults] = useState<BrandVault[]>([]);
   const [currentVault, setCurrentVault] = useState<any>();
@@ -733,8 +736,12 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
 
           <Tabs.TabPane forceRender tab="Images" key="Images">
             <Col lg={16} xs={24}>
-              <Row className="mx-1">
-                <Col lg={6} xs={12}>
+              <Row
+                gutter={8}
+                justify={isMobile ? 'space-between' : undefined}
+                className={isMobile ? 'mx-1 mb-n2' : 'mx-1'}
+              >
+                <Col lg={6}>
                   <Form.Item label="Colour">
                     <Upload.ImageUpload
                       maxCount={1}
@@ -744,7 +751,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                     />
                   </Form.Item>
                 </Col>
-                <Col lg={6} xs={12}>
+                <Col lg={6}>
                   <Form.Item label="Black">
                     <Upload.ImageUpload
                       maxCount={1}
@@ -754,7 +761,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                     />
                   </Form.Item>
                 </Col>
-                <Col lg={6} xs={12}>
+                <Col lg={6}>
                   <Form.Item label="White">
                     <Upload.ImageUpload
                       maxCount={1}
@@ -764,7 +771,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                     />
                   </Form.Item>
                 </Col>
-                <Col lg={6} xs={12}>
+                <Col lg={6}>
                   <Form.Item
                     label="Logo Round"
                     rules={[
@@ -780,7 +787,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                     />
                   </Form.Item>
                 </Col>
-                <Col lg={6} xs={12}>
+                <Col lg={6}>
                   <Form.Item
                     label="Upload Card"
                     name="brandCard"
@@ -796,7 +803,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                     />
                   </Form.Item>
                 </Col>
-                <Col lg={6} xs={12}>
+                <Col lg={6}>
                   <Form.Item
                     label="Thumbnail"
                     name="thumbnail"
@@ -812,7 +819,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                     />
                   </Form.Item>
                 </Col>
-                <Col lg={6} xs={12}>
+                <Col lg={6}>
                   <Form.Item
                     label="Store Buy Button"
                     name="storeBuyButton"
@@ -824,6 +831,9 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                     ]}
                   >
                     <Upload.ImageUpload
+                      onImageChange={() =>
+                        form.setFieldsValue({ propagationNeeded: true })
+                      }
                       maxCount={1}
                       fileList={brand?.storeBuyButton}
                       form={form}
@@ -835,8 +845,12 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
               <Typography.Title style={{ marginBottom: '4vh' }} level={5}>
                 Store Page Display
               </Typography.Title>
-              <Row className="mx-1">
-                <Col lg={6} xs={12}>
+              <Row
+                gutter={8}
+                justify={isMobile ? 'space-between' : undefined}
+                className={isMobile ? 'mx-1 mb-n2' : 'mx-1'}
+              >
+                <Col lg={6}>
                   <Form.Item
                     label="Masthead Image"
                     name="mastHead"
