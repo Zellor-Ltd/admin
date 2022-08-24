@@ -149,7 +149,12 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
             message.error('Error: ' + errorField.errors[0]);
           });
         }}
-        initialValues={creator}
+        initialValues={{
+          ...creator,
+          currencyCode: creator?.currencyCode ?? 'EUR',
+          displayInVideoFeed: creator?.displayInVideoFeed ?? true,
+          displayInCreatorGrid: creator?.displayInCreatorGrid ?? true,
+        }}
         autoComplete="off"
       >
         <Tabs defaultActiveKey="Details">
@@ -182,7 +187,6 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                       name="displayInVideoFeed"
                       label="Display in Video Feed"
                       valuePropName="checked"
-                      initialValue
                     >
                       <Switch />
                     </Form.Item>
@@ -192,7 +196,6 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                       name="displayInCreatorGrid"
                       label="Display in Creator Grid"
                       valuePropName="checked"
-                      initialValue
                     >
                       <Switch />
                     </Form.Item>
@@ -350,7 +353,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                     },
                   ]}
                 >
-                  <Select defaultValue="EUR" disabled={!currencies.length}>
+                  <Select disabled={!currencies.length}>
                     {currencies.map(currency => (
                       <Select.Option key={currency.code} value={currency.code}>
                         {currency.code}
