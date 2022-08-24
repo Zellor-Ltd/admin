@@ -37,6 +37,7 @@ const { Panel } = Collapse;
 const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const { doFetch, doRequest } = useRequest({ setLoading });
+  const [selectedRows, setSelectedRows] = useState<any[]>([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
   const [manualPayment, setManualPayment] = useState<boolean>(false);
   const [currentStatus, setCurrentStatus] = useState<string>();
@@ -322,13 +323,8 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
     },
   ];
 
-  const onSelectChange = (selectedRowKeys: any, selectedRows: any) => {
-    setSelectedRowKeys(selectedRowKeys);
-    setTotalSalePrice(0);
-    setTotalCommissionAmount(0);
-    setSmallestCommissionPercentage(selectedRows[0]?.commissionPercentage);
-    setBiggestCommissionPercentage(selectedRows[0]?.commissionPercentage);
-
+  //when fixing currency display, fix derived states as well
+  useEffect(() => {
     selectedRows.forEach(
       ({ item, commissionAmount, commissionPercentage, status }) => {
         if (status === 'Returned') {
@@ -346,6 +342,16 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
           setBiggestCommissionPercentage(currentCommissionPercentage);
       }
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedRows]);
+
+  const onSelectChange = (selectedRowKeys: any, selectedRows: any) => {
+    setSelectedRowKeys(selectedRowKeys);
+    setSelectedRows(selectedRows);
+    setTotalSalePrice(0);
+    setTotalCommissionAmount(0);
+    setSmallestCommissionPercentage(selectedRows[0]?.commissionPercentage);
+    setBiggestCommissionPercentage(selectedRows[0]?.commissionPercentage);
   };
 
   const rowSelection = {
