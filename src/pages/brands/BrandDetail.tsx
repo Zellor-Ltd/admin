@@ -567,7 +567,22 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                   >
                     <Input />
                   </Form.Item>
-                </Col>
+                              </Col>
+                              <Col lg={16} xs={24}>
+                                  <Form.Item
+                                      name="shopUrl"
+                                      label="Product Redirect URL (Template $DISCOID$)"
+                                      rules={[
+                                          {
+                                              required: true,
+                                              message:
+                                                  'Product Redirect URL is required.',
+                                          },
+                                      ]}
+                                  >
+                                      <Input />
+                                  </Form.Item>
+                              </Col>
                 <Row gutter={4}>
                   <Col lg={8} xs={24}>
                     <Form.Item
