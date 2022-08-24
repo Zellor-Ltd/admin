@@ -24,10 +24,12 @@ import { Link, RouteComponentProps } from 'react-router-dom';
 import {
   fetchProductBrands,
   deleteProductBrand,
+  fetchBrands,
 } from '../../services/DiscoClubService';
 import CopyIdToClipboard from '../../components/CopyIdToClipboard';
 import ProductBrandDetail from './ProductBrandDetail';
 import scrollIntoView from 'scroll-into-view';
+import { Brand } from 'interfaces/Brand';
 
 const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -37,6 +39,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
   const [currentProductBrand, setCurrentProductBrand] =
     useState<ProductBrand>();
   const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
+  const [brands, setBrands] = useState<Brand[]>([]);
   const [filter, setFilter] = useState<string>('');
   const { isMobile } = useContext(AppContext);
 
@@ -47,11 +50,17 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
 
   const getResources = async () => {
     await getProductBrands();
+    await getBrands();
   };
 
   const getProductBrands = async () => {
     const { results } = await doFetch(fetchProductBrands);
     setProductBrands(results);
+  };
+
+  const getBrands = async () => {
+    const { results }: any = await doFetch(fetchBrands);
+    setBrands(results);
   };
 
   useEffect(() => {
@@ -288,6 +297,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
           productBrand={currentProductBrand as ProductBrand}
           onSave={onSaveBrand}
           onCancel={onCancelBrand}
+          brands={brands}
         />
       )}
     </>
