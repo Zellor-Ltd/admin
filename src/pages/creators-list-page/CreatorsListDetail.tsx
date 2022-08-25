@@ -56,6 +56,7 @@ const CreatorsPageDetail: React.FC<MastheadDetailProps> = ({
               rules={[{ required: true, message: 'Masthead is required.' }]}
             >
               <Upload.ImageUpload
+                type="image"
                 maxCount={1}
                 fileList={masthead?.image}
                 form={form}

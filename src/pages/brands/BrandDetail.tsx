@@ -570,22 +570,21 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                   >
                     <Input />
                   </Form.Item>
-                              </Col>
-                              <Col lg={16} xs={24}>
-                                  <Form.Item
-                                      name="shopUrl"
-                                      label="Product Redirect URL (Template $DISCOID$)"
-                                      rules={[
-                                          {
-                                              required: true,
-                                              message:
-                                                  'Product Redirect URL is required.',
-                                          },
-                                      ]}
-                                  >
-                                      <Input />
-                                  </Form.Item>
-                              </Col>
+                </Col>
+                <Col lg={16} xs={24}>
+                  <Form.Item
+                    name="shopUrl"
+                    label="Product Redirect URL (Template $DISCOID$)"
+                    rules={[
+                      {
+                        required: true,
+                        message: 'Product Redirect URL is required.',
+                      },
+                    ]}
+                  >
+                    <Input />
+                  </Form.Item>
+                </Col>
                 <Row gutter={4}>
                   <Col lg={8} xs={24}>
                     <Form.Item
@@ -743,6 +742,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                 <Col lg={6}>
                   <Form.Item label="Colour">
                     <Upload.ImageUpload
+                      type="colourLogo"
                       maxCount={1}
                       fileList={brand?.colourLogo}
                       form={form}
@@ -753,6 +753,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                 <Col lg={6}>
                   <Form.Item label="Black">
                     <Upload.ImageUpload
+                      type="blackLogo"
                       maxCount={1}
                       fileList={brand?.blackLogo}
                       form={form}
@@ -763,6 +764,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                 <Col lg={6}>
                   <Form.Item label="White">
                     <Upload.ImageUpload
+                      type="whiteLogo"
                       maxCount={1}
                       fileList={brand?.whiteLogo}
                       form={form}
@@ -779,6 +781,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                     name="brandLogo"
                   >
                     <Upload.ImageUpload
+                      type="brandLogo"
                       onImageChange={() =>
                         form.setFieldsValue({ propagationNeeded: true })
                       }
@@ -798,6 +801,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                     ]}
                   >
                     <Upload.ImageUpload
+                      type="uploadCard"
                       onImageChange={() =>
                         form.setFieldsValue({ propagationNeeded: true })
                       }
@@ -817,6 +821,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                     ]}
                   >
                     <Upload.ImageUpload
+                      type="thumbnail"
                       maxCount={1}
                       fileList={brand?.thumbnail}
                       form={form}
@@ -836,6 +841,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                     ]}
                   >
                     <Upload.ImageUpload
+                      type="storeBuyButton"
                       onImageChange={() =>
                         form.setFieldsValue({ propagationNeeded: true })
                       }
@@ -867,6 +873,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                     ]}
                   >
                     <Upload.ImageUpload
+                      type="masthead"
                       onImageChange={() =>
                         form.setFieldsValue({ propagationNeeded: true })
                       }
@@ -884,6 +891,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                     rules={[{ required: true, message: 'Avatar is required.' }]}
                   >
                     <Upload.ImageUpload
+                      type="avatar"
                       onImageChange={() =>
                         form.setFieldsValue({ propagationNeeded: true })
                       }

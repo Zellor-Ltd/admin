@@ -251,6 +251,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                   <Col lg={6} xs={12}>
                     <Form.Item label="Colour">
                       <Upload.ImageUpload
+                        type="colourLogo"
                         maxCount={1}
                         fileList={productBrand?.colourLogo}
                         form={form}
@@ -261,6 +262,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                   <Col lg={6} xs={12}>
                     <Form.Item label="Black">
                       <Upload.ImageUpload
+                        type="blackLogo"
                         maxCount={1}
                         fileList={productBrand?.blackLogo}
                         form={form}
@@ -271,6 +273,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                   <Col lg={6} xs={12}>
                     <Form.Item label="White">
                       <Upload.ImageUpload
+                        type="whiteLogo"
                         maxCount={1}
                         fileList={productBrand?.whiteLogo}
                         form={form}
@@ -287,6 +290,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                       name="brandLogo"
                     >
                       <Upload.ImageUpload
+                        type="brandLogo"
                         fileList={productBrand?.brandLogo}
                         maxCount={1}
                         form={form}
@@ -303,6 +307,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                       rules={[{ required: false }]}
                     >
                       <Upload.ImageUpload
+                        type="thumbnail"
                         maxCount={1}
                         fileList={productBrand?.thumbnail}
                         form={form}
@@ -317,6 +322,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                       rules={[{ required: false }]}
                     >
                       <Upload.ImageUpload
+                        type="videoLogo"
                         maxCount={1}
                         fileList={productBrand?.videoLogo}
                         form={form}
@@ -341,6 +347,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                       ]}
                     >
                       <Upload.ImageUpload
+                        type="masthead"
                         maxCount={1}
                         fileList={productBrand?.mastHead}
                         form={form}
@@ -357,6 +364,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                       ]}
                     >
                       <Upload.ImageUpload
+                        type="avatar"
                         maxCount={1}
                         fileList={productBrand?.avatar}
                         form={form}
