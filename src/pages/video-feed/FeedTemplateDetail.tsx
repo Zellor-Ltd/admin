@@ -182,6 +182,7 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
 
     const response = await doRequest(() => saveFeedTemplate(item));
     item.id ? onSave?.(item) : onSave?.({ ...item, id: response.result });
+    templateForm.resetFields();
     if (!response.result) setDetails?.(false);
   };
 
@@ -401,7 +402,6 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
                           message: 'Index is required.',
                         },
                       ]}
-                      initialValue={1000}
                     >
                       <InputNumber />
                     </Form.Item>
@@ -517,7 +517,6 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
                   <Select
                     placeholder="Please select a language"
                     disabled={!language.length}
-                    defaultValue="English"
                   >
                     {language.map((lang: any) => (
                       <Select.Option key={lang.value} value={lang.value}>
@@ -577,12 +576,7 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
                       label="Go Live Date"
                       getValueProps={formatMoment}
                     >
-                      <DatePicker
-                        defaultValue={moment(
-                          templateForm.getFieldValue('goLiveDate')
-                        )}
-                        format="DD/MM/YYYY"
-                      />
+                      <DatePicker format="DD/MM/YYYY" />
                     </Form.Item>
                   </Col>
                   <Col lg={12} xs={24}>
@@ -591,12 +585,7 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
                       label="Expiration Date"
                       getValueProps={formatMoment}
                     >
-                      <DatePicker
-                        defaultValue={moment(
-                          templateForm.getFieldValue('validity')
-                        )}
-                        format="DD/MM/YYYY"
-                      />
+                      <DatePicker format="DD/MM/YYYY" />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -645,7 +634,7 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
                                     danger
                                     type="primary"
                                     className="remove-button"
-                                    key={`botao_${segment.thumbnail?.url}`}
+                                    key={`${segment.thumbnail?.url}_button`}
                                     onClick={evt =>
                                       onDeleteSegment(evt, segmentIndex)
                                     }
@@ -653,6 +642,7 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
                                 ]
                               : [
                                   <Button
+                                    key={`${segment.thumbnail?.url}_button`}
                                     icon={<DeleteOutlined />}
                                     shape="circle"
                                     type="primary"
@@ -661,7 +651,7 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
                                       onDeleteSegment(evt, segmentIndex)
                                     }
                                   />,
-                                  <div>No Thumbnail</div>,
+                                  <div key="noThumbnailDiv">No Thumbnail</div>,
                                 ]}
                           </div>
                         ))}
@@ -680,7 +670,7 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
             </Row>
           </Tabs.TabPane>
           <Tabs.TabPane forceRender tab="Listing" key="listing">
-            <Form.Item name="selectedOption" initialValue={selectedOptions}>
+            <Form.Item name="selectedOption">
               <Radio.Group buttonStyle="solid" onChange={handleSwitchChange}>
                 <Radio.Button value="productBrand">Product Brand</Radio.Button>
                 <Radio.Button value="creator">Creator</Radio.Button>
@@ -1123,7 +1113,18 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
           }}
           layout="vertical"
           className="video-feed"
-          initialValues={feedTemplate}
+          initialValues={{
+            ...feedTemplate,
+            language: feedTemplate?.language ?? 'English',
+            index: feedTemplate?.index ?? 1000,
+            selectedOption: feedTemplate?.selectedOption ?? selectedOptions,
+            goLiveDate: feedTemplate?.goLiveDate
+              ? moment(feedTemplate.goLiveDate)
+              : undefined,
+            validity: feedTemplate?.validity
+              ? moment(feedTemplate.validity)
+              : undefined,
+          }}
         >
           {!selectedSegment && <VideoUpdatePage />}
         </Form>

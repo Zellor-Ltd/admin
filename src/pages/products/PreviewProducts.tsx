@@ -11,7 +11,6 @@ import {
   Checkbox,
   Col,
   Collapse,
-  Form,
   Input,
   message,
   PageHeader,
@@ -29,13 +28,7 @@ import { useRequest } from 'hooks/useRequest';
 import { Brand } from 'interfaces/Brand';
 import { Product } from 'interfaces/Product';
 import moment from 'moment';
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import {
   addVariant,
@@ -52,7 +45,6 @@ import './Products.scss';
 import { ProductCategory } from 'interfaces/Category';
 import { AppContext } from 'contexts/AppContext';
 import { ProductBrand } from 'interfaces/ProductBrand';
-import { productUtils } from '../../helpers/product-utils';
 import scrollIntoView from 'scroll-into-view';
 import { useMount } from 'react-use';
 import AlternatePreviewProducts from './AlternatePreviewProducts';
@@ -60,7 +52,6 @@ import SimpleSelect from '../../components/select/SimpleSelect';
 import { SelectOption } from '../../interfaces/SelectOption';
 import ProductDetail from './ProductDetail';
 
-const { getSearchTags, getCategories } = productUtils;
 const { Panel } = Collapse;
 
 const PreviewProducts: React.FC<RouteComponentProps> = () => {
@@ -72,7 +63,6 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
   const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
   const [isFetchingBrands, setIsFetchingBrands] = useState(false);
   const [isFetchingProductBrands, setIsFetchingProductBrands] = useState(false);
-  const [form] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
   const [disabled, setDisabled] = useState<boolean>(false);
   const [fetchingCategories, setFetchingCategories] = useState(false);
@@ -213,88 +203,6 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
     setCurrentSubSubCategory(undefined);
   }, [currentSubCategory]);
 
-  const setSearchTagsByCategory = useCallback(
-    (
-      useInitialValue: boolean,
-      selectedCategories: any[] = [],
-      categoryKey?: string,
-      productCategoryIndex?: number
-    ) => {
-      const currentCategories = getCategories(form, allCategories);
-      let previousTags: string[] = [];
-
-      if (
-        productCategoryIndex !== undefined &&
-        categoryKey !== undefined &&
-        currentProduct &&
-        currentProduct?.categories
-      ) {
-        previousTags = getSearchTags(
-          currentProduct.categories[productCategoryIndex],
-          categoryKey
-        );
-      }
-
-      const selectedCategoriesSearchTags = selectedCategories
-        .filter(v => v && v.searchTags)
-        .map(v => v.searchTags)
-        .reduce((prev, curr) => {
-          return prev?.concat(curr || []);
-        }, []);
-
-      let searchTags = form.getFieldValue('searchTags') || [];
-      const finalValue = Array.from(
-        new Set([
-          ...searchTags.filter(tag => previousTags.indexOf(tag) === -1),
-          ...selectedCategoriesSearchTags,
-        ])
-      );
-      if (useInitialValue && currentProduct) {
-        searchTags = currentProduct.searchTags || finalValue;
-      } else {
-        searchTags = finalValue;
-      }
-
-      if (
-        !!selectedCategories &&
-        !!currentProduct &&
-        !!currentProduct.categories &&
-        productCategoryIndex !== undefined
-      ) {
-        currentProduct.categories[productCategoryIndex] = currentCategories;
-        currentProduct.searchTags = searchTags;
-      }
-
-      form.setFieldsValue({
-        searchTags,
-      });
-    },
-    [form, currentProduct]
-  );
-
-  const setDiscoPercentageByBrand = useCallback(
-    (useInitialValue: boolean) => {
-      const product = form.getFieldsValue(true);
-      const selectedBrand = brands?.find(
-        (brand: Brand) => brand.id === product.brand?.id
-      );
-
-      let discoPercentage;
-
-      if (useInitialValue && currentProduct) {
-        discoPercentage =
-          currentProduct.discoPercentage || selectedBrand?.discoPercentage;
-      } else {
-        discoPercentage = selectedBrand?.discoPercentage;
-      }
-
-      form.setFieldsValue({
-        discoPercentage,
-      });
-    },
-    [brands, form, currentProduct]
-  );
-
   useMount(async () => {
     const getProductBrands = async () => {
       setIsFetchingProductBrands(true);
@@ -312,11 +220,6 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
 
     await Promise.all([getBrands(), getProductBrands(), fetchAllCategories()]);
   });
-
-  useEffect(() => {
-    setDiscoPercentageByBrand(true);
-    setSearchTagsByCategory(true);
-  }, [brands, setDiscoPercentageByBrand, setSearchTagsByCategory]);
 
   const onAlternateViewSaveChanges = async (entity: Product) => {
     setDisabled(true);
@@ -373,9 +276,6 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
       setProducts(results);
     } else setProducts(prev => [...prev.concat(results)]);
   };
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => form.resetFields(), [currentProduct]);
 
   const deleteItem = async (_id: string, index: number) => {
     await doRequest(() => deleteStagingProduct(_id));
@@ -1084,12 +984,12 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
             }
             className={isMobile ? 'mb-n1' : ''}
             extra={[
-              <Row justify="end">
+              <Row justify="end" key="headerRow">
                 <Col>
                   <Row gutter={8}>
                     <Col>
                       <Button
-                        key="1"
+                        key="2"
                         className={isMobile ? 'mt-05' : ''}
                         onClick={() => createProduct(products.length)}
                       >
@@ -1098,7 +998,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                     </Col>
                     <Col>
                       <Button
-                        key="1"
+                        key="3"
                         type="primary"
                         className={isMobile ? 'mt-05' : ''}
                         onClick={switchView}

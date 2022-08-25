@@ -40,7 +40,7 @@ interface FanDetailProps {
 const { Option } = Select;
 
 const prefixSelector = (prefix: string) => (
-  <Form.Item initialValue={prefix || '+353'} name="dialCode" noStyle>
+  <Form.Item name="dialCode" noStyle>
     <Select style={{ width: 80 }}>
       <Option value="+353">+353</Option>
       <Option value="+55">+55</Option>
@@ -235,11 +235,15 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
           fan
             ? {
                 ...fan,
-                phoneNumber: fan.personalDetails?.phone?.number,
-                line1: fan.addresses?.[0]?.line1,
-                city: fan.addresses?.[0]?.city,
-                country: fan.addresses?.[0]?.country,
-                postalCode: fan.addresses?.[0]?.postalCode,
+                phoneNumber: fan?.personalDetails?.phone?.number,
+                dialCode:
+                  fan?.dialCode ??
+                  fan?.personalDetails?.phone?.dialCode ??
+                  '+353',
+                line1: fan?.addresses?.[0]?.line1,
+                city: fan?.addresses?.[0]?.city,
+                country: fan?.addresses?.[0]?.country,
+                postalCode: fan?.addresses?.[0]?.postalCode,
               }
             : undefined
         }

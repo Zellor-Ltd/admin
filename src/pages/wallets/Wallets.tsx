@@ -183,7 +183,11 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
   const handleChangeFan = async (value?: string, option?: any) => {
     if (option) {
       const { balance }: any = await fetchBalancePerBrand(option.id);
-      setWallets(balance);
+      const balanceWithKeys = balance.map(item => {
+        return { ...item, key: item.brandId };
+      });
+      setWallets(balanceWithKeys as any[]);
+
       setSelectedFan(fans.find(fan => fan.user === value));
       setUserInput(value);
     } else {
@@ -275,7 +279,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
           <Table
             scroll={{ x: true }}
             rowClassName={(_, index) => `scrollable-row-${index}`}
-            rowKey="id"
+            rowKey="key"
             columns={columns}
             dataSource={search(wallets)}
             pagination={false}

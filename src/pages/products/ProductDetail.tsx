@@ -91,6 +91,8 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
     if (product) {
       _setProduct(product);
     }
+    setDiscoPercentageByBrand(true);
+    setSearchTagsByCategory(true);
   }, [product]);
 
   useEffect(() => {
@@ -196,11 +198,6 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
       _productCategoryIndex
     );
   };
-
-  useEffect(() => {
-    setDiscoPercentageByBrand(true);
-    setSearchTagsByCategory(true);
-  }, [brands, setDiscoPercentageByBrand, setSearchTagsByCategory]);
 
   useEffect(() => {
     if (product?.ageMin && product?.ageMax)
@@ -810,6 +807,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
               <Col lg={24} xs={12}>
                 <Form.Item label="Tag Image">
                   <Upload.ImageUpload
+                    type="tag"
                     fileList={form.getFieldValue('tagImage')}
                     formProp="tagImage"
                     form={form}
@@ -822,6 +820,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
               <Col lg={24} xs={12}>
                 <Form.Item label="Thumbnail">
                   <Upload.ImageUpload
+                    type="thumbnail"
                     fileList={form.getFieldValue('thumbnailUrl')}
                     formProp="thumbnailUrl"
                     form={form}
@@ -839,6 +838,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                     }
                   >
                     <Upload.ImageUpload
+                      type="image"
                       maxCount={20}
                       fileList={form.getFieldValue('image')}
                       formProp="image"

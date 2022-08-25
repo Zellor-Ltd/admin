@@ -11,7 +11,6 @@ import {
   Checkbox,
   Col,
   Collapse,
-  Form,
   Input,
   PageHeader,
   Row,
@@ -20,13 +19,7 @@ import {
   Table,
   Typography,
 } from 'antd';
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import './Products.scss';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
@@ -47,7 +40,6 @@ import ProductAPITestModal from './ProductAPITestModal';
 import ProductExpandedRow from './ProductExpandedRow';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { ProductBrand } from 'interfaces/ProductBrand';
-import { productUtils } from '../../helpers/product-utils';
 import scrollIntoView from 'scroll-into-view';
 import { useMount } from 'react-use';
 import SimpleSelect from 'components/select/SimpleSelect';
@@ -55,7 +47,6 @@ import { SelectOption } from '../../interfaces/SelectOption';
 import ProductDetail from './ProductDetail';
 import { ProductCategory } from 'interfaces/Category';
 
-const { getSearchTags, getCategories } = productUtils;
 const { Panel } = Collapse;
 
 const LiveProducts: React.FC<RouteComponentProps> = () => {
@@ -65,7 +56,6 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
   const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
   const [isFetchingBrands, setIsFetchingBrands] = useState(false);
   const [isFetchingProductBrand, setIsFetchingProductBrand] = useState(false);
-  const [form] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
   const [fetchingCategories, setFetchingCategories] = useState(false);
   const { fetchAllCategories, allCategories } = useAllCategories({
@@ -207,96 +197,6 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
       });
   }, [searchFilter]);
 
-  useEffect(() => {
-    form.setFieldsValue(currentProduct);
-  }, [currentProduct]);
-
-  const setDiscoPercentageByBrand = useCallback(
-    (useInitialValue: boolean) => {
-      const product = form.getFieldsValue(true);
-      const selectedBrand = brands?.find(
-        (brand: Brand) => brand.id === product.brand?.id
-      );
-
-      let discoPercentage;
-
-      if (useInitialValue && currentProduct) {
-        discoPercentage =
-          currentProduct.discoPercentage || selectedBrand?.discoPercentage;
-      } else {
-        discoPercentage = selectedBrand?.discoPercentage;
-      }
-
-      form.setFieldsValue({
-        discoPercentage,
-      });
-    },
-    [brands, form, currentProduct]
-  );
-
-  const setSearchTagsByCategory = useCallback(
-    (
-      useInitialValue: boolean,
-      selectedCategories: any[] = [],
-      categoryKey?: string,
-      productCategoryIndex?: number
-    ) => {
-      const currentCategories = getCategories(form, allCategories);
-      let previousTags: string[] = [];
-
-      if (
-        productCategoryIndex !== undefined &&
-        categoryKey !== undefined &&
-        currentProduct &&
-        currentProduct?.categories
-      ) {
-        previousTags = getSearchTags(
-          currentProduct.categories[productCategoryIndex],
-          categoryKey
-        );
-      }
-
-      const selectedCategoriesSearchTags = selectedCategories
-        .filter(v => v && v.searchTags)
-        .map(v => v.searchTags)
-        .reduce((prev, curr) => {
-          return prev?.concat(curr || []);
-        }, []);
-
-      let searchTags = form.getFieldValue('searchTags') || [];
-      const finalValue = Array.from(
-        new Set([
-          ...searchTags.filter(tag => previousTags.indexOf(tag) === -1),
-          ...selectedCategoriesSearchTags,
-        ])
-      );
-      if (useInitialValue && currentProduct) {
-        searchTags = currentProduct.searchTags || finalValue;
-      } else {
-        searchTags = finalValue;
-      }
-
-      if (
-        !!selectedCategories &&
-        !!currentProduct &&
-        !!currentProduct.categories &&
-        productCategoryIndex !== undefined
-      ) {
-        currentProduct.categories[productCategoryIndex] = currentCategories;
-      }
-
-      form.setFieldsValue({
-        searchTags,
-      });
-    },
-    [form, currentProduct]
-  );
-
-  useEffect(() => {
-    setDiscoPercentageByBrand(true);
-    setSearchTagsByCategory(true);
-  }, [brands, setDiscoPercentageByBrand, setSearchTagsByCategory]);
-
   const _fetchProducts = async (resetResults?: boolean) => {
     scrollToCenter(0);
     const pageToUse = resetResults ? 0 : page;
@@ -332,8 +232,6 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
     } else setProducts(prev => [...prev.concat(results)]);
     if (!loaded.current) loaded.current = true;
   };
-
-  useEffect(() => form.resetFields(), [currentProduct]);
 
   const columns: EditableColumnType<Product>[] = [
     {

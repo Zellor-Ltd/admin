@@ -55,6 +55,7 @@ interface ImageUploadProps {
     removed?: boolean
   ) => void;
   disabled?: boolean;
+  type: string;
 }
 
 interface ImageDnDProps {
@@ -62,6 +63,7 @@ interface ImageDnDProps {
   moveRow;
   file;
   fileList;
+  type;
 }
 
 const ImageUpload: React.FC<ImageUploadProps> = ({
@@ -81,6 +83,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   classNames = '',
   onImageChange,
   disabled = false,
+  type,
 }) => {
   const [fileListLocal, setFileListLocal] = useState<any>([]);
   const [isCropping, setIsCropping] = useState(false);
@@ -293,7 +296,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 
     if (onFitTo) {
       actionButtons.push(
-        <Col lg={6} xs={6}>
+        <Col lg={6} xs={6} key={`${type}_${file.uid}_fitToWidth`}>
           <Tooltip title="Fit to Width">
             <Button
               size="small"
@@ -307,7 +310,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
       );
 
       actionButtons.push(
-        <Col lg={6} xs={6}>
+        <Col lg={6} xs={6} key={`${type}_${file.uid}_fitToHeight`}>
           <Tooltip title="Fit to Height">
             <Button
               size="small"
@@ -323,7 +326,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 
     if (!!file.url && !!file.oldUrl && file.url !== file.oldUrl && onRollback) {
       actionButtons.push(
-        <Col lg={6} xs={6}>
+        <Col lg={6} xs={6} key={`${type}_${file.uid}_fitRollback`}>
           <Tooltip title="Rollback fit">
             <Button
               size="small"
@@ -338,7 +341,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 
     if (onAssignToMasthead) {
       actionButtons.push(
-        <Col lg={6} xs={6}>
+        <Col lg={6} xs={6} key={`${type}_${file.uid}_assignToMasthead`}>
           <Tooltip title="Assign to Masthead">
             <Button
               size="small"
@@ -353,7 +356,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 
     if (onAssignToThumbnail) {
       actionButtons.push(
-        <Col lg={6} xs={6}>
+        <Col lg={6} xs={6} key={`${type}_${file.uid}_assignToThumbnail`}>
           <Tooltip title="Assign to Thumbnail">
             <Button
               size="small"
@@ -368,7 +371,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 
     if (onAssignToTag) {
       actionButtons.push(
-        <Col lg={6} xs={6}>
+        <Col lg={6} xs={6} key={`${type}_${file.uid}_assignToTag`}>
           <Tooltip title="Assign to Tag">
             <Button
               size="small"
@@ -383,7 +386,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 
     if (croppable) {
       actionButtons.push(
-        <Col lg={6} xs={6}>
+        <Col lg={6} xs={6} key={`${type}_${file.uid}_crop`}>
           <Tooltip title="Crop">
             <Button
               size="small"
@@ -450,6 +453,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     ) {
       return (
         <ImageDnD
+          type={type}
           key={file.uid}
           originNode={originNode}
           file={file}

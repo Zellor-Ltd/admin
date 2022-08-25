@@ -12,7 +12,7 @@ import {
   Typography,
 } from 'antd';
 import { useRequest } from '../../hooks/useRequest';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { AppContext } from 'contexts/AppContext';
 import { fetchCreators, fetchPayments } from '../../services/DiscoClubService';
 import { Creator } from 'interfaces/Creator';
@@ -38,7 +38,7 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
   const [details, setDetails] = useState<boolean>(false);
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [currentPayment, setCurrentPayment] = useState<Payment>();
-  const [totalAmount, setTotalAmount] = useState<number>(0);
+  const totalAmount = useRef<any>();
   const [currentCreator, setCurrentCreator] = useState<Creator>();
   const [dateFrom, setDateFrom] = useState<string>();
   const [dateTo, setDateTo] = useState<string>();
@@ -67,7 +67,7 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
   }, [refreshing]);
 
   useEffect(() => {
-    setTotalAmount(0);
+    totalAmount.current = 0;
     if (!currentCreator && !dateFrom && !dateTo) {
       setPayments([]);
       return;
@@ -348,7 +348,7 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
                 pageData.forEach(({ payment }) => {
                   tempAmount += payment;
                 });
-                setTotalAmount(tempAmount);
+                totalAmount.current = tempAmount;
 
                 return (
                   <>
@@ -361,7 +361,7 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
                       <Table.Summary.Cell index={3}></Table.Summary.Cell>
                       <Table.Summary.Cell index={4}></Table.Summary.Cell>
                       <Table.Summary.Cell index={5}>
-                        €{totalAmount.toFixed(2)}
+                        €{totalAmount.current.toFixed(2)}
                       </Table.Summary.Cell>
                       <Table.Summary.Cell index={6}></Table.Summary.Cell>
                     </Table.Summary.Row>

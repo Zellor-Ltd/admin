@@ -47,6 +47,7 @@ const Interests: React.FC<InterestsProps> = () => {
     const getCategoryParams = (category: ProductCategory) => ({
       searchTags: category.searchTags,
       image: category.image,
+      id: category.id,
     });
 
     const _mergedCategories: any[] = [];
