@@ -1301,6 +1301,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                   <Col lg={24} xs={24}>
                     <Form.Item label="Thumbnail URL">
                       <Upload.ImageUpload
+                        type="thumbnail"
                         fileList={selectedSegment!.thumbnail}
                         formProp={'thumbnail'}
                         form={segmentForm}

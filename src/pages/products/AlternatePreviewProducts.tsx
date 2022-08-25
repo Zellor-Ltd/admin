@@ -256,6 +256,7 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
       render: (_, record) => (
         <Form.Item className="mb-0 mt-1">
           <Upload.ImageUpload
+            type="tag"
             scrollOverflow
             fileList={record.tagImage}
             formProp="tagImage"
@@ -284,6 +285,7 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
       render: (_, record) => (
         <Form.Item className="mb-0 mt-1">
           <Upload.ImageUpload
+            type="thumbnail"
             scrollOverflow
             fileList={record.thumbnailUrl}
             formProp="thumbnailUrl"
@@ -313,6 +315,7 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
         return (
           <Form.Item className={'mb-0 mt-1'}>
             <Upload.ImageUpload
+              type="image"
               maxCount={20}
               fileList={record.image}
               formProp="image"

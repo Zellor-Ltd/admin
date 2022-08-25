@@ -310,6 +310,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
               <Col lg={4}>
                 <Form.Item label="Cover Picture">
                   <Upload.ImageUpload
+                    type="coverPictureUrl"
                     fileList={creator?.coverPictureUrl}
                     formProp="coverPictureUrl"
                     form={form}
@@ -319,6 +320,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
               <Col lg={4}>
                 <Form.Item label="Avatar">
                   <Upload.ImageUpload
+                    type="avatar"
                     fileList={creator?.avatar}
                     formProp="avatar"
                     form={form}
@@ -328,6 +330,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
               <Col lg={4}>
                 <Form.Item label="Thumbnail">
                   <Upload.ImageUpload
+                    type="thummbnail"
                     fileList={creator?.thumbnail}
                     formProp="thumbnail"
                     form={form}

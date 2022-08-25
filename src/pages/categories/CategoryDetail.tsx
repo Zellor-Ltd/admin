@@ -149,6 +149,7 @@ const CategoryDetail: React.FC<CategoryDetailProps> = ({
           <Col lg={12} xs={24}>
             <Form.Item label="Image">
               <Upload.ImageUpload
+                type="image"
                 maxCount={1}
                 fileList={category?.image}
                 form={form}
