@@ -8,6 +8,7 @@ import {
   Modal,
   PageHeader,
   Row,
+  Select,
   Tabs,
   Typography,
 } from 'antd';
@@ -17,16 +18,19 @@ import React, { useState } from 'react';
 import { saveProductBrand } from '../../services/DiscoClubService';
 import { TwitterPicker } from 'react-color';
 import { ProductBrand } from 'interfaces/ProductBrand';
+import { Brand } from 'interfaces/Brand';
 interface ProductBrandDetailProps {
   productBrand: ProductBrand | undefined;
   onSave?: (record: ProductBrand) => void;
   onCancel?: () => void;
+  brands: Brand[];
 }
 
 const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
   productBrand,
   onSave,
   onCancel,
+  brands,
 }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [form] = Form.useForm();
@@ -98,7 +102,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
             <Tabs.TabPane forceRender tab="Details" key="Details">
               <Row gutter={8}>
                 <Col lg={12} xs={24}>
-                  <Col lg={16} xs={24}>
+                  <Col span={24}>
                     <Form.Item
                       label="Product Brand Name"
                       name="brandName"
@@ -112,14 +116,50 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                       <Input />
                     </Form.Item>
                   </Col>
-                  <Col lg={16} xs={24}>
+                  <Col span={24}>
                     <Form.Item label="External Code" name="externalCode">
                       <Input />
                     </Form.Item>
                   </Col>
-                  <Col>
-                    <Row gutter={4}>
-                      <Col lg={8} xs={24}>
+                  <Col span={24}>
+                    <Row gutter={8}>
+                      <Col lg={12} xs={24}>
+                        <Form.Item name="apiBrand" label="API Brand">
+                          <Input placeholder="API Brand" />
+                        </Form.Item>
+                      </Col>
+                      <Col lg={12} xs={24}>
+                        <Form.Item
+                          name="masterBrand"
+                          label="Master Brand"
+                          rules={[
+                            {
+                              required: true,
+                              message: 'Master Brand is required.',
+                            },
+                          ]}
+                        >
+                          <Select
+                            placeholder="Select a Master Brand"
+                            style={{ width: '100%' }}
+                            allowClear
+                            showSearch
+                            filterOption={(input, option) =>
+                              !!option?.children
+                                ?.toString()
+                                ?.toUpperCase()
+                                .includes(input?.toUpperCase())
+                            }
+                          >
+                            {brands.map((curr: any) => (
+                              <Select.Option key={curr.id} value={curr.id}>
+                                {curr.brandName}
+                              </Select.Option>
+                            ))}
+                          </Select>
+                        </Form.Item>
+                      </Col>
+                      <Col lg={12} xs={24}>
                         <Form.Item
                           name="discoPercentage"
                           label="Disco Percentage %"
@@ -138,7 +178,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                           />
                         </Form.Item>
                       </Col>
-                      <Col lg={8} xs={24}>
+                      <Col lg={12} xs={24}>
                         <Form.Item name="creatorPercentage" label="Creator %">
                           <InputNumber
                             pattern="^(?:100|\d{1,2})(?:.\d{1,2})?$"
@@ -164,9 +204,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                           </p>
                         </Modal>
                       </Col>
-                    </Row>
-                    <Row gutter={4}>
-                      <Col lg={8} xs={24}>
+                      <Col lg={12} xs={24}>
                         <Form.Item
                           name="maxDiscoDollarPercentage"
                           label="Max Disco Dollar %"
@@ -188,7 +226,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                       </Col>
                     </Row>
                   </Col>
-                  <Col lg={24} xs={24}>
+                  <Col span={24}>
                     <Form.Item
                       label="Product Brand Color"
                       name="brandTxtColor"
