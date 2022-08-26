@@ -17,7 +17,8 @@ import {
   Select,
   Slider,
   Table,
-  Tabs,
+    Tabs,
+    Switch,
   Typography,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
@@ -123,6 +124,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
     useState<ProductBrand>();
   const [currentBrandIcon, setCurrentBrandIcon] = useState<any>();
   const [tagBuffer, setTagBuffer] = useState<any[]>([]);
+
 
   useEffect(() => {
     if (videoTab === 'Links') {
@@ -1105,7 +1107,42 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                 />
               </Col>
             </Row>
-          </Tabs.TabPane>
+                </Tabs.TabPane>
+                <Tabs.TabPane forceRender tab="Promo" key="Promo">
+                    <Row gutter={8}>
+                        <Col sm={12} lg={6}>
+                            <Form.Item
+                                name="promoEnabled"
+                                label="Enabled"
+                                valuePropName="checked"
+                            >
+                                <Switch />
+                            </Form.Item>
+
+                            <Form.Item name="promoMasterBrand" label="Master Brand">
+                                <Select onChange={onChangeBrand}>
+                                    {brands.map(brand => (
+                                        <Select.Option key={brand.id} value={brand.id}>
+                                            {brand.brandName}
+                                        </Select.Option>
+                                    ))}
+                                </Select>
+                            </Form.Item>
+
+                            <Form.Item name="promoText" label="Headline Text">
+                                <Input />
+                            </Form.Item>
+
+                            <Form.Item name="promoCode" label="Coupon Code">
+                                <Input />
+                            </Form.Item>
+
+                            <Form.Item name="promoDate" label="Date Range (Text format)">
+                                <Input />
+                            </Form.Item>
+                        </Col>                      
+                    </Row>
+                </Tabs.TabPane>
         </Tabs>
         <Row gutter={8} justify="end">
           <Col>
@@ -1131,6 +1168,10 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
         </Row>
       </>
     );
+    };
+
+  const onChangeBrand = (key: string) => {
+        setSelectedBrand(brands.find(brand => brand.id === key));
   };
 
   const brandsColumns: ColumnsType<any> = [
