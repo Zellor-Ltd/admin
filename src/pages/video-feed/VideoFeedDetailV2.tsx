@@ -810,7 +810,10 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                     >
                       <DatePicker format="DD/MM/YYYY" />
                     </Form.Item>
-                  </Col>
+                    </Col>
+                    <Col lg={12} xs={24}>
+
+                    </Col>
                 </Row>
               </Col>
             </Row>
@@ -861,7 +864,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                                     onClick={evt =>
                                       onDeleteSegment(evt, segmentIndex)
                                     }
-                                  />,
+                                        />,
                                 ]
                               : [
                                   <Button
@@ -872,10 +875,12 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                                     onClick={evt =>
                                       onDeleteSegment(evt, segmentIndex)
                                     }
-                                  />,
+                                        />                                        ,
                                   <div>No Thumbnail</div>,
-                                ]}
-                          </div>
+                                    ]}
+                                <p/>
+                                <p><a href={segment.shareLink}>{segment.shareLink}</a></p>
+                            </div>                            
                         ))}
                       </div>
                     );
@@ -1069,7 +1074,6 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                 />
               </Col>
               <Col lg={4} xs={24}>
-                <Typography.Title level={5}>Link Type</Typography.Title>
                 <Select
                   disabled={!linkType.length}
                   style={{ width: '100%' }}
@@ -1099,6 +1103,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                 </Button>
               </Col>
               <Col span={24}>
+                <Typography.Title level={5}>Shared Link:</Typography.Title>
                 <Table
                   columns={columns}
                   rowKey="id"
