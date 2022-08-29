@@ -928,3 +928,9 @@ export const removeVariant = (productId: string, variantId: string) =>
   instance.get(
     `Disco/Product/RemoveFromVariantGroup/${productId}/${variantId}`
   );
+
+export const fetchProductStores = (productId: string) =>
+  instance.get(`Disco/Product/Store/List/${productId}`);
+
+export const saveProductStore = (productId: string, store: any) =>
+  instance.put(`Disco/Product/Store/Update/${productId}`, store);
