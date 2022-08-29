@@ -18,10 +18,8 @@ import {
   FolderAddOutlined,
   BarsOutlined,
   LikeOutlined,
-  FileDoneOutlined,
   ToTopOutlined,
   LockOutlined,
-  PicCenterOutlined,
   UsergroupAddOutlined,
   ScheduleOutlined,
   WalletOutlined,
@@ -31,6 +29,9 @@ import {
   RocketOutlined,
   PartitionOutlined,
   PercentageOutlined,
+  BlockOutlined,
+  ShoppingOutlined,
+  CreditCardOutlined,
 } from '@ant-design/icons';
 import { Menu } from 'antd';
 import SubMenu from 'antd/lib/menu/SubMenu';
@@ -74,7 +75,7 @@ const AdminSideMenu = ({ isMobile, testMode }) => {
       <Menu.Item key="product-brands" icon={<TagOutlined />}>
         <Link to="/product-brands">Product Brands</Link>
       </Menu.Item>
-      <Menu.Item key="products" icon={<ShoppingCartOutlined />}>
+      <Menu.Item key="products" icon={<ShoppingOutlined />}>
         <Link to="/products">Live Products</Link>
       </Menu.Item>
       <Menu.Item key="preview-products" icon={<IssuesCloseOutlined />}>
@@ -89,9 +90,17 @@ const AdminSideMenu = ({ isMobile, testMode }) => {
       <Menu.Item key="fan-videos" icon={<UsergroupAddOutlined />}>
         <Link to="/fan-videos">Fan Videos</Link>
       </Menu.Item>
-      <Menu.Item key="feed-templates" icon={<PicCenterOutlined />}>
-        <Link to="/feed-templates">Feed Templates</Link>
-      </Menu.Item>
+      <SubMenu key="templates" icon={<BlockOutlined />} title="Templates">
+        <Menu.Item key="product-templates" icon={<ShoppingOutlined />}>
+          <Link to="/product-templates">Product Templates</Link>
+        </Menu.Item>
+        <Menu.Item key="feed-templates" icon={<MobileOutlined />}>
+          <Link to="/feed-templates">Feed Templates</Link>
+        </Menu.Item>
+        <Menu.Item key="dd-templates" icon={<CreditCardOutlined />}>
+          <Link to="/dd-templates">DD Templates</Link>
+        </Menu.Item>
+      </SubMenu>
       <SubMenu key="finance" icon={<DollarOutlined />} title="Finance">
         <Menu.Item key="payments" icon={<PercentageOutlined />}>
           <Link to="/payments">Payments</Link>
@@ -155,9 +164,6 @@ const AdminSideMenu = ({ isMobile, testMode }) => {
         </Menu.Item>
         <Menu.Item key="settings_trends" icon={<LineChartOutlined />}>
           <Link to="/settings_trends">Trends</Link>
-        </Menu.Item>
-        <Menu.Item key="settings_dd-templates" icon={<FileDoneOutlined />}>
-          <Link to="/settings_dd-templates">DD Templates</Link>
         </Menu.Item>
         <Menu.Item key="settings_fan-groups" icon={<TeamOutlined />}>
           <Link to="/settings_fan-groups">Fan Groups</Link>

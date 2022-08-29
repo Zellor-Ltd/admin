@@ -257,7 +257,6 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
           <PageHeader
             title="Product Brands"
             subTitle={isMobile ? '' : 'List of Product Brands'}
-            className={isMobile ? 'mb-n1' : ''}
             extra={[
               <Button
                 key="1"

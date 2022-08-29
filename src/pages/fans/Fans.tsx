@@ -268,7 +268,6 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
           <PageHeader
             title="Fans"
             subTitle={isMobile ? '' : 'List of Fans'}
-            className={isMobile ? 'mb-n1' : ''}
             extra={[
               <Button
                 key="1"

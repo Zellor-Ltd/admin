@@ -208,7 +208,6 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
           <PageHeader
             title="Tags"
             subTitle={isMobile ? '' : 'List of Tags'}
-            className={isMobile ? 'mb-n1' : ''}
             extra={[
               <Button
                 key="1"
