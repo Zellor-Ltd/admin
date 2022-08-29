@@ -40,6 +40,7 @@ import { SketchPicker } from 'react-color';
 import { AppContext } from 'contexts/AppContext';
 import { ColumnsType } from 'antd/lib/table';
 import { currencyRender } from 'helpers/currencyRender';
+import scrollIntoView from 'scroll-into-view';
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 const { getSearchTags, getCategories, removeSearchTagsByCategory } =
@@ -80,6 +81,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
   const [_product, _setProduct] = useState(product);
   const [color, setColor] = useState<string | undefined>(product?.colour);
   const [selectedStore, setSelectedStore] = useState<Brand>();
+  const [selectedTab, setSelectedTab] = useState<string>('Details');
 
   const {
     settings: { currency = [] },
@@ -215,6 +217,14 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
     });
 
     setAgeRange(value);
+  };
+
+  const checkConstraintValidity = () => {
+    const barcodeInput = document.getElementById('barcode') as HTMLInputElement;
+    if (!barcodeInput.checkValidity()) {
+      setSelectedTab('Checkout');
+      scrollIntoView(barcodeInput);
+    }
   };
 
   const onFinish = async () => {
@@ -417,6 +427,10 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
     form.setFieldsValue({ brand: selectedStore });
   };
 
+  const handleTabChange = (value: string) => {
+    setSelectedTab(value);
+  };
+
   return (
     <div className="products-details">
       <PageHeader
@@ -434,7 +448,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
         }}
         layout="vertical"
       >
-        <Tabs defaultActiveKey="Details">
+        <Tabs onChange={handleTabChange} activeKey={selectedTab}>
           <Tabs.TabPane forceRender tab="Details" key="Details">
             <Row gutter={8}>
               <Col lg={12} xs={24}>
@@ -773,13 +787,12 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                   </Col>
                   <Col lg={12} xs={24}>
                     <Form.Item name="barcode" label="Barcode">
-                      <InputNumber
-                        name="barcode"
+                      <Input
+                        id="barcode"
                         pattern="^[0-9]{12}$"
                         placeholder="Barcode number"
                         disabled={isLive}
-                        title="numbers only, 12 digits"
-                        formatter={value => `${value}`}
+                        title="Numbers only, 12 digits."
                       />
                     </Form.Item>
                   </Col>
@@ -985,6 +998,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
               type="primary"
               htmlType="submit"
               loading={loading}
+              onClick={checkConstraintValidity}
             >
               Save Changes
             </Button>
