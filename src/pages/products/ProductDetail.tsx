@@ -775,7 +775,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                     <Form.Item name="barcode" label="Barcode">
                       <InputNumber
                         name="barcode"
-                        pattern="^\d{12}$"
+                        pattern="^[0-9]{12}$"
                         placeholder="Barcode number"
                         disabled={isLive}
                         title="numbers only, 12 digits"
