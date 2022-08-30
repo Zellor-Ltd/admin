@@ -748,6 +748,7 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
                   <Row gutter={8}>
                     <Col>
                       <Button
+                        style={{ display: 'none' }}
                         key="2"
                         className={isMobile ? 'mt-05' : ''}
                         onClick={() =>
