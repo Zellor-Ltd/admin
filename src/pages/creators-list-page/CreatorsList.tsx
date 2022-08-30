@@ -155,7 +155,6 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
           <PageHeader
             title="Mastheads"
             subTitle={isMobile ? '' : 'List of Mastheads'}
-            className={isMobile ? 'mb-n1' : ''}
             extra={[
               <Button
                 key="1"

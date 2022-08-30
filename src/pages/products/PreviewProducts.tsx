@@ -982,7 +982,6 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                 ? 'Default View'
                 : 'Alternate View'
             }
-            className={isMobile ? 'mb-n1' : ''}
             extra={[
               <Row justify="end" key="headerRow">
                 <Col>
@@ -1034,7 +1033,10 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                 </Panel>
               </Collapse>
             )}
-            <Col span={24}>
+            <Col
+              span={24}
+              className={activeKey === '1' ? 'mt-n1 mb-1' : 'mt-n05'}
+            >
               <Row
                 justify="space-between"
                 align="top"
@@ -1053,10 +1055,9 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                   </Button>
                 </Col>
                 <Col
-                  className="mt-n2"
                   style={{
                     position: 'relative',
-                    top: activeKey === '1' ? '2rem' : '3.5rem',
+                    top: activeKey === '1' ? '0rem' : '0.5rem',
                   }}
                 >
                   <Button

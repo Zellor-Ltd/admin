@@ -15,13 +15,12 @@ import {
   PageHeader,
   Row,
   Select,
-  Spin,
   Table,
   Typography,
 } from 'antd';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import './Products.scss';
+import 'pages/products/Products.scss';
 import CopyIdToClipboard from 'components/CopyIdToClipboard';
 import { EditableColumnType } from 'components/EditableTable';
 import { AppContext } from 'contexts/AppContext';
@@ -30,26 +29,25 @@ import { useRequest } from 'hooks/useRequest';
 import { Brand } from 'interfaces/Brand';
 import { Product } from 'interfaces/Product';
 import moment from 'moment';
-import InfiniteScroll from 'react-infinite-scroll-component';
 import {
   fetchBrands,
   fetchProductBrands,
-  fetchProducts,
+  fetchProductTemplates,
 } from 'services/DiscoClubService';
-import ProductAPITestModal from './ProductAPITestModal';
-import ProductExpandedRow from './ProductExpandedRow';
+import ProductAPITestModal from 'pages/products/ProductAPITestModal';
+import ProductExpandedRow from 'pages/products/ProductExpandedRow';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { ProductBrand } from 'interfaces/ProductBrand';
 import scrollIntoView from 'scroll-into-view';
 import { useMount } from 'react-use';
 import SimpleSelect from 'components/select/SimpleSelect';
 import { SelectOption } from '../../interfaces/SelectOption';
-import ProductDetail from './ProductDetail';
 import { ProductCategory } from 'interfaces/Category';
+import ProductTemplateDetail from './ProductTemplateDetail';
 
 const { Panel } = Collapse;
 
-const LiveProducts: React.FC<RouteComponentProps> = () => {
+const ProductTemplates: React.FC<RouteComponentProps> = () => {
   const { isMobile } = useContext(AppContext);
   const inputRef = useRef<any>(null);
   const [brands, setBrands] = useState<Brand[]>([]);
@@ -71,27 +69,23 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
   const [productBrandFilter, setProductBrandFilter] = useState<
     ProductBrand | undefined
   >();
-  const [outOfStockFilter, setOutOfStockFilter] = useState<boolean>(false);
+  const [outOfStockFilter, setOutOfStockFilter] = useState<boolean>();
   const [currentMasterBrand, setCurrentMasterBrand] = useState<string>();
   const [currentProductBrand, setCurrentProductBrand] = useState<string>();
-  const [page, setPage] = useState<number>(0);
-  const [eof, setEof] = useState<boolean>(false);
   const loaded = useRef<boolean>(false);
   const [details, setDetails] = useState<boolean>(false);
-  const [currentProduct, setCurrentProduct] = useState<Product>();
+  const [currentTemplate, setCurrentTemplate] = useState<Product>();
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
-  const [products, setProducts] = useState<Product[]>([]);
-  const [productStatusFilter, setProductStatusFilter] =
-    useState<string>('live');
+  const [productTemplates, setProductTemplates] = useState<Product[]>([]);
+  const [productStatusFilter, setProductTemplateStatusFilter] =
+    useState<string>();
   const [runIdFilter, setRunIdFilter] = useState<string>();
 
-  const [productSuperCategoryFilter, setProductSuperCategoryFilter] =
+  const [superCategoryFilter, setSuperCategoryFilter] =
     useState<ProductCategory>();
-  const [productCategoryFilter, setProductCategoryFilter] =
-    useState<ProductCategory>();
-  const [productSubCategoryFilter, setProductSubCategoryFilter] =
-    useState<ProductCategory>();
-  const [productSubSubCategoryFilter, setProductSubSubCategoryFilter] =
+  const [categoryFilter, setCategoryFilter] = useState<ProductCategory>();
+  const [subCategoryFilter, setSubCategoryFilter] = useState<ProductCategory>();
+  const [subSubCategoryFilter, setSubSubCategoryFilter] =
     useState<ProductCategory>();
 
   const optionMapping: SelectOption = {
@@ -100,25 +94,25 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
     value: 'id',
   };
 
-  const productSuperCategoryOptionMapping: SelectOption = {
+  const superCategoryOptionMapping: SelectOption = {
     key: 'id',
     label: 'superCategory',
     value: 'id',
   };
 
-  const productCategoryOptionMapping: SelectOption = {
+  const categoryOptionMapping: SelectOption = {
     key: 'id',
     label: 'category',
     value: 'id',
   };
 
-  const productSubCategoryOptionMapping: SelectOption = {
+  const subCategoryOptionMapping: SelectOption = {
     key: 'id',
     label: 'subCategory',
     value: 'id',
   };
 
-  const productSubSubCategoryOptionMapping: SelectOption = {
+  const subSubCategoryOptionMapping: SelectOption = {
     key: 'id',
     label: 'subSubCategory',
     value: 'id',
@@ -197,39 +191,32 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
       });
   }, [searchFilter]);
 
-  const _fetchProducts = async (resetResults?: boolean) => {
+  const _fetchProductTemplates = async () => {
     scrollToCenter(0);
-    const pageToUse = resetResults ? 0 : page;
     const response = await doFetch(() =>
-      fetchProducts({
-        limit: 30,
-        page: pageToUse,
+      fetchProductTemplates({
         brandId: brandFilter?.id,
         query: searchFilter,
-        unclassified: false,
         productBrandId: productBrandFilter?.id,
         outOfStock: outOfStockFilter,
         status: productStatusFilter,
-        superCategoryId: productSuperCategoryFilter?.id,
-        categoryId: productCategoryFilter?.id,
-        subCategoryId: productSubCategoryFilter?.id,
-        subSubCategoryId: productSubSubCategoryFilter?.id,
+        superCategoryId: superCategoryFilter?.id,
+        categoryId: categoryFilter?.id,
+        subCategoryId: subCategoryFilter?.id,
+        subSubCategoryId: subSubCategoryFilter?.id,
         runId: runIdFilter,
       })
     );
-    setPage(pageToUse + 1);
-    if (response.results.length < 30) setEof(true);
     return response;
   };
 
-  const getProducts = async (resetResults?: boolean) => {
+  const getProductTemplates = async (resetResults?: boolean) => {
     if (resetResults) collapse(resetResults);
-    if (!resetResults && !products.length) return;
-    const { results } = await doFetch(() => _fetchProducts(resetResults));
+    if (!resetResults && !productTemplates.length) return;
+    const { results } = await doFetch(() => _fetchProductTemplates());
     if (resetResults) {
-      setEof(false);
-      setProducts(results);
-    } else setProducts(prev => [...prev.concat(results)]);
+      setProductTemplates(results);
+    } else setProductTemplates(prev => [...prev.concat(results)]);
     if (!loaded.current) loaded.current = true;
   };
 
@@ -250,7 +237,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
       render: (value: string, record, index) => (
         <>
           <Link
-            onClick={() => viewProduct(index, record)}
+            onClick={() => viewProductTemplate(index, record)}
             to={{ pathname: window.location.pathname, state: record }}
           >
             {value}
@@ -489,7 +476,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
         <>
           <Link
             to={{ pathname: window.location.pathname, state: record }}
-            onClick={() => viewProduct(index, record)}
+            onClick={() => viewProductTemplate(index, record)}
           >
             <EyeOutlined />
           </Link>
@@ -518,7 +505,9 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
   const handleRowSelection = (preSelectedRows: any[]) => {
     const selectedRows: any[] = [];
     preSelectedRows.forEach(productId => {
-      const product = products.find(product => product.id === productId);
+      const product = productTemplates.find(
+        product => product.id === productId
+      );
       if (product!.brand?.automated !== true) selectedRows.push(productId);
     });
     setSelectedRowKeys(selectedRows);
@@ -536,8 +525,8 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
     }
   }, [details]);
 
-  const viewProduct = (index: number, record?: Product) => {
-    setCurrentProduct(record);
+  const viewProductTemplate = (index: number, record?: Product) => {
+    setCurrentTemplate(record);
     setLastViewedIndex(index);
     if (record) {
       setCurrentMasterBrand(record.brand.brandName);
@@ -557,20 +546,20 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
 
   const refreshItem = (record: Product) => {
     if (loaded.current) {
-      products[lastViewedIndex] = record;
-      setProducts([...products]);
+      productTemplates[lastViewedIndex] = record;
+      setProductTemplates([...productTemplates]);
     } else {
-      setProducts([record]);
+      setProductTemplates([record]);
     }
   };
 
-  const onSaveProduct = (product: Product) => {
-    refreshItem(product);
-    setCurrentProduct(product);
+  const onSaveTemplate = (productTemplate: Product) => {
+    refreshItem(productTemplate);
+    setCurrentTemplate(productTemplate);
     setDetails(false);
   };
 
-  const onCancelProduct = () => {
+  const onCancelTemplate = () => {
     setDetails(false);
   };
 
@@ -580,7 +569,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
         <Col lg={16} xs={24}>
           <Row gutter={[8, 8]}>
             <Col lg={6} xs={24}>
-              <Typography.Title level={5}>Product Name</Typography.Title>
+              <Typography.Title level={5}>Template Name</Typography.Title>
               <Input
                 disabled={loading}
                 ref={inputRef}
@@ -588,7 +577,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                 suffix={<SearchOutlined />}
                 value={searchFilter}
                 placeholder="Search by Name"
-                onPressEnter={() => getProducts(true)}
+                onPressEnter={() => getProductTemplates(true)}
               />
             </Col>
             <Col lg={6} xs={24}>
@@ -602,7 +591,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                 placeholder={'Select a Master Brand'}
                 loading={isFetchingBrands}
                 disabled={isFetchingBrands || loading}
-                allowClear={true}
+                allowClear
               ></SimpleSelect>
             </Col>
             <Col lg={6} xs={24}>
@@ -618,7 +607,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                 placeholder={'Select a Product Brand'}
                 loading={isFetchingProductBrand}
                 disabled={isFetchingProductBrand || loading}
-                allowClear={true}
+                allowClear
               ></SimpleSelect>
             </Col>
             <Col lg={6} xs={24}>
@@ -627,8 +616,10 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                 disabled={loading}
                 placeholder="Select a Status"
                 style={{ width: '100%' }}
-                onChange={(value: string) => setProductStatusFilter(value)}
-                allowClear={true}
+                onChange={(value: string) =>
+                  setProductTemplateStatusFilter(value)
+                }
+                allowClear
                 defaultValue={productStatusFilter}
               >
                 <Select.Option value="live">Live</Select.Option>
@@ -645,62 +636,56 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                     item.superCategory === 'Children'
                   );
                 })}
-                onChange={(_, category) =>
-                  setProductSuperCategoryFilter(category)
-                }
+                onChange={(_, category) => setSuperCategoryFilter(category)}
                 style={{ width: '100%' }}
-                selectedOption={productSuperCategoryFilter?.id}
-                optionMapping={productSuperCategoryOptionMapping}
+                selectedOption={superCategoryFilter?.id}
+                optionMapping={superCategoryOptionMapping}
                 placeholder={'Select a Super Category'}
                 loading={fetchingCategories}
                 disabled={fetchingCategories || loading}
-                allowClear={true}
+                allowClear
               ></SimpleSelect>
             </Col>
             <Col lg={6} xs={24}>
               <Typography.Title level={5}>Category</Typography.Title>
               <SimpleSelect
                 data={allCategories.Category}
-                onChange={(_, category) => setProductCategoryFilter(category)}
+                onChange={(_, category) => setCategoryFilter(category)}
                 style={{ width: '100%' }}
-                selectedOption={productCategoryFilter?.id}
-                optionMapping={productCategoryOptionMapping}
+                selectedOption={categoryFilter?.id}
+                optionMapping={categoryOptionMapping}
                 placeholder={'Select a Category'}
                 loading={fetchingCategories}
                 disabled={fetchingCategories || loading}
-                allowClear={true}
+                allowClear
               ></SimpleSelect>
             </Col>
             <Col lg={6} xs={24}>
               <Typography.Title level={5}>Sub Category</Typography.Title>
               <SimpleSelect
                 data={allCategories['Sub Category']}
-                onChange={(_, category) =>
-                  setProductSubCategoryFilter(category)
-                }
+                onChange={(_, category) => setSubCategoryFilter(category)}
                 style={{ width: '100%' }}
-                selectedOption={productSubCategoryFilter?.id}
-                optionMapping={productSubCategoryOptionMapping}
+                selectedOption={subCategoryFilter?.id}
+                optionMapping={subCategoryOptionMapping}
                 placeholder={'Select a Sub Category'}
                 loading={fetchingCategories}
                 disabled={fetchingCategories || loading}
-                allowClear={true}
+                allowClear
               ></SimpleSelect>
             </Col>
             <Col lg={6} xs={24}>
               <Typography.Title level={5}>Sub Sub Category</Typography.Title>
               <SimpleSelect
                 data={allCategories['Sub Sub Category']}
-                onChange={(_, category) =>
-                  setProductSubSubCategoryFilter(category)
-                }
+                onChange={(_, category) => setSubSubCategoryFilter(category)}
                 style={{ width: '100%' }}
-                selectedOption={productSubSubCategoryFilter?.id}
-                optionMapping={productSubSubCategoryOptionMapping}
+                selectedOption={subSubCategoryFilter?.id}
+                optionMapping={subSubCategoryOptionMapping}
                 placeholder={'Select a Sub Sub Category'}
                 loading={fetchingCategories}
                 disabled={fetchingCategories || loading}
-                allowClear={true}
+                allowClear
               ></SimpleSelect>
             </Col>
             <Col lg={6} xs={24}>
@@ -713,7 +698,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                 value={runIdFilter}
                 suffix={<SearchOutlined />}
                 placeholder="Search by Run ID"
-                onPressEnter={() => getProducts(true)}
+                onPressEnter={() => getProductTemplates(true)}
               />
             </Col>
             <Col lg={6} xs={24}>
@@ -742,13 +727,40 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
     else setActiveKey('1');
   };
 
+  const createProductTemplate = (index: number) => {
+    setCurrentTemplate(undefined);
+    setCurrentMasterBrand(undefined);
+    setCurrentProductBrand(undefined);
+    setLastViewedIndex(index);
+    setDetails(true);
+  };
+
   return (
     <>
       {!details && (
         <>
           <PageHeader
-            title="Products"
-            subTitle={isMobile ? '' : 'List of Live Products'}
+            title="Product Templates"
+            subTitle={isMobile ? '' : 'List of Product Templates'}
+            extra={[
+              <Row justify="end" key="headerRow">
+                <Col>
+                  <Row gutter={8}>
+                    <Col>
+                      <Button
+                        key="2"
+                        className={isMobile ? 'mt-05' : ''}
+                        onClick={() =>
+                          createProductTemplate(productTemplates.length)
+                        }
+                      >
+                        New Item
+                      </Button>
+                    </Col>
+                  </Row>
+                </Col>
+              </Row>,
+            ]}
           />
           <Row
             align="bottom"
@@ -794,7 +806,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                 <Col>
                   <Button
                     type="primary"
-                    onClick={() => getProducts(true)}
+                    onClick={() => getProductTemplates(true)}
                     loading={loading}
                     style={{
                       position: 'relative',
@@ -813,73 +825,54 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
             selectedRecord={productAPITest}
             setSelectedRecord={setProductAPITest}
           />
-          <InfiniteScroll
-            dataLength={products.length}
-            next={getProducts}
-            hasMore={!eof}
-            loader={
-              page !== 0 && (
-                <div className="scroll-message">
-                  <Spin />
-                </div>
-              )
+          <Table
+            scroll={{ x: true }}
+            className="mt-2"
+            rowClassName={(_, index) =>
+              `scrollable-row-${index} ${
+                index === lastViewedIndex ? 'selected-row' : ''
+              }`
             }
-            endMessage={
-              <div className="scroll-message">
-                <b>End of results.</b>
-              </div>
-            }
-          >
-            <Table
-              scroll={{ x: true }}
-              className="mt-2"
-              rowClassName={(_, index) =>
-                `scrollable-row-${index} ${
-                  index === lastViewedIndex ? 'selected-row' : ''
-                }`
-              }
-              rowKey="id"
-              columns={columns}
-              dataSource={products}
-              loading={!products.length && loading}
-              pagination={false}
-              rowSelection={{
-                selectedRowKeys,
-                onChange: handleRowSelection,
-              }}
-              expandable={{
-                expandedRowRender: (record: Product) => (
-                  <ProductExpandedRow
-                    key={record.id}
-                    record={record}
-                    allCategories={allCategories}
-                    loading={loadingCategories}
-                    isStaging={false}
-                    productBrands={productBrands}
-                  ></ProductExpandedRow>
-                ),
-              }}
-            />
-          </InfiniteScroll>
+            rowKey="id"
+            columns={columns}
+            dataSource={productTemplates}
+            loading={!productTemplates.length && loading}
+            pagination={false}
+            rowSelection={{
+              selectedRowKeys,
+              onChange: handleRowSelection,
+            }}
+            expandable={{
+              expandedRowRender: (record: Product) => (
+                <ProductExpandedRow
+                  key={record.id}
+                  record={record}
+                  allCategories={allCategories}
+                  loading={loadingCategories}
+                  isStaging={false}
+                  productBrands={productBrands}
+                ></ProductExpandedRow>
+              ),
+            }}
+          />
         </>
       )}
       {details && (
-        <ProductDetail
+        <ProductTemplateDetail
           brands={brands}
           productBrands={productBrands}
           allCategories={allCategories}
-          onSave={onSaveProduct}
-          onCancel={onCancelProduct}
-          product={currentProduct}
+          onSave={onSaveTemplate}
+          onCancel={onCancelTemplate}
+          template={currentTemplate}
           productBrand={currentProductBrand}
           brand={currentMasterBrand}
           isFetchingBrands={isFetchingBrands}
           isFetchingProductBrand={isFetchingProductBrand}
-          isLive
         />
       )}
     </>
   );
 };
 
-export default LiveProducts;
+export default ProductTemplates;

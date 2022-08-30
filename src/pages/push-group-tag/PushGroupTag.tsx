@@ -280,7 +280,6 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
           <PageHeader
             title={isMobile ? 'Push Tags to User Groups' : 'Tags'}
             subTitle={isMobile ? '' : 'Push Tags to user groups'}
-            className={isMobile ? 'mb-n1' : ''}
           />
           <Row
             align="bottom"

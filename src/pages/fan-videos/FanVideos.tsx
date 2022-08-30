@@ -655,7 +655,6 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
           <PageHeader
             title="Fan Videos"
             subTitle={isMobile ? '' : 'List of Fan Videos'}
-            className={isMobile ? 'mb-n1' : ''}
             extra={[
               <Button
                 key="2"

@@ -282,7 +282,6 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
           <PageHeader
             title="Creators"
             subTitle={isMobile ? '' : 'List of Creators'}
-            className={isMobile ? 'mb-n1' : ''}
             extra={[
               <Button
                 key="1"

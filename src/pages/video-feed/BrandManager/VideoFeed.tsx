@@ -694,7 +694,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
           <PageHeader
             title="Video Feeds"
             subTitle={isMobile ? '' : 'List of Feeds'}
-            className={isMobile ? 'mb-n1' : ''}
             extra={[
               <Button
                 key="2"

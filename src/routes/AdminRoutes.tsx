@@ -44,6 +44,7 @@ import FanVideos from 'pages/fan-videos/FanVideos';
 import Payments from 'pages/payments/Payments';
 import PaymentHistory from 'pages/payments/PaymentHistory';
 import VariantGroups from 'pages/variants/VariantGroups';
+import ProductTemplates from 'pages/product-templates/ProductTemplates';
 
 function AdminRoutes() {
   return (
@@ -98,6 +99,11 @@ function AdminRoutes() {
       <AppRoute
         path="/products"
         component={LiveProducts}
+        layout={AuthenticatedLayout}
+      />
+      <AppRoute
+        path="/product-templates"
+        component={ProductTemplates}
         layout={AuthenticatedLayout}
       />
       <AppRoute
@@ -196,7 +202,7 @@ function AdminRoutes() {
         layout={AuthenticatedLayout}
       />
       <AppRoute
-        path="/settings_dd-templates"
+        path="/dd-templates"
         component={DdTemplates}
         layout={AuthenticatedLayout}
       />

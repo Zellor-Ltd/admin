@@ -770,7 +770,6 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
           <PageHeader
             title="Orders"
             subTitle={isMobile ? '' : 'List of Orders'}
-            className={isMobile ? 'mb-n1' : ''}
           />
           <Row
             align="bottom"

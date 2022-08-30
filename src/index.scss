@@ -156,7 +156,7 @@
   z-index: 2;
   top: 4rem;
   background: white;
-  padding: 0.5em 1em 1em 2em;
+  padding: 0.5rem 1rem 1rem 2rem;
 }
 
 .custom-filter-box {
@@ -299,9 +299,10 @@
   }
 
   .ant-page-header {
-    padding: 1em 1.5em 1em 0.5em;
+    padding: 1rem 1rem 1rem 0.75rem;
     white-space: normal;
     overflow-wrap: normal;
+    margin-bottom: -0.5rem;
   }
 
   .ant-page-header-heading-title {
@@ -358,6 +359,10 @@
   }
 }
 
+.sketch-picker {
+  transform: scale(0.8);
+}
+
 .mx-0 {
   margin-left: 0;
   margin-right: 0;
@@ -408,6 +413,10 @@
 
 .mt-15 {
   margin-top: 1.5rem;
+}
+
+.mt-n05 {
+  margin-top: -0.5rem;
 }
 
 .mt-n1 {

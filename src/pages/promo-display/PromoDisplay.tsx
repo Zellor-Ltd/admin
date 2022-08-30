@@ -196,7 +196,6 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
           <PageHeader
             title="Shop Display"
             subTitle={isMobile ? '' : 'List of Shop Displays'}
-            className={isMobile ? 'mb-n1' : ''}
             extra={[
               <Button
                 key="1"

@@ -13,6 +13,7 @@ import {
   Select,
   Slider,
   Switch,
+  Table,
   Tabs,
   Typography,
 } from 'antd';
@@ -27,8 +28,8 @@ import { Product } from 'interfaces/Product';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { saveStagingProduct } from 'services/DiscoClubService';
-import ProductCategoriesTrees from './ProductCategoriesTrees';
-import './Products.scss';
+import ProductCategoriesTrees from 'pages/products/ProductCategoriesTrees';
+import 'pages/products/Products.scss';
 import SimpleSelect from 'components/select/SimpleSelect';
 import { SelectOption } from 'interfaces/SelectOption';
 import { productUtils } from 'helpers/product-utils';
@@ -37,36 +38,38 @@ import { useRequest } from 'hooks/useRequest';
 import update from 'immutability-helper';
 import { SketchPicker } from 'react-color';
 import { AppContext } from 'contexts/AppContext';
+import { ColumnsType } from 'antd/lib/table';
+//import { currencyRender } from 'helpers/currencyRender';
+import scrollIntoView from 'scroll-into-view';
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 const { getSearchTags, getCategories, removeSearchTagsByCategory } =
   productUtils;
-interface ProductDetailProps {
+
+interface ProductTemplateProps {
   brands: Brand[];
   productBrands: ProductBrand[];
   allCategories: any;
   onSave?: (record: Product) => void;
   onCancel?: () => void;
-  product?: Product;
+  template?: Product;
   brand?: string;
   productBrand?: string;
   isFetchingBrands: boolean;
   isFetchingProductBrand: boolean;
-  isLive: boolean;
 }
 
-const ProductDetail: React.FC<ProductDetailProps> = ({
+const ProductTemplateDetail: React.FC<ProductTemplateProps> = ({
   brands,
   productBrands,
   allCategories,
-  product,
+  template,
   productBrand,
   brand,
   onSave,
   onCancel,
   isFetchingBrands,
   isFetchingProductBrand,
-  isLive,
 }) => {
   const { isMobile } = useContext(AppContext);
   const [loading, setLoading] = useState<boolean>(false);
@@ -74,8 +77,10 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
   const [form] = Form.useForm();
   const [maxDiscountAlert, setMaxDiscountAlert] = useState<boolean>(false);
   const { doRequest } = useRequest({ setLoading });
-  const [_product, _setProduct] = useState(product);
-  const [color, setColor] = useState<string | undefined>(product?.colour);
+  const [_template, _setTemplate] = useState(template);
+  const [color, setColor] = useState<string | undefined>(template?.colour);
+  const [selectedStore, setSelectedStore] = useState<Brand>();
+  const [selectedTab, setSelectedTab] = useState<string>('Details');
 
   const {
     settings: { currency = [] },
@@ -88,12 +93,12 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
   };
 
   useEffect(() => {
-    if (product) {
-      _setProduct(product);
+    if (template) {
+      _setTemplate(template);
     }
     setDiscoPercentageByBrand(true);
     setSearchTagsByCategory(true);
-  }, [product]);
+  }, [template]);
 
   useEffect(() => {
     form.setFieldsValue({ colour: color });
@@ -119,7 +124,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
         discoPercentage,
       });
     },
-    [brands, form, product]
+    [brands, form, template]
   );
 
   const setSearchTagsByCategory = useCallback(
@@ -135,11 +140,11 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
       if (
         productCategoryIndex !== undefined &&
         categoryKey !== undefined &&
-        product &&
-        product?.categories
+        template &&
+        template?.categories
       ) {
         previousTags = getSearchTags(
-          product.categories[productCategoryIndex],
+          template.categories[productCategoryIndex],
           categoryKey
         );
       }
@@ -158,35 +163,35 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
           ...selectedCategoriesSearchTags,
         ])
       );
-      if (useInitialValue && product) {
-        searchTags = product.searchTags || finalValue;
+      if (useInitialValue && template) {
+        searchTags = template.searchTags || finalValue;
       } else {
         searchTags = finalValue;
       }
 
       if (
         !!selectedCategories &&
-        !!product &&
-        !!product.categories &&
+        !!template &&
+        !!template.categories &&
         productCategoryIndex !== undefined
       ) {
-        product.categories[productCategoryIndex] = currentCategories;
+        template.categories[productCategoryIndex] = currentCategories;
       }
 
       form.setFieldsValue({
         searchTags,
       });
     },
-    [form, product]
+    [form, template]
   );
 
   const handleCategoryDelete = (productCategoryIndex: number) => {
-    removeSearchTagsByCategory(productCategoryIndex, product, form);
+    removeSearchTagsByCategory(productCategoryIndex, template, form);
   };
 
   const handleCategoryChange = (
     selectedCategories: any,
-    _productCategoryIndex: number,
+    _templateCategoryIndex: number,
     filterCategory: Function,
     categoryKey: string
   ) => {
@@ -195,14 +200,14 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
       false,
       selectedCategories,
       categoryKey,
-      _productCategoryIndex
+      _templateCategoryIndex
     );
   };
 
   useEffect(() => {
-    if (product?.ageMin && product?.ageMax)
-      setAgeRange([product?.ageMin, product?.ageMax]);
-  }, [product]);
+    if (template?.ageMin && template?.ageMax)
+      setAgeRange([template?.ageMin, template?.ageMax]);
+  }, [template]);
 
   const onChangeAge = (value: [number, number]) => {
     form.setFieldsValue({
@@ -211,6 +216,14 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
     });
 
     setAgeRange(value);
+  };
+
+  const checkConstraintValidity = () => {
+    const barcodeInput = document.getElementById('barcode') as HTMLInputElement;
+    if (!barcodeInput.checkValidity()) {
+      setSelectedTab('Checkout');
+      scrollIntoView(barcodeInput);
+    }
   };
 
   const onFinish = async () => {
@@ -256,33 +269,33 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
   };
 
   const onAssignToThumbnail = (file: Image) => {
-    if (_product) {
+    if (_template) {
       form.setFieldsValue({ thumbnailUrl: file });
-      _product.thumbnailUrl = file;
-      _setProduct({ ..._product });
+      _template.thumbnailUrl = file;
+      _setTemplate({ ..._template });
     }
   };
 
   const onAssignToTag = (file: Image) => {
-    if (_product) {
+    if (_template) {
       form.setFieldsValue({ tagImage: file });
-      _product.tagImage = file;
-      _setProduct({ ..._product });
+      _template.tagImage = file;
+      _setTemplate({ ..._template });
     }
   };
 
   const onOrder = (dragIndex: number, hoverIndex: number) => {
-    if (_product) {
-      const dragImage = _product?.image[dragIndex];
-      _product.image = update(_product.image as any, {
+    if (_template) {
+      const dragImage = _template?.image[dragIndex];
+      _template.image = update(_template.image as any, {
         $splice: [
           [dragIndex, 1],
           [hoverIndex, 0, dragImage],
         ],
       });
 
-      form.setFieldsValue({ image: _product.image });
-      _setProduct({ ..._product });
+      form.setFieldsValue({ image: _template.image });
+      _setTemplate({ ..._template });
     }
   };
 
@@ -294,25 +307,25 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
     if (!sourceProp) {
       throw new Error('missing sourceProp parameter');
     }
-    if (_product) {
+    if (_template) {
       switch (sourceProp) {
         case 'image':
-          if (_product[sourceProp][imageIndex].fitTo === fitTo) {
-            _product[sourceProp][imageIndex].fitTo = undefined;
+          if (_template[sourceProp][imageIndex].fitTo === fitTo) {
+            _template[sourceProp][imageIndex].fitTo = undefined;
           } else {
-            _product[sourceProp][imageIndex].fitTo = fitTo;
+            _template[sourceProp][imageIndex].fitTo = fitTo;
           }
           break;
         default:
-          if (_product[sourceProp].fitTo === fitTo) {
-            _product[sourceProp].fitTo = undefined;
+          if (_template[sourceProp].fitTo === fitTo) {
+            _template[sourceProp].fitTo = undefined;
           } else {
-            _product[sourceProp].fitTo = fitTo;
+            _template[sourceProp].fitTo = fitTo;
           }
       }
 
-      form.setFieldsValue({ ..._product });
-      _setProduct({ ..._product });
+      form.setFieldsValue({ ..._template });
+      _setTemplate({ ..._template });
     }
   };
 
@@ -321,29 +334,108 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
     sourceProp: 'image' | 'tagImage' | 'thumbnailUrl' | 'masthead',
     imageIndex: number
   ) => {
-    if (_product) {
+    if (_template) {
       switch (sourceProp) {
         case 'image':
-          _product[sourceProp][imageIndex].url = oldUrl;
+          _template[sourceProp][imageIndex].url = oldUrl;
           break;
         default:
-          _product[sourceProp].url = oldUrl;
+          _template[sourceProp].url = oldUrl;
       }
 
-      form.setFieldsValue({ ..._product });
-      _setProduct({ ..._product });
+      form.setFieldsValue({ ..._template });
+      _setTemplate({ ..._template });
     }
+  };
+
+  const storeColumns: ColumnsType<any> = [
+    {
+      title: 'Name',
+      dataIndex: 'name',
+      width: '25%',
+      align: 'center',
+      sorter: (a, b): any => {
+        if (a.name && b.name) return a.name.localeCompare(b.name);
+        else if (a.name) return -1;
+        else if (b.name) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: 'Country',
+      dataIndex: 'country',
+      width: '20%',
+      align: 'center',
+      sorter: (a, b): any => {
+        if (a.country && b.country) return a.country.localeCompare(b.country);
+        else if (a.country) return -1;
+        else if (b.country) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: 'Currency',
+      dataIndex: 'currency',
+      width: '15%',
+      align: 'center',
+      sorter: (a, b): any => {
+        if (a.currency && b.currency)
+          return a.currency.localeCompare(b.currency);
+        else if (a.currency) return -1;
+        else if (b.currency) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: 'Price',
+      dataIndex: 'price',
+      width: '15%',
+      align: 'center',
+      sorter: (a, b): any => {
+        if (a.price && b.price) return a.price - b.price;
+        else if (a.price) return -1;
+        else if (b.price) return 1;
+        else return 0;
+      },
+      //render: (_: number, entity: any) => currencyRender(entity, 'price'),
+    },
+    {
+      title: 'Link',
+      dataIndex: 'link',
+      width: '20%',
+      align: 'center',
+      sorter: (a, b): any => {
+        if (a.link && b.link) return a.link.localeCompare(b.link);
+        else if (a.link) return -1;
+        else if (b.link) return 1;
+        else return 0;
+      },
+    },
+  ];
+
+  const rowSelection = {
+    onChange: (_: any, selectedRow: any) => {
+      setSelectedStore(selectedRow[0]);
+    },
+  };
+
+  const handleSelectStore = async () => {
+    form.setFieldsValue({ brand: selectedStore });
+  };
+
+  const handleTabChange = (value: string) => {
+    setSelectedTab(value);
   };
 
   return (
     <div className="products-details">
       <PageHeader
-        title={_product ? `${_product?.name} Update` : 'New Product'}
+        title={_template ? `${_template?.name} Update` : 'New Product Template'}
       />
       <Form
         form={form}
-        name="productForm"
-        initialValues={_product}
+        name="productTemplateForm"
+        initialValues={_template}
         onFinish={onFinish}
         onFinishFailed={({ errorFields }) => {
           errorFields.forEach(errorField => {
@@ -352,14 +444,14 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
         }}
         layout="vertical"
       >
-        <Tabs defaultActiveKey="Details">
+        <Tabs onChange={handleTabChange} activeKey={selectedTab}>
           <Tabs.TabPane forceRender tab="Details" key="Details">
             <Row gutter={8}>
               <Col lg={12} xs={24}>
                 <Row gutter={8} align="bottom">
                   <Col lg={12} xs={12}>
                     <Form.Item name="status" label="Status">
-                      <Radio.Group disabled={isLive} buttonStyle="solid">
+                      <Radio.Group buttonStyle="solid">
                         <Radio.Button value="live">Live</Radio.Button>
                         <Radio.Button value="paused">Paused</Radio.Button>
                       </Radio.Group>
@@ -371,21 +463,17 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                       label="Out of stock"
                       valuePropName="checked"
                     >
-                      <Switch disabled={isLive} />
+                      <Switch />
                     </Form.Item>
                   </Col>
                   <Col lg={24} xs={24}>
                     <Form.Item name="name" label="Short description">
-                      <Input disabled={isLive} />
+                      <Input />
                     </Form.Item>
                   </Col>
                   <Col lg={24} xs={24}>
                     <Form.Item label="Long description">
-                      <RichTextEditor
-                        formField="description"
-                        form={form}
-                        disabled={isLive}
-                      />
+                      <RichTextEditor formField="description" form={form} />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -413,7 +501,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                         optionMapping={optionMapping}
                         placeholder={'Select a brand'}
                         loading={isFetchingBrands}
-                        disabled={isFetchingBrands || isLive}
+                        disabled={isFetchingBrands}
                         allowClear
                       ></SimpleSelect>
                     </Form.Item>
@@ -441,7 +529,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                         optionMapping={optionMapping}
                         placeholder={'Select a brand'}
                         loading={isFetchingProductBrand}
-                        disabled={isFetchingProductBrand || isLive}
+                        disabled={isFetchingProductBrand}
                         allowClear
                       ></SimpleSelect>
                     </Form.Item>
@@ -454,7 +542,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                       label="Go Live Date"
                       getValueProps={formatMoment}
                     >
-                      <DatePicker format="DD/MM/YYYY" disabled={isLive} />
+                      <DatePicker format="DD/MM/YYYY" />
                     </Form.Item>
                   </Col>
                   <Col lg={12} xs={24}>
@@ -463,7 +551,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                       label="Expiration Date"
                       getValueProps={formatMoment}
                     >
-                      <DatePicker format="DD/MM/YYYY" disabled={isLive} />
+                      <DatePicker format="DD/MM/YYYY" />
                     </Form.Item>
                   </Col>
                   <Col lg={12} xs={24}>
@@ -471,19 +559,18 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                       <Form.Item name="variantId" label="Variant">
                         <Input
                           placeholder="Variant ID"
-                          disabled={isLive}
                           pattern="^.{8}-.{4}-.{4}-.{4}-.{12}_STR$"
                         />
                       </Form.Item>
                     </Col>
                     <Col lg={24} xs={24}>
                       <Form.Item name="colourTitle" label="Colour">
-                        <Input placeholder="Colour name" disabled={isLive} />
+                        <Input placeholder="Colour name" />
                       </Form.Item>
                     </Col>
                     <Col lg={24} xs={24}>
                       <Form.Item name="size" label="Size">
-                        <Input placeholder="Size" disabled={isLive} />
+                        <Input placeholder="Size" />
                       </Form.Item>
                     </Col>
                   </Col>
@@ -511,12 +598,11 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
           </Tabs.TabPane>
           <Tabs.TabPane forceRender tab="Categories" key="Categories">
             <ProductCategoriesTrees
-              categories={_product?.categories}
+              categories={_template?.categories}
               allCategories={allCategories}
               form={form}
               handleCategoryChange={handleCategoryChange}
               handleCategoryDelete={handleCategoryDelete}
-              disabled={isLive}
             />
             <Col lg={24} xs={24}>
               <Form.Item
@@ -526,11 +612,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
               >
                 {({ getFieldValue }) => (
                   <Form.Item name={'searchTags'} label="Search Tags">
-                    <Select
-                      mode="tags"
-                      className="product-search-tags"
-                      disabled={isLive}
-                    >
+                    <Select mode="tags" className="product-search-tags">
                       {getFieldValue('searchTags')?.map((searchTag: any) => (
                         <Select.Option key={searchTag} value={searchTag}>
                           {searchTag}
@@ -554,7 +636,6 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                     max={100}
                     value={ageRange}
                     onChange={onChangeAge}
-                    disabled={isLive}
                   />
                 </Form.Item>
               </Col>
@@ -566,7 +647,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                   label="Gender"
                   rules={[{ required: true, message: 'Gender is required.' }]}
                 >
-                  <Select mode="multiple" disabled={isLive}>
+                  <Select mode="multiple">
                     <Select.Option value="Female">Female</Select.Option>
                     <Select.Option value="Male">Male</Select.Option>
                     <Select.Option value="Other">Other</Select.Option>
@@ -584,10 +665,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                 <Row gutter={8}>
                   <Col span={24}>
                     <Form.Item name="currencyIsoCode" label="Default Currency">
-                      <Select
-                        placeholder="Please select a currency"
-                        disabled={isLive}
-                      >
+                      <Select placeholder="Please select a currency">
                         {currency.map((curr: any) => (
                           <Select.Option key={curr.value} value={curr.value}>
                             {curr.name}
@@ -598,10 +676,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                   </Col>
                   <Col span={24}>
                     <Form.Item name="currencyIsoCodeUS" label="Currency US">
-                      <Select
-                        placeholder="Please select a currency"
-                        disabled={isLive}
-                      >
+                      <Select placeholder="Please select a currency">
                         {currency.map((curr: any) => (
                           <Select.Option key={curr.value} value={curr.value}>
                             {curr.name}
@@ -612,10 +687,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                   </Col>
                   <Col span={24}>
                     <Form.Item name="currencyIsoCodeGB" label="Currency UK">
-                      <Select
-                        placeholder="Please select a currency"
-                        disabled={isLive}
-                      >
+                      <Select placeholder="Please select a currency">
                         {currency.map((curr: any) => (
                           <Select.Option key={curr.value} value={curr.value}>
                             {curr.name}
@@ -626,10 +698,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                   </Col>
                   <Col span={24}>
                     <Form.Item name="currencyIsoCodeIE" label="Currency Europe">
-                      <Select
-                        placeholder="Please select a currency"
-                        disabled={isLive}
-                      >
+                      <Select placeholder="Please select a currency">
                         {currency.map((curr: any) => (
                           <Select.Option key={curr.value} value={curr.value}>
                             {curr.name}
@@ -650,7 +719,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                           label="Allow Use of DD?"
                           valuePropName="checked"
                         >
-                          <Switch disabled={isLive} />
+                          <Switch />
                         </Form.Item>
                       </Col>
                       <Col lg={12}>
@@ -659,7 +728,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                           label="On Sale"
                           valuePropName="checked"
                         >
-                          <Switch disabled={isLive} />
+                          <Switch />
                         </Form.Item>
                       </Col>
                     </Row>
@@ -667,34 +736,31 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
 
                   <Col lg={12} xs={24}>
                     <Form.Item name="shopifyUniqueId" label="Shopify UID">
-                      <InputNumber disabled={isLive} />
+                      <InputNumber />
                     </Form.Item>
                   </Col>
                   <Col lg={12} xs={24}>
                     <Form.Item name="magentoId" label="Magento Id">
-                      <InputNumber disabled={isLive} />
+                      <InputNumber />
                     </Form.Item>
                   </Col>
                   <Col lg={12} xs={24}>
                     <Form.Item name="urlKey" label="URL Key">
-                      <Input placeholder="Product Key" disabled={isLive} />
+                      <Input placeholder="Product Key" />
                     </Form.Item>
                   </Col>
                   <Col lg={12} xs={24}>
                     <Form.Item name="weight" label="Weight">
-                      <InputNumber
-                        placeholder="Weight in Kg"
-                        disabled={isLive}
-                      />
+                      <InputNumber placeholder="Weight in Kg" />
                     </Form.Item>
                   </Col>
                   <Col lg={12} xs={24}>
                     <Form.Item name="barcode" label="Barcode">
                       <Input
+                        id="barcode"
                         pattern="^[0-9]{12}$"
                         placeholder="Barcode number"
-                        disabled={isLive}
-                        title="numbers only, 12 digits"
+                        title="Numbers only, 12 digits."
                       />
                     </Form.Item>
                   </Col>
@@ -713,22 +779,22 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                         },
                       ]}
                     >
-                      <InputNumber disabled={isLive} />
+                      <InputNumber />
                     </Form.Item>
                   </Col>
                   <Col span={24}>
                     <Form.Item name="originalPriceUS" label="Price US">
-                      <InputNumber disabled={isLive} />
+                      <InputNumber />
                     </Form.Item>
                   </Col>
                   <Col span={24}>
                     <Form.Item name="originalPriceGB" label="Price UK">
-                      <InputNumber disabled={isLive} />
+                      <InputNumber />
                     </Form.Item>
                   </Col>
                   <Col span={24}>
                     <Form.Item name="originalPriceIE" label="Price Europe">
-                      <InputNumber disabled={isLive} />
+                      <InputNumber />
                     </Form.Item>
                   </Col>
 
@@ -775,7 +841,6 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                       <InputNumber
                         parser={value => (value || '').replace(/-/g, '')}
                         precision={0}
-                        disabled={isLive}
                       />
                     </Form.Item>
                   </Col>
@@ -784,22 +849,48 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                       name="discoPercentage"
                       label="Disco Percentage %"
                     >
-                      <InputNumber disabled={isLive} />
+                      <InputNumber />
                     </Form.Item>
                   </Col>
                   <Col lg={12} xs={24}>
                     <Form.Item name="sku" label="SKU">
-                      <Input disabled={isLive} />
+                      <Input />
                     </Form.Item>
                   </Col>
                   <Col lg={12} xs={24}>
                     <Form.Item name="creatorPercentage" label="Creator %">
-                      <InputNumber disabled={isLive} />
+                      <InputNumber />
                     </Form.Item>
                   </Col>
                 </Row>
               </Col>
             </Row>
+          </Tabs.TabPane>
+          <Tabs.TabPane forceRender tab="Stores" key="Stores">
+            <Row justify="end">
+              <Col>
+                <Button
+                  disabled={!selectedStore}
+                  type="primary"
+                  className="mb-1"
+                  loading={loading}
+                  onClick={handleSelectStore}
+                >
+                  Select Store
+                </Button>
+              </Col>
+            </Row>
+            <Table
+              rowKey="id"
+              columns={storeColumns}
+              //                dataSource={_template?.stores}
+              rowSelection={{
+                type: 'radio',
+                ...rowSelection,
+              }}
+              pagination={false}
+              className="mb-2"
+            />
           </Tabs.TabPane>
           <Tabs.TabPane forceRender tab="Images" key="Images">
             <Row gutter={8}>
@@ -807,12 +898,11 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                 <Form.Item label="Tag Image">
                   <Upload.ImageUpload
                     type="tag"
-                    fileList={_product?.tagImage}
+                    fileList={_template?.tagImage}
                     formProp="tagImage"
                     form={form}
                     onFitTo={onFitTo}
                     onRollback={onRollback}
-                    disabled={isLive}
                   />
                 </Form.Item>
               </Col>
@@ -820,12 +910,11 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                 <Form.Item label="Thumbnail">
                   <Upload.ImageUpload
                     type="thumbnail"
-                    fileList={_product?.thumbnailUrl}
+                    fileList={_template?.thumbnailUrl}
                     formProp="thumbnailUrl"
                     form={form}
                     onFitTo={onFitTo}
                     onRollback={onRollback}
-                    disabled={isLive}
                   />
                 </Form.Item>
               </Col>
@@ -833,13 +922,13 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                 <Form.Item label="Image">
                   <div
                     className={
-                      _product ? (_product.image ? 'img-upload-div' : '') : ''
+                      _template ? (_template.image ? 'img-upload-div' : '') : ''
                     }
                   >
                     <Upload.ImageUpload
                       type="image"
                       maxCount={20}
-                      fileList={_product?.image}
+                      fileList={_template?.image}
                       formProp="image"
                       form={form}
                       onAssignToTag={onAssignToTag}
@@ -849,7 +938,6 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                       onOrder={onOrder}
                       onFitTo={onFitTo}
                       onRollback={onRollback}
-                      disabled={isLive}
                     />
                   </div>
                 </Form.Item>
@@ -871,10 +959,10 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
           <Col>
             <Button
               className="mb-1"
-              disabled={isLive}
               type="primary"
               htmlType="submit"
               loading={loading}
+              onClick={checkConstraintValidity}
             >
               Save Changes
             </Button>
@@ -885,4 +973,4 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
   );
 };
 
-export default ProductDetail;
+export default ProductTemplateDetail;
