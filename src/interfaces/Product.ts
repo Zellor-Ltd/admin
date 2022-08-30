@@ -6,6 +6,7 @@ import { ProductBrand } from './ProductBrand';
 import { Image } from './Image';
 
 export interface Product {
+  stores?: any[];
   size?: string;
   colourTitle?: string;
   variantId?: string;

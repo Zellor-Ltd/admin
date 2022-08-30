@@ -13,6 +13,7 @@ import {
   Select,
   Slider,
   Switch,
+  Table,
   Tabs,
   Typography,
 } from 'antd';
@@ -37,6 +38,9 @@ import { useRequest } from 'hooks/useRequest';
 import update from 'immutability-helper';
 import { SketchPicker } from 'react-color';
 import { AppContext } from 'contexts/AppContext';
+import { ColumnsType } from 'antd/lib/table';
+import { currencyRender } from 'helpers/currencyRender';
+import scrollIntoView from 'scroll-into-view';
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 const { getSearchTags, getCategories, removeSearchTagsByCategory } =
@@ -76,6 +80,8 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
   const { doRequest } = useRequest({ setLoading });
   const [_product, _setProduct] = useState(product);
   const [color, setColor] = useState<string | undefined>(product?.colour);
+  const [selectedStore, setSelectedStore] = useState<Brand>();
+  const [selectedTab, setSelectedTab] = useState<string>('Details');
 
   const {
     settings: { currency = [] },
@@ -213,6 +219,14 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
     setAgeRange(value);
   };
 
+  const checkConstraintValidity = () => {
+    const barcodeInput = document.getElementById('barcode') as HTMLInputElement;
+    if (!barcodeInput.checkValidity()) {
+      setSelectedTab('Checkout');
+      scrollIntoView(barcodeInput);
+    }
+  };
+
   const onFinish = async () => {
     setLoading(true);
     try {
@@ -335,6 +349,88 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
     }
   };
 
+  const storeColumns: ColumnsType<any> = [
+    {
+      title: 'Name',
+      dataIndex: 'name',
+      width: '25%',
+      align: 'center',
+      sorter: (a, b): any => {
+        if (a.name && b.name) return a.name.localeCompare(b.name);
+        else if (a.name) return -1;
+        else if (b.name) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: 'Country',
+      dataIndex: 'country',
+      width: '20%',
+      align: 'center',
+      sorter: (a, b): any => {
+        if (a.country && b.country) return a.country.localeCompare(b.country);
+        else if (a.country) return -1;
+        else if (b.country) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: 'Currency',
+      dataIndex: 'currency',
+      width: '15%',
+      align: 'center',
+      sorter: (a, b): any => {
+        if (a.currency && b.currency)
+          return a.currency.localeCompare(b.currency);
+        else if (a.currency) return -1;
+        else if (b.currency) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: 'Price',
+      dataIndex: 'price',
+      width: '15%',
+      align: 'center',
+      sorter: (a, b): any => {
+        if (a.price && b.price) return a.price - b.price;
+        else if (a.price) return -1;
+        else if (b.price) return 1;
+        else return 0;
+      },
+      render: (_: number, entity: any) => currencyRender(entity, 'price'),
+    },
+    {
+      title: 'Link',
+      dataIndex: 'link',
+      width: '20%',
+      align: 'center',
+      sorter: (a, b): any => {
+        if (a.link && b.link) return a.link.localeCompare(b.link);
+        else if (a.link) return -1;
+        else if (b.link) return 1;
+        else return 0;
+      },
+    },
+  ];
+
+  const rowSelection = {
+    onChange: (_: any, selectedRow: any) => {
+      setSelectedStore(selectedRow[0]);
+    },
+    getCheckboxProps: () => ({
+      disabled: isLive,
+    }),
+  };
+
+  const handleSelectStore = async () => {
+    form.setFieldsValue({ brand: selectedStore });
+  };
+
+  const handleTabChange = (value: string) => {
+    setSelectedTab(value);
+  };
+
   return (
     <div className="products-details">
       <PageHeader
@@ -352,7 +448,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
         }}
         layout="vertical"
       >
-        <Tabs defaultActiveKey="Details">
+        <Tabs onChange={handleTabChange} activeKey={selectedTab}>
           <Tabs.TabPane forceRender tab="Details" key="Details">
             <Row gutter={8}>
               <Col lg={12} xs={24}>
@@ -691,10 +787,11 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                   <Col lg={12} xs={24}>
                     <Form.Item name="barcode" label="Barcode">
                       <Input
+                        id="barcode"
                         pattern="^[0-9]{12}$"
                         placeholder="Barcode number"
                         disabled={isLive}
-                        title="numbers only, 12 digits"
+                        title="Numbers only, 12 digits."
                       />
                     </Form.Item>
                   </Col>
@@ -801,6 +898,31 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
               </Col>
             </Row>
           </Tabs.TabPane>
+          <Tabs.TabPane forceRender tab="Stores" key="Stores">
+            <Row justify="end">
+              <Col>
+                <Button
+                  disabled={isLive || !selectedStore}
+                  type="primary"
+                  className="mb-1"
+                  loading={loading}
+                  onClick={handleSelectStore}
+                >
+                  Select Store
+                </Button>
+              </Col>
+            </Row>
+            <Table
+              rowKey="id"
+              columns={storeColumns}
+              dataSource={_product?.stores}
+              rowSelection={{
+                type: 'radio',
+                ...rowSelection,
+              }}
+              pagination={false}
+            />
+          </Tabs.TabPane>
           <Tabs.TabPane forceRender tab="Images" key="Images">
             <Row gutter={8}>
               <Col lg={24} xs={12}>
@@ -875,6 +997,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
               type="primary"
               htmlType="submit"
               loading={loading}
+              onClick={checkConstraintValidity}
             >
               Save Changes
             </Button>

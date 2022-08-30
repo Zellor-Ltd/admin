@@ -14,13 +14,14 @@ export type ColumnTypesEscapeColumns = Exclude<
 
 type EditableTableProps<T> = Omit<TableProps<any>, 'columns'> & {
   columns: EditableColumnType<T>[];
-  onSave: Function;
+  onSave?: Function;
+  exportable?: boolean;
 };
 
 const EditableTable: React.FC<EditableTableProps<any>> = (
   props: EditableTableProps<any>
 ) => {
-  const { columns = [], onSave } = props;
+  const { columns = [], onSave, exportable = true } = props;
 
   const configuredColumns = columns.map(col => {
     if (!col.editable) {
@@ -77,15 +78,19 @@ const EditableTable: React.FC<EditableTableProps<any>> = (
   return (
     <Table
       {...props}
-      exportable
-      exportableProps={{
-        fields,
-        fileName: 'Disco Products',
-        showColumnPicker: true,
-        btnProps: {
-          className: 'ml-1 my-05',
-        },
-      }}
+      exportable={exportable}
+      exportableProps={
+        exportable
+          ? {
+              fields,
+              fileName: 'Disco Products',
+              showColumnPicker: true,
+              btnProps: {
+                className: 'ml-1 my-05',
+              },
+            }
+          : undefined
+      }
       columns={configuredColumns as ColumnTypesEscapeColumns}
       components={{
         body: {
