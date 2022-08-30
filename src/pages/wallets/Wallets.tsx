@@ -214,7 +214,6 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
           <PageHeader
             title="Fan Wallets"
             subTitle={isMobile ? '' : 'List of Fan wallets'}
-            className={isMobile ? 'mb-n1' : ''}
           />
           <Row
             align="bottom"

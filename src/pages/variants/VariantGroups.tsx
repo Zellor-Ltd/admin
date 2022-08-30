@@ -532,7 +532,6 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
           <PageHeader
             title="Variant Groups"
             subTitle={isMobile ? '' : 'Select group to edit'}
-            className={isMobile ? 'mb-n1' : ''}
           />
           <Row
             align="bottom"

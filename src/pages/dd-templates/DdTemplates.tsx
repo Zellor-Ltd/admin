@@ -211,7 +211,6 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
           <PageHeader
             title="Disco Dollar Templates"
             subTitle={isMobile ? '' : 'List of Disco Dollar Templates'}
-            className={isMobile ? 'mb-n1' : ''}
             extra={[
               <Button
                 key="1"

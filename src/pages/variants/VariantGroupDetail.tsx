@@ -31,7 +31,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import {
   fetchVariants,
   addVariant,
-  removeVariant,
+  deleteVariant,
   fetchStagingProducts,
 } from 'services/DiscoClubService';
 import '../../pages/products/Products.scss';
@@ -507,7 +507,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
   };
 
   const handleRemove = async (item: Product) => {
-    await doRequest(() => removeVariant(item.id, variantGroup.id));
+    await doRequest(() => deleteVariant(item.id, variantGroup.id));
     setVariants(prev => [
       ...prev.slice(0, variants.indexOf(item)),
       ...prev.slice(variants.indexOf(item) + 1),

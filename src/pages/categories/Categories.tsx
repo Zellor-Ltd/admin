@@ -377,7 +377,6 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
           <PageHeader
             title="Categories"
             subTitle={isMobile ? '' : 'List of Categories'}
-            className={isMobile ? 'mb-n1' : ''}
             extra={[
               <Dropdown
                 key="headerDropdown"

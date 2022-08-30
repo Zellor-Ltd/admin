@@ -208,7 +208,6 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
           <PageHeader
             title="Promotions"
             subTitle={isMobile ? '' : 'List of Promotions'}
-            className={isMobile ? 'mb-n1' : ''}
             extra={[
               <Button
                 key="1"
