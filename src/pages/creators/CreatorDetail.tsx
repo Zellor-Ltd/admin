@@ -61,10 +61,10 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
   const [ageRange, setAgeRange] = useState<[number, number]>([12, 100]);
   const [serversList, setServersList] = useState<ServerAlias[]>([]);
   const [currencies, setCurrencies] = useState<Currency[]>([]);
+  const [instaLink, setInstaLink] = useState<string>(creator?.userName);
   const { doRequest } = useRequest({ setLoading });
   const { isMobile } = useContext(AppContext);
   const inputRef = useRef<any>(null);
-
   const [form] = Form.useForm();
 
   const onFinish = async () => {
@@ -130,9 +130,9 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
   };
 
   const handleInstaLinkFocus = (event: any) => {
-    console.log(event);
-    window.open(event.target.value);
     inputRef.current.blur();
+    event.target.style.border = '1px solid #d9d9d9';
+    if (event.target.value) window.open(event.target.value);
   };
 
   return (
@@ -287,7 +287,11 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                     },
                   ]}
                 >
-                  <Input prefix="@" autoComplete="off" />
+                  <Input
+                    prefix="@"
+                    autoComplete="off"
+                    onChange={(event: any) => setInstaLink(event.target.value)}
+                  />
                 </Form.Item>
               </Col>
               <Col lg={12} xs={24}>
@@ -295,8 +299,10 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                   <Input
                     ref={inputRef}
                     type="url"
-                    className="instalink-input"
-                    value={`https://ie.discoclub.com/c/${creator.userName}`}
+                    className={instaLink ? 'instalink-input' : undefined}
+                    value={
+                      instaLink ? `https://ie.discoclub.com/c/${instaLink}` : ''
+                    }
                     onFocus={event => handleInstaLinkFocus(event)}
                   />
                 </Form.Item>
