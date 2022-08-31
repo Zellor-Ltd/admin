@@ -11,7 +11,7 @@ import { SearchFilterDebounce } from 'components/SearchFilterDebounce';
 import { AppContext } from 'contexts/AppContext';
 import { useRequest } from 'hooks/useRequest';
 import { Tag } from 'interfaces/Tag';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { deleteTag, fetchTags } from 'services/DiscoClubService';
@@ -31,6 +31,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [eof, setEof] = useState<boolean>(false);
   const [tags, setTags] = useState<Tag[]>([]);
   const { isMobile } = useContext(AppContext);
+  const isMounted = useRef<boolean>(false);
 
   useEffect(() => {
     if (refreshing) {
@@ -42,6 +43,10 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
   }, [refreshing]);
 
   useEffect(() => {
+    if (!isMounted.current) {
+      isMounted.current = true;
+      return;
+    }
     setRefreshing(true);
   }, [searchFilter]);
 

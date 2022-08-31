@@ -223,8 +223,11 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
   };
 
   const getProducts = async (resetResults?: boolean) => {
+    if (!resetResults && products.length < 30) {
+      setEof(true);
+      return;
+    }
     if (resetResults) collapse(resetResults);
-    if (!resetResults && !products.length) return;
     const { results } = await doFetch(() => _fetchProducts(resetResults));
     if (resetResults) {
       setEof(false);
