@@ -563,6 +563,17 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                     </Form.Item>
                   </Col>
                   <Col lg={12} xs={24}>
+                    <Form.Item name="quantity" label="Quantity">
+                      <InputNumber
+                        placeholder="Quantity"
+                        pattern="^\d*%"
+                        title="Non-negative integers only."
+                        disabled={isLive}
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={12} xs={24}></Col>
+                  <Col lg={12} xs={24}>
                     <Col lg={24} xs={24}>
                       <Form.Item name="variantId" label="Variant">
                         <Input
@@ -606,6 +617,17 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
             </Row>
           </Tabs.TabPane>
           <Tabs.TabPane forceRender tab="Categories" key="Categories">
+            <Row>
+              <Col span={24}>
+                <Form.Item name="apiCategory" label="API Category">
+                  <Input
+                    style={isMobile ? { width: '100%' } : { width: '180px' }}
+                    placeholder="API Category"
+                    disabled
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
             <ProductCategoriesTrees
               categories={_product?.categories}
               allCategories={allCategories}
