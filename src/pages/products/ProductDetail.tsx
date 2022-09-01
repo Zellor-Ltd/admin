@@ -15,6 +15,7 @@ import {
   Switch,
   Table,
   Tabs,
+  Tooltip,
   Typography,
 } from 'antd';
 import { Upload } from 'components';
@@ -398,7 +399,8 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
         else if (b.price) return 1;
         else return 0;
       },
-      render: (_: number, entity: any) => currencyRender(entity, 'price'),
+      render: (_: number, entity: any) =>
+        entity.price ? currencyRender(entity, 'price') : '-',
     },
     {
       title: 'Link',
@@ -410,6 +412,21 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
         else if (a.link) return -1;
         else if (b.link) return 1;
         else return 0;
+      },
+      render: (value: string) => {
+        return (
+          <div style={{ display: 'grid', placeItems: 'stretch' }}>
+            <div
+              style={{
+                textOverflow: 'ellipsis',
+                overflow: 'hidden',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              <Tooltip title={value}>{value}</Tooltip>
+            </div>
+          </div>
+        );
       },
     },
   ];
