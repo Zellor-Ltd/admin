@@ -3,24 +3,13 @@ import {
   TagOutlined,
   HeartFilled,
   ShoppingCartOutlined,
-  WarningOutlined,
 } from '@ant-design/icons';
 import { Menu } from 'antd';
 import { Link } from 'react-router-dom';
 
-const AdminSideMenu = testMode => {
+const AdminSideMenu = () => {
   return (
     <Menu theme="dark" mode="inline" defaultSelectedKeys={['brand-dashboard']}>
-      {testMode.testMode && (
-        <Menu.Item
-          key="testMode"
-          disabled
-          icon={<WarningOutlined />}
-          className="test-mode-banner"
-        >
-          Test Mode
-        </Menu.Item>
-      )}
       <Menu.Item key="brand-dashboard" icon={<FundOutlined />}>
         <Link to="/brand-dashboard">Dashboard</Link>
       </Menu.Item>
