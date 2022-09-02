@@ -24,7 +24,7 @@ import {
   saveCommission,
   updateCommission,
 } from '../../services/DiscoClubService';
-import CopyIdToClipboard from '../../components/CopyIdToClipboard';
+import CopyValueToClipboard from '../../components/CopyValueToClipboard';
 import { Creator } from '../../interfaces/Creator';
 import { Commission } from '../../interfaces/Commission';
 import ManualPayment from './ManualPayment';
@@ -197,7 +197,9 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
         else if (b.id) return 1;
         else return 0;
       },
-      render: (_, record: Commission) => <CopyIdToClipboard id={record.id} />,
+      render: (_, record: Commission) => (
+        <CopyValueToClipboard value={record.id} />
+      ),
     },
     {
       title: 'Product ID',
@@ -211,7 +213,7 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
         else return 0;
       },
       render: (_, record: Commission) => (
-        <CopyIdToClipboard id={record.item?.id} />
+        <CopyValueToClipboard value={record.item?.id} />
       ),
     },
     {

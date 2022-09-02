@@ -6,7 +6,7 @@ import { useContext, useEffect, useState } from 'react';
 import { AppContext } from 'contexts/AppContext';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { fetchProfiles } from 'services/DiscoClubService';
-import CopyIdToClipboard from 'components/CopyIdToClipboard';
+import CopyValueToClipboard from 'components/CopyValueToClipboard';
 
 const Roles: React.FC<RouteComponentProps> = ({ history, location }) => {
   const detailsPathname = `${location.pathname}/role`;
@@ -36,7 +36,7 @@ const Roles: React.FC<RouteComponentProps> = ({ history, location }) => {
       title: '_id',
       dataIndex: 'id',
       width: '6%',
-      render: id => <CopyIdToClipboard id={id} />,
+      render: id => <CopyValueToClipboard value={id} />,
       align: 'center',
     },
     {

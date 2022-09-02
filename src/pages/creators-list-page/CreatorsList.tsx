@@ -25,7 +25,7 @@ import {
   deleteMasthead,
   fetchMastheads,
 } from '../../services/DiscoClubService';
-import CopyIdToClipboard from '../../components/CopyIdToClipboard';
+import CopyValueToClipboard from '../../components/CopyValueToClipboard';
 import scrollIntoView from 'scroll-into-view';
 import CreatorsPageDetail from './CreatorsListDetail';
 
@@ -63,7 +63,7 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
       title: '_id',
       dataIndex: 'id',
       width: '6%',
-      render: id => <CopyIdToClipboard id={id} />,
+      render: id => <CopyValueToClipboard value={id} />,
       align: 'center',
     },
     {

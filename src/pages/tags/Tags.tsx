@@ -6,7 +6,7 @@ import {
 } from '@ant-design/icons';
 import { Button, Col, PageHeader, Popconfirm, Row, Spin, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import CopyIdToClipboard from 'components/CopyIdToClipboard';
+import CopyValueToClipboard from 'components/CopyValueToClipboard';
 import { SearchFilterDebounce } from 'components/SearchFilterDebounce';
 import { AppContext } from 'contexts/AppContext';
 import { useRequest } from 'hooks/useRequest';
@@ -100,7 +100,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
       title: '_id',
       dataIndex: 'id',
       width: '6%',
-      render: id => <CopyIdToClipboard id={id} />,
+      render: id => <CopyValueToClipboard value={id} />,
       align: 'center',
     },
     {

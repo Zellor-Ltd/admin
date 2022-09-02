@@ -31,7 +31,7 @@ import { AppContext } from 'contexts/AppContext';
 import Highlighter from 'react-highlight-words';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { productCategoriesAPI } from 'services/DiscoClubService';
-import CopyIdToClipboard from 'components/CopyIdToClipboard';
+import CopyValueToClipboard from 'components/CopyValueToClipboard';
 import scrollIntoView from 'scroll-into-view';
 import CategoryDetail from './CategoryDetail';
 import InfiniteScroll from 'react-infinite-scroll-component';
@@ -259,7 +259,7 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
       title: '_id',
       dataIndex: 'id',
       width: '6%',
-      render: id => <CopyIdToClipboard id={id} />,
+      render: id => <CopyValueToClipboard value={id} />,
       align: 'center',
     },
     {

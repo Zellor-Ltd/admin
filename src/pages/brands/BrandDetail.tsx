@@ -34,7 +34,7 @@ import {
   saveBrandVault,
 } from 'services/DiscoClubService';
 import { ColumnsType } from 'antd/lib/table';
-import CopyIdToClipboard from 'components/CopyIdToClipboard';
+import CopyValueToClipboard from 'components/CopyValueToClipboard';
 import moment from 'moment';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import scrollIntoView from 'scroll-into-view';
@@ -161,7 +161,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
       title: '_id',
       dataIndex: 'id',
       width: '6%',
-      render: id => <CopyIdToClipboard id={id} />,
+      render: id => <CopyValueToClipboard value={id} />,
       align: 'center',
     },
     {

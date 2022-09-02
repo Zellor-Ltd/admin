@@ -30,7 +30,7 @@ import {
   fetchProductBrands,
   fetchStagingProducts,
 } from 'services/DiscoClubService';
-import CopyIdToClipboard from 'components/CopyIdToClipboard';
+import CopyValueToClipboard from 'components/CopyValueToClipboard';
 import '../../pages/products/Products.scss';
 import { ProductCategory } from 'interfaces/Category';
 import { AppContext } from 'contexts/AppContext';
@@ -247,7 +247,7 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
       title: 'VariantId',
       dataIndex: 'id',
       width: '5%',
-      render: id => <CopyIdToClipboard id={id} />,
+      render: id => <CopyValueToClipboard value={id} />,
       align: 'center',
     },
     {
