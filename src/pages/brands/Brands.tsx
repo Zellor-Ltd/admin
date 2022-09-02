@@ -15,7 +15,6 @@ import {
   PageHeader,
   Popconfirm,
   Row,
-  Switch,
   Table,
   Tag,
   Typography,
@@ -29,7 +28,6 @@ import { AppContext } from 'contexts/AppContext';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { deleteBrand, fetchBrands, saveBrand } from 'services/DiscoClubService';
 import { SimpleSwitch } from '../../components/SimpleSwitch';
-import { PauseModal } from './PauseModal';
 import BrandDetail from './BrandDetail';
 import scrollIntoView from 'scroll-into-view';
 import { useRequest } from 'hooks/useRequest';
@@ -47,7 +45,6 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
   const { doFetch } = useRequest({ setLoading });
   const [brands, setBrands] = useState<Brand[]>([]);
   const [filterText, setFilterText] = useState('');
-  const [showModal, setShowModal] = useState<boolean>(false);
   const [currentBrand, setCurrentBrand] = useState<Brand>();
   const { isMobile } = useContext(AppContext);
 
@@ -103,22 +100,13 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
     brand: Brand,
     toggled: boolean
   ) => {
-    if (switchType === 'showOutOfStock') {
-      try {
-        brand.showOutOfStock = toggled;
-        await saveBrand(brand);
-        message.success('Register updated with success.');
-      } catch (error) {
-        message.error("Error: Couldn't set brand property. Try again.");
-      }
-    } else {
-      setCurrentBrand(brand);
-      setShowModal(true);
+    try {
+      brand[switchType] = toggled;
+      await saveBrand(brand);
+      message.success('Register updated with success.');
+    } catch (error) {
+      message.error("Error: Couldn't set brand property. Try again.");
     }
-  };
-
-  const onCompletePausedAction = () => {
-    fetch();
   };
 
   const editBrand = (index: number, brand?: Brand) => {
@@ -175,24 +163,13 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
       dataIndex: 'paused',
       width: '15%',
       align: 'center',
-      render: (value: any, record: Brand) => (
-        <>
-          <Switch
-            checked={!!record.paused}
-            onChange={() =>
-              handleSwitchChange('paused', record, !!record.paused)
-            }
-          />
-          {showModal && (
-            <PauseModal
-              showPauseModal={showModal}
-              setShowPauseModal={setShowModal}
-              brandId={currentBrand?.id as string}
-              isBrandPaused={!!!currentBrand?.paused}
-              onOk={onCompletePausedAction}
-            />
-          )}
-        </>
+      render: (_: any, record: Brand) => (
+        <SimpleSwitch
+          toggled={!!record.paused}
+          handleSwitchChange={(toggled: boolean) =>
+            handleSwitchChange('paused', record, toggled)
+          }
+        />
       ),
       sorter: (a, b): any => {
         if (a.paused && b.paused) return 0;
@@ -209,7 +186,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
       render: (value: any, record: Brand) => (
         <SimpleSwitch
           toggled={!!record.showOutOfStock}
-          handleSwitchChange={toggled =>
+          handleSwitchChange={(toggled: boolean) =>
             handleSwitchChange('showOutOfStock', record, toggled)
           }
         />
