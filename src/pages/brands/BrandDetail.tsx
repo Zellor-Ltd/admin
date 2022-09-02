@@ -136,7 +136,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
     toFocus.current = elements.find(item => !item.checkValidity());
     if (toFocus) {
       setActiveTabKey('Checkout');
-      scrollIntoView(toFocus);
+      scrollIntoView(toFocus.current);
     }
   };
 
@@ -417,6 +417,11 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
         case 'confirmationUrl':
         case 'cancelationUrl':
         case 'shopUrl':
+        case 'discoPercentage':
+        case 'creatorPercentage':
+        case 'maxDiscoDollarPercentage':
+        case 'initialFreeDdAmount':
+        case 'returnPeriod':
         case 'shopName':
           setActiveTabKey('Checkout');
           break;
@@ -427,7 +432,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
           setActiveTabKey('Images');
           break;
         default:
-          console.log('Something went wrong. Check handleFinishFailed().');
+          console.log('Something went wrong.');
       }
       scrollIntoView(element);
     }
@@ -550,6 +555,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                     ]}
                   >
                     <Radio.Group
+                      id="checkoutType"
                       buttonStyle="solid"
                       onChange={handleCheckoutTypeChange}
                     >
@@ -752,7 +758,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                       <InputNumber
                         id="returnPeriod"
                         pattern="^((1[0-9][0-9])|([0-9]{1,2}))$"
-                        title="positive integers"
+                        title="Positive integers."
                       />
                     </Form.Item>
                   </Col>
