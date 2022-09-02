@@ -260,7 +260,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
           </Link>
           <span style={{ fontSize: '12px' }}>
             <br />
-            {record.categories
+            {record.categories && record.categories.length
               ? [
                   record.categories[0].superCategory?.superCategory +
                     ' / ' +
