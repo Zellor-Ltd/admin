@@ -9,12 +9,12 @@ import {
   Select,
 } from 'antd';
 import { useRequest } from '../../hooks/useRequest';
-import { useContext, useState } from 'react';
+import { useContext, useRef, useState } from 'react';
 import { AppContext } from 'contexts/AppContext';
 import { savePayment } from '../../services/DiscoClubService';
 import { Banner } from 'interfaces/Banner';
 import { Creator } from 'interfaces/Creator';
-
+import scrollIntoView from 'scroll-into-view';
 interface ManualPaymentProps {
   creators: Creator[];
   onSave?: (record: Banner) => void;
@@ -33,15 +33,34 @@ const ManualPayment: React.FC<ManualPaymentProps> = ({
   const [form] = Form.useForm();
   const { doRequest } = useRequest({ setLoading });
   const [oneOffCreator, setOneOffCreator] = useState<string>();
+  const toFocus = useRef<any>();
 
   const onFinish = async () => {
-    const paymentForm = form.getFieldsValue(true);
+    try {
+      const paymentForm = form.getFieldsValue(true);
 
-    if (paymentForm.amount === 0) {
-      message.warning('Warning: Cannot send zero value payments!');
-      return;
+      if (paymentForm.amount === 0) {
+        message.warning('Warning: Cannot send zero value payments!');
+        return;
+      }
+      await doRequest(() => savePayment(paymentForm));
+    } catch (error: any) {
+      message.error('Error: ' + error.error);
     }
-    await doRequest(() => savePayment(paymentForm));
+  };
+
+  const handleFinishFailed = (errorFields: any[]) => {
+    message.error('Error: ' + errorFields[0].errors[0]);
+
+    const id = errorFields[0].name[0];
+    const element = document.getElementById(id);
+
+    scrollIntoView(element);
+  };
+
+  const checkConstraintValidity = () => {
+    const amount = document.getElementById('discoPercentage') as any;
+    if (!amount?.checkValidity()) scrollIntoView(toFocus.current);
   };
 
   const handleCancel = () => {
@@ -59,6 +78,7 @@ const ManualPayment: React.FC<ManualPaymentProps> = ({
         form={form}
         layout="vertical"
         onFinish={onFinish}
+        onFinishFailed={({ errorFields }) => handleFinishFailed(errorFields)}
         autoComplete="off"
       >
         <Row gutter={[8, 8]}>
@@ -70,6 +90,7 @@ const ManualPayment: React.FC<ManualPaymentProps> = ({
                 rules={[{ required: true, message: 'Creator is required.' }]}
               >
                 <Select
+                  id="creatorId"
                   style={{ width: '100%' }}
                   onChange={setOneOffCreator}
                   value={oneOffCreator}
@@ -103,7 +124,7 @@ const ManualPayment: React.FC<ManualPaymentProps> = ({
                   },
                 ]}
               >
-                <Input placeholder="Description" />
+                <Input id="description" placeholder="Description" />
               </Form.Item>
             </Col>
             <Col lg={16} xs={24}>
@@ -119,7 +140,7 @@ const ManualPayment: React.FC<ManualPaymentProps> = ({
                   },
                 ]}
               >
-                <Input placeholder="Amount" />
+                <Input id="amount" placeholder="Amount" />
               </Form.Item>
             </Col>
           </Col>
@@ -136,6 +157,7 @@ const ManualPayment: React.FC<ManualPaymentProps> = ({
                   type="primary"
                   htmlType="submit"
                   className="mb-1"
+                  onClick={checkConstraintValidity}
                 >
                   Send
                 </Button>

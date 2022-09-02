@@ -25,7 +25,13 @@ import { Brand } from 'interfaces/Brand';
 import { ProductBrand } from '../../interfaces/ProductBrand';
 import { AllCategories } from 'interfaces/Category';
 import { Product } from 'interfaces/Product';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { useSelector } from 'react-redux';
 import { saveStagingProduct } from 'services/DiscoClubService';
 import ProductCategoriesTrees from 'pages/products/ProductCategoriesTrees';
@@ -39,7 +45,6 @@ import update from 'immutability-helper';
 import { SketchPicker } from 'react-color';
 import { AppContext } from 'contexts/AppContext';
 import { ColumnsType } from 'antd/lib/table';
-//import { currencyRender } from 'helpers/currencyRender';
 import scrollIntoView from 'scroll-into-view';
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
@@ -80,7 +85,8 @@ const ProductTemplateDetail: React.FC<ProductTemplateProps> = ({
   const [_template, _setTemplate] = useState(template);
   const [color, setColor] = useState<string | undefined>(template?.colour);
   const [selectedStore, setSelectedStore] = useState<Brand>();
-  const [selectedTab, setSelectedTab] = useState<string>('Details');
+  const [activeTabKey, setActiveTabKey] = useState<string>('Details');
+  const toFocus = useRef<any>();
 
   const {
     settings: { currency = [] },
@@ -219,10 +225,15 @@ const ProductTemplateDetail: React.FC<ProductTemplateProps> = ({
   };
 
   const checkConstraintValidity = () => {
-    const barcodeInput = document.getElementById('barcode') as HTMLInputElement;
-    if (!barcodeInput.checkValidity()) {
-      setSelectedTab('Checkout');
-      scrollIntoView(barcodeInput);
+    const quantity = document.getElementById('quantity') as HTMLInputElement;
+    const barcode = document.getElementById('barcode') as HTMLInputElement;
+    const variantId = document.getElementById('variantId') as HTMLInputElement;
+    const elements = [barcode, variantId, quantity];
+    toFocus.current = elements.find(item => !item?.checkValidity());
+    if (toFocus.current) {
+      if (toFocus.current === barcode) setActiveTabKey('Checkout');
+      if (toFocus.current === variantId || quantity) setActiveTabKey('Details');
+      scrollIntoView(toFocus.current);
     }
   };
 
@@ -249,9 +260,48 @@ const ProductTemplateDetail: React.FC<ProductTemplateProps> = ({
       formProduct.id
         ? onSave?.(formProduct)
         : onSave?.({ ...formProduct, id: result._id });
-    } catch (error) {
-      console.error(error);
+    } catch (error: any) {
       setLoading(false);
+      message.error('Error: ' + error.error);
+    }
+  };
+
+  const handleFinishFailed = (errorFields: any[]) => {
+    let errorIndex = 0;
+    if (
+      errorFields[0].name[0] !== 'brand' &&
+      errorFields[0].name[0] !== 'productBrand'
+    ) {
+      if (errorFields[errorFields.length - 1].name[0] === 'categories')
+        errorIndex = errorFields.length - 1;
+
+      if (errorFields[errorFields.length - 2]?.name[0] === 'categories')
+        errorIndex = errorFields.length - 2;
+    }
+
+    message.error('Error: ' + errorFields[errorIndex].errors[0]);
+
+    if (!toFocus.current) {
+      const id = errorFields[errorIndex].name[0];
+      const element = document.getElementById(id);
+
+      switch (id) {
+        case 'brand':
+        case 'productBrand':
+          setActiveTabKey('Details');
+          break;
+        case 'categories':
+        case 'gender':
+          setActiveTabKey('Categories');
+          break;
+        case 'originalPrice':
+        case 'maxDiscoDollars':
+          setActiveTabKey('Checkout');
+          break;
+        default:
+          console.log('Something went wrong.');
+      }
+      scrollIntoView(element);
     }
   };
 
@@ -424,27 +474,25 @@ const ProductTemplateDetail: React.FC<ProductTemplateProps> = ({
   };
 
   const handleTabChange = (value: string) => {
-    setSelectedTab(value);
+    setActiveTabKey(value);
   };
 
   return (
     <div className="products-details">
       <PageHeader
-        title={_template ? `${_template?.name} Update` : 'New Product Template'}
+        title={
+          _template ? `${_template?.name ?? ''} Update` : 'New Product Template'
+        }
       />
       <Form
         form={form}
         name="productTemplateForm"
         initialValues={_template}
         onFinish={onFinish}
-        onFinishFailed={({ errorFields }) => {
-          errorFields.forEach(errorField => {
-            message.error('Error: ' + errorField.errors[0]);
-          });
-        }}
+        onFinishFailed={({ errorFields }) => handleFinishFailed(errorFields)}
         layout="vertical"
       >
-        <Tabs onChange={handleTabChange} activeKey={selectedTab}>
+        <Tabs onChange={handleTabChange} activeKey={activeTabKey}>
           <Tabs.TabPane forceRender tab="Details" key="Details">
             <Row gutter={8}>
               <Col lg={12} xs={24}>
@@ -492,6 +540,7 @@ const ProductTemplateDetail: React.FC<ProductTemplateProps> = ({
                       ]}
                     >
                       <SimpleSelect
+                        id="brand"
                         data={brands}
                         onChange={(value, brand) =>
                           updateForm(value, brand, 'brand')
@@ -520,6 +569,7 @@ const ProductTemplateDetail: React.FC<ProductTemplateProps> = ({
                       ]}
                     >
                       <SimpleSelect
+                        id="productBrand"
                         data={productBrands}
                         onChange={(value, productBrand) =>
                           updateForm(value, productBrand, 'productBrand')
@@ -555,11 +605,24 @@ const ProductTemplateDetail: React.FC<ProductTemplateProps> = ({
                     </Form.Item>
                   </Col>
                   <Col lg={12} xs={24}>
+                    <Form.Item name="quantity" label="Quantity">
+                      <InputNumber
+                        id="quantity"
+                        placeholder="Quantity"
+                        pattern="^\d*%"
+                        title="Non-negative integers only."
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={12} xs={24}></Col>
+                  <Col lg={12} xs={24}>
                     <Col lg={24} xs={24}>
                       <Form.Item name="variantId" label="Variant">
                         <Input
+                          id="variantId"
                           placeholder="Variant ID"
                           pattern="^.{8}-.{4}-.{4}-.{4}-.{12}_STR$"
+                          title="Format must be XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX_STR."
                         />
                       </Form.Item>
                     </Col>
@@ -598,6 +661,7 @@ const ProductTemplateDetail: React.FC<ProductTemplateProps> = ({
           </Tabs.TabPane>
           <Tabs.TabPane forceRender tab="Categories" key="Categories">
             <ProductCategoriesTrees
+              id="categories"
               categories={_template?.categories}
               allCategories={allCategories}
               form={form}
@@ -647,7 +711,7 @@ const ProductTemplateDetail: React.FC<ProductTemplateProps> = ({
                   label="Gender"
                   rules={[{ required: true, message: 'Gender is required.' }]}
                 >
-                  <Select mode="multiple">
+                  <Select id="gender" mode="multiple">
                     <Select.Option value="Female">Female</Select.Option>
                     <Select.Option value="Male">Male</Select.Option>
                     <Select.Option value="Other">Other</Select.Option>
@@ -779,7 +843,7 @@ const ProductTemplateDetail: React.FC<ProductTemplateProps> = ({
                         },
                       ]}
                     >
-                      <InputNumber />
+                      <InputNumber id="originalPrice" />
                     </Form.Item>
                   </Col>
                   <Col span={24}>
@@ -839,6 +903,7 @@ const ProductTemplateDetail: React.FC<ProductTemplateProps> = ({
                       ]}
                     >
                       <InputNumber
+                        id="maxDiscoDollars"
                         parser={value => (value || '').replace(/-/g, '')}
                         precision={0}
                       />
@@ -883,13 +948,12 @@ const ProductTemplateDetail: React.FC<ProductTemplateProps> = ({
             <Table
               rowKey="id"
               columns={storeColumns}
-              //                dataSource={_template?.stores}
+              dataSource={_template?.stores}
               rowSelection={{
                 type: 'radio',
                 ...rowSelection,
               }}
               pagination={false}
-              className="mb-2"
             />
           </Tabs.TabPane>
           <Tabs.TabPane forceRender tab="Images" key="Images">

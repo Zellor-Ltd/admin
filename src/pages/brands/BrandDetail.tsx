@@ -133,8 +133,8 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
       initialFreeDdAmount,
       returnPeriod,
     ];
-    toFocus.current = elements.find(item => !item.checkValidity());
-    if (toFocus) {
+    toFocus.current = elements.find(item => !item?.checkValidity());
+    if (toFocus.current) {
       setActiveTabKey('Checkout');
       scrollIntoView(toFocus.current);
     }
@@ -262,7 +262,9 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
       formBrand.id
         ? onSave?.(formBrand)
         : onSave?.({ ...formBrand, id: response.result });
-    } catch (error) {}
+    } catch (error: any) {
+      message.error('Error: ' + error.error);
+    }
   };
 
   const handleCheckoutTypeChange = (e: RadioChangeEvent) => {
@@ -445,7 +447,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
           vaultOptions
             ? 'Vault Update'
             : brand
-            ? `${brand.brandName} Update`
+            ? `${brand.brandName ?? ''} Update`
             : 'New Master Brand'
         }
       />

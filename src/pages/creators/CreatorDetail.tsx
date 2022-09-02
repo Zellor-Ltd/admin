@@ -37,7 +37,7 @@ import {
   fetchServersList,
   saveCreator,
 } from 'services/DiscoClubService';
-
+import scrollIntoView from 'scroll-into-view';
 interface CreatorDetailProps {
   creator: any;
   onSave?: (record: Creator) => void;
@@ -66,6 +66,8 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
   const { isMobile } = useContext(AppContext);
   const inputRef = useRef<any>(null);
   const [form] = Form.useForm();
+  const [activeTabKey, setActiveTabKey] = useState<string>('Details');
+  const toFocus = useRef<any>();
 
   const onFinish = async () => {
     setLoading(true);
@@ -82,6 +84,41 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
       console.error(error);
       setLoading(false);
     }
+  };
+
+  const handleFinishFailed = (errorFields: any[]) => {
+    message.error('Error: ' + errorFields[0].errors[0]);
+
+    if (!toFocus.current) {
+      const id = errorFields[0].name[0];
+      const element = document.getElementById(id);
+
+      switch (id) {
+        case 'userName':
+        case 'gender':
+          setActiveTabKey('Details');
+          break;
+        case 'birthday':
+          setActiveTabKey('Extended Details');
+          break;
+        default:
+          console.log('Something went wrong.');
+      }
+      scrollIntoView(element);
+    }
+  };
+
+  const checkConstraintValidity = () => {
+    const vat = document.getElementById('vat') as any;
+
+    if (!vat?.checkValidity()) {
+      setActiveTabKey('Extended Details');
+      scrollIntoView(vat);
+    }
+  };
+
+  const handleTabChange = (activeKey: string) => {
+    setActiveTabKey(activeKey);
   };
 
   useEffect(() => {
@@ -138,17 +175,13 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
   return (
     <>
       <PageHeader
-        title={creator ? `${creator?.firstName} Update` : 'New Creator'}
+        title={creator ? `${creator?.firstName ?? ''} Update` : 'New Creator'}
       />
       <Form
         form={form}
         layout="vertical"
         onFinish={onFinish}
-        onFinishFailed={({ errorFields }) => {
-          errorFields.forEach(errorField => {
-            message.error('Error: ' + errorField.errors[0]);
-          });
-        }}
+        onFinishFailed={({ errorFields }) => handleFinishFailed(errorFields)}
         initialValues={{
           ...creator,
           currencyCode: creator?.currencyCode ?? 'EUR',
@@ -157,7 +190,11 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
         }}
         autoComplete="off"
       >
-        <Tabs defaultActiveKey="Details">
+        <Tabs
+          defaultActiveKey="Details"
+          activeKey={activeTabKey}
+          onChange={handleTabChange}
+        >
           <Tabs.TabPane forceRender tab="Details" key="Details">
             <Row gutter={8}>
               <Col lg={24} xs={24}>
@@ -261,7 +298,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                     },
                   ]}
                 >
-                  <Select>
+                  <Select id="gender">
                     <Select.Option value="Female">Female</Select.Option>
                     <Select.Option value="Male">Male</Select.Option>
                     <Select.Option value="Other">Other</Select.Option>
@@ -288,6 +325,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                   ]}
                 >
                   <Input
+                    id="userName"
                     prefix="@"
                     autoComplete="off"
                     onChange={(event: any) => setInstaLink(event.target.value)}
@@ -352,16 +390,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
           >
             <Row gutter={8}>
               <Col lg={12} xs={24}>
-                <Form.Item
-                  label="Default Currency"
-                  name="currencyCode"
-                  rules={[
-                    {
-                      required: false, //ToDo: review
-                      message: 'Currency code is required.',
-                    },
-                  ]}
-                >
+                <Form.Item label="Default Currency" name="currencyCode">
                   <Select disabled={!currencies.length}>
                     {currencies.map(currency => (
                       <Select.Option key={currency.code} value={currency.code}>
@@ -383,7 +412,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                     },
                   ]}
                 >
-                  <DatePicker format="DD/MM/YYYY" />
+                  <DatePicker id="birthday" format="DD/MM/YYYY" />
                 </Form.Item>
               </Col>
               <Col lg={12} xs={24}>
@@ -446,6 +475,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
               <Col lg={12} xs={24}>
                 <Form.Item label="Value Added Tax" name="vat">
                   <Input
+                    id="vat"
                     pattern="^[A-Za-z0-9]*"
                     title="VAT must contain only letters and numbers."
                   />
@@ -477,7 +507,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
               </Col>
             </Row>
           </Tabs.TabPane>
-          <Tabs.TabPane forceRender tab="Your Work" key="YourWork">
+          <Tabs.TabPane forceRender tab="Your Work" key="Your Work">
             <Row gutter={8}>
               <Col lg={24} xs={24}>
                 <Form.Item
@@ -510,29 +540,33 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
               <Col lg={24} xs={24}>
                 <Typography.Title level={4}>Target</Typography.Title>
               </Col>
-              <Col lg={12} xs={24}>
-                <Form.Item label="Slider">
-                  <Slider
-                    range
-                    marks={{ 12: '12', 100: '100' }}
-                    min={12}
-                    max={100}
-                    value={ageRange}
-                    onChange={onChangeAge}
-                  />
-                </Form.Item>
-              </Col>
-              <Col lg={12} xs={24}>
-                <Form.Item name="targetGender" label="Gender">
-                  <Select mode="multiple">
-                    <Select.Option value="Female">Female</Select.Option>
-                    <Select.Option value="Male">Male</Select.Option>
-                    <Select.Option value="Other">Other</Select.Option>
-                    <Select.Option value="Prefer not to say">
-                      Prefer not to say
-                    </Select.Option>
-                  </Select>
-                </Form.Item>
+              <Col span={24}>
+                <Row gutter={8}>
+                  <Col lg={12} xs={24}>
+                    <Form.Item label="Slider">
+                      <Slider
+                        range
+                        marks={{ 12: '12', 100: '100' }}
+                        min={12}
+                        max={100}
+                        value={ageRange}
+                        onChange={onChangeAge}
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={12} xs={24}>
+                    <Form.Item name="targetGender" label="Gender">
+                      <Select mode="multiple">
+                        <Select.Option value="Female">Female</Select.Option>
+                        <Select.Option value="Male">Male</Select.Option>
+                        <Select.Option value="Other">Other</Select.Option>
+                        <Select.Option value="Prefer not to say">
+                          Prefer not to say
+                        </Select.Option>
+                      </Select>
+                    </Form.Item>
+                  </Col>
+                </Row>
               </Col>
             </Row>
           </Tabs.TabPane>
@@ -578,6 +612,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
               type="primary"
               htmlType="submit"
               className="mb-1"
+              onClick={checkConstraintValidity}
             >
               Save Changes
             </Button>

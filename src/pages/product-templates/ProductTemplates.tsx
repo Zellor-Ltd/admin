@@ -43,7 +43,7 @@ import { useMount } from 'react-use';
 import SimpleSelect from 'components/select/SimpleSelect';
 import { SelectOption } from '../../interfaces/SelectOption';
 import { ProductCategory } from 'interfaces/Category';
-import ProductTemplateDetail from './ProductTemplateDetail';
+import ProductDetail from 'pages/products/ProductDetail';
 
 const { Panel } = Collapse;
 
@@ -859,17 +859,19 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
         </>
       )}
       {details && (
-        <ProductTemplateDetail
+        <ProductDetail
           brands={brands}
           productBrands={productBrands}
           allCategories={allCategories}
           onSave={onSaveTemplate}
           onCancel={onCancelTemplate}
-          template={currentTemplate}
+          product={currentTemplate}
           productBrand={currentProductBrand}
           brand={currentMasterBrand}
           isFetchingBrands={isFetchingBrands}
           isFetchingProductBrand={isFetchingProductBrand}
+          isLive={false}
+          template
         />
       )}
     </>

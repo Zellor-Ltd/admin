@@ -64,6 +64,7 @@ interface ProductDetailProps {
   isFetchingBrands: boolean;
   isFetchingProductBrand: boolean;
   isLive: boolean;
+  template?: boolean;
 }
 
 const ProductDetail: React.FC<ProductDetailProps> = ({
@@ -78,6 +79,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
   isFetchingBrands,
   isFetchingProductBrand,
   isLive,
+  template,
 }) => {
   const { isMobile } = useContext(AppContext);
   const [loading, setLoading] = useState<boolean>(false);
@@ -228,31 +230,36 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
   };
 
   const checkConstraintValidity = () => {
+    const quantity = document.getElementById('quantity') as HTMLInputElement;
     const barcode = document.getElementById('barcode') as HTMLInputElement;
     const variantId = document.getElementById('variantId') as HTMLInputElement;
-    const elements = [barcode, variantId];
-    toFocus.current = elements.find(item => !item.checkValidity());
+    const elements = [barcode, variantId, quantity];
+    toFocus.current = elements.find(item => !item?.checkValidity());
     if (toFocus.current) {
       if (toFocus.current === barcode) setActiveTabKey('Checkout');
-      if (toFocus.current === variantId) setActiveTabKey('Details');
+      if (toFocus.current === variantId || quantity) setActiveTabKey('Details');
       scrollIntoView(toFocus.current);
     }
   };
 
   const handleFinishFailed = (errorFields: any[]) => {
     let errorIndex = 0;
-    if (errorFields[errorFields.length - 1].name[0] === 'categories')
-      errorIndex = errorFields.length - 1;
+    if (
+      errorFields[0].name[0] !== 'brand' &&
+      errorFields[0].name[0] !== 'productBrand'
+    ) {
+      if (errorFields[errorFields.length - 1].name[0] === 'categories')
+        errorIndex = errorFields.length - 1;
 
-    if (errorFields[errorFields.length - 2].name[0] === 'categories')
-      errorIndex = errorFields.length - 2;
+      if (errorFields[errorFields.length - 2]?.name[0] === 'categories')
+        errorIndex = errorFields.length - 2;
+    }
 
     message.error('Error: ' + errorFields[errorIndex].errors[0]);
 
     if (!toFocus.current) {
       const id = errorFields[errorIndex].name[0];
       const element = document.getElementById(id);
-      console.log(element);
 
       switch (id) {
         case 'brand':
@@ -497,7 +504,13 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
   return (
     <div className="products-details">
       <PageHeader
-        title={_product ? `${_product?.name} Update` : 'New Product'}
+        title={
+          _product
+            ? `${_product?.name ?? ''} Update`
+            : template
+            ? 'New Product Template'
+            : 'New Product'
+        }
       />
       <Form
         form={form}
@@ -626,6 +639,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                   <Col lg={12} xs={24}>
                     <Form.Item name="quantity" label="Quantity">
                       <InputNumber
+                        id="quantity"
                         placeholder="Quantity"
                         pattern="^\d*%"
                         title="Non-negative integers only."

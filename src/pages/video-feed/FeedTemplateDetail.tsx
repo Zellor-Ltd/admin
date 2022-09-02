@@ -132,13 +132,13 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
     if (showBrandForm)
       setPageTitle(
         selectedBrandIndex > -1
-          ? `${selectedBrand?.brandName} Update`
+          ? `${selectedBrand?.brandName ?? ''} Update`
           : 'New Segment Master Brand'
       );
     else if (showTagForm)
       setPageTitle(
         selectedTagIndex > -1
-          ? `${selectedTag?.tagName} Update`
+          ? `${selectedTag?.tagName ?? ''} Update`
           : 'New Segment Tag'
       );
     else if (selectedSegment) {
@@ -146,15 +146,15 @@ const FeedTemplateDetail: React.FC<FeedTemplateDetailProps> = ({
       setPageTitle(
         selectedSegmentIndex > -1 &&
           (packages ? packages.length !== selectedSegmentIndex : true)
-          ? `Segment ${selectedSegmentIndex + 1} Update`
+          ? `Segment ${selectedSegmentIndex + 1 ?? ''} Update`
           : 'New Segment'
       );
     } else
       setPageTitle(
         feedTemplate
           ? feedTemplate.title.length > 50
-            ? `${feedTemplate.title.substr(0, 50)} Update`
-            : `${feedTemplate.title} Update`
+            ? `${feedTemplate.title.substr(0, 50) ?? ''} Update`
+            : `${feedTemplate.title ?? ''} Update`
           : 'New Video Feed'
       );
   }, [selectedSegment, showBrandForm, showTagForm]);

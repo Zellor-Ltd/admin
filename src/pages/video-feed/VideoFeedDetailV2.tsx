@@ -17,8 +17,8 @@ import {
   Select,
   Slider,
   Table,
-    Tabs,
-    Switch,
+  Tabs,
+  Switch,
   Typography,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
@@ -46,6 +46,7 @@ import CopyIdToClipboard from 'components/CopyIdToClipboard';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import update from 'immutability-helper';
+import scrollIntoView from 'scroll-into-view';
 
 const { Title } = Typography;
 
@@ -66,6 +67,7 @@ interface VideoFeedDetailProps {
   isFetchingProductBrand: boolean;
   setDetails?: (boolean) => void;
   isFanVideo?: boolean;
+  template?: boolean;
 }
 
 const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
@@ -78,6 +80,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
   isFetchingProductBrand,
   setDetails,
   isFanVideo,
+  template,
 }) => {
   const {
     settings: {
@@ -106,7 +109,9 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
   const defaultSegmentTab = 'Images';
   const [videoTab, setVideoTab] = useState<string>('Video Details');
   const [segmentTab, setSegmentTab] = useState<string>('Images');
-  const [pageTitle, setPageTitle] = useState<string>('Video Update');
+  const [pageTitle, setPageTitle] = useState<string>(
+    template ? 'Video Template Update' : 'Video Update'
+  );
   const { doFetch, doRequest } = useRequest({ setLoading });
   const [includeVideo, setIncludeVideo] = useState<boolean>(false);
   const [videoCreator, setVideoCreator] = useState<Creator>();
@@ -124,7 +129,6 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
     useState<ProductBrand>();
   const [currentBrandIcon, setCurrentBrandIcon] = useState<any>();
   const [tagBuffer, setTagBuffer] = useState<any[]>([]);
-
 
   useEffect(() => {
     if (videoTab === 'Links') {
@@ -286,13 +290,13 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
     if (showBrandForm)
       setPageTitle(
         selectedBrandIndex > -1
-          ? `${selectedBrand?.brandName} Update`
+          ? `${selectedBrand?.brandName ?? ''} Update`
           : 'New Segment Master Brand'
       );
     else if (showTagForm)
       setPageTitle(
         selectedTagIndex > -1
-          ? `${selectedTag?.tagName} Update`
+          ? `${selectedTag?.tagName ?? ''} Update`
           : 'New Segment Tag'
       );
     else if (selectedSegment) {
@@ -300,15 +304,17 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
       setPageTitle(
         selectedSegmentIndex > -1 &&
           (packages ? packages.length !== selectedSegmentIndex : true)
-          ? `Segment ${selectedSegmentIndex + 1} Update`
+          ? `Segment ${selectedSegmentIndex + 1 ?? ''} Update`
           : 'New Segment'
       );
     } else
       setPageTitle(
         feedItem
           ? feedItem.title.length > 50
-            ? `${feedItem.title.substr(0, 50)} Update`
-            : `${feedItem.title} Update`
+            ? `${feedItem.title.substr(0, 50) ?? ''} Update`
+            : `${feedItem.title ?? ''} Update`
+          : template
+          ? 'New Video Feed Template'
           : 'New Video Feed'
       );
   }, [selectedSegment, showBrandForm, showTagForm]);
@@ -319,25 +325,56 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
   }, [feedItem]);
 
   const onFinish = async () => {
-    const item: FeedItem = feedForm.getFieldsValue(true);
-    item.goLiveDate = moment(item.goLiveDate).format();
-    item.validity = moment(item.validity).format();
-    item.status = status;
-    item.selectedOption = selectedOption;
+    try {
+      const item: FeedItem = feedForm.getFieldsValue(true);
+      item.goLiveDate = moment(item.goLiveDate).format();
+      item.validity = moment(item.validity).format();
+      item.status = status;
+      item.selectedOption = selectedOption;
 
-    item.package = item.package?.map(pack => {
-      const segment: any = {
-        ...pack,
-        tags: pack.tags ?? [],
-      };
-      // TODO: FIND THE ROOT CAUSE FOR THIS SELF REFERENCE
-      delete segment.package;
-      return segment;
-    });
+      item.package = item.package?.map(pack => {
+        const segment: any = {
+          ...pack,
+          tags: pack.tags ?? [],
+        };
+        // TODO: FIND THE ROOT CAUSE FOR THIS SELF REFERENCE
+        delete segment.package;
+        return segment;
+      });
 
-    const response = await doRequest(() => saveVideoFeed(item));
-    item.id ? onSave?.(item) : onSave?.({ ...item, id: response.result });
-    if (!response.result) setDetails?.(false);
+      const response = await doRequest(() => saveVideoFeed(item));
+      item.id ? onSave?.(item) : onSave?.({ ...item, id: response.result });
+      if (!response.result) setDetails?.(false);
+    } catch (error: any) {
+      message.error('Error: ' + error.error);
+    }
+  };
+
+  const handleFinishFailed = (errorFields: any[]) => {
+    setSelectedSegment(undefined);
+    console.log('toma tua cu');
+
+    message.error('Error: ' + errorFields[0].errors[0]);
+
+    const id = errorFields[0].name[0];
+    const element = document.getElementById(id);
+
+    switch (id) {
+      case 'index':
+        setVideoTab('Video Details');
+        break;
+      case 'videoType':
+        setVideoTab('Settings');
+        break;
+      case 'productBrand':
+      case 'productBrandIcon':
+      case 'creator':
+        setVideoTab('Listing');
+        break;
+      default:
+        console.log('Something went wrong.');
+    }
+    scrollIntoView(element);
   };
 
   const onDeleteSegment = (evt: any, index: number) => {
@@ -580,7 +617,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                         },
                       ]}
                     >
-                      <InputNumber />
+                      <InputNumber id="index" />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -680,7 +717,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
               </Col>
             </Row>
           </Tabs.TabPane>
-          <Tabs.TabPane forceRender tab="Descriptors" key="descriptors">
+          <Tabs.TabPane forceRender tab="Descriptors" key="Descriptors">
             <Row gutter={8}>
               <Col lg={24} xs={24}>
                 <Form.Item name="description" label="Long description">
@@ -707,7 +744,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
               </Col>
             </Row>
           </Tabs.TabPane>
-          <Tabs.TabPane forceRender tab="Settings" key="settings">
+          <Tabs.TabPane forceRender tab="Settings" key="Settings">
             <Row gutter={8}>
               <Col lg={12} xs={24}>
                 <Form.Item name="lengthTotal" label="Length">
@@ -742,6 +779,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                   ]}
                 >
                   <Select
+                    id="videoType"
                     mode="multiple"
                     placeholder="Please select a Video Type"
                     disabled={!videoType.length}
@@ -789,7 +827,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
               </Col>
             </Row>
           </Tabs.TabPane>
-          <Tabs.TabPane forceRender tab="Segments" key="segments">
+          <Tabs.TabPane forceRender tab="Segments" key="Segments">
             <Row gutter={8}>
               <Col lg={12} xs={24}>
                 <Row gutter={8}>
@@ -810,10 +848,8 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                     >
                       <DatePicker format="DD/MM/YYYY" />
                     </Form.Item>
-                    </Col>
-                    <Col lg={12} xs={24}>
-
-                    </Col>
+                  </Col>
+                  <Col lg={12} xs={24}></Col>
                 </Row>
               </Col>
             </Row>
@@ -864,7 +900,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                                     onClick={evt =>
                                       onDeleteSegment(evt, segmentIndex)
                                     }
-                                        />,
+                                  />,
                                 ]
                               : [
                                   <Button
@@ -875,12 +911,16 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                                     onClick={evt =>
                                       onDeleteSegment(evt, segmentIndex)
                                     }
-                                        />                                        ,
+                                  />,
                                   <div>No Thumbnail</div>,
-                                    ]}
-                                <p/>
-                                <p><a href={segment.shareLink}>{segment.shareLink}</a></p>
-                            </div>                            
+                                ]}
+                            <p />
+                            <p>
+                              <a href={segment.shareLink}>
+                                {segment.shareLink}
+                              </a>
+                            </p>
+                          </div>
                         ))}
                       </div>
                     );
@@ -896,7 +936,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
               </Col>
             </Row>
           </Tabs.TabPane>
-          <Tabs.TabPane forceRender tab="Listing" key="listing">
+          <Tabs.TabPane forceRender tab="Listing" key="Listing">
             <Form.Item name="selectedOption">
               <Radio.Group buttonStyle="solid" onChange={handleSwitchChange}>
                 <Radio.Button value="productBrand">Product Brand</Radio.Button>
@@ -916,6 +956,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                     ]}
                   >
                     <Select
+                      id="productBrand"
                       placeholder="Select a Brand"
                       disabled={isFetchingProductBrand}
                       onChange={onChangeProductBrand}
@@ -951,6 +992,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                       ]}
                     >
                       <Select
+                        id="productBrandIcon"
                         placeholder="Select an icon"
                         disabled={!productBrandIcons.length}
                         onChange={onChangeBrandIcon}
@@ -993,6 +1035,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                     ]}
                   >
                     <Select
+                      id="creator"
                       placeholder="Select a Creator"
                       disabled={!creators.length}
                       onChange={onChangeCreator}
@@ -1112,42 +1155,42 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                 />
               </Col>
             </Row>
-                </Tabs.TabPane>
-                <Tabs.TabPane forceRender tab="Promo" key="Promo">
-                    <Row gutter={8}>
-                        <Col sm={12} lg={6}>
-                            <Form.Item
-                                name="promoEnabled"
-                                label="Enabled"
-                                valuePropName="checked"
-                            >
-                                <Switch />
-                            </Form.Item>
+          </Tabs.TabPane>
+          <Tabs.TabPane forceRender tab="Promo" key="Promo">
+            <Row gutter={8}>
+              <Col sm={12} lg={6}>
+                <Form.Item
+                  name="promoEnabled"
+                  label="Enabled"
+                  valuePropName="checked"
+                >
+                  <Switch />
+                </Form.Item>
 
-                            <Form.Item name="promoMasterBrand" label="Master Brand">
-                                <Select onChange={onChangeBrand}>
-                                    {brands.map(brand => (
-                                        <Select.Option key={brand.id} value={brand.id}>
-                                            {brand.brandName}
-                                        </Select.Option>
-                                    ))}
-                                </Select>
-                            </Form.Item>
+                <Form.Item name="promoMasterBrand" label="Master Brand">
+                  <Select onChange={onChangeBrand}>
+                    {brands.map(brand => (
+                      <Select.Option key={brand.id} value={brand.id}>
+                        {brand.brandName}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Form.Item>
 
-                            <Form.Item name="promoText" label="Headline Text">
-                                <Input />
-                            </Form.Item>
+                <Form.Item name="promoText" label="Headline Text">
+                  <Input />
+                </Form.Item>
 
-                            <Form.Item name="promoCode" label="Coupon Code">
-                                <Input />
-                            </Form.Item>
+                <Form.Item name="promoCode" label="Coupon Code">
+                  <Input />
+                </Form.Item>
 
-                            <Form.Item name="promoDate" label="Date Range (Text format)">
-                                <Input />
-                            </Form.Item>
-                        </Col>                      
-                    </Row>
-                </Tabs.TabPane>
+                <Form.Item name="promoDate" label="Date Range (Text format)">
+                  <Input />
+                </Form.Item>
+              </Col>
+            </Row>
+          </Tabs.TabPane>
         </Tabs>
         <Row gutter={8} justify="end">
           <Col>
@@ -1173,10 +1216,10 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
         </Row>
       </>
     );
-    };
+  };
 
   const onChangeBrand = (key: string) => {
-        setSelectedBrand(brands.find(brand => brand.id === key));
+    setSelectedBrand(brands.find(brand => brand.id === key));
   };
 
   const brandsColumns: ColumnsType<any> = [
@@ -1360,7 +1403,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                   tab={`Master Brands (${
                     selectedSegment!.brands?.length || 0
                   })`}
-                  key="MasterBrands"
+                  key="Master Brands"
                 >
                   <Button
                     type="default"
@@ -1500,11 +1543,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
           form={feedForm}
           onFinish={onFinish}
           name="feedForm"
-          onFinishFailed={({ errorFields }) => {
-            errorFields.forEach(errorField => {
-              message.error('Error: ' + errorField.errors[0]);
-            });
-          }}
+          onFinishFailed={({ errorFields }) => handleFinishFailed(errorFields)}
           layout="vertical"
           className="video-feed"
           initialValues={{

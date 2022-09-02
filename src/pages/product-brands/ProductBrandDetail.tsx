@@ -50,7 +50,6 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
         ? onSave?.(formProductBrand)
         : onSave?.({ ...formProductBrand, id: result });
     } catch (err: any) {
-      console.log(err);
       message.error('Error: ' + err.error);
     }
   };
@@ -72,7 +71,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
       creatorPercentage,
       maxDiscoDollarPercentage,
     ];
-    toFocus.current = elements.find(item => !item.checkValidity());
+    toFocus.current = elements.find(item => !item?.checkValidity());
     if (toFocus.current) {
       setActiveTabKey('Details');
       scrollIntoView(toFocus.current);
@@ -127,7 +126,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
       <PageHeader
         title={
           productBrand
-            ? `${productBrand.brandName} Update`
+            ? `${productBrand.brandName ?? ''} Update`
             : 'New Product Brand'
         }
       />

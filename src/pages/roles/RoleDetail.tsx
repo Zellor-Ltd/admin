@@ -26,7 +26,9 @@ const RoleDetail: React.FC<RouteComponentProps> = props => {
 
   return (
     <>
-      <PageHeader title={initial ? `${initial.name} Update` : 'New Item'} />
+      <PageHeader
+        title={initial ? `${initial.name ?? ''} Update` : 'New Item'}
+      />
       <Form
         name="roleForm"
         layout="vertical"
