@@ -26,7 +26,13 @@ import { Brand } from 'interfaces/Brand';
 import { ProductBrand } from '../../interfaces/ProductBrand';
 import { AllCategories } from 'interfaces/Category';
 import { Product } from 'interfaces/Product';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { useSelector } from 'react-redux';
 import { saveStagingProduct } from 'services/DiscoClubService';
 import ProductCategoriesTrees from './ProductCategoriesTrees';
@@ -59,6 +65,7 @@ interface ProductDetailProps {
   isFetchingBrands: boolean;
   isFetchingProductBrand: boolean;
   isLive: boolean;
+  template?: boolean;
 }
 
 const ProductDetail: React.FC<ProductDetailProps> = ({
@@ -73,6 +80,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
   isFetchingBrands,
   isFetchingProductBrand,
   isLive,
+  template,
 }) => {
   const { isMobile } = useContext(AppContext);
   const [loading, setLoading] = useState<boolean>(false);
@@ -83,7 +91,8 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
   const [_product, _setProduct] = useState(product);
   const [color, setColor] = useState<string | undefined>(product?.colour);
   const [selectedStore, setSelectedStore] = useState<Brand>();
-  const [selectedTab, setSelectedTab] = useState<string>('Details');
+  const [activeTabKey, setActiveTabKey] = useState<string>('Details');
+  const toFocus = useRef<any>();
 
   const {
     settings: { currency = [] },
@@ -222,10 +231,54 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
   };
 
   const checkConstraintValidity = () => {
-    const barcodeInput = document.getElementById('barcode') as HTMLInputElement;
-    if (!barcodeInput.checkValidity()) {
-      setSelectedTab('Checkout');
-      scrollIntoView(barcodeInput);
+    const quantity = document.getElementById('quantity') as HTMLInputElement;
+    const barcode = document.getElementById('barcode') as HTMLInputElement;
+    const variantId = document.getElementById('variantId') as HTMLInputElement;
+    const elements = [barcode, variantId, quantity];
+    toFocus.current = elements.find(item => !item?.checkValidity());
+    if (toFocus.current) {
+      if (toFocus.current === barcode) setActiveTabKey('Checkout');
+      if (toFocus.current === variantId || quantity) setActiveTabKey('Details');
+      scrollIntoView(toFocus.current);
+    }
+  };
+
+  const handleFinishFailed = (errorFields: any[]) => {
+    let errorIndex = 0;
+    if (
+      errorFields[0].name[0] !== 'brand' &&
+      errorFields[0].name[0] !== 'productBrand'
+    ) {
+      if (errorFields[errorFields.length - 1].name[0] === 'categories')
+        errorIndex = errorFields.length - 1;
+
+      if (errorFields[errorFields.length - 2]?.name[0] === 'categories')
+        errorIndex = errorFields.length - 2;
+    }
+
+    message.error('Error: ' + errorFields[errorIndex].errors[0]);
+
+    if (!toFocus.current) {
+      const id = errorFields[errorIndex].name[0];
+      const element = document.getElementById(id);
+
+      switch (id) {
+        case 'brand':
+        case 'productBrand':
+          setActiveTabKey('Details');
+          break;
+        case 'categories':
+        case 'gender':
+          setActiveTabKey('Categories');
+          break;
+        case 'originalPrice':
+        case 'maxDiscoDollars':
+          setActiveTabKey('Checkout');
+          break;
+        default:
+          console.log('Something went wrong.');
+      }
+      scrollIntoView(element);
     }
   };
 
@@ -454,7 +507,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
   };
 
   const handleTabChange = (value: string) => {
-    setSelectedTab(value);
+    setActiveTabKey(value);
   };
 
   const handleImageChange = (
@@ -477,21 +530,23 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
   return (
     <div className="products-details">
       <PageHeader
-        title={_product ? `${_product?.name} Update` : 'New Product'}
+        title={
+          _product
+            ? `${_product?.name ?? ''} Update`
+            : template
+            ? 'New Product Template'
+            : 'New Product'
+        }
       />
       <Form
         form={form}
         name="productForm"
         initialValues={_product}
         onFinish={onFinish}
-        onFinishFailed={({ errorFields }) => {
-          errorFields.forEach(errorField => {
-            message.error('Error: ' + errorField.errors[0]);
-          });
-        }}
+        onFinishFailed={({ errorFields }) => handleFinishFailed(errorFields)}
         layout="vertical"
       >
-        <Tabs onChange={handleTabChange} activeKey={selectedTab}>
+        <Tabs onChange={handleTabChange} activeKey={activeTabKey}>
           <Tabs.TabPane forceRender tab="Details" key="Details">
             <Row gutter={8}>
               <Col lg={12} xs={24}>
@@ -543,6 +598,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                       ]}
                     >
                       <SimpleSelect
+                        id="brand"
                         data={brands}
                         onChange={(value, brand) =>
                           updateForm(value, brand, 'brand')
@@ -571,6 +627,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                       ]}
                     >
                       <SimpleSelect
+                        id="productBrand"
                         data={productBrands}
                         onChange={(value, productBrand) =>
                           updateForm(value, productBrand, 'productBrand')
@@ -608,6 +665,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                   <Col lg={12} xs={24}>
                     <Form.Item name="quantity" label="Quantity">
                       <InputNumber
+                        id="quantity"
                         placeholder="Quantity"
                         pattern="^\d*%"
                         title="Non-negative integers only."
@@ -620,9 +678,11 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                     <Col lg={24} xs={24}>
                       <Form.Item name="variantId" label="Variant">
                         <Input
+                          id="variantId"
                           placeholder="Variant ID"
                           disabled={isLive}
                           pattern="^.{8}-.{4}-.{4}-.{4}-.{12}_STR$"
+                          title="Format must be XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX_STR."
                         />
                       </Form.Item>
                     </Col>
@@ -663,15 +723,18 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
             <Row>
               <Col span={24}>
                 <Form.Item name="apiCategory" label="API Category">
-                  <Input
-                    style={isMobile ? { width: '100%' } : { width: '180px' }}
-                    placeholder="API Category"
-                    disabled
-                  />
+                  <Tooltip title={_product?.apiCategory}>
+                    <Input.TextArea
+                      rows={2}
+                      placeholder="API Category"
+                      disabled
+                    />
+                  </Tooltip>
                 </Form.Item>
               </Col>
             </Row>
             <ProductCategoriesTrees
+              id="categories"
               categories={_product?.categories}
               allCategories={allCategories}
               form={form}
@@ -727,7 +790,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                   label="Gender"
                   rules={[{ required: true, message: 'Gender is required.' }]}
                 >
-                  <Select mode="multiple" disabled={isLive}>
+                  <Select mode="multiple" disabled={isLive} id="gender">
                     <Select.Option value="Female">Female</Select.Option>
                     <Select.Option value="Male">Male</Select.Option>
                     <Select.Option value="Other">Other</Select.Option>
@@ -875,7 +938,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                         },
                       ]}
                     >
-                      <InputNumber disabled={isLive} />
+                      <InputNumber id="originalPrice" disabled={isLive} />
                     </Form.Item>
                   </Col>
                   <Col span={24}>
@@ -935,6 +998,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                       ]}
                     >
                       <InputNumber
+                        id="maxDiscoDollars"
                         parser={value => (value || '').replace(/-/g, '')}
                         precision={0}
                         disabled={isLive}

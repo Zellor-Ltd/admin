@@ -22,6 +22,7 @@ interface MultipleFetchDebounceSelectProps {
   setEof?: (eof: boolean) => void;
   loaded?: boolean;
   input?: string;
+  id?: string;
 }
 
 const MultipleFetchDebounceSelect: React.FC<
@@ -42,6 +43,7 @@ const MultipleFetchDebounceSelect: React.FC<
   setEof,
   loaded,
   input,
+  id,
 }) => {
   const mounted = useRef(false);
   const [isFetching, setIsFetching] = useState(false);
@@ -187,6 +189,7 @@ const MultipleFetchDebounceSelect: React.FC<
 
   return (
     <Select
+      id={id}
       style={style}
       placeholder={placeholder}
       labelInValue

@@ -31,7 +31,7 @@ const FanGroupsDetail: React.FC<FanGroupsDetailProps> = ({
   return (
     <>
       <PageHeader
-        title={fanGroup ? `${fanGroup.name} Update` : 'New Fan Group'}
+        title={fanGroup ? `${fanGroup.name ?? ''} Update` : 'New Fan Group'}
       />
       <Form
         name="fanGroupForm"

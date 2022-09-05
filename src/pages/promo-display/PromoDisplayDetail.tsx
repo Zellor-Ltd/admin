@@ -1,4 +1,4 @@
-import { Button, Col, DatePicker, Form, PageHeader, Row } from 'antd';
+import { Button, Col, DatePicker, Form, message, PageHeader, Row } from 'antd';
 import { RichTextEditor } from 'components/RichTextEditor';
 import SimpleSelect from 'components/select/SimpleSelect';
 import { formatMoment } from 'helpers/formatMoment';
@@ -9,6 +9,7 @@ import { savePromoDisplay } from 'services/DiscoClubService';
 import useAllCategories from 'hooks/useAllCategories';
 import { useMount } from 'react-use';
 import { SelectOption } from 'interfaces/SelectOption';
+import scrollIntoView from 'scroll-into-view';
 interface PromoDisplayDetailProps {
   promoDisplay?: any;
   onSave?: (record: PromoDisplay) => void;
@@ -39,13 +40,26 @@ const PromoDisplaysDetail: React.FC<PromoDisplayDetailProps> = ({
   });
 
   const onFinish = async () => {
-    const formPromoDisplay = form.getFieldsValue(true);
-    const { result } = await doRequest(() =>
-      savePromoDisplay(formPromoDisplay)
-    );
-    formPromoDisplay.id
-      ? onSave?.(formPromoDisplay)
-      : onSave?.({ ...formPromoDisplay, id: result });
+    try {
+      const formPromoDisplay = form.getFieldsValue(true);
+      const { result } = await doRequest(() =>
+        savePromoDisplay(formPromoDisplay)
+      );
+      formPromoDisplay.id
+        ? onSave?.(formPromoDisplay)
+        : onSave?.({ ...formPromoDisplay, id: result });
+    } catch (error: any) {
+      message.error('Error: ' + error.error);
+    }
+  };
+
+  const handleFinishFailed = (errorFields: any[]) => {
+    message.error('Error: ' + errorFields[0].errors[0]);
+
+    const id = errorFields[0].name[0];
+    const element = document.getElementById(id);
+
+    scrollIntoView(element);
   };
 
   return (
@@ -59,6 +73,7 @@ const PromoDisplaysDetail: React.FC<PromoDisplayDetailProps> = ({
         form={form}
         initialValues={promoDisplay}
         onFinish={onFinish}
+        onFinishFailed={({ errorFields }) => handleFinishFailed(errorFields)}
       >
         <Row>
           <Col lg={24} xs={24}>
@@ -81,7 +96,7 @@ const PromoDisplaysDetail: React.FC<PromoDisplayDetailProps> = ({
                 { required: true, message: 'Display Start Date is required.' },
               ]}
             >
-              <DatePicker format="DD/MM/YYYY" />
+              <DatePicker id="displayStartDate" format="DD/MM/YYYY" />
             </Form.Item>
           </Col>
           <Col lg={8} xs={24}>
@@ -93,7 +108,7 @@ const PromoDisplaysDetail: React.FC<PromoDisplayDetailProps> = ({
                 { required: true, message: 'Display Expire Date is required.' },
               ]}
             >
-              <DatePicker format="DD/MM/YYYY" />
+              <DatePicker id="displayExpireDate" format="DD/MM/YYYY" />
             </Form.Item>
           </Col>
           <Col lg={8} xs={24}>

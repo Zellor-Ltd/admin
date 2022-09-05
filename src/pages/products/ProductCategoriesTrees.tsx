@@ -11,6 +11,7 @@ interface ProductCategoriesTreesProps {
   handleCategoryChange: Function;
   handleCategoryDelete?: Function;
   disabled?: boolean;
+  id?: string;
 }
 
 const ProductCategoriesTrees: React.FC<ProductCategoriesTreesProps> = ({
@@ -20,6 +21,7 @@ const ProductCategoriesTrees: React.FC<ProductCategoriesTreesProps> = ({
   handleCategoryChange,
   handleCategoryDelete,
   disabled,
+  id,
 }) => {
   const [_categories, _setCategories] = useState<SelectedProductCategories[]>(
     categories || [{}]
@@ -51,6 +53,7 @@ const ProductCategoriesTrees: React.FC<ProductCategoriesTreesProps> = ({
             style={{ maxWidth: '1000px' }}
           >
             <ProductCategories
+              id={index === 0 ? id : ''}
               productCategoryIndex={index}
               initialValues={_categories}
               allCategories={allCategories}

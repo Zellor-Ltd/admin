@@ -51,3 +51,9 @@
   min-width: 5.5rem;
   min-height: 3.5rem;
 }
+
+//do not remove. used for focusing purposes on form validation fail
+.ant-upload-select-picture-card input {
+  display: block !important;
+  width: 0;
+}

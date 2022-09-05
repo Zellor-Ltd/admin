@@ -19,6 +19,7 @@ interface ProductCategoriesProps {
   initialValues: SelectedProductCategories[];
   handleCategoryChange: Function;
   disabled?: boolean;
+  id?: string;
 }
 
 const formatProductCategories: (
@@ -44,6 +45,7 @@ const ProductCategories: React.FC<ProductCategoriesProps> = ({
   initialValues,
   handleCategoryChange,
   disabled = false,
+  id,
 }) => {
   const { isMobile } = useContext(AppContext);
   const { filteredCategories, filterCategory } = useAllCategories({
@@ -88,6 +90,7 @@ const ProductCategories: React.FC<ProductCategoriesProps> = ({
             rules={[{ required: _index < 2, message: `${key} is required` }]}
           >
             <Select
+              id={_index === 0 ? id : ''}
               disabled={
                 disabled ||
                 !filteredCategories[key as keyof AllCategories].length

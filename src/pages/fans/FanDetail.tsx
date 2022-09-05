@@ -21,7 +21,7 @@ import { Creator } from 'interfaces/Creator';
 import { Currency } from 'interfaces/Currency';
 import { Fan } from 'interfaces/Fan';
 import { ServerAlias } from 'interfaces/ServerAlias';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   fetchCategories,
   fetchCreators,
@@ -31,6 +31,7 @@ import {
   saveUser,
 } from 'services/DiscoClubService';
 import FanGroupDropdown from './FanGroupDropdown';
+import scrollIntoView from 'scroll-into-view';
 interface FanDetailProps {
   fan: any;
   onSave?: (record: Fan) => void;
@@ -58,6 +59,8 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
   const [currencies, setCurrencies] = useState<Currency[]>([]);
   const [form] = Form.useForm();
   const { doRequest } = useRequest({ setLoading });
+  const [activeTabKey, setActiveTabKey] = useState<string>('Details');
+  const toFocus = useRef<any>();
 
   useEffect(() => {
     const getCreators = async () => {
@@ -207,15 +210,38 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
       setLoading(false);
       message.success('Register updated with success.');
       user.id ? onSave?.(user) : onSave?.({ ...user, id: result });
-    } catch (error) {
+    } catch (error: any) {
       setLoading(false);
+      message.error('Error: ' + error.error);
     }
+  };
+
+  const handleFinishFailed = (errorFields: any[]) => {
+    message.error('Error: ' + errorFields[0].errors[0]);
+
+    if (!toFocus.current) {
+      const id = errorFields[0].name[0];
+      const element = document.getElementById(id);
+
+      switch (id) {
+        case 'userName':
+          setActiveTabKey('Details');
+          break;
+        default:
+          console.log('Something went wrong.');
+      }
+      scrollIntoView(element);
+    }
+  };
+
+  const handleTabChange = (activeKey: string) => {
+    setActiveTabKey(activeKey);
   };
 
   return (
     <>
       <PageHeader
-        title={fan ? `${fan.userName} Update` : 'New Fan'}
+        title={fan ? `${fan.userName ?? ''} Update` : 'New Fan'}
         extra={[
           <Button
             key="1"
@@ -248,13 +274,13 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
             : undefined
         }
         onFinish={onFinish}
-        onFinishFailed={({ errorFields }) => {
-          errorFields.forEach(errorField => {
-            message.error('Error: ' + errorField.errors[0]);
-          });
-        }}
+        onFinishFailed={({ errorFields }) => handleFinishFailed(errorFields)}
       >
-        <Tabs defaultActiveKey="Details">
+        <Tabs
+          defaultActiveKey="Details"
+          activeKey={activeTabKey}
+          onChange={handleTabChange}
+        >
           <Tabs.TabPane forceRender tab="Details" key="Details">
             <Row gutter={8}>
               {fan && (
@@ -275,7 +301,7 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
                     },
                   ]}
                 >
-                  <Input />
+                  <Input id="userName" />
                 </Form.Item>
               </Col>
               <Col lg={8} xs={24}>
@@ -405,7 +431,7 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
           <Tabs.TabPane
             forceRender
             tab="Following Creators"
-            key="FollowingCreators"
+            key="Following Creators"
           >
             <Row gutter={8}>
               <Col lg={24} xs={24}>
@@ -464,7 +490,7 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
           <Tabs.TabPane
             forceRender
             tab="Following Categories"
-            key="FollowingCategories"
+            key="Following Categories"
           >
             <Row gutter={8}>
               <Col lg={24} xs={24}>
