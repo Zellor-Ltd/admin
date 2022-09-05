@@ -24,7 +24,7 @@ import { useCallback, useContext, useEffect, useState } from 'react';
 import { AppContext } from 'contexts/AppContext';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { deletePromotion, fetchPromotions } from 'services/DiscoClubService';
-import CopyIdToClipboard from 'components/CopyIdToClipboard';
+import CopyValueToClipboard from 'components/CopyValueToClipboard';
 import scrollIntoView from 'scroll-into-view';
 import PromotionDetail from './PromotionDetail';
 
@@ -67,7 +67,7 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
       title: '_id',
       dataIndex: 'id',
       width: '6%',
-      render: id => <CopyIdToClipboard id={id} />,
+      render: id => <CopyValueToClipboard value={id} />,
       align: 'center',
     },
     {

@@ -48,6 +48,7 @@ import { AppContext } from 'contexts/AppContext';
 import { ColumnsType } from 'antd/lib/table';
 import { currencyRender } from 'helpers/currencyRender';
 import scrollIntoView from 'scroll-into-view';
+import CopyValueToClipboard from 'components/CopyValueToClipboard';
 
 const { categoriesKeys, categoriesFields } = categoriesSettings;
 const { getSearchTags, getCategories, removeSearchTagsByCategory } =
@@ -407,7 +408,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
     {
       title: 'Name',
       dataIndex: 'name',
-      width: '25%',
+      width: '18%',
       align: 'center',
       sorter: (a, b): any => {
         if (a.name && b.name) return a.name.localeCompare(b.name);
@@ -419,7 +420,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
     {
       title: 'Country',
       dataIndex: 'country',
-      width: '20%',
+      width: '15%',
       align: 'center',
       sorter: (a, b): any => {
         if (a.country && b.country) return a.country.localeCompare(b.country);
@@ -431,7 +432,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
     {
       title: 'Currency',
       dataIndex: 'currency',
-      width: '15%',
+      width: '10%',
       align: 'center',
       sorter: (a, b): any => {
         if (a.currency && b.currency)
@@ -444,7 +445,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
     {
       title: 'Price',
       dataIndex: 'price',
-      width: '15%',
+      width: '10%',
       align: 'center',
       sorter: (a, b): any => {
         if (a.price && b.price) return a.price - b.price;
@@ -458,7 +459,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
     {
       title: 'Link',
       dataIndex: 'link',
-      width: '20%',
+      width: '32%',
       align: 'center',
       sorter: (a, b): any => {
         if (a.link && b.link) return a.link.localeCompare(b.link);
@@ -471,6 +472,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
           <div style={{ display: 'grid', placeItems: 'stretch' }}>
             <div
               style={{
+                padding: '0.5rem',
                 textOverflow: 'ellipsis',
                 overflow: 'hidden',
                 whiteSpace: 'nowrap',
@@ -481,6 +483,13 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
           </div>
         );
       },
+    },
+    {
+      title: 'Copy URL',
+      dataIndex: 'link',
+      width: '10%',
+      render: (_, record: any) => <CopyValueToClipboard value={record.link} />,
+      align: 'center',
     },
   ];
 
@@ -499,6 +508,23 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
 
   const handleTabChange = (value: string) => {
     setActiveTabKey(value);
+  };
+
+  const handleImageChange = (
+    _: Image,
+    sourceProp: string,
+    removed?: boolean
+  ) => {
+    if (removed) {
+      if (sourceProp !== 'image')
+        form.setFieldsValue({ [sourceProp]: undefined });
+      else
+        form.setFieldsValue({
+          image: form
+            .getFieldValue([sourceProp])
+            .filter((item: any) => item.status !== 'removed'),
+        });
+    }
   };
 
   return (
@@ -1014,6 +1040,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
               </Col>
             </Row>
             <Table
+              className="mb-1"
               rowKey="id"
               columns={storeColumns}
               dataSource={_product?.stores}
@@ -1036,6 +1063,11 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                     onFitTo={onFitTo}
                     onRollback={onRollback}
                     disabled={isLive}
+                    onImageChange={(
+                      image: Image,
+                      _: string,
+                      removed?: boolean
+                    ) => handleImageChange(image, 'tagImage', removed)}
                   />
                 </Form.Item>
               </Col>
@@ -1049,6 +1081,11 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                     onFitTo={onFitTo}
                     onRollback={onRollback}
                     disabled={isLive}
+                    onImageChange={(
+                      image: Image,
+                      _: string,
+                      removed?: boolean
+                    ) => handleImageChange(image, 'thumbnailUrl', removed)}
                   />
                 </Form.Item>
               </Col>
@@ -1073,6 +1110,11 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                       onFitTo={onFitTo}
                       onRollback={onRollback}
                       disabled={isLive}
+                      onImageChange={(
+                        image: Image,
+                        _: string,
+                        removed?: boolean
+                      ) => handleImageChange(image, 'image', removed)}
                     />
                   </div>
                 </Form.Item>

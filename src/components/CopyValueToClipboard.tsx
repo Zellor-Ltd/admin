@@ -2,12 +2,12 @@ import { CopyOutlined } from '@ant-design/icons';
 import { Button, message } from 'antd';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 
-export default function CopyIdToClipboard({ id }: { id: string }) {
+export default function CopyValueToClipboard({ value }: { value: string }) {
   return (
-    <CopyToClipboard text={id}>
+    <CopyToClipboard text={value}>
       <Button
         onClick={() => {
-          message.success('Copied _id to Clipboard.');
+          message.success('Copied value to Clipboard.');
         }}
         type="link"
         style={{

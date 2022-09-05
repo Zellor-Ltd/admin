@@ -2,7 +2,7 @@ import { Col, Row, Popconfirm, Button, Table, Typography } from 'antd';
 import { useRequest } from '../../hooks/useRequest';
 import { DeleteOutlined } from '@ant-design/icons';
 import moment from 'moment';
-import CopyIdToClipboard from '../../components/CopyIdToClipboard';
+import CopyValueToClipboard from '../../components/CopyValueToClipboard';
 import React, { useContext, useEffect, useState } from 'react';
 import { AppContext } from 'contexts/AppContext';
 import { fetchPreRegs, deletePreReg } from '../../services/DiscoClubService';
@@ -44,7 +44,7 @@ const PreRegisteredUsers: React.FC<DashboardProps> = () => {
       title: '_id',
       dataIndex: 'id',
       width: '5%',
-      render: (id: any) => <CopyIdToClipboard id={id} />,
+      render: (id: any) => <CopyValueToClipboard value={id} />,
       align: 'center',
     },
     { title: 'Email', dataIndex: 'email', width: '15%' },

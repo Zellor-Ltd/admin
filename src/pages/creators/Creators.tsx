@@ -19,7 +19,7 @@ import {
   Typography,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import CopyIdToClipboard from 'components/CopyIdToClipboard';
+import CopyValueToClipboard from 'components/CopyValueToClipboard';
 import { Creator } from 'interfaces/Creator';
 import React, { useContext, useEffect, useState } from 'react';
 import { AppContext } from 'contexts/AppContext';
@@ -99,7 +99,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
       title: '_id',
       dataIndex: 'id',
       width: '3%',
-      render: id => <CopyIdToClipboard id={id} />,
+      render: id => <CopyValueToClipboard value={id} />,
       align: 'center',
     },
     {

@@ -42,7 +42,7 @@ import ReactTagInput from '@pathofdev/react-tag-input';
 import '@pathofdev/react-tag-input/build/index.css';
 import moment from 'moment';
 import { ProductBrand } from 'interfaces/ProductBrand';
-import CopyIdToClipboard from 'components/CopyIdToClipboard';
+import CopyValueToClipboard from 'components/CopyValueToClipboard';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import update from 'immutability-helper';
@@ -512,8 +512,8 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
       dataIndex: 'id',
       width: '20%',
       render: link => (
-        <CopyIdToClipboard
-          id={'https://link.discoclub.com/' + link?.substring(0, 9)}
+        <CopyValueToClipboard
+          value={'https://link.discoclub.com/' + link?.substring(0, 9)}
         />
       ),
       align: 'center',
@@ -543,7 +543,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
       dataIndex: 'videoFeedId',
       width: '15%',
       align: 'center',
-      render: videoFeedId => <CopyIdToClipboard id={videoFeedId} />,
+      render: videoFeedId => <CopyValueToClipboard value={videoFeedId} />,
     },
     {
       title: 'Segment',

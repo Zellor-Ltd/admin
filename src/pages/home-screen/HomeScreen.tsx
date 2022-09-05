@@ -9,7 +9,7 @@ import { useContext, useState, useEffect } from 'react';
 import { AppContext } from 'contexts/AppContext';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { fetchBanners, deleteBanner } from 'services/DiscoClubService';
-import CopyIdToClipboard from '../../components/CopyIdToClipboard';
+import CopyValueToClipboard from '../../components/CopyValueToClipboard';
 import scrollIntoView from 'scroll-into-view';
 import HomeScreenDetail from './HomeScreenDetail';
 
@@ -74,7 +74,7 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
       title: '_id',
       dataIndex: 'id',
       width: '6%',
-      render: id => <CopyIdToClipboard id={id} />,
+      render: id => <CopyValueToClipboard value={id} />,
       align: 'center',
     },
     {

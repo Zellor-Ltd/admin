@@ -40,7 +40,7 @@ import {
   transferStageProduct,
 } from 'services/DiscoClubService';
 import ProductExpandedRow from './ProductExpandedRow';
-import CopyIdToClipboard from 'components/CopyIdToClipboard';
+import CopyValueToClipboard from 'components/CopyValueToClipboard';
 import './Products.scss';
 import { ProductCategory } from 'interfaces/Category';
 import { AppContext } from 'contexts/AppContext';
@@ -315,7 +315,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
       title: 'Id',
       dataIndex: 'id',
       width: '6%',
-      render: id => <CopyIdToClipboard id={id} />,
+      render: id => <CopyValueToClipboard value={id} />,
       align: 'center',
     },
     {
@@ -323,12 +323,32 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
       dataIndex: 'name',
       width: '15%',
       render: (value: string, record: Product, index: number) => (
-        <Link
-          onClick={() => editProduct(record, index, 'default')}
-          to={{ pathname: window.location.pathname, state: record }}
-        >
-          {value}
-        </Link>
+        <>
+          <Link
+            onClick={() => editProduct(record, index, 'default')}
+            to={{ pathname: window.location.pathname, state: record }}
+          >
+            {value}
+          </Link>
+          <span style={{ fontSize: '12px' }}>
+            <br />
+            {record.categories && record.categories.length
+              ? [
+                  record.categories[0].superCategory?.superCategory +
+                    ' / ' +
+                    record.categories[0].category?.category +
+                    (record.categories[0].subCategory
+                      ? ' / ' + record.categories[0].subCategory?.subCategory
+                      : ''),
+                  record.categories[0].subSubCategory
+                    ? ' / ' +
+                      record.categories[0].subSubCategory?.subSubCategory
+                    : '',
+                  record.categories[1] ? ' (...)' : '',
+                ]
+              : ''}
+          </span>
+        </>
       ),
       sorter: (a, b): any => {
         if (a.name && b.name) return a.name.localeCompare(b.name);
