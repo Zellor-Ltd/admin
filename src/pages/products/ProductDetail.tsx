@@ -457,6 +457,23 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
     setSelectedTab(value);
   };
 
+  const handleImageChange = (
+    _: Image,
+    sourceProp: string,
+    removed?: boolean
+  ) => {
+    if (removed) {
+      if (sourceProp !== 'image')
+        form.setFieldsValue({ [sourceProp]: undefined });
+      else
+        form.setFieldsValue({
+          image: form
+            .getFieldValue([sourceProp])
+            .filter((item: any) => item.status !== 'removed'),
+        });
+    }
+  };
+
   return (
     <div className="products-details">
       <PageHeader
@@ -984,6 +1001,11 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                     onFitTo={onFitTo}
                     onRollback={onRollback}
                     disabled={isLive}
+                    onImageChange={(
+                      image: Image,
+                      _: string,
+                      removed?: boolean
+                    ) => handleImageChange(image, 'tagImage', removed)}
                   />
                 </Form.Item>
               </Col>
@@ -997,6 +1019,11 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                     onFitTo={onFitTo}
                     onRollback={onRollback}
                     disabled={isLive}
+                    onImageChange={(
+                      image: Image,
+                      _: string,
+                      removed?: boolean
+                    ) => handleImageChange(image, 'thumbnailUrl', removed)}
                   />
                 </Form.Item>
               </Col>
@@ -1021,6 +1048,11 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                       onFitTo={onFitTo}
                       onRollback={onRollback}
                       disabled={isLive}
+                      onImageChange={(
+                        image: Image,
+                        _: string,
+                        removed?: boolean
+                      ) => handleImageChange(image, 'image', removed)}
                     />
                   </div>
                 </Form.Item>
