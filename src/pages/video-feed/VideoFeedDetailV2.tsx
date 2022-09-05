@@ -64,7 +64,6 @@ interface VideoFeedDetailProps {
   brands: Brand[];
   creators: Creator[];
   productBrands: ProductBrand[];
-  isFetchingProductBrand: boolean;
   setDetails?: (boolean) => void;
   isFanVideo?: boolean;
   template?: boolean;
@@ -77,7 +76,6 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
   brands,
   creators,
   productBrands,
-  isFetchingProductBrand,
   setDetails,
   isFanVideo,
   template,
@@ -129,6 +127,12 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
     useState<ProductBrand>();
   const [currentBrandIcon, setCurrentBrandIcon] = useState<any>();
   const [tagBuffer, setTagBuffer] = useState<any[]>([]);
+  const loaded = useRef<boolean>(false);
+
+  useEffect(() => {
+    if (brands.length && creators.length && productBrands.length)
+      loaded.current = true;
+  }, [brands, creators, productBrands]);
 
   useEffect(() => {
     if (videoTab === 'Links') {
@@ -649,7 +653,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                 <Form.Item name="category" label="Category">
                   <Select
                     placeholder="Please select a category"
-                    disabled={!category.length}
+                    disabled={!loaded.current || !category.length}
                   >
                     {category.map((category: any) => (
                       <Select.Option key={category.name} value={category.name}>
@@ -666,7 +670,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                       placeholder="Please select a creator"
                       onChange={onCreatorChange}
                       value={videoCreator?.id}
-                      disabled={!creators.length}
+                      disabled={!loaded.current}
                       filterOption={onSearch}
                       allowClear
                       showSearch
@@ -759,7 +763,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                 <Form.Item name="language" label="Language">
                   <Select
                     placeholder="Please select a language"
-                    disabled={!language.length}
+                    disabled={!loaded.current || !language.length}
                   >
                     {language.map((lang: any) => (
                       <Select.Option key={lang.value} value={lang.value}>
@@ -781,7 +785,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                     id="videoType"
                     mode="multiple"
                     placeholder="Please select a Video Type"
-                    disabled={!videoType.length}
+                    disabled={!loaded.current || !videoType.length}
                   >
                     {videoType.map((type: any) => (
                       <Select.Option
@@ -957,7 +961,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                     <Select
                       id="productBrand"
                       placeholder="Select a Brand"
-                      disabled={isFetchingProductBrand}
+                      disabled={!loaded.current}
                       onChange={onChangeProductBrand}
                       allowClear={false}
                       showSearch
@@ -1036,7 +1040,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                     <Select
                       id="creator"
                       placeholder="Select a Creator"
-                      disabled={!creators.length}
+                      disabled={!loaded.current}
                       onChange={onChangeCreator}
                       style={{ width: '100%' }}
                       showSearch
@@ -1074,7 +1078,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
               <Col lg={4} xs={24}>
                 <Typography.Title level={5}>Creator</Typography.Title>
                 <Select
-                  disabled={!creators.length}
+                  disabled={!loaded.current}
                   style={{ width: '100%' }}
                   onSelect={onSelectCreator}
                   value={videoCreator?.id}
@@ -1093,7 +1097,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
               <Col lg={4} xs={24}>
                 <Typography.Title level={5}>Social platform</Typography.Title>
                 <Select
-                  disabled={!socialPlatform.length}
+                  disabled={!loaded.current || !socialPlatform.length}
                   style={{ width: '100%' }}
                   onSelect={setSelectedSocialPlatform}
                   value={selectedSocialPlatform}
@@ -1117,7 +1121,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
               </Col>
               <Col lg={4} xs={24}>
                 <Select
-                  disabled={!linkType.length}
+                  disabled={!loaded.current || !linkType.length}
                   style={{ width: '100%' }}
                   onSelect={setSelectedLinkType}
                   value={selectedLinkType}
@@ -1346,6 +1350,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
             setShowBrandForm={setShowBrandForm}
             brand={selectedBrand}
             brands={brands}
+            productBrands={productBrands}
           />
         )}
         {showTagForm && (

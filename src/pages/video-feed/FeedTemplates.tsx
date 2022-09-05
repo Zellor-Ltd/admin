@@ -44,7 +44,6 @@ const FeedTemplates: React.FC<RouteComponentProps> = () => {
   const [details, setDetails] = useState<boolean>(false);
   const [creators, setCreators] = useState<Creator[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
-  const [isFetchingProductBrands, setIsFetchingProductBrands] = useState(false);
   const [productBrands, setProductBrands] = useState([]);
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [loaded, setLoaded] = useState<boolean>(false);
@@ -176,10 +175,8 @@ const FeedTemplates: React.FC<RouteComponentProps> = () => {
       setBrands(response.results);
     }
     async function getProductBrands() {
-      setIsFetchingProductBrands(true);
       const response: any = await fetchProductBrands();
       setProductBrands(response.results);
-      setIsFetchingProductBrands(false);
     }
     await Promise.all([getcreators(), getBrands(), getProductBrands()]);
   };
@@ -249,7 +246,6 @@ const FeedTemplates: React.FC<RouteComponentProps> = () => {
           brands={brands}
           creators={creators}
           productBrands={productBrands}
-          isFetchingProductBrand={isFetchingProductBrands}
           setDetails={setDetails}
           template
         />

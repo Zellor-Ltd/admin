@@ -781,7 +781,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
           brands={brands}
           creators={creators}
           productBrands={productBrands}
-          isFetchingProductBrand={isFetchingProductBrands}
           setDetails={setDetails}
         />
       )}

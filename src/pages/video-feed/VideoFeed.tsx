@@ -72,12 +72,9 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const [selectedVideoFeed, setSelectedVideoFeed] = useState<FeedItem>();
   const [loading, setLoading] = useState(false);
   const [details, setDetails] = useState<boolean>(false);
-  const [isFetchingCategories, setIsFetchingCategories] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
   const [creators, setCreators] = useState<Creator[]>([]);
-  const [isFetchingBrands, setIsFetchingBrands] = useState(false);
   const [brands, setBrands] = useState<Brand[]>([]);
-  const [isFetchingProductBrands, setIsFetchingProductBrands] = useState(false);
   const [productBrands, setProductBrands] = useState([]);
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [loaded, setLoaded] = useState<boolean>(false);
@@ -407,22 +404,16 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       setCreators(response.results);
     }
     async function getCategories() {
-      setIsFetchingCategories(true);
       const response: any = await fetchCategories();
       setCategories(response.results);
-      setIsFetchingCategories(false);
     }
     async function getBrands() {
-      setIsFetchingBrands(true);
       const response: any = await fetchBrands();
       setBrands(response.results);
-      setIsFetchingBrands(false);
     }
     async function getProductBrands() {
-      setIsFetchingProductBrands(true);
       const response: any = await fetchProductBrands();
       setProductBrands(response.results);
-      setIsFetchingProductBrands(false);
     }
     await Promise.all([
       getcreators(),
@@ -533,8 +524,8 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                 selectedOption={brandFilter?.id}
                 optionMapping={masterBrandMapping}
                 placeholder={'Select a Master Brand'}
-                loading={isFetchingBrands}
-                disabled={isFetchingBrands || loading}
+                loading={!brands}
+                disabled={!brands || loading}
                 allowClear={true}
               />
             </Col>
@@ -547,8 +538,8 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                 selectedOption={productBrandFilter}
                 optionMapping={productBrandMapping}
                 placeholder={'Select a Product Brand'}
-                loading={isFetchingProductBrands}
-                disabled={isFetchingProductBrands || loading}
+                loading={!productBrands}
+                disabled={!productBrands || loading}
                 allowClear={true}
               />
             </Col>
@@ -592,8 +583,8 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                 optionMapping={categoryMapping}
                 placeholder={'Select a Category'}
                 allowClear={true}
-                loading={isFetchingCategories}
-                disabled={isFetchingCategories || loading}
+                loading={!categories}
+                disabled={!categories || loading}
               />
             </Col>
             <Col lg={5} xs={24}>
@@ -781,7 +772,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
           brands={brands}
           creators={creators}
           productBrands={productBrands}
-          isFetchingProductBrand={isFetchingProductBrands}
           setDetails={setDetails}
         />
       )}
