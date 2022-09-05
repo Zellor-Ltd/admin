@@ -6,6 +6,7 @@ import { ProductBrand } from './ProductBrand';
 import { Image } from './Image';
 
 export interface Product {
+  apiCategory?: string;
   stores?: any[];
   size?: string;
   colourTitle?: string;
