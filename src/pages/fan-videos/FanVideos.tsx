@@ -69,12 +69,9 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
   const [selectedVideoFeed, setSelectedVideoFeed] = useState<FeedItem>();
   const [loading, setLoading] = useState(false);
   const [details, setDetails] = useState<boolean>(false);
-  const [isFetchingCategories, setIsFetchingCategories] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
   const [creators, setCreators] = useState<Creator[]>([]);
-  const [isFetchingBrands, setIsFetchingBrands] = useState(false);
   const [brands, setBrands] = useState<Brand[]>([]);
-  const [isFetchingProductBrands, setIsFetchingProductBrands] = useState(false);
   const [productBrands, setProductBrands] = useState([]);
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [loaded, setLoaded] = useState<boolean>(false);
@@ -94,6 +91,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
   const [indexFilter, setIndexFilter] = useState<number>();
   const [creatorFilter, setCreatorFilter] = useState<string>();
   const inputRef = useRef<any>(null);
+  const loadingResources = useRef<boolean>(true);
   const [activeKey, setActiveKey] = useState<string>('-1');
   const [offset, setOffset] = useState<number>(64);
   const [panelStyle, setPanelStyle] = useState<React.CSSProperties>({
@@ -398,29 +396,23 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
       setCreators(response.results);
     }
     async function getCategories() {
-      setIsFetchingCategories(true);
       const response: any = await fetchCategories();
       setCategories(response.results);
-      setIsFetchingCategories(false);
     }
     async function getBrands() {
-      setIsFetchingBrands(true);
       const response: any = await fetchBrands();
       setBrands(response.results);
-      setIsFetchingBrands(false);
     }
     async function getProductBrands() {
-      setIsFetchingProductBrands(true);
       const response: any = await fetchProductBrands();
       setProductBrands(response.results);
-      setIsFetchingProductBrands(false);
     }
     await Promise.all([
       getcreators(),
       getCategories(),
       getBrands(),
       getProductBrands(),
-    ]);
+    ]).then(() => (loadingResources.current = false));
   };
 
   const search = rows => {
@@ -536,7 +528,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
               Search
             </Typography.Title>
             <Input
-              disabled={loading}
+              disabled={loadingResources.current || loading}
               ref={inputRef}
               onChange={event => setTitleFilter(event.target.value)}
               suffix={<SearchOutlined />}
@@ -554,8 +546,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
               selectedOption={brandFilter?.id}
               optionMapping={masterBrandMapping}
               placeholder="Select a Master Brand"
-              loading={isFetchingBrands}
-              disabled={isFetchingBrands || loading}
+              disabled={loadingResources.current || loading}
               allowClear
             />
           </Col>
@@ -568,8 +559,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
               selectedOption={productBrandFilter}
               optionMapping={productBrandMapping}
               placeholder="Select a Product Brand"
-              loading={isFetchingProductBrands}
-              disabled={isFetchingProductBrands || loading}
+              disabled={loadingResources.current || loading}
               allowClear
             />
           </Col>
@@ -577,7 +567,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
             <Typography.Title level={5}>Status</Typography.Title>
             <Select
               placeholder="Select a Status"
-              disabled={loading}
+              disabled={loadingResources.current || loading}
               onChange={setStatusFilter}
               style={{ width: '100%' }}
               filterOption={(input, option) =>
@@ -613,14 +603,13 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
               optionMapping={categoryMapping}
               placeholder="Select a Category"
               allowClear
-              loading={isFetchingCategories}
-              disabled={isFetchingCategories || loading}
+              disabled={loadingResources.current || loading}
             />
           </Col>
           <Col lg={6} xs={24}>
             <Typography.Title level={5}>Start Index</Typography.Title>
             <InputNumber
-              disabled={loading}
+              disabled={loadingResources.current || loading}
               min={0}
               onChange={startIndex => setIndexFilter(startIndex ?? undefined)}
               placeholder="Select an Index"
@@ -631,7 +620,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
             <Typography.Title level={5}>Creator</Typography.Title>
             <Select
               placeholder="Select a Creator"
-              disabled={!creators.length || loading}
+              disabled={loadingResources.current || loading}
               onChange={setCreatorFilter}
               value={creatorFilter}
               style={{ width: '100%' }}

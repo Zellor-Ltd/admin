@@ -52,7 +52,6 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   const [details, setDetails] = useState<boolean>(false);
   const [fans, setFans] = useState<Fan[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
-  const [isFetchingBrands, setIsFetchingBrands] = useState(false);
   const [searchText, setSearchText] = useState<string>('');
   const searchInput = useRef<Input>(null);
   const [loaded, setLoaded] = useState<boolean>(false);
@@ -707,10 +706,8 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   useEffect(() => {
     const getBrands = async () => {
       try {
-        setIsFetchingBrands(true);
         const { results }: any = await fetchBrands();
         setBrands(results.filter((brand: any) => brand.brandName));
-        setIsFetchingBrands(false);
       } catch (e) {
       } finally {
       }
@@ -787,8 +784,8 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
                     style={{ width: '100%' }}
                     placeholder="Select a Master Brand"
                     value={brandId}
-                    loading={isFetchingBrands}
-                    disabled={isFetchingBrands || refreshing}
+                    loading={!brands.length}
+                    disabled={!brands.length || refreshing}
                     showSearch
                     filterOption={(input, option) =>
                       !!option?.children
@@ -819,7 +816,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
                     placeholder="Search by Fan E-mail"
                     options={fans}
                     input={fanFilterInput}
-                    disabled={isFetchingBrands || refreshing}
+                    disabled={!brands.length || refreshing}
                     onInputKeyDown={(event: HTMLInputElement) =>
                       handleKeyDown(event)
                     }

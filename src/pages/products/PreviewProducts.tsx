@@ -61,14 +61,10 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
   const saveProductFn = saveStagingProduct;
   const [brands, setBrands] = useState<Brand[]>([]);
   const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
-  const [isFetchingBrands, setIsFetchingBrands] = useState(false);
-  const [isFetchingProductBrands, setIsFetchingProductBrands] = useState(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [disabled, setDisabled] = useState<boolean>(false);
-  const [fetchingCategories, setFetchingCategories] = useState(false);
-  const { fetchAllCategories, allCategories } = useAllCategories({
-    setLoading: setFetchingCategories,
-  });
+  const loadingResources = useRef<boolean>(true);
+  const { fetchAllCategories, allCategories } = useAllCategories({});
 
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
   const [selectedRows, setSelectedRows] = useState<Product[]>([]);
@@ -205,20 +201,20 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
 
   useMount(async () => {
     const getProductBrands = async () => {
-      setIsFetchingProductBrands(true);
       const { results }: any = await fetchProductBrands();
       setProductBrands(results);
-      setIsFetchingProductBrands(false);
     };
 
     const getBrands = async () => {
-      setIsFetchingBrands(true);
       const { results }: any = await fetchBrands();
       setBrands(results);
-      setIsFetchingBrands(false);
     };
 
-    await Promise.all([getBrands(), getProductBrands(), fetchAllCategories()]);
+    await Promise.all([
+      getBrands(),
+      getProductBrands(),
+      fetchAllCategories(),
+    ]).then(() => (loadingResources.current = false));
   });
 
   const onAlternateViewSaveChanges = async (entity: Product) => {
@@ -743,8 +739,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
               product={currentProduct}
               productBrand={currentProductBrand}
               brand={currentMasterBrand}
-              isFetchingBrands={isFetchingBrands}
-              isFetchingProductBrand={isFetchingProductBrands}
+              loadingResources={loadingResources.current}
               isLive={false}
             />
           );
@@ -769,7 +764,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
             <Col lg={6} xs={24}>
               <Typography.Title level={5}>Product Name</Typography.Title>
               <Input
-                disabled={loading || disabled}
+                disabled={loadingResources.current || loading || disabled}
                 ref={inputRef}
                 onChange={event => setSearchFilter(event.target.value)}
                 suffix={<SearchOutlined />}
@@ -787,8 +782,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                 selectedOption={brandFilter?.brandName}
                 optionMapping={optionMapping}
                 placeholder="Select a Master Brand"
-                loading={isFetchingBrands}
-                disabled={isFetchingBrands || loading || disabled}
+                disabled={loadingResources.current || loading || disabled}
                 allowClear
               ></SimpleSelect>
             </Col>
@@ -803,15 +797,14 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                 selectedOption={productBrandFilter?.brandName}
                 optionMapping={optionMapping}
                 placeholder="Select a Product Brand"
-                loading={isFetchingProductBrands}
-                disabled={isFetchingProductBrands || loading || disabled}
+                disabled={loadingResources.current || loading || disabled}
                 allowClear
               ></SimpleSelect>
             </Col>
             <Col lg={6} xs={24}>
               <Typography.Title level={5}>Status</Typography.Title>
               <Select
-                disabled={loading || disabled}
+                disabled={loadingResources.current || loading || disabled}
                 placeholder="Select a Status"
                 style={{ width: '100%' }}
                 onChange={setProductStatusFilter}
@@ -837,8 +830,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                 selectedOption={currentSuperCategory?.id}
                 optionMapping={productSuperCategoryOptionMapping}
                 placeholder="Select a Super Category"
-                loading={fetchingCategories}
-                disabled={fetchingCategories || loading || disabled}
+                disabled={loadingResources.current || loading || disabled}
                 allowClear
               ></SimpleSelect>
             </Col>
@@ -855,8 +847,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                 selectedOption={currentCategory?.id ?? null}
                 optionMapping={productCategoryOptionMapping}
                 placeholder="Select a Category"
-                loading={fetchingCategories}
-                disabled={fetchingCategories || loading || disabled}
+                disabled={loadingResources.current || loading || disabled}
                 allowClear
               ></SimpleSelect>
             </Col>
@@ -879,9 +870,8 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                 selectedOption={currentSubCategory?.id ?? null}
                 optionMapping={productSubCategoryOptionMapping}
                 placeholder="Select a Sub Category"
-                loading={fetchingCategories}
                 disabled={
-                  fetchingCategories ||
+                  loadingResources.current ||
                   loading ||
                   disabled ||
                   !allCategories['Sub Category'].filter(item => {
@@ -921,9 +911,8 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                 selectedOption={currentSubSubCategory?.id ?? null}
                 optionMapping={productSubSubCategoryOptionMapping}
                 placeholder="Select a Sub Sub Category"
-                loading={fetchingCategories}
                 disabled={
-                  fetchingCategories ||
+                  loadingResources.current ||
                   loading ||
                   disabled ||
                   !allCategories['Sub Sub Category'].filter(item => {
@@ -947,7 +936,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
             <Col lg={6} xs={24}>
               <Typography.Title level={5}>Run ID</Typography.Title>
               <Input
-                disabled={loading || disabled}
+                disabled={loadingResources.current || loading || disabled}
                 onChange={evt => {
                   setRunIdFilter(evt.target.value);
                 }}
@@ -959,7 +948,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
             </Col>
             <Col lg={6} xs={24}>
               <Checkbox
-                disabled={loading || disabled}
+                disabled={loadingResources.current || loading || disabled}
                 onChange={handleFilterOutOfStock}
                 className={isMobile ? 'mt-1 mb-1' : 'mt-2 mb-1 ml-05'}
               >
@@ -968,7 +957,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
             </Col>
             <Col lg={6} xs={24}>
               <Checkbox
-                disabled={loading || disabled}
+                disabled={loadingResources.current || loading || disabled}
                 onChange={handleFilterClassified}
                 className={isMobile ? 'mb-2' : 'mt-2 mb-1 ml-05'}
               >

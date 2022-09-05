@@ -71,13 +71,11 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const [segmentForm] = Form.useForm();
   const [selectedVideoFeed, setSelectedVideoFeed] = useState<FeedItem>();
   const [loading, setLoading] = useState(false);
+  const loadingResources = useRef<boolean>(true);
   const [details, setDetails] = useState<boolean>(false);
-  const [isFetchingCategories, setIsFetchingCategories] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
   const [creators, setCreators] = useState<Creator[]>([]);
-  const [isFetchingBrands, setIsFetchingBrands] = useState(false);
   const [brands, setBrands] = useState<Brand[]>([]);
-  const [isFetchingProductBrands, setIsFetchingProductBrands] = useState(false);
   const [productBrands, setProductBrands] = useState([]);
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [loaded, setLoaded] = useState<boolean>(false);
@@ -103,6 +101,21 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   });
   const filterPanelHeight = useRef<number>();
   const windowHeight = window.innerHeight;
+
+  useEffect(() => {
+    getDetailsResources();
+  }, []);
+
+  useEffect(() => {
+    if (selectedVideoFeed) {
+      selectedVideoFeed.index =
+        selectedVideoFeed?.index !== undefined
+          ? selectedVideoFeed?.index
+          : 1000;
+    }
+    feedForm.setFieldsValue(selectedVideoFeed);
+    segmentForm.setFieldsValue(selectedVideoFeed);
+  }, [selectedVideoFeed]);
 
   useEffect(() => {
     const panel = document.getElementById('filterPanel');
@@ -357,21 +370,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     },
   ];
 
-  useEffect(() => {
-    getDetailsResources();
-  }, []);
-
-  useEffect(() => {
-    if (selectedVideoFeed) {
-      selectedVideoFeed.index =
-        selectedVideoFeed?.index !== undefined
-          ? selectedVideoFeed?.index
-          : 1000;
-    }
-    feedForm.setFieldsValue(selectedVideoFeed);
-    segmentForm.setFieldsValue(selectedVideoFeed);
-  }, [selectedVideoFeed]);
-
   const scrollToCenter = (index: number) => {
     scrollIntoView(
       document.querySelector(`.scrollable-row-${index}`) as HTMLElement
@@ -407,29 +405,23 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       setCreators(response.results);
     }
     async function getCategories() {
-      setIsFetchingCategories(true);
       const response: any = await fetchCategories();
       setCategories(response.results);
-      setIsFetchingCategories(false);
     }
     async function getBrands() {
-      setIsFetchingBrands(true);
       const response: any = await fetchBrands();
       setBrands(response.results);
-      setIsFetchingBrands(false);
     }
     async function getProductBrands() {
-      setIsFetchingProductBrands(true);
       const response: any = await fetchProductBrands();
       setProductBrands(response.results);
-      setIsFetchingProductBrands(false);
     }
     await Promise.all([
       getcreators(),
       getCategories(),
       getBrands(),
       getProductBrands(),
-    ]);
+    ]).then(() => (loadingResources.current = false));
   };
 
   const search = rows => {
@@ -515,7 +507,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                 Title
               </Typography.Title>
               <Input
-                disabled={loading}
+                disabled={loadingResources.current || loading}
                 ref={inputRef}
                 onChange={event => setTitleFilter(event.target.value)}
                 suffix={<SearchOutlined />}
@@ -533,8 +525,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                 selectedOption={brandFilter?.id}
                 optionMapping={masterBrandMapping}
                 placeholder="Select a Master Brand"
-                loading={isFetchingBrands}
-                disabled={isFetchingBrands || loading}
+                disabled={loadingResources.current || loading}
                 allowClear
               />
             </Col>
@@ -547,8 +538,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                 selectedOption={productBrandFilter}
                 optionMapping={productBrandMapping}
                 placeholder="Select a Product Brand"
-                loading={isFetchingProductBrands}
-                disabled={isFetchingProductBrands || loading}
+                disabled={loadingResources.current || loading}
                 allowClear
               />
             </Col>
@@ -556,7 +546,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
               <Typography.Title level={5}>Status</Typography.Title>
               <Select
                 placeholder="Select a Status"
-                disabled={loading}
+                disabled={loadingResources.current || loading}
                 onChange={setStatusFilter}
                 style={{ width: '100%' }}
                 filterOption={(input, option) =>
@@ -592,8 +582,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                 optionMapping={categoryMapping}
                 placeholder="Select a Category"
                 allowClear
-                loading={isFetchingCategories}
-                disabled={isFetchingCategories || loading}
+                disabled={loadingResources.current || loading}
               />
             </Col>
             <Col lg={5} xs={24}>
@@ -606,12 +595,13 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                 optionMapping={videoTypeMapping || loading}
                 placeholder="Select a Video Type"
                 allowClear
+                disabled={loadingResources.current || loading}
               />
             </Col>
             <Col lg={5} xs={24}>
               <Typography.Title level={5}>Start Index</Typography.Title>
               <InputNumber
-                disabled={loading}
+                disabled={loadingResources.current || loading}
                 min={0}
                 onChange={startIndex => setIndexFilter(startIndex ?? undefined)}
                 placeholder="Select an Index"
@@ -622,7 +612,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
               <Typography.Title level={5}>Creator</Typography.Title>
               <Select
                 placeholder="Select a Creator"
-                disabled={!creators.length || loading}
+                disabled={loadingResources.current || loading}
                 onChange={setCreatorFilter}
                 value={creatorFilter}
                 style={{ width: '100%' }}
@@ -649,7 +639,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
             <Col lg={5} xs={24}>
               <Typography.Title level={5}>Date Sort</Typography.Title>
               <Select
-                disabled={loading}
+                disabled={loadingResources.current || loading}
                 onChange={setDateSortFilter}
                 placeholder="Select a Sorting Option"
                 style={{ width: '100%' }}

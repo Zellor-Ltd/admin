@@ -79,12 +79,8 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
   const [currentGroup, setCurrentGroup] = useState<Product>();
   const [brands, setBrands] = useState<Brand[]>([]);
   const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
-  const [isFetchingBrands, setIsFetchingBrands] = useState(false);
-  const [isFetchingProductBrands, setIsFetchingProductBrands] = useState(false);
-  const [fetchingCategories, setFetchingCategories] = useState(false);
-  const { fetchAllCategories, allCategories } = useAllCategories({
-    setLoading: setFetchingCategories,
-  });
+  const loadingResources = useRef<boolean>(true);
+  const { fetchAllCategories, allCategories } = useAllCategories({});
   const loaded = useRef<boolean>(false);
   const [details, setDetails] = useState<boolean>(false);
   const { usePageFilter } = useContext(AppContext);
@@ -170,20 +166,20 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
 
   useMount(async () => {
     const getProductBrands = async () => {
-      setIsFetchingProductBrands(true);
       const { results }: any = await fetchProductBrands();
       setProductBrands(results);
-      setIsFetchingProductBrands(false);
     };
 
     const getBrands = async () => {
-      setIsFetchingBrands(true);
       const { results }: any = await fetchBrands();
       setBrands(results);
-      setIsFetchingBrands(false);
     };
 
-    await Promise.all([getBrands(), getProductBrands(), fetchAllCategories()]);
+    await Promise.all([
+      getBrands(),
+      getProductBrands(),
+      fetchAllCategories(),
+    ]).then(() => (loadingResources.current = false));
   });
 
   const handleFilterClassified = (e: CheckboxChangeEvent) => {
@@ -304,7 +300,7 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
               <Col lg={6} xs={24}>
                 <Typography.Title level={5}>Product Name</Typography.Title>
                 <Input
-                  disabled={loading}
+                  disabled={loadingResources.current || loading}
                   value={searchFilter}
                   onChange={event => setSearchFilter(event.target.value)}
                   placeholder="Search by Name"
@@ -320,8 +316,7 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
                   selectedOption={brandFilter?.brandName}
                   optionMapping={optionMapping}
                   placeholder="Select a Master Brand"
-                  loading={isFetchingBrands}
-                  disabled={isFetchingBrands || loading}
+                  disabled={loadingResources.current || loading}
                   allowClear
                 ></SimpleSelect>
               </Col>
@@ -336,15 +331,14 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
                   selectedOption={productBrandFilter?.brandName}
                   optionMapping={optionMapping}
                   placeholder="Select a Product Brand"
-                  loading={isFetchingProductBrands}
-                  disabled={isFetchingProductBrands || loading}
+                  disabled={loadingResources.current || loading}
                   allowClear
                 ></SimpleSelect>
               </Col>
               <Col lg={6} xs={24}>
                 <Typography.Title level={5}>Status</Typography.Title>
                 <Select
-                  disabled={loading}
+                  disabled={loadingResources.current || loading}
                   placeholder="Select a Status"
                   style={{ width: '100%' }}
                   onChange={setProductStatusFilter}
@@ -370,8 +364,7 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
                   selectedOption={currentSuperCategory?.id}
                   optionMapping={productSuperCategoryOptionMapping}
                   placeholder="Select a Super Category"
-                  loading={fetchingCategories}
-                  disabled={fetchingCategories || loading}
+                  disabled={loadingResources.current || loading}
                   allowClear
                 ></SimpleSelect>
               </Col>
@@ -389,8 +382,7 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
                   selectedOption={currentCategory?.id ?? null}
                   optionMapping={productCategoryOptionMapping}
                   placeholder="Select a Category"
-                  loading={fetchingCategories}
-                  disabled={fetchingCategories || loading}
+                  disabled={loadingResources.current || loading}
                   allowClear
                 ></SimpleSelect>
               </Col>
@@ -413,9 +405,8 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
                   selectedOption={currentSubCategory?.id ?? null}
                   optionMapping={productSubCategoryOptionMapping}
                   placeholder="Select a Sub Category"
-                  loading={fetchingCategories}
                   disabled={
-                    fetchingCategories ||
+                    loadingResources.current ||
                     loading ||
                     !allCategories['Sub Category'].filter(item => {
                       return (
@@ -454,9 +445,8 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
                   selectedOption={currentSubSubCategory?.id ?? null}
                   optionMapping={productSubSubCategoryOptionMapping}
                   placeholder="Select a Sub Sub Category"
-                  loading={fetchingCategories}
                   disabled={
-                    fetchingCategories ||
+                    loadingResources.current ||
                     loading ||
                     !allCategories['Sub Sub Category'].filter(item => {
                       return (
@@ -479,7 +469,7 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
               <Col lg={6} xs={24}>
                 <Typography.Title level={5}>Run ID</Typography.Title>
                 <Input
-                  disabled={loading}
+                  disabled={loadingResources.current || loading}
                   onChange={evt => {
                     setRunIdFilter(evt.target.value);
                   }}
@@ -491,7 +481,7 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
               </Col>
               <Col lg={6} xs={24}>
                 <Checkbox
-                  disabled={loading}
+                  disabled={loadingResources.current || loading}
                   onChange={handleFilterOutOfStock}
                   className={isMobile ? 'mt-1 mb-1' : 'mt-2 mb-1 ml-05'}
                 >
@@ -500,7 +490,7 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
               </Col>
               <Col lg={6} xs={24}>
                 <Checkbox
-                  disabled={loading}
+                  disabled={loadingResources.current || loading}
                   onChange={handleFilterClassified}
                   className={isMobile ? 'mb-2' : 'mt-2 mb-1 ml-05'}
                 >

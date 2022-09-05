@@ -52,13 +52,9 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
   const inputRef = useRef<any>(null);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
-  const [isFetchingBrands, setIsFetchingBrands] = useState(false);
-  const [isFetchingProductBrand, setIsFetchingProductBrand] = useState(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const [fetchingCategories, setFetchingCategories] = useState(false);
-  const { fetchAllCategories, allCategories } = useAllCategories({
-    setLoading: setFetchingCategories,
-  });
+  const loadingResources = useRef<boolean>(true);
+  const { fetchAllCategories, allCategories } = useAllCategories({});
   const { usePageFilter } = useContext(AppContext);
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
   const [productAPITest, setProductAPITest] = useState<Product | null>(null);
@@ -167,21 +163,21 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
   useMount(async () => {
     const getBrands = async () => {
       setLoading(true);
-      setIsFetchingBrands(true);
       const response: any = await fetchBrands();
       setLoading(false);
-      setIsFetchingBrands(false);
       setBrands(response.results);
     };
 
     const getProductBrands = async () => {
-      setIsFetchingProductBrand(true);
       const { results }: any = await fetchProductBrands();
       setProductBrands(results);
-      setIsFetchingProductBrand(false);
     };
 
-    await Promise.all([getBrands(), getProductBrands(), fetchAllCategories()]);
+    await Promise.all([
+      getBrands(),
+      getProductBrands(),
+      fetchAllCategories(),
+    ]).then(() => (loadingResources.current = false));
   });
 
   useEffect(() => {
@@ -571,7 +567,7 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
             <Col lg={6} xs={24}>
               <Typography.Title level={5}>Template Name</Typography.Title>
               <Input
-                disabled={loading}
+                disabled={loadingResources.current || loading}
                 ref={inputRef}
                 onChange={event => setSearchFilter(event.target.value)}
                 suffix={<SearchOutlined />}
@@ -589,8 +585,7 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
                 selectedOption={brandFilter?.brandName}
                 optionMapping={optionMapping}
                 placeholder="Select a Master Brand"
-                loading={isFetchingBrands}
-                disabled={isFetchingBrands || loading}
+                disabled={loadingResources.current || loading}
                 allowClear
               ></SimpleSelect>
             </Col>
@@ -605,15 +600,14 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
                 selectedOption={productBrandFilter?.brandName}
                 optionMapping={optionMapping}
                 placeholder="Select a Product Brand"
-                loading={isFetchingProductBrand}
-                disabled={isFetchingProductBrand || loading}
+                disabled={loadingResources.current || loading}
                 allowClear
               ></SimpleSelect>
             </Col>
             <Col lg={6} xs={24}>
               <Typography.Title level={5}>Status</Typography.Title>
               <Select
-                disabled={loading}
+                disabled={loadingResources.current || loading}
                 placeholder="Select a Status"
                 style={{ width: '100%' }}
                 onChange={(value: string) =>
@@ -641,8 +635,7 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
                 selectedOption={superCategoryFilter?.id}
                 optionMapping={superCategoryOptionMapping}
                 placeholder="Select a Super Category"
-                loading={fetchingCategories}
-                disabled={fetchingCategories || loading}
+                disabled={loadingResources.current || loading}
                 allowClear
               ></SimpleSelect>
             </Col>
@@ -655,8 +648,7 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
                 selectedOption={categoryFilter?.id}
                 optionMapping={categoryOptionMapping}
                 placeholder="Select a Category"
-                loading={fetchingCategories}
-                disabled={fetchingCategories || loading}
+                disabled={loadingResources.current || loading}
                 allowClear
               ></SimpleSelect>
             </Col>
@@ -669,8 +661,7 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
                 selectedOption={subCategoryFilter?.id}
                 optionMapping={subCategoryOptionMapping}
                 placeholder="Select a Sub Category"
-                loading={fetchingCategories}
-                disabled={fetchingCategories || loading}
+                disabled={loadingResources.current || loading}
                 allowClear
               ></SimpleSelect>
             </Col>
@@ -683,15 +674,14 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
                 selectedOption={subSubCategoryFilter?.id}
                 optionMapping={subSubCategoryOptionMapping}
                 placeholder="Select a Sub Sub Category"
-                loading={fetchingCategories}
-                disabled={fetchingCategories || loading}
+                disabled={loadingResources.current || loading}
                 allowClear
               ></SimpleSelect>
             </Col>
             <Col lg={6} xs={24}>
               <Typography.Title level={5}>Run ID</Typography.Title>
               <Input
-                disabled={loading}
+                disabled={loadingResources.current || loading}
                 onChange={evt => {
                   setRunIdFilter(evt.target.value);
                 }}
@@ -703,7 +693,7 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
             </Col>
             <Col lg={6} xs={24}>
               <Checkbox
-                disabled={loading}
+                disabled={loadingResources.current || loading}
                 onChange={handleFilterOutOfStock}
                 className={isMobile ? 'mt-1 mb-2' : 'mt-2 mb-1 ml-05'}
               >
@@ -868,8 +858,7 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
           product={currentTemplate}
           productBrand={currentProductBrand}
           brand={currentMasterBrand}
-          isFetchingBrands={isFetchingBrands}
-          isFetchingProductBrand={isFetchingProductBrand}
+          loadingResources={loadingResources.current}
           isLive={false}
           template
         />

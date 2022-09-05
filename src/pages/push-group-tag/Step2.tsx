@@ -18,7 +18,6 @@ const Step2: React.FC<Step2Props> = ({ selectedTags, onReturn }) => {
   const { isMobile } = useContext(AppContext);
   const [selectedFanGroup, setSelectedFanGroup] = useState<FanGroup>();
   const [fanGroups, setFanGroups] = useState<FanGroup[]>([]);
-  const [isFetchingFanGroups, setIsFetchingFanGroups] = useState(false);
   const { doFetch } = useRequest();
 
   const fanGroupMapping: SelectOption = {
@@ -28,12 +27,10 @@ const Step2: React.FC<Step2Props> = ({ selectedTags, onReturn }) => {
   };
 
   const getResources = async () => {
-    setIsFetchingFanGroups(true);
     const { results }: { results: FanGroup[] } = await doFetch(() =>
       fetchFanGroups()
     );
     setFanGroups(results);
-    setIsFetchingFanGroups(false);
   };
 
   useEffect(() => {
@@ -60,8 +57,7 @@ const Step2: React.FC<Step2Props> = ({ selectedTags, onReturn }) => {
             selectedOption={selectedFanGroup?.name}
             optionMapping={fanGroupMapping}
             placeholder="Select a Fan Group"
-            loading={isFetchingFanGroups}
-            disabled={isFetchingFanGroups}
+            disabled={!fanGroups.length}
             allowClear
             className="mx-1"
           ></SimpleSelect>

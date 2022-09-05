@@ -22,7 +22,6 @@ import MultipleFetchDebounceSelect from '../../components/select/MultipleFetchDe
 
 const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
   const [selectedBrand, setSelectedBrand] = useState<Brand>();
-  const [isFetchingBrands, setIsFetchingBrands] = useState(false);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [selectedFan, setSelectedFan] = useState<Fan | undefined>();
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
@@ -49,10 +48,8 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
   useEffect(() => {
     const getBrands = async () => {
       try {
-        setIsFetchingBrands(true);
         const { results }: any = await fetchBrands();
         setBrands(results.filter((brand: any) => brand.brandName));
-        setIsFetchingBrands(false);
       } catch (e) {}
     };
 
@@ -226,7 +223,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
                   <Typography.Title level={5}>Fan Filter</Typography.Title>
                   <MultipleFetchDebounceSelect
                     style={{ width: '100%' }}
-                    disabled={isFetchingBrands}
+                    disabled={!brands.length}
                     input={userInput}
                     onInput={getFans}
                     onChange={handleChangeFan}
@@ -246,8 +243,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
                       selectedOption={selectedBrand?.brandName}
                       optionMapping={optionMapping}
                       placeholder="Select a Master Brand"
-                      loading={isFetchingBrands}
-                      disabled={isFetchingBrands}
+                      disabled={!brands.length}
                       allowClear
                     ></SimpleSelect>
                   </Col>
