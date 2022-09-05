@@ -13,7 +13,7 @@ import {
   transferStageProduct,
 } from '../../services/DiscoClubService';
 import ProductExpandedRow from './ProductExpandedRow';
-import CopyIdToClipboard from '../../components/CopyIdToClipboard';
+import CopyValueToClipboard from '../../components/CopyValueToClipboard';
 import { ProductBrand } from '../../interfaces/ProductBrand';
 import { Image } from '../../interfaces/Image';
 import scrollIntoView from 'scroll-into-view';
@@ -226,7 +226,7 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
       width: '5%',
       align: 'center',
       shouldCellUpdate: () => false,
-      render: id => <CopyIdToClipboard id={id} />,
+      render: id => <CopyValueToClipboard value={id} />,
     },
     {
       title: 'Name',

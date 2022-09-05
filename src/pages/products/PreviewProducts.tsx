@@ -40,7 +40,7 @@ import {
   transferStageProduct,
 } from 'services/DiscoClubService';
 import ProductExpandedRow from './ProductExpandedRow';
-import CopyIdToClipboard from 'components/CopyIdToClipboard';
+import CopyValueToClipboard from 'components/CopyValueToClipboard';
 import './Products.scss';
 import { ProductCategory } from 'interfaces/Category';
 import { AppContext } from 'contexts/AppContext';
@@ -315,7 +315,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
       title: 'Id',
       dataIndex: 'id',
       width: '6%',
-      render: id => <CopyIdToClipboard id={id} />,
+      render: id => <CopyValueToClipboard value={id} />,
       align: 'center',
     },
     {

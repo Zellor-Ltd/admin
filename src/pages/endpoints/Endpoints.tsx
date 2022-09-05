@@ -6,7 +6,7 @@ import { useContext, useState, useEffect } from 'react';
 import { AppContext } from 'contexts/AppContext';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { fetchEndpoints } from 'services/DiscoClubService';
-import CopyIdToClipboard from 'components/CopyIdToClipboard';
+import CopyValueToClipboard from 'components/CopyValueToClipboard';
 
 const Endpoints: React.FC<RouteComponentProps> = ({ history, location }) => {
   const detailsPathname = `${location.pathname}/endpoint`;
@@ -20,7 +20,7 @@ const Endpoints: React.FC<RouteComponentProps> = ({ history, location }) => {
       title: '_id',
       dataIndex: 'id',
       width: '6%',
-      render: id => <CopyIdToClipboard id={id} />,
+      render: id => <CopyValueToClipboard value={id} />,
       align: 'center',
     },
     {

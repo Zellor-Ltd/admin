@@ -20,7 +20,7 @@ import {
   Typography,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import CopyIdToClipboard from 'components/CopyIdToClipboard';
+import CopyValueToClipboard from 'components/CopyValueToClipboard';
 import { discoBrandId } from 'helpers/constants';
 import { Brand } from 'interfaces/Brand';
 import { useContext, useEffect, useState } from 'react';
@@ -134,7 +134,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
       title: '_id',
       dataIndex: 'id',
       width: '6%',
-      render: (_, record: Brand) => <CopyIdToClipboard id={record.id} />,
+      render: (_, record: Brand) => <CopyValueToClipboard value={record.id} />,
       align: 'center',
     },
     {

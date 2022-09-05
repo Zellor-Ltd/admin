@@ -21,7 +21,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import { AppContext } from 'contexts/AppContext';
 import Highlighter from 'react-highlight-words';
 import { fetchInterests, saveInterests } from 'services/DiscoClubService';
-import CopyIdToClipboard from 'components/CopyIdToClipboard';
+import CopyValueToClipboard from 'components/CopyValueToClipboard';
 
 interface InterestsProps {}
 
@@ -211,7 +211,7 @@ const Interests: React.FC<InterestsProps> = () => {
       title: '_id',
       dataIndex: 'id',
       width: '6%',
-      render: id => <CopyIdToClipboard id={id} />,
+      render: id => <CopyValueToClipboard value={id} />,
       align: 'center',
     },
     {

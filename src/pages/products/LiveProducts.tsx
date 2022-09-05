@@ -22,7 +22,7 @@ import {
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import './Products.scss';
-import CopyIdToClipboard from 'components/CopyIdToClipboard';
+import CopyValueToClipboard from 'components/CopyValueToClipboard';
 import { EditableColumnType } from 'components/EditableTable';
 import { AppContext } from 'contexts/AppContext';
 import useAllCategories from 'hooks/useAllCategories';
@@ -241,7 +241,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
       title: 'Id',
       dataIndex: 'id',
       width: '1%',
-      render: id => <CopyIdToClipboard id={id} />,
+      render: id => <CopyValueToClipboard value={id} />,
       align: 'center',
     },
     {
@@ -368,7 +368,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
       width: '7%',
       align: 'center',
       responsive: ['sm'],
-      render: importRunId => <CopyIdToClipboard id={importRunId} />,
+      render: importRunId => <CopyValueToClipboard value={importRunId} />,
     },
     {
       title: 'Expiration Date',

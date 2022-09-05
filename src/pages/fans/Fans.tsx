@@ -17,7 +17,7 @@ import {
   Typography,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import CopyIdToClipboard from 'components/CopyIdToClipboard';
+import CopyValueToClipboard from 'components/CopyValueToClipboard';
 import EditMultipleButton from 'components/EditMultipleButton';
 import { useRequest } from 'hooks/useRequest';
 import { Fan } from 'interfaces/Fan';
@@ -119,7 +119,7 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
       title: '_id',
       dataIndex: 'id',
       width: '10%',
-      render: id => <CopyIdToClipboard id={id} />,
+      render: id => <CopyValueToClipboard value={id} />,
       align: 'center',
     },
     {

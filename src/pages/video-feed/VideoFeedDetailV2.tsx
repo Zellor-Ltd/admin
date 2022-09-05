@@ -17,8 +17,8 @@ import {
   Select,
   Slider,
   Table,
-    Tabs,
-    Switch,
+  Tabs,
+  Switch,
   Typography,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
@@ -42,7 +42,7 @@ import ReactTagInput from '@pathofdev/react-tag-input';
 import '@pathofdev/react-tag-input/build/index.css';
 import moment from 'moment';
 import { ProductBrand } from 'interfaces/ProductBrand';
-import CopyIdToClipboard from 'components/CopyIdToClipboard';
+import CopyValueToClipboard from 'components/CopyValueToClipboard';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import update from 'immutability-helper';
@@ -124,7 +124,6 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
     useState<ProductBrand>();
   const [currentBrandIcon, setCurrentBrandIcon] = useState<any>();
   const [tagBuffer, setTagBuffer] = useState<any[]>([]);
-
 
   useEffect(() => {
     if (videoTab === 'Links') {
@@ -476,8 +475,8 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
       dataIndex: 'id',
       width: '20%',
       render: link => (
-        <CopyIdToClipboard
-          id={'https://link.discoclub.com/' + link?.substring(0, 9)}
+        <CopyValueToClipboard
+          value={'https://link.discoclub.com/' + link?.substring(0, 9)}
         />
       ),
       align: 'center',
@@ -507,7 +506,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
       dataIndex: 'videoFeedId',
       width: '15%',
       align: 'center',
-      render: videoFeedId => <CopyIdToClipboard id={videoFeedId} />,
+      render: videoFeedId => <CopyValueToClipboard value={videoFeedId} />,
     },
     {
       title: 'Segment',
@@ -810,10 +809,8 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                     >
                       <DatePicker format="DD/MM/YYYY" />
                     </Form.Item>
-                    </Col>
-                    <Col lg={12} xs={24}>
-
-                    </Col>
+                  </Col>
+                  <Col lg={12} xs={24}></Col>
                 </Row>
               </Col>
             </Row>
@@ -864,7 +861,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                                     onClick={evt =>
                                       onDeleteSegment(evt, segmentIndex)
                                     }
-                                        />,
+                                  />,
                                 ]
                               : [
                                   <Button
@@ -875,12 +872,16 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                                     onClick={evt =>
                                       onDeleteSegment(evt, segmentIndex)
                                     }
-                                        />                                        ,
+                                  />,
                                   <div>No Thumbnail</div>,
-                                    ]}
-                                <p/>
-                                <p><a href={segment.shareLink}>{segment.shareLink}</a></p>
-                            </div>                            
+                                ]}
+                            <p />
+                            <p>
+                              <a href={segment.shareLink}>
+                                {segment.shareLink}
+                              </a>
+                            </p>
+                          </div>
                         ))}
                       </div>
                     );
@@ -1112,42 +1113,42 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                 />
               </Col>
             </Row>
-                </Tabs.TabPane>
-                <Tabs.TabPane forceRender tab="Promo" key="Promo">
-                    <Row gutter={8}>
-                        <Col sm={12} lg={6}>
-                            <Form.Item
-                                name="promoEnabled"
-                                label="Enabled"
-                                valuePropName="checked"
-                            >
-                                <Switch />
-                            </Form.Item>
+          </Tabs.TabPane>
+          <Tabs.TabPane forceRender tab="Promo" key="Promo">
+            <Row gutter={8}>
+              <Col sm={12} lg={6}>
+                <Form.Item
+                  name="promoEnabled"
+                  label="Enabled"
+                  valuePropName="checked"
+                >
+                  <Switch />
+                </Form.Item>
 
-                            <Form.Item name="promoMasterBrand" label="Master Brand">
-                                <Select onChange={onChangeBrand}>
-                                    {brands.map(brand => (
-                                        <Select.Option key={brand.id} value={brand.id}>
-                                            {brand.brandName}
-                                        </Select.Option>
-                                    ))}
-                                </Select>
-                            </Form.Item>
+                <Form.Item name="promoMasterBrand" label="Master Brand">
+                  <Select onChange={onChangeBrand}>
+                    {brands.map(brand => (
+                      <Select.Option key={brand.id} value={brand.id}>
+                        {brand.brandName}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Form.Item>
 
-                            <Form.Item name="promoText" label="Headline Text">
-                                <Input />
-                            </Form.Item>
+                <Form.Item name="promoText" label="Headline Text">
+                  <Input />
+                </Form.Item>
 
-                            <Form.Item name="promoCode" label="Coupon Code">
-                                <Input />
-                            </Form.Item>
+                <Form.Item name="promoCode" label="Coupon Code">
+                  <Input />
+                </Form.Item>
 
-                            <Form.Item name="promoDate" label="Date Range (Text format)">
-                                <Input />
-                            </Form.Item>
-                        </Col>                      
-                    </Row>
-                </Tabs.TabPane>
+                <Form.Item name="promoDate" label="Date Range (Text format)">
+                  <Input />
+                </Form.Item>
+              </Col>
+            </Row>
+          </Tabs.TabPane>
         </Tabs>
         <Row gutter={8} justify="end">
           <Col>
@@ -1173,10 +1174,10 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
         </Row>
       </>
     );
-    };
+  };
 
   const onChangeBrand = (key: string) => {
-        setSelectedBrand(brands.find(brand => brand.id === key));
+    setSelectedBrand(brands.find(brand => brand.id === key));
   };
 
   const brandsColumns: ColumnsType<any> = [
