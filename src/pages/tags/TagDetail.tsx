@@ -19,6 +19,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { AppContext } from 'contexts/AppContext';
 import { useSelector } from 'react-redux';
 import { fetchBrands, fetchProducts, saveTag } from 'services/DiscoClubService';
+import scrollIntoView from 'scroll-into-view';
 interface TagDetailProps {
   tag?: Tag;
   onSave?: (record: Tag) => void;
@@ -84,24 +85,30 @@ const TagDetail: React.FC<TagDetailProps> = ({ tag, onSave, onCancel }) => {
     };
   }, [tag, form]);
 
-  const onFinish = () => {
-    form.validateFields().then(async () => {
-      setLoading(true);
-      try {
-        const formTag = form.getFieldsValue(true);
-        formTag.product = products.find(
-          product => product.id === formTag.product?.id
-        );
-        formTag.brand = brands.find(brand => brand.id === formTag.brand?.id);
-        const { result } = await doRequest(() => saveTag(formTag));
-        setLoading(false);
-        message.success('Register updated with success.');
-        formTag.id ? onSave?.(formTag) : onSave?.({ ...formTag, id: result });
-      } catch (e) {
-        console.error(e);
-        setLoading(false);
-      }
-    });
+  const onFinish = async () => {
+    setLoading(true);
+    try {
+      const tagForm = form.getFieldsValue(true);
+      tagForm.product = products.find(
+        product => product.id === tagForm.product?.id
+      );
+      tagForm.brand = brands.find(brand => brand.id === tagForm.brand?.id);
+      const { result } = await doRequest(() => saveTag(tagForm));
+      setLoading(false);
+      message.success('Register updated with success.');
+      tagForm.id ? onSave?.(tagForm) : onSave?.({ ...tagForm, id: result });
+    } catch (error: any) {
+      message.error('Error: ' + error.error);
+    }
+  };
+
+  const handleFinishFailed = (errorFields: any[]) => {
+    setLoading(false);
+    message.error('Error: ' + errorFields[0].errors[0]);
+
+    const id = errorFields[0].name[0];
+    const element = document.getElementById(id);
+    scrollIntoView(element);
   };
 
   const productsBySelectedBrand = () => {
@@ -119,13 +126,14 @@ const TagDetail: React.FC<TagDetailProps> = ({ tag, onSave, onCancel }) => {
 
   return (
     <>
-      <PageHeader title={tag ? `${tag?.tagName} Update` : 'New Tag'} />
+      <PageHeader title={tag ? `${tag?.tagName ?? ''} Update` : 'New Tag'} />
       <Form
         name="tagForm"
         layout="vertical"
         form={form}
         initialValues={tag}
         onFinish={onFinish}
+        onFinishFailed={({ errorFields }) => handleFinishFailed(errorFields)}
         className="tags"
       >
         <Input.Group>
@@ -136,7 +144,7 @@ const TagDetail: React.FC<TagDetailProps> = ({ tag, onSave, onCancel }) => {
                 label="Tag Name"
                 rules={[{ required: true, message: 'Tag Name is required.' }]}
               >
-                <Input />
+                <Input id="tagName" />
               </Form.Item>
             </Col>
             <Col lg={6} xs={0}>
@@ -157,6 +165,7 @@ const TagDetail: React.FC<TagDetailProps> = ({ tag, onSave, onCancel }) => {
                 rules={[{ required: true, message: 'Template is required.' }]}
               >
                 <Select
+                  id="template"
                   placeholder="Please select a template"
                   onChange={onChangeTemplate}
                 >
@@ -198,7 +207,7 @@ const TagDetail: React.FC<TagDetailProps> = ({ tag, onSave, onCancel }) => {
                       { required: true, message: 'Disco Gold is required.' },
                     ]}
                   >
-                    <InputNumber style={{ width: '100%' }} />
+                    <InputNumber id="discoGold" style={{ width: '100%' }} />
                   </Form.Item>
                 </Col>
                 <Col lg={12} xs={24}>
@@ -233,7 +242,10 @@ const TagDetail: React.FC<TagDetailProps> = ({ tag, onSave, onCancel }) => {
                     { required: true, message: 'Click Sound is required.' },
                   ]}
                 >
-                  <Select placeholder="Please select a click sound">
+                  <Select
+                    id="clickSound"
+                    placeholder="Please select a click sound"
+                  >
                     {clickSound.map((click: any) => (
                       <Select.Option key={click.value} value={click.value}>
                         {click.name}

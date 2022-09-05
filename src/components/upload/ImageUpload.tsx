@@ -56,6 +56,7 @@ interface ImageUploadProps {
   ) => void;
   disabled?: boolean;
   type: string;
+  id?: string;
 }
 
 interface ImageDnDProps {
@@ -84,6 +85,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   onImageChange,
   disabled = false,
   type,
+  id,
 }) => {
   const [fileListLocal, setFileListLocal] = useState<any>([]);
   const [isCropping, setIsCropping] = useState(false);
@@ -476,6 +478,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     >
       <DndProvider backend={HTML5Backend}>
         <Upload
+          id={id}
           action={action}
           headers={{
             Authorization: `Bearer ${localStorage.getItem('token')}`,

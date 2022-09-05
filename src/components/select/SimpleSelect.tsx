@@ -15,9 +15,11 @@ interface SimpleSelectProps {
   disabled?: boolean;
   showSearch?: boolean;
   className?: string;
+  id?: string;
 }
 
 const SimpleSelect: React.FC<SimpleSelectProps> = ({
+  id,
   data,
   optionMapping,
   onChange,
@@ -63,6 +65,7 @@ const SimpleSelect: React.FC<SimpleSelectProps> = ({
 
   return (
     <Select
+      id={id}
       placeholder={placeholder}
       style={style}
       onChange={_onChange}

@@ -14,11 +14,12 @@ import {
 } from 'antd';
 import { Upload } from 'components';
 import { useRequest } from '../../hooks/useRequest';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { saveProductBrand } from '../../services/DiscoClubService';
 import { TwitterPicker } from 'react-color';
 import { ProductBrand } from 'interfaces/ProductBrand';
 import { Brand } from 'interfaces/Brand';
+import scrollIntoView from 'scroll-into-view';
 interface ProductBrandDetailProps {
   productBrand: ProductBrand | undefined;
   onSave?: (record: ProductBrand) => void;
@@ -36,6 +37,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
   const [form] = Form.useForm();
   const { doRequest } = useRequest({ setLoading });
   const [activeTabKey, setActiveTabKey] = React.useState('Details');
+  const toFocus = useRef<any>();
   const [showModal, setShowModal] = useState<boolean>(false);
 
   const onFinish = async () => {
@@ -48,13 +50,60 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
         ? onSave?.(formProductBrand)
         : onSave?.({ ...formProductBrand, id: result });
     } catch (err: any) {
-      console.log(err);
       message.error('Error: ' + err.error);
     }
   };
 
-  const changeTab = (activeKey: string) => {
+  const handleTabChange = (activeKey: string) => {
     setActiveTabKey(activeKey);
+  };
+
+  const checkConstraintValidity = () => {
+    const discoPercentage = document.getElementById('discoPercentage') as any;
+    const creatorPercentage = document.getElementById(
+      'creatorPercentage'
+    ) as any;
+    const maxDiscoDollarPercentage = document.getElementById(
+      'maxDiscoDollarPercentage'
+    ) as any;
+    const elements = [
+      discoPercentage,
+      creatorPercentage,
+      maxDiscoDollarPercentage,
+    ];
+    toFocus.current = elements.find(item => !item?.checkValidity());
+    if (toFocus.current) {
+      setActiveTabKey('Details');
+      scrollIntoView(toFocus.current);
+    }
+  };
+
+  const handleFinishFailed = (errorFields: any[]) => {
+    message.error('Error: ' + errorFields[0].errors[0]);
+
+    if (!toFocus.current) {
+      const id = errorFields[0].name[0];
+      const element = document.getElementById(id);
+
+      switch (id) {
+        case 'discoPercentage':
+        case 'creatorPercentage':
+        case 'maxDiscoDollarPercentage':
+        case 'brandName':
+        case 'masterBrand':
+        case 'brandTxtColor':
+          setActiveTabKey('Details');
+          break;
+        case 'brandLogo':
+        case 'mastHead':
+        case 'avatar':
+          setActiveTabKey('Images');
+          break;
+        default:
+          console.log('Something went wrong.');
+      }
+      scrollIntoView(element);
+    }
   };
 
   const onConfirmPropagate = () => {
@@ -77,7 +126,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
       <PageHeader
         title={
           productBrand
-            ? `${productBrand.brandName} Update`
+            ? `${productBrand.brandName ?? ''} Update`
             : 'New Product Brand'
         }
       />
@@ -87,17 +136,13 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
         form={form}
         initialValues={productBrand}
         onFinish={onFinish}
-        onFinishFailed={({ errorFields }) => {
-          errorFields.forEach(errorField => {
-            message.error('Error: ' + errorField.errors[0]);
-          });
-        }}
+        onFinishFailed={({ errorFields }) => handleFinishFailed(errorFields)}
       >
         <>
           <Tabs
             defaultActiveKey="Details"
             activeKey={activeTabKey}
-            onChange={changeTab}
+            onChange={handleTabChange}
           >
             <Tabs.TabPane forceRender tab="Details" key="Details">
               <Row gutter={8}>
@@ -113,7 +158,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                         },
                       ]}
                     >
-                      <Input />
+                      <Input id="brandName" />
                     </Form.Item>
                   </Col>
                   <Col span={24}>
@@ -140,6 +185,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                           ]}
                         >
                           <Select
+                            id="masterBrand"
                             placeholder="Select a Master Brand"
                             style={{ width: '100%' }}
                             allowClear
@@ -171,22 +217,20 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                           ]}
                         >
                           <InputNumber
-                            pattern="^(?:100|\d{1,2})(?:.\d{1,2})?$"
-                            title="positive integers"
-                            min={0}
-                            max={100}
+                            id="discoPercentage"
+                            pattern="^((1[0-9][0-9])|([0-9]{1,2}))$"
+                            title="Positive integers."
                           />
                         </Form.Item>
                       </Col>
                       <Col lg={12} xs={24}>
                         <Form.Item name="creatorPercentage" label="Creator %">
                           <InputNumber
-                            pattern="^(?:100|\d{1,2})(?:.\d{1,2})?$"
-                            title="positive integers"
-                            min={0}
-                            max={100}
+                            id="creatorPercentage"
+                            pattern="^((1[0-9][0-9])|([0-9]{1,2}))$"
+                            title="Positive integers."
                             onChange={input =>
-                              handleCreatorPercentageChange(input)
+                              handleCreatorPercentageChange(input as number)
                             }
                           />
                         </Form.Item>
@@ -217,10 +261,9 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                           ]}
                         >
                           <InputNumber
-                            pattern="^(?:100|\d{1,2})(?:.\d{1,2})?$"
-                            title="positive integers"
-                            min={0}
-                            max={100}
+                            id="maxDiscoDollarPercentage"
+                            pattern="^((1[0-9][0-9])|([0-9]{1,2}))$"
+                            title="Positive integers."
                           />
                         </Form.Item>
                       </Col>
@@ -238,7 +281,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                       ]}
                       valuePropName="color"
                     >
-                      <ColorPicker />
+                      <ColorPicker id="brandTxtColor" />
                     </Form.Item>
                   </Col>
                 </Col>
@@ -290,6 +333,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                       name="brandLogo"
                     >
                       <Upload.ImageUpload
+                        id="brandLogo"
                         type="brandLogo"
                         fileList={productBrand?.brandLogo}
                         maxCount={1}
@@ -301,11 +345,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                 </Row>
                 <Row gutter={8}>
                   <Col lg={6} xs={12}>
-                    <Form.Item
-                      label="Thumbnail"
-                      name="thumbnail"
-                      rules={[{ required: false }]}
-                    >
+                    <Form.Item label="Thumbnail" name="thumbnail">
                       <Upload.ImageUpload
                         type="thumbnail"
                         maxCount={1}
@@ -319,7 +359,6 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                     <Form.Item
                       label="Product Brand Video Logo"
                       name="videoLogo"
-                      rules={[{ required: false }]}
                     >
                       <Upload.ImageUpload
                         type="videoLogo"
@@ -347,6 +386,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                       ]}
                     >
                       <Upload.ImageUpload
+                        id="mastHead"
                         type="masthead"
                         maxCount={1}
                         fileList={productBrand?.mastHead}
@@ -364,6 +404,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                       ]}
                     >
                       <Upload.ImageUpload
+                        id="avatar"
                         type="avatar"
                         maxCount={1}
                         fileList={productBrand?.avatar}
@@ -392,6 +433,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                 type="primary"
                 htmlType="submit"
                 className="mb-1"
+                onClick={checkConstraintValidity}
               >
                 Save Changes
               </Button>

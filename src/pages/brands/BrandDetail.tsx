@@ -21,7 +21,7 @@ import {
 import { Upload } from 'components';
 import { RichTextEditor } from 'components/RichTextEditor';
 import { Brand } from 'interfaces/Brand';
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, useRef } from 'react';
 import React from 'react';
 import { useRequest } from 'hooks/useRequest';
 import { TwitterPicker } from 'react-color';
@@ -66,6 +66,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
   const [internalCheckout, setInternalCheckout] = useState<boolean>(
     brand?.checkoutType === 'internal'
   );
+  const toFocus = useRef<any>();
 
   const {
     settings: { checkoutType = [] },
@@ -112,6 +113,32 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
       );
     }
   }, [vaultOptions]);
+
+  const checkConstraintValidity = () => {
+    const discoPercentage = document.getElementById('discoPercentage') as any;
+    const creatorPercentage = document.getElementById(
+      'creatorPercentage'
+    ) as any;
+    const maxDiscoDollarPercentage = document.getElementById(
+      'maxDiscoDollarPercentage'
+    ) as any;
+    const initialFreeDdAmount = document.getElementById(
+      'initialFreeDdAmount'
+    ) as any;
+    const returnPeriod = document.getElementById('returnPeriod') as any;
+    const elements = [
+      discoPercentage,
+      creatorPercentage,
+      maxDiscoDollarPercentage,
+      initialFreeDdAmount,
+      returnPeriod,
+    ];
+    toFocus.current = elements.find(item => !item?.checkValidity());
+    if (toFocus.current) {
+      setActiveTabKey('Checkout');
+      scrollIntoView(toFocus.current);
+    }
+  };
 
   const deleteItem = async (vault: BrandVault, index: number) => {
     deleteBrandVault(vault.id);
@@ -235,8 +262,8 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
       formBrand.id
         ? onSave?.(formBrand)
         : onSave?.({ ...formBrand, id: response.result });
-    } catch (error) {
-      console.log(error as string);
+    } catch (error: any) {
+      message.error('Error: ' + error.error);
     }
   };
 
@@ -257,7 +284,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
     }
   };
 
-  const changeTab = (activeKey: string) => {
+  const handleTabChange = (activeKey: string) => {
     setActiveTabKey(activeKey);
   };
 
@@ -276,10 +303,10 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                   <Form.Item
                     label="Key"
                     name="key"
-                    rules={[{ required: true, message: `Key is required.` }]}
+                    rules={[{ required: true, message: 'Key is required.' }]}
                     initialValue={currentVault?.key}
                   >
-                    <Input />
+                    <Input id="vaultKey" />
                   </Form.Item>
                 </Col>
                 <Col lg={16} xs={24}>
@@ -287,11 +314,11 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                     label="Shop Name"
                     name="shopName"
                     rules={[
-                      { required: true, message: `Shop Name is required.` },
+                      { required: true, message: 'Shop Name is required.' },
                     ]}
                     initialValue={brand ? brand.shopName : ''}
                   >
-                    <Input />
+                    <Input id="vaultShopName" />
                   </Form.Item>
                 </Col>
                 <Col lg={16} xs={24}>
@@ -299,21 +326,21 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                     label="API Shop Name"
                     name="apiShopName"
                     rules={[
-                      { required: true, message: `API Shop Name is required.` },
+                      { required: true, message: 'API Shop Name is required.' },
                     ]}
                     initialValue={currentVault?.apiShopName}
                   >
-                    <Input />
+                    <Input id="vaultApiShopName" />
                   </Form.Item>
                 </Col>
                 <Col lg={16} xs={24}>
                   <Form.Item
                     label="Token"
                     name="token"
-                    rules={[{ required: true, message: `Token is required.` }]}
+                    rules={[{ required: true, message: 'Token is required' }]}
                     initialValue={currentVault?.token}
                   >
-                    <Input type="password" />
+                    <Input type="password" id="vaultToken" />
                   </Form.Item>
                 </Col>
               </Col>
@@ -369,6 +396,50 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
     setShowModal(true);
   };
 
+  const handleFinishFailed = (errorFields: any[]) => {
+    message.error('Error: ' + errorFields[0].errors[0]);
+
+    if (!toFocus.current) {
+      const id = errorFields[0].name[0];
+      const element = document.getElementById(id);
+
+      switch (id) {
+        case 'vaultKey':
+        case 'vaultShopName':
+        case 'vaultApiShopName':
+        case 'vaultToken':
+          setActiveTabKey('Secrets');
+          break;
+        case 'brandTxtColor':
+          setActiveTabKey('Details');
+          break;
+        case 'checkoutType':
+        case 'externalCheckoutType':
+        case 'checkout':
+        case 'confirmationUrl':
+        case 'cancelationUrl':
+        case 'shopUrl':
+        case 'discoPercentage':
+        case 'creatorPercentage':
+        case 'maxDiscoDollarPercentage':
+        case 'initialFreeDdAmount':
+        case 'returnPeriod':
+        case 'shopName':
+          setActiveTabKey('Checkout');
+          break;
+        case 'brandLogo':
+        case 'brandCard':
+        case 'mastHead':
+        case 'avatar':
+          setActiveTabKey('Images');
+          break;
+        default:
+          console.log('Something went wrong.');
+      }
+      scrollIntoView(element);
+    }
+  };
+
   return (
     <>
       <PageHeader
@@ -376,27 +447,22 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
           vaultOptions
             ? 'Vault Update'
             : brand
-            ? `${brand.brandName} Update`
+            ? `${brand.brandName ?? ''} Update`
             : 'New Master Brand'
         }
       />
       <Form
-        className=""
         name="brandForm"
         layout="vertical"
         form={form}
         initialValues={{ ...brand, returnPeriod: brand?.returnPeriod ?? 14 }}
         onFinish={onFinish}
-        onFinishFailed={({ errorFields }) => {
-          errorFields.forEach(errorField => {
-            message.error('Error: ' + errorField.errors[0]);
-          });
-        }}
+        onFinishFailed={({ errorFields }) => handleFinishFailed(errorFields)}
       >
         <Tabs
           defaultActiveKey="Details"
           activeKey={activeTabKey}
-          onChange={changeTab}
+          onChange={handleTabChange}
           tabBarExtraContent={
             activeTabKey === 'Secrets' &&
             !vaultOptions && (
@@ -453,12 +519,12 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                     },
                   ]}
                 >
-                  <ColorPicker />
+                  <ColorPicker id="brandTxtColor" />
                 </Form.Item>
               </Col>
               <Col lg={12} xs={24}>
                 <Form.Item
-                  name={'fitTo'}
+                  name="fitTo"
                   label="Master Brand Default Image Sizing"
                 >
                   <Select placeholder="Please select a sizing option">
@@ -491,6 +557,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                     ]}
                   >
                     <Radio.Group
+                      id="checkoutType"
                       buttonStyle="solid"
                       onChange={handleCheckoutTypeChange}
                     >
@@ -512,6 +579,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                     ]}
                   >
                     <Select
+                      id="externalCheckoutType"
                       disabled={internalCheckout}
                       placeholder="Select an external checkout type"
                     >
@@ -532,7 +600,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                       { required: true, message: 'Checkout is required.' },
                     ]}
                   >
-                    <Select placeholder="Select a checkout type">
+                    <Select placeholder="Select a checkout type" id="checkout">
                       {checkoutTypeList.map((curr: any) => (
                         <Select.Option key={curr.value} value={curr.value}>
                           {curr.name}
@@ -553,7 +621,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                       },
                     ]}
                   >
-                    <Input />
+                    <Input id="confirmationUrl" />
                   </Form.Item>
                 </Col>
                 <Col lg={16} xs={24}>
@@ -568,7 +636,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                       },
                     ]}
                   >
-                    <Input />
+                    <Input id="cancelationUrl" />
                   </Form.Item>
                 </Col>
                 <Col lg={16} xs={24}>
@@ -582,7 +650,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                       },
                     ]}
                   >
-                    <Input />
+                    <Input id="shopUrl" />
                   </Form.Item>
                 </Col>
                 <Row gutter={4}>
@@ -598,10 +666,9 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                       ]}
                     >
                       <InputNumber
-                        pattern="^(?:100|\d{1,2})(?:.\d{1,2})?$"
-                        title="positive integers"
-                        min={0}
-                        max={100}
+                        id="discoPercentage"
+                        pattern="^((1[0-9][0-9])|([0-9]{1,2}))$"
+                        title="Positive integers."
                       />
                     </Form.Item>
                   </Col>
@@ -617,11 +684,12 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                       ]}
                     >
                       <InputNumber
-                        pattern="^(?:100|\d{1,2})(?:.\d{1,2})?$"
-                        title="positive integers"
-                        min={0}
-                        max={100}
-                        onChange={input => handleCreatorPercentageChange(input)}
+                        id="creatorPercentage"
+                        pattern="^((1[0-9][0-9])|([0-9]{1,2}))$"
+                        title="Positive integers."
+                        onChange={input =>
+                          handleCreatorPercentageChange(input as number)
+                        }
                       />
                     </Form.Item>
                     <Modal
@@ -652,10 +720,9 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                       ]}
                     >
                       <InputNumber
-                        pattern="^(?:100|\d{1,2})(?:.\d{1,2})?$"
-                        title="positive integers"
-                        min={0}
-                        max={100}
+                        id="maxDiscoDollarPercentage"
+                        pattern="^((1[0-9][0-9])|([0-9]{1,2}))$"
+                        title="Positive integers."
                       />
                     </Form.Item>
                   </Col>
@@ -671,9 +738,9 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                       ]}
                     >
                       <InputNumber
-                        pattern="^[0-9]*$"
-                        title="positive integers"
-                        min={0}
+                        id="initialFreeDdAmount"
+                        pattern="^[0-9]+$"
+                        title="Positive integers."
                       />
                     </Form.Item>
                   </Col>
@@ -691,10 +758,9 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                       ]}
                     >
                       <InputNumber
-                        pattern="^(?:100|\d{1,2})(?:.\d{1,2})?$"
-                        title="positive integers"
-                        min={1}
-                        max={100}
+                        id="returnPeriod"
+                        pattern="^((1[0-9][0-9])|([0-9]{1,2}))$"
+                        title="Positive integers."
                       />
                     </Form.Item>
                   </Col>
@@ -707,7 +773,10 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                       { required: true, message: 'Shop Name is required.' },
                     ]}
                   >
-                    <Input placeholder="casey-temp.myshopify.com" />
+                    <Input
+                      id="shopName"
+                      placeholder="casey-temp.myshopify.com"
+                    />
                   </Form.Item>
                 </Col>
               </Col>
@@ -781,6 +850,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                     name="brandLogo"
                   >
                     <Upload.ImageUpload
+                      id="brandLogo"
                       type="brandLogo"
                       onImageChange={() =>
                         form.setFieldsValue({ propagationNeeded: true })
@@ -801,6 +871,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                     ]}
                   >
                     <Upload.ImageUpload
+                      id="brandCard"
                       type="uploadCard"
                       onImageChange={() =>
                         form.setFieldsValue({ propagationNeeded: true })
@@ -813,13 +884,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                   </Form.Item>
                 </Col>
                 <Col lg={6}>
-                  <Form.Item
-                    label="Thumbnail"
-                    name="thumbnail"
-                    rules={[
-                      { required: false, message: `Thumbnail is required.` },
-                    ]}
-                  >
+                  <Form.Item label="Thumbnail" name="thumbnail">
                     <Upload.ImageUpload
                       type="thumbnail"
                       maxCount={1}
@@ -830,16 +895,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                   </Form.Item>
                 </Col>
                 <Col lg={6}>
-                  <Form.Item
-                    label="Store Buy Button"
-                    name="storeBuyButton"
-                    rules={[
-                      {
-                        required: false,
-                        message: `Store Buy Button is required.`,
-                      },
-                    ]}
-                  >
+                  <Form.Item label="Store Buy Button" name="storeBuyButton">
                     <Upload.ImageUpload
                       type="storeBuyButton"
                       onImageChange={() =>
@@ -873,6 +929,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                     ]}
                   >
                     <Upload.ImageUpload
+                      id="mastHead"
                       type="masthead"
                       onImageChange={() =>
                         form.setFieldsValue({ propagationNeeded: true })
@@ -891,6 +948,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                     rules={[{ required: true, message: 'Avatar is required.' }]}
                   >
                     <Upload.ImageUpload
+                      id="avatar"
                       type="avatar"
                       onImageChange={() =>
                         form.setFieldsValue({ propagationNeeded: true })
@@ -922,6 +980,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                 type="primary"
                 htmlType="submit"
                 className="mb-1"
+                onClick={checkConstraintValidity}
               >
                 Save Changes
               </Button>

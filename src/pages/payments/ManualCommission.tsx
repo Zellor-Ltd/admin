@@ -4,6 +4,7 @@ import {
   DatePicker,
   Form,
   Input,
+  message,
   PageHeader,
   Row,
   Select,
@@ -15,7 +16,7 @@ import { saveManualCommission } from '../../services/DiscoClubService';
 import { Banner } from 'interfaces/Banner';
 import { Creator } from 'interfaces/Creator';
 import { formatMoment } from 'helpers/formatMoment';
-
+import scrollIntoView from 'scroll-into-view';
 interface PaymentDetailsProps {
   creators: Creator[];
   defaultCreator?: string;
@@ -35,8 +36,21 @@ const ManualCommission: React.FC<PaymentDetailsProps> = ({
   const [oneOffCreator, setOneOffCreator] = useState<string>();
 
   const onFinish = async () => {
-    const commissionForm = form.getFieldsValue(true);
-    await doRequest(() => saveManualCommission(commissionForm));
+    try {
+      const commissionForm = form.getFieldsValue(true);
+      await doRequest(() => saveManualCommission(commissionForm));
+    } catch (error: any) {
+      message.error('Error: ' + error.error);
+    }
+  };
+
+  const handleFinishFailed = (errorFields: any[]) => {
+    message.error('Error: ' + errorFields[0].errors[0]);
+
+    const id = errorFields[0].name[0];
+    const element = document.getElementById(id);
+
+    scrollIntoView(element);
   };
 
   return (
@@ -49,6 +63,7 @@ const ManualCommission: React.FC<PaymentDetailsProps> = ({
         form={form}
         layout="vertical"
         onFinish={onFinish}
+        onFinishFailed={({ errorFields }) => handleFinishFailed(errorFields)}
         autoComplete="off"
       >
         <Row gutter={[8, 8]}>
@@ -60,7 +75,7 @@ const ManualCommission: React.FC<PaymentDetailsProps> = ({
                 getValueProps={formatMoment}
                 rules={[{ required: true, message: 'Date is required.' }]}
               >
-                <DatePicker format="DD/MM/YYYY" />
+                <DatePicker id="date" format="DD/MM/YYYY" />
               </Form.Item>
             </Col>
             <Col lg={16} xs={24}>
@@ -74,7 +89,7 @@ const ManualCommission: React.FC<PaymentDetailsProps> = ({
                   },
                 ]}
               >
-                <Input placeholder="Feed ID" />
+                <Input id="feedId" placeholder="Feed ID" />
               </Form.Item>
             </Col>
             <Col lg={16} xs={24}>
@@ -84,6 +99,7 @@ const ManualCommission: React.FC<PaymentDetailsProps> = ({
                 rules={[{ required: true, message: 'Creator is required.' }]}
               >
                 <Select
+                  id="creatorId"
                   style={{ width: '100%' }}
                   onChange={setOneOffCreator}
                   value={oneOffCreator}
@@ -118,7 +134,7 @@ const ManualCommission: React.FC<PaymentDetailsProps> = ({
                   },
                 ]}
               >
-                <Input placeholder="Product ID" />
+                <Input id="productId" placeholder="Product ID" />
               </Form.Item>
             </Col>
             <Col lg={16} xs={24}>
@@ -132,7 +148,7 @@ const ManualCommission: React.FC<PaymentDetailsProps> = ({
                   },
                 ]}
               >
-                <Input placeholder="Quantity" />
+                <Input id="quantity" placeholder="Quantity" />
               </Form.Item>
             </Col>
           </Col>

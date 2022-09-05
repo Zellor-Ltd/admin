@@ -34,7 +34,7 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ order, setDetails }) => {
   return (
     <>
       <PageHeader
-        title={order ? `${order.firstName} Update` : 'New Item'}
+        title={order ? `${order.firstName ?? ''} Update` : 'New Item'}
         subTitle="Order"
       />
       <Form
