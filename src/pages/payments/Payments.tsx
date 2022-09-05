@@ -424,10 +424,10 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
                     .includes(input?.toUpperCase())
                 }
               >
-                <Select.Option key={1} value={'Cleared'}>
+                <Select.Option key={1} value="Cleared">
                   Cleared
                 </Select.Option>
-                <Select.Option key={2} value={'Returned'}>
+                <Select.Option key={2} value="Returned">
                   Returned
                 </Select.Option>
               </Select>

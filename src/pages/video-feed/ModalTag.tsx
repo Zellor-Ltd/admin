@@ -154,7 +154,7 @@ const ModalTag: React.FC<ModalFormProps> = ({
       visible={visible}
       onOk={onOk}
       onCancel={onCancel}
-      width={'80%'}
+      width="80%"
       forceRender
       okButtonProps={{ loading: loading }}
     >

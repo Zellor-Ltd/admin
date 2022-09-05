@@ -588,7 +588,7 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
                 style={{ width: '100%' }}
                 selectedOption={brandFilter?.brandName}
                 optionMapping={optionMapping}
-                placeholder={'Select a Master Brand'}
+                placeholder="Select a Master Brand"
                 loading={isFetchingBrands}
                 disabled={isFetchingBrands || loading}
                 allowClear
@@ -604,7 +604,7 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
                 style={{ width: '100%' }}
                 selectedOption={productBrandFilter?.brandName}
                 optionMapping={optionMapping}
-                placeholder={'Select a Product Brand'}
+                placeholder="Select a Product Brand"
                 loading={isFetchingProductBrand}
                 disabled={isFetchingProductBrand || loading}
                 allowClear
@@ -640,7 +640,7 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
                 style={{ width: '100%' }}
                 selectedOption={superCategoryFilter?.id}
                 optionMapping={superCategoryOptionMapping}
-                placeholder={'Select a Super Category'}
+                placeholder="Select a Super Category"
                 loading={fetchingCategories}
                 disabled={fetchingCategories || loading}
                 allowClear
@@ -654,7 +654,7 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
                 style={{ width: '100%' }}
                 selectedOption={categoryFilter?.id}
                 optionMapping={categoryOptionMapping}
-                placeholder={'Select a Category'}
+                placeholder="Select a Category"
                 loading={fetchingCategories}
                 disabled={fetchingCategories || loading}
                 allowClear
@@ -668,7 +668,7 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
                 style={{ width: '100%' }}
                 selectedOption={subCategoryFilter?.id}
                 optionMapping={subCategoryOptionMapping}
-                placeholder={'Select a Sub Category'}
+                placeholder="Select a Sub Category"
                 loading={fetchingCategories}
                 disabled={fetchingCategories || loading}
                 allowClear
@@ -682,7 +682,7 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
                 style={{ width: '100%' }}
                 selectedOption={subSubCategoryFilter?.id}
                 optionMapping={subSubCategoryOptionMapping}
-                placeholder={'Select a Sub Sub Category'}
+                placeholder="Select a Sub Sub Category"
                 loading={fetchingCategories}
                 disabled={fetchingCategories || loading}
                 allowClear

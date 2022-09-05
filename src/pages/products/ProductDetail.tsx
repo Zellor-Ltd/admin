@@ -606,7 +606,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                         style={{ width: '100%' }}
                         selectedOption={brand}
                         optionMapping={optionMapping}
-                        placeholder={'Select a brand'}
+                        placeholder="Select a Brand"
                         loading={isFetchingBrands}
                         disabled={isFetchingBrands || isLive}
                         allowClear
@@ -635,7 +635,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                         style={{ width: '100%' }}
                         selectedOption={productBrand}
                         optionMapping={optionMapping}
-                        placeholder={'Select a brand'}
+                        placeholder="Select a Brand"
                         loading={isFetchingProductBrand}
                         disabled={isFetchingProductBrand || isLive}
                         allowClear
@@ -749,7 +749,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                 }
               >
                 {({ getFieldValue }) => (
-                  <Form.Item name={'searchTags'} label="Search Tags">
+                  <Form.Item name="searchTags" label="Search Tags">
                     <Select
                       mode="tags"
                       className="product-search-tags"

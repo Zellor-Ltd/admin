@@ -532,10 +532,10 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                 style={{ width: '100%' }}
                 selectedOption={brandFilter?.id}
                 optionMapping={masterBrandMapping}
-                placeholder={'Select a Master Brand'}
+                placeholder="Select a Master Brand"
                 loading={isFetchingBrands}
                 disabled={isFetchingBrands || loading}
-                allowClear={true}
+                allowClear
               />
             </Col>
             <Col lg={5} xs={24}>
@@ -546,10 +546,10 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                 style={{ width: '100%' }}
                 selectedOption={productBrandFilter}
                 optionMapping={productBrandMapping}
-                placeholder={'Select a Product Brand'}
+                placeholder="Select a Product Brand"
                 loading={isFetchingProductBrands}
                 disabled={isFetchingProductBrands || loading}
-                allowClear={true}
+                allowClear
               />
             </Col>
             <Col lg={5} xs={24}>
@@ -565,8 +565,8 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                     ?.toUpperCase()
                     .includes(input?.toUpperCase())
                 }
-                allowClear={true}
-                showSearch={true}
+                allowClear
+                showSearch
                 value={statusFilter}
               >
                 {statusList.map((curr: any) => (
@@ -590,8 +590,8 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                 style={{ width: '100%' }}
                 selectedOption={categoryFilter}
                 optionMapping={categoryMapping}
-                placeholder={'Select a Category'}
-                allowClear={true}
+                placeholder="Select a Category"
+                allowClear
                 loading={isFetchingCategories}
                 disabled={isFetchingCategories || loading}
               />
@@ -604,8 +604,8 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                 style={{ width: '100%' }}
                 selectedOption={videoTypeFilter}
                 optionMapping={videoTypeMapping || loading}
-                placeholder={'Select a Video Type'}
-                allowClear={true}
+                placeholder="Select a Video Type"
+                allowClear
               />
             </Col>
             <Col lg={5} xs={24}>
@@ -632,8 +632,8 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                     ?.toUpperCase()
                     .includes(input?.toUpperCase())
                 }
-                allowClear={true}
-                showSearch={true}
+                allowClear
+                showSearch
               >
                 {creators.map((curr: any) => (
                   <Select.Option
@@ -659,8 +659,8 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                     .toLowerCase()
                     .includes(input.toLowerCase())
                 }
-                allowClear={true}
-                showSearch={true}
+                allowClear
+                showSearch
                 value={dateSortFilter}
               >
                 <Select.Option

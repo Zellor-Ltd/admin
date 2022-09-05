@@ -416,7 +416,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                 </Form.Item>
               </Col>
               <Col lg={12} xs={24}>
-                <Form.Item name={'serverAlias'} label="Server Alias">
+                <Form.Item name="serverAlias" label="Server Alias">
                   <Select>
                     {serversList.map(serverAlias => (
                       <Select.Option

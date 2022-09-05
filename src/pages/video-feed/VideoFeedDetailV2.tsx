@@ -712,8 +712,8 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                   <ReactTagInput
                     tags={searchTags}
                     placeholder="Type and press enter"
-                    removeOnBackspace={true}
-                    editable={true}
+                    removeOnBackspace
+                    editable
                     onChange={newTags => setSearchTags(newTags)}
                   />
                 </Form.Item>
@@ -733,7 +733,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                 </Form.Item>
               </Col>
               <Col lg={24} xs={24}>
-                <Form.Item name={'searchTags'} label="Search Tags">
+                <Form.Item name="searchTags" label="Search Tags">
                   <Select mode="tags" className="product-search-tags">
                     {feedForm
                       .getFieldValue('searchTags')
@@ -1376,7 +1376,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                       <Form.Item label="Video">
                         <Upload.VideoUpload
                           fileList={selectedSegment!.video}
-                          formProp={'video'}
+                          formProp="video"
                           form={segmentForm}
                         />
                       </Form.Item>
@@ -1385,7 +1385,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                       <Form.Item label="Watermark Video">
                         <Upload.VideoUpload
                           fileList={selectedSegment!.watermarkVideo}
-                          formProp={'watermarkVideo'}
+                          formProp="watermarkVideo"
                           form={segmentForm}
                         />
                       </Form.Item>
@@ -1396,7 +1396,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                       <Upload.ImageUpload
                         type="thumbnail"
                         fileList={selectedSegment!.thumbnail}
-                        formProp={'thumbnail'}
+                        formProp="thumbnail"
                         form={segmentForm}
                       />
                     </Form.Item>

@@ -786,10 +786,10 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                 style={{ width: '100%' }}
                 selectedOption={brandFilter?.brandName}
                 optionMapping={optionMapping}
-                placeholder={'Select a Master Brand'}
+                placeholder="Select a Master Brand"
                 loading={isFetchingBrands}
                 disabled={isFetchingBrands || loading || disabled}
-                allowClear={true}
+                allowClear
               ></SimpleSelect>
             </Col>
             <Col lg={6} xs={24}>
@@ -802,10 +802,10 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                 style={{ width: '100%' }}
                 selectedOption={productBrandFilter?.brandName}
                 optionMapping={optionMapping}
-                placeholder={'Select a Product Brand'}
+                placeholder="Select a Product Brand"
                 loading={isFetchingProductBrands}
                 disabled={isFetchingProductBrands || loading || disabled}
-                allowClear={true}
+                allowClear
               ></SimpleSelect>
             </Col>
             <Col lg={6} xs={24}>
@@ -814,8 +814,8 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                 disabled={loading || disabled}
                 placeholder="Select a Status"
                 style={{ width: '100%' }}
-                onChange={(value: string) => setProductStatusFilter(value)}
-                allowClear={true}
+                onChange={setProductStatusFilter}
+                allowClear
                 defaultValue={productStatusFilter}
               >
                 <Select.Option value="live">Live</Select.Option>
@@ -836,10 +836,10 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                 style={{ width: '100%' }}
                 selectedOption={currentSuperCategory?.id}
                 optionMapping={productSuperCategoryOptionMapping}
-                placeholder={'Select a Super Category'}
+                placeholder="Select a Super Category"
                 loading={fetchingCategories}
                 disabled={fetchingCategories || loading || disabled}
-                allowClear={true}
+                allowClear
               ></SimpleSelect>
             </Col>
             <Col lg={6} xs={24}>
@@ -854,10 +854,10 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                 style={{ width: '100%' }}
                 selectedOption={currentCategory?.id ?? null}
                 optionMapping={productCategoryOptionMapping}
-                placeholder={'Select a Category'}
+                placeholder="Select a Category"
                 loading={fetchingCategories}
                 disabled={fetchingCategories || loading || disabled}
-                allowClear={true}
+                allowClear
               ></SimpleSelect>
             </Col>
             <Col lg={6} xs={24}>
@@ -878,7 +878,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                 style={{ width: '100%' }}
                 selectedOption={currentSubCategory?.id ?? null}
                 optionMapping={productSubCategoryOptionMapping}
-                placeholder={'Select a Sub Category'}
+                placeholder="Select a Sub Category"
                 loading={fetchingCategories}
                 disabled={
                   fetchingCategories ||
@@ -896,7 +896,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                     );
                   }).length
                 }
-                allowClear={true}
+                allowClear
               ></SimpleSelect>
             </Col>
             <Col lg={6} xs={24}>
@@ -920,7 +920,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                 style={{ width: '100%' }}
                 selectedOption={currentSubSubCategory?.id ?? null}
                 optionMapping={productSubSubCategoryOptionMapping}
-                placeholder={'Select a Sub Sub Category'}
+                placeholder="Select a Sub Sub Category"
                 loading={fetchingCategories}
                 disabled={
                   fetchingCategories ||
@@ -941,7 +941,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                     );
                   }).length
                 }
-                allowClear={true}
+                allowClear
               ></SimpleSelect>
             </Col>
             <Col lg={6} xs={24}>

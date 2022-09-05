@@ -313,7 +313,7 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
         prevRecord['image'] !== nextRecord['image'],
       render: (_, record) => {
         return (
-          <Form.Item className={'mb-0 mt-1'}>
+          <Form.Item className="mb-0 mt-1">
             <Upload.ImageUpload
               type="image"
               maxCount={20}

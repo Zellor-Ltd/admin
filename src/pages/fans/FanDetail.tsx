@@ -413,7 +413,7 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
                 />
               </Col>
               <Col lg={8} xs={24}>
-                <Form.Item name={'serverAlias'} label="Server Alias">
+                <Form.Item name="serverAlias" label="Server Alias">
                   <Select>
                     {serversList.map(serverAlias => (
                       <Select.Option

@@ -176,7 +176,7 @@ const Transactions: React.FC<RouteComponentProps> = () => {
       <Row
         gutter={8}
         style={{ marginBottom: '20px' }}
-        className={'sticky-filter-box'}
+        className="sticky-filter-box"
       >
         <Col xxl={40} lg={4} xs={24}>
           <Typography.Title level={5}>Fan Filter</Typography.Title>

@@ -56,7 +56,7 @@ const ModalBrand: React.FC<ModalFormProps> = ({ brand, visible, onCancel }) => {
       visible={visible}
       onOk={onOk}
       onCancel={onCancel}
-      width={'80%'}
+      width="80%"
       okButtonProps={{ loading: loading }}
       forceRender
     >

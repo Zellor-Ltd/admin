@@ -318,10 +318,10 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
                     }
                     style={{ width: '100%' }}
                     optionMapping={optionMapping}
-                    placeholder={'Select a Master Brand'}
+                    placeholder="Select a Master Brand"
                     loading={isFetchingBrands}
                     disabled={fetchingTags || isFetchingBrands}
-                    allowClear={true}
+                    allowClear
                   ></SimpleSelect>
                 </Col>
               </Row>

@@ -602,10 +602,10 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                 style={{ width: '100%' }}
                 selectedOption={brandFilter?.brandName}
                 optionMapping={optionMapping}
-                placeholder={'Select a Master Brand'}
+                placeholder="Select a Master Brand"
                 loading={isFetchingBrands}
                 disabled={isFetchingBrands || loading}
-                allowClear={true}
+                allowClear
               ></SimpleSelect>
             </Col>
             <Col lg={6} xs={24}>
@@ -618,10 +618,10 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                 style={{ width: '100%' }}
                 selectedOption={productBrandFilter?.brandName}
                 optionMapping={optionMapping}
-                placeholder={'Select a Product Brand'}
+                placeholder="Select a Product Brand"
                 loading={isFetchingProductBrand}
                 disabled={isFetchingProductBrand || loading}
-                allowClear={true}
+                allowClear
               ></SimpleSelect>
             </Col>
             <Col lg={6} xs={24}>
@@ -630,8 +630,8 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                 disabled={loading}
                 placeholder="Select a Status"
                 style={{ width: '100%' }}
-                onChange={(value: string) => setProductStatusFilter(value)}
-                allowClear={true}
+                onChange={setProductStatusFilter}
+                allowClear
                 defaultValue={productStatusFilter}
               >
                 <Select.Option value="live">Live</Select.Option>
@@ -654,10 +654,10 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                 style={{ width: '100%' }}
                 selectedOption={productSuperCategoryFilter?.id}
                 optionMapping={productSuperCategoryOptionMapping}
-                placeholder={'Select a Super Category'}
+                placeholder="Select a Super Category"
                 loading={fetchingCategories}
                 disabled={fetchingCategories || loading}
-                allowClear={true}
+                allowClear
               ></SimpleSelect>
             </Col>
             <Col lg={6} xs={24}>
@@ -668,10 +668,10 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                 style={{ width: '100%' }}
                 selectedOption={productCategoryFilter?.id}
                 optionMapping={productCategoryOptionMapping}
-                placeholder={'Select a Category'}
+                placeholder="Select a Category"
                 loading={fetchingCategories}
                 disabled={fetchingCategories || loading}
-                allowClear={true}
+                allowClear
               ></SimpleSelect>
             </Col>
             <Col lg={6} xs={24}>
@@ -684,10 +684,10 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                 style={{ width: '100%' }}
                 selectedOption={productSubCategoryFilter?.id}
                 optionMapping={productSubCategoryOptionMapping}
-                placeholder={'Select a Sub Category'}
+                placeholder="Select a Sub Category"
                 loading={fetchingCategories}
                 disabled={fetchingCategories || loading}
-                allowClear={true}
+                allowClear
               ></SimpleSelect>
             </Col>
             <Col lg={6} xs={24}>
@@ -700,10 +700,10 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                 style={{ width: '100%' }}
                 selectedOption={productSubSubCategoryFilter?.id}
                 optionMapping={productSubSubCategoryOptionMapping}
-                placeholder={'Select a Sub Sub Category'}
+                placeholder="Select a Sub Sub Category"
                 loading={fetchingCategories}
                 disabled={fetchingCategories || loading}
-                allowClear={true}
+                allowClear
               ></SimpleSelect>
             </Col>
             <Col lg={6} xs={24}>

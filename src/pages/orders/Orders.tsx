@@ -785,7 +785,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
                     allowClear
                     onChange={handleChangeBrand}
                     style={{ width: '100%' }}
-                    placeholder={'Select a Master Brand'}
+                    placeholder="Select a Master Brand"
                     value={brandId}
                     loading={isFetchingBrands}
                     disabled={isFetchingBrands || refreshing}

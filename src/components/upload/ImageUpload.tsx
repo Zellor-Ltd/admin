@@ -107,7 +107,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   }, [fileList]);
 
   const uploadButton = (
-    <div className={'custom-upload-button'}>
+    <div className="custom-upload-button">
       <PlusOutlined />
       <div style={{ marginTop: 8 }}>Upload</div>
     </div>

@@ -76,7 +76,7 @@ const GuestDetail: React.FC<GuestDetailProps> = ({ fan, onSave, onCancel }) => {
 
   return (
     <>
-      <PageHeader title={'Guest Update'} />
+      <PageHeader title="Guest Update" />
       <Form
         name="userForm"
         layout="vertical"

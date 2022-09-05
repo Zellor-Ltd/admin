@@ -583,10 +583,10 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                       disabled={internalCheckout}
                       placeholder="Select an external checkout type"
                     >
-                      <Select.Option key={1} value={'Option 1'}>
+                      <Select.Option key={1} value="Option 1">
                         Option 1
                       </Select.Option>
-                      <Select.Option key={2} value={'Option 2'}>
+                      <Select.Option key={2} value="Option 2">
                         Option 2
                       </Select.Option>
                     </Select>

@@ -553,10 +553,10 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
               style={{ width: '100%' }}
               selectedOption={brandFilter?.id}
               optionMapping={masterBrandMapping}
-              placeholder={'Select a Master Brand'}
+              placeholder="Select a Master Brand"
               loading={isFetchingBrands}
               disabled={isFetchingBrands || loading}
-              allowClear={true}
+              allowClear
             />
           </Col>
           <Col lg={6} xs={24}>
@@ -567,10 +567,10 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
               style={{ width: '100%' }}
               selectedOption={productBrandFilter}
               optionMapping={productBrandMapping}
-              placeholder={'Select a Product Brand'}
+              placeholder="Select a Product Brand"
               loading={isFetchingProductBrands}
               disabled={isFetchingProductBrands || loading}
-              allowClear={true}
+              allowClear
             />
           </Col>
           <Col lg={6} xs={24}>
@@ -586,8 +586,8 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
                   ?.toUpperCase()
                   .includes(input?.toUpperCase())
               }
-              allowClear={true}
-              showSearch={true}
+              allowClear
+              showSearch
               value={statusFilter}
             >
               {statusList.map((curr: any) => (
@@ -611,8 +611,8 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
               style={{ width: '100%' }}
               selectedOption={categoryFilter}
               optionMapping={categoryMapping}
-              placeholder={'Select a Category'}
-              allowClear={true}
+              placeholder="Select a Category"
+              allowClear
               loading={isFetchingCategories}
               disabled={isFetchingCategories || loading}
             />

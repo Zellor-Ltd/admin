@@ -245,10 +245,10 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
                       style={{ width: '100%' }}
                       selectedOption={selectedBrand?.brandName}
                       optionMapping={optionMapping}
-                      placeholder={'Select a master brand'}
+                      placeholder="Select a Master Brand"
                       loading={isFetchingBrands}
                       disabled={isFetchingBrands}
-                      allowClear={true}
+                      allowClear
                     ></SimpleSelect>
                   </Col>
                 )}

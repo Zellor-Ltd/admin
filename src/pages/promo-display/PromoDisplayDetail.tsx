@@ -123,7 +123,7 @@ const PromoDisplaysDetail: React.FC<PromoDisplayDetailProps> = ({
                 style={{ width: '100%' }}
                 selectedOption={promoDisplay?.superCategoryId}
                 optionMapping={optionMapping}
-                placeholder={'Select a Super Category'}
+                placeholder="Select a Super Category"
                 loading={fetchingCategories}
                 disabled={fetchingCategories}
                 allowClear
