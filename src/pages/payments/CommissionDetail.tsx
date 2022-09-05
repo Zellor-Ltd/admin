@@ -5,7 +5,7 @@ import React from 'react';
 import { useRequest } from 'hooks/useRequest';
 import { fetchCommissionDetails } from 'services/DiscoClubService';
 import { ColumnType } from 'antd/lib/table';
-import CopyIdToClipboard from 'components/CopyIdToClipboard';
+import CopyValueToClipboard from 'components/CopyValueToClipboard';
 import { Product } from 'interfaces/Product';
 
 interface CommissionDetailProps {
@@ -39,7 +39,7 @@ const CommissionDetail: React.FC<CommissionDetailProps> = ({
       title: 'Product Id',
       dataIndex: 'id',
       width: '1%',
-      render: id => <CopyIdToClipboard id={id} />,
+      render: id => <CopyValueToClipboard value={id} />,
       align: 'center',
     },
     {

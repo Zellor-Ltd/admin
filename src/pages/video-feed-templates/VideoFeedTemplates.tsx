@@ -10,7 +10,7 @@ import {
   Tag as AntTag,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import CopyIdToClipboard from 'components/CopyIdToClipboard';
+import CopyValueToClipboard from 'components/CopyValueToClipboard';
 import { FeedItem } from 'interfaces/FeedItem';
 import { Segment } from 'interfaces/Segment';
 import React, { useEffect, useState } from 'react';
@@ -63,7 +63,7 @@ const VideoFeedTemplates: React.FC<RouteComponentProps> = () => {
       title: '_id',
       dataIndex: 'id',
       width: '3%',
-      render: id => <CopyIdToClipboard id={id} />,
+      render: id => <CopyValueToClipboard value={id} />,
       align: 'center',
     },
     {

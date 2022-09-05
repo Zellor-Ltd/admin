@@ -25,7 +25,7 @@ import {
   deletePromoDisplay,
   fetchPromoDisplays,
 } from 'services/DiscoClubService';
-import CopyIdToClipboard from 'components/CopyIdToClipboard';
+import CopyValueToClipboard from 'components/CopyValueToClipboard';
 import scrollIntoView from 'scroll-into-view';
 import PromoDisplayDetail from './PromoDisplayDetail';
 
@@ -83,7 +83,7 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
       title: '_id',
       dataIndex: 'id',
       width: '6%',
-      render: id => <CopyIdToClipboard id={id} />,
+      render: id => <CopyValueToClipboard value={id} />,
       align: 'center',
     },
     {

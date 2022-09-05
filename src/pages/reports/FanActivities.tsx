@@ -1,7 +1,7 @@
 import { Col, Row, Typography } from 'antd';
 import { useRequest } from '../../hooks/useRequest';
 import EditableTable from '../../components/EditableTable';
-import CopyIdToClipboard from '../../components/CopyIdToClipboard';
+import CopyValueToClipboard from '../../components/CopyValueToClipboard';
 import React, { useContext, useEffect, useState } from 'react';
 import { AppContext } from 'contexts/AppContext';
 import { fetchFanActivity } from '../../services/DiscoClubService';
@@ -32,7 +32,7 @@ const FanActivities: React.FC<DashboardProps> = () => {
       title: '_id',
       dataIndex: 'id',
       width: '5%',
-      render: (id: any) => <CopyIdToClipboard id={id} />,
+      render: (id: any) => <CopyValueToClipboard value={id} />,
       align: 'center',
     },
     { title: 'User', dataIndex: 'user', width: '30%' },

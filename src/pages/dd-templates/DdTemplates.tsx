@@ -22,7 +22,7 @@ import { useContext, useState, useEffect } from 'react';
 import { AppContext } from 'contexts/AppContext';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { deleteDdTemplate, fetchDdTemplates } from 'services/DiscoClubService';
-import CopyIdToClipboard from 'components/CopyIdToClipboard';
+import CopyValueToClipboard from 'components/CopyValueToClipboard';
 import scrollIntoView from 'scroll-into-view';
 import DdTemplateDetail from './DdTemplateDetail';
 
@@ -89,7 +89,7 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
       title: '_id',
       dataIndex: 'id',
       width: '6%',
-      render: id => <CopyIdToClipboard id={id} />,
+      render: id => <CopyValueToClipboard value={id} />,
       align: 'center',
     },
     {
