@@ -723,11 +723,13 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
             <Row>
               <Col span={24}>
                 <Form.Item name="apiCategory" label="API Category">
-                  <Input
-                    style={isMobile ? { width: '100%' } : { width: '180px' }}
-                    placeholder="API Category"
-                    disabled
-                  />
+                  <Tooltip title={_product?.apiCategory}>
+                    <Input.TextArea
+                      rows={2}
+                      placeholder="API Category"
+                      disabled
+                    />
+                  </Tooltip>
                 </Form.Item>
               </Col>
             </Row>
