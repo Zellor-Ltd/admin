@@ -310,7 +310,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
     } else
       setPageTitle(
         feedItem
-          ? feedItem.title.length > 50
+          ? feedItem.title?.length > 50
             ? `${feedItem.title.substr(0, 50) ?? ''} Update`
             : `${feedItem.title ?? ''} Update`
           : template
@@ -352,7 +352,6 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
 
   const handleFinishFailed = (errorFields: any[]) => {
     setSelectedSegment(undefined);
-    console.log('toma tua cu');
 
     message.error('Error: ' + errorFields[0].errors[0]);
 

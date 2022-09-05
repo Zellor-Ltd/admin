@@ -67,7 +67,7 @@ const Users: React.FC<RouteComponentProps> = ({ history }) => {
       align: 'right',
       render: (value, record) => (
         <>
-          <Link to={{ pathname: `/user`, state: record }}>
+          <Link to={{ pathname: '/user', state: record }}>
             <EditOutlined />
           </Link>
         </>

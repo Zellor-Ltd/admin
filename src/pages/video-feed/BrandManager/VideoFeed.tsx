@@ -163,12 +163,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     value: 'id',
   };
 
-  const statusMapping: SelectOption = {
-    key: 'value',
-    label: 'value',
-    value: 'value'?.toUpperCase(),
-  };
-
   const videoTypeMapping: SelectOption = {
     key: 'value',
     label: 'value',
@@ -548,7 +542,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
               <Typography.Title level={5}>Product Brand</Typography.Title>
               <SimpleSelect
                 data={productBrands}
-                onChange={id => setProductBrandFilter(id as any)}
+                onChange={setProductBrandFilter}
                 style={{ width: '100%' }}
                 selectedOption={productBrandFilter}
                 optionMapping={productBrandMapping}
@@ -560,16 +554,31 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
             </Col>
             <Col lg={5} xs={24}>
               <Typography.Title level={5}>Status</Typography.Title>
-              <SimpleSelect
+              <Select
+                placeholder="Select a Status"
                 disabled={loading}
-                data={statusList}
-                onChange={status => setStatusFilter(status)}
+                onChange={setStatusFilter}
                 style={{ width: '100%' }}
-                selectedOption={statusFilter}
-                optionMapping={statusMapping}
-                placeholder={'Select a Status'}
+                filterOption={(input, option) =>
+                  !!option?.children
+                    ?.toString()
+                    ?.toUpperCase()
+                    .includes(input?.toUpperCase())
+                }
                 allowClear={true}
-              />
+                showSearch={true}
+                value={statusFilter}
+              >
+                {statusList.map((curr: any) => (
+                  <Select.Option
+                    key={curr.value}
+                    value={curr.value.toUpperCase()}
+                    label={curr.value}
+                  >
+                    {curr.value}
+                  </Select.Option>
+                ))}
+              </Select>
             </Col>
             <Col lg={5} xs={24}>
               <Typography.Title level={5}>Category</Typography.Title>
@@ -591,7 +600,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
               <Typography.Title level={5}>Video Type</Typography.Title>
               <SimpleSelect
                 data={videoTypeList}
-                onChange={videoType => setVideoTypeFilter(videoType)}
+                onChange={setVideoTypeFilter}
                 style={{ width: '100%' }}
                 selectedOption={videoTypeFilter}
                 optionMapping={videoTypeMapping || loading}
@@ -606,6 +615,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                 min={0}
                 onChange={startIndex => setIndexFilter(startIndex ?? undefined)}
                 placeholder="Select an Index"
+                value={indexFilter}
               />
             </Col>
             <Col lg={5} xs={24}>
@@ -614,6 +624,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                 placeholder="Select a Creator"
                 disabled={!creators.length || loading}
                 onChange={setCreatorFilter}
+                value={creatorFilter}
                 style={{ width: '100%' }}
                 filterOption={(input, option) =>
                   !!option?.children
@@ -650,6 +661,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                 }
                 allowClear={true}
                 showSearch={true}
+                value={dateSortFilter}
               >
                 <Select.Option
                   key="newestFirst"
