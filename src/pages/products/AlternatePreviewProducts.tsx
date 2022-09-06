@@ -377,7 +377,6 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
                 viewPicker && (
                   <div onBlur={() => (viewPicker.current = false)}>
                     <SketchPicker
-                      className="mt-1"
                       color={record.colour ?? '#FFFFFF'}
                       disableAlpha
                       onChange={selectedColour =>

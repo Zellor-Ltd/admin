@@ -711,6 +711,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                   <Col lg={12} xs={24}>
                     <Col lg={24} xs={24}>
                       <SketchPicker
+                        className="product-sketch-picker"
                         color={color}
                         onChange={selectedColor => setColor(selectedColor.hex)}
                         presetColors={[

@@ -302,7 +302,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
           justify={isMobile ? 'end' : 'space-between'}
           className={isMobile ? 'pt-0' : 'ml-25 pt-0'}
         >
-          <Col lg={16} xs={24}>
+          <Col lg={20} xs={24}>
             <Row gutter={[8, 8]}>
               <Col lg={6} xs={24}>
                 <Typography.Title level={5}>Product Name</Typography.Title>
@@ -591,7 +591,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
         type="text"
         style={{ background: 'none' }}
         onClick={() => setShowMore(prev => !prev)}
-        className="mt-05 ml-1"
+        className="mt-05 ml-1 mb-1"
       >
         <Typography.Title
           level={5}
