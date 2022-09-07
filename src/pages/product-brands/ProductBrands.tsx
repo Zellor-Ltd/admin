@@ -101,6 +101,13 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
         else return 0;
       },
     },
+      {
+          title: 'Brand Link',
+          dataIndex: 'brandLink',
+          width: '10%',
+          align: 'center',
+          render: (value: string) => <a href={"https://ie.discoclub.com/b/" + value} target="blank">https://ie.discoclub.com/b/{value}</a>,
+      },
     {
       title: 'D%',
       dataIndex: 'discoPercentage',
