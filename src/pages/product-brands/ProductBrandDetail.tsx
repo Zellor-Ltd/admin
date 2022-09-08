@@ -9,22 +9,33 @@ import {
   PageHeader,
   Row,
   Select,
+  Slider,
   Tabs,
+  Tooltip,
   Typography,
 } from 'antd';
 import { Upload } from 'components';
 import { useRequest } from '../../hooks/useRequest';
-import React, { useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { saveProductBrand } from '../../services/DiscoClubService';
 import { TwitterPicker } from 'react-color';
 import { ProductBrand } from 'interfaces/ProductBrand';
 import { Brand } from 'interfaces/Brand';
 import scrollIntoView from 'scroll-into-view';
+import ProductCategoriesTrees from 'pages/products/ProductCategoriesTrees';
+import { AllCategories } from 'interfaces/Category';
+import { categoryMapper } from 'helpers/categoryMapper';
+import { categoryUtils } from 'helpers/categoryUtils';
+
+const { categoriesKeys, categoriesFields } = categoryMapper;
+const { getSearchTags, getCategories, removeSearchTagsByCategory } =
+  categoryUtils;
 interface ProductBrandDetailProps {
   productBrand: ProductBrand | undefined;
   onSave?: (record: ProductBrand) => void;
   onCancel?: () => void;
   brands: Brand[];
+  allCategories: any;
 }
 
 const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
@@ -32,6 +43,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
   onSave,
   onCancel,
   brands,
+  allCategories,
 }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [form] = Form.useForm();
@@ -39,10 +51,20 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
   const [activeTabKey, setActiveTabKey] = React.useState('Details');
   const toFocus = useRef<any>();
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [ageRange, setAgeRange] = useState<[number, number]>([12, 100]);
 
   const onFinish = async () => {
     try {
       const formProductBrand = form.getFieldsValue(true);
+
+      categoriesFields.forEach((field, index) => {
+        formProductBrand.categories.forEach((productCategory: any) => {
+          productCategory[field] = allCategories[
+            categoriesKeys[index] as keyof AllCategories
+          ].find((category: any) => category.id === productCategory[field]?.id);
+        });
+      });
+
       const { result } = await doRequest(() =>
         saveProductBrand(formProductBrand)
       );
@@ -119,6 +141,98 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
   const handleCreatorPercentageChange = (input: number) => {
     form.setFieldsValue({ creatorPercentage: input });
     setShowModal(true);
+  };
+
+  const setSearchTagsByCategory = useCallback(
+    (
+      useInitialValue: boolean,
+      selectedCategories: any[] = [],
+      categoryKey?: string,
+      productCategoryIndex?: number
+    ) => {
+      const currentCategories = getCategories(form, allCategories);
+      let previousTags: string[] = [];
+
+      if (
+        productCategoryIndex !== undefined &&
+        categoryKey !== undefined &&
+        productBrand &&
+        productBrand?.categories
+      ) {
+        previousTags = getSearchTags(
+          productBrand.categories[productCategoryIndex],
+          categoryKey
+        );
+      }
+
+      const selectedCategoriesSearchTags = selectedCategories
+        .filter(v => v && v.searchTags)
+        .map(v => v.searchTags)
+        .reduce((prev, curr) => {
+          return prev?.concat(curr || []);
+        }, []);
+
+      let searchTags = form.getFieldValue('searchTags') || [];
+      const finalValue = Array.from(
+        new Set([
+          ...searchTags.filter((tag: any) => previousTags.indexOf(tag) === -1),
+          ...selectedCategoriesSearchTags,
+        ])
+      );
+      if (useInitialValue && productBrand) {
+        searchTags = productBrand.searchTags || finalValue;
+      } else {
+        searchTags = finalValue;
+      }
+
+      if (
+        !!selectedCategories &&
+        !!productBrand &&
+        !!productBrand.categories &&
+        productCategoryIndex !== undefined
+      ) {
+        productBrand.categories[productCategoryIndex] = currentCategories;
+      }
+
+      form.setFieldsValue({
+        searchTags,
+      });
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [form, productBrand]
+  );
+
+  const handleCategoryDelete = (productCategoryIndex: number) => {
+    removeSearchTagsByCategory(productCategoryIndex, productBrand, form);
+  };
+
+  const handleCategoryChange = (
+    selectedCategories: any,
+    _categoryIndex: number,
+    filterCategory: Function,
+    categoryKey: string
+  ) => {
+    filterCategory(form);
+    setSearchTagsByCategory(
+      false,
+      selectedCategories,
+      categoryKey,
+      _categoryIndex
+    );
+  };
+
+  useEffect(() => {
+    if (productBrand?.ageMin && productBrand?.ageMax)
+      setAgeRange([productBrand?.ageMin, productBrand?.ageMax]);
+  }, [productBrand]);
+
+  const onChangeAge = (value: [number, number]) => {
+    form.setFieldsValue({
+      ageMin: value[0],
+      ageMax: value[1],
+    });
+
+    setAgeRange(value);
   };
 
   return (
@@ -288,6 +402,83 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
               </Row>
             </Tabs.TabPane>
 
+            <Tabs.TabPane forceRender tab="Categories" key="Categories">
+              <Row>
+                <Col span={24}>
+                  <Form.Item name="apiCategory" label="API Category">
+                    <Tooltip title={productBrand?.apiCategory}>
+                      <Input.TextArea
+                        rows={2}
+                        placeholder="No API Category"
+                        disabled
+                      />
+                    </Tooltip>
+                  </Form.Item>
+                </Col>
+              </Row>
+              <ProductCategoriesTrees
+                id="categories"
+                categories={productBrand?.categories}
+                allCategories={allCategories}
+                form={form}
+                handleCategoryChange={handleCategoryChange}
+                handleCategoryDelete={handleCategoryDelete}
+              />
+              <Col lg={24} xs={24}>
+                <Form.Item
+                  shouldUpdate={(prevValues, curValues) =>
+                    prevValues.category !== curValues.category
+                  }
+                >
+                  {({ getFieldValue }) => (
+                    <Form.Item name={'searchTags'} label="Search Tags">
+                      <Select mode="tags" className="product-search-tags">
+                        {getFieldValue('searchTags')?.map((searchTag: any) => (
+                          <Select.Option key={searchTag} value={searchTag}>
+                            {searchTag}
+                          </Select.Option>
+                        ))}
+                      </Select>
+                    </Form.Item>
+                  )}
+                </Form.Item>
+              </Col>
+              <Row gutter={8}>
+                <Col lg={24} xs={24}>
+                  <Typography.Title level={4}>Target</Typography.Title>
+                </Col>
+                <Col lg={24} xs={24}>
+                  <Form.Item label="Age Range">
+                    <Slider
+                      range
+                      marks={{ 12: '12', 100: '100' }}
+                      min={12}
+                      max={100}
+                      value={ageRange}
+                      onChange={onChangeAge}
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+              <Row gutter={8}>
+                <Col lg={24} xs={24}>
+                  <Form.Item
+                    name="gender"
+                    label="Gender"
+                    rules={[{ required: true, message: 'Gender is required.' }]}
+                  >
+                    <Select mode="multiple" id="gender">
+                      <Select.Option value="Female">Female</Select.Option>
+                      <Select.Option value="Male">Male</Select.Option>
+                      <Select.Option value="Other">Other</Select.Option>
+                      <Select.Option value="Prefer not to say">
+                        Prefer not to say
+                      </Select.Option>
+                    </Select>
+                  </Form.Item>
+                </Col>
+              </Row>
+            </Tabs.TabPane>
             <Tabs.TabPane forceRender tab="Images" key="Images">
               <Col lg={16} xs={24}>
                 <Row gutter={8}>

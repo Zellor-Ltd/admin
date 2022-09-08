@@ -1,18 +1,18 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Button, Col, Form, Radio, Row } from 'antd';
-import { categoriesSettings } from 'helpers/utils';
+import { categoryMapper } from 'helpers/categoryMapper';
 import { AllCategories } from 'interfaces/Category';
 import { Product } from 'interfaces/Product';
 import { ProductBrand } from 'interfaces/ProductBrand';
 import ProductCategoriesTrees from './ProductCategoriesTrees';
 import { useCallback } from 'react';
-import { productUtils } from '../../helpers/product-utils';
+import { categoryUtils } from '../../helpers/categoryUtils';
 import SimpleSelect from 'components/select/SimpleSelect';
 import { SelectOption } from 'interfaces/SelectOption';
 
-const { categoriesKeys, categoriesFields } = categoriesSettings;
+const { categoriesKeys, categoriesFields } = categoryMapper;
 const { getSearchTags, getCategories, removeSearchTagsByCategory } =
-  productUtils;
+  categoryUtils;
 
 interface ProductExpandedRowProps {
   record: Product;

@@ -21,7 +21,8 @@ import {
 import { Upload } from 'components';
 import { RichTextEditor } from 'components/RichTextEditor';
 import { formatMoment } from 'helpers/formatMoment';
-import { categoriesSettings } from 'helpers/utils';
+import { categoryMapper } from 'helpers/categoryMapper';
+import { categoryUtils } from 'helpers/categoryUtils';
 import { Brand } from 'interfaces/Brand';
 import { ProductBrand } from '../../interfaces/ProductBrand';
 import { AllCategories } from 'interfaces/Category';
@@ -39,7 +40,6 @@ import ProductCategoriesTrees from './ProductCategoriesTrees';
 import './Products.scss';
 import SimpleSelect from 'components/select/SimpleSelect';
 import { SelectOption } from 'interfaces/SelectOption';
-import { productUtils } from 'helpers/product-utils';
 import { Image } from '../../interfaces/Image';
 import { useRequest } from 'hooks/useRequest';
 import update from 'immutability-helper';
@@ -50,9 +50,9 @@ import { currencyRender } from 'helpers/currencyRender';
 import scrollIntoView from 'scroll-into-view';
 import CopyValueToClipboard from 'components/CopyValueToClipboard';
 
-const { categoriesKeys, categoriesFields } = categoriesSettings;
+const { categoriesKeys, categoriesFields } = categoryMapper;
 const { getSearchTags, getCategories, removeSearchTagsByCategory } =
-  productUtils;
+  categoryUtils;
 interface ProductDetailProps {
   brands: Brand[];
   productBrands: ProductBrand[];
@@ -726,7 +726,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                   <Tooltip title={_product?.apiCategory}>
                     <Input.TextArea
                       rows={2}
-                      placeholder="API Category"
+                      placeholder="No API Category"
                       disabled
                     />
                   </Tooltip>

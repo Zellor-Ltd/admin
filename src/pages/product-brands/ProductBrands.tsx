@@ -30,6 +30,7 @@ import CopyValueToClipboard from '../../components/CopyValueToClipboard';
 import ProductBrandDetail from './ProductBrandDetail';
 import scrollIntoView from 'scroll-into-view';
 import { Brand } from 'interfaces/Brand';
+import useAllCategories from 'hooks/useAllCategories';
 
 const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -42,6 +43,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
   const [brands, setBrands] = useState<Brand[]>([]);
   const [filter, setFilter] = useState<string>('');
   const { isMobile } = useContext(AppContext);
+  const { fetchAllCategories, allCategories } = useAllCategories({});
 
   useEffect(() => {
     getResources();
@@ -49,8 +51,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
   }, []);
 
   const getResources = async () => {
-    await getProductBrands();
-    await getBrands();
+    await Promise.all([getBrands(), getProductBrands(), fetchAllCategories()]);
   };
 
   const getProductBrands = async () => {
@@ -101,13 +102,17 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
         else return 0;
       },
     },
-      {
-          title: 'Brand Link',
-          dataIndex: 'brandLink',
-          width: '10%',
-          align: 'center',
-          render: (value: string) => <a href={"https://ie.discoclub.com/b/" + value} target="blank">https://ie.discoclub.com/b/{value}</a>,
-      },
+    {
+      title: 'Brand Link',
+      dataIndex: 'brandLink',
+      width: '10%',
+      align: 'center',
+      render: (value: string) => (
+        <a href={'https://ie.discoclub.com/b/' + value} target="blank">
+          https://ie.discoclub.com/b/{value}
+        </a>
+      ),
+    },
     {
       title: 'D%',
       dataIndex: 'discoPercentage',
@@ -304,6 +309,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
           onSave={onSaveBrand}
           onCancel={onCancelBrand}
           brands={brands}
+          allCategories={allCategories}
         />
       )}
     </>

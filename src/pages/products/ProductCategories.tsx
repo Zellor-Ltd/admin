@@ -1,6 +1,6 @@
 import { Col, Form, Select } from 'antd';
 import { FormInstance } from 'antd/lib/form';
-import { categoriesSettings } from 'helpers/utils';
+import { categoryMapper } from 'helpers/categoryMapper';
 import useAllCategories from 'hooks/useAllCategories';
 import {
   AllCategories,
@@ -11,7 +11,7 @@ import {
 import { useContext } from 'react';
 import { AppContext } from 'contexts/AppContext';
 
-const { categoriesArray } = categoriesSettings;
+const { categoriesArray } = categoryMapper;
 
 interface ProductCategoriesProps {
   allCategories: AllCategories;
