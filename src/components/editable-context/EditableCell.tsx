@@ -72,7 +72,7 @@ const EditableCell: React.FC<EditableCellProps> = ({
         {number ? (
           <InputNumber ref={inputNumberRef} onPressEnter={save} onBlur={save} />
         ) : (
-          <Input ref={inputRef} onPressEnter={save} onBlur={save} />
+          <Input allowClear ref={inputRef} onPressEnter={save} onBlur={save} />
         )}
       </Form.Item>
     ) : (

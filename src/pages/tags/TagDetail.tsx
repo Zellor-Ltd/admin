@@ -142,7 +142,7 @@ const TagDetail: React.FC<TagDetailProps> = ({ tag, onSave, onCancel }) => {
                 label="Tag Name"
                 rules={[{ required: true, message: 'Tag Name is required.' }]}
               >
-                <Input id="tagName" />
+                <Input allowClear id="tagName" />
               </Form.Item>
             </Col>
             <Col lg={12} xs={24}>

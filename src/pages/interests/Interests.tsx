@@ -104,6 +104,7 @@ const Interests: React.FC<InterestsProps> = () => {
     }) => (
       <div style={{ padding: 8 }}>
         <Input
+          allowClear
           ref={searchInput}
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}

@@ -38,12 +38,12 @@ const RoleDetail: React.FC<RouteComponentProps> = props => {
           <Col lg={12} xs={24}>
             <Col span={24}>
               <Form.Item label="Name" name="name">
-                <Input />
+                <Input allowClear />
               </Form.Item>
             </Col>
             <Col span={24}>
               <Form.Item label="Description" name="description">
-                <Input.TextArea />
+                <Input.TextArea allowClear />
               </Form.Item>
             </Col>
           </Col>

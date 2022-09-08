@@ -124,7 +124,7 @@ const ManualPayment: React.FC<ManualPaymentProps> = ({
                   },
                 ]}
               >
-                <Input id="description" placeholder="Description" />
+                <Input allowClear id="description" placeholder="Description" />
               </Form.Item>
             </Col>
             <Col span={24}>
@@ -140,7 +140,7 @@ const ManualPayment: React.FC<ManualPaymentProps> = ({
                   },
                 ]}
               >
-                <Input id="amount" placeholder="Amount" />
+                <Input allowClear id="amount" placeholder="Amount" />
               </Form.Item>
             </Col>
           </Col>

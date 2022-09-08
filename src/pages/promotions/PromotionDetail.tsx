@@ -67,7 +67,7 @@ const PromotionDetail: React.FC<PromotionDetailProps> = ({
         <Row gutter={8}>
           <Col lg={12} xs={24}>
             <Form.Item label="Description" name="description">
-              <Input />
+              <Input allowClear />
             </Form.Item>
           </Col>
           <Col lg={12} xs={24}>

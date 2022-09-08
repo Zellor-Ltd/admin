@@ -5,7 +5,6 @@ import {
   Table,
   Form,
   Input,
-  InputNumber,
   message,
   PageHeader,
   Radio,
@@ -17,6 +16,7 @@ import {
   Typography,
   Popconfirm,
   Modal,
+  InputNumber,
 } from 'antd';
 import { Upload } from 'components';
 import { RichTextEditor } from 'components/RichTextEditor';
@@ -526,7 +526,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
             <Row gutter={8}>
               <Col lg={12} xs={24}>
                 <Form.Item label="Master Brand Name" name="brandName">
-                  <Input placeholder="Master Brand Name" allowClear />
+                  <Input allowClear placeholder="Master Brand Name" />
                 </Form.Item>
               </Col>
               <Col lg={24} xs={24}>
@@ -571,7 +571,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
               <Col lg={12} xs={24}>
                 <Col span={24}>
                   <Form.Item label="Master Brand Name" name="brandName">
-                    <Input placeholder="Master Brand Name" allowClear />
+                    <Input allowClear placeholder="Master Brand Name" />
                   </Form.Item>
                 </Col>
                 <Col span={24}>

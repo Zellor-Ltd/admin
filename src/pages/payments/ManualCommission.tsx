@@ -90,7 +90,7 @@ const ManualCommission: React.FC<PaymentDetailsProps> = ({
                   },
                 ]}
               >
-                <Input id="feedId" placeholder="Feed ID" />
+                <Input allowClear id="feedId" placeholder="Feed ID" />
               </Form.Item>
             </Col>
             <Col span={24}>
@@ -135,7 +135,7 @@ const ManualCommission: React.FC<PaymentDetailsProps> = ({
                   },
                 ]}
               >
-                <Input id="productId" placeholder="Product ID" />
+                <Input allowClear id="productId" placeholder="Product ID" />
               </Form.Item>
             </Col>
             <Col span={24}>

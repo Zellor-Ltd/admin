@@ -286,7 +286,7 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
               {fan && (
                 <Col lg={8} xs={24}>
                   <Form.Item label="_id" name="id">
-                    <Input disabled />
+                    <Input allowClear disabled />
                   </Form.Item>
                 </Col>
               )}
@@ -301,17 +301,17 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
                     },
                   ]}
                 >
-                  <Input id="userName" />
+                  <Input allowClear id="userName" />
                 </Form.Item>
               </Col>
               <Col lg={8} xs={24}>
                 <Form.Item label="Email" name="user">
-                  <Input type="email" />
+                  <Input allowClear type="email" />
                 </Form.Item>
               </Col>
               <Col lg={8} xs={24}>
                 <Form.Item label="Password" name="pwd">
-                  <Input.Password />
+                  <Input.Password allowClear />
                 </Form.Item>
               </Col>
               <Col lg={8} xs={24}>
@@ -382,17 +382,17 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
             <Row gutter={8}>
               <Col lg={8} xs={24}>
                 <Form.Item label="Address" name="line1">
-                  <Input />
+                  <Input allowClear />
                 </Form.Item>
               </Col>
               <Col lg={8} xs={24}>
                 <Form.Item label="City" name="city">
-                  <Input />
+                  <Input allowClear />
                 </Form.Item>
               </Col>
               <Col lg={8} xs={24}>
                 <Form.Item label="Country" name="country">
-                  <Input />
+                  <Input allowClear />
                 </Form.Item>
               </Col>
               <Col lg={8} xs={24}>

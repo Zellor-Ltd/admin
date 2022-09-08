@@ -46,7 +46,7 @@ const FanGroupsDetail: React.FC<FanGroupsDetailProps> = ({
                 name="name"
                 rules={[{ required: true, message: 'Name is required.' }]}
               >
-                <Input />
+                <Input allowClear />
               </Form.Item>
             </Col>
           </Col>

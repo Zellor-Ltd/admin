@@ -209,17 +209,17 @@ const UserDetail: React.FC<RouteComponentProps> = props => {
         <Row gutter={8}>
           <Col lg={8} xs={24}>
             <Form.Item label="Name" name="name">
-              <Input />
+              <Input allowClear />
             </Form.Item>
           </Col>
           <Col lg={8} xs={24}>
             <Form.Item label="Email" name="user">
-              <Input type="email" />
+              <Input allowClear type="email" />
             </Form.Item>
           </Col>
           <Col lg={8} xs={24}>
             <Form.Item label="Password" name="pwd">
-              <Input.Password />
+              <Input.Password allowClear />
             </Form.Item>
           </Col>
           <Col lg={8} xs={24}>
@@ -235,12 +235,12 @@ const UserDetail: React.FC<RouteComponentProps> = props => {
           </Col>
           <Col lg={8} xs={24}>
             <Form.Item label="Phone" name="phone">
-              <Input addonBefore={prefixSelector} />
+              <Input allowClear addonBefore={prefixSelector} />
             </Form.Item>
           </Col>
           <Col lg={8} xs={24}>
             <Form.Item label="Address" name="address">
-              <Input />
+              <Input allowClear />
             </Form.Item>
           </Col>
           <Col lg={8} xs={24}>
@@ -266,7 +266,7 @@ const UserDetail: React.FC<RouteComponentProps> = props => {
 
           <Col lg={8} xs={24}>
             <Form.Item label="Email" name="user">
-              <Input type="email" />
+              <Input allowClear type="email" />
             </Form.Item>
           </Col>
           <Col lg={4} xs={24}>

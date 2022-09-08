@@ -74,7 +74,7 @@ const DdTemplatesDetail: React.FC<DdTemplatesDetailProps> = ({
                 name="tagName"
                 rules={[{ required: true, message: 'Tag Name is required.' }]}
               >
-                <Input id="tagName" />
+                <Input allowClear id="tagName" />
               </Form.Item>
             </Col>
             <Col span={24}>
@@ -83,7 +83,7 @@ const DdTemplatesDetail: React.FC<DdTemplatesDetailProps> = ({
                 name="template"
                 rules={[{ required: true, message: 'Template is required.' }]}
               >
-                <Input id="template" />
+                <Input allowClear id="template" />
               </Form.Item>
             </Col>
             <Col span={24}>

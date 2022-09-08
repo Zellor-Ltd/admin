@@ -571,7 +571,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                   </Col>
                   <Col lg={24} xs={24}>
                     <Form.Item name="name" label="Short description">
-                      <Input disabled={loadingResources || isLive} />
+                      <Input allowClear disabled={loadingResources || isLive} />
                     </Form.Item>
                   </Col>
                   <Col lg={24} xs={24}>
@@ -683,6 +683,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                     <Col lg={24} xs={24}>
                       <Form.Item name="variantId" label="Variant">
                         <Input
+                          allowClear
                           id="variantId"
                           placeholder="Variant ID"
                           disabled={loadingResources || isLive}
@@ -694,6 +695,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                     <Col lg={24} xs={24}>
                       <Form.Item name="colourTitle" label="Colour">
                         <Input
+                          allowClear
                           placeholder="Colour name"
                           disabled={loadingResources || isLive}
                         />
@@ -702,6 +704,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                     <Col lg={24} xs={24}>
                       <Form.Item name="size" label="Size">
                         <Input
+                          allowClear
                           placeholder="Size"
                           disabled={loadingResources || isLive}
                         />
@@ -918,6 +921,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                   <Col lg={12} xs={24}>
                     <Form.Item name="urlKey" label="URL Key">
                       <Input
+                        allowClear
                         placeholder="Product Key"
                         disabled={loadingResources || isLive}
                       />
@@ -934,6 +938,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                   <Col lg={12} xs={24}>
                     <Form.Item name="barcode" label="Barcode">
                       <Input
+                        allowClear
                         id="barcode"
                         pattern="^[0-9]{13}$"
                         placeholder="Barcode number"
@@ -1037,7 +1042,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                   </Col>
                   <Col lg={12} xs={24}>
                     <Form.Item name="sku" label="SKU">
-                      <Input disabled={loadingResources || isLive} />
+                      <Input allowClear disabled={loadingResources || isLive} />
                     </Form.Item>
                   </Col>
                   <Col lg={12} xs={24}>

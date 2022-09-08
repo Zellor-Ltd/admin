@@ -47,12 +47,12 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ order, setDetails }) => {
         <Row gutter={8}>
           <Col lg={12} xs={24}>
             <Form.Item label="First Name" name="firstName">
-              <Input />
+              <Input allowClear />
             </Form.Item>
           </Col>
           <Col lg={12} xs={24}>
             <Form.Item label="Last name" name="lastName">
-              <Input />
+              <Input allowClear />
             </Form.Item>
           </Col>
         </Row>

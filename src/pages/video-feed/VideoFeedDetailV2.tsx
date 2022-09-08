@@ -641,12 +641,12 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
               </Col>
               <Col lg={24} xs={24}>
                 <Form.Item name="title" label="Title">
-                  <Input />
+                  <Input allowClear />
                 </Form.Item>
               </Col>
               <Col lg={24} xs={24}>
                 <Form.Item name="shortDescription" label="Short description">
-                  <Input />
+                  <Input allowClear />
                 </Form.Item>
               </Col>
               <Col lg={24} xs={24}>
@@ -693,6 +693,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                   <Col lg={24} xs={24}>
                     <Form.Item label="Creator Name">
                       <Input
+                        allowClear
                         value={
                           videoCreator?.firstName ?? videoCreator?.userName
                         }
@@ -702,7 +703,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                   </Col>
                   <Col lg={24} xs={24}>
                     <Form.Item label="Creator Email">
-                      <Input value={videoCreator?.user} disabled />
+                      <Input allowClear value={videoCreator?.user} disabled />
                     </Form.Item>
                   </Col>
                 </>
@@ -756,7 +757,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
               </Col>
               <Col lg={12} xs={24}>
                 <Form.Item name="format" label="Format">
-                  <Input />
+                  <Input allowClear />
                 </Form.Item>
               </Col>
               <Col lg={12} xs={24}>
@@ -1184,17 +1185,17 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                 </Col>
                 <Col span={24}>
                   <Form.Item name="promoText" label="Headline Text">
-                    <Input />
+                    <Input allowClear />
                   </Form.Item>
                 </Col>
                 <Col span={24}>
                   <Form.Item name="promoCode" label="Coupon Code">
-                    <Input />
+                    <Input allowClear />
                   </Form.Item>
                 </Col>
                 <Col span={24}>
                   <Form.Item name="promoDate" label="Date Range (Text format)">
-                    <Input />
+                    <Input allowClear />
                   </Form.Item>
                 </Col>
               </Col>

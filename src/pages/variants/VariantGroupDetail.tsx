@@ -307,6 +307,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
               <Col lg={6} xs={24}>
                 <Typography.Title level={5}>Product Name</Typography.Title>
                 <Input
+                  allowClear
                   value={searchFilter}
                   onChange={event => setSearchFilter(event.target.value)}
                   placeholder="Search by Name"
@@ -474,6 +475,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
               <Col lg={6} xs={24}>
                 <Typography.Title level={5}>Run ID</Typography.Title>
                 <Input
+                  allowClear
                   onChange={evt => {
                     setRunIdFilter(evt.target.value);
                   }}

@@ -342,6 +342,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
                 Search
               </Typography.Title>
               <Input
+                allowClear
                 disabled={loading}
                 onChange={onChangeFilter}
                 placeholder="Search by Name"

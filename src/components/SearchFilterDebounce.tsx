@@ -38,6 +38,7 @@ export const SearchFilterDebounce: React.FC<SearchFilterDebounceProps> = ({
         {label}
       </Typography.Title>
       <Input
+        allowClear
         disabled={disabled}
         placeholder={placeholder}
         onPressEnter={onPressEnter}

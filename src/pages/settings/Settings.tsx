@@ -135,7 +135,7 @@ const ItemList: React.FC<ItemListProp> = ({ name, isMobile }) => (
                 fieldKey={[field.key, 'name']}
                 label="Name"
               >
-                <Input />
+                <Input allowClear />
               </Form.Item>
             </Col>
             <Col lg={12} xs={24}>
@@ -156,7 +156,7 @@ const ItemList: React.FC<ItemListProp> = ({ name, isMobile }) => (
                 name={[field.name, 'value']}
                 fieldKey={[field.key, 'value']}
               >
-                <Input />
+                <Input allowClear />
               </Form.Item>
             </Col>
           </Row>

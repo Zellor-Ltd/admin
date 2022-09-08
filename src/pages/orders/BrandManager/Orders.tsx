@@ -217,6 +217,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     }) => (
       <div style={{ padding: 8 }}>
         <Input
+          allowClear
           ref={searchInput}
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}

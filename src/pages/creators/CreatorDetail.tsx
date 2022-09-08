@@ -241,12 +241,12 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
               </Col>
               <Col lg={12} xs={24}>
                 <Form.Item label="First Name" name="firstName">
-                  <Input />
+                  <Input allowClear />
                 </Form.Item>
               </Col>
               <Col lg={12} xs={24}>
                 <Form.Item label="Last name" name="lastName">
-                  <Input />
+                  <Input allowClear />
                 </Form.Item>
               </Col>
               <Col lg={12} xs={24}>
@@ -260,17 +260,17 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                     },
                   ]}
                 >
-                  <Input />
+                  <Input allowClear />
                 </Form.Item>
               </Col>
               <Col lg={12} xs={24}>
                 <Form.Item label="Password" name="pwd">
-                  <Input.Password autoComplete="off" />
+                  <Input.Password autoComplete="off" allowClear />
                 </Form.Item>
               </Col>
               <Col lg={12} xs={24}>
                 <Form.Item label="Description" name="description">
-                  <Input showCount maxLength={200} />
+                  <Input allowClear showCount maxLength={200} />
                 </Form.Item>
               </Col>
               <Col lg={12} xs={24}>
@@ -284,7 +284,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                     },
                   ]}
                 >
-                  <Input />
+                  <Input allowClear />
                 </Form.Item>
               </Col>
               <Col lg={12} xs={24}>
@@ -325,6 +325,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                   ]}
                 >
                   <Input
+                    allowClear
                     id="userName"
                     prefix="@"
                     autoComplete="off"
@@ -335,6 +336,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
               <Col lg={12} xs={24}>
                 <Form.Item label="Creator's InstaLink">
                   <Input
+                    allowClear
                     ref={inputRef}
                     type="url"
                     className={instaLink ? 'instalink-input' : undefined}
@@ -459,12 +461,12 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                     },
                   ]}
                 >
-                  <Input />
+                  <Input allowClear />
                 </Form.Item>
               </Col>
               <Col lg={12} xs={24}>
                 <Form.Item label="Coupon Code" name="couponCode">
-                  <Input />
+                  <Input allowClear />
                 </Form.Item>
               </Col>
               <Col lg={12} xs={24}>
@@ -475,6 +477,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
               <Col lg={12} xs={24}>
                 <Form.Item label="Value Added Tax" name="vat">
                   <Input
+                    allowClear
                     id="vat"
                     pattern="^[A-Za-z0-9]*"
                     title="VAT must contain only letters and numbers."
@@ -487,17 +490,17 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
             <Row gutter={8}>
               <Col lg={12} xs={24}>
                 <Form.Item label="Address" name="line1">
-                  <Input />
+                  <Input allowClear />
                 </Form.Item>
               </Col>
               <Col lg={12} xs={24}>
                 <Form.Item label="City" name="city">
-                  <Input />
+                  <Input allowClear />
                 </Form.Item>
               </Col>
               <Col lg={12} xs={24}>
                 <Form.Item label="Country" name="country">
-                  <Input />
+                  <Input allowClear />
                 </Form.Item>
               </Col>
               <Col lg={12} xs={24}>
@@ -514,7 +517,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                   label="Describe your content focus"
                   name="contentFocus"
                 >
-                  <Input.TextArea rows={4} />
+                  <Input.TextArea rows={4} allowClear />
                 </Form.Item>
               </Col>
               <Col lg={24} xs={24}>
@@ -522,17 +525,17 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                   label="Top Brand collaborations you have completed"
                   name="topBrands"
                 >
-                  <Input.TextArea rows={4} />
+                  <Input.TextArea rows={4} allowClear />
                 </Form.Item>
               </Col>
               <Col lg={24} xs={24}>
                 <Form.Item label="Your Work" name="yourWork">
-                  <Input showCount maxLength={40} />
+                  <Input allowClear showCount maxLength={40} />
                 </Form.Item>
               </Col>
               <Col lg={24} xs={24}>
                 <Form.Item label="Creator Profile" name="creatorProfile">
-                  <Input />
+                  <Input allowClear />
                 </Form.Item>
               </Col>
             </Row>
@@ -579,22 +582,22 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
             <Row>
               <Col lg={12} xs={24}>
                 <Form.Item name="instagram" label="Instagram">
-                  <Input prefix={<InstagramFilled />} />
+                  <Input allowClear prefix={<InstagramFilled />} />
                 </Form.Item>
                 <Form.Item name="facebook" label="Facebook">
-                  <Input prefix={<FacebookFilled />} />
+                  <Input allowClear prefix={<FacebookFilled />} />
                 </Form.Item>
                 <Form.Item name="tiktok" label="TikTok">
-                  <Input prefix={<SoundFilled />} />
+                  <Input allowClear prefix={<SoundFilled />} />
                 </Form.Item>
                 <Form.Item name="youtube" label="Youtube">
-                  <Input prefix={<YoutubeFilled />} />
+                  <Input allowClear prefix={<YoutubeFilled />} />
                 </Form.Item>
                 <Form.Item name="website" label="Website">
-                  <Input prefix={<GlobalOutlined />} />
+                  <Input allowClear prefix={<GlobalOutlined />} />
                 </Form.Item>
                 <Form.Item name="twitter" label="Twitter">
-                  <Input prefix={<TwitterCircleFilled />} />
+                  <Input allowClear prefix={<TwitterCircleFilled />} />
                 </Form.Item>
               </Col>
             </Row>

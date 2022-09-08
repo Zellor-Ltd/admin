@@ -166,12 +166,12 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                         },
                       ]}
                     >
-                      <Input id="brandName" />
+                      <Input allowClear id="brandName" />
                     </Form.Item>
                   </Col>
                   <Col lg={12} xs={24}>
                     <Form.Item label="External Code" name="externalCode">
-                      <Input />
+                      <Input allowClear />
                     </Form.Item>
                   </Col>
                   <Col span={24}>
@@ -185,12 +185,12 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                   </Col>
                   <Col lg={12} xs={24}>
                     <Form.Item label="Home URL" name="homeUrl">
-                      <Input placeholder="Home URL" allowClear />
+                      <Input allowClear placeholder="Home URL" />
                     </Form.Item>
                   </Col>
                   <Col lg={12} xs={24}>
                     <Form.Item name="apiBrand" label="API Brand">
-                      <Input placeholder="API Brand" />
+                      <Input allowClear placeholder="API Brand" />
                     </Form.Item>
                   </Col>
                   <Col lg={12} xs={24}>
@@ -313,22 +313,22 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
               <Row>
                 <Col lg={8} xs={24}>
                   <Form.Item name="instagram" label="Instagram">
-                    <Input prefix={<InstagramFilled />} />
+                    <Input allowClear prefix={<InstagramFilled />} />
                   </Form.Item>
                   <Form.Item name="facebook" label="Facebook">
-                    <Input prefix={<FacebookFilled />} />
+                    <Input allowClear prefix={<FacebookFilled />} />
                   </Form.Item>
                   <Form.Item name="tiktok" label="TikTok">
-                    <Input prefix={<SoundFilled />} />
+                    <Input allowClear prefix={<SoundFilled />} />
                   </Form.Item>
                   <Form.Item name="youtube" label="Youtube">
-                    <Input prefix={<YoutubeFilled />} />
+                    <Input allowClear prefix={<YoutubeFilled />} />
                   </Form.Item>
                   <Form.Item name="website" label="Website">
-                    <Input prefix={<GlobalOutlined />} />
+                    <Input allowClear prefix={<GlobalOutlined />} />
                   </Form.Item>
                   <Form.Item name="twitter" label="Twitter">
-                    <Input prefix={<TwitterCircleFilled />} />
+                    <Input allowClear prefix={<TwitterCircleFilled />} />
                   </Form.Item>
                 </Col>
               </Row>

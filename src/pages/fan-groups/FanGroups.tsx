@@ -128,6 +128,7 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
             <Col lg={4} xs={24}>
               <Typography.Title level={5}>Search</Typography.Title>
               <Input
+                allowClear
                 disabled={loading}
                 placeholder="Search by Name"
                 suffix={<SearchOutlined />}

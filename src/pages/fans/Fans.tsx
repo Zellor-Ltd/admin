@@ -288,6 +288,7 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
                 <Col lg={6} xs={24}>
                   <Typography.Title level={5}>Fan Filter</Typography.Title>
                   <Input
+                    allowClear
                     disabled={loading || refreshing}
                     style={{ width: '100%' }}
                     onChange={evt => onSearch(evt.target.value)}

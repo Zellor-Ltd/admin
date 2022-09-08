@@ -72,6 +72,7 @@ const FanGroupDropdown: React.FC<FanGroupDropdownProps> = ({
               }}
             >
               <Input
+                allowClear
                 style={{ flex: 'auto', marginRight: '6px' }}
                 value={addFanGroupField}
                 onChange={onFanGroupChange}

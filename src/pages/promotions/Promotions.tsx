@@ -224,6 +224,7 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
                 Search
               </Typography.Title>
               <Input
+                allowClear
                 placeholder="Search by ID"
                 suffix={<SearchOutlined />}
                 onChange={event => setIdFilter(event.target.value)}

@@ -528,6 +528,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
               Search
             </Typography.Title>
             <Input
+              allowClear
               disabled={loadingResources.current || loading}
               ref={inputRef}
               onChange={event => setTitleFilter(event.target.value)}

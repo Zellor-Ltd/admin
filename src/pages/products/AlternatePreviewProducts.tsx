@@ -348,6 +348,7 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
           className="repositioned-grid-item"
         >
           <Input
+            allowClear
             onChange={event => (record.variantId = event.target.value)}
             placeholder="Variant ID"
             defaultValue={value}
@@ -428,6 +429,7 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
           className="repositioned-grid-item"
         >
           <Input
+            allowClear
             onChange={event => (record.colourTitle = event.target.value)}
             placeholder="Colour name"
             defaultValue={value}
@@ -448,6 +450,7 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
           className="repositioned-grid-item"
         >
           <Input
+            allowClear
             onChange={event => (record.size = event.target.value)}
             placeholder="Size"
             defaultValue={value}

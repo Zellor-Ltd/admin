@@ -325,7 +325,7 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = props => {
                   </Col>
                   <Col lg={24} xs={24}>
                     <Form.Item name="title" label="Title">
-                      <Input />
+                      <Input allowClear />
                     </Form.Item>
                   </Col>
                   <Col lg={24} xs={24}>
@@ -333,7 +333,7 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = props => {
                       name="shortDescription"
                       label="Short description"
                     >
-                      <Input />
+                      <Input allowClear />
                     </Form.Item>
                   </Col>
                   <Col lg={24} xs={24}>
@@ -395,7 +395,7 @@ const VideoFeedDetail: React.FC<RouteComponentProps> = props => {
                   </Col>
                   <Col lg={12} xs={24}>
                     <Form.Item name="format" label="Format">
-                      <Input />
+                      <Input allowClear />
                     </Form.Item>
                   </Col>
                   <Col lg={12} xs={24}>
