@@ -83,7 +83,7 @@ const ManualPayment: React.FC<ManualPaymentProps> = ({
       >
         <Row gutter={[8, 8]}>
           <Col lg={12} xs={24}>
-            <Col lg={16} xs={24}>
+            <Col span={24}>
               <Form.Item
                 name="creatorId"
                 label="Creator"
@@ -113,7 +113,7 @@ const ManualPayment: React.FC<ManualPaymentProps> = ({
                 </Select>
               </Form.Item>
             </Col>
-            <Col lg={16} xs={24}>
+            <Col span={24}>
               <Form.Item
                 name="description"
                 label="Description"
@@ -127,7 +127,7 @@ const ManualPayment: React.FC<ManualPaymentProps> = ({
                 <Input id="description" placeholder="Description" />
               </Form.Item>
             </Col>
-            <Col lg={16} xs={24}>
+            <Col span={24}>
               <Form.Item
                 name="amount"
                 label="Amount"
@@ -144,25 +144,23 @@ const ManualPayment: React.FC<ManualPaymentProps> = ({
               </Form.Item>
             </Col>
           </Col>
-          <Col lg={16} xs={24}>
-            <Row gutter={8} justify={isMobile ? 'end' : undefined}>
-              <Col>
-                <Button type="default" onClick={handleCancel}>
-                  Cancel
-                </Button>
-              </Col>
-              <Col>
-                <Button
-                  loading={loading}
-                  type="primary"
-                  htmlType="submit"
-                  className="mb-1"
-                  onClick={checkConstraintValidity}
-                >
-                  Send
-                </Button>
-              </Col>
-            </Row>
+        </Row>
+        <Row gutter={8} justify="end">
+          <Col>
+            <Button type="default" onClick={handleCancel}>
+              Cancel
+            </Button>
+          </Col>
+          <Col>
+            <Button
+              loading={loading}
+              type="primary"
+              htmlType="submit"
+              className="mb-1"
+              onClick={checkConstraintValidity}
+            >
+              Send
+            </Button>
           </Col>
         </Row>
       </Form>

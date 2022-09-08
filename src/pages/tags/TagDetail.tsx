@@ -15,8 +15,7 @@ import { useRequest } from 'hooks/useRequest';
 import { Brand } from 'interfaces/Brand';
 import { Product } from 'interfaces/Product';
 import { Tag } from 'interfaces/Tag';
-import React, { useContext, useEffect, useState } from 'react';
-import { AppContext } from 'contexts/AppContext';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { fetchBrands, fetchProducts, saveTag } from 'services/DiscoClubService';
 import scrollIntoView from 'scroll-into-view';
@@ -27,7 +26,6 @@ interface TagDetailProps {
 }
 
 const TagDetail: React.FC<TagDetailProps> = ({ tag, onSave, onCancel }) => {
-  const { isMobile } = useContext(AppContext);
   const [loading, setLoading] = useState(false);
   const { doRequest } = useRequest({ setLoading });
 
@@ -147,7 +145,7 @@ const TagDetail: React.FC<TagDetailProps> = ({ tag, onSave, onCancel }) => {
                 <Input id="tagName" />
               </Form.Item>
             </Col>
-            <Col lg={6} xs={0}>
+            <Col lg={12} xs={24}>
               <Form.Item name={['brand', 'id']} label="Master Brand">
                 <Select onChange={onChangeBrand}>
                   {brands.map(brand => (
@@ -158,7 +156,7 @@ const TagDetail: React.FC<TagDetailProps> = ({ tag, onSave, onCancel }) => {
                 </Select>
               </Form.Item>
             </Col>
-            <Col xxl={6} lg={12} xs={24}>
+            <Col lg={12} xs={24}>
               <Form.Item
                 name="template"
                 label="Template"
@@ -177,7 +175,7 @@ const TagDetail: React.FC<TagDetailProps> = ({ tag, onSave, onCancel }) => {
                 </Select>
               </Form.Item>
             </Col>
-            <Col lg={6} xs={0}>
+            <Col lg={12} xs={24}>
               <Form.Item shouldUpdate>
                 {() => (
                   <Form.Item name={['product', 'id']} label="Product">
@@ -260,7 +258,7 @@ const TagDetail: React.FC<TagDetailProps> = ({ tag, onSave, onCancel }) => {
         <Input.Group>
           <Row gutter={8}></Row>
         </Input.Group>
-        <Row gutter={8} justify={isMobile ? 'end' : undefined}>
+        <Row gutter={8} justify="end">
           <Col>
             <Button type="default" onClick={() => onCancel?.()}>
               Cancel

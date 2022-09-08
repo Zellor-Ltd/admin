@@ -9,8 +9,7 @@ import {
   ProductCategory,
 } from 'interfaces/Category';
 import { SearchTag } from 'interfaces/SearchTag';
-import React, { useContext, useEffect, useState } from 'react';
-import { AppContext } from 'contexts/AppContext';
+import React, { useEffect, useState } from 'react';
 import { productCategoriesAPI } from 'services/DiscoClubService';
 import SearchTags from './SearchTags';
 interface CategoryDetailProps {
@@ -29,7 +28,6 @@ const CategoryDetail: React.FC<CategoryDetailProps> = ({
   onSave,
   onCancel,
 }) => {
-  const { isMobile } = useContext(AppContext);
   const [loading, setLoading] = useState<boolean>(false);
   const { doRequest } = useRequest({ setLoading });
 
@@ -158,7 +156,7 @@ const CategoryDetail: React.FC<CategoryDetailProps> = ({
             </Form.Item>
           </Col>
         </Row>
-        <Row gutter={8} justify={isMobile ? 'end' : undefined}>
+        <Row gutter={8} justify="end">
           <Col>
             <Button type="default" onClick={() => onCancel?.()}>
               Cancel

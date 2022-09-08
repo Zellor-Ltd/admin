@@ -1161,36 +1161,42 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
           </Tabs.TabPane>
           <Tabs.TabPane forceRender tab="Promo" key="Promo">
             <Row gutter={8}>
-              <Col sm={12} lg={6}>
-                <Form.Item
-                  name="promoEnabled"
-                  label="Enabled"
-                  valuePropName="checked"
-                >
-                  <Switch />
-                </Form.Item>
-
-                <Form.Item name="promoMasterBrand" label="Master Brand">
-                  <Select onChange={onChangeBrand}>
-                    {brands.map(brand => (
-                      <Select.Option key={brand.id} value={brand.id}>
-                        {brand.brandName}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </Form.Item>
-
-                <Form.Item name="promoText" label="Headline Text">
-                  <Input />
-                </Form.Item>
-
-                <Form.Item name="promoCode" label="Coupon Code">
-                  <Input />
-                </Form.Item>
-
-                <Form.Item name="promoDate" label="Date Range (Text format)">
-                  <Input />
-                </Form.Item>
+              <Col lg={12} xs={24}>
+                <Col span={24}>
+                  <Form.Item
+                    name="promoEnabled"
+                    label="Enabled"
+                    valuePropName="checked"
+                  >
+                    <Switch />
+                  </Form.Item>
+                </Col>
+                <Col span={24}>
+                  <Form.Item name="promoMasterBrand" label="Master Brand">
+                    <Select onChange={onChangeBrand}>
+                      {brands.map(brand => (
+                        <Select.Option key={brand.id} value={brand.id}>
+                          {brand.brandName}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
+                </Col>
+                <Col span={24}>
+                  <Form.Item name="promoText" label="Headline Text">
+                    <Input />
+                  </Form.Item>
+                </Col>
+                <Col span={24}>
+                  <Form.Item name="promoCode" label="Coupon Code">
+                    <Input />
+                  </Form.Item>
+                </Col>
+                <Col span={24}>
+                  <Form.Item name="promoDate" label="Date Range (Text format)">
+                    <Input />
+                  </Form.Item>
+                </Col>
               </Col>
             </Row>
           </Tabs.TabPane>

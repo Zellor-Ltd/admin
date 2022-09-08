@@ -10,8 +10,7 @@ import {
 } from 'antd';
 import { formatMoment } from '../../helpers/formatMoment';
 import { useRequest } from '../../hooks/useRequest';
-import { useState, useContext } from 'react';
-import { AppContext } from 'contexts/AppContext';
+import { useState } from 'react';
 import { saveBanner } from '../../services/DiscoClubService';
 import { Banner } from 'interfaces/Banner';
 import scrollIntoView from 'scroll-into-view';
@@ -26,7 +25,6 @@ const HomeScreenDetail: React.FC<HomeScreenDetailProps> = ({
   onSave,
   onCancel,
 }) => {
-  const { isMobile } = useContext(AppContext);
   const [loading, setLoading] = useState<boolean>(false);
   const [form] = Form.useForm();
   const { doRequest } = useRequest({ setLoading });
@@ -65,34 +63,40 @@ const HomeScreenDetail: React.FC<HomeScreenDetailProps> = ({
       >
         <Row>
           <Col lg={12} xs={24}>
-            <Form.Item label="HTML" name="html">
-              <Input />
-            </Form.Item>
+            <Col span={24}>
+              <Form.Item label="HTML" name="html">
+                <Input />
+              </Form.Item>
+            </Col>
+            <Row gutter={8}>
+              <Col lg={12} xs={24}>
+                <Form.Item
+                  name="startDate"
+                  label="Start Date"
+                  getValueProps={formatMoment}
+                  rules={[
+                    { required: true, message: 'Start Date is required.' },
+                  ]}
+                >
+                  <DatePicker id="startDate" format="DD/MM/YYYY" />
+                </Form.Item>
+              </Col>
+              <Col lg={12} xs={24}>
+                <Form.Item
+                  name="expireDate"
+                  label="Expire Date"
+                  getValueProps={formatMoment}
+                  rules={[
+                    { required: true, message: 'Expire Date is required.' },
+                  ]}
+                >
+                  <DatePicker id="expireDate" format="DD/MM/YYYY" />
+                </Form.Item>
+              </Col>
+            </Row>
           </Col>
         </Row>
-        <Row gutter={8}>
-          <Col lg={6} xs={24}>
-            <Form.Item
-              name="startDate"
-              label="Start Date"
-              getValueProps={formatMoment}
-              rules={[{ required: true, message: 'Start Date is required.' }]}
-            >
-              <DatePicker id="startDate" format="DD/MM/YYYY" />
-            </Form.Item>
-          </Col>
-          <Col lg={6} xs={24}>
-            <Form.Item
-              name="expireDate"
-              label="Expire Date"
-              getValueProps={formatMoment}
-              rules={[{ required: true, message: 'Expire Date is required.' }]}
-            >
-              <DatePicker id="expireDate" format="DD/MM/YYYY" />
-            </Form.Item>
-          </Col>
-        </Row>
-        <Row gutter={8} justify={isMobile ? 'end' : undefined}>
+        <Row gutter={8} justify="end">
           <Col>
             <Button type="default" onClick={() => onCancel?.()}>
               Cancel

@@ -68,7 +68,7 @@ const ManualCommission: React.FC<PaymentDetailsProps> = ({
       >
         <Row gutter={[8, 8]}>
           <Col lg={12} xs={24}>
-            <Col lg={16} xs={24}>
+            <Col span={24}>
               <Form.Item
                 name="date"
                 label="Date"
@@ -78,7 +78,7 @@ const ManualCommission: React.FC<PaymentDetailsProps> = ({
                 <DatePicker id="date" format="DD/MM/YYYY" />
               </Form.Item>
             </Col>
-            <Col lg={16} xs={24}>
+            <Col span={24}>
               <Form.Item
                 name="feedId"
                 label="Feed ID"
@@ -92,7 +92,7 @@ const ManualCommission: React.FC<PaymentDetailsProps> = ({
                 <Input id="feedId" placeholder="Feed ID" />
               </Form.Item>
             </Col>
-            <Col lg={16} xs={24}>
+            <Col span={24}>
               <Form.Item
                 name="creatorId"
                 label="Creator"
@@ -123,7 +123,7 @@ const ManualCommission: React.FC<PaymentDetailsProps> = ({
                 </Select>
               </Form.Item>
             </Col>
-            <Col lg={16} xs={24}>
+            <Col span={24}>
               <Form.Item
                 name="productId"
                 label="Product ID"
@@ -137,7 +137,7 @@ const ManualCommission: React.FC<PaymentDetailsProps> = ({
                 <Input id="productId" placeholder="Product ID" />
               </Form.Item>
             </Col>
-            <Col lg={16} xs={24}>
+            <Col span={24}>
               <Form.Item
                 name="quantity"
                 label="Quantity"
@@ -152,8 +152,8 @@ const ManualCommission: React.FC<PaymentDetailsProps> = ({
               </Form.Item>
             </Col>
           </Col>
-          <Col lg={16} xs={24}>
-            <Row gutter={8} justify={isMobile ? 'end' : undefined}>
+          <Col span={24}>
+            <Row gutter={8} justify="end">
               <Col>
                 <Button
                   type="default"

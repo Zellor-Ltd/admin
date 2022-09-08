@@ -246,6 +246,12 @@
   border: 1px solid #d9d9d9;
 }
 
+.ant-form-item-label > label {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
 @media (max-width: 992px) {
   .ant-layout-sider-children {
     width: 50px;

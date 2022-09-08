@@ -10,8 +10,7 @@ import {
   Row,
 } from 'antd';
 import { Endpoint } from 'interfaces/Endpoint';
-import { useContext, useEffect, useState } from 'react';
-import { AppContext } from 'contexts/AppContext';
+import { useEffect, useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { saveEndpoint } from 'services/DiscoClubService';
 
@@ -19,7 +18,6 @@ const EndpointDetail: React.FC<RouteComponentProps> = ({
   history,
   location,
 }) => {
-  const { isMobile } = useContext(AppContext);
   const initial = location.state as Endpoint;
   const [loading, setLoading] = useState(false);
 
@@ -106,7 +104,7 @@ const EndpointDetail: React.FC<RouteComponentProps> = ({
             </Form.Item>
           </Col>
         </Row>
-        <Row gutter={8} justify={isMobile ? 'end' : undefined}>
+        <Row gutter={8} justify="end">
           <Col>
             <Button type="default" onClick={() => history.goBack()}>
               Cancel

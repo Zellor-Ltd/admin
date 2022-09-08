@@ -285,6 +285,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
   };
 
   const handleTabChange = (activeKey: string) => {
+    if (activeTabKey === 'Secrets') setVaultOptions(false);
     setActiveTabKey(activeKey);
   };
 
@@ -299,17 +300,17 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
           <Form name="brandVaultForm" layout="vertical" form={vaultForm}>
             <Col>
               <Col lg={12} xs={24}>
-                <Col lg={16} xs={24}>
+                <Col span={24}>
                   <Form.Item
                     label="Key"
                     name="key"
                     rules={[{ required: true, message: 'Key is required.' }]}
                     initialValue={currentVault?.key}
                   >
-                    <Input id="vaultKey" />
+                    <Input allowClear id="vaultKey" placeholder="Vault Key" />
                   </Form.Item>
                 </Col>
-                <Col lg={16} xs={24}>
+                <Col span={24}>
                   <Form.Item
                     label="Shop Name"
                     name="shopName"
@@ -318,10 +319,14 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                     ]}
                     initialValue={brand ? brand.shopName : ''}
                   >
-                    <Input id="vaultShopName" />
+                    <Input
+                      allowClear
+                      id="vaultShopName"
+                      placeholder="Vault Shop Name"
+                    />
                   </Form.Item>
                 </Col>
-                <Col lg={16} xs={24}>
+                <Col span={24}>
                   <Form.Item
                     label="API Shop Name"
                     name="apiShopName"
@@ -330,21 +335,30 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                     ]}
                     initialValue={currentVault?.apiShopName}
                   >
-                    <Input id="vaultApiShopName" />
+                    <Input
+                      allowClear
+                      id="vaultApiShopName"
+                      placeholder="Vault API Shop Name"
+                    />
                   </Form.Item>
                 </Col>
-                <Col lg={16} xs={24}>
+                <Col span={24}>
                   <Form.Item
                     label="Token"
                     name="token"
                     rules={[{ required: true, message: 'Token is required' }]}
                     initialValue={currentVault?.token}
                   >
-                    <Input type="password" id="vaultToken" />
+                    <Input
+                      allowClear
+                      type="password"
+                      id="vaultToken"
+                      placeholder="Token"
+                    />
                   </Form.Item>
                 </Col>
               </Col>
-              <Row gutter={8}>
+              <Row gutter={8} justify="end">
                 <Col>
                   <Button type="default" onClick={() => returnFromVault()}>
                     Cancel
@@ -440,6 +454,13 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
     }
   };
 
+  const filterOption = (input: string, option: any) => {
+    return !!option?.children
+      ?.toString()
+      ?.toUpperCase()
+      .includes(input?.toUpperCase());
+  };
+
   return (
     <>
       <PageHeader
@@ -505,7 +526,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
             <Row gutter={8}>
               <Col lg={12} xs={24}>
                 <Form.Item label="Master Brand Name" name="brandName">
-                  <Input />
+                  <Input placeholder="Master Brand Name" allowClear />
                 </Form.Item>
               </Col>
               <Col lg={24} xs={24}>
@@ -527,7 +548,12 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                   name="fitTo"
                   label="Master Brand Default Image Sizing"
                 >
-                  <Select placeholder="Please select a sizing option">
+                  <Select
+                    allowClear
+                    showSearch
+                    filterOption={filterOption}
+                    placeholder="Please select a sizing option"
+                  >
                     <Select.Option key="w" value="w" label="Width">
                       Width
                     </Select.Option>
@@ -543,12 +569,12 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
           <Tabs.TabPane forceRender tab="Checkout" key="Checkout">
             <Row gutter={8}>
               <Col lg={12} xs={24}>
-                <Col lg={16} xs={24}>
+                <Col span={24}>
                   <Form.Item label="Master Brand Name" name="brandName">
-                    <Input />
+                    <Input placeholder="Master Brand Name" allowClear />
                   </Form.Item>
                 </Col>
-                <Col lg={16} xs={24}>
+                <Col span={24}>
                   <Form.Item
                     name="checkoutType"
                     label="Checkout Type"
@@ -566,7 +592,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                     </Radio.Group>
                   </Form.Item>
                 </Col>
-                <Col lg={16} xs={24}>
+                <Col span={24}>
                   <Form.Item
                     shouldUpdate
                     name="externalCheckoutType"
@@ -579,6 +605,9 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                     ]}
                   >
                     <Select
+                      allowClear
+                      showSearch
+                      filterOption={filterOption}
                       id="externalCheckoutType"
                       disabled={internalCheckout}
                       placeholder="Select an external checkout type"
@@ -592,7 +621,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                     </Select>
                   </Form.Item>
                 </Col>
-                <Col lg={16} xs={24}>
+                <Col span={24}>
                   <Form.Item
                     name="checkout"
                     label="Checkout"
@@ -600,7 +629,13 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                       { required: true, message: 'Checkout is required.' },
                     ]}
                   >
-                    <Select placeholder="Select a checkout type" id="checkout">
+                    <Select
+                      allowClear
+                      showSearch
+                      filterOption={filterOption}
+                      placeholder="Select a checkout type"
+                      id="checkout"
+                    >
                       {checkoutTypeList.map((curr: any) => (
                         <Select.Option key={curr.value} value={curr.value}>
                           {curr.name}
@@ -609,7 +644,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                     </Select>
                   </Form.Item>
                 </Col>
-                <Col lg={16} xs={24}>
+                <Col span={24}>
                   <Form.Item
                     name="confirmationUrl"
                     label="External Payment Confirmation URL"
@@ -621,10 +656,14 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                       },
                     ]}
                   >
-                    <Input id="confirmationUrl" />
+                    <Input
+                      allowClear
+                      id="confirmationUrl"
+                      placeholder="External Payment Confirmation URL"
+                    />
                   </Form.Item>
                 </Col>
-                <Col lg={16} xs={24}>
+                <Col span={24}>
                   <Form.Item
                     name="cancelationUrl"
                     label="External Payment Cancelation URL"
@@ -636,10 +675,14 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                       },
                     ]}
                   >
-                    <Input id="cancelationUrl" />
+                    <Input
+                      allowClear
+                      id="cancelationUrl"
+                      placeholder="External Payment Cancelation URL"
+                    />
                   </Form.Item>
                 </Col>
-                <Col lg={16} xs={24}>
+                <Col span={24}>
                   <Form.Item
                     name="shopUrl"
                     label="Product Redirect URL (Template $DISCOID$)"
@@ -650,11 +693,15 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                       },
                     ]}
                   >
-                    <Input id="shopUrl" />
+                    <Input
+                      allowClear
+                      id="shopUrl"
+                      placeholder="Product Redirect URL"
+                    />
                   </Form.Item>
                 </Col>
                 <Row gutter={4}>
-                  <Col lg={8} xs={24}>
+                  <Col lg={12} xs={24}>
                     <Form.Item
                       name="discoPercentage"
                       label="Disco Percentage %"
@@ -669,10 +716,11 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                         id="discoPercentage"
                         pattern="^((1[0-9][0-9])|([0-9]{1,2}))$"
                         title="Positive integers."
+                        placeholder="Positive integers"
                       />
                     </Form.Item>
                   </Col>
-                  <Col lg={8} xs={24}>
+                  <Col lg={12} xs={24}>
                     <Form.Item
                       name="creatorPercentage"
                       label="Creator %"
@@ -687,6 +735,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                         id="creatorPercentage"
                         pattern="^((1[0-9][0-9])|([0-9]{1,2}))$"
                         title="Positive integers."
+                        placeholder="Positive integers"
                         onChange={input =>
                           handleCreatorPercentageChange(input as number)
                         }
@@ -706,9 +755,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                       </p>
                     </Modal>
                   </Col>
-                </Row>
-                <Row gutter={4}>
-                  <Col lg={8} xs={24}>
+                  <Col lg={12} xs={24}>
                     <Form.Item
                       name="maxDiscoDollarPercentage"
                       label="Max Disco Dollar %"
@@ -723,10 +770,11 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                         id="maxDiscoDollarPercentage"
                         pattern="^((1[0-9][0-9])|([0-9]{1,2}))$"
                         title="Positive integers."
+                        placeholder="Positive integers"
                       />
                     </Form.Item>
                   </Col>
-                  <Col lg={8} xs={24}>
+                  <Col lg={12} xs={24}>
                     <Form.Item
                       name="initialFreeDdAmount"
                       label="Initial Free Disco Dollars"
@@ -741,12 +789,11 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                         id="initialFreeDdAmount"
                         pattern="^[0-9]+$"
                         title="Positive integers."
+                        placeholder="Positive integers"
                       />
                     </Form.Item>
                   </Col>
-                </Row>
-                <Row gutter={4}>
-                  <Col lg={8} xs={24}>
+                  <Col lg={12} xs={24}>
                     <Form.Item
                       name="returnPeriod"
                       label="Return Period (days)"
@@ -761,11 +808,12 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                         id="returnPeriod"
                         pattern="^((1[0-9][0-9])|([0-9]{1,2}))$"
                         title="Positive integers."
+                        placeholder="Positive integers"
                       />
                     </Form.Item>
                   </Col>
                 </Row>
-                <Col lg={16} xs={24}>
+                <Col span={24}>
                   <Form.Item
                     name="shopName"
                     label="Shop Name (without https:// or spaces)"
@@ -774,6 +822,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                     ]}
                   >
                     <Input
+                      allowClear
                       id="shopName"
                       placeholder="casey-temp.myshopify.com"
                     />
