@@ -22,7 +22,7 @@ import {
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import './Products.scss';
-import CopyValueToClipboard from 'components/CopyValueToClipboard';
+import CopyValueToClipboard from '../../components/CopyValueToClipboard';
 import { EditableColumnType } from 'components/EditableTable';
 import { AppContext } from 'contexts/AppContext';
 import useAllCategories from 'hooks/useAllCategories';
@@ -75,7 +75,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
   const [currentMasterBrand, setCurrentMasterBrand] = useState<string>();
   const [currentProductBrand, setCurrentProductBrand] = useState<string>();
   const [page, setPage] = useState<number>(0);
-  const [eof, setEof] = useState<boolean>(false);
+  const [eof, setEof] = useState<boolean>(true);
   const loaded = useRef<boolean>(false);
   const [details, setDetails] = useState<boolean>(false);
   const [currentProduct, setCurrentProduct] = useState<Product>();
@@ -227,12 +227,13 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
       setEof(true);
       return;
     }
-    if (resetResults) collapse(resetResults);
-    const { results } = await doFetch(() => _fetchProducts(resetResults));
     if (resetResults) {
       setEof(false);
-      setProducts(results);
-    } else setProducts(prev => [...prev.concat(results)]);
+      collapse(resetResults);
+    }
+    const { results } = await doFetch(() => _fetchProducts(resetResults));
+    if (resetResults) setProducts(results);
+    else setProducts(prev => [...prev.concat(results)]);
     if (!loaded.current) loaded.current = true;
   };
 
@@ -821,7 +822,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
             next={getProducts}
             hasMore={!eof}
             loader={
-              page !== 0 && (
+              !eof && (
                 <div className="scroll-message">
                   <Spin />
                 </div>
