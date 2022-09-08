@@ -4,20 +4,8 @@ import {
   EyeOutlined,
   SearchOutlined,
   SettingOutlined,
-  UpOutlined,
 } from '@ant-design/icons';
-import {
-  Button,
-  Checkbox,
-  Col,
-  Collapse,
-  Input,
-  PageHeader,
-  Row,
-  Select,
-  Table,
-  Typography,
-} from 'antd';
+import { Button, Col, PageHeader, Row, Table } from 'antd';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import 'pages/products/Products.scss';
@@ -36,40 +24,21 @@ import {
 } from 'services/DiscoClubService';
 import ProductAPITestModal from 'pages/products/ProductAPITestModal';
 import ProductExpandedRow from 'pages/products/ProductExpandedRow';
-import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { ProductBrand } from 'interfaces/ProductBrand';
 import scrollIntoView from 'scroll-into-view';
 import { useMount } from 'react-use';
-import SimpleSelect from 'components/select/SimpleSelect';
-import { SelectOption } from '../../interfaces/SelectOption';
-import { ProductCategory } from 'interfaces/Category';
 import ProductDetail from 'pages/products/ProductDetail';
-
-const { Panel } = Collapse;
 
 const ProductTemplates: React.FC<RouteComponentProps> = () => {
   const { isMobile } = useContext(AppContext);
-  const inputRef = useRef<any>(null);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
-  const [isFetchingBrands, setIsFetchingBrands] = useState(false);
-  const [isFetchingProductBrand, setIsFetchingProductBrand] = useState(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const [fetchingCategories, setFetchingCategories] = useState(false);
-  const { fetchAllCategories, allCategories } = useAllCategories({
-    setLoading: setFetchingCategories,
-  });
-  const { usePageFilter } = useContext(AppContext);
+  const { fetchAllCategories, allCategories } = useAllCategories({});
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
   const [productAPITest, setProductAPITest] = useState<Product | null>(null);
   const { doFetch } = useRequest({ setLoading });
   const { loading: loadingCategories } = useRequest();
-  const [searchFilter, setSearchFilter] = usePageFilter<string>('search');
-  const [brandFilter, setBrandFilter] = useState<Brand | undefined>();
-  const [productBrandFilter, setProductBrandFilter] = useState<
-    ProductBrand | undefined
-  >();
-  const [outOfStockFilter, setOutOfStockFilter] = useState<boolean>();
   const [currentMasterBrand, setCurrentMasterBrand] = useState<string>();
   const [currentProductBrand, setCurrentProductBrand] = useState<string>();
   const loaded = useRef<boolean>(false);
@@ -77,141 +46,28 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
   const [currentTemplate, setCurrentTemplate] = useState<Product>();
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [productTemplates, setProductTemplates] = useState<Product[]>([]);
-  const [productStatusFilter, setProductTemplateStatusFilter] =
-    useState<string>();
-  const [runIdFilter, setRunIdFilter] = useState<string>();
-
-  const [superCategoryFilter, setSuperCategoryFilter] =
-    useState<ProductCategory>();
-  const [categoryFilter, setCategoryFilter] = useState<ProductCategory>();
-  const [subCategoryFilter, setSubCategoryFilter] = useState<ProductCategory>();
-  const [subSubCategoryFilter, setSubSubCategoryFilter] =
-    useState<ProductCategory>();
-
-  const optionMapping: SelectOption = {
-    key: 'id',
-    label: 'brandName',
-    value: 'id',
-  };
-
-  const superCategoryOptionMapping: SelectOption = {
-    key: 'id',
-    label: 'superCategory',
-    value: 'id',
-  };
-
-  const categoryOptionMapping: SelectOption = {
-    key: 'id',
-    label: 'category',
-    value: 'id',
-  };
-
-  const subCategoryOptionMapping: SelectOption = {
-    key: 'id',
-    label: 'subCategory',
-    value: 'id',
-  };
-
-  const subSubCategoryOptionMapping: SelectOption = {
-    key: 'id',
-    label: 'subSubCategory',
-    value: 'id',
-  };
-  const [activeKey, setActiveKey] = useState<string>('-1');
-
-  const [offset, setOffset] = useState<number>(64);
-  const [panelStyle, setPanelStyle] = useState<React.CSSProperties>({
-    top: 64,
-  });
-  const filterPanelHeight = useRef<number>();
-  const windowHeight = window.innerHeight;
-
-  useEffect(() => {
-    const panel = document.getElementById('filterPanel');
-
-    if (isMobile && panel) {
-      // Code for Chrome, Safari and Opera
-      panel.addEventListener('webkitTransitionEnd', updateOffset);
-      // Standard syntax
-      panel.addEventListener('transitionend', updateOffset);
-
-      return () => {
-        // Code for Chrome, Safari and Opera
-        panel.removeEventListener('webkitTransitionEnd', updateOffset);
-        // Standard syntax
-        panel.removeEventListener('transitionend', updateOffset);
-      };
-    }
-  });
-
-  const updateOffset = () => {
-    if (activeKey === '1') {
-      filterPanelHeight.current =
-        document.getElementById('filterPanel')!.offsetHeight;
-      if (filterPanelHeight.current! > windowHeight) {
-        const heightDifference = filterPanelHeight.current! - windowHeight;
-        const seventhWindowHeight = windowHeight / 7;
-        setOffset(-heightDifference - seventhWindowHeight);
-      }
-    } else setOffset(64);
-  };
-
-  useEffect(() => {
-    setPanelStyle({ top: offset });
-  }, [offset]);
-
-  const handleFilterOutOfStock = (e: CheckboxChangeEvent) => {
-    setOutOfStockFilter(e.target.checked);
-  };
 
   useMount(async () => {
     const getBrands = async () => {
-      setLoading(true);
-      setIsFetchingBrands(true);
-      const response: any = await fetchBrands();
-      setLoading(false);
-      setIsFetchingBrands(false);
+      const response: any = await doFetch(() => fetchBrands());
       setBrands(response.results);
     };
 
     const getProductBrands = async () => {
-      setIsFetchingProductBrand(true);
-      const { results }: any = await fetchProductBrands();
+      const { results }: any = await doFetch(() => fetchProductBrands());
       setProductBrands(results);
-      setIsFetchingProductBrand(false);
     };
 
     await Promise.all([getBrands(), getProductBrands(), fetchAllCategories()]);
   });
 
-  useEffect(() => {
-    if (inputRef.current)
-      inputRef.current.focus({
-        cursor: 'end',
-      });
-  }, [searchFilter]);
-
   const _fetchProductTemplates = async () => {
     scrollToCenter(0);
-    const response = await doFetch(() =>
-      fetchProductTemplates({
-        brandId: brandFilter?.id,
-        query: searchFilter,
-        productBrandId: productBrandFilter?.id,
-        outOfStock: outOfStockFilter,
-        status: productStatusFilter,
-        superCategoryId: superCategoryFilter?.id,
-        categoryId: categoryFilter?.id,
-        subCategoryId: subCategoryFilter?.id,
-        subSubCategoryId: subSubCategoryFilter?.id,
-        runId: runIdFilter,
-      })
-    );
+    const response = await doFetch(() => fetchProductTemplates());
     return response;
   };
 
   const getProductTemplates = async (resetResults?: boolean) => {
-    if (resetResults) collapse(resetResults);
     if (!resetResults && !productTemplates.length) return;
     const { results } = await doFetch(() => _fetchProductTemplates());
     if (resetResults) {
@@ -492,16 +348,6 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
     },
   ];
 
-  const onChangeBrand = async (_selectedBrand: Brand | undefined) => {
-    setBrandFilter(_selectedBrand);
-  };
-
-  const onChangeProductBrand = async (
-    _selectedBrand: ProductBrand | undefined
-  ) => {
-    setProductBrandFilter(_selectedBrand);
-  };
-
   const handleRowSelection = (preSelectedRows: any[]) => {
     const selectedRows: any[] = [];
     preSelectedRows.forEach(productId => {
@@ -563,170 +409,6 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
     setDetails(false);
   };
 
-  const Filters = () => {
-    return (
-      <>
-        <Col lg={16} xs={24}>
-          <Row gutter={[8, 8]}>
-            <Col lg={6} xs={24}>
-              <Typography.Title level={5}>Template Name</Typography.Title>
-              <Input
-                disabled={loading}
-                ref={inputRef}
-                onChange={event => setSearchFilter(event.target.value)}
-                suffix={<SearchOutlined />}
-                value={searchFilter}
-                placeholder="Search by Name"
-                onPressEnter={() => getProductTemplates(true)}
-              />
-            </Col>
-            <Col lg={6} xs={24}>
-              <Typography.Title level={5}>Master Brand</Typography.Title>
-              <SimpleSelect
-                data={brands}
-                onChange={(_, brand) => onChangeBrand(brand)}
-                style={{ width: '100%' }}
-                selectedOption={brandFilter?.brandName}
-                optionMapping={optionMapping}
-                placeholder={'Select a Master Brand'}
-                loading={isFetchingBrands}
-                disabled={isFetchingBrands || loading}
-                allowClear
-              ></SimpleSelect>
-            </Col>
-            <Col lg={6} xs={24}>
-              <Typography.Title level={5}>Product Brand</Typography.Title>
-              <SimpleSelect
-                data={productBrands}
-                onChange={(_, productBrand) =>
-                  onChangeProductBrand(productBrand)
-                }
-                style={{ width: '100%' }}
-                selectedOption={productBrandFilter?.brandName}
-                optionMapping={optionMapping}
-                placeholder={'Select a Product Brand'}
-                loading={isFetchingProductBrand}
-                disabled={isFetchingProductBrand || loading}
-                allowClear
-              ></SimpleSelect>
-            </Col>
-            <Col lg={6} xs={24}>
-              <Typography.Title level={5}>Status</Typography.Title>
-              <Select
-                disabled={loading}
-                placeholder="Select a Status"
-                style={{ width: '100%' }}
-                onChange={(value: string) =>
-                  setProductTemplateStatusFilter(value)
-                }
-                allowClear
-                defaultValue={productStatusFilter}
-              >
-                <Select.Option value="live">Live</Select.Option>
-                <Select.Option value="paused">Paused</Select.Option>
-              </Select>
-            </Col>
-            <Col lg={6} xs={24}>
-              <Typography.Title level={5}>Super Category</Typography.Title>
-              <SimpleSelect
-                data={allCategories['Super Category'].filter(item => {
-                  return (
-                    item.superCategory === 'Women' ||
-                    item.superCategory === 'Men' ||
-                    item.superCategory === 'Children'
-                  );
-                })}
-                onChange={(_, category) => setSuperCategoryFilter(category)}
-                style={{ width: '100%' }}
-                selectedOption={superCategoryFilter?.id}
-                optionMapping={superCategoryOptionMapping}
-                placeholder={'Select a Super Category'}
-                loading={fetchingCategories}
-                disabled={fetchingCategories || loading}
-                allowClear
-              ></SimpleSelect>
-            </Col>
-            <Col lg={6} xs={24}>
-              <Typography.Title level={5}>Category</Typography.Title>
-              <SimpleSelect
-                data={allCategories.Category}
-                onChange={(_, category) => setCategoryFilter(category)}
-                style={{ width: '100%' }}
-                selectedOption={categoryFilter?.id}
-                optionMapping={categoryOptionMapping}
-                placeholder={'Select a Category'}
-                loading={fetchingCategories}
-                disabled={fetchingCategories || loading}
-                allowClear
-              ></SimpleSelect>
-            </Col>
-            <Col lg={6} xs={24}>
-              <Typography.Title level={5}>Sub Category</Typography.Title>
-              <SimpleSelect
-                data={allCategories['Sub Category']}
-                onChange={(_, category) => setSubCategoryFilter(category)}
-                style={{ width: '100%' }}
-                selectedOption={subCategoryFilter?.id}
-                optionMapping={subCategoryOptionMapping}
-                placeholder={'Select a Sub Category'}
-                loading={fetchingCategories}
-                disabled={fetchingCategories || loading}
-                allowClear
-              ></SimpleSelect>
-            </Col>
-            <Col lg={6} xs={24}>
-              <Typography.Title level={5}>Sub Sub Category</Typography.Title>
-              <SimpleSelect
-                data={allCategories['Sub Sub Category']}
-                onChange={(_, category) => setSubSubCategoryFilter(category)}
-                style={{ width: '100%' }}
-                selectedOption={subSubCategoryFilter?.id}
-                optionMapping={subSubCategoryOptionMapping}
-                placeholder={'Select a Sub Sub Category'}
-                loading={fetchingCategories}
-                disabled={fetchingCategories || loading}
-                allowClear
-              ></SimpleSelect>
-            </Col>
-            <Col lg={6} xs={24}>
-              <Typography.Title level={5}>Run ID</Typography.Title>
-              <Input
-                disabled={loading}
-                onChange={evt => {
-                  setRunIdFilter(evt.target.value);
-                }}
-                value={runIdFilter}
-                suffix={<SearchOutlined />}
-                placeholder="Search by Run ID"
-                onPressEnter={() => getProductTemplates(true)}
-              />
-            </Col>
-            <Col lg={6} xs={24}>
-              <Checkbox
-                disabled={loading}
-                onChange={handleFilterOutOfStock}
-                className={isMobile ? 'mt-1 mb-2' : 'mt-2 mb-1 ml-05'}
-              >
-                Out of Stock only
-              </Checkbox>
-            </Col>
-          </Row>
-        </Col>
-      </>
-    );
-  };
-
-  const collapse = (shouldCollapse?: any) => {
-    if (shouldCollapse && isMobile) {
-      if (activeKey === '1') setActiveKey('0');
-    }
-  };
-
-  const handleCollapseChange = () => {
-    if (activeKey === '1') setActiveKey('0');
-    else setActiveKey('1');
-  };
-
   const createProductTemplate = (index: number) => {
     setCurrentTemplate(undefined);
     setCurrentMasterBrand(undefined);
@@ -743,14 +425,17 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
             title="Product Templates"
             subTitle={isMobile ? '' : 'List of Product Templates'}
             extra={[
-              <Row justify="end" key="headerRow">
+              <Row
+                justify="end"
+                key="headerRow"
+                className={isMobile ? 'mt-05' : ''}
+              >
                 <Col>
                   <Row gutter={8}>
                     <Col>
                       <Button
                         style={{ display: 'none' }}
                         key="2"
-                        className={isMobile ? 'mt-05' : ''}
                         onClick={() =>
                           createProductTemplate(productTemplates.length)
                         }
@@ -758,77 +443,28 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
                         New Item
                       </Button>
                     </Col>
+                    <Col>
+                      <Button
+                        type="primary"
+                        onClick={() => getProductTemplates(true)}
+                        loading={loading}
+                      >
+                        Search
+                        <SearchOutlined style={{ color: 'white' }} />
+                      </Button>
+                    </Col>
                   </Row>
                 </Col>
               </Row>,
             ]}
           />
-          <Row
-            align="bottom"
-            justify="space-between"
-            className="sticky-filter-box"
-            id="filterPanel"
-            style={panelStyle}
-          >
-            {!isMobile && <Filters />}
-            {isMobile && (
-              <Collapse
-                ghost
-                accordion
-                activeKey={activeKey}
-                onChange={handleCollapseChange}
-                destroyInactivePanel
-              >
-                <Panel
-                  header={<Typography.Title level={5}>Filter</Typography.Title>}
-                  key="1"
-                >
-                  <Filters />
-                </Panel>
-              </Collapse>
-            )}
-            <Col
-              span={24}
-              className={activeKey === '1' ? 'mt-n1 mb-1' : 'mt-n1'}
-            >
-              <Row justify="space-between" align="top">
-                <Col flex="auto">
-                  <Button
-                    type="text"
-                    onClick={collapse}
-                    style={{
-                      display: activeKey === '1' ? 'block' : 'none',
-                      background: 'none',
-                    }}
-                  >
-                    <UpOutlined />
-                  </Button>
-                </Col>
-                <Col>
-                  <Button
-                    type="primary"
-                    onClick={() => getProductTemplates(true)}
-                    loading={loading}
-                    style={{
-                      position: 'relative',
-                      top: activeKey === '1' ? '0' : '0.5rem',
-                    }}
-                    className="mr-1"
-                  >
-                    Search
-                    <SearchOutlined style={{ color: 'white' }} />
-                  </Button>
-                </Col>
-              </Row>
-            </Col>
-          </Row>
           <ProductAPITestModal
             selectedRecord={productAPITest}
             setSelectedRecord={setProductAPITest}
           />
           <Table
             scroll={{ x: true }}
-            className="mt-2"
+            className="mt-1"
             rowClassName={(_, index) =>
               `scrollable-row-${index} ${
                 index === lastViewedIndex ? 'selected-row' : ''
@@ -868,8 +504,8 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
           product={currentTemplate}
           productBrand={currentProductBrand}
           brand={currentMasterBrand}
-          isFetchingBrands={isFetchingBrands}
-          isFetchingProductBrand={isFetchingProductBrand}
+          isFetchingBrands={!brands.length}
+          isFetchingProductBrand={!productBrands.length}
           isLive={false}
           template
         />
