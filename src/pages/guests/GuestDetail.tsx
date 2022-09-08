@@ -4,6 +4,7 @@ import { Creator } from '../../interfaces/Creator';
 import { Fan } from '../../interfaces/Fan';
 import { useState } from 'react';
 import { saveUser } from '../../services/DiscoClubService';
+import moment from 'moment';
 interface GuestDetailProps {
   fan: Fan;
   onSave?: (record: Fan) => void;
@@ -90,6 +91,9 @@ const GuestDetail: React.FC<GuestDetailProps> = ({ fan, onSave, onCancel }) => {
                 city: fan.addresses?.[0]?.city,
                 country: fan.addresses?.[0]?.country,
                 postalCode: fan.addresses?.[0]?.postalCode,
+                birthday: fan?.['birthday']
+                  ? moment(fan?.['birthday'])
+                  : undefined,
               }
             : undefined
         }

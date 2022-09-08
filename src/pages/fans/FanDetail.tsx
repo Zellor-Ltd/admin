@@ -32,6 +32,7 @@ import {
 } from 'services/DiscoClubService';
 import FanGroupDropdown from './FanGroupDropdown';
 import scrollIntoView from 'scroll-into-view';
+import moment from 'moment';
 interface FanDetailProps {
   fan: any;
   onSave?: (record: Fan) => void;
@@ -174,6 +175,7 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
 
   const formatUserData = (formUser: any) => {
     const formattedUser = { ...formUser };
+
     if (typeof formUser.birthday === 'string') {
       formattedUser.birthday = formUser.birthday;
     }
@@ -270,6 +272,9 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
                 city: fan?.addresses?.[0]?.city,
                 country: fan?.addresses?.[0]?.country,
                 postalCode: fan?.addresses?.[0]?.postalCode,
+                birthday: fan?.['birthday']
+                  ? moment(fan?.['birthday'])
+                  : undefined,
               }
             : undefined
         }
