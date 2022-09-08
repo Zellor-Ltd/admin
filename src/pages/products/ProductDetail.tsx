@@ -672,7 +672,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                       <InputNumber
                         id="quantity"
                         placeholder="Quantity"
-                        pattern="^\d*%"
+                        pattern="^\d*$"
                         title="Non-negative integers only."
                         disabled={loadingResources || isLive}
                       />
@@ -935,10 +935,10 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                     <Form.Item name="barcode" label="Barcode">
                       <Input
                         id="barcode"
-                        pattern="^[0-9]{12}$"
+                        pattern="^[0-9]{13}$"
                         placeholder="Barcode number"
                         disabled={loadingResources || isLive}
-                        title="Numbers only, 12 digits."
+                        title="Numbers only, 13 digits."
                       />
                     </Form.Item>
                   </Col>

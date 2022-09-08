@@ -1,5 +1,6 @@
 import { CopyOutlined } from '@ant-design/icons';
 import { Button, message } from 'antd';
+import React from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 export default function CopyValueToClipboard({ value }: { value: string }) {
