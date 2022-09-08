@@ -357,47 +357,8 @@ export const fetchStagingProducts = ({
     runId,
   });
 
-export const fetchProductTemplates = ({
-  brandId,
-  query,
-  unclassified,
-  productBrandId,
-  date,
-  outOfStock,
-  status,
-  superCategoryId,
-  categoryId,
-  subCategoryId,
-  subSubCategoryId,
-  runId,
-}: {
-  brandId?: string;
-  query?: string;
-  unclassified?: boolean;
-  productBrandId?: string;
-  date?: Date;
-  outOfStock?: boolean;
-  status?: string;
-  superCategoryId?: string;
-  categoryId?: string;
-  subCategoryId?: string;
-  subSubCategoryId?: string;
-  runId?: string;
-}) =>
-  instance.put('Wi/Ep/ListProductTemplate', {
-    brandId,
-    query,
-    unclassified,
-    productBrandId,
-    date,
-    outOfStock,
-    status,
-    superCategoryId,
-    categoryId,
-    subCategoryId,
-    subSubCategoryId,
-    runId,
-  });
+export const fetchProductTemplates = () =>
+  instance.get('Wi/Ep/ListProductTemplate');
 
 export const fetchBrands = () => instance.get('Wi/Ep/ListBrands');
 

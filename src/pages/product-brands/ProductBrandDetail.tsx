@@ -26,6 +26,14 @@ import ProductCategoriesTrees from 'pages/products/ProductCategoriesTrees';
 import { AllCategories } from 'interfaces/Category';
 import { categoryMapper } from 'helpers/categoryMapper';
 import { categoryUtils } from 'helpers/categoryUtils';
+import {
+  InstagramFilled,
+  FacebookFilled,
+  SoundFilled,
+  YoutubeFilled,
+  GlobalOutlined,
+  TwitterCircleFilled,
+} from '@ant-design/icons';
 
 const { categoriesKeys, categoriesFields } = categoryMapper;
 const { getSearchTags, getCategories, removeSearchTagsByCategory } =
@@ -259,9 +267,9 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
             onChange={handleTabChange}
           >
             <Tabs.TabPane forceRender tab="Details" key="Details">
-              <Row gutter={8}>
-                <Col lg={12} xs={24}>
-                  <Col span={24}>
+              <Col lg={12} xs={24}>
+                <Row gutter={8}>
+                  <Col lg={12} xs={24}>
                     <Form.Item
                       label="Product Brand Name"
                       name="brandName"
@@ -275,113 +283,122 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                       <Input id="brandName" />
                     </Form.Item>
                   </Col>
-                  <Col span={24}>
+                  <Col lg={12} xs={24}>
                     <Form.Item label="External Code" name="externalCode">
                       <Input />
                     </Form.Item>
                   </Col>
                   <Col span={24}>
-                    <Row gutter={8}>
-                      <Col lg={12} xs={24}>
-                        <Form.Item name="apiBrand" label="API Brand">
-                          <Input placeholder="API Brand" />
-                        </Form.Item>
-                      </Col>
-                      <Col lg={12} xs={24}>
-                        <Form.Item
-                          name="masterBrand"
-                          label="Master Brand"
-                          rules={[
-                            {
-                              required: true,
-                              message: 'Master Brand is required.',
-                            },
-                          ]}
-                        >
-                          <Select
-                            id="masterBrand"
-                            placeholder="Select a Master Brand"
-                            style={{ width: '100%' }}
-                            allowClear
-                            showSearch
-                            filterOption={(input, option) =>
-                              !!option?.children
-                                ?.toString()
-                                ?.toUpperCase()
-                                .includes(input?.toUpperCase())
-                            }
-                          >
-                            {brands.map((curr: any) => (
-                              <Select.Option key={curr.id} value={curr.id}>
-                                {curr.brandName}
-                              </Select.Option>
-                            ))}
-                          </Select>
-                        </Form.Item>
-                      </Col>
-                      <Col lg={12} xs={24}>
-                        <Form.Item
-                          name="discoPercentage"
-                          label="Disco Percentage %"
-                          rules={[
-                            {
-                              required: true,
-                              message: 'Disco Percentage is required.',
-                            },
-                          ]}
-                        >
-                          <InputNumber
-                            id="discoPercentage"
-                            pattern="^((1[0-9][0-9])|([0-9]{1,2}))$"
-                            title="Positive integers."
-                          />
-                        </Form.Item>
-                      </Col>
-                      <Col lg={12} xs={24}>
-                        <Form.Item name="creatorPercentage" label="Creator %">
-                          <InputNumber
-                            id="creatorPercentage"
-                            pattern="^((1[0-9][0-9])|([0-9]{1,2}))$"
-                            title="Positive integers."
-                            onChange={input =>
-                              handleCreatorPercentageChange(input as number)
-                            }
-                          />
-                        </Form.Item>
-                        <Modal
-                          title="Apply to all products?"
-                          visible={showModal}
-                          onOk={onConfirmPropagate}
-                          onCancel={onCancelPropagate}
-                          okText="Yes"
-                          cancelText="No"
-                        >
-                          <p>
-                            Would you like to apply this creator percentage to
-                            all {productBrand?.brandName} products?
-                          </p>
-                        </Modal>
-                      </Col>
-                      <Col lg={12} xs={24}>
-                        <Form.Item
-                          name="maxDiscoDollarPercentage"
-                          label="Max Disco Dollar %"
-                          rules={[
-                            {
-                              required: true,
-                              message:
-                                'Max Disco Dollar percentage is required.',
-                            },
-                          ]}
-                        >
-                          <InputNumber
-                            id="maxDiscoDollarPercentage"
-                            pattern="^((1[0-9][0-9])|([0-9]{1,2}))$"
-                            title="Positive integers."
-                          />
-                        </Form.Item>
-                      </Col>
-                    </Row>
+                    <Form.Item label="Description" name="description">
+                      <Input.TextArea
+                        rows={2}
+                        placeholder="Description"
+                        allowClear
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={12} xs={24}>
+                    <Form.Item label="Home URL" name="homeUrl">
+                      <Input placeholder="Home URL" allowClear />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={12} xs={24}>
+                    <Form.Item name="apiBrand" label="API Brand">
+                      <Input placeholder="API Brand" />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={12} xs={24}>
+                    <Form.Item
+                      name="masterBrand"
+                      label="Master Brand"
+                      rules={[
+                        {
+                          required: true,
+                          message: 'Master Brand is required.',
+                        },
+                      ]}
+                    >
+                      <Select
+                        id="masterBrand"
+                        placeholder="Select a Master Brand"
+                        style={{ width: '100%' }}
+                        allowClear
+                        showSearch
+                        filterOption={(input, option) =>
+                          !!option?.children
+                            ?.toString()
+                            ?.toUpperCase()
+                            .includes(input?.toUpperCase())
+                        }
+                      >
+                        {brands.map((curr: any) => (
+                          <Select.Option key={curr.id} value={curr.id}>
+                            {curr.brandName}
+                          </Select.Option>
+                        ))}
+                      </Select>
+                    </Form.Item>
+                  </Col>
+                  <Col lg={12} xs={24}>
+                    <Form.Item
+                      name="discoPercentage"
+                      label="Disco Percentage %"
+                      rules={[
+                        {
+                          required: true,
+                          message: 'Disco Percentage is required.',
+                        },
+                      ]}
+                    >
+                      <InputNumber
+                        id="discoPercentage"
+                        pattern="^((1[0-9][0-9])|([0-9]{1,2}))$"
+                        title="Positive integers."
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={12} xs={24}>
+                    <Form.Item name="creatorPercentage" label="Creator %">
+                      <InputNumber
+                        id="creatorPercentage"
+                        pattern="^((1[0-9][0-9])|([0-9]{1,2}))$"
+                        title="Positive integers."
+                        onChange={input =>
+                          handleCreatorPercentageChange(input as number)
+                        }
+                      />
+                    </Form.Item>
+                    <Modal
+                      title="Apply to all products?"
+                      visible={showModal}
+                      onOk={onConfirmPropagate}
+                      onCancel={onCancelPropagate}
+                      okText="Yes"
+                      cancelText="No"
+                    >
+                      <p>
+                        Would you like to apply this creator percentage to all{' '}
+                        {productBrand?.brandName} products?
+                      </p>
+                    </Modal>
+                  </Col>
+                  <Col lg={12} xs={24}>
+                    <Form.Item
+                      name="maxDiscoDollarPercentage"
+                      label="Max Disco Dollar %"
+                      rules={[
+                        {
+                          required: true,
+                          message: 'Max Disco Dollar percentage is required.',
+                        },
+                      ]}
+                    >
+                      <InputNumber
+                        id="maxDiscoDollarPercentage"
+                        pattern="^((1[0-9][0-9])|([0-9]{1,2}))$"
+                        title="Positive integers."
+                      />
+                    </Form.Item>
                   </Col>
                   <Col span={24}>
                     <Form.Item
@@ -398,6 +415,35 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                       <ColorPicker id="brandTxtColor" />
                     </Form.Item>
                   </Col>
+                </Row>
+              </Col>
+            </Tabs.TabPane>
+            <Tabs.TabPane forceRender tab="Social" key="Social">
+              <Row gutter={8}>
+                <Col lg={24} xs={24}>
+                  <Typography.Title level={4}>Social Channels</Typography.Title>
+                </Col>
+              </Row>
+              <Row>
+                <Col lg={8} xs={24}>
+                  <Form.Item name="instagram" label="Instagram">
+                    <Input prefix={<InstagramFilled />} />
+                  </Form.Item>
+                  <Form.Item name="facebook" label="Facebook">
+                    <Input prefix={<FacebookFilled />} />
+                  </Form.Item>
+                  <Form.Item name="tiktok" label="TikTok">
+                    <Input prefix={<SoundFilled />} />
+                  </Form.Item>
+                  <Form.Item name="youtube" label="Youtube">
+                    <Input prefix={<YoutubeFilled />} />
+                  </Form.Item>
+                  <Form.Item name="website" label="Website">
+                    <Input prefix={<GlobalOutlined />} />
+                  </Form.Item>
+                  <Form.Item name="twitter" label="Twitter">
+                    <Input prefix={<TwitterCircleFilled />} />
+                  </Form.Item>
                 </Col>
               </Row>
             </Tabs.TabPane>

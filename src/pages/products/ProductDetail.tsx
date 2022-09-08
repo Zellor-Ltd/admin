@@ -667,7 +667,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                       <InputNumber
                         id="quantity"
                         placeholder="Quantity"
-                        pattern="^\d*%"
+                        pattern="^\d*$"
                         title="Non-negative integers only."
                         disabled={isLive}
                       />

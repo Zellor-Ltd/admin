@@ -40,7 +40,7 @@ import {
   transferStageProduct,
 } from 'services/DiscoClubService';
 import ProductExpandedRow from './ProductExpandedRow';
-import CopyValueToClipboard from 'components/CopyValueToClipboard';
+import CopyValueToClipboard from '../../components/CopyValueToClipboard';
 import './Products.scss';
 import { ProductCategory } from 'interfaces/Category';
 import { AppContext } from 'contexts/AppContext';
@@ -86,7 +86,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
   const [outOfStockFilter, setOutOfStockFilter] = useState<boolean>(false);
   const [unclassifiedFilter, setUnclassifiedFilter] = useState<boolean>(false);
   const [page, setPage] = useState<number>(0);
-  const [eof, setEof] = useState<boolean>(false);
+  const [eof, setEof] = useState<boolean>(true);
   const [products, setProducts] = useState<Product[]>([]);
 
   const [currentMasterBrand, setCurrentMasterBrand] = useState<string>();
@@ -270,14 +270,15 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
       setEof(true);
       return;
     }
-    if (resetResults) collapse(resetResults);
+    if (resetResults) {
+      setEof(false);
+      collapse(resetResults);
+    }
     const { results } = await doFetch(() =>
       _fetchStagingProducts(resetResults)
     );
-    if (resetResults) {
-      setEof(false);
-      setProducts(results);
-    } else setProducts(prev => [...prev.concat(results)]);
+    if (resetResults) setProducts(results);
+    else setProducts(prev => [...prev.concat(results)]);
   };
 
   const deleteItem = async (_id: string, index: number) => {
@@ -685,7 +686,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                 next={getProducts}
                 hasMore={!eof}
                 loader={
-                  page !== 0 && (
+                  !eof && (
                     <div className="scroll-message">
                       <Spin />
                     </div>

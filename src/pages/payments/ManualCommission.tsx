@@ -4,6 +4,7 @@ import {
   DatePicker,
   Form,
   Input,
+  InputNumber,
   message,
   PageHeader,
   Row,
@@ -148,7 +149,11 @@ const ManualCommission: React.FC<PaymentDetailsProps> = ({
                   },
                 ]}
               >
-                <Input id="quantity" placeholder="Quantity" />
+                <InputNumber
+                  pattern="^\d*$"
+                  id="quantity"
+                  placeholder="Quantity"
+                />
               </Form.Item>
             </Col>
           </Col>
