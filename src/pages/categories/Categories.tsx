@@ -18,7 +18,7 @@ import {
   Tabs,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import { categoriesSettings } from 'helpers/utils';
+import { categoryMapper } from 'helpers/categoryMapper';
 import useAllCategories from 'hooks/useAllCategories';
 import {
   AllCategories,
@@ -36,7 +36,7 @@ import scrollIntoView from 'scroll-into-view';
 import CategoryDetail from './CategoryDetail';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
-const { categoriesKeys, categoriesFields } = categoriesSettings;
+const { categoriesKeys, categoriesFields } = categoryMapper;
 
 const Categories: React.FC<RouteComponentProps> = ({ location }) => {
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);

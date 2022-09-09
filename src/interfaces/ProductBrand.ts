@@ -1,4 +1,9 @@
 export interface ProductBrand {
+  searchTags: any[];
+  ageMax?: any;
+  ageMin?: any;
+  apiCategory?: string;
+  categories?: any;
   id: string;
   brandName: string;
   status: string;

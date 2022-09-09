@@ -3,20 +3,21 @@ import {
   SelectedProductCategories,
 } from '../interfaces/Category';
 import { FormInstance } from 'antd/lib/form';
-import { categoriesSettings } from './utils';
+import { categoryMapper } from './categoryMapper';
 import update from 'immutability-helper';
 import { Product } from '../interfaces/Product';
+import { ProductBrand } from 'interfaces/ProductBrand';
 
-const { categoriesKeys, categoriesFields } = categoriesSettings;
+const { categoriesKeys, categoriesFields } = categoryMapper;
 
 const getCategories = (form: FormInstance, allCategories: AllCategories) => {
   const currentCategories: SelectedProductCategories = {};
 
   categoriesFields.forEach((field, index) => {
-    form.getFieldValue('categories')?.forEach((productCategory: any) => {
+    form.getFieldValue('categories')?.forEach((item: any) => {
       const category = allCategories[
         categoriesKeys[index] as keyof AllCategories
-      ].find(category => category.id === productCategory[field]?.id);
+      ].find(category => category.id === item[field]?.id);
       currentCategories[field] = category;
     });
   });
@@ -26,9 +27,9 @@ const getCategories = (form: FormInstance, allCategories: AllCategories) => {
 
 const getSearchTags = (
   category: SelectedProductCategories,
-  categoryKey?: string,
+  categoryKey?: any,
   filterFn?: any
-): string[] => {
+) => {
   if (!category) {
     return [];
   }
@@ -56,13 +57,13 @@ const getSearchTags = (
 };
 
 const removeSearchTagsByCategory = (
-  productCategoryIndex: number,
-  product: Product | undefined,
+  itemIndex: number,
+  entity: Product | ProductBrand | undefined,
   form: FormInstance
 ) => {
-  if (product && product?.categories) {
-    const updatedCategories: any[] = update(product.categories as any, {
-      $splice: [[productCategoryIndex, 1]],
+  if (entity && entity?.categories) {
+    const updatedCategories: any[] = update(entity.categories as any, {
+      $splice: [[itemIndex, 1]],
     });
     const remainingTags = updatedCategories
       .map(category => getSearchTags(category))
@@ -74,12 +75,12 @@ const removeSearchTagsByCategory = (
       searchTags: Array.from(new Set([...remainingTags])),
     });
 
-    product.categories = updatedCategories;
-    product.searchTags = remainingTags;
+    entity.categories = updatedCategories;
+    entity.searchTags = remainingTags;
   }
 };
 
-export const productUtils = {
+export const categoryUtils = {
   getCategories,
   getSearchTags,
   removeSearchTagsByCategory,
