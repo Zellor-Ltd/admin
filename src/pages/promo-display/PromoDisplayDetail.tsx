@@ -10,6 +10,7 @@ import useAllCategories from 'hooks/useAllCategories';
 import { useMount } from 'react-use';
 import { SelectOption } from 'interfaces/SelectOption';
 import scrollIntoView from 'scroll-into-view';
+import moment from 'moment';
 interface PromoDisplayDetailProps {
   promoDisplay?: any;
   onSave?: (record: PromoDisplay) => void;
@@ -71,7 +72,15 @@ const PromoDisplaysDetail: React.FC<PromoDisplayDetailProps> = ({
         name="promoDisplayForm"
         layout="vertical"
         form={form}
-        initialValues={promoDisplay}
+        initialValues={{
+          ...promoDisplay,
+          displayStartDate: promoDisplay?.['displayStartDate']
+            ? moment(promoDisplay?.['displayStartDate'])
+            : undefined,
+          displayExpireDate: promoDisplay?.['displayExpireDate']
+            ? moment(promoDisplay?.['displayExpireDate'])
+            : undefined,
+        }}
         onFinish={onFinish}
         onFinishFailed={({ errorFields }) => handleFinishFailed(errorFields)}
       >

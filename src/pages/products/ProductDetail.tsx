@@ -49,6 +49,7 @@ import { ColumnsType } from 'antd/lib/table';
 import { currencyRender } from 'helpers/currencyRender';
 import scrollIntoView from 'scroll-into-view';
 import CopyValueToClipboard from 'components/CopyValueToClipboard';
+import moment from 'moment';
 
 const { categoriesKeys, categoriesFields } = categoryMapper;
 const { getSearchTags, getCategories, removeSearchTagsByCategory } =
@@ -541,7 +542,15 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
       <Form
         form={form}
         name="productForm"
-        initialValues={_product}
+        initialValues={{
+          ..._product,
+          goLiveDate: _product?.['goLiveDate']
+            ? moment(_product?.['goLiveDate'])
+            : undefined,
+          validity: _product?.['validity']
+            ? moment(_product?.['validity'])
+            : undefined,
+        }}
         onFinish={onFinish}
         onFinishFailed={({ errorFields }) => handleFinishFailed(errorFields)}
         layout="vertical"
