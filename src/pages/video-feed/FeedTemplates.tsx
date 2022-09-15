@@ -28,7 +28,7 @@ import './VideoFeed.scss';
 import './VideoFeedDetail.scss';
 import moment from 'moment';
 import { useRequest } from 'hooks/useRequest';
-import VideoFeedDetailV2 from './VideoFeedDetailV2';
+import VideoFeedDetail from './VideoFeedDetail';
 
 const { Content } = Layout;
 
@@ -239,7 +239,7 @@ const FeedTemplates: React.FC<RouteComponentProps> = () => {
         </div>
       )}
       {details && (
-        <VideoFeedDetailV2
+        <VideoFeedDetail
           onSave={onSaveItem}
           onCancel={onCancelItem}
           feedItem={selectedFeedTemplate}

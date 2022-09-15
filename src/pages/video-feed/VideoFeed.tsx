@@ -48,7 +48,7 @@ import './VideoFeed.scss';
 import './VideoFeedDetail.scss';
 import SimpleSelect from 'components/select/SimpleSelect';
 import { SelectOption } from 'interfaces/SelectOption';
-import VideoFeedDetailV2 from './VideoFeedDetailV2';
+import VideoFeedDetail from './VideoFeedDetail';
 import { statusList, videoTypeList } from 'components/select/select.utils';
 import { useRequest } from 'hooks/useRequest';
 import moment from 'moment';
@@ -757,7 +757,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
         </div>
       )}
       {details && (
-        <VideoFeedDetailV2
+        <VideoFeedDetail
           onSave={onSaveItem}
           onCancel={onCancelItem}
           feedItem={selectedVideoFeed}

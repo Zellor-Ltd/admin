@@ -48,7 +48,7 @@ import 'pages/video-feed/VideoFeed.scss';
 import 'pages/video-feed/VideoFeedDetail.scss';
 import SimpleSelect from 'components/select/SimpleSelect';
 import { SelectOption } from 'interfaces/SelectOption';
-import VideoFeedDetailV2 from 'pages/video-feed/VideoFeedDetailV2';
+import VideoFeedDetail from 'pages/video-feed/VideoFeedDetail';
 import { statusList } from 'components/select/select.utils';
 import { useRequest } from 'hooks/useRequest';
 import moment from 'moment';
@@ -738,7 +738,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
         </>
       )}
       {details && (
-        <VideoFeedDetailV2
+        <VideoFeedDetail
           onSave={onSaveItem}
           onCancel={onCancelItem}
           feedItem={selectedVideoFeed}
