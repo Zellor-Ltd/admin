@@ -472,7 +472,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                 </Col>
               </Row>
               <ProductCategoriesTrees
-                id="categories"
+                id="productBrandCategories"
                 categories={productBrand?.categories}
                 allCategories={allCategories}
                 form={form}
