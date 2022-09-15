@@ -627,6 +627,9 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
               onChange={setCreatorFilter}
               value={creatorFilter}
               style={{ width: '100%' }}
+              filterOption={filterOption}
+              allowClear
+              showSearch
             >
               {creators.map((curr: any) => (
                 <Select.Option key={curr.id} value={curr.firstName}>

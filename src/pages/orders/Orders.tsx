@@ -444,6 +444,9 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
           defaultValue={value}
           style={{ width: '100%' }}
           onChange={value => handleSelectChange(value, order, index, 'stage')}
+          filterOption={filterOption}
+          allowClear
+          showSearch
         >
           {ordersSettings.map((ordersSetting: any) => (
             <Select.Option
@@ -488,6 +491,9 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
           onChange={value =>
             handleSelectChange(value, order, index, 'commissionInternalStatus')
           }
+          filterOption={filterOption}
+          allowClear
+          showSearch
         >
           {ordersSettings.map((ordersSetting: any) => (
             <Select.Option

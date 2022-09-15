@@ -586,6 +586,9 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                         placeholder="Please select a status"
                         onChange={setStatus}
                         value={status}
+                        filterOption={filterOption}
+                        allowClear
+                        showSearch
                       >
                         <Select.Option key="live" value="live" label="Live">
                           Live
@@ -657,6 +660,9 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                   <Select
                     placeholder="Please select a category"
                     disabled={!loaded.current || !category.length}
+                    filterOption={filterOption}
+                    allowClear
+                    showSearch
                   >
                     {category.map((category: any) => (
                       <Select.Option key={category.name} value={category.name}>
@@ -738,7 +744,13 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
               </Col>
               <Col lg={24} xs={24}>
                 <Form.Item name="searchTags" label="Search Tags">
-                  <Select mode="tags" className="product-search-tags">
+                  <Select
+                    mode="tags"
+                    className="product-search-tags"
+                    filterOption={filterOption}
+                    allowClear
+                    showSearch
+                  >
                     {feedForm
                       .getFieldValue('searchTags')
                       ?.map((searchTag: any) => (
@@ -768,6 +780,9 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                   <Select
                     placeholder="Please select a language"
                     disabled={!loaded.current || !language.length}
+                    filterOption={filterOption}
+                    allowClear
+                    showSearch
                   >
                     {language.map((lang: any) => (
                       <Select.Option key={lang.value} value={lang.value}>
@@ -790,6 +805,9 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                     mode="multiple"
                     placeholder="Please select a Video Type"
                     disabled={!loaded.current || !videoType.length}
+                    filterOption={filterOption}
+                    allowClear
+                    showSearch
                   >
                     {videoType.map((type: any) => (
                       <Select.Option
@@ -822,7 +840,12 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
               </Col>
               <Col lg={12} xs={24}>
                 <Form.Item name="gender" label="Gender">
-                  <Select mode="multiple">
+                  <Select
+                    mode="multiple"
+                    filterOption={filterOption}
+                    allowClear
+                    showSearch
+                  >
                     <Select.Option value="Female">Female</Select.Option>
                     <Select.Option value="Male">Male</Select.Option>
                     <Select.Option value="Other">Other</Select.Option>
@@ -967,7 +990,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                       placeholder="Select a Brand"
                       disabled={!loaded.current}
                       onChange={onChangeProductBrand}
-                      allowClear={false}
+                      allowClear
                       showSearch
                       filterOption={filterOption}
                       value={currentProductBrand?.id}
@@ -998,7 +1021,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                         placeholder="Select an icon"
                         disabled={!productBrandIcons.length}
                         onChange={onChangeBrandIcon}
-                        allowClear={false}
+                        allowClear
                         showSearch
                         filterOption={filterOption}
                         value={currentBrandIcon}
@@ -1037,6 +1060,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                       disabled={!loaded.current}
                       onChange={onChangeCreator}
                       style={{ width: '100%' }}
+                      allowClear
                       showSearch
                       filterOption={filterOption}
                       value={currentCreator?.id}
@@ -1071,6 +1095,9 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                   style={{ width: '100%' }}
                   onSelect={onSelectCreator}
                   value={videoCreator?.id}
+                  filterOption={filterOption}
+                  allowClear
+                  showSearch
                 >
                   {creators.map((curr: any) => (
                     <Select.Option
@@ -1090,6 +1117,9 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                   style={{ width: '100%' }}
                   onSelect={setSelectedSocialPlatform}
                   value={selectedSocialPlatform}
+                  filterOption={filterOption}
+                  allowClear
+                  showSearch
                 >
                   {socialPlatform.map((curr: any) => (
                     <Select.Option key={curr.value} value={curr.value}>
@@ -1114,6 +1144,9 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                   style={{ width: '100%' }}
                   onSelect={setSelectedLinkType}
                   value={selectedLinkType}
+                  filterOption={filterOption}
+                  allowClear
+                  showSearch
                 >
                   {linkType.map((curr: any) => (
                     <Select.Option key={curr.value} value={curr.value}>
@@ -1162,7 +1195,12 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                 </Col>
                 <Col span={24}>
                   <Form.Item name="promoMasterBrand" label="Master Brand">
-                    <Select onChange={onChangeBrand}>
+                    <Select
+                      onChange={onChangeBrand}
+                      filterOption={filterOption}
+                      allowClear
+                      showSearch
+                    >
                       {brands.map(brand => (
                         <Select.Option key={brand.id} value={brand.id}>
                           {brand.brandName}

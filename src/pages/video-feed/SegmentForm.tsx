@@ -217,6 +217,7 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                           rules={[{ required: true }]}
                         >
                           <Select
+                            allowClear
                             showSearch
                             filterOption={filterOption}
                             onChange={(key: string) =>
@@ -251,6 +252,9 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                                   onChange={(key: string) =>
                                     onChangeLogo(key, field.name)
                                   }
+                                  filterOption={filterOption}
+                                  allowClear
+                                  showSearch
                                 >
                                   {bra.brandLogo?.url && (
                                     <Select.Option value="brandLogo">
@@ -407,6 +411,9 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                               onChangeTag(key, field.name, index)
                             }
                             loading={loading}
+                            filterOption={filterOption}
+                            allowClear
+                            showSearch
                           >
                             {(filteredTags[index]
                               ? filteredTags[index]

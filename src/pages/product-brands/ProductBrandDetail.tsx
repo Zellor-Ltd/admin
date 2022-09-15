@@ -489,7 +489,13 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                 >
                   {({ getFieldValue }) => (
                     <Form.Item name={'searchTags'} label="Search Tags">
-                      <Select mode="tags" className="product-search-tags">
+                      <Select
+                        mode="tags"
+                        className="product-search-tags"
+                        filterOption={filterOption}
+                        allowClear
+                        showSearch
+                      >
                         {getFieldValue('searchTags')?.map((searchTag: any) => (
                           <Select.Option key={searchTag} value={searchTag}>
                             {searchTag}
@@ -524,7 +530,13 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                     label="Gender"
                     rules={[{ required: true, message: 'Gender is required.' }]}
                   >
-                    <Select mode="multiple" id="gender">
+                    <Select
+                      mode="multiple"
+                      id="gender"
+                      filterOption={filterOption}
+                      allowClear
+                      showSearch
+                    >
                       <Select.Option value="Female">Female</Select.Option>
                       <Select.Option value="Male">Male</Select.Option>
                       <Select.Option value="Other">Other</Select.Option>

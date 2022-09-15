@@ -204,6 +204,7 @@ const BrandForm: React.FC<FormProps> = ({
           <Form.Item name="selectedLogo" label="Product Brand logo">
             <Select
               allowClear
+              showSearch
               value={selectedLogo}
               placeholder="Please select a logo"
               disabled={!loaded.current}
