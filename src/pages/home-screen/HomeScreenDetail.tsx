@@ -14,6 +14,7 @@ import { useState } from 'react';
 import { saveBanner } from '../../services/DiscoClubService';
 import { Banner } from 'interfaces/Banner';
 import scrollIntoView from 'scroll-into-view';
+import moment from 'moment';
 interface HomeScreenDetailProps {
   banner: Banner;
   onSave?: (record: Banner) => void;
@@ -57,7 +58,15 @@ const HomeScreenDetail: React.FC<HomeScreenDetailProps> = ({
         name="bannerForm"
         layout="vertical"
         form={form}
-        initialValues={banner}
+        initialValues={{
+          ...banner,
+          startDate: banner?.['startDate']
+            ? moment(banner?.['startDate'])
+            : undefined,
+          expireDate: banner?.['expireDate']
+            ? moment(banner?.['expireDate'])
+            : undefined,
+        }}
         onFinish={onFinish}
         onFinishFailed={({ errorFields }) => handleFinishFailed(errorFields)}
       >

@@ -1,6 +1,6 @@
 import { Button, Col, Form, Input, PageHeader, Row, Select } from 'antd';
 import { Upload } from 'components';
-import { categoriesSettings } from 'helpers/utils';
+import { categoryMapper } from 'helpers/categoryMapper';
 import useAllCategories from 'hooks/useAllCategories';
 import { useRequest } from 'hooks/useRequest';
 import {
@@ -19,8 +19,7 @@ interface CategoryDetailProps {
   onCancel?: () => void;
 }
 
-const { categoriesKeys, categoriesArray, categoriesFields } =
-  categoriesSettings;
+const { categoriesKeys, categoriesArray, categoriesFields } = categoryMapper;
 
 const CategoryDetail: React.FC<CategoryDetailProps> = ({
   index,

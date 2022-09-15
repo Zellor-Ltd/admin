@@ -6,11 +6,10 @@ import {
 } from 'interfaces/Category';
 import { useCallback, useEffect, useState } from 'react';
 import { productCategoriesAPI } from 'services/DiscoClubService';
-import { categoriesSettings } from 'helpers/utils';
+import { categoryMapper } from 'helpers/categoryMapper';
 import { useRequest } from './useRequest';
 
-const { categoriesKeys, categoriesFields, categoriesArray } =
-  categoriesSettings;
+const { categoriesKeys, categoriesFields, categoriesArray } = categoryMapper;
 
 const allCategoriesFactory = (): AllCategories => ({
   'Super Category': [],
