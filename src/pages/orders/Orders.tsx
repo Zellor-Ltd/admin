@@ -151,15 +151,23 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   const handleSelectChange = async (
     value: string,
     order: Order,
-    index: number
+    index: number,
+    propName: 'stage' | 'commissionInternalStatus'
   ) => {
     const currentOrderUpdateList = [...orderUpdateList];
     currentOrderUpdateList[index] = true;
     setOrderUpdateList(currentOrderUpdateList);
-    await saveOrder({
-      ...order,
-      stage: value,
-    });
+    if (propName === 'stage') {
+      await saveOrder({
+        ...order,
+        stage: value,
+      });
+    } else {
+      await saveOrder({
+        ...order,
+        commissionInternalStatus: value,
+      });
+    }
 
     const _orders = [...orders];
     _orders[index].hLastUpdate = moment
@@ -435,7 +443,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
           disabled={orderUpdateList[index]}
           defaultValue={value}
           style={{ width: '100%' }}
-          onChange={value => handleSelectChange(value, order, index)}
+          onChange={value => handleSelectChange(value, order, index, 'stage')}
         >
           {ordersSettings.map((ordersSetting: any) => (
             <Select.Option
@@ -477,7 +485,9 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
           disabled={orderUpdateList[index]}
           defaultValue={value}
           style={{ width: '100%' }}
-          onChange={value => handleSelectChange(value, order, index)}
+          onChange={value =>
+            handleSelectChange(value, order, index, 'commissionInternalStatus')
+          }
         >
           {ordersSettings.map((ordersSetting: any) => (
             <Select.Option
