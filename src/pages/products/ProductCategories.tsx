@@ -87,7 +87,12 @@ const ProductCategories: React.FC<ProductCategoriesProps> = ({
             key={_index}
             label={key}
             name={['categories', productCategoryIndex, field, 'id']}
-            rules={[{ required: _index < 2, message: `${key} is required` }]}
+            rules={[
+              {
+                required: _index < 2 && id !== 'productBrandCategories',
+                message: `${key} is required`,
+              },
+            ]}
           >
             <Select
               id={_index === 0 ? id : ''}
