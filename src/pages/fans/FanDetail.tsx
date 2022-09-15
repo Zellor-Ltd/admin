@@ -306,17 +306,17 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
                     },
                   ]}
                 >
-                  <Input allowClear id="userName" />
+                  <Input allowClear id="userName" placeholder="Name" />
                 </Form.Item>
               </Col>
               <Col lg={8} xs={24}>
                 <Form.Item label="Email" name="user">
-                  <Input allowClear type="email" />
+                  <Input allowClear type="email" placeholder="Email" />
                 </Form.Item>
               </Col>
               <Col lg={8} xs={24}>
                 <Form.Item label="Password" name="pwd">
-                  <Input.Password allowClear />
+                  <Input.Password allowClear placeholder="Password" />
                 </Form.Item>
               </Col>
               <Col lg={8} xs={24}>
@@ -346,7 +346,7 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
               </Col>
               <Col lg={8} xs={24}>
                 <Form.Item name="gender" label="Gender">
-                  <Select>
+                  <Select placeholder="Gender">
                     <Select.Option value="Female">Female</Select.Option>
                     <Select.Option value="Male">Male</Select.Option>
                     <Select.Option value="Other">Other</Select.Option>
@@ -359,6 +359,7 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
               <Col lg={8} xs={24}>
                 <Form.Item label="Phone" name="phoneNumber">
                   <InputNumber
+                    placeholder="Phone"
                     style={{
                       width: '100%',
                     }}
@@ -372,7 +373,7 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
               </Col>
               <Col lg={8} xs={24}>
                 <Form.Item label="Default Currency" name="currencyCode">
-                  <Select>
+                  <Select placeholder="Default Currency">
                     {currencies.map(currency => (
                       <Select.Option key={currency.code} value={currency.code}>
                         {currency.code}
@@ -387,22 +388,22 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
             <Row gutter={8}>
               <Col lg={8} xs={24}>
                 <Form.Item label="Address" name="line1">
-                  <Input allowClear />
+                  <Input allowClear placeholder="Address" />
                 </Form.Item>
               </Col>
               <Col lg={8} xs={24}>
                 <Form.Item label="City" name="city">
-                  <Input allowClear />
+                  <Input allowClear placeholder="City" />
                 </Form.Item>
               </Col>
               <Col lg={8} xs={24}>
                 <Form.Item label="Country" name="country">
-                  <Input allowClear />
+                  <Input allowClear placeholder="Country" />
                 </Form.Item>
               </Col>
               <Col lg={8} xs={24}>
                 <Form.Item label="Postal Code" name="postalCode">
-                  <InputNumber />
+                  <InputNumber placeholder="Postal Code" />
                 </Form.Item>
               </Col>
             </Row>
@@ -419,7 +420,7 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
               </Col>
               <Col lg={8} xs={24}>
                 <Form.Item name="serverAlias" label="Server Alias">
-                  <Select>
+                  <Select placeholder="Server Alias">
                     {serversList.map(serverAlias => (
                       <Select.Option
                         key={serverAlias.alias}
@@ -457,7 +458,7 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
                           </Typography.Title>
                           <Form.Item>
                             <Select
-                              placeholder="Please select a creator"
+                              placeholder="Please select a Creator"
                               onChange={onChangeCreator}
                               allowClear
                             >
@@ -517,7 +518,7 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
                           </Typography.Title>
                           <Form.Item>
                             <Select
-                              placeholder="Please select a categories"
+                              placeholder="Please select a Category"
                               onChange={onChangeCategories}
                               allowClear
                             >

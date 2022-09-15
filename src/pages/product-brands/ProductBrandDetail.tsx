@@ -287,12 +287,16 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                         },
                       ]}
                     >
-                      <Input allowClear id="brandName" />
+                      <Input
+                        allowClear
+                        id="brandName"
+                        placeholder="Product Brand Name"
+                      />
                     </Form.Item>
                   </Col>
                   <Col lg={12} xs={24}>
                     <Form.Item label="External Code" name="externalCode">
-                      <Input allowClear />
+                      <Input allowClear placeholder="External Code" />
                     </Form.Item>
                   </Col>
                   <Col span={24}>
@@ -356,6 +360,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                         id="discoPercentage"
                         pattern="^((1[0-9][0-9])|([0-9]{1,2}))$"
                         title="Positive integers."
+                        placeholder="Disco %"
                       />
                     </Form.Item>
                   </Col>
@@ -365,6 +370,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                         id="creatorPercentage"
                         pattern="^((1[0-9][0-9])|([0-9]{1,2}))$"
                         title="Positive integers."
+                        placeholder="Creator %"
                         onChange={input =>
                           handleCreatorPercentageChange(input as number)
                         }
@@ -399,6 +405,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                         id="maxDiscoDollarPercentage"
                         pattern="^((1[0-9][0-9])|([0-9]{1,2}))$"
                         title="Positive integers."
+                        placeholder="Max Disco Dollar %"
                       />
                     </Form.Item>
                   </Col>
@@ -436,24 +443,48 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                 </Col>
               </Row>
               <Row>
-                <Col lg={8} xs={24}>
+                <Col lg={12} xs={24}>
                   <Form.Item name="instagram" label="Instagram">
-                    <Input allowClear prefix={<InstagramFilled />} />
+                    <Input
+                      allowClear
+                      prefix={<InstagramFilled />}
+                      placeholder="Instagram"
+                    />
                   </Form.Item>
                   <Form.Item name="facebook" label="Facebook">
-                    <Input allowClear prefix={<FacebookFilled />} />
+                    <Input
+                      allowClear
+                      prefix={<FacebookFilled />}
+                      placeholder="Facebook"
+                    />
                   </Form.Item>
                   <Form.Item name="tiktok" label="TikTok">
-                    <Input allowClear prefix={<SoundFilled />} />
+                    <Input
+                      allowClear
+                      prefix={<SoundFilled />}
+                      placeholder="TikTok"
+                    />
                   </Form.Item>
                   <Form.Item name="youtube" label="Youtube">
-                    <Input allowClear prefix={<YoutubeFilled />} />
+                    <Input
+                      allowClear
+                      prefix={<YoutubeFilled />}
+                      placeholder="Youtube"
+                    />
                   </Form.Item>
                   <Form.Item name="website" label="Website">
-                    <Input allowClear prefix={<GlobalOutlined />} />
+                    <Input
+                      allowClear
+                      prefix={<GlobalOutlined />}
+                      placeholder="Website"
+                    />
                   </Form.Item>
                   <Form.Item name="twitter" label="Twitter">
-                    <Input allowClear prefix={<TwitterCircleFilled />} />
+                    <Input
+                      allowClear
+                      prefix={<TwitterCircleFilled />}
+                      placeholder="Twitter"
+                    />
                   </Form.Item>
                 </Col>
               </Row>
@@ -536,6 +567,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                       filterOption={filterOption}
                       allowClear
                       showSearch
+                      placeholder="Gender"
                     >
                       <Select.Option value="Female">Female</Select.Option>
                       <Select.Option value="Male">Male</Select.Option>

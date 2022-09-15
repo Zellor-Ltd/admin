@@ -67,22 +67,22 @@ const EndpointDetail: React.FC<RouteComponentProps> = ({
         <Row gutter={8}>
           <Col lg={6} xs={24}>
             <Form.Item label="Name" name="name">
-              <Input allowClear />
+              <Input allowClear placeholder="Name" />
             </Form.Item>
           </Col>
           <Col lg={6} xs={24}>
             <Form.Item label="Description" name="description">
-              <Input allowClear />
+              <Input allowClear placeholder="Description" />
             </Form.Item>
           </Col>
           <Col lg={6} xs={24}>
             <Form.Item label="Container" name="container">
-              <Input allowClear />
+              <Input allowClear placeholder="Container" />
             </Form.Item>
           </Col>
           <Col lg={6} xs={24}>
             <Form.Item label="Application" name="application">
-              <Input allowClear disabled />
+              <Input allowClear disabled placeholder="Application" />
             </Form.Item>
           </Col>
 

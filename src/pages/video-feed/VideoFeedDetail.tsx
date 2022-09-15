@@ -113,9 +113,9 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
   const { doFetch, doRequest } = useRequest({ setLoading });
   const [includeVideo, setIncludeVideo] = useState<boolean>(false);
   const [videoCreator, setVideoCreator] = useState<Creator>();
-  const [selectedLinkType, setSelectedLinkType] = useState<string>('');
+  const [selectedLinkType, setSelectedLinkType] = useState<string>();
   const [selectedSocialPlatform, setSelectedSocialPlatform] =
-    useState<string>('');
+    useState<string>();
   const [links, setLinks] = useState<any[]>([]);
   const [segment, setSegment] = useState<number>(0);
   const [status, setStatus] = useState<string>(feedItem?.status);
@@ -647,12 +647,12 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
               </Col>
               <Col lg={24} xs={24}>
                 <Form.Item name="title" label="Title">
-                  <Input allowClear />
+                  <Input allowClear placeholder="Title" />
                 </Form.Item>
               </Col>
               <Col lg={24} xs={24}>
                 <Form.Item name="shortDescription" label="Short description">
-                  <Input allowClear />
+                  <Input allowClear placeholder="Short description" />
                 </Form.Item>
               </Col>
               <Col lg={24} xs={24}>
@@ -707,12 +707,18 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                           videoCreator?.firstName ?? videoCreator?.userName
                         }
                         disabled
+                        placeholder="Creator Name"
                       />
                     </Form.Item>
                   </Col>
                   <Col lg={24} xs={24}>
                     <Form.Item label="Creator Email">
-                      <Input allowClear value={videoCreator?.user} disabled />
+                      <Input
+                        allowClear
+                        value={videoCreator?.user}
+                        disabled
+                        placeholder="Creator Email"
+                      />
                     </Form.Item>
                   </Col>
                 </>
@@ -767,12 +773,12 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
             <Row gutter={8}>
               <Col lg={12} xs={24}>
                 <Form.Item name="lengthTotal" label="Length">
-                  <InputNumber />
+                  <InputNumber placeholder="Length" />
                 </Form.Item>
               </Col>
               <Col lg={12} xs={24}>
                 <Form.Item name="format" label="Format">
-                  <Input allowClear />
+                  <Input allowClear placeholder="Format" />
                 </Form.Item>
               </Col>
               <Col lg={12} xs={24}>
@@ -845,6 +851,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                     filterOption={filterOption}
                     allowClear
                     showSearch
+                    placeholder="Gender"
                   >
                     <Select.Option value="Female">Female</Select.Option>
                     <Select.Option value="Male">Male</Select.Option>
@@ -973,7 +980,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                 <Radio.Button value="creator">Creator</Radio.Button>
               </Radio.Group>
             </Form.Item>
-            <Col sm={12} lg={6}>
+            <Col lg={12} xs={24}>
               {selectedOption === 'productBrand' && (
                 <>
                   <Form.Item
@@ -1096,6 +1103,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                   onSelect={onSelectCreator}
                   value={videoCreator?.id}
                   filterOption={filterOption}
+                  placeholder="Creator"
                   allowClear
                   showSearch
                 >
@@ -1117,6 +1125,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                   style={{ width: '100%' }}
                   onSelect={setSelectedSocialPlatform}
                   value={selectedSocialPlatform}
+                  placeholder="Social platform"
                   filterOption={filterOption}
                   allowClear
                   showSearch
@@ -1139,11 +1148,13 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                 />
               </Col>
               <Col lg={4} xs={24}>
+                <Typography.Title level={5}>Link Type</Typography.Title>
                 <Select
                   disabled={!loaded.current || !linkType.length}
                   style={{ width: '100%' }}
                   onSelect={setSelectedLinkType}
                   value={selectedLinkType}
+                  placeholder="Link Type"
                   filterOption={filterOption}
                   allowClear
                   showSearch
@@ -1197,6 +1208,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                   <Form.Item name="promoMasterBrand" label="Master Brand">
                     <Select
                       onChange={onChangeBrand}
+                      placeholder="Master Brand"
                       filterOption={filterOption}
                       allowClear
                       showSearch
@@ -1211,17 +1223,17 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                 </Col>
                 <Col span={24}>
                   <Form.Item name="promoText" label="Headline Text">
-                    <Input allowClear />
+                    <Input allowClear placeholder="Headline Text" />
                   </Form.Item>
                 </Col>
                 <Col span={24}>
                   <Form.Item name="promoCode" label="Coupon Code">
-                    <Input allowClear />
+                    <Input allowClear placeholder="Coupon Code" />
                   </Form.Item>
                 </Col>
                 <Col span={24}>
                   <Form.Item name="promoDate" label="Date Range (Text format)">
-                    <Input allowClear />
+                    <Input allowClear placeholder="Date Range (Text format)" />
                   </Form.Item>
                 </Col>
               </Col>

@@ -1,4 +1,14 @@
-import { Button, Col, Form, message, PageHeader, Row, Table, Tabs } from 'antd';
+import {
+  Button,
+  Col,
+  Form,
+  message,
+  PageHeader,
+  Row,
+  Table,
+  Tabs,
+  Typography,
+} from 'antd';
 import { useRequest } from '../../hooks/useRequest';
 import { Creator } from '../../interfaces/Creator';
 import { Fan } from '../../interfaces/Fan';
@@ -106,40 +116,70 @@ const GuestDetail: React.FC<GuestDetailProps> = ({ fan, onSave, onCancel }) => {
                 <Row justify="space-between">
                   <span>_id</span>
                 </Row>
-                <span className="info-block mt-05 mb-1">{fan.id}</span>
+                <span className="info-block mt-05 mb-1">
+                  {fan.id ?? <Typography.Text disabled>_id</Typography.Text>}
+                </span>
               </Col>
               <Col lg={8} xs={24}>
                 <span>Name</span>
-                <span className="info-block mt-05 mb-1">{fan.userName}</span>
+                <span className="info-block mt-05 mb-1">
+                  {fan.userName ?? (
+                    <Typography.Text disabled>Name</Typography.Text>
+                  )}
+                </span>
               </Col>
               <Col lg={8} xs={24}>
                 <span>Email</span>
-                <span className="info-block mt-05 mb-1">{fan.user}</span>
+                <span className="info-block mt-05 mb-1">
+                  {fan.user ?? <Typography.Text disabled></Typography.Text>}
+                </span>
               </Col>
               <Col lg={8} xs={24}>
                 <span>Password</span>
-                <span className="info-block mt-05 mb-1">{fan.pwd}</span>
+                <span className="info-block mt-05 mb-1">
+                  {fan.pwd ?? (
+                    <Typography.Text disabled>Password</Typography.Text>
+                  )}
+                </span>
               </Col>
               <Col lg={8} xs={24}>
                 <span>Profile</span>
-                <span className="info-block mt-05 mb-1">{fan.profile}</span>
+                <span className="info-block mt-05 mb-1">
+                  {fan.profile ?? (
+                    <Typography.Text disabled>Profile</Typography.Text>
+                  )}
+                </span>
               </Col>
               <Col lg={8} xs={24}>
                 <span>Birthday</span>
-                <span className="info-block mt-05 mb-1">{fan.birthday}</span>
+                <span className="info-block mt-05 mb-1">
+                  {fan.birthday ?? (
+                    <Typography.Text disabled>Birthday</Typography.Text>
+                  )}
+                </span>
               </Col>
               <Col lg={8} xs={24}>
                 <span>Gender</span>
-                <span className="info-block mt-05 mb-1">{fan.gender}</span>
+                <span className="info-block mt-05 mb-1">
+                  {fan.gender ?? (
+                    <Typography.Text disabled>Gender</Typography.Text>
+                  )}
+                </span>
               </Col>
               <Col lg={8} xs={24}>
                 <span>Phone</span>
-                <span className="info-block mt-05 mb-1">{fan.phoneNumber}</span>
+                <span className="info-block mt-05 mb-1">
+                  {fan.phoneNumber ?? (
+                    <Typography.Text disabled>Phone</Typography.Text>
+                  )}
+                </span>
               </Col>
               <Col lg={8} xs={24}>
                 <span>Default Currency</span>
                 <span className="info-block mt-05 mb-1">
-                  {fan.currencyCode}
+                  {fan.currencyCode ?? (
+                    <Typography.Text disabled>Default Currency</Typography.Text>
+                  )}
                 </span>
               </Col>
             </Row>
@@ -148,19 +188,33 @@ const GuestDetail: React.FC<GuestDetailProps> = ({ fan, onSave, onCancel }) => {
             <Row gutter={8}>
               <Col lg={8} xs={24}>
                 <span>Address</span>
-                <span className="info-block mt-05 mb-1">{fan.line1}</span>
+                <span className="info-block mt-05 mb-1">
+                  {fan.line1 ?? (
+                    <Typography.Text disabled>Address</Typography.Text>
+                  )}
+                </span>
               </Col>
               <Col lg={8} xs={24}>
                 <span>City</span>
-                <span className="info-block mt-05 mb-1">{fan.city}</span>
+                <span className="info-block mt-05 mb-1">
+                  {fan.city ?? <Typography.Text disabled>City</Typography.Text>}
+                </span>
               </Col>
               <Col lg={8} xs={24}>
                 <span>Country</span>
-                <span className="info-block mt-05 mb-1">{fan.country}</span>
+                <span className="info-block mt-05 mb-1">
+                  {fan.country ?? (
+                    <Typography.Text disabled>Country</Typography.Text>
+                  )}
+                </span>
               </Col>
               <Col lg={8} xs={24}>
                 <span>Postal Code</span>
-                <span className="info-block mt-05 mb-1">{fan.postalCode}</span>
+                <span className="info-block mt-05 mb-1">
+                  {fan.postalCode ?? (
+                    <Typography.Text disabled>Postal Code</Typography.Text>
+                  )}
+                </span>
               </Col>
             </Row>
           </Tabs.TabPane>
@@ -168,11 +222,19 @@ const GuestDetail: React.FC<GuestDetailProps> = ({ fan, onSave, onCancel }) => {
             <Row gutter={8}>
               <Col lg={8} xs={24}>
                 <span>Server Alias</span>
-                <span className="info-block mt-05 mb-1">{fan.serverAlias}</span>
+                <span className="info-block mt-05 mb-1">
+                  {fan.serverAlias ?? (
+                    <Typography.Text disabled>Server Alias</Typography.Text>
+                  )}
+                </span>
               </Col>
               <Col lg={8} xs={24}>
                 <span>Group</span>
-                <span className="info-block mt-05 mb-1">{fan.group}</span>
+                <span className="info-block mt-05 mb-1">
+                  {fan.group ?? (
+                    <Typography.Text disabled>Group</Typography.Text>
+                  )}
+                </span>
               </Col>
             </Row>
           </Tabs.TabPane>

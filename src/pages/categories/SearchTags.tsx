@@ -49,7 +49,7 @@ const SearchTags = ({
           <Row gutter={8} key={index}>
             <Col xs={10}>
               <Form.Item label="Tag Name" name={['searchTags', index, 'name']}>
-                <Input allowClear />
+                <Input allowClear placeholder="Tag Name" />
               </Form.Item>
             </Col>
             <Col xs={10}>
@@ -57,7 +57,7 @@ const SearchTags = ({
                 label="Tag Value"
                 name={['searchTags', index, 'value']}
               >
-                <Input allowClear />
+                <Input allowClear placeholder="Tag Value" />
               </Form.Item>
             </Col>
             <Col xs={4} style={{ marginTop: '24px' }}>

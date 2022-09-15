@@ -142,12 +142,12 @@ const TagDetail: React.FC<TagDetailProps> = ({ tag, onSave, onCancel }) => {
                 label="Tag Name"
                 rules={[{ required: true, message: 'Tag Name is required.' }]}
               >
-                <Input allowClear id="tagName" />
+                <Input allowClear id="tagName" placeholder="Tag Name" />
               </Form.Item>
             </Col>
             <Col lg={12} xs={24}>
               <Form.Item name={['brand', 'id']} label="Master Brand">
-                <Select onChange={onChangeBrand}>
+                <Select onChange={onChangeBrand} placeholder="Master Brand">
                   {brands.map(brand => (
                     <Select.Option key={brand.id} value={brand.id}>
                       {brand.brandName}
@@ -184,6 +184,7 @@ const TagDetail: React.FC<TagDetailProps> = ({ tag, onSave, onCancel }) => {
                         form.getFieldValue('template') === 'dollar' ||
                         !form.getFieldValue('brand')
                       }
+                      placeholder="Product"
                     >
                       {productOptions.map(product => (
                         <Select.Option key={product.id} value={product.id}>
@@ -195,9 +196,9 @@ const TagDetail: React.FC<TagDetailProps> = ({ tag, onSave, onCancel }) => {
                 )}
               </Form.Item>
             </Col>
-            <Col lg={12} xs={24}>
+            <Col span={24}>
               <Row gutter={8}>
-                <Col lg={12} xs={24}>
+                <Col lg={6} xs={24}>
                   <Form.Item
                     name="discoGold"
                     label="Disco Gold"
@@ -205,17 +206,44 @@ const TagDetail: React.FC<TagDetailProps> = ({ tag, onSave, onCancel }) => {
                       { required: true, message: 'Disco Gold is required.' },
                     ]}
                   >
-                    <InputNumber id="discoGold" style={{ width: '100%' }} />
+                    <InputNumber
+                      id="discoGold"
+                      style={{ width: '100%' }}
+                      placeholder="Disco Gold"
+                    />
                   </Form.Item>
                 </Col>
-                <Col lg={12} xs={24}>
+                <Col lg={6} xs={24}>
                   <Form.Item name="discoDollars" label="Disco Dollar">
-                    <InputNumber style={{ width: '100%' }} />
+                    <InputNumber
+                      style={{ width: '100%' }}
+                      placeholder="Disco Dollar"
+                    />
+                  </Form.Item>
+                </Col>
+                <Col lg={6} xs={24}>
+                  <Form.Item
+                    name="clickSound"
+                    label="Click Sound"
+                    rules={[
+                      { required: true, message: 'Click Sound is required.' },
+                    ]}
+                  >
+                    <Select
+                      id="clickSound"
+                      placeholder="Please select a click sound"
+                    >
+                      {clickSound.map((click: any) => (
+                        <Select.Option key={click.value} value={click.value}>
+                          {click.name}
+                        </Select.Option>
+                      ))}
+                    </Select>
                   </Form.Item>
                 </Col>
               </Row>
               <Row gutter={8}>
-                <Col lg={12} xs={24}>
+                <Col lg={6} xs={24}>
                   <Form.Item
                     name={['position', 0, 'x']}
                     label="Disco Dollar Position X"
@@ -223,7 +251,7 @@ const TagDetail: React.FC<TagDetailProps> = ({ tag, onSave, onCancel }) => {
                     <Slider tipFormatter={v => `${v}%`} min={0} max={100} />
                   </Form.Item>
                 </Col>
-                <Col lg={12} xs={24}>
+                <Col lg={6} xs={24}>
                   <Form.Item
                     name={['position', 0, 'y']}
                     label="Disco Dollar Position Y"
@@ -232,26 +260,6 @@ const TagDetail: React.FC<TagDetailProps> = ({ tag, onSave, onCancel }) => {
                   </Form.Item>
                 </Col>
               </Row>
-              <Col lg={12} xs={24}>
-                <Form.Item
-                  name="clickSound"
-                  label="Click Sound"
-                  rules={[
-                    { required: true, message: 'Click Sound is required.' },
-                  ]}
-                >
-                  <Select
-                    id="clickSound"
-                    placeholder="Please select a click sound"
-                  >
-                    {clickSound.map((click: any) => (
-                      <Select.Option key={click.value} value={click.value}>
-                        {click.name}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </Form.Item>
-              </Col>
             </Col>
           </Row>
         </Input.Group>

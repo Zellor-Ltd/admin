@@ -74,7 +74,7 @@ const HomeScreenDetail: React.FC<HomeScreenDetailProps> = ({
           <Col lg={12} xs={24}>
             <Col span={24}>
               <Form.Item label="HTML" name="html">
-                <Input allowClear />
+                <Input allowClear placeholder="HTML" />
               </Form.Item>
             </Col>
             <Row gutter={8}>

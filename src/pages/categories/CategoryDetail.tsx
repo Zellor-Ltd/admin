@@ -137,7 +137,7 @@ const CategoryDetail: React.FC<CategoryDetailProps> = ({
                       ))}
                     </Select>
                   ) : (
-                    <Input></Input>
+                    <Input allowClear placeholder={key}></Input>
                   )}
                 </Form.Item>
               ))}

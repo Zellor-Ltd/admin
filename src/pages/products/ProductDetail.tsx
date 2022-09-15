@@ -580,7 +580,11 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                   </Col>
                   <Col lg={24} xs={24}>
                     <Form.Item name="name" label="Short description">
-                      <Input allowClear disabled={loadingResources || isLive} />
+                      <Input
+                        allowClear
+                        disabled={loadingResources || isLive}
+                        placeholder="Short Description"
+                      />
                     </Form.Item>
                   </Col>
                   <Col lg={24} xs={24}>
@@ -818,6 +822,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                     mode="multiple"
                     disabled={loadingResources || isLive}
                     id="gender"
+                    placeholder="Gender"
                   >
                     <Select.Option value="Female">Female</Select.Option>
                     <Select.Option value="Male">Male</Select.Option>
@@ -919,12 +924,18 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
 
                   <Col lg={12} xs={24}>
                     <Form.Item name="shopifyUniqueId" label="Shopify UID">
-                      <InputNumber disabled={loadingResources || isLive} />
+                      <InputNumber
+                        disabled={loadingResources || isLive}
+                        placeholder="Shopify UID"
+                      />
                     </Form.Item>
                   </Col>
                   <Col lg={12} xs={24}>
-                    <Form.Item name="magentoId" label="Magento Id">
-                      <InputNumber disabled={loadingResources || isLive} />
+                    <Form.Item name="magentoId" label="Magento ID">
+                      <InputNumber
+                        disabled={loadingResources || isLive}
+                        placeholder="Magento ID"
+                      />
                     </Form.Item>
                   </Col>
                   <Col lg={12} xs={24}>
@@ -974,22 +985,32 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                       <InputNumber
                         id="originalPrice"
                         disabled={loadingResources || isLive}
+                        placeholder="Original Price"
                       />
                     </Form.Item>
                   </Col>
                   <Col span={24}>
                     <Form.Item name="originalPriceUS" label="Price US">
-                      <InputNumber disabled={loadingResources || isLive} />
+                      <InputNumber
+                        disabled={loadingResources || isLive}
+                        placeholder="Price US"
+                      />
                     </Form.Item>
                   </Col>
                   <Col span={24}>
                     <Form.Item name="originalPriceGB" label="Price UK">
-                      <InputNumber disabled={loadingResources || isLive} />
+                      <InputNumber
+                        disabled={loadingResources || isLive}
+                        placeholder="Price UK"
+                      />
                     </Form.Item>
                   </Col>
                   <Col span={24}>
                     <Form.Item name="originalPriceIE" label="Price Europe">
-                      <InputNumber disabled={loadingResources || isLive} />
+                      <InputNumber
+                        disabled={loadingResources || isLive}
+                        placeholder="Price Europe"
+                      />
                     </Form.Item>
                   </Col>
 
@@ -1038,6 +1059,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                         parser={value => (value || '').replace(/-/g, '')}
                         precision={0}
                         disabled={loadingResources || isLive}
+                        placeholder="Max Discount in DD"
                       />
                     </Form.Item>
                   </Col>
@@ -1046,17 +1068,27 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                       name="discoPercentage"
                       label="Disco Percentage %"
                     >
-                      <InputNumber disabled={loadingResources || isLive} />
+                      <InputNumber
+                        disabled={loadingResources || isLive}
+                        placeholder="Disco %"
+                      />
                     </Form.Item>
                   </Col>
                   <Col lg={12} xs={24}>
                     <Form.Item name="sku" label="SKU">
-                      <Input allowClear disabled={loadingResources || isLive} />
+                      <Input
+                        allowClear
+                        disabled={loadingResources || isLive}
+                        placeholder="SKU"
+                      />
                     </Form.Item>
                   </Col>
                   <Col lg={12} xs={24}>
                     <Form.Item name="creatorPercentage" label="Creator %">
-                      <InputNumber disabled={loadingResources || isLive} />
+                      <InputNumber
+                        disabled={loadingResources || isLive}
+                        placeholder="Creator %"
+                      />
                     </Form.Item>
                   </Col>
                 </Row>

@@ -67,7 +67,7 @@ const PromotionDetail: React.FC<PromotionDetailProps> = ({
         <Row gutter={8}>
           <Col lg={12} xs={24}>
             <Form.Item label="Description" name="description">
-              <Input allowClear />
+              <Input allowClear placeholder="Description" />
             </Form.Item>
           </Col>
           <Col lg={12} xs={24}>
@@ -77,7 +77,7 @@ const PromotionDetail: React.FC<PromotionDetailProps> = ({
           </Col>
           <Col lg={12} xs={24}>
             <Form.Item name="packages" label="Packages">
-              <Select mode="tags">
+              <Select mode="tags" placeholder="Packages">
                 {packages.map((_package: any) => (
                   <Select.Option key={_package.id} value={_package.title}>
                     {_package.title}

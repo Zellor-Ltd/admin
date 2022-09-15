@@ -74,7 +74,7 @@ const DdTemplatesDetail: React.FC<DdTemplatesDetailProps> = ({
                 name="tagName"
                 rules={[{ required: true, message: 'Tag Name is required.' }]}
               >
-                <Input allowClear id="tagName" />
+                <Input allowClear id="tagName" placeholder="Tag Name" />
               </Form.Item>
             </Col>
             <Col span={24}>
@@ -83,7 +83,7 @@ const DdTemplatesDetail: React.FC<DdTemplatesDetailProps> = ({
                 name="template"
                 rules={[{ required: true, message: 'Template is required.' }]}
               >
-                <Input allowClear id="template" />
+                <Input allowClear id="template" placeholder="Template" />
               </Form.Item>
             </Col>
             <Col span={24}>
@@ -92,7 +92,7 @@ const DdTemplatesDetail: React.FC<DdTemplatesDetailProps> = ({
                 name="discoGold"
                 rules={[{ required: true, message: 'Disco Gold is required.' }]}
               >
-                <InputNumber id="discoGold" />
+                <InputNumber id="discoGold" placeholder="Disco Gold" />
               </Form.Item>
             </Col>
             <Col span={24}>
@@ -103,7 +103,7 @@ const DdTemplatesDetail: React.FC<DdTemplatesDetailProps> = ({
                   { required: true, message: 'Disco Dollars is required.' },
                 ]}
               >
-                <InputNumber id="discoDollars" />
+                <InputNumber id="discoDollars" placeholder="Disco Dollars" />
               </Form.Item>
             </Col>
           </Col>

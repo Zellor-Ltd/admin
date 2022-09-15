@@ -241,12 +241,12 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
               </Col>
               <Col lg={12} xs={24}>
                 <Form.Item label="First Name" name="firstName">
-                  <Input allowClear />
+                  <Input allowClear placeholder="First Name" />
                 </Form.Item>
               </Col>
               <Col lg={12} xs={24}>
                 <Form.Item label="Last name" name="lastName">
-                  <Input allowClear />
+                  <Input allowClear placeholder="Last name" />
                 </Form.Item>
               </Col>
               <Col lg={12} xs={24}>
@@ -260,17 +260,26 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                     },
                   ]}
                 >
-                  <Input allowClear />
+                  <Input allowClear placeholder="Username (Email)" />
                 </Form.Item>
               </Col>
               <Col lg={12} xs={24}>
                 <Form.Item label="Password" name="pwd">
-                  <Input.Password autoComplete="off" allowClear />
+                  <Input.Password
+                    autoComplete="off"
+                    allowClear
+                    placeholder="Password"
+                  />
                 </Form.Item>
               </Col>
               <Col lg={12} xs={24}>
                 <Form.Item label="Description" name="description">
-                  <Input allowClear showCount maxLength={200} />
+                  <Input
+                    allowClear
+                    showCount
+                    maxLength={200}
+                    placeholder="Description"
+                  />
                 </Form.Item>
               </Col>
               <Col lg={12} xs={24}>
@@ -284,7 +293,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                     },
                   ]}
                 >
-                  <Input allowClear />
+                  <Input allowClear placeholder="Creator's Address" />
                 </Form.Item>
               </Col>
               <Col lg={12} xs={24}>
@@ -298,7 +307,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                     },
                   ]}
                 >
-                  <Select id="gender">
+                  <Select id="gender" placeholder="Gender">
                     <Select.Option value="Female">Female</Select.Option>
                     <Select.Option value="Male">Male</Select.Option>
                     <Select.Option value="Other">Other</Select.Option>
@@ -310,7 +319,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
               </Col>
               <Col lg={12} xs={24}>
                 <Form.Item label="Phone" name="phone">
-                  <InputNumber />
+                  <InputNumber placeholder="Phone" />
                 </Form.Item>
               </Col>
               <Col lg={12} xs={24}>
@@ -325,6 +334,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                   ]}
                 >
                   <Input
+                    placeholder="Display name (@unique)"
                     allowClear
                     id="userName"
                     prefix="@"
@@ -336,6 +346,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
               <Col lg={12} xs={24}>
                 <Form.Item label="Creator's InstaLink">
                   <Input
+                    placeholder="Creator's InstaLink"
                     allowClear
                     ref={inputRef}
                     type="url"
@@ -393,7 +404,10 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
             <Row gutter={8}>
               <Col lg={12} xs={24}>
                 <Form.Item label="Default Currency" name="currencyCode">
-                  <Select disabled={!currencies.length}>
+                  <Select
+                    disabled={!currencies.length}
+                    placeholder="Default Currency"
+                  >
                     {currencies.map(currency => (
                       <Select.Option key={currency.code} value={currency.code}>
                         {currency.code}
@@ -419,7 +433,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
               </Col>
               <Col lg={12} xs={24}>
                 <Form.Item name="serverAlias" label="Server Alias">
-                  <Select>
+                  <Select placeholder="Server Alias">
                     {serversList.map(serverAlias => (
                       <Select.Option
                         key={serverAlias.alias}
@@ -433,12 +447,15 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
               </Col>
               <Col lg={12} xs={24}>
                 <Form.Item label="Commission %" name="comissionPercentage">
-                  <InputNumber decimalSeparator="." />
+                  <InputNumber
+                    decimalSeparator="."
+                    placeholder="Commission %"
+                  />
                 </Form.Item>
               </Col>
               <Col lg={12} xs={24}>
                 <Form.Item name="linkType" label="Link Type">
-                  <Select disabled={!linkType.length}>
+                  <Select disabled={!linkType.length} placeholder="Link Type">
                     {linkType.map(linkType => (
                       <Select.Option
                         key={linkType.value}
@@ -461,17 +478,17 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                     },
                   ]}
                 >
-                  <Input allowClear />
+                  <Input allowClear placeholder="Paypal Account" />
                 </Form.Item>
               </Col>
               <Col lg={12} xs={24}>
                 <Form.Item label="Coupon Code" name="couponCode">
-                  <Input allowClear />
+                  <Input allowClear placeholder="Coupon Code" />
                 </Form.Item>
               </Col>
               <Col lg={12} xs={24}>
                 <Form.Item label="Discount %" name="discountPercentage">
-                  <InputNumber decimalSeparator="." />
+                  <InputNumber decimalSeparator="." placeholder="Discount %" />
                 </Form.Item>
               </Col>
               <Col lg={12} xs={24}>
@@ -481,6 +498,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                     id="vat"
                     pattern="^[A-Za-z0-9]*"
                     title="VAT must contain only letters and numbers."
+                    placeholder="Value Added Tax"
                   />
                 </Form.Item>
               </Col>
@@ -490,22 +508,22 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
             <Row gutter={8}>
               <Col lg={12} xs={24}>
                 <Form.Item label="Address" name="line1">
-                  <Input allowClear />
+                  <Input allowClear placeholder="Address" />
                 </Form.Item>
               </Col>
               <Col lg={12} xs={24}>
                 <Form.Item label="City" name="city">
-                  <Input allowClear />
+                  <Input allowClear placeholder="City" />
                 </Form.Item>
               </Col>
               <Col lg={12} xs={24}>
                 <Form.Item label="Country" name="country">
-                  <Input allowClear />
+                  <Input allowClear placeholder="Country" />
                 </Form.Item>
               </Col>
               <Col lg={12} xs={24}>
                 <Form.Item label="Postal Code" name="postalCode">
-                  <InputNumber />
+                  <InputNumber placeholder="Postal Code" />
                 </Form.Item>
               </Col>
             </Row>
@@ -517,7 +535,11 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                   label="Describe your content focus"
                   name="contentFocus"
                 >
-                  <Input.TextArea rows={4} allowClear />
+                  <Input.TextArea
+                    rows={4}
+                    allowClear
+                    placeholder="Describe your content focus"
+                  />
                 </Form.Item>
               </Col>
               <Col lg={24} xs={24}>
@@ -525,17 +547,26 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                   label="Top Brand collaborations you have completed"
                   name="topBrands"
                 >
-                  <Input.TextArea rows={4} allowClear />
+                  <Input.TextArea
+                    rows={4}
+                    allowClear
+                    placeholder="Top Brand collaborations you have completed"
+                  />
                 </Form.Item>
               </Col>
               <Col lg={24} xs={24}>
                 <Form.Item label="Your Work" name="yourWork">
-                  <Input allowClear showCount maxLength={40} />
+                  <Input
+                    allowClear
+                    showCount
+                    maxLength={40}
+                    placeholder="Your Work"
+                  />
                 </Form.Item>
               </Col>
               <Col lg={24} xs={24}>
                 <Form.Item label="Creator Profile" name="creatorProfile">
-                  <Input allowClear />
+                  <Input allowClear placeholder="Creator Profile" />
                 </Form.Item>
               </Col>
             </Row>
@@ -559,7 +590,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                   </Col>
                   <Col lg={12} xs={24}>
                     <Form.Item name="targetGender" label="Gender">
-                      <Select mode="multiple">
+                      <Select mode="multiple" placeholder="Gender">
                         <Select.Option value="Female">Female</Select.Option>
                         <Select.Option value="Male">Male</Select.Option>
                         <Select.Option value="Other">Other</Select.Option>
@@ -582,22 +613,46 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
             <Row>
               <Col lg={12} xs={24}>
                 <Form.Item name="instagram" label="Instagram">
-                  <Input allowClear prefix={<InstagramFilled />} />
+                  <Input
+                    allowClear
+                    prefix={<InstagramFilled />}
+                    placeholder="Instagram"
+                  />
                 </Form.Item>
                 <Form.Item name="facebook" label="Facebook">
-                  <Input allowClear prefix={<FacebookFilled />} />
+                  <Input
+                    allowClear
+                    prefix={<FacebookFilled />}
+                    placeholder="Facebook"
+                  />
                 </Form.Item>
                 <Form.Item name="tiktok" label="TikTok">
-                  <Input allowClear prefix={<SoundFilled />} />
+                  <Input
+                    allowClear
+                    prefix={<SoundFilled />}
+                    placeholder="TikTok"
+                  />
                 </Form.Item>
                 <Form.Item name="youtube" label="Youtube">
-                  <Input allowClear prefix={<YoutubeFilled />} />
+                  <Input
+                    allowClear
+                    prefix={<YoutubeFilled />}
+                    placeholder="Youtube"
+                  />
                 </Form.Item>
                 <Form.Item name="website" label="Website">
-                  <Input allowClear prefix={<GlobalOutlined />} />
+                  <Input
+                    allowClear
+                    prefix={<GlobalOutlined />}
+                    placeholder="Website"
+                  />
                 </Form.Item>
                 <Form.Item name="twitter" label="Twitter">
-                  <Input allowClear prefix={<TwitterCircleFilled />} />
+                  <Input
+                    allowClear
+                    prefix={<TwitterCircleFilled />}
+                    placeholder="Twitter"
+                  />
                 </Form.Item>
               </Col>
             </Row>
