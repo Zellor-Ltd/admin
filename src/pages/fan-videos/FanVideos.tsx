@@ -519,6 +519,13 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
     setDetails(false);
   };
 
+  const filterOption = (input: string, option: any) => {
+    return !!option?.children
+      ?.toString()
+      ?.toUpperCase()
+      .includes(input?.toUpperCase());
+  };
+
   const Filters = () => {
     return (
       <Col lg={16} xs={24}>
@@ -571,12 +578,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
               disabled={loadingResources.current || loading}
               onChange={setStatusFilter}
               style={{ width: '100%' }}
-              filterOption={(input, option) =>
-                !!option?.children
-                  ?.toString()
-                  ?.toUpperCase()
-                  .includes(input?.toUpperCase())
-              }
+              filterOption={filterOption}
               allowClear
               showSearch
               value={statusFilter}

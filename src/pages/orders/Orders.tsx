@@ -771,6 +771,13 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     }
   };
 
+  const filterOption = (input: string, option: any) => {
+    return !!option?.children
+      ?.toString()
+      ?.toUpperCase()
+      .includes(input?.toUpperCase());
+  };
+
   return (
     <>
       {!details && (
@@ -798,12 +805,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
                     loading={!brands.length}
                     disabled={!brands.length || refreshing}
                     showSearch
-                    filterOption={(input, option) =>
-                      !!option?.children
-                        ?.toString()
-                        ?.toUpperCase()
-                        .includes(input?.toUpperCase())
-                    }
+                    filterOption={filterOption}
                   >
                     {brands.map(curr => (
                       <Select.Option

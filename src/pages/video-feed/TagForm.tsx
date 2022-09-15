@@ -84,6 +84,13 @@ const TagForm: React.FC<FormProps> = ({
     form.setFieldsValue({ tagName: '' });
   };
 
+  const filterOption = (input: string, option: any) => {
+    return !!option?.children
+      ?.toString()
+      ?.toUpperCase()
+      .includes(input?.toUpperCase());
+  };
+
   return (
     <Form name="tagForm" form={form} initialValues={tag} layout="vertical">
       <Row gutter={8}>
@@ -93,12 +100,7 @@ const TagForm: React.FC<FormProps> = ({
               showSearch
               allowClear
               placeholder="Please select a Brand"
-              filterOption={(input, option) =>
-                !!option?.children
-                  ?.toString()
-                  .toLowerCase()
-                  .includes(input.toLowerCase())
-              }
+              filterOption={filterOption}
               onChange={v => handleBrandFilter(v)}
               value={selectedBrandId}
               disabled={!brands}

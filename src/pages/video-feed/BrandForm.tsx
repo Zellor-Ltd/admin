@@ -90,6 +90,13 @@ const BrandForm: React.FC<FormProps> = ({
     setSelectedLogo(productBrandKey);
   };
 
+  const filterOption = (input: string, option: any) => {
+    return !!option?.children
+      ?.toString()
+      ?.toUpperCase()
+      .includes(input?.toUpperCase());
+  };
+
   return (
     <Form name="brandForm" form={form} initialValues={brand} layout="vertical">
       <Row gutter={8}>
@@ -100,12 +107,7 @@ const BrandForm: React.FC<FormProps> = ({
               allowClear
               placeholder="Please select a Store"
               disabled={!loaded.current}
-              filterOption={(input, option) =>
-                !!option?.children
-                  ?.toString()
-                  ?.toUpperCase()
-                  .includes(input?.toUpperCase())
-              }
+              filterOption={filterOption}
               onChange={(brandId: string) => onChangeBrand(brandId)}
             >
               {brands.map(brand => (
@@ -126,12 +128,7 @@ const BrandForm: React.FC<FormProps> = ({
               showSearch
               allowClear
               placeholder="Please select a Product Brand"
-              filterOption={(input, option) =>
-                !!option?.children
-                  ?.toString()
-                  ?.toUpperCase()
-                  .includes(input?.toUpperCase())
-              }
+              filterOption={filterOption}
               onChange={(productBrandName: string) =>
                 onChangeProductBrand(productBrandName)
               }
@@ -211,12 +208,7 @@ const BrandForm: React.FC<FormProps> = ({
               placeholder="Please select a logo"
               disabled={!loaded.current}
               onChange={onChangeProductBrandLogo}
-              filterOption={(input, option) =>
-                !!option?.children
-                  ?.toString()
-                  ?.toUpperCase()
-                  .includes(input?.toUpperCase())
-              }
+              filterOption={filterOption}
             >
               {selectedProductBrand?.whiteLogo?.url && (
                 <Select.Option value="whiteLogo">White</Select.Option>

@@ -243,6 +243,13 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
     setAgeRange(value);
   };
 
+  const filterOption = (input: string, option: any) => {
+    return !!option?.children
+      ?.toString()
+      ?.toUpperCase()
+      .includes(input?.toUpperCase());
+  };
+
   return (
     <>
       <PageHeader
@@ -324,12 +331,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                         style={{ width: '100%' }}
                         allowClear
                         showSearch
-                        filterOption={(input, option) =>
-                          !!option?.children
-                            ?.toString()
-                            ?.toUpperCase()
-                            .includes(input?.toUpperCase())
-                        }
+                        filterOption={filterOption}
                       >
                         {brands.map((curr: any) => (
                           <Select.Option key={curr.id} value={curr.id}>

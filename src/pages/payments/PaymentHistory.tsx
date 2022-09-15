@@ -227,6 +227,13 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
     },
   ];
 
+  const filterOption = (input: string, option: any) => {
+    return !!option?.children
+      ?.toString()
+      ?.toUpperCase()
+      .includes(input?.toUpperCase());
+  };
+
   const Filters = () => {
     return (
       <>
@@ -255,12 +262,7 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
                 showSearch
                 allowClear
                 disabled={!creators.length || loading || refreshing}
-                filterOption={(input, option) =>
-                  !!option?.children
-                    ?.toString()
-                    .toLowerCase()
-                    .includes(input.toLowerCase())
-                }
+                filterOption={filterOption}
               >
                 {creators.map((curr: any) => (
                   <Select.Option key={curr.id} value={curr.id}>

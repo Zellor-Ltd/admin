@@ -68,6 +68,13 @@ const ManualPayment: React.FC<ManualPaymentProps> = ({
     setManualPayment(false);
   };
 
+  const filterOption = (input: string, option: any) => {
+    return !!option?.children
+      ?.toString()
+      ?.toUpperCase()
+      .includes(input?.toUpperCase());
+  };
+
   return (
     <>
       <PageHeader
@@ -98,12 +105,7 @@ const ManualPayment: React.FC<ManualPaymentProps> = ({
                   showSearch
                   allowClear
                   disabled={!creators.length}
-                  filterOption={(input, option) =>
-                    !!option?.children
-                      ?.toString()
-                      ?.toUpperCase()
-                      .includes(input?.toUpperCase())
-                  }
+                  filterOption={filterOption}
                 >
                   {creators.map((curr: any) => (
                     <Select.Option key={curr.id} value={curr.id}>

@@ -497,6 +497,13 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     setDetails(false);
   };
 
+  const filterOption = (input: string, option: any) => {
+    return !!option?.children
+      ?.toString()
+      ?.toUpperCase()
+      .includes(input?.toUpperCase());
+  };
+
   const Filters = () => {
     return (
       <>
@@ -550,12 +557,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                 disabled={loadingResources.current || loading}
                 onChange={setStatusFilter}
                 style={{ width: '100%' }}
-                filterOption={(input, option) =>
-                  !!option?.children
-                    ?.toString()
-                    ?.toUpperCase()
-                    .includes(input?.toUpperCase())
-                }
+                filterOption={filterOption}
                 allowClear
                 showSearch
                 value={statusFilter}
@@ -617,12 +619,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                 onChange={setCreatorFilter}
                 value={creatorFilter}
                 style={{ width: '100%' }}
-                filterOption={(input, option) =>
-                  !!option?.children
-                    ?.toString()
-                    ?.toUpperCase()
-                    .includes(input?.toUpperCase())
-                }
+                filterOption={filterOption}
                 allowClear
                 showSearch
               >
@@ -644,12 +641,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                 onChange={setDateSortFilter}
                 placeholder="Select a Sorting Option"
                 style={{ width: '100%' }}
-                filterOption={(input, option) =>
-                  !!option?.children
-                    ?.toString()
-                    .toLowerCase()
-                    .includes(input.toLowerCase())
-                }
+                filterOption={filterOption}
                 allowClear
                 showSearch
                 value={dateSortFilter}

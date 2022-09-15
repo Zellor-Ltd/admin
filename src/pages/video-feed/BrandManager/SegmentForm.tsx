@@ -126,6 +126,13 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
     }
   };
 
+  const filterOption = (input: string, option: any) => {
+    return !!option?.children
+      ?.toString()
+      ?.toUpperCase()
+      .includes(input?.toUpperCase());
+  };
+
   return (
     <Form
       form={form}
@@ -211,12 +218,7 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                         >
                           <Select
                             showSearch
-                            filterOption={(input, option) =>
-                              !!option?.value
-                                ?.toString()
-                                ?.toUpperCase()
-                                .includes(input?.toUpperCase())
-                            }
+                            filterOption={filterOption}
                             onChange={(key: string) =>
                               onChangeBrand(key, field.name)
                             }
@@ -381,12 +383,7 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                           <Select
                             showSearch
                             allowClear
-                            filterOption={(input, option) =>
-                              !!option?.value
-                                ?.toString()
-                                ?.toUpperCase()
-                                .includes(input?.toUpperCase())
-                            }
+                            filterOption={filterOption}
                             loading={loading}
                             onChange={v => handleBrandFilter(v, index)}
                             value={selectedFilterBrands[index]}

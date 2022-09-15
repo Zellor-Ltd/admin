@@ -464,8 +464,11 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
     }
   };
 
-  const onSearch = (input: string, option: any) => {
-    return option.label?.toUpperCase().includes(input?.toUpperCase());
+  const filterOption = (input: string, option: any) => {
+    return !!option?.children
+      ?.toString()
+      ?.toUpperCase()
+      .includes(input?.toUpperCase());
   };
 
   const loadProductBrandIcons = (productBrand?: ProductBrand) => {
@@ -671,7 +674,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                       onChange={onCreatorChange}
                       value={videoCreator?.id}
                       disabled={!loaded.current}
-                      filterOption={onSearch}
+                      filterOption={filterOption}
                       allowClear
                       showSearch
                     >
@@ -966,12 +969,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                       onChange={onChangeProductBrand}
                       allowClear={false}
                       showSearch
-                      filterOption={(input, option) =>
-                        !!option?.label
-                          ?.toString()
-                          ?.toUpperCase()
-                          .includes(input?.toUpperCase())
-                      }
+                      filterOption={filterOption}
                       value={currentProductBrand?.id}
                     >
                       {productBrands.map((productBrand: ProductBrand) => (
@@ -1002,12 +1000,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                         onChange={onChangeBrandIcon}
                         allowClear={false}
                         showSearch
-                        filterOption={(input, option) =>
-                          !!option?.label
-                            ?.toString()
-                            ?.toUpperCase()
-                            .includes(input?.toUpperCase())
-                        }
+                        filterOption={filterOption}
                         value={currentBrandIcon}
                       >
                         {productBrandIcons.map((icon: any) => (
@@ -1045,12 +1038,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                       onChange={onChangeCreator}
                       style={{ width: '100%' }}
                       showSearch
-                      filterOption={(input, option) =>
-                        !!option?.label
-                          ?.toString()
-                          ?.toUpperCase()
-                          .includes(input?.toUpperCase())
-                      }
+                      filterOption={filterOption}
                       value={currentCreator?.id}
                     >
                       {creators.map((curr: Creator) => (

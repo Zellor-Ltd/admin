@@ -54,6 +54,13 @@ const ManualCommission: React.FC<PaymentDetailsProps> = ({
     scrollIntoView(element);
   };
 
+  const filterOption = (input: string, option: any) => {
+    return !!option?.children
+      ?.toString()
+      ?.toUpperCase()
+      .includes(input?.toUpperCase());
+  };
+
   return (
     <>
       <PageHeader
@@ -109,12 +116,7 @@ const ManualCommission: React.FC<PaymentDetailsProps> = ({
                   showSearch
                   allowClear
                   disabled={!creators.length}
-                  filterOption={(input, option) =>
-                    !!option?.children
-                      ?.toString()
-                      ?.toUpperCase()
-                      .includes(input?.toUpperCase())
-                  }
+                  filterOption={filterOption}
                 >
                   {creators.map((curr: any) => (
                     <Select.Option key={curr.id} value={curr.id}>
