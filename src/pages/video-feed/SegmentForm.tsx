@@ -217,6 +217,7 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                           rules={[{ required: true }]}
                         >
                           <Select
+                            placeholder="Brand"
                             allowClear
                             showSearch
                             filterOption={filterOption}
@@ -385,6 +386,7 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                       <Col lg={12} xs={24}>
                         <Form.Item label="Brand">
                           <Select
+                            placeholder="Brand"
                             showSearch
                             allowClear
                             filterOption={filterOption}
@@ -411,6 +413,7 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                               onChangeTag(key, field.name, index)
                             }
                             loading={loading}
+                            placeholder="Tag"
                             filterOption={filterOption}
                             allowClear
                             showSearch

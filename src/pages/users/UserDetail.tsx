@@ -28,9 +28,22 @@ import {
 
 const { Option } = Select;
 
+const filterOption = (input: string, option: any) => {
+  return !!option?.children
+    ?.toString()
+    ?.toUpperCase()
+    .includes(input?.toUpperCase());
+};
+
 const prefixSelector = (
   <Form.Item name="prefix" noStyle>
-    <Select defaultValue="353" style={{ width: 80 }}>
+    <Select
+      defaultValue="353"
+      style={{ width: 80 }}
+      allowClear
+      showSearch
+      filterOption={filterOption}
+    >
       <Option value="353">+353</Option>
       <Option value="55">+55</Option>
       <Option value="86">+86</Option>
@@ -224,7 +237,12 @@ const UserDetail: React.FC<RouteComponentProps> = props => {
           </Col>
           <Col lg={8} xs={24}>
             <Form.Item name="profile" label="Profile">
-              <Select>
+              <Select
+                allowClear
+                showSearch
+                filterOption={filterOption}
+                placeholder="Profile"
+              >
                 {roles.map(role => (
                   <Select.Option key={role.id} value={role.name}>
                     {role.name}
@@ -254,7 +272,12 @@ const UserDetail: React.FC<RouteComponentProps> = props => {
           </Col>
           <Col lg={8} xs={24}>
             <Form.Item name="gender" label="Gender">
-              <Select>
+              <Select
+                allowClear
+                showSearch
+                filterOption={filterOption}
+                placeholder="Gender"
+              >
                 {gendersList.map((gender, index) => (
                   <Select.Option key={index} value={gender.value}>
                     {gender.label}
@@ -302,6 +325,8 @@ const UserDetail: React.FC<RouteComponentProps> = props => {
                           placeholder="Please select a creator"
                           onChange={onChangeCreator}
                           allowClear
+                          showSearch
+                          filterOption={filterOption}
                         >
                           {creators
                             .filter(
@@ -352,9 +377,11 @@ const UserDetail: React.FC<RouteComponentProps> = props => {
                       </Typography.Title>
                       <Form.Item>
                         <Select
-                          placeholder="Please select a categories"
+                          placeholder="Please select a category"
                           onChange={onChangeCategories}
                           allowClear
+                          showSearch
+                          filterOption={filterOption}
                         >
                           {categories
                             .filter(

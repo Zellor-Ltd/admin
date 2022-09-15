@@ -757,6 +757,13 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
     );
   };
 
+  const filterOption = (input: string, option: any) => {
+    return !!option?.children
+      ?.toString()
+      ?.toUpperCase()
+      .includes(input?.toUpperCase());
+  };
+
   const Filters = () => {
     return (
       <>
@@ -778,6 +785,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
             <Col lg={6} xs={24}>
               <Typography.Title level={5}>Master Brand</Typography.Title>
               <SimpleSelect
+                showSearch
                 data={brands}
                 onChange={(_, brand) => onChangeBrand(brand)}
                 style={{ width: '100%' }}
@@ -791,6 +799,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
             <Col lg={6} xs={24}>
               <Typography.Title level={5}>Product Brand</Typography.Title>
               <SimpleSelect
+                showSearch
                 data={productBrands}
                 onChange={(_, productBrand) =>
                   onChangeProductBrand(productBrand)
@@ -812,6 +821,8 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                 onChange={setProductStatusFilter}
                 allowClear
                 defaultValue={productStatusFilter}
+                showSearch
+                filterOption={filterOption}
               >
                 <Select.Option value="live">Live</Select.Option>
                 <Select.Option value="paused">Paused</Select.Option>
@@ -820,6 +831,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
             <Col lg={6} xs={24}>
               <Typography.Title level={5}>Super Category</Typography.Title>
               <SimpleSelect
+                showSearch
                 data={allCategories['Super Category'].filter(item => {
                   return (
                     item.superCategory === 'Women' ||
@@ -839,6 +851,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
             <Col lg={6} xs={24}>
               <Typography.Title level={5}>Category</Typography.Title>
               <SimpleSelect
+                showSearch
                 data={allCategories.Category.filter(item => {
                   return currentSuperCategory
                     ? item.superCategory === currentSuperCategory.superCategory
@@ -856,6 +869,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
             <Col lg={6} xs={24}>
               <Typography.Title level={5}>Sub Category</Typography.Title>
               <SimpleSelect
+                showSearch
                 data={allCategories['Sub Category'].filter(item => {
                   return (
                     (currentCategory
@@ -894,6 +908,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
             <Col lg={6} xs={24}>
               <Typography.Title level={5}>Sub Sub Category</Typography.Title>
               <SimpleSelect
+                showSearch
                 data={allCategories['Sub Sub Category'].filter(item => {
                   return (
                     (currentSubCategory

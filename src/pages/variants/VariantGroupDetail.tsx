@@ -294,6 +294,13 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
     setProductBrandFilter(_selectedBrand);
   };
 
+  const filterOption = (input: string, option: any) => {
+    return !!option?.children
+      ?.toString()
+      ?.toUpperCase()
+      .includes(input?.toUpperCase());
+  };
+
   const Filters = () => {
     return (
       <>
@@ -317,6 +324,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
               <Col lg={6} xs={24}>
                 <Typography.Title level={5}>Master Brand</Typography.Title>
                 <SimpleSelect
+                  showSearch
                   data={brands}
                   onChange={(_, brand) => onChangeBrand(brand)}
                   style={{ width: '100%' }}
@@ -329,6 +337,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
               <Col lg={6} xs={24}>
                 <Typography.Title level={5}>Product Brand</Typography.Title>
                 <SimpleSelect
+                  showSearch
                   data={productBrands}
                   onChange={(_, productBrand) =>
                     onChangeProductBrand(productBrand)
@@ -347,6 +356,8 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
                   style={{ width: '100%' }}
                   onChange={setProductStatusFilter}
                   allowClear
+                  showSearch
+                  filterOption={filterOption}
                   defaultValue={productStatusFilter}
                 >
                   <Select.Option value="live">Live</Select.Option>
@@ -356,6 +367,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
               <Col lg={6} xs={24}>
                 <Typography.Title level={5}>Super Category</Typography.Title>
                 <SimpleSelect
+                  showSearch
                   data={allCategories['Super Category'].filter(item => {
                     return (
                       item.superCategory === 'Women' ||
@@ -376,6 +388,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
               <Col lg={6} xs={24}>
                 <Typography.Title level={5}>Category</Typography.Title>
                 <SimpleSelect
+                  showSearch
                   data={allCategories.Category.filter(item => {
                     return currentSuperCategory
                       ? item.superCategory ===
@@ -395,6 +408,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
               <Col lg={6} xs={24}>
                 <Typography.Title level={5}>Sub Category</Typography.Title>
                 <SimpleSelect
+                  showSearch
                   data={allCategories['Sub Category'].filter(item => {
                     return (
                       (currentCategory
@@ -432,6 +446,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
               <Col lg={6} xs={24}>
                 <Typography.Title level={5}>Sub Sub Category</Typography.Title>
                 <SimpleSelect
+                  showSearch
                   data={allCategories['Sub Sub Category'].filter(item => {
                     return (
                       (currentSubCategory

@@ -162,6 +162,7 @@ const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
         <Col lg={4} xs={8}>
           <Form.Item name="productBrand" label="Product Brand">
             <SimpleSelect
+              showSearch
               data={productBrands}
               onChange={(value, brand) =>
                 updateForm(value, brand, 'productBrand')

@@ -441,7 +441,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
         <Select
           loading={orderUpdateList[index]}
           disabled={orderUpdateList[index]}
-          defaultValue={value}
+          defaultValue={value ?? '-'}
           style={{ width: '100%' }}
           onChange={value => handleSelectChange(value, order, index, 'stage')}
           filterOption={filterOption}
@@ -486,7 +486,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
         <Select
           loading={orderUpdateList[index]}
           disabled={orderUpdateList[index]}
-          defaultValue={value}
+          defaultValue={value ?? '-'}
           style={{ width: '100%' }}
           onChange={value =>
             handleSelectChange(value, order, index, 'commissionInternalStatus')

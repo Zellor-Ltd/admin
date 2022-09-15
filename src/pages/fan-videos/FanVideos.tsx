@@ -548,6 +548,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
           <Col lg={6} xs={24}>
             <Typography.Title level={5}>Master Brand</Typography.Title>
             <SimpleSelect
+              showSearch
               data={brands}
               onChange={(_, brand) => setBrandFilter(brand)}
               style={{ width: '100%' }}
@@ -561,6 +562,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
           <Col lg={6} xs={24}>
             <Typography.Title level={5}>Product Brand</Typography.Title>
             <SimpleSelect
+              showSearch
               data={productBrands}
               onChange={setProductBrandFilter}
               style={{ width: '100%' }}
@@ -597,6 +599,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
           <Col lg={6} xs={24}>
             <Typography.Title level={5}>Category</Typography.Title>
             <SimpleSelect
+              showSearch
               data={categories}
               onChange={(_, category) =>
                 setCategoryFilter(category?.name ?? '')

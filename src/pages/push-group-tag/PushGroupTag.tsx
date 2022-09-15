@@ -309,6 +309,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
                 <Col lg={6} xs={24}>
                   <Typography.Title level={5}>Master Brand</Typography.Title>
                   <SimpleSelect
+                    showSearch
                     data={brands}
                     onChange={(_, brand) =>
                       setBrandFilter(brand?.brandName ?? '')

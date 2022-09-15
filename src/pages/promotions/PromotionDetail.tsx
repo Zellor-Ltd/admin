@@ -50,6 +50,13 @@ const PromotionDetail: React.FC<PromotionDetailProps> = ({
     } // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const filterOption = (input: string, option: any) => {
+    return !!option?.children
+      ?.toString()
+      ?.toUpperCase()
+      .includes(input?.toUpperCase());
+  };
+
   useEffect(() => {
     getResources();
   }, [getResources]);
@@ -77,7 +84,13 @@ const PromotionDetail: React.FC<PromotionDetailProps> = ({
           </Col>
           <Col lg={12} xs={24}>
             <Form.Item name="packages" label="Packages">
-              <Select mode="tags" placeholder="Packages">
+              <Select
+                mode="tags"
+                placeholder="Packages"
+                allowClear
+                showSearch
+                filterOption={filterOption}
+              >
                 {packages.map((_package: any) => (
                   <Select.Option key={_package.id} value={_package.title}>
                     {_package.title}

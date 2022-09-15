@@ -172,6 +172,13 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
     if (event.target.value) window.open(event.target.value);
   };
 
+  const filterOption = (input: string, option: any) => {
+    return !!option?.children
+      ?.toString()
+      ?.toUpperCase()
+      .includes(input?.toUpperCase());
+  };
+
   return (
     <>
       <PageHeader
@@ -307,7 +314,13 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                     },
                   ]}
                 >
-                  <Select id="gender" placeholder="Gender">
+                  <Select
+                    id="gender"
+                    placeholder="Gender"
+                    allowClear
+                    showSearch
+                    filterOption={filterOption}
+                  >
                     <Select.Option value="Female">Female</Select.Option>
                     <Select.Option value="Male">Male</Select.Option>
                     <Select.Option value="Other">Other</Select.Option>
@@ -407,6 +420,9 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                   <Select
                     disabled={!currencies.length}
                     placeholder="Default Currency"
+                    allowClear
+                    showSearch
+                    filterOption={filterOption}
                   >
                     {currencies.map(currency => (
                       <Select.Option key={currency.code} value={currency.code}>
@@ -433,7 +449,12 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
               </Col>
               <Col lg={12} xs={24}>
                 <Form.Item name="serverAlias" label="Server Alias">
-                  <Select placeholder="Server Alias">
+                  <Select
+                    placeholder="Server Alias"
+                    allowClear
+                    showSearch
+                    filterOption={filterOption}
+                  >
                     {serversList.map(serverAlias => (
                       <Select.Option
                         key={serverAlias.alias}
@@ -455,7 +476,13 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
               </Col>
               <Col lg={12} xs={24}>
                 <Form.Item name="linkType" label="Link Type">
-                  <Select disabled={!linkType.length} placeholder="Link Type">
+                  <Select
+                    disabled={!linkType.length}
+                    placeholder="Link Type"
+                    allowClear
+                    showSearch
+                    filterOption={filterOption}
+                  >
                     {linkType.map(linkType => (
                       <Select.Option
                         key={linkType.value}
@@ -590,7 +617,13 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                   </Col>
                   <Col lg={12} xs={24}>
                     <Form.Item name="targetGender" label="Gender">
-                      <Select mode="multiple" placeholder="Gender">
+                      <Select
+                        mode="multiple"
+                        placeholder="Gender"
+                        allowClear
+                        showSearch
+                        filterOption={filterOption}
+                      >
                         <Select.Option value="Female">Female</Select.Option>
                         <Select.Option value="Male">Male</Select.Option>
                         <Select.Option value="Other">Other</Select.Option>

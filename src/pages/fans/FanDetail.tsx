@@ -41,9 +41,22 @@ interface FanDetailProps {
 
 const { Option } = Select;
 
+const filterOption = (input: string, option: any) => {
+  return !!option?.children
+    ?.toString()
+    ?.toUpperCase()
+    .includes(input?.toUpperCase());
+};
+
 const prefixSelector = (prefix: string) => (
   <Form.Item name="dialCode" noStyle>
-    <Select style={{ width: 80 }}>
+    <Select
+      style={{ width: 80 }}
+      allowClear
+      showSearch
+      filterOption={filterOption}
+      placeholder="Dial Code"
+    >
       <Option value="+353">+353</Option>
       <Option value="+55">+55</Option>
       <Option value="+86">+86</Option>
@@ -321,7 +334,12 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
               </Col>
               <Col lg={8} xs={24}>
                 <Form.Item name="profile" label="Profile">
-                  <Select placeholder="Please select a profile">
+                  <Select
+                    placeholder="Please select a profile"
+                    allowClear
+                    showSearch
+                    filterOption={filterOption}
+                  >
                     <Select.Option key="Fan" value="Fan" label="Fan">
                       Fan
                     </Select.Option>
@@ -346,7 +364,12 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
               </Col>
               <Col lg={8} xs={24}>
                 <Form.Item name="gender" label="Gender">
-                  <Select placeholder="Gender">
+                  <Select
+                    placeholder="Gender"
+                    allowClear
+                    showSearch
+                    filterOption={filterOption}
+                  >
                     <Select.Option value="Female">Female</Select.Option>
                     <Select.Option value="Male">Male</Select.Option>
                     <Select.Option value="Other">Other</Select.Option>
@@ -373,7 +396,12 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
               </Col>
               <Col lg={8} xs={24}>
                 <Form.Item label="Default Currency" name="currencyCode">
-                  <Select placeholder="Default Currency">
+                  <Select
+                    placeholder="Default Currency"
+                    allowClear
+                    showSearch
+                    filterOption={filterOption}
+                  >
                     {currencies.map(currency => (
                       <Select.Option key={currency.code} value={currency.code}>
                         {currency.code}
@@ -420,7 +448,12 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
               </Col>
               <Col lg={8} xs={24}>
                 <Form.Item name="serverAlias" label="Server Alias">
-                  <Select placeholder="Server Alias">
+                  <Select
+                    placeholder="Server Alias"
+                    allowClear
+                    showSearch
+                    filterOption={filterOption}
+                  >
                     {serversList.map(serverAlias => (
                       <Select.Option
                         key={serverAlias.alias}
@@ -461,6 +494,8 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
                               placeholder="Please select a Creator"
                               onChange={onChangeCreator}
                               allowClear
+                              showSearch
+                              filterOption={filterOption}
                             >
                               {creators
                                 .filter(
@@ -521,6 +556,8 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
                               placeholder="Please select a Category"
                               onChange={onChangeCategories}
                               allowClear
+                              showSearch
+                              filterOption={filterOption}
                             >
                               {categories
                                 .filter(

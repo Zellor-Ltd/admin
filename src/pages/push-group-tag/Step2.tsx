@@ -51,6 +51,7 @@ const Step2: React.FC<Step2Props> = ({ selectedTags, onReturn }) => {
             Fan Group Filter
           </Typography.Title>
           <SimpleSelect
+            showSearch
             data={fanGroups}
             onChange={(_, fanGroup) => handleFanGroupChange(fanGroup)}
             style={{ width: '92%' }}

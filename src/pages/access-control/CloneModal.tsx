@@ -61,6 +61,13 @@ const CloneModal: React.FC<CloneModalProps> = ({
     });
   };
 
+  const filterOption = (input: string, option: any) => {
+    return !!option?.children
+      ?.toString()
+      ?.toUpperCase()
+      .includes(input?.toUpperCase());
+  };
+
   return (
     <Modal
       visible={showCloneModal}
@@ -78,7 +85,10 @@ const CloneModal: React.FC<CloneModalProps> = ({
           <Select
             placeholder="Select a profile to save"
             style={{ width: '100%' }}
-            value={selectedProfile}
+            value={selectedProfile ?? '-'}
+            allowClear
+            showSearch
+            filterOption={filterOption}
           >
             {profiles
               .filter(profile => profile !== selectedProfile)

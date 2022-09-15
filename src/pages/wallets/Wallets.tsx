@@ -237,6 +237,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
                   <Col lg={4} xs={24} className={isMobile ? 'mt-05' : ''}>
                     <Typography.Title level={5}>Master Brand</Typography.Title>
                     <SimpleSelect
+                      showSearch
                       data={brands}
                       onChange={(_, brand) => handleChangeBrand(brand)}
                       style={{ width: '100%' }}

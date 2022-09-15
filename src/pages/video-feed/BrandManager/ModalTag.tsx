@@ -148,6 +148,13 @@ const ModalTag: React.FC<ModalFormProps> = ({
     };
   });
 
+  const filterOption = (input: string, option: any) => {
+    return !!option?.children
+      ?.toString()
+      ?.toUpperCase()
+      .includes(input?.toUpperCase());
+  };
+
   return (
     <Modal
       title="Tag"
@@ -163,7 +170,13 @@ const ModalTag: React.FC<ModalFormProps> = ({
           <Row gutter={8}>
             <Col lg={8} xs={0}>
               <Form.Item name="tagName" label="Tag">
-                <Select onChange={onChangeTag}>
+                <Select
+                  allowClear
+                  showSearch
+                  filterOption={filterOption}
+                  placeholder="Tag"
+                  onChange={onChangeTag}
+                >
                   {tags.map(tag => (
                     <Select.Option key={tag.id} value={tag.id}>
                       {tag.tagName}

@@ -123,6 +123,7 @@ const PromoDisplaysDetail: React.FC<PromoDisplayDetailProps> = ({
           <Col lg={8} xs={24}>
             <Form.Item label="Super Category" name="superCategoryId">
               <SimpleSelect
+                showSearch
                 data={allCategories['Super Category'].filter(item => {
                   return (
                     item.superCategory === 'Women' ||

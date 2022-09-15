@@ -79,6 +79,13 @@ const ProductCategories: React.FC<ProductCategoriesProps> = ({
     );
   };
 
+  const filterOption = (input: string, option: any) => {
+    return !!option?.children
+      ?.toString()
+      ?.toUpperCase()
+      .includes(input?.toUpperCase());
+  };
+
   const CategoryList = () => {
     return (
       <>
@@ -96,6 +103,8 @@ const ProductCategories: React.FC<ProductCategoriesProps> = ({
                 !filteredCategories[key as keyof AllCategories].length
               }
               allowClear={_index >= 2}
+              showSearch
+              filterOption={filterOption}
               placeholder="Please select a category"
               style={isMobile ? { width: '100%' } : { width: '180px' }}
               onChange={(_, option: any) =>

@@ -75,6 +75,13 @@ const CategoryDetail: React.FC<CategoryDetailProps> = ({
       : onSave?.({ ...formCategory, id: result }, categoryUpdateName);
   };
 
+  const filterOption = (input: string, option: any) => {
+    return !!option?.children
+      ?.toString()
+      ?.toUpperCase()
+      .includes(input?.toUpperCase());
+  };
+
   return (
     <>
       <PageHeader
@@ -120,6 +127,9 @@ const CategoryDetail: React.FC<CategoryDetailProps> = ({
                           }
                         )
                       }
+                      allowClear
+                      showSearch
+                      filterOption={filterOption}
                     >
                       {(
                         filteredCategories[

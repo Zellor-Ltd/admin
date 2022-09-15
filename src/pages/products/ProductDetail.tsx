@@ -526,6 +526,13 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
     }
   };
 
+  const filterOption = (input: string, option: any) => {
+    return !!option?.children
+      ?.toString()
+      ?.toUpperCase()
+      .includes(input?.toUpperCase());
+  };
+
   return (
     <div className="products-details">
       <PageHeader
@@ -612,6 +619,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                       ]}
                     >
                       <SimpleSelect
+                        showSearch
                         id="brand"
                         data={brands}
                         onChange={(value, brand) =>
@@ -640,6 +648,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                       ]}
                     >
                       <SimpleSelect
+                        showSearch
                         id="productBrand"
                         data={productBrands}
                         onChange={(value, productBrand) =>
@@ -782,6 +791,9 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                       mode="tags"
                       className="product-search-tags"
                       disabled={loadingResources || isLive}
+                      allowClear
+                      showSearch
+                      filterOption={filterOption}
                     >
                       {getFieldValue('searchTags')?.map((searchTag: any) => (
                         <Select.Option key={searchTag} value={searchTag}>
@@ -823,6 +835,9 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                     disabled={loadingResources || isLive}
                     id="gender"
                     placeholder="Gender"
+                    allowClear
+                    showSearch
+                    filterOption={filterOption}
                   >
                     <Select.Option value="Female">Female</Select.Option>
                     <Select.Option value="Male">Male</Select.Option>
@@ -844,6 +859,9 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                       <Select
                         placeholder="Please select a currency"
                         disabled={loadingResources || isLive}
+                        allowClear
+                        showSearch
+                        filterOption={filterOption}
                       >
                         {currency.map((curr: any) => (
                           <Select.Option key={curr.value} value={curr.value}>
@@ -858,6 +876,9 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                       <Select
                         placeholder="Please select a currency"
                         disabled={loadingResources || isLive}
+                        allowClear
+                        showSearch
+                        filterOption={filterOption}
                       >
                         {currency.map((curr: any) => (
                           <Select.Option key={curr.value} value={curr.value}>
@@ -872,6 +893,9 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                       <Select
                         placeholder="Please select a currency"
                         disabled={loadingResources || isLive}
+                        allowClear
+                        showSearch
+                        filterOption={filterOption}
                       >
                         {currency.map((curr: any) => (
                           <Select.Option key={curr.value} value={curr.value}>
@@ -886,6 +910,9 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                       <Select
                         placeholder="Please select a currency"
                         disabled={loadingResources || isLive}
+                        allowClear
+                        showSearch
+                        filterOption={filterOption}
                       >
                         {currency.map((curr: any) => (
                           <Select.Option key={curr.value} value={curr.value}>

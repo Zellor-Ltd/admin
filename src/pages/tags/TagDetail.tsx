@@ -122,6 +122,13 @@ const TagDetail: React.FC<TagDetailProps> = ({ tag, onSave, onCancel }) => {
     form.setFieldsValue({ product: {} });
   };
 
+  const filterOption = (input: string, option: any) => {
+    return !!option?.children
+      ?.toString()
+      ?.toUpperCase()
+      .includes(input?.toUpperCase());
+  };
+
   return (
     <>
       <PageHeader title={tag ? `${tag?.tagName ?? ''} Update` : 'New Tag'} />
@@ -147,7 +154,13 @@ const TagDetail: React.FC<TagDetailProps> = ({ tag, onSave, onCancel }) => {
             </Col>
             <Col lg={12} xs={24}>
               <Form.Item name={['brand', 'id']} label="Master Brand">
-                <Select onChange={onChangeBrand} placeholder="Master Brand">
+                <Select
+                  onChange={onChangeBrand}
+                  placeholder="Master Brand"
+                  allowClear
+                  showSearch
+                  filterOption={filterOption}
+                >
                   {brands.map(brand => (
                     <Select.Option key={brand.id} value={brand.id}>
                       {brand.brandName}
@@ -166,6 +179,9 @@ const TagDetail: React.FC<TagDetailProps> = ({ tag, onSave, onCancel }) => {
                   id="template"
                   placeholder="Please select a template"
                   onChange={onChangeTemplate}
+                  allowClear
+                  showSearch
+                  filterOption={filterOption}
                 >
                   {template.map((temp: any) => (
                     <Select.Option key={temp.value} value={temp.value}>
@@ -185,6 +201,9 @@ const TagDetail: React.FC<TagDetailProps> = ({ tag, onSave, onCancel }) => {
                         !form.getFieldValue('brand')
                       }
                       placeholder="Product"
+                      allowClear
+                      showSearch
+                      filterOption={filterOption}
                     >
                       {productOptions.map(product => (
                         <Select.Option key={product.id} value={product.id}>
@@ -232,6 +251,9 @@ const TagDetail: React.FC<TagDetailProps> = ({ tag, onSave, onCancel }) => {
                     <Select
                       id="clickSound"
                       placeholder="Please select a click sound"
+                      allowClear
+                      showSearch
+                      filterOption={filterOption}
                     >
                       {clickSound.map((click: any) => (
                         <Select.Option key={click.value} value={click.value}>
