@@ -400,7 +400,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                       />
                     </Form.Item>
                   </Col>
-                  <Col span={24}>
+                  <Col lg={12} xs={24}>
                     <Form.Item
                       label="Product Brand Color"
                       name="brandTxtColor"
@@ -413,6 +413,15 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                       valuePropName="color"
                     >
                       <ColorPicker id="brandTxtColor" />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={12} xs={24}>
+                    <Form.Item label="Brand Link" name="brandLink">
+                      <Input
+                        placeholder="Brand Link"
+                        allowClear
+                        prefix="https://ie.discoclub.com/b/"
+                      />
                     </Form.Item>
                   </Col>
                 </Row>
