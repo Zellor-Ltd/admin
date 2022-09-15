@@ -1136,11 +1136,7 @@ const VideoFeedDetailV2: React.FC<VideoFeedDetailProps> = ({
                 ></Checkbox>
               </Col>
               <Col lg={4} xs={24}>
-                <Button
-                  type="default"
-                  onClick={handleGenerateLink}
-                  disabled={!videoCreator || !selectedSocialPlatform}
-                >
+                <Button type="default" onClick={handleGenerateLink} disabled>
                   Generate Link
                 </Button>
               </Col>
