@@ -239,7 +239,8 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
     toFocus.current = elements.find(item => !item?.checkValidity());
     if (toFocus.current) {
       if (toFocus.current === barcode) setActiveTabKey('Checkout');
-      if (toFocus.current === variantId || quantity) setActiveTabKey('Details');
+      else if (toFocus.current === variantId || quantity)
+        setActiveTabKey('Details');
       scrollIntoView(toFocus.current);
     }
   };
