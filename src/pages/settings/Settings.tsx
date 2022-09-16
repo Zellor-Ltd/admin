@@ -51,7 +51,7 @@ const Settings: React.FC = () => {
         className={isMobile ? 'mb-n1' : ''}
         subTitle={isMobile ? '' : 'Configuration'}
       />
-      <Row className={isMobile ? 'sticky-filter-box' : ''}>
+      <Row className="tab-page">
         <Col>
           <Form
             form={form}

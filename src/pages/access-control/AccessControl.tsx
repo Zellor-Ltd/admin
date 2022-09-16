@@ -185,7 +185,7 @@ const AccessControl: React.FC = () => {
           defaultActiveKey="template"
           style={{ width: '100%' }}
           onChange={setSelectedMethod}
-          className="mt-1"
+          className="mt-05"
         >
           {methodsList.map((method, index) => (
             <TabPane tab={method} key={method}>

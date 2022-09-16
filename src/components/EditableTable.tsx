@@ -86,7 +86,7 @@ const EditableTable: React.FC<EditableTableProps<any>> = (
               fileName: 'Disco Products',
               showColumnPicker: true,
               btnProps: {
-                className: 'ml-1 my-05',
+                className: 'ml-2 mt-05 mb-n05',
               },
             }
           : undefined

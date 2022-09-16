@@ -795,11 +795,11 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
           <Row
             align="bottom"
             justify="space-between"
-            className="mb-1 sticky-filter-box"
+            className="sticky-filter-box mb-05"
             gutter={8}
           >
             <Col lg={16} xs={24}>
-              <Row gutter={[8, 8]}>
+              <Row gutter={[8, 8]} align="bottom">
                 <Col lg={6} xs={24}>
                   <Typography.Title level={5}>Master Brand</Typography.Title>
                   <Select
@@ -843,15 +843,11 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
                 </Col>
               </Row>
             </Col>
-            <Col lg={24} xs={24}>
-              <Row justify="end" className={isMobile ? 'mt-2' : ''}>
-                <Col>
-                  <Button type="primary" onClick={() => setRefreshing(true)}>
-                    Search
-                    <SearchOutlined style={{ color: 'white' }} />
-                  </Button>
-                </Col>
-              </Row>
+            <Col>
+              <Button type="primary" onClick={() => setRefreshing(true)}>
+                Search
+                <SearchOutlined style={{ color: 'white' }} />
+              </Button>
             </Col>
           </Row>
           <InfiniteScroll

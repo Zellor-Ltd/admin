@@ -375,7 +375,7 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
     return (
       <>
         <Col lg={16} xs={24}>
-          <Row justify="end" gutter={[8, 8]}>
+          <Row justify="end" gutter={[8, 8]} align="bottom">
             {!isMobile && (
               <Col lg={6} xs={24}>
                 <Row justify="end" className="mr-2 mt-03">

@@ -215,7 +215,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
           <Row
             align="bottom"
             justify="space-between"
-            className="sticky-filter-box mb-1"
+            className="sticky-filter-box mb-05"
           >
             <Col span={24}>
               <Row gutter={8} align="bottom">

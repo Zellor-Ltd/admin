@@ -120,7 +120,7 @@ const Endpoints: React.FC<RouteComponentProps> = ({ history, location }) => {
           </Button>,
         ]}
       />
-      <Row gutter={8} className="sticky-filter-box">
+      <Row gutter={8} className="sticky-filter-box mb-05">
         <Col lg={4} xs={24}>
           <Typography.Title level={5}>Search</Typography.Title>
           <Input
@@ -128,7 +128,6 @@ const Endpoints: React.FC<RouteComponentProps> = ({ history, location }) => {
             disabled={loading}
             placeholder="Search by Name"
             suffix={<SearchOutlined />}
-            className="mb-1"
             value={filter}
             onChange={event => {
               setFilter(event.target.value);

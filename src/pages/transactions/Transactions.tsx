@@ -173,11 +173,7 @@ const Transactions: React.FC<RouteComponentProps> = () => {
         subTitle={isMobile ? '' : 'List of Transactions'}
         className={isMobile ? 'mb-n1' : ''}
       />
-      <Row
-        gutter={8}
-        style={{ marginBottom: '20px' }}
-        className="sticky-filter-box"
-      >
+      <Row gutter={8} className="sticky-filter-box mb-05">
         <Col xxl={40} lg={4} xs={24}>
           <Typography.Title level={5}>Fan Filter</Typography.Title>
           <MultipleFetchDebounceSelect

@@ -281,9 +281,9 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
           <Row
             align="bottom"
             justify="space-between"
-            className="sticky-filter-box"
+            className="sticky-filter-box mb-05"
           >
-            <Col lg={16} xs={24} className="mb-1">
+            <Col lg={16} xs={24}>
               <Row gutter={8}>
                 <Col lg={6} xs={24}>
                   <Typography.Title level={5}>Fan Filter</Typography.Title>
@@ -301,11 +301,13 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
               <Row
                 gutter={8}
                 justify="end"
-                className={isMobile ? 'mt-1' : 'mt-2'}
+                align="bottom"
+                className={isMobile ? 'mt-1' : ''}
               >
                 <Col>
                   <EditMultipleButton
                     text="Edit Fans"
+                    style={{ marginBottom: 0 }}
                     arrayList={fans}
                     ModalComponent={EditFanModal}
                     selectedRowKeys={selectedRowKeys}
@@ -317,7 +319,7 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
                     type="primary"
                     onClick={getResources}
                     loading={loading}
-                    className={isMobile ? 'mb-1' : 'mb-1 mr-06'}
+                    className={isMobile ? 'mb-1' : 'mr-06'}
                   >
                     Search
                     <SearchOutlined style={{ color: 'white' }} />

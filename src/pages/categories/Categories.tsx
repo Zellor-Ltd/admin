@@ -378,6 +378,7 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
           <PageHeader
             title="Categories"
             subTitle={isMobile ? '' : 'List of Categories'}
+            className="mb-n05"
             extra={[
               <Dropdown
                 key="headerDropdown"
@@ -409,7 +410,7 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
             ]}
           />
           <Tabs
-            className="sticky-filter-box"
+            className="tab-page"
             onChange={handleTabChange}
             activeKey={selectedTab}
           >

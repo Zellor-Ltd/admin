@@ -229,7 +229,7 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
                 disabled={loading}
                 placeholder="Search by Tag Name"
                 suffix={<SearchOutlined />}
-                className="mb-1"
+                className="mb-05"
                 value={filter}
                 onChange={event => {
                   setFilter(event.target.value);

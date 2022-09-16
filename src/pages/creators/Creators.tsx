@@ -296,7 +296,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
             gutter={8}
             align="bottom"
             justify="space-between"
-            className="mb-1 sticky-filter-box"
+            className="mb-05 sticky-filter-box"
           >
             <Col lg={4} xs={24}>
               <Typography.Title level={5}>Search</Typography.Title>

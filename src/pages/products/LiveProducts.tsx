@@ -776,7 +776,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
             justify="space-between"
             className="sticky-filter-box"
             id="filterPanel"
-            style={panelStyle}
+            style={{ ...panelStyle, marginBottom: '0.5rem' }}
           >
             {!isMobile && <Filters />}
             {isMobile && (

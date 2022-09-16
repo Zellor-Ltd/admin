@@ -91,7 +91,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
   const [indexFilter, setIndexFilter] = useState<number>();
   const [creatorFilter, setCreatorFilter] = useState<string>();
   const inputRef = useRef<any>(null);
-  const loadingResources = useRef<boolean>(true);
+  const [loadingResources, setLoadingResources] = useState<boolean>(true);
   const [activeKey, setActiveKey] = useState<string>('-1');
   const [offset, setOffset] = useState<number>(64);
   const [panelStyle, setPanelStyle] = useState<React.CSSProperties>({
@@ -412,7 +412,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
       getCategories(),
       getBrands(),
       getProductBrands(),
-    ]).then(() => (loadingResources.current = false));
+    ]).then(() => setLoadingResources(false));
   };
 
   const search = rows => {
@@ -528,15 +528,15 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
 
   const Filters = () => {
     return (
-      <Col lg={16} xs={24}>
-        <Row gutter={[8, 8]}>
+      <>
+        <Row gutter={[8, 8]} align="bottom">
           <Col lg={6} xs={24}>
             <Typography.Title level={5} title="Search">
               Search
             </Typography.Title>
             <Input
               allowClear
-              disabled={loadingResources.current || loading}
+              disabled={loadingResources || loading}
               ref={inputRef}
               onChange={event => setTitleFilter(event.target.value)}
               suffix={<SearchOutlined />}
@@ -555,7 +555,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
               selectedOption={brandFilter?.id}
               optionMapping={masterBrandMapping}
               placeholder="Select a Master Brand"
-              disabled={loadingResources.current || loading}
+              disabled={loadingResources || loading}
               allowClear
             />
           </Col>
@@ -569,7 +569,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
               selectedOption={productBrandFilter}
               optionMapping={productBrandMapping}
               placeholder="Select a Product Brand"
-              disabled={loadingResources.current || loading}
+              disabled={loadingResources || loading}
               allowClear
             />
           </Col>
@@ -577,7 +577,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
             <Typography.Title level={5}>Status</Typography.Title>
             <Select
               placeholder="Select a Status"
-              disabled={loadingResources.current || loading}
+              disabled={loadingResources || loading}
               onChange={setStatusFilter}
               style={{ width: '100%' }}
               filterOption={filterOption}
@@ -609,13 +609,13 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
               optionMapping={categoryMapping}
               placeholder="Select a Category"
               allowClear
-              disabled={loadingResources.current || loading}
+              disabled={loadingResources || loading}
             />
           </Col>
           <Col lg={6} xs={24}>
             <Typography.Title level={5}>Start Index</Typography.Title>
             <InputNumber
-              disabled={loadingResources.current || loading}
+              disabled={loadingResources || loading}
               min={0}
               onChange={startIndex => setIndexFilter(startIndex ?? undefined)}
               placeholder="Select an Index"
@@ -626,7 +626,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
             <Typography.Title level={5}>Creator</Typography.Title>
             <Select
               placeholder="Select a Creator"
-              disabled={loadingResources.current || loading}
+              disabled={loadingResources || loading}
               onChange={setCreatorFilter}
               value={creatorFilter}
               style={{ width: '100%' }}
@@ -642,7 +642,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
             </Select>
           </Col>
         </Row>
-      </Col>
+      </>
     );
   };
 
@@ -679,31 +679,33 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
             justify="space-between"
             className="sticky-filter-box"
             id="filterPanel"
-            style={panelStyle}
+            style={{ ...panelStyle, marginBottom: '0.5rem' }}
           >
-            {!isMobile && <Filters />}
-            {isMobile && (
-              <Col lg={24} xs={24}>
-                <Collapse
-                  ghost
-                  className="mb-1"
-                  activeKey={activeKey}
-                  onChange={handleCollapseChange}
-                  destroyInactivePanel
-                >
-                  <Panel
-                    header={
-                      <Typography.Title level={5}>Filter</Typography.Title>
-                    }
-                    key="1"
+            <Col lg={16} xs={24}>
+              {!isMobile && <Filters />}
+              {isMobile && (
+                <Col lg={24} xs={24}>
+                  <Collapse
+                    ghost
+                    className="mb-1"
+                    activeKey={activeKey}
+                    onChange={handleCollapseChange}
+                    destroyInactivePanel
                   >
-                    <Filters />
-                  </Panel>
-                </Collapse>
-              </Col>
-            )}
-            <Col span={24}>
-              <Row justify="space-between" align="top">
+                    <Panel
+                      header={
+                        <Typography.Title level={5}>Filter</Typography.Title>
+                      }
+                      key="1"
+                    >
+                      <Filters />
+                    </Panel>
+                  </Collapse>
+                </Col>
+              )}
+            </Col>
+            <Col>
+              <Row justify="space-between" align="bottom">
                 <Col flex="auto">
                   <Button
                     type="text"
@@ -717,12 +719,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
                   </Button>
                 </Col>
                 <Col>
-                  <Button
-                    type="primary"
-                    onClick={fetch}
-                    loading={loading}
-                    className="mb-1"
-                  >
+                  <Button type="primary" onClick={fetch} loading={loading}>
                     Search
                     <SearchOutlined style={{ color: 'white' }} />
                   </Button>

@@ -226,7 +226,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
           <Row
             align="bottom"
             justify="space-between"
-            className="sticky-filter-box mb-1"
+            className="sticky-filter-box mb-05"
           >
             <Col lg={4} xs={24}>
               <SearchFilterDebounce
