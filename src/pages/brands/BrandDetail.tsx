@@ -529,7 +529,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                   <Input allowClear placeholder="Master Brand Name" />
                 </Form.Item>
               </Col>
-              <Col lg={24} xs={24}>
+              <Col span={24}>
                 <Form.Item
                   label="Master Brand Color"
                   name="brandTxtColor"
@@ -830,7 +830,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                 </Col>
               </Col>
               <Col lg={12} xs={24}>
-                <Col lg={24} xs={24}>
+                <Col span={24}>
                   <Form.Item label="Pre-Checkout Message (With Discount)">
                     <RichTextEditor
                       formField="overlayHtmlWithDiscount"
@@ -838,7 +838,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                     />
                   </Form.Item>
                 </Col>
-                <Col lg={24} xs={24}>
+                <Col span={24}>
                   <Form.Item label="Pre-Checkout Message (WithOUT Discount)">
                     <RichTextEditor
                       formField="overlayHtmlWithoutDiscount"

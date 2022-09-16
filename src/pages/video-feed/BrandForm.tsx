@@ -100,7 +100,7 @@ const BrandForm: React.FC<FormProps> = ({
   return (
     <Form name="brandForm" form={form} initialValues={brand} layout="vertical">
       <Row gutter={8}>
-        <Col lg={24} xs={24}>
+        <Col span={24}>
           <Form.Item name="id" label="Store" rules={[{ required: true }]}>
             <Select
               showSearch
@@ -118,7 +118,7 @@ const BrandForm: React.FC<FormProps> = ({
             </Select>
           </Form.Item>
         </Col>
-        <Col lg={24} xs={24}>
+        <Col span={24}>
           <Form.Item
             name={['productBrand', 'id']}
             label="Product Brand"

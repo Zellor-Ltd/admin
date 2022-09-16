@@ -438,7 +438,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
             </Tabs.TabPane>
             <Tabs.TabPane forceRender tab="Social" key="Social">
               <Row gutter={8}>
-                <Col lg={24} xs={24}>
+                <Col span={24}>
                   <Typography.Title level={4}>Social Channels</Typography.Title>
                 </Col>
               </Row>
@@ -512,7 +512,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                 handleCategoryChange={handleCategoryChange}
                 handleCategoryDelete={handleCategoryDelete}
               />
-              <Col lg={24} xs={24}>
+              <Col span={24}>
                 <Form.Item
                   shouldUpdate={(prevValues, curValues) =>
                     prevValues.category !== curValues.category
@@ -538,10 +538,10 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                 </Form.Item>
               </Col>
               <Row gutter={8}>
-                <Col lg={24} xs={24}>
+                <Col span={24}>
                   <Typography.Title level={4}>Target</Typography.Title>
                 </Col>
-                <Col lg={24} xs={24}>
+                <Col span={24}>
                   <Form.Item label="Age Range">
                     <Slider
                       range
@@ -555,7 +555,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                 </Col>
               </Row>
               <Row gutter={8}>
-                <Col lg={24} xs={24}>
+                <Col span={24}>
                   <Form.Item
                     name="gender"
                     label="Gender"

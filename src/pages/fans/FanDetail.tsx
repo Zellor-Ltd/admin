@@ -473,7 +473,7 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
             key="Following Creators"
           >
             <Row gutter={8}>
-              <Col lg={24} xs={24}>
+              <Col span={24}>
                 <Form.Item
                   shouldUpdate={(prevValues, curValues) =>
                     prevValues.followingCreators !== curValues.followingCreators
@@ -515,7 +515,7 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
                             </Select>
                           </Form.Item>
                         </Col>
-                        <Col lg={24} xs={24}>
+                        <Col span={24}>
                           <Table
                             dataSource={followingCreators}
                             columns={creatorColumns}
@@ -534,7 +534,7 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
             key="Following Categories"
           >
             <Row gutter={8}>
-              <Col lg={24} xs={24}>
+              <Col span={24}>
                 <Form.Item
                   shouldUpdate={(prevValues, curValues) =>
                     prevValues.followingCategories !==
@@ -577,7 +577,7 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
                             </Select>
                           </Form.Item>
                         </Col>
-                        <Col lg={24} xs={24}>
+                        <Col span={24}>
                           <Table
                             dataSource={followingCategories}
                             columns={categoryColumns}

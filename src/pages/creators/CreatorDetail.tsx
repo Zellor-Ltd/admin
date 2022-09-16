@@ -204,7 +204,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
         >
           <Tabs.TabPane forceRender tab="Details" key="Details">
             <Row gutter={8}>
-              <Col lg={24} xs={24}>
+              <Col span={24}>
                 <Row
                   gutter={24}
                   align="bottom"
@@ -557,7 +557,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
           </Tabs.TabPane>
           <Tabs.TabPane forceRender tab="Your Work" key="Your Work">
             <Row gutter={8}>
-              <Col lg={24} xs={24}>
+              <Col span={24}>
                 <Form.Item
                   label="Describe your content focus"
                   name="contentFocus"
@@ -569,7 +569,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                   />
                 </Form.Item>
               </Col>
-              <Col lg={24} xs={24}>
+              <Col span={24}>
                 <Form.Item
                   label="Top Brand collaborations you have completed"
                   name="topBrands"
@@ -581,7 +581,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                   />
                 </Form.Item>
               </Col>
-              <Col lg={24} xs={24}>
+              <Col span={24}>
                 <Form.Item label="Your Work" name="yourWork">
                   <Input
                     allowClear
@@ -591,14 +591,14 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                   />
                 </Form.Item>
               </Col>
-              <Col lg={24} xs={24}>
+              <Col span={24}>
                 <Form.Item label="Creator Profile" name="creatorProfile">
                   <Input allowClear placeholder="Creator Profile" />
                 </Form.Item>
               </Col>
             </Row>
             <Row gutter={8}>
-              <Col lg={24} xs={24}>
+              <Col span={24}>
                 <Typography.Title level={4}>Target</Typography.Title>
               </Col>
               <Col span={24}>
@@ -639,7 +639,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
           </Tabs.TabPane>
           <Tabs.TabPane forceRender tab="Social" key="Social">
             <Row gutter={8}>
-              <Col lg={24} xs={24}>
+              <Col span={24}>
                 <Typography.Title level={4}>Social Channels</Typography.Title>
               </Col>
             </Row>

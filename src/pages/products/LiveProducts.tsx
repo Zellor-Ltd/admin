@@ -124,6 +124,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
   const [offset, setOffset] = useState<number>(64);
   const [panelStyle, setPanelStyle] = useState<React.CSSProperties>({
     top: 64,
+    marginBottom: '0.5rem',
   });
   const filterPanelHeight = useRef<number>();
   const windowHeight = window.innerHeight;
@@ -774,9 +775,9 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
           <Row
             align="bottom"
             justify="space-between"
-            className="sticky-filter-box"
+            className="sticky-filter-box mb-05"
             id="filterPanel"
-            style={{ ...panelStyle, marginBottom: '0.5rem' }}
+            style={panelStyle}
           >
             {!isMobile && <Filters />}
             {isMobile && (

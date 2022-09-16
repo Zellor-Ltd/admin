@@ -38,7 +38,7 @@ const CreatorsPageDetail: React.FC<MastheadDetailProps> = ({
         autoComplete="off"
       >
         <Row gutter={8}>
-          <Col lg={24} xs={24}>
+          <Col span={24}>
             <Form.Item name="active" label="Active" valuePropName="checked">
               <Switch />
             </Form.Item>
@@ -48,7 +48,7 @@ const CreatorsPageDetail: React.FC<MastheadDetailProps> = ({
               <Input allowClear placeholder="Description" />
             </Form.Item>
           </Col>
-          <Col lg={24} xs={24}>
+          <Col span={24}>
             <Form.Item
               label="Masthead"
               rules={[{ required: true, message: 'Masthead is required.' }]}

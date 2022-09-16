@@ -585,7 +585,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                       <Switch disabled={loadingResources || isLive} />
                     </Form.Item>
                   </Col>
-                  <Col lg={24} xs={24}>
+                  <Col span={24}>
                     <Form.Item name="name" label="Short description">
                       <Input
                         allowClear
@@ -594,7 +594,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                       />
                     </Form.Item>
                   </Col>
-                  <Col lg={24} xs={24}>
+                  <Col span={24}>
                     <Form.Item label="Long description">
                       <RichTextEditor
                         formField="description"
@@ -607,7 +607,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
               </Col>
               <Col lg={12} xs={24}>
                 <Row gutter={8}>
-                  <Col lg={24} xs={24}>
+                  <Col span={24}>
                     <Form.Item
                       name="brand"
                       label="Master Brand"
@@ -636,7 +636,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                   </Col>
                 </Row>
                 <Row gutter={8}>
-                  <Col lg={24} xs={24}>
+                  <Col span={24}>
                     <Form.Item
                       name="productBrand"
                       label="Product Brand"
@@ -702,7 +702,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                   </Col>
                   <Col lg={12} xs={24}></Col>
                   <Col lg={12} xs={24}>
-                    <Col lg={24} xs={24}>
+                    <Col span={24}>
                       <Form.Item name="variantId" label="Variant">
                         <Input
                           allowClear
@@ -714,7 +714,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                         />
                       </Form.Item>
                     </Col>
-                    <Col lg={24} xs={24}>
+                    <Col span={24}>
                       <Form.Item name="colourTitle" label="Colour">
                         <Input
                           allowClear
@@ -723,7 +723,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                         />
                       </Form.Item>
                     </Col>
-                    <Col lg={24} xs={24}>
+                    <Col span={24}>
                       <Form.Item name="size" label="Size">
                         <Input
                           allowClear
@@ -734,7 +734,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                     </Col>
                   </Col>
                   <Col lg={12} xs={24}>
-                    <Col lg={24} xs={24}>
+                    <Col span={24}>
                       <SketchPicker
                         className="product-sketch-picker"
                         color={color}
@@ -779,7 +779,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
               handleCategoryDelete={handleCategoryDelete}
               disabled={loadingResources || isLive}
             />
-            <Col lg={24} xs={24}>
+            <Col span={24}>
               <Form.Item
                 shouldUpdate={(prevValues, curValues) =>
                   prevValues.category !== curValues.category
@@ -806,10 +806,10 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
               </Form.Item>
             </Col>
             <Row gutter={8}>
-              <Col lg={24} xs={24}>
+              <Col span={24}>
                 <Typography.Title level={4}>Target</Typography.Title>
               </Col>
-              <Col lg={24} xs={24}>
+              <Col span={24}>
                 <Form.Item label="Age Range">
                   <Slider
                     range
@@ -824,7 +824,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
               </Col>
             </Row>
             <Row gutter={8}>
-              <Col lg={24} xs={24}>
+              <Col span={24}>
                 <Form.Item
                   name="gender"
                   label="Gender"
@@ -1186,7 +1186,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                   />
                 </Form.Item>
               </Col>
-              <Col lg={24} xs={24}>
+              <Col span={24}>
                 <Form.Item label="Image">
                   <div
                     className={

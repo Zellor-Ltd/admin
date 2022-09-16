@@ -139,6 +139,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
   const [offset, setOffset] = useState<number>(64);
   const [panelStyle, setPanelStyle] = useState<React.CSSProperties>({
     top: 64,
+    marginBottom: '0.5rem',
   });
   const filterPanelHeight = useRef<number>();
   const windowHeight = window.innerHeight;

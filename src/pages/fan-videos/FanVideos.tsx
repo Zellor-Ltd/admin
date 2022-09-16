@@ -96,6 +96,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
   const [offset, setOffset] = useState<number>(64);
   const [panelStyle, setPanelStyle] = useState<React.CSSProperties>({
     top: 64,
+    marginBottom: '0.5rem',
   });
   const filterPanelHeight = useRef<number>();
   const windowHeight = window.innerHeight;
@@ -677,14 +678,14 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
           <Row
             align="bottom"
             justify="space-between"
-            className="sticky-filter-box"
+            className="sticky-filter-box mb-05"
             id="filterPanel"
-            style={{ ...panelStyle, marginBottom: '0.5rem' }}
+            style={panelStyle}
           >
             <Col lg={16} xs={24}>
               {!isMobile && <Filters />}
               {isMobile && (
-                <Col lg={24} xs={24}>
+                <Col span={24}>
                   <Collapse
                     ghost
                     className="mb-1"

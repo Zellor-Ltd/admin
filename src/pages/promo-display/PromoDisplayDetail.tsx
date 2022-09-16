@@ -85,7 +85,7 @@ const PromoDisplaysDetail: React.FC<PromoDisplayDetailProps> = ({
         onFinishFailed={({ errorFields }) => handleFinishFailed(errorFields)}
       >
         <Row>
-          <Col lg={24} xs={24}>
+          <Col span={24}>
             <Form.Item label="Display HTML">
               <RichTextEditor
                 formField="displayHtml"

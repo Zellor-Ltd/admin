@@ -154,7 +154,7 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
 
       <Row gutter={8}>
         <Col lg={6} xs={24}>
-          <Col lg={24} xs={24}>
+          <Col span={24}>
             <Form.Item label="Video">
               <Upload.VideoUpload
                 fileList={segment?.video}
@@ -163,7 +163,7 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
               />
             </Form.Item>
           </Col>
-          <Col lg={24} xs={24}>
+          <Col span={24}>
             <Form.Item label="Thumbnail URL">
               <Upload.ImageUpload
                 type="thumbnail"
@@ -175,10 +175,10 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
           </Col>
         </Col>
         <Col lg={18} xs={24}>
-          <Col lg={24} xs={24}>
+          <Col span={24}>
             <Typography.Title level={4}>Brands</Typography.Title>
           </Col>
-          <Col lg={24} xs={24}>
+          <Col span={24}>
             <Form.List name="brands">
               {(fields, { add, remove }) => (
                 <div>
@@ -356,10 +356,10 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
               )}
             </Form.List>
           </Col>
-          <Col lg={24} xs={24}>
+          <Col span={24}>
             <Typography.Title level={4}>Tags</Typography.Title>
           </Col>
-          <Col lg={24} xs={24}>
+          <Col span={24}>
             <Form.List name="tags">
               {(fields, { add, remove }) => (
                 <div>

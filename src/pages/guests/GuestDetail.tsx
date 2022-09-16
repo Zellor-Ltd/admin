@@ -244,7 +244,7 @@ const GuestDetail: React.FC<GuestDetailProps> = ({ fan, onSave, onCancel }) => {
             key="FollowingCreators"
           >
             <Row gutter={8}>
-              <Col lg={24} xs={24}>
+              <Col span={24}>
                 <Table
                   dataSource={fan.followingCreators}
                   columns={creatorColumns}
@@ -258,7 +258,7 @@ const GuestDetail: React.FC<GuestDetailProps> = ({ fan, onSave, onCancel }) => {
             key="FollowingCategories"
           >
             <Row gutter={8}>
-              <Col lg={24} xs={24}>
+              <Col span={24}>
                 <Table
                   dataSource={fan.followingCategories}
                   columns={categoryColumns}

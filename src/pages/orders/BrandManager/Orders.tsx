@@ -84,7 +84,6 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       setOrders([]);
       setEof(false);
       fetch();
-      setRefreshing(false);
     }
   }, [refreshing]);
 
@@ -131,6 +130,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     if (pageToUse === 0) setOrders(validOrders);
     else setOrders(prev => [...prev.concat(validOrders)]);
     setLoaded(true);
+    setRefreshing(false);
   };
 
   const loadNext = async () => {
@@ -808,7 +808,6 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
                     style={{ width: '100%' }}
                     placeholder="Select a Master Brand"
                     value={brandId}
-                    loading={!brands.length}
                     disabled={!brands.length || refreshing}
                     showSearch
                     filterOption={filterOption}

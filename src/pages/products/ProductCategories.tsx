@@ -135,7 +135,7 @@ const ProductCategories: React.FC<ProductCategoriesProps> = ({
   return (
     <>
       {isMobile && (
-        <Col lg={24} xs={24}>
+        <Col span={24}>
           <CategoryList />
         </Col>
       )}

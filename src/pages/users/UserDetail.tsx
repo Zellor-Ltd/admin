@@ -304,7 +304,7 @@ const UserDetail: React.FC<RouteComponentProps> = props => {
           </Col>
         </Row>
         <Row>
-          <Col lg={24} xs={24}>
+          <Col span={24}>
             <Form.Item
               shouldUpdate={(prevValues, curValues) =>
                 prevValues.followingCreators !== curValues.followingCreators
@@ -346,7 +346,7 @@ const UserDetail: React.FC<RouteComponentProps> = props => {
                         </Select>
                       </Form.Item>
                     </Col>
-                    <Col lg={24} xs={24}>
+                    <Col span={24}>
                       <Table
                         dataSource={followingCreators}
                         columns={creatorColumns}
@@ -359,7 +359,7 @@ const UserDetail: React.FC<RouteComponentProps> = props => {
           </Col>
         </Row>
         <Row>
-          <Col lg={24} xs={24}>
+          <Col span={24}>
             <Form.Item
               shouldUpdate={(prevValues, curValues) =>
                 prevValues.followingCategories !== curValues.followingCategories
@@ -401,7 +401,7 @@ const UserDetail: React.FC<RouteComponentProps> = props => {
                         </Select>
                       </Form.Item>
                     </Col>
-                    <Col lg={24} xs={24}>
+                    <Col span={24}>
                       <Table
                         dataSource={followingCategories}
                         columns={categoryColumns}

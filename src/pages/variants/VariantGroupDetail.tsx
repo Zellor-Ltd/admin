@@ -127,6 +127,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
   const [offset, setOffset] = useState<number>(64);
   const [panelStyle, setPanelStyle] = useState<React.CSSProperties>({
     top: 64,
+    marginBottom: '0.5rem',
   });
   const filterPanelHeight = useRef<number>();
   const windowHeight = window.innerHeight;
@@ -319,6 +320,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
                   onChange={event => setSearchFilter(event.target.value)}
                   placeholder="Search by Name"
                   onPressEnter={() => getProducts(true)}
+                  disabled={fetchingCategories}
                 />
               </Col>
               <Col lg={6} xs={24}>
@@ -332,6 +334,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
                   optionMapping={optionMapping}
                   placeholder="Select a Master Brand"
                   allowClear
+                  disabled={fetchingCategories}
                 ></SimpleSelect>
               </Col>
               <Col lg={6} xs={24}>
@@ -347,6 +350,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
                   optionMapping={optionMapping}
                   placeholder="Select a Product Brand"
                   allowClear
+                  disabled={fetchingCategories}
                 ></SimpleSelect>
               </Col>
               <Col lg={6} xs={24}>
@@ -359,6 +363,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
                   showSearch
                   filterOption={filterOption}
                   defaultValue={productStatusFilter}
+                  disabled={fetchingCategories}
                 >
                   <Select.Option value="live">Live</Select.Option>
                   <Select.Option value="paused">Paused</Select.Option>
@@ -498,12 +503,14 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
                   suffix={<SearchOutlined />}
                   placeholder="Search by Run ID"
                   onPressEnter={() => getProducts(true)}
+                  disabled={fetchingCategories}
                 />
               </Col>
               <Col lg={6} xs={24}>
                 <Checkbox
                   onChange={handleFilterOutOfStock}
                   className={isMobile ? 'mt-1 mb-1' : 'mt-2 mb-1 ml-05'}
+                  disabled={fetchingCategories}
                 >
                   Out of Stock only
                 </Checkbox>
@@ -512,6 +519,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
                 <Checkbox
                   onChange={handleFilterClassified}
                   className={isMobile ? 'mb-2' : 'mt-2 mb-1 ml-05'}
+                  disabled={fetchingCategories}
                 >
                   Unclassified only
                 </Checkbox>
@@ -608,7 +616,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
         type="text"
         style={{ background: 'none' }}
         onClick={() => setShowMore(prev => !prev)}
-        className="mt-05 ml-1 mb-1"
+        className="ml-1 mb-1"
       >
         <Typography.Title
           level={5}

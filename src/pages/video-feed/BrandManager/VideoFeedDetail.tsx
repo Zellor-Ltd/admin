@@ -578,7 +578,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
         <Tabs activeKey={videoTab} onChange={setVideoTab}>
           <Tabs.TabPane forceRender tab="Video Details" key={defaultVideoTab}>
             <Row gutter={8}>
-              <Col lg={24} xs={24}>
+              <Col span={24}>
                 <Row gutter={8}>
                   <Col lg={12} xs={24}>
                     <Form.Item label="Status">
@@ -645,17 +645,17 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                   </Col>
                 </Row>
               </Col>
-              <Col lg={24} xs={24}>
+              <Col span={24}>
                 <Form.Item name="title" label="Title">
                   <Input allowClear />
                 </Form.Item>
               </Col>
-              <Col lg={24} xs={24}>
+              <Col span={24}>
                 <Form.Item name="shortDescription" label="Short description">
                   <Input allowClear />
                 </Form.Item>
               </Col>
-              <Col lg={24} xs={24}>
+              <Col span={24}>
                 <Form.Item name="category" label="Category">
                   <Select
                     placeholder="Please select a category"
@@ -673,7 +673,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                 </Form.Item>
               </Col>
               {!isFanVideo && (
-                <Col lg={24} xs={24}>
+                <Col span={24}>
                   <Form.Item label="Creator">
                     <Select
                       placeholder="Please select a creator"
@@ -699,7 +699,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
               )}
               {isFanVideo && (
                 <>
-                  <Col lg={24} xs={24}>
+                  <Col span={24}>
                     <Form.Item label="Creator Name">
                       <Input
                         allowClear
@@ -710,14 +710,14 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                       />
                     </Form.Item>
                   </Col>
-                  <Col lg={24} xs={24}>
+                  <Col span={24}>
                     <Form.Item label="Creator Email">
                       <Input allowClear value={videoCreator?.user} disabled />
                     </Form.Item>
                   </Col>
                 </>
               )}
-              <Col lg={24} xs={24}>
+              <Col span={24}>
                 <Form.Item name="searchTags" label="Search Tags">
                   <ReactTagInput
                     tags={searchTags}
@@ -732,17 +732,17 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
           </Tabs.TabPane>
           <Tabs.TabPane forceRender tab="Descriptors" key="Descriptors">
             <Row gutter={8}>
-              <Col lg={24} xs={24}>
+              <Col span={24}>
                 <Form.Item name="description" label="Long description">
                   <RichTextEditor formField="description" form={feedForm} />
                 </Form.Item>
               </Col>
-              <Col lg={24} xs={24}>
+              <Col span={24}>
                 <Form.Item name="creatorHtml" label="Creator Descriptor">
                   <RichTextEditor formField="creatorHtml" form={feedForm} />
                 </Form.Item>
               </Col>
-              <Col lg={24} xs={24}>
+              <Col span={24}>
                 <Form.Item name="searchTags" label="Search Tags">
                   <Select
                     mode="tags"
@@ -823,7 +823,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
               </Col>
             </Row>
             <Row gutter={8}>
-              <Col lg={24} xs={24}>
+              <Col span={24}>
                 <Typography.Title level={4}>Target</Typography.Title>
               </Col>
               <Col lg={12} xs={24}>
@@ -1424,7 +1424,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                       </Form.Item>
                     </Col>
                   </Row>
-                  <Col lg={24} xs={24}>
+                  <Col span={24}>
                     <Form.Item label="Thumbnail URL">
                       <Upload.ImageUpload
                         type="thumbnail"
