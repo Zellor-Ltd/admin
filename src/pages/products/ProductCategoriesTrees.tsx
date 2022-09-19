@@ -53,7 +53,7 @@ const ProductCategoriesTrees: React.FC<ProductCategoriesTreesProps> = ({
             style={{ maxWidth: '1000px' }}
           >
             <ProductCategories
-              id={index === 0 ? id : ''}
+              id={id}
               productCategoryIndex={index}
               initialValues={_categories}
               allCategories={allCategories}
