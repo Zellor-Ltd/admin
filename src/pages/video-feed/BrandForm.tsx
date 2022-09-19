@@ -2,7 +2,7 @@
 import { Button, Col, Form, InputNumber, Row, Select } from 'antd';
 import { Brand } from 'interfaces/Brand';
 import { ProductBrand } from 'interfaces/ProductBrand';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useMount } from 'react-use';
 import { find } from 'lodash';
 
@@ -23,7 +23,7 @@ const BrandForm: React.FC<FormProps> = ({
   const [selectedProductBrand, setSelectedProductBrand] =
     useState<ProductBrand>();
   const [selectedLogo, setSelectedLogo] = useState(brand?.selectedLogo);
-  const loaded = useRef<boolean>(false);
+  const [loaded, setLoaded] = useState<boolean>(false);
 
   useEffect(() => {
     onChangeProductBrandLogo(form.getFieldValue('selectedLogo'));
@@ -49,7 +49,7 @@ const BrandForm: React.FC<FormProps> = ({
   };
 
   useMount(() => {
-    loaded.current = true;
+    setLoaded(true);
     if (brand?.productBrand?.id) {
       setSelectedProductBrand(
         find(productBrands, { id: brand.productBrand?.id })
@@ -106,7 +106,7 @@ const BrandForm: React.FC<FormProps> = ({
               showSearch
               allowClear
               placeholder="Please select a Store"
-              disabled={!loaded.current}
+              disabled={!loaded}
               filterOption={filterOption}
               onChange={(brandId: string) => onChangeBrand(brandId)}
             >
@@ -132,7 +132,7 @@ const BrandForm: React.FC<FormProps> = ({
               onChange={(productBrandName: string) =>
                 onChangeProductBrand(productBrandName)
               }
-              disabled={!loaded.current}
+              disabled={!loaded}
             >
               {productBrands.map(productBrand => (
                 <Select.Option key={productBrand.id} value={productBrand.id}>
@@ -148,7 +148,7 @@ const BrandForm: React.FC<FormProps> = ({
             label="Start Time"
             rules={[{ required: true }]}
           >
-            <InputNumber disabled={!loaded.current} placeholder="Start Time" />
+            <InputNumber disabled={!loaded} placeholder="Start Time" />
           </Form.Item>
         </Col>
         <Col lg={4} xs={24}>
@@ -158,7 +158,7 @@ const BrandForm: React.FC<FormProps> = ({
             rules={[{ required: true }]}
             initialValue={1}
           >
-            <InputNumber disabled={!loaded.current} placeholder="Opacity" />
+            <InputNumber disabled={!loaded} placeholder="Opacity" />
           </Form.Item>
         </Col>
         <Col lg={4} xs={24}>
@@ -167,7 +167,7 @@ const BrandForm: React.FC<FormProps> = ({
             label="Duration"
             rules={[{ required: true }]}
           >
-            <InputNumber disabled={!loaded.current} placeholder="Duration" />
+            <InputNumber disabled={!loaded} placeholder="Duration" />
           </Form.Item>
         </Col>
         <Col lg={4} xs={24}>
@@ -177,7 +177,7 @@ const BrandForm: React.FC<FormProps> = ({
             rules={[{ required: true }]}
             initialValue={0}
           >
-            <InputNumber disabled={!loaded.current} placeholder="Position X" />
+            <InputNumber disabled={!loaded} placeholder="Position X" />
           </Form.Item>
         </Col>
         <Col lg={4} xs={24}>
@@ -187,7 +187,7 @@ const BrandForm: React.FC<FormProps> = ({
             rules={[{ required: true }]}
             initialValue={0}
           >
-            <InputNumber disabled={!loaded.current} placeholder="Position Y" />
+            <InputNumber disabled={!loaded} placeholder="Position Y" />
           </Form.Item>
         </Col>
         <Col lg={4} xs={24}>
@@ -197,7 +197,7 @@ const BrandForm: React.FC<FormProps> = ({
             rules={[{ required: true }]}
             initialValue={1}
           >
-            <InputNumber disabled={!loaded.current} placeholder="Z Index" />
+            <InputNumber disabled={!loaded} placeholder="Z Index" />
           </Form.Item>
         </Col>
         <Col lg={12} xs={24}>
@@ -207,7 +207,7 @@ const BrandForm: React.FC<FormProps> = ({
               showSearch
               value={selectedLogo}
               placeholder="Please select a logo"
-              disabled={!loaded.current}
+              disabled={!loaded}
               onChange={onChangeProductBrandLogo}
               filterOption={filterOption}
             >
