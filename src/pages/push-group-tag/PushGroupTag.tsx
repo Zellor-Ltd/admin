@@ -323,17 +323,21 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
                 </Col>
               </Row>
             </Col>
-            <Col>
-              <Button
-                className={isMobile ? 'mt-1' : ''}
-                type="primary"
-                disabled={
-                  !selectedRowKeys.length || fetchingTags || !brands.length
-                }
-                onClick={selectTags}
-              >
-                Next
-              </Button>
+            <Col lg={8} xs={24}>
+              <Row justify="end">
+                <Col>
+                  <Button
+                    className={isMobile ? 'mt-1' : ''}
+                    type="primary"
+                    disabled={
+                      !selectedRowKeys.length || fetchingTags || !brands.length
+                    }
+                    onClick={selectTags}
+                  >
+                    Next
+                  </Button>
+                </Col>
+              </Row>
             </Col>
           </Row>
           <InfiniteScroll

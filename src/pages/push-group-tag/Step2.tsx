@@ -4,8 +4,7 @@ import { useRequest } from 'hooks/useRequest';
 import { FanGroup } from 'interfaces/FanGroup';
 import { SelectOption } from 'interfaces/SelectOption';
 import { Tag } from 'interfaces/Tag';
-import { useContext, useEffect, useState } from 'react';
-import { AppContext } from 'contexts/AppContext';
+import { useEffect, useState } from 'react';
 import { fetchFanGroups } from 'services/DiscoClubService';
 import { TagBox } from './TagBox';
 
@@ -15,7 +14,6 @@ interface Step2Props {
 }
 
 const Step2: React.FC<Step2Props> = ({ selectedTags, onReturn }) => {
-  const { isMobile } = useContext(AppContext);
   const [selectedFanGroup, setSelectedFanGroup] = useState<FanGroup>();
   const [fanGroups, setFanGroups] = useState<FanGroup[]>([]);
   const { doFetch } = useRequest();
@@ -45,27 +43,28 @@ const Step2: React.FC<Step2Props> = ({ selectedTags, onReturn }) => {
   return (
     <>
       <PageHeader title="Push Notifications - Tags" />
-      <Row gutter={[8, 8]} justify={isMobile ? 'end' : undefined}>
+      <Row
+        gutter={[8, 8]}
+        justify="space-between"
+        align="bottom"
+        className="mr-1 ml-1"
+      >
         <Col lg={12} xs={24}>
-          <Typography.Title className="mx-1" level={5}>
-            Fan Group Filter
-          </Typography.Title>
+          <Typography.Title level={5}>Fan Group Filter</Typography.Title>
           <SimpleSelect
             showSearch
             data={fanGroups}
             onChange={(_, fanGroup) => handleFanGroupChange(fanGroup)}
-            style={{ width: '92%' }}
+            style={{ width: '100%' }}
             selectedOption={selectedFanGroup?.name}
             optionMapping={fanGroupMapping}
             placeholder="Select a Fan Group"
             disabled={!fanGroups.length}
+            className="mb-1"
             allowClear
-            className="mx-1 mb-1"
           ></SimpleSelect>
-        </Col>
-        <Col span={24}>
           {selectedFanGroup && (
-            <div className="mx-1">
+            <div>
               {selectedTags.map(tag => (
                 <TagBox
                   key={tag.id}
@@ -76,16 +75,14 @@ const Step2: React.FC<Step2Props> = ({ selectedTags, onReturn }) => {
             </div>
           )}
         </Col>
-      </Row>
-      <Row justify="end">
-        <Col>
-          <Button
-            type="default"
-            onClick={() => onReturn?.()}
-            className="mx-1 mb-1"
-          >
-            Back
-          </Button>
+        <Col lg={12} xs={24}>
+          <Row justify="end">
+            <Col>
+              <Button type="default" onClick={() => onReturn?.()}>
+                Back
+              </Button>
+            </Col>
+          </Row>
         </Col>
       </Row>
     </>
