@@ -48,12 +48,21 @@ const FanGroupDropdown: React.FC<FanGroupDropdownProps> = ({
     setAddFanGroupField(event.target.value);
   };
 
+  const filterOption = (input: string, option: any) => {
+    return !!option?.children
+      ?.toString()
+      ?.toUpperCase()
+      .includes(input?.toUpperCase());
+  };
+
   return (
     <Form.Item label="Group">
       <Select
         style={style}
         placeholder="Group"
         allowClear
+        showSearch
+        filterOption={filterOption}
         onChange={(value = '') => {
           setSelectedFanGroup(String(value));
           form.setFieldsValue({ group: String(value) });
@@ -72,6 +81,7 @@ const FanGroupDropdown: React.FC<FanGroupDropdownProps> = ({
               }}
             >
               <Input
+                allowClear
                 style={{ flex: 'auto', marginRight: '6px' }}
                 value={addFanGroupField}
                 onChange={onFanGroupChange}

@@ -162,6 +162,7 @@ const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
         <Col lg={4} xs={8}>
           <Form.Item name="productBrand" label="Product Brand">
             <SimpleSelect
+              showSearch
               data={productBrands}
               onChange={(value, brand) =>
                 updateForm(value, brand, 'productBrand')
@@ -173,7 +174,7 @@ const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
                   : record.productBrand?.brandName
               }
               optionMapping={optionMapping}
-              placeholder={'Select a brand'}
+              placeholder="Select a Brand"
               loading={false}
               disabled={false}
               allowClear

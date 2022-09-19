@@ -336,12 +336,13 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
               </Button>,
             ]}
           />
-          <Row gutter={8} className="mb-1 sticky-filter-box">
+          <Row gutter={8} className="mb-05 sticky-filter-box">
             <Col lg={4} xs={24}>
               <Typography.Title level={5} title="Search">
                 Search
               </Typography.Title>
               <Input
+                allowClear
                 disabled={loading}
                 onChange={onChangeFilter}
                 placeholder="Search by Name"

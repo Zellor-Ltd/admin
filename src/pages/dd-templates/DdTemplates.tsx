@@ -221,14 +221,14 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
               </Button>,
             ]}
           />
-          <Row gutter={8} className={'sticky-filter-box'}>
+          <Row gutter={8} className="sticky-filter-box mb-05">
             <Col lg={4} xs={24}>
               <Typography.Title level={5}>Search</Typography.Title>
               <Input
+                allowClear
                 disabled={loading}
                 placeholder="Search by Tag Name"
                 suffix={<SearchOutlined />}
-                className="mb-1"
                 value={filter}
                 onChange={event => {
                   setFilter(event.target.value);

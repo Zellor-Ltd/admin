@@ -2,13 +2,13 @@
 import { Button, Col, Form, InputNumber, Row, Select } from 'antd';
 import { Brand } from 'interfaces/Brand';
 import { ProductBrand } from 'interfaces/ProductBrand';
-import { useEffect, useState } from 'react';
-import { fetchProductBrands } from 'services/DiscoClubService';
+import { useEffect, useRef, useState } from 'react';
 import { useMount } from 'react-use';
 import { find } from 'lodash';
 
 interface FormProps {
   brands: Brand[];
+  productBrands: ProductBrand[];
   brand: Brand | undefined;
   setShowBrandForm: (value: boolean) => void;
 }
@@ -17,13 +17,13 @@ const BrandForm: React.FC<FormProps> = ({
   brand,
   setShowBrandForm,
   brands,
+  productBrands,
 }) => {
   const [form] = Form.useForm();
   const [selectedProductBrand, setSelectedProductBrand] =
     useState<ProductBrand>();
-  const [isFetchingProductBrands, setIsFetchingProductBrands] = useState(false);
   const [selectedLogo, setSelectedLogo] = useState(brand?.selectedLogo);
-  const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
+  const loaded = useRef<boolean>(false);
 
   useEffect(() => {
     onChangeProductBrandLogo(form.getFieldValue('selectedLogo'));
@@ -49,20 +49,13 @@ const BrandForm: React.FC<FormProps> = ({
   };
 
   useMount(() => {
-    getProductBrands().then();
+    loaded.current = true;
+    if (brand?.productBrand?.id) {
+      setSelectedProductBrand(
+        find(productBrands, { id: brand.productBrand?.id })
+      );
+    }
   });
-
-  const getProductBrands = async () => {
-    try {
-      setIsFetchingProductBrands(true);
-      const { results }: any = await fetchProductBrands();
-      if (brand?.productBrand?.id) {
-        setSelectedProductBrand(find(results, { id: brand.productBrand?.id }));
-      }
-      setProductBrands(results);
-      setIsFetchingProductBrands(false);
-    } catch (e) {}
-  };
 
   const onChangeProductBrandLogo = (
     productBrandKey: 'whiteLogo' | 'colourLogo' | 'blackLogo' | 'brandName' | ''
@@ -97,19 +90,24 @@ const BrandForm: React.FC<FormProps> = ({
     setSelectedLogo(productBrandKey);
   };
 
+  const filterOption = (input: string, option: any) => {
+    return !!option?.children
+      ?.toString()
+      ?.toUpperCase()
+      .includes(input?.toUpperCase());
+  };
+
   return (
     <Form name="brandForm" form={form} initialValues={brand} layout="vertical">
       <Row gutter={8}>
-        <Col lg={24} xs={24}>
+        <Col span={24}>
           <Form.Item name="id" label="Store" rules={[{ required: true }]}>
             <Select
               showSearch
-              filterOption={(input, option) =>
-                !!option?.children
-                  ?.toString()
-                  ?.toUpperCase()
-                  .includes(input?.toUpperCase())
-              }
+              allowClear
+              placeholder="Please select a Store"
+              disabled={!loaded.current}
+              filterOption={filterOption}
               onChange={(brandId: string) => onChangeBrand(brandId)}
             >
               {brands.map(brand => (
@@ -120,7 +118,7 @@ const BrandForm: React.FC<FormProps> = ({
             </Select>
           </Form.Item>
         </Col>
-        <Col lg={24} xs={24}>
+        <Col span={24}>
           <Form.Item
             name={['productBrand', 'id']}
             label="Product Brand"
@@ -128,17 +126,13 @@ const BrandForm: React.FC<FormProps> = ({
           >
             <Select
               showSearch
-              filterOption={(input, option) =>
-                !!option?.children
-                  ?.toString()
-                  ?.toUpperCase()
-                  .includes(input?.toUpperCase())
-              }
+              allowClear
+              placeholder="Please select a Product Brand"
+              filterOption={filterOption}
               onChange={(productBrandName: string) =>
                 onChangeProductBrand(productBrandName)
               }
-              loading={isFetchingProductBrands}
-              disabled={isFetchingProductBrands}
+              disabled={!loaded.current}
             >
               {productBrands.map(productBrand => (
                 <Select.Option key={productBrand.id} value={productBrand.id}>
@@ -149,13 +143,73 @@ const BrandForm: React.FC<FormProps> = ({
           </Form.Item>
         </Col>
         <Col lg={4} xs={24}>
+          <Form.Item
+            name={['position', 0, 'startTime']}
+            label="Start Time"
+            rules={[{ required: true }]}
+          >
+            <InputNumber disabled={!loaded.current} placeholder="Start Time" />
+          </Form.Item>
+        </Col>
+        <Col lg={4} xs={24}>
+          <Form.Item
+            name={['position', 0, 'opacity']}
+            label="Opacity"
+            rules={[{ required: true }]}
+            initialValue={1}
+          >
+            <InputNumber disabled={!loaded.current} placeholder="Opacity" />
+          </Form.Item>
+        </Col>
+        <Col lg={4} xs={24}>
+          <Form.Item
+            name={['position', 0, 'duration']}
+            label="Duration"
+            rules={[{ required: true }]}
+          >
+            <InputNumber disabled={!loaded.current} placeholder="Duration" />
+          </Form.Item>
+        </Col>
+        <Col lg={4} xs={24}>
+          <Form.Item
+            name={['position', 0, 'x']}
+            label="Position X"
+            rules={[{ required: true }]}
+            initialValue={0}
+          >
+            <InputNumber disabled={!loaded.current} placeholder="Position X" />
+          </Form.Item>
+        </Col>
+        <Col lg={4} xs={24}>
+          <Form.Item
+            name={['position', 0, 'y']}
+            label="Position Y"
+            rules={[{ required: true }]}
+            initialValue={0}
+          >
+            <InputNumber disabled={!loaded.current} placeholder="Position Y" />
+          </Form.Item>
+        </Col>
+        <Col lg={4} xs={24}>
+          <Form.Item
+            name={['position', 0, 'z']}
+            label="Z Index"
+            rules={[{ required: true }]}
+            initialValue={1}
+          >
+            <InputNumber disabled={!loaded.current} placeholder="Z Index" />
+          </Form.Item>
+        </Col>
+        <Col lg={12} xs={24}>
           <Form.Item name="selectedLogo" label="Product Brand logo">
             <Select
+              allowClear
+              showSearch
               value={selectedLogo}
               placeholder="Please select a logo"
-              loading={isFetchingProductBrands}
-              disabled={isFetchingProductBrands}
+              disabled={!loaded.current}
               onChange={onChangeProductBrandLogo}
+              filterOption={filterOption}
             >
               {selectedProductBrand?.whiteLogo?.url && (
                 <Select.Option value="whiteLogo">White</Select.Option>
@@ -172,64 +226,6 @@ const BrandForm: React.FC<FormProps> = ({
               )}
               <Select.Option value="">None</Select.Option>
             </Select>
-          </Form.Item>
-        </Col>
-        <Col lg={4} xs={24}>
-          <Form.Item
-            name={['position', 0, 'startTime']}
-            label="Start Time"
-            rules={[{ required: true }]}
-          >
-            <InputNumber />
-          </Form.Item>
-        </Col>
-        <Col lg={4} xs={24}>
-          <Form.Item
-            name={['position', 0, 'opacity']}
-            label="Opacity"
-            rules={[{ required: true }]}
-            initialValue={1}
-          >
-            <InputNumber />
-          </Form.Item>
-        </Col>
-        <Col lg={4} xs={24}>
-          <Form.Item
-            name={['position', 0, 'duration']}
-            label="duration"
-            rules={[{ required: true }]}
-          >
-            <InputNumber />
-          </Form.Item>
-        </Col>
-        <Col lg={4} xs={24}>
-          <Form.Item
-            name={['position', 0, 'x']}
-            label="Position X"
-            rules={[{ required: true }]}
-            initialValue={0}
-          >
-            <InputNumber />
-          </Form.Item>
-        </Col>
-        <Col lg={4} xs={24}>
-          <Form.Item
-            name={['position', 0, 'y']}
-            label="position Y"
-            rules={[{ required: true }]}
-            initialValue={0}
-          >
-            <InputNumber />
-          </Form.Item>
-        </Col>
-        <Col lg={4} xs={24}>
-          <Form.Item
-            name={['position', 0, 'z']}
-            label="Z Index"
-            rules={[{ required: true }]}
-            initialValue={1}
-          >
-            <InputNumber />
           </Form.Item>
         </Col>
       </Row>

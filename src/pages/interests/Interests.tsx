@@ -104,6 +104,7 @@ const Interests: React.FC<InterestsProps> = () => {
     }) => (
       <div style={{ padding: 8 }}>
         <Input
+          allowClear
           ref={searchInput}
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
@@ -252,9 +253,10 @@ const Interests: React.FC<InterestsProps> = () => {
 
   return (
     <div className="interests">
-      <PageHeader title="Interests" className={isMobile ? 'mb-n1' : ''} />
-      <Row className="sticky-filter-box">
-        <Col>
+      <PageHeader
+        title="Interests"
+        className={isMobile ? 'mb-n1' : ''}
+        extra={[
           <Button
             onClick={saveChanges}
             style={{
@@ -264,14 +266,12 @@ const Interests: React.FC<InterestsProps> = () => {
             }}
           >
             Save Changes
-          </Button>
-        </Col>
+          </Button>,
+        ]}
+      />
+      <Row className="tab-page">
         <Col span={24}>
-          <Tabs
-            className="mt-05"
-            defaultActiveKey="Interests"
-            onChange={handleTabChange}
-          >
+          <Tabs defaultActiveKey="Interests" onChange={handleTabChange}>
             <Tabs.TabPane tab="Interests" key="Interests">
               <SortableTable
                 scroll={{ x: true }}

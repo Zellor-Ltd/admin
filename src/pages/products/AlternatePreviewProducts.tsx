@@ -313,7 +313,7 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
         prevRecord['image'] !== nextRecord['image'],
       render: (_, record) => {
         return (
-          <Form.Item className={'mb-0 mt-1'}>
+          <Form.Item className="mb-0 mt-1">
             <Upload.ImageUpload
               type="image"
               maxCount={20}
@@ -348,6 +348,7 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
           className="repositioned-grid-item"
         >
           <Input
+            allowClear
             onChange={event => (record.variantId = event.target.value)}
             placeholder="Variant ID"
             defaultValue={value}
@@ -377,7 +378,6 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
                 viewPicker && (
                   <div onBlur={() => (viewPicker.current = false)}>
                     <SketchPicker
-                      className="mt-1"
                       color={record.colour ?? '#FFFFFF'}
                       disableAlpha
                       onChange={selectedColour =>
@@ -429,6 +429,7 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
           className="repositioned-grid-item"
         >
           <Input
+            allowClear
             onChange={event => (record.colourTitle = event.target.value)}
             placeholder="Colour name"
             defaultValue={value}
@@ -449,6 +450,7 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
           className="repositioned-grid-item"
         >
           <Input
+            allowClear
             onChange={event => (record.size = event.target.value)}
             placeholder="Size"
             defaultValue={value}

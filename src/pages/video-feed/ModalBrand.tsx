@@ -50,13 +50,20 @@ const ModalBrand: React.FC<ModalFormProps> = ({ brand, visible, onCancel }) => {
     setselectedBrand(brands.find(brand => brand.id === key));
   };
 
+  const filterOption = (input: string, option: any) => {
+    return !!option?.children
+      ?.toString()
+      ?.toUpperCase()
+      .includes(input?.toUpperCase());
+  };
+
   return (
     <Modal
       title="Brand"
       visible={visible}
       onOk={onOk}
       onCancel={onCancel}
-      width={'80%'}
+      width="80%"
       okButtonProps={{ loading: loading }}
       forceRender
     >
@@ -70,7 +77,13 @@ const ModalBrand: React.FC<ModalFormProps> = ({ brand, visible, onCancel }) => {
           <Row gutter={8}>
             <Col lg={6} xs={0}>
               <Form.Item name="brandName" label="Brand">
-                <Select onChange={onChangeBrand}>
+                <Select
+                  onChange={onChangeBrand}
+                  allowClear
+                  showSearch
+                  filterOption={filterOption}
+                  placeholder="Brand"
+                >
                   {brands.map(brand => (
                     <Select.Option key={brand.id} value={brand.id}>
                       {brand.brandName}

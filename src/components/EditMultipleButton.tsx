@@ -14,6 +14,7 @@ interface EditProductsButtonProps {
   selectedRowKeys: any[];
   onOk: Function;
   ModalComponent: React.FC<EditMultipleModalProps<any>>;
+  style?: any;
 }
 
 const EditMultipleButton: React.FC<EditProductsButtonProps> = ({
@@ -22,6 +23,7 @@ const EditMultipleButton: React.FC<EditProductsButtonProps> = ({
   selectedRowKeys,
   onOk,
   ModalComponent,
+  style,
 }) => {
   const [showEditProductModal, setShowEditProductModal] =
     useState<boolean>(false);
@@ -43,7 +45,7 @@ const EditMultipleButton: React.FC<EditProductsButtonProps> = ({
   };
 
   return (
-    <div className="mb-1">
+    <div className="mb-1" style={style}>
       <Button
         type="primary"
         onClick={() => setShowEditProductModal(true)}

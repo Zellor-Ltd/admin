@@ -85,7 +85,7 @@ const PromoDisplaysDetail: React.FC<PromoDisplayDetailProps> = ({
         onFinishFailed={({ errorFields }) => handleFinishFailed(errorFields)}
       >
         <Row>
-          <Col lg={24} xs={24}>
+          <Col span={24}>
             <Form.Item label="Display HTML">
               <RichTextEditor
                 formField="displayHtml"
@@ -123,6 +123,7 @@ const PromoDisplaysDetail: React.FC<PromoDisplayDetailProps> = ({
           <Col lg={8} xs={24}>
             <Form.Item label="Super Category" name="superCategoryId">
               <SimpleSelect
+                showSearch
                 data={allCategories['Super Category'].filter(item => {
                   return (
                     item.superCategory === 'Women' ||
@@ -132,7 +133,7 @@ const PromoDisplaysDetail: React.FC<PromoDisplayDetailProps> = ({
                 style={{ width: '100%' }}
                 selectedOption={promoDisplay?.superCategoryId}
                 optionMapping={optionMapping}
-                placeholder={'Select a Super Category'}
+                placeholder="Select a Super Category"
                 loading={fetchingCategories}
                 disabled={fetchingCategories}
                 allowClear

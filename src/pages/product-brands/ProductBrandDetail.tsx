@@ -243,6 +243,13 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
     setAgeRange(value);
   };
 
+  const filterOption = (input: string, option: any) => {
+    return !!option?.children
+      ?.toString()
+      ?.toUpperCase()
+      .includes(input?.toUpperCase());
+  };
+
   return (
     <>
       <PageHeader
@@ -280,12 +287,16 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                         },
                       ]}
                     >
-                      <Input id="brandName" />
+                      <Input
+                        allowClear
+                        id="brandName"
+                        placeholder="Product Brand Name"
+                      />
                     </Form.Item>
                   </Col>
                   <Col lg={12} xs={24}>
                     <Form.Item label="External Code" name="externalCode">
-                      <Input />
+                      <Input allowClear placeholder="External Code" />
                     </Form.Item>
                   </Col>
                   <Col span={24}>
@@ -299,12 +310,12 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                   </Col>
                   <Col lg={12} xs={24}>
                     <Form.Item label="Home URL" name="homeUrl">
-                      <Input placeholder="Home URL" allowClear />
+                      <Input allowClear placeholder="Home URL" />
                     </Form.Item>
                   </Col>
                   <Col lg={12} xs={24}>
                     <Form.Item name="apiBrand" label="API Brand">
-                      <Input placeholder="API Brand" />
+                      <Input allowClear placeholder="API Brand" />
                     </Form.Item>
                   </Col>
                   <Col lg={12} xs={24}>
@@ -324,12 +335,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                         style={{ width: '100%' }}
                         allowClear
                         showSearch
-                        filterOption={(input, option) =>
-                          !!option?.children
-                            ?.toString()
-                            ?.toUpperCase()
-                            .includes(input?.toUpperCase())
-                        }
+                        filterOption={filterOption}
                       >
                         {brands.map((curr: any) => (
                           <Select.Option key={curr.id} value={curr.id}>
@@ -354,6 +360,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                         id="discoPercentage"
                         pattern="^((1[0-9][0-9])|([0-9]{1,2}))$"
                         title="Positive integers."
+                        placeholder="Disco %"
                       />
                     </Form.Item>
                   </Col>
@@ -363,6 +370,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                         id="creatorPercentage"
                         pattern="^((1[0-9][0-9])|([0-9]{1,2}))$"
                         title="Positive integers."
+                        placeholder="Creator %"
                         onChange={input =>
                           handleCreatorPercentageChange(input as number)
                         }
@@ -397,6 +405,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                         id="maxDiscoDollarPercentage"
                         pattern="^((1[0-9][0-9])|([0-9]{1,2}))$"
                         title="Positive integers."
+                        placeholder="Max Disco Dollar %"
                       />
                     </Form.Item>
                   </Col>
@@ -429,29 +438,53 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
             </Tabs.TabPane>
             <Tabs.TabPane forceRender tab="Social" key="Social">
               <Row gutter={8}>
-                <Col lg={24} xs={24}>
+                <Col span={24}>
                   <Typography.Title level={4}>Social Channels</Typography.Title>
                 </Col>
               </Row>
               <Row>
-                <Col lg={8} xs={24}>
+                <Col lg={12} xs={24}>
                   <Form.Item name="instagram" label="Instagram">
-                    <Input prefix={<InstagramFilled />} />
+                    <Input
+                      allowClear
+                      prefix={<InstagramFilled />}
+                      placeholder="Instagram"
+                    />
                   </Form.Item>
                   <Form.Item name="facebook" label="Facebook">
-                    <Input prefix={<FacebookFilled />} />
+                    <Input
+                      allowClear
+                      prefix={<FacebookFilled />}
+                      placeholder="Facebook"
+                    />
                   </Form.Item>
                   <Form.Item name="tiktok" label="TikTok">
-                    <Input prefix={<SoundFilled />} />
+                    <Input
+                      allowClear
+                      prefix={<SoundFilled />}
+                      placeholder="TikTok"
+                    />
                   </Form.Item>
                   <Form.Item name="youtube" label="Youtube">
-                    <Input prefix={<YoutubeFilled />} />
+                    <Input
+                      allowClear
+                      prefix={<YoutubeFilled />}
+                      placeholder="Youtube"
+                    />
                   </Form.Item>
                   <Form.Item name="website" label="Website">
-                    <Input prefix={<GlobalOutlined />} />
+                    <Input
+                      allowClear
+                      prefix={<GlobalOutlined />}
+                      placeholder="Website"
+                    />
                   </Form.Item>
                   <Form.Item name="twitter" label="Twitter">
-                    <Input prefix={<TwitterCircleFilled />} />
+                    <Input
+                      allowClear
+                      prefix={<TwitterCircleFilled />}
+                      placeholder="Twitter"
+                    />
                   </Form.Item>
                 </Col>
               </Row>
@@ -479,7 +512,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                 handleCategoryChange={handleCategoryChange}
                 handleCategoryDelete={handleCategoryDelete}
               />
-              <Col lg={24} xs={24}>
+              <Col span={24}>
                 <Form.Item
                   shouldUpdate={(prevValues, curValues) =>
                     prevValues.category !== curValues.category
@@ -487,7 +520,13 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                 >
                   {({ getFieldValue }) => (
                     <Form.Item name={'searchTags'} label="Search Tags">
-                      <Select mode="tags" className="product-search-tags">
+                      <Select
+                        mode="tags"
+                        className="product-search-tags"
+                        filterOption={filterOption}
+                        allowClear
+                        showSearch
+                      >
                         {getFieldValue('searchTags')?.map((searchTag: any) => (
                           <Select.Option key={searchTag} value={searchTag}>
                             {searchTag}
@@ -499,10 +538,10 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                 </Form.Item>
               </Col>
               <Row gutter={8}>
-                <Col lg={24} xs={24}>
+                <Col span={24}>
                   <Typography.Title level={4}>Target</Typography.Title>
                 </Col>
-                <Col lg={24} xs={24}>
+                <Col span={24}>
                   <Form.Item label="Age Range">
                     <Slider
                       range
@@ -516,13 +555,20 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                 </Col>
               </Row>
               <Row gutter={8}>
-                <Col lg={24} xs={24}>
+                <Col span={24}>
                   <Form.Item
                     name="gender"
                     label="Gender"
                     rules={[{ required: true, message: 'Gender is required.' }]}
                   >
-                    <Select mode="multiple" id="gender">
+                    <Select
+                      mode="multiple"
+                      id="gender"
+                      filterOption={filterOption}
+                      allowClear
+                      showSearch
+                      placeholder="Gender"
+                    >
                       <Select.Option value="Female">Female</Select.Option>
                       <Select.Option value="Male">Male</Select.Option>
                       <Select.Option value="Other">Other</Select.Option>

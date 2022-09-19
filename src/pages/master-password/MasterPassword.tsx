@@ -33,7 +33,7 @@ const MasterPassword: React.FC<RouteComponentProps> = () => {
           <Row gutter={8} justify={isMobile ? 'end' : 'start'}>
             <Col lg={4} xs={24}>
               <Form.Item label="ID" name="id" rules={[{ required: true }]}>
-                <Input placeholder="Enter ID" />
+                <Input allowClear placeholder="Enter ID" />
               </Form.Item>
             </Col>
             <Col lg={6} xs={24}>

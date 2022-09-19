@@ -46,17 +46,17 @@ const InterfaceDetail: React.FC<RouteComponentProps> = props => {
         <Row gutter={8}>
           <Col lg={6} xs={24}>
             <Form.Item label="Unique ID" name="uniqueId">
-              <Input />
+              <Input allowClear />
             </Form.Item>
           </Col>
           <Col lg={6} xs={24}>
             <Form.Item label="Name" name="name">
-              <Input />
+              <Input allowClear />
             </Form.Item>
           </Col>
           <Col lg={6} xs={24}>
             <Form.Item label="Source" name="source">
-              <Input />
+              <Input allowClear />
             </Form.Item>
           </Col>
 

@@ -142,34 +142,27 @@ const WalletDetail: React.FC<WalletDetailProps> = ({
         }
       />
       <Row align="bottom" justify="space-between">
-        <Col lg={24} xs={24}>
-          <Row gutter={8}>
-            <Col lg={6} xs={12}>
-              <Typography.Text strong>Fan: {initial.fan.user}</Typography.Text>
-            </Col>
-            <Col lg={6} xs={12}>
-              <Typography.Text strong>
-                Master Brand: {initial.brand.name}
-              </Typography.Text>
-            </Col>
-          </Row>
-          <Row justify="space-between">
-            <Col lg={20} xs={12}>
-              <WalletEdit
-                disabled={loading}
-                fanId={initial.fan.id}
-                brandId={initial.brand.id}
-                wallet={initial as unknown as Wallet}
-                onSave={onSaveWallet}
-                onReset={onResetWallet}
-              />
-            </Col>
-            <Col>
-              <Button type="primary" onClick={() => onCancel?.()}>
-                Go Back
-              </Button>
-            </Col>
-          </Row>
+        <Col span={24}>
+          <Col>
+            <Typography.Text>
+              Fan: {initial.fan.user} | Master Brand: {initial.brand.name}
+            </Typography.Text>
+          </Col>
+          <Col lg={20} xs={12}>
+            <WalletEdit
+              disabled={loading}
+              fanId={initial.fan.id}
+              brandId={initial.brand.id}
+              wallet={initial as unknown as Wallet}
+              onSave={onSaveWallet}
+              onReset={onResetWallet}
+            />
+          </Col>
+        </Col>
+        <Col>
+          <Button type="primary" onClick={() => onCancel?.()}>
+            Go Back
+          </Button>
         </Col>
       </Row>
       <Table

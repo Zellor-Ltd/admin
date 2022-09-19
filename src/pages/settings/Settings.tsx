@@ -51,7 +51,7 @@ const Settings: React.FC = () => {
         className={isMobile ? 'mb-n1' : ''}
         subTitle={isMobile ? '' : 'Configuration'}
       />
-      <Row className={isMobile ? 'sticky-filter-box' : ''}>
+      <Row className="tab-page">
         <Col>
           <Form
             form={form}
@@ -135,7 +135,7 @@ const ItemList: React.FC<ItemListProp> = ({ name, isMobile }) => (
                 fieldKey={[field.key, 'name']}
                 label="Name"
               >
-                <Input />
+                <Input allowClear placeholder="Name" />
               </Form.Item>
             </Col>
             <Col lg={12} xs={24}>
@@ -156,7 +156,7 @@ const ItemList: React.FC<ItemListProp> = ({ name, isMobile }) => (
                 name={[field.name, 'value']}
                 fieldKey={[field.key, 'value']}
               >
-                <Input />
+                <Input allowClear placeholder="Value" />
               </Form.Item>
             </Col>
           </Row>

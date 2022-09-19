@@ -126,6 +126,13 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
     }
   };
 
+  const filterOption = (input: string, option: any) => {
+    return !!option?.children
+      ?.toString()
+      ?.toUpperCase()
+      .includes(input?.toUpperCase());
+  };
+
   return (
     <Form
       form={form}
@@ -147,7 +154,7 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
 
       <Row gutter={8}>
         <Col lg={6} xs={24}>
-          <Col lg={24} xs={24}>
+          <Col span={24}>
             <Form.Item label="Video">
               <Upload.VideoUpload
                 fileList={segment?.video}
@@ -156,7 +163,7 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
               />
             </Form.Item>
           </Col>
-          <Col lg={24} xs={24}>
+          <Col span={24}>
             <Form.Item label="Thumbnail URL">
               <Upload.ImageUpload
                 type="thumbnail"
@@ -168,10 +175,10 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
           </Col>
         </Col>
         <Col lg={18} xs={24}>
-          <Col lg={24} xs={24}>
+          <Col span={24}>
             <Typography.Title level={4}>Brands</Typography.Title>
           </Col>
-          <Col lg={24} xs={24}>
+          <Col span={24}>
             <Form.List name="brands">
               {(fields, { add, remove }) => (
                 <div>
@@ -210,13 +217,9 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                           rules={[{ required: true }]}
                         >
                           <Select
+                            allowClear
                             showSearch
-                            filterOption={(input, option) =>
-                              !!option?.value
-                                ?.toString()
-                                ?.toUpperCase()
-                                .includes(input?.toUpperCase())
-                            }
+                            filterOption={filterOption}
                             onChange={(key: string) =>
                               onChangeBrand(key, field.name)
                             }
@@ -249,6 +252,9 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                                   onChange={(key: string) =>
                                     onChangeLogo(key, field.name)
                                   }
+                                  filterOption={filterOption}
+                                  allowClear
+                                  showSearch
                                 >
                                   {bra.brandLogo?.url && (
                                     <Select.Option value="brandLogo">
@@ -349,10 +355,10 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
               )}
             </Form.List>
           </Col>
-          <Col lg={24} xs={24}>
+          <Col span={24}>
             <Typography.Title level={4}>Tags</Typography.Title>
           </Col>
-          <Col lg={24} xs={24}>
+          <Col span={24}>
             <Form.List name="tags">
               {(fields, { add, remove }) => (
                 <div>
@@ -381,12 +387,7 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                           <Select
                             showSearch
                             allowClear
-                            filterOption={(input, option) =>
-                              !!option?.value
-                                ?.toString()
-                                ?.toUpperCase()
-                                .includes(input?.toUpperCase())
-                            }
+                            filterOption={filterOption}
                             loading={loading}
                             onChange={v => handleBrandFilter(v, index)}
                             value={selectedFilterBrands[index]}
@@ -410,6 +411,9 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                               onChangeTag(key, field.name, index)
                             }
                             loading={loading}
+                            filterOption={filterOption}
+                            allowClear
+                            showSearch
                           >
                             {(filteredTags[index]
                               ? filteredTags[index]

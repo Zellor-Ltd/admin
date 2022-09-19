@@ -51,8 +51,11 @@ const SimpleSelect: React.FC<SimpleSelectProps> = ({
     _setSelectedOption(selectedOption);
   }, [selectedOption]);
 
-  const _onSearch = (input: any, option: any) => {
-    return option.label?.toUpperCase().includes(input?.toUpperCase());
+  const _filterOption = (input: string, option: any) => {
+    return !!option?.children
+      ?.toString()
+      ?.toUpperCase()
+      .includes(input?.toUpperCase());
   };
 
   const _onChange = (value: string) => {
@@ -70,12 +73,12 @@ const SimpleSelect: React.FC<SimpleSelectProps> = ({
       style={style}
       onChange={_onChange}
       options={options}
-      allowClear={allowClear}
+      allowClear
       value={_selectedOption}
       loading={loading}
       disabled={disabled}
-      showSearch={showSearch}
-      filterOption={_onSearch}
+      showSearch
+      filterOption={_filterOption}
       className={className}
     ></Select>
   );

@@ -28,7 +28,7 @@ import './VideoFeed.scss';
 import './VideoFeedDetail.scss';
 import moment from 'moment';
 import { useRequest } from 'hooks/useRequest';
-import VideoFeedDetailV2 from './VideoFeedDetailV2';
+import VideoFeedDetail from './VideoFeedDetail';
 
 const { Content } = Layout;
 
@@ -44,7 +44,6 @@ const FeedTemplates: React.FC<RouteComponentProps> = () => {
   const [details, setDetails] = useState<boolean>(false);
   const [creators, setCreators] = useState<Creator[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
-  const [isFetchingProductBrands, setIsFetchingProductBrands] = useState(false);
   const [productBrands, setProductBrands] = useState([]);
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [loaded, setLoaded] = useState<boolean>(false);
@@ -176,10 +175,8 @@ const FeedTemplates: React.FC<RouteComponentProps> = () => {
       setBrands(response.results);
     }
     async function getProductBrands() {
-      setIsFetchingProductBrands(true);
       const response: any = await fetchProductBrands();
       setProductBrands(response.results);
-      setIsFetchingProductBrands(false);
     }
     await Promise.all([getcreators(), getBrands(), getProductBrands()]);
   };
@@ -229,6 +226,7 @@ const FeedTemplates: React.FC<RouteComponentProps> = () => {
           <Content>
             <Table
               scroll={{ x: true }}
+              className="mt-1"
               rowClassName={(_, index) =>
                 `${index === lastViewedIndex ? 'selected-row' : ''}`
               }
@@ -242,14 +240,13 @@ const FeedTemplates: React.FC<RouteComponentProps> = () => {
         </div>
       )}
       {details && (
-        <VideoFeedDetailV2
+        <VideoFeedDetail
           onSave={onSaveItem}
           onCancel={onCancelItem}
           feedItem={selectedFeedTemplate}
           brands={brands}
           creators={creators}
           productBrands={productBrands}
-          isFetchingProductBrand={isFetchingProductBrands}
           setDetails={setDetails}
           template
         />

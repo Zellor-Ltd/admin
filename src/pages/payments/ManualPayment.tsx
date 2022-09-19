@@ -68,6 +68,13 @@ const ManualPayment: React.FC<ManualPaymentProps> = ({
     setManualPayment(false);
   };
 
+  const filterOption = (input: string, option: any) => {
+    return !!option?.children
+      ?.toString()
+      ?.toUpperCase()
+      .includes(input?.toUpperCase());
+  };
+
   return (
     <>
       <PageHeader
@@ -83,7 +90,7 @@ const ManualPayment: React.FC<ManualPaymentProps> = ({
       >
         <Row gutter={[8, 8]}>
           <Col lg={12} xs={24}>
-            <Col lg={16} xs={24}>
+            <Col span={24}>
               <Form.Item
                 name="creatorId"
                 label="Creator"
@@ -98,12 +105,7 @@ const ManualPayment: React.FC<ManualPaymentProps> = ({
                   showSearch
                   allowClear
                   disabled={!creators.length}
-                  filterOption={(input, option) =>
-                    !!option?.children
-                      ?.toString()
-                      ?.toUpperCase()
-                      .includes(input?.toUpperCase())
-                  }
+                  filterOption={filterOption}
                 >
                   {creators.map((curr: any) => (
                     <Select.Option key={curr.id} value={curr.id}>
@@ -113,7 +115,7 @@ const ManualPayment: React.FC<ManualPaymentProps> = ({
                 </Select>
               </Form.Item>
             </Col>
-            <Col lg={16} xs={24}>
+            <Col span={24}>
               <Form.Item
                 name="description"
                 label="Description"
@@ -124,10 +126,10 @@ const ManualPayment: React.FC<ManualPaymentProps> = ({
                   },
                 ]}
               >
-                <Input id="description" placeholder="Description" />
+                <Input allowClear id="description" placeholder="Description" />
               </Form.Item>
             </Col>
-            <Col lg={16} xs={24}>
+            <Col span={24}>
               <Form.Item
                 name="amount"
                 label="Amount"
@@ -140,29 +142,27 @@ const ManualPayment: React.FC<ManualPaymentProps> = ({
                   },
                 ]}
               >
-                <Input id="amount" placeholder="Amount" />
+                <Input allowClear id="amount" placeholder="Amount" />
               </Form.Item>
             </Col>
           </Col>
-          <Col lg={16} xs={24}>
-            <Row gutter={8} justify={isMobile ? 'end' : undefined}>
-              <Col>
-                <Button type="default" onClick={handleCancel}>
-                  Cancel
-                </Button>
-              </Col>
-              <Col>
-                <Button
-                  loading={loading}
-                  type="primary"
-                  htmlType="submit"
-                  className="mb-1"
-                  onClick={checkConstraintValidity}
-                >
-                  Send
-                </Button>
-              </Col>
-            </Row>
+        </Row>
+        <Row gutter={8} justify="end">
+          <Col>
+            <Button type="default" onClick={handleCancel}>
+              Cancel
+            </Button>
+          </Col>
+          <Col>
+            <Button
+              loading={loading}
+              type="primary"
+              htmlType="submit"
+              className="mb-1"
+              onClick={checkConstraintValidity}
+            >
+              Send
+            </Button>
           </Col>
         </Row>
       </Form>

@@ -15,8 +15,7 @@ import { useRequest } from 'hooks/useRequest';
 import { Brand } from 'interfaces/Brand';
 import { Product } from 'interfaces/Product';
 import { Tag } from 'interfaces/Tag';
-import React, { useContext, useEffect, useState } from 'react';
-import { AppContext } from 'contexts/AppContext';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { fetchBrands, fetchProducts, saveTag } from 'services/DiscoClubService';
 import scrollIntoView from 'scroll-into-view';
@@ -27,7 +26,6 @@ interface TagDetailProps {
 }
 
 const TagDetail: React.FC<TagDetailProps> = ({ tag, onSave, onCancel }) => {
-  const { isMobile } = useContext(AppContext);
   const [loading, setLoading] = useState(false);
   const { doRequest } = useRequest({ setLoading });
 
@@ -124,6 +122,13 @@ const TagDetail: React.FC<TagDetailProps> = ({ tag, onSave, onCancel }) => {
     form.setFieldsValue({ product: {} });
   };
 
+  const filterOption = (input: string, option: any) => {
+    return !!option?.children
+      ?.toString()
+      ?.toUpperCase()
+      .includes(input?.toUpperCase());
+  };
+
   return (
     <>
       <PageHeader title={tag ? `${tag?.tagName ?? ''} Update` : 'New Tag'} />
@@ -144,12 +149,18 @@ const TagDetail: React.FC<TagDetailProps> = ({ tag, onSave, onCancel }) => {
                 label="Tag Name"
                 rules={[{ required: true, message: 'Tag Name is required.' }]}
               >
-                <Input id="tagName" />
+                <Input allowClear id="tagName" placeholder="Tag Name" />
               </Form.Item>
             </Col>
-            <Col lg={6} xs={0}>
+            <Col lg={12} xs={24}>
               <Form.Item name={['brand', 'id']} label="Master Brand">
-                <Select onChange={onChangeBrand}>
+                <Select
+                  onChange={onChangeBrand}
+                  placeholder="Master Brand"
+                  allowClear
+                  showSearch
+                  filterOption={filterOption}
+                >
                   {brands.map(brand => (
                     <Select.Option key={brand.id} value={brand.id}>
                       {brand.brandName}
@@ -158,7 +169,7 @@ const TagDetail: React.FC<TagDetailProps> = ({ tag, onSave, onCancel }) => {
                 </Select>
               </Form.Item>
             </Col>
-            <Col xxl={6} lg={12} xs={24}>
+            <Col lg={12} xs={24}>
               <Form.Item
                 name="template"
                 label="Template"
@@ -168,6 +179,9 @@ const TagDetail: React.FC<TagDetailProps> = ({ tag, onSave, onCancel }) => {
                   id="template"
                   placeholder="Please select a template"
                   onChange={onChangeTemplate}
+                  allowClear
+                  showSearch
+                  filterOption={filterOption}
                 >
                   {template.map((temp: any) => (
                     <Select.Option key={temp.value} value={temp.value}>
@@ -177,7 +191,7 @@ const TagDetail: React.FC<TagDetailProps> = ({ tag, onSave, onCancel }) => {
                 </Select>
               </Form.Item>
             </Col>
-            <Col lg={6} xs={0}>
+            <Col lg={12} xs={24}>
               <Form.Item shouldUpdate>
                 {() => (
                   <Form.Item name={['product', 'id']} label="Product">
@@ -186,6 +200,10 @@ const TagDetail: React.FC<TagDetailProps> = ({ tag, onSave, onCancel }) => {
                         form.getFieldValue('template') === 'dollar' ||
                         !form.getFieldValue('brand')
                       }
+                      placeholder="Product"
+                      allowClear
+                      showSearch
+                      filterOption={filterOption}
                     >
                       {productOptions.map(product => (
                         <Select.Option key={product.id} value={product.id}>
@@ -197,9 +215,9 @@ const TagDetail: React.FC<TagDetailProps> = ({ tag, onSave, onCancel }) => {
                 )}
               </Form.Item>
             </Col>
-            <Col lg={12} xs={24}>
+            <Col span={24}>
               <Row gutter={8}>
-                <Col lg={12} xs={24}>
+                <Col lg={6} xs={24}>
                   <Form.Item
                     name="discoGold"
                     label="Disco Gold"
@@ -207,17 +225,47 @@ const TagDetail: React.FC<TagDetailProps> = ({ tag, onSave, onCancel }) => {
                       { required: true, message: 'Disco Gold is required.' },
                     ]}
                   >
-                    <InputNumber id="discoGold" style={{ width: '100%' }} />
+                    <InputNumber
+                      id="discoGold"
+                      style={{ width: '100%' }}
+                      placeholder="Disco Gold"
+                    />
                   </Form.Item>
                 </Col>
-                <Col lg={12} xs={24}>
+                <Col lg={6} xs={24}>
                   <Form.Item name="discoDollars" label="Disco Dollar">
-                    <InputNumber style={{ width: '100%' }} />
+                    <InputNumber
+                      style={{ width: '100%' }}
+                      placeholder="Disco Dollar"
+                    />
+                  </Form.Item>
+                </Col>
+                <Col lg={6} xs={24}>
+                  <Form.Item
+                    name="clickSound"
+                    label="Click Sound"
+                    rules={[
+                      { required: true, message: 'Click Sound is required.' },
+                    ]}
+                  >
+                    <Select
+                      id="clickSound"
+                      placeholder="Please select a click sound"
+                      allowClear
+                      showSearch
+                      filterOption={filterOption}
+                    >
+                      {clickSound.map((click: any) => (
+                        <Select.Option key={click.value} value={click.value}>
+                          {click.name}
+                        </Select.Option>
+                      ))}
+                    </Select>
                   </Form.Item>
                 </Col>
               </Row>
               <Row gutter={8}>
-                <Col lg={12} xs={24}>
+                <Col lg={6} xs={24}>
                   <Form.Item
                     name={['position', 0, 'x']}
                     label="Disco Dollar Position X"
@@ -225,7 +273,7 @@ const TagDetail: React.FC<TagDetailProps> = ({ tag, onSave, onCancel }) => {
                     <Slider tipFormatter={v => `${v}%`} min={0} max={100} />
                   </Form.Item>
                 </Col>
-                <Col lg={12} xs={24}>
+                <Col lg={6} xs={24}>
                   <Form.Item
                     name={['position', 0, 'y']}
                     label="Disco Dollar Position Y"
@@ -234,33 +282,13 @@ const TagDetail: React.FC<TagDetailProps> = ({ tag, onSave, onCancel }) => {
                   </Form.Item>
                 </Col>
               </Row>
-              <Col lg={12} xs={24}>
-                <Form.Item
-                  name="clickSound"
-                  label="Click Sound"
-                  rules={[
-                    { required: true, message: 'Click Sound is required.' },
-                  ]}
-                >
-                  <Select
-                    id="clickSound"
-                    placeholder="Please select a click sound"
-                  >
-                    {clickSound.map((click: any) => (
-                      <Select.Option key={click.value} value={click.value}>
-                        {click.name}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </Form.Item>
-              </Col>
             </Col>
           </Row>
         </Input.Group>
         <Input.Group>
           <Row gutter={8}></Row>
         </Input.Group>
-        <Row gutter={8} justify={isMobile ? 'end' : undefined}>
+        <Row gutter={8} justify="end">
           <Col>
             <Button type="default" onClick={() => onCancel?.()}>
               Cancel

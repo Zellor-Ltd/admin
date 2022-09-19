@@ -218,16 +218,16 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
               </Button>,
             ]}
           />
-          <Row gutter={8} className={'sticky-filter-box'}>
+          <Row gutter={8} className="sticky-filter-box mb-05">
             <Col lg={4} xs={24}>
               <Typography.Title level={5} title="Search">
                 Search
               </Typography.Title>
               <Input
+                allowClear
                 placeholder="Search by ID"
                 suffix={<SearchOutlined />}
                 onChange={event => setIdFilter(event.target.value)}
-                className="mb-1"
               />
             </Col>
           </Row>

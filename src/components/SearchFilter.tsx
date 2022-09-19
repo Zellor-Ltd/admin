@@ -20,7 +20,7 @@ export const SearchFilter: React.FC<SearchFilterProps> = ({
       <Typography.Title level={5} title={label}>
         {label}
       </Typography.Title>
-      <Input onChange={onChangeFilter} suffix={<SearchOutlined />} />
+      <Input allowClear onChange={onChangeFilter} suffix={<SearchOutlined />} />
     </div>
   );
 };

@@ -52,7 +52,6 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   const [details, setDetails] = useState<boolean>(false);
   const [fans, setFans] = useState<Fan[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
-  const [isFetchingBrands, setIsFetchingBrands] = useState(false);
   const [searchText, setSearchText] = useState<string>('');
   const searchInput = useRef<Input>(null);
   const [loaded, setLoaded] = useState<boolean>(false);
@@ -85,7 +84,6 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       setOrders([]);
       setEof(false);
       fetch();
-      setRefreshing(false);
     }
   }, [refreshing]);
 
@@ -132,6 +130,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     if (pageToUse === 0) setOrders(validOrders);
     else setOrders(prev => [...prev.concat(validOrders)]);
     setLoaded(true);
+    setRefreshing(false);
   };
 
   const loadNext = async () => {
@@ -226,6 +225,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     }) => (
       <div style={{ padding: 8 }}>
         <Input
+          allowClear
           ref={searchInput}
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
@@ -441,9 +441,12 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
         <Select
           loading={orderUpdateList[index]}
           disabled={orderUpdateList[index]}
-          defaultValue={value}
+          defaultValue={value ?? '-'}
           style={{ width: '100%' }}
           onChange={value => handleSelectChange(value, order, index, 'stage')}
+          filterOption={filterOption}
+          allowClear
+          showSearch
         >
           {ordersSettings.map((ordersSetting: any) => (
             <Select.Option
@@ -483,11 +486,14 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
         <Select
           loading={orderUpdateList[index]}
           disabled={orderUpdateList[index]}
-          defaultValue={value}
+          defaultValue={value ?? '-'}
           style={{ width: '100%' }}
           onChange={value =>
             handleSelectChange(value, order, index, 'commissionInternalStatus')
           }
+          filterOption={filterOption}
+          allowClear
+          showSearch
         >
           {ordersSettings.map((ordersSetting: any) => (
             <Select.Option
@@ -717,10 +723,8 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   useEffect(() => {
     const getBrands = async () => {
       try {
-        setIsFetchingBrands(true);
         const { results }: any = await fetchBrands();
         setBrands(results.filter((brand: any) => brand.brandName));
-        setIsFetchingBrands(false);
       } catch (e) {
       } finally {
       }
@@ -773,6 +777,13 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     }
   };
 
+  const filterOption = (input: string, option: any) => {
+    return !!option?.children
+      ?.toString()
+      ?.toUpperCase()
+      .includes(input?.toUpperCase());
+  };
+
   return (
     <>
       {!details && (
@@ -784,28 +795,22 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
           <Row
             align="bottom"
             justify="space-between"
-            className="mb-1 sticky-filter-box"
+            className="sticky-filter-box mb-05"
             gutter={8}
           >
             <Col lg={16} xs={24}>
-              <Row gutter={[8, 8]}>
+              <Row gutter={[8, 8]} align="bottom">
                 <Col lg={6} xs={24}>
                   <Typography.Title level={5}>Master Brand</Typography.Title>
                   <Select
                     allowClear
                     onChange={handleChangeBrand}
                     style={{ width: '100%' }}
-                    placeholder={'Select a Master Brand'}
+                    placeholder="Select a Master Brand"
                     value={brandId}
-                    loading={isFetchingBrands}
-                    disabled={isFetchingBrands || refreshing}
+                    disabled={!brands.length || refreshing}
                     showSearch
-                    filterOption={(input, option) =>
-                      !!option?.children
-                        ?.toString()
-                        ?.toUpperCase()
-                        .includes(input?.toUpperCase())
-                    }
+                    filterOption={filterOption}
                   >
                     {brands.map(curr => (
                       <Select.Option
@@ -829,7 +834,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
                     placeholder="Search by Fan E-mail"
                     options={fans}
                     input={fanFilterInput}
-                    disabled={isFetchingBrands || refreshing}
+                    disabled={!brands.length || refreshing}
                     onInputKeyDown={(event: HTMLInputElement) =>
                       handleKeyDown(event)
                     }
@@ -837,15 +842,11 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
                 </Col>
               </Row>
             </Col>
-            <Col lg={24} xs={24}>
-              <Row justify="end" className={isMobile ? 'mt-2' : ''}>
-                <Col>
-                  <Button type="primary" onClick={() => setRefreshing(true)}>
-                    Search
-                    <SearchOutlined style={{ color: 'white' }} />
-                  </Button>
-                </Col>
-              </Row>
+            <Col>
+              <Button type="primary" onClick={() => setRefreshing(true)}>
+                Search
+                <SearchOutlined style={{ color: 'white' }} />
+              </Button>
             </Col>
           </Row>
           <InfiniteScroll

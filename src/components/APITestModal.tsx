@@ -101,6 +101,7 @@ const APITestModal: React.FC<APITestModalProps<any>> = ({
                 return (
                   <Row style={{ margin: '8px 0' }}>
                     <Input
+                      allowClear
                       type={param.type}
                       defaultValue={param.default}
                       value={formValues[index][param.field]}

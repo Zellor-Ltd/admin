@@ -1,8 +1,7 @@
 import { Button, Col, Form, Input, PageHeader, Row } from 'antd';
 import { useRequest } from 'hooks/useRequest';
 import { FanGroup } from 'interfaces/FanGroup';
-import { useContext, useState } from 'react';
-import { AppContext } from 'contexts/AppContext';
+import { useState } from 'react';
 import { saveFanGroup } from 'services/DiscoClubService';
 interface FanGroupsDetailProps {
   fanGroup?: FanGroup;
@@ -15,7 +14,6 @@ const FanGroupsDetail: React.FC<FanGroupsDetailProps> = ({
   onSave,
   onCancel,
 }) => {
-  const { isMobile } = useContext(AppContext);
   const [loading, setLoading] = useState<boolean>(false);
   const [form] = Form.useForm();
   const { doRequest } = useRequest({ setLoading });
@@ -48,12 +46,12 @@ const FanGroupsDetail: React.FC<FanGroupsDetailProps> = ({
                 name="name"
                 rules={[{ required: true, message: 'Name is required.' }]}
               >
-                <Input />
+                <Input allowClear placeholder="Name" />
               </Form.Item>
             </Col>
           </Col>
         </Row>
-        <Row gutter={8} justify={isMobile ? 'end' : undefined}>
+        <Row gutter={8} justify="end">
           <Col>
             <Button type="default" onClick={() => onCancel?.()}>
               Cancel

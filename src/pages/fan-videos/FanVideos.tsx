@@ -48,7 +48,7 @@ import 'pages/video-feed/VideoFeed.scss';
 import 'pages/video-feed/VideoFeedDetail.scss';
 import SimpleSelect from 'components/select/SimpleSelect';
 import { SelectOption } from 'interfaces/SelectOption';
-import VideoFeedDetailV2 from 'pages/video-feed/VideoFeedDetailV2';
+import VideoFeedDetail from 'pages/video-feed/VideoFeedDetail';
 import { statusList } from 'components/select/select.utils';
 import { useRequest } from 'hooks/useRequest';
 import moment from 'moment';
@@ -69,12 +69,9 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
   const [selectedVideoFeed, setSelectedVideoFeed] = useState<FeedItem>();
   const [loading, setLoading] = useState(false);
   const [details, setDetails] = useState<boolean>(false);
-  const [isFetchingCategories, setIsFetchingCategories] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
   const [creators, setCreators] = useState<Creator[]>([]);
-  const [isFetchingBrands, setIsFetchingBrands] = useState(false);
   const [brands, setBrands] = useState<Brand[]>([]);
-  const [isFetchingProductBrands, setIsFetchingProductBrands] = useState(false);
   const [productBrands, setProductBrands] = useState([]);
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [loaded, setLoaded] = useState<boolean>(false);
@@ -94,10 +91,12 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
   const [indexFilter, setIndexFilter] = useState<number>();
   const [creatorFilter, setCreatorFilter] = useState<string>();
   const inputRef = useRef<any>(null);
+  const [loadingResources, setLoadingResources] = useState<boolean>(true);
   const [activeKey, setActiveKey] = useState<string>('-1');
   const [offset, setOffset] = useState<number>(64);
   const [panelStyle, setPanelStyle] = useState<React.CSSProperties>({
     top: 64,
+    marginBottom: '0.5rem',
   });
   const filterPanelHeight = useRef<number>();
   const windowHeight = window.innerHeight;
@@ -398,29 +397,23 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
       setCreators(response.results);
     }
     async function getCategories() {
-      setIsFetchingCategories(true);
       const response: any = await fetchCategories();
       setCategories(response.results);
-      setIsFetchingCategories(false);
     }
     async function getBrands() {
-      setIsFetchingBrands(true);
       const response: any = await fetchBrands();
       setBrands(response.results);
-      setIsFetchingBrands(false);
     }
     async function getProductBrands() {
-      setIsFetchingProductBrands(true);
       const response: any = await fetchProductBrands();
       setProductBrands(response.results);
-      setIsFetchingProductBrands(false);
     }
     await Promise.all([
       getcreators(),
       getCategories(),
       getBrands(),
       getProductBrands(),
-    ]);
+    ]).then(() => setLoadingResources(false));
   };
 
   const search = rows => {
@@ -527,16 +520,24 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
     setDetails(false);
   };
 
+  const filterOption = (input: string, option: any) => {
+    return !!option?.children
+      ?.toString()
+      ?.toUpperCase()
+      .includes(input?.toUpperCase());
+  };
+
   const Filters = () => {
     return (
-      <Col lg={16} xs={24}>
-        <Row gutter={[8, 8]}>
+      <>
+        <Row gutter={[8, 8]} align="bottom">
           <Col lg={6} xs={24}>
             <Typography.Title level={5} title="Search">
               Search
             </Typography.Title>
             <Input
-              disabled={loading}
+              allowClear
+              disabled={loadingResources || loading}
               ref={inputRef}
               onChange={event => setTitleFilter(event.target.value)}
               suffix={<SearchOutlined />}
@@ -548,46 +549,41 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
           <Col lg={6} xs={24}>
             <Typography.Title level={5}>Master Brand</Typography.Title>
             <SimpleSelect
+              showSearch
               data={brands}
               onChange={(_, brand) => setBrandFilter(brand)}
               style={{ width: '100%' }}
               selectedOption={brandFilter?.id}
               optionMapping={masterBrandMapping}
-              placeholder={'Select a Master Brand'}
-              loading={isFetchingBrands}
-              disabled={isFetchingBrands || loading}
-              allowClear={true}
+              placeholder="Select a Master Brand"
+              disabled={loadingResources || loading}
+              allowClear
             />
           </Col>
           <Col lg={6} xs={24}>
             <Typography.Title level={5}>Product Brand</Typography.Title>
             <SimpleSelect
+              showSearch
               data={productBrands}
               onChange={setProductBrandFilter}
               style={{ width: '100%' }}
               selectedOption={productBrandFilter}
               optionMapping={productBrandMapping}
-              placeholder={'Select a Product Brand'}
-              loading={isFetchingProductBrands}
-              disabled={isFetchingProductBrands || loading}
-              allowClear={true}
+              placeholder="Select a Product Brand"
+              disabled={loadingResources || loading}
+              allowClear
             />
           </Col>
           <Col lg={6} xs={24}>
             <Typography.Title level={5}>Status</Typography.Title>
             <Select
               placeholder="Select a Status"
-              disabled={loading}
+              disabled={loadingResources || loading}
               onChange={setStatusFilter}
               style={{ width: '100%' }}
-              filterOption={(input, option) =>
-                !!option?.children
-                  ?.toString()
-                  ?.toUpperCase()
-                  .includes(input?.toUpperCase())
-              }
-              allowClear={true}
-              showSearch={true}
+              filterOption={filterOption}
+              allowClear
+              showSearch
               value={statusFilter}
             >
               {statusList.map((curr: any) => (
@@ -604,6 +600,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
           <Col lg={6} xs={24}>
             <Typography.Title level={5}>Category</Typography.Title>
             <SimpleSelect
+              showSearch
               data={categories}
               onChange={(_, category) =>
                 setCategoryFilter(category?.name ?? '')
@@ -611,16 +608,15 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
               style={{ width: '100%' }}
               selectedOption={categoryFilter}
               optionMapping={categoryMapping}
-              placeholder={'Select a Category'}
-              allowClear={true}
-              loading={isFetchingCategories}
-              disabled={isFetchingCategories || loading}
+              placeholder="Select a Category"
+              allowClear
+              disabled={loadingResources || loading}
             />
           </Col>
           <Col lg={6} xs={24}>
             <Typography.Title level={5}>Start Index</Typography.Title>
             <InputNumber
-              disabled={loading}
+              disabled={loadingResources || loading}
               min={0}
               onChange={startIndex => setIndexFilter(startIndex ?? undefined)}
               placeholder="Select an Index"
@@ -631,10 +627,13 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
             <Typography.Title level={5}>Creator</Typography.Title>
             <Select
               placeholder="Select a Creator"
-              disabled={!creators.length || loading}
+              disabled={loadingResources || loading}
               onChange={setCreatorFilter}
               value={creatorFilter}
               style={{ width: '100%' }}
+              filterOption={filterOption}
+              allowClear
+              showSearch
             >
               {creators.map((curr: any) => (
                 <Select.Option key={curr.id} value={curr.firstName}>
@@ -644,7 +643,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
             </Select>
           </Col>
         </Row>
-      </Col>
+      </>
     );
   };
 
@@ -679,33 +678,35 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
           <Row
             align="bottom"
             justify="space-between"
-            className="sticky-filter-box"
+            className="sticky-filter-box mb-05"
             id="filterPanel"
             style={panelStyle}
           >
-            {!isMobile && <Filters />}
-            {isMobile && (
-              <Col lg={24} xs={24}>
-                <Collapse
-                  ghost
-                  className="mb-1"
-                  activeKey={activeKey}
-                  onChange={handleCollapseChange}
-                  destroyInactivePanel
-                >
-                  <Panel
-                    header={
-                      <Typography.Title level={5}>Filter</Typography.Title>
-                    }
-                    key="1"
+            <Col lg={16} xs={24}>
+              {!isMobile && <Filters />}
+              {isMobile && (
+                <Col span={24}>
+                  <Collapse
+                    ghost
+                    className="mb-1"
+                    activeKey={activeKey}
+                    onChange={handleCollapseChange}
+                    destroyInactivePanel
                   >
-                    <Filters />
-                  </Panel>
-                </Collapse>
-              </Col>
-            )}
-            <Col span={24}>
-              <Row justify="space-between" align="top">
+                    <Panel
+                      header={
+                        <Typography.Title level={5}>Filter</Typography.Title>
+                      }
+                      key="1"
+                    >
+                      <Filters />
+                    </Panel>
+                  </Collapse>
+                </Col>
+              )}
+            </Col>
+            <Col>
+              <Row justify="space-between" align="bottom">
                 <Col flex="auto">
                   <Button
                     type="text"
@@ -719,12 +720,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
                   </Button>
                 </Col>
                 <Col>
-                  <Button
-                    type="primary"
-                    onClick={fetch}
-                    loading={loading}
-                    className="mb-1"
-                  >
+                  <Button type="primary" onClick={fetch} loading={loading}>
                     Search
                     <SearchOutlined style={{ color: 'white' }} />
                   </Button>
@@ -746,14 +742,13 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
         </>
       )}
       {details && (
-        <VideoFeedDetailV2
+        <VideoFeedDetail
           onSave={onSaveItem}
           onCancel={onCancelItem}
           feedItem={selectedVideoFeed}
           brands={brands}
           creators={creators}
           productBrands={productBrands}
-          isFetchingProductBrand={isFetchingProductBrands}
           setDetails={setDetails}
           isFanVideo
         />

@@ -63,10 +63,9 @@ interface ProductDetailProps {
   product?: Product;
   brand?: string;
   productBrand?: string;
-  isFetchingBrands: boolean;
-  isFetchingProductBrand: boolean;
   isLive: boolean;
   template?: boolean;
+  loadingResources?: boolean;
 }
 
 const ProductDetail: React.FC<ProductDetailProps> = ({
@@ -78,10 +77,9 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
   brand,
   onSave,
   onCancel,
-  isFetchingBrands,
-  isFetchingProductBrand,
   isLive,
   template,
+  loadingResources,
 }) => {
   const { isMobile } = useContext(AppContext);
   const [loading, setLoading] = useState<boolean>(false);
@@ -529,6 +527,13 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
     }
   };
 
+  const filterOption = (input: string, option: any) => {
+    return !!option?.children
+      ?.toString()
+      ?.toUpperCase()
+      .includes(input?.toUpperCase());
+  };
+
   return (
     <div className="products-details">
       <PageHeader
@@ -563,7 +568,10 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                 <Row gutter={8} align="bottom">
                   <Col lg={12} xs={12}>
                     <Form.Item name="status" label="Status">
-                      <Radio.Group disabled={isLive} buttonStyle="solid">
+                      <Radio.Group
+                        disabled={loadingResources || isLive}
+                        buttonStyle="solid"
+                      >
                         <Radio.Button value="live">Live</Radio.Button>
                         <Radio.Button value="paused">Paused</Radio.Button>
                       </Radio.Group>
@@ -575,20 +583,24 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                       label="Out of stock"
                       valuePropName="checked"
                     >
-                      <Switch disabled={isLive} />
+                      <Switch disabled={loadingResources || isLive} />
                     </Form.Item>
                   </Col>
-                  <Col lg={24} xs={24}>
+                  <Col span={24}>
                     <Form.Item name="name" label="Short description">
-                      <Input disabled={isLive} />
+                      <Input
+                        allowClear
+                        disabled={loadingResources || isLive}
+                        placeholder="Short Description"
+                      />
                     </Form.Item>
                   </Col>
-                  <Col lg={24} xs={24}>
+                  <Col span={24}>
                     <Form.Item label="Long description">
                       <RichTextEditor
                         formField="description"
                         form={form}
-                        disabled={isLive}
+                        disabled={loadingResources || isLive}
                       />
                     </Form.Item>
                   </Col>
@@ -596,7 +608,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
               </Col>
               <Col lg={12} xs={24}>
                 <Row gutter={8}>
-                  <Col lg={24} xs={24}>
+                  <Col span={24}>
                     <Form.Item
                       name="brand"
                       label="Master Brand"
@@ -608,6 +620,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                       ]}
                     >
                       <SimpleSelect
+                        showSearch
                         id="brand"
                         data={brands}
                         onChange={(value, brand) =>
@@ -616,16 +629,15 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                         style={{ width: '100%' }}
                         selectedOption={brand}
                         optionMapping={optionMapping}
-                        placeholder={'Select a brand'}
-                        loading={isFetchingBrands}
-                        disabled={isFetchingBrands || isLive}
+                        placeholder="Select a Brand"
+                        disabled={loadingResources || isLive}
                         allowClear
                       ></SimpleSelect>
                     </Form.Item>
                   </Col>
                 </Row>
                 <Row gutter={8}>
-                  <Col lg={24} xs={24}>
+                  <Col span={24}>
                     <Form.Item
                       name="productBrand"
                       label="Product Brand"
@@ -637,6 +649,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                       ]}
                     >
                       <SimpleSelect
+                        showSearch
                         id="productBrand"
                         data={productBrands}
                         onChange={(value, productBrand) =>
@@ -645,9 +658,8 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                         style={{ width: '100%' }}
                         selectedOption={productBrand}
                         optionMapping={optionMapping}
-                        placeholder={'Select a brand'}
-                        loading={isFetchingProductBrand}
-                        disabled={isFetchingProductBrand || isLive}
+                        placeholder="Select a Brand"
+                        disabled={loadingResources || isLive}
                         allowClear
                       ></SimpleSelect>
                     </Form.Item>
@@ -660,7 +672,10 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                       label="Go Live Date"
                       getValueProps={formatMoment}
                     >
-                      <DatePicker format="DD/MM/YYYY" disabled={isLive} />
+                      <DatePicker
+                        format="DD/MM/YYYY"
+                        disabled={loadingResources || isLive}
+                      />
                     </Form.Item>
                   </Col>
                   <Col lg={12} xs={24}>
@@ -669,7 +684,10 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                       label="Expiration Date"
                       getValueProps={formatMoment}
                     >
-                      <DatePicker format="DD/MM/YYYY" disabled={isLive} />
+                      <DatePicker
+                        format="DD/MM/YYYY"
+                        disabled={loadingResources || isLive}
+                      />
                     </Form.Item>
                   </Col>
                   <Col lg={12} xs={24}>
@@ -679,37 +697,47 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                         placeholder="Quantity"
                         pattern="^\d*$"
                         title="Non-negative integers only."
-                        disabled={isLive}
+                        disabled={loadingResources || isLive}
                       />
                     </Form.Item>
                   </Col>
                   <Col lg={12} xs={24}></Col>
                   <Col lg={12} xs={24}>
-                    <Col lg={24} xs={24}>
+                    <Col span={24}>
                       <Form.Item name="variantId" label="Variant">
                         <Input
+                          allowClear
                           id="variantId"
                           placeholder="Variant ID"
-                          disabled={isLive}
+                          disabled={loadingResources || isLive}
                           pattern="^.{8}-.{4}-.{4}-.{4}-.{12}_STR$"
                           title="Format must be XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX_STR."
                         />
                       </Form.Item>
                     </Col>
-                    <Col lg={24} xs={24}>
+                    <Col span={24}>
                       <Form.Item name="colourTitle" label="Colour">
-                        <Input placeholder="Colour name" disabled={isLive} />
+                        <Input
+                          allowClear
+                          placeholder="Colour name"
+                          disabled={loadingResources || isLive}
+                        />
                       </Form.Item>
                     </Col>
-                    <Col lg={24} xs={24}>
+                    <Col span={24}>
                       <Form.Item name="size" label="Size">
-                        <Input placeholder="Size" disabled={isLive} />
+                        <Input
+                          allowClear
+                          placeholder="Size"
+                          disabled={loadingResources || isLive}
+                        />
                       </Form.Item>
                     </Col>
                   </Col>
                   <Col lg={12} xs={24}>
-                    <Col lg={24} xs={24}>
+                    <Col span={24}>
                       <SketchPicker
+                        className="product-sketch-picker"
                         color={color}
                         onChange={selectedColor => setColor(selectedColor.hex)}
                         presetColors={[
@@ -750,20 +778,23 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
               form={form}
               handleCategoryChange={handleCategoryChange}
               handleCategoryDelete={handleCategoryDelete}
-              disabled={isLive}
+              disabled={loadingResources || isLive}
             />
-            <Col lg={24} xs={24}>
+            <Col span={24}>
               <Form.Item
                 shouldUpdate={(prevValues, curValues) =>
                   prevValues.category !== curValues.category
                 }
               >
                 {({ getFieldValue }) => (
-                  <Form.Item name={'searchTags'} label="Search Tags">
+                  <Form.Item name="searchTags" label="Search Tags">
                     <Select
                       mode="tags"
                       className="product-search-tags"
-                      disabled={isLive}
+                      disabled={loadingResources || isLive}
+                      allowClear
+                      showSearch
+                      filterOption={filterOption}
                     >
                       {getFieldValue('searchTags')?.map((searchTag: any) => (
                         <Select.Option key={searchTag} value={searchTag}>
@@ -776,10 +807,10 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
               </Form.Item>
             </Col>
             <Row gutter={8}>
-              <Col lg={24} xs={24}>
+              <Col span={24}>
                 <Typography.Title level={4}>Target</Typography.Title>
               </Col>
-              <Col lg={24} xs={24}>
+              <Col span={24}>
                 <Form.Item label="Age Range">
                   <Slider
                     range
@@ -788,19 +819,27 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                     max={100}
                     value={ageRange}
                     onChange={onChangeAge}
-                    disabled={isLive}
+                    disabled={loadingResources || isLive}
                   />
                 </Form.Item>
               </Col>
             </Row>
             <Row gutter={8}>
-              <Col lg={24} xs={24}>
+              <Col span={24}>
                 <Form.Item
                   name="gender"
                   label="Gender"
                   rules={[{ required: true, message: 'Gender is required.' }]}
                 >
-                  <Select mode="multiple" disabled={isLive} id="gender">
+                  <Select
+                    mode="multiple"
+                    disabled={loadingResources || isLive}
+                    id="gender"
+                    placeholder="Gender"
+                    allowClear
+                    showSearch
+                    filterOption={filterOption}
+                  >
                     <Select.Option value="Female">Female</Select.Option>
                     <Select.Option value="Male">Male</Select.Option>
                     <Select.Option value="Other">Other</Select.Option>
@@ -820,7 +859,10 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                     <Form.Item name="currencyIsoCode" label="Default Currency">
                       <Select
                         placeholder="Please select a currency"
-                        disabled={isLive}
+                        disabled={loadingResources || isLive}
+                        allowClear
+                        showSearch
+                        filterOption={filterOption}
                       >
                         {currency.map((curr: any) => (
                           <Select.Option key={curr.value} value={curr.value}>
@@ -834,7 +876,10 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                     <Form.Item name="currencyIsoCodeUS" label="Currency US">
                       <Select
                         placeholder="Please select a currency"
-                        disabled={isLive}
+                        disabled={loadingResources || isLive}
+                        allowClear
+                        showSearch
+                        filterOption={filterOption}
                       >
                         {currency.map((curr: any) => (
                           <Select.Option key={curr.value} value={curr.value}>
@@ -848,7 +893,10 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                     <Form.Item name="currencyIsoCodeGB" label="Currency UK">
                       <Select
                         placeholder="Please select a currency"
-                        disabled={isLive}
+                        disabled={loadingResources || isLive}
+                        allowClear
+                        showSearch
+                        filterOption={filterOption}
                       >
                         {currency.map((curr: any) => (
                           <Select.Option key={curr.value} value={curr.value}>
@@ -862,7 +910,10 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                     <Form.Item name="currencyIsoCodeIE" label="Currency Europe">
                       <Select
                         placeholder="Please select a currency"
-                        disabled={isLive}
+                        disabled={loadingResources || isLive}
+                        allowClear
+                        showSearch
+                        filterOption={filterOption}
                       >
                         {currency.map((curr: any) => (
                           <Select.Option key={curr.value} value={curr.value}>
@@ -884,7 +935,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                           label="Allow Use of DD?"
                           valuePropName="checked"
                         >
-                          <Switch disabled={isLive} />
+                          <Switch disabled={loadingResources || isLive} />
                         </Form.Item>
                       </Col>
                       <Col lg={12}>
@@ -893,7 +944,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                           label="On Sale"
                           valuePropName="checked"
                         >
-                          <Switch disabled={isLive} />
+                          <Switch disabled={loadingResources || isLive} />
                         </Form.Item>
                       </Col>
                     </Row>
@@ -901,34 +952,45 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
 
                   <Col lg={12} xs={24}>
                     <Form.Item name="shopifyUniqueId" label="Shopify UID">
-                      <InputNumber disabled={isLive} />
+                      <InputNumber
+                        disabled={loadingResources || isLive}
+                        placeholder="Shopify UID"
+                      />
                     </Form.Item>
                   </Col>
                   <Col lg={12} xs={24}>
-                    <Form.Item name="magentoId" label="Magento Id">
-                      <InputNumber disabled={isLive} />
+                    <Form.Item name="magentoId" label="Magento ID">
+                      <InputNumber
+                        disabled={loadingResources || isLive}
+                        placeholder="Magento ID"
+                      />
                     </Form.Item>
                   </Col>
                   <Col lg={12} xs={24}>
                     <Form.Item name="urlKey" label="URL Key">
-                      <Input placeholder="Product Key" disabled={isLive} />
+                      <Input
+                        allowClear
+                        placeholder="Product Key"
+                        disabled={loadingResources || isLive}
+                      />
                     </Form.Item>
                   </Col>
                   <Col lg={12} xs={24}>
                     <Form.Item name="weight" label="Weight">
                       <InputNumber
                         placeholder="Weight in Kg"
-                        disabled={isLive}
+                        disabled={loadingResources || isLive}
                       />
                     </Form.Item>
                   </Col>
                   <Col lg={12} xs={24}>
                     <Form.Item name="barcode" label="Barcode">
                       <Input
+                        allowClear
                         id="barcode"
                         pattern="^[0-9]{13}$"
                         placeholder="Barcode number"
-                        disabled={isLive}
+                        disabled={loadingResources || isLive}
                         title="Numbers only, 13 digits."
                       />
                     </Form.Item>
@@ -948,22 +1010,35 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                         },
                       ]}
                     >
-                      <InputNumber id="originalPrice" disabled={isLive} />
+                      <InputNumber
+                        id="originalPrice"
+                        disabled={loadingResources || isLive}
+                        placeholder="Original Price"
+                      />
                     </Form.Item>
                   </Col>
                   <Col span={24}>
                     <Form.Item name="originalPriceUS" label="Price US">
-                      <InputNumber disabled={isLive} />
+                      <InputNumber
+                        disabled={loadingResources || isLive}
+                        placeholder="Price US"
+                      />
                     </Form.Item>
                   </Col>
                   <Col span={24}>
                     <Form.Item name="originalPriceGB" label="Price UK">
-                      <InputNumber disabled={isLive} />
+                      <InputNumber
+                        disabled={loadingResources || isLive}
+                        placeholder="Price UK"
+                      />
                     </Form.Item>
                   </Col>
                   <Col span={24}>
                     <Form.Item name="originalPriceIE" label="Price Europe">
-                      <InputNumber disabled={isLive} />
+                      <InputNumber
+                        disabled={loadingResources || isLive}
+                        placeholder="Price Europe"
+                      />
                     </Form.Item>
                   </Col>
 
@@ -1011,7 +1086,8 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                         id="maxDiscoDollars"
                         parser={value => (value || '').replace(/-/g, '')}
                         precision={0}
-                        disabled={isLive}
+                        disabled={loadingResources || isLive}
+                        placeholder="Max Discount in DD"
                       />
                     </Form.Item>
                   </Col>
@@ -1020,17 +1096,27 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                       name="discoPercentage"
                       label="Disco Percentage %"
                     >
-                      <InputNumber disabled={isLive} />
+                      <InputNumber
+                        disabled={loadingResources || isLive}
+                        placeholder="Disco %"
+                      />
                     </Form.Item>
                   </Col>
                   <Col lg={12} xs={24}>
                     <Form.Item name="sku" label="SKU">
-                      <Input disabled={isLive} />
+                      <Input
+                        allowClear
+                        disabled={loadingResources || isLive}
+                        placeholder="SKU"
+                      />
                     </Form.Item>
                   </Col>
                   <Col lg={12} xs={24}>
                     <Form.Item name="creatorPercentage" label="Creator %">
-                      <InputNumber disabled={isLive} />
+                      <InputNumber
+                        disabled={loadingResources || isLive}
+                        placeholder="Creator %"
+                      />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -1041,7 +1127,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
             <Row justify="end">
               <Col>
                 <Button
-                  disabled={isLive || !selectedStore}
+                  disabled={loadingResources || isLive || !selectedStore}
                   type="primary"
                   className="mb-1"
                   loading={loading}
@@ -1074,7 +1160,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                     form={form}
                     onFitTo={onFitTo}
                     onRollback={onRollback}
-                    disabled={isLive}
+                    disabled={loadingResources || isLive}
                     onImageChange={(
                       image: Image,
                       _: string,
@@ -1092,7 +1178,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                     form={form}
                     onFitTo={onFitTo}
                     onRollback={onRollback}
-                    disabled={isLive}
+                    disabled={loadingResources || isLive}
                     onImageChange={(
                       image: Image,
                       _: string,
@@ -1101,7 +1187,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                   />
                 </Form.Item>
               </Col>
-              <Col lg={24} xs={24}>
+              <Col span={24}>
                 <Form.Item label="Image">
                   <div
                     className={
@@ -1121,7 +1207,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                       onOrder={onOrder}
                       onFitTo={onFitTo}
                       onRollback={onRollback}
-                      disabled={isLive}
+                      disabled={loadingResources || isLive}
                       onImageChange={(
                         image: Image,
                         _: string,
@@ -1148,7 +1234,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
           <Col>
             <Button
               className="mb-1"
-              disabled={isLive}
+              disabled={loadingResources || isLive}
               type="primary"
               htmlType="submit"
               loading={loading}

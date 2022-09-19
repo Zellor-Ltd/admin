@@ -20,7 +20,6 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [, setLoading] = useState<boolean>(false);
   const { doFetch } = useRequest({ setLoading });
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
-  const [isFetchingBrands, setIsFetchingBrands] = useState(false);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [details, setDetails] = useState<boolean>(false);
@@ -114,9 +113,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
   };
 
   const getBrands = async () => {
-    setIsFetchingBrands(true);
     const { results }: any = await doFetch(fetchBrands);
-    setIsFetchingBrands(false);
     setBrands(results);
   };
 
@@ -284,16 +281,16 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
           <Row
             align="bottom"
             justify="space-between"
-            className="mb-1 sticky-filter-box"
+            className="mb-05 sticky-filter-box"
           >
             <Col lg={16} xs={24}>
-              <Row gutter={[8, 8]}>
+              <Row gutter={[8, 8]} align="bottom">
                 <Col lg={6} xs={24}>
                   <Typography.Title level={5}>
                     Search by Tag Name
                   </Typography.Title>
                   <MultipleFetchDebounceSelect
-                    disabled={fetchingTags || isFetchingBrands}
+                    disabled={fetchingTags || !brands.length}
                     style={{ width: '100%' }}
                     input={userInput}
                     loaded={loaded}
@@ -312,33 +309,31 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
                 <Col lg={6} xs={24}>
                   <Typography.Title level={5}>Master Brand</Typography.Title>
                   <SimpleSelect
+                    showSearch
                     data={brands}
                     onChange={(_, brand) =>
                       setBrandFilter(brand?.brandName ?? '')
                     }
                     style={{ width: '100%' }}
                     optionMapping={optionMapping}
-                    placeholder={'Select a Master Brand'}
-                    loading={isFetchingBrands}
-                    disabled={fetchingTags || isFetchingBrands}
-                    allowClear={true}
+                    placeholder="Select a Master Brand"
+                    disabled={fetchingTags || !brands.length}
+                    allowClear
                   ></SimpleSelect>
                 </Col>
               </Row>
             </Col>
-            <Col xs={24}>
-              <Row justify="end">
-                <Col>
-                  <Button
-                    className={isMobile ? 'mt-1' : ''}
-                    type="primary"
-                    disabled={!selectedRowKeys.length}
-                    onClick={selectTags}
-                  >
-                    Next
-                  </Button>
-                </Col>
-              </Row>
+            <Col>
+              <Button
+                className={isMobile ? 'mt-1' : ''}
+                type="primary"
+                disabled={
+                  !selectedRowKeys.length || fetchingTags || !brands.length
+                }
+                onClick={selectTags}
+              >
+                Next
+              </Button>
             </Col>
           </Row>
           <InfiniteScroll

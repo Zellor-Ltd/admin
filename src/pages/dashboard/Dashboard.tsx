@@ -482,7 +482,7 @@ const Dashboard: React.FC<DashboardProps> = () => {
                 value={1}
                 valueStyle={cardStyle}
                 suffix={<GlobalOutlined style={{ color: '#084BA3' }} />}
-                title={'Countries'}
+                title="Countries"
               />
             </div>
           </Card>

@@ -173,6 +173,7 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
           <PageHeader
             title="Banners"
             subTitle={isMobile ? '' : 'List of Banners'}
+            className="mb-05"
             extra={[
               <Button
                 key="1"

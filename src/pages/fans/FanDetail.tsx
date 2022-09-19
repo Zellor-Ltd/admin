@@ -41,9 +41,22 @@ interface FanDetailProps {
 
 const { Option } = Select;
 
+const filterOption = (input: string, option: any) => {
+  return !!option?.children
+    ?.toString()
+    ?.toUpperCase()
+    .includes(input?.toUpperCase());
+};
+
 const prefixSelector = (prefix: string) => (
   <Form.Item name="dialCode" noStyle>
-    <Select style={{ width: 80 }}>
+    <Select
+      style={{ width: 80 }}
+      allowClear
+      showSearch
+      filterOption={filterOption}
+      placeholder="Dial Code"
+    >
       <Option value="+353">+353</Option>
       <Option value="+55">+55</Option>
       <Option value="+86">+86</Option>
@@ -291,7 +304,7 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
               {fan && (
                 <Col lg={8} xs={24}>
                   <Form.Item label="_id" name="id">
-                    <Input disabled />
+                    <Input allowClear disabled />
                   </Form.Item>
                 </Col>
               )}
@@ -306,22 +319,27 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
                     },
                   ]}
                 >
-                  <Input id="userName" />
+                  <Input allowClear id="userName" placeholder="Name" />
                 </Form.Item>
               </Col>
               <Col lg={8} xs={24}>
                 <Form.Item label="Email" name="user">
-                  <Input type="email" />
+                  <Input allowClear type="email" placeholder="Email" />
                 </Form.Item>
               </Col>
               <Col lg={8} xs={24}>
                 <Form.Item label="Password" name="pwd">
-                  <Input.Password />
+                  <Input.Password allowClear placeholder="Password" />
                 </Form.Item>
               </Col>
               <Col lg={8} xs={24}>
                 <Form.Item name="profile" label="Profile">
-                  <Select placeholder="Please select a profile">
+                  <Select
+                    placeholder="Please select a profile"
+                    allowClear
+                    showSearch
+                    filterOption={filterOption}
+                  >
                     <Select.Option key="Fan" value="Fan" label="Fan">
                       Fan
                     </Select.Option>
@@ -346,7 +364,12 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
               </Col>
               <Col lg={8} xs={24}>
                 <Form.Item name="gender" label="Gender">
-                  <Select>
+                  <Select
+                    placeholder="Gender"
+                    allowClear
+                    showSearch
+                    filterOption={filterOption}
+                  >
                     <Select.Option value="Female">Female</Select.Option>
                     <Select.Option value="Male">Male</Select.Option>
                     <Select.Option value="Other">Other</Select.Option>
@@ -359,6 +382,7 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
               <Col lg={8} xs={24}>
                 <Form.Item label="Phone" name="phoneNumber">
                   <InputNumber
+                    placeholder="Phone"
                     style={{
                       width: '100%',
                     }}
@@ -372,7 +396,12 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
               </Col>
               <Col lg={8} xs={24}>
                 <Form.Item label="Default Currency" name="currencyCode">
-                  <Select>
+                  <Select
+                    placeholder="Default Currency"
+                    allowClear
+                    showSearch
+                    filterOption={filterOption}
+                  >
                     {currencies.map(currency => (
                       <Select.Option key={currency.code} value={currency.code}>
                         {currency.code}
@@ -387,22 +416,22 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
             <Row gutter={8}>
               <Col lg={8} xs={24}>
                 <Form.Item label="Address" name="line1">
-                  <Input />
+                  <Input allowClear placeholder="Address" />
                 </Form.Item>
               </Col>
               <Col lg={8} xs={24}>
                 <Form.Item label="City" name="city">
-                  <Input />
+                  <Input allowClear placeholder="City" />
                 </Form.Item>
               </Col>
               <Col lg={8} xs={24}>
                 <Form.Item label="Country" name="country">
-                  <Input />
+                  <Input allowClear placeholder="Country" />
                 </Form.Item>
               </Col>
               <Col lg={8} xs={24}>
                 <Form.Item label="Postal Code" name="postalCode">
-                  <InputNumber />
+                  <InputNumber placeholder="Postal Code" />
                 </Form.Item>
               </Col>
             </Row>
@@ -418,8 +447,13 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
                 />
               </Col>
               <Col lg={8} xs={24}>
-                <Form.Item name={'serverAlias'} label="Server Alias">
-                  <Select>
+                <Form.Item name="serverAlias" label="Server Alias">
+                  <Select
+                    placeholder="Server Alias"
+                    allowClear
+                    showSearch
+                    filterOption={filterOption}
+                  >
                     {serversList.map(serverAlias => (
                       <Select.Option
                         key={serverAlias.alias}
@@ -439,7 +473,7 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
             key="Following Creators"
           >
             <Row gutter={8}>
-              <Col lg={24} xs={24}>
+              <Col span={24}>
                 <Form.Item
                   shouldUpdate={(prevValues, curValues) =>
                     prevValues.followingCreators !== curValues.followingCreators
@@ -457,9 +491,11 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
                           </Typography.Title>
                           <Form.Item>
                             <Select
-                              placeholder="Please select a creator"
+                              placeholder="Please select a Creator"
                               onChange={onChangeCreator}
                               allowClear
+                              showSearch
+                              filterOption={filterOption}
                             >
                               {creators
                                 .filter(
@@ -479,7 +515,7 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
                             </Select>
                           </Form.Item>
                         </Col>
-                        <Col lg={24} xs={24}>
+                        <Col span={24}>
                           <Table
                             dataSource={followingCreators}
                             columns={creatorColumns}
@@ -498,7 +534,7 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
             key="Following Categories"
           >
             <Row gutter={8}>
-              <Col lg={24} xs={24}>
+              <Col span={24}>
                 <Form.Item
                   shouldUpdate={(prevValues, curValues) =>
                     prevValues.followingCategories !==
@@ -517,9 +553,11 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
                           </Typography.Title>
                           <Form.Item>
                             <Select
-                              placeholder="Please select a categories"
+                              placeholder="Please select a Category"
                               onChange={onChangeCategories}
                               allowClear
+                              showSearch
+                              filterOption={filterOption}
                             >
                               {categories
                                 .filter(
@@ -539,7 +577,7 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
                             </Select>
                           </Form.Item>
                         </Col>
-                        <Col lg={24} xs={24}>
+                        <Col span={24}>
                           <Table
                             dataSource={followingCategories}
                             columns={categoryColumns}

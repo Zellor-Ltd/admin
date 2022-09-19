@@ -10,8 +10,7 @@ import {
 } from 'antd';
 import { useRequest } from 'hooks/useRequest';
 import { DdTemplate } from 'interfaces/DdTemplate';
-import { useContext, useState } from 'react';
-import { AppContext } from 'contexts/AppContext';
+import { useState } from 'react';
 import { saveDdTemplate } from 'services/DiscoClubService';
 import scrollIntoView from 'scroll-into-view';
 interface DdTemplatesDetailProps {
@@ -25,7 +24,6 @@ const DdTemplatesDetail: React.FC<DdTemplatesDetailProps> = ({
   onSave,
   onCancel,
 }) => {
-  const { isMobile } = useContext(AppContext);
   const [loading, setLoading] = useState<boolean>(false);
   const [form] = Form.useForm();
   const { doRequest } = useRequest({ setLoading });
@@ -70,34 +68,34 @@ const DdTemplatesDetail: React.FC<DdTemplatesDetailProps> = ({
       >
         <Row gutter={8}>
           <Col lg={12} xs={24}>
-            <Col lg={16} xs={24}>
+            <Col span={24}>
               <Form.Item
                 label="Tag Name"
                 name="tagName"
                 rules={[{ required: true, message: 'Tag Name is required.' }]}
               >
-                <Input id="tagName" />
+                <Input allowClear id="tagName" placeholder="Tag Name" />
               </Form.Item>
             </Col>
-            <Col lg={16} xs={24}>
+            <Col span={24}>
               <Form.Item
                 label="Template"
                 name="template"
                 rules={[{ required: true, message: 'Template is required.' }]}
               >
-                <Input id="template" />
+                <Input allowClear id="template" placeholder="Template" />
               </Form.Item>
             </Col>
-            <Col lg={16} xs={24}>
+            <Col span={24}>
               <Form.Item
                 label="Disco Gold"
                 name="discoGold"
                 rules={[{ required: true, message: 'Disco Gold is required.' }]}
               >
-                <InputNumber id="discoGold" />
+                <InputNumber id="discoGold" placeholder="Disco Gold" />
               </Form.Item>
             </Col>
-            <Col lg={16} xs={24}>
+            <Col span={24}>
               <Form.Item
                 label="Disco Dollars"
                 name="discoDollars"
@@ -105,12 +103,12 @@ const DdTemplatesDetail: React.FC<DdTemplatesDetailProps> = ({
                   { required: true, message: 'Disco Dollars is required.' },
                 ]}
               >
-                <InputNumber id="discoDollars" />
+                <InputNumber id="discoDollars" placeholder="Disco Dollars" />
               </Form.Item>
             </Col>
           </Col>
         </Row>
-        <Row gutter={8} justify={isMobile ? 'end' : undefined}>
+        <Row gutter={8} justify="end">
           <Col>
             <Button type="default" onClick={() => onCancel?.()}>
               Cancel

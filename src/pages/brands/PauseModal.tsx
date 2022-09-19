@@ -53,7 +53,7 @@ export const PauseModal: React.FC<PauseModalProps> = ({
           rules={[{ required: true }]}
           name="masterPassword"
         >
-          <Input />
+          <Input allowClear />
         </Form.Item>
         <Divider />
         <Row justify="end" gutter={8}>

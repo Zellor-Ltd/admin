@@ -34,6 +34,7 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
   const [brands, setBrands] = useState<Brand[]>([]);
   const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [loadingResources, setLoadingResources] = useState<boolean>(true);
   const { fetchAllCategories, allCategories } = useAllCategories({});
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
   const [productAPITest, setProductAPITest] = useState<Product | null>(null);
@@ -58,7 +59,11 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
       setProductBrands(results);
     };
 
-    await Promise.all([getBrands(), getProductBrands(), fetchAllCategories()]);
+    await Promise.all([
+      getBrands(),
+      getProductBrands(),
+      fetchAllCategories(),
+    ]).then(() => setLoadingResources(false));
   });
 
   const _fetchProductTemplates = async () => {
@@ -504,8 +509,7 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
           product={currentTemplate}
           productBrand={currentProductBrand}
           brand={currentMasterBrand}
-          isFetchingBrands={!brands.length}
-          isFetchingProductBrand={!productBrands.length}
+          loadingResources={loadingResources}
           isLive={false}
           template
         />

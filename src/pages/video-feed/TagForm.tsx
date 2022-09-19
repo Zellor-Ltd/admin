@@ -20,8 +20,8 @@ const TagForm: React.FC<FormProps> = ({
   setShowTagForm,
   brands,
 }) => {
-  const [selectedBrandId, setSelectedBrandId] = useState<string>(
-    tag?.brand?.id || ''
+  const [selectedBrandId, setSelectedBrandId] = useState<string | undefined>(
+    tag?.brand?.id
   );
   const [form] = Form.useForm();
   const [tags, setTags] = useState<any[]>([]);
@@ -84,6 +84,13 @@ const TagForm: React.FC<FormProps> = ({
     form.setFieldsValue({ tagName: '' });
   };
 
+  const filterOption = (input: string, option: any) => {
+    return !!option?.children
+      ?.toString()
+      ?.toUpperCase()
+      .includes(input?.toUpperCase());
+  };
+
   return (
     <Form name="tagForm" form={form} initialValues={tag} layout="vertical">
       <Row gutter={8}>
@@ -92,14 +99,11 @@ const TagForm: React.FC<FormProps> = ({
             <Select
               showSearch
               allowClear
-              filterOption={(input, option) =>
-                !!option?.children
-                  ?.toString()
-                  .toLowerCase()
-                  .includes(input.toLowerCase())
-              }
+              placeholder="Please select a Brand"
+              filterOption={filterOption}
               onChange={v => handleBrandFilter(v)}
               value={selectedBrandId}
+              disabled={!brands}
             >
               {brands.map(brand => (
                 <Select.Option key={brand.id} value={brand.id}>
@@ -110,7 +114,7 @@ const TagForm: React.FC<FormProps> = ({
           </Form.Item>
         </Col>
         <Col lg={12} xs={24}>
-          <Form.Item name={'tagName'} label="Tag" rules={[{ required: true }]}>
+          <Form.Item name="tagName" label="Tag" rules={[{ required: true }]}>
             <MultipleFetchDebounceSelect
               style={{ width: '100%' }}
               onInput={getTags}
@@ -118,74 +122,74 @@ const TagForm: React.FC<FormProps> = ({
               onClear={onChangeTag}
               optionMapping={tagOptionMapping}
               placeholder="Type to search a Tag"
-              disabled={!selectedBrandId}
+              disabled={!selectedBrandId || !brands}
               input={userInput}
               options={tags}
             ></MultipleFetchDebounceSelect>
           </Form.Item>
         </Col>
-        <Col lg={3} xs={24}>
+        <Col lg={4} xs={24}>
           <Form.Item
             name={['position', 0, 'startTime']}
-            fieldKey={'startTime'}
+            fieldKey="startTime"
             label="Start Time"
             rules={[{ required: true }]}
           >
-            <InputNumber />
+            <InputNumber disabled={!brands} placeholder="Start Time" />
           </Form.Item>
         </Col>
-        <Col lg={3} xs={24}>
+        <Col lg={4} xs={24}>
           <Form.Item
             name={['position', 0, 'opacity']}
-            fieldKey={'opacity'}
+            fieldKey="opacity"
             label="Opacity"
             rules={[{ required: true }]}
             initialValue={1}
           >
-            <InputNumber />
+            <InputNumber disabled={!brands} placeholder="Opacity" />
           </Form.Item>
         </Col>
-        <Col lg={3} xs={24}>
+        <Col lg={4} xs={24}>
           <Form.Item
             name={['position', 0, 'duration']}
-            fieldKey={'duration'}
-            label="duration"
+            fieldKey="duration"
+            label="Duration"
             rules={[{ required: true }]}
           >
-            <InputNumber />
+            <InputNumber disabled={!brands} placeholder="Duration" />
           </Form.Item>
         </Col>
-        <Col lg={3} xs={24}>
+        <Col lg={4} xs={24}>
           <Form.Item
             name={['position', 0, 'x']}
-            fieldKey={'x'}
+            fieldKey="x"
             label="Position X"
             rules={[{ required: true }]}
             initialValue={0}
           >
-            <InputNumber />
+            <InputNumber disabled={!brands} placeholder="Position X" />
           </Form.Item>
         </Col>
-        <Col lg={3} xs={24}>
+        <Col lg={4} xs={24}>
           <Form.Item
             name={['position', 0, 'y']}
-            fieldKey={'y'}
+            fieldKey="y"
             label="Position Y"
             rules={[{ required: true }]}
             initialValue={0}
           >
-            <InputNumber />
+            <InputNumber disabled={!brands} placeholder="Position Y" />
           </Form.Item>
         </Col>
-        <Col lg={3} xs={24}>
+        <Col lg={4} xs={24}>
           <Form.Item
             name={['position', 0, 'z']}
-            fieldKey={'z'}
+            fieldKey="z"
             label="Z Index"
             rules={[{ required: true }]}
             initialValue={1}
           >
-            <InputNumber />
+            <InputNumber disabled={!brands} placeholder="Z Index" />
           </Form.Item>
         </Col>
       </Row>

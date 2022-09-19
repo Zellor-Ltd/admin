@@ -43,6 +43,7 @@ const DebounceSelect: React.FC<DebounceSelectProps> = ({
     if (value) {
       debounceFetcher(value, true);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
 
   const debounceFetcher = useMemo(() => {
@@ -78,6 +79,7 @@ const DebounceSelect: React.FC<DebounceSelectProps> = ({
     };
 
     return debounce(loadOptions, debounceTimeout);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchOptions, debounceTimeout]);
 
   const _onChange = (option: { value: string; label: string; key: string }) => {

@@ -9,8 +9,7 @@ import {
   ProductCategory,
 } from 'interfaces/Category';
 import { SearchTag } from 'interfaces/SearchTag';
-import React, { useContext, useEffect, useState } from 'react';
-import { AppContext } from 'contexts/AppContext';
+import React, { useEffect, useState } from 'react';
 import { productCategoriesAPI } from 'services/DiscoClubService';
 import SearchTags from './SearchTags';
 interface CategoryDetailProps {
@@ -28,7 +27,6 @@ const CategoryDetail: React.FC<CategoryDetailProps> = ({
   onSave,
   onCancel,
 }) => {
-  const { isMobile } = useContext(AppContext);
   const [loading, setLoading] = useState<boolean>(false);
   const { doRequest } = useRequest({ setLoading });
 
@@ -77,6 +75,13 @@ const CategoryDetail: React.FC<CategoryDetailProps> = ({
       : onSave?.({ ...formCategory, id: result }, categoryUpdateName);
   };
 
+  const filterOption = (input: string, option: any) => {
+    return !!option?.children
+      ?.toString()
+      ?.toUpperCase()
+      .includes(input?.toUpperCase());
+  };
+
   return (
     <>
       <PageHeader
@@ -122,6 +127,9 @@ const CategoryDetail: React.FC<CategoryDetailProps> = ({
                           }
                         )
                       }
+                      allowClear
+                      showSearch
+                      filterOption={filterOption}
                     >
                       {(
                         filteredCategories[
@@ -139,7 +147,7 @@ const CategoryDetail: React.FC<CategoryDetailProps> = ({
                       ))}
                     </Select>
                   ) : (
-                    <Input></Input>
+                    <Input allowClear placeholder={key}></Input>
                   )}
                 </Form.Item>
               ))}
@@ -157,7 +165,7 @@ const CategoryDetail: React.FC<CategoryDetailProps> = ({
             </Form.Item>
           </Col>
         </Row>
-        <Row gutter={8} justify={isMobile ? 'end' : undefined}>
+        <Row gutter={8} justify="end">
           <Col>
             <Button type="default" onClick={() => onCancel?.()}>
               Cancel

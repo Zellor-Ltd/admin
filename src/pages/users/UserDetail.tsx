@@ -28,9 +28,22 @@ import {
 
 const { Option } = Select;
 
+const filterOption = (input: string, option: any) => {
+  return !!option?.children
+    ?.toString()
+    ?.toUpperCase()
+    .includes(input?.toUpperCase());
+};
+
 const prefixSelector = (
   <Form.Item name="prefix" noStyle>
-    <Select defaultValue="353" style={{ width: 80 }}>
+    <Select
+      defaultValue="353"
+      style={{ width: 80 }}
+      allowClear
+      showSearch
+      filterOption={filterOption}
+    >
       <Option value="353">+353</Option>
       <Option value="55">+55</Option>
       <Option value="86">+86</Option>
@@ -209,22 +222,27 @@ const UserDetail: React.FC<RouteComponentProps> = props => {
         <Row gutter={8}>
           <Col lg={8} xs={24}>
             <Form.Item label="Name" name="name">
-              <Input />
+              <Input allowClear />
             </Form.Item>
           </Col>
           <Col lg={8} xs={24}>
             <Form.Item label="Email" name="user">
-              <Input type="email" />
+              <Input allowClear type="email" />
             </Form.Item>
           </Col>
           <Col lg={8} xs={24}>
             <Form.Item label="Password" name="pwd">
-              <Input.Password />
+              <Input.Password allowClear />
             </Form.Item>
           </Col>
           <Col lg={8} xs={24}>
             <Form.Item name="profile" label="Profile">
-              <Select>
+              <Select
+                allowClear
+                showSearch
+                filterOption={filterOption}
+                placeholder="Profile"
+              >
                 {roles.map(role => (
                   <Select.Option key={role.id} value={role.name}>
                     {role.name}
@@ -235,12 +253,12 @@ const UserDetail: React.FC<RouteComponentProps> = props => {
           </Col>
           <Col lg={8} xs={24}>
             <Form.Item label="Phone" name="phone">
-              <Input addonBefore={prefixSelector} />
+              <Input allowClear addonBefore={prefixSelector} />
             </Form.Item>
           </Col>
           <Col lg={8} xs={24}>
             <Form.Item label="Address" name="address">
-              <Input />
+              <Input allowClear />
             </Form.Item>
           </Col>
           <Col lg={8} xs={24}>
@@ -254,7 +272,12 @@ const UserDetail: React.FC<RouteComponentProps> = props => {
           </Col>
           <Col lg={8} xs={24}>
             <Form.Item name="gender" label="Gender">
-              <Select>
+              <Select
+                allowClear
+                showSearch
+                filterOption={filterOption}
+                placeholder="Gender"
+              >
                 {gendersList.map((gender, index) => (
                   <Select.Option key={index} value={gender.value}>
                     {gender.label}
@@ -266,7 +289,7 @@ const UserDetail: React.FC<RouteComponentProps> = props => {
 
           <Col lg={8} xs={24}>
             <Form.Item label="Email" name="user">
-              <Input type="email" />
+              <Input allowClear type="email" />
             </Form.Item>
           </Col>
           <Col lg={4} xs={24}>
@@ -281,7 +304,7 @@ const UserDetail: React.FC<RouteComponentProps> = props => {
           </Col>
         </Row>
         <Row>
-          <Col lg={24} xs={24}>
+          <Col span={24}>
             <Form.Item
               shouldUpdate={(prevValues, curValues) =>
                 prevValues.followingCreators !== curValues.followingCreators
@@ -302,6 +325,8 @@ const UserDetail: React.FC<RouteComponentProps> = props => {
                           placeholder="Please select a creator"
                           onChange={onChangeCreator}
                           allowClear
+                          showSearch
+                          filterOption={filterOption}
                         >
                           {creators
                             .filter(
@@ -321,7 +346,7 @@ const UserDetail: React.FC<RouteComponentProps> = props => {
                         </Select>
                       </Form.Item>
                     </Col>
-                    <Col lg={24} xs={24}>
+                    <Col span={24}>
                       <Table
                         dataSource={followingCreators}
                         columns={creatorColumns}
@@ -334,7 +359,7 @@ const UserDetail: React.FC<RouteComponentProps> = props => {
           </Col>
         </Row>
         <Row>
-          <Col lg={24} xs={24}>
+          <Col span={24}>
             <Form.Item
               shouldUpdate={(prevValues, curValues) =>
                 prevValues.followingCategories !== curValues.followingCategories
@@ -352,9 +377,11 @@ const UserDetail: React.FC<RouteComponentProps> = props => {
                       </Typography.Title>
                       <Form.Item>
                         <Select
-                          placeholder="Please select a categories"
+                          placeholder="Please select a category"
                           onChange={onChangeCategories}
                           allowClear
+                          showSearch
+                          filterOption={filterOption}
                         >
                           {categories
                             .filter(
@@ -374,7 +401,7 @@ const UserDetail: React.FC<RouteComponentProps> = props => {
                         </Select>
                       </Form.Item>
                     </Col>
-                    <Col lg={24} xs={24}>
+                    <Col span={24}>
                       <Table
                         dataSource={followingCategories}
                         columns={categoryColumns}

@@ -18,7 +18,6 @@ const Step2: React.FC<Step2Props> = ({ selectedTags, onReturn }) => {
   const { isMobile } = useContext(AppContext);
   const [selectedFanGroup, setSelectedFanGroup] = useState<FanGroup>();
   const [fanGroups, setFanGroups] = useState<FanGroup[]>([]);
-  const [isFetchingFanGroups, setIsFetchingFanGroups] = useState(false);
   const { doFetch } = useRequest();
 
   const fanGroupMapping: SelectOption = {
@@ -28,12 +27,10 @@ const Step2: React.FC<Step2Props> = ({ selectedTags, onReturn }) => {
   };
 
   const getResources = async () => {
-    setIsFetchingFanGroups(true);
     const { results }: { results: FanGroup[] } = await doFetch(() =>
       fetchFanGroups()
     );
     setFanGroups(results);
-    setIsFetchingFanGroups(false);
   };
 
   useEffect(() => {
@@ -49,21 +46,21 @@ const Step2: React.FC<Step2Props> = ({ selectedTags, onReturn }) => {
     <>
       <PageHeader title="Push Notifications - Tags" />
       <Row gutter={[8, 8]} justify={isMobile ? 'end' : undefined}>
-        <Col lg={6} xs={24}>
+        <Col lg={12} xs={24}>
           <Typography.Title className="mx-1" level={5}>
             Fan Group Filter
           </Typography.Title>
           <SimpleSelect
+            showSearch
             data={fanGroups}
             onChange={(_, fanGroup) => handleFanGroupChange(fanGroup)}
             style={{ width: '92%' }}
             selectedOption={selectedFanGroup?.name}
             optionMapping={fanGroupMapping}
-            placeholder={'Select a fan group'}
-            loading={isFetchingFanGroups}
-            disabled={isFetchingFanGroups}
+            placeholder="Select a Fan Group"
+            disabled={!fanGroups.length}
             allowClear
-            className="mx-1"
+            className="mx-1 mb-1"
           ></SimpleSelect>
         </Col>
         <Col span={24}>
@@ -75,7 +72,9 @@ const Step2: React.FC<Step2Props> = ({ selectedTags, onReturn }) => {
             </div>
           )}
         </Col>
-        <Col span={24}>
+      </Row>
+      <Row justify="end">
+        <Col>
           <Button
             type="default"
             onClick={() => onReturn?.()}

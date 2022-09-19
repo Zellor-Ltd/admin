@@ -127,6 +127,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
   const [offset, setOffset] = useState<number>(64);
   const [panelStyle, setPanelStyle] = useState<React.CSSProperties>({
     top: 64,
+    marginBottom: '0.5rem',
   });
   const filterPanelHeight = useRef<number>();
   const windowHeight = window.innerHeight;
@@ -294,6 +295,13 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
     setProductBrandFilter(_selectedBrand);
   };
 
+  const filterOption = (input: string, option: any) => {
+    return !!option?.children
+      ?.toString()
+      ?.toUpperCase()
+      .includes(input?.toUpperCase());
+  };
+
   const Filters = () => {
     return (
       <>
@@ -302,32 +310,37 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
           justify={isMobile ? 'end' : 'space-between'}
           className={isMobile ? 'pt-0' : 'ml-25 pt-0'}
         >
-          <Col lg={16} xs={24}>
+          <Col lg={20} xs={24}>
             <Row gutter={[8, 8]}>
               <Col lg={6} xs={24}>
                 <Typography.Title level={5}>Product Name</Typography.Title>
                 <Input
+                  allowClear
                   value={searchFilter}
                   onChange={event => setSearchFilter(event.target.value)}
                   placeholder="Search by Name"
                   onPressEnter={() => getProducts(true)}
+                  disabled={fetchingCategories}
                 />
               </Col>
               <Col lg={6} xs={24}>
                 <Typography.Title level={5}>Master Brand</Typography.Title>
                 <SimpleSelect
+                  showSearch
                   data={brands}
                   onChange={(_, brand) => onChangeBrand(brand)}
                   style={{ width: '100%' }}
                   selectedOption={brandFilter?.brandName}
                   optionMapping={optionMapping}
-                  placeholder={'Select a Master Brand'}
-                  allowClear={true}
+                  placeholder="Select a Master Brand"
+                  allowClear
+                  disabled={fetchingCategories}
                 ></SimpleSelect>
               </Col>
               <Col lg={6} xs={24}>
                 <Typography.Title level={5}>Product Brand</Typography.Title>
                 <SimpleSelect
+                  showSearch
                   data={productBrands}
                   onChange={(_, productBrand) =>
                     onChangeProductBrand(productBrand)
@@ -335,8 +348,9 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
                   style={{ width: '100%' }}
                   selectedOption={productBrandFilter?.brandName}
                   optionMapping={optionMapping}
-                  placeholder={'Select a Product Brand'}
-                  allowClear={true}
+                  placeholder="Select a Product Brand"
+                  allowClear
+                  disabled={fetchingCategories}
                 ></SimpleSelect>
               </Col>
               <Col lg={6} xs={24}>
@@ -344,9 +358,12 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
                 <Select
                   placeholder="Select a Status"
                   style={{ width: '100%' }}
-                  onChange={(value: string) => setProductStatusFilter(value)}
-                  allowClear={true}
+                  onChange={setProductStatusFilter}
+                  allowClear
+                  showSearch
+                  filterOption={filterOption}
                   defaultValue={productStatusFilter}
+                  disabled={fetchingCategories}
                 >
                   <Select.Option value="live">Live</Select.Option>
                   <Select.Option value="paused">Paused</Select.Option>
@@ -355,6 +372,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
               <Col lg={6} xs={24}>
                 <Typography.Title level={5}>Super Category</Typography.Title>
                 <SimpleSelect
+                  showSearch
                   data={allCategories['Super Category'].filter(item => {
                     return (
                       item.superCategory === 'Women' ||
@@ -366,15 +384,16 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
                   style={{ width: '100%' }}
                   selectedOption={currentSuperCategory?.id}
                   optionMapping={productSuperCategoryOptionMapping}
-                  placeholder={'Select a Super Category'}
+                  placeholder="Select a Super Category"
                   loading={fetchingCategories}
                   disabled={fetchingCategories}
-                  allowClear={true}
+                  allowClear
                 ></SimpleSelect>
               </Col>
               <Col lg={6} xs={24}>
                 <Typography.Title level={5}>Category</Typography.Title>
                 <SimpleSelect
+                  showSearch
                   data={allCategories.Category.filter(item => {
                     return currentSuperCategory
                       ? item.superCategory ===
@@ -385,15 +404,16 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
                   style={{ width: '100%' }}
                   selectedOption={currentCategory?.id ?? null}
                   optionMapping={productCategoryOptionMapping}
-                  placeholder={'Select a Category'}
+                  placeholder="Select a Category"
                   loading={fetchingCategories}
                   disabled={fetchingCategories}
-                  allowClear={true}
+                  allowClear
                 ></SimpleSelect>
               </Col>
               <Col lg={6} xs={24}>
                 <Typography.Title level={5}>Sub Category</Typography.Title>
                 <SimpleSelect
+                  showSearch
                   data={allCategories['Sub Category'].filter(item => {
                     return (
                       (currentCategory
@@ -409,7 +429,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
                   style={{ width: '100%' }}
                   selectedOption={currentSubCategory?.id ?? null}
                   optionMapping={productSubCategoryOptionMapping}
-                  placeholder={'Select a Sub Category'}
+                  placeholder="Select a Sub Category"
                   loading={fetchingCategories}
                   disabled={
                     fetchingCategories ||
@@ -425,12 +445,13 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
                       );
                     }).length
                   }
-                  allowClear={true}
+                  allowClear
                 ></SimpleSelect>
               </Col>
               <Col lg={6} xs={24}>
                 <Typography.Title level={5}>Sub Sub Category</Typography.Title>
                 <SimpleSelect
+                  showSearch
                   data={allCategories['Sub Sub Category'].filter(item => {
                     return (
                       (currentSubCategory
@@ -449,7 +470,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
                   style={{ width: '100%' }}
                   selectedOption={currentSubSubCategory?.id ?? null}
                   optionMapping={productSubSubCategoryOptionMapping}
-                  placeholder={'Select a Sub Sub Category'}
+                  placeholder="Select a Sub Sub Category"
                   loading={fetchingCategories}
                   disabled={
                     fetchingCategories ||
@@ -468,12 +489,13 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
                       );
                     }).length
                   }
-                  allowClear={true}
+                  allowClear
                 ></SimpleSelect>
               </Col>
               <Col lg={6} xs={24}>
                 <Typography.Title level={5}>Run ID</Typography.Title>
                 <Input
+                  allowClear
                   onChange={evt => {
                     setRunIdFilter(evt.target.value);
                   }}
@@ -481,12 +503,14 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
                   suffix={<SearchOutlined />}
                   placeholder="Search by Run ID"
                   onPressEnter={() => getProducts(true)}
+                  disabled={fetchingCategories}
                 />
               </Col>
               <Col lg={6} xs={24}>
                 <Checkbox
                   onChange={handleFilterOutOfStock}
                   className={isMobile ? 'mt-1 mb-1' : 'mt-2 mb-1 ml-05'}
+                  disabled={fetchingCategories}
                 >
                   Out of Stock only
                 </Checkbox>
@@ -495,6 +519,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
                 <Checkbox
                   onChange={handleFilterClassified}
                   className={isMobile ? 'mb-2' : 'mt-2 mb-1 ml-05'}
+                  disabled={fetchingCategories}
                 >
                   Unclassified only
                 </Checkbox>
@@ -591,7 +616,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
         type="text"
         style={{ background: 'none' }}
         onClick={() => setShowMore(prev => !prev)}
-        className="mt-05 ml-1"
+        className="ml-1 mb-1"
       >
         <Typography.Title
           level={5}

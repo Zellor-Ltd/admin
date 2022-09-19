@@ -318,7 +318,7 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
           <Row
             align="bottom"
             justify="space-between"
-            className="mb-1 sticky-filter-box"
+            className="mb-05 sticky-filter-box"
           >
             <Col lg={16} xs={24}>
               <Row gutter={8}>

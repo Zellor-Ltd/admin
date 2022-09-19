@@ -61,14 +61,10 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
   const saveProductFn = saveStagingProduct;
   const [brands, setBrands] = useState<Brand[]>([]);
   const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
-  const [isFetchingBrands, setIsFetchingBrands] = useState(false);
-  const [isFetchingProductBrands, setIsFetchingProductBrands] = useState(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [disabled, setDisabled] = useState<boolean>(false);
-  const [fetchingCategories, setFetchingCategories] = useState(false);
-  const { fetchAllCategories, allCategories } = useAllCategories({
-    setLoading: setFetchingCategories,
-  });
+  const [loadingResources, setLoadingResources] = useState<boolean>(true);
+  const { fetchAllCategories, allCategories } = useAllCategories({});
 
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
   const [selectedRows, setSelectedRows] = useState<Product[]>([]);
@@ -143,6 +139,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
   const [offset, setOffset] = useState<number>(64);
   const [panelStyle, setPanelStyle] = useState<React.CSSProperties>({
     top: 64,
+    marginBottom: '0.5rem',
   });
   const filterPanelHeight = useRef<number>();
   const windowHeight = window.innerHeight;
@@ -205,20 +202,20 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
 
   useMount(async () => {
     const getProductBrands = async () => {
-      setIsFetchingProductBrands(true);
       const { results }: any = await fetchProductBrands();
       setProductBrands(results);
-      setIsFetchingProductBrands(false);
     };
 
     const getBrands = async () => {
-      setIsFetchingBrands(true);
       const { results }: any = await fetchBrands();
       setBrands(results);
-      setIsFetchingBrands(false);
     };
 
-    await Promise.all([getBrands(), getProductBrands(), fetchAllCategories()]);
+    await Promise.all([
+      getBrands(),
+      getProductBrands(),
+      fetchAllCategories(),
+    ]).then(() => setLoadingResources(false));
   });
 
   const onAlternateViewSaveChanges = async (entity: Product) => {
@@ -744,8 +741,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
               product={currentProduct}
               productBrand={currentProductBrand}
               brand={currentMasterBrand}
-              isFetchingBrands={isFetchingBrands}
-              isFetchingProductBrand={isFetchingProductBrands}
+              loadingResources={loadingResources}
               isLive={false}
             />
           );
@@ -762,109 +758,136 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
     );
   };
 
+  const filterOption = (input: string, option: any) => {
+    return !!option?.children
+      ?.toString()
+      ?.toUpperCase()
+      .includes(input?.toUpperCase());
+  };
+
   const Filters = () => {
     return (
       <>
-        <Col lg={16} xs={24}>
-          <Row gutter={[8, 8]}>
-            <Col lg={6} xs={24}>
-              <Typography.Title level={5}>Product Name</Typography.Title>
-              <Input
-                disabled={loading || disabled}
-                ref={inputRef}
-                onChange={event => setSearchFilter(event.target.value)}
-                suffix={<SearchOutlined />}
-                value={searchFilter}
-                placeholder="Search by Name"
-                onPressEnter={() => getProducts(true)}
-              />
-            </Col>
-            <Col lg={6} xs={24}>
-              <Typography.Title level={5}>Master Brand</Typography.Title>
-              <SimpleSelect
-                data={brands}
-                onChange={(_, brand) => onChangeBrand(brand)}
-                style={{ width: '100%' }}
-                selectedOption={brandFilter?.brandName}
-                optionMapping={optionMapping}
-                placeholder={'Select a Master Brand'}
-                loading={isFetchingBrands}
-                disabled={isFetchingBrands || loading || disabled}
-                allowClear={true}
-              ></SimpleSelect>
-            </Col>
-            <Col lg={6} xs={24}>
-              <Typography.Title level={5}>Product Brand</Typography.Title>
-              <SimpleSelect
-                data={productBrands}
-                onChange={(_, productBrand) =>
-                  onChangeProductBrand(productBrand)
-                }
-                style={{ width: '100%' }}
-                selectedOption={productBrandFilter?.brandName}
-                optionMapping={optionMapping}
-                placeholder={'Select a Product Brand'}
-                loading={isFetchingProductBrands}
-                disabled={isFetchingProductBrands || loading || disabled}
-                allowClear={true}
-              ></SimpleSelect>
-            </Col>
-            <Col lg={6} xs={24}>
-              <Typography.Title level={5}>Status</Typography.Title>
-              <Select
-                disabled={loading || disabled}
-                placeholder="Select a Status"
-                style={{ width: '100%' }}
-                onChange={(value: string) => setProductStatusFilter(value)}
-                allowClear={true}
-                defaultValue={productStatusFilter}
-              >
-                <Select.Option value="live">Live</Select.Option>
-                <Select.Option value="paused">Paused</Select.Option>
-              </Select>
-            </Col>
-            <Col lg={6} xs={24}>
-              <Typography.Title level={5}>Super Category</Typography.Title>
-              <SimpleSelect
-                data={allCategories['Super Category'].filter(item => {
-                  return (
-                    item.superCategory === 'Women' ||
-                    item.superCategory === 'Men' ||
-                    item.superCategory === 'Children'
-                  );
-                })}
-                onChange={(_, category) => setCurrentSuperCategory(category)}
-                style={{ width: '100%' }}
-                selectedOption={currentSuperCategory?.id}
-                optionMapping={productSuperCategoryOptionMapping}
-                placeholder={'Select a Super Category'}
-                loading={fetchingCategories}
-                disabled={fetchingCategories || loading || disabled}
-                allowClear={true}
-              ></SimpleSelect>
-            </Col>
-            <Col lg={6} xs={24}>
-              <Typography.Title level={5}>Category</Typography.Title>
-              <SimpleSelect
-                data={allCategories.Category.filter(item => {
-                  return currentSuperCategory
+        <Row gutter={[8, 8]} align="bottom">
+          <Col lg={6} xs={24}>
+            <Typography.Title level={5}>Product Name</Typography.Title>
+            <Input
+              allowClear
+              disabled={loadingResources || loading || disabled}
+              ref={inputRef}
+              onChange={event => setSearchFilter(event.target.value)}
+              suffix={<SearchOutlined />}
+              value={searchFilter}
+              placeholder="Search by Name"
+              onPressEnter={() => getProducts(true)}
+            />
+          </Col>
+          <Col lg={6} xs={24}>
+            <Typography.Title level={5}>Master Brand</Typography.Title>
+            <SimpleSelect
+              showSearch
+              data={brands}
+              onChange={(_, brand) => onChangeBrand(brand)}
+              style={{ width: '100%' }}
+              selectedOption={brandFilter?.brandName}
+              optionMapping={optionMapping}
+              placeholder="Select a Master Brand"
+              disabled={loadingResources || loading || disabled}
+              allowClear
+            ></SimpleSelect>
+          </Col>
+          <Col lg={6} xs={24}>
+            <Typography.Title level={5}>Product Brand</Typography.Title>
+            <SimpleSelect
+              showSearch
+              data={productBrands}
+              onChange={(_, productBrand) => onChangeProductBrand(productBrand)}
+              style={{ width: '100%' }}
+              selectedOption={productBrandFilter?.brandName}
+              optionMapping={optionMapping}
+              placeholder="Select a Product Brand"
+              disabled={loadingResources || loading || disabled}
+              allowClear
+            ></SimpleSelect>
+          </Col>
+          <Col lg={6} xs={24}>
+            <Typography.Title level={5}>Status</Typography.Title>
+            <Select
+              disabled={loadingResources || loading || disabled}
+              placeholder="Select a Status"
+              style={{ width: '100%' }}
+              onChange={setProductStatusFilter}
+              allowClear
+              defaultValue={productStatusFilter}
+              showSearch
+              filterOption={filterOption}
+            >
+              <Select.Option value="live">Live</Select.Option>
+              <Select.Option value="paused">Paused</Select.Option>
+            </Select>
+          </Col>
+          <Col lg={6} xs={24}>
+            <Typography.Title level={5}>Super Category</Typography.Title>
+            <SimpleSelect
+              showSearch
+              data={allCategories['Super Category'].filter(item => {
+                return (
+                  item.superCategory === 'Women' ||
+                  item.superCategory === 'Men' ||
+                  item.superCategory === 'Children'
+                );
+              })}
+              onChange={(_, category) => setCurrentSuperCategory(category)}
+              style={{ width: '100%' }}
+              selectedOption={currentSuperCategory?.id}
+              optionMapping={productSuperCategoryOptionMapping}
+              placeholder="Select a Super Category"
+              disabled={loadingResources || loading || disabled}
+              allowClear
+            ></SimpleSelect>
+          </Col>
+          <Col lg={6} xs={24}>
+            <Typography.Title level={5}>Category</Typography.Title>
+            <SimpleSelect
+              showSearch
+              data={allCategories.Category.filter(item => {
+                return currentSuperCategory
+                  ? item.superCategory === currentSuperCategory.superCategory
+                  : true;
+              })}
+              onChange={(_, category) => setCurrentCategory(category)}
+              style={{ width: '100%' }}
+              selectedOption={currentCategory?.id ?? null}
+              optionMapping={productCategoryOptionMapping}
+              placeholder="Select a Category"
+              disabled={loadingResources || loading || disabled}
+              allowClear
+            ></SimpleSelect>
+          </Col>
+          <Col lg={6} xs={24}>
+            <Typography.Title level={5}>Sub Category</Typography.Title>
+            <SimpleSelect
+              showSearch
+              data={allCategories['Sub Category'].filter(item => {
+                return (
+                  (currentCategory
+                    ? item.category === currentCategory.category
+                    : true) &&
+                  (currentSuperCategory
                     ? item.superCategory === currentSuperCategory.superCategory
-                    : true;
-                })}
-                onChange={(_, category) => setCurrentCategory(category)}
-                style={{ width: '100%' }}
-                selectedOption={currentCategory?.id ?? null}
-                optionMapping={productCategoryOptionMapping}
-                placeholder={'Select a Category'}
-                loading={fetchingCategories}
-                disabled={fetchingCategories || loading || disabled}
-                allowClear={true}
-              ></SimpleSelect>
-            </Col>
-            <Col lg={6} xs={24}>
-              <Typography.Title level={5}>Sub Category</Typography.Title>
-              <SimpleSelect
-                data={allCategories['Sub Category'].filter(item => {
+                    : true)
+                );
+              })}
+              onChange={(_, category) => setCurrentSubCategory(category)}
+              style={{ width: '100%' }}
+              selectedOption={currentSubCategory?.id ?? null}
+              optionMapping={productSubCategoryOptionMapping}
+              placeholder="Select a Sub Category"
+              disabled={
+                loadingResources ||
+                loading ||
+                disabled ||
+                !allCategories['Sub Category'].filter(item => {
                   return (
                     (currentCategory
                       ? item.category === currentCategory.category
@@ -874,36 +897,38 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                         currentSuperCategory.superCategory
                       : true)
                   );
-                })}
-                onChange={(_, category) => setCurrentSubCategory(category)}
-                style={{ width: '100%' }}
-                selectedOption={currentSubCategory?.id ?? null}
-                optionMapping={productSubCategoryOptionMapping}
-                placeholder={'Select a Sub Category'}
-                loading={fetchingCategories}
-                disabled={
-                  fetchingCategories ||
-                  loading ||
-                  disabled ||
-                  !allCategories['Sub Category'].filter(item => {
-                    return (
-                      (currentCategory
-                        ? item.category === currentCategory.category
-                        : true) &&
-                      (currentSuperCategory
-                        ? item.superCategory ===
-                          currentSuperCategory.superCategory
-                        : true)
-                    );
-                  }).length
-                }
-                allowClear={true}
-              ></SimpleSelect>
-            </Col>
-            <Col lg={6} xs={24}>
-              <Typography.Title level={5}>Sub Sub Category</Typography.Title>
-              <SimpleSelect
-                data={allCategories['Sub Sub Category'].filter(item => {
+                }).length
+              }
+              allowClear
+            ></SimpleSelect>
+          </Col>
+          <Col lg={6} xs={24}>
+            <Typography.Title level={5}>Sub Sub Category</Typography.Title>
+            <SimpleSelect
+              showSearch
+              data={allCategories['Sub Sub Category'].filter(item => {
+                return (
+                  (currentSubCategory
+                    ? item.subCategory === currentSubCategory.subCategory
+                    : true) &&
+                  (currentCategory
+                    ? item.category === currentCategory.category
+                    : true) &&
+                  (currentSuperCategory
+                    ? item.superCategory === currentSuperCategory.superCategory
+                    : true)
+                );
+              })}
+              onChange={(_, category) => setCurrentSubSubCategory(category)}
+              style={{ width: '100%' }}
+              selectedOption={currentSubSubCategory?.id ?? null}
+              optionMapping={productSubSubCategoryOptionMapping}
+              placeholder="Select a Sub Sub Category"
+              disabled={
+                loadingResources ||
+                loading ||
+                disabled ||
+                !allCategories['Sub Sub Category'].filter(item => {
                   return (
                     (currentSubCategory
                       ? item.subCategory === currentSubCategory.subCategory
@@ -916,68 +941,64 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                         currentSuperCategory.superCategory
                       : true)
                   );
-                })}
-                onChange={(_, category) => setCurrentSubSubCategory(category)}
-                style={{ width: '100%' }}
-                selectedOption={currentSubSubCategory?.id ?? null}
-                optionMapping={productSubSubCategoryOptionMapping}
-                placeholder={'Select a Sub Sub Category'}
-                loading={fetchingCategories}
-                disabled={
-                  fetchingCategories ||
-                  loading ||
-                  disabled ||
-                  !allCategories['Sub Sub Category'].filter(item => {
-                    return (
-                      (currentSubCategory
-                        ? item.subCategory === currentSubCategory.subCategory
-                        : true) &&
-                      (currentCategory
-                        ? item.category === currentCategory.category
-                        : true) &&
-                      (currentSuperCategory
-                        ? item.superCategory ===
-                          currentSuperCategory.superCategory
-                        : true)
-                    );
-                  }).length
-                }
-                allowClear={true}
-              ></SimpleSelect>
-            </Col>
-            <Col lg={6} xs={24}>
-              <Typography.Title level={5}>Run ID</Typography.Title>
-              <Input
-                disabled={loading || disabled}
-                onChange={evt => {
-                  setRunIdFilter(evt.target.value);
-                }}
-                value={runIdFilter}
-                suffix={<SearchOutlined />}
-                placeholder="Search by Run ID"
-                onPressEnter={() => getProducts(true)}
-              />
-            </Col>
-            <Col lg={6} xs={24}>
-              <Checkbox
-                disabled={loading || disabled}
-                onChange={handleFilterOutOfStock}
-                className={isMobile ? 'mt-1 mb-1' : 'mt-2 mb-1 ml-05'}
-              >
-                Out of Stock only
-              </Checkbox>
-            </Col>
-            <Col lg={6} xs={24}>
-              <Checkbox
-                disabled={loading || disabled}
-                onChange={handleFilterClassified}
-                className={isMobile ? 'mb-2' : 'mt-2 mb-1 ml-05'}
-              >
-                Unclassified only
-              </Checkbox>
-            </Col>
-          </Row>
-        </Col>
+                }).length
+              }
+              allowClear
+            ></SimpleSelect>
+          </Col>
+          <Col lg={6} xs={24}>
+            <Typography.Title level={5}>Run ID</Typography.Title>
+            <Input
+              allowClear
+              disabled={loadingResources || loading || disabled}
+              onChange={evt => {
+                setRunIdFilter(evt.target.value);
+              }}
+              value={runIdFilter}
+              suffix={<SearchOutlined />}
+              placeholder="Search by Run ID"
+              onPressEnter={() => getProducts(true)}
+            />
+          </Col>
+          <Col lg={6} xs={24}>
+            <Checkbox
+              disabled={loadingResources || loading || disabled}
+              onChange={handleFilterOutOfStock}
+              className={isMobile ? 'mt-1 mb-1' : 'mt-2 mb-05'}
+            >
+              <div style={{ display: 'grid', placeItems: 'stretch' }}>
+                <div
+                  style={{
+                    whiteSpace: 'nowrap',
+                    textOverflow: 'ellipsis',
+                    overflow: 'hidden',
+                  }}
+                >
+                  Out of Stock only
+                </div>
+              </div>
+            </Checkbox>
+          </Col>
+          <Col lg={6} xs={24}>
+            <Checkbox
+              disabled={loadingResources || loading || disabled}
+              onChange={handleFilterClassified}
+              className={isMobile ? 'mb-2' : 'mt-2 mb-05'}
+            >
+              <div style={{ display: 'grid', placeItems: 'stretch' }}>
+                <div
+                  style={{
+                    whiteSpace: 'nowrap',
+                    textOverflow: 'ellipsis',
+                    overflow: 'hidden',
+                  }}
+                >
+                  Unclassified only
+                </div>
+              </div>
+            </Checkbox>
+          </Col>
+        </Row>
       </>
     );
   };
@@ -1041,26 +1062,27 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
             id="filterPanel"
             style={panelStyle}
           >
-            {!isMobile && <Filters />}
-            {isMobile && (
-              <Collapse
-                ghost
-                activeKey={activeKey}
-                onChange={handleCollapseChange}
-                destroyInactivePanel
-              >
-                <Panel
-                  header={<Typography.Title level={5}>Filter</Typography.Title>}
-                  key="1"
+            <Col lg={16} xs={24}>
+              {!isMobile && <Filters />}
+              {isMobile && (
+                <Collapse
+                  ghost
+                  activeKey={activeKey}
+                  onChange={handleCollapseChange}
+                  destroyInactivePanel
                 >
-                  <Filters />
-                </Panel>
-              </Collapse>
-            )}
-            <Col
-              span={24}
-              className={activeKey === '1' ? 'mt-n1 mb-1' : 'mt-n05'}
-            >
+                  <Panel
+                    header={
+                      <Typography.Title level={5}>Filter</Typography.Title>
+                    }
+                    key="1"
+                  >
+                    <Filters />
+                  </Panel>
+                </Collapse>
+              )}
+            </Col>
+            <Col className={activeKey === '1' ? 'mt-n1 mb-1' : 'mt-n05'}>
               <Row
                 justify="space-between"
                 align="top"
@@ -1078,12 +1100,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                     <UpOutlined />
                   </Button>
                 </Col>
-                <Col
-                  style={{
-                    position: 'relative',
-                    top: activeKey === '1' ? '0rem' : '0.5rem',
-                  }}
-                >
+                <Col>
                   <Button
                     onClick={handleGroupItems}
                     loading={loading}

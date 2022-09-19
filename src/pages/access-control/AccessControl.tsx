@@ -129,6 +129,13 @@ const AccessControl: React.FC = () => {
     setSelectedProfile(value);
   };
 
+  const filterOption = (input: string, option: any) => {
+    return !!option?.children
+      ?.toString()
+      ?.toUpperCase()
+      .includes(input?.toUpperCase());
+  };
+
   return (
     <>
       <PageHeader title="Access Control" className={isMobile ? 'mb-n1' : ''} />
@@ -145,6 +152,9 @@ const AccessControl: React.FC = () => {
             style={{ width: '100%' }}
             onChange={onChangeProfile}
             value={selectedProfile}
+            allowClear
+            showSearch
+            filterOption={filterOption}
           >
             {profiles.map((profile: any) => (
               <Select.Option key={profile} value={profile}>
@@ -175,7 +185,7 @@ const AccessControl: React.FC = () => {
           defaultActiveKey="template"
           style={{ width: '100%' }}
           onChange={setSelectedMethod}
-          className="mt-1"
+          className="mt-05"
         >
           {methodsList.map((method, index) => (
             <TabPane tab={method} key={method}>
