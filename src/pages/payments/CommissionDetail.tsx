@@ -22,10 +22,17 @@ const CommissionDetail: React.FC<CommissionDetailProps> = ({
   const { doFetch } = useRequest({ setLoading });
   const [totalAmount, setTotalAmount] = useState<number>(0);
   const [totalSalePrice, setTotalSalePrice] = useState<number>(0);
+  const [tempAmount, setTempAmount] = useState<number>(0);
+  const [tempSalePrice, setTempSalePrice] = useState<number>(0);
 
   useEffect(() => {
     getDetails();
   }, []);
+
+  useEffect(() => {
+    setTotalAmount(tempAmount);
+    setTotalSalePrice(tempSalePrice);
+  }, [tempAmount, tempSalePrice]);
 
   const getDetails = async () => {
     const { results } = await doFetch(() =>
@@ -142,17 +149,15 @@ const CommissionDetail: React.FC<CommissionDetailProps> = ({
             loading={loading}
             pagination={false}
             summary={pageData => {
-              let tempAmount,
-                tempSalePrice = 0;
               pageData.forEach(
                 ({ discountedPrice, creatorPercentage, originalPrice }) => {
-                  tempAmount +=
-                    ((creatorPercentage ?? 0) / 100) * originalPrice;
-                  tempSalePrice += discountedPrice;
+                  setTempAmount(
+                    prev =>
+                      prev + ((creatorPercentage ?? 0) / 100) * originalPrice
+                  );
+                  setTempSalePrice(prev => prev + discountedPrice);
                 }
               );
-              setTotalAmount(tempAmount);
-              setTotalSalePrice(tempSalePrice);
 
               return (
                 <>
