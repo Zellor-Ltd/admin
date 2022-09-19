@@ -67,7 +67,11 @@ const Step2: React.FC<Step2Props> = ({ selectedTags, onReturn }) => {
           {selectedFanGroup && (
             <div className="mx-1">
               {selectedTags.map(tag => (
-                <TagBox tag={tag} selectedFanGroup={selectedFanGroup} />
+                <TagBox
+                  key={tag.id}
+                  tag={tag}
+                  selectedFanGroup={selectedFanGroup}
+                />
               ))}
             </div>
           )}
