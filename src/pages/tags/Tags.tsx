@@ -28,14 +28,13 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
   const { doFetch, doRequest } = useRequest({ setLoading });
   const [searchFilter, setSearchFilter] = usePageFilter<string>('search');
   const [page, setPage] = useState<number>(0);
-  const [eof, setEof] = useState<boolean>(false);
+  const [eof, setEof] = useState<boolean>(true);
   const [tags, setTags] = useState<Tag[]>([]);
   const { isMobile } = useContext(AppContext);
   const isMounted = useRef<boolean>(false);
 
   useEffect(() => {
     if (refreshing) {
-      setTags([]);
       setEof(false);
       updateDisplayedArray();
       setRefreshing(false);
@@ -43,15 +42,16 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
   }, [refreshing]);
 
   useEffect(() => {
-    if (!isMounted.current) {
-      isMounted.current = true;
-      return;
+    if (searchFilter) {
+      if (!isMounted.current) {
+        isMounted.current = true;
+        return;
+      }
+      setRefreshing(true);
     }
-    setRefreshing(true);
   }, [searchFilter]);
 
   const updateDisplayedArray = async () => {
-    scrollToCenter(0);
     const pageToUse = refreshing ? 0 : page;
 
     const { results } = await doFetch(() =>
@@ -68,7 +68,11 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
     if (results.length < 30) setEof(true);
   };
 
-  const fetch = () => {
+  const fetch = (scrollToTop?: boolean) => {
+    if (scrollToTop) {
+      scrollToCenter(0);
+      setTags([]);
+    }
     setRefreshing(true);
   };
 
@@ -244,7 +248,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
                   <Button
                     type="primary"
                     className={isMobile ? 'mt-1' : 'mt-1 mr-06'}
-                    onClick={fetch}
+                    onClick={() => fetch(true)}
                     loading={loading}
                   >
                     Search
