@@ -10,7 +10,6 @@ import {
   Button,
   Col,
   Collapse,
-  Form,
   Input,
   InputNumber,
   Layout,
@@ -67,8 +66,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const { isMobile } = useContext(AppContext);
   const inputRef = useRef<any>(null);
   const [activeKey, setActiveKey] = useState<string>('-1');
-  const [feedForm] = Form.useForm();
-  const [segmentForm] = Form.useForm();
   const [selectedVideoFeed, setSelectedVideoFeed] = useState<FeedItem>();
   const [loading, setLoading] = useState(false);
   const [loadingResources, setLoadingResources] = useState<boolean>(true);
@@ -106,17 +103,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   useEffect(() => {
     getDetailsResources();
   }, []);
-
-  useEffect(() => {
-    if (selectedVideoFeed) {
-      selectedVideoFeed.index =
-        selectedVideoFeed?.index !== undefined
-          ? selectedVideoFeed?.index
-          : 1000;
-    }
-    feedForm.setFieldsValue(selectedVideoFeed);
-    segmentForm.setFieldsValue(selectedVideoFeed);
-  }, [selectedVideoFeed]);
 
   useEffect(() => {
     const panel = document.getElementById('filterPanel');
@@ -490,7 +476,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const onSaveItem = (record: FeedItem) => {
     refreshItem(record);
     setDetails(false);
-    feedForm.resetFields();
     setSelectedVideoFeed(undefined);
   };
 
