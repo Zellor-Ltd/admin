@@ -206,12 +206,10 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
   };
 
   const handleChangeTag = async (value?: string) => {
-    if (value) {
-      const entity = buffer.find(
-        tag => tag.tagName?.toUpperCase() === value?.toUpperCase()
-      );
-      if (entity) setTags([entity]);
-    }
+    const entity = buffer.filter(tag =>
+      tag.id.toUpperCase().includes(value?.toUpperCase() ?? '')
+    );
+    setTags(entity);
   };
 
   const searchTags = () => {
