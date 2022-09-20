@@ -66,13 +66,17 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
     try {
       const formProductBrand = form.getFieldsValue(true);
 
-      categoriesFields.forEach((field, index) => {
-        formProductBrand.categories.forEach((productCategory: any) => {
-          productCategory[field] = allCategories[
-            categoriesKeys[index] as keyof AllCategories
-          ].find((category: any) => category.id === productCategory[field]?.id);
+      if (formProductBrand.categories) {
+        categoriesFields.forEach((field, index) => {
+          formProductBrand.categories.forEach((productCategory: any) => {
+            productCategory[field] = allCategories[
+              categoriesKeys[index] as keyof AllCategories
+            ].find(
+              (category: any) => category.id === productCategory[field]?.id
+            );
+          });
         });
-      });
+      } else formProductBrand.categories = [{}];
 
       const { result } = await doRequest(() =>
         saveProductBrand(formProductBrand)
@@ -515,7 +519,6 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                 </Col>
               </Row>
               <ProductCategoriesTrees
-                id="productBrandCategories"
                 categories={productBrand?.categories}
                 allCategories={allCategories}
                 form={form}

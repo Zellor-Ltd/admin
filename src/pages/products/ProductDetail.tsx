@@ -773,6 +773,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
             </Row>
             <ProductCategoriesTrees
               id="categories"
+              required
               categories={_product?.categories}
               allCategories={allCategories}
               form={form}

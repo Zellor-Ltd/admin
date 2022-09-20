@@ -19,7 +19,8 @@ interface ProductCategoriesProps {
   initialValues: SelectedProductCategories[];
   handleCategoryChange: Function;
   disabled?: boolean;
-  id?: string;
+  _id?: string;
+  required?: boolean;
 }
 
 const formatProductCategories: (
@@ -45,7 +46,8 @@ const ProductCategories: React.FC<ProductCategoriesProps> = ({
   initialValues,
   handleCategoryChange,
   disabled = false,
-  id,
+  _id,
+  required,
 }) => {
   const { isMobile } = useContext(AppContext);
   const { filteredCategories, filterCategory } = useAllCategories({
@@ -96,21 +98,22 @@ const ProductCategories: React.FC<ProductCategoriesProps> = ({
             name={['categories', productCategoryIndex, field, 'id']}
             rules={[
               {
-                required: _index < 2 && id !== 'productBrandCategories',
+                required: _index < 2 && required,
                 message: `${key} is required`,
               },
             ]}
           >
             <Select
-              id={_index === 0 ? id : ''}
+              id={_index === 0 ? _id : ''}
               disabled={
                 disabled ||
                 !filteredCategories[key as keyof AllCategories].length
               }
-              allowClear={_index >= 2}
+              allowClear
               showSearch
               filterOption={filterOption}
               placeholder="Please select a category"
+              className="mr-05"
               style={isMobile ? { width: '100%' } : { width: '180px' }}
               onChange={(_, option: any) =>
                 _handleCategoryChange(option?.children as string, key)
