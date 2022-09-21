@@ -576,7 +576,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
   };
 
   const filterOption = (input: string, option: any) => {
-    return !!option?.children
+    return !!option?.label
       ?.toString()
       ?.toUpperCase()
       .includes(input?.toUpperCase());
