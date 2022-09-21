@@ -183,6 +183,8 @@ const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
         </Col>
       </Row>
       <ProductCategoriesTrees
+        id="categories"
+        required
         categories={record.categories}
         allCategories={allCategories}
         form={form}

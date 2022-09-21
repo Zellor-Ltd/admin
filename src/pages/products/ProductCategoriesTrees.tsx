@@ -12,6 +12,7 @@ interface ProductCategoriesTreesProps {
   handleCategoryDelete?: Function;
   disabled?: boolean;
   id?: string;
+  required?: boolean;
 }
 
 const ProductCategoriesTrees: React.FC<ProductCategoriesTreesProps> = ({
@@ -22,6 +23,7 @@ const ProductCategoriesTrees: React.FC<ProductCategoriesTreesProps> = ({
   handleCategoryDelete,
   disabled,
   id,
+  required,
 }) => {
   const [_categories, _setCategories] = useState<SelectedProductCategories[]>(
     categories || [{}]
@@ -47,13 +49,10 @@ const ProductCategoriesTrees: React.FC<ProductCategoriesTreesProps> = ({
     <>
       <Col span={24}>
         {_categories.map((_: any, index: number) => (
-          <Row
-            key={index}
-            justify="space-between"
-            style={{ maxWidth: '1000px' }}
-          >
+          <Row key={index} style={{ maxWidth: '1000px' }}>
             <ProductCategories
-              id={id}
+              required={required}
+              _id={id}
               productCategoryIndex={index}
               initialValues={_categories}
               allCategories={allCategories}
