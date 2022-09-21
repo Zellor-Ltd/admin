@@ -127,11 +127,15 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
     useState<ProductBrand>();
   const [currentBrandIcon, setCurrentBrandIcon] = useState<any>();
   const [tagBuffer, setTagBuffer] = useState<any[]>([]);
-  const loaded = useRef<boolean>(false);
+  const [loaded, setLoaded] = useState<boolean>(false);
+  const [vLinkBrandIcons, setVLinkBrandIcons] = useState<any[]>([]);
+  const [vLinkProductBrandIcons, setVLinkProductBrandIcons] = useState<any[]>(
+    []
+  );
 
   useEffect(() => {
     if (brands.length && creators.length && productBrands.length)
-      loaded.current = true;
+      setLoaded(true);
   }, [brands, creators, productBrands]);
 
   useEffect(() => {
@@ -156,12 +160,24 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
         item => item.id === feedItem?.selectedId
       );
       setCurrentProductBrand(selectedProductBrand);
-      loadProductBrandIcons(selectedProductBrand);
+      loadIcons(selectedProductBrand);
       setCurrentBrandIcon(feedItem?.selectedIconUrl);
     }
 
     if (feedItem?.creator) {
       setVideoCreator(feedItem?.creator);
+    }
+
+    if (feedItem?.vLink?.brand) {
+      const entity = brands.find(item => item.id === feedItem.vLink.brand.id);
+      loadIcons(entity);
+    }
+
+    if (feedItem?.vLink?.productBrand) {
+      const entity = productBrands.find(
+        item => item.id === feedItem.vLink.productBrand.id
+      );
+      loadIcons(entity);
     }
   }, []);
 
@@ -267,10 +283,41 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
     setCurrentCreator(selectedCreator);
   };
 
-  const onChangeProductBrand = (value: string) => {
-    const selectedProductBrand = productBrands.find(item => item.id === value);
-    setCurrentProductBrand(selectedProductBrand);
-    loadProductBrandIcons(selectedProductBrand);
+  const handleSelectChange = (
+    type: 'listing' | 'vLinkBrand' | 'vLinkProductBrand',
+    id?: string
+  ) => {
+    if (type === 'vLinkBrand') {
+      const entity = brands?.find(item => item.id === id);
+      loadIcons(entity, 'brand');
+
+      let vLinkFields = feedForm.getFieldValue('vLink');
+      vLinkFields.brand.showPrice = false;
+      vLinkFields.brand.selectedLogoUrl = undefined;
+      feedForm.setFieldsValue({
+        vLink: vLinkFields,
+      });
+      return;
+    }
+
+    const entity = productBrands?.find(item => item.id === id);
+
+    if (type === 'vLinkProductBrand') {
+      loadIcons(entity, 'productBrand');
+
+      let vLinkFields = feedForm.getFieldValue('vLink');
+      vLinkFields.productBrand.showPrice = false;
+      vLinkFields.productBrand.selectedLogoUrl = undefined;
+      feedForm.setFieldsValue({
+        vLink: vLinkFields,
+      });
+      return;
+    }
+
+    if (type === 'listing') {
+      setCurrentProductBrand(entity);
+      loadIcons(entity);
+    }
   };
 
   const onChangeBrandIcon = (url: string) => {
@@ -471,34 +518,39 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
       .includes(input?.toUpperCase());
   };
 
-  const loadProductBrandIcons = (productBrand?: ProductBrand) => {
+  const loadIcons = (
+    entity?: ProductBrand | Brand,
+    vLink?: 'brand' | 'productBrand'
+  ) => {
     const icons: any[] = [];
-    if (productBrand?.brandLogo)
+    if (entity?.brandLogo)
       icons.push({
         key: 'Round',
         label: 'Round',
-        value: productBrand.brandLogo.url,
+        value: entity.brandLogo.url,
       });
-    if (productBrand?.whiteLogo)
+    if (entity?.whiteLogo)
       icons.push({
         key: 'White',
         label: 'White',
-        value: productBrand.whiteLogo.url,
+        value: entity.whiteLogo.url,
       });
-    if (productBrand?.blackLogo)
+    if (entity?.blackLogo)
       icons.push({
         key: 'Black',
         label: 'Black',
-        value: productBrand.blackLogo.url,
+        value: entity.blackLogo.url,
       });
-    if (productBrand?.colourLogo)
+    if (entity?.colourLogo)
       icons.push({
         key: 'Colour',
         label: 'Colour',
-        value: productBrand.colourLogo.url,
+        value: entity.colourLogo.url,
       });
 
-    setProductBrandIcons(icons);
+    if (vLink === 'brand') setVLinkBrandIcons(icons);
+    if (vLink === 'productBrand') setVLinkProductBrandIcons(icons);
+    else setProductBrandIcons(icons);
   };
 
   const handleGenerateLink = async () => {
@@ -659,7 +711,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                 <Form.Item name="category" label="Category">
                   <Select
                     placeholder="Please select a category"
-                    disabled={!loaded.current || !category.length}
+                    disabled={!loaded || !category.length}
                     filterOption={filterOption}
                     allowClear
                     showSearch
@@ -679,7 +731,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                       placeholder="Please select a creator"
                       onChange={onCreatorChange}
                       value={videoCreator?.id}
-                      disabled={!loaded.current}
+                      disabled={!loaded}
                       filterOption={filterOption}
                       allowClear
                       showSearch
@@ -785,7 +837,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                 <Form.Item name="language" label="Language">
                   <Select
                     placeholder="Please select a language"
-                    disabled={!loaded.current || !language.length}
+                    disabled={!loaded || !language.length}
                     filterOption={filterOption}
                     allowClear
                     showSearch
@@ -810,7 +862,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                     id="videoType"
                     mode="multiple"
                     placeholder="Please select a Video Type"
-                    disabled={!loaded.current || !videoType.length}
+                    disabled={!loaded || !videoType.length}
                     filterOption={filterOption}
                     allowClear
                     showSearch
@@ -995,8 +1047,8 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                     <Select
                       id="productBrand"
                       placeholder="Select a Brand"
-                      disabled={!loaded.current}
-                      onChange={onChangeProductBrand}
+                      disabled={!loaded}
+                      onChange={(id: any) => handleSelectChange('listing', id)}
                       allowClear
                       showSearch
                       filterOption={filterOption}
@@ -1064,7 +1116,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                     <Select
                       id="creator"
                       placeholder="Select a Creator"
-                      disabled={!loaded.current}
+                      disabled={!loaded}
                       onChange={onChangeCreator}
                       style={{ width: '100%' }}
                       allowClear
@@ -1098,7 +1150,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
               <Col lg={4} xs={24}>
                 <Typography.Title level={5}>Creator</Typography.Title>
                 <Select
-                  disabled={!loaded.current}
+                  disabled={!loaded}
                   style={{ width: '100%' }}
                   onSelect={onSelectCreator}
                   value={videoCreator?.id}
@@ -1121,7 +1173,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
               <Col lg={4} xs={24}>
                 <Typography.Title level={5}>Social platform</Typography.Title>
                 <Select
-                  disabled={!loaded.current || !socialPlatform.length}
+                  disabled={!loaded || !socialPlatform.length}
                   style={{ width: '100%' }}
                   onSelect={setSelectedSocialPlatform}
                   value={selectedSocialPlatform}
@@ -1150,7 +1202,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
               <Col lg={4} xs={24}>
                 <Typography.Title level={5}>Link Type</Typography.Title>
                 <Select
-                  disabled={!loaded.current || !linkType.length}
+                  disabled={!loaded || !linkType.length}
                   style={{ width: '100%' }}
                   onSelect={setSelectedLinkType}
                   value={selectedLinkType}
@@ -1236,6 +1288,142 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                     <Input allowClear placeholder="Date Range (Text format)" />
                   </Form.Item>
                 </Col>
+              </Col>
+            </Row>
+          </Tabs.TabPane>
+
+          <Tabs.TabPane forceRender tab="vLink" key="vLink">
+            <Row gutter={8}>
+              <Col lg={8} xs={24}>
+                <Form.Item label="Master Brand" name={['vLink', 'brand', 'id']}>
+                  <Select
+                    placeholder="Select a Master Brand"
+                    disabled={!loaded}
+                    onChange={id => handleSelectChange('vLinkBrand', id)}
+                    allowClear
+                    showSearch
+                    filterOption={filterOption}
+                  >
+                    {brands.map((brand: Brand) => (
+                      <Select.Option
+                        key={brand.id}
+                        value={brand.id}
+                        label={brand.brandName}
+                      >
+                        {brand.brandName}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+                {feedForm.getFieldValue(['vLink', 'brand', 'id']) && (
+                  <Form.Item
+                    label="Show Price"
+                    name={['vLink', 'brand', 'showPrice']}
+                    valuePropName="checked"
+                  >
+                    <Switch />
+                  </Form.Item>
+                )}
+                {feedForm.getFieldValue(['vLink', 'brand', 'id']) && (
+                  <Form.Item
+                    label="Icon"
+                    name={['vLink', 'brand', 'selectedLogoUrl']}
+                  >
+                    <Select
+                      placeholder="Select an icon"
+                      disabled={!loaded}
+                      allowClear
+                      showSearch
+                      filterOption={filterOption}
+                    >
+                      {vLinkBrandIcons.map((icon: any) => (
+                        <Select.Option
+                          key={icon.key}
+                          value={icon.value}
+                          label={icon.label}
+                        >
+                          {icon.label}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
+                )}
+              </Col>
+              <Col lg={8} xs={24}>
+                <Form.Item
+                  label="Product Brand"
+                  name={['vLink', 'productBrand', 'id']}
+                >
+                  <Select
+                    placeholder="Select a Product Brand"
+                    disabled={!loaded}
+                    onChange={id => handleSelectChange('vLinkProductBrand', id)}
+                    allowClear
+                    showSearch
+                    filterOption={filterOption}
+                  >
+                    {productBrands.map((productBrand: ProductBrand) => (
+                      <Select.Option
+                        key={productBrand.id}
+                        value={productBrand.id}
+                        label={productBrand.brandName}
+                      >
+                        {productBrand.brandName}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+                {feedForm.getFieldValue(['vLink', 'productBrand', 'id']) && (
+                  <Form.Item
+                    label="Show Price"
+                    name={['vLink', 'productBrand', 'showPrice']}
+                    valuePropName="checked"
+                  >
+                    <Switch />
+                  </Form.Item>
+                )}
+                {feedForm.getFieldValue(['vLink', 'productBrand', 'id']) && (
+                  <Form.Item
+                    label="Icon"
+                    name={['vLink', 'productBrand', 'selectedLogoUrl']}
+                  >
+                    <Select
+                      placeholder="Select an icon"
+                      disabled={!loaded}
+                      allowClear
+                      showSearch
+                      filterOption={filterOption}
+                    >
+                      {vLinkProductBrandIcons.map((icon: any) => (
+                        <Select.Option
+                          key={icon.key}
+                          value={icon.value}
+                          label={icon.label}
+                        >
+                          {icon.label}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
+                )}
+              </Col>
+              <Col lg={8} xs={24}>
+                <Form.Item label="Creator" name={['vLink', 'creator']}>
+                  <Select
+                    disabled={!creators.length}
+                    placeholder="Select a Creator"
+                    style={{ width: '100%' }}
+                    allowClear
+                    showSearch
+                    filterOption={filterOption}
+                  >
+                    {creators.map(creator => (
+                      <Select.Option key={creator.id} value={creator.id}>
+                        {creator.firstName}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Form.Item>
               </Col>
             </Row>
           </Tabs.TabPane>
