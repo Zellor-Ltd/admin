@@ -134,6 +134,9 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
         case 'avatar':
           setActiveTabKey('Images');
           break;
+        case 'gender':
+          setActiveTabKey('Categories');
+          break;
         default:
           console.log('Something went wrong.');
       }
