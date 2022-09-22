@@ -36,7 +36,16 @@ import {
 import { ColumnsType } from 'antd/lib/table';
 import CopyValueToClipboard from 'components/CopyValueToClipboard';
 import moment from 'moment';
-import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import {
+  DeleteOutlined,
+  EditOutlined,
+  FacebookFilled,
+  GlobalOutlined,
+  InstagramFilled,
+  SoundFilled,
+  TwitterCircleFilled,
+  YoutubeFilled,
+} from '@ant-design/icons';
 import scrollIntoView from 'scroll-into-view';
 import { Link } from 'react-router-dom';
 import { AppContext } from 'contexts/AppContext';
@@ -1017,6 +1026,60 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
               tab="Secrets"
               key="Secrets"
             ></Tabs.TabPane>
+
+            <Tabs.TabPane forceRender tab="Social" key="Social">
+              <Row gutter={8}>
+                <Col span={24}>
+                  <Typography.Title level={4}>Social Channels</Typography.Title>
+                </Col>
+              </Row>
+              <Row>
+                <Col lg={12} xs={24}>
+                  <Form.Item name="instagram" label="Instagram">
+                    <Input
+                      allowClear
+                      prefix={<InstagramFilled />}
+                      placeholder="Instagram"
+                    />
+                  </Form.Item>
+                  <Form.Item name="facebook" label="Facebook">
+                    <Input
+                      allowClear
+                      prefix={<FacebookFilled />}
+                      placeholder="Facebook"
+                    />
+                  </Form.Item>
+                  <Form.Item name="tiktok" label="TikTok">
+                    <Input
+                      allowClear
+                      prefix={<SoundFilled />}
+                      placeholder="TikTok"
+                    />
+                  </Form.Item>
+                  <Form.Item name="youtube" label="Youtube">
+                    <Input
+                      allowClear
+                      prefix={<YoutubeFilled />}
+                      placeholder="Youtube"
+                    />
+                  </Form.Item>
+                  <Form.Item name="website" label="Website">
+                    <Input
+                      allowClear
+                      prefix={<GlobalOutlined />}
+                      placeholder="Website"
+                    />
+                  </Form.Item>
+                  <Form.Item name="twitter" label="Twitter">
+                    <Input
+                      allowClear
+                      prefix={<TwitterCircleFilled />}
+                      placeholder="Twitter"
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+            </Tabs.TabPane>
           </Tabs>
           {activeTabKey !== 'Secrets' && (
             <Row gutter={8} justify="end">
