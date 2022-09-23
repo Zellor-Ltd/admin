@@ -36,7 +36,8 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
   const [details, setDetails] = useState<boolean>(false);
   const [currentPromoDisplay, setCurrentPromoDisplay] =
     useState<PromoDisplay>();
-  const [promoDisplays, setPromoDisplays] = useState<PromoDisplay[]>([]);
+  const [buffer, setBuffer] = useState<PromoDisplay[]>([]);
+  const [data, setData] = useState<PromoDisplay[]>([]);
   const [filter, setFilter] = useState<string>('');
   const { isMobile } = useContext(AppContext);
 
@@ -45,24 +46,29 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    const tmp = search(buffer);
+    setData(tmp);
+  }, [filter, buffer]);
+
+  const scrollToCenter = (index: number) => {
+    scrollIntoView(
+      document.querySelector(`.scrollable-row-${index}`) as HTMLElement
+    );
+  };
+
   const getResources = async () => {
     await getPromoDisplays();
   };
 
   const getPromoDisplays = async () => {
     const { results } = await doFetch(fetchPromoDisplays);
-    setPromoDisplays(results);
+    setBuffer(results);
   };
 
   useEffect(() => {
-    if (!details) {
-      scrollIntoView(
-        document.querySelector(
-          `.scrollable-row-${lastViewedIndex}`
-        ) as HTMLElement
-      );
-    }
-  }, [details, promoDisplays]);
+    if (!details) scrollToCenter(lastViewedIndex);
+  }, [details, data]);
 
   const editPromoDisplay = (index: number, promoDisplay?: PromoDisplay) => {
     setLastViewedIndex(index);
@@ -72,10 +78,7 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
 
   const deleteItem = async (id: string, index: number) => {
     await doRequest(() => deletePromoDisplay({ id }));
-    setPromoDisplays(prev => [
-      ...prev.slice(0, index),
-      ...prev.slice(index + 1),
-    ]);
+    setBuffer(buffer.filter(item => item.id !== id));
   };
 
   const columns: ColumnsType<PromoDisplay> = [
@@ -175,13 +178,18 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
     );
   };
 
-  const refreshItem = (record: PromoDisplay) => {
-    promoDisplays[lastViewedIndex] = record;
-    setPromoDisplays([...promoDisplays]);
+  const refreshItem = (record: PromoDisplay, newItem?: boolean) => {
+    const tmp = buffer.map(item => {
+      if (item.id === record.id) return record;
+      else return item;
+    });
+
+    setBuffer(newItem ? [...tmp, record] : [...tmp]);
+    scrollToCenter(data.length - 1);
   };
 
-  const onSavePromoDisplay = (record: PromoDisplay) => {
-    refreshItem(record);
+  const onSavePromoDisplay = (record: PromoDisplay, newItem?: boolean) => {
+    refreshItem(record, newItem);
     setDetails(false);
   };
 
@@ -200,7 +208,7 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
               <Button
                 key="1"
                 className={isMobile ? 'mt-05' : ''}
-                onClick={() => editPromoDisplay(promoDisplays.length)}
+                onClick={() => editPromoDisplay(data.length)}
               >
                 New Item
               </Button>,
@@ -226,7 +234,7 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
             rowClassName={(_, index) => `scrollable-row-${index}`}
             rowKey="id"
             columns={columns}
-            dataSource={search(promoDisplays)}
+            dataSource={data}
             loading={loading}
             pagination={false}
           />

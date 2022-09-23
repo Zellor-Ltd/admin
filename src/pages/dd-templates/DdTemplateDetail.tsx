@@ -15,7 +15,7 @@ import { saveDdTemplate } from 'services/DiscoClubService';
 import scrollIntoView from 'scroll-into-view';
 interface DdTemplatesDetailProps {
   template: DdTemplate | undefined;
-  onSave?: (record: DdTemplate) => void;
+  onSave?: (record: DdTemplate, newItem?: boolean) => void;
   onCancel?: () => void;
 }
 
@@ -34,7 +34,7 @@ const DdTemplatesDetail: React.FC<DdTemplatesDetailProps> = ({
       const { result } = await doRequest(() => saveDdTemplate(formDdTemplate));
       formDdTemplate.id
         ? onSave?.(formDdTemplate)
-        : onSave?.({ ...formDdTemplate, id: result });
+        : onSave?.({ ...formDdTemplate, id: result }, true);
     } catch (error: any) {
       message.error('Error: ' + error.error);
     }

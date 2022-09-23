@@ -61,7 +61,8 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   const [brandId, setBrandId] = useState<string>();
   const [optionsPage, setOptionsPage] = useState<number>(0);
   const [filter, setFilter] = useState<any[]>([]);
-  const [orders, setOrders] = useState<Order[]>([]);
+  const [buffer, setBuffer] = useState<any[]>([]);
+  const [data, setData] = useState<any[]>([]);
   const [fanFilterInput, setFanFilterInput] = useState<string>();
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [cartTableContent, setCartTableContent] = useState<any>();
@@ -81,11 +82,16 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
 
   useEffect(() => {
     if (refreshing) {
-      setOrders([]);
+      setBuffer([]);
       setEof(false);
       fetch();
     }
   }, [refreshing]);
+
+  useEffect(() => {
+    const tmp = search(buffer);
+    setData(tmp);
+  }, [filter, buffer]);
 
   useEffect(() => {
     if (loaded || brandId || selectedUser) {
@@ -127,8 +133,8 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     const validOrders = results.filter(
       (order: Order) => !!(order.product || order.cart)
     );
-    if (pageToUse === 0) setOrders(validOrders);
-    else setOrders(prev => [...prev.concat(validOrders)]);
+    if (pageToUse === 0) setBuffer(validOrders);
+    else setBuffer(prev => [...prev.concat(validOrders)]);
     setLoaded(true);
     setRefreshing(false);
   };
@@ -168,11 +174,11 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       });
     }
 
-    const _orders = [...orders];
-    _orders[index].hLastUpdate = moment
+    const tmp = [...data];
+    tmp[index].hLastUpdate = moment
       .utc()
       .format('YYYY-MM-DDTHH:mm:ss.SSSSSSSZ');
-    setOrders(_orders);
+    setData(tmp);
 
     message.success('Changes saved!');
     setOrderUpdateList(prev => {
@@ -203,7 +209,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     if (!details) {
       scrollToCenter(lastViewedIndex);
     }
-  }, [details, orders]);
+  }, [details]);
 
   const editFan = (index: number, fan?: Fan) => {
     setLastViewedIndex(index);
@@ -733,7 +739,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   }, []);
 
   const handleChangeBrand = async (_?: string, option?: BaseOptionType) => {
-    setOrders([]);
+    setBuffer([]);
     const selectedEntity = brands.find(item => item.id === option?.value);
     setBrandId(selectedEntity?.id);
   };
@@ -743,7 +749,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   const onChangeFan = async (input?: string, fan?: Fan) => {
-    setOrders([]);
+    setBuffer([]);
     if (!fan) {
       setFanFilterInput('');
       setSelectedUser(undefined);
@@ -850,7 +856,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
             </Col>
           </Row>
           <InfiniteScroll
-            dataLength={search(orders).length}
+            dataLength={data.length}
             next={loadNext}
             hasMore={page > 0 && !eof}
             loader={
@@ -873,7 +879,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
               rowClassName={(_, index) => `scrollable-row-${index}`}
               rowKey="id"
               columns={columns}
-              dataSource={search(orders)}
+              dataSource={data}
               loading={refreshing}
               pagination={false}
               expandedRowKeys={expandedRowKeys}

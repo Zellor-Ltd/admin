@@ -7,7 +7,7 @@ import { saveMasthead } from '../../services/DiscoClubService';
 
 interface MastheadDetailProps {
   masthead?: Masthead;
-  onSave?: (record: Masthead) => void;
+  onSave?: (record: Masthead, newItem?: boolean) => void;
   onCancel?: () => void;
 }
 
@@ -24,7 +24,7 @@ const CreatorsPageDetail: React.FC<MastheadDetailProps> = ({
     const { result } = await doRequest(() => saveMasthead(formMasthead));
     formMasthead.id
       ? onSave?.(formMasthead)
-      : onSave?.({ ...formMasthead, id: result });
+      : onSave?.({ ...formMasthead, id: result }, true);
   };
 
   return (

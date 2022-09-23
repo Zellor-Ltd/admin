@@ -13,7 +13,7 @@ import scrollIntoView from 'scroll-into-view';
 import moment from 'moment';
 interface PromoDisplayDetailProps {
   promoDisplay?: any;
-  onSave?: (record: PromoDisplay) => void;
+  onSave?: (record: PromoDisplay, newItem?: boolean) => void;
   onCancel?: () => void;
 }
 
@@ -48,7 +48,7 @@ const PromoDisplaysDetail: React.FC<PromoDisplayDetailProps> = ({
       );
       formPromoDisplay.id
         ? onSave?.(formPromoDisplay)
-        : onSave?.({ ...formPromoDisplay, id: result });
+        : onSave?.({ ...formPromoDisplay, id: result }, true);
     } catch (error: any) {
       message.error('Error: ' + error.error);
     }

@@ -18,7 +18,8 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [details, setDetails] = useState<boolean>(false);
   const [currentFanGroup, setCurrentFanGroup] = useState<FanGroup>();
-  const [fanGroups, setFanGroups] = useState<FanGroup[]>([]);
+  const [buffer, setBuffer] = useState<FanGroup[]>([]);
+  const [data, setData] = useState<FanGroup[]>([]);
   const [filter, setFilter] = useState<string>('');
   const { isMobile } = useContext(AppContext);
 
@@ -27,24 +28,29 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    const tmp = search(buffer);
+    setData(tmp);
+  }, [filter, buffer]);
+
   const getResources = async () => {
     await getFanGroups();
   };
 
   const getFanGroups = async () => {
     const { results } = await doFetch(fetchFanGroups);
-    setFanGroups(results);
+    setBuffer(results);
+  };
+
+  const scrollToCenter = (index: number) => {
+    scrollIntoView(
+      document.querySelector(`.scrollable-row-${index}`) as HTMLElement
+    );
   };
 
   useEffect(() => {
-    if (!details) {
-      scrollIntoView(
-        document.querySelector(
-          `.scrollable-row-${lastViewedIndex}`
-        ) as HTMLElement
-      );
-    }
-  }, [details, fanGroups]);
+    if (!details) scrollToCenter(lastViewedIndex);
+  }, [details, data]);
 
   const editFanGroup = (index: number, fanGroup?: FanGroup) => {
     setLastViewedIndex(index);
@@ -93,13 +99,16 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
     );
   };
 
-  const refreshItem = (record: FanGroup) => {
-    fanGroups[lastViewedIndex] = record;
-    setFanGroups([...fanGroups]);
+  const refreshItem = (record: FanGroup, newItem?: boolean) => {
+    const tmp = buffer.map(item => {
+      if (item.id === record.id) return record;
+      else return item;
+    });
+    setBuffer(newItem ? [...tmp, record] : [...tmp]);
   };
 
-  const onSaveFanGroup = (record: FanGroup) => {
-    refreshItem(record);
+  const onSaveFanGroup = (record: FanGroup, newItem?: boolean) => {
+    refreshItem(record, newItem);
     setDetails(false);
   };
 
@@ -118,7 +127,7 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
               <Button
                 key="1"
                 className={isMobile ? 'mt-05' : ''}
-                onClick={() => editFanGroup(fanGroups.length)}
+                onClick={() => editFanGroup(data.length)}
               >
                 New Item
               </Button>,
@@ -144,7 +153,7 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
             rowClassName={(_, index) => `scrollable-row-${index}`}
             rowKey="id"
             columns={columns}
-            dataSource={search(fanGroups)}
+            dataSource={data}
             loading={loading}
             pagination={false}
           />
