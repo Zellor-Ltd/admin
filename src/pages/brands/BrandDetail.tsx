@@ -531,43 +531,59 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
               </Row>
               <Row gutter={8}>
                 <Col lg={12} xs={24}>
-                  <Form.Item label="Master Brand Name" name="brandName">
-                    <Input allowClear placeholder="Master Brand Name" />
-                  </Form.Item>
-                </Col>
-                <Col span={24}>
-                  <Form.Item
-                    label="Master Brand Color"
-                    name="brandTxtColor"
-                    rules={[
-                      {
-                        required: true,
-                        message: 'Master Brand Color is required.',
-                      },
-                    ]}
-                  >
-                    <ColorPicker id="brandTxtColor" />
-                  </Form.Item>
-                </Col>
-                <Col lg={12} xs={24}>
-                  <Form.Item
-                    name="fitTo"
-                    label="Master Brand Default Image Sizing"
-                  >
-                    <Select
-                      allowClear
-                      showSearch
-                      filterOption={filterOption}
-                      placeholder="Please select a sizing option"
-                    >
-                      <Select.Option key="w" value="w" label="Width">
-                        Width
-                      </Select.Option>
-                      <Select.Option key="h" value="h" label="Height">
-                        Height
-                      </Select.Option>
-                    </Select>
-                  </Form.Item>
+                  <Row gutter={8}>
+                    <Col span={24}>
+                      <Form.Item label="Master Brand Name" name="brandName">
+                        <Input allowClear placeholder="Master Brand Name" />
+                      </Form.Item>
+                    </Col>
+                    <Col span={24}>
+                      <Form.Item
+                        label="Master Brand Color"
+                        name="brandTxtColor"
+                        rules={[
+                          {
+                            required: true,
+                            message: 'Master Brand Color is required.',
+                          },
+                        ]}
+                      >
+                        <ColorPicker id="brandTxtColor" />
+                      </Form.Item>
+                    </Col>
+                    <Col lg={12} xs={24}>
+                      <Form.Item
+                        name="fitTo"
+                        label="Master Brand Default Image Sizing"
+                      >
+                        <Select
+                          allowClear
+                          showSearch
+                          filterOption={filterOption}
+                          placeholder="Please select a sizing option"
+                        >
+                          <Select.Option key="w" value="w" label="Width">
+                            Width
+                          </Select.Option>
+                          <Select.Option key="h" value="h" label="Height">
+                            Height
+                          </Select.Option>
+                        </Select>
+                      </Form.Item>
+                    </Col>
+                    <Col lg={12} xs={24}>
+                      <Form.Item
+                        label="Master Brand Link"
+                        name="masterBrandLink"
+                      >
+                        <Input
+                          placeholder="Master Brand Link"
+                          allowClear
+                          prefix="https://vlink.ie/"
+                        />
+                      </Form.Item>
+                    </Col>
+                  </Row>
                 </Col>
               </Row>
             </Tabs.TabPane>
