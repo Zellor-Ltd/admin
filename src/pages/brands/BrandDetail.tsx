@@ -450,10 +450,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
   };
 
   const filterOption = (input: string, option: any) => {
-    return !!option?.children
-      ?.toString()
-      ?.toUpperCase()
-      .includes(input?.toUpperCase());
+    return option?.label?.toUpperCase().includes(input?.toUpperCase());
   };
 
   const onFinish = async () => {
