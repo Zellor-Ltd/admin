@@ -159,6 +159,21 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
       },
     },
     {
+      title: 'Master Brand Link',
+      dataIndex: 'masterBrandLink',
+      width: '10%',
+      align: 'center',
+      render: (value: string) => (
+        <a
+          href={'https://vlink.ie/' + value}
+          target="blank"
+          style={value ? {} : { pointerEvents: 'none' }}
+        >
+          {value ? `https://vlink.ie/${value}` : '-'}
+        </a>
+      ),
+    },
+    {
       title: 'Paused',
       dataIndex: 'paused',
       width: '15%',
