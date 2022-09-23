@@ -52,10 +52,7 @@ const SimpleSelect: React.FC<SimpleSelectProps> = ({
   }, [selectedOption]);
 
   const _filterOption = (input: string, option: any) => {
-    return !!option?.children
-      ?.toString()
-      ?.toUpperCase()
-      .includes(input?.toUpperCase());
+    return option?.label?.toUpperCase().includes(input?.toUpperCase());
   };
 
   const _onChange = (value: string) => {
