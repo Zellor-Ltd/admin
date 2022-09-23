@@ -81,6 +81,7 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   const onSaveDdTemplate = (record: DdTemplate, newItem?: boolean) => {
+    if (newItem) setFilter('');
     refreshItem(record, newItem);
     setDetails(false);
   };
@@ -225,7 +226,7 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
               <Button
                 key="1"
                 className={isMobile ? 'mt-05' : ''}
-                onClick={() => editDdTemplate(data.length)}
+                onClick={() => editDdTemplate(buffer.length)}
               >
                 New Item
               </Button>,

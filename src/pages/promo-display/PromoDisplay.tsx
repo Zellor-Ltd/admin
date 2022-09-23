@@ -189,6 +189,7 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   const onSavePromoDisplay = (record: PromoDisplay, newItem?: boolean) => {
+    if (newItem) setFilter('');
     refreshItem(record, newItem);
     setDetails(false);
   };
@@ -208,7 +209,7 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
               <Button
                 key="1"
                 className={isMobile ? 'mt-05' : ''}
-                onClick={() => editPromoDisplay(data.length)}
+                onClick={() => editPromoDisplay(buffer.length)}
               >
                 New Item
               </Button>,

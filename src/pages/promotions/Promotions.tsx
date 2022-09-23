@@ -205,6 +205,7 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   const onSavePromotion = (record: Promotion, newItem?: boolean) => {
+    if (newItem) setIdFilter('');
     refreshItem(record, newItem);
     setDetails(false);
   };
@@ -224,7 +225,7 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
               <Button
                 key="1"
                 className={isMobile ? 'mt-05' : ''}
-                onClick={() => editPromotion(data.length)}
+                onClick={() => editPromotion(buffer.length)}
               >
                 New Item
               </Button>,

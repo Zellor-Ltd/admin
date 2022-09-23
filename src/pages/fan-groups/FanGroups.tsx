@@ -108,6 +108,7 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
   };
 
   const onSaveFanGroup = (record: FanGroup, newItem?: boolean) => {
+    if (newItem) setFilter('');
     refreshItem(record, newItem);
     setDetails(false);
   };
@@ -127,7 +128,7 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
               <Button
                 key="1"
                 className={isMobile ? 'mt-05' : ''}
-                onClick={() => editFanGroup(data.length)}
+                onClick={() => editFanGroup(buffer.length)}
               >
                 New Item
               </Button>,

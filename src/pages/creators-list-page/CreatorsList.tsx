@@ -150,6 +150,7 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   const onSaveMasthead = (record: Masthead, newItem?: boolean) => {
+    if (newItem) setFilter('');
     refreshItem(record, newItem);
     setDetails(false);
   };
@@ -169,7 +170,7 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
               <Button
                 key="1"
                 className={isMobile ? 'mt-05' : ''}
-                onClick={() => editItem(data.length)}
+                onClick={() => editItem(buffer.length)}
               >
                 New Item
               </Button>,

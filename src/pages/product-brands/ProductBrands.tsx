@@ -262,6 +262,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   const onSaveBrand = (record: ProductBrand, newItem?: boolean) => {
+    if (newItem) setFilter('');
     refreshItem(record, newItem);
     setDetails(false);
   };
@@ -281,7 +282,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
               <Button
                 key="1"
                 className={isMobile ? 'mt-05' : ''}
-                onClick={() => editProductBrand(data.length)}
+                onClick={() => editProductBrand(buffer.length)}
               >
                 New Item
               </Button>,

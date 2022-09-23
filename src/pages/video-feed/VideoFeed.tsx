@@ -505,6 +505,11 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   };
 
   const onSaveItem = (record: FeedItem, newItem?: boolean) => {
+    if (newItem) {
+      setIndexFilter(undefined);
+      setCreatorFilter(undefined);
+      setCategoryFilter(undefined);
+    }
     refreshItem(record, newItem);
     setDetails(false);
     setSelectedVideoFeed(undefined);
@@ -709,7 +714,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
               <Button
                 key="2"
                 className={isMobile ? 'mt-05' : ''}
-                onClick={() => onEditFeedItem(data.length - 1)}
+                onClick={() => onEditFeedItem(buffer.length - 1)}
               >
                 New Item
               </Button>,
