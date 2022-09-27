@@ -739,6 +739,19 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                       <Typography.Title level={5}>Filter</Typography.Title>
                     }
                     key="1"
+                    extra={
+                      isMobile && (
+                        <Button
+                          type="primary"
+                          onClick={fetch}
+                          loading={loading}
+                          style={{ marginRight: '-2em' }}
+                        >
+                          Search
+                          <SearchOutlined style={{ color: 'white' }} />
+                        </Button>
+                      )
+                    }
                   >
                     <Filters />
                   </Panel>
@@ -763,10 +776,12 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                     <UpOutlined />
                   </Button>
                 </Col>
-                <Button type="primary" onClick={fetch} loading={loading}>
-                  Search
-                  <SearchOutlined style={{ color: 'white' }} />
-                </Button>
+                {!isMobile && (
+                  <Button type="primary" onClick={fetch} loading={loading}>
+                    Search
+                    <SearchOutlined style={{ color: 'white' }} />
+                  </Button>
+                )}
               </Row>
             </Col>
           </Row>
