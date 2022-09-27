@@ -35,13 +35,14 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [details, setDetails] = useState<boolean>(false);
   const [currentMasthead, setCurrentMasthead] = useState<Masthead>();
-  const [mastheads, setMastheads] = useState<Masthead[]>([]);
+  const [buffer, setBuffer] = useState<Masthead[]>([]);
+  const [data, setData] = useState<Masthead[]>([]);
   const [filter, setFilter] = useState<string>('');
   const { isMobile } = useContext(AppContext);
 
   const getResources = useCallback(async () => {
     const { results } = await doFetch(fetchMastheads);
-    setMastheads(results);
+    setBuffer(results);
   }, []);
 
   useEffect(() => {
@@ -49,14 +50,19 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
   }, [getResources]);
 
   useEffect(() => {
-    if (!details) {
-      scrollIntoView(
-        document.querySelector(
-          `.scrollable-row-${lastViewedIndex}`
-        ) as HTMLElement
-      );
-    }
-  }, [details, mastheads]);
+    const tmp = search(buffer);
+    setData(tmp);
+  }, [filter, buffer]);
+
+  useEffect(() => {
+    if (!details) scrollToCenter(lastViewedIndex);
+  }, [details]);
+
+  const scrollToCenter = (index: number) => {
+    scrollIntoView(
+      document.querySelector(`.scrollable-row-${index}`) as HTMLElement
+    );
+  };
 
   const columns: ColumnsType<Masthead> = [
     {
@@ -105,7 +111,7 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
             title="Are you sure？"
             okText="Yes"
             cancelText="No"
-            onConfirm={() => deleteItem(record.id, index)}
+            onConfirm={() => deleteItem(record.id)}
           >
             <Button type="link" style={{ padding: 0, margin: 6 }}>
               <DeleteOutlined />
@@ -126,21 +132,26 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
     setLastViewedIndex(index);
     setCurrentMasthead(masthead);
     setDetails(true);
-    setLoading(true);
   };
 
-  const deleteItem = async (id: string, index: number) => {
+  const deleteItem = async (id: string) => {
     await doRequest(() => deleteMasthead({ id }));
-    setMastheads(prev => [...prev.slice(0, index), ...prev.slice(index + 1)]);
-    setLoading(true);
-  };
-  const refreshItem = (record: Masthead) => {
-    mastheads[lastViewedIndex] = record;
-    setMastheads([...mastheads]);
+    setBuffer(buffer.filter(item => item.id !== id));
   };
 
-  const onSaveMasthead = (record: Masthead) => {
-    refreshItem(record);
+  const refreshItem = (record: Masthead, newItem?: boolean) => {
+    const tmp = buffer.map(item => {
+      if (item.id === record.id) return record;
+      else return item;
+    });
+
+    setBuffer(newItem ? [...tmp, record] : [...tmp]);
+    scrollToCenter(data.length - 1);
+  };
+
+  const onSaveMasthead = (record: Masthead, newItem?: boolean) => {
+    if (newItem) setFilter('');
+    refreshItem(record, newItem);
     setDetails(false);
   };
 
@@ -159,7 +170,7 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
               <Button
                 key="1"
                 className={isMobile ? 'mt-05' : ''}
-                onClick={() => editItem(mastheads.length)}
+                onClick={() => editItem(buffer.length)}
               >
                 New Item
               </Button>,
@@ -185,7 +196,7 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
             rowClassName={(_, index) => `scrollable-row-${index}`}
             rowKey="id"
             columns={columns}
-            dataSource={search(mastheads)}
+            dataSource={data}
             loading={loading}
             pagination={false}
           />

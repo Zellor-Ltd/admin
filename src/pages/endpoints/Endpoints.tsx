@@ -12,8 +12,15 @@ const Endpoints: React.FC<RouteComponentProps> = ({ history, location }) => {
   const detailsPathname = `${location.pathname}/endpoint`;
   const [loading, setLoading] = useState(false);
   const [filter, setFilter] = useState<string>('');
-  const [endpoints, setEndpoints] = useState<Endpoint[]>([]);
+  const [buffer, setBuffer] = useState<Endpoint[]>([]);
+  const [data, setData] = useState<Endpoint[]>([]);
   const { isMobile } = useContext(AppContext);
+
+  useEffect(() => {
+    const tmp = search(buffer);
+    setData(tmp);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filter, buffer]);
 
   const columns: ColumnsType<Endpoint> = [
     {
@@ -84,16 +91,16 @@ const Endpoints: React.FC<RouteComponentProps> = ({ history, location }) => {
     },
   ];
 
-  async function fetch() {
+  const fetch = async () => {
     setLoading(true);
     try {
       const response: any = await fetchEndpoints();
-      setEndpoints(response.results);
+      setBuffer(response.results);
       setLoading(false);
     } catch (error) {
       setLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
     fetch();
@@ -139,8 +146,9 @@ const Endpoints: React.FC<RouteComponentProps> = ({ history, location }) => {
         scroll={{ x: true }}
         rowKey="id"
         columns={columns}
-        dataSource={search(endpoints)}
+        dataSource={data}
         loading={loading}
+        pagination={false}
       />
     </div>
   );

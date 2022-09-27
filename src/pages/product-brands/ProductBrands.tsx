@@ -39,7 +39,8 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
   const [details, setDetails] = useState<boolean>(false);
   const [currentProductBrand, setCurrentProductBrand] =
     useState<ProductBrand>();
-  const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
+  const [buffer, setBuffer] = useState<ProductBrand[]>([]);
+  const [data, setData] = useState<ProductBrand[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [filter, setFilter] = useState<string>('');
   const { isMobile } = useContext(AppContext);
@@ -50,13 +51,24 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    const tmp = search(buffer);
+    setData(tmp);
+  }, [filter, buffer]);
+
+  const scrollToCenter = (index: number) => {
+    scrollIntoView(
+      document.querySelector(`.scrollable-row-${index}`) as HTMLElement
+    );
+  };
+
   const getResources = async () => {
     await Promise.all([getBrands(), getProductBrands(), fetchAllCategories()]);
   };
 
   const getProductBrands = async () => {
     const { results } = await doFetch(fetchProductBrands);
-    setProductBrands(results);
+    setBuffer(results);
   };
 
   const getBrands = async () => {
@@ -65,13 +77,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   useEffect(() => {
-    if (!details) {
-      scrollIntoView(
-        document.querySelector(
-          `.scrollable-row-${lastViewedIndex}`
-        ) as HTMLElement
-      );
-    }
+    if (!details) scrollToCenter(lastViewedIndex);
   }, [details]);
 
   const columns: ColumnsType<ProductBrand> = [
@@ -246,19 +252,22 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
 
   const deleteItem = async (id: string, index: number) => {
     await doRequest(() => deleteProductBrand(id));
-    setProductBrands(prev => [
-      ...prev.slice(0, index),
-      ...prev.slice(index + 1),
-    ]);
+    setBuffer(buffer.filter(item => item.id !== id));
   };
 
-  const refreshItem = (record: ProductBrand) => {
-    productBrands[lastViewedIndex] = record;
-    setProductBrands([...productBrands]);
+  const refreshItem = (record: ProductBrand, newItem?: boolean) => {
+    const tmp = buffer.map(item => {
+      if (item.id === record.id) return record;
+      else return item;
+    });
+
+    setBuffer(newItem ? [...tmp, record] : [...tmp]);
+    scrollToCenter(data.length - 1);
   };
 
-  const onSaveBrand = (record: ProductBrand) => {
-    refreshItem(record);
+  const onSaveBrand = (record: ProductBrand, newItem?: boolean) => {
+    if (newItem) setFilter('');
+    refreshItem(record, newItem);
     setDetails(false);
   };
 
@@ -277,7 +286,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
               <Button
                 key="1"
                 className={isMobile ? 'mt-05' : ''}
-                onClick={() => editProductBrand(productBrands.length)}
+                onClick={() => editProductBrand(buffer.length)}
               >
                 New Item
               </Button>,
@@ -303,8 +312,9 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
             rowClassName={(_, index) => `scrollable-row-${index}`}
             rowKey="id"
             columns={columns}
-            dataSource={search(productBrands)}
+            dataSource={data}
             loading={loading}
+            pagination={false}
           />
         </div>
       )}

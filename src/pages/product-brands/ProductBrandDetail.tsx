@@ -41,7 +41,7 @@ const { getSearchTags, getCategories, removeSearchTagsByCategory } =
   categoryUtils;
 interface ProductBrandDetailProps {
   productBrand: ProductBrand | undefined;
-  onSave?: (record: ProductBrand) => void;
+  onSave?: (record: ProductBrand, newItem?: boolean) => void;
   onCancel?: () => void;
   brands: Brand[];
   allCategories: any;
@@ -83,7 +83,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
       );
       formProductBrand.id
         ? onSave?.(formProductBrand)
-        : onSave?.({ ...formProductBrand, id: result });
+        : onSave?.({ ...formProductBrand, id: result }, true);
     } catch (err: any) {
       message.error('Error: ' + err.error);
     }

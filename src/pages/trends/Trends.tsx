@@ -12,7 +12,7 @@ import {
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { useRequest } from 'hooks/useRequest';
-import { useContext, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { AppContext } from 'contexts/AppContext';
 import { RouteComponentProps } from 'react-router-dom';
 import { fetchTrends, saveTrend } from 'services/DiscoClubService';
@@ -22,14 +22,20 @@ import scrollIntoView from 'scroll-into-view';
 const Trends: React.FC<RouteComponentProps> = props => {
   const [loading, setLoading] = useState<boolean>(false);
   const { doFetch } = useRequest({ setLoading });
-  const [trends, setTrends] = useState<any[]>([]);
   const [filter, setFilter] = useState<string>('');
-  const [updatingTrendIndex, setUpdatingTrendIndex] = useState<
+  const [updatingTrendIndex, setUpdatingIndex] = useState<
     Record<string, boolean>
   >({});
-  const shouldUpdateTrendIndex = useRef(false);
-  const originalTrendsIndex = useRef<Record<string, number | undefined>>({});
+  const shouldUpdateIndex = useRef(false);
   const { isMobile } = useContext(AppContext);
+  const [buffer, setBuffer] = useState<any[]>([]);
+  const [data, setData] = useState<any[]>([]);
+
+  useEffect(() => {
+    const tmp = search(buffer);
+    setData(tmp);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filter, buffer]);
 
   const scrollToCenter = (index: number) => {
     scrollIntoView(
@@ -44,31 +50,27 @@ const Trends: React.FC<RouteComponentProps> = props => {
   const getTrends = async () => {
     scrollToCenter(0);
     const { results } = await doFetch(fetchTrends);
-    setTrends(results);
+    setBuffer(results);
   };
 
-  const onColumnChange = (trendIndex: number, trend: any) => {
-    for (let i = 0; i < trends.length; i++) {
-      if (trends[i].id === trend.id) {
-        if (originalTrendsIndex.current[trend.id] === undefined) {
-          originalTrendsIndex.current[trend.id] = trend.index;
-        }
+  const handleIndexChange = (newIndex: number, trend: any) => {
+    shouldUpdateIndex.current = trend.index !== newIndex;
 
-        shouldUpdateTrendIndex.current =
-          originalTrendsIndex.current[trend.id] !== trendIndex;
+    const row = buffer.find(item => item.id === trend.id);
+    row.index = newIndex;
 
-        trends[i].index = trendIndex;
-        setTrends([...trends]);
-        break;
-      }
-    }
+    const tmp = buffer.map(item => {
+      if (item.id === row.id) return row;
+      else return item;
+    });
+
+    setBuffer([...tmp]);
   };
 
-  const onColumnBlur = async (trend: any) => {
-    if (!shouldUpdateTrendIndex.current) {
-      return;
-    }
-    setUpdatingTrendIndex(prev => {
+  const updateIndex = async (trend: any) => {
+    if (!shouldUpdateIndex.current) return;
+
+    setUpdatingIndex(prev => {
       const newValue = {
         ...prev,
       };
@@ -76,6 +78,7 @@ const Trends: React.FC<RouteComponentProps> = props => {
 
       return newValue;
     });
+
     try {
       await saveTrend(trend);
       message.success('Register updated with success.');
@@ -86,22 +89,23 @@ const Trends: React.FC<RouteComponentProps> = props => {
       );
       message.success('Error while trying to update Trend index.');
     }
-    setUpdatingTrendIndex(prev => {
+
+    setUpdatingIndex(prev => {
       const newValue = {
         ...prev,
       };
       delete newValue[trend.id];
       return newValue;
     });
-    delete originalTrendsIndex.current[trend.id];
-    shouldUpdateTrendIndex.current = false;
+
+    shouldUpdateIndex.current = false;
   };
 
   const columns: ColumnsType<any> = [
     {
       title: 'Index',
       dataIndex: 'index',
-      width: '5%',
+      width: '8%',
       render: (_, trend) => {
         if (updatingTrendIndex[trend.id]) {
           const antIcon = <LoadingOutlined spin />;
@@ -111,8 +115,9 @@ const Trends: React.FC<RouteComponentProps> = props => {
             <InputNumber
               type="number"
               value={trend.index}
-              onChange={trendIndex => onColumnChange(trendIndex, trend as any)}
-              onBlur={() => onColumnBlur(trend as any)}
+              onPressEnter={() => updateIndex(trend as any)}
+              onChange={value => handleIndexChange(value, trend)}
+              onBlur={() => updateIndex(trend as any)}
             />
           );
         }
@@ -128,7 +133,7 @@ const Trends: React.FC<RouteComponentProps> = props => {
     {
       title: 'Description',
       dataIndex: 'tag',
-      width: '95%',
+      width: '92%',
       sorter: (a, b): any => {
         if (a.tag && b.tag) return a.tag.localeCompare(b.tag);
         else if (a.tag) return -1;
@@ -187,7 +192,7 @@ const Trends: React.FC<RouteComponentProps> = props => {
           rowClassName={(_, index) => `scrollable-row-${index}`}
           rowKey="id"
           columns={columns}
-          dataSource={search(trends)}
+          dataSource={data}
           loading={loading}
           pagination={false}
         />

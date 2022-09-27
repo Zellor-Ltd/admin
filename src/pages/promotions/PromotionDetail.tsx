@@ -15,7 +15,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { fetchVideoFeed2, savePromotion } from 'services/DiscoClubService';
 interface PromotionDetailProps {
   promotion: Promotion | undefined;
-  onSave?: (record: Promotion) => void;
+  onSave?: (record: Promotion, newItem?: boolean) => void;
   onCancel?: () => void;
 }
 
@@ -33,7 +33,7 @@ const PromotionDetail: React.FC<PromotionDetailProps> = ({
     const { result } = await doRequest(() => savePromotion(formPromotion));
     formPromotion.id
       ? onSave?.(formPromotion)
-      : onSave?.({ ...formPromotion, id: result });
+      : onSave?.({ ...formPromotion, id: result }, true);
   };
 
   const getPackages = useCallback(async () => {

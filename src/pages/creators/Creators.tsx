@@ -55,9 +55,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   useEffect(() => {
-    if (!details) {
-      scrollToCenter(lastViewedIndex);
-    }
+    if (!details) scrollToCenter(lastViewedIndex);
   }, [details]);
 
   const fetch = async (loadNextPage?: boolean) => {

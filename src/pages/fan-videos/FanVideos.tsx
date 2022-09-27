@@ -73,13 +73,11 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
   const [creators, setCreators] = useState<Creator[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [productBrands, setProductBrands] = useState([]);
-  const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
-  const [loaded, setLoaded] = useState<boolean>(false);
-  const [feedItems, setFeedItems] = useState<any[]>([]);
+  const [buffer, setBuffer] = useState<any[]>([]);
+  const [data, setData] = useState<any[]>([]);
   const { doFetch } = useRequest({ setLoading });
-  const shouldUpdateFeedItemIndex = useRef(false);
-  const originalFeedItemsIndex = useRef<Record<string, number | undefined>>({});
-  const [updatingFeedItemIndex, setUpdatingFeedItemIndex] = useState<
+  const shouldUpdateIndex = useRef(false);
+  const [updatingFeedItemIndex, setUpdatingIndex] = useState<
     Record<string, boolean>
   >({});
   const { isMobile } = useContext(AppContext);
@@ -92,6 +90,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
   const [creatorFilter, setCreatorFilter] = useState<string>();
   const inputRef = useRef<any>(null);
   const [loadingResources, setLoadingResources] = useState<boolean>(true);
+  const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [activeKey, setActiveKey] = useState<string>('-1');
   const [offset, setOffset] = useState<number>(64);
   const [panelStyle, setPanelStyle] = useState<React.CSSProperties>({
@@ -100,6 +99,11 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
   });
   const filterPanelHeight = useRef<number>();
   const windowHeight = window.innerHeight;
+
+  useEffect(() => {
+    const tmp = search(buffer);
+    setData(tmp);
+  }, [indexFilter, creatorFilter, categoryFilter, buffer]);
 
   useEffect(() => {
     const panel = document.getElementById('filterPanel');
@@ -181,10 +185,9 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
             <InputNumber
               type="number"
               value={feedItem.index}
-              onChange={feedItemIndex =>
-                onFeedItemIndexOnColumnChange(feedItemIndex, feedItem)
-              }
-              onBlur={() => onFeedItemIndexOnColumnBlur(feedItem)}
+              onChange={value => handleIndexChange(value, feedItem)}
+              onBlur={() => updateIndex(feedItem)}
+              onPressEnter={() => updateIndex(feedItem)}
             />
           );
         }
@@ -337,7 +340,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
             title="Are you sure？"
             okText="Yes"
             cancelText="No"
-            onConfirm={() => deleteItem(feedItem.id, index)}
+            onConfirm={() => deleteItem(feedItem.id)}
           >
             <Button type="link" style={{ padding: 0, margin: 6 }}>
               <DeleteOutlined />
@@ -363,6 +366,10 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
     segmentForm.setFieldsValue(selectedVideoFeed);
   }, [selectedVideoFeed]);
 
+  useEffect(() => {
+    if (!details) scrollToCenter(lastViewedIndex);
+  }, [details]);
+
   const scrollToCenter = (index: number) => {
     scrollIntoView(
       document.querySelector(`.scrollable-row-${index}`) as HTMLElement
@@ -382,8 +389,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
           productBrandId: productBrandFilter,
         })
       );
-      setFeedItems(results);
-      setLoaded(true);
+      setBuffer(results);
     } catch (error) {
       message.error('Error to get feed');
     }
@@ -436,18 +442,17 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
     return updatedRows;
   };
 
-  const deleteItem = async (_id: string, index: number) => {
+  const deleteItem = async (_id: string) => {
     await deleteVideoFeed(_id);
-    setFeedItems(prev => [...prev.slice(0, index), ...prev.slice(index + 1)]);
+    setBuffer(buffer.filter(item => item.id !== _id));
   };
 
   const refreshItem = (record: FeedItem) => {
-    if (loaded) {
-      feedItems[lastViewedIndex] = record;
-      setFeedItems([...feedItems]);
-    } else {
-      setFeedItems([record]);
-    }
+    const tmp = buffer.map(item => {
+      if (item.id === record.id) return record;
+      else return item;
+    });
+    setBuffer([...tmp]);
   };
 
   const onEditFeedItem = (index: number, videoFeed?: FeedItem) => {
@@ -456,31 +461,25 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
     setDetails(true);
   };
 
-  const onFeedItemIndexOnColumnChange = (
-    feedItemIndex: number,
-    feedItem: FeedItem
-  ) => {
-    for (let i = 0; i < feedItems.length; i++) {
-      if (feedItems[i].id === feedItem.id) {
-        if (originalFeedItemsIndex.current[feedItem.id] === undefined) {
-          originalFeedItemsIndex.current[feedItem.id] = feedItem.index;
-        }
+  const handleIndexChange = (newIndex: number, feedItem: FeedItem) => {
+    shouldUpdateIndex.current = feedItem.index !== newIndex;
 
-        shouldUpdateFeedItemIndex.current =
-          originalFeedItemsIndex.current[feedItem.id] !== feedItemIndex;
+    const row = buffer.find(item => item.id === feedItem.id);
+    row.index = newIndex;
 
-        feedItems[i].index = feedItemIndex;
-        setFeedItems([...feedItems]);
-        break;
-      }
-    }
+    const tmp = buffer.map(item => {
+      if (item.id === row.id) return row;
+      else return item;
+    });
+
+    setBuffer([...tmp]);
   };
 
-  const onFeedItemIndexOnColumnBlur = async (feedItem: FeedItem) => {
-    if (!shouldUpdateFeedItemIndex.current) {
+  const updateIndex = async (feedItem: FeedItem) => {
+    if (!shouldUpdateIndex.current) {
       return;
     }
-    setUpdatingFeedItemIndex(prev => {
+    setUpdatingIndex(prev => {
       const newValue = {
         ...prev,
       };
@@ -488,6 +487,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
 
       return newValue;
     });
+
     try {
       await saveVideoFeed(feedItem);
       message.success('Register updated with success.');
@@ -498,15 +498,16 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
       );
       message.success('Error while trying to update FeedItem index.');
     }
-    setUpdatingFeedItemIndex(prev => {
+
+    setUpdatingIndex(prev => {
       const newValue = {
         ...prev,
       };
       delete newValue[feedItem.id];
       return newValue;
     });
-    delete originalFeedItemsIndex.current[feedItem.id];
-    shouldUpdateFeedItemIndex.current = false;
+
+    shouldUpdateIndex.current = false;
   };
 
   const onSaveItem = (record: FeedItem) => {
@@ -666,7 +667,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
               <Button
                 key="2"
                 className={isMobile ? 'mt-05' : ''}
-                onClick={() => onEditFeedItem(feedItems.length - 1)}
+                onClick={() => onEditFeedItem(data.length - 1)}
               >
                 New Item
               </Button>,
@@ -732,8 +733,9 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
               size="small"
               columns={feedItemColumns}
               rowKey="id"
-              dataSource={search(feedItems)}
+              dataSource={data}
               loading={loading}
+              pagination={false}
             />
           </Content>
         </>

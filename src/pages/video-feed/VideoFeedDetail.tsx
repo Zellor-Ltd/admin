@@ -58,7 +58,7 @@ interface DraggableBodyRowProps
 
 const type = 'DraggableBodyRow';
 interface VideoFeedDetailProps {
-  onSave?: (record: FeedItem) => void;
+  onSave?: (record: FeedItem, newItem?: boolean) => void;
   onCancel?: () => void;
   feedItem?: FeedItem;
   brands: Brand[];
@@ -394,7 +394,9 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
       });
 
       const response = await doRequest(() => saveVideoFeed(item));
-      item.id ? onSave?.(item) : onSave?.({ ...item, id: response.result });
+      item.id
+        ? onSave?.(item)
+        : onSave?.({ ...item, id: response.result }, true);
       if (!response.result) setDetails?.(false);
     } catch (error: any) {
       message.error('Error: ' + error.error);

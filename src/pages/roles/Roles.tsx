@@ -12,14 +12,15 @@ const Roles: React.FC<RouteComponentProps> = ({ history, location }) => {
   const detailsPathname = `${location.pathname}/role`;
   const [loading, setLoading] = useState<boolean>(false);
   const [filter, setFilter] = useState<string>('');
-  const [roles, setRoles] = useState<Role[]>([]);
+  const [buffer, setBuffer] = useState<Role[]>([]);
+  const [data, setData] = useState<Role[]>([]);
   const { isMobile } = useContext(AppContext);
 
   async function fetch() {
     setLoading(true);
     try {
       const response: any = await fetchProfiles();
-      setRoles(response.results);
+      setBuffer(response.results);
       setLoading(false);
     } catch (error) {
       setLoading(false);
@@ -30,6 +31,12 @@ const Roles: React.FC<RouteComponentProps> = ({ history, location }) => {
     fetch();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    const tmp = search(buffer);
+    setData(tmp);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filter, buffer]);
 
   const columns: ColumnsType<Role> = [
     {
@@ -119,8 +126,9 @@ const Roles: React.FC<RouteComponentProps> = ({ history, location }) => {
         scroll={{ x: true }}
         rowKey="id"
         columns={columns}
-        dataSource={search(roles)}
+        dataSource={data}
         loading={loading}
+        pagination={false}
       />
     </div>
   );

@@ -32,7 +32,8 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [details, setDetails] = useState<boolean>(false);
   const [currentDdTemplate, setCurrentDdTemplate] = useState<DdTemplate>();
-  const [ddTemplates, setDdTemplates] = useState<DdTemplate[]>([]);
+  const [buffer, setBuffer] = useState<DdTemplate[]>([]);
+  const [data, setData] = useState<DdTemplate[]>([]);
   const [filter, setFilter] = useState<string>('');
   const { isMobile } = useContext(AppContext);
 
@@ -40,24 +41,29 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
     getResources();
   }, []);
 
+  useEffect(() => {
+    const tmp = search(buffer);
+    setData(tmp);
+  }, [filter, buffer]);
+
   const getResources = async () => {
     await getDdTemplates();
   };
 
   const getDdTemplates = async () => {
     const { results } = await doFetch(fetchDdTemplates);
-    setDdTemplates(results);
+    setBuffer(results);
   };
 
   useEffect(() => {
-    if (!details) {
-      scrollIntoView(
-        document.querySelector(
-          `.scrollable-row-${lastViewedIndex}`
-        ) as HTMLElement
-      );
-    }
-  }, [details, ddTemplates]);
+    if (!details) scrollToCenter(lastViewedIndex);
+  }, [details, data]);
+
+  const scrollToCenter = (index: number) => {
+    scrollIntoView(
+      document.querySelector(`.scrollable-row-${index}`) as HTMLElement
+    );
+  };
 
   const editDdTemplate = (index: number, template?: DdTemplate) => {
     setLastViewedIndex(index);
@@ -65,13 +71,18 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
     setDetails(true);
   };
 
-  const refreshItem = (record: DdTemplate) => {
-    ddTemplates[lastViewedIndex] = record;
-    setDdTemplates([...ddTemplates]);
+  const refreshItem = (record: DdTemplate, newItem?: boolean) => {
+    const tmp = buffer.map(item => {
+      if (item.id === record.id) return record;
+      else return item;
+    });
+
+    setBuffer(newItem ? [...tmp, record] : [...tmp]);
   };
 
-  const onSaveDdTemplate = (record: DdTemplate) => {
-    refreshItem(record);
+  const onSaveDdTemplate = (record: DdTemplate, newItem?: boolean) => {
+    if (newItem) setFilter('');
+    refreshItem(record, newItem);
     setDetails(false);
   };
 
@@ -81,7 +92,7 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
 
   const deleteItem = async (id: string, index: number) => {
     await doRequest(() => deleteDdTemplate({ id }));
-    setDdTemplates(prev => [...prev.slice(0, index), ...prev.slice(index + 1)]);
+    setBuffer(buffer.filter(item => item.id !== id));
   };
 
   const columns: ColumnsType<DdTemplate> = [
@@ -215,7 +226,7 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
               <Button
                 key="1"
                 className={isMobile ? 'mt-05' : ''}
-                onClick={() => editDdTemplate(ddTemplates.length)}
+                onClick={() => editDdTemplate(buffer.length)}
               >
                 New Item
               </Button>,
@@ -241,7 +252,7 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
             rowClassName={(_, index) => `scrollable-row-${index}`}
             rowKey="id"
             columns={columns}
-            dataSource={search(ddTemplates)}
+            dataSource={data}
             loading={loading}
             pagination={false}
           />

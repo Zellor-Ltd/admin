@@ -36,8 +36,15 @@ const WalletDetail: React.FC<WalletDetailProps> = ({
   const [loading, setLoading] = useState<boolean>(false);
   const { doFetch } = useRequest({ setLoading: setLoading });
   const initial = location.state as unknown as WalletDetailParams;
-  const [transactions, setTransactions] = useState<WalletTransaction[]>([]);
   const [filter, setFilter] = useState<any[]>([]);
+  const [buffer, setBuffer] = useState<WalletTransaction[]>([]);
+  const [data, setData] = useState<WalletTransaction[]>([]);
+
+  useEffect(() => {
+    const tmp = search(buffer);
+    setData(tmp);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filter, buffer]);
 
   const wallet = initial
     ? {
@@ -61,7 +68,7 @@ const WalletDetail: React.FC<WalletDetailProps> = ({
     const { results } = await doFetch(() =>
       fetchTransactionsPerBrand(initial.fan.id, initial.brand.id)
     );
-    setTransactions(results);
+    setBuffer(results);
   };
 
   const columns: ColumnsType<WalletTransaction> = [
@@ -116,17 +123,17 @@ const WalletDetail: React.FC<WalletDetailProps> = ({
   };
 
   const onResetWallet = () => {
-    setTransactions([]);
+    setBuffer([]);
     onReset?.(wallet);
   };
 
   const onSaveWallet = (balanceToAdd: number) => {
-    transactions.push({
+    const tmp = buffer.concat({
       discoDollars: balanceToAdd,
       hCreationDate: moment(),
       addedBy: 'admin',
     });
-    setTransactions([...transactions]);
+    setBuffer([...tmp]);
     onSave?.(balanceToAdd, wallet);
   };
 
@@ -169,7 +176,7 @@ const WalletDetail: React.FC<WalletDetailProps> = ({
         scroll={{ x: true }}
         rowKey="id"
         columns={columns}
-        dataSource={search(transactions)}
+        dataSource={data}
         loading={loading}
         pagination={false}
       />

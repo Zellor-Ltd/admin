@@ -34,7 +34,8 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [details, setDetails] = useState<boolean>(false);
   const [currentPromotion, setCurrentPromotion] = useState<Promotion>();
-  const [promotions, setPromotions] = useState<Promotion[]>([]);
+  const [buffer, setBuffer] = useState<Promotion[]>([]);
+  const [data, setData] = useState<Promotion[]>([]);
   const [dateFilter, setDateFilter] = useState<any[]>([]);
   const [idFilter, setIdFilter] = useState<string>('');
   const { isMobile } = useContext(AppContext);
@@ -47,20 +48,25 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
     getResources();
   }, [getResources]);
 
+  useEffect(() => {
+    const tmp = search(buffer);
+    setData(tmp);
+  }, [idFilter, dateFilter, buffer]);
+
   const getPromotions = useCallback(async () => {
     const { results } = await doFetch(fetchPromotions);
-    setPromotions(results);
+    setBuffer(results);
   }, []);
 
+  const scrollToCenter = (index: number) => {
+    scrollIntoView(
+      document.querySelector(`.scrollable-row-${index}`) as HTMLElement
+    );
+  };
+
   useEffect(() => {
-    if (!details) {
-      scrollIntoView(
-        document.querySelector(
-          `.scrollable-row-${lastViewedIndex}`
-        ) as HTMLElement
-      );
-    }
-  }, [details, promotions]);
+    if (!details) scrollToCenter(lastViewedIndex);
+  }, [details]);
 
   const columns: ColumnsType<Promotion> = [
     {
@@ -185,15 +191,22 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
 
   const deleteItem = async (id: string, index: number) => {
     await doRequest(() => deletePromotion({ id }));
-    setPromotions(prev => [...prev.slice(0, index), ...prev.slice(index + 1)]);
-  };
-  const refreshItem = (record: Promotion) => {
-    promotions[lastViewedIndex] = record;
-    setPromotions([...promotions]);
+    setBuffer(buffer.filter(item => item.id !== id));
   };
 
-  const onSavePromotion = (record: Promotion) => {
-    refreshItem(record);
+  const refreshItem = (record: Promotion, newItem?: boolean) => {
+    const tmp = buffer.map(item => {
+      if (item.id === record.id) return record;
+      else return item;
+    });
+
+    setBuffer(newItem ? [...tmp, record] : [...tmp]);
+    scrollToCenter(data.length - 1);
+  };
+
+  const onSavePromotion = (record: Promotion, newItem?: boolean) => {
+    if (newItem) setIdFilter('');
+    refreshItem(record, newItem);
     setDetails(false);
   };
 
@@ -212,7 +225,7 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
               <Button
                 key="1"
                 className={isMobile ? 'mt-05' : ''}
-                onClick={() => editPromotion(promotions.length)}
+                onClick={() => editPromotion(buffer.length)}
               >
                 New Item
               </Button>,
@@ -236,7 +249,7 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
             rowClassName={(_, index) => `scrollable-row-${index}`}
             rowKey="id"
             columns={columns}
-            dataSource={search(promotions)}
+            dataSource={data}
             loading={loading}
             pagination={false}
           />

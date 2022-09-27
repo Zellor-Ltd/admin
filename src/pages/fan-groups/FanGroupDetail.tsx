@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { saveFanGroup } from 'services/DiscoClubService';
 interface FanGroupsDetailProps {
   fanGroup?: FanGroup;
-  onSave?: (record: FanGroup) => void;
+  onSave?: (record: FanGroup, newItem?: boolean) => void;
   onCancel?: () => void;
 }
 
@@ -23,7 +23,7 @@ const FanGroupsDetail: React.FC<FanGroupsDetailProps> = ({
     const { result } = await doRequest(() => saveFanGroup(formFanGroup));
     formFanGroup.id
       ? onSave?.(formFanGroup)
-      : onSave?.({ ...formFanGroup, id: result });
+      : onSave?.({ ...formFanGroup, id: result }, true);
   };
 
   return (
