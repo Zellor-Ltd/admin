@@ -712,8 +712,8 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                     </Form.Item>
                   </Col>
                 </Row>
-                <Row gutter={8}>
-                  <Col span={24} className="mb-1">
+                <Row gutter={8} align="middle">
+                  <Col span={12}>
                     <Button
                       type="primary"
                       onClick={
@@ -725,14 +725,17 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                       {status === 'draft' ? 'Approve' : 'Suspend'}
                     </Button>
                   </Col>
-                  <Col span={24}>
-                    <Form.Item
-                      name="isDraft"
-                      label="Is Draft"
-                      valuePropName="checked"
-                    >
-                      <Switch />
-                    </Form.Item>
+                  <Col span={12}>
+                    <Row justify={isMobile ? 'end' : undefined}>
+                      <Form.Item
+                        name="isDraft"
+                        label="Is Draft"
+                        valuePropName="checked"
+                        className={isMobile ? 'mr-1' : undefined}
+                      >
+                        <Switch />
+                      </Form.Item>
+                    </Row>
                   </Col>
                 </Row>
               </Col>
