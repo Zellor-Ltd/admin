@@ -679,8 +679,8 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                     </Form.Item>
                   </Col>
                 </Row>
-                <Row gutter={8} className="mb-1">
-                  <Col>
+                <Row gutter={8}>
+                  <Col span={24} className="mb-1">
                     <Button
                       type="primary"
                       onClick={
@@ -691,6 +691,15 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                     >
                       {status === 'draft' ? 'Approve' : 'Suspend'}
                     </Button>
+                  </Col>
+                  <Col span={24}>
+                    <Form.Item
+                      name="isDraft"
+                      label="Is Draft"
+                      valuePropName="checked"
+                    >
+                      <Switch />
+                    </Form.Item>
                   </Col>
                 </Row>
               </Col>
