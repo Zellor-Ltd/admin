@@ -1138,6 +1138,9 @@ const ColorPicker: React.FC<any> = props => {
   };
 
   return (
-    <TwitterPicker onChangeComplete={(value: any) => _onChange(value.hex)} />
+    <TwitterPicker
+      width="100%"
+      onChangeComplete={(value: any) => _onChange(value.hex)}
+    />
   );
 };
