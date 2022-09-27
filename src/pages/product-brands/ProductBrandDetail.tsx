@@ -755,6 +755,9 @@ export default ProductBrandsDetail;
 const ColorPicker: React.FC<any> = props => {
   const { onChange } = props;
   return (
-    <TwitterPicker onChangeComplete={(value: any) => onChange(value.hex)} />
+    <TwitterPicker
+      width="100%"
+      onChangeComplete={(value: any) => onChange(value.hex)}
+    />
   );
 };
