@@ -634,7 +634,11 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
               showSearch
             >
               {creators.map((curr: any) => (
-                <Select.Option key={curr.id} value={curr.firstName}>
+                <Select.Option
+                  key={curr.id}
+                  value={curr.firstName}
+                  label={curr.firstName}
+                >
                   {curr.firstName}
                 </Select.Option>
               ))}

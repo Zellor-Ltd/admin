@@ -819,8 +819,12 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
               showSearch
               filterOption={filterOption}
             >
-              <Select.Option value="live">Live</Select.Option>
-              <Select.Option value="paused">Paused</Select.Option>
+              <Select.Option value="live" label="live">
+                Live
+              </Select.Option>
+              <Select.Option value="paused" label="paused">
+                Paused
+              </Select.Option>
             </Select>
           </Col>
           <Col lg={6} xs={24}>

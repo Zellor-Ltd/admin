@@ -108,7 +108,11 @@ const BrandForm: React.FC<FormProps> = ({
               onChange={(brandId: string) => onChangeBrand(brandId)}
             >
               {brands.map(brand => (
-                <Select.Option key={brand.id} value={brand.id}>
+                <Select.Option
+                  key={brand.id}
+                  value={brand.id}
+                  label={brand.brandName}
+                >
                   {brand.brandName}
                 </Select.Option>
               ))}
@@ -132,7 +136,11 @@ const BrandForm: React.FC<FormProps> = ({
               disabled={!loaded}
             >
               {productBrands.map(productBrand => (
-                <Select.Option key={productBrand.id} value={productBrand.id}>
+                <Select.Option
+                  key={productBrand.id}
+                  value={productBrand.id}
+                  label={productBrand.brandName}
+                >
                   {productBrand.brandName}
                 </Select.Option>
               ))}
@@ -209,19 +217,29 @@ const BrandForm: React.FC<FormProps> = ({
               filterOption={filterOption}
             >
               {selectedProductBrand?.whiteLogo?.url && (
-                <Select.Option value="whiteLogo">White</Select.Option>
+                <Select.Option value="whiteLogo" label="White">
+                  White
+                </Select.Option>
               )}
 
               {selectedProductBrand?.colourLogo?.url && (
-                <Select.Option value="colourLogo">Colour</Select.Option>
+                <Select.Option value="colourLogo" label="Colour">
+                  Colour
+                </Select.Option>
               )}
               {selectedProductBrand?.blackLogo?.url && (
-                <Select.Option value="blackLogo">Black</Select.Option>
+                <Select.Option value="blackLogo" label="Black">
+                  Black
+                </Select.Option>
               )}
               {selectedProductBrand?.brandName && (
-                <Select.Option value="brandName">Text</Select.Option>
+                <Select.Option value="brandName" label="Text">
+                  Text
+                </Select.Option>
               )}
-              <Select.Option value="">None</Select.Option>
+              <Select.Option value="" label="None">
+                None
+              </Select.Option>
             </Select>
           </Form.Item>
         </Col>

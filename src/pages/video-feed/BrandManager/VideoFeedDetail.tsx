@@ -725,7 +725,11 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                     showSearch
                   >
                     {category.map((category: any) => (
-                      <Select.Option key={category.name} value={category.name}>
+                      <Select.Option
+                        key={category.name}
+                        value={category.name}
+                        label={category.name}
+                      >
                         {category.name}
                       </Select.Option>
                     ))}
@@ -1276,7 +1280,11 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                       showSearch
                     >
                       {brands.map(brand => (
-                        <Select.Option key={brand.id} value={brand.id}>
+                        <Select.Option
+                          key={brand.id}
+                          value={brand.id}
+                          label={brand.brandName}
+                        >
                           {brand.brandName}
                         </Select.Option>
                       ))}
@@ -1428,7 +1436,11 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                     filterOption={filterOption}
                   >
                     {creators.map(creator => (
-                      <Select.Option key={creator.id} value={creator.id}>
+                      <Select.Option
+                        key={creator.id}
+                        value={creator.id}
+                        label={creator.firstName}
+                      >
                         {creator.firstName}
                       </Select.Option>
                     ))}

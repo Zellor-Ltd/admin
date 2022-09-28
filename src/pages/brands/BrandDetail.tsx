@@ -632,10 +632,18 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                         disabled={internalCheckout}
                         placeholder="Select an external checkout type"
                       >
-                        <Select.Option key={1} value="Option 1">
+                        <Select.Option
+                          key={1}
+                          value="Option 1"
+                          label="Option 1"
+                        >
                           Option 1
                         </Select.Option>
-                        <Select.Option key={2} value="Option 2">
+                        <Select.Option
+                          key={2}
+                          value="Option 2"
+                          label="Option 2"
+                        >
                           Option 2
                         </Select.Option>
                       </Select>
@@ -657,7 +665,11 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                         id="checkout"
                       >
                         {checkoutTypeList.map((curr: any) => (
-                          <Select.Option key={curr.value} value={curr.value}>
+                          <Select.Option
+                            key={curr.value}
+                            value={curr.value}
+                            label={curr.name}
+                          >
                             {curr.name}
                           </Select.Option>
                         ))}

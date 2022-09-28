@@ -115,6 +115,37 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
   });
   const filterPanelHeight = useRef<number>();
   const windowHeight = window.innerHeight;
+  const superCategories = allCategories['Super Category'].filter(item => {
+    return (
+      item.superCategory === 'Women' ||
+      item.superCategory === 'Men' ||
+      item.superCategory === 'Children'
+    );
+  });
+  const categories = allCategories.Category.filter(item => {
+    return currentSuperCategory
+      ? item.superCategory === currentSuperCategory.superCategory
+      : true;
+  });
+  const subCategories = allCategories['Sub Category'].filter(item => {
+    return (
+      (currentCategory ? item.category === currentCategory.category : true) &&
+      (currentSuperCategory
+        ? item.superCategory === currentSuperCategory.superCategory
+        : true)
+    );
+  });
+  const subSubCategories = allCategories['Sub Sub Category'].filter(item => {
+    return (
+      (currentSubCategory
+        ? item.subCategory === currentSubCategory.subCategory
+        : true) &&
+      (currentCategory ? item.category === currentCategory.category : true) &&
+      (currentSuperCategory
+        ? item.superCategory === currentSuperCategory.superCategory
+        : true)
+    );
+  });
 
   useEffect(() => {
     const panel = document.getElementById('filterPanel');
@@ -347,21 +378,19 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
               filterOption={filterOption}
               defaultValue={productStatusFilter}
             >
-              <Select.Option value="live">Live</Select.Option>
-              <Select.Option value="paused">Paused</Select.Option>
+              <Select.Option value="live" label="live">
+                Live
+              </Select.Option>
+              <Select.Option value="paused" label="paused">
+                Paused
+              </Select.Option>
             </Select>
           </Col>
           <Col lg={6} xs={24}>
             <Typography.Title level={5}>Super Category</Typography.Title>
             <SimpleSelect
               showSearch
-              data={allCategories['Super Category'].filter(item => {
-                return (
-                  item.superCategory === 'Women' ||
-                  item.superCategory === 'Men' ||
-                  item.superCategory === 'Children'
-                );
-              })}
+              data={superCategories}
               onChange={(_, category) => setCurrentSuperCategory(category)}
               style={{ width: '100%' }}
               selectedOption={currentSuperCategory?.id}
@@ -375,11 +404,7 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
             <Typography.Title level={5}>Category</Typography.Title>
             <SimpleSelect
               showSearch
-              data={allCategories.Category.filter(item => {
-                return currentSuperCategory
-                  ? item.superCategory === currentSuperCategory.superCategory
-                  : true;
-              })}
+              data={categories}
               onChange={(_, category) => setCurrentCategory(category)}
               style={{ width: '100%' }}
               selectedOption={currentCategory?.id ?? null}
@@ -393,16 +418,7 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
             <Typography.Title level={5}>Sub Category</Typography.Title>
             <SimpleSelect
               showSearch
-              data={allCategories['Sub Category'].filter(item => {
-                return (
-                  (currentCategory
-                    ? item.category === currentCategory.category
-                    : true) &&
-                  (currentSuperCategory
-                    ? item.superCategory === currentSuperCategory.superCategory
-                    : true)
-                );
-              })}
+              data={subCategories}
               onChange={(_, category) => setCurrentSubCategory(category)}
               style={{ width: '100%' }}
               selectedOption={currentSubCategory?.id ?? null}
@@ -430,19 +446,7 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
             <Typography.Title level={5}>Sub Sub Category</Typography.Title>
             <SimpleSelect
               showSearch
-              data={allCategories['Sub Sub Category'].filter(item => {
-                return (
-                  (currentSubCategory
-                    ? item.subCategory === currentSubCategory.subCategory
-                    : true) &&
-                  (currentCategory
-                    ? item.category === currentCategory.category
-                    : true) &&
-                  (currentSuperCategory
-                    ? item.superCategory === currentSuperCategory.superCategory
-                    : true)
-                );
-              })}
+              data={subSubCategories}
               onChange={(_, category) => setCurrentSubSubCategory(category)}
               style={{ width: '100%' }}
               selectedOption={currentSubSubCategory?.id ?? null}
@@ -639,6 +643,10 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
           brands={brands}
           productBrands={productBrands}
           setDetails={setDetails}
+          superCategories={superCategories}
+          categories={categories}
+          subCategories={subCategories}
+          subSubCategories={subSubCategories}
         />
       )}
     </>

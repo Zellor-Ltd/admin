@@ -863,7 +863,11 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                         filterOption={filterOption}
                       >
                         {currency.map((curr: any) => (
-                          <Select.Option key={curr.value} value={curr.value}>
+                          <Select.Option
+                            key={curr.value}
+                            value={curr.value}
+                            label={curr.name}
+                          >
                             {curr.name}
                           </Select.Option>
                         ))}
@@ -880,7 +884,11 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                         filterOption={filterOption}
                       >
                         {currency.map((curr: any) => (
-                          <Select.Option key={curr.value} value={curr.value}>
+                          <Select.Option
+                            key={curr.value}
+                            value={curr.value}
+                            label={curr.name}
+                          >
                             {curr.name}
                           </Select.Option>
                         ))}
@@ -897,7 +905,11 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                         filterOption={filterOption}
                       >
                         {currency.map((curr: any) => (
-                          <Select.Option key={curr.value} value={curr.value}>
+                          <Select.Option
+                            key={curr.value}
+                            value={curr.value}
+                            label={curr.name}
+                          >
                             {curr.name}
                           </Select.Option>
                         ))}
@@ -914,7 +926,11 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                         filterOption={filterOption}
                       >
                         {currency.map((curr: any) => (
-                          <Select.Option key={curr.value} value={curr.value}>
+                          <Select.Option
+                            key={curr.value}
+                            value={curr.value}
+                            label={curr.name}
+                          >
                             {curr.name}
                           </Select.Option>
                         ))}

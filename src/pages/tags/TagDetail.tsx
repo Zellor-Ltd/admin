@@ -159,7 +159,11 @@ const TagDetail: React.FC<TagDetailProps> = ({ tag, onSave, onCancel }) => {
                   filterOption={filterOption}
                 >
                   {brands.map(brand => (
-                    <Select.Option key={brand.id} value={brand.id}>
+                    <Select.Option
+                      key={brand.id}
+                      value={brand.id}
+                      label={brand.brandName}
+                    >
                       {brand.brandName}
                     </Select.Option>
                   ))}
@@ -181,7 +185,11 @@ const TagDetail: React.FC<TagDetailProps> = ({ tag, onSave, onCancel }) => {
                   filterOption={filterOption}
                 >
                   {template.map((temp: any) => (
-                    <Select.Option key={temp.value} value={temp.value}>
+                    <Select.Option
+                      key={temp.value}
+                      value={temp.value}
+                      label={temp.name}
+                    >
                       {temp.name}
                     </Select.Option>
                   ))}
@@ -203,7 +211,11 @@ const TagDetail: React.FC<TagDetailProps> = ({ tag, onSave, onCancel }) => {
                       filterOption={filterOption}
                     >
                       {productOptions.map(product => (
-                        <Select.Option key={product.id} value={product.id}>
+                        <Select.Option
+                          key={product.id}
+                          value={product.id}
+                          label={product.name}
+                        >
                           {product.name}
                         </Select.Option>
                       ))}
@@ -253,7 +265,11 @@ const TagDetail: React.FC<TagDetailProps> = ({ tag, onSave, onCancel }) => {
                       filterOption={filterOption}
                     >
                       {clickSound.map((click: any) => (
-                        <Select.Option key={click.value} value={click.value}>
+                        <Select.Option
+                          key={click.value}
+                          value={click.value}
+                          label={click.name}
+                        >
                           {click.name}
                         </Select.Option>
                       ))}

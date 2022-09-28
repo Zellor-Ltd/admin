@@ -397,7 +397,11 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
                 filterOption={filterOption}
               >
                 {creators.map((curr: any) => (
-                  <Select.Option key={curr.id} value={curr.id}>
+                  <Select.Option
+                    key={curr.id}
+                    value={curr.id}
+                    label={curr.firstName}
+                  >
                     {curr.firstName}
                   </Select.Option>
                 ))}

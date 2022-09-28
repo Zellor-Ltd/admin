@@ -458,6 +458,7 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
                       <Select.Option
                         key={serverAlias.alias}
                         value={serverAlias.alias}
+                        label={serverAlias.name}
                       >
                         {serverAlias.name}
                       </Select.Option>
