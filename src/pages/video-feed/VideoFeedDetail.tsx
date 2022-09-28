@@ -1155,92 +1155,94 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
           </Tabs.TabPane>
           <Tabs.TabPane forceRender tab="Links" key="Links">
             <Row gutter={[32, 32]} align="bottom">
-              <Col lg={4} xs={24}>
-                <Typography.Title level={5}>Creator</Typography.Title>
-                <Select
-                  disabled={!loaded}
-                  style={{ width: '100%' }}
-                  onSelect={onSelectCreator}
-                  value={videoCreator?.id}
-                  filterOption={filterOption}
-                  placeholder="Creator"
-                  allowClear
-                  showSearch
-                >
-                  {creators.map((curr: any) => (
-                    <Select.Option
-                      key={curr.id}
-                      value={curr.id}
-                      label={curr.firstName}
-                    >
-                      {curr.firstName}
-                    </Select.Option>
-                  ))}
-                </Select>
-              </Col>
-              <Col lg={4} xs={24}>
-                <Typography.Title level={5}>Social platform</Typography.Title>
-                <Select
-                  disabled={!loaded || !socialPlatform.length}
-                  style={{ width: '100%' }}
-                  onSelect={setSelectedSocialPlatform}
-                  value={selectedSocialPlatform}
-                  placeholder="Social platform"
-                  filterOption={filterOption}
-                  allowClear
-                  showSearch
-                >
-                  {socialPlatform.map((curr: any) => (
-                    <Select.Option key={curr.value} value={curr.value}>
-                      {curr.value}
-                    </Select.Option>
-                  ))}
-                </Select>
-              </Col>
-              <Col lg={4} xs={24}>
-                <Typography.Title level={5}>Segment</Typography.Title>
-                <InputNumber
-                  defaultValue={0}
-                  title="positive integers"
-                  min={0}
-                  max={100}
-                  onChange={setSegment}
-                />
-              </Col>
-              <Col lg={4} xs={24}>
-                <Typography.Title level={5}>Link Type</Typography.Title>
-                <Select
-                  disabled={!loaded || !linkType.length}
-                  style={{ width: '100%' }}
-                  onSelect={setSelectedLinkType}
-                  value={selectedLinkType}
-                  placeholder="Link Type"
-                  filterOption={filterOption}
-                  allowClear
-                  showSearch
-                >
-                  {linkType.map((curr: any) => (
-                    <Select.Option key={curr.value} value={curr.value}>
-                      {curr.value}
-                    </Select.Option>
-                  ))}
-                </Select>
-              </Col>
-              <Col lg={4} xs={24}>
-                <Typography.Title level={5}>Include Video</Typography.Title>
-                <Checkbox
-                  onChange={evt => setIncludeVideo(evt.target.checked)}
-                ></Checkbox>
-              </Col>
-              <Col lg={4} xs={24}>
-                <Button
-                  type="default"
-                  onClick={handleGenerateLink}
-                  disabled={!videoCreator || !selectedSocialPlatform}
-                >
-                  Generate Link
-                </Button>
-              </Col>
+              <div style={{ display: 'none' }}>
+                <Col lg={4} xs={24}>
+                  <Typography.Title level={5}>Creator</Typography.Title>
+                  <Select
+                    disabled={!loaded}
+                    style={{ width: '100%' }}
+                    onSelect={onSelectCreator}
+                    value={videoCreator?.id}
+                    filterOption={filterOption}
+                    placeholder="Creator"
+                    allowClear
+                    showSearch
+                  >
+                    {creators.map((curr: any) => (
+                      <Select.Option
+                        key={curr.id}
+                        value={curr.id}
+                        label={curr.firstName}
+                      >
+                        {curr.firstName}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Col>
+                <Col lg={4} xs={24}>
+                  <Typography.Title level={5}>Social platform</Typography.Title>
+                  <Select
+                    disabled={!loaded || !socialPlatform.length}
+                    style={{ width: '100%' }}
+                    onSelect={setSelectedSocialPlatform}
+                    value={selectedSocialPlatform}
+                    placeholder="Social platform"
+                    filterOption={filterOption}
+                    allowClear
+                    showSearch
+                  >
+                    {socialPlatform.map((curr: any) => (
+                      <Select.Option key={curr.value} value={curr.value}>
+                        {curr.value}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Col>
+                <Col lg={4} xs={24}>
+                  <Typography.Title level={5}>Segment</Typography.Title>
+                  <InputNumber
+                    defaultValue={0}
+                    title="positive integers"
+                    min={0}
+                    max={100}
+                    onChange={setSegment}
+                  />
+                </Col>
+                <Col lg={4} xs={24}>
+                  <Typography.Title level={5}>Link Type</Typography.Title>
+                  <Select
+                    disabled={!loaded || !linkType.length}
+                    style={{ width: '100%' }}
+                    onSelect={setSelectedLinkType}
+                    value={selectedLinkType}
+                    placeholder="Link Type"
+                    filterOption={filterOption}
+                    allowClear
+                    showSearch
+                  >
+                    {linkType.map((curr: any) => (
+                      <Select.Option key={curr.value} value={curr.value}>
+                        {curr.value}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Col>
+                <Col lg={4} xs={24}>
+                  <Typography.Title level={5}>Include Video</Typography.Title>
+                  <Checkbox
+                    onChange={evt => setIncludeVideo(evt.target.checked)}
+                  ></Checkbox>
+                </Col>
+                <Col lg={4} xs={24}>
+                  <Button
+                    type="default"
+                    onClick={handleGenerateLink}
+                    disabled={!videoCreator || !selectedSocialPlatform}
+                  >
+                    Generate Link
+                  </Button>
+                </Col>
+              </div>
               <Col span={24}>
                 <Typography.Title level={5}>Shared Link:</Typography.Title>
                 <Table
