@@ -115,11 +115,11 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
       align: 'center',
       render: (value: string) => (
         <a
-          href={'https://ie.discoclub.com/b/' + value}
+          href={'https://vlink.ie/' + value}
           target="blank"
           style={value ? {} : { pointerEvents: 'none' }}
         >
-          {value ? `https://ie.discoclub.com/b/${value}` : '-'}
+          {value ? `https://vlink.ie/${value}` : '-'}
         </a>
       ),
     },
