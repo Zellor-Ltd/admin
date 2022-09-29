@@ -32,6 +32,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import {
   addVariant,
+  barcodeLookup,
   deleteStagingProduct,
   fetchBrands,
   fetchProductBrands,
@@ -73,6 +74,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
 
   const { usePageFilter } = useContext(AppContext);
+  const [barcodeFilter, setBarcodeFilter] = useState<string>();
   const [searchFilter, setSearchFilter] = usePageFilter<string>('search');
   const [runIdFilter, setRunIdFilter] = useState<string>();
   const [brandFilter, setBrandFilter] = useState<Brand | undefined>();
@@ -585,10 +587,20 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
     setProductBrandFilter(_selectedBrand);
   };
 
-  const createProduct = (index: number) => {
-    setCurrentProduct(undefined);
-    setCurrentMasterBrand(undefined);
-    setCurrentProductBrand(undefined);
+  const createProduct = async (index: number) => {
+    try {
+      const { result }: any = await barcodeLookup({
+        barcode: barcodeFilter,
+        group: null,
+      });
+      setCurrentProduct(result);
+      setCurrentMasterBrand(result?.brand?.brandName);
+      setCurrentProductBrand(result?.productBrand?.brandName);
+    } catch (error: any) {
+      setCurrentProduct(undefined);
+      setCurrentMasterBrand(undefined);
+      setCurrentProductBrand(undefined);
+    }
     setLastViewedIndex(index);
     setDetails(true);
   };
@@ -1028,6 +1040,17 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
               <Row justify="end" key="headerRow">
                 <Col>
                   <Row gutter={8}>
+                    <Col>
+                      <Input
+                        allowClear
+                        disabled={loadingResources || loading || disabled}
+                        onChange={event => setBarcodeFilter(event.target.value)}
+                        suffix={<SearchOutlined />}
+                        value={barcodeFilter}
+                        placeholder="Lookup Barcode"
+                        onPressEnter={() => createProduct(products.length)}
+                      />
+                    </Col>
                     <Col>
                       <Button
                         key="2"
