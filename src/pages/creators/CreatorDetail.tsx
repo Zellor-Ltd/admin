@@ -454,6 +454,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                       <Select.Option
                         key={serverAlias.alias}
                         value={serverAlias.alias}
+                        label={serverAlias.name}
                       >
                         {serverAlias.name}
                       </Select.Option>
@@ -482,6 +483,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                       <Select.Option
                         key={linkType.value}
                         value={linkType.value}
+                        label={linkType.name}
                       >
                         {linkType.name}
                       </Select.Option>

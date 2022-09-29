@@ -103,7 +103,11 @@ const TagForm: React.FC<FormProps> = ({
               disabled={!brands}
             >
               {brands.map(brand => (
-                <Select.Option key={brand.id} value={brand.id}>
+                <Select.Option
+                  key={brand.id}
+                  value={brand.id}
+                  label={brand.brandName}
+                >
                   {brand.brandName}
                 </Select.Option>
               ))}

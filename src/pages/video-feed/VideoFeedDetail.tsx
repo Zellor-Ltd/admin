@@ -759,7 +759,11 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                     showSearch
                   >
                     {category.map((category: any) => (
-                      <Select.Option key={category.name} value={category.name}>
+                      <Select.Option
+                        key={category.name}
+                        value={category.name}
+                        label={category.name}
+                      >
                         {category.name}
                       </Select.Option>
                     ))}
@@ -1314,7 +1318,11 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                       showSearch
                     >
                       {brands.map(brand => (
-                        <Select.Option key={brand.id} value={brand.id}>
+                        <Select.Option
+                          key={brand.id}
+                          value={brand.id}
+                          label={brand.brandName}
+                        >
                           {brand.brandName}
                         </Select.Option>
                       ))}
@@ -1510,26 +1518,26 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                 </Row>
               </Col>
               <Col lg={8} xs={24}>
-                <Row justify={isMobile ? 'end' : undefined}>
-                  <Col span={24}>
-                    <Form.Item label="Creator" name={['vLink', 'creator']}>
-                      <Select
-                        disabled={!creators.length}
-                        placeholder="Select a Creator"
-                        style={{ width: '100%' }}
-                        allowClear
-                        showSearch
-                        filterOption={filterOption}
+                <Form.Item label="Creator" name={['vLink', 'creator']}>
+                  <Select
+                    disabled={!creators.length}
+                    placeholder="Select a Creator"
+                    style={{ width: '100%' }}
+                    allowClear
+                    showSearch
+                    filterOption={filterOption}
+                  >
+                    {creators.map(creator => (
+                      <Select.Option
+                        key={creator.id}
+                        value={creator.id}
+                        label={creator.firstName}
                       >
-                        {creators.map(creator => (
-                          <Select.Option key={creator.id} value={creator.id}>
-                            {creator.firstName}
-                          </Select.Option>
-                        ))}
-                      </Select>
-                    </Form.Item>
-                  </Col>
-                </Row>
+                        {creator.firstName}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Form.Item>
               </Col>
             </Row>
           </Tabs.TabPane>

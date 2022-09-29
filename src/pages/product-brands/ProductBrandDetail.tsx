@@ -352,7 +352,11 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                         filterOption={filterOption}
                       >
                         {brands.map((curr: any) => (
-                          <Select.Option key={curr.id} value={curr.id}>
+                          <Select.Option
+                            key={curr.id}
+                            value={curr.id}
+                            label={curr.brandName}
+                          >
                             {curr.brandName}
                           </Select.Option>
                         ))}
