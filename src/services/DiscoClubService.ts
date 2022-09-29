@@ -168,6 +168,9 @@ export const resetUser = (id: string) =>
 export const loginService = (login: Login) =>
   instance.put('Disco/Identity/Adm/GetApiToken', login);
 
+export const barcodeLookup = (params: any) =>
+  instance.post('Disco/Product/Adm/Scan', { params });
+
 export const lockFeedToUser = (feedId: string, userId: string) =>
   instance.get(`Disco/Feed/LockToOne/${feedId}/${userId}`);
 

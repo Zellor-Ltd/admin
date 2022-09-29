@@ -447,7 +447,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                       <Input
                         placeholder="Brand Link"
                         allowClear
-                        prefix="https://ie.discoclub.com/b/"
+                        prefix="https://vlink.ie/"
                       />
                     </Form.Item>
                   </Col>
