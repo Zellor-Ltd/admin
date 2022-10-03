@@ -615,7 +615,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
       width: '20%',
       render: link => (
         <CopyValueToClipboard
-          value={'https://link.discoclub.com/' + link?.substring(0, 9)}
+          value={'https://vlink.ie/' + link?.substring(0, 9)}
         />
       ),
       align: 'center',
@@ -626,7 +626,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
       width: '15%',
       render: id => (
         <a
-          href={'https://link.discoclub.com/' + id.replace('_STR', '')}
+          href={'https://vlink.ie/' + id.replace('_STR', '')}
           target="blank"
         >
           {id.replace('_STR', '')}
