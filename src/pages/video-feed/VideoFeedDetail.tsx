@@ -39,7 +39,12 @@ import React, {
   useState,
 } from 'react';
 import { useSelector } from 'react-redux';
-import { fetchLinks, saveLink, saveVideoFeed } from 'services/DiscoClubService';
+import {
+  fetchLinks,
+  rebuildLink,
+  saveLink,
+  saveVideoFeed,
+} from 'services/DiscoClubService';
 import BrandForm from './BrandForm';
 import TagForm from './TagForm';
 import './VideoFeed.scss';
@@ -142,6 +147,10 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
   const [vLinkProductBrandIcons, setVLinkProductBrandIcons] = useState<any[]>(
     []
   );
+  const [currentVLinkBrand, setCurrentVLinkBrand] = useState<Brand>();
+  const [currentVLinkProductBrand, setCurrentVLinkProductBrand] =
+    useState<ProductBrand>();
+  const [currentVLinkCreator, setCurrentVLinkCreator] = useState<Creator>();
 
   useEffect(() => {
     if (brands.length && creators.length && productBrands.length)
@@ -180,6 +189,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
 
     if (feedItem?.vLink?.brand) {
       const entity = brands.find(item => item.id === feedItem.vLink.brand.id);
+      setCurrentVLinkBrand(entity);
       loadIcons('vLinkBrand', entity);
       setVLinkBrandIcon(
         feedForm.getFieldValue(
@@ -193,6 +203,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
       const entity = productBrands.find(
         item => item.id === feedItem.vLink.productBrand.id
       );
+      setCurrentVLinkProductBrand(entity);
       loadIcons('vLinkProductBrand', entity);
       setVLinkProductBrandIcon(
         feedForm.getFieldValue(
@@ -307,6 +318,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
   ) => {
     if (type === 'vLinkBrand') {
       const entity = brands?.find(item => item.id === id);
+      setCurrentVLinkBrand(entity);
       loadIcons('vLinkBrand', entity);
       let vLinkFields = feedForm.getFieldValue('vLink');
       vLinkFields.brand.brandName = entity?.brandName;
@@ -322,6 +334,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
     const entity = productBrands?.find(item => item.id === id);
 
     if (type === 'vLinkProductBrand') {
+      setCurrentVLinkProductBrand(entity);
       loadIcons('vLinkProductBrand', entity);
       let vLinkFields = feedForm.getFieldValue('vLink');
       vLinkFields.productBrand.brandName = entity?.brandName;
@@ -652,6 +665,15 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
   const onSelectCreator = (value: string) => {
     const creator = creators.find(item => item.id === value);
     setVideoCreator(creator);
+  };
+
+  const handleCreatorChange = (id: string) => {
+    const entity = creators.find(item => item.id === id);
+    setCurrentVLinkCreator(entity);
+  };
+
+  const rebuildVlink = (value: string) => {
+    doFetch(() => rebuildLink(value));
   };
 
   const VideoUpdatePage = () => {
@@ -1349,7 +1371,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
           </Tabs.TabPane>
 
           <Tabs.TabPane forceRender tab="vLink" key="vLink">
-            <Row gutter={8}>
+            <Row gutter={32}>
               <Col lg={8} xs={24}>
                 <Row justify={isMobile ? 'end' : undefined}>
                   <Col span={24}>
@@ -1377,15 +1399,32 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                       </Select>
                     </Form.Item>
                   </Col>
-                  <Col className="mr-1">
+                  <Col span={24}>
                     {feedForm.getFieldValue(['vLink', 'brand', 'id']) && (
-                      <Form.Item
-                        label="Show Price"
-                        name={['vLink', 'brand', 'showPrice']}
-                        valuePropName="checked"
-                      >
-                        <Switch />
-                      </Form.Item>
+                      <Row justify="space-between" align="middle">
+                        <Col>
+                          <Form.Item
+                            label="Show Price"
+                            name={['vLink', 'brand', 'showPrice']}
+                            valuePropName="checked"
+                          >
+                            <Switch />
+                          </Form.Item>
+                        </Col>
+                        <Col>
+                          <Button
+                            type="primary"
+                            onClick={() =>
+                              rebuildVlink(currentVLinkBrand?.masterBrandLink!)
+                            }
+                            disabled={!currentVLinkBrand?.masterBrandLink}
+                            className={isMobile ? 'mb-05 mr-1' : undefined}
+                            style={{ marginTop: 6 }}
+                          >
+                            Rebuild VLink
+                          </Button>
+                        </Col>
+                      </Row>
                     )}
                   </Col>
                   <Col span={24}>
@@ -1455,19 +1494,36 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                       </Select>
                     </Form.Item>
                   </Col>
-                  <Col className="mr-1">
+                  <Col span={24}>
                     {feedForm.getFieldValue([
                       'vLink',
                       'productBrand',
                       'id',
                     ]) && (
-                      <Form.Item
-                        label="Show Price"
-                        name={['vLink', 'productBrand', 'showPrice']}
-                        valuePropName="checked"
-                      >
-                        <Switch />
-                      </Form.Item>
+                      <Row justify="space-between" align="middle">
+                        <Col>
+                          <Form.Item
+                            label="Show Price"
+                            name={['vLink', 'productBrand', 'showPrice']}
+                            valuePropName="checked"
+                          >
+                            <Switch />
+                          </Form.Item>
+                        </Col>
+                        <Col>
+                          <Button
+                            type="primary"
+                            onClick={() =>
+                              rebuildVlink(currentVLinkProductBrand?.brandLink!)
+                            }
+                            disabled={!currentVLinkProductBrand?.brandLink}
+                            className={isMobile ? 'mb-05 mr-1' : undefined}
+                            style={{ marginTop: 6 }}
+                          >
+                            Rebuild VLink
+                          </Button>
+                        </Col>
+                      </Row>
                     )}
                   </Col>
                   <Col span={24}>
@@ -1518,26 +1574,43 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                 </Row>
               </Col>
               <Col lg={8} xs={24}>
-                <Form.Item label="Creator" name={['vLink', 'creator']}>
-                  <Select
-                    disabled={!creators.length}
-                    placeholder="Select a Creator"
-                    style={{ width: '100%' }}
-                    allowClear
-                    showSearch
-                    filterOption={filterOption}
-                  >
-                    {creators.map(creator => (
-                      <Select.Option
-                        key={creator.id}
-                        value={creator.id}
-                        label={creator.firstName}
+                <Row justify="end">
+                  <Col span={24}>
+                    <Form.Item label="Creator" name={['vLink', 'creator']}>
+                      <Select
+                        disabled={!creators.length}
+                        placeholder="Select a Creator"
+                        style={{ width: '100%' }}
+                        allowClear
+                        showSearch
+                        filterOption={filterOption}
+                        onChange={handleCreatorChange}
                       >
-                        {creator.firstName}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </Form.Item>
+                        {creators.map(creator => (
+                          <Select.Option
+                            key={creator.id}
+                            value={creator.id}
+                            label={creator.firstName}
+                          >
+                            {creator.firstName}
+                          </Select.Option>
+                        ))}
+                      </Select>
+                    </Form.Item>
+                  </Col>
+                  <Col>
+                    <Button
+                      type="primary"
+                      onClick={() =>
+                        rebuildVlink(currentVLinkCreator?.userName!)
+                      }
+                      disabled={!currentVLinkCreator?.userName}
+                      className={isMobile ? 'mb-05' : 'ml-1 mt-2'}
+                    >
+                      Rebuild VLink
+                    </Button>
+                  </Col>
+                </Row>
               </Col>
             </Row>
           </Tabs.TabPane>

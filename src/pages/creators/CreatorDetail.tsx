@@ -35,6 +35,7 @@ import { useSelector } from 'react-redux';
 import {
   fetchCurrencies,
   fetchServersList,
+  rebuildLink,
   saveCreator,
 } from 'services/DiscoClubService';
 import scrollIntoView from 'scroll-into-view';
@@ -62,7 +63,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
   const [serversList, setServersList] = useState<ServerAlias[]>([]);
   const [currencies, setCurrencies] = useState<Currency[]>([]);
   const [instaLink, setInstaLink] = useState<string>(creator?.userName);
-  const { doRequest } = useRequest({ setLoading });
+  const { doFetch, doRequest } = useRequest({ setLoading });
   const { isMobile } = useContext(AppContext);
   const inputRef = useRef<any>(null);
   const [form] = Form.useForm();
@@ -174,6 +175,10 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
 
   const filterOption = (input: string, option: any) => {
     return option?.label?.toUpperCase().includes(input?.toUpperCase());
+  };
+
+  const rebuildVlink = () => {
+    doFetch(() => rebuildLink(creator?.userName!));
   };
 
   return (
@@ -354,17 +359,32 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                 </Form.Item>
               </Col>
               <Col lg={12} xs={24}>
-                <Form.Item label="Creator's InstaLink">
-                  <Input
-                    placeholder="Creator's InstaLink"
-                    allowClear
-                    ref={inputRef}
-                    type="url"
-                    className={instaLink ? 'instalink-input' : undefined}
-                    value={instaLink ? `https://vlink.ie/${instaLink}` : ''}
-                    onFocus={event => handleInstaLinkFocus(event)}
-                  />
-                </Form.Item>
+                <Row justify="end">
+                  <Col span={24}>
+                    <Form.Item label="Creator's InstaLink">
+                      <Input
+                        placeholder="Creator's InstaLink"
+                        allowClear
+                        ref={inputRef}
+                        type="url"
+                        className={instaLink ? 'instalink-input' : undefined}
+                        value={instaLink ? `https://vlink.ie/${instaLink}` : ''}
+                        onFocus={event => handleInstaLinkFocus(event)}
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col>
+                    <Button
+                      type="primary"
+                      onClick={rebuildVlink}
+                      disabled={!instaLink}
+                      className={isMobile ? 'mb-1' : 'ml-1'}
+                      style={isMobile ? {} : { marginTop: 6 }}
+                    >
+                      Rebuild VLink
+                    </Button>
+                  </Col>
+                </Row>
               </Col>
             </Row>
             <Row

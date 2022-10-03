@@ -26,7 +26,7 @@ import React from 'react';
 import { useRequest } from 'hooks/useRequest';
 import { TwitterPicker } from 'react-color';
 import { useSelector } from 'react-redux';
-import { saveBrand } from 'services/DiscoClubService';
+import { rebuildLink, saveBrand } from 'services/DiscoClubService';
 import { BrandVault } from '../../interfaces/BrandVault';
 import {
   fetchBrandVault,
@@ -76,6 +76,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
     brand?.checkoutType === 'internal'
   );
   const toFocus = useRef<any>();
+  const [link, setLink] = useState<string>(brand?.masterBrandLink ?? '');
 
   const {
     settings: { checkoutType = [] },
@@ -466,6 +467,10 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
     }
   };
 
+  const rebuildVlink = () => {
+    doFetch(() => rebuildLink(brand?.masterBrandLink!));
+  };
+
   return (
     <>
       <PageHeader
@@ -531,7 +536,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
               </Row>
               <Row gutter={8}>
                 <Col lg={12} xs={24}>
-                  <Row gutter={8}>
+                  <Row gutter={8} align="middle">
                     <Col span={24}>
                       <Form.Item label="Master Brand Name" name="brandName">
                         <Input allowClear placeholder="Master Brand Name" />
@@ -553,6 +558,34 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                     </Col>
                     <Col lg={12} xs={24}>
                       <Form.Item
+                        label="Master Brand Link"
+                        name="masterBrandLink"
+                      >
+                        <Input
+                          placeholder="Master Brand Link"
+                          allowClear
+                          prefix="https://vlink.ie/"
+                          onChange={event => setLink(event.target.value)}
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col lg={12} xs={24}>
+                      <Row justify={isMobile ? 'end' : undefined}>
+                        <Col>
+                          <Button
+                            type="primary"
+                            onClick={rebuildVlink}
+                            disabled={!link}
+                            className={isMobile ? 'mb-05' : 'ml-1'}
+                            style={isMobile ? {} : { marginTop: 6 }}
+                          >
+                            Rebuild VLink
+                          </Button>
+                        </Col>
+                      </Row>
+                    </Col>
+                    <Col lg={12} xs={24}>
+                      <Form.Item
                         name="fitTo"
                         label="Master Brand Default Image Sizing"
                       >
@@ -569,18 +602,6 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                             Height
                           </Select.Option>
                         </Select>
-                      </Form.Item>
-                    </Col>
-                    <Col lg={12} xs={24}>
-                      <Form.Item
-                        label="Master Brand Link"
-                        name="masterBrandLink"
-                      >
-                        <Input
-                          placeholder="Master Brand Link"
-                          allowClear
-                          prefix="https://vlink.ie/"
-                        />
                       </Form.Item>
                     </Col>
                   </Row>

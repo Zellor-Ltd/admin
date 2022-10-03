@@ -179,6 +179,8 @@ export const unlockFeed = (id: string) =>
 
 export const rebuildAllFeedd = () => instance.get('/Disco/Feed/RebuildAll');
 
+export const rebuildLink = (input: string) => instance.get(`/Disco/DataMgm/RebuildOneVideoLink/${input}`);
+
 export const transferStageProduct = (productId: string) =>
   instance.get(`Disco/Staging/Product/Transfer/${productId}`);
 

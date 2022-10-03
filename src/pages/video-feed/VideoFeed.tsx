@@ -372,6 +372,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   }, [details]);
 
   const fetch = async (event?: any) => {
+    if (event && activeKey !== '1') event.stopPropagation();
     try {
       if (event) collapse(event);
       scrollToCenter(0);
