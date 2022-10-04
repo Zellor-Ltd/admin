@@ -459,14 +459,38 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     setBuffer(buffer.filter(item => item.id !== _id));
   };
 
-  const refreshItem = (record: FeedItem, newItem?: boolean) => {
+  const refreshTable = (
+    record: FeedItem,
+    newItem?: boolean,
+    cloning?: boolean
+  ) => {
+    const oldRecord = buffer.find(item => item.id === record.id);
+    const oldIndex = buffer.indexOf(oldRecord);
+
     const tmp = buffer.map(item => {
       if (item.id === record.id) return record;
       else return item;
     });
 
-    setBuffer(newItem ? [...tmp, record] : [...tmp]);
-    scrollToCenter(data.length - 1);
+    // updating
+    if (!newItem) {
+      setBuffer([...tmp]);
+      setDetails(false);
+      scrollToCenter(lastViewedIndex);
+    }
+    // adding
+    if (!cloning) {
+      setBuffer([...tmp, record]);
+      setDetails(false);
+      scrollToCenter(buffer.length);
+    }
+
+    // cloning
+    if (cloning) {
+      setBuffer(buffer.splice(oldIndex, 0, record));
+      setDetails(false);
+      scrollToCenter(lastViewedIndex + 1);
+    }
   };
 
   const onEditFeedItem = (
@@ -523,14 +547,17 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     shouldUpdateIndex.current = false;
   };
 
-  const onSaveItem = (record: FeedItem, newItem?: boolean) => {
+  const onSaveItem = (
+    record: FeedItem,
+    newItem?: boolean,
+    cloning?: boolean
+  ) => {
     if (newItem) {
       setIndexFilter(undefined);
       setCreatorFilter(undefined);
       setCategoryFilter(undefined);
     }
-    refreshItem(record, newItem);
-    setDetails(false);
+    refreshTable(record, newItem, cloning);
     setSelectedVideoFeed(undefined);
   };
 

@@ -70,7 +70,7 @@ interface DraggableBodyRowProps
 
 const type = 'DraggableBodyRow';
 interface VideoFeedDetailProps {
-  onSave?: (record: FeedItem, newItem?: boolean) => void;
+  onSave?: (record: FeedItem, newItem?: boolean, cloning?: boolean) => void;
   onCancel?: () => void;
   feedItem?: FeedItem;
   brands: Brand[];
@@ -438,8 +438,9 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
     try {
       const item: FeedItem = feedForm.getFieldsValue(true);
 
-      if (item.id === previousID) {
+      if (feedItem?.id && item.id === previousID) {
         idRef.current!.focus();
+        setVideoTab('Video Details');
         message.warning('Please change video feed ID.');
         scrollIntoView(document.getElementById('feedId'));
         return;
@@ -461,15 +462,17 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
       });
 
       //updating record
-      if (!feedItem?.cloning && item.id) {
+      if (!feedItem?.id) {
         const response = await doRequest(() => saveVideoFeed(item, false));
         onSave?.(item);
         if (!response.result) setDetails?.(false);
+        return;
       }
-      //adding record
-      else {
+
+      //adding/cloning record
+      if (feedItem?.id) {
         const response = await doRequest(() => saveVideoFeed(item, true));
-        onSave?.({ ...item, id: response.result }, true);
+        onSave?.({ ...item, id: response.result }, true, !!feedItem?.cloning);
         if (!response.result) setDetails?.(false);
       }
     } catch (error: any) {
@@ -720,6 +723,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                         disabled={!feedItem?.cloning}
                         ref={idRef}
                         id="feedId"
+                        placeholder="No input needed"
                       />
                     </Form.Item>
                   </Col>
