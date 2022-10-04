@@ -314,11 +314,11 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
   );
 
   useEffect(() => {
-    segmentForm.setFieldsValue({ tags: [...tagBuffer] });
+    if (selectedSegment) segmentForm.setFieldsValue({ tags: [...tagBuffer] });
   }, [tagBuffer]);
 
   useEffect(() => {
-    if (tagBuffer !== segmentForm.getFieldValue('tags'))
+    if (selectedSegment && tagBuffer !== segmentForm.getFieldValue('tags'))
       setTagBuffer(segmentForm.getFieldValue('tags'));
   }, [selectedSegment]);
 
@@ -723,19 +723,21 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                       />
                     </Form.Item>
                   </Col>
-                  <Col lg={12}>
-                    <Row align="bottom">
+                  <Col lg={12} xs={24}>
+                    <Row
+                      align="bottom"
+                      justify={isMobile ? 'end' : undefined}
+                      className={isMobile ? 'mb-1' : undefined}
+                    >
                       <Col>
-                        <Row justify={isMobile ? 'end' : undefined}>
-                          <Form.Item
-                            name="isDraft"
-                            label="Is Draft"
-                            valuePropName="checked"
-                            className="mx-1"
-                          >
-                            <Switch />
-                          </Form.Item>
-                        </Row>
+                        <Form.Item
+                          name="isDraft"
+                          label="Is Draft"
+                          valuePropName="checked"
+                          className="mx-1"
+                        >
+                          <Switch />
+                        </Form.Item>
                       </Col>
                       <Col>
                         <Button
