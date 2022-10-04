@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import {
+  CopyOutlined,
   DeleteOutlined,
   EditOutlined,
   LoadingOutlined,
@@ -334,6 +335,21 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       },
     },
     {
+      title: 'Clone',
+      width: '5%',
+      align: 'center',
+      render: (_, feedItem: FeedItem, index: number) => (
+        <>
+          <Link
+            onClick={() => onEditFeedItem(index, feedItem, true)}
+            to={{ pathname: window.location.pathname, state: feedItem }}
+          >
+            <CopyOutlined />
+          </Link>
+        </>
+      ),
+    },
+    {
       title: 'Actions',
       key: 'action',
       width: '5%',
@@ -453,9 +469,13 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     scrollToCenter(data.length - 1);
   };
 
-  const onEditFeedItem = (index: number, videoFeed?: FeedItem) => {
+  const onEditFeedItem = (
+    index: number,
+    videoFeed?: FeedItem,
+    cloning?: boolean
+  ) => {
     setLastViewedIndex(index);
-    setSelectedVideoFeed(videoFeed);
+    setSelectedVideoFeed({ ...(videoFeed as any), cloning: cloning });
     setDetails(true);
   };
 

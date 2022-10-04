@@ -179,7 +179,8 @@ export const unlockFeed = (id: string) =>
 
 export const rebuildAllFeedd = () => instance.get('/Disco/Feed/RebuildAll');
 
-export const rebuildLink = (input: string) => instance.get(`/Disco/DataMgm/RebuildOneVideoLink/${input}`);
+export const rebuildLink = (input: string) =>
+  instance.get(`/Disco/DataMgm/RebuildOneVideoLink/${input}`);
 
 export const transferStageProduct = (productId: string) =>
   instance.get(`Disco/Staging/Product/Transfer/${productId}`);
@@ -628,12 +629,9 @@ export const addVariant = (productId: string, variantId: string) =>
 export const saveLink = (params: any) =>
   instance.put('Disco/Link/Adm/GenerateExternalLink', params);
 
-export const saveVideoFeed = (params: FeedItem) => {
-  if (params.id) {
-    return instance.put('Disco/Feed/Update', params);
-  } else {
-    return instance.put('Disco/Feed/Adm/Add', params);
-  }
+export const saveVideoFeed = (params: FeedItem, newItem?: boolean) => {
+  if (newItem) return instance.put('Disco/Feed/Adm/Add', params);
+  else return instance.put('Disco/Feed/Update', params);
 };
 
 export const saveVariantGroup = (params: VariantGroup) => {

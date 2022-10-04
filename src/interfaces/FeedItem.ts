@@ -4,6 +4,7 @@ import { Video } from './Video';
 import { ProductBrand } from './ProductBrand';
 
 export interface FeedItem {
+  cloning?: boolean;
   vLink?: any;
   searchTags?: any;
   video: Video;
