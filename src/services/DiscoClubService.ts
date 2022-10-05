@@ -168,8 +168,8 @@ export const resetUser = (id: string) =>
 export const loginService = (login: Login) =>
   instance.put('Disco/Identity/Adm/GetApiToken', login);
 
-export const barcodeLookup = (params: any) =>
-  instance.post('Disco/Product/Adm/Scan', { params });
+export const barcodeLookup = (barcode: string, group?: any) =>
+  instance.post('Disco/Product/Adm/Scan', { barcode, group });
 
 export const lockFeedToUser = (feedId: string, userId: string) =>
   instance.get(`Disco/Feed/LockToOne/${feedId}/${userId}`);
@@ -179,7 +179,8 @@ export const unlockFeed = (id: string) =>
 
 export const rebuildAllFeedd = () => instance.get('/Disco/Feed/RebuildAll');
 
-export const rebuildLink = (input: string) => instance.get(`/Disco/DataMgm/RebuildOneVideoLink/${input}`);
+export const rebuildLink = (input: string) =>
+  instance.get(`/Disco/DataMgm/RebuildOneVideoLink/${input}`);
 
 export const transferStageProduct = (productId: string) =>
   instance.get(`Disco/Staging/Product/Transfer/${productId}`);
