@@ -4,6 +4,7 @@ import {
   CloseOutlined,
   DeleteOutlined,
   EditOutlined,
+  LoadingOutlined,
   RedoOutlined,
   SearchOutlined,
 } from '@ant-design/icons';
@@ -11,6 +12,7 @@ import {
   Button,
   Col,
   Input,
+  InputNumber,
   message,
   PageHeader,
   Popconfirm,
@@ -49,6 +51,9 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
   const [eof, setEof] = useState<boolean>(false);
   const [searchFilter, setSearchFilter] = useState<string>();
   const { isMobile } = useContext(AppContext);
+  const [updatingVIndex, setUpdatingVIndex] = useState<Record<string, boolean>>(
+    {}
+  );
 
   const scrollToCenter = (index: number) => {
     scrollIntoView(
@@ -98,6 +103,35 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
     doFetch(() => rebuildLink(creator.userName!));
   };
 
+  const updateVIndex = async (record: Creator, input?: number) => {
+    if (record.vIndex === input) return;
+    record.vIndex = input;
+
+    setUpdatingVIndex(prev => {
+      const newValue = {
+        ...prev,
+      };
+      newValue[record.id] = true;
+
+      return newValue;
+    });
+
+    try {
+      await saveCreator(record);
+      message.success('Register updated with success.');
+    } catch (err) {
+      console.error(`Error while trying to update index.`, err);
+    }
+
+    setUpdatingVIndex(prev => {
+      const newValue = {
+        ...prev,
+      };
+      delete newValue[record.id];
+      return newValue;
+    });
+  };
+
   const columns: ColumnsType<Creator> = [
     {
       title: '_id',
@@ -119,6 +153,38 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
           return a.firstName.localeCompare(b.firstName);
         else if (a.firstName) return -1;
         else if (b.firstName) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: 'vIndex',
+      dataIndex: 'vIndex',
+      width: '3%',
+      render: (_, creator, index) => {
+        if (updatingVIndex[creator.id]) {
+          const antIcon = <LoadingOutlined spin />;
+          return <Spin indicator={antIcon} />;
+        } else {
+          return (
+            <InputNumber
+              type="number"
+              value={creator.vIndex}
+              onFocus={event => event.stopPropagation()}
+              onBlur={(event: any) =>
+                updateVIndex(creator, event.target.value as unknown as number)
+              }
+              onPressEnter={(event: any) =>
+                updateVIndex(creator, event.target.value as unknown as number)
+              }
+            />
+          );
+        }
+      },
+      align: 'center',
+      sorter: (a, b): any => {
+        if (a.vIndex && b.vIndex) return a.vIndex - b.vIndex;
+        else if (a.vIndex) return -1;
+        else if (b.vIndex) return 1;
         else return 0;
       },
     },

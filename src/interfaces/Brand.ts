@@ -1,6 +1,7 @@
 import { ProductBrand } from './ProductBrand';
 
 export interface Brand {
+  vIndex?: number;
   masterBrandLink?: string;
   storeBuyButton?: any;
   returnPeriod?: any;
