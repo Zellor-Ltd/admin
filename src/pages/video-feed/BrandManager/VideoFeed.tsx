@@ -4,6 +4,7 @@ import {
   DeleteOutlined,
   EditOutlined,
   LoadingOutlined,
+  RedoOutlined,
   SearchOutlined,
   UpOutlined,
 } from '@ant-design/icons';
@@ -38,20 +39,22 @@ import {
   fetchCreators,
   fetchProductBrands,
   fetchVideoFeedV2,
+  rebuildLink,
   saveVideoFeed,
 } from 'services/DiscoClubService';
 import { Brand } from 'interfaces/Brand';
 import '@pathofdev/react-tag-input/build/index.css';
 import { Category } from 'interfaces/Category';
 import { Creator } from 'interfaces/Creator';
-import '../VideoFeed.scss';
-import '../VideoFeedDetail.scss';
+import './VideoFeed.scss';
+import './VideoFeedDetail.scss';
 import SimpleSelect from 'components/select/SimpleSelect';
 import { SelectOption } from 'interfaces/SelectOption';
-import VideoFeedDetail from '../VideoFeedDetail';
+import VideoFeedDetail from './VideoFeedDetail';
 import { statusList, videoTypeList } from 'components/select/select.utils';
 import moment from 'moment';
 import scrollIntoView from 'scroll-into-view';
+import { useRequest } from 'hooks/useRequest';
 
 const { Content } = Layout;
 const { Panel } = Collapse;
@@ -68,6 +71,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const [activeKey, setActiveKey] = useState<string>('-1');
   const [selectedVideoFeed, setSelectedVideoFeed] = useState<FeedItem>();
   const [loading, setLoading] = useState(false);
+  const { doFetch } = useRequest({ setLoading });
   const [loadingResources, setLoadingResources] = useState<boolean>(true);
   const [details, setDetails] = useState<boolean>(false);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -173,6 +177,10 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     key: 'value',
     label: 'value',
     value: 'value',
+  };
+
+  const rebuildVlink = async (value: string) => {
+    await doFetch(() => rebuildLink(value));
   };
 
   const feedItemColumns: ColumnsType<FeedItem> = [
@@ -333,6 +341,27 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
         else if (b.package?.find(item => item.shareLink)?.shareLink) return 1;
         else return 0;
       },
+    },
+    {
+      title: 'Rebuild',
+      width: '5%',
+      align: 'center',
+      render: (_, record: FeedItem) => (
+        <>
+          <Button
+            type="link"
+            block
+            onClick={() =>
+              rebuildVlink(
+                record.package?.find(item => item.shareLink)?.shareLink ?? ''
+              )
+            }
+            disabled={!record.package?.find(item => item.shareLink)?.shareLink}
+          >
+            <RedoOutlined />
+          </Button>
+        </>
+      ),
     },
     {
       title: 'Clone',

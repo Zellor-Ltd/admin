@@ -168,8 +168,8 @@ export const resetUser = (id: string) =>
 export const loginService = (login: Login) =>
   instance.put('Disco/Identity/Adm/GetApiToken', login);
 
-export const barcodeLookup = (params: any) =>
-  instance.post('Disco/Product/Adm/Scan', { params });
+export const barcodeLookup = (barcode: string, group?: any) =>
+  instance.post('Disco/Product/Adm/Scan', { barcode, group });
 
 export const lockFeedToUser = (feedId: string, userId: string) =>
   instance.get(`Disco/Feed/LockToOne/${feedId}/${userId}`);
@@ -883,7 +883,7 @@ export const deleteBrandVault = (id: string) => {
 };
 
 export const deletePrivileges = (data: Privilege) =>
-  instance.delete('Wi/Ep/RemovePrivilege', { data });
+    instance.delete('Disco/Identity/Adm/RemovePrivillege', { data });
 
 export const deleteVideoFeed = (id: string) =>
   instance.delete(`Disco/Feed/Delete/${id}`);

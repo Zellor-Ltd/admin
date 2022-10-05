@@ -589,13 +589,10 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
 
   const createProduct = async (index: number) => {
     try {
-      const { result }: any = await barcodeLookup({
-        barcode: barcodeFilter,
-        group: null,
-      });
-      setCurrentProduct(result);
-      setCurrentMasterBrand(result?.brand?.brandName);
-      setCurrentProductBrand(result?.productBrand?.brandName);
+      const { results }: any = await barcodeLookup(barcodeFilter ?? '', null);
+      setCurrentProduct(results?.[0]);
+      setCurrentMasterBrand(results?.[0]?.brand?.brandName);
+      setCurrentProductBrand(results?.[0]?.productBrand?.brandName);
     } catch (error: any) {
       setCurrentProduct(undefined);
       setCurrentMasterBrand(undefined);
