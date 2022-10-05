@@ -438,7 +438,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
     try {
       const item: FeedItem = feedForm.getFieldsValue(true);
 
-      if (feedItem?.id && item.id === previousID) {
+      if (feedItem?.cloning && item.id === previousID) {
         idRef.current!.focus();
         setVideoTab('Video Details');
         message.warning('Please change video feed ID.');
@@ -461,19 +461,23 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
         return segment;
       });
 
-      //updating record
-      if (!feedItem?.id) {
-        const response = await doRequest(() => saveVideoFeed(item, false));
+      // updating record
+      if (feedItem?.id && !feedItem?.cloning) {
+        await doRequest(() => saveVideoFeed(item));
         onSave?.(item);
-        if (!response.result) setDetails?.(false);
         return;
       }
 
-      //adding/cloning record
-      if (feedItem?.id) {
+      // adding record
+      if (!feedItem?.id) {
         const response = await doRequest(() => saveVideoFeed(item, true));
-        onSave?.({ ...item, id: response.result }, true, !!feedItem?.cloning);
-        if (!response.result) setDetails?.(false);
+        onSave?.({ ...item, id: response.result }, true, false);
+      }
+
+      // cloning record
+      if (feedItem?.cloning && item.id !== previousID) {
+        const response = await doRequest(() => saveVideoFeed(item, true));
+        onSave?.({ ...item, id: response.result, cloning: false }, true, true);
       }
     } catch (error: any) {
       message.error('Error: ' + error.error);

@@ -341,7 +341,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       render: (_, feedItem: FeedItem, index: number) => (
         <>
           <Link
-            onClick={() => onEditFeedItem(index, feedItem, true)}
+            onClick={() => handleClone(index, feedItem)}
             to={{ pathname: window.location.pathname, state: feedItem }}
           >
             <CopyOutlined />
@@ -464,42 +464,49 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     newItem?: boolean,
     cloning?: boolean
   ) => {
-    const oldRecord = buffer.find(item => item.id === record.id);
-    const oldIndex = buffer.indexOf(oldRecord);
+    // cloning
+    if (cloning) {
+      if (lastViewedIndex === 0) buffer.splice(1, 0, record);
+      if (lastViewedIndex > 0 && lastViewedIndex < buffer.length - 1)
+        buffer.splice(lastViewedIndex + 1, 0, record);
+      if (lastViewedIndex === buffer.length - 1)
+        buffer.splice(buffer.length, 0, record);
 
-    const tmp = buffer.map(item => {
-      if (item.id === record.id) return record;
-      else return item;
-    });
+      setBuffer([...buffer]);
+      setDetails(false);
+      scrollToCenter(lastViewedIndex + 1);
+      return;
+    }
+
+    if (lastViewedIndex === 0) buffer.splice(0, 1, record);
+    if (lastViewedIndex > 0 && lastViewedIndex < buffer.length - 1)
+      buffer.splice(lastViewedIndex, 1, record);
+    if (lastViewedIndex === buffer.length - 1)
+      buffer.splice(buffer.length - 1, 1, record);
+
+    setBuffer([...buffer]);
+    setDetails(false);
 
     // updating
     if (!newItem) {
-      setBuffer([...tmp]);
-      setDetails(false);
       scrollToCenter(lastViewedIndex);
     }
+
     // adding
     if (!cloning) {
-      setBuffer([...tmp, record]);
-      setDetails(false);
       scrollToCenter(buffer.length);
-    }
-
-    // cloning
-    if (cloning) {
-      setBuffer(buffer.splice(oldIndex, 0, record));
-      setDetails(false);
-      scrollToCenter(lastViewedIndex + 1);
     }
   };
 
-  const onEditFeedItem = (
-    index: number,
-    videoFeed?: FeedItem,
-    cloning?: boolean
-  ) => {
+  const onEditFeedItem = (index: number, videoFeed?: FeedItem) => {
     setLastViewedIndex(index);
-    setSelectedVideoFeed({ ...(videoFeed as any), cloning: cloning });
+    setSelectedVideoFeed({ ...(videoFeed as any) });
+    setDetails(true);
+  };
+
+  const handleClone = (index: number, videoFeed?: FeedItem) => {
+    setLastViewedIndex(index);
+    setSelectedVideoFeed({ ...(videoFeed as any), cloning: true });
     setDetails(true);
   };
 
@@ -547,7 +554,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     shouldUpdateIndex.current = false;
   };
 
-  const onSaveItem = (
+  const handleSave = (
     record: FeedItem,
     newItem?: boolean,
     cloning?: boolean
@@ -849,7 +856,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       )}
       {details && (
         <VideoFeedDetail
-          onSave={onSaveItem}
+          onSave={handleSave}
           onCancel={onCancelItem}
           feedItem={selectedVideoFeed}
           brands={brands}

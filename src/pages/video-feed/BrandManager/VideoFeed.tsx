@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import {
+  CopyOutlined,
   DeleteOutlined,
   EditOutlined,
   LoadingOutlined,
@@ -43,13 +44,12 @@ import { Brand } from 'interfaces/Brand';
 import '@pathofdev/react-tag-input/build/index.css';
 import { Category } from 'interfaces/Category';
 import { Creator } from 'interfaces/Creator';
-import './VideoFeed.scss';
-import './VideoFeedDetail.scss';
+import '../VideoFeed.scss';
+import '../VideoFeedDetail.scss';
 import SimpleSelect from 'components/select/SimpleSelect';
 import { SelectOption } from 'interfaces/SelectOption';
 import VideoFeedDetail from '../VideoFeedDetail';
 import { statusList, videoTypeList } from 'components/select/select.utils';
-import { useRequest } from 'hooks/useRequest';
 import moment from 'moment';
 import scrollIntoView from 'scroll-into-view';
 
@@ -76,7 +76,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const [productBrands, setProductBrands] = useState([]);
   const [buffer, setBuffer] = useState<any[]>([]);
   const [data, setData] = useState<any[]>([]);
-  const { doFetch } = useRequest({ setLoading });
   const shouldUpdateIndex = useRef(false);
   const [updatingIndex, setUpdatingIndex] = useState<Record<string, boolean>>(
     {}
@@ -108,6 +107,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   useEffect(() => {
     const tmp = search(buffer);
     setData(tmp);
+    setLoading(false);
   }, [indexFilter, creatorFilter, categoryFilter, buffer]);
 
   useEffect(() => {
@@ -335,6 +335,21 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       },
     },
     {
+      title: 'Clone',
+      width: '5%',
+      align: 'center',
+      render: (_, feedItem: FeedItem, index: number) => (
+        <>
+          <Link
+            onClick={() => handleClone(index, feedItem)}
+            to={{ pathname: window.location.pathname, state: feedItem }}
+          >
+            <CopyOutlined />
+          </Link>
+        </>
+      ),
+    },
+    {
       title: 'Actions',
       key: 'action',
       width: '5%',
@@ -377,16 +392,15 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     try {
       if (event) collapse(event);
       scrollToCenter(0);
-      const { results }: any = await doFetch(() =>
-        fetchVideoFeedV2({
-          query: titleFilter,
-          brandId: brandFilter?.id,
-          status: statusFilter?.toUpperCase(),
-          videoType: videoTypeFilter,
-          productBrandId: productBrandFilter,
-          dateSort: dateSortFilter,
-        })
-      );
+      setLoading(true);
+      const { results }: any = await fetchVideoFeedV2({
+        query: titleFilter,
+        brandId: brandFilter?.id,
+        status: statusFilter?.toUpperCase(),
+        videoType: videoTypeFilter,
+        productBrandId: productBrandFilter,
+        dateSort: dateSortFilter,
+      });
       setBuffer(results);
     } catch (error) {
       message.error('Error to get feed');
@@ -445,19 +459,54 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     setBuffer(buffer.filter(item => item.id !== _id));
   };
 
-  const refreshItem = (record: FeedItem, newItem?: boolean) => {
-    const tmp = buffer.map(item => {
-      if (item.id === record.id) return record;
-      else return item;
-    });
+  const refreshTable = (
+    record: FeedItem,
+    newItem?: boolean,
+    cloning?: boolean
+  ) => {
+    // cloning
+    if (cloning) {
+      if (lastViewedIndex === 0) buffer.splice(1, 0, record);
+      if (lastViewedIndex > 0 && lastViewedIndex < buffer.length - 1)
+        buffer.splice(lastViewedIndex + 1, 0, record);
+      if (lastViewedIndex === buffer.length - 1)
+        buffer.splice(buffer.length, 0, record);
 
-    setBuffer(newItem ? [...tmp, record] : [...tmp]);
-    scrollToCenter(data.length - 1);
+      setBuffer([...buffer]);
+      setDetails(false);
+      scrollToCenter(lastViewedIndex + 1);
+      return;
+    }
+
+    if (lastViewedIndex === 0) buffer.splice(0, 1, record);
+    if (lastViewedIndex > 0 && lastViewedIndex < buffer.length - 1)
+      buffer.splice(lastViewedIndex, 1, record);
+    if (lastViewedIndex === buffer.length - 1)
+      buffer.splice(buffer.length - 1, 1, record);
+
+    setBuffer([...buffer]);
+    setDetails(false);
+
+    // updating
+    if (!newItem) {
+      scrollToCenter(lastViewedIndex);
+    }
+
+    // adding
+    if (!cloning) {
+      scrollToCenter(buffer.length);
+    }
   };
 
   const onEditFeedItem = (index: number, videoFeed?: FeedItem) => {
     setLastViewedIndex(index);
-    setSelectedVideoFeed(videoFeed);
+    setSelectedVideoFeed({ ...(videoFeed as any) });
+    setDetails(true);
+  };
+
+  const handleClone = (index: number, videoFeed?: FeedItem) => {
+    setLastViewedIndex(index);
+    setSelectedVideoFeed({ ...(videoFeed as any), cloning: true });
     setDetails(true);
   };
 
@@ -505,14 +554,17 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     shouldUpdateIndex.current = false;
   };
 
-  const onSaveItem = (record: FeedItem, newItem?: boolean) => {
+  const handleSave = (
+    record: FeedItem,
+    newItem?: boolean,
+    cloning?: boolean
+  ) => {
     if (newItem) {
       setIndexFilter(undefined);
       setCreatorFilter(undefined);
       setCategoryFilter(undefined);
     }
-    refreshItem(record, newItem);
-    setDetails(false);
+    refreshTable(record, newItem, cloning);
     setSelectedVideoFeed(undefined);
   };
 
@@ -742,6 +794,19 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                       <Typography.Title level={5}>Filter</Typography.Title>
                     }
                     key="1"
+                    extra={
+                      isMobile && (
+                        <Button
+                          type="primary"
+                          onClick={fetch}
+                          loading={loading}
+                          style={{ marginRight: '-2em' }}
+                        >
+                          Search
+                          <SearchOutlined style={{ color: 'white' }} />
+                        </Button>
+                      )
+                    }
                   >
                     <Filters />
                   </Panel>
@@ -766,10 +831,12 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                     <UpOutlined />
                   </Button>
                 </Col>
-                <Button type="primary" onClick={fetch} loading={loading}>
-                  Search
-                  <SearchOutlined style={{ color: 'white' }} />
-                </Button>
+                {!isMobile && (
+                  <Button type="primary" onClick={fetch} loading={loading}>
+                    Search
+                    <SearchOutlined style={{ color: 'white' }} />
+                  </Button>
+                )}
               </Row>
             </Col>
           </Row>
@@ -789,7 +856,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       )}
       {details && (
         <VideoFeedDetail
-          onSave={onSaveItem}
+          onSave={handleSave}
           onCancel={onCancelItem}
           feedItem={selectedVideoFeed}
           brands={brands}
