@@ -886,7 +886,7 @@ export const deleteBrandVault = (id: string) => {
 };
 
 export const deletePrivileges = (data: Privilege) =>
-  instance.delete('Wi/Ep/RemovePrivilege', { data });
+    instance.delete('Disco/Identity/Adm/RemovePrivillege', { data });
 
 export const deleteVideoFeed = (id: string) =>
   instance.delete(`Disco/Feed/Delete/${id}`);
