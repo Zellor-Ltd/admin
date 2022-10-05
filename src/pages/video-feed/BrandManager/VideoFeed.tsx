@@ -3,6 +3,7 @@ import {
   DeleteOutlined,
   EditOutlined,
   LoadingOutlined,
+  RedoOutlined,
   SearchOutlined,
   UpOutlined,
 } from '@ant-design/icons';
@@ -37,21 +38,22 @@ import {
   fetchCreators,
   fetchProductBrands,
   fetchVideoFeedV2,
+  rebuildLink,
   saveVideoFeed,
 } from 'services/DiscoClubService';
 import { Brand } from 'interfaces/Brand';
 import '@pathofdev/react-tag-input/build/index.css';
 import { Category } from 'interfaces/Category';
 import { Creator } from 'interfaces/Creator';
-import './VideoFeed.scss';
-import './VideoFeedDetail.scss';
+import '../VideoFeed.scss';
+import '../VideoFeedDetail.scss';
 import SimpleSelect from 'components/select/SimpleSelect';
 import { SelectOption } from 'interfaces/SelectOption';
 import VideoFeedDetail from '../VideoFeedDetail';
 import { statusList, videoTypeList } from 'components/select/select.utils';
-import { useRequest } from 'hooks/useRequest';
 import moment from 'moment';
 import scrollIntoView from 'scroll-into-view';
+import { useRequest } from 'hooks/useRequest';
 
 const { Content } = Layout;
 const { Panel } = Collapse;
@@ -68,6 +70,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const [activeKey, setActiveKey] = useState<string>('-1');
   const [selectedVideoFeed, setSelectedVideoFeed] = useState<FeedItem>();
   const [loading, setLoading] = useState(false);
+  const { doFetch } = useRequest({ setLoading });
   const [loadingResources, setLoadingResources] = useState<boolean>(true);
   const [details, setDetails] = useState<boolean>(false);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -76,7 +79,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const [productBrands, setProductBrands] = useState([]);
   const [buffer, setBuffer] = useState<any[]>([]);
   const [data, setData] = useState<any[]>([]);
-  const { doFetch } = useRequest({ setLoading });
   const shouldUpdateIndex = useRef(false);
   const [updatingIndex, setUpdatingIndex] = useState<Record<string, boolean>>(
     {}
@@ -108,6 +110,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   useEffect(() => {
     const tmp = search(buffer);
     setData(tmp);
+    setLoading(false);
   }, [indexFilter, creatorFilter, categoryFilter, buffer]);
 
   useEffect(() => {
@@ -173,6 +176,10 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     key: 'value',
     label: 'value',
     value: 'value',
+  };
+
+  const rebuildVlink = async (value: string) => {
+    await doFetch(() => rebuildLink(value));
   };
 
   const feedItemColumns: ColumnsType<FeedItem> = [
@@ -335,6 +342,27 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       },
     },
     {
+      title: 'Rebuild',
+      width: '5%',
+      align: 'center',
+      render: (_, record: FeedItem) => (
+        <>
+          <Button
+            type="link"
+            block
+            onClick={() =>
+              rebuildVlink(
+                record.package?.find(item => item.shareLink)?.shareLink ?? ''
+              )
+            }
+            disabled={!record.package?.find(item => item.shareLink)?.shareLink}
+          >
+            <RedoOutlined />
+          </Button>
+        </>
+      ),
+    },
+    {
       title: 'Actions',
       key: 'action',
       width: '5%',
@@ -377,16 +405,15 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     try {
       if (event) collapse(event);
       scrollToCenter(0);
-      const { results }: any = await doFetch(() =>
-        fetchVideoFeedV2({
-          query: titleFilter,
-          brandId: brandFilter?.id,
-          status: statusFilter?.toUpperCase(),
-          videoType: videoTypeFilter,
-          productBrandId: productBrandFilter,
-          dateSort: dateSortFilter,
-        })
-      );
+      setLoading(true);
+      const { results }: any = await fetchVideoFeedV2({
+        query: titleFilter,
+        brandId: brandFilter?.id,
+        status: statusFilter?.toUpperCase(),
+        videoType: videoTypeFilter,
+        productBrandId: productBrandFilter,
+        dateSort: dateSortFilter,
+      });
       setBuffer(results);
     } catch (error) {
       message.error('Error to get feed');
@@ -742,6 +769,19 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                       <Typography.Title level={5}>Filter</Typography.Title>
                     }
                     key="1"
+                    extra={
+                      isMobile && (
+                        <Button
+                          type="primary"
+                          onClick={fetch}
+                          loading={loading}
+                          style={{ marginRight: '-2em' }}
+                        >
+                          Search
+                          <SearchOutlined style={{ color: 'white' }} />
+                        </Button>
+                      )
+                    }
                   >
                     <Filters />
                   </Panel>
@@ -766,10 +806,12 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                     <UpOutlined />
                   </Button>
                 </Col>
-                <Button type="primary" onClick={fetch} loading={loading}>
-                  Search
-                  <SearchOutlined style={{ color: 'white' }} />
-                </Button>
+                {!isMobile && (
+                  <Button type="primary" onClick={fetch} loading={loading}>
+                    Search
+                    <SearchOutlined style={{ color: 'white' }} />
+                  </Button>
+                )}
               </Row>
             </Col>
           </Row>

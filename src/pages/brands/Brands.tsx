@@ -4,6 +4,7 @@ import {
   CloseOutlined,
   DeleteOutlined,
   EditOutlined,
+  RedoOutlined,
   SearchOutlined,
 } from '@ant-design/icons';
 import {
@@ -26,7 +27,12 @@ import { Brand } from 'interfaces/Brand';
 import { useContext, useEffect, useState } from 'react';
 import { AppContext } from 'contexts/AppContext';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { deleteBrand, fetchBrands, saveBrand } from 'services/DiscoClubService';
+import {
+  deleteBrand,
+  fetchBrands,
+  rebuildLink,
+  saveBrand,
+} from 'services/DiscoClubService';
 import { SimpleSwitch } from '../../components/SimpleSwitch';
 import BrandDetail from './BrandDetail';
 import scrollIntoView from 'scroll-into-view';
@@ -129,6 +135,10 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
     setDetails(false);
   };
 
+  const rebuildVlink = (brand: Brand) => {
+    doFetch(() => rebuildLink(brand.masterBrandLink!));
+  };
+
   const columns: ColumnsType<Brand> = [
     {
       title: '_id',
@@ -171,6 +181,23 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
         >
           {value ? `https://vlink.ie/${value}` : '-'}
         </a>
+      ),
+    },
+    {
+      title: 'Rebuild',
+      width: '5%',
+      align: 'center',
+      render: (_, record: Brand) => (
+        <>
+          <Button
+            type="link"
+            block
+            onClick={() => rebuildVlink(record)}
+            disabled={!record.masterBrandLink}
+          >
+            <RedoOutlined />
+          </Button>
+        </>
       ),
     },
     {

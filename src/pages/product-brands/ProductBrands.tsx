@@ -2,6 +2,7 @@
 import {
   DeleteOutlined,
   EditOutlined,
+  RedoOutlined,
   SearchOutlined,
 } from '@ant-design/icons';
 import {
@@ -25,6 +26,7 @@ import {
   fetchProductBrands,
   deleteProductBrand,
   fetchBrands,
+  rebuildLink,
 } from '../../services/DiscoClubService';
 import CopyValueToClipboard from '../../components/CopyValueToClipboard';
 import ProductBrandDetail from './ProductBrandDetail';
@@ -80,6 +82,10 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
     if (!details) scrollToCenter(lastViewedIndex);
   }, [details]);
 
+  const rebuildVlink = (productBrand: ProductBrand) => {
+    doFetch(() => rebuildLink(productBrand.brandLink!));
+  };
+
   const columns: ColumnsType<ProductBrand> = [
     {
       title: '_id',
@@ -121,6 +127,23 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
         >
           {value ? `https://vlink.ie/${value}` : '-'}
         </a>
+      ),
+    },
+    {
+      title: 'Rebuild',
+      width: '5%',
+      align: 'center',
+      render: (_, record: ProductBrand) => (
+        <>
+          <Button
+            type="link"
+            block
+            onClick={() => rebuildVlink(record)}
+            disabled={!record.brandLink}
+          >
+            <RedoOutlined />
+          </Button>
+        </>
       ),
     },
     {

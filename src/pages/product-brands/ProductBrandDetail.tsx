@@ -17,14 +17,8 @@ import {
 } from 'antd';
 import { Upload } from 'components';
 import { useRequest } from '../../hooks/useRequest';
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
-import { rebuildLink, saveProductBrand } from '../../services/DiscoClubService';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { saveProductBrand } from '../../services/DiscoClubService';
 import { TwitterPicker } from 'react-color';
 import { ProductBrand } from 'interfaces/ProductBrand';
 import { Brand } from 'interfaces/Brand';
@@ -41,7 +35,6 @@ import {
   GlobalOutlined,
   TwitterCircleFilled,
 } from '@ant-design/icons';
-import { AppContext } from 'contexts/AppContext';
 
 const { categoriesKeys, categoriesFields } = categoryMapper;
 const { getSearchTags, getCategories, removeSearchTagsByCategory } =
@@ -61,15 +54,13 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
   brands,
   allCategories,
 }) => {
-  const { isMobile } = useContext(AppContext);
   const [loading, setLoading] = useState<boolean>(false);
   const [form] = Form.useForm();
-  const { doFetch, doRequest } = useRequest({ setLoading });
+  const { doRequest } = useRequest({ setLoading });
   const [activeTabKey, setActiveTabKey] = React.useState('Details');
   const toFocus = useRef<any>();
   const [showModal, setShowModal] = useState<boolean>(false);
   const [ageRange, setAgeRange] = useState<[number, number]>([12, 100]);
-  const [link, setLink] = useState<string>(productBrand?.brandLink ?? '');
 
   const onFinish = async () => {
     try {
@@ -264,10 +255,6 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
     return option?.label?.toUpperCase().includes(input?.toUpperCase());
   };
 
-  const rebuildVlink = () => {
-    doFetch(() => rebuildLink(productBrand?.brandLink!));
-  };
-
   return (
     <>
       <PageHeader
@@ -293,7 +280,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
           >
             <Tabs.TabPane forceRender tab="Details" key="Details">
               <Col lg={12} xs={24}>
-                <Row gutter={8} align="middle">
+                <Row gutter={8}>
                   <Col span={24}>
                     <Form.Item
                       name="propagationNeeded"
@@ -441,31 +428,6 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                     </Form.Item>
                   </Col>
                   <Col lg={12} xs={24}>
-                    <Form.Item label="Brand Link" name="brandLink">
-                      <Input
-                        placeholder="Brand Link"
-                        allowClear
-                        prefix="https://vlink.ie/"
-                        onChange={event => setLink(event.target.value)}
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col lg={12} xs={24}>
-                    <Row justify={isMobile ? 'end' : undefined}>
-                      <Col>
-                        <Button
-                          type="primary"
-                          onClick={rebuildVlink}
-                          disabled={!link}
-                          className={isMobile ? 'mb-05' : 'ml-1'}
-                          style={isMobile ? {} : { marginTop: 6 }}
-                        >
-                          Rebuild VLink
-                        </Button>
-                      </Col>
-                    </Row>
-                  </Col>
-                  <Col lg={12} xs={24}>
                     <Form.Item
                       label="Product Brand Color"
                       name="brandTxtColor"
@@ -478,6 +440,15 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                       valuePropName="color"
                     >
                       <ColorPicker id="brandTxtColor" />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={12} xs={24}>
+                    <Form.Item label="Brand Link" name="brandLink">
+                      <Input
+                        placeholder="Brand Link"
+                        allowClear
+                        prefix="https://vlink.ie/"
+                      />
                     </Form.Item>
                   </Col>
                 </Row>

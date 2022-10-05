@@ -4,6 +4,7 @@ import {
   CloseOutlined,
   DeleteOutlined,
   EditOutlined,
+  RedoOutlined,
   SearchOutlined,
 } from '@ant-design/icons';
 import {
@@ -27,6 +28,7 @@ import { Link, RouteComponentProps } from 'react-router-dom';
 import {
   deleteCreator,
   fetchCreators,
+  rebuildLink,
   saveCreator,
 } from 'services/DiscoClubService';
 import CreatorDetail from './CreatorDetail';
@@ -92,6 +94,10 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
     }
   };
 
+  const rebuildVlink = (creator: Creator) => {
+    doFetch(() => rebuildLink(creator.userName!));
+  };
+
   const columns: ColumnsType<Creator> = [
     {
       title: '_id',
@@ -128,6 +134,38 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
         else if (b.userName) return 1;
         else return 0;
       },
+    },
+    {
+      title: 'InstaLink',
+      dataIndex: 'userName',
+      width: '10%',
+      align: 'center',
+      render: (value: string) => (
+        <a
+          href={'https://vlink.ie/' + value}
+          target="blank"
+          style={value ? {} : { pointerEvents: 'none' }}
+        >
+          {value ? `https://vlink.ie/${value}` : '-'}
+        </a>
+      ),
+    },
+    {
+      title: 'Rebuild',
+      width: '5%',
+      align: 'center',
+      render: (_, record: Creator) => (
+        <>
+          <Button
+            type="link"
+            block
+            onClick={() => rebuildVlink(record)}
+            disabled={!record.userName}
+          >
+            <RedoOutlined />
+          </Button>
+        </>
+      ),
     },
     {
       title: 'Coupon Code',
