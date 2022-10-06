@@ -80,8 +80,10 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const [productBrands, setProductBrands] = useState([]);
   const [buffer, setBuffer] = useState<any[]>([]);
   const [data, setData] = useState<any[]>([]);
-  const shouldUpdateIndex = useRef(false);
   const [updatingIndex, setUpdatingIndex] = useState<Record<string, boolean>>(
+    {}
+  );
+  const [updatingVIndex, setUpdatingVIndex] = useState<Record<string, boolean>>(
     {}
   );
 
@@ -204,9 +206,13 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
             <InputNumber
               type="number"
               value={feedItem.index}
-              onChange={value => handleIndexChange(value, feedItem)}
-              onBlur={() => updateIndex(feedItem)}
-              onPressEnter={() => updateIndex(feedItem)}
+              onFocus={event => event.stopPropagation()}
+              onBlur={(event: any) =>
+                updateIndex(feedItem, event.target.value as unknown as any)
+              }
+              onPressEnter={(event: any) =>
+                updateIndex(feedItem, event.target.value as unknown as any)
+              }
             />
           );
         }
@@ -216,6 +222,38 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
         if (a.index && b.index) return a.index - b.index;
         else if (a.index) return -1;
         else if (b.index) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: 'vIndex',
+      dataIndex: 'vIndex',
+      width: '3%',
+      render: (_, feedItem) => {
+        if (updatingVIndex[feedItem.id]) {
+          const antIcon = <LoadingOutlined spin />;
+          return <Spin indicator={antIcon} />;
+        } else {
+          return (
+            <InputNumber
+              type="number"
+              value={feedItem.vIndex}
+              onFocus={event => event.stopPropagation()}
+              onBlur={(event: any) =>
+                updateVIndex(feedItem, event.target.value as unknown as number)
+              }
+              onPressEnter={(event: any) =>
+                updateVIndex(feedItem, event.target.value as unknown as number)
+              }
+            />
+          );
+        }
+      },
+      align: 'center',
+      sorter: (a, b): any => {
+        if (a.vIndex && b.vIndex) return a.vIndex - b.vIndex;
+        else if (a.vIndex) return -1;
+        else if (b.vIndex) return 1;
         else return 0;
       },
     },
@@ -539,22 +577,9 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     setDetails(true);
   };
 
-  const handleIndexChange = (newIndex: number, feedItem: FeedItem) => {
-    shouldUpdateIndex.current = feedItem.index !== newIndex;
-
-    const row = buffer.find(item => item.id === feedItem.id);
-    row.index = newIndex;
-
-    const tmp = buffer.map(item => {
-      if (item.id === row.id) return row;
-      else return item;
-    });
-
-    setBuffer([...tmp]);
-  };
-
-  const updateIndex = async (record: FeedItem) => {
-    if (!shouldUpdateIndex.current) return;
+  const updateIndex = async (record: FeedItem, value?: number) => {
+    if (record.index === value) return;
+    record.index = value;
 
     setUpdatingIndex(prev => {
       const newValue = {
@@ -579,8 +604,35 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       delete newValue[record.id];
       return newValue;
     });
+  };
 
-    shouldUpdateIndex.current = false;
+  const updateVIndex = async (record: FeedItem, input?: number) => {
+    if (record.vIndex === input) return;
+    record.vIndex = input;
+
+    setUpdatingVIndex(prev => {
+      const newValue = {
+        ...prev,
+      };
+      newValue[record.id] = true;
+
+      return newValue;
+    });
+
+    try {
+      await saveVideoFeed(record);
+      message.success('Register updated with success.');
+    } catch (err) {
+      console.error(`Error while trying to update index.`, err);
+    }
+
+    setUpdatingVIndex(prev => {
+      const newValue = {
+        ...prev,
+      };
+      delete newValue[record.id];
+      return newValue;
+    });
   };
 
   const handleSave = (

@@ -1,4 +1,5 @@
 export interface ProductBrand {
+  vIndex?: number;
   brandLink?: string;
   searchTags: any[];
   ageMax?: any;

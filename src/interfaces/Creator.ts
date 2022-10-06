@@ -1,6 +1,7 @@
 import { Image } from './Image';
 
 export interface Creator {
+  vIndex?: number;
   displayInCreatorGrid?: boolean;
   discountPercentage?: number;
   couponCode?: string;

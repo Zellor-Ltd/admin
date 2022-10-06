@@ -2,6 +2,7 @@
 import {
   DeleteOutlined,
   EditOutlined,
+  LoadingOutlined,
   RedoOutlined,
   SearchOutlined,
 } from '@ant-design/icons';
@@ -9,9 +10,12 @@ import {
   Button,
   Col,
   Input,
+  InputNumber,
+  message,
   PageHeader,
   Popconfirm,
   Row,
+  Spin,
   Table,
   Typography,
 } from 'antd';
@@ -27,6 +31,7 @@ import {
   deleteProductBrand,
   fetchBrands,
   rebuildLink,
+  saveProductBrand,
 } from '../../services/DiscoClubService';
 import CopyValueToClipboard from '../../components/CopyValueToClipboard';
 import ProductBrandDetail from './ProductBrandDetail';
@@ -47,6 +52,9 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
   const [filter, setFilter] = useState<string>('');
   const { isMobile } = useContext(AppContext);
   const { fetchAllCategories, allCategories } = useAllCategories({});
+  const [updatingVIndex, setUpdatingVIndex] = useState<Record<string, boolean>>(
+    {}
+  );
 
   useEffect(() => {
     getResources();
@@ -86,6 +94,35 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
     doFetch(() => rebuildLink(productBrand.brandLink!));
   };
 
+  const updateVIndex = async (record: ProductBrand, input?: number) => {
+    if (record.vIndex === input) return;
+    record.vIndex = input;
+
+    setUpdatingVIndex(prev => {
+      const newValue = {
+        ...prev,
+      };
+      newValue[record.id] = true;
+
+      return newValue;
+    });
+
+    try {
+      await saveProductBrand(record);
+      message.success('Register updated with success.');
+    } catch (err) {
+      console.error(`Error while trying to update index.`, err);
+    }
+
+    setUpdatingVIndex(prev => {
+      const newValue = {
+        ...prev,
+      };
+      delete newValue[record.id];
+      return newValue;
+    });
+  };
+
   const columns: ColumnsType<ProductBrand> = [
     {
       title: '_id',
@@ -111,6 +148,44 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
           return a.brandName.localeCompare(b.brandName);
         else if (a.brandName) return -1;
         else if (b.brandName) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: 'vIndex',
+      dataIndex: 'vIndex',
+      width: '3%',
+      render: (_, productBrand, index) => {
+        if (updatingVIndex[productBrand.id]) {
+          const antIcon = <LoadingOutlined spin />;
+          return <Spin indicator={antIcon} />;
+        } else {
+          return (
+            <InputNumber
+              type="number"
+              value={productBrand.vIndex}
+              onFocus={event => event.stopPropagation()}
+              onBlur={(event: any) =>
+                updateVIndex(
+                  productBrand,
+                  event.target.value as unknown as number
+                )
+              }
+              onPressEnter={(event: any) =>
+                updateVIndex(
+                  productBrand,
+                  event.target.value as unknown as number
+                )
+              }
+            />
+          );
+        }
+      },
+      align: 'center',
+      sorter: (a, b): any => {
+        if (a.vIndex && b.vIndex) return a.vIndex - b.vIndex;
+        else if (a.vIndex) return -1;
+        else if (b.vIndex) return 1;
         else return 0;
       },
     },
