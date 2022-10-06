@@ -853,6 +853,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                 New Item
               </Button>,
             ]}
+            className={isMobile ? 'mb-1' : ''}
           />
           <Row
             align="bottom"
@@ -923,6 +924,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
           </Row>
           <Content>
             <Table
+              className={isMobile ? '' : 'mt-15'}
               scroll={{ x: true }}
               rowClassName={(_, index) => `scrollable-row-${index}`}
               size="small"

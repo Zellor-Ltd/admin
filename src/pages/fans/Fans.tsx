@@ -301,7 +301,7 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
               <Row
                 gutter={8}
                 justify="end"
-                align="bottom"
+                align="top"
                 className={isMobile ? 'mt-1' : ''}
               >
                 <Col>
@@ -319,7 +319,7 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
                     type="primary"
                     onClick={getResources}
                     loading={loading}
-                    className={isMobile ? 'mb-1' : 'mr-06'}
+                    className={isMobile ? '' : 'mr-06'}
                   >
                     Search
                     <SearchOutlined style={{ color: 'white' }} />
@@ -354,6 +354,7 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
             }
           >
             <Table
+              className="mt-1"
               scroll={{ x: true }}
               rowClassName={(_, index) => `scrollable-row-${index}`}
               rowKey="id"

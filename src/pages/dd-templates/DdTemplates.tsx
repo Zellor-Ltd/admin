@@ -248,6 +248,7 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
             </Col>
           </Row>
           <Table
+            className="mt-15"
             scroll={{ x: true }}
             rowClassName={(_, index) => `scrollable-row-${index}`}
             rowKey="id"

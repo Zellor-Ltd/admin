@@ -676,15 +676,16 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
                 New Item
               </Button>,
             ]}
+            className={isMobile ? 'mb-05' : ''}
           />
           <Row
-            align="bottom"
+            align={isMobile ? 'middle' : 'bottom'}
             justify="space-between"
             className="sticky-filter-box mb-05"
             id="filterPanel"
             style={panelStyle}
           >
-            <Col lg={16} xs={24}>
+            <Col lg={16} xs={{ flex: 'auto' }}>
               {!isMobile && <Filters />}
               {isMobile && (
                 <Col span={24}>
@@ -707,7 +708,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
                 </Col>
               )}
             </Col>
-            <Col>
+            <Col xs={{ flex: 'none' }}>
               <Row justify="space-between" align="bottom">
                 <Col flex="auto">
                   <Button
@@ -732,6 +733,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
           </Row>
           <Content>
             <Table
+              className={isMobile ? 'mt-n1' : 'mt-15'}
               scroll={{ x: true }}
               rowClassName={(_, index) => `scrollable-row-${index}`}
               size="small"

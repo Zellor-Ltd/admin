@@ -791,6 +791,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                 activeKey={activeKey}
                 onChange={handleCollapseChange}
                 destroyInactivePanel
+                className="mb-n1"
               >
                 <Panel
                   header={<Typography.Title level={5}>Filter</Typography.Title>}
@@ -802,32 +803,41 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
             )}
             <Col className={activeKey === '1' ? 'mb-1' : ''}>
               <Row justify="space-between" align="top">
-                <Col flex="auto">
-                  <Button
-                    type="text"
-                    onClick={collapse}
-                    style={{
-                      display: activeKey === '1' ? 'block' : 'none',
-                      background: 'none',
-                    }}
-                  >
-                    <UpOutlined />
-                  </Button>
+                <Col span={24}>
+                  <Row justify="start">
+                    <Col>
+                      <Button
+                        type="text"
+                        onClick={collapse}
+                        style={{
+                          display: activeKey === '1' ? 'block' : 'none',
+                          background: 'none',
+                        }}
+                      >
+                        <UpOutlined />
+                      </Button>
+                    </Col>
+                  </Row>
                 </Col>
-                <Col>
-                  <Button
-                    type="primary"
-                    onClick={() => getProducts(true)}
-                    loading={loading}
-                    className="mr-1"
-                    style={{
-                      position: 'relative',
-                      bottom: activeKey === '1' ? '0' : '0.5rem',
-                    }}
-                  >
-                    Search
-                    <SearchOutlined style={{ color: 'white' }} />
-                  </Button>
+                <Col flex="none">
+                  <Row justify={activeKey === '1' ? 'end' : undefined}>
+                    <Col>
+                      <Button
+                        type="primary"
+                        onClick={() => getProducts(true)}
+                        loading={loading}
+                        className="mr-1"
+                        style={{
+                          position: 'relative',
+                          top: activeKey !== '1' && isMobile ? '1rem' : 0,
+                          width: '100%',
+                        }}
+                      >
+                        Search
+                        <SearchOutlined style={{ color: 'white' }} />
+                      </Button>
+                    </Col>
+                  </Row>
                 </Col>
               </Row>
             </Col>
@@ -854,6 +864,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
             }
           >
             <Table
+              className="mt-1"
               scroll={{ x: true }}
               rowClassName={(_, index) =>
                 `scrollable-row-${index} ${

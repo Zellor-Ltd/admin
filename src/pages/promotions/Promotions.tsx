@@ -245,6 +245,7 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
             </Col>
           </Row>
           <Table
+            className="mt-1"
             scroll={{ x: true }}
             rowClassName={(_, index) => `scrollable-row-${index}`}
             rowKey="id"

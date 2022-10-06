@@ -548,6 +548,7 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
           <PageHeader
             title="Variant Groups"
             subTitle={isMobile ? '' : 'Select group to edit'}
+            className={isMobile ? 'mb-1' : ''}
           />
           <Row
             align="bottom"
@@ -556,7 +557,7 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
             id="filterPanel"
             style={panelStyle}
           >
-            <Col lg={16} xs={24}>
+            <Col lg={16} xs={{ flex: 'auto' }}>
               {!isMobile && <Filters />}
               {isMobile && (
                 <>
@@ -578,7 +579,7 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
                 </>
               )}
             </Col>
-            <Col>
+            <Col xs={{ flex: 'none' }}>
               <Row justify="space-between" align="bottom">
                 <Col flex="auto">
                   <Button
@@ -624,6 +625,7 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
             }
           >
             <Table
+              className="mt-1"
               scroll={{ x: true }}
               rowClassName={(_, index) => `scrollable-row-${index}`}
               rowKey="id"
