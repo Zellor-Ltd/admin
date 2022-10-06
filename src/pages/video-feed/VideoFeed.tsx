@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import {
+  CopyOutlined,
   DeleteOutlined,
   EditOutlined,
   LoadingOutlined,
@@ -401,6 +402,21 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       ),
     },
     {
+      title: 'Clone',
+      width: '5%',
+      align: 'center',
+      render: (_, feedItem: FeedItem, index: number) => (
+        <>
+          <Link
+            onClick={() => handleClone(index, feedItem)}
+            to={{ pathname: window.location.pathname, state: feedItem }}
+          >
+            <CopyOutlined />
+          </Link>
+        </>
+      ),
+    },
+    {
       title: 'Actions',
       key: 'action',
       width: '5%',
@@ -510,19 +526,54 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     setBuffer(buffer.filter(item => item.id !== _id));
   };
 
-  const refreshItem = (record: FeedItem, newItem?: boolean) => {
-    const tmp = buffer.map(item => {
-      if (item.id === record.id) return record;
-      else return item;
-    });
+  const refreshTable = (
+    record: FeedItem,
+    newItem?: boolean,
+    cloning?: boolean
+  ) => {
+    // cloning
+    if (cloning) {
+      if (lastViewedIndex === 0) buffer.splice(1, 0, record);
+      if (lastViewedIndex > 0 && lastViewedIndex < buffer.length - 1)
+        buffer.splice(lastViewedIndex + 1, 0, record);
+      if (lastViewedIndex === buffer.length - 1)
+        buffer.splice(buffer.length, 0, record);
 
-    setBuffer(newItem ? [...tmp, record] : [...tmp]);
-    scrollToCenter(data.length - 1);
+      setBuffer([...buffer]);
+      setDetails(false);
+      scrollToCenter(lastViewedIndex + 1);
+      return;
+    }
+
+    if (lastViewedIndex === 0) buffer.splice(0, 1, record);
+    if (lastViewedIndex > 0 && lastViewedIndex < buffer.length - 1)
+      buffer.splice(lastViewedIndex, 1, record);
+    if (lastViewedIndex === buffer.length - 1)
+      buffer.splice(buffer.length - 1, 1, record);
+
+    setBuffer([...buffer]);
+    setDetails(false);
+
+    // updating
+    if (!newItem) {
+      scrollToCenter(lastViewedIndex);
+    }
+
+    // adding
+    if (!cloning) {
+      scrollToCenter(buffer.length);
+    }
   };
 
   const onEditFeedItem = (index: number, videoFeed?: FeedItem) => {
     setLastViewedIndex(index);
-    setSelectedVideoFeed(videoFeed);
+    setSelectedVideoFeed({ ...(videoFeed as any) });
+    setDetails(true);
+  };
+
+  const handleClone = (index: number, videoFeed?: FeedItem) => {
+    setLastViewedIndex(index);
+    setSelectedVideoFeed({ ...(videoFeed as any), cloning: true });
     setDetails(true);
   };
 
@@ -584,14 +635,17 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     });
   };
 
-  const onSaveItem = (record: FeedItem, newItem?: boolean) => {
+  const handleSave = (
+    record: FeedItem,
+    newItem?: boolean,
+    cloning?: boolean
+  ) => {
     if (newItem) {
       setIndexFilter(undefined);
       setCreatorFilter(undefined);
       setCategoryFilter(undefined);
     }
-    refreshItem(record, newItem);
-    setDetails(false);
+    refreshTable(record, newItem, cloning);
     setSelectedVideoFeed(undefined);
   };
 
@@ -883,7 +937,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       )}
       {details && (
         <VideoFeedDetail
-          onSave={onSaveItem}
+          onSave={handleSave}
           onCancel={onCancelItem}
           feedItem={selectedVideoFeed}
           brands={brands}

@@ -65,7 +65,7 @@ interface DraggableBodyRowProps
 
 const type = 'DraggableBodyRow';
 interface VideoFeedDetailProps {
-  onSave?: (record: FeedItem, newItem?: boolean) => void;
+  onSave?: (record: FeedItem, newItem?: boolean, cloning?: boolean) => void;
   onCancel?: () => void;
   feedItem?: FeedItem;
   brands: Brand[];
@@ -142,6 +142,21 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
   const [vLinkProductBrandIcons, setVLinkProductBrandIcons] = useState<any[]>(
     []
   );
+  let idRef = useRef<Input>(null);
+  const mounted = useRef<boolean>(false);
+  const previousID = feedItem?.cloning ? feedItem?.id : undefined;
+
+  useEffect(() => {
+    if (!mounted.current) {
+      mounted.current = true;
+      return;
+    }
+
+    if (feedItem?.cloning) {
+      idRef.current!.focus();
+      scrollIntoView(document.getElementById('feedId'));
+    }
+  });
 
   useEffect(() => {
     if (brands.length && creators.length && productBrands.length)
@@ -288,11 +303,11 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
   );
 
   useEffect(() => {
-    segmentForm.setFieldsValue({ tags: [...tagBuffer] });
+    if (selectedSegment) segmentForm.setFieldsValue({ tags: [...tagBuffer] });
   }, [tagBuffer]);
 
   useEffect(() => {
-    if (tagBuffer !== segmentForm.getFieldValue('tags'))
+    if (selectedSegment && tagBuffer !== segmentForm.getFieldValue('tags'))
       setTagBuffer(segmentForm.getFieldValue('tags'));
   }, [selectedSegment]);
 
@@ -409,6 +424,15 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
   const onFinish = async () => {
     try {
       const item: FeedItem = feedForm.getFieldsValue(true);
+
+      if (feedItem?.cloning && item.id === previousID) {
+        idRef.current!.focus();
+        setVideoTab('Video Details');
+        message.warning('Please change video feed ID.');
+        scrollIntoView(document.getElementById('feedId'));
+        return;
+      }
+
       item.goLiveDate = moment(item.goLiveDate).format();
       item.validity = moment(item.validity).format();
       item.status = status;
@@ -424,11 +448,24 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
         return segment;
       });
 
-      const response = await doRequest(() => saveVideoFeed(item));
-      item.id
-        ? onSave?.(item)
-        : onSave?.({ ...item, id: response.result }, true);
-      if (!response.result) setDetails?.(false);
+      // updating record
+      if (feedItem?.id && !feedItem?.cloning) {
+        await doRequest(() => saveVideoFeed(item));
+        onSave?.(item);
+        return;
+      }
+
+      // adding record
+      if (!feedItem?.id) {
+        const response = await doRequest(() => saveVideoFeed(item, true));
+        onSave?.({ ...item, id: response.result }, true, false);
+      }
+
+      // cloning record
+      if (feedItem?.cloning && item.id !== previousID) {
+        const response = await doRequest(() => saveVideoFeed(item, true));
+        onSave?.({ ...item, id: response.result, cloning: false }, true, true);
+      }
     } catch (error: any) {
       message.error('Error: ' + error.error);
     }
@@ -612,10 +649,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
       dataIndex: 'id',
       width: '15%',
       render: id => (
-        <a
-          href={'https://link.discoclub.com/' + id.replace('_STR', '')}
-          target="blank"
-        >
+        <a href={'https://vlink.ie/' + id.replace('_STR', '')} target="blank">
           {id.replace('_STR', '')}
         </a>
       ),
@@ -662,6 +696,49 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
             <Row gutter={8}>
               <Col span={24}>
                 <Row gutter={8}>
+                  <Col lg={12} xs={24}>
+                    <Form.Item
+                      name="id"
+                      label={feedItem?.cloning ? 'ID - Change needed' : 'ID'}
+                    >
+                      <Input
+                        disabled={!feedItem?.cloning}
+                        ref={idRef}
+                        id="feedId"
+                        placeholder="No input needed"
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={12} xs={24}>
+                    <Row
+                      align="bottom"
+                      justify={isMobile ? 'end' : undefined}
+                      className={isMobile ? 'mb-1' : undefined}
+                    >
+                      <Col>
+                        <Form.Item
+                          name="isDraft"
+                          label="Is Draft"
+                          valuePropName="checked"
+                          className="mx-1"
+                        >
+                          <Switch />
+                        </Form.Item>
+                      </Col>
+                      <Col>
+                        <Button
+                          type="primary"
+                          onClick={
+                            status === 'draft'
+                              ? () => setStatus('live')
+                              : () => setStatus('suspended')
+                          }
+                        >
+                          {status === 'draft' ? 'Approve' : 'Suspend'}
+                        </Button>
+                      </Col>
+                    </Row>
+                  </Col>
                   <Col lg={12} xs={24}>
                     <Form.Item label="Status">
                       <Select
@@ -710,32 +787,6 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                     >
                       <InputNumber id="index" />
                     </Form.Item>
-                  </Col>
-                </Row>
-                <Row gutter={8} align="middle">
-                  <Col span={12}>
-                    <Button
-                      type="primary"
-                      onClick={
-                        status === 'draft'
-                          ? () => setStatus('live')
-                          : () => setStatus('suspended')
-                      }
-                    >
-                      {status === 'draft' ? 'Approve' : 'Suspend'}
-                    </Button>
-                  </Col>
-                  <Col span={12}>
-                    <Row justify={isMobile ? 'end' : undefined}>
-                      <Form.Item
-                        name="isDraft"
-                        label="Is Draft"
-                        valuePropName="checked"
-                        className={isMobile ? 'mr-1' : undefined}
-                      >
-                        <Switch />
-                      </Form.Item>
-                    </Row>
                   </Col>
                 </Row>
               </Col>

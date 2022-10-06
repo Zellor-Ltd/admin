@@ -5,6 +5,7 @@ import { ProductBrand } from './ProductBrand';
 
 export interface FeedItem {
   vIndex?: number;
+  cloning?: boolean;
   vLink?: any;
   searchTags?: any;
   video: Video;
