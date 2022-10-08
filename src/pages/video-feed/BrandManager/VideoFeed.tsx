@@ -46,11 +46,11 @@ import { Brand } from 'interfaces/Brand';
 import '@pathofdev/react-tag-input/build/index.css';
 import { Category } from 'interfaces/Category';
 import { Creator } from 'interfaces/Creator';
-import './VideoFeed.scss';
-import './VideoFeedDetail.scss';
+import '../VideoFeed.scss';
+import '../VideoFeedDetail.scss';
 import SimpleSelect from 'components/select/SimpleSelect';
 import { SelectOption } from 'interfaces/SelectOption';
-import VideoFeedDetail from './VideoFeedDetail';
+import VideoFeedDetail from '../VideoFeedDetail';
 import { statusList, videoTypeList } from 'components/select/select.utils';
 import moment from 'moment';
 import scrollIntoView from 'scroll-into-view';
@@ -181,7 +181,8 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     value: 'value',
   };
 
-  const rebuildVlink = async (value: string) => {
+  const rebuildVlink = async (value: string, index: number) => {
+    setLastViewedIndex(index);
     await doFetch(() => rebuildLink(value));
   };
 
@@ -384,14 +385,15 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       title: 'Rebuild',
       width: '5%',
       align: 'center',
-      render: (_, record: FeedItem) => (
+      render: (_, record: FeedItem, index: number) => (
         <>
           <Button
             type="link"
             block
             onClick={() =>
               rebuildVlink(
-                record.package?.find(item => item.shareLink)?.shareLink ?? ''
+                record.package?.find(item => item.shareLink)?.shareLink ?? '',
+                index
               )
             }
             disabled={!record.package?.find(item => item.shareLink)?.shareLink}
@@ -531,38 +533,14 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     newItem?: boolean,
     cloning?: boolean
   ) => {
-    // cloning
     if (cloning) {
-      if (lastViewedIndex === 0) buffer.splice(1, 0, record);
-      if (lastViewedIndex > 0 && lastViewedIndex < buffer.length - 1)
-        buffer.splice(lastViewedIndex + 1, 0, record);
-      if (lastViewedIndex === buffer.length - 1)
-        buffer.splice(buffer.length, 0, record);
-
-      setBuffer([...buffer]);
-      setDetails(false);
-      scrollToCenter(lastViewedIndex + 1);
-      return;
-    }
-
-    if (lastViewedIndex === 0) buffer.splice(0, 1, record);
-    if (lastViewedIndex > 0 && lastViewedIndex < buffer.length - 1)
-      buffer.splice(lastViewedIndex, 1, record);
-    if (lastViewedIndex === buffer.length - 1)
-      buffer.splice(buffer.length - 1, 1, record);
-
+      const newIndex = lastViewedIndex + 1;
+      buffer.splice(newIndex, 0, record);
+      setLastViewedIndex(newIndex);
+    } else buffer[lastViewedIndex] = record;
     setBuffer([...buffer]);
     setDetails(false);
-
-    // updating
-    if (!newItem) {
-      scrollToCenter(lastViewedIndex);
-    }
-
-    // adding
-    if (!cloning) {
-      scrollToCenter(buffer.length);
-    }
+    scrollToCenter(lastViewedIndex);
   };
 
   const onEditFeedItem = (index: number, videoFeed?: FeedItem) => {
