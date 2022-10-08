@@ -32,6 +32,7 @@ import {
   BlockOutlined,
   ShoppingOutlined,
   CreditCardOutlined,
+  PlaySquareOutlined,
 } from '@ant-design/icons';
 import { Menu } from 'antd';
 import SubMenu from 'antd/lib/menu/SubMenu';
@@ -269,6 +270,9 @@ const AdminSideMenu = ({ isMobile }) => {
         </Menu.Item>
         <Menu.Item key="settings_trends" icon={<LineChartOutlined />}>
           <Link to="/settings_trends">Trends</Link>
+        </Menu.Item>
+        <Menu.Item key="settings_fixed-videos" icon={<PlaySquareOutlined />}>
+          <Link to="/settings_fixed-videos">Fixed Videos</Link>
         </Menu.Item>
         <Menu.Item
           key="settings_fan-groups"
