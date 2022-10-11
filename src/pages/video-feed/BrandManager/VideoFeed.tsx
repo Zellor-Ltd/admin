@@ -29,7 +29,7 @@ import { ColumnsType } from 'antd/lib/table';
 import CopyValueToClipboard from 'components/CopyValueToClipboard';
 import { FeedItem } from 'interfaces/FeedItem';
 import { Segment } from 'interfaces/Segment';
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { AppContext } from 'contexts/AppContext';
 import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 import {
@@ -46,11 +46,11 @@ import { Brand } from 'interfaces/Brand';
 import '@pathofdev/react-tag-input/build/index.css';
 import { Category } from 'interfaces/Category';
 import { Creator } from 'interfaces/Creator';
-import '../VideoFeed.scss';
-import '../VideoFeedDetail.scss';
+import './VideoFeed.scss';
+import './VideoFeedDetail.scss';
 import SimpleSelect from 'components/select/SimpleSelect';
 import { SelectOption } from 'interfaces/SelectOption';
-import VideoFeedDetail from '../VideoFeedDetail';
+import VideoFeedDetail from './VideoFeedDetail';
 import { statusList, videoTypeList } from 'components/select/select.utils';
 import moment from 'moment';
 import scrollIntoView from 'scroll-into-view';
@@ -79,7 +79,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const [brands, setBrands] = useState<Brand[]>([]);
   const [productBrands, setProductBrands] = useState([]);
   const [buffer, setBuffer] = useState<any[]>([]);
-  const [data, setData] = useState<any[]>([]);
   const [updatingIndex, setUpdatingIndex] = useState<Record<string, boolean>>(
     {}
   );
@@ -110,11 +109,34 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     getDetailsResources();
   }, []);
 
+  const search = rows => {
+    let updatedRows = rows;
+    if (indexFilter) {
+      updatedRows = updatedRows.filter(row => {
+        return row.index && row.index === indexFilter;
+      });
+    }
+    if (creatorFilter) {
+      updatedRows = updatedRows.filter(
+        row => row?.creator?.firstName?.indexOf(creatorFilter) > -1
+      );
+    }
+    if (categoryFilter) {
+      updatedRows = updatedRows.filter(
+        row => row.category?.indexOf(categoryFilter) > -1
+      );
+    }
+    return updatedRows;
+  };
+
+  const data = useMemo(
+    () => search(buffer),
+    [indexFilter, creatorFilter, categoryFilter, buffer]
+  );
+
   useEffect(() => {
-    const tmp = search(buffer);
-    setData(tmp);
     setLoading(false);
-  }, [indexFilter, creatorFilter, categoryFilter, buffer]);
+  }, [data]);
 
   useEffect(() => {
     const panel = document.getElementById('filterPanel');
@@ -501,26 +523,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       getBrands(),
       getProductBrands(),
     ]).then(() => setLoadingResources(false));
-  };
-
-  const search = rows => {
-    let updatedRows = rows;
-    if (indexFilter) {
-      updatedRows = updatedRows.filter(row => {
-        return row.index && row.index === indexFilter;
-      });
-    }
-    if (creatorFilter) {
-      updatedRows = updatedRows.filter(
-        row => row?.creator?.firstName?.indexOf(creatorFilter) > -1
-      );
-    }
-    if (categoryFilter) {
-      updatedRows = updatedRows.filter(
-        row => row.category?.indexOf(categoryFilter) > -1
-      );
-    }
-    return updatedRows;
   };
 
   const deleteItem = async (_id: string, index: number) => {

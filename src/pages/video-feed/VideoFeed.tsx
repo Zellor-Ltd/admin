@@ -55,6 +55,8 @@ import { statusList, videoTypeList } from 'components/select/select.utils';
 import moment from 'moment';
 import scrollIntoView from 'scroll-into-view';
 import { useRequest } from 'hooks/useRequest';
+import { isTemplateExpression } from 'typescript';
+import { map } from 'lodash';
 
 const { Content } = Layout;
 const { Panel } = Collapse;
@@ -103,7 +105,8 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   });
   const filterPanelHeight = useRef<number>();
   const windowHeight = window.innerHeight;
-  const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
+  const lastFocusedIndex = useRef<number>(-1);
+  const bufferIndex = useRef<number>(-1);
 
   useEffect(() => {
     getDetailsResources();
@@ -128,11 +131,15 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     }
     return updatedRows;
   };
-
-  const data = useMemo(
+  let data = useMemo(
     () => search(buffer),
     [indexFilter, creatorFilter, categoryFilter, buffer]
-  );
+  ).map(item => {
+    return {
+      ...item,
+      shareLink: item.package?.find(pack => pack.shareLink)?.shareLink ?? '',
+    };
+  });
 
   useEffect(() => {
     setLoading(false);
@@ -203,9 +210,13 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     value: 'value',
   };
 
-  const rebuildVlink = async (value: string, index: number) => {
-    setLastViewedIndex(index);
-    await doFetch(() => rebuildLink(value));
+  const rebuildVlink = async (value: string, record: any, index: number) => {
+    lastFocusedIndex.current = index;
+    const { result }: any = await doFetch(() => rebuildLink(value));
+    if (true) {
+      buffer[bufferIndex.current] = { ...record, shareLink: result };
+      setIndexFilter(prev => prev);
+    }
   };
 
   const feedItemColumns: ColumnsType<FeedItem> = [
@@ -286,6 +297,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       width: '18%',
       render: (value: string, feedItem: FeedItem, index: number) => (
         <Link
+          onFocus={() => (bufferIndex.current = buffer.indexOf(feedItem))}
           onClick={() => onEditFeedItem(index, feedItem)}
           to={{ pathname: window.location.pathname, state: feedItem }}
         >
@@ -373,52 +385,44 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     },
     {
       title: 'InstaLink',
+      dataIndex: 'shareLink',
       width: '18%',
-      render: (_: string, record: FeedItem) => (
+      render: (value: string, record: FeedItem) => (
         <Link
-          onClick={() =>
-            window
-              .open(
-                record.package?.find(item => item.shareLink)?.shareLink,
-                '_blank'
-              )
-              ?.focus()
-          }
+          onClick={() => window.open(value, '_blank')?.focus()}
           to={{ pathname: window.location.pathname }}
         >
-          {record.package?.find(item => item.shareLink)?.shareLink ?? ''}
+          {value ?? ''}
         </Link>
       ),
-      sorter: (a, b): any => {
-        if (a.package && b.package) {
-          const linkA = a.package.find(item => item.shareLink)?.shareLink;
-          const linkB = b.package.find(item => item.shareLink)?.shareLink;
+      sorter: (a: any, b: any): any => {
+        if (a.shareLink && b.shareLink) {
+          const linkA = a.shareLink;
+          const linkB = b.shareLink;
           if (linkA && linkB) return linkA.localeCompare(linkB);
           else if (linkA) return -1;
           else if (linkB) return 1;
           else return 0;
-        } else if (a.package?.find(item => item.shareLink)?.shareLink)
-          return -1;
-        else if (b.package?.find(item => item.shareLink)?.shareLink) return 1;
+        } else if (a.shareLink) return -1;
+        else if (b.shareLink) return 1;
         else return 0;
       },
     },
     {
       title: 'Rebuild',
+      dataIndex: 'shareLink',
       width: '5%',
       align: 'center',
-      render: (_, record: FeedItem, index: number) => (
+      render: (value: string, record: any, index: number) => (
         <>
           <Button
             type="link"
             block
+            onFocus={() => (bufferIndex.current = buffer.indexOf(record))}
             onClick={() =>
-              rebuildVlink(
-                record.package?.find(item => item.shareLink)?.shareLink ?? '',
-                index
-              )
+              rebuildVlink(value.slice(17, value.length), record, index)
             }
-            disabled={!record.package?.find(item => item.shareLink)?.shareLink}
+            disabled={!record.shareLink}
           >
             <RedoOutlined />
           </Button>
@@ -432,6 +436,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       render: (_, feedItem: FeedItem, index: number) => (
         <>
           <Link
+            onFocus={() => (bufferIndex.current = buffer.indexOf(feedItem))}
             onClick={() => handleClone(index, feedItem)}
             to={{ pathname: window.location.pathname, state: feedItem }}
           >
@@ -448,6 +453,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       render: (_, feedItem: FeedItem, index: number) => (
         <>
           <Link
+            onFocus={() => (bufferIndex.current = buffer.indexOf(feedItem))}
             onClick={() => onEditFeedItem(index, feedItem)}
             to={{ pathname: window.location.pathname, state: feedItem }}
           >
@@ -475,7 +481,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   };
 
   useEffect(() => {
-    if (!details) scrollToCenter(lastViewedIndex);
+    if (!details) scrollToCenter(lastFocusedIndex.current);
   }, [details]);
 
   const fetch = async (event?: any) => {
@@ -536,23 +542,23 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     cloning?: boolean
   ) => {
     if (cloning) {
-      const newIndex = lastViewedIndex + 1;
+      const newIndex = lastFocusedIndex.current + 1;
       buffer.splice(newIndex, 0, record);
-      setLastViewedIndex(newIndex);
-    } else buffer[lastViewedIndex] = record;
+      lastFocusedIndex.current = newIndex;
+    } else buffer[lastFocusedIndex.current] = record;
     setBuffer([...buffer]);
     setDetails(false);
-    scrollToCenter(lastViewedIndex);
+    scrollToCenter(lastFocusedIndex.current);
   };
 
   const onEditFeedItem = (index: number, videoFeed?: FeedItem) => {
-    setLastViewedIndex(index);
+    lastFocusedIndex.current = index;
     setSelectedVideoFeed({ ...(videoFeed as any) });
     setDetails(true);
   };
 
   const handleClone = (index: number, videoFeed?: FeedItem) => {
-    setLastViewedIndex(index);
+    lastFocusedIndex.current = index;
     setSelectedVideoFeed({ ...(videoFeed as any), cloning: true });
     setDetails(true);
   };
