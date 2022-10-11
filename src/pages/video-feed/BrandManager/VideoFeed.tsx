@@ -29,7 +29,7 @@ import { ColumnsType } from 'antd/lib/table';
 import CopyValueToClipboard from 'components/CopyValueToClipboard';
 import { FeedItem } from 'interfaces/FeedItem';
 import { Segment } from 'interfaces/Segment';
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { AppContext } from 'contexts/AppContext';
 import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 import {
@@ -79,7 +79,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const [brands, setBrands] = useState<Brand[]>([]);
   const [productBrands, setProductBrands] = useState([]);
   const [buffer, setBuffer] = useState<any[]>([]);
-  const [data, setData] = useState<any[]>([]);
   const [updatingIndex, setUpdatingIndex] = useState<Record<string, boolean>>(
     {}
   );
@@ -110,11 +109,34 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     getDetailsResources();
   }, []);
 
+  const search = rows => {
+    let updatedRows = rows;
+    if (indexFilter) {
+      updatedRows = updatedRows.filter(row => {
+        return row.index && row.index === indexFilter;
+      });
+    }
+    if (creatorFilter) {
+      updatedRows = updatedRows.filter(
+        row => row?.creator?.firstName?.indexOf(creatorFilter) > -1
+      );
+    }
+    if (categoryFilter) {
+      updatedRows = updatedRows.filter(
+        row => row.category?.indexOf(categoryFilter) > -1
+      );
+    }
+    return updatedRows;
+  };
+
+  const data = useMemo(
+    () => search(buffer),
+    [indexFilter, creatorFilter, categoryFilter, buffer]
+  );
+
   useEffect(() => {
-    const tmp = search(buffer);
-    setData(tmp);
     setLoading(false);
-  }, [indexFilter, creatorFilter, categoryFilter, buffer]);
+  }, [data]);
 
   useEffect(() => {
     const panel = document.getElementById('filterPanel');
@@ -181,7 +203,8 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     value: 'value',
   };
 
-  const rebuildVlink = async (value: string) => {
+  const rebuildVlink = async (value: string, index: number) => {
+    setLastViewedIndex(index);
     await doFetch(() => rebuildLink(value));
   };
 
@@ -384,14 +407,15 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       title: 'Rebuild',
       width: '5%',
       align: 'center',
-      render: (_, record: FeedItem) => (
+      render: (_, record: FeedItem, index: number) => (
         <>
           <Button
             type="link"
             block
             onClick={() =>
               rebuildVlink(
-                record.package?.find(item => item.shareLink)?.shareLink ?? ''
+                record.package?.find(item => item.shareLink)?.shareLink ?? '',
+                index
               )
             }
             disabled={!record.package?.find(item => item.shareLink)?.shareLink}
@@ -501,26 +525,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     ]).then(() => setLoadingResources(false));
   };
 
-  const search = rows => {
-    let updatedRows = rows;
-    if (indexFilter) {
-      updatedRows = updatedRows.filter(row => {
-        return row.index && row.index === indexFilter;
-      });
-    }
-    if (creatorFilter) {
-      updatedRows = updatedRows.filter(
-        row => row?.creator?.firstName?.indexOf(creatorFilter) > -1
-      );
-    }
-    if (categoryFilter) {
-      updatedRows = updatedRows.filter(
-        row => row.category?.indexOf(categoryFilter) > -1
-      );
-    }
-    return updatedRows;
-  };
-
   const deleteItem = async (_id: string, index: number) => {
     await deleteVideoFeed(_id);
     setBuffer(buffer.filter(item => item.id !== _id));
@@ -531,38 +535,14 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     newItem?: boolean,
     cloning?: boolean
   ) => {
-    // cloning
     if (cloning) {
-      if (lastViewedIndex === 0) buffer.splice(1, 0, record);
-      if (lastViewedIndex > 0 && lastViewedIndex < buffer.length - 1)
-        buffer.splice(lastViewedIndex + 1, 0, record);
-      if (lastViewedIndex === buffer.length - 1)
-        buffer.splice(buffer.length, 0, record);
-
-      setBuffer([...buffer]);
-      setDetails(false);
-      scrollToCenter(lastViewedIndex + 1);
-      return;
-    }
-
-    if (lastViewedIndex === 0) buffer.splice(0, 1, record);
-    if (lastViewedIndex > 0 && lastViewedIndex < buffer.length - 1)
-      buffer.splice(lastViewedIndex, 1, record);
-    if (lastViewedIndex === buffer.length - 1)
-      buffer.splice(buffer.length - 1, 1, record);
-
+      const newIndex = lastViewedIndex + 1;
+      buffer.splice(newIndex, 0, record);
+      setLastViewedIndex(newIndex);
+    } else buffer[lastViewedIndex] = record;
     setBuffer([...buffer]);
     setDetails(false);
-
-    // updating
-    if (!newItem) {
-      scrollToCenter(lastViewedIndex);
-    }
-
-    // adding
-    if (!cloning) {
-      scrollToCenter(buffer.length);
-    }
+    scrollToCenter(lastViewedIndex);
   };
 
   const onEditFeedItem = (index: number, videoFeed?: FeedItem) => {

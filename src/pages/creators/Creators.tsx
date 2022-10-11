@@ -99,8 +99,12 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
     }
   };
 
-  const rebuildVlink = (creator: Creator) => {
-    doFetch(() => rebuildLink(creator.userName!));
+  const rebuildVlink = async (creator: Creator, index: number) => {
+    const { result }: any = await doFetch(() => rebuildLink(creator.userName!));
+    if (result) {
+      creators[index] = { ...creator, userName: result };
+      setCreators([...creators]);
+    }
   };
 
   const updateVIndex = async (record: Creator, input?: number) => {
@@ -220,12 +224,12 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
       title: 'Rebuild',
       width: '5%',
       align: 'center',
-      render: (_, record: Creator) => (
+      render: (_, record: Creator, index: number) => (
         <>
           <Button
             type="link"
             block
-            onClick={() => rebuildVlink(record)}
+            onClick={() => rebuildVlink(record, index)}
             disabled={!record.userName}
           >
             <RedoOutlined />
