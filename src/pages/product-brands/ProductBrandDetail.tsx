@@ -34,6 +34,7 @@ import {
   YoutubeFilled,
   GlobalOutlined,
   TwitterCircleFilled,
+  LinkOutlined,
 } from '@ant-design/icons';
 
 const { categoriesKeys, categoriesFields } = categoryMapper;
@@ -502,6 +503,13 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                       allowClear
                       prefix={<TwitterCircleFilled />}
                       placeholder="Twitter"
+                    />
+                  </Form.Item>
+                  <Form.Item name="jumpUrl" label="Jump URL">
+                    <Input
+                      allowClear
+                      prefix={<LinkOutlined />}
+                      placeholder="Jump URL"
                     />
                   </Form.Item>
                 </Col>
