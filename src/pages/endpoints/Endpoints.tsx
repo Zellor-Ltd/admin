@@ -116,7 +116,6 @@ const Endpoints: React.FC<RouteComponentProps> = ({ history, location }) => {
       <PageHeader
         title="Endpoints"
         subTitle={isMobile ? '' : 'List of Endpoints'}
-        className={isMobile ? 'mb-n1' : ''}
         extra={[
           <Button
             key="1"
@@ -143,6 +142,7 @@ const Endpoints: React.FC<RouteComponentProps> = ({ history, location }) => {
         </Col>
       </Row>
       <Table
+        className="mt-1"
         scroll={{ x: true }}
         rowKey="id"
         columns={columns}

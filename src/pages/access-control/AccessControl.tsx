@@ -135,7 +135,7 @@ const AccessControl: React.FC = () => {
 
   return (
     <>
-      <PageHeader title="Access Control" className={isMobile ? 'mb-n1' : ''} />
+      <PageHeader title="Access Control" className={isMobile ? 'mb-05' : ''} />
       <Row
         gutter={[8, 8]}
         justify={isMobile ? 'end' : 'start'}

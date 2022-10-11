@@ -218,7 +218,11 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
             className="sticky-filter-box mb-05"
           >
             <Col span={24}>
-              <Row gutter={8} align="bottom">
+              <Row
+                gutter={8}
+                align="bottom"
+                justify={isMobile ? 'end' : undefined}
+              >
                 <Col lg={4} xs={24}>
                   <Typography.Title level={5}>Fan Filter</Typography.Title>
                   <MultipleFetchDebounceSelect
@@ -273,6 +277,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
             </Col>
           </Row>
           <Table
+            className="mt-1"
             scroll={{ x: true }}
             rowClassName={(_, index) => `scrollable-row-${index}`}
             rowKey="key"

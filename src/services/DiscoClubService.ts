@@ -611,6 +611,10 @@ export const updateManyFans = (groupName: string, fansIds: string[]) => {
   return instance.post(`/Disco/Fan/SetUsersGroup/${groupName}`, fansIds);
 };
 
+export const saveFixedVideo = (params: any) => {
+  return instance.put('Disco/Feed/FixedVideo/Adm/Add', params);
+};
+
 export const saveVideoType = (params: VideoType) => {
   return instance.put('Disco/Feed/Adm/Add', params);
 };
@@ -883,7 +887,7 @@ export const deleteBrandVault = (id: string) => {
 };
 
 export const deletePrivileges = (data: Privilege) =>
-    instance.delete('Disco/Identity/Adm/RemovePrivillege', { data });
+  instance.delete('Disco/Identity/Adm/RemovePrivillege', { data });
 
 export const deleteVideoFeed = (id: string) =>
   instance.delete(`Disco/Feed/Delete/${id}`);

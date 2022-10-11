@@ -155,7 +155,7 @@ const Trends: React.FC<RouteComponentProps> = props => {
         <PageHeader
           title="Trends"
           subTitle={isMobile ? '' : 'List of Trends'}
-          className={isMobile ? 'mb-n1' : ''}
+          className={isMobile ? 'mb-05' : ''}
         />
         <Row
           gutter={8}
@@ -188,6 +188,7 @@ const Trends: React.FC<RouteComponentProps> = props => {
           </Col>
         </Row>
         <Table
+          className="mt-15"
           scroll={{ x: true }}
           rowClassName={(_, index) => `scrollable-row-${index}`}
           rowKey="id"

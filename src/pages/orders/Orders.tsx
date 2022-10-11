@@ -717,6 +717,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     return (
       <>
         <Table
+          className="mt-1"
           rowKey="id"
           columns={cartColumns}
           dataSource={validData}
@@ -845,11 +846,19 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
                 </Col>
               </Row>
             </Col>
-            <Col>
-              <Button type="primary" onClick={() => setRefreshing(true)}>
-                Search
-                <SearchOutlined style={{ color: 'white' }} />
-              </Button>
+            <Col lg={4} xs={24}>
+              <Row justify="end">
+                <Col>
+                  <Button
+                    type="primary"
+                    onClick={() => setRefreshing(true)}
+                    className={isMobile ? 'mt-1' : ''}
+                  >
+                    Search
+                    <SearchOutlined style={{ color: 'white' }} />
+                  </Button>
+                </Col>
+              </Row>
             </Col>
           </Row>
           <InfiniteScroll
@@ -872,6 +881,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
             }
           >
             <Table
+              className="mt-05"
               scroll={{ x: true }}
               rowClassName={(_, index) => `scrollable-row-${index}`}
               rowKey="id"

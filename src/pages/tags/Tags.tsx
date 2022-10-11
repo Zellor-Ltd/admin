@@ -276,6 +276,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
             }
           >
             <Table
+              className="mt-1"
               scroll={{ x: true }}
               rowClassName={(_, index) => `scrollable-row-${index}`}
               rowKey="id"

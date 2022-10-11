@@ -29,7 +29,7 @@ import { ColumnsType } from 'antd/lib/table';
 import CopyValueToClipboard from 'components/CopyValueToClipboard';
 import { FeedItem } from 'interfaces/FeedItem';
 import { Segment } from 'interfaces/Segment';
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { AppContext } from 'contexts/AppContext';
 import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 import {
@@ -55,6 +55,8 @@ import { statusList, videoTypeList } from 'components/select/select.utils';
 import moment from 'moment';
 import scrollIntoView from 'scroll-into-view';
 import { useRequest } from 'hooks/useRequest';
+import { isTemplateExpression } from 'typescript';
+import { map } from 'lodash';
 
 const { Content } = Layout;
 const { Panel } = Collapse;
@@ -79,7 +81,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const [brands, setBrands] = useState<Brand[]>([]);
   const [productBrands, setProductBrands] = useState([]);
   const [buffer, setBuffer] = useState<any[]>([]);
-  const [data, setData] = useState<any[]>([]);
   const [updatingIndex, setUpdatingIndex] = useState<Record<string, boolean>>(
     {}
   );
@@ -104,17 +105,45 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   });
   const filterPanelHeight = useRef<number>();
   const windowHeight = window.innerHeight;
-  const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
+  const lastFocusedIndex = useRef<number>(-1);
+  const bufferIndex = useRef<number>(-1);
 
   useEffect(() => {
     getDetailsResources();
   }, []);
 
+  const search = rows => {
+    let updatedRows = rows;
+    if (indexFilter) {
+      updatedRows = updatedRows.filter(row => {
+        return row.index && row.index === indexFilter;
+      });
+    }
+    if (creatorFilter) {
+      updatedRows = updatedRows.filter(
+        row => row?.creator?.firstName?.indexOf(creatorFilter) > -1
+      );
+    }
+    if (categoryFilter) {
+      updatedRows = updatedRows.filter(
+        row => row.category?.indexOf(categoryFilter) > -1
+      );
+    }
+    return updatedRows;
+  };
+  let data = useMemo(
+    () => search(buffer),
+    [indexFilter, creatorFilter, categoryFilter, buffer]
+  ).map(item => {
+    return {
+      ...item,
+      shareLink: item.package?.find(pack => pack.shareLink)?.shareLink ?? '',
+    };
+  });
+
   useEffect(() => {
-    const tmp = search(buffer);
-    setData(tmp);
     setLoading(false);
-  }, [indexFilter, creatorFilter, categoryFilter, buffer]);
+  }, [data]);
 
   useEffect(() => {
     const panel = document.getElementById('filterPanel');
@@ -181,8 +210,13 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     value: 'value',
   };
 
-  const rebuildVlink = async (value: string) => {
-    await doFetch(() => rebuildLink(value));
+  const rebuildVlink = async (value: string, record: any, index: number) => {
+    lastFocusedIndex.current = index;
+    const { result }: any = await doFetch(() => rebuildLink(value));
+    if (true) {
+      buffer[bufferIndex.current] = { ...record, shareLink: result };
+      setIndexFilter(prev => prev);
+    }
   };
 
   const feedItemColumns: ColumnsType<FeedItem> = [
@@ -263,6 +297,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       width: '18%',
       render: (value: string, feedItem: FeedItem, index: number) => (
         <Link
+          onFocus={() => (bufferIndex.current = buffer.indexOf(feedItem))}
           onClick={() => onEditFeedItem(index, feedItem)}
           to={{ pathname: window.location.pathname, state: feedItem }}
         >
@@ -350,51 +385,44 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     },
     {
       title: 'InstaLink',
+      dataIndex: 'shareLink',
       width: '18%',
-      render: (_: string, record: FeedItem) => (
+      render: (value: string, record: FeedItem) => (
         <Link
-          onClick={() =>
-            window
-              .open(
-                record.package?.find(item => item.shareLink)?.shareLink,
-                '_blank'
-              )
-              ?.focus()
-          }
+          onClick={() => window.open(value, '_blank')?.focus()}
           to={{ pathname: window.location.pathname }}
         >
-          {record.package?.find(item => item.shareLink)?.shareLink ?? ''}
+          {value ?? ''}
         </Link>
       ),
-      sorter: (a, b): any => {
-        if (a.package && b.package) {
-          const linkA = a.package.find(item => item.shareLink)?.shareLink;
-          const linkB = b.package.find(item => item.shareLink)?.shareLink;
+      sorter: (a: any, b: any): any => {
+        if (a.shareLink && b.shareLink) {
+          const linkA = a.shareLink;
+          const linkB = b.shareLink;
           if (linkA && linkB) return linkA.localeCompare(linkB);
           else if (linkA) return -1;
           else if (linkB) return 1;
           else return 0;
-        } else if (a.package?.find(item => item.shareLink)?.shareLink)
-          return -1;
-        else if (b.package?.find(item => item.shareLink)?.shareLink) return 1;
+        } else if (a.shareLink) return -1;
+        else if (b.shareLink) return 1;
         else return 0;
       },
     },
     {
       title: 'Rebuild',
+      dataIndex: 'shareLink',
       width: '5%',
       align: 'center',
-      render: (_, record: FeedItem) => (
+      render: (value: string, record: any, index: number) => (
         <>
           <Button
             type="link"
             block
+            onFocus={() => (bufferIndex.current = buffer.indexOf(record))}
             onClick={() =>
-              rebuildVlink(
-                record.package?.find(item => item.shareLink)?.shareLink ?? ''
-              )
+              rebuildVlink(value.slice(17, value.length), record, index)
             }
-            disabled={!record.package?.find(item => item.shareLink)?.shareLink}
+            disabled={!record.shareLink}
           >
             <RedoOutlined />
           </Button>
@@ -408,6 +436,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       render: (_, feedItem: FeedItem, index: number) => (
         <>
           <Link
+            onFocus={() => (bufferIndex.current = buffer.indexOf(feedItem))}
             onClick={() => handleClone(index, feedItem)}
             to={{ pathname: window.location.pathname, state: feedItem }}
           >
@@ -424,6 +453,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       render: (_, feedItem: FeedItem, index: number) => (
         <>
           <Link
+            onFocus={() => (bufferIndex.current = buffer.indexOf(feedItem))}
             onClick={() => onEditFeedItem(index, feedItem)}
             to={{ pathname: window.location.pathname, state: feedItem }}
           >
@@ -451,7 +481,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   };
 
   useEffect(() => {
-    if (!details) scrollToCenter(lastViewedIndex);
+    if (!details) scrollToCenter(lastFocusedIndex.current);
   }, [details]);
 
   const fetch = async (event?: any) => {
@@ -501,26 +531,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     ]).then(() => setLoadingResources(false));
   };
 
-  const search = rows => {
-    let updatedRows = rows;
-    if (indexFilter) {
-      updatedRows = updatedRows.filter(row => {
-        return row.index && row.index === indexFilter;
-      });
-    }
-    if (creatorFilter) {
-      updatedRows = updatedRows.filter(
-        row => row?.creator?.firstName?.indexOf(creatorFilter) > -1
-      );
-    }
-    if (categoryFilter) {
-      updatedRows = updatedRows.filter(
-        row => row.category?.indexOf(categoryFilter) > -1
-      );
-    }
-    return updatedRows;
-  };
-
   const deleteItem = async (_id: string, index: number) => {
     await deleteVideoFeed(_id);
     setBuffer(buffer.filter(item => item.id !== _id));
@@ -531,48 +541,24 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     newItem?: boolean,
     cloning?: boolean
   ) => {
-    // cloning
     if (cloning) {
-      if (lastViewedIndex === 0) buffer.splice(1, 0, record);
-      if (lastViewedIndex > 0 && lastViewedIndex < buffer.length - 1)
-        buffer.splice(lastViewedIndex + 1, 0, record);
-      if (lastViewedIndex === buffer.length - 1)
-        buffer.splice(buffer.length, 0, record);
-
-      setBuffer([...buffer]);
-      setDetails(false);
-      scrollToCenter(lastViewedIndex + 1);
-      return;
-    }
-
-    if (lastViewedIndex === 0) buffer.splice(0, 1, record);
-    if (lastViewedIndex > 0 && lastViewedIndex < buffer.length - 1)
-      buffer.splice(lastViewedIndex, 1, record);
-    if (lastViewedIndex === buffer.length - 1)
-      buffer.splice(buffer.length - 1, 1, record);
-
+      const newIndex = lastFocusedIndex.current + 1;
+      buffer.splice(newIndex, 0, record);
+      lastFocusedIndex.current = newIndex;
+    } else buffer[lastFocusedIndex.current] = record;
     setBuffer([...buffer]);
     setDetails(false);
-
-    // updating
-    if (!newItem) {
-      scrollToCenter(lastViewedIndex);
-    }
-
-    // adding
-    if (!cloning) {
-      scrollToCenter(buffer.length);
-    }
+    scrollToCenter(lastFocusedIndex.current);
   };
 
   const onEditFeedItem = (index: number, videoFeed?: FeedItem) => {
-    setLastViewedIndex(index);
+    lastFocusedIndex.current = index;
     setSelectedVideoFeed({ ...(videoFeed as any) });
     setDetails(true);
   };
 
   const handleClone = (index: number, videoFeed?: FeedItem) => {
-    setLastViewedIndex(index);
+    lastFocusedIndex.current = index;
     setSelectedVideoFeed({ ...(videoFeed as any), cloning: true });
     setDetails(true);
   };
@@ -853,6 +839,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                 New Item
               </Button>,
             ]}
+            className={isMobile ? 'mb-1' : ''}
           />
           <Row
             align="bottom"
@@ -923,6 +910,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
           </Row>
           <Content>
             <Table
+              className={isMobile ? '' : 'mt-15'}
               scroll={{ x: true }}
               rowClassName={(_, index) => `scrollable-row-${index}`}
               size="small"

@@ -141,8 +141,14 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
     setDetails(false);
   };
 
-  const rebuildVlink = (brand: Brand) => {
-    doFetch(() => rebuildLink(brand.masterBrandLink!));
+  const rebuildVlink = async (brand: Brand, index: number) => {
+    const { result }: any = await doFetch(() =>
+      rebuildLink(brand.masterBrandLink!)
+    );
+    if (result) {
+      brands[index] = { ...brand, masterBrandLink: result };
+      setBrands([...brands]);
+    }
   };
 
   const updateVIndex = async (record: Brand, input?: number) => {
@@ -254,12 +260,12 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
       title: 'Rebuild',
       width: '5%',
       align: 'center',
-      render: (_, record: Brand) => (
+      render: (_, record: Brand, index: number) => (
         <>
           <Button
             type="link"
             block
-            onClick={() => rebuildVlink(record)}
+            onClick={() => rebuildVlink(record, index)}
             disabled={!record.masterBrandLink}
           >
             <RedoOutlined />
@@ -460,6 +466,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
             </Col>
           </Row>
           <Table
+            className="mt-15"
             scroll={{ x: true }}
             rowClassName={(_, index) => `scrollable-row-${index}`}
             rowKey="id"

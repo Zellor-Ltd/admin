@@ -844,6 +844,32 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                         />
                       </Form.Item>
                     </Col>
+                    <Col lg={12} xs={24}>
+                      <Form.Item
+                        name="currencySymbol"
+                        label="Currency Symbol"
+                        rules={[
+                          {
+                            required: false,
+                            message: 'Currency Symbol is required.',
+                          },
+                        ]}
+                      >
+                        <Select
+                          allowClear
+                          showSearch
+                          filterOption={filterOption}
+                          placeholder="Please select a currency symbol"
+                        >
+                          <Select.Option key="£" value="£" label="£">
+                            £
+                          </Select.Option>
+                          <Select.Option key="€" value="€" label="€">
+                            €
+                          </Select.Option>
+                        </Select>
+                      </Form.Item>
+                    </Col>
                   </Row>
                   <Col span={24}>
                     <Form.Item

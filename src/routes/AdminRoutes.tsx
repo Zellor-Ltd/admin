@@ -45,6 +45,7 @@ import Payments from 'pages/payments/Payments';
 import PaymentHistory from 'pages/payments/PaymentHistory';
 import VariantGroups from 'pages/variants/VariantGroups';
 import ProductTemplates from 'pages/product-templates/ProductTemplates';
+import FixedVideo from 'pages/fixed-videos/FixedVideo';
 
 function AdminRoutes() {
   return (
@@ -219,6 +220,11 @@ function AdminRoutes() {
       <AppRoute
         path="/settings_interests"
         component={Interests}
+        layout={AuthenticatedLayout}
+      />
+      <AppRoute
+        path="/settings_fixed-videos"
+        component={FixedVideo}
         layout={AuthenticatedLayout}
       />
       <AppRoute

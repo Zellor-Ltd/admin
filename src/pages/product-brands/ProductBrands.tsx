@@ -90,8 +90,14 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
     if (!details) scrollToCenter(lastViewedIndex);
   }, [details]);
 
-  const rebuildVlink = (productBrand: ProductBrand) => {
-    doFetch(() => rebuildLink(productBrand.brandLink!));
+  const rebuildVlink = async (productBrand: ProductBrand, index: number) => {
+    const { result }: any = await doFetch(() =>
+      rebuildLink(productBrand.brandLink!)
+    );
+    if (result) {
+      data[index] = { ...productBrand, brandLink: result };
+      setData([...data]);
+    }
   };
 
   const updateVIndex = async (record: ProductBrand, input?: number) => {
@@ -208,12 +214,12 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
       title: 'Rebuild',
       width: '5%',
       align: 'center',
-      render: (_, record: ProductBrand) => (
+      render: (_, record: ProductBrand, index: number) => (
         <>
           <Button
             type="link"
             block
-            onClick={() => rebuildVlink(record)}
+            onClick={() => rebuildVlink(record, index)}
             disabled={!record.brandLink}
           >
             <RedoOutlined />
@@ -406,6 +412,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
             </Col>
           </Row>
           <Table
+            className="mt-15"
             scroll={{ x: true }}
             rowClassName={(_, index) => `scrollable-row-${index}`}
             rowKey="id"
