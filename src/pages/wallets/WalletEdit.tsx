@@ -54,7 +54,7 @@ const WalletEdit: React.FC<WalletEditProps> = ({
 
   return (
     <>
-      <Col span={12}>
+      <Col lg={12} xs={24}>
         <Form
           form={form}
           className={isMobile ? 'mx-0' : ''}

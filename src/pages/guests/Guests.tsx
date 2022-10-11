@@ -313,7 +313,7 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
           <PageHeader
             title="Guests"
             subTitle={isMobile ? '' : 'List of Guests'}
-            className={isMobile ? 'mb-n1 mt-05' : ''}
+            className={isMobile ? 'my-05' : ''}
           />
           <Row
             align="bottom"
@@ -379,6 +379,7 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
             }
           >
             <Table
+              className="mt-1"
               scroll={{ x: true }}
               rowClassName={(_, index) => `scrollable-row-${index}`}
               rowKey="id"

@@ -275,6 +275,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
           <PageHeader
             title={isMobile ? 'Push Tags to User Groups' : 'Tags'}
             subTitle={isMobile ? '' : 'Push Tags to user groups'}
+            className={isMobile ? 'mb-05' : ''}
           />
           <Row
             align="bottom"
@@ -357,6 +358,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
             }
           >
             <Table
+              className="mt-1"
               scroll={{ x: true }}
               rowClassName={(_, index) => `scrollable-row-${index}`}
               rowSelection={rowSelection}

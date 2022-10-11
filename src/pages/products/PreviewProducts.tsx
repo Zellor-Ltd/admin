@@ -1037,10 +1037,11 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                 ? 'Default View'
                 : 'Alternate View'
             }
+            className={isMobile ? 'mb-1' : ''}
             extra={[
               <Row justify="end" key="headerRow">
                 <Col>
-                  <Row gutter={8}>
+                  <Row gutter={8} align="bottom">
                     <Col>
                       <Input
                         allowClear
@@ -1083,7 +1084,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
             id="filterPanel"
             style={panelStyle}
           >
-            <Col lg={16} xs={24}>
+            <Col lg={16} xs={{ flex: 'auto' }}>
               {!isMobile && <Filters />}
               {isMobile && (
                 <Collapse
@@ -1103,7 +1104,10 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                 </Collapse>
               )}
             </Col>
-            <Col className={activeKey === '1' ? 'mt-n1 mb-1' : 'mt-n05'}>
+            <Col
+              xs={{ flex: 'none' }}
+              className={activeKey === '1' ? 'mt-n1 mb-1' : ''}
+            >
               <Row
                 justify="space-between"
                 align="top"

@@ -96,7 +96,6 @@ const Roles: React.FC<RouteComponentProps> = ({ history, location }) => {
       <PageHeader
         title="Roles"
         subTitle={isMobile ? '' : 'List of Roles'}
-        className={isMobile ? 'mb-n1' : ''}
         extra={[
           <Button
             key="1"
@@ -123,6 +122,7 @@ const Roles: React.FC<RouteComponentProps> = ({ history, location }) => {
         </Col>
       </Row>
       <Table
+        className="mt-15"
         scroll={{ x: true }}
         rowKey="id"
         columns={columns}

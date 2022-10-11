@@ -46,11 +46,11 @@ import { Brand } from 'interfaces/Brand';
 import '@pathofdev/react-tag-input/build/index.css';
 import { Category } from 'interfaces/Category';
 import { Creator } from 'interfaces/Creator';
-import './VideoFeed.scss';
-import './VideoFeedDetail.scss';
+import '../VideoFeed.scss';
+import '../VideoFeedDetail.scss';
 import SimpleSelect from 'components/select/SimpleSelect';
 import { SelectOption } from 'interfaces/SelectOption';
-import VideoFeedDetail from './VideoFeedDetail';
+import VideoFeedDetail from '../VideoFeedDetail';
 import { statusList, videoTypeList } from 'components/select/select.utils';
 import moment from 'moment';
 import scrollIntoView from 'scroll-into-view';
@@ -853,6 +853,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                 New Item
               </Button>,
             ]}
+            className={isMobile ? 'mb-1' : ''}
           />
           <Row
             align="bottom"
@@ -923,6 +924,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
           </Row>
           <Content>
             <Table
+              className={isMobile ? '' : 'mt-15'}
               scroll={{ x: true }}
               rowClassName={(_, index) => `scrollable-row-${index}`}
               size="small"

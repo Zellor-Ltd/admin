@@ -171,7 +171,6 @@ const Transactions: React.FC<RouteComponentProps> = () => {
       <PageHeader
         title="Transactions"
         subTitle={isMobile ? '' : 'List of Transactions'}
-        className={isMobile ? 'mb-n1' : ''}
       />
       <Row gutter={8} className="sticky-filter-box mb-05">
         <Col xxl={40} lg={4} xs={24}>
@@ -191,6 +190,7 @@ const Transactions: React.FC<RouteComponentProps> = () => {
         </Col>
       </Row>
       <Table
+        className="mt-1"
         scroll={{ x: true }}
         rowKey="id"
         columns={columns}
