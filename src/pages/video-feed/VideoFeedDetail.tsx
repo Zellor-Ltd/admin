@@ -439,13 +439,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
       item.selectedOption = selectedOption;
 
       item.package = item.package?.map(pack => {
-        const segment: any = {
-          ...pack,
-          tags: pack.tags ?? [],
-        };
-        // TODO: FIND THE ROOT CAUSE FOR THIS SELF REFERENCE
-        delete segment.package;
-        return segment;
+        return { ...pack, tags: pack.tags ?? [] };
       });
 
       // updating record
@@ -509,7 +503,9 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
 
   const onAddSegment = (addWatermark?: boolean, segment?: any) => {
     const packages = feedForm.getFieldValue('package');
-    const sequence = packages ? packages.length + 1 : 1;
+    const sequence = packages?.length ?? 0;
+    setSelectedSegmentIndex(sequence);
+
     if (addWatermark) {
       setSelectedSegment({
         sequence,
@@ -518,18 +514,15 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
         selectedOption: 'creator',
         watermarkVideo: segment.video,
       } as Segment);
-
-      setSelectedSegmentIndex(sequence - 1);
-
       return;
     }
+
     setSelectedSegment({
       sequence,
       tags: [],
       brands: [],
       selectedOption: 'creator',
     });
-    setSelectedSegmentIndex(sequence - 1);
   };
 
   const onChangeAge = (value: [number, number]) => {
