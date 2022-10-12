@@ -42,6 +42,7 @@ import {
   FacebookFilled,
   GlobalOutlined,
   InstagramFilled,
+  LinkOutlined,
   SoundFilled,
   TwitterCircleFilled,
   YoutubeFilled,
@@ -1126,6 +1127,13 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                       allowClear
                       prefix={<TwitterCircleFilled />}
                       placeholder="Twitter"
+                    />
+                  </Form.Item>
+                  <Form.Item name="jumpUrl" label="Jump URL">
+                    <Input
+                      allowClear
+                      prefix={<LinkOutlined />}
+                      placeholder="Jump URL"
                     />
                   </Form.Item>
                 </Col>
