@@ -12,6 +12,7 @@ const Login: React.FC<RouteComponentProps> = props => {
     try {
       const response: any = await loginService(values);
       if (response.success) {
+        localStorage.setItem('token', response.token);
         history.push('/');
       }
     } catch (e) {}
