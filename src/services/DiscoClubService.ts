@@ -215,7 +215,6 @@ export const updateUsersFeedByGroup = (groupName: string, params: any) =>
 
 export const fetchStartupVideo = () => instance.get('Wi/Ep/GetStartupVideo');
 
-// TODO: REMOVE IT WHEN PAGE FEED MIXER IS GONE
 export const fetchVideoFeed = () => instance.get('Wi/Ep/ListVideoFeed');
 export const fetchVideoFeedV2 = ({
   query,
@@ -237,6 +236,36 @@ export const fetchVideoFeedV2 = ({
   dateSort?: string;
 }) =>
   instance.put(`Disco/Feed/Adm/List/`, {
+    query,
+    brandId,
+    status,
+    videoType,
+    productBrandId,
+    startIndex,
+    categoryId,
+    dateSort,
+  });
+export const fetchVideoFeedV3 = ({
+  query,
+  brandId,
+  status,
+  videoType,
+  productBrandId,
+  startIndex,
+  categoryId,
+  dateSort,
+  page = 0
+}: {
+  query?: string;
+  brandId?: string;
+  status?: string;
+  videoType?: string;
+  productBrandId?: string;
+  startIndex?: number;
+  categoryId?: string;
+  dateSort?: string;
+} & Pagination) =>
+  instance.put(`Disco/Feed/Adm/List/${page}`, {
     query,
     brandId,
     status,
