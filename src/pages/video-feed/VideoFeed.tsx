@@ -505,7 +505,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     const pageToUse = resetResults ? 0 : page;
     try {
       if (event) collapse(event);
-      scrollToCenter(0);
+      if (resetResults) scrollToCenter(0);
       setLoading(true);
       const { results }: any = await fetchVideoFeedV3({
         page: pageToUse,

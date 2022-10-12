@@ -70,7 +70,7 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
     setLoaded(true);
   };
 
-  const fetchUsers = async () => {
+  const fetchUsers = async (skipScroll?: boolean) => {
     scrollToCenter(0);
     const pageToUse = refreshing ? 0 : page;
     const response = await doFetch(() =>
@@ -93,7 +93,7 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
 
   const updateDisplayedArray = async () => {
     if (!fans.length) return;
-    await fetchUsers();
+    await fetchUsers(true);
   };
 
   const scrollToCenter = (index: number) => {

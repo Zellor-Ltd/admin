@@ -239,7 +239,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
   };
 
   const _fetchStagingProducts = async (resetResults?: boolean) => {
-    scrollToCenter(0);
+    if (resetResults) scrollToCenter(0);
     const pageToUse = resetResults ? 0 : page;
     const response = await doFetch(() =>
       fetchStagingProducts({

@@ -66,7 +66,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
   }, [details]);
 
   const fetch = async (loadNextPage?: boolean) => {
-    scrollToCenter(0);
+    if (!loadNextPage) scrollToCenter(0);
     const pageToUse = loadNextPage ? page : 0;
     const { results } = await doFetch(() =>
       fetchCreators({
