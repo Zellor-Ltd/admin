@@ -119,7 +119,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   const fetch = async (loadNextPage?: boolean) => {
-    scrollToCenter(0);
+    if (!loadNextPage) scrollToCenter(0);
     const pageToUse = loadNextPage ? page : 0;
     const { results }: any = await doFetch(() =>
       fetchOrders({

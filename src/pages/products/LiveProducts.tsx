@@ -195,7 +195,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
   }, [searchFilter]);
 
   const _fetchProducts = async (resetResults?: boolean) => {
-    scrollToCenter(0);
+    if (resetResults) scrollToCenter(0);
     const pageToUse = resetResults ? 0 : page;
     const response = await doFetch(() =>
       fetchProducts({
