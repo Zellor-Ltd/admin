@@ -616,7 +616,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                     <Form.Item name="targetGender" label="Gender">
                       <Select
                         mode="multiple"
-                        placeholder="Gender"
+                        placeholder="Target Gender"
                         allowClear
                         showSearch
                         filterOption={filterOption}
