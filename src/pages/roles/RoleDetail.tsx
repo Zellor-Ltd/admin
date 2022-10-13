@@ -2,6 +2,7 @@ import { Button, Col, Form, Input, message, PageHeader, Row } from 'antd';
 import { useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { saveRole } from 'services/DiscoClubService';
+import { DOMPurify } from 'dompurify';
 
 const RoleDetail: React.FC<RouteComponentProps> = props => {
   const { history, location } = props;
@@ -13,6 +14,7 @@ const RoleDetail: React.FC<RouteComponentProps> = props => {
     setLoading(true);
     try {
       const role = form.getFieldsValue(true);
+      role.description = DOMPurify.sanitize(form.getFieldValue('description'));
       await saveRole(role);
       setLoading(false);
       message.success('Register updated with success.');

@@ -27,6 +27,7 @@ import ProductCategoriesTrees from 'pages/products/ProductCategoriesTrees';
 import { AllCategories } from 'interfaces/Category';
 import { categoryMapper } from 'helpers/categoryMapper';
 import { categoryUtils } from 'helpers/categoryUtils';
+import { DOMPurify } from 'dompurify';
 import {
   InstagramFilled,
   FacebookFilled,
@@ -65,11 +66,18 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
 
   const onFinish = async () => {
     try {
-      const formProductBrand = form.getFieldsValue(true);
+      const productBrandForm = form.getFieldsValue(true);
 
-      if (formProductBrand.categories) {
+      productBrandForm.description = DOMPurify.sanitize(
+        form.getFieldValue('description')
+      );
+      productBrandForm.apiCategory = DOMPurify.sanitize(
+        form.getFieldValue('apiCategory')
+      );
+
+      if (productBrandForm.categories) {
         categoriesFields.forEach((field, index) => {
-          formProductBrand.categories.forEach((productCategory: any) => {
+          productBrandForm.categories.forEach((productCategory: any) => {
             productCategory[field] = allCategories[
               categoriesKeys[index] as keyof AllCategories
             ].find(
@@ -77,14 +85,14 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
             );
           });
         });
-      } else formProductBrand.categories = [{}];
+      } else productBrandForm.categories = [{}];
 
       const { result } = await doRequest(() =>
-        saveProductBrand(formProductBrand)
+        saveProductBrand(productBrandForm)
       );
-      formProductBrand.id
-        ? onSave?.(formProductBrand)
-        : onSave?.({ ...formProductBrand, id: result }, true);
+      productBrandForm.id
+        ? onSave?.(productBrandForm)
+        : onSave?.({ ...productBrandForm, id: result }, true);
     } catch (err: any) {
       message.error('Error: ' + err.error);
     }

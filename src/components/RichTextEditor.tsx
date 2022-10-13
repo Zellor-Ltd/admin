@@ -7,6 +7,7 @@ import htmlToDraft from 'html-to-draftjs';
 import React, { useState } from 'react';
 import { Editor } from 'react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
+import { DOMPurify } from 'dompurify';
 
 const { TextArea } = Input;
 interface RichTextEditorProps {
@@ -34,7 +35,9 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
     ? generateEditorContent(fieldValue)
     : EditorState.createEmpty();
 
-  const [htmlValue, setHtmlValue] = useState<string>(fieldValue);
+  const [htmlValue, setHtmlValue] = useState<string>(
+    DOMPurify.sanitize(fieldValue)
+  );
   const [editorState, setEditorState] =
     useState<EditorState>(editorInitialValue);
 
@@ -91,7 +94,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
             <TextArea
               value={htmlValue}
               onChange={event => {
-                setHtmlValue(event.target.value);
+                setHtmlValue(DOMPurify.sanitize(event.target.value));
               }}
               style={{ height: '300px' }}
             />
