@@ -50,6 +50,7 @@ import { currencyRender } from 'helpers/currencyRender';
 import scrollIntoView from 'scroll-into-view';
 import CopyValueToClipboard from 'components/CopyValueToClipboard';
 import moment from 'moment';
+import { DOMPurify } from 'dompurify';
 
 const { categoriesKeys, categoriesFields } = categoryMapper;
 const { getSearchTags, getCategories, removeSearchTagsByCategory } =
@@ -285,26 +286,29 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
   const onFinish = async () => {
     setLoading(true);
     try {
-      const formProduct = form.getFieldsValue(true);
+      const productForm = form.getFieldsValue(true);
 
-      formProduct.brand = brands?.find(
-        brand => brand.id === formProduct.brand?.id
+      productForm.apiCategory = DOMPurify.sanitize(
+        form.getFieldValue('apiCategory')
+      );
+      productForm.brand = brands?.find(
+        brand => brand.id === productForm.brand?.id
       );
 
       categoriesFields.forEach((field, index) => {
-        formProduct.categories.forEach((productCategory: any) => {
+        productForm.categories.forEach((productCategory: any) => {
           productCategory[field] = allCategories[
             categoriesKeys[index] as keyof AllCategories
           ].find(category => category.id === productCategory[field]?.id);
         });
       });
 
-      const { result } = await doRequest(() => saveStagingProduct(formProduct));
+      const { result } = await doRequest(() => saveStagingProduct(productForm));
 
       setLoading(false);
-      formProduct.id
-        ? onSave?.(formProduct)
-        : onSave?.({ ...formProduct, id: result._id });
+      productForm.id
+        ? onSave?.(productForm)
+        : onSave?.({ ...productForm, id: result._id });
     } catch (error) {
       console.error(error);
       setLoading(false);

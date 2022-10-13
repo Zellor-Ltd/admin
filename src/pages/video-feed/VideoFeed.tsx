@@ -55,8 +55,6 @@ import { statusList, videoTypeList } from 'components/select/select.utils';
 import moment from 'moment';
 import scrollIntoView from 'scroll-into-view';
 import { useRequest } from 'hooks/useRequest';
-import { isTemplateExpression } from 'typescript';
-import { map } from 'lodash';
 
 const { Content } = Layout;
 const { Panel } = Collapse;

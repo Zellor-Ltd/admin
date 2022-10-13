@@ -21,6 +21,7 @@
     "array-move": "^3.0.1",
     "axios": "^0.21.4",
     "classnames": "^2.3.1",
+    "dompurify": "^2.4.0",
     "draft-js": "^0.11.7",
     "draftjs-to-html": "^0.9.1",
     "html-to-draftjs": "^1.5.0",

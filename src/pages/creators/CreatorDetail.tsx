@@ -38,6 +38,7 @@ import {
   saveCreator,
 } from 'services/DiscoClubService';
 import scrollIntoView from 'scroll-into-view';
+import { DOMPurify } from 'dompurify';
 interface CreatorDetailProps {
   creator: any;
   onSave?: (record: Creator) => void;
@@ -72,8 +73,8 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
   const onFinish = async () => {
     setLoading(true);
     try {
-      const formCreator = form.getFieldsValue(true);
-      const formattedCreator = formatUserData(formCreator);
+      const creatorForm = form.getFieldsValue(true);
+      const formattedCreator = formatCreatorData(creatorForm);
       const { result } = await doRequest(() => saveCreator(formattedCreator));
       setLoading(false);
       message.success('Register updated with success.');
@@ -149,21 +150,24 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
     setAgeRange(value);
   };
 
-  const formatUserData = (formUser: any) => {
-    const formattedUser = { ...formUser };
+  const formatCreatorData = (formUser: any) => {
+    const formattedCreator = { ...formUser };
     if (typeof formUser.birthday === 'string') {
-      formattedUser.birthday = formUser.birthday;
+      formattedCreator.birthday = formUser.birthday;
     }
     if (typeof formUser.birthday === 'object') {
-      formattedUser.birthday = formUser.birthday.format('DD-MM-YYYY');
+      formattedCreator.birthday = formUser.birthday.format('DD-MM-YYYY');
     }
 
-    formattedUser.personalDetails = formattedUser.personalDetails || {};
-    formattedUser.personalDetails.phone =
-      formattedUser.personalDetails.phone || {};
-    formattedUser.personalDetails.phone.number = formUser.phoneNumber;
+    formattedCreator.personalDetails = formattedCreator.personalDetails || {};
+    formattedCreator.personalDetails.phone =
+      formattedCreator.personalDetails.phone || {};
+    formattedCreator.personalDetails.phone.number = formUser.phoneNumber;
 
-    return formattedUser;
+    formattedCreator.contentFocus = DOMPurify.sanitize(formUser.contentFocus);
+    formattedCreator.topBrands = DOMPurify.sanitize(formUser.topBrands);
+
+    return formattedCreator;
   };
 
   const handleInstaLinkFocus = (event: any) => {
