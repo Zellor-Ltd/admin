@@ -38,7 +38,7 @@ import {
   fetchCategories,
   fetchCreators,
   fetchProductBrands,
-  fetchVideoFeedV2,
+  fetchVideoFeedV3,
   rebuildLink,
   saveVideoFeed,
 } from 'services/DiscoClubService';
@@ -55,8 +55,7 @@ import { statusList, videoTypeList } from 'components/select/select.utils';
 import moment from 'moment';
 import scrollIntoView from 'scroll-into-view';
 import { useRequest } from 'hooks/useRequest';
-import { isTemplateExpression } from 'typescript';
-import { map } from 'lodash';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 const { Content } = Layout;
 const { Panel } = Collapse;
@@ -107,6 +106,8 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const windowHeight = window.innerHeight;
   const lastFocusedIndex = useRef<number>(-1);
   const bufferIndex = useRef<number>(-1);
+  const [page, setPage] = useState<number>(0);
+  const [eof, setEof] = useState<boolean>(true);
 
   useEffect(() => {
     getDetailsResources();
@@ -129,17 +130,18 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
         row => row.category?.indexOf(categoryFilter) > -1
       );
     }
-    return updatedRows;
+    return updatedRows.map(item => {
+      return {
+        ...item,
+        shareLink: item.package?.find(pack => pack.shareLink)?.shareLink ?? '',
+      };
+    });
   };
-  let data = useMemo(
+
+  const data = useMemo(
     () => search(buffer),
     [indexFilter, creatorFilter, categoryFilter, buffer]
-  ).map(item => {
-    return {
-      ...item,
-      shareLink: item.package?.find(pack => pack.shareLink)?.shareLink ?? '',
-    };
-  });
+  );
 
   useEffect(() => {
     setLoading(false);
@@ -484,13 +486,29 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     if (!details) scrollToCenter(lastFocusedIndex.current);
   }, [details]);
 
-  const fetch = async (event?: any) => {
+  const getFeed = async (event?: Event, resetResults?: boolean) => {
+    if (!resetResults && buffer.length < 30) {
+      setEof(true);
+      return;
+    }
+    if (resetResults) {
+      setEof(false);
+      collapse(resetResults);
+    }
+    const results = await fetchFeed(event, resetResults);
+    if (resetResults) setBuffer(results as any);
+    else setBuffer(prev => [...prev.concat(results)]);
+  };
+
+  const fetchFeed = async (event?: Event, resetResults?: boolean) => {
     if (event && activeKey !== '1') event.stopPropagation();
+    const pageToUse = resetResults ? 0 : page;
     try {
       if (event) collapse(event);
-      scrollToCenter(0);
+      if (resetResults) scrollToCenter(0);
       setLoading(true);
-      const { results }: any = await fetchVideoFeedV2({
+      const { results }: any = await fetchVideoFeedV3({
+        page: pageToUse,
         query: titleFilter,
         brandId: brandFilter?.id,
         status: statusFilter?.toUpperCase(),
@@ -498,7 +516,9 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
         productBrandId: productBrandFilter,
         dateSort: dateSortFilter,
       });
-      setBuffer(results);
+      setPage(pageToUse + 1);
+      if (results.length < 30) setEof(true);
+      return results;
     } catch (error) {
       message.error('Error to get feed');
     }
@@ -659,7 +679,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
               suffix={<SearchOutlined />}
               value={titleFilter}
               placeholder="Search by Title"
-              onPressEnter={fetch}
+              onPressEnter={() => getFeed(undefined, true)}
             />
           </Col>
           <Col lg={5} xs={24}>
@@ -866,7 +886,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                       isMobile && (
                         <Button
                           type="primary"
-                          onClick={fetch}
+                          onClick={(event: any) => getFeed(event, true)}
                           loading={loading}
                           style={{ marginRight: '-2em' }}
                         >
@@ -900,7 +920,11 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                   </Button>
                 </Col>
                 {!isMobile && (
-                  <Button type="primary" onClick={fetch} loading={loading}>
+                  <Button
+                    type="primary"
+                    onClick={() => getFeed(undefined, true)}
+                    loading={loading}
+                  >
                     Search
                     <SearchOutlined style={{ color: 'white' }} />
                   </Button>
@@ -909,17 +933,35 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
             </Col>
           </Row>
           <Content>
-            <Table
-              className={isMobile ? '' : 'mt-15'}
-              scroll={{ x: true }}
-              rowClassName={(_, index) => `scrollable-row-${index}`}
-              size="small"
-              columns={feedItemColumns}
-              rowKey="id"
-              dataSource={data}
-              loading={loading}
-              pagination={false}
-            />
+            <InfiniteScroll
+              dataLength={data.length}
+              next={() => getFeed(undefined, false)}
+              hasMore={!eof}
+              loader={
+                !eof && (
+                  <div className="scroll-message">
+                    <Spin />
+                  </div>
+                )
+              }
+              endMessage={
+                <div className="scroll-message">
+                  <b>End of results.</b>
+                </div>
+              }
+            >
+              <Table
+                className={isMobile ? '' : 'mt-15'}
+                scroll={{ x: true }}
+                rowClassName={(_, index) => `scrollable-row-${index}`}
+                size="small"
+                columns={feedItemColumns}
+                rowKey="id"
+                dataSource={data}
+                loading={loading}
+                pagination={false}
+              />
+            </InfiniteScroll>
           </Content>
         </div>
       )}
