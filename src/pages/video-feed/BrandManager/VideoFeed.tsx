@@ -108,6 +108,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const bufferIndex = useRef<number>(-1);
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(true);
+  const [data, setData] = useState<any[]>([]);
 
   useEffect(() => {
     getDetailsResources();
@@ -130,18 +131,16 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
         row => row.category?.indexOf(categoryFilter) > -1
       );
     }
-    return updatedRows.map(item => {
-      return {
-        ...item,
-        shareLink: item.package?.find(pack => pack.shareLink)?.shareLink ?? '',
-      };
-    });
+    return updatedRows;
   };
 
-  const data = useMemo(
-    () => search(buffer),
-    [indexFilter, creatorFilter, categoryFilter, buffer]
-  );
+  useEffect(() => {
+    setData(search(buffer));
+  }, [buffer]);
+
+  useEffect(() => {
+    setBuffer([...buffer]);
+  }, [indexFilter, creatorFilter, categoryFilter]);
 
   useEffect(() => {
     setLoading(false);
@@ -215,9 +214,9 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const rebuildVlink = async (value: string, record: any, index: number) => {
     lastFocusedIndex.current = index;
     const { result }: any = await doFetch(() => rebuildLink(value));
-    if (true) {
-      buffer[bufferIndex.current] = { ...record, shareLink: result };
-      setIndexFilter(prev => prev);
+    if (result) {
+      buffer[index] = { ...record, shareLink: result, rebuilt: true };
+      setData([...buffer]);
     }
   };
 
@@ -387,14 +386,25 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     },
     {
       title: 'InstaLink',
-      dataIndex: 'shareLink',
       width: '18%',
-      render: (value: string, record: FeedItem) => (
+      render: (_: string, record: any) => (
         <Link
-          onClick={() => window.open(value, '_blank')?.focus()}
+          onClick={() =>
+            window
+              .open(
+                record.rebuilt
+                  ? record.shareLink ?? ''
+                  : record.package?.find(pack => pack.shareLink)?.shareLink ??
+                      '',
+                '_blank'
+              )
+              ?.focus()
+          }
           to={{ pathname: window.location.pathname }}
         >
-          {value ?? ''}
+          {record.rebuilt
+            ? record.shareLink ?? ''
+            : record.package?.find(pack => pack.shareLink)?.shareLink ?? ''}
         </Link>
       ),
       sorter: (a: any, b: any): any => {
@@ -412,19 +422,28 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     },
     {
       title: 'Rebuild',
-      dataIndex: 'shareLink',
       width: '5%',
       align: 'center',
-      render: (value: string, record: any, index: number) => (
+      render: (_: string, record: any, index: number) => (
         <>
           <Button
             type="link"
             block
             onFocus={() => (bufferIndex.current = buffer.indexOf(record))}
             onClick={() =>
-              rebuildVlink(value.slice(17, value.length), record, index)
+              rebuildVlink(
+                record.package
+                  ?.find(pack => pack.shareLink)
+                  ?.shareLink?.slice(
+                    17,
+                    record.package?.find(pack => pack.shareLink)?.shareLink
+                      ?.length
+                  ),
+                record,
+                index
+              )
             }
-            disabled={!record.shareLink}
+            disabled={!record.package?.find(pack => pack.shareLink)}
           >
             <RedoOutlined />
           </Button>
@@ -505,7 +524,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     const pageToUse = resetResults ? 0 : page;
     try {
       if (event) collapse(event);
-      scrollToCenter(0);
+      if (resetResults) scrollToCenter(0);
       setLoading(true);
       const { results }: any = await fetchVideoFeedV3({
         page: pageToUse,
