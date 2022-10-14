@@ -4,7 +4,7 @@ import { Button } from 'antd/lib/radio';
 import { ContentState, convertToRaw, EditorState } from 'draft-js';
 import draftToHtml from 'draftjs-to-html';
 import htmlToDraft from 'html-to-draftjs';
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Editor } from 'react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import { DOMPurify } from 'dompurify';
@@ -35,11 +35,18 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
     ? generateEditorContent(fieldValue)
     : EditorState.createEmpty();
 
-  const [htmlValue, setHtmlValue] = useState<string>(
-    DOMPurify.sanitize(fieldValue)
-  );
+  const [htmlValue, setHtmlValue] = useState<string>();
+  const isMounted = useRef<boolean>(false);
   const [editorState, setEditorState] =
     useState<EditorState>(editorInitialValue);
+
+  useEffect(() => {
+    if (!isMounted.current) {
+      isMounted.current = true;
+      return;
+    }
+    if (fieldValue) setHtmlValue(DOMPurify.sanitize(fieldValue));
+  }, []);
 
   const handleEditorChange = (newState: EditorState) => {
     setEditorState(newState);
@@ -56,7 +63,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
     setShowModal(false);
     // Involve htmlValue content with a <p></p> to prevent RichTextEditor from crashing.
     const formattedHtmlValue =
-      htmlValue.substr(0, 3) === '<p>' ? htmlValue : `<p>${htmlValue}</p>`;
+      htmlValue?.substr(0, 3) === '<p>' ? htmlValue : `<p>${htmlValue}</p>`;
     setHtmlValue(formattedHtmlValue);
     form.setFieldsValue({
       [formField]: formattedHtmlValue,
