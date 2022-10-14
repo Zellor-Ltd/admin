@@ -46,6 +46,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
       return;
     }
     if (fieldValue) setHtmlValue(DOMPurify.sanitize(fieldValue));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleEditorChange = (newState: EditorState) => {
