@@ -245,6 +245,7 @@ export const fetchVideoFeedV2 = ({
     categoryId,
     dateSort,
   });
+
 export const fetchVideoFeedV3 = ({
   query,
   brandId,
@@ -254,7 +255,7 @@ export const fetchVideoFeedV3 = ({
   startIndex,
   categoryId,
   dateSort,
-  page = 0
+  page = 0,
 }: {
   query?: string;
   brandId?: string;
@@ -666,6 +667,9 @@ export const saveVideoFeed = (params: FeedItem, newItem?: boolean) => {
   if (newItem) return instance.put('Disco/Feed/Adm/Add', params);
   else return instance.put('Disco/Feed/Update', params);
 };
+
+export const saveFeedList = (params: any) =>
+  instance.put('Disco/Feed/Adm/FeedList/Add', params);
 
 export const saveVariantGroup = (params: VariantGroup) => {
   if (params.id) {

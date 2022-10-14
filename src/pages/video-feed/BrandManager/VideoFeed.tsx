@@ -29,7 +29,7 @@ import { ColumnsType } from 'antd/lib/table';
 import CopyValueToClipboard from 'components/CopyValueToClipboard';
 import { FeedItem } from 'interfaces/FeedItem';
 import { Segment } from 'interfaces/Segment';
-import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { AppContext } from 'contexts/AppContext';
 import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 import {
@@ -40,22 +40,24 @@ import {
   fetchProductBrands,
   fetchVideoFeedV3,
   rebuildLink,
+  saveFeedList,
   saveVideoFeed,
 } from 'services/DiscoClubService';
 import { Brand } from 'interfaces/Brand';
 import '@pathofdev/react-tag-input/build/index.css';
 import { Category } from 'interfaces/Category';
 import { Creator } from 'interfaces/Creator';
-import './VideoFeed.scss';
-import './VideoFeedDetail.scss';
+import '../VideoFeed.scss';
+import '../VideoFeedDetail.scss';
 import SimpleSelect from 'components/select/SimpleSelect';
 import { SelectOption } from 'interfaces/SelectOption';
-import VideoFeedDetail from './VideoFeedDetail';
+import VideoFeedDetail from '../VideoFeedDetail';
 import { statusList, videoTypeList } from 'components/select/select.utils';
 import moment from 'moment';
 import scrollIntoView from 'scroll-into-view';
 import { useRequest } from 'hooks/useRequest';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import { useSelector } from 'react-redux';
 
 const { Content } = Layout;
 const { Panel } = Collapse;
@@ -67,6 +69,10 @@ const reduceSegmentsTags = (packages: Segment[]) => {
 };
 
 const VideoFeed: React.FC<RouteComponentProps> = () => {
+  const {
+    settings: { feedList = [] },
+  } = useSelector((state: any) => state.settings);
+  const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
   const { isMobile } = useContext(AppContext);
   const inputRef = useRef<any>(null);
   const [activeKey, setActiveKey] = useState<string>('-1');
@@ -79,6 +85,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const [creators, setCreators] = useState<Creator[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [productBrands, setProductBrands] = useState([]);
+  const [list, setList] = useState([]);
   const [buffer, setBuffer] = useState<any[]>([]);
   const [updatingIndex, setUpdatingIndex] = useState<Record<string, boolean>>(
     {}
@@ -846,6 +853,29 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
               </Select.Option>
             </Select>
           </Col>
+          <Col lg={5} xs={24}>
+            <Typography.Title level={5}>List Name</Typography.Title>
+            <Select
+              disabled={loadingResources || loading}
+              onChange={setList}
+              placeholder="Select a List"
+              style={{ width: '100%' }}
+              filterOption={filterOption}
+              allowClear
+              showSearch
+              value={list}
+            >
+              {feedList.map((curr: any) => (
+                <Select.Option
+                  key={curr.value}
+                  value={curr.value}
+                  label={curr.name}
+                >
+                  {curr.name}
+                </Select.Option>
+              ))}
+            </Select>
+          </Col>
         </Row>
       </>
     );
@@ -860,6 +890,24 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const handleCollapseChange = () => {
     if (activeKey === '1') setActiveKey('0');
     else setActiveKey('1');
+  };
+
+  const addList = async () => {
+    const response: any = await saveFeedList({
+      listName: list,
+      feedId: selectedRowKeys,
+    });
+    if (response.error) message.error("Error: couldn't add Video to List.");
+    if (response.result) message.success('Video added to list.');
+  };
+
+  const onSelectChange = (selectedRowKeys: any, selectedRows: any) => {
+    setSelectedRowKeys(selectedRowKeys);
+    lastFocusedIndex.current = data.indexOf(selectedRows[0]);
+  };
+
+  const rowSelection = {
+    onChange: onSelectChange,
   };
 
   return (
@@ -903,15 +951,25 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                     key="1"
                     extra={
                       isMobile && (
-                        <Button
-                          type="primary"
-                          onClick={(event: any) => getFeed(event, true)}
-                          loading={loading}
-                          style={{ marginRight: '-2em' }}
-                        >
-                          Search
-                          <SearchOutlined style={{ color: 'white' }} />
-                        </Button>
+                        <>
+                          <Button
+                            onClick={(event: any) => addList()}
+                            loading={loading}
+                            className="mr-1"
+                            disabled={!selectedRowKeys.length || !list}
+                          >
+                            Add to Selected List
+                          </Button>
+                          <Button
+                            type="primary"
+                            onClick={(event: any) => getFeed(event, true)}
+                            loading={loading}
+                            style={{ marginRight: '-2em' }}
+                          >
+                            Search
+                            <SearchOutlined style={{ color: 'white' }} />
+                          </Button>
+                        </>
                       )
                     }
                   >
@@ -920,7 +978,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                 </Collapse>
               )}
             </Col>
-            <Col>
+            <Col lg={4}>
               <Row
                 justify="space-between"
                 align="bottom"
@@ -939,14 +997,24 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                   </Button>
                 </Col>
                 {!isMobile && (
-                  <Button
-                    type="primary"
-                    onClick={() => getFeed(undefined, true)}
-                    loading={loading}
-                  >
-                    Search
-                    <SearchOutlined style={{ color: 'white' }} />
-                  </Button>
+                  <Col>
+                    <Button
+                      onClick={(event: any) => addList()}
+                      loading={loading}
+                      className="mr-1"
+                      disabled={!selectedRowKeys.length || !list}
+                    >
+                      Add to Selected List
+                    </Button>
+                    <Button
+                      type="primary"
+                      onClick={() => getFeed(undefined, true)}
+                      loading={loading}
+                    >
+                      Search
+                      <SearchOutlined style={{ color: 'white' }} />
+                    </Button>
+                  </Col>
                 )}
               </Row>
             </Col>
@@ -973,6 +1041,10 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                 className={isMobile ? '' : 'mt-15'}
                 scroll={{ x: true }}
                 rowClassName={(_, index) => `scrollable-row-${index}`}
+                rowSelection={{
+                  type: 'radio',
+                  ...rowSelection,
+                }}
                 size="small"
                 columns={feedItemColumns}
                 rowKey="id"
