@@ -100,6 +100,9 @@ const Settings: React.FC = () => {
               <TabPane tab="Link Type" key="linkType">
                 <ItemList name="linkType" isMobile={isMobile} />
               </TabPane>
+              <TabPane tab="Feed List" key="feedList">
+                <ItemList name="feedList" isMobile={isMobile} />
+              </TabPane>
             </Tabs>
             <Row gutter={8} justify="end">
               <Col>

@@ -33,6 +33,7 @@ import {
   ShoppingOutlined,
   CreditCardOutlined,
   PlaySquareOutlined,
+  PicLeftOutlined,
 } from '@ant-design/icons';
 import { Menu } from 'antd';
 import SubMenu from 'antd/lib/menu/SubMenu';
@@ -116,6 +117,13 @@ const AdminSideMenu = ({ isMobile }) => {
         onClick={() => refreshParent('feed')}
       >
         <Link to="/feed">Video Feeds</Link>
+      </Menu.Item>
+      <Menu.Item
+        key="feed-lists"
+        icon={<PicLeftOutlined />}
+        onClick={() => refreshParent('feed-lists')}
+      >
+        <Link to="/feed-lists">Feed Lists</Link>
       </Menu.Item>
       <Menu.Item
         key="fan-videos"
