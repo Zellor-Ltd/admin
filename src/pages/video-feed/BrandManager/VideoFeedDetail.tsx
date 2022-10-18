@@ -39,7 +39,12 @@ import React, {
   useState,
 } from 'react';
 import { useSelector } from 'react-redux';
-import { fetchLinks, saveLink, saveVideoFeed } from 'services/DiscoClubService';
+import {
+  fetchLinks,
+  saveLink,
+  saveProductBrand,
+  saveVideoFeed,
+} from 'services/DiscoClubService';
 import BrandForm from '../BrandForm';
 import TagForm from '../TagForm';
 import '../VideoFeed.scss';
@@ -131,11 +136,14 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
     'productBrand' | 'creator'
   >(feedItem?.selectedOption ?? 'productBrand');
   const [currentCreator, setCurrentCreator] = useState<Creator>();
-  const [currentProductBrand, setCurrentProductBrand] =
+  const [listingProductBrand, setListingProductBrand] =
     useState<ProductBrand>();
+  const [vLinkProductBrand, setVLinkProductBrand] = useState<ProductBrand>();
   const [currentBrandIcon, setCurrentBrandIcon] = useState<any>();
   const [vLinkBrandIcon, setVLinkBrandIcon] = useState<any>();
   const [vLinkProductBrandIcon, setVLinkProductBrandIcon] = useState<any>();
+  const [vLinkProductBrandWhiteLogo, setVLinkProductBrandWhiteLogo] =
+    useState<any>();
   const [tagBuffer, setTagBuffer] = useState<any[]>([]);
   const [loaded, setLoaded] = useState<boolean>(false);
   const [vLinkBrandIcons, setVLinkBrandIcons] = useState<any[]>([]);
@@ -184,7 +192,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
       const selectedProductBrand = productBrands.find(
         item => item.id === feedItem?.selectedId
       );
-      setCurrentProductBrand(selectedProductBrand);
+      setListingProductBrand(selectedProductBrand);
       loadIcons('productBrand', selectedProductBrand);
       setCurrentBrandIcon(feedItem?.selectedIconUrl);
     }
@@ -208,11 +216,21 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
       const entity = productBrands.find(
         item => item.id === feedItem.vLink.productBrand.id
       );
+      setVLinkProductBrand(entity);
       loadIcons('vLinkProductBrand', entity);
+      let vLinkFields = feedForm.getFieldValue('vLink');
+      vLinkFields.productBrand.description = entity?.description;
+      feedForm.setFieldsValue({ vLink: vLinkFields });
       setVLinkProductBrandIcon(
         feedForm.getFieldValue(
           ['vLink', 'productBrand', 'selectedLogoUrl'] ??
             feedItem?.vLink.productBrand.selectedLogoUrl
+        )
+      );
+      setVLinkProductBrandWhiteLogo(
+        feedForm.getFieldValue(
+          ['vLink', 'productBrand', 'selectedWhiteLogoUrl'] ??
+            feedItem?.vLink.productBrand.selectedWhiteLogoUrl
         )
       );
     }
@@ -220,10 +238,10 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
 
   useEffect(() => {
     feedForm.setFieldsValue({
-      selectedId: currentProductBrand?.id,
-      selectedFeedTitle: currentProductBrand?.brandName,
+      selectedId: listingProductBrand?.id,
+      selectedFeedTitle: listingProductBrand?.brandName,
     });
-  }, [currentProductBrand]);
+  }, [listingProductBrand]);
 
   useEffect(() => {
     feedForm.setFieldsValue({ selectedIconUrl: currentBrandIcon });
@@ -337,26 +355,34 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
     const entity = productBrands?.find(item => item.id === id);
 
     if (type === 'vLinkProductBrand') {
+      setVLinkProductBrand(entity);
       loadIcons('vLinkProductBrand', entity);
       let vLinkFields = feedForm.getFieldValue('vLink');
       vLinkFields.productBrand.brandName = entity?.brandName;
+      vLinkFields.productBrand.description = entity?.description;
       vLinkFields.productBrand.showPrice = false;
       vLinkFields.productBrand.selectedLogoUrl = undefined;
+      vLinkFields.productBrand.selectedWhiteLogoUrl = undefined;
       feedForm.setFieldsValue({
         vLink: vLinkFields.productBrand,
       });
       setVLinkProductBrandIcon(undefined);
+      setVLinkProductBrandWhiteLogo(undefined);
       return;
     }
 
     if (type === 'listing') {
-      setCurrentProductBrand(entity);
+      setListingProductBrand(entity);
       loadIcons('productBrand', entity);
     }
   };
 
   const onChangeIcon = (
-    type: 'brand' | 'vLinkBrand' | 'vLinkProductBrand',
+    type:
+      | 'brand'
+      | 'vLinkBrand'
+      | 'vLinkProductBrand'
+      | 'vLinkProductBrandWhiteLogo',
     url: string
   ) => {
     if (type === 'brand') setCurrentBrandIcon(url);
@@ -367,6 +393,14 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
     if (type === 'vLinkProductBrand')
       setVLinkProductBrandIcon(
         feedForm.getFieldValue(['vLink', 'productBrand', 'selectedLogoUrl'])
+      );
+    if (type === 'vLinkProductBrandWhiteLogo')
+      setVLinkProductBrandWhiteLogo(
+        feedForm.getFieldValue([
+          'vLink',
+          'productBrand',
+          'selectedWhiteLogoUrl',
+        ])
       );
   };
 
@@ -424,6 +458,17 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
   const onFinish = async () => {
     try {
       const item: FeedItem = feedForm.getFieldsValue(true);
+
+      if (
+        vLinkProductBrand &&
+        feedItem?.vLink?.productBrand?.description !==
+          item.vLink?.productBrand?.description
+      ) {
+        await saveProductBrand({
+          ...vLinkProductBrand,
+          description: item.vLink.productBrand.description,
+        });
+      }
 
       if (feedItem?.cloning && item.id === previousID) {
         idRef.current!.focus();
@@ -1142,7 +1187,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                       allowClear
                       showSearch
                       filterOption={filterOption}
-                      value={currentProductBrand?.id}
+                      value={listingProductBrand?.id}
                     >
                       {productBrands.map((productBrand: ProductBrand) => (
                         <Select.Option
@@ -1547,12 +1592,71 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                       </Form.Item>
                     )}
                   </Col>
+                  <Col span={24}>
+                    {feedForm.getFieldValue([
+                      'vLink',
+                      'productBrand',
+                      'id',
+                    ]) && (
+                      <Form.Item
+                        label="Description"
+                        name={['vLink', 'productBrand', 'description']}
+                      >
+                        <Input placeholder="Description" />
+                      </Form.Item>
+                    )}
+                  </Col>
                   <Col span={8}>
                     <Row justify={isMobile ? 'end' : undefined}>
                       <Col>
                         {vLinkProductBrandIcon && (
                           <Image
                             src={vLinkProductBrandIcon}
+                            className="mb-1"
+                          ></Image>
+                        )}
+                      </Col>
+                    </Row>
+                  </Col>
+                  <Col span={24}>
+                    {feedForm.getFieldValue([
+                      'vLink',
+                      'productBrand',
+                      'id',
+                    ]) && (
+                      <Form.Item
+                        label="White Logo"
+                        name={['vLink', 'productBrand', 'selectedWhiteLogoUrl']}
+                      >
+                        <Select
+                          placeholder="Select a white logo"
+                          disabled={!loaded}
+                          allowClear
+                          showSearch
+                          filterOption={filterOption}
+                          onChange={value =>
+                            onChangeIcon('vLinkProductBrandWhiteLogo', value)
+                          }
+                        >
+                          {vLinkProductBrandIcons.map((icon: any) => (
+                            <Select.Option
+                              key={icon.key}
+                              value={icon.value}
+                              label={icon.label}
+                            >
+                              {icon.label}
+                            </Select.Option>
+                          ))}
+                        </Select>
+                      </Form.Item>
+                    )}
+                  </Col>
+                  <Col span={8}>
+                    <Row justify={isMobile ? 'end' : undefined}>
+                      <Col>
+                        {vLinkProductBrandWhiteLogo && (
+                          <Image
+                            src={vLinkProductBrandWhiteLogo}
                             className="mb-1"
                           ></Image>
                         )}

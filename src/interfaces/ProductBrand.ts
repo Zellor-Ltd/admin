@@ -22,4 +22,5 @@ export interface ProductBrand {
   creatorPercentage: number;
   maxDiscoDollarPercentage: number;
   hCreationDate: Date;
+  description?: string;
 }
