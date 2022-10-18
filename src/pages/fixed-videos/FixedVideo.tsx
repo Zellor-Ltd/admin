@@ -59,6 +59,24 @@ const FixedVideo: React.FC<RouteComponentProps> = () => {
             </Col>
             <Col span={24}>
               <Form.Item
+                name="userExperienceVideo"
+                label="User Experience Video"
+                rules={[
+                  {
+                    required: true,
+                    message: 'User Experience Video is required.',
+                  },
+                ]}
+              >
+                <Input
+                  allowClear
+                  id="userExperienceVideo"
+                  placeholder="User Experience Video"
+                />
+              </Form.Item>
+            </Col>
+            <Col span={24}>
+              <Form.Item
                 name="taggingVideo"
                 label="Tagging Video"
                 rules={[
