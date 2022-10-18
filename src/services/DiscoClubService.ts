@@ -279,7 +279,7 @@ export const fetchVideoFeedV3 = ({
 
 export const fetchVideoFeed2 = () => instance.get('Wi/Ep/GetVideoFeed');
 
-export const fetchFeedList = () => instance.put('Disco/Feed/Adm/FeedList/List');
+export const fetchFeedList = () => instance.put('Disco/Feed/Adm/Featured/List');
 
 export const fetchVariants = (variantId: string) =>
   instance.get(`Disco/Product/GetVariants/${variantId}`);
@@ -671,7 +671,7 @@ export const saveVideoFeed = (params: FeedItem, newItem?: boolean) => {
 };
 
 export const saveFeedList = (params: any) =>
-  instance.put('Disco/Feed/Adm/FeedList/Add', params);
+    instance.put('Disco/Feed/Adm/Featured/Add', params);
 
 export const saveVariantGroup = (params: VariantGroup) => {
   if (params.id) {
