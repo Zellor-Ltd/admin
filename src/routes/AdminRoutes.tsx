@@ -46,7 +46,7 @@ import PaymentHistory from 'pages/payments/PaymentHistory';
 import VariantGroups from 'pages/variants/VariantGroups';
 import ProductTemplates from 'pages/product-templates/ProductTemplates';
 import FixedVideo from 'pages/fixed-videos/FixedVideo';
-import FeedLists from 'pages/feed-lists/FeedLists';
+import FeaturedFeeds from 'pages/featured-feeds/FeaturedFeeds';
 
 function AdminRoutes() {
   return (
@@ -84,8 +84,8 @@ function AdminRoutes() {
         layout={AuthenticatedLayout}
       />
       <AppRoute
-        path="/feed-lists"
-        component={FeedLists}
+        path="/featured-feeds"
+        component={FeaturedFeeds}
         layout={AuthenticatedLayout}
       />
       <AppRoute

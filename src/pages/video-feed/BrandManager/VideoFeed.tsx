@@ -40,7 +40,7 @@ import {
   fetchProductBrands,
   fetchVideoFeedV3,
   rebuildLink,
-  saveFeedList,
+  saveFeaturedFeeds,
   saveVideoFeed,
 } from 'services/DiscoClubService';
 import { Brand } from 'interfaces/Brand';
@@ -893,7 +893,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   };
 
   const addList = async () => {
-    const response: any = await saveFeedList({
+    const response: any = await saveFeaturedFeeds({
       listName: list,
       feedId: selectedRowKeys,
     });
