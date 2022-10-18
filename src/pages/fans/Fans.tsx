@@ -291,7 +291,7 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
                     allowClear
                     disabled={loading || refreshing}
                     style={{ width: '100%' }}
-                    onChange={evt => onSearch(evt.target.value)}
+                    onPressEnter={(evt: any) => onSearch(evt.target.value)}
                     placeholder="Search by Fan E-mail"
                   />
                 </Col>
