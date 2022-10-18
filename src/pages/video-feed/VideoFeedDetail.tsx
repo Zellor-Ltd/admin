@@ -39,7 +39,12 @@ import React, {
   useState,
 } from 'react';
 import { useSelector } from 'react-redux';
-import { fetchLinks, saveLink, saveVideoFeed } from 'services/DiscoClubService';
+import {
+  fetchLinks,
+  saveLink,
+  saveProductBrand,
+  saveVideoFeed,
+} from 'services/DiscoClubService';
 import BrandForm from './BrandForm';
 import TagForm from './TagForm';
 import './VideoFeed.scss';
@@ -131,8 +136,9 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
     'productBrand' | 'creator'
   >(feedItem?.selectedOption ?? 'productBrand');
   const [currentCreator, setCurrentCreator] = useState<Creator>();
-  const [currentProductBrand, setCurrentProductBrand] =
+  const [listingProductBrand, setListingProductBrand] =
     useState<ProductBrand>();
+  const [vLinkProductBrand, setVLinkProductBrand] = useState<ProductBrand>();
   const [currentBrandIcon, setCurrentBrandIcon] = useState<any>();
   const [vLinkBrandIcon, setVLinkBrandIcon] = useState<any>();
   const [vLinkProductBrandIcon, setVLinkProductBrandIcon] = useState<any>();
@@ -186,7 +192,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
       const selectedProductBrand = productBrands.find(
         item => item.id === feedItem?.selectedId
       );
-      setCurrentProductBrand(selectedProductBrand);
+      setListingProductBrand(selectedProductBrand);
       loadIcons('productBrand', selectedProductBrand);
       setCurrentBrandIcon(feedItem?.selectedIconUrl);
     }
@@ -210,7 +216,11 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
       const entity = productBrands.find(
         item => item.id === feedItem.vLink.productBrand.id
       );
+      setVLinkProductBrand(entity);
       loadIcons('vLinkProductBrand', entity);
+      let vLinkFields = feedForm.getFieldValue('vLink');
+      vLinkFields.productBrand.description = entity?.description;
+      feedForm.setFieldsValue({ vLink: vLinkFields });
       setVLinkProductBrandIcon(
         feedForm.getFieldValue(
           ['vLink', 'productBrand', 'selectedLogoUrl'] ??
@@ -228,10 +238,10 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
 
   useEffect(() => {
     feedForm.setFieldsValue({
-      selectedId: currentProductBrand?.id,
-      selectedFeedTitle: currentProductBrand?.brandName,
+      selectedId: listingProductBrand?.id,
+      selectedFeedTitle: listingProductBrand?.brandName,
     });
-  }, [currentProductBrand]);
+  }, [listingProductBrand]);
 
   useEffect(() => {
     feedForm.setFieldsValue({ selectedIconUrl: currentBrandIcon });
@@ -345,9 +355,11 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
     const entity = productBrands?.find(item => item.id === id);
 
     if (type === 'vLinkProductBrand') {
+      setVLinkProductBrand(entity);
       loadIcons('vLinkProductBrand', entity);
       let vLinkFields = feedForm.getFieldValue('vLink');
       vLinkFields.productBrand.brandName = entity?.brandName;
+      vLinkFields.productBrand.description = entity?.description;
       vLinkFields.productBrand.showPrice = false;
       vLinkFields.productBrand.selectedLogoUrl = undefined;
       vLinkFields.productBrand.selectedWhiteLogoUrl = undefined;
@@ -355,11 +367,12 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
         vLink: vLinkFields.productBrand,
       });
       setVLinkProductBrandIcon(undefined);
+      setVLinkProductBrandWhiteLogo(undefined);
       return;
     }
 
     if (type === 'listing') {
-      setCurrentProductBrand(entity);
+      setListingProductBrand(entity);
       loadIcons('productBrand', entity);
     }
   };
@@ -445,6 +458,17 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
   const onFinish = async () => {
     try {
       const item: FeedItem = feedForm.getFieldsValue(true);
+
+      if (
+        vLinkProductBrand &&
+        feedItem?.vLink?.productBrand?.description !==
+          item.vLink?.productBrand?.description
+      ) {
+        await saveProductBrand({
+          ...vLinkProductBrand,
+          description: item.vLink.productBrand.description,
+        });
+      }
 
       if (feedItem?.cloning && item.id === previousID) {
         idRef.current!.focus();
@@ -1163,7 +1187,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                       allowClear
                       showSearch
                       filterOption={filterOption}
-                      value={currentProductBrand?.id}
+                      value={listingProductBrand?.id}
                     >
                       {productBrands.map((productBrand: ProductBrand) => (
                         <Select.Option
@@ -1565,6 +1589,20 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                             </Select.Option>
                           ))}
                         </Select>
+                      </Form.Item>
+                    )}
+                  </Col>
+                  <Col span={24}>
+                    {feedForm.getFieldValue([
+                      'vLink',
+                      'productBrand',
+                      'id',
+                    ]) && (
+                      <Form.Item
+                        label="Description"
+                        name={['vLink', 'productBrand', 'description']}
+                      >
+                        <Input placeholder="Description" />
                       </Form.Item>
                     )}
                   </Col>
