@@ -5,7 +5,10 @@ import { FeedItem } from 'interfaces/FeedItem';
 import React, { useCallback, useContext, useRef, useState } from 'react';
 import { AppContext } from 'contexts/AppContext';
 import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
-import { fetchFeedList, saveFeedList } from 'services/DiscoClubService';
+import {
+  fetchFeaturedFeeds,
+  saveFeaturedFeeds,
+} from 'services/DiscoClubService';
 import '@pathofdev/react-tag-input/build/index.css';
 import { useRequest } from 'hooks/useRequest';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
@@ -22,7 +25,7 @@ interface DraggableBodyRowProps
 
 const type = 'DraggableBodyRow';
 
-const FeedList: React.FC<RouteComponentProps> = () => {
+const FeaturedFeed: React.FC<RouteComponentProps> = () => {
   const {
     settings: { feedList = [] },
   } = useSelector((state: any) => state.settings);
@@ -37,7 +40,7 @@ const FeedList: React.FC<RouteComponentProps> = () => {
   const fetch = async (input?: string) => {
     try {
       if (input) setListName(input);
-      const { results }: any = await doFetch(() => fetchFeedList());
+      const { results }: any = await doFetch(() => fetchFeaturedFeeds());
       setList(results);
     } catch (error) {}
   };
@@ -157,8 +160,8 @@ const FeedList: React.FC<RouteComponentProps> = () => {
     <>
       <div className="video-feed mb-1">
         <PageHeader
-          title="Feed List"
-          subTitle={isMobile ? '' : 'List of Feed List'}
+          title="Featured Feeds"
+          subTitle={isMobile ? '' : 'List of Featured Feeds'}
         />
         <Row
           justify="space-between"
@@ -200,7 +203,7 @@ const FeedList: React.FC<RouteComponentProps> = () => {
                   disabled={listBuffer === list}
                   className={isMobile ? 'mt-05' : ''}
                   onClick={() =>
-                    doRequest(() => saveFeedList({ listName, listBuffer }))
+                    doRequest(() => saveFeaturedFeeds({ listName, listBuffer }))
                   }
                 >
                   Deploy
@@ -247,4 +250,4 @@ const FeedList: React.FC<RouteComponentProps> = () => {
   );
 };
 
-export default withRouter(FeedList);
+export default withRouter(FeaturedFeed);

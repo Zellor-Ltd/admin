@@ -119,11 +119,11 @@ const AdminSideMenu = ({ isMobile }) => {
         <Link to="/feed">Video Feeds</Link>
       </Menu.Item>
       <Menu.Item
-        key="feed-lists"
+        key="featured-feeds"
         icon={<PicLeftOutlined />}
-        onClick={() => refreshParent('feed-lists')}
+        onClick={() => refreshParent('featured-feeds')}
       >
-        <Link to="/feed-lists">Feed Lists</Link>
+        <Link to="/featured-feeds">Featured Feeds</Link>
       </Menu.Item>
       <Menu.Item
         key="fan-videos"
