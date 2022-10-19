@@ -1070,22 +1070,28 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                 </Col>
                 {!isMobile && (
                   <Col>
-                    <Button
-                      onClick={(event: any) => addList()}
-                      loading={loading}
-                      className="mr-1"
-                      disabled={!selectedRowKeys.length || !list}
-                    >
-                      Add to Selected List
-                    </Button>
-                    <Button
-                      type="primary"
-                      onClick={() => getFeed(undefined, true)}
-                      loading={loading}
-                    >
-                      Search
-                      <SearchOutlined style={{ color: 'white' }} />
-                    </Button>
+                    <Row gutter={[16, 16]} justify="end">
+                      <Col>
+                        <Button
+                          onClick={(event: any) => addList()}
+                          loading={loading}
+                          className={isMobile ? 'mr-1' : undefined}
+                          disabled={!selectedRowKeys.length || !list}
+                        >
+                          Add to Selected List
+                        </Button>
+                      </Col>
+                      <Col>
+                        <Button
+                          type="primary"
+                          onClick={() => getFeed(undefined, true)}
+                          loading={loading}
+                        >
+                          Search
+                          <SearchOutlined style={{ color: 'white' }} />
+                        </Button>
+                      </Col>
+                    </Row>
                   </Col>
                 )}
               </Row>
