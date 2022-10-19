@@ -200,10 +200,17 @@ const FeaturedFeed: React.FC<RouteComponentProps> = () => {
               <Col>
                 <Button
                   key="2"
-                  disabled={listBuffer === list}
+                  disabled={listBuffer === list || !list}
                   className={isMobile ? 'mt-05' : ''}
                   onClick={() =>
-                    doRequest(() => saveFeaturedFeed({ listName, listBuffer }))
+                    doRequest(() =>
+                      saveFeaturedFeed(
+                        listName!,
+                        listBuffer.map(item => {
+                          return { id: item.id, index: item.index };
+                        })
+                      )
+                    )
                   }
                 >
                   Deploy

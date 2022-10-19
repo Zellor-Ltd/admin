@@ -42,7 +42,6 @@ import {
   fetchProductBrands,
   fetchVideoFeedV3,
   rebuildLink,
-  saveFeaturedFeed,
   saveVideoFeed,
 } from 'services/DiscoClubService';
 import { Brand } from 'interfaces/Brand';
@@ -74,7 +73,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const {
     settings: { feedList = [] },
   } = useSelector((state: any) => state.settings);
-  const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
   const { isMobile } = useContext(AppContext);
   const inputRef = useRef<any>(null);
   const [activeKey, setActiveKey] = useState<string>('-1');
@@ -964,24 +962,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     else setActiveKey('1');
   };
 
-  const addList = async () => {
-    const response: any = await saveFeaturedFeed({
-      listName: list,
-      feedId: selectedRowKeys,
-    });
-    if (response.error) message.error("Error: couldn't add Video to List.");
-    if (response.result) message.success('Video added to list.');
-  };
-
-  const onSelectChange = (selectedRowKeys: any, selectedRows: any) => {
-    setSelectedRowKeys(selectedRowKeys);
-    lastFocusedIndex.current = data.indexOf(selectedRows[0]);
-  };
-
-  const rowSelection = {
-    onChange: onSelectChange,
-  };
-
   return (
     <>
       {!details && (
@@ -1023,25 +1003,15 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                     key="1"
                     extra={
                       isMobile && (
-                        <>
-                          <Button
-                            onClick={(event: any) => addList()}
-                            loading={loading}
-                            className="mr-1"
-                            disabled={!selectedRowKeys.length || !list}
-                          >
-                            Add to Selected List
-                          </Button>
-                          <Button
-                            type="primary"
-                            onClick={(event: any) => getFeed(event, true)}
-                            loading={loading}
-                            style={{ marginRight: '-2em' }}
-                          >
-                            Search
-                            <SearchOutlined style={{ color: 'white' }} />
-                          </Button>
-                        </>
+                        <Button
+                          type="primary"
+                          onClick={(event: any) => getFeed(event, true)}
+                          loading={loading}
+                          style={{ marginRight: '-2em' }}
+                        >
+                          Search
+                          <SearchOutlined style={{ color: 'white' }} />
+                        </Button>
                       )
                     }
                   >
@@ -1069,30 +1039,14 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                   </Button>
                 </Col>
                 {!isMobile && (
-                  <Col>
-                    <Row gutter={[16, 16]} justify="end">
-                      <Col>
-                        <Button
-                          onClick={(event: any) => addList()}
-                          loading={loading}
-                          className={isMobile ? 'mr-1' : undefined}
-                          disabled={!selectedRowKeys.length || !list}
-                        >
-                          Add to Selected List
-                        </Button>
-                      </Col>
-                      <Col>
-                        <Button
-                          type="primary"
-                          onClick={() => getFeed(undefined, true)}
-                          loading={loading}
-                        >
-                          Search
-                          <SearchOutlined style={{ color: 'white' }} />
-                        </Button>
-                      </Col>
-                    </Row>
-                  </Col>
+                  <Button
+                    type="primary"
+                    onClick={() => getFeed(undefined, true)}
+                    loading={loading}
+                  >
+                    Search
+                    <SearchOutlined style={{ color: 'white' }} />
+                  </Button>
                 )}
               </Row>
             </Col>
@@ -1119,10 +1073,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                 className={isMobile ? '' : 'mt-15'}
                 scroll={{ x: true }}
                 rowClassName={(_, index) => `scrollable-row-${index}`}
-                rowSelection={{
-                  type: 'radio',
-                  ...rowSelection,
-                }}
                 size="small"
                 columns={feedItemColumns}
                 rowKey="id"
