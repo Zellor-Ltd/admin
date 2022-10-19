@@ -93,6 +93,8 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const [updatingVIndex, setUpdatingVIndex] = useState<Record<string, boolean>>(
     {}
   );
+  const [updatingList, setUpdatingList] = useState<Record<string, boolean>>({});
+  const selectedList = useRef<string>();
 
   // Filter state
   const [statusFilter, setStatusFilter] = useState<string>();
@@ -316,6 +318,50 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
         if (a.title && b.title) return a.title.localeCompare(b.title as string);
         else if (a.title) return -1;
         else if (b.title) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: 'Feed List',
+      dataIndex: 'listName',
+      width: '18%',
+      render: (value: string, feedItem: FeedItem) => {
+        if (updatingList[feedItem.id]) {
+          const antIcon = <LoadingOutlined spin />;
+          return <Spin indicator={antIcon} />;
+        } else {
+          return (
+            <Select
+              style={{ width: '100%' }}
+              placeholder="List name"
+              showSearch
+              allowClear
+              disabled={!feedList.length || loading}
+              filterOption={filterOption}
+              onBlur={() => updateList(feedItem, selectedList.current)}
+              value={feedItem.listName}
+              onChange={(value: string) => {
+                selectedList.current = value;
+              }}
+            >
+              {feedList.map((curr: any) => (
+                <Select.Option
+                  key={curr.value}
+                  value={curr.value}
+                  label={curr.name}
+                >
+                  {curr.name}
+                </Select.Option>
+              ))}
+            </Select>
+          );
+        }
+      },
+      sorter: (a, b): any => {
+        if (a.listName && b.listName)
+          return a.listName.localeCompare(b.listName as string);
+        else if (a.listName) return -1;
+        else if (b.listName) return 1;
         else return 0;
       },
     },
@@ -659,6 +705,35 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     }
 
     setUpdatingVIndex(prev => {
+      const newValue = {
+        ...prev,
+      };
+      delete newValue[record.id];
+      return newValue;
+    });
+  };
+
+  const updateList = async (record: FeedItem, value?: string) => {
+    if (record.listName === value) return;
+    record.listName = value;
+
+    setUpdatingList(prev => {
+      const newValue = {
+        ...prev,
+      };
+      newValue[record.id] = true;
+
+      return newValue;
+    });
+
+    try {
+      await saveVideoFeed(record);
+      message.success('Register updated with success.');
+    } catch (err) {
+      console.error(`Error while trying to update list.`, err);
+    }
+
+    setUpdatingList(prev => {
       const newValue = {
         ...prev,
       };
