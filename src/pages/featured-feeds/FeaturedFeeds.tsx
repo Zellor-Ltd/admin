@@ -7,7 +7,7 @@ import { AppContext } from '../../contexts/AppContext';
 import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 import {
   fetchFeaturedFeeds,
-  saveFeaturedFeeds,
+  saveFeaturedFeed,
 } from '../../services/DiscoClubService';
 import '@pathofdev/react-tag-input/build/index.css';
 import { useRequest } from '../../hooks/useRequest';
@@ -37,10 +37,10 @@ const FeaturedFeed: React.FC<RouteComponentProps> = () => {
   const { doFetch, doRequest } = useRequest({ setLoading });
   const { isMobile } = useContext(AppContext);
 
-  const fetch = async (input?: string) => {
+  const fetch = async (input: string) => {
     try {
       if (input) setListName(input);
-      const { results }: any = await doFetch(() => fetchFeaturedFeeds());
+      const { results }: any = await doFetch(() => fetchFeaturedFeeds(input));
       setList(results);
     } catch (error) {}
   };
@@ -173,7 +173,7 @@ const FeaturedFeed: React.FC<RouteComponentProps> = () => {
 
             <Select
               style={{ width: '100%' }}
-              onChange={value => fetch(value)}
+              onChange={value => setListName(value)}
               placeholder="List name"
               showSearch
               allowClear
@@ -203,7 +203,7 @@ const FeaturedFeed: React.FC<RouteComponentProps> = () => {
                   disabled={listBuffer === list}
                   className={isMobile ? 'mt-05' : ''}
                   onClick={() =>
-                    doRequest(() => saveFeaturedFeeds({ listName, listBuffer }))
+                    doRequest(() => saveFeaturedFeed({ listName, listBuffer }))
                   }
                 >
                   Deploy
@@ -212,9 +212,10 @@ const FeaturedFeed: React.FC<RouteComponentProps> = () => {
               <Col>
                 <Button
                   type="primary"
-                  onClick={() => fetch()}
+                  onClick={() => fetch(listName!)}
                   loading={loading}
                   className="ml-1"
+                  disabled={!listName}
                 >
                   Search
                   <SearchOutlined style={{ color: 'white' }} />
