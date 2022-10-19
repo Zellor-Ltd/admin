@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Button, Col, PageHeader, Row, Select, Table, Typography } from 'antd';
+import { Button, Col, PageHeader, Row, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { FeedItem } from 'interfaces/FeedItem';
 import React, { useCallback, useContext, useRef, useState } from 'react';
@@ -14,7 +14,6 @@ import { useRequest } from 'hooks/useRequest';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import update from 'immutability-helper';
-import { useSelector } from 'react-redux';
 import { SearchOutlined } from '@ant-design/icons';
 
 interface DraggableBodyRowProps
@@ -26,9 +25,6 @@ interface DraggableBodyRowProps
 const type = 'DraggableBodyRow';
 
 const FeaturedFeed: React.FC<RouteComponentProps> = () => {
-  const {
-    settings: { feedList = [] },
-  } = useSelector((state: any) => state.settings);
   const [loading, setLoading] = useState(false);
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [list, setList] = useState<any[]>([]);
@@ -65,7 +61,7 @@ const FeaturedFeed: React.FC<RouteComponentProps> = () => {
       width: '18%',
       render: (value: string, record: FeedItem, index: number) => (
         <Link
-          onClick={() => editList(index, record)}
+          onClick={() => editList(index)}
           to={{ pathname: window.location.pathname }}
         >
           {value}
@@ -83,7 +79,7 @@ const FeaturedFeed: React.FC<RouteComponentProps> = () => {
     },
   ];
 
-  const editList = (index: number, feedList?: any) => {
+  const editList = (index: number) => {
     setLastViewedIndex(index);
   };
 
@@ -152,46 +148,13 @@ const FeaturedFeed: React.FC<RouteComponentProps> = () => {
     [listBuffer]
   );
 
-  const filterOption = (input: string, option: any) => {
-    return option?.label?.toUpperCase().includes(input?.toUpperCase());
-  };
-
   return (
     <>
       <div className="video-feed mb-1">
         <PageHeader
           title="Featured Feeds"
           subTitle={isMobile ? '' : 'List of Featured Feeds'}
-        />
-        <Row
-          justify="space-between"
-          align="bottom"
-          className="mb-05 sticky-filter-box"
-        >
-          <Col lg={4} xs={24}>
-            <Typography.Title level={5}>List Name</Typography.Title>
-
-            <Select
-              style={{ width: '100%' }}
-              onChange={value => fetch(value)}
-              placeholder="List name"
-              showSearch
-              allowClear
-              disabled={!feedList.length || loading}
-              filterOption={filterOption}
-            >
-              {feedList.map((curr: any) => (
-                <Select.Option
-                  key={curr.value}
-                  value={curr.value}
-                  label={curr.name}
-                >
-                  {curr.name}
-                </Select.Option>
-              ))}
-            </Select>
-          </Col>
-          <Col lg={8} xs={24}>
+          extra={
             <Row
               justify="end"
               align="middle"
@@ -221,8 +184,8 @@ const FeaturedFeed: React.FC<RouteComponentProps> = () => {
                 </Button>
               </Col>
             </Row>
-          </Col>
-        </Row>
+          }
+        />
         <DndProvider backend={HTML5Backend}>
           <Table
             scroll={{ x: true }}
