@@ -331,6 +331,18 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                       />
                     </Form.Item>
                   </Col>
+                  <Col span={24}>
+                    <Form.Item
+                      label="vLink Description"
+                      name="vLinkDescription"
+                    >
+                      <Input.TextArea
+                        rows={2}
+                        placeholder="vLink Description"
+                        allowClear
+                      />
+                    </Form.Item>
+                  </Col>
                   <Col lg={12} xs={24}>
                     <Form.Item label="Home URL" name="homeUrl">
                       <Input allowClear placeholder="Home URL" />
