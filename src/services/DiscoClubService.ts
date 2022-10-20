@@ -280,7 +280,7 @@ export const fetchVideoFeedV3 = ({
 export const fetchVideoFeed2 = () => instance.get('Wi/Ep/GetVideoFeed');
 
 export const fetchFeaturedFeeds = (name: string) =>
-  instance.put(`Disco/Feed/Adm/Featured/List/${name}`);
+  instance.get(`Disco/Feed/Adm/Featured/List/${name}`);
 
 export const fetchVariants = (variantId: string) =>
   instance.get(`Disco/Product/GetVariants/${variantId}`);
