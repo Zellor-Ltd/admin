@@ -557,6 +557,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
           validity: _product?.['validity']
             ? moment(_product?.['validity'])
             : undefined,
+          currencyIsoCode: _product?.currencyIsoCode ?? 'EUR',
         }}
         onFinish={onFinish}
         onFinishFailed={({ errorFields }) => handleFinishFailed(errorFields)}
