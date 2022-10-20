@@ -4,6 +4,7 @@ import {
   DeleteOutlined,
   EditOutlined,
   LoadingOutlined,
+  ProfileOutlined,
   RedoOutlined,
   SearchOutlined,
   UpOutlined,
@@ -18,6 +19,7 @@ import {
   message,
   PageHeader,
   Popconfirm,
+  Popover,
   Row,
   Select,
   Spin,
@@ -40,7 +42,6 @@ import {
   fetchProductBrands,
   fetchVideoFeedV3,
   rebuildLink,
-  saveFeaturedFeeds,
   saveVideoFeed,
 } from 'services/DiscoClubService';
 import { Brand } from 'interfaces/Brand';
@@ -72,7 +73,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const {
     settings: { feedList = [] },
   } = useSelector((state: any) => state.settings);
-  const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
   const { isMobile } = useContext(AppContext);
   const inputRef = useRef<any>(null);
   const [activeKey, setActiveKey] = useState<string>('-1');
@@ -93,7 +93,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const [updatingVIndex, setUpdatingVIndex] = useState<Record<string, boolean>>(
     {}
   );
-  const [updatingList, setUpdatingList] = useState<Record<string, boolean>>({});
   const selectedList = useRef<string>();
 
   // Filter state
@@ -118,6 +117,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(true);
   const [data, setData] = useState<any[]>([]);
+  const [record, setRecord] = useState<FeedItem>();
 
   useEffect(() => {
     getDetailsResources();
@@ -229,6 +229,52 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     }
   };
 
+  const updateList = async (value: string, feedItem: FeedItem) => {
+    if (value !== feedItem.listName) {
+      try {
+        await saveVideoFeed(feedItem);
+        message.success('Register updated with success.');
+      } catch (err) {
+        console.error(`Error while trying to update list.`, err);
+      } finally {
+        selectedList.current = value;
+        setRecord({ ...feedItem, listName: value });
+        setData([
+          ...data.map(item => {
+            if (item.id === feedItem.id) return record!;
+            else return item;
+          }),
+        ]);
+      }
+    }
+  };
+
+  const filterOption = (input: string, option: any) => {
+    return option?.label?.toUpperCase().includes(input?.toUpperCase());
+  };
+
+  const menu = (
+    <Select
+      style={{ width: '150px' }}
+      placeholder="List name"
+      showSearch
+      allowClear
+      disabled={!feedList.length || loading}
+      filterOption={filterOption}
+      value={record?.listName}
+      onBlur={(event: any) => updateList(event.target.value, record!)}
+      onChange={(value: string) =>
+        setRecord({ ...(record as any), listName: value })
+      }
+    >
+      {feedList.map((curr: any) => (
+        <Select.Option key={curr.value} value={curr.value} label={curr.name}>
+          {curr.name}
+        </Select.Option>
+      ))}
+    </Select>
+  );
+
   const feedItemColumns: ColumnsType<FeedItem> = [
     {
       title: '_id',
@@ -325,38 +371,20 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       title: 'Feed List',
       dataIndex: 'listName',
       width: '18%',
-      render: (value: string, feedItem: FeedItem) => {
-        if (updatingList[feedItem.id]) {
-          const antIcon = <LoadingOutlined spin />;
-          return <Spin indicator={antIcon} />;
-        } else {
-          return (
-            <Select
-              style={{ width: '100%' }}
-              placeholder="List name"
-              showSearch
-              allowClear
-              disabled={!feedList.length || loading}
-              filterOption={filterOption}
-              onBlur={() => updateList(feedItem, selectedList.current)}
-              value={feedItem.listName}
-              onChange={(value: string) => {
-                selectedList.current = value;
-              }}
+      render: (_: string, feedItem: FeedItem) => (
+        <>
+          <Popover placement="bottomLeft" content={menu} trigger="click">
+            <Button
+              type="link"
+              block
+              style={{ border: 'none' }}
+              onClick={() => setRecord(feedItem)}
             >
-              {feedList.map((curr: any) => (
-                <Select.Option
-                  key={curr.value}
-                  value={curr.value}
-                  label={curr.name}
-                >
-                  {curr.name}
-                </Select.Option>
-              ))}
-            </Select>
-          );
-        }
-      },
+              <ProfileOutlined />
+            </Button>
+          </Popover>
+        </>
+      ),
       sorter: (a, b): any => {
         if (a.listName && b.listName)
           return a.listName.localeCompare(b.listName as string);
@@ -713,35 +741,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     });
   };
 
-  const updateList = async (record: FeedItem, value?: string) => {
-    if (record.listName === value) return;
-    record.listName = value;
-
-    setUpdatingList(prev => {
-      const newValue = {
-        ...prev,
-      };
-      newValue[record.id] = true;
-
-      return newValue;
-    });
-
-    try {
-      await saveVideoFeed(record);
-      message.success('Register updated with success.');
-    } catch (err) {
-      console.error(`Error while trying to update list.`, err);
-    }
-
-    setUpdatingList(prev => {
-      const newValue = {
-        ...prev,
-      };
-      delete newValue[record.id];
-      return newValue;
-    });
-  };
-
   const handleSave = (
     record: FeedItem,
     newItem?: boolean,
@@ -758,10 +757,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
 
   const onCancelItem = () => {
     setDetails(false);
-  };
-
-  const filterOption = (input: string, option: any) => {
-    return option?.label?.toUpperCase().includes(input?.toUpperCase());
   };
 
   const Filters = () => {
@@ -967,24 +962,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     else setActiveKey('1');
   };
 
-  const addList = async () => {
-    const response: any = await saveFeaturedFeeds({
-      listName: list,
-      feedId: selectedRowKeys,
-    });
-    if (response.error) message.error("Error: couldn't add Video to List.");
-    if (response.result) message.success('Video added to list.');
-  };
-
-  const onSelectChange = (selectedRowKeys: any, selectedRows: any) => {
-    setSelectedRowKeys(selectedRowKeys);
-    lastFocusedIndex.current = data.indexOf(selectedRows[0]);
-  };
-
-  const rowSelection = {
-    onChange: onSelectChange,
-  };
-
   return (
     <>
       {!details && (
@@ -1026,25 +1003,15 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                     key="1"
                     extra={
                       isMobile && (
-                        <>
-                          <Button
-                            onClick={(event: any) => addList()}
-                            loading={loading}
-                            className="mr-1"
-                            disabled={!selectedRowKeys.length || !list}
-                          >
-                            Add to Selected List
-                          </Button>
-                          <Button
-                            type="primary"
-                            onClick={(event: any) => getFeed(event, true)}
-                            loading={loading}
-                            style={{ marginRight: '-2em' }}
-                          >
-                            Search
-                            <SearchOutlined style={{ color: 'white' }} />
-                          </Button>
-                        </>
+                        <Button
+                          type="primary"
+                          onClick={(event: any) => getFeed(event, true)}
+                          loading={loading}
+                          style={{ marginRight: '-2em' }}
+                        >
+                          Search
+                          <SearchOutlined style={{ color: 'white' }} />
+                        </Button>
                       )
                     }
                   >
@@ -1072,24 +1039,14 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                   </Button>
                 </Col>
                 {!isMobile && (
-                  <Col>
-                    <Button
-                      onClick={(event: any) => addList()}
-                      loading={loading}
-                      className="mr-1"
-                      disabled={!selectedRowKeys.length || !list}
-                    >
-                      Add to Selected List
-                    </Button>
-                    <Button
-                      type="primary"
-                      onClick={() => getFeed(undefined, true)}
-                      loading={loading}
-                    >
-                      Search
-                      <SearchOutlined style={{ color: 'white' }} />
-                    </Button>
-                  </Col>
+                  <Button
+                    type="primary"
+                    onClick={() => getFeed(undefined, true)}
+                    loading={loading}
+                  >
+                    Search
+                    <SearchOutlined style={{ color: 'white' }} />
+                  </Button>
                 )}
               </Row>
             </Col>
@@ -1116,10 +1073,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                 className={isMobile ? '' : 'mt-15'}
                 scroll={{ x: true }}
                 rowClassName={(_, index) => `scrollable-row-${index}`}
-                rowSelection={{
-                  type: 'radio',
-                  ...rowSelection,
-                }}
                 size="small"
                 columns={feedItemColumns}
                 rowKey="id"

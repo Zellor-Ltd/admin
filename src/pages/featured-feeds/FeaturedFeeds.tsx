@@ -1,19 +1,20 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Button, Col, PageHeader, Row, Table } from 'antd';
+import { Button, Col, PageHeader, Row, Select, Table, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import { FeedItem } from 'interfaces/FeedItem';
+import { FeedItem } from '../../interfaces/FeedItem';
 import React, { useCallback, useContext, useRef, useState } from 'react';
-import { AppContext } from 'contexts/AppContext';
+import { AppContext } from '../../contexts/AppContext';
 import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 import {
   fetchFeaturedFeeds,
-  saveFeaturedFeeds,
-} from 'services/DiscoClubService';
+  saveFeaturedFeed,
+} from '../../services/DiscoClubService';
 import '@pathofdev/react-tag-input/build/index.css';
-import { useRequest } from 'hooks/useRequest';
+import { useRequest } from '../../hooks/useRequest';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import update from 'immutability-helper';
+import { useSelector } from 'react-redux';
 import { SearchOutlined } from '@ant-design/icons';
 
 interface DraggableBodyRowProps
@@ -25,6 +26,9 @@ interface DraggableBodyRowProps
 const type = 'DraggableBodyRow';
 
 const FeaturedFeed: React.FC<RouteComponentProps> = () => {
+  const {
+    settings: { feedList = [] },
+  } = useSelector((state: any) => state.settings);
   const [loading, setLoading] = useState(false);
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [list, setList] = useState<any[]>([]);
@@ -33,10 +37,10 @@ const FeaturedFeed: React.FC<RouteComponentProps> = () => {
   const { doFetch, doRequest } = useRequest({ setLoading });
   const { isMobile } = useContext(AppContext);
 
-  const fetch = async (input?: string) => {
+  const fetch = async (input: string) => {
     try {
       if (input) setListName(input);
-      const { results }: any = await doFetch(() => fetchFeaturedFeeds());
+      const { results }: any = await doFetch(() => fetchFeaturedFeeds(input));
       setList(results);
     } catch (error) {}
   };
@@ -148,13 +152,46 @@ const FeaturedFeed: React.FC<RouteComponentProps> = () => {
     [listBuffer]
   );
 
+  const filterOption = (input: string, option: any) => {
+    return option?.label?.toUpperCase().includes(input?.toUpperCase());
+  };
+
   return (
     <>
       <div className="video-feed mb-1">
         <PageHeader
           title="Featured Feeds"
           subTitle={isMobile ? '' : 'List of Featured Feeds'}
-          extra={
+        />
+        <Row
+          justify="space-between"
+          align="bottom"
+          className="mb-05 sticky-filter-box"
+        >
+          <Col lg={4} xs={24}>
+            <Typography.Title level={5}>List Name</Typography.Title>
+
+            <Select
+              style={{ width: '100%' }}
+              onChange={value => setListName(value)}
+              placeholder="List name"
+              showSearch
+              allowClear
+              disabled={!feedList.length || loading}
+              filterOption={filterOption}
+            >
+              {feedList.map((curr: any) => (
+                <Select.Option
+                  key={curr.value}
+                  value={curr.value}
+                  label={curr.name}
+                >
+                  {curr.name}
+                </Select.Option>
+              ))}
+            </Select>
+          </Col>
+          <Col lg={8} xs={24}>
             <Row
               justify="end"
               align="middle"
@@ -163,10 +200,17 @@ const FeaturedFeed: React.FC<RouteComponentProps> = () => {
               <Col>
                 <Button
                   key="2"
-                  disabled={listBuffer === list}
+                  disabled={listBuffer === list || !list}
                   className={isMobile ? 'mt-05' : ''}
                   onClick={() =>
-                    doRequest(() => saveFeaturedFeeds({ listName, listBuffer }))
+                    doRequest(() =>
+                      saveFeaturedFeed(
+                        listName!,
+                        listBuffer.map(item => {
+                          return { id: item.id, index: item.index };
+                        })
+                      )
+                    )
                   }
                 >
                   Deploy
@@ -175,17 +219,18 @@ const FeaturedFeed: React.FC<RouteComponentProps> = () => {
               <Col>
                 <Button
                   type="primary"
-                  onClick={() => fetch()}
+                  onClick={() => fetch(listName!)}
                   loading={loading}
                   className="ml-1"
+                  disabled={!listName}
                 >
                   Search
                   <SearchOutlined style={{ color: 'white' }} />
                 </Button>
               </Col>
             </Row>
-          }
-        />
+          </Col>
+        </Row>
         <DndProvider backend={HTML5Backend}>
           <Table
             scroll={{ x: true }}
