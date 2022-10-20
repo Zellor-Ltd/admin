@@ -7,7 +7,7 @@ import { AppContext } from '../../contexts/AppContext';
 import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 import {
   fetchFeaturedFeeds,
-  saveFeaturedFeed,
+  updateFeaturedFeed,
 } from '../../services/DiscoClubService';
 import '@pathofdev/react-tag-input/build/index.css';
 import { useRequest } from '../../hooks/useRequest';
@@ -15,8 +15,6 @@ import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import update from 'immutability-helper';
 import { useSelector } from 'react-redux';
-import { SearchOutlined } from '@ant-design/icons';
-
 interface DraggableBodyRowProps
   extends React.HTMLAttributes<HTMLTableRowElement> {
   index: number;
@@ -32,24 +30,23 @@ const FeaturedFeed: React.FC<RouteComponentProps> = () => {
   const [loading, setLoading] = useState(false);
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [list, setList] = useState<any[]>([]);
-  const [listName, setListName] = useState<string>();
   const [listBuffer, setListBuffer] = useState<any[]>([]);
   const { doFetch, doRequest } = useRequest({ setLoading });
   const { isMobile } = useContext(AppContext);
 
   const fetch = async (input: string) => {
     try {
-      if (input) setListName(input);
       const { results }: any = await doFetch(() => fetchFeaturedFeeds(input));
       setList(results);
+      setListBuffer(results);
     } catch (error) {}
   };
 
   const columns: ColumnsType<any> = [
     {
       title: 'Index',
-      dataIndex: 'index',
       width: '3%',
+      dataIndex: 'id',
       align: 'center',
       sorter: (a, b): any => {
         if (a.index && b.index) return a.index - b.index;
@@ -57,7 +54,7 @@ const FeaturedFeed: React.FC<RouteComponentProps> = () => {
         else if (b.index) return 1;
         else return 0;
       },
-      render: (value: number) => `${value + 1}`,
+      render: (_: number, __: any, index: number) => `${index}`,
     },
     {
       title: 'Product Brand',
@@ -173,7 +170,7 @@ const FeaturedFeed: React.FC<RouteComponentProps> = () => {
 
             <Select
               style={{ width: '100%' }}
-              onChange={value => setListName(value)}
+              onChange={value => fetch(value)}
               placeholder="List name"
               showSearch
               allowClear
@@ -191,41 +188,19 @@ const FeaturedFeed: React.FC<RouteComponentProps> = () => {
               ))}
             </Select>
           </Col>
-          <Col lg={8} xs={24}>
-            <Row
-              justify="end"
-              align="middle"
-              className={isMobile ? 'mt-2' : 'mr-06'}
-            >
+          <Col lg={4} xs={24}>
+            <Row justify="end">
               <Col>
                 <Button
                   key="2"
+                  type="primary"
                   disabled={listBuffer === list || !list}
-                  className={isMobile ? 'mt-05' : ''}
+                  className={isMobile ? 'mt-15' : ''}
                   onClick={() =>
-                    doRequest(() =>
-                      saveFeaturedFeed(
-                        listName!,
-                        listBuffer.map(item => {
-                          return { id: item.id, index: item.index };
-                        })
-                      )
-                    )
+                    doRequest(() => updateFeaturedFeed(listBuffer))
                   }
                 >
                   Deploy
-                </Button>
-              </Col>
-              <Col>
-                <Button
-                  type="primary"
-                  onClick={() => fetch(listName!)}
-                  loading={loading}
-                  className="ml-1"
-                  disabled={!listName}
-                >
-                  Search
-                  <SearchOutlined style={{ color: 'white' }} />
                 </Button>
               </Col>
             </Row>
