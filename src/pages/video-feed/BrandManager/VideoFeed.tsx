@@ -19,7 +19,6 @@ import {
   message,
   PageHeader,
   Popconfirm,
-  Popover,
   Row,
   Select,
   Spin,
@@ -42,6 +41,7 @@ import {
   fetchProductBrands,
   fetchVideoFeedV3,
   rebuildLink,
+  addFeaturedFeed,
   saveVideoFeed,
 } from 'services/DiscoClubService';
 import { Brand } from 'interfaces/Brand';
@@ -118,6 +118,8 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const [eof, setEof] = useState<boolean>(true);
   const [data, setData] = useState<any[]>([]);
   const [record, setRecord] = useState<FeedItem>();
+  const [selectedFeed, setSelectedFeed] = useState<FeedItem>();
+  const selectRef = useRef<any>(null);
 
   useEffect(() => {
     getDetailsResources();
@@ -229,51 +231,28 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     }
   };
 
-  const updateList = async (value: string, feedItem: FeedItem) => {
-    if (value !== feedItem.listName) {
-      try {
-        await saveVideoFeed(feedItem);
-        message.success('Register updated with success.');
-      } catch (err) {
-        console.error(`Error while trying to update list.`, err);
-      } finally {
-        selectedList.current = value;
-        setRecord({ ...feedItem, listName: value });
-        setData([
-          ...data.map(item => {
-            if (item.id === feedItem.id) return record!;
-            else return item;
-          }),
-        ]);
-      }
+  const addToList = async (value: string, feedItem: FeedItem) => {
+    try {
+      await addFeaturedFeed(feedItem.id, value);
+      message.success('Register updated with success.');
+    } catch (err) {
+      console.error(`Error while trying to update list.`, err);
+    } finally {
+      selectedList.current = value;
+      setRecord({ ...feedItem, listName: value });
+      setData([
+        ...data.map(item => {
+          if (item?.id === feedItem?.id) return record!;
+          else return item;
+        }),
+      ]);
+      selectRef.current?.blur();
     }
   };
 
   const filterOption = (input: string, option: any) => {
     return option?.label?.toUpperCase().includes(input?.toUpperCase());
   };
-
-  const menu = (
-    <Select
-      style={{ width: '150px' }}
-      placeholder="List name"
-      showSearch
-      allowClear
-      disabled={!feedList.length || loading}
-      filterOption={filterOption}
-      value={record?.listName}
-      onBlur={(event: any) => updateList(event.target.value, record!)}
-      onChange={(value: string) =>
-        setRecord({ ...(record as any), listName: value })
-      }
-    >
-      {feedList.map((curr: any) => (
-        <Select.Option key={curr.value} value={curr.value} label={curr.name}>
-          {curr.name}
-        </Select.Option>
-      ))}
-    </Select>
-  );
 
   const feedItemColumns: ColumnsType<FeedItem> = [
     {
@@ -288,14 +267,14 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       dataIndex: 'index',
       width: '3%',
       render: (_, feedItem, index) => {
-        if (updatingIndex[feedItem.id]) {
+        if (updatingIndex[feedItem?.id]) {
           const antIcon = <LoadingOutlined spin />;
           return <Spin indicator={antIcon} />;
         } else {
           return (
             <InputNumber
               type="number"
-              value={feedItem.index}
+              value={feedItem?.index}
               onFocus={event => event.stopPropagation()}
               onBlur={(event: any) =>
                 updateIndex(feedItem, event.target.value as unknown as any)
@@ -320,14 +299,14 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       dataIndex: 'vIndex',
       width: '3%',
       render: (_, feedItem) => {
-        if (updatingVIndex[feedItem.id]) {
+        if (updatingVIndex[feedItem?.id]) {
           const antIcon = <LoadingOutlined spin />;
           return <Spin indicator={antIcon} />;
         } else {
           return (
             <InputNumber
               type="number"
-              value={feedItem.vIndex}
+              value={feedItem?.vIndex}
               onFocus={event => event.stopPropagation()}
               onBlur={(event: any) =>
                 updateVIndex(feedItem, event.target.value as unknown as number)
@@ -364,32 +343,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
         if (a.title && b.title) return a.title.localeCompare(b.title as string);
         else if (a.title) return -1;
         else if (b.title) return 1;
-        else return 0;
-      },
-    },
-    {
-      title: 'Feed List',
-      dataIndex: 'listName',
-      width: '18%',
-      render: (_: string, feedItem: FeedItem) => (
-        <>
-          <Popover placement="bottomLeft" content={menu} trigger="click">
-            <Button
-              type="link"
-              block
-              style={{ border: 'none' }}
-              onClick={() => setRecord(feedItem)}
-            >
-              <ProfileOutlined />
-            </Button>
-          </Popover>
-        </>
-      ),
-      sorter: (a, b): any => {
-        if (a.listName && b.listName)
-          return a.listName.localeCompare(b.listName as string);
-        else if (a.listName) return -1;
-        else if (b.listName) return 1;
         else return 0;
       },
     },
@@ -473,7 +426,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
           onClick={() =>
             window
               .open(
-                record.rebuilt
+                record && record.rebuilt
                   ? record.shareLink ?? ''
                   : record.package?.find(pack => pack.shareLink)?.shareLink ??
                       '',
@@ -483,9 +436,11 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
           }
           to={{ pathname: window.location.pathname }}
         >
-          {record.rebuilt
-            ? record.shareLink ?? ''
-            : record.package?.find(pack => pack.shareLink)?.shareLink ?? ''}
+          {record
+            ? record.rebuilt
+              ? record.shareLink ?? ''
+              : record.package?.find(pack => pack.shareLink)?.shareLink ?? ''
+            : ''}
         </Link>
       ),
       sorter: (a: any, b: any): any => {
@@ -499,6 +454,48 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
         } else if (a.shareLink) return -1;
         else if (b.shareLink) return 1;
         else return 0;
+      },
+    },
+    {
+      title: 'Feed List',
+      dataIndex: 'listName',
+      width: '18%',
+      render: (_: string, feedItem: FeedItem) => {
+        if (feedItem?.id !== selectedFeed?.id)
+          return (
+            <Button
+              type="link"
+              block
+              style={{ zIndex: 10 }}
+              onClick={() => setSelectedFeed(feedItem)}
+            >
+              <ProfileOutlined />
+            </Button>
+          );
+        else
+          return (
+            <Select
+              showSearch
+              allowClear
+              defaultOpen
+              ref={selectRef}
+              style={{ width: '100px' }}
+              disabled={!feedList.length || loading}
+              filterOption={filterOption}
+              onChange={(value: string) => addToList(value, feedItem)}
+              onBlur={() => setSelectedFeed(undefined)}
+            >
+              {feedList.map((curr: any) => (
+                <Select.Option
+                  key={curr.value}
+                  value={curr.value}
+                  label={curr.name}
+                >
+                  {curr.name}
+                </Select.Option>
+              ))}
+            </Select>
+          );
       },
     },
     {
@@ -524,7 +521,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                 index
               )
             }
-            disabled={!record.package?.find(pack => pack.shareLink)}
+            disabled={!record?.package?.find(pack => pack.shareLink)}
           >
             <RedoOutlined />
           </Button>

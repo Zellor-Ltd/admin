@@ -671,8 +671,11 @@ export const saveVideoFeed = (params: FeedItem, newItem?: boolean) => {
   else return instance.put('Disco/Feed/Update', params);
 };
 
-export const saveFeaturedFeed = (listName: string, list: any[]) =>
-  instance.put('Disco/Feed/Adm/Featured/Add', { listName, list });
+export const addFeaturedFeed = (feedId: string, listName: string) =>
+  instance.put('Disco/Feed/Adm/Featured/Add', { feedId, listName });
+
+export const updateFeaturedFeed = (params: any[]) =>
+  instance.put('Disco/Feed/Adm/Featured/Update', params);
 
 export const saveVariantGroup = (params: VariantGroup) => {
   if (params.id) {
