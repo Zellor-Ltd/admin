@@ -219,7 +219,6 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
       setVLinkProductBrand(entity);
       loadIcons('vLinkProductBrand', entity);
       let vLinkFields = feedForm.getFieldValue('vLink');
-      vLinkFields.productBrand.description = entity?.description;
       feedForm.setFieldsValue({ vLink: vLinkFields });
       setVLinkProductBrandIcon(
         feedForm.getFieldValue(
@@ -359,7 +358,6 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
       loadIcons('vLinkProductBrand', entity);
       let vLinkFields = feedForm.getFieldValue('vLink');
       vLinkFields.productBrand.brandName = entity?.brandName;
-      vLinkFields.productBrand.description = entity?.description;
       vLinkFields.productBrand.showPrice = false;
       vLinkFields.productBrand.selectedLogoUrl = undefined;
       vLinkFields.productBrand.selectedWhiteLogoUrl = undefined;
@@ -459,16 +457,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
     try {
       const item: FeedItem = feedForm.getFieldsValue(true);
 
-      if (
-        vLinkProductBrand &&
-        feedItem?.vLink?.productBrand?.description !==
-          item.vLink?.productBrand?.description
-      ) {
-        await saveProductBrand({
-          ...vLinkProductBrand,
-          description: item.vLink.productBrand.description,
-        });
-      }
+      await saveProductBrand({ ...vLinkProductBrand } as any);
 
       if (feedItem?.cloning && item.id === previousID) {
         idRef.current!.focus();
@@ -1589,20 +1578,6 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                             </Select.Option>
                           ))}
                         </Select>
-                      </Form.Item>
-                    )}
-                  </Col>
-                  <Col span={24}>
-                    {feedForm.getFieldValue([
-                      'vLink',
-                      'productBrand',
-                      'id',
-                    ]) && (
-                      <Form.Item
-                        label="Description"
-                        name={['vLink', 'productBrand', 'description']}
-                      >
-                        <Input placeholder="Description" />
                       </Form.Item>
                     )}
                   </Col>
