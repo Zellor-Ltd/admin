@@ -50,7 +50,6 @@ import { currencyRender } from 'helpers/currencyRender';
 import scrollIntoView from 'scroll-into-view';
 import CopyValueToClipboard from 'components/CopyValueToClipboard';
 import moment from 'moment';
-import { DOMPurify } from 'dompurify';
 
 const { categoriesKeys, categoriesFields } = categoryMapper;
 const { getSearchTags, getCategories, removeSearchTagsByCategory } =
@@ -288,9 +287,6 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
     try {
       const productForm = form.getFieldsValue(true);
 
-      productForm.apiCategory = DOMPurify.sanitize(
-        form.getFieldValue('apiCategory')
-      );
       productForm.brand = brands?.find(
         brand => brand.id === productForm.brand?.id
       );

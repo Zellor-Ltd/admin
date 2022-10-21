@@ -38,7 +38,7 @@ import {
   saveCreator,
 } from 'services/DiscoClubService';
 import scrollIntoView from 'scroll-into-view';
-import { DOMPurify } from 'dompurify';
+
 interface CreatorDetailProps {
   creator: any;
   onSave?: (record: Creator) => void;
@@ -164,8 +164,8 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
       formattedCreator.personalDetails.phone || {};
     formattedCreator.personalDetails.phone.number = formUser.phoneNumber;
 
-    formattedCreator.contentFocus = DOMPurify.sanitize(formUser.contentFocus);
-    formattedCreator.topBrands = DOMPurify.sanitize(formUser.topBrands);
+    formattedCreator.contentFocus = formUser.contentFocus;
+    formattedCreator.topBrands = formUser.topBrands;
 
     return formattedCreator;
   };
