@@ -13,6 +13,7 @@ import { useRequest } from 'hooks/useRequest';
 import { Promotion } from 'interfaces/Promotion';
 import { useCallback, useEffect, useState } from 'react';
 import { fetchVideoFeed2, savePromotion } from 'services/DiscoClubService';
+import DOMPurify from 'isomorphic-dompurify';
 interface PromotionDetailProps {
   promotion: Promotion | undefined;
   onSave?: (record: Promotion, newItem?: boolean) => void;
@@ -29,11 +30,13 @@ const PromotionDetail: React.FC<PromotionDetailProps> = ({
   const [packages, setPackages] = useState<any[]>([]);
 
   const onFinish = async () => {
-    const formPromotion = form.getFieldsValue(true);
-    const { result } = await doRequest(() => savePromotion(formPromotion));
-    formPromotion.id
-      ? onSave?.(formPromotion)
-      : onSave?.({ ...formPromotion, id: result }, true);
+    const promotionForm = form.getFieldsValue(true);
+    if (promotionForm.brief)
+      promotionForm.brief = DOMPurify.sanitize(promotionForm.brief);
+    const { result } = await doRequest(() => savePromotion(promotionForm));
+    promotionForm.id
+      ? onSave?.(promotionForm)
+      : onSave?.({ ...promotionForm, id: result }, true);
   };
 
   const getPackages = useCallback(async () => {
