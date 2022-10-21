@@ -1,11 +1,21 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Button, Col, PageHeader, Row, Select, Table, Typography } from 'antd';
+import {
+  Button,
+  Col,
+  PageHeader,
+  Popconfirm,
+  Row,
+  Select,
+  Table,
+  Typography,
+} from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { FeedItem } from '../../interfaces/FeedItem';
 import React, { useCallback, useContext, useRef, useState } from 'react';
 import { AppContext } from '../../contexts/AppContext';
 import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 import {
+  deleteFeaturedFeed,
   fetchFeaturedFeeds,
   updateFeaturedFeed,
 } from '../../services/DiscoClubService';
@@ -15,6 +25,7 @@ import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import update from 'immutability-helper';
 import { useSelector } from 'react-redux';
+import { DeleteOutlined } from '@ant-design/icons';
 interface DraggableBodyRowProps
   extends React.HTMLAttributes<HTMLTableRowElement> {
   index: number;
@@ -40,6 +51,11 @@ const FeaturedFeed: React.FC<RouteComponentProps> = () => {
       setList(results);
       setListBuffer(results);
     } catch (error) {}
+  };
+
+  const deleteItem = async (_id: string, index: number) => {
+    await deleteFeaturedFeed(_id);
+    setListBuffer(listBuffer.filter(item => item.id !== _id));
   };
 
   const columns: ColumnsType<any> = [
@@ -77,6 +93,26 @@ const FeaturedFeed: React.FC<RouteComponentProps> = () => {
         else if (b.productBrand.name) return 1;
         else return 0;
       },
+    },
+    {
+      title: 'Actions',
+      key: 'action',
+      width: '5%',
+      align: 'right',
+      render: (_, feedItem: FeedItem, index: number) => (
+        <>
+          <Popconfirm
+            title="Are you sure？"
+            okText="Yes"
+            cancelText="No"
+            onConfirm={() => deleteItem(feedItem.id, index)}
+          >
+            <Button type="link" style={{ padding: 0, margin: 6 }}>
+              <DeleteOutlined />
+            </Button>
+          </Popconfirm>
+        </>
+      ),
     },
   ];
 

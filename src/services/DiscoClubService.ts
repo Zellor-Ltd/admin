@@ -931,6 +931,9 @@ export const deletePrivileges = (data: Privilege) =>
 export const deleteVideoFeed = (id: string) =>
   instance.delete(`Disco/Feed/Delete/${id}`);
 
+export const deleteFeaturedFeed = (id: string) =>
+  instance.delete(`Disco/Feed/Adm/Featured/Remove/${id}`);
+
 export const deleteTag = (data: IDelete) =>
   instance.delete('Wi/Ep/RemoveTag', { data });
 
