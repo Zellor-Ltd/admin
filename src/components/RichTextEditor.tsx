@@ -7,7 +7,6 @@ import htmlToDraft from 'html-to-draftjs';
 import React, { useEffect, useRef, useState } from 'react';
 import { Editor } from 'react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
-import { DOMPurify } from 'dompurify';
 
 const { TextArea } = Input;
 interface RichTextEditorProps {
@@ -45,7 +44,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
       isMounted.current = true;
       return;
     }
-    if (fieldValue) setHtmlValue(DOMPurify.sanitize(fieldValue));
+    if (fieldValue) setHtmlValue(fieldValue);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -102,7 +101,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
             <TextArea
               value={htmlValue}
               onChange={event => {
-                setHtmlValue(DOMPurify.sanitize(event.target.value));
+                setHtmlValue(event.target.value);
               }}
               style={{ height: '300px' }}
             />

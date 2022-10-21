@@ -27,7 +27,7 @@ import ProductCategoriesTrees from 'pages/products/ProductCategoriesTrees';
 import { AllCategories } from 'interfaces/Category';
 import { categoryMapper } from 'helpers/categoryMapper';
 import { categoryUtils } from 'helpers/categoryUtils';
-import { DOMPurify } from 'dompurify';
+
 import {
   InstagramFilled,
   FacebookFilled,
@@ -68,12 +68,8 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
     try {
       const productBrandForm = form.getFieldsValue(true);
 
-      productBrandForm.description = DOMPurify.sanitize(
-        form.getFieldValue('description')
-      );
-      productBrandForm.apiCategory = DOMPurify.sanitize(
-        form.getFieldValue('apiCategory')
-      );
+      productBrandForm.description = form.getFieldValue('description');
+      productBrandForm.apiCategory = form.getFieldValue('apiCategory');
 
       if (productBrandForm.categories) {
         categoriesFields.forEach((field, index) => {
