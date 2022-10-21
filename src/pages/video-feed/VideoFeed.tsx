@@ -117,7 +117,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(true);
   const [data, setData] = useState<any[]>([]);
-  const [record, setRecord] = useState<FeedItem>();
   const [selectedFeed, setSelectedFeed] = useState<FeedItem>();
   const selectRef = useRef<any>(null);
 
@@ -239,10 +238,10 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       console.error(`Error while trying to update list.`, err);
     } finally {
       selectedList.current = value;
-      setRecord({ ...feedItem, listName: value });
       setData([
         ...data.map(item => {
-          if (item?.id === feedItem?.id) return record!;
+          if (item?.id === feedItem?.id)
+            return { ...feedItem, listName: value };
           else return item;
         }),
       ]);
