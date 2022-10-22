@@ -50,6 +50,7 @@ import { currencyRender } from 'helpers/currencyRender';
 import scrollIntoView from 'scroll-into-view';
 import CopyValueToClipboard from 'components/CopyValueToClipboard';
 import moment from 'moment';
+import DOMPurify from 'isomorphic-dompurify';
 
 const { categoriesKeys, categoriesFields } = categoryMapper;
 const { getSearchTags, getCategories, removeSearchTagsByCategory } =
@@ -286,6 +287,8 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
     setLoading(true);
     try {
       const productForm = form.getFieldsValue(true);
+      if (productForm.description)
+        productForm.description = DOMPurify.sanitize(productForm.description);
 
       productForm.brand = brands?.find(
         brand => brand.id === productForm.brand?.id

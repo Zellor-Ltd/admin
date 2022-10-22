@@ -11,6 +11,7 @@ import { useMount } from 'react-use';
 import { SelectOption } from 'interfaces/SelectOption';
 import scrollIntoView from 'scroll-into-view';
 import moment from 'moment';
+import DOMPurify from 'isomorphic-dompurify';
 interface PromoDisplayDetailProps {
   promoDisplay?: any;
   onSave?: (record: PromoDisplay, newItem?: boolean) => void;
@@ -42,13 +43,14 @@ const PromoDisplaysDetail: React.FC<PromoDisplayDetailProps> = ({
 
   const onFinish = async () => {
     try {
-      const formPromoDisplay = form.getFieldsValue(true);
-      const { result } = await doRequest(() =>
-        savePromoDisplay(formPromoDisplay)
-      );
-      formPromoDisplay.id
-        ? onSave?.(formPromoDisplay)
-        : onSave?.({ ...formPromoDisplay, id: result }, true);
+      const displayForm = form.getFieldsValue(true);
+      if (displayForm.displayHtml)
+        displayForm.displayHtml = DOMPurify.sanitize(displayForm.displayHtml);
+
+      const { result } = await doRequest(() => savePromoDisplay(displayForm));
+      displayForm.id
+        ? onSave?.(displayForm)
+        : onSave?.({ ...displayForm, id: result }, true);
     } catch (error: any) {
       message.error('Error: ' + error.error);
     }
