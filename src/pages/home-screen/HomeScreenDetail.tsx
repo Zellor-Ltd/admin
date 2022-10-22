@@ -15,6 +15,8 @@ import { saveBanner } from '../../services/DiscoClubService';
 import { Banner } from 'interfaces/Banner';
 import scrollIntoView from 'scroll-into-view';
 import moment from 'moment';
+import DOMPurify from 'isomorphic-dompurify';
+
 interface HomeScreenDetailProps {
   banner: Banner;
   onSave?: (record: Banner) => void;
@@ -32,11 +34,13 @@ const HomeScreenDetail: React.FC<HomeScreenDetailProps> = ({
 
   const onFinish = async () => {
     try {
-      const formBanner = form.getFieldsValue(true);
-      const { result } = await doRequest(() => saveBanner(formBanner));
-      formBanner.id
-        ? onSave?.(formBanner)
-        : onSave?.({ ...formBanner, id: result });
+      const bannerForm = form.getFieldsValue(true);
+      if (bannerForm.html)
+        bannerForm.html = DOMPurify.sanitize(bannerForm.html);
+      const { result } = await doRequest(() => saveBanner(bannerForm));
+      bannerForm.id
+        ? onSave?.(bannerForm)
+        : onSave?.({ ...bannerForm, id: result });
     } catch (error: any) {
       message.error('Error: ' + error.error);
     }

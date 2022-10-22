@@ -59,6 +59,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import update from 'immutability-helper';
 import scrollIntoView from 'scroll-into-view';
 import { AppContext } from 'contexts/AppContext';
+import DOMPurify from 'isomorphic-dompurify';
 
 const { Title } = Typography;
 
@@ -456,7 +457,10 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
   const onFinish = async () => {
     try {
       const item: FeedItem = feedForm.getFieldsValue(true);
-
+      if (item.description)
+        item.description = DOMPurify.sanitize(item.description);
+      if (item.creatorHtml)
+        item.creatorHtml = DOMPurify.sanitize(item.creatorHtml);
       await saveProductBrand({ ...vLinkProductBrand } as any);
 
       if (feedItem?.cloning && item.id === previousID) {

@@ -49,6 +49,7 @@ import {
 import scrollIntoView from 'scroll-into-view';
 import { Link } from 'react-router-dom';
 import { AppContext } from 'contexts/AppContext';
+import DOMPurify from 'isomorphic-dompurify';
 interface BrandDetailProps {
   onSave?: (record: Brand) => void;
   onCancel?: () => void;
@@ -455,12 +456,21 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
 
   const onFinish = async () => {
     try {
-      const formBrand = form.getFieldsValue(true);
-      const response: any = await saveBrand(formBrand);
+      const brandForm = form.getFieldsValue(true);
+      if (brandForm.overlayHtmlWithoutDiscount)
+        brandForm.overlayHtmlWithoutDiscount = DOMPurify.sanitize(
+          brandForm.overlayHtmlWithoutDiscount
+        );
+      if (brandForm.overlayHtmlWithDiscount)
+        brandForm.overlayHtmlWithDiscount = DOMPurify.sanitize(
+          brandForm.overlayHtmlWithDiscount
+        );
+
+      const response: any = await saveBrand(brandForm);
       message.success('Register updated with success.');
-      formBrand.id
-        ? onSave?.(formBrand)
-        : onSave?.({ ...formBrand, id: response.result });
+      brandForm.id
+        ? onSave?.(brandForm)
+        : onSave?.({ ...brandForm, id: response.result });
     } catch (error: any) {
       message.error('Error: ' + error.error);
     }
