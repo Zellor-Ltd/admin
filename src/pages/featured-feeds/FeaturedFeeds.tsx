@@ -40,22 +40,22 @@ const FeaturedFeed: React.FC<RouteComponentProps> = () => {
   } = useSelector((state: any) => state.settings);
   const [loading, setLoading] = useState(false);
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
-  const [list, setList] = useState<any[]>([]);
-  const [listBuffer, setListBuffer] = useState<any[]>([]);
+  const [listRef, setListRef] = useState<any[]>([]);
+  const [featuredFeeds, setFeaturedFeeds] = useState<any[]>([]);
   const { doFetch, doRequest } = useRequest({ setLoading });
   const { isMobile } = useContext(AppContext);
 
   const fetch = async (input: string) => {
     try {
       const { results }: any = await doFetch(() => fetchFeaturedFeeds(input));
-      setList(results);
-      setListBuffer(results);
+      setListRef(results);
+      setFeaturedFeeds(results);
     } catch (error) {}
   };
 
   const deleteItem = async (_id: string, index: number) => {
     await deleteFeaturedFeed(_id);
-    setListBuffer(listBuffer.filter(item => item.id !== _id));
+    setFeaturedFeeds(featuredFeeds.filter(item => item.id !== _id));
   };
 
   const columns: ColumnsType<any> = [
@@ -64,13 +64,35 @@ const FeaturedFeed: React.FC<RouteComponentProps> = () => {
       width: '3%',
       dataIndex: 'id',
       align: 'center',
+      render: (_: number, entity: any, index: number) => `${index}`,
+    },
+    {
+      title: 'Creator',
+      dataIndex: ['creator', 'firstName'],
+      width: '18%',
       sorter: (a, b): any => {
-        if (a.index && b.index) return a.index - b.index;
-        else if (a.index) return -1;
-        else if (b.index) return 1;
+        if (a.creator?.firstName && b.creator?.firstName)
+          return a.creator?.firstName.localeCompare(
+            b.creator?.firstName as string
+          );
+        else if (a.creator?.firstName) return -1;
+        else if (b.creator?.firstName) return 1;
         else return 0;
       },
-      render: (_: number, __: any, index: number) => `${index}`,
+    },
+    {
+      title: 'Creator Username',
+      dataIndex: ['creator', 'userName'],
+      width: '18%',
+      sorter: (a, b): any => {
+        if (a.creator?.userName && b.creator?.userName)
+          return a.creator?.userName.localeCompare(
+            b.creator?.userName as string
+          );
+        else if (a.creator?.userName) return -1;
+        else if (b.creator?.userName) return 1;
+        else return 0;
+      },
     },
     {
       title: 'Product Brand',
@@ -85,12 +107,70 @@ const FeaturedFeed: React.FC<RouteComponentProps> = () => {
         </Link>
       ),
       sorter: (a, b): any => {
-        if (a.productBrand.name && b.productBrand.name)
-          return a.productBrand.name.localeCompare(
-            b.productBrand.name as string
+        if (a.productBrand?.name && b.productBrand?.name)
+          return a.productBrand?.name.localeCompare(
+            b.productBrand?.name as string
           );
-        else if (a.productBrand.name) return -1;
-        else if (b.productBrand.name) return 1;
+        else if (a.productBrand?.name) return -1;
+        else if (b.productBrand?.name) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: 'Product Brand Description',
+      dataIndex: ['productBrand', 'description'],
+      width: '18%',
+      sorter: (a, b): any => {
+        if (a.productBrand?.description && b.productBrand?.description)
+          return a.productBrand?.description.localeCompare(
+            b.productBrand?.description as string
+          );
+        else if (a.productBrand?.description) return -1;
+        else if (b.productBrand?.description) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: 'Product Brand vLinkDescription',
+      dataIndex: ['productBrand', 'vLinkDescription'],
+      width: '18%',
+      sorter: (a, b): any => {
+        if (
+          a.productBrand?.vLinkDescription &&
+          b.productBrand?.vLinkDescription
+        )
+          return a.productBrand?.vLinkDescription.localeCompare(
+            b.productBrand?.vLinkDescription as string
+          );
+        else if (a.productBrand?.vLinkDescription) return -1;
+        else if (b.productBrand?.vLinkDescription) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: 'Product Brand Link',
+      width: '18%',
+      dataIndex: ['productBrand', 'brandLink'],
+      render: (value: string) => (
+        <Link
+          onClick={() => {
+            if (value) window.open(value, '_blank')?.focus();
+          }}
+          to={{ pathname: window.location.pathname }}
+        >
+          {value ?? '-'}
+        </Link>
+      ),
+      sorter: (a: any, b: any): any => {
+        if (a.productBrand?.brandLink && b.productBrand?.brandLink) {
+          const linkA = a.productBrand?.brandLink;
+          const linkB = b.productBrand?.brandLink;
+          if (linkA && linkB) return linkA.localeCompare(linkB);
+          else if (linkA) return -1;
+          else if (linkB) return 1;
+          else return 0;
+        } else if (a.productBrand?.brandLink) return -1;
+        else if (b.productBrand?.brandLink) return 1;
         else return 0;
       },
     },
@@ -172,9 +252,9 @@ const FeaturedFeed: React.FC<RouteComponentProps> = () => {
 
   const moveRow = useCallback(
     (dragIndex: number, hoverIndex: number) => {
-      const dragRow = listBuffer[dragIndex];
-      setListBuffer(
-        update(listBuffer, {
+      const dragRow = featuredFeeds[dragIndex];
+      setFeaturedFeeds(
+        update(featuredFeeds, {
           $splice: [
             [dragIndex, 1],
             [hoverIndex, 0, dragRow],
@@ -182,7 +262,7 @@ const FeaturedFeed: React.FC<RouteComponentProps> = () => {
         })
       );
     },
-    [listBuffer]
+    [featuredFeeds]
   );
 
   const filterOption = (input: string, option: any) => {
@@ -230,10 +310,10 @@ const FeaturedFeed: React.FC<RouteComponentProps> = () => {
                 <Button
                   key="2"
                   type="primary"
-                  disabled={listBuffer === list || !list}
+                  disabled={featuredFeeds === listRef || !featuredFeeds?.length}
                   className={isMobile ? 'mt-15' : ''}
                   onClick={() =>
-                    doRequest(() => updateFeaturedFeed(listBuffer))
+                    doRequest(() => updateFeaturedFeed(featuredFeeds))
                   }
                 >
                   Deploy
@@ -260,7 +340,7 @@ const FeaturedFeed: React.FC<RouteComponentProps> = () => {
             size="small"
             columns={columns}
             rowKey="id"
-            dataSource={listBuffer}
+            dataSource={featuredFeeds}
             loading={loading}
           />
         </DndProvider>
