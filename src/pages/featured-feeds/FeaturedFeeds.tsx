@@ -269,6 +269,13 @@ const FeaturedFeed: React.FC<RouteComponentProps> = () => {
     return option?.label?.toUpperCase().includes(input?.toUpperCase());
   };
 
+  const handleDeploy = () => {
+    const indexedFeeds = featuredFeeds.map(item => {
+      return { ...item, index: featuredFeeds.indexOf(item) };
+    });
+    doRequest(() => updateFeaturedFeed(indexedFeeds));
+  };
+
   return (
     <>
       <div className="video-feed mb-1">
@@ -312,9 +319,7 @@ const FeaturedFeed: React.FC<RouteComponentProps> = () => {
                   type="primary"
                   disabled={featuredFeeds === listRef || !featuredFeeds?.length}
                   className={isMobile ? 'mt-15' : ''}
-                  onClick={() =>
-                    doRequest(() => updateFeaturedFeed(featuredFeeds))
-                  }
+                  onClick={handleDeploy}
                 >
                   Deploy
                 </Button>
