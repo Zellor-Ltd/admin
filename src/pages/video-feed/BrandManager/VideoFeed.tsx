@@ -464,6 +464,9 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
           return (
             <Button
               type="link"
+              disabled={
+                !feedItem.vLink?.productBrand && !feedItem.vLink?.creator
+              }
               block
               style={{ zIndex: 10 }}
               onClick={() => setSelectedFeed(feedItem)}
