@@ -39,12 +39,7 @@ import React, {
   useState,
 } from 'react';
 import { useSelector } from 'react-redux';
-import {
-  fetchLinks,
-  saveLink,
-  saveProductBrand,
-  saveVideoFeed,
-} from 'services/DiscoClubService';
+import { fetchLinks, saveLink, saveVideoFeed } from 'services/DiscoClubService';
 import BrandForm from './BrandForm';
 import TagForm from './TagForm';
 import './VideoFeed.scss';
@@ -139,7 +134,6 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
   const [currentCreator, setCurrentCreator] = useState<Creator>();
   const [listingProductBrand, setListingProductBrand] =
     useState<ProductBrand>();
-  const [vLinkProductBrand, setVLinkProductBrand] = useState<ProductBrand>();
   const [currentBrandIcon, setCurrentBrandIcon] = useState<any>();
   const [vLinkBrandIcon, setVLinkBrandIcon] = useState<any>();
   const [vLinkProductBrandIcon, setVLinkProductBrandIcon] = useState<any>();
@@ -217,7 +211,6 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
       const entity = productBrands.find(
         item => item.id === feedItem.vLink.productBrand.id
       );
-      setVLinkProductBrand(entity);
       loadIcons('vLinkProductBrand', entity);
       let vLinkFields = feedForm.getFieldValue('vLink');
       feedForm.setFieldsValue({ vLink: vLinkFields });
@@ -355,7 +348,6 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
     const entity = productBrands?.find(item => item.id === id);
 
     if (type === 'vLinkProductBrand') {
-      setVLinkProductBrand(entity);
       loadIcons('vLinkProductBrand', entity);
       let vLinkFields = feedForm.getFieldValue('vLink');
       vLinkFields.productBrand.brandName = entity?.brandName;
@@ -457,11 +449,12 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
   const onFinish = async () => {
     try {
       const item: FeedItem = feedForm.getFieldsValue(true);
+
       if (item.description)
         item.description = DOMPurify.sanitize(item.description);
+
       if (item.creatorHtml)
         item.creatorHtml = DOMPurify.sanitize(item.creatorHtml);
-      await saveProductBrand({ ...vLinkProductBrand } as any);
 
       if (feedItem?.cloning && item.id === previousID) {
         idRef.current!.focus();
