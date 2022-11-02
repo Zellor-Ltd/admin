@@ -12,6 +12,7 @@ import {
   Popconfirm,
   Row,
   Table,
+  Tooltip,
   Typography,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
@@ -83,14 +84,38 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
 
   const columns: ColumnsType<PromoDisplay> = [
     {
-      title: '_id',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="_id">_id</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'id',
       width: '6%',
       render: id => <CopyValueToClipboard value={id} />,
       align: 'center',
     },
     {
-      title: 'Shop Display ID',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Shop Display ID">Shop Display ID</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'id',
       width: '20%',
       render: (value: string, record: PromoDisplay, index: number) => (
@@ -103,7 +128,19 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
       ),
     },
     {
-      title: 'Display Start Date',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Display Start Date">Display Start Date</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'displayStartDate',
       width: '15%',
       align: 'center',
@@ -124,7 +161,19 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
     {
-      title: 'Display Expire Date',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Display Expire Date">Display Expire Date</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'displayExpireDate',
       width: '15%',
       align: 'center',
@@ -232,7 +281,7 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
           </Row>
           <Table
             className="mt-1"
-            scroll={{ x: true }}
+            scroll={{ x: true, y: 300 }}
             rowClassName={(_, index) => `scrollable-row-${index}`}
             rowKey="id"
             columns={columns}

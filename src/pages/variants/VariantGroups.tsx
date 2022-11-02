@@ -14,6 +14,7 @@ import {
   Select,
   Spin,
   Table,
+  Tooltip,
   Typography,
 } from 'antd';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
@@ -272,16 +273,40 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
 
   const columns: EditableColumnType<Product>[] = [
     {
-      title: 'VariantId',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="VariantID">VariantID</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'id',
-      width: '5%',
+      width: '10%',
       render: id => <CopyValueToClipboard value={id} />,
       align: 'center',
     },
     {
-      title: 'Name',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Name">Name</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'name',
-      width: '85%',
+      width: '80%',
       align: 'left',
       sorter: (a, b): any => {
         if (a.name && b.name) return a.name.localeCompare(b.name);
@@ -291,7 +316,19 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
       },
     },
     {
-      title: 'Edit Group',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Edit Group">Edit Group</Tooltip>
+          </div>
+        </div>
+      ),
       key: 'action',
       width: '10%',
       align: 'center',
@@ -626,7 +663,7 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
           >
             <Table
               className="mt-1"
-              scroll={{ x: true }}
+              scroll={{ x: true, y: 300 }}
               rowClassName={(_, index) => `scrollable-row-${index}`}
               rowKey="id"
               columns={columns}

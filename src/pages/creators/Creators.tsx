@@ -19,6 +19,7 @@ import {
   Row,
   Spin,
   Table,
+  Tooltip,
   Typography,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
@@ -138,14 +139,38 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
 
   const columns: ColumnsType<Creator> = [
     {
-      title: '_id',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="_id">_id</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'id',
       width: '3%',
       render: id => <CopyValueToClipboard value={id} />,
       align: 'center',
     },
     {
-      title: 'Name',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Name">Name</Tooltip>
+          </div>
+        </div>
+      ),
       width: '15%',
       render: (_, record: Creator, index: number) => (
         <Link to={location.pathname} onClick={() => editCreator(index, record)}>
@@ -161,7 +186,19 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
     {
-      title: 'vIndex',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="vIndex">vIndex</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'vIndex',
       width: '3%',
       render: (_, creator, index) => {
@@ -193,7 +230,19 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
     {
-      title: 'Display Name',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Display Name">Display Name</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'userName',
       width: '10%',
       align: 'center',
@@ -206,7 +255,19 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
     {
-      title: 'InstaLink',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="InstaLink">InstaLink</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'userName',
       width: '10%',
       align: 'center',
@@ -221,7 +282,19 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
       ),
     },
     {
-      title: 'Rebuild',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Rebuild">Rebuild</Tooltip>
+          </div>
+        </div>
+      ),
       width: '5%',
       align: 'center',
       render: (_, record: Creator, index: number) => (
@@ -238,7 +311,19 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
       ),
     },
     {
-      title: 'Coupon Code',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Coupon Code">Coupon Code</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'couponCode',
       width: '10%',
       align: 'center',
@@ -251,7 +336,19 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
     {
-      title: 'Discount %',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Discount %">Discount %</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'discountPercentage',
       width: '5%',
       align: 'center',
@@ -264,7 +361,21 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
     {
-      title: 'Display in Creator Grid',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Display in Creator Grid">
+              Display in Creator Grid
+            </Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'displayInCreatorGrid',
       width: '15%',
       align: 'center',
@@ -282,7 +393,19 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
     {
-      title: 'Status',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Status">Status</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'status',
       width: '10%',
       align: 'center',
@@ -452,7 +575,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
           >
             <Table
               className="mt-1"
-              scroll={{ x: true }}
+              scroll={{ x: true, y: 300 }}
               rowClassName={(_, index) => `scrollable-row-${index}`}
               rowKey="id"
               columns={columns}

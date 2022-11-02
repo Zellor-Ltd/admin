@@ -300,14 +300,38 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
 
   const columns: ColumnsType<Order> = [
     {
-      title: '_id',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="_id">_id</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'id',
       width: '6%',
       render: id => <CopyOrderToClipboard order={id} />,
       align: 'center',
     },
     {
-      title: 'Name',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Name">Name</Tooltip>
+          </div>
+        </div>
+      ),
       width: '14%',
       align: 'center',
       render: (_, record) =>
@@ -343,7 +367,19 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
     {
-      title: 'User',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="User">User</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'customerEmail',
       width: '12%',
       align: 'center',
@@ -372,7 +408,19 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
     {
-      title: 'Paid',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Paid">Paid</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'paid',
       width: '5%',
       align: 'center',
@@ -385,7 +433,19 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
     {
-      title: 'Amount',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Amount">Amount</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'amount',
       width: '5%',
       align: 'center',
@@ -398,7 +458,19 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
     {
-      title: 'Disco Dollars',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Disco Dollars">Disco Dollars</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'discoDollars',
       width: '5%',
       align: 'center',
@@ -411,7 +483,19 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
     {
-      title: 'Creation',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Creation">Creation</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'hCreationDate',
       width: '9%',
       align: 'center',
@@ -439,7 +523,19 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
     {
-      title: 'Stage',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Stage">Stage</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'stage',
       width: '12%',
       align: 'center',
@@ -484,7 +580,19 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
     {
-      title: 'Int. Status',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Int. Status">Int. Status</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'commissionInternalStatus',
       width: '12%',
       align: 'center',
@@ -534,7 +642,19 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
     {
-      title: 'Last Update',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Last Update">Last Update</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'hLastUpdate',
       width: '10%',
       align: 'center',
@@ -882,7 +1002,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
           >
             <Table
               className="mt-05"
-              scroll={{ x: true }}
+              scroll={{ x: true, y: 300 }}
               rowClassName={(_, index) => `scrollable-row-${index}`}
               rowKey="id"
               columns={columns}

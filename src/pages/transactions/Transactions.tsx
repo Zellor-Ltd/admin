@@ -6,6 +6,7 @@ import {
   PageHeader,
   Row,
   Table,
+  Tooltip,
   Typography,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
@@ -53,14 +54,38 @@ const Transactions: React.FC<RouteComponentProps> = () => {
 
   const columns: ColumnsType<Transaction> = [
     {
-      title: '_id',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="_id">_id</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'id',
       width: '6%',
       render: id => <CopyOrderToClipboard order={id} />,
       align: 'center',
     },
     {
-      title: 'Creation Time',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Creation Time">Creation Time</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'hCreationDate',
       width: '15%',
       align: 'left',
@@ -88,7 +113,19 @@ const Transactions: React.FC<RouteComponentProps> = () => {
       },
     },
     {
-      title: 'Master Brand',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Master Brand">Master Brand</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'brandName',
       width: '15%',
       align: 'center',
@@ -101,7 +138,19 @@ const Transactions: React.FC<RouteComponentProps> = () => {
       },
     },
     {
-      title: 'Disco Dollars',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Disco Dollars">Disco Dollars</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'discoDollars',
       width: '15%',
       align: 'center',
@@ -114,7 +163,19 @@ const Transactions: React.FC<RouteComponentProps> = () => {
       },
     },
     {
-      title: 'Disco Gold',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Disco Gold">Disco Gold</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'discoGold',
       width: '15%',
       align: 'center',
@@ -191,7 +252,7 @@ const Transactions: React.FC<RouteComponentProps> = () => {
       </Row>
       <Table
         className="mt-1"
-        scroll={{ x: true }}
+        scroll={{ x: true, y: 300 }}
         rowKey="id"
         columns={columns}
         dataSource={transactions}

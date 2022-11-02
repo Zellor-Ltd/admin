@@ -13,6 +13,7 @@ import {
   Popconfirm,
   Row,
   Table,
+  Tooltip,
   Typography,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
@@ -66,14 +67,38 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
 
   const columns: ColumnsType<Masthead> = [
     {
-      title: '_id',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="_id">_id</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'id',
       width: '6%',
       render: id => <CopyValueToClipboard value={id} />,
       align: 'center',
     },
     {
-      title: 'Description',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Description">Description</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'description',
       width: '15%',
       align: 'center',
@@ -91,7 +116,19 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
     {
-      title: 'Image',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Image">Image</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'image',
       width: '15%',
       align: 'center',
@@ -193,7 +230,7 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
           </Row>
           <Table
             className="mt-1"
-            scroll={{ x: true }}
+            scroll={{ x: true, y: 300 }}
             rowClassName={(_, index) => `scrollable-row-${index}`}
             rowKey="id"
             columns={columns}

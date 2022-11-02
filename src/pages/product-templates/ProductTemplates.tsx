@@ -5,7 +5,7 @@ import {
   SearchOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
-import { Button, Col, PageHeader, Row, Table } from 'antd';
+import { Button, Col, PageHeader, Row, Table, Tooltip } from 'antd';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import 'pages/products/Products.scss';
@@ -83,14 +83,38 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
 
   const columns: EditableColumnType<Product>[] = [
     {
-      title: 'Id',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="_id">_id</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'id',
       width: '1%',
       render: id => <CopyValueToClipboard value={id} />,
       align: 'center',
     },
     {
-      title: 'Name',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Name">Name</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'name',
       width: '17%',
       shouldCellUpdate: (prevRecord, nextRecord) =>
@@ -131,7 +155,19 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
       },
     },
     {
-      title: 'Master Brand',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Master Brand">Master Brand</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: ['brand', 'brandName'],
       width: '10%',
       align: 'center',
@@ -147,7 +183,19 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
       },
     },
     {
-      title: 'In Stock',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="In Stock">In Stock</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'outOfStock',
       width: '7%',
       align: 'center',
@@ -162,7 +210,19 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
       },
     },
     {
-      title: 'Max DD',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Max DD">Max DD</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'maxDiscoDollars',
       width: '7%',
       align: 'center',
@@ -178,7 +238,19 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
       },
     },
     {
-      title: 'Disco %',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Disco %">Disco %</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'discoPercentage',
       width: '8%',
       align: 'center',
@@ -194,7 +266,19 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
       },
     },
     {
-      title: 'Shopify Id',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Shopify ID">Shopify ID</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'shopifyUniqueId',
       width: '7%',
       align: 'center',
@@ -208,7 +292,19 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
       },
     },
     {
-      title: 'Import Run Id',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Import Run ID">Import Run ID</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'importRunId',
       width: '7%',
       align: 'center',
@@ -216,7 +312,19 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
       render: importRunId => <CopyValueToClipboard value={importRunId} />,
     },
     {
-      title: 'Expiration Date',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Expiration Date">Expiration Date</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'offerExpirationDate',
       width: '10%',
       align: 'center',
@@ -237,7 +345,19 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
       },
     },
     {
-      title: 'Status',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Status">Status</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'status',
       width: '12%',
       align: 'center',
@@ -252,7 +372,19 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
       },
     },
     {
-      title: 'Product Brand',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Product Brand">Product Brand</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'productBrand',
       width: '10%',
       align: 'center',
@@ -302,7 +434,19 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
       },
     },
     {
-      title: 'Last Go-Live',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Last Go-Live">Last Go-Live</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'goLiveDate',
       width: '10%',
       align: 'center',
@@ -468,7 +612,7 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
             setSelectedRecord={setProductAPITest}
           />
           <Table
-            scroll={{ x: true }}
+            scroll={{ x: true, y: 300 }}
             className="mt-1"
             rowClassName={(_, index) =>
               `scrollable-row-${index} ${

@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import { Button, PageHeader, Popconfirm, Table } from 'antd';
+import { Button, PageHeader, Popconfirm, Table, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { useRequest } from '../../hooks/useRequest';
 import { Banner } from '../../interfaces/Banner';
@@ -71,14 +71,38 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
 
   const columns: ColumnsType<Banner> = [
     {
-      title: '_id',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="_id">_id</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'id',
       width: '6%',
       render: id => <CopyValueToClipboard value={id} />,
       align: 'center',
     },
     {
-      title: 'id',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="_id">_id</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'id',
       width: '6%',
       render: (value: string, record: Banner, index: number) => (
@@ -89,7 +113,19 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
       align: 'center',
     },
     {
-      title: 'HTML',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="HTML">HTML</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'html',
       width: '20%',
       sorter: (a, b) => {
@@ -100,7 +136,19 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
       },
     },
     {
-      title: 'Display Start Date',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Display Start Date">Display Start Date</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'startDate',
       width: '15%',
       align: 'center',
@@ -120,7 +168,19 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
       },
     },
     {
-      title: 'Display Expire Date',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Display Expire Date">Display Expire Date</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'expireDate',
       width: '15%',
       align: 'center',
@@ -185,7 +245,7 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
             ]}
           />
           <Table
-            scroll={{ x: true }}
+            scroll={{ x: true, y: 300 }}
             rowClassName={(_, index) => `scrollable-row-${index}`}
             rowKey="id"
             columns={columns}

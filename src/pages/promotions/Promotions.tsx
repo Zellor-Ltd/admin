@@ -14,6 +14,7 @@ import {
   Popconfirm,
   Row,
   Table,
+  Tooltip,
   Typography,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
@@ -70,14 +71,38 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
 
   const columns: ColumnsType<Promotion> = [
     {
-      title: '_id',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="_id">_id</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'id',
       width: '6%',
       render: id => <CopyValueToClipboard value={id} />,
       align: 'center',
     },
     {
-      title: 'Promo ID',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Promo ID">Promo ID</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'id',
       width: '10%',
       render: (value: string, record: Promotion, index: number) => (
@@ -96,7 +121,19 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
     {
-      title: 'Master Brand',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Master Brand">Master Brand</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: ['brand', 'brandName'],
       width: '10%',
       align: 'center',
@@ -109,7 +146,19 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
     {
-      title: 'Creation',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Creation">Creation</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'hCreationDate',
       width: '10%',
       align: 'center',
@@ -246,7 +295,7 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
           </Row>
           <Table
             className="mt-1"
-            scroll={{ x: true }}
+            scroll={{ x: true, y: 300 }}
             rowClassName={(_, index) => `scrollable-row-${index}`}
             rowKey="id"
             columns={columns}

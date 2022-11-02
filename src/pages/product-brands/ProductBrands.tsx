@@ -17,6 +17,7 @@ import {
   Row,
   Spin,
   Table,
+  Tooltip,
   Typography,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
@@ -138,9 +139,21 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
       align: 'center',
     },
     {
-      title: 'Name',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Name">Name</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'brandName',
-      width: '20%',
+      width: '15%',
       render: (value: string, record: ProductBrand, index: number) => (
         <Link
           to={location.pathname}
@@ -196,7 +209,19 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
     {
-      title: 'Brand Link',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Brand Link">Brand Link</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'brandLink',
       width: '10%',
       align: 'center',
@@ -211,8 +236,20 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
       ),
     },
     {
-      title: 'Rebuild',
-      width: '5%',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Rebuild">Rebuild</Tooltip>
+          </div>
+        </div>
+      ),
+      width: '10%',
       align: 'center',
       render: (_, record: ProductBrand, index: number) => (
         <>
@@ -230,7 +267,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
     {
       title: 'D%',
       dataIndex: 'discoPercentage',
-      width: '10%',
+      width: '8%',
       align: 'center',
       render: (value: string) => <a href=".">{value}</a>,
 
@@ -247,7 +284,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
     {
       title: 'C%',
       dataIndex: 'creatorPercentage',
-      width: '10%',
+      width: '8%',
       align: 'center',
       render: (value: string) => <a href=".">{value}</a>,
       sorter: (a, b): any => {
@@ -264,7 +301,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
     {
       title: 'DD%',
       dataIndex: 'maxDiscoDollarPercentage',
-      width: '10%',
+      width: '8%',
       align: 'center',
       render: (value: string) => <a href=".">{value}</a>,
       sorter: (a, b): any => {
@@ -278,7 +315,19 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
     {
-      title: 'External Code',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="External Code">External Code</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'externalCode',
       width: '10%',
       align: 'center',
@@ -293,7 +342,19 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
     {
-      title: 'Creation',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Creation">Creation</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'hCreationDate',
       width: '15%',
       align: 'center',
@@ -413,7 +474,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
           </Row>
           <Table
             className="mt-15"
-            scroll={{ x: true }}
+            scroll={{ x: true, y: 300 }}
             rowClassName={(_, index) => `scrollable-row-${index}`}
             rowKey="id"
             columns={columns}

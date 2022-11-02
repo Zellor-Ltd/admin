@@ -9,6 +9,7 @@ import {
   Row,
   Space,
   Tabs,
+  Tooltip,
 } from 'antd';
 import Table, { ColumnsType } from 'antd/lib/table';
 import { SortableTable } from 'components';
@@ -209,14 +210,38 @@ const Interests: React.FC<InterestsProps> = () => {
 
   const columns: ColumnsType<FeedItem> = [
     {
-      title: '_id',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="_id">_id</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'id',
       width: '6%',
       render: id => <CopyValueToClipboard value={id} />,
       align: 'center',
     },
     {
-      title: 'Title',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Title">Title</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'description',
       width: '15%',
       ...(() =>
@@ -225,7 +250,19 @@ const Interests: React.FC<InterestsProps> = () => {
           : {})(),
     },
     {
-      title: 'Image',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Image">Image</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'image',
       width: '15%',
       render: (image: Image) => <AntImage src={image?.url} width={70} />,
@@ -274,7 +311,7 @@ const Interests: React.FC<InterestsProps> = () => {
           <Tabs defaultActiveKey="Interests" onChange={handleTabChange}>
             <Tabs.TabPane tab="Interests" key="Interests">
               <SortableTable
-                scroll={{ x: true }}
+                scroll={{ x: true, y: 300 }}
                 rowKey="id"
                 columns={columns}
                 dataSource={interests}
@@ -284,7 +321,7 @@ const Interests: React.FC<InterestsProps> = () => {
             </Tabs.TabPane>
             <Tabs.TabPane tab="All Categories" key="All Categories">
               <Table
-                scroll={{ x: true }}
+                scroll={{ x: true, y: 300 }}
                 rowKey="id"
                 columns={columns}
                 dataSource={mergedCategories}

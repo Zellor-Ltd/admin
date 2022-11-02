@@ -11,6 +11,7 @@ import {
   Select,
   Spin,
   Table,
+  Tooltip,
   Typography,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
@@ -137,7 +138,19 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
 
   const columns: ColumnsType<Commission> = [
     {
-      title: 'Date',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Date">Date</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'hCreationDate',
       width: '10%',
       align: 'center',
@@ -156,7 +169,19 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
       },
     },
     {
-      title: 'Due Date',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Due Date">Due Date</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'dueDate',
       width: '10%',
       align: 'center',
@@ -188,7 +213,19 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
       },
     },
     {
-      title: 'Commission ID',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Commission ID">Commission ID</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'id',
       width: '25%',
       sorter: (a, b): any => {
@@ -202,7 +239,19 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
       ),
     },
     {
-      title: 'Product ID',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Product ID">Product ID</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: ['item', 'id'],
       width: '25%',
       sorter: (a, b): any => {
@@ -217,7 +266,19 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
       ),
     },
     {
-      title: 'Description',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Description">Description</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: ['item', 'description'],
       width: '15%',
       sorter: (a, b): any => {
@@ -231,7 +292,19 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
         value?.length > 50 ? `${value.toString().slice(0, 50)}(...)` : value,
     },
     {
-      title: 'Quantity',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Quantity">Quantity</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: ['item', 'quantity'],
       width: '10%',
       sorter: (a, b): any => {
@@ -243,7 +316,19 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
       },
     },
     {
-      title: 'Status',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Status">Status</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'status',
       width: '15%',
       sorter: (a, b): any => {
@@ -254,7 +339,19 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
       },
     },
     {
-      title: 'Price',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Price">Price</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: ['item', 'totalPrice'],
       width: '10%',
       sorter: (a, b): any => {
@@ -267,7 +364,19 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
       render: (value: number) => `€${value.toFixed(2)}`,
     },
     {
-      title: 'Discount',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Discount">Discount</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: ['item', 'totalPrice'],
       width: '10%',
       sorter: (a, b): any => {
@@ -285,7 +394,19 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
         ).toFixed(2)}%`,
     },
     {
-      title: 'Sale Price',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Sale Price">Sale Price</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: ['item', 'totalDiscountedPrice'],
       width: '10%',
       sorter: (a, b): any => {
@@ -298,7 +419,19 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
       render: (value: number) => `€${value.toFixed(2)}`,
     },
     {
-      title: 'Commission %',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Commission %">Commission %</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'commissionPercentage',
       width: '10%',
       sorter: (a, b): any => {
@@ -311,7 +444,19 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
       render: (value: number) => `${value.toFixed(2)}%`,
     },
     {
-      title: 'Commission',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Commission">Commission</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'commissionAmount',
       width: '10%',
       sorter: (a, b): any => {
@@ -507,7 +652,7 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
           )}
           <>
             <Table
-              scroll={{ x: true }}
+              scroll={{ x: true, y: 300 }}
               rowClassName={(_, index) => `scrollable-row-${index}`}
               rowSelection={rowSelection}
               rowKey="id"

@@ -4,7 +4,16 @@ import {
   EditOutlined,
   SearchOutlined,
 } from '@ant-design/icons';
-import { Button, Col, PageHeader, Popconfirm, Row, Spin, Table } from 'antd';
+import {
+  Button,
+  Col,
+  PageHeader,
+  Popconfirm,
+  Row,
+  Spin,
+  Table,
+  Tooltip,
+} from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import CopyValueToClipboard from 'components/CopyValueToClipboard';
 import { SearchFilterDebounce } from 'components/SearchFilterDebounce';
@@ -101,14 +110,38 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
 
   const columns: ColumnsType<Tag> = [
     {
-      title: '_id',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="_id">_id</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'id',
       width: '6%',
       render: id => <CopyValueToClipboard value={id} />,
       align: 'center',
     },
     {
-      title: 'Tag',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Tag">Tag</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'tagName',
       width: '15%',
       render: (value, record: Tag, index: number) => (
@@ -124,7 +157,19 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
       },
     },
     {
-      title: 'Product',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Product">Product</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: ['product', 'name'],
       width: '20%',
       sorter: (a, b): any => {
@@ -136,7 +181,19 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
       },
     },
     {
-      title: 'Master Brand',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Master Brand">Master Brand</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: ['brand', 'brandName'],
       width: '20%',
       sorter: (a, b): any => {
@@ -148,7 +205,19 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
       },
     },
     {
-      title: 'Template',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Template">Template</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'template',
       width: '15%',
       sorter: (a, b): any => {
@@ -160,7 +229,19 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
       },
     },
     {
-      title: "DD's",
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="DDs">DDs</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'discoDollars',
       width: '5%',
       sorter: (a, b): any => {
@@ -277,7 +358,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
           >
             <Table
               className="mt-1"
-              scroll={{ x: true }}
+              scroll={{ x: true, y: 300 }}
               rowClassName={(_, index) => `scrollable-row-${index}`}
               rowKey="id"
               columns={columns}

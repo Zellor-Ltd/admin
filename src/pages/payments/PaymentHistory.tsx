@@ -9,6 +9,7 @@ import {
   Select,
   Spin,
   Table,
+  Tooltip,
   Typography,
 } from 'antd';
 import { useRequest } from '../../hooks/useRequest';
@@ -120,7 +121,19 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
 
   const columns: ColumnsType<Payment> = [
     {
-      title: 'Date',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Date">Date</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'hCreationDate',
       width: '10%',
       align: 'left',
@@ -139,7 +152,19 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
     {
-      title: 'Description',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Description">Description</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'description',
       width: '15%',
       sorter: (a, b): any => {
@@ -156,7 +181,19 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
       ),
     },
     {
-      title: 'Creator Name',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Creator Name">Creator Name</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'creatorId',
       width: '15%',
       sorter: (a, b): any => {
@@ -171,7 +208,19 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
     {
-      title: 'Creator Email',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Creator Email">Creator Email</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'creatorId',
       width: '15%',
       sorter: (a, b): any => {
@@ -186,7 +235,19 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
     {
-      title: 'Creator Paypal',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Creator Paypal">Creator Paypal</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'creatorId',
       width: '15%',
       sorter: (a, b): any => {
@@ -201,7 +262,19 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
     {
-      title: 'Amount',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Amount">Amount</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'payment',
       width: '10%',
       sorter: (a, b): any => {
@@ -215,7 +288,19 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
     {
-      title: 'Number of Items',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Number of Items">Number of Items</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'quantity',
       width: '10%',
       sorter: (a, b): any => {
@@ -339,7 +424,7 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
             }
           >
             <Table
-              scroll={{ x: true }}
+              scroll={{ x: true, y: 300 }}
               rowClassName={(_, index) => `scrollable-row-${index}`}
               rowKey="id"
               columns={columns}

@@ -7,6 +7,7 @@ import {
   Row,
   Select,
   Table,
+  Tooltip,
   Typography,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
@@ -60,14 +61,38 @@ const FeaturedFeed: React.FC<RouteComponentProps> = () => {
 
   const columns: ColumnsType<any> = [
     {
-      title: 'Index',
-      width: '3%',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Index">Index</Tooltip>
+          </div>
+        </div>
+      ),
+      width: '5%',
       dataIndex: 'id',
       align: 'center',
       render: (_: number, entity: any, index: number) => `${index}`,
     },
     {
-      title: 'Creator',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Creator">Creator</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: ['creator', 'firstName'],
       width: '18%',
       sorter: (a, b): any => {
@@ -81,7 +106,19 @@ const FeaturedFeed: React.FC<RouteComponentProps> = () => {
       },
     },
     {
-      title: 'Creator Username',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Creator Username">Creator Username</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: ['creator', 'userName'],
       width: '18%',
       sorter: (a, b): any => {
@@ -95,7 +132,19 @@ const FeaturedFeed: React.FC<RouteComponentProps> = () => {
       },
     },
     {
-      title: 'Product Brand',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Product Brand">Product Brand</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: ['productBrand', 'name'],
       width: '18%',
       render: (value: string, record: FeedItem, index: number) => (
@@ -117,9 +166,23 @@ const FeaturedFeed: React.FC<RouteComponentProps> = () => {
       },
     },
     {
-      title: 'Product Brand Description',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Product Brand Description">
+              Product Brand Description
+            </Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: ['productBrand', 'description'],
-      width: '18%',
+      width: '10%',
       sorter: (a, b): any => {
         if (a.productBrand?.description && b.productBrand?.description)
           return a.productBrand?.description.localeCompare(
@@ -131,9 +194,23 @@ const FeaturedFeed: React.FC<RouteComponentProps> = () => {
       },
     },
     {
-      title: 'Product Brand vLinkDescription',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Product Brand vLinkDescription">
+              Product Brand vLinkDescription
+            </Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: ['productBrand', 'vLinkDescription'],
-      width: '18%',
+      width: '10%',
       sorter: (a, b): any => {
         if (
           a.productBrand?.vLinkDescription &&
@@ -148,7 +225,19 @@ const FeaturedFeed: React.FC<RouteComponentProps> = () => {
       },
     },
     {
-      title: 'Product Brand Link',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Product Brand Link">Product Brand Link</Tooltip>
+          </div>
+        </div>
+      ),
       width: '18%',
       dataIndex: ['productBrand', 'brandLink'],
       render: (value: string) => (
@@ -177,7 +266,7 @@ const FeaturedFeed: React.FC<RouteComponentProps> = () => {
     {
       title: 'Actions',
       key: 'action',
-      width: '5%',
+      width: '10%',
       align: 'right',
       render: (_, feedItem: FeedItem, index: number) => (
         <>
@@ -329,7 +418,7 @@ const FeaturedFeed: React.FC<RouteComponentProps> = () => {
         </Row>
         <DndProvider backend={HTML5Backend}>
           <Table
-            scroll={{ x: true }}
+            scroll={{ x: true, y: 300 }}
             className="mt-1"
             rowClassName={(_, index) =>
               `${index === lastViewedIndex ? 'selected-row' : ''}`

@@ -17,6 +17,7 @@ import {
   Select,
   Spin,
   Table,
+  Tooltip,
   Typography,
 } from 'antd';
 import React, { useContext, useEffect, useRef, useState } from 'react';
@@ -236,16 +237,40 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
 
   const columns: EditableColumnType<Product>[] = [
     {
-      title: 'Id',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="_id">_id</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'id',
       width: '1%',
       render: id => <CopyValueToClipboard value={id} />,
       align: 'center',
     },
     {
-      title: 'Name',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Name">Name</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'name',
-      width: '17%',
+      width: '15%',
       shouldCellUpdate: (prevRecord, nextRecord) =>
         prevRecord.name != nextRecord.name,
       render: (value: string, record, index) => (
@@ -284,7 +309,19 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
       },
     },
     {
-      title: 'Master Brand',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Master Brand">Master Brand</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: ['brand', 'brandName'],
       width: '10%',
       align: 'center',
@@ -300,7 +337,19 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
       },
     },
     {
-      title: 'In Stock',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="In Stock">In Stock</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'outOfStock',
       width: '7%',
       align: 'center',
@@ -315,9 +364,21 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
       },
     },
     {
-      title: 'Max DD',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Max DD">Max DD</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'maxDiscoDollars',
-      width: '7%',
+      width: '5%',
       align: 'center',
       responsive: ['sm'],
       shouldCellUpdate: (prevRecord, nextRecord) =>
@@ -331,9 +392,21 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
       },
     },
     {
-      title: 'Disco %',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Disco %">Disco %</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'discoPercentage',
-      width: '8%',
+      width: '5%',
       align: 'center',
       responsive: ['sm'],
       shouldCellUpdate: (prevRecord, nextRecord) =>
@@ -347,7 +420,19 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
       },
     },
     {
-      title: 'Shopify Id',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Shopify ID">Shopify ID</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'shopifyUniqueId',
       width: '7%',
       align: 'center',
@@ -361,15 +446,39 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
       },
     },
     {
-      title: 'Import Run Id',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Import Run ID">Import Run ID</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'importRunId',
-      width: '7%',
+      width: '4%',
       align: 'center',
       responsive: ['sm'],
       render: importRunId => <CopyValueToClipboard value={importRunId} />,
     },
     {
-      title: 'Expiration Date',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Expiration Date">Expiration Date</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'offerExpirationDate',
       width: '10%',
       align: 'center',
@@ -390,7 +499,19 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
       },
     },
     {
-      title: 'Status',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Status">Status</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'status',
       width: '12%',
       align: 'center',
@@ -405,7 +526,19 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
       },
     },
     {
-      title: 'Product Brand',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Product Brand">Product Brand</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'productBrand',
       width: '10%',
       align: 'center',
@@ -455,7 +588,19 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
       },
     },
     {
-      title: 'Last Go-Live',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Last Go-Live">Last Go-Live</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'goLiveDate',
       width: '10%',
       align: 'center',
@@ -482,7 +627,19 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
       },
     },
     {
-      title: 'Actions',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Actions">Actions</Tooltip>
+          </div>
+        </div>
+      ),
       key: 'action',
       width: '12%',
       align: 'right',
@@ -865,7 +1022,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
           >
             <Table
               className="mt-1"
-              scroll={{ x: true }}
+              scroll={{ x: true, y: 300 }}
               rowClassName={(_, index) =>
                 `scrollable-row-${index} ${
                   index === lastViewedIndex ? 'selected-row' : ''
