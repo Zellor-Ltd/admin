@@ -120,6 +120,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const [data, setData] = useState<any[]>([]);
   const [selectedFeed, setSelectedFeed] = useState<FeedItem>();
   const selectRef = useRef<any>(null);
+  const loadMore = useRef<boolean>(false);
 
   useEffect(() => {
     getDetailsResources();
@@ -146,10 +147,14 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   };
 
   useEffect(() => {
-    setData(search(buffer));
+    if (search(buffer).length < 30 && loadMore.current)
+      getFeed(undefined, false);
+    else setData(search(buffer));
+    loadMore.current = false;
   }, [buffer]);
 
   useEffect(() => {
+    loadMore.current = true;
     setBuffer([...buffer]);
   }, [indexFilter, creatorFilter, categoryFilter]);
 
@@ -743,7 +748,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   }, [details]);
 
   const getFeed = async (event?: Event, resetResults?: boolean) => {
-    if (!resetResults && buffer.length < 30) {
+    if (!loadMore.current && !resetResults && buffer.length < 30) {
       setEof(true);
       return;
     }
