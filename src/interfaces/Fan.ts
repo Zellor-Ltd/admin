@@ -12,6 +12,7 @@ export interface FanFilter {
   group?: string;
 }
 export interface Fan {
+  signUpDate?: any;
   addresses?: any[];
   personalDetails?: any;
   pwd?: string;
