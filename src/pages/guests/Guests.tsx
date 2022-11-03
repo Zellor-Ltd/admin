@@ -9,6 +9,7 @@ import {
   Spin,
   Table,
   Tag,
+  Tooltip,
   Typography,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
@@ -102,14 +103,38 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
 
   const columns: ColumnsType<Fan> = [
     {
-      title: '_id',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="_id">_id</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'id',
       width: '10%',
       render: id => <CopyValueToClipboard value={id} />,
       align: 'center',
     },
     {
-      title: 'Name',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Name">Name</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'userName',
       width: '25%',
       align: 'center',
@@ -140,7 +165,19 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
     {
-      title: 'Creation',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Creation">Creation</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'hCreationDate',
       width: '15%',
       align: 'center',
@@ -162,7 +199,19 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
     {
-      title: 'E-mail',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="E-mail">E-mail</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'user',
       width: '25%',
       align: 'center',
@@ -184,7 +233,19 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
     {
-      title: 'Profile',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Profile">Profile</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'profile',
       width: '10%',
       render: (profile = 'Fan') => (
@@ -380,7 +441,7 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
           >
             <Table
               className="mt-1"
-              scroll={{ x: true }}
+              scroll={{ x: true, y: 300 }}
               rowClassName={(_, index) => `scrollable-row-${index}`}
               rowKey="id"
               columns={columns}

@@ -24,6 +24,7 @@ import {
   Spin,
   Table,
   Tag as AntTag,
+  Tooltip,
   Typography,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
@@ -260,14 +261,38 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
 
   const feedItemColumns: ColumnsType<FeedItem> = [
     {
-      title: '_id',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="_id">_id</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'id',
       width: '3%',
       render: id => <CopyValueToClipboard value={id} />,
       align: 'center',
     },
     {
-      title: 'Index',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Index">Index</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'index',
       width: '3%',
       render: (_, feedItem, index) => {
@@ -299,7 +324,19 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       },
     },
     {
-      title: 'vIndex',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="vIndex">vIndex</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'vIndex',
       width: '3%',
       render: (_, feedItem) => {
@@ -331,7 +368,19 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       },
     },
     {
-      title: 'Title',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Title">Title</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'title',
       width: '18%',
       render: (value: string, feedItem: FeedItem, index: number) => (
@@ -351,14 +400,38 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       },
     },
     {
-      title: 'Segments',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Segments">Segments</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'package',
       render: (pack: Array<any> = []) => <AntTag>{pack?.length ?? 0}</AntTag>,
       width: '5%',
       align: 'center',
     },
     {
-      title: 'Length',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Length">Length</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'lengthTotal',
       width: '5%',
       align: 'center',
@@ -371,7 +444,19 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       },
     },
     {
-      title: 'Creation Date',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Creation Date">Creation Date</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'hCreationDate',
       width: '10%',
       render: (creation: Date) =>
@@ -393,7 +478,19 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       },
     },
     {
-      title: 'Tags',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Tags">Tags</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'package',
       width: '5%',
       render: (pack: Array<any> = []) => (
@@ -409,7 +506,19 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       },
     },
     {
-      title: 'Status',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Status">Status</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'status',
       width: '7%',
       align: 'center',
@@ -423,7 +532,19 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       },
     },
     {
-      title: 'InstaLink',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="InstaLink">InstaLink</Tooltip>
+          </div>
+        </div>
+      ),
       width: '18%',
       render: (_: string, record: any) => (
         <Link
@@ -461,9 +582,21 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       },
     },
     {
-      title: 'Feed List',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Feed List">Feed List</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'listName',
-      width: '18%',
+      width: '5%',
       render: (_: string, feedItem: FeedItem) => {
         if (feedItem?.id !== selectedFeed?.id)
           return (
@@ -506,7 +639,19 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       },
     },
     {
-      title: 'Rebuild',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Rebuild">Rebuild</Tooltip>
+          </div>
+        </div>
+      ),
       width: '5%',
       align: 'center',
       render: (_: string, record: any, index: number) => (
@@ -536,7 +681,19 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       ),
     },
     {
-      title: 'Clone',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Clone">Clone</Tooltip>
+          </div>
+        </div>
+      ),
       width: '5%',
       align: 'center',
       render: (_, feedItem: FeedItem, index: number) => (
@@ -554,7 +711,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     {
       title: 'Actions',
       key: 'action',
-      width: '5%',
+      width: '10%',
       align: 'right',
       render: (_, feedItem: FeedItem, index: number) => (
         <>
@@ -1075,7 +1232,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
             >
               <Table
                 className={isMobile ? '' : 'mt-15'}
-                scroll={{ x: true }}
+                scroll={{ x: true, y: 300 }}
                 rowClassName={(_, index) => `scrollable-row-${index}`}
                 size="small"
                 columns={feedItemColumns}

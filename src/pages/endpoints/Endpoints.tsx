@@ -1,5 +1,14 @@
 import { EditOutlined, SearchOutlined } from '@ant-design/icons';
-import { Button, Col, Input, PageHeader, Row, Table, Typography } from 'antd';
+import {
+  Button,
+  Col,
+  Input,
+  PageHeader,
+  Row,
+  Table,
+  Tooltip,
+  Typography,
+} from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { Endpoint } from 'interfaces/Endpoint';
 import { useContext, useState, useEffect } from 'react';
@@ -24,14 +33,38 @@ const Endpoints: React.FC<RouteComponentProps> = ({ history, location }) => {
 
   const columns: ColumnsType<Endpoint> = [
     {
-      title: '_id',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="_id">_id</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'id',
       width: '6%',
       render: id => <CopyValueToClipboard value={id} />,
       align: 'center',
     },
     {
-      title: 'Name',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Name">Name</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'name',
       width: '15%',
       render: (value, record: Endpoint) => (
@@ -52,7 +85,19 @@ const Endpoints: React.FC<RouteComponentProps> = ({ history, location }) => {
       },
     },
     {
-      title: 'Container',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Container">Container</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'container',
       width: '15%',
       sorter: (a, b): any => {
@@ -64,7 +109,19 @@ const Endpoints: React.FC<RouteComponentProps> = ({ history, location }) => {
       },
     },
     {
-      title: 'Method',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Method">Method</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'action',
       width: '10%',
       sorter: (a, b): any => {
@@ -143,7 +200,7 @@ const Endpoints: React.FC<RouteComponentProps> = ({ history, location }) => {
       </Row>
       <Table
         className="mt-1"
-        scroll={{ x: true }}
+        scroll={{ x: true, y: 300 }}
         rowKey="id"
         columns={columns}
         dataSource={data}

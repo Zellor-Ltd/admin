@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Col, PageHeader, Row, Table, Typography } from 'antd';
+import { Col, PageHeader, Row, Table, Tooltip, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import SimpleSelect from 'components/select/SimpleSelect';
 import { Brand } from 'interfaces/Brand';
@@ -110,7 +110,19 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
 
   const columns: ColumnsType<Wallet> = [
     {
-      title: 'Master Brand',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Master Brand">Master Brand</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'brandName',
       width: '40%',
       render: (value: string, record: Wallet, index: number) => (
@@ -144,7 +156,19 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
     {
-      title: 'DD Balance',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="DD Balance">DD Balance</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'discoDollars',
       width: '15%',
       align: 'right',
@@ -278,7 +302,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
           </Row>
           <Table
             className="mt-1"
-            scroll={{ x: true }}
+            scroll={{ x: true, y: 300 }}
             rowClassName={(_, index) => `scrollable-row-${index}`}
             rowKey="key"
             columns={columns}

@@ -1,5 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Button, Col, Input, PageHeader, Row, Table, Typography } from 'antd';
+import {
+  Button,
+  Col,
+  Input,
+  PageHeader,
+  Row,
+  Table,
+  Tooltip,
+  Typography,
+} from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { useRequest } from 'hooks/useRequest';
 import { FanGroup } from 'interfaces/FanGroup';
@@ -60,7 +69,19 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
 
   const columns: ColumnsType<FanGroup> = [
     {
-      title: 'Group Name',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Group Name">Group Name</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'name',
       width: '20%',
       sorter: (a, b): any => {
@@ -71,7 +92,19 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
       },
     },
     {
-      title: 'Creation',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Creation">Creation</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'hCreationDate',
       width: '15%',
       align: 'center',
@@ -151,7 +184,7 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
           </Row>
           <Table
             className="mt-15"
-            scroll={{ x: true }}
+            scroll={{ x: true, y: 300 }}
             rowClassName={(_, index) => `scrollable-row-${index}`}
             rowKey="id"
             columns={columns}

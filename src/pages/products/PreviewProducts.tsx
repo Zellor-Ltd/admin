@@ -18,6 +18,7 @@ import {
   Row,
   Select,
   Spin,
+  Tooltip,
   Typography,
 } from 'antd';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
@@ -312,14 +313,38 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
 
   const columns: EditableColumnType<Product>[] = [
     {
-      title: 'Id',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="_id">_id</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'id',
       width: '6%',
       render: id => <CopyValueToClipboard value={id} />,
       align: 'center',
     },
     {
-      title: 'Name',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Name">Name</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'name',
       width: '15%',
       render: (value: string, record: Product, index: number) => (
@@ -358,7 +383,19 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
       },
     },
     {
-      title: 'Master Brand',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Master Brand">Master Brand</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: ['brand', 'brandName'],
       width: '15%',
       align: 'center',
@@ -371,14 +408,38 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
       },
     },
     {
-      title: 'Import Run Id',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Import Run ID">Import Run ID</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'importRunId',
       width: '7%',
       align: 'center',
       responsive: ['sm'],
     },
     {
-      title: 'Product Brand',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Product Brand">Product Brand</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: ['productBrand'],
       width: '12%',
       align: 'center',
@@ -426,13 +487,37 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
       },
     },
     {
-      title: 'SKU',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="SKU">SKU</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'sku',
       width: '5%',
       align: 'center',
     },
     {
-      title: 'In Stock',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="In Stock">In Stock</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'outOfStock',
       width: '7%',
       align: 'center',
@@ -445,7 +530,19 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
       },
     },
     {
-      title: 'Currency',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Currency">Currency</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'currencyIsoCode',
       width: '7%',
       align: 'center',
@@ -458,7 +555,19 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
       },
     },
     {
-      title: 'Price',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Price">Price</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'originalPrice',
       width: '7%',
       align: 'center',
@@ -471,7 +580,19 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
       },
     },
     {
-      title: 'Max DD',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Max DD">Max DD</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'maxDiscoDollars',
       width: '7%',
       align: 'center',
@@ -486,7 +607,19 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
       },
     },
     {
-      title: 'Last Import',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Last Import">Last Import</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'lastImportDate',
       width: '12.5%',
       align: 'center',
@@ -513,7 +646,19 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
       },
     },
     {
-      title: 'Last Go-Live',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Last Go-Live">Last Go-Live</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'lastGoLiveDate',
       width: '12.5%',
       align: 'center',
@@ -707,7 +852,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                 }
               >
                 <EditableTable
-                  scroll={{ x: true }}
+                  scroll={{ x: true, y: 300 }}
                   className="mt-2"
                   rowClassName={(_, index) =>
                     `scrollable-row-${index} ${

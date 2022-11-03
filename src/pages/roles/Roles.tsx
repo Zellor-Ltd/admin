@@ -1,5 +1,14 @@
 import { EditOutlined, SearchOutlined } from '@ant-design/icons';
-import { Button, Col, Input, PageHeader, Row, Table, Typography } from 'antd';
+import {
+  Button,
+  Col,
+  Input,
+  PageHeader,
+  Row,
+  Table,
+  Tooltip,
+  Typography,
+} from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { Role } from 'interfaces/Role';
 import { useContext, useEffect, useState } from 'react';
@@ -40,14 +49,38 @@ const Roles: React.FC<RouteComponentProps> = ({ history, location }) => {
 
   const columns: ColumnsType<Role> = [
     {
-      title: '_id',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="_id">_id</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'id',
       width: '6%',
       render: id => <CopyValueToClipboard value={id} />,
       align: 'center',
     },
     {
-      title: 'Name',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Name">Name</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'name',
       width: '15%',
       render: (value, record: Role) => (
@@ -61,7 +94,19 @@ const Roles: React.FC<RouteComponentProps> = ({ history, location }) => {
       },
     },
     {
-      title: 'Description',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Description">Description</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'description',
       width: '15%',
       sorter: (a, b): any => {
@@ -123,7 +168,7 @@ const Roles: React.FC<RouteComponentProps> = ({ history, location }) => {
       </Row>
       <Table
         className="mt-15"
-        scroll={{ x: true }}
+        scroll={{ x: true, y: 300 }}
         rowKey="id"
         columns={columns}
         dataSource={data}

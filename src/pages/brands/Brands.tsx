@@ -21,6 +21,7 @@ import {
   Spin,
   Table,
   Tag,
+  Tooltip,
   Typography,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
@@ -182,16 +183,40 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
 
   const columns: ColumnsType<Brand> = [
     {
-      title: '_id',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="_id">_id</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'id',
       width: '6%',
       render: (_, record: Brand) => <CopyValueToClipboard value={record.id} />,
       align: 'center',
     },
     {
-      title: 'Master Brand Name',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Master Brand Name">Master Brand Name</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'brandName',
-      width: '30%',
+      width: '15%',
       render: (value: string, record: Brand, index: number) => (
         <Link to={location.pathname} onClick={() => editBrand(index, record)}>
           {record.id !== discoBrandId ? (
@@ -212,7 +237,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
     {
       title: 'vIndex',
       dataIndex: 'vIndex',
-      width: '3%',
+      width: '5%',
       render: (_, brand, index) => {
         if (updatingVIndex[brand.id]) {
           const antIcon = <LoadingOutlined spin />;
@@ -242,9 +267,21 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
       },
     },
     {
-      title: 'Master Brand Link',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Master Brand Link">Master Brand Link</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'masterBrandLink',
-      width: '10%',
+      width: '5%',
       align: 'center',
       render: (value: string) => (
         <a
@@ -257,7 +294,19 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
       ),
     },
     {
-      title: 'Rebuild',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Rebuild">Rebuild</Tooltip>
+          </div>
+        </div>
+      ),
       width: '5%',
       align: 'center',
       render: (_, record: Brand, index: number) => (
@@ -274,9 +323,21 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
       ),
     },
     {
-      title: 'Paused',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Paused">Paused</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'paused',
-      width: '15%',
+      width: '10%',
       align: 'center',
       render: (_: any, record: Brand) => (
         <SimpleSwitch
@@ -294,9 +355,21 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
       },
     },
     {
-      title: 'Show Out of Stock',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Show Out of Stock">Show Out of Stock</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'showOutOfStock',
-      width: '15%',
+      width: '10%',
       align: 'center',
       render: (value: any, record: Brand) => (
         <SimpleSwitch
@@ -314,9 +387,21 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
       },
     },
     {
-      title: 'Automated',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Automated">Automated</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'automated',
-      width: '15%',
+      width: '5%',
       align: 'center',
       render: (value: any) => <b>{value ? 'Yes' : 'No'}</b>,
       sorter: (a, b): any => {
@@ -327,9 +412,21 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
       },
     },
     {
-      title: ' Master Brand Color',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Master Brand Color">Master Brand Color</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'brandTxtColor',
-      width: '20%',
+      width: '10%',
       align: 'center',
       render: (value: any) => (
         <Avatar
@@ -340,7 +437,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
     {
       title: 'D%',
       dataIndex: 'discoPercentage',
-      width: '10%',
+      width: '8%',
       align: 'center',
       render: (value: string) => <a href=".">{value}</a>,
       sorter: (a, b): any => {
@@ -354,7 +451,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
     {
       title: 'C%',
       dataIndex: 'creatorPercentage',
-      width: '10%',
+      width: '8%',
       align: 'center',
       render: (value: string) => <a href=".">{value}</a>,
       sorter: (a, b): any => {
@@ -368,7 +465,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
     {
       title: 'DD%',
       dataIndex: 'maxDiscoDollarPercentage',
-      width: '10%',
+      width: '9%',
       align: 'center',
       render: (value: string) => <a href=".">{value}</a>,
       sorter: (a, b): any => {
@@ -380,9 +477,21 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
       },
     },
     {
-      title: 'Status',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Status">Status</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'status',
-      width: '20%',
+      width: '10%',
       align: 'center',
       render: (value = 'pending') => (
         <Tag color={tagColorByStatus[value]}>{value}</Tag>
@@ -398,7 +507,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
     {
       title: 'Actions',
       key: 'action',
-      width: '10%',
+      width: '15%',
       align: 'right',
       render: (_, record: Brand, index: number) => (
         <>
@@ -467,7 +576,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
           </Row>
           <Table
             className="mt-15"
-            scroll={{ x: true }}
+            scroll={{ x: true, y: 300 }}
             rowClassName={(_, index) => `scrollable-row-${index}`}
             rowKey="id"
             columns={columns}

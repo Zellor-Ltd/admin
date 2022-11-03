@@ -7,6 +7,7 @@ import {
   PageHeader,
   Table,
   Tag as AntTag,
+  Tooltip,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import CopyValueToClipboard from 'components/CopyValueToClipboard';
@@ -53,14 +54,38 @@ const FeedTemplates: React.FC<RouteComponentProps> = () => {
 
   const columns: ColumnsType<any> = [
     {
-      title: '_id',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="_id">_id</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'id',
       width: '3%',
       render: id => <CopyValueToClipboard value={id} />,
       align: 'center',
     },
     {
-      title: 'Title',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Title">Title</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'title',
       width: '18%',
       render: (value: string, feedTemplate: FeedItem, index: number) => (
@@ -79,7 +104,19 @@ const FeedTemplates: React.FC<RouteComponentProps> = () => {
       },
     },
     {
-      title: 'Creation Date',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Creation Date">Creation Date</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'hCreationDate',
       width: '10%',
       render: (creation: Date) =>
@@ -101,7 +138,19 @@ const FeedTemplates: React.FC<RouteComponentProps> = () => {
       },
     },
     {
-      title: 'Tags',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Tags">Tags</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'package',
       width: '5%',
       render: (pack: Array<any> = []) => (
@@ -117,7 +166,19 @@ const FeedTemplates: React.FC<RouteComponentProps> = () => {
       },
     },
     {
-      title: 'Status',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Status">Status</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'status',
       width: '7%',
       align: 'center',
@@ -225,7 +286,7 @@ const FeedTemplates: React.FC<RouteComponentProps> = () => {
           />
           <Content>
             <Table
-              scroll={{ x: true }}
+              scroll={{ x: true, y: 300 }}
               className="mt-1"
               rowClassName={(_, index) =>
                 `${index === lastViewedIndex ? 'selected-row' : ''}`

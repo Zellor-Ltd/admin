@@ -8,6 +8,7 @@ import {
   Row,
   Spin,
   Table,
+  Tooltip,
   Typography,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
@@ -103,7 +104,19 @@ const Trends: React.FC<RouteComponentProps> = props => {
 
   const columns: ColumnsType<any> = [
     {
-      title: 'Index',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Index">Index</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'index',
       width: '8%',
       render: (_, trend) => {
@@ -131,7 +144,19 @@ const Trends: React.FC<RouteComponentProps> = props => {
       },
     },
     {
-      title: 'Description',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Description">Description</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'tag',
       width: '92%',
       sorter: (a, b): any => {
@@ -189,7 +214,7 @@ const Trends: React.FC<RouteComponentProps> = props => {
         </Row>
         <Table
           className="mt-15"
-          scroll={{ x: true }}
+          scroll={{ x: true, y: 300 }}
           rowClassName={(_, index) => `scrollable-row-${index}`}
           rowKey="id"
           columns={columns}

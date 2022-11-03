@@ -1,5 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Button, Col, PageHeader, Row, Spin, Table, Typography } from 'antd';
+import {
+  Button,
+  Col,
+  PageHeader,
+  Row,
+  Spin,
+  Table,
+  Tooltip,
+  Typography,
+} from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { useRequest } from 'hooks/useRequest';
 import { Brand } from 'interfaces/Brand';
@@ -119,7 +128,19 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
 
   const columns: ColumnsType<Tag> = [
     {
-      title: 'Tag',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Tag">Tag</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'tagName',
       width: '25%',
       sorter: (a, b): any => {
@@ -130,7 +151,19 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
       },
     },
     {
-      title: 'Product',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Product">Product</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: ['product', 'name'],
       width: '20%',
       sorter: (a, b): any => {
@@ -142,7 +175,19 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
       },
     },
     {
-      title: 'Brand',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Brand">Brand</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: ['brand', 'brandName'],
       width: '20%',
       sorter: (a, b): any => {
@@ -154,7 +199,19 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
       },
     },
     {
-      title: 'Template',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Template">Template</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'template',
       width: '15%',
       sorter: (a, b): any => {
@@ -166,7 +223,19 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
       },
     },
     {
-      title: "DD's",
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="DDs">DDs</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'discoDollars',
       width: '10%',
       sorter: (a, b): any => {
@@ -359,7 +428,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
           >
             <Table
               className="mt-1"
-              scroll={{ x: true }}
+              scroll={{ x: true, y: 300 }}
               rowClassName={(_, index) => `scrollable-row-${index}`}
               rowSelection={rowSelection}
               rowKey="id"
