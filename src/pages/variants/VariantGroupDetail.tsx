@@ -98,6 +98,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
   const [currentSubSubCategory, setCurrentSubSubCategory] =
     useState<ProductCategory>();
   const { doFetch, doRequest } = useRequest({ setLoading });
+  const [loaded, setLoaded] = useState<boolean>(false);
 
   const optionMapping: SelectOption = {
     key: 'id',
@@ -251,6 +252,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
     );
     if (resetResults) setProducts(results);
     else setProducts(prev => [...prev.concat(results)]);
+    setLoaded(true);
   };
 
   const handleFilterOutOfStock = (e: CheckboxChangeEvent) => {
@@ -676,9 +678,11 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
               )
             }
             endMessage={
-              <div className="scroll-message">
-                <b>End of results.</b>
-              </div>
+              loaded && (
+                <div className="scroll-message">
+                  <b>End of results.</b>
+                </div>
+              )
             }
           >
             <Table

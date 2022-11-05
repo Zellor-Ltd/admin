@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import {
   Button,
   Checkbox,
@@ -25,6 +26,7 @@ import CloneModal from './CloneModal';
 import { Privilege } from 'interfaces/Privilege';
 import { Endpoint } from 'interfaces/Endpoint';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
+import { useRequest } from 'hooks/useRequest';
 
 const { TabPane } = Tabs;
 const { Text } = Typography;
@@ -38,7 +40,7 @@ interface endpointPrivilege {
 
 const AccessControl: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
-
+  const { doFetch } = useRequest({ setLoading });
   const [profiles, setProfiles] = useState<string[]>([]);
 
   const [selectedProfile, setSelectedProfile] = useState<string>();
@@ -67,7 +69,7 @@ const AccessControl: React.FC = () => {
 
   const getEndpoints = useCallback(async () => {
     try {
-      const response: any = await fetchEndpoints();
+      const response: any = await doFetch(() => fetchEndpoints());
       setEndpoints(response.results);
     } catch (error) {
       console.log(error);
@@ -76,7 +78,7 @@ const AccessControl: React.FC = () => {
 
   const getProfiles = useCallback(async () => {
     try {
-      const response: any = await fetchProfiles();
+      const response: any = await doFetch(() => fetchProfiles());
       const prof = response.results.map((profile: Role) => profile.name);
       setProfiles(prof);
       setSelectedProfile(prof[1]);

@@ -986,7 +986,8 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
             next={loadNext}
             hasMore={page > 0 && !eof}
             loader={
-              page !== 0 && (
+              page !== 0 &&
+              loaded && (
                 <div className="scroll-message">
                   <Spin />
                 </div>

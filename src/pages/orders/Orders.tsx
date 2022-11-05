@@ -43,7 +43,7 @@ import { useRequest } from 'hooks/useRequest';
 import { BaseOptionType } from 'antd/lib/cascader';
 
 const Orders: React.FC<RouteComponentProps> = ({ location }) => {
-  const [, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const { doFetch } = useRequest({ setLoading: setLoading });
   const [orderUpdateList, setOrderUpdateList] = useState<boolean[]>([]);
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
@@ -986,7 +986,8 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
             next={loadNext}
             hasMore={page > 0 && !eof}
             loader={
-              page !== 0 && (
+              page !== 0 &&
+              loading && (
                 <div className="scroll-message">
                   <Spin />
                 </div>

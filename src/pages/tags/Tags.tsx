@@ -346,14 +346,16 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
             loader={
               page !== 0 && (
                 <div className="scroll-message">
-                  <Spin />
+                  <Spin spinning={loading} />
                 </div>
               )
             }
             endMessage={
-              <div className="scroll-message">
-                <b>End of results.</b>
-              </div>
+              page !== 0 && (
+                <div className="scroll-message">
+                  <b>End of results.</b>
+                </div>
+              )
             }
           >
             <Table

@@ -1218,9 +1218,10 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
               next={() => getFeed(undefined, false)}
               hasMore={!eof}
               loader={
-                !eof && (
+                !eof &&
+                page !== 0 && (
                   <div className="scroll-message">
-                    <Spin />
+                    <Spin spinning={loading} />
                   </div>
                 )
               }
@@ -1238,7 +1239,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                 columns={feedItemColumns}
                 rowKey="id"
                 dataSource={data}
-                loading={loading}
+                loading={loading && page === 0}
                 pagination={false}
               />
             </InfiniteScroll>

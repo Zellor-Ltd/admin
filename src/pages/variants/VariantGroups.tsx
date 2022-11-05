@@ -649,16 +649,19 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
             next={getProducts}
             hasMore={!eof}
             loader={
-              page !== 0 && (
+              page !== 0 &&
+              loading && (
                 <div className="scroll-message">
                   <Spin />
                 </div>
               )
             }
             endMessage={
-              <div className="scroll-message">
-                <b>End of results.</b>
-              </div>
+              page !== 0 && (
+                <div className="scroll-message">
+                  <b>End of results.</b>
+                </div>
+              )
             }
           >
             <Table
@@ -668,7 +671,7 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
               rowKey="id"
               columns={columns}
               dataSource={products}
-              loading={loading}
+              loading={loading && page === 0}
               pagination={false}
             />
           </InfiniteScroll>
