@@ -1015,9 +1015,11 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
               )
             }
             endMessage={
-              <div className="scroll-message">
-                <b>End of results.</b>
-              </div>
+              loaded.current && (
+                <div className="scroll-message">
+                  <b>End of results.</b>
+                </div>
+              )
             }
           >
             <Table

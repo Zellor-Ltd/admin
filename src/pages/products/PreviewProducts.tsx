@@ -64,6 +64,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
   const [brands, setBrands] = useState<Brand[]>([]);
   const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const loaded = useRef<boolean>(false);
   const [disabled, setDisabled] = useState<boolean>(false);
   const [loadingResources, setLoadingResources] = useState<boolean>(true);
   const { fetchAllCategories, allCategories } = useAllCategories({});
@@ -218,7 +219,10 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
       getBrands(),
       getProductBrands(),
       fetchAllCategories(),
-    ]).then(() => setLoadingResources(false));
+    ]).then(() => {
+      setLoadingResources(false);
+      loaded.current = true;
+    });
   });
 
   const onAlternateViewSaveChanges = async (entity: Product) => {
@@ -846,9 +850,11 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                   )
                 }
                 endMessage={
-                  <div className="scroll-message">
-                    <b>End of results.</b>
-                  </div>
+                  loaded.current && (
+                    <div className="scroll-message">
+                      <b>End of results.</b>
+                    </div>
+                  )
                 }
               >
                 <EditableTable
