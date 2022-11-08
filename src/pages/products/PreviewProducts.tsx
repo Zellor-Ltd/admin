@@ -843,7 +843,8 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                 next={getProducts}
                 hasMore={!eof}
                 loader={
-                  !eof && (
+                  page !== 0 &&
+                  loading && (
                     <div className="scroll-message">
                       <Spin />
                     </div>
@@ -868,7 +869,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                   rowKey="id"
                   columns={columns}
                   dataSource={products}
-                  loading={loading || disabled}
+                  loading={(loading || disabled) && page === 0}
                   onSave={onSaveItem}
                   pagination={false}
                   rowSelection={{

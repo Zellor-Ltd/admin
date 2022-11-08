@@ -1008,7 +1008,8 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
             next={getProducts}
             hasMore={!eof}
             loader={
-              !eof && (
+              page !== 0 &&
+              loading && (
                 <div className="scroll-message">
                   <Spin />
                 </div>
@@ -1033,7 +1034,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
               rowKey="id"
               columns={columns}
               dataSource={products}
-              loading={!products.length && loading}
+              loading={!products.length && loading && page === 0}
               pagination={false}
               rowSelection={{
                 selectedRowKeys,
