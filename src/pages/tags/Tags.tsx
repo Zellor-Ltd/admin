@@ -33,6 +33,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [currentTag, setCurrentTag] = useState<Tag>();
   const { usePageFilter } = useContext(AppContext);
   const [loading, setLoading] = useState<boolean>(false);
+  const loaded = useRef<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const { doFetch, doRequest } = useRequest({ setLoading });
   const [searchFilter, setSearchFilter] = usePageFilter<string>('search');
@@ -75,6 +76,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
     setTags(prev => [...prev.concat(results)]);
 
     if (results.length < 30) setEof(true);
+    loaded.current = true;
   };
 
   const fetch = (scrollToTop?: boolean) => {
@@ -351,9 +353,11 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
               )
             }
             endMessage={
-              <div className="scroll-message">
-                <b>End of results.</b>
-              </div>
+              loaded.current && (
+                <div className="scroll-message">
+                  <b>End of results.</b>
+                </div>
+              )
             }
           >
             <Table
