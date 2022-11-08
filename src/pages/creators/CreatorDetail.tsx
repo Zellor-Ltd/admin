@@ -38,6 +38,7 @@ import {
   saveCreator,
 } from 'services/DiscoClubService';
 import scrollIntoView from 'scroll-into-view';
+import moment from 'moment';
 
 interface CreatorDetailProps {
   creator: any;
@@ -367,6 +368,23 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                     className={instaLink ? 'instalink-input' : undefined}
                     value={instaLink ? `https://vlink.ie/${instaLink}` : ''}
                     onFocus={event => handleInstaLinkFocus(event)}
+                  />
+                </Form.Item>
+              </Col>
+              <Col lg={12} xs={24}>
+                <Form.Item
+                  label="Sign up Date"
+                  name="signUpDate"
+                  getValueProps={formatMoment}
+                >
+                  <DatePicker
+                    disabled
+                    placeholder={
+                      creator
+                        ? 'Sign up Date'
+                        : moment().format('DD/MM/YYYY').toString()
+                    }
+                    format="DD/MM/YYYY"
                   />
                 </Form.Item>
               </Col>

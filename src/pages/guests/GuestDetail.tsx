@@ -182,6 +182,14 @@ const GuestDetail: React.FC<GuestDetailProps> = ({ fan, onSave, onCancel }) => {
                   )}
                 </span>
               </Col>
+              <Col lg={8} xs={24}>
+                <span>Sign up Date</span>
+                <span className="info-block mt-05 mb-1">
+                  {fan.signUpDate ?? (
+                    <Typography.Text disabled>Sign up Date</Typography.Text>
+                  )}
+                </span>
+              </Col>
             </Row>
           </Tabs.TabPane>
           <Tabs.TabPane forceRender tab="Address" key="Address">

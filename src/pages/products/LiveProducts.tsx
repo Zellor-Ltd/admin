@@ -1016,7 +1016,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
               )
             }
             endMessage={
-              page !== 0 && (
+              loaded.current && (
                 <div className="scroll-message">
                   <b>End of results.</b>
                 </div>

@@ -79,6 +79,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const [activeKey, setActiveKey] = useState<string>('-1');
   const [selectedVideoFeed, setSelectedVideoFeed] = useState<FeedItem>();
   const [loading, setLoading] = useState(false);
+  const loaded = useRef<boolean>(false);
   const { doFetch } = useRequest({ setLoading });
   const [loadingResources, setLoadingResources] = useState<boolean>(true);
   const [details, setDetails] = useState<boolean>(false);
@@ -1226,9 +1227,11 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                 )
               }
               endMessage={
-                <div className="scroll-message">
-                  <b>End of results.</b>
-                </div>
+                loaded.current && (
+                  <div className="scroll-message">
+                    <b>End of results.</b>
+                  </div>
+                )
               }
             >
               <Table
