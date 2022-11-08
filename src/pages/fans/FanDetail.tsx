@@ -410,6 +410,23 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
                   </Select>
                 </Form.Item>
               </Col>
+              <Col lg={8} xs={24}>
+                <Form.Item
+                  label="Sign up Date"
+                  name="signUpDate"
+                  getValueProps={formatMoment}
+                >
+                  <DatePicker
+                    disabled
+                    placeholder={
+                      fan
+                        ? 'Sign up Date'
+                        : moment().format('DD/MM/YYYY').toString()
+                    }
+                    format="DD/MM/YYYY"
+                  />
+                </Form.Item>
+              </Col>
             </Row>
           </Tabs.TabPane>
           <Tabs.TabPane forceRender tab="Address" key="Address">
