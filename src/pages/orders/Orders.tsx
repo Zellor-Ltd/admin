@@ -1001,64 +1001,72 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
               )
             }
           >
-            <Table
-              className="mt-05"
-              scroll={{ x: true, y: 300 }}
-              rowClassName={(_, index) => `scrollable-row-${index}`}
-              rowKey="id"
-              columns={columns}
-              dataSource={data}
-              loading={refreshing}
-              pagination={false}
-              expandedRowKeys={expandedRowKeys}
-              expandable={{
-                onExpand: (expanded, record) => {
-                  const keys: string[] = [];
-                  if (expanded) {
-                    keys.push(record?.id!);
-                    setCartTableContent(record);
-                  } else {
-                    setCartTableContent(undefined);
-                  }
-                  setExpandedRowKeys(keys);
-                },
-                expandedRowRender: record => (
-                  <>
-                    <Row justify="center">
-                      <Col span={22}>
-                        <Descriptions title="Details">
-                          <Descriptions.Item label="Order ID" className="mt-05">
-                            {record.id}
-                          </Descriptions.Item>
-                          <Descriptions.Item label="User">
-                            {record.customerEmail}
-                          </Descriptions.Item>
-                          <Descriptions.Item label="Paid Status">
-                            {record.paid ? 'Paid' : 'Not paid'}
-                          </Descriptions.Item>
-                          <Descriptions.Item label="Order Amount">
-                            {((record.amount ?? 0) / 100).toFixed(2)}
-                          </Descriptions.Item>
-                          <Descriptions.Item label="Date">
-                            {moment(record.hCreationDate).format('DD/MM/YYYY')}
-                          </Descriptions.Item>
-                        </Descriptions>
-                      </Col>
-                    </Row>
-                    <Row justify="center" className="mt-15">
-                      <Col span={22}>
-                        <Descriptions title="Cart">
-                          <Descriptions.Item>
-                            <CartTable />
-                          </Descriptions.Item>
-                        </Descriptions>
-                      </Col>
-                    </Row>
-                  </>
-                ),
-                rowExpandable: record => record.cart || record.product,
-              }}
-            />
+            <div style={{ height: '100%' }}>
+              <Table
+                style={{ minHeight: '100vh' }}
+                className="mt-05"
+                scroll={{ x: true, y: 300 }}
+                rowClassName={(_, index) => `scrollable-row-${index}`}
+                rowKey="id"
+                columns={columns}
+                dataSource={data}
+                loading={refreshing}
+                pagination={false}
+                expandedRowKeys={expandedRowKeys}
+                expandable={{
+                  onExpand: (expanded, record) => {
+                    const keys: string[] = [];
+                    if (expanded) {
+                      keys.push(record?.id!);
+                      setCartTableContent(record);
+                    } else {
+                      setCartTableContent(undefined);
+                    }
+                    setExpandedRowKeys(keys);
+                  },
+                  expandedRowRender: record => (
+                    <>
+                      <Row justify="center">
+                        <Col span={22}>
+                          <Descriptions title="Details">
+                            <Descriptions.Item
+                              label="Order ID"
+                              className="mt-05"
+                            >
+                              {record.id}
+                            </Descriptions.Item>
+                            <Descriptions.Item label="User">
+                              {record.customerEmail}
+                            </Descriptions.Item>
+                            <Descriptions.Item label="Paid Status">
+                              {record.paid ? 'Paid' : 'Not paid'}
+                            </Descriptions.Item>
+                            <Descriptions.Item label="Order Amount">
+                              {((record.amount ?? 0) / 100).toFixed(2)}
+                            </Descriptions.Item>
+                            <Descriptions.Item label="Date">
+                              {moment(record.hCreationDate).format(
+                                'DD/MM/YYYY'
+                              )}
+                            </Descriptions.Item>
+                          </Descriptions>
+                        </Col>
+                      </Row>
+                      <Row justify="center" className="mt-15">
+                        <Col span={22}>
+                          <Descriptions title="Cart">
+                            <Descriptions.Item>
+                              <CartTable />
+                            </Descriptions.Item>
+                          </Descriptions>
+                        </Col>
+                      </Row>
+                    </>
+                  ),
+                  rowExpandable: record => record.cart || record.product,
+                }}
+              />
+            </div>
           </InfiniteScroll>
         </div>
       )}

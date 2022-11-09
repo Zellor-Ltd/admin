@@ -341,7 +341,9 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
               </Row>
             </Col>
           </Row>
-          <InfiniteScroll
+          <div style={{ height: '100%' }}>
+            <InfiniteScroll
+              style={{ minHeight: '100vh' }}
             dataLength={tags.length}
             next={fetch}
             hasMore={!eof}
@@ -370,7 +372,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
               loading={refreshing || (!tags.length && loading)}
               pagination={false}
             />
-          </InfiniteScroll>
+          </InfiniteScroll></div>
         </>
       )}
       {details && (

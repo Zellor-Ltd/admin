@@ -250,14 +250,17 @@ const Transactions: React.FC<RouteComponentProps> = () => {
           ></MultipleFetchDebounceSelect>
         </Col>
       </Row>
-      <Table
-        className="mt-1"
-        scroll={{ x: true, y: 300 }}
-        rowKey="id"
-        columns={columns}
-        dataSource={transactions}
-        loading={loading}
-      />
+      <div style={{ height: '100%' }}>
+        <Table
+          style={{ minHeight: '100vh' }}
+          className="mt-1"
+          scroll={{ x: true, y: 300 }}
+          rowKey="id"
+          columns={columns}
+          dataSource={transactions}
+          loading={loading}
+        />
+      </div>
     </div>
   );
 };

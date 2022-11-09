@@ -556,36 +556,39 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
               </Row>
             </Col>
           </Row>
-          <InfiniteScroll
-            dataLength={creators.length}
-            next={() => fetch(true)}
-            hasMore={!eof}
-            loader={
-              page !== 0 && (
-                <div className="scroll-message">
-                  <Spin />
-                </div>
-              )
-            }
-            endMessage={
-              page !== 0 && (
-                <div className="scroll-message">
-                  <b>End of results.</b>
-                </div>
-              )
-            }
-          >
-            <Table
-              className="mt-1"
-              scroll={{ x: true, y: 300 }}
-              rowClassName={(_, index) => `scrollable-row-${index}`}
-              rowKey="id"
-              columns={columns}
-              dataSource={creators}
-              loading={loading}
-              pagination={false}
-            />
-          </InfiniteScroll>
+          <div style={{ height: '100%' }}>
+            <InfiniteScroll
+              style={{ minHeight: '100vh' }}
+              dataLength={creators.length}
+              next={() => fetch(true)}
+              hasMore={!eof}
+              loader={
+                page !== 0 && (
+                  <div className="scroll-message">
+                    <Spin />
+                  </div>
+                )
+              }
+              endMessage={
+                page !== 0 && (
+                  <div className="scroll-message">
+                    <b>End of results.</b>
+                  </div>
+                )
+              }
+            >
+              <Table
+                className="mt-1"
+                scroll={{ x: true, y: 300 }}
+                rowClassName={(_, index) => `scrollable-row-${index}`}
+                rowKey="id"
+                columns={columns}
+                dataSource={creators}
+                loading={loading}
+                pagination={false}
+              />
+            </InfiniteScroll>
+          </div>
         </div>
       )}
       {details && (

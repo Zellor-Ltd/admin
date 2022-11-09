@@ -838,59 +838,62 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
         if (!details) {
           return (
             <>
-              <InfiniteScroll
-                dataLength={products.length}
-                next={getProducts}
-                hasMore={!eof}
-                loader={
-                  page !== 0 &&
-                  loading && (
-                    <div className="scroll-message">
-                      <Spin />
-                    </div>
-                  )
-                }
-                endMessage={
-                  loaded.current && (
-                    <div className="scroll-message">
-                      <b>End of results.</b>
-                    </div>
-                  )
-                }
-              >
-                <EditableTable
-                  scroll={{ x: true, y: 300 }}
-                  className="mt-2"
-                  rowClassName={(_, index) =>
-                    `scrollable-row-${index} ${
-                      index === lastViewedIndex ? 'selected-row' : ''
-                    }`
+              <div style={{ height: '100%' }}>
+                <InfiniteScroll
+                  style={{ minHeight: '100vh' }}
+                  dataLength={products.length}
+                  next={getProducts}
+                  hasMore={!eof}
+                  loader={
+                    page !== 0 &&
+                    loading && (
+                      <div className="scroll-message">
+                        <Spin />
+                      </div>
+                    )
                   }
-                  rowKey="id"
-                  columns={columns}
-                  dataSource={products}
-                  loading={(loading || disabled) && page === 0}
-                  onSave={onSaveItem}
-                  pagination={false}
-                  rowSelection={{
-                    selectedRowKeys,
-                    onChange: onSelectChange,
-                  }}
-                  expandable={{
-                    expandedRowRender: (record: Product) => (
-                      <ProductExpandedRow
-                        key={record.id}
-                        record={record}
-                        allCategories={allCategories}
-                        onSaveProduct={onSaveCategories}
-                        loading={loadingCategories}
-                        isStaging
-                        productBrands={productBrands}
-                      ></ProductExpandedRow>
-                    ),
-                  }}
-                />
-              </InfiniteScroll>
+                  endMessage={
+                    loaded.current && (
+                      <div className="scroll-message">
+                        <b>End of results.</b>
+                      </div>
+                    )
+                  }
+                >
+                  <EditableTable
+                    scroll={{ x: true, y: 300 }}
+                    className="mt-2"
+                    rowClassName={(_, index) =>
+                      `scrollable-row-${index} ${
+                        index === lastViewedIndex ? 'selected-row' : ''
+                      }`
+                    }
+                    rowKey="id"
+                    columns={columns}
+                    dataSource={products}
+                    loading={(loading || disabled) && page === 0}
+                    onSave={onSaveItem}
+                    pagination={false}
+                    rowSelection={{
+                      selectedRowKeys,
+                      onChange: onSelectChange,
+                    }}
+                    expandable={{
+                      expandedRowRender: (record: Product) => (
+                        <ProductExpandedRow
+                          key={record.id}
+                          record={record}
+                          allCategories={allCategories}
+                          onSaveProduct={onSaveCategories}
+                          loading={loadingCategories}
+                          isStaging
+                          productBrands={productBrands}
+                        ></ProductExpandedRow>
+                      ),
+                    }}
+                  />
+                </InfiniteScroll>
+              </div>
             </>
           );
         } else {

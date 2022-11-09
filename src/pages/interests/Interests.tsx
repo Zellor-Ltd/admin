@@ -310,23 +310,29 @@ const Interests: React.FC<InterestsProps> = () => {
         <Col span={24}>
           <Tabs defaultActiveKey="Interests" onChange={handleTabChange}>
             <Tabs.TabPane tab="Interests" key="Interests">
-              <SortableTable
-                scroll={{ x: true, y: 300 }}
-                rowKey="id"
-                columns={columns}
-                dataSource={interests}
-                setDataSource={setInterests}
-                loading={loading}
-              />
+              <div style={{ height: '100%' }}>
+                <SortableTable
+                  style={{ minHeight: '100vh' }}
+                  scroll={{ x: true, y: 300 }}
+                  rowKey="id"
+                  columns={columns}
+                  dataSource={interests}
+                  setDataSource={setInterests}
+                  loading={loading}
+                />
+              </div>
             </Tabs.TabPane>
             <Tabs.TabPane tab="All Categories" key="All Categories">
-              <Table
-                scroll={{ x: true, y: 300 }}
-                rowKey="id"
-                columns={columns}
-                dataSource={mergedCategories}
-                loading={loading}
-              />
+              <div style={{ height: '100%' }}>
+                <Table
+                  style={{ minHeight: '100vh' }}
+                  scroll={{ x: true, y: 300 }}
+                  rowKey="id"
+                  columns={columns}
+                  dataSource={mergedCategories}
+                  loading={loading}
+                />
+              </div>
             </Tabs.TabPane>
           </Tabs>
         </Col>

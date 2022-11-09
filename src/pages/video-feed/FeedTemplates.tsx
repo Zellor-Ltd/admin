@@ -285,7 +285,9 @@ const FeedTemplates: React.FC<RouteComponentProps> = () => {
             ]}
           />
           <Content>
+          <div style={{ height: '100%' }}>
             <Table
+              style={{ minHeight: '100vh' }}  
               scroll={{ x: true, y: 300 }}
               className="mt-1"
               rowClassName={(_, index) =>
@@ -296,7 +298,7 @@ const FeedTemplates: React.FC<RouteComponentProps> = () => {
               rowKey="id"
               dataSource={feedTemplates}
               loading={loading}
-            />
+            /></div>
           </Content>
         </div>
       )}

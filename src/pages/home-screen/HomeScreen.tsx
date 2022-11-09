@@ -244,15 +244,18 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
               </Button>,
             ]}
           />
-          <Table
-            scroll={{ x: true, y: 300 }}
-            rowClassName={(_, index) => `scrollable-row-${index}`}
-            rowKey="id"
-            columns={columns}
-            dataSource={banners}
-            loading={loading}
-            pagination={false}
-          />
+          <div style={{ height: '100%' }}>
+            <Table
+              style={{ minHeight: '100vh' }}
+              scroll={{ x: true, y: 300 }}
+              rowClassName={(_, index) => `scrollable-row-${index}`}
+              rowKey="id"
+              columns={columns}
+              dataSource={banners}
+              loading={loading}
+              pagination={false}
+            />
+          </div>
         </div>
       )}
       {details && (

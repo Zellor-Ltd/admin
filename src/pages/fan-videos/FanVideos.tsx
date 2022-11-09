@@ -841,17 +841,20 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
             </Col>
           </Row>
           <Content>
-            <Table
-              className={isMobile ? 'mt-n1' : 'mt-15'}
-              scroll={{ x: true, y: 300 }}
-              rowClassName={(_, index) => `scrollable-row-${index}`}
-              size="small"
-              columns={feedItemColumns}
-              rowKey="id"
-              dataSource={data}
-              loading={loading}
-              pagination={false}
-            />
+            <div style={{ height: '100%' }}>
+              <Table
+                style={{ minHeight: '100vh' }}
+                className={isMobile ? 'mt-n1' : 'mt-15'}
+                scroll={{ x: true, y: 300 }}
+                rowClassName={(_, index) => `scrollable-row-${index}`}
+                size="small"
+                columns={feedItemColumns}
+                rowKey="id"
+                dataSource={data}
+                loading={loading}
+                pagination={false}
+              />
+            </div>
           </Content>
         </>
       )}

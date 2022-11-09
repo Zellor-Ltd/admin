@@ -651,62 +651,67 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
             </Collapse>
           )}
           <>
-            <Table
-              scroll={{ x: true, y: 300 }}
-              rowClassName={(_, index) => `scrollable-row-${index}`}
-              rowSelection={rowSelection}
-              rowKey="id"
-              columns={columns}
-              dataSource={commissions}
-              loading={loading}
-              pagination={false}
-              summary={pageData => {
-                return (
-                  <>
-                    <Table.Summary.Row>
-                      <Table.Summary.Cell index={0}></Table.Summary.Cell>
-                      <Table.Summary.Cell index={1}>
-                        <Typography.Text strong>Total</Typography.Text>
-                      </Table.Summary.Cell>
-                      <Table.Summary.Cell index={2}></Table.Summary.Cell>
-                      <Table.Summary.Cell index={3}></Table.Summary.Cell>
-                      <Table.Summary.Cell index={4}></Table.Summary.Cell>
-                      <Table.Summary.Cell index={5}></Table.Summary.Cell>
-                      <Table.Summary.Cell index={6}></Table.Summary.Cell>
-                      <Table.Summary.Cell index={7}></Table.Summary.Cell>
-                      <Table.Summary.Cell index={8}>
-                        <Typography.Text>
-                          {totalSalePrice >= 0
-                            ? `€${totalSalePrice.toFixed(2)}`
-                            : `-€${Math.abs(totalSalePrice).toFixed(2)}`}
-                        </Typography.Text>
-                      </Table.Summary.Cell>
-                      <Table.Summary.Cell index={9}>
-                        <Typography.Text>
-                          {smallestCommissionPercentage
-                            ? smallestCommissionPercentage ===
-                              biggestCommissionPercentage
-                              ? `${smallestCommissionPercentage.toFixed(2)}%`
-                              : `${smallestCommissionPercentage.toFixed(
+            <div style={{ height: '100%' }}>
+              <Table
+                style={{ minHeight: '100vh' }}
+                scroll={{ x: true, y: 300 }}
+                rowClassName={(_, index) => `scrollable-row-${index}`}
+                rowSelection={rowSelection}
+                rowKey="id"
+                columns={columns}
+                dataSource={commissions}
+                loading={loading}
+                pagination={false}
+                summary={pageData => {
+                  return (
+                    <>
+                      <Table.Summary.Row>
+                        <Table.Summary.Cell index={0}></Table.Summary.Cell>
+                        <Table.Summary.Cell index={1}>
+                          <Typography.Text strong>Total</Typography.Text>
+                        </Table.Summary.Cell>
+                        <Table.Summary.Cell index={2}></Table.Summary.Cell>
+                        <Table.Summary.Cell index={3}></Table.Summary.Cell>
+                        <Table.Summary.Cell index={4}></Table.Summary.Cell>
+                        <Table.Summary.Cell index={5}></Table.Summary.Cell>
+                        <Table.Summary.Cell index={6}></Table.Summary.Cell>
+                        <Table.Summary.Cell index={7}></Table.Summary.Cell>
+                        <Table.Summary.Cell index={8}>
+                          <Typography.Text>
+                            {totalSalePrice >= 0
+                              ? `€${totalSalePrice.toFixed(2)}`
+                              : `-€${Math.abs(totalSalePrice).toFixed(2)}`}
+                          </Typography.Text>
+                        </Table.Summary.Cell>
+                        <Table.Summary.Cell index={9}>
+                          <Typography.Text>
+                            {smallestCommissionPercentage
+                              ? smallestCommissionPercentage ===
+                                biggestCommissionPercentage
+                                ? `${smallestCommissionPercentage.toFixed(2)}%`
+                                : `${smallestCommissionPercentage.toFixed(
+                                    2
+                                  )}% - ${biggestCommissionPercentage.toFixed(
+                                    2
+                                  )}%`
+                              : '-'}
+                          </Typography.Text>
+                        </Table.Summary.Cell>
+                        <Table.Summary.Cell index={10}>
+                          <Typography.Text>
+                            {totalCommissionAmount >= 0
+                              ? `€${totalCommissionAmount.toFixed(2)}`
+                              : `-€${Math.abs(totalCommissionAmount).toFixed(
                                   2
-                                )}% - ${biggestCommissionPercentage.toFixed(
-                                  2
-                                )}%`
-                            : '-'}
-                        </Typography.Text>
-                      </Table.Summary.Cell>
-                      <Table.Summary.Cell index={10}>
-                        <Typography.Text>
-                          {totalCommissionAmount >= 0
-                            ? `€${totalCommissionAmount.toFixed(2)}`
-                            : `-€${Math.abs(totalCommissionAmount).toFixed(2)}`}
-                        </Typography.Text>
-                      </Table.Summary.Cell>
-                    </Table.Summary.Row>
-                  </>
-                );
-              }}
-            />
+                                )}`}
+                          </Typography.Text>
+                        </Table.Summary.Cell>
+                      </Table.Summary.Row>
+                    </>
+                  );
+                }}
+              />
+            </div>
             <Row justify="end" className="mr-1 mt-2" gutter={[8, 8]}>
               <Col>
                 <Button

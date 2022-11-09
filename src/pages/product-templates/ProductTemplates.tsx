@@ -611,36 +611,39 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
             selectedRecord={productAPITest}
             setSelectedRecord={setProductAPITest}
           />
-          <Table
-            scroll={{ x: true, y: 300 }}
-            className="mt-1"
-            rowClassName={(_, index) =>
-              `scrollable-row-${index} ${
-                index === lastViewedIndex ? 'selected-row' : ''
-              }`
-            }
-            rowKey="id"
-            columns={columns}
-            dataSource={productTemplates}
-            loading={!productTemplates.length && loading}
-            pagination={false}
-            rowSelection={{
-              selectedRowKeys,
-              onChange: handleRowSelection,
-            }}
-            expandable={{
-              expandedRowRender: (record: Product) => (
-                <ProductExpandedRow
-                  key={record.id}
-                  record={record}
-                  allCategories={allCategories}
-                  loading={loadingCategories}
-                  isStaging={false}
-                  productBrands={productBrands}
-                ></ProductExpandedRow>
-              ),
-            }}
-          />
+          <div style={{ height: '100%' }}>
+            <Table
+              style={{ minHeight: '100vh' }}
+              scroll={{ x: true, y: 300 }}
+              className="mt-1"
+              rowClassName={(_, index) =>
+                `scrollable-row-${index} ${
+                  index === lastViewedIndex ? 'selected-row' : ''
+                }`
+              }
+              rowKey="id"
+              columns={columns}
+              dataSource={productTemplates}
+              loading={!productTemplates.length && loading}
+              pagination={false}
+              rowSelection={{
+                selectedRowKeys,
+                onChange: handleRowSelection,
+              }}
+              expandable={{
+                expandedRowRender: (record: Product) => (
+                  <ProductExpandedRow
+                    key={record.id}
+                    record={record}
+                    allCategories={allCategories}
+                    loading={loadingCategories}
+                    isStaging={false}
+                    productBrands={productBrands}
+                  ></ProductExpandedRow>
+                ),
+              }}
+            />
+          </div>
         </>
       )}
       {details && (

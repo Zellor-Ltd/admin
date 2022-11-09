@@ -166,15 +166,18 @@ const Roles: React.FC<RouteComponentProps> = ({ history, location }) => {
           />
         </Col>
       </Row>
-      <Table
-        className="mt-15"
-        scroll={{ x: true, y: 300 }}
-        rowKey="id"
-        columns={columns}
-        dataSource={data}
-        loading={loading}
-        pagination={false}
-      />
+      <div style={{ height: '100%' }}>
+        <Table
+          style={{ minHeight: '100vh' }}
+          className="mt-15"
+          scroll={{ x: true, y: 300 }}
+          rowKey="id"
+          columns={columns}
+          dataSource={data}
+          loading={loading}
+          pagination={false}
+        />
+      </div>
     </div>
   );
 };

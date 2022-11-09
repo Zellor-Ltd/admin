@@ -417,26 +417,29 @@ const FeaturedFeed: React.FC<RouteComponentProps> = () => {
           </Col>
         </Row>
         <DndProvider backend={HTML5Backend}>
-          <Table
-            scroll={{ x: true, y: 300 }}
-            className="mt-1"
-            rowClassName={(_, index) =>
-              `${index === lastViewedIndex ? 'selected-row' : ''}`
-            }
-            components={components}
-            onRow={(_, index) => {
-              const attr = {
-                index,
-                moveRow,
-              };
-              return attr as React.HTMLAttributes<any>;
-            }}
-            size="small"
-            columns={columns}
-            rowKey="id"
-            dataSource={featuredFeeds}
-            loading={loading}
-          />
+          <div style={{ height: '100%' }}>
+            <Table
+              style={{ minHeight: '100vh' }}
+              scroll={{ x: true, y: 300 }}
+              className="mt-1"
+              rowClassName={(_, index) =>
+                `${index === lastViewedIndex ? 'selected-row' : ''}`
+              }
+              components={components}
+              onRow={(_, index) => {
+                const attr = {
+                  index,
+                  moveRow,
+                };
+                return attr as React.HTMLAttributes<any>;
+              }}
+              size="small"
+              columns={columns}
+              rowKey="id"
+              dataSource={featuredFeeds}
+              loading={loading}
+            />
+          </div>
         </DndProvider>
       </div>
     </>

@@ -1003,57 +1003,60 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
             selectedRecord={productAPITest}
             setSelectedRecord={setProductAPITest}
           />
-          <InfiniteScroll
-            dataLength={products.length}
-            next={getProducts}
-            hasMore={!eof}
-            loader={
-              page !== 0 &&
-              loading && (
-                <div className="scroll-message">
-                  <Spin />
-                </div>
-              )
-            }
-            endMessage={
-              loaded.current && (
-                <div className="scroll-message">
-                  <b>End of results.</b>
-                </div>
-              )
-            }
-          >
-            <Table
-              className="mt-1"
-              scroll={{ x: true, y: 300 }}
-              rowClassName={(_, index) =>
-                `scrollable-row-${index} ${
-                  index === lastViewedIndex ? 'selected-row' : ''
-                }`
+          <div style={{ height: '100%' }}>
+            <InfiniteScroll
+              style={{ minHeight: '100vh' }}
+              dataLength={products.length}
+              next={getProducts}
+              hasMore={!eof}
+              loader={
+                page !== 0 &&
+                loading && (
+                  <div className="scroll-message">
+                    <Spin />
+                  </div>
+                )
               }
-              rowKey="id"
-              columns={columns}
-              dataSource={products}
-              loading={!products.length && loading && page === 0}
-              pagination={false}
-              rowSelection={{
-                selectedRowKeys,
-                onChange: handleRowSelection,
-              }}
-              expandable={{
-                expandedRowRender: (record: Product) => (
-                  <ProductExpandedRow
-                    key={record.id}
-                    record={record}
-                    allCategories={allCategories}
-                    loading={loadingCategories}
-                    isStaging={false}
-                    productBrands={productBrands}
-                  ></ProductExpandedRow>
-                ),
-              }}
-            />
-          </InfiniteScroll>
+              endMessage={
+                loaded.current && (
+                  <div className="scroll-message">
+                    <b>End of results.</b>
+                  </div>
+                )
+              }
+            >
+              <Table
+                className="mt-1"
+                scroll={{ x: true, y: 300 }}
+                rowClassName={(_, index) =>
+                  `scrollable-row-${index} ${
+                    index === lastViewedIndex ? 'selected-row' : ''
+                  }`
+                }
+                rowKey="id"
+                columns={columns}
+                dataSource={products}
+                loading={!products.length && loading && page === 0}
+                pagination={false}
+                rowSelection={{
+                  selectedRowKeys,
+                  onChange: handleRowSelection,
+                }}
+                expandable={{
+                  expandedRowRender: (record: Product) => (
+                    <ProductExpandedRow
+                      key={record.id}
+                      record={record}
+                      allCategories={allCategories}
+                      loading={loadingCategories}
+                      isStaging={false}
+                      productBrands={productBrands}
+                    ></ProductExpandedRow>
+                  ),
+                }}
+              />
+            </InfiniteScroll>
+          </div>
         </>
       )}
       {details && (

@@ -30,91 +30,94 @@ const FixedVideo: React.FC<RouteComponentProps> = () => {
         title="Fixed Video"
         subTitle={isMobile ? '' : 'New Fixed Video'}
       />
-      <Form
-        form={form}
-        layout="vertical"
-        onFinish={onFinish}
-        onFinishFailed={({ errorFields }) => handleFinishFailed(errorFields)}
-        autoComplete="off"
-      >
-        <Row gutter={[8, 8]}>
-          <Col lg={12} xs={24}>
-            <Col span={24}>
-              <Form.Item
-                name="explainerVideo"
-                label="Explainer Video"
-                rules={[
-                  {
-                    required: true,
-                    message: 'Explainer Video ID is required.',
-                  },
-                ]}
-              >
-                <Input
-                  allowClear
-                  id="explainerVideo"
-                  placeholder="Explainer Video ID"
-                />
-              </Form.Item>
-            </Col>
-            <Col span={24}>
-              <Form.Item
-                name="userExperienceVideo"
-                label="User Experience Video"
-                rules={[
-                  {
-                    required: true,
-                    message: 'User Experience Video is required.',
-                  },
-                ]}
-              >
-                <Input
-                  allowClear
-                  id="userExperienceVideo"
-                  placeholder="User Experience Video"
-                />
-              </Form.Item>
-            </Col>
-            <Col span={24}>
-              <Form.Item
-                name="taggingVideo"
-                label="Tagging Video"
-                rules={[
-                  {
-                    required: true,
-                    message: 'Tagging Video ID is required.',
-                  },
-                ]}
-              >
-                <Input
-                  allowClear
-                  id="taggingVideo"
-                  placeholder="Tagging Video ID"
-                />
-              </Form.Item>
-            </Col>
-          </Col>
-          <Col span={24}>
-            <Row gutter={8} justify="end">
-              <Col>
-                <Button type="default" onClick={() => form.resetFields()}>
-                  Cancel
-                </Button>
-              </Col>
-              <Col>
-                <Button
-                  loading={loading}
-                  type="primary"
-                  htmlType="submit"
-                  className="mb-1"
+      <div style={{ height: '100%' }}>
+        <Form
+          style={{ minHeight: '100vh' }}
+          form={form}
+          layout="vertical"
+          onFinish={onFinish}
+          onFinishFailed={({ errorFields }) => handleFinishFailed(errorFields)}
+          autoComplete="off"
+        >
+          <Row gutter={[8, 8]}>
+            <Col lg={12} xs={24}>
+              <Col span={24}>
+                <Form.Item
+                  name="explainerVideo"
+                  label="Explainer Video"
+                  rules={[
+                    {
+                      required: true,
+                      message: 'Explainer Video ID is required.',
+                    },
+                  ]}
                 >
-                  Save
-                </Button>
+                  <Input
+                    allowClear
+                    id="explainerVideo"
+                    placeholder="Explainer Video ID"
+                  />
+                </Form.Item>
               </Col>
-            </Row>
-          </Col>
-        </Row>
-      </Form>
+              <Col span={24}>
+                <Form.Item
+                  name="userExperienceVideo"
+                  label="User Experience Video"
+                  rules={[
+                    {
+                      required: true,
+                      message: 'User Experience Video is required.',
+                    },
+                  ]}
+                >
+                  <Input
+                    allowClear
+                    id="userExperienceVideo"
+                    placeholder="User Experience Video"
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={24}>
+                <Form.Item
+                  name="taggingVideo"
+                  label="Tagging Video"
+                  rules={[
+                    {
+                      required: true,
+                      message: 'Tagging Video ID is required.',
+                    },
+                  ]}
+                >
+                  <Input
+                    allowClear
+                    id="taggingVideo"
+                    placeholder="Tagging Video ID"
+                  />
+                </Form.Item>
+              </Col>
+            </Col>
+            <Col span={24}>
+              <Row gutter={8} justify="end">
+                <Col>
+                  <Button type="default" onClick={() => form.resetFields()}>
+                    Cancel
+                  </Button>
+                </Col>
+                <Col>
+                  <Button
+                    loading={loading}
+                    type="primary"
+                    htmlType="submit"
+                    className="mb-1"
+                  >
+                    Save
+                  </Button>
+                </Col>
+              </Row>
+            </Col>
+          </Row>
+        </Form>
+      </div>
     </>
   );
 };

@@ -441,20 +441,23 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
               )
             }
           >
-            <Table
-              className="mt-1"
-              scroll={{ x: true, y: 300 }}
-              rowClassName={(_, index) => `scrollable-row-${index}`}
-              rowKey="id"
-              columns={columns}
-              dataSource={guests}
-              loading={fetchingGuests}
-              pagination={false}
-              rowSelection={{
-                selectedRowKeys,
-                onChange: setSelectedRowKeys,
-              }}
-            />
+            <div style={{ height: '100%' }}>
+              <Table
+                style={{ minHeight: '100vh' }}
+                className="mt-1"
+                scroll={{ x: true, y: 300 }}
+                rowClassName={(_, index) => `scrollable-row-${index}`}
+                rowKey="id"
+                columns={columns}
+                dataSource={guests}
+                loading={fetchingGuests}
+                pagination={false}
+                rowSelection={{
+                  selectedRowKeys,
+                  onChange: setSelectedRowKeys,
+                }}
+              />
+            </div>
           </InfiniteScroll>
         </div>
       )}
