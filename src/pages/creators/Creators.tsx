@@ -556,9 +556,8 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
               </Row>
             </Col>
           </Row>
-          <div style={{ height: '100%' }}>
+          <div>
             <InfiniteScroll
-              style={{ minHeight: '100vh' }}
               dataLength={creators.length}
               next={() => fetch(true)}
               hasMore={!eof}

@@ -1125,7 +1125,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   };
 
   return (
-    <>
+    <div style={{ overflow: 'clip', height: '100%' }}>
       {!details && (
         <div className="video-feed mb-1">
           <PageHeader
@@ -1260,7 +1260,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
           setDetails={setDetails}
         />
       )}
-    </>
+    </div>
   );
 };
 

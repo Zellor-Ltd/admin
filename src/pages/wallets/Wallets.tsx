@@ -229,7 +229,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   return (
-    <>
+    <div style={{ overflow: 'clip', height: '100%' }}>
       {!details && (
         <div className="wallets">
           <PageHeader
@@ -300,9 +300,8 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
               </Row>
             </Col>
           </Row>
-          <div style={{ height: '100%' }}>
+          <div>
             <Table
-              style={{ minHeight: '100vh' }}
               className="mt-1"
               scroll={{ x: true, y: 300 }}
               rowClassName={(_, index) => `scrollable-row-${index}`}
@@ -322,7 +321,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
           onReset={handleResetWallet}
         />
       )}
-    </>
+    </div>
   );
 };
 

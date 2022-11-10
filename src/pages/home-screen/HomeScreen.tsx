@@ -227,7 +227,7 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
     },
   ];
   return (
-    <>
+    <div style={{ overflow: 'clip', height: '100%' }}>
       {!details && (
         <div>
           <PageHeader
@@ -244,9 +244,8 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
               </Button>,
             ]}
           />
-          <div style={{ height: '100%' }}>
+          <div>
             <Table
-              style={{ minHeight: '100vh' }}
               scroll={{ x: true, y: 300 }}
               rowClassName={(_, index) => `scrollable-row-${index}`}
               rowKey="id"
@@ -265,7 +264,7 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
           onCancel={onCancelBanner}
         />
       )}
-    </>
+    </div>
   );
 };
 

@@ -544,9 +544,9 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
   ];
 
   return (
-    <>
+    <div style={{ overflow: 'clip', height: '100%' }}>
       {!details && (
-        <>
+        <div>
           <PageHeader
             title="Master Brands"
             subTitle={isMobile ? '' : 'List of Master Brands'}
@@ -574,11 +574,10 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
               />
             </Col>
           </Row>
-          <div style={{ height: '100%' }}>
+          <div>
             <Table
-              style={{ minHeight: '100vh' }}
               className="mt-15"
-              scroll={{ x: true, y: 300 }}
+              scroll={{ x: true, y: 240 }}
               rowClassName={(_, index) => `scrollable-row-${index}`}
               rowKey="id"
               columns={columns}
@@ -587,7 +586,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
               pagination={false}
             />
           </div>
-        </>
+        </div>
       )}
       {details && (
         <BrandDetail
@@ -596,7 +595,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
           brand={currentBrand as Brand}
         />
       )}
-    </>
+    </div>
   );
 };
 

@@ -212,9 +212,8 @@ const Trends: React.FC<RouteComponentProps> = props => {
             </Row>
           </Col>
         </Row>
-        <div style={{ height: '100%' }}>
+        <div>
           <Table
-            style={{ minHeight: '100vh' }}
             className="mt-15"
             scroll={{ x: true, y: 300 }}
             rowClassName={(_, index) => `scrollable-row-${index}`}

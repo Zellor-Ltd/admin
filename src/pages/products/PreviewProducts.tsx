@@ -838,9 +838,8 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
         if (!details) {
           return (
             <>
-              <div style={{ height: '100%' }}>
+              <div>
                 <InfiniteScroll
-                  style={{ minHeight: '100vh' }}
                   dataLength={products.length}
                   next={getProducts}
                   hasMore={!eof}
@@ -1182,7 +1181,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
   };
 
   return (
-    <>
+    <div style={{ overflow: 'clip', height: '100%' }}>
       {!details && (
         <>
           <PageHeader
@@ -1306,7 +1305,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
         </>
       )}
       {buildView()}
-    </>
+    </div>
   );
 };
 

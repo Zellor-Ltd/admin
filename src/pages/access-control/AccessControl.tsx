@@ -180,9 +180,9 @@ const AccessControl: React.FC = () => {
         layout="vertical"
         onFinish={onFinish}
       >
-        <div style={{ height: '100%' }}>
+        <div>
           <Tabs
-            style={{ minHeight: '100vh', width: '100%' }}
+            style={{ width: '100%' }}
             defaultActiveKey="template"
             onChange={setSelectedMethod}
             className="mt-05"

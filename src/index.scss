@@ -1,5 +1,68 @@
 @import '~antd/dist/antd.css';
 
+body {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+.site-layout-background {
+  margin: 24px 16px;
+  padding: 5px;
+  width: 50px;
+  top: 64px;
+
+  @media screen and (max-height: 449px) {
+    height: 75vh;
+  }
+
+  @media screen and (min-height: 450px) and (max-height: 549px) {
+    height: 81vh;
+  }
+
+  @media screen and (min-height: 550px) and (max-height: 649px) {
+    height: 83vh;
+  }
+
+  @media screen and (min-height: 650px) and (max-height: 749px) {
+    height: 85vh;
+  }
+
+  @media screen and (min-height: 750px) and (max-height: 849px) {
+    height: 87vh;
+  }
+
+  @media screen and (min-height: 850px) and (max-height: 949px) {
+    height: 88vh;
+  }
+
+  @media screen and (min-height: 950px) and (max-height: 1049px) {
+    height: 89vh;
+  }
+
+  @media screen and (min-height: 1050px) and (max-height: 1149px) {
+    height: 90vh;
+  }
+
+  @media screen and (min-height: 1150px) and (max-height: 1249px) {
+    height: 91vh;
+  }
+
+  @media screen and (min-height: 1250px) and (max-height: 1449px) {
+    height: 92vh;
+  }
+
+  @media screen and (min-height: 1450px) and (max-height: 1649px) {
+    height: 93vh;
+  }
+
+  @media screen and (min-height: 1650px) {
+    height: 94vh;
+  }
+}
+
+.ant-table-body {
+  max-height: 1000px !important;
+}
+
 .ant-input-number,
 .ant-picker {
   width: 100%;
@@ -121,9 +184,8 @@
 .ant-layout-sider-children {
   position: fixed;
   overflow: auto;
-  height: 90vh;
   left: 0;
-  bottom: 0;
+  top: 64px;
   width: 200px;
   background: #001529;
 }
@@ -257,48 +319,6 @@
 }
 
 @media (max-width: 992px) {
-  .ant-layout-sider-children {
-    width: 50px;
-    top: 64px;
-
-    @media screen and (max-height: 449px) {
-      height: 85vh;
-    }
-
-    @media screen and (min-height: 450px) and (max-height: 549px) {
-      height: 89vh;
-    }
-
-    @media screen and (min-height: 550px) and (max-height: 649px) {
-      height: 91vh;
-    }
-
-    @media screen and (min-height: 650px) and (max-height: 749px) {
-      height: 92vh;
-    }
-
-    @media screen and (min-height: 750px) and (max-height: 849px) {
-      height: 93vh;
-    }
-
-    @media screen and (min-height: 850px) and (max-height: 949px) {
-      height: 94vh;
-    }
-
-    @media screen and (min-height: 950px) and (max-height: 1049px) {
-      height: 95vh;
-    }
-
-    @media screen and (min-height: 1050px) {
-      height: 96vh;
-    }
-  }
-
-  .site-layout-background {
-    margin: 24px 16px;
-    padding: 5px;
-  }
-
   .sider-container {
     background: #001529;
     width: 52px;

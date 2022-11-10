@@ -567,7 +567,7 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
   };
 
   return (
-    <>
+    <div style={{ overflow: 'clip', height: '100%' }}>
       {!details && (
         <>
           <PageHeader
@@ -611,9 +611,8 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
             selectedRecord={productAPITest}
             setSelectedRecord={setProductAPITest}
           />
-          <div style={{ height: '100%' }}>
+          <div>
             <Table
-              style={{ minHeight: '100vh' }}
               scroll={{ x: true, y: 300 }}
               className="mt-1"
               rowClassName={(_, index) =>
@@ -661,7 +660,7 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
           template
         />
       )}
-    </>
+    </div>
   );
 };
 

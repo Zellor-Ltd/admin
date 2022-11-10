@@ -166,9 +166,8 @@ const Roles: React.FC<RouteComponentProps> = ({ history, location }) => {
           />
         </Col>
       </Row>
-      <div style={{ height: '100%' }}>
+      <div>
         <Table
-          style={{ minHeight: '100vh' }}
           className="mt-15"
           scroll={{ x: true, y: 300 }}
           rowKey="id"

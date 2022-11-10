@@ -909,7 +909,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   return (
-    <>
+    <div style={{ overflow: 'clip', height: '100%' }}>
       {!details && (
         <div className="orders">
           <PageHeader
@@ -1001,9 +1001,8 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
               )
             }
           >
-            <div style={{ height: '100%' }}>
+            <div>
               <Table
-                style={{ minHeight: '100vh' }}
                 className="mt-05"
                 scroll={{ x: true, y: 300 }}
                 rowClassName={(_, index) => `scrollable-row-${index}`}
@@ -1073,7 +1072,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       {details && (
         <FanDetail fan={currentFan} onSave={onSaveFan} onCancel={onCancelFan} />
       )}
-    </>
+    </div>
   );
 };
 

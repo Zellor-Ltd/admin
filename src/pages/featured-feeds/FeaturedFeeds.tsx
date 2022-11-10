@@ -366,7 +366,7 @@ const FeaturedFeed: React.FC<RouteComponentProps> = () => {
   };
 
   return (
-    <>
+    <div style={{ overflow: 'clip', height: '100%' }}>
       <div className="video-feed mb-1">
         <PageHeader
           title="Featured Feeds"
@@ -417,9 +417,8 @@ const FeaturedFeed: React.FC<RouteComponentProps> = () => {
           </Col>
         </Row>
         <DndProvider backend={HTML5Backend}>
-          <div style={{ height: '100%' }}>
+          <div>
             <Table
-              style={{ minHeight: '100vh' }}
               scroll={{ x: true, y: 300 }}
               className="mt-1"
               rowClassName={(_, index) =>
@@ -442,7 +441,7 @@ const FeaturedFeed: React.FC<RouteComponentProps> = () => {
           </div>
         </DndProvider>
       </div>
-    </>
+    </div>
   );
 };
 

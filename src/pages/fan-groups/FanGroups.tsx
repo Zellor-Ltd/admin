@@ -182,18 +182,18 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
               />
             </Col>
           </Row>
-          <div style={{ height: '100%' }}>
+          <div>
             <Table
-              style={{ minHeight: '100vh' }}
-            className="mt-15"
-            scroll={{ x: true, y: 300 }}
-            rowClassName={(_, index) => `scrollable-row-${index}`}
-            rowKey="id"
-            columns={columns}
-            dataSource={data}
-            loading={loading}
-            pagination={false}
-          /></div>
+              className="mt-15"
+              scroll={{ x: true, y: 300 }}
+              rowClassName={(_, index) => `scrollable-row-${index}`}
+              rowKey="id"
+              columns={columns}
+              dataSource={data}
+              loading={loading}
+              pagination={false}
+            />
+          </div>
         </div>
       )}
       {details && (

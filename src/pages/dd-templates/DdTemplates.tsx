@@ -289,7 +289,7 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   return (
-    <>
+    <div style={{ overflow: 'clip', height: '100%' }}>
       {!details && (
         <div>
           <PageHeader
@@ -320,9 +320,8 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
               />
             </Col>
           </Row>
-          <div style={{ height: '100%' }}>
+          <div>
             <Table
-              style={{ minHeight: '100vh' }}
               className="mt-15"
               scroll={{ x: true, y: 300 }}
               rowClassName={(_, index) => `scrollable-row-${index}`}
@@ -342,7 +341,7 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
           onCancel={onCancelDdTemplate}
         />
       )}
-    </>
+    </div>
   );
 };
 

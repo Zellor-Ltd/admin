@@ -926,7 +926,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
   };
 
   return (
-    <>
+    <div style={{ overflow: 'clip', height: '100%' }}>
       {!details && (
         <>
           <PageHeader
@@ -1003,9 +1003,8 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
             selectedRecord={productAPITest}
             setSelectedRecord={setProductAPITest}
           />
-          <div style={{ height: '100%' }}>
+          <div>
             <InfiniteScroll
-              style={{ minHeight: '100vh' }}
               dataLength={products.length}
               next={getProducts}
               hasMore={!eof}
@@ -1073,7 +1072,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
           isLive
         />
       )}
-    </>
+    </div>
   );
 };
 

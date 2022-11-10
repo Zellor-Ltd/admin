@@ -582,7 +582,7 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
   };
 
   return (
-    <>
+    <div style={{ overflow: 'clip', height: '100%' }}>
       {!manualPayment && !manualCommission && (
         <>
           <PageHeader
@@ -651,9 +651,8 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
             </Collapse>
           )}
           <>
-            <div style={{ height: '100%' }}>
+            <div>
               <Table
-                style={{ minHeight: '100vh' }}
                 scroll={{ x: true, y: 300 }}
                 rowClassName={(_, index) => `scrollable-row-${index}`}
                 rowSelection={rowSelection}
@@ -751,7 +750,7 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
           setManualCommission={setManualCommission}
         />
       )}
-    </>
+    </div>
   );
 };
 

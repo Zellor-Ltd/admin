@@ -198,9 +198,8 @@ const Endpoints: React.FC<RouteComponentProps> = ({ history, location }) => {
           />
         </Col>
       </Row>
-      <div style={{ height: '100%' }}>
+      <div>
         <Table
-          style={{ minHeight: '100vh' }}
           className="mt-1"
           scroll={{ x: true, y: 300 }}
           rowKey="id"

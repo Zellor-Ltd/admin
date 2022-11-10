@@ -382,7 +382,7 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   return (
-    <>
+    <div style={{ overflow: 'clip', height: '100%' }}>
       {!details && (
         <>
           <PageHeader
@@ -406,9 +406,8 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
               </Panel>
             </Collapse>
           )}
-          <div style={{ height: '100%' }}>
+          <div>
             <InfiniteScroll
-              style={{ minHeight: '100vh' }}
               dataLength={payments.length}
               next={getPayments}
               hasMore={!eof}
@@ -468,7 +467,7 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
       {details && (
         <CommissionDetail setDetails={setDetails} commission={currentPayment} />
       )}
-    </>
+    </div>
   );
 };
 

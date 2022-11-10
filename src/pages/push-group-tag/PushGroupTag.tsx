@@ -408,9 +408,8 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
               </Row>
             </Col>
           </Row>
-          <div style={{ height: '100%' }}>
+          <div>
             <InfiniteScroll
-              style={{ minHeight: '100vh' }}
               dataLength={tags.length}
               next={loadTags}
               hasMore={!eof}

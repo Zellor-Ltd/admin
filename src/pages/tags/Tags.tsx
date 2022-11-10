@@ -341,38 +341,38 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
               </Row>
             </Col>
           </Row>
-          <div style={{ height: '100%' }}>
+          <div>
             <InfiniteScroll
-              style={{ minHeight: '100vh' }}
-            dataLength={tags.length}
-            next={fetch}
-            hasMore={!eof}
-            loader={
-              page !== 0 && (
-                <div className="scroll-message">
-                  <Spin spinning={loading} />
-                </div>
-              )
-            }
-            endMessage={
-              loaded.current && (
-                <div className="scroll-message">
-                  <b>End of results.</b>
-                </div>
-              )
-            }
-          >
-            <Table
-              className="mt-1"
-              scroll={{ x: true, y: 300 }}
-              rowClassName={(_, index) => `scrollable-row-${index}`}
-              rowKey="id"
-              columns={columns}
-              dataSource={tags}
-              loading={refreshing || (!tags.length && loading)}
-              pagination={false}
-            />
-          </InfiniteScroll></div>
+              dataLength={tags.length}
+              next={fetch}
+              hasMore={!eof}
+              loader={
+                page !== 0 && (
+                  <div className="scroll-message">
+                    <Spin spinning={loading} />
+                  </div>
+                )
+              }
+              endMessage={
+                loaded.current && (
+                  <div className="scroll-message">
+                    <b>End of results.</b>
+                  </div>
+                )
+              }
+            >
+              <Table
+                className="mt-1"
+                scroll={{ x: true, y: 300 }}
+                rowClassName={(_, index) => `scrollable-row-${index}`}
+                rowKey="id"
+                columns={columns}
+                dataSource={tags}
+                loading={refreshing || (!tags.length && loading)}
+                pagination={false}
+              />
+            </InfiniteScroll>
+          </div>
         </>
       )}
       {details && (

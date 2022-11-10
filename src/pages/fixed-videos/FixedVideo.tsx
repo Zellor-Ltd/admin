@@ -30,9 +30,8 @@ const FixedVideo: React.FC<RouteComponentProps> = () => {
         title="Fixed Video"
         subTitle={isMobile ? '' : 'New Fixed Video'}
       />
-      <div style={{ height: '100%' }}>
+      <div>
         <Form
-          style={{ minHeight: '100vh' }}
           form={form}
           layout="vertical"
           onFinish={onFinish}

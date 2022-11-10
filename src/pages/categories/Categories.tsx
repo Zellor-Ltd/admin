@@ -453,9 +453,8 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
           >
             {categoriesKeys.map(key => (
               <Tabs.TabPane tab={key} key={key}>
-                <div style={{ height: '100%' }}>
+                <div>
                   <InfiniteScroll
-                    style={{ minHeight: '100vh' }}
                     dataLength={categories.length}
                     next={updateDisplayedArray}
                     hasMore={!eof}

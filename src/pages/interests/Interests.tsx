@@ -310,9 +310,8 @@ const Interests: React.FC<InterestsProps> = () => {
         <Col span={24}>
           <Tabs defaultActiveKey="Interests" onChange={handleTabChange}>
             <Tabs.TabPane tab="Interests" key="Interests">
-              <div style={{ height: '100%' }}>
+              <div>
                 <SortableTable
-                  style={{ minHeight: '100vh' }}
                   scroll={{ x: true, y: 300 }}
                   rowKey="id"
                   columns={columns}
@@ -323,9 +322,8 @@ const Interests: React.FC<InterestsProps> = () => {
               </div>
             </Tabs.TabPane>
             <Tabs.TabPane tab="All Categories" key="All Categories">
-              <div style={{ height: '100%' }}>
+              <div>
                 <Table
-                  style={{ minHeight: '100vh' }}
                   scroll={{ x: true, y: 300 }}
                   rowKey="id"
                   columns={columns}

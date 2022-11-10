@@ -268,7 +268,7 @@ const FeedTemplates: React.FC<RouteComponentProps> = () => {
   };
 
   return (
-    <>
+    <div style={{ overflow: 'clip', height: '100%' }}>
       {!details && (
         <div className="video-feed mb-1">
           <PageHeader
@@ -285,20 +285,20 @@ const FeedTemplates: React.FC<RouteComponentProps> = () => {
             ]}
           />
           <Content>
-          <div style={{ height: '100%' }}>
-            <Table
-              style={{ minHeight: '100vh' }}  
-              scroll={{ x: true, y: 300 }}
-              className="mt-1"
-              rowClassName={(_, index) =>
-                `${index === lastViewedIndex ? 'selected-row' : ''}`
-              }
-              size="small"
-              columns={columns}
-              rowKey="id"
-              dataSource={feedTemplates}
-              loading={loading}
-            /></div>
+            <div>
+              <Table
+                scroll={{ x: true, y: 300 }}
+                className="mt-1"
+                rowClassName={(_, index) =>
+                  `${index === lastViewedIndex ? 'selected-row' : ''}`
+                }
+                size="small"
+                columns={columns}
+                rowKey="id"
+                dataSource={feedTemplates}
+                loading={loading}
+              />
+            </div>
           </Content>
         </div>
       )}
@@ -314,7 +314,7 @@ const FeedTemplates: React.FC<RouteComponentProps> = () => {
           template
         />
       )}
-    </>
+    </div>
   );
 };
 
