@@ -175,7 +175,7 @@ const Trends: React.FC<RouteComponentProps> = props => {
   };
 
   return (
-    <>
+    <div style={{ overflow: 'clip', height: '100%' }}>
       <div>
         <PageHeader
           title="Trends"
@@ -225,7 +225,7 @@ const Trends: React.FC<RouteComponentProps> = props => {
           />
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

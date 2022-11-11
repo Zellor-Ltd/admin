@@ -368,7 +368,7 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   return (
-    <>
+    <div style={{ overflow: 'clip', height: '100%' }}>
       {!details && (
         <div>
           <PageHeader
@@ -467,7 +467,7 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
           onCancel={onCancelFan}
         />
       )}
-    </>
+    </div>
   );
 };
 export default Guests;

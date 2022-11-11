@@ -505,7 +505,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   return (
-    <>
+    <div style={{ overflow: 'clip', height: '100%' }}>
       {!details && (
         <div className="creators">
           <PageHeader
@@ -598,7 +598,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
           onRollback={onRollback}
         />
       )}
-    </>
+    </div>
   );
 };
 

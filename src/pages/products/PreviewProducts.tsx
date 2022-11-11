@@ -1193,42 +1193,44 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                 ? 'Default View'
                 : 'Alternate View'
             }
-            className={isMobile ? 'mb-1' : ''}
+            className={isMobile ? 'mb-1 w-100' : ''}
             extra={[
-              <Row justify="end" key="headerRow">
+              <Row
+                gutter={8}
+                justify="end"
+                align="bottom"
+                key="headerRow"
+                style={{ margin: 0 }}
+              >
                 <Col>
-                  <Row gutter={8} align="bottom">
-                    <Col>
-                      <Input
-                        allowClear
-                        disabled={loadingResources || loading || disabled}
-                        onChange={event => setBarcodeFilter(event.target.value)}
-                        suffix={<SearchOutlined />}
-                        value={barcodeFilter}
-                        placeholder="Lookup Barcode"
-                        onPressEnter={() => createProduct(products.length)}
-                      />
-                    </Col>
-                    <Col>
-                      <Button
-                        key="2"
-                        className={isMobile ? 'mt-05' : ''}
-                        onClick={() => createProduct(products.length)}
-                      >
-                        New Item
-                      </Button>
-                    </Col>
-                    <Col>
-                      <Button
-                        key="3"
-                        type="primary"
-                        className={isMobile ? 'mt-05' : ''}
-                        onClick={switchView}
-                      >
-                        Switch View
-                      </Button>
-                    </Col>
-                  </Row>
+                  <Input
+                    allowClear
+                    disabled={loadingResources || loading || disabled}
+                    onChange={event => setBarcodeFilter(event.target.value)}
+                    suffix={<SearchOutlined />}
+                    value={barcodeFilter}
+                    placeholder="Lookup Barcode"
+                    onPressEnter={() => createProduct(products.length)}
+                  />
+                </Col>
+                <Col>
+                  <Button
+                    key="2"
+                    className={isMobile ? 'mt-05' : ''}
+                    onClick={() => createProduct(products.length)}
+                  >
+                    New Item
+                  </Button>
+                </Col>
+                <Col style={{ paddingRight: 0 }}>
+                  <Button
+                    key="3"
+                    type="primary"
+                    className={isMobile ? 'mt-05' : ''}
+                    onClick={switchView}
+                  >
+                    Switch View
+                  </Button>
                 </Col>
               </Row>,
             ]}

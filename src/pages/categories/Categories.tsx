@@ -409,7 +409,7 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   return (
-    <>
+    <div style={{ overflow: 'clip', height: '100%' }}>
       {!details && (
         <div className="categories">
           <PageHeader
@@ -495,7 +495,7 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
           onCancel={onCancelCategory}
         />
       )}
-    </>
+    </div>
   );
 };
 

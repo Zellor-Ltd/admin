@@ -294,7 +294,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
   };
 
   return (
-    <>
+    <div style={{ overflow: 'clip', height: '100%' }}>
       {!details && (
         <>
           <PageHeader
@@ -378,7 +378,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
       {details && (
         <TagDetail tag={currentTag} onSave={onSaveTag} onCancel={onCancelTag} />
       )}
-    </>
+    </div>
   );
 };
 

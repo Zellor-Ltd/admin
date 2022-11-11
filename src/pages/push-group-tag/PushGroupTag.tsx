@@ -338,7 +338,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
   };
 
   return (
-    <>
+    <div style={{ overflow: 'clip', height: '100%' }}>
       {!details && (
         <div>
           <PageHeader
@@ -445,7 +445,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
         </div>
       )}
       {details && <Step2 selectedTags={currentTags} onReturn={onReturnStep2} />}
-    </>
+    </div>
   );
 };
 

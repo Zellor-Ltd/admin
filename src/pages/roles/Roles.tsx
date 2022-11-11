@@ -137,7 +137,7 @@ const Roles: React.FC<RouteComponentProps> = ({ history, location }) => {
   };
 
   return (
-    <div className="roles">
+    <div className="roles" style={{ overflow: 'clip', height: '100%' }}>
       <PageHeader
         title="Roles"
         subTitle={isMobile ? '' : 'List of Roles'}

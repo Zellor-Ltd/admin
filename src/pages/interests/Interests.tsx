@@ -289,7 +289,7 @@ const Interests: React.FC<InterestsProps> = () => {
   };
 
   return (
-    <div className="interests">
+    <div className="interests" style={{ overflow: 'clip', height: '100%' }}>
       <PageHeader
         title="Interests"
         className={isMobile ? 'mb-n1' : ''}

@@ -151,7 +151,7 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
   };
 
   return (
-    <>
+    <div style={{ overflow: 'clip', height: '100%' }}>
       {!details && (
         <div>
           <PageHeader
@@ -203,7 +203,7 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
           onCancel={onCancelFanGroup}
         />
       )}
-    </>
+    </div>
   );
 };
 

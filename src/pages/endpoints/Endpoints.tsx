@@ -169,7 +169,7 @@ const Endpoints: React.FC<RouteComponentProps> = ({ history, location }) => {
   };
 
   return (
-    <div className="endpoints">
+    <div className="endpoints" style={{ overflow: 'clip', height: '100%' }}>
       <PageHeader
         title="Endpoints"
         subTitle={isMobile ? '' : 'List of Endpoints'}
