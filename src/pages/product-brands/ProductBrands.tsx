@@ -441,7 +441,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   return (
-    <>
+    <div style={{ overflow: 'clip', height: '100%' }}>
       {!details && (
         <div>
           <PageHeader
@@ -472,16 +472,18 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
               />
             </Col>
           </Row>
-          <Table
-            className="mt-15"
-            scroll={{ x: true, y: 300 }}
-            rowClassName={(_, index) => `scrollable-row-${index}`}
-            rowKey="id"
-            columns={columns}
-            dataSource={data}
-            loading={loading}
-            pagination={false}
-          />
+          <div>
+            <Table
+              className="mt-15"
+              scroll={{ x: true, y: 300 }}
+              rowClassName={(_, index) => `scrollable-row-${index}`}
+              rowKey="id"
+              columns={columns}
+              dataSource={data}
+              loading={loading}
+              pagination={false}
+            />
+          </div>
         </div>
       )}
       {details && (
@@ -493,7 +495,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
           allCategories={allCategories}
         />
       )}
-    </>
+    </div>
   );
 };
 

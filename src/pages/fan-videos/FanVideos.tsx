@@ -770,7 +770,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
   };
 
   return (
-    <>
+    <div style={{ overflow: 'clip', height: '100%' }}>
       {!details && (
         <>
           <PageHeader
@@ -841,17 +841,19 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
             </Col>
           </Row>
           <Content>
-            <Table
-              className={isMobile ? 'mt-n1' : 'mt-15'}
-              scroll={{ x: true, y: 300 }}
-              rowClassName={(_, index) => `scrollable-row-${index}`}
-              size="small"
-              columns={feedItemColumns}
-              rowKey="id"
-              dataSource={data}
-              loading={loading}
-              pagination={false}
-            />
+            <div>
+              <Table
+                className={isMobile ? 'mt-n1' : 'mt-15'}
+                scroll={{ x: true, y: 300 }}
+                rowClassName={(_, index) => `scrollable-row-${index}`}
+                size="small"
+                columns={feedItemColumns}
+                rowKey="id"
+                dataSource={data}
+                loading={loading}
+                pagination={false}
+              />
+            </div>
           </Content>
         </>
       )}
@@ -867,7 +869,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
           isFanVideo
         />
       )}
-    </>
+    </div>
   );
 };
 

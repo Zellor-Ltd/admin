@@ -382,7 +382,7 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   return (
-    <>
+    <div style={{ overflow: 'clip', height: '100%' }}>
       {!details && (
         <>
           <PageHeader
@@ -406,66 +406,68 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
               </Panel>
             </Collapse>
           )}
-          <InfiniteScroll
-            dataLength={payments.length}
-            next={getPayments}
-            hasMore={!eof}
-            loader={
-              page !== 0 && (
-                <div className="scroll-message">
-                  <Spin />
-                </div>
-              )
-            }
-            endMessage={
-              page !== 0 && (
-                <div className="scroll-message">
-                  <b>End of results.</b>
-                </div>
-              )
-            }
-          >
-            <Table
-              scroll={{ x: true, y: 300 }}
-              rowClassName={(_, index) => `scrollable-row-${index}`}
-              rowKey="id"
-              columns={columns}
-              dataSource={payments}
-              loading={refreshing}
-              pagination={false}
-              summary={pageData => {
-                let tempAmount = 0;
-                pageData.forEach(({ payment }) => {
-                  tempAmount += payment;
-                });
-                totalAmount.current = tempAmount;
+          <div>
+            <InfiniteScroll
+              dataLength={payments.length}
+              next={getPayments}
+              hasMore={!eof}
+              loader={
+                page !== 0 && (
+                  <div className="scroll-message">
+                    <Spin />
+                  </div>
+                )
+              }
+              endMessage={
+                page !== 0 && (
+                  <div className="scroll-message">
+                    <b>End of results.</b>
+                  </div>
+                )
+              }
+            >
+              <Table
+                scroll={{ x: true, y: 300 }}
+                rowClassName={(_, index) => `scrollable-row-${index}`}
+                rowKey="id"
+                columns={columns}
+                dataSource={payments}
+                loading={refreshing}
+                pagination={false}
+                summary={pageData => {
+                  let tempAmount = 0;
+                  pageData.forEach(({ payment }) => {
+                    tempAmount += payment;
+                  });
+                  totalAmount.current = tempAmount;
 
-                return (
-                  <>
-                    <Table.Summary.Row>
-                      <Table.Summary.Cell index={0}>
-                        <Typography.Text strong>Total</Typography.Text>
-                      </Table.Summary.Cell>
-                      <Table.Summary.Cell index={1}></Table.Summary.Cell>
-                      <Table.Summary.Cell index={2}></Table.Summary.Cell>
-                      <Table.Summary.Cell index={3}></Table.Summary.Cell>
-                      <Table.Summary.Cell index={4}></Table.Summary.Cell>
-                      <Table.Summary.Cell index={5}>
-                        €{totalAmount.current.toFixed(2)}
-                      </Table.Summary.Cell>
-                      <Table.Summary.Cell index={6}></Table.Summary.Cell>
-                    </Table.Summary.Row>
-                  </>
-                );
-              }}
-            />
-          </InfiniteScroll>
+                  return (
+                    <>
+                      <Table.Summary.Row>
+                        <Table.Summary.Cell index={0}>
+                          <Typography.Text strong>Total</Typography.Text>
+                        </Table.Summary.Cell>
+                        <Table.Summary.Cell index={1}></Table.Summary.Cell>
+                        <Table.Summary.Cell index={2}></Table.Summary.Cell>
+                        <Table.Summary.Cell index={3}></Table.Summary.Cell>
+                        <Table.Summary.Cell index={4}></Table.Summary.Cell>
+                        <Table.Summary.Cell index={5}>
+                          €{totalAmount.current.toFixed(2)}
+                        </Table.Summary.Cell>
+                        <Table.Summary.Cell index={6}></Table.Summary.Cell>
+                      </Table.Summary.Row>
+                    </>
+                  );
+                }}
+              />
+            </InfiniteScroll>
+          </div>
         </>
       )}
       {details && (
         <CommissionDetail setDetails={setDetails} commission={currentPayment} />
       )}
-    </>
+    </div>
   );
 };
 

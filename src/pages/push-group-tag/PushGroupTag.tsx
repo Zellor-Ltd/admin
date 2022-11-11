@@ -338,7 +338,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
   };
 
   return (
-    <>
+    <div style={{ overflow: 'clip', height: '100%' }}>
       {!details && (
         <div>
           <PageHeader
@@ -408,42 +408,44 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
               </Row>
             </Col>
           </Row>
-          <InfiniteScroll
-            dataLength={tags.length}
-            next={loadTags}
-            hasMore={!eof}
-            loader={
-              tagsPage !== 0 &&
-              fetchingTags && (
-                <div className="scroll-message">
-                  <Spin />
-                </div>
-              )
-            }
-            endMessage={
-              loaded && (
-                <div className="scroll-message">
-                  <b>End of results.</b>
-                </div>
-              )
-            }
-          >
-            <Table
-              className="mt-1"
-              scroll={{ x: true, y: 300 }}
-              rowClassName={(_, index) => `scrollable-row-${index}`}
-              rowSelection={rowSelection}
-              rowKey="id"
-              columns={columns}
-              dataSource={search(tags)}
-              loading={fetchingTags}
-              pagination={false}
-            />
-          </InfiniteScroll>
+          <div>
+            <InfiniteScroll
+              dataLength={tags.length}
+              next={loadTags}
+              hasMore={!eof}
+              loader={
+                tagsPage !== 0 &&
+                fetchingTags && (
+                  <div className="scroll-message">
+                    <Spin />
+                  </div>
+                )
+              }
+              endMessage={
+                loaded && (
+                  <div className="scroll-message">
+                    <b>End of results.</b>
+                  </div>
+                )
+              }
+            >
+              <Table
+                className="mt-1"
+                scroll={{ x: true, y: 300 }}
+                rowClassName={(_, index) => `scrollable-row-${index}`}
+                rowSelection={rowSelection}
+                rowKey="id"
+                columns={columns}
+                dataSource={search(tags)}
+                loading={fetchingTags}
+                pagination={false}
+              />
+            </InfiniteScroll>
+          </div>
         </div>
       )}
       {details && <Step2 selectedTags={currentTags} onReturn={onReturnStep2} />}
-    </>
+    </div>
   );
 };
 

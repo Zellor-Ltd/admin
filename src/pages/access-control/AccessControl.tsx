@@ -180,30 +180,32 @@ const AccessControl: React.FC = () => {
         layout="vertical"
         onFinish={onFinish}
       >
-        <Tabs
-          defaultActiveKey="template"
-          style={{ width: '100%' }}
-          onChange={setSelectedMethod}
-          className="mt-05"
-        >
-          {methodsList.map((method, index) => (
-            <TabPane tab={method} key={method}>
-              <Row gutter={24}>
-                {loading ? (
-                  <Spin style={{ margin: '0 auto' }} />
-                ) : (
-                  endpointPrivileges.map((data, _index) => (
-                    <FunctionPrivilege
-                      endpointPrivilege={data}
-                      profile={selectedProfile ?? ''}
-                      key={`position_${_index}`}
-                    />
-                  ))
-                )}
-              </Row>
-            </TabPane>
-          ))}
-        </Tabs>
+        <div>
+          <Tabs
+            style={{ width: '100%' }}
+            defaultActiveKey="template"
+            onChange={setSelectedMethod}
+            className="mt-05"
+          >
+            {methodsList.map((method, index) => (
+              <TabPane tab={method} key={method}>
+                <Row gutter={24}>
+                  {loading ? (
+                    <Spin style={{ margin: '0 auto' }} />
+                  ) : (
+                    endpointPrivileges.map((data, _index) => (
+                      <FunctionPrivilege
+                        endpointPrivilege={data}
+                        profile={selectedProfile ?? ''}
+                        key={`position_${_index}`}
+                      />
+                    ))
+                  )}
+                </Row>
+              </TabPane>
+            ))}
+          </Tabs>
+        </div>
       </Form>
       <CloneModal
         showCloneModal={showCloneModal}

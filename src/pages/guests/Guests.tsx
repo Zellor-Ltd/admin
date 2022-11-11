@@ -368,7 +368,7 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   return (
-    <>
+    <div style={{ overflow: 'clip', height: '100%' }}>
       {!details && (
         <div>
           <PageHeader
@@ -441,20 +441,22 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
               )
             }
           >
-            <Table
-              className="mt-1"
-              scroll={{ x: true, y: 300 }}
-              rowClassName={(_, index) => `scrollable-row-${index}`}
-              rowKey="id"
-              columns={columns}
-              dataSource={guests}
-              loading={fetchingGuests}
-              pagination={false}
-              rowSelection={{
-                selectedRowKeys,
-                onChange: setSelectedRowKeys,
-              }}
-            />
+            <div>
+              <Table
+                className="mt-1"
+                scroll={{ x: true, y: 300 }}
+                rowClassName={(_, index) => `scrollable-row-${index}`}
+                rowKey="id"
+                columns={columns}
+                dataSource={guests}
+                loading={fetchingGuests}
+                pagination={false}
+                rowSelection={{
+                  selectedRowKeys,
+                  onChange: setSelectedRowKeys,
+                }}
+              />
+            </div>
           </InfiniteScroll>
         </div>
       )}
@@ -465,7 +467,7 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
           onCancel={onCancelFan}
         />
       )}
-    </>
+    </div>
   );
 };
 export default Guests;

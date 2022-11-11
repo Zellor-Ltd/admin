@@ -294,7 +294,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
   };
 
   return (
-    <>
+    <div style={{ overflow: 'clip', height: '100%' }}>
       {!details && (
         <>
           <PageHeader
@@ -341,42 +341,44 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
               </Row>
             </Col>
           </Row>
-          <InfiniteScroll
-            dataLength={tags.length}
-            next={fetch}
-            hasMore={!eof}
-            loader={
-              page !== 0 && (
-                <div className="scroll-message">
-                  <Spin spinning={loading} />
-                </div>
-              )
-            }
-            endMessage={
-              loaded.current && (
-                <div className="scroll-message">
-                  <b>End of results.</b>
-                </div>
-              )
-            }
-          >
-            <Table
-              className="mt-1"
-              scroll={{ x: true, y: 300 }}
-              rowClassName={(_, index) => `scrollable-row-${index}`}
-              rowKey="id"
-              columns={columns}
-              dataSource={tags}
-              loading={refreshing || (!tags.length && loading)}
-              pagination={false}
-            />
-          </InfiniteScroll>
+          <div>
+            <InfiniteScroll
+              dataLength={tags.length}
+              next={fetch}
+              hasMore={!eof}
+              loader={
+                page !== 0 && (
+                  <div className="scroll-message">
+                    <Spin spinning={loading} />
+                  </div>
+                )
+              }
+              endMessage={
+                loaded.current && (
+                  <div className="scroll-message">
+                    <b>End of results.</b>
+                  </div>
+                )
+              }
+            >
+              <Table
+                className="mt-1"
+                scroll={{ x: true, y: 300 }}
+                rowClassName={(_, index) => `scrollable-row-${index}`}
+                rowKey="id"
+                columns={columns}
+                dataSource={tags}
+                loading={refreshing || (!tags.length && loading)}
+                pagination={false}
+              />
+            </InfiniteScroll>
+          </div>
         </>
       )}
       {details && (
         <TagDetail tag={currentTag} onSave={onSaveTag} onCancel={onCancelTag} />
       )}
-    </>
+    </div>
   );
 };
 

@@ -838,59 +838,61 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
         if (!details) {
           return (
             <>
-              <InfiniteScroll
-                dataLength={products.length}
-                next={getProducts}
-                hasMore={!eof}
-                loader={
-                  page !== 0 &&
-                  loading && (
-                    <div className="scroll-message">
-                      <Spin />
-                    </div>
-                  )
-                }
-                endMessage={
-                  loaded.current && (
-                    <div className="scroll-message">
-                      <b>End of results.</b>
-                    </div>
-                  )
-                }
-              >
-                <EditableTable
-                  scroll={{ x: true, y: 300 }}
-                  className="mt-2"
-                  rowClassName={(_, index) =>
-                    `scrollable-row-${index} ${
-                      index === lastViewedIndex ? 'selected-row' : ''
-                    }`
+              <div>
+                <InfiniteScroll
+                  dataLength={products.length}
+                  next={getProducts}
+                  hasMore={!eof}
+                  loader={
+                    page !== 0 &&
+                    loading && (
+                      <div className="scroll-message">
+                        <Spin />
+                      </div>
+                    )
                   }
-                  rowKey="id"
-                  columns={columns}
-                  dataSource={products}
-                  loading={(loading || disabled) && page === 0}
-                  onSave={onSaveItem}
-                  pagination={false}
-                  rowSelection={{
-                    selectedRowKeys,
-                    onChange: onSelectChange,
-                  }}
-                  expandable={{
-                    expandedRowRender: (record: Product) => (
-                      <ProductExpandedRow
-                        key={record.id}
-                        record={record}
-                        allCategories={allCategories}
-                        onSaveProduct={onSaveCategories}
-                        loading={loadingCategories}
-                        isStaging
-                        productBrands={productBrands}
-                      ></ProductExpandedRow>
-                    ),
-                  }}
-                />
-              </InfiniteScroll>
+                  endMessage={
+                    loaded.current && (
+                      <div className="scroll-message">
+                        <b>End of results.</b>
+                      </div>
+                    )
+                  }
+                >
+                  <EditableTable
+                    scroll={{ x: true, y: 300 }}
+                    className="mt-2"
+                    rowClassName={(_, index) =>
+                      `scrollable-row-${index} ${
+                        index === lastViewedIndex ? 'selected-row' : ''
+                      }`
+                    }
+                    rowKey="id"
+                    columns={columns}
+                    dataSource={products}
+                    loading={(loading || disabled) && page === 0}
+                    onSave={onSaveItem}
+                    pagination={false}
+                    rowSelection={{
+                      selectedRowKeys,
+                      onChange: onSelectChange,
+                    }}
+                    expandable={{
+                      expandedRowRender: (record: Product) => (
+                        <ProductExpandedRow
+                          key={record.id}
+                          record={record}
+                          allCategories={allCategories}
+                          onSaveProduct={onSaveCategories}
+                          loading={loadingCategories}
+                          isStaging
+                          productBrands={productBrands}
+                        ></ProductExpandedRow>
+                      ),
+                    }}
+                  />
+                </InfiniteScroll>
+              </div>
             </>
           );
         } else {
@@ -1179,7 +1181,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
   };
 
   return (
-    <>
+    <div style={{ overflow: 'clip', height: '100%' }}>
       {!details && (
         <>
           <PageHeader
@@ -1191,42 +1193,44 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                 ? 'Default View'
                 : 'Alternate View'
             }
-            className={isMobile ? 'mb-1' : ''}
+            className={isMobile ? 'mb-1 w-100' : ''}
             extra={[
-              <Row justify="end" key="headerRow">
+              <Row
+                gutter={8}
+                justify="end"
+                align="bottom"
+                key="headerRow"
+                style={{ margin: 0 }}
+              >
                 <Col>
-                  <Row gutter={8} align="bottom">
-                    <Col>
-                      <Input
-                        allowClear
-                        disabled={loadingResources || loading || disabled}
-                        onChange={event => setBarcodeFilter(event.target.value)}
-                        suffix={<SearchOutlined />}
-                        value={barcodeFilter}
-                        placeholder="Lookup Barcode"
-                        onPressEnter={() => createProduct(products.length)}
-                      />
-                    </Col>
-                    <Col>
-                      <Button
-                        key="2"
-                        className={isMobile ? 'mt-05' : ''}
-                        onClick={() => createProduct(products.length)}
-                      >
-                        New Item
-                      </Button>
-                    </Col>
-                    <Col>
-                      <Button
-                        key="3"
-                        type="primary"
-                        className={isMobile ? 'mt-05' : ''}
-                        onClick={switchView}
-                      >
-                        Switch View
-                      </Button>
-                    </Col>
-                  </Row>
+                  <Input
+                    allowClear
+                    disabled={loadingResources || loading || disabled}
+                    onChange={event => setBarcodeFilter(event.target.value)}
+                    suffix={<SearchOutlined />}
+                    value={barcodeFilter}
+                    placeholder="Lookup Barcode"
+                    onPressEnter={() => createProduct(products.length)}
+                  />
+                </Col>
+                <Col>
+                  <Button
+                    key="2"
+                    className={isMobile ? 'mt-05' : ''}
+                    onClick={() => createProduct(products.length)}
+                  >
+                    New Item
+                  </Button>
+                </Col>
+                <Col style={{ paddingRight: 0 }}>
+                  <Button
+                    key="3"
+                    type="primary"
+                    className={isMobile ? 'mt-05' : ''}
+                    onClick={switchView}
+                  >
+                    Switch View
+                  </Button>
                 </Col>
               </Row>,
             ]}
@@ -1303,7 +1307,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
         </>
       )}
       {buildView()}
-    </>
+    </div>
   );
 };
 

@@ -366,7 +366,7 @@ const FeaturedFeed: React.FC<RouteComponentProps> = () => {
   };
 
   return (
-    <>
+    <div style={{ overflow: 'clip', height: '100%' }}>
       <div className="video-feed mb-1">
         <PageHeader
           title="Featured Feeds"
@@ -417,29 +417,31 @@ const FeaturedFeed: React.FC<RouteComponentProps> = () => {
           </Col>
         </Row>
         <DndProvider backend={HTML5Backend}>
-          <Table
-            scroll={{ x: true, y: 300 }}
-            className="mt-1"
-            rowClassName={(_, index) =>
-              `${index === lastViewedIndex ? 'selected-row' : ''}`
-            }
-            components={components}
-            onRow={(_, index) => {
-              const attr = {
-                index,
-                moveRow,
-              };
-              return attr as React.HTMLAttributes<any>;
-            }}
-            size="small"
-            columns={columns}
-            rowKey="id"
-            dataSource={featuredFeeds}
-            loading={loading}
-          />
+          <div>
+            <Table
+              scroll={{ x: true, y: 300 }}
+              className="mt-1"
+              rowClassName={(_, index) =>
+                `${index === lastViewedIndex ? 'selected-row' : ''}`
+              }
+              components={components}
+              onRow={(_, index) => {
+                const attr = {
+                  index,
+                  moveRow,
+                };
+                return attr as React.HTMLAttributes<any>;
+              }}
+              size="small"
+              columns={columns}
+              rowKey="id"
+              dataSource={featuredFeeds}
+              loading={loading}
+            />
+          </div>
         </DndProvider>
       </div>
-    </>
+    </div>
   );
 };
 

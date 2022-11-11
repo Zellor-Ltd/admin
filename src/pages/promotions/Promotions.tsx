@@ -264,7 +264,7 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   return (
-    <>
+    <div style={{ overflow: 'clip', height: '100%' }}>
       {!details && (
         <div className="promotions">
           <PageHeader
@@ -293,16 +293,18 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
               />
             </Col>
           </Row>
-          <Table
-            className="mt-1"
-            scroll={{ x: true, y: 300 }}
-            rowClassName={(_, index) => `scrollable-row-${index}`}
-            rowKey="id"
-            columns={columns}
-            dataSource={data}
-            loading={loading}
-            pagination={false}
-          />
+          <div>
+            <Table
+              className="mt-1"
+              scroll={{ x: true, y: 300 }}
+              rowClassName={(_, index) => `scrollable-row-${index}`}
+              rowKey="id"
+              columns={columns}
+              dataSource={data}
+              loading={loading}
+              pagination={false}
+            />
+          </div>
         </div>
       )}
       {details && (
@@ -312,7 +314,7 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
           onCancel={onCancelPromotion}
         />
       )}
-    </>
+    </div>
   );
 };
 

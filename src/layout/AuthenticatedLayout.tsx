@@ -82,6 +82,7 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
           style={{
             padding: '24 0',
             minHeight: 280,
+            overflow: 'clip',
           }}
         >
           <ErrorBoundary fallbackComponent={ErrorPage()}>

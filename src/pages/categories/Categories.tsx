@@ -409,7 +409,7 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   return (
-    <>
+    <div style={{ overflow: 'clip', height: '100%' }}>
       {!details && (
         <div className="categories">
           <PageHeader
@@ -453,33 +453,35 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
           >
             {categoriesKeys.map(key => (
               <Tabs.TabPane tab={key} key={key}>
-                <InfiniteScroll
-                  dataLength={categories.length}
-                  next={updateDisplayedArray}
-                  hasMore={!eof}
-                  loader={
-                    page !== 0 && (
+                <div>
+                  <InfiniteScroll
+                    dataLength={categories.length}
+                    next={updateDisplayedArray}
+                    hasMore={!eof}
+                    loader={
+                      page !== 0 && (
+                        <div className="scroll-message">
+                          <Spin />
+                        </div>
+                      )
+                    }
+                    endMessage={
                       <div className="scroll-message">
-                        <Spin />
+                        <b>End of results.</b>
                       </div>
-                    )
-                  }
-                  endMessage={
-                    <div className="scroll-message">
-                      <b>End of results.</b>
-                    </div>
-                  }
-                >
-                  <Table
-                    scroll={{ x: true, y: 300 }}
-                    rowClassName={(_, index) => `scrollable-row-${index}`}
-                    rowKey="id"
-                    columns={columns}
-                    dataSource={categories}
-                    loading={loading || refreshing}
-                    pagination={false}
-                  />
-                </InfiniteScroll>
+                    }
+                  >
+                    <Table
+                      scroll={{ x: true, y: 300 }}
+                      rowClassName={(_, index) => `scrollable-row-${index}`}
+                      rowKey="id"
+                      columns={columns}
+                      dataSource={categories}
+                      loading={loading || refreshing}
+                      pagination={false}
+                    />
+                  </InfiniteScroll>
+                </div>
               </Tabs.TabPane>
             ))}
           </Tabs>
@@ -493,7 +495,7 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
           onCancel={onCancelCategory}
         />
       )}
-    </>
+    </div>
   );
 };
 

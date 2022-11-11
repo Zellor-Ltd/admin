@@ -228,7 +228,7 @@ const Transactions: React.FC<RouteComponentProps> = () => {
   };
 
   return (
-    <div className="transactions">
+    <div className="transactions" style={{ overflow: 'clip', height: '100%' }}>
       <PageHeader
         title="Transactions"
         subTitle={isMobile ? '' : 'List of Transactions'}
@@ -250,14 +250,16 @@ const Transactions: React.FC<RouteComponentProps> = () => {
           ></MultipleFetchDebounceSelect>
         </Col>
       </Row>
-      <Table
-        className="mt-1"
-        scroll={{ x: true, y: 300 }}
-        rowKey="id"
-        columns={columns}
-        dataSource={transactions}
-        loading={loading}
-      />
+      <div>
+        <Table
+          className="mt-1"
+          scroll={{ x: true, y: 300 }}
+          rowKey="id"
+          columns={columns}
+          dataSource={transactions}
+          loading={loading}
+        />
+      </div>
     </div>
   );
 };

@@ -579,7 +579,7 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
   };
 
   return (
-    <>
+    <div style={{ overflow: 'clip', height: '100%' }}>
       {!details && (
         <>
           <PageHeader
@@ -691,7 +691,7 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
           subSubCategories={subSubCategories}
         />
       )}
-    </>
+    </div>
   );
 };
 

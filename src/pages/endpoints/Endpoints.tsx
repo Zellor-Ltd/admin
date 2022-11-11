@@ -169,7 +169,7 @@ const Endpoints: React.FC<RouteComponentProps> = ({ history, location }) => {
   };
 
   return (
-    <div className="endpoints">
+    <div className="endpoints" style={{ overflow: 'clip', height: '100%' }}>
       <PageHeader
         title="Endpoints"
         subTitle={isMobile ? '' : 'List of Endpoints'}
@@ -198,15 +198,17 @@ const Endpoints: React.FC<RouteComponentProps> = ({ history, location }) => {
           />
         </Col>
       </Row>
-      <Table
-        className="mt-1"
-        scroll={{ x: true, y: 300 }}
-        rowKey="id"
-        columns={columns}
-        dataSource={data}
-        loading={loading}
-        pagination={false}
-      />
+      <div>
+        <Table
+          className="mt-1"
+          scroll={{ x: true, y: 300 }}
+          rowKey="id"
+          columns={columns}
+          dataSource={data}
+          loading={loading}
+          pagination={false}
+        />
+      </div>
     </div>
   );
 };

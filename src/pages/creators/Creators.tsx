@@ -505,7 +505,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   return (
-    <>
+    <div style={{ overflow: 'clip', height: '100%' }}>
       {!details && (
         <div className="creators">
           <PageHeader
@@ -556,36 +556,38 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
               </Row>
             </Col>
           </Row>
-          <InfiniteScroll
-            dataLength={creators.length}
-            next={() => fetch(true)}
-            hasMore={!eof}
-            loader={
-              page !== 0 && (
-                <div className="scroll-message">
-                  <Spin />
-                </div>
-              )
-            }
-            endMessage={
-              page !== 0 && (
-                <div className="scroll-message">
-                  <b>End of results.</b>
-                </div>
-              )
-            }
-          >
-            <Table
-              className="mt-1"
-              scroll={{ x: true, y: 300 }}
-              rowClassName={(_, index) => `scrollable-row-${index}`}
-              rowKey="id"
-              columns={columns}
-              dataSource={creators}
-              loading={loading}
-              pagination={false}
-            />
-          </InfiniteScroll>
+          <div>
+            <InfiniteScroll
+              dataLength={creators.length}
+              next={() => fetch(true)}
+              hasMore={!eof}
+              loader={
+                page !== 0 && (
+                  <div className="scroll-message">
+                    <Spin />
+                  </div>
+                )
+              }
+              endMessage={
+                page !== 0 && (
+                  <div className="scroll-message">
+                    <b>End of results.</b>
+                  </div>
+                )
+              }
+            >
+              <Table
+                className="mt-1"
+                scroll={{ x: true, y: 300 }}
+                rowClassName={(_, index) => `scrollable-row-${index}`}
+                rowKey="id"
+                columns={columns}
+                dataSource={creators}
+                loading={loading}
+                pagination={false}
+              />
+            </InfiniteScroll>
+          </div>
         </div>
       )}
       {details && (
@@ -596,7 +598,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
           onRollback={onRollback}
         />
       )}
-    </>
+    </div>
   );
 };
 
