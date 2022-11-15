@@ -42,6 +42,7 @@ import {
   FacebookFilled,
   GlobalOutlined,
   InstagramFilled,
+  LinkOutlined,
   SoundFilled,
   TwitterCircleFilled,
   YoutubeFilled,
@@ -590,6 +591,15 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                           placeholder="Master Brand Link"
                           allowClear
                           prefix="https://vlink.ie/"
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col lg={12} xs={24}>
+                      <Form.Item name="jumpUrl" label="Jump URL">
+                        <Input
+                          allowClear
+                          prefix={<LinkOutlined />}
+                          placeholder="Jump URL"
                         />
                       </Form.Item>
                     </Col>
