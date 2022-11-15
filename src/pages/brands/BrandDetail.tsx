@@ -42,7 +42,6 @@ import {
   FacebookFilled,
   GlobalOutlined,
   InstagramFilled,
-  LinkOutlined,
   SoundFilled,
   TwitterCircleFilled,
   YoutubeFilled,

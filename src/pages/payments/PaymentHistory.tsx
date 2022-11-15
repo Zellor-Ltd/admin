@@ -382,7 +382,7 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   return (
-    <div style={{ overflow: 'clip', height: '100%' }}>
+    <div className="history-container">
       {!details && (
         <>
           <PageHeader
@@ -406,7 +406,7 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
               </Panel>
             </Collapse>
           )}
-          <div>
+          <div className={payments.length ? '' : 'empty-history'}>
             <InfiniteScroll
               dataLength={payments.length}
               next={getPayments}

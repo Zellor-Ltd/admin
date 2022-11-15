@@ -204,6 +204,63 @@ body {
   color: rgba(0, 0, 0, 0.45);
 }
 
+.details-checkout {
+  position: absolute !important;
+  bottom: 2rem !important;
+  right: 2rem !important;
+}
+
+.ant-table-empty,
+.empty-table,
+.empty-table table,
+.empty-table .ant-spin-container,
+.empty-table .ant-table-container,
+.empty-table .ant-spin-nested-loading,
+.empty-history,
+.empty-history * {
+  height: 100% !important;
+}
+
+.empty-history .ant-table-header {
+  height: auto !important;
+}
+
+.empty-table .ant-table-body {
+  position: absolute;
+  bottom: 13rem;
+  top: 0;
+}
+
+.payments-container {
+  overflow: clip;
+  position: absolute;
+  top: 120px;
+  left: 250px;
+  right: 3rem;
+  bottom: 7rem;
+}
+
+.history-container {
+  overflow: clip;
+  position: absolute;
+  top: 120px;
+  left: 250px;
+  right: 3rem;
+  bottom: 3rem;
+}
+
+.history-container .ant-table-summary {
+  height: auto !important;
+  position: fixed;
+  bottom: 3rem;
+}
+
+.empty-history .ant-table-body {
+  position: absolute;
+  bottom: 200px;
+  top: 0;
+}
+
 .info-block {
   width: 100%;
   min-width: 0;
