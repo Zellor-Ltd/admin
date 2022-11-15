@@ -2,6 +2,7 @@ import {
   FacebookFilled,
   GlobalOutlined,
   InstagramFilled,
+  LinkOutlined,
   SoundFilled,
   TwitterCircleFilled,
   YoutubeFilled,
@@ -386,6 +387,11 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                     }
                     format="DD/MM/YYYY"
                   />
+                </Form.Item>
+              </Col>
+              <Col lg={12} xs={24}>
+                <Form.Item name="jumpUrl" label="Jump URL">
+                  <Input allowClear placeholder="Jump URL" />
                 </Form.Item>
               </Col>
             </Row>

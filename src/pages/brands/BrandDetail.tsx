@@ -596,11 +596,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                     </Col>
                     <Col lg={12} xs={24}>
                       <Form.Item name="jumpUrl" label="Jump URL">
-                        <Input
-                          allowClear
-                          prefix={<LinkOutlined />}
-                          placeholder="Jump URL"
-                        />
+                        <Input allowClear placeholder="Jump URL" />
                       </Form.Item>
                     </Col>
                   </Row>
