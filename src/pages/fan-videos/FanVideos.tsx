@@ -210,7 +210,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
             <InputNumber
               type="number"
               value={feedItem.index}
-              onChange={value => handleIndexChange(value, feedItem)}
+              onChange={(value: any) => handleIndexChange(value, feedItem)}
               onBlur={() => updateIndex(feedItem)}
               onPressEnter={() => updateIndex(feedItem)}
             />
@@ -570,7 +570,8 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
     setDetails(true);
   };
 
-  const handleIndexChange = (newIndex: number, feedItem: FeedItem) => {
+  const handleIndexChange = (newIndex?: number, feedItem?: FeedItem) => {
+    if (!feedItem || !newIndex) return;
     shouldUpdateIndex.current = feedItem.index !== newIndex;
 
     const row = buffer.find(item => item.id === feedItem.id);
