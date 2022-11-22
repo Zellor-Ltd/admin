@@ -51,7 +51,7 @@ import { ProductCategory } from 'interfaces/Category';
 const { Panel } = Collapse;
 
 const LiveProducts: React.FC<RouteComponentProps> = () => {
-  const { isMobile } = useContext(AppContext);
+  const { isMobile, setIsDetails } = useContext(AppContext);
   const inputRef = useRef<any>(null);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
@@ -692,6 +692,8 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
     if (!details) {
       scrollToCenter(lastViewedIndex);
     }
+
+    setIsDetails(details)
   }, [details]);
 
   const viewProduct = (index: number, record?: Product) => {
@@ -926,7 +928,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
   };
 
   return (
-    <div style={{ overflow: 'clip', height: '100%' }}>
+    <div style={details ? { height: '100%' } : { overflow: 'clip', height: '100%' }}>
       {!details && (
         <>
           <PageHeader

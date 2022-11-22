@@ -112,7 +112,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
     value: 'id',
   };
 
-  const { isMobile } = useContext(AppContext);
+  const { isMobile, setIsDetails } = useContext(AppContext);
 
   const productSuperCategoryOptionMapping: SelectOption = {
     key: 'id',
@@ -785,6 +785,8 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
     if (!details) {
       scrollToCenter(lastViewedIndex);
     }
+
+    setIsDetails(details)
   }, [details]);
 
   const onSaveProduct = (product: Product) => {
@@ -1181,7 +1183,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
   };
 
   return (
-    <div style={{ overflow: 'clip', height: '100%' }}>
+    <div style={details ? { height: '100%' } : { overflow: 'clip', height: '100%' }}>
       {!details && (
         <>
           <PageHeader
