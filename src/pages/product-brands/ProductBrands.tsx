@@ -458,7 +458,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
             ]}
           />
           <Row className="sticky-filter-box mb-05" gutter={8}>
-            <Col lg={4} xs={24}>
+            <Col lg={4} md={12} xs={24}>
               <Typography.Title level={5}>Search</Typography.Title>
               <Input
                 allowClear

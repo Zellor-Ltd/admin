@@ -118,7 +118,7 @@ const Trends: React.FC<RouteComponentProps> = props => {
         </div>
       ),
       dataIndex: 'index',
-      width: '8%',
+      width: '10%',
       render: (_, trend) => {
         if (updatingTrendIndex[trend.id]) {
           const antIcon = <LoadingOutlined spin />;
@@ -158,7 +158,7 @@ const Trends: React.FC<RouteComponentProps> = props => {
         </div>
       ),
       dataIndex: 'tag',
-      width: '92%',
+      width: '90%',
       sorter: (a, b): any => {
         if (a.tag && b.tag) return a.tag.localeCompare(b.tag);
         else if (a.tag) return -1;
@@ -188,7 +188,7 @@ const Trends: React.FC<RouteComponentProps> = props => {
           justify="space-between"
           className="mb-05 sticky-filter-box"
         >
-          <Col lg={4} xs={24}>
+          <Col lg={4} md={12} xs={24}>
             <Typography.Title level={5}>Search</Typography.Title>
             <Input
               allowClear
@@ -201,7 +201,7 @@ const Trends: React.FC<RouteComponentProps> = props => {
               }}
             />
           </Col>
-          <Col lg={4} xs={24}>
+          <Col lg={4} md={12} xs={24}>
             <Row justify="end" className="mt-1">
               <Col>
                 <Button type="primary" onClick={getResources} loading={loading}>

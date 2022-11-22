@@ -924,7 +924,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
           >
             <Col lg={16} xs={24}>
               <Row gutter={[8, 8]} align="bottom">
-                <Col lg={6} xs={24}>
+                <Col lg={6} md={12} xs={24}>
                   <Typography.Title level={5}>Master Brand</Typography.Title>
                   <Select
                     allowClear
@@ -947,7 +947,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
                     ))}
                   </Select>
                 </Col>
-                <Col lg={6} xs={24}>
+                <Col lg={6} md={12} xs={24}>
                   <Typography.Title level={5}>Fan Filter</Typography.Title>
                   <MultipleFetchDebounceSelect
                     style={{ width: '100%' }}

@@ -383,7 +383,7 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
           >
             <Col lg={16} xs={24}>
               <Row gutter={8}>
-                <Col lg={6} xs={24}>
+                <Col lg={6} md={12} xs={24}>
                   <Typography.Title level={5}>
                     Search by Guest e-mail
                   </Typography.Title>
