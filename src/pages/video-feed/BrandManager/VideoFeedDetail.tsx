@@ -1322,7 +1322,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                     title="positive integers"
                     min={0}
                     max={100}
-                    onChange={setSegment}
+                    onChange={(value: any)=>setSegment(value as number)}
                   />
                 </Col>
                 <Col lg={4} xs={24}>
