@@ -96,7 +96,7 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
     setPayments(results);
   };
 
-  const paypayments = async () => {
+  const payPayments = async () => {
     if (totalCommissionAmount < 0) {
       message.warning('Warning: Cannot send negative payments!');
       return;
@@ -733,7 +733,7 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
                 <Button
                   type="primary"
                   disabled={!selectedRowKeys.length}
-                  onClick={paypayments}
+                  onClick={payPayments}
                 >
                   Pay
                 </Button>
