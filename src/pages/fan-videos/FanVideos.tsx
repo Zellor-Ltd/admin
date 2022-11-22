@@ -81,7 +81,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
   const [updatingFeedItemIndex, setUpdatingIndex] = useState<
     Record<string, boolean>
   >({});
-  const { isMobile } = useContext(AppContext);
+  const { isMobile, setIsDetails } = useContext(AppContext);
   const [statusFilter, setStatusFilter] = useState<string>();
   const [brandFilter, setBrandFilter] = useState<Brand>();
   const [productBrandFilter, setProductBrandFilter] = useState<string>();
@@ -476,6 +476,8 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
   }, [selectedVideoFeed]);
 
   useEffect(() => {
+    setIsDetails(details)
+
     if (!details) scrollToCenter(lastViewedIndex);
   }, [details]);
 
@@ -771,7 +773,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
   };
 
   return (
-    <div style={{ overflow: 'clip', height: '100%' }}>
+    <div style={details ? { height: '100%' } : { overflow: 'clip', height: '100%' }}>
       {!details && (
         <>
           <PageHeader

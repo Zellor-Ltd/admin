@@ -73,7 +73,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     label: 'user',
     value: 'user',
   };
-  const { isMobile } = useContext(AppContext);
+  const { isMobile, setIsDetails } = useContext(AppContext);
 
   useMount(async () => {
     const response: any = await fetchSettings();
@@ -209,6 +209,8 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     if (!details) {
       scrollToCenter(lastViewedIndex);
     }
+
+    setIsDetails(details)
   }, [details]);
 
   const editFan = (index: number, fan?: Fan) => {
@@ -909,7 +911,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   return (
-    <div style={{ overflow: 'clip', height: '100%' }}>
+    <div style={details ? { height: '100%' } : { overflow: 'clip', height: '100%' }}>
       {!details && (
         <div className="orders">
           <PageHeader

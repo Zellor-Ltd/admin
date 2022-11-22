@@ -55,7 +55,7 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
   const [fans, setFans] = useState<Fan[]>([]);
   const [searchFilter, setSearchFilter] = useState<string>();
   const [refreshing, setRefreshing] = useState<boolean>(false);
-  const { isMobile } = useContext(AppContext);
+  const { isMobile, setIsDetails } = useContext(AppContext);
 
   useEffect(() => {
     if (refreshing) {
@@ -104,6 +104,8 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   useEffect(() => {
+    setIsDetails(details)
+    
     if (!details) {
       scrollToCenter(lastViewedIndex);
     }
@@ -335,7 +337,7 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   return (
-    <div style={{ overflow: 'clip', height: '100%' }}>
+    <div style={details ? { height: '100%' } : { overflow: 'clip', height: '100%' }}>
       {!details && (
         <>
           <PageHeader

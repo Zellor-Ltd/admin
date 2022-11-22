@@ -66,8 +66,6 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
     }
   }, [details, wallets]);
 
-  useEffect(() => {});
-
   const handleEditWallet = (index: number) => {
     setLastViewedIndex(index);
     setDetails(true);

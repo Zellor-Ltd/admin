@@ -36,7 +36,7 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
   const [buffer, setBuffer] = useState<DdTemplate[]>([]);
   const [data, setData] = useState<DdTemplate[]>([]);
   const [filter, setFilter] = useState<string>('');
-  const { isMobile } = useContext(AppContext);
+  const { isMobile, setIsDetails } = useContext(AppContext);
 
   useEffect(() => {
     getResources();
@@ -55,6 +55,10 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
     const { results } = await doFetch(fetchDdTemplates);
     setBuffer(results);
   };
+
+  useEffect(() => {
+    setIsDetails(details)
+  }, [details])
 
   useEffect(() => {
     if (!details) scrollToCenter(lastViewedIndex);
@@ -289,7 +293,7 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   return (
-    <div style={{ overflow: 'clip', height: '100%' }}>
+    <div style={details ? { height: '100%' } : { overflow: 'clip', height: '100%' }}>
       {!details && (
         <div>
           <PageHeader

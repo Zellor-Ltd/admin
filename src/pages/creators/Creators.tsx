@@ -51,7 +51,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
   const [searchFilter, setSearchFilter] = useState<string>();
-  const { isMobile } = useContext(AppContext);
+  const { isMobile, setIsDetails } = useContext(AppContext);
   const [updatingVIndex, setUpdatingVIndex] = useState<Record<string, boolean>>(
     {}
   );
@@ -63,6 +63,8 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   useEffect(() => {
+    setIsDetails(details)
+
     if (!details) scrollToCenter(lastViewedIndex);
   }, [details]);
 
@@ -505,7 +507,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   return (
-    <div style={{ overflow: 'clip', height: '100%' }}>
+    <div style={details ? { height: '100%' } : { overflow: 'clip', height: '100%' }}>
       {!details && (
         <div className="creators">
           <PageHeader

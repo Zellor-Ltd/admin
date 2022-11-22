@@ -54,7 +54,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
     value: 'id',
   };
 
-  const { isMobile } = useContext(AppContext);
+  const { isMobile, setIsDetails } = useContext(AppContext);
 
   const tagOptionMapping: SelectOption = {
     key: 'id',
@@ -105,6 +105,8 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
         setTagsPage(optionsPage);
       }
     }
+
+    setIsDetails(details)
   }, [details]);
 
   useEffect(() => {
@@ -338,7 +340,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
   };
 
   return (
-    <div style={{ overflow: 'clip', height: '100%' }}>
+    <div style={details ? { height: '100%' } : { overflow: 'clip', height: '100%' }}>
       {!details && (
         <div>
           <PageHeader
