@@ -529,7 +529,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
             justify="space-between"
             className="mb-05 sticky-filter-box"
           >
-            <Col lg={4} xs={24}>
+            <Col lg={4} md={12} xs={24}>
               <Typography.Title level={5}>Search</Typography.Title>
               <Input
                 allowClear

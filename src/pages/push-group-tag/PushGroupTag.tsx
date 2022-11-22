@@ -355,7 +355,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
           >
             <Col lg={16} xs={24}>
               <Row gutter={[8, 8]} align="bottom">
-                <Col lg={6} xs={24}>
+                <Col lg={6} md={12} xs={24}>
                   <Typography.Title level={5}>
                     Search by Tag Name
                   </Typography.Title>
@@ -376,7 +376,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
                     placeholder="Type to search a Tag"
                   ></MultipleFetchDebounceSelect>
                 </Col>
-                <Col lg={6} xs={24}>
+                <Col lg={6} md={12} xs={24}>
                   <Typography.Title level={5}>Master Brand</Typography.Title>
                   <SimpleSelect
                     showSearch
