@@ -204,6 +204,20 @@ body {
   color: rgba(0, 0, 0, 0.45);
 }
 
+.transactions .ant-table-wrapper,
+.transactions .ant-spin-nested-loading,
+.transactions .ant-spin-container, 
+.transactions .ant-table,
+.transactions .ant-table-container,
+.transactions table {
+  height: 100% !important; 
+}
+
+.transactions .ant-table-body {
+  height: 100% !important; 
+  overflow: scroll !important; 
+}
+
 .details-checkout {
   position: absolute;
   bottom: 2rem;
