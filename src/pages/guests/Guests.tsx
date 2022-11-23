@@ -54,7 +54,7 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
   const scrolling = useRef(false);
   const [guests, setGuests] = useState<Fan[]>([]);
   const [buffer, setBuffer] = useState<Fan[]>([]);
-  const { isMobile } = useContext(AppContext);
+  const { isMobile, setIsDetails } = useContext(AppContext);
 
   const fanOptionMapping: SelectOption = {
     key: 'id',
@@ -91,6 +91,8 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
         setGuestsPage(optionsPage);
       }
     }
+
+    setIsDetails(details)
   }, [details]);
 
   useEffect(() => {
@@ -368,7 +370,7 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   return (
-    <div style={{ overflow: 'clip', height: '100%' }}>
+    <div style={details ? { height: '100%' } : { overflow: 'clip', height: '100%' }}>
       {!details && (
         <div>
           <PageHeader
@@ -383,7 +385,7 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
           >
             <Col lg={16} xs={24}>
               <Row gutter={8}>
-                <Col lg={6} xs={24}>
+                <Col lg={6} md={12} xs={24}>
                   <Typography.Title level={5}>
                     Search by Guest e-mail
                   </Typography.Title>

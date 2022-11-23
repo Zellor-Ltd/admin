@@ -4,7 +4,7 @@ import { Notifications } from 'components/Notifications';
 import jwt from 'helpers/jwt';
 import { useBuildTarget } from 'hooks/useBuildTarget';
 import ErrorPage from 'pages/error/ErrorPage';
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { AppContext } from 'contexts/AppContext';
 import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 import './AuthenticatedLayout.scss';
@@ -14,8 +14,24 @@ import BrandManagerSideMenu from './SideMenus/BrandManagerSideMenu';
 const { Header, Sider, Content } = Layout;
 
 const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
-  const { isMobile } = useContext(AppContext);
+  const { isMobile, isDetails } = useContext(AppContext);
   const { children, history } = props;
+  const [style, setStyle] = useState<any>({
+    padding: '24 0',
+    minHeight: 280,
+    overflow:  'clip',
+  })
+
+  useEffect(() => {
+    if (isDetails) setStyle({ padding: '24 0',
+    minHeight: 280,
+    overflow:  'scroll',
+  });
+     else setStyle({ padding: '24 0',
+     minHeight: 280,
+     overflow:  'clip',
+   })
+  }, [isDetails])
 
   const appName = useBuildTarget({
     ADMIN: 'Disco Admin',
@@ -79,11 +95,7 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
         </div>
         <Content
           className="site-layout-background"
-          style={{
-            padding: '24 0',
-            minHeight: 280,
-            overflow: 'clip',
-          }}
+          style={style}
         >
           <ErrorBoundary fallbackComponent={ErrorPage()}>
             {children}

@@ -40,7 +40,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(true);
   const [tags, setTags] = useState<Tag[]>([]);
-  const { isMobile } = useContext(AppContext);
+  const { isMobile, setIsDetails } = useContext(AppContext);
   const isMounted = useRef<boolean>(false);
 
   useEffect(() => {
@@ -97,6 +97,8 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
     if (!details) {
       scrollToCenter(lastViewedIndex);
     }
+
+    setIsDetails(details)
   }, [details]);
 
   const editTag = (index: number, tag?: Tag) => {
@@ -294,7 +296,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
   };
 
   return (
-    <div style={{ overflow: 'clip', height: '100%' }}>
+    <div style={details ? { height: '100%' } : { overflow: 'clip', height: '100%' }}>
       {!details && (
         <>
           <PageHeader
@@ -315,7 +317,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
             justify="space-between"
             className="sticky-filter-box mb-05"
           >
-            <Col lg={4} xs={24}>
+            <Col lg={4} md={12} xs={24}>
               <SearchFilterDebounce
                 disabled={refreshing || loading}
                 initialValue={searchFilter}
@@ -325,7 +327,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
                 onPressEnter={fetch}
               />
             </Col>
-            <Col lg={4} xs={24}>
+            <Col lg={4} md={12} xs={24}>
               <Row justify="end">
                 <Col>
                   <Button

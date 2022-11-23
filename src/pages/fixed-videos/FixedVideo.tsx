@@ -95,7 +95,7 @@ const FixedVideo: React.FC<RouteComponentProps> = () => {
                 </Form.Item>
               </Col>
             </Col>
-            <Col span={24}>
+            <Col span={24} className="details-checkout">
               <Row gutter={8} justify="end">
                 <Col>
                   <Button type="default" onClick={() => form.resetFields()}>

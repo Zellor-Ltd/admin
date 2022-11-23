@@ -30,7 +30,7 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
   const [buffer, setBuffer] = useState<FanGroup[]>([]);
   const [data, setData] = useState<FanGroup[]>([]);
   const [filter, setFilter] = useState<string>('');
-  const { isMobile } = useContext(AppContext);
+  const { isMobile, setIsDetails } = useContext(AppContext);
 
   useEffect(() => {
     getResources();
@@ -56,6 +56,10 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
       document.querySelector(`.scrollable-row-${index}`) as HTMLElement
     );
   };
+
+  useEffect(() => {
+    setIsDetails(details)
+  }, [details])
 
   useEffect(() => {
     if (!details) scrollToCenter(lastViewedIndex);
@@ -151,7 +155,7 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
   };
 
   return (
-    <div style={{ overflow: 'clip', height: '100%' }}>
+    <div style={details ? { height: '100%' } : { overflow: 'clip', height: '100%' }}>
       {!details && (
         <div>
           <PageHeader
@@ -168,7 +172,7 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
             ]}
           />
           <Row gutter={8} className="sticky-filter-box mb-05">
-            <Col lg={4} xs={24}>
+            <Col lg={4} md={12} xs={24}>
               <Typography.Title level={5}>Search</Typography.Title>
               <Input
                 allowClear

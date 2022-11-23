@@ -20,7 +20,7 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [details, setDetails] = useState<boolean>(false);
   const [currentBanner, setCurrentBanner] = useState<Banner>();
-  const { isMobile } = useContext(AppContext);
+  const { isMobile, setIsDetails } = useContext(AppContext);
 
   const getBanners = async () => {
     const response = await doFetch(() => fetchBanners());
@@ -41,6 +41,8 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
         ) as HTMLElement
       );
     }
+
+    setIsDetails(details)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [details]);
 
@@ -227,7 +229,7 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
     },
   ];
   return (
-    <div style={{ overflow: 'clip', height: '100%' }}>
+    <div style={details ? { height: '100%' } : { overflow: 'clip', height: '100%' }}>
       {!details && (
         <div>
           <PageHeader

@@ -141,9 +141,10 @@ const AccessControl: React.FC = () => {
       <Row
         gutter={[8, 8]}
         justify={isMobile ? 'end' : 'start'}
+        align='bottom'
         className="sticky-filter-box"
       >
-        <Col lg={4} xs={24}>
+        <Col lg={4} md={12} xs={24}>
           <Typography.Title level={5}>Profile</Typography.Title>
           <Select
             disabled={loading}

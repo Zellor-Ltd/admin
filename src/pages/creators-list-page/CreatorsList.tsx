@@ -39,7 +39,7 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
   const [buffer, setBuffer] = useState<Masthead[]>([]);
   const [data, setData] = useState<Masthead[]>([]);
   const [filter, setFilter] = useState<string>('');
-  const { isMobile } = useContext(AppContext);
+  const { isMobile, setIsDetails } = useContext(AppContext);
 
   const getResources = useCallback(async () => {
     const { results } = await doFetch(fetchMastheads);
@@ -56,6 +56,8 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
   }, [filter, buffer]);
 
   useEffect(() => {
+    setIsDetails(details)
+
     if (!details) scrollToCenter(lastViewedIndex);
   }, [details]);
 
@@ -197,7 +199,7 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   return (
-    <div style={{ overflow: 'clip', height: '100%' }}>
+    <div style={details ? { height: '100%' } : { overflow: 'clip', height: '100%' }}>
       {!details && (
         <div className="Mastheads">
           <PageHeader
@@ -214,7 +216,7 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
             ]}
           />
           <Row gutter={8} className="sticky-filter-box mb-05">
-            <Col lg={4} xs={24}>
+            <Col lg={4} md={12} xs={24}>
               <Typography.Title level={5}>Search</Typography.Title>
               <Input
                 allowClear

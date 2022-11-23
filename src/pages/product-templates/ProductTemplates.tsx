@@ -30,7 +30,7 @@ import { useMount } from 'react-use';
 import ProductDetail from 'pages/products/ProductDetail';
 
 const ProductTemplates: React.FC<RouteComponentProps> = () => {
-  const { isMobile } = useContext(AppContext);
+  const { isMobile, setIsDetails } = useContext(AppContext);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -518,6 +518,8 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
     if (!details) {
       scrollToCenter(lastViewedIndex);
     }
+
+    setIsDetails(details)
   }, [details]);
 
   const viewProductTemplate = (index: number, record?: Product) => {
@@ -567,7 +569,7 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
   };
 
   return (
-    <div style={{ overflow: 'clip', height: '100%' }}>
+    <div style={details ? { height: '100%' } : { overflow: 'clip', height: '100%' }}>
       {!details && (
         <>
           <PageHeader

@@ -54,7 +54,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
     value: 'id',
   };
 
-  const { isMobile } = useContext(AppContext);
+  const { isMobile, setIsDetails } = useContext(AppContext);
 
   const tagOptionMapping: SelectOption = {
     key: 'id',
@@ -105,6 +105,8 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
         setTagsPage(optionsPage);
       }
     }
+
+    setIsDetails(details)
   }, [details]);
 
   useEffect(() => {
@@ -338,7 +340,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
   };
 
   return (
-    <div style={{ overflow: 'clip', height: '100%' }}>
+    <div style={details ? { height: '100%' } : { overflow: 'clip', height: '100%' }}>
       {!details && (
         <div>
           <PageHeader
@@ -353,7 +355,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
           >
             <Col lg={16} xs={24}>
               <Row gutter={[8, 8]} align="bottom">
-                <Col lg={6} xs={24}>
+                <Col lg={6} md={12} xs={24}>
                   <Typography.Title level={5}>
                     Search by Tag Name
                   </Typography.Title>
@@ -374,7 +376,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
                     placeholder="Type to search a Tag"
                   ></MultipleFetchDebounceSelect>
                 </Col>
-                <Col lg={6} xs={24}>
+                <Col lg={6} md={12} xs={24}>
                   <Typography.Title level={5}>Master Brand</Typography.Title>
                   <SimpleSelect
                     showSearch

@@ -56,7 +56,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [brands, setBrands] = useState<Brand[]>([]);
   const [filterText, setFilterText] = useState('');
   const [currentBrand, setCurrentBrand] = useState<Brand>();
-  const { isMobile } = useContext(AppContext);
+  const { isMobile, setIsDetails } = useContext(AppContext);
   const [updatingVIndex, setUpdatingVIndex] = useState<Record<string, boolean>>(
     {}
   );
@@ -65,12 +65,16 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
     fetch();
   }, []);
 
+
+
   const fetch = async () => {
     const { results }: any = await doFetch(fetchBrands);
     setBrands(results);
   };
 
   useEffect(() => {
+    setIsDetails(details)
+
     if (!details) {
       scrollIntoView(
         document.querySelector(
@@ -544,7 +548,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
   ];
 
   return (
-    <div style={{ overflow: 'clip', height: '100%' }}>
+    <div style={details ? { height: '100%' } : { overflow: 'clip', height: '100%' }}>
       {!details && (
         <div>
           <PageHeader
@@ -561,7 +565,7 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
             ]}
           />
           <Row gutter={8} className="mb-05 sticky-filter-box">
-            <Col lg={4} xs={24}>
+            <Col lg={4} md={12} xs={24}>
               <Typography.Title level={5} title="Search">
                 Search
               </Typography.Title>
