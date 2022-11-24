@@ -341,6 +341,7 @@ const FeaturedFeed: React.FC<RouteComponentProps> = () => {
 
   const moveRow = useCallback(
     (dragIndex: number, hoverIndex: number) => {
+      if (!featuredFeeds.length) return;
       const dragRow = featuredFeeds[dragIndex];
       setFeaturedFeeds(
         update(featuredFeeds, {
@@ -417,28 +418,26 @@ const FeaturedFeed: React.FC<RouteComponentProps> = () => {
           </Col>
         </Row>
         <DndProvider backend={HTML5Backend}>
-          <div>
-            <Table
-              scroll={{ x: true, y: 300 }}
-              className="mt-1"
-              rowClassName={(_, index) =>
-                `${index === lastViewedIndex ? 'selected-row' : ''}`
-              }
-              components={components}
-              onRow={(_, index) => {
-                const attr = {
-                  index,
-                  moveRow,
-                };
-                return attr as React.HTMLAttributes<any>;
-              }}
-              size="small"
-              columns={columns}
-              rowKey="id"
-              dataSource={featuredFeeds}
-              loading={loading}
-            />
-          </div>
+          <Table
+            scroll={{ x: true, y: 300 }}
+            className="mt-1 featured-feeds-layout"
+            rowClassName={(_, index) =>
+              `${index === lastViewedIndex ? 'selected-row' : ''}`
+            }
+            components={components}
+            onRow={(_, index) => {
+              const attr = {
+                index,
+                moveRow,
+              };
+              return attr as React.HTMLAttributes<any>;
+            }}
+            size="small"
+            columns={columns}
+            rowKey="id"
+            dataSource={featuredFeeds}
+            loading={loading}
+          />
         </DndProvider>
       </div>
     </div>

@@ -509,7 +509,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
   return (
     <div style={details ? { height: '100%' } : { overflow: 'clip', height: '100%' }}>
       {!details && (
-        <div className="creators">
+        <div className="creator-container">
           <PageHeader
             title="Creators"
             subTitle={isMobile ? '' : 'List of Creators'}
@@ -558,7 +558,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
               </Row>
             </Col>
           </Row>
-          <div>
+          <div className={creators.length ? '' : 'empty-table'}>
             <InfiniteScroll
               dataLength={creators.length}
               next={() => fetch(true)}
@@ -577,9 +577,10 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
                   </div>
                 )
               }
+              className={creators.length ? '' : 'empty-table'}
             >
               <Table
-                className="mt-1"
+                className={creators.length ? 'mt-1' : 'mt-1 empty-table'}
                 scroll={{ x: true, y: 300 }}
                 rowClassName={(_, index) => `scrollable-row-${index}`}
                 rowKey="id"

@@ -98,7 +98,7 @@ body {
   max-height: 1000px !important;
 }
 
-.w-100 .ant-page-header-heading-extra {
+.w-100, .w-100 .ant-page-header-heading-extra {
   width: 100%;
 }
 
@@ -205,9 +205,100 @@ body {
 }
 
 .details-checkout {
+  position: absolute !important;
+  bottom: 2rem !important;
+  right: 2rem !important;
+}
+
+.payment-history {
+  position: fixed !important;
+  overflow: clip !important;
+  inset: 270px 2.5rem 3.75rem 250px !important;
+}
+
+.payment-history .infinite-scroll-component__outerdiv, 
+.payment-history .infinite-scroll-component,  
+.payment-history .ant-table-wrapper,  
+.payment-history .ant-spin-nested-loading, 
+.payment-history .ant-spin-container,
+.payment-history .ant-table,
+.payment-history .ant-table-container {
+  height: 100% !important; 
+}
+
+.payment-history .ant-table-body {
+  overflow: scroll !important;
+  height: 100% !important;
+}
+
+.ant-table-empty,
+.empty-table,
+.empty-table table,
+.empty-table .ant-spin-container,
+.empty-table .ant-table-container,
+.empty-table .ant-spin-nested-loading,
+.empty-table .infinite-scroll-component__outerdiv,
+.featured-feeds-layout,
+.creator-container {
+  height: 100% !important;
+}
+
+.empty-table .ant-table-body {
   position: absolute;
-  bottom: 2rem;
-  right: 2rem;
+  bottom: 10rem;
+  top: 0;
+}
+
+.payments-container {
+  overflow: clip;
+  position: absolute;
+  top: 120px;
+  left: 250px;
+  right: 3rem;
+  bottom: 7rem;
+}
+
+.history-container {
+  overflow: clip;
+  position: absolute;
+  top: 120px;
+  left: 250px;
+  right: 3rem;
+  bottom: 3rem;
+}
+
+.history-container .ant-table-summary {
+  height: auto !important;
+  position: fixed;
+  bottom: 3.75rem;
+}
+
+.featured-feeds-layout .ant-pagination {
+  position: fixed;
+  bottom: 3rem;
+  right: 3rem;
+  height: auto !important;
+}
+
+.featured-feeds-layout .ant-table-body {
+  overflow: auto scroll;
+  position: fixed;
+  top: 340px;
+  bottom: 7rem;
+  right: 3rem;
+  left: 240px;
+}
+
+.featured-feeds-layout table {
+  height: 100%;
+}
+
+.featured-feeds-layout .ant-table-expanded-row-fixed {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
 }
 
 .info-block {
