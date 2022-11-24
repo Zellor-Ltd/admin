@@ -45,7 +45,7 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [currentCreator, setCurrentCreator] = useState<string>();
   const [creators, setCreators] = useState<Creator[]>([]);
   const { isMobile } = useContext(AppContext);
-  const [commissions, setCommissions] = useState<Commission[]>([]);
+  const [payments, setPayments] = useState<Commission[]>([]);
   const [totalCommissionAmount, setTotalCommissionAmount] = useState<number>(0);
   const [smallestCommissionPercentage, setSmallestCommissionPercentage] =
     useState<number>(0);
@@ -78,14 +78,14 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
     setTotalSalePrice(0);
     setTotalCommissionAmount(0);
     if (!currentCreator) {
-      setCommissions([]);
+      setPayments([]);
       return;
     }
-    getCommissions();
+    getpayments();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentCreator, currentStatus]);
 
-  const getCommissions = async () => {
+  const getpayments = async () => {
     setSelectedRowKeys([]);
     const { results } = await doFetch(() =>
       fetchCommissions({
@@ -93,10 +93,10 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
         status: currentStatus ?? '',
       })
     );
-    setCommissions(results);
+    setPayments(results);
   };
 
-  const payCommissions = async () => {
+  const payPayments = async () => {
     if (totalCommissionAmount < 0) {
       message.warning('Warning: Cannot send negative payments!');
       return;
@@ -109,13 +109,13 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
       })
     );
     setSelectedRowKeys([]);
-    setCommissions([]);
+    setPayments([]);
   };
 
   const onChangeDueDate = (value: Date, record: Commission, index: number) => {
     shouldUpdateDueDate.current = record.dueDate! !== value;
-    commissions[index].dueDate = value;
-    setCommissions([...commissions]);
+    payments[index].dueDate = value;
+    setPayments([...payments]);
   };
 
   const onBlurDueDate = async (commission: Commission) => {
@@ -582,7 +582,7 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
   };
 
   return (
-    <div style={{ overflow: 'clip', height: '100%' }}>
+    <div className="payments-container">
       {!manualPayment && !manualCommission && (
         <>
           <PageHeader
@@ -651,67 +651,73 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
             </Collapse>
           )}
           <>
-            <div>
-              <Table
-                scroll={{ x: true, y: 300 }}
-                rowClassName={(_, index) => `scrollable-row-${index}`}
-                rowSelection={rowSelection}
-                rowKey="id"
-                columns={columns}
-                dataSource={commissions}
-                loading={loading}
-                pagination={false}
-                summary={pageData => {
-                  return (
-                    <>
-                      <Table.Summary.Row>
-                        <Table.Summary.Cell index={0}></Table.Summary.Cell>
-                        <Table.Summary.Cell index={1}>
-                          <Typography.Text strong>Total</Typography.Text>
-                        </Table.Summary.Cell>
-                        <Table.Summary.Cell index={2}></Table.Summary.Cell>
-                        <Table.Summary.Cell index={3}></Table.Summary.Cell>
-                        <Table.Summary.Cell index={4}></Table.Summary.Cell>
-                        <Table.Summary.Cell index={5}></Table.Summary.Cell>
-                        <Table.Summary.Cell index={6}></Table.Summary.Cell>
-                        <Table.Summary.Cell index={7}></Table.Summary.Cell>
-                        <Table.Summary.Cell index={8}>
-                          <Typography.Text>
-                            {totalSalePrice >= 0
-                              ? `€${totalSalePrice.toFixed(2)}`
-                              : `-€${Math.abs(totalSalePrice).toFixed(2)}`}
-                          </Typography.Text>
-                        </Table.Summary.Cell>
-                        <Table.Summary.Cell index={9}>
-                          <Typography.Text>
-                            {smallestCommissionPercentage
-                              ? smallestCommissionPercentage ===
-                                biggestCommissionPercentage
-                                ? `${smallestCommissionPercentage.toFixed(2)}%`
-                                : `${smallestCommissionPercentage.toFixed(
-                                    2
-                                  )}% - ${biggestCommissionPercentage.toFixed(
-                                    2
-                                  )}%`
-                              : '-'}
-                          </Typography.Text>
-                        </Table.Summary.Cell>
-                        <Table.Summary.Cell index={10}>
-                          <Typography.Text>
-                            {totalCommissionAmount >= 0
-                              ? `€${totalCommissionAmount.toFixed(2)}`
-                              : `-€${Math.abs(totalCommissionAmount).toFixed(
+            <Table
+              scroll={{ x: true, y: 300 }}
+              rowClassName={(_, index) => `scrollable-row-${index}`}
+              className={payments.length ? '' : 'empty-table'}
+              rowSelection={rowSelection}
+              rowKey="id"
+              columns={columns}
+              dataSource={payments}
+              loading={loading}
+              pagination={false}
+              summary={pageData => {
+                return (
+                  <>
+                    <Table.Summary.Row>
+                      <Table.Summary.Cell index={0}></Table.Summary.Cell>
+                      <Table.Summary.Cell index={1}>
+                        <Typography.Text strong>Total</Typography.Text>
+                      </Table.Summary.Cell>
+                      <Table.Summary.Cell index={2}></Table.Summary.Cell>
+                      <Table.Summary.Cell index={3}></Table.Summary.Cell>
+                      <Table.Summary.Cell index={4}></Table.Summary.Cell>
+                      <Table.Summary.Cell index={5}></Table.Summary.Cell>
+                      <Table.Summary.Cell index={6}></Table.Summary.Cell>
+                      <Table.Summary.Cell index={7}></Table.Summary.Cell>
+                      <Table.Summary.Cell index={8}>
+                        <Typography.Text>
+                          {totalSalePrice >= 0
+                            ? `€${totalSalePrice.toFixed(2)}`
+                            : `-€${Math.abs(totalSalePrice).toFixed(2)}`}
+                        </Typography.Text>
+                      </Table.Summary.Cell>
+                      <Table.Summary.Cell index={9}>
+                        <Typography.Text>
+                          {smallestCommissionPercentage
+                            ? smallestCommissionPercentage ===
+                              biggestCommissionPercentage
+                              ? `${smallestCommissionPercentage.toFixed(2)}%`
+                              : `${smallestCommissionPercentage.toFixed(
                                   2
-                                )}`}
-                          </Typography.Text>
-                        </Table.Summary.Cell>
-                      </Table.Summary.Row>
-                    </>
-                  );
-                }}
-              />
-            </div>
-            <Row justify="end" className="mr-1 mt-2" gutter={[8, 8]}>
+                                )}% - ${biggestCommissionPercentage.toFixed(
+                                  2
+                                )}%`
+                            : '-'}
+                        </Typography.Text>
+                      </Table.Summary.Cell>
+                      <Table.Summary.Cell index={10}>
+                        <Typography.Text>
+                          {totalCommissionAmount >= 0
+                            ? `€${totalCommissionAmount.toFixed(2)}`
+                            : `-€${Math.abs(totalCommissionAmount).toFixed(2)}`}
+                        </Typography.Text>
+                      </Table.Summary.Cell>
+                    </Table.Summary.Row>
+                  </>
+                );
+              }}
+            />
+            <Row
+              justify="end"
+              className="mr-1 mt-2"
+              gutter={[8, 8]}
+              style={{
+                position: 'fixed',
+                bottom: '3rem',
+                right: '3rem',
+              }}
+            >
               <Col>
                 <Button
                   type="default"
@@ -727,7 +733,7 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
                 <Button
                   type="primary"
                   disabled={!selectedRowKeys.length}
-                  onClick={payCommissions}
+                  onClick={payPayments}
                 >
                   Pay
                 </Button>

@@ -382,7 +382,7 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   return (
-    <div style={{ overflow: 'clip', height: '100%' }}>
+    <div className="history-container">
       {!details && (
         <>
           <PageHeader
@@ -406,8 +406,9 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
               </Panel>
             </Collapse>
           )}
-          <div>
+          <div className={payments.length ? 'payment-history' : 'payment-history empty-table'}>
             <InfiniteScroll
+              className={payments.length ? '' : 'empty-table'}
               dataLength={payments.length}
               next={getPayments}
               hasMore={!eof}
@@ -427,6 +428,7 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
               }
             >
               <Table
+                className={payments.length ? '' : 'empty-table'}
                 scroll={{ x: true, y: 300 }}
                 rowClassName={(_, index) => `scrollable-row-${index}`}
                 rowKey="id"
@@ -443,7 +445,7 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
 
                   return (
                     <>
-                      <Table.Summary.Row>
+                      <Table.Summary.Row style={{position: 'fixed', bottom: '3.75rem', right: '3rem', background: 'white', left: '250px'}}>
                         <Table.Summary.Cell index={0}>
                           <Typography.Text strong>Total</Typography.Text>
                         </Table.Summary.Cell>
@@ -454,7 +456,7 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
                         <Table.Summary.Cell index={5}>
                           €{totalAmount.current.toFixed(2)}
                         </Table.Summary.Cell>
-                        <Table.Summary.Cell index={6}></Table.Summary.Cell>
+                        <Table.Summary.Cell index={6} className='w-100'></Table.Summary.Cell>
                       </Table.Summary.Row>
                     </>
                   );
