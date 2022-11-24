@@ -844,7 +844,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
             </Col>
           </Row>
           <Content>
-            <div>
+            <div className='table-container'>
               <Table
                 className={isMobile ? 'mt-n1' : 'mt-15'}
                 scroll={{ x: true, y: 300 }}

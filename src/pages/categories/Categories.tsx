@@ -455,7 +455,7 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
           >
             {categoriesKeys.map(key => (
               <Tabs.TabPane tab={key} key={key}>
-                <div>
+                <div className='table-container' style={{position: 'fixed', top: '222px'}}>
                   <InfiniteScroll
                     dataLength={categories.length}
                     next={updateDisplayedArray}

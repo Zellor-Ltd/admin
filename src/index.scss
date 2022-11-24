@@ -218,6 +218,42 @@ body {
   overflow: scroll !important; 
 }
 
+.interests .ant-table-wrapper {
+  position: fixed;
+  top: 230px;
+}
+
+.interests .ant-table-tbody {
+  overflow: scroll;
+}
+
+.table-container {
+  position: fixed;
+  overflow: clip !important;
+  inset: 330px 2.5rem 2.5rem 250px;
+}
+
+.table-container .ant-table-header {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.table-container .infinite-scroll-component__outerdiv, 
+.table-container .infinite-scroll-component,  
+.table-container .ant-table-wrapper,  
+.table-container .ant-spin-nested-loading, 
+.table-container .ant-spin-container,
+.table-container .ant-table,
+.table-container .ant-table-container {
+  height: 100% !important; 
+}
+
+.table-container .ant-table-body {
+  overflow: scroll !important;
+  height: 100% !important;
+}
+
 .details-checkout {
   position: absolute;
   bottom: 2rem;

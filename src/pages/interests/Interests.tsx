@@ -312,6 +312,7 @@ const Interests: React.FC<InterestsProps> = () => {
             <Tabs.TabPane tab="Interests" key="Interests">
               <div>
                 <SortableTable
+                  className='table-container interests'
                   scroll={{ x: true, y: 300 }}
                   rowKey="id"
                   columns={columns}
@@ -324,6 +325,7 @@ const Interests: React.FC<InterestsProps> = () => {
             <Tabs.TabPane tab="All Categories" key="All Categories">
               <div>
                 <Table
+                  className='table-container interests'
                   scroll={{ x: true, y: 300 }}
                   rowKey="id"
                   columns={columns}
