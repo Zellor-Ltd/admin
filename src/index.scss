@@ -227,12 +227,6 @@ body {
   overflow: scroll;
 }
 
-.table-container {
-  position: fixed;
-  overflow: clip !important;
-  inset: 330px 2.5rem 2.5rem 250px;
-}
-
 .table-container .ant-table-header {
   position: sticky;
   top: 0;
@@ -409,6 +403,12 @@ body {
 }
 
 @media (max-width: 992px) {
+  .table-container {
+    position: fixed;
+    overflow: clip !important;
+    inset: 330px 2.5rem 2.5rem 100px;
+  }
+
   .ant-layout-sider-children {
     position: fixed;
     overflow: auto;
@@ -468,6 +468,12 @@ body {
 }
 
 @media (min-width: 992px) {
+  .table-container {
+    position: fixed;
+    overflow: clip !important;
+    inset: 330px 2.5rem 2.5rem 250px;
+  }
+
   .site-layout-background {
     margin: 24px 16px;
     padding: 24px;
