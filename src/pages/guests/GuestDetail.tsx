@@ -7,6 +7,7 @@ import {
   Row,
   Table,
   Tabs,
+  Tooltip,
   Typography,
 } from 'antd';
 import { useRequest } from '../../hooks/useRequest';
@@ -27,9 +28,35 @@ const GuestDetail: React.FC<GuestDetailProps> = ({ fan, onSave, onCancel }) => {
   const { doRequest } = useRequest({ setLoading });
 
   const creatorColumns = [
-    { title: 'UserName', dataIndex: 'userName', width: '15%' },
+    { 
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="UserName">UserName</Tooltip>
+          </div>
+        </div>
+      ), dataIndex: 'userName', width: '15%',
+    },
     {
-      title: 'Name',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Name">Name</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'firstName',
       width: '15%',
       render: (_, record: Creator) => (
@@ -40,7 +67,21 @@ const GuestDetail: React.FC<GuestDetailProps> = ({ fan, onSave, onCancel }) => {
     },
   ];
 
-  const categoryColumns = [{ title: 'Name', dataIndex: 'name', width: '100%' }];
+  const categoryColumns = [{ 
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Name">Name</Tooltip>
+          </div>
+        </div>
+      ), dataIndex: 'name', width: '100%',
+  ellipsis: true }];
 
   const formatUserData = (formUser: any) => {
     const formattedUser = { ...formUser };

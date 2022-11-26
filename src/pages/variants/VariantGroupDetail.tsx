@@ -18,6 +18,7 @@ import {
   Select,
   Spin,
   Table,
+  Tooltip,
   Typography,
 } from 'antd';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
@@ -261,7 +262,19 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
 
   const columns: EditableColumnType<Product>[] = [
     {
-      title: 'Name',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Name">Name</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'name',
       width: '15%',
       sorter: (a, b): any => {
@@ -272,7 +285,19 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
       },
     },
     {
-      title: 'Actions',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Actions">Actions</Tooltip>
+          </div>
+        </div>
+      ),
       key: 'action',
       width: '12%',
       align: 'right',
@@ -539,7 +564,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
         subTitle={isMobile ? '' : 'Add/Remove Variants'}
         className={isMobile ? 'mb-n1' : ''}
         extra={
-          <Row justify={isMobile ? 'end' : undefined}>
+          <Row justify='end'>
             <Col>
               <Button type="primary" onClick={() => setDetails(false)}>
                 Go Back
@@ -550,11 +575,11 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
       />
       <Collapse ghost>
         <Panel
-          className="ml-1 mt-1"
+          className="ml-1 mt-1 mb-05"
           showArrow={false}
           header={
             <Typography.Title level={5}>
-              <MenuOutlined />
+              &nbsp;&nbsp;&nbsp;&nbsp;<MenuOutlined />
               &nbsp;&nbsp;&nbsp;&nbsp;Variants in Group
             </Typography.Title>
           }
@@ -667,6 +692,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
             </Col>
           </Row>
           <InfiniteScroll
+            className='variant table-container'
             dataLength={products.length}
             next={getProducts}
             hasMore={!eof}
@@ -687,7 +713,6 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
           >
             <Table
               scroll={{ x: true }}
-              className="mt-2"
               rowClassName={(_, index) => `scrollable-row-${index}`}
               rowKey="id"
               columns={columns}

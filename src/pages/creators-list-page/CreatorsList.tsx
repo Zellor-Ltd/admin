@@ -137,7 +137,19 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
       render: value => <Image className="active-masthead" src={value?.url} />,
     },
     {
-      title: 'Actions',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Actions">Actions</Tooltip>
+          </div>
+        </div>
+      ),
       key: 'action',
       width: '5%',
       align: 'right',

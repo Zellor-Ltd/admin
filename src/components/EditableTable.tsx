@@ -1,5 +1,7 @@
 import { Table, ITableExportFields } from 'ant-table-extensions';
 import { ColumnType, TableProps } from 'antd/lib/table';
+import { AppContext } from 'contexts/AppContext';
+import { useContext } from 'react';
 import { EditableCell, EditableRow } from '.';
 
 export type EditableColumnType<T> = ColumnType<T> & {
@@ -22,6 +24,7 @@ const EditableTable: React.FC<EditableTableProps<any>> = (
   props: EditableTableProps<any>
 ) => {
   const { columns = [], onSave, exportable = true } = props;
+  const { isMobile } = useContext(AppContext);
 
   const configuredColumns = columns.map(col => {
     if (!col.editable) {
@@ -86,7 +89,8 @@ const EditableTable: React.FC<EditableTableProps<any>> = (
               fileName: 'Disco Products',
               showColumnPicker: true,
               btnProps: {
-                className: 'ml-2 mt-05 mb-n05',
+                className: ' ml-2 mt-05 mb-n1',
+                style: isMobile ? { position: 'fixed', top: '270px', left: '67px'} : { position: 'fixed', top: '270px', left: '240px'},
               },
             }
           : undefined

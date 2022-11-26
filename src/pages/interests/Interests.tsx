@@ -268,7 +268,19 @@ const Interests: React.FC<InterestsProps> = () => {
       render: (image: Image) => <AntImage src={image?.url} width={70} />,
     },
     {
-      title: 'Actions',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Actions">Actions</Tooltip>
+          </div>
+        </div>
+      ),
       key: 'action',
       width: '5%',
       align: 'right',

@@ -17,6 +17,7 @@ import {
   Popconfirm,
   Modal,
   InputNumber,
+  Tooltip,
 } from 'antd';
 import { Upload } from 'components';
 import { RichTextEditor } from 'components/RichTextEditor';
@@ -195,40 +196,107 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
 
   const columns: ColumnsType<BrandVault> = [
     {
-      title: '_id',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="_id">_id</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'id',
       width: '6%',
-      render: id => <CopyValueToClipboard value={id} />,
       align: 'center',
+      ellipsis: true,
+      render: id => <CopyValueToClipboard value={id} />,
     },
     {
-      title: 'Key',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Key">Key</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'key',
       width: '12%',
       align: 'center',
       render: (value: string, record: BrandVault, index: number) => (
-        <Link
-          to={window.location.pathname}
-          onClick={() => editVault(record, index)}
-        >
-          {value}
-        </Link>
+        <Tooltip title={value}>
+          <Link
+            to={window.location.pathname}
+            onClick={() => editVault(record, index)}
+          >
+            {value}
+          </Link>
+        </Tooltip>
       ),
     },
     {
-      title: 'Shop Name',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Shop Name">Shop Name</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'shopName',
       width: '15%',
-      align: 'center',
+      align: 'center',render: (value: string) => (
+      <Tooltip title={value}>
+          {value}
+        </Tooltip>
+      ),
     },
     {
-      title: 'API Shop Name',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="API Shop Name">API Shop Name</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'apiShopName',
       width: '15%',
       align: 'center',
     },
     {
-      title: 'Creation',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Creation">Creation</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'hCreationDate',
       width: '15%',
       align: 'center',
@@ -240,7 +308,19 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
       ),
     },
     {
-      title: 'Actions',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Actions">Actions</Tooltip>
+          </div>
+        </div>
+      ),
       key: 'action',
       width: '10%',
       align: 'right',

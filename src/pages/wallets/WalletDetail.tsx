@@ -6,6 +6,7 @@ import {
   PageHeader,
   Row,
   Table,
+  Tooltip,
   Typography,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
@@ -73,7 +74,19 @@ const WalletDetail: React.FC<WalletDetailProps> = ({
 
   const columns: ColumnsType<WalletTransaction> = [
     {
-      title: 'Date Time',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Date Time">Date Time</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'hCreationDate',
       width: '20%',
       align: 'left',
@@ -90,18 +103,54 @@ const WalletDetail: React.FC<WalletDetailProps> = ({
         )}`,
     },
     {
-      title: 'Type',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Type">Type</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'type',
       width: '12%',
     },
     {
-      title: 'Amount',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Amount">Amount</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'discoDollars',
       width: '10%',
       align: 'center',
     },
     {
-      title: 'Who',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Who">Who</Tooltip>
+          </div>
+        </div>
+      ),
       width: '20%',
       align: 'right',
       dataIndex: 'addedBy',

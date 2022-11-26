@@ -11,6 +11,7 @@ import {
   Row,
   Select,
   Table,
+  Tooltip,
   Typography,
 } from 'antd';
 import { formatMoment } from 'helpers/formatMoment';
@@ -134,9 +135,33 @@ const UserDetail: React.FC<RouteComponentProps> = props => {
   };
 
   const creatorColumns = [
-    { title: 'UserName', dataIndex: 'userName', width: '15%' },
+    {       title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="UserName">UserName</Tooltip>
+          </div>
+        </div>
+      ), dataIndex: 'userName', width: '15%', },
     {
-      title: 'Actions',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Actions">Actions</Tooltip>
+          </div>
+        </div>
+      ),
       key: 'action',
       width: '5%',
       render: (value: any, record: Creator, index: number) => (
@@ -176,9 +201,33 @@ const UserDetail: React.FC<RouteComponentProps> = props => {
   };
 
   const categoryColumns = [
-    { title: 'Name', dataIndex: 'name', width: '15%' },
+    {       title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Name">Name</Tooltip>
+          </div>
+        </div>
+      ), dataIndex: 'name', width: '15%' },
     {
-      title: 'Actions',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Actions">Actions</Tooltip>
+          </div>
+        </div>
+      ),
       key: 'action',
       width: '5%',
       render: (value: any, record: Category, index: number) => (

@@ -239,7 +239,19 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
       },
     },
     {
-      title: 'vIndex',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="vIndex">vIndex</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'vIndex',
       width: '5%',
       render: (_, brand, index) => {
@@ -439,7 +451,19 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
       ),
     },
     {
-      title: 'D%',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="D%">D%</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'discoPercentage',
       width: '8%',
       align: 'center',
@@ -453,7 +477,19 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
       },
     },
     {
-      title: 'C%',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="C%">C%</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'creatorPercentage',
       width: '8%',
       align: 'center',
@@ -467,7 +503,19 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
       },
     },
     {
-      title: 'DD%',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="DD%">DD%</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'maxDiscoDollarPercentage',
       width: '9%',
       align: 'center',
@@ -509,7 +557,19 @@ const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
       },
     },
     {
-      title: 'Actions',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Actions">Actions</Tooltip>
+          </div>
+        </div>
+      ),
       key: 'action',
       width: '15%',
       align: 'right',

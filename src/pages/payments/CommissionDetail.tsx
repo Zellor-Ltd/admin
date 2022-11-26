@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Button, Col, Table, PageHeader, Row, Typography } from 'antd';
+import { Button, Col, Table, PageHeader, Row, Typography, Tooltip } from 'antd';
 import { useState, useEffect } from 'react';
 import React from 'react';
 import { useRequest } from 'hooks/useRequest';
@@ -43,14 +43,38 @@ const CommissionDetail: React.FC<CommissionDetailProps> = ({
 
   const columns: ColumnType<Product>[] = [
     {
-      title: 'Product Id',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Product ID">Product ID</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'id',
       width: '1%',
       render: id => <CopyValueToClipboard value={id} />,
       align: 'center',
     },
     {
-      title: 'Product Description',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Product Description">Product Description</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'description',
       width: '10%',
       align: 'center',
@@ -66,7 +90,19 @@ const CommissionDetail: React.FC<CommissionDetailProps> = ({
       },
     },
     {
-      title: 'Price',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Price">Price</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'originalPrice',
       width: '10%',
       sorter: (a, b): any => {
@@ -79,7 +115,19 @@ const CommissionDetail: React.FC<CommissionDetailProps> = ({
       render: (value: number) => `€${value}`,
     },
     {
-      title: 'Discount',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Discount">Discount</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'originalPrice',
       width: '10%',
       sorter: (a, b): any => {
@@ -96,7 +144,19 @@ const CommissionDetail: React.FC<CommissionDetailProps> = ({
         }%`,
     },
     {
-      title: 'Sale Price',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Sale Price">Sale Price</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'discountedPrice',
       width: '10%',
       sorter: (a, b): any => {
@@ -109,7 +169,19 @@ const CommissionDetail: React.FC<CommissionDetailProps> = ({
       render: (value: number) => `€${value}`,
     },
     {
-      title: 'Commission %',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Commission %">Commission %</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'creatorPercentage',
       width: '10%',
       sorter: (a, b): any => {
@@ -122,7 +194,19 @@ const CommissionDetail: React.FC<CommissionDetailProps> = ({
       render: (value: number) => `${value}%`,
     },
     {
-      title: 'Commission Amount',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Commission Amount">Commission Amount</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'creatorPercentage',
       width: '10%',
       sorter: (a, b): any => {

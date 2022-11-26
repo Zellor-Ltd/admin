@@ -1,4 +1,4 @@
-import { Col, Row, Typography } from 'antd';
+import { Col, Row, Tooltip, Typography } from 'antd';
 import { useRequest } from '../../hooks/useRequest';
 import EditableTable from '../../components/EditableTable';
 import CopyValueToClipboard from '../../components/CopyValueToClipboard';
@@ -29,26 +29,124 @@ const FanActivities: React.FC<DashboardProps> = () => {
 
   const fanActs: ColumnsType<PreReg> = [
     {
-      title: '_id',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="_id">_id</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'id',
       width: '5%',
       render: (id: any) => <CopyValueToClipboard value={id} />,
       align: 'center',
     },
-    { title: 'User', dataIndex: 'user', width: '30%' },
-    { title: 'Total DD', dataIndex: 'totalDiscoDollars', width: '10%' },
-    { title: 'Wishlist Items', dataIndex: 'wishListItems', width: '10%' },
+    {       title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="User">User</Tooltip>
+          </div>
+        </div>
+      ), dataIndex: 'user', width: '30%',
+    ellipsis: true },
+    {       title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Total DD">Total DD</Tooltip>
+          </div>
+        </div>
+      ), dataIndex: 'totalDiscoDollars', width: '10%',
+    ellipsis: true },
+    {       title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Wishlist Items">Wishlist Items</Tooltip>
+          </div>
+        </div>
+      ), dataIndex: 'wishListItems', width: '10%', ellipsis: true },
     {
-      title: 'Logins in the last 10 days',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Logins in the last 10 days">Logins in the last 10 days</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'last10dayslogins',
-      width: '15%',
+      width: '15%', ellipsis: true
     },
-    { title: 'Total Ordered', dataIndex: 'totalOrdered', width: '10%' },
-    { title: 'Items Ordered', dataIndex: 'itemsOrdered', width: '10%' },
+    {       title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Total Ordered">Total Ordered</Tooltip>
+          </div>
+        </div>
+      ), dataIndex: 'totalOrdered', width: '10%', ellipsis: true },
+    {       title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Items Ordered">Items Ordered</Tooltip>
+          </div>
+        </div>
+      ), dataIndex: 'itemsOrdered', width: '10%', ellipsis: true },
     {
-      title: 'Videos watched this month',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Videos watched this month">Videos watched this month</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'feedsWatchedThisMonth',
-      width: '10%',
+      width: '10%', ellipsis: true
     },
   ];
 

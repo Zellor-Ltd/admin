@@ -678,14 +678,38 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
 
   const cartColumns: ColumnsType<Order> = [
     {
-      title: '_id',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="_id">_id</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'id',
       width: '6%',
       render: id => <CopyOrderToClipboard order={id} />,
       align: 'center',
     },
     {
-      title: 'Description',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Description">Description</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'description',
       width: '15%',
       align: 'center',
@@ -714,7 +738,19 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
     {
-      title: 'Quantity',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Quantity">Quantity</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'quantity',
       width: '5%',
       align: 'center',
@@ -726,7 +762,19 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
     {
-      title: 'Price',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Price">Price</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'originalPrice',
       width: '5%',
       align: 'center',
@@ -740,7 +788,19 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
     {
-      title: 'Discount',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Discount">Discount</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'discount',
       width: '5%',
       align: 'center',
@@ -753,7 +813,19 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
     {
-      title: 'Sale Price',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Sale Price">Sale Price</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'discountedPrice',
       width: '5%',
       align: 'center',
@@ -767,7 +839,19 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
     {
-      title: 'Return Date',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Return Date">Return Date</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'returnDate',
       width: '10%',
       align: 'center',
@@ -789,7 +873,19 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
     {
-      title: 'Return Quantity',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Return Quantity">Return Quantity</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'returnQuantity',
       width: '5%',
       align: 'center',
