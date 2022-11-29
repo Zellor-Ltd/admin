@@ -409,7 +409,19 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
 
   const storeColumns: ColumnsType<any> = [
     {
-      title: 'Name',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Name">Name</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'name',
       width: '18%',
       align: 'center',
@@ -421,7 +433,19 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
       },
     },
     {
-      title: 'Country',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Country">Country</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'country',
       width: '15%',
       align: 'center',
@@ -433,7 +457,19 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
       },
     },
     {
-      title: 'Currency',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Currency">Currency</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'currency',
       width: '10%',
       align: 'center',
@@ -446,7 +482,19 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
       },
     },
     {
-      title: 'Price',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Price">Price</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'price',
       width: '10%',
       align: 'center',
@@ -460,7 +508,19 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
         entity.price ? currencyRender(entity, 'price') : '-',
     },
     {
-      title: 'Link',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Link">Link</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'link',
       width: '32%',
       align: 'center',
@@ -488,7 +548,19 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
       },
     },
     {
-      title: 'Copy URL',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Copy URL">Copy URL</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'link',
       width: '10%',
       render: (_, record: any) => <CopyValueToClipboard value={record.link} />,

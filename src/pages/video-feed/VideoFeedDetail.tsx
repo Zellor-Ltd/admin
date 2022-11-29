@@ -18,6 +18,7 @@ import {
   Slider,
   Table,
   Tabs,
+  Tooltip,
   Switch,
   Typography,
 } from 'antd';
@@ -658,7 +659,19 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
 
   const columns: ColumnsType<any> = [
     {
-      title: 'ID',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="ID">ID</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'id',
       width: '20%',
       render: link => (
@@ -669,7 +682,19 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
       align: 'center',
     },
     {
-      title: 'Link',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Link">Link</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'id',
       width: '15%',
       render: id => (
@@ -680,26 +705,74 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
       align: 'center',
     },
     {
-      title: 'Social Platform',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Social Platform">Social Platform</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'socialPlatform',
       width: '15%',
       align: 'center',
     },
     {
-      title: 'Feed ID',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Feed ID">Feed ID</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'videoFeedId',
       width: '15%',
       align: 'center',
       render: videoFeedId => <CopyValueToClipboard value={videoFeedId} />,
     },
     {
-      title: 'Segment',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Segment">Segment</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'segment',
       width: '15%',
       align: 'center',
     },
     {
-      title: 'With Video',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="With Video">With Video</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'includeVideo',
       width: '15%',
       align: 'center',
@@ -1693,22 +1766,70 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
 
   const brandsColumns: ColumnsType<any> = [
     {
-      title: 'Name',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Name">Name</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'brandName',
       width: '15%',
     },
     {
-      title: 'Start time',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Start Time">Start Time</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: ['position', '0', 'startTime'],
       width: '15%',
     },
     {
-      title: 'Duration',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Duration">Duration</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: ['position', '0', 'duration'],
       width: '15%',
     },
     {
-      title: 'Actions',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Actions">Actions</Tooltip>
+          </div>
+        </div>
+      ),
       key: 'action',
       width: '5%',
       align: 'right',
@@ -1749,27 +1870,87 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
 
   const tagsColumns: ColumnsType<any> = [
     {
-      title: 'Store Name',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Store Name">Store Name</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: ['brand', 'brandName'],
       width: '15%',
     },
     {
-      title: 'Tag Name',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Tag Name">Tag Name</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'tagName',
       width: '15%',
     },
     {
-      title: 'Start time',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Start Time">Start Time</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: ['position', '0', 'startTime'],
       width: '15%',
     },
     {
-      title: 'Duration',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Duration">Duration</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: ['position', '0', 'duration'],
       width: '15%',
     },
     {
-      title: 'Actions',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Actions">Actions</Tooltip>
+          </div>
+        </div>
+      ),
       key: 'action',
       width: '5%',
       align: 'right',

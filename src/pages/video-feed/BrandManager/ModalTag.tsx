@@ -9,6 +9,7 @@ import {
   Row,
   Select,
   Table,
+  Tooltip,
 } from 'antd';
 import { Position } from 'interfaces/Position';
 import { Tag } from 'interfaces/Tag';
@@ -85,37 +86,109 @@ const ModalTag: React.FC<ModalFormProps> = ({
 
   const columns = [
     {
-      title: 'Start time',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Start Time">Start Time</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'startTime',
       editable: true,
       number: true,
     },
     {
-      title: 'Opacity',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Opacity">Opacity</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'opacity',
       editable: true,
       number: true,
     },
     {
-      title: 'Position X',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Position X">Position X</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'x',
       editable: true,
       number: true,
     },
     {
-      title: 'Position Y',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Position Y">Position Y</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'y',
       editable: true,
       number: true,
     },
     {
-      title: 'Z Index',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Z Index">Z Index</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'z',
       editable: true,
       number: true,
     },
     {
-      title: 'actions',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Actions">Actions</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'actions',
       render: (_: any, record: Position, index: number) =>
         selectedPositions.length >= 1 ? (

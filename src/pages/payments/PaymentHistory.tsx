@@ -445,7 +445,7 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
 
                   return (
                     <>
-                      <Table.Summary.Row style={{position: 'fixed', bottom: '3.75rem', right: '3rem', background: 'white', left: '250px'}}>
+                      <Table.Summary.Row style={isMobile ? {position: 'fixed', bottom: '3.75rem', right: '3rem', background: 'white', left: '100px'} : {position: 'fixed', bottom: '3.75rem', right: '3rem', background: 'white', left: '250px'}}>
                         <Table.Summary.Cell index={0}>
                           <Typography.Text strong>Total</Typography.Text>
                         </Table.Summary.Cell>

@@ -198,7 +198,19 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
     {
-      title: 'Actions',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Actions">Actions</Tooltip>
+          </div>
+        </div>
+      ),
       key: 'action',
       width: '10%',
       align: 'right',

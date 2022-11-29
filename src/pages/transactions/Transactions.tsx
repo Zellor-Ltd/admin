@@ -250,9 +250,8 @@ const Transactions: React.FC<RouteComponentProps> = () => {
           ></MultipleFetchDebounceSelect>
         </Col>
       </Row>
-      <div>
+      <div className='transactions' style={{position: 'fixed', inset: '270px 3rem 2.5rem 240px', overflow: 'clip'}}>
         <Table
-          className="mt-1"
           scroll={{ x: true, y: 300 }}
           rowKey="id"
           columns={columns}

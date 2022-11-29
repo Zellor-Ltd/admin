@@ -665,7 +665,6 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
             }
           >
             <Table
-              className="mt-1"
               scroll={{ x: true, y: 300 }}
               rowClassName={(_, index) => `scrollable-row-${index}`}
               rowKey="id"

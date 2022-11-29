@@ -259,7 +259,19 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
     {
-      title: 'Actions',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Actions">Actions</Tooltip>
+          </div>
+        </div>
+      ),
       key: 'action',
       width: '10%',
       align: 'right',
@@ -324,10 +336,10 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
               />
             </Col>
           </Row>
-          <div>
+          <div className='table-container' style={{position: 'fixed', top: '255px'}}>
             <Table
               className="mt-15"
-              scroll={{ x: true, y: 300 }}
+              scroll={{ x: true, y: '100%' }}
               rowClassName={(_, index) => `scrollable-row-${index}`}
               rowKey="id"
               columns={columns}

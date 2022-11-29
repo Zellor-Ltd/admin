@@ -1,4 +1,4 @@
-import { Col, Row, Popconfirm, Button, Table, Typography } from 'antd';
+import { Col, Row, Popconfirm, Button, Table, Tooltip, Typography } from 'antd';
 import { useRequest } from '../../hooks/useRequest';
 import { DeleteOutlined } from '@ant-design/icons';
 import moment from 'moment';
@@ -41,15 +41,51 @@ const PreRegisteredUsers: React.FC<DashboardProps> = () => {
 
   const preRegistered: ColumnsType<PreReg> = [
     {
-      title: '_id',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="_id">_id</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'id',
       width: '5%',
       render: (id: any) => <CopyValueToClipboard value={id} />,
       align: 'center',
     },
-    { title: 'Email', dataIndex: 'email', width: '15%' },
+    {       title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Email">Email</Tooltip>
+          </div>
+        </div>
+      ), dataIndex: 'email', width: '15%' },
     {
-      title: 'Creation Date',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Creation Date">Creation Date</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'hCreationDate',
       width: '65%',
       align: 'center',
@@ -58,7 +94,19 @@ const PreRegisteredUsers: React.FC<DashboardProps> = () => {
         moment(hCreationDate).format('DD/MM/YYYY'),
     },
     {
-      title: 'Actions',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Actions">Actions</Tooltip>
+          </div>
+        </div>
+      ),
       key: 'action',
       width: '15%',
       align: 'right',

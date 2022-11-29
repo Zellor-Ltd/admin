@@ -268,7 +268,19 @@ const Interests: React.FC<InterestsProps> = () => {
       render: (image: Image) => <AntImage src={image?.url} width={70} />,
     },
     {
-      title: 'Actions',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Actions">Actions</Tooltip>
+          </div>
+        </div>
+      ),
       key: 'action',
       width: '5%',
       align: 'right',
@@ -312,6 +324,7 @@ const Interests: React.FC<InterestsProps> = () => {
             <Tabs.TabPane tab="Interests" key="Interests">
               <div>
                 <SortableTable
+                  className='table-container interests'
                   scroll={{ x: true, y: 300 }}
                   rowKey="id"
                   columns={columns}
@@ -324,6 +337,7 @@ const Interests: React.FC<InterestsProps> = () => {
             <Tabs.TabPane tab="All Categories" key="All Categories">
               <div>
                 <Table
+                  className='table-container interests'
                   scroll={{ x: true, y: 300 }}
                   rowKey="id"
                   columns={columns}
