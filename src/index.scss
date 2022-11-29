@@ -232,18 +232,19 @@ body {
 }
 
 .ant-table-empty,
-.empty-table,
-.empty-table table,
-.empty-table .ant-spin-container,
-.empty-table .ant-table-container,
-.empty-table .ant-spin-nested-loading,
-.empty-table .infinite-scroll-component__outerdiv,
+.custom-table,
+.custom-table table,
+.custom-table.links .ant-table-wrapper,
+.custom-table .ant-spin-container,
+.custom-table .ant-table-container,
+.custom-table .ant-spin-nested-loading,
+.custom-table .infinite-scroll-component__outerdiv,
 .featured-feeds-layout,
 .creator-container {
   height: 100% !important;
 }
 
-.empty-table .ant-table-body {
+.custom-table .ant-table-body {
   position: absolute;
   bottom: 10rem;
   top: 0;
@@ -299,6 +300,30 @@ body {
   justify-content: center;
   align-items: center;
   height: 100%;
+}
+
+.video-feed {
+  .segment-thumbnail {
+    border: 1.5px dashed;
+    border-color: #8a8a8a;
+    margin: 0 8px;
+    padding: 2px;
+    text-align: center;
+    &.selected {
+      border-color: blue;
+    }
+  }
+
+  .remove-button {
+    position: absolute;
+    margin-left: -37px;
+    margin-top: 3px;
+  }
+
+  .scroll-message {
+    text-align: center;
+    margin-top: 16px;
+  }
 }
 
 .info-block {

@@ -215,6 +215,8 @@ export const updateUsersFeedByGroup = (groupName: string, params: any) =>
 
 export const fetchStartupVideo = () => instance.get('Wi/Ep/GetStartupVideo');
 
+export const fetchDirectLinks = () => instance.get('Disco/Link/Adm/List');
+
 export const fetchVideoFeed = () => instance.get('Wi/Ep/ListVideoFeed');
 export const fetchVideoFeedV2 = ({
   query,
@@ -666,9 +668,14 @@ export const addVariant = (productId: string, variantId: string) =>
 export const saveLink = (params: any) =>
   instance.put('Disco/Link/Adm/GenerateExternalLink', params);
 
+export const saveDirectLink = (params: any, newItem?: boolean) => {
+  if (newItem) return instance.put('Disco/Link/Adm/AddDirectlLink', params);
+  else return instance.put('Disco/Link/Adm/UpdateDirectlLink', params);
+};
+
 export const saveVideoFeed = (params: FeedItem, newItem?: boolean) => {
-  if (newItem) return instance.put('Disco/Feed/Adm/Add', params);
-  else return instance.put('Disco/Feed/Update', params);
+if (newItem) return instance.put('Disco/Feed/Adm/Add', params);
+else return instance.put('Disco/Feed/Update', params);
 };
 
 export const addFeaturedFeed = (feedId: string, listName: string) =>
@@ -927,6 +934,9 @@ export const deleteBrandVault = (id: string) => {
 
 export const deletePrivileges = (data: Privilege) =>
   instance.delete('Disco/Identity/Adm/RemovePrivillege', { data });
+
+export const deleteDirectLink = (id: string) =>
+  instance.delete(`Disco/Link/Adm/RemoveDirectlLink/${id}`);
 
 export const deleteVideoFeed = (id: string) =>
   instance.delete(`Disco/Feed/Delete/${id}`);

@@ -368,7 +368,7 @@ const FeaturedFeed: React.FC<RouteComponentProps> = () => {
 
   return (
     <div style={{ overflow: 'clip', height: '100%' }}>
-      <div className="video-feed mb-1">
+      <div className="mb-1">
         <PageHeader
           title="Featured Feeds"
           subTitle={isMobile ? '' : 'List of Featured Feeds'}

@@ -14,6 +14,7 @@ import {
   IssuesCloseOutlined,
   DashboardOutlined,
   LineChartOutlined,
+  LinkOutlined,
   UserAddOutlined,
   FolderAddOutlined,
   BarsOutlined,
@@ -220,6 +221,12 @@ const AdminSideMenu = ({ isMobile }) => {
           onClick={() => refreshParent('marketing_promotions')}
         >
           <Link to="/marketing_promotions">Promotions</Link>
+        </Menu.Item>
+        <Menu.Item
+          key="marketing_direct-links"
+          icon={<LinkOutlined />}
+          onClick={() => refreshParent('marketing_direct-links')}>
+          <Link to="/marketing_direct-links">Direct Links</Link>
         </Menu.Item>
       </SubMenu>
       <SubMenu key="users" icon={<TeamOutlined />} title="Users">

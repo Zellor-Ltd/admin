@@ -47,6 +47,7 @@ import VariantGroups from 'pages/variants/VariantGroups';
 import ProductTemplates from 'pages/product-templates/ProductTemplates';
 import FixedVideo from 'pages/fixed-videos/FixedVideo';
 import FeaturedFeeds from 'pages/featured-feeds/FeaturedFeeds';
+import DirectLinks from 'pages/direct-links/DirectLinks';
 
 function AdminRoutes() {
   return (
@@ -201,6 +202,11 @@ function AdminRoutes() {
       <AppRoute
         path="/marketing_creators-list"
         component={CreatorsList}
+        layout={AuthenticatedLayout}
+      />
+      <AppRoute
+        path="/marketing_direct-links"
+        component={DirectLinks}
         layout={AuthenticatedLayout}
       />
       <AppRoute

@@ -558,7 +558,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
               </Row>
             </Col>
           </Row>
-          <div className={creators.length ? '' : 'empty-table'}>
+          <div className={creators.length ? '' : 'custom-table'}>
             <InfiniteScroll
               dataLength={creators.length}
               next={() => fetch(true)}
@@ -577,10 +577,10 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
                   </div>
                 )
               }
-              className={creators.length ? '' : 'empty-table'}
+              className={creators.length ? '' : 'custom-table'}
             >
               <Table
-                className={creators.length ? 'mt-1' : 'mt-1 empty-table'}
+                className={creators.length ? 'mt-1' : 'mt-1 custom-table'}
                 scroll={{ x: true, y: 300 }}
                 rowClassName={(_, index) => `scrollable-row-${index}`}
                 rowKey="id"

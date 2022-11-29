@@ -654,7 +654,7 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
             <Table
               scroll={{ x: true, y: 300 }}
               rowClassName={(_, index) => `scrollable-row-${index}`}
-              className={payments.length ? '' : 'empty-table'}
+              className={payments.length ? '' : 'custom-table'}
               rowSelection={rowSelection}
               rowKey="id"
               columns={columns}
