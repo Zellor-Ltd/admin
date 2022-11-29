@@ -140,7 +140,7 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
           </div>
         </div>
       ), dataIndex: 'userName', width: '15%',
-    ellipsis: true },
+    },
     {
       title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
@@ -208,7 +208,7 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
           </div>
         </div>
       ), dataIndex: 'name', width: '15%',
-    ellipsis: true },
+    },
     {
       
       title: (

@@ -81,7 +81,7 @@ const GuestDetail: React.FC<GuestDetailProps> = ({ fan, onSave, onCancel }) => {
           </div>
         </div>
       ), dataIndex: 'name', width: '100%',
-  ellipsis: true }];
+   }];
 
   const formatUserData = (formUser: any) => {
     const formattedUser = { ...formUser };

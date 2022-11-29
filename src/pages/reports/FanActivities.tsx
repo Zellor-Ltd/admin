@@ -60,7 +60,7 @@ const FanActivities: React.FC<DashboardProps> = () => {
           </div>
         </div>
       ), dataIndex: 'user', width: '30%',
-    ellipsis: true },
+     },
     {       title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
@@ -74,7 +74,7 @@ const FanActivities: React.FC<DashboardProps> = () => {
           </div>
         </div>
       ), dataIndex: 'totalDiscoDollars', width: '10%',
-    ellipsis: true },
+     },
     {       title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
@@ -87,7 +87,7 @@ const FanActivities: React.FC<DashboardProps> = () => {
             <Tooltip title="Wishlist Items">Wishlist Items</Tooltip>
           </div>
         </div>
-      ), dataIndex: 'wishListItems', width: '10%', ellipsis: true },
+      ), dataIndex: 'wishListItems', width: '10%' },
     {
             title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
@@ -103,7 +103,7 @@ const FanActivities: React.FC<DashboardProps> = () => {
         </div>
       ),
       dataIndex: 'last10dayslogins',
-      width: '15%', ellipsis: true
+      width: '15%'
     },
     {       title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
@@ -117,7 +117,7 @@ const FanActivities: React.FC<DashboardProps> = () => {
             <Tooltip title="Total Ordered">Total Ordered</Tooltip>
           </div>
         </div>
-      ), dataIndex: 'totalOrdered', width: '10%', ellipsis: true },
+      ), dataIndex: 'totalOrdered', width: '10%' },
     {       title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
@@ -130,7 +130,7 @@ const FanActivities: React.FC<DashboardProps> = () => {
             <Tooltip title="Items Ordered">Items Ordered</Tooltip>
           </div>
         </div>
-      ), dataIndex: 'itemsOrdered', width: '10%', ellipsis: true },
+      ), dataIndex: 'itemsOrdered', width: '10%' },
     {
             title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
@@ -146,7 +146,7 @@ const FanActivities: React.FC<DashboardProps> = () => {
         </div>
       ),
       dataIndex: 'feedsWatchedThisMonth',
-      width: '10%', ellipsis: true
+      width: '10%'
     },
   ];
 

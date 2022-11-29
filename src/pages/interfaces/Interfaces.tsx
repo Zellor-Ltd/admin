@@ -24,7 +24,7 @@ const Interfaces: React.FC<RouteComponentProps> = ({ history }) => {
           </div>
         </div>
       ), dataIndex: 'name', width: '15%',
-    ellipsis: true },
+     },
     {       title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
@@ -38,7 +38,7 @@ const Interfaces: React.FC<RouteComponentProps> = ({ history }) => {
           </div>
         </div>
       ), dataIndex: 'httpEndpoint', width: '15%',
-    ellipsis: true },
+     },
     {
             title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
