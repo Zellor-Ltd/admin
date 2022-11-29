@@ -8,7 +8,7 @@ import { SelectOption } from '../../interfaces/SelectOption';
 
 interface MultipleFetchDebounceSelectProps {
   onInput: (search?: string, loadNextPage?: boolean) => any;
-  onChange: (value?: string, entity?: any) => void;
+  onChange?: (value?: string, entity?: any) => void;
   onClear?: Function;
   onFocus?: () => any;
   onBlur?: () => any;
@@ -138,7 +138,7 @@ const MultipleFetchDebounceSelect: React.FC<
         entity[optionMapping.value]?.toUpperCase() ===
         option.value?.toUpperCase()
     );
-    onChange(option.value, selectedEntity);
+    onChange?.(option.value, selectedEntity);
   };
 
   const _onClear = () => {

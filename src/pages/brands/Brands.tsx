@@ -48,7 +48,7 @@ const tagColorByStatus: any = {
   pending: '',
 };
 
-const Brands: React.FC<RouteComponentProps> = ({ history, location }) => {
+const Brands: React.FC<RouteComponentProps> = ({ location }) => {
   const [details, setDetails] = useState<boolean>(false);
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [loading, setLoading] = useState<boolean>(false);
