@@ -234,7 +234,7 @@ const Transactions: React.FC<RouteComponentProps> = () => {
         subTitle={isMobile ? '' : 'List of Transactions'}
       />
       <Row gutter={8} className="sticky-filter-box mb-05">
-        <Col xxl={40} lg={4} md={12} xs={24}>
+        <Col xxl={40} lg={4} xs={24}>
           <Typography.Title level={5}>Fan Filter</Typography.Title>
           <MultipleFetchDebounceSelect
             disabled={loading}
@@ -250,7 +250,14 @@ const Transactions: React.FC<RouteComponentProps> = () => {
           ></MultipleFetchDebounceSelect>
         </Col>
       </Row>
-      <div className='transactions' style={{position: 'fixed', inset: '270px 3rem 2.5rem 240px', overflow: 'clip'}}>
+      <div
+        className="transactions"
+        style={{
+          position: 'fixed',
+          inset: '270px 3rem 2.5rem 240px',
+          overflow: 'clip',
+        }}
+      >
         <Table
           scroll={{ x: true, y: 300 }}
           rowKey="id"

@@ -90,7 +90,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
   useEffect(() => {
     if (!details) scrollToCenter(lastViewedIndex);
 
-    setIsDetails(details)
+    setIsDetails(details);
   }, [details]);
 
   const rebuildVlink = async (productBrand: ProductBrand, index: number) => {
@@ -134,7 +134,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
 
   const columns: ColumnsType<ProductBrand> = [
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -185,7 +185,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -291,7 +291,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
       ),
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -319,7 +319,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -348,7 +348,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
     },
 
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -437,7 +437,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -514,7 +514,11 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   return (
-    <div style={details ? { height: '100%' } : { overflow: 'clip', height: '100%' }}>
+    <div
+      style={
+        details ? { height: '100%' } : { overflow: 'clip', height: '100%' }
+      }
+    >
       {!details && (
         <div>
           <PageHeader
@@ -531,7 +535,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
             ]}
           />
           <Row className="sticky-filter-box mb-05" gutter={8}>
-            <Col lg={4} md={12} xs={24}>
+            <Col lg={4} xs={24}>
               <Typography.Title level={5}>Search</Typography.Title>
               <Input
                 allowClear

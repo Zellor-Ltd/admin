@@ -65,15 +65,13 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
     fetch();
   }, []);
 
-
-
   const fetch = async () => {
     const { results }: any = await doFetch(fetchBrands);
     setBrands(results);
   };
 
   useEffect(() => {
-    setIsDetails(details)
+    setIsDetails(details);
 
     if (!details) {
       scrollIntoView(
@@ -608,7 +606,11 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
   ];
 
   return (
-    <div style={details ? { height: '100%' } : { overflow: 'clip', height: '100%' }}>
+    <div
+      style={
+        details ? { height: '100%' } : { overflow: 'clip', height: '100%' }
+      }
+    >
       {!details && (
         <div>
           <PageHeader
@@ -625,7 +627,7 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
             ]}
           />
           <Row gutter={8} className="mb-05 sticky-filter-box">
-            <Col lg={4} md={12} xs={24}>
+            <Col lg={4} xs={24}>
               <Typography.Title level={5} title="Search">
                 Search
               </Typography.Title>

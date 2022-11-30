@@ -196,7 +196,7 @@ const Endpoints: React.FC<RouteComponentProps> = ({ history, location }) => {
         ]}
       />
       <Row gutter={8} className="sticky-filter-box mb-05">
-        <Col lg={4} md={12} xs={24}>
+        <Col lg={4} xs={24}>
           <Typography.Title level={5}>Search</Typography.Title>
           <Input
             allowClear

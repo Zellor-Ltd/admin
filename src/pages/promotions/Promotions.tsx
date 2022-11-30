@@ -66,8 +66,8 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   useEffect(() => {
-    setIsDetails(details)
-    
+    setIsDetails(details);
+
     if (!details) scrollToCenter(lastViewedIndex);
   }, [details]);
 
@@ -189,7 +189,7 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -278,7 +278,11 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   return (
-    <div style={details ? { height: '100%' } : { overflow: 'clip', height: '100%' }}>
+    <div
+      style={
+        details ? { height: '100%' } : { overflow: 'clip', height: '100%' }
+      }
+    >
       {!details && (
         <div className="promotions">
           <PageHeader
@@ -295,7 +299,7 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
             ]}
           />
           <Row gutter={8} className="sticky-filter-box mb-05">
-            <Col lg={4} md={12} xs={24}>
+            <Col lg={4} xs={24}>
               <Typography.Title level={5} title="Search">
                 Search
               </Typography.Title>
