@@ -98,12 +98,11 @@ body {
   max-height: 1000px !important;
 }
 
-.w-100, .w-100 .ant-page-header-heading-extra {
-  width: 100%;
-}
-
+.w-100,
+.w-100 .ant-page-header-heading-extra,
 .ant-input-number,
-.ant-picker {
+.ant-picker,
+.fan-groups .ant-table-body {
   width: 100%;
 }
 
@@ -206,16 +205,16 @@ body {
 
 .transactions .ant-table-wrapper,
 .transactions .ant-spin-nested-loading,
-.transactions .ant-spin-container, 
+.transactions .ant-spin-container,
 .transactions .ant-table,
 .transactions .ant-table-container,
 .transactions table {
-  height: 100% !important; 
+  height: 100% !important;
 }
 
 .transactions .ant-table-body {
-  height: 100% !important; 
-  overflow: scroll !important; 
+  height: 100% !important;
+  overflow: scroll !important;
 }
 
 .interests .ant-table-wrapper {
@@ -227,35 +226,22 @@ body {
   overflow: scroll;
 }
 
-.table-container .ant-table-header,
-.table-container .alternate thead {
+.categories.custom-table .ant-table-header,
+.categories.custom-table .alternate thead {
   position: sticky;
   top: 0;
   z-index: 2;
 }
-
-.table-container .infinite-scroll-component__outerdiv, 
-.table-container .infinite-scroll-component,  
-.table-container .ant-table-wrapper,  
-.table-container .ant-spin-nested-loading, 
-.table-container .ant-spin-container,
-.table-container .ant-table,
-.table-container .ant-table-container,
 .variant .ant-table-content,
 .variant table,
 .variant colgroup {
-  height: 100% !important; 
-}
-
-.table-container .ant-table-body {
-  overflow: scroll !important;
   height: 100% !important;
 }
 
 .variant .ant-table-tbody {
-    position: fixed;
-    overflow: scroll;
-    inset: 470px 2.5rem 2.5rem 100px;
+  position: fixed;
+  overflow: scroll;
+  inset: 470px 2.5rem 2.5rem 100px;
 }
 
 .details-checkout {
@@ -264,38 +250,56 @@ body {
   right: 2rem !important;
 }
 
-.payment-history .infinite-scroll-component__outerdiv, 
-.payment-history .infinite-scroll-component,  
-.payment-history .ant-table-wrapper,  
-.payment-history .ant-spin-nested-loading, 
+.payment-history .infinite-scroll-component__outerdiv,
+.payment-history .infinite-scroll-component,
+.payment-history .ant-table-wrapper,
+.payment-history .ant-spin-nested-loading,
 .payment-history .ant-spin-container,
 .payment-history .ant-table,
 .payment-history .ant-table-container {
-  height: 100% !important; 
-}
-
-.payment-history .ant-table-body {
-  overflow: scroll !important;
   height: 100% !important;
 }
 
 .ant-table-empty,
 .custom-table,
 .custom-table table,
-.custom-table.links .ant-table-wrapper,
+.custom-table .alternate-table,
+.custom-table .ant-table,
+.custom-table .ant-table-wrapper,
 .custom-table .ant-spin-container,
 .custom-table .ant-table-container,
 .custom-table .ant-spin-nested-loading,
 .custom-table .infinite-scroll-component__outerdiv,
+.custom-table .infinite-scroll-component,
 .featured-feeds-layout,
+.featured-feeds-layout table,
 .creator-container {
   height: 100% !important;
 }
 
+.custom-table .ant-table-header {
+  height: initial !important;
+}
+
 .custom-table .ant-table-body {
   position: absolute;
-  bottom: 10rem;
-  top: 0;
+  bottom: 7rem;
+  top: 55px;
+}
+
+.fan-groups .ant-table-body {
+  position: initial !important;
+}
+
+.categories .ant-table-body {
+  position: sticky;
+  top: 55px;
+}
+
+.interests .ant-table-body,
+.payment-history .ant-table-body {
+  overflow: scroll !important;
+  height: 100% !important;
 }
 
 .history-container .ant-table-summary {
@@ -318,10 +322,6 @@ body {
   bottom: 7rem;
   right: 3rem;
   left: 240px;
-}
-
-.featured-feeds-layout table {
-  height: 100%;
 }
 
 .featured-feeds-layout .ant-table-expanded-row-fixed {
@@ -523,7 +523,7 @@ body {
     right: 3rem;
     bottom: 7rem;
   }
-  
+
   .history-container {
     overflow: clip;
     position: absolute;
@@ -533,7 +533,7 @@ body {
     bottom: 3rem;
   }
 
-  .table-container {
+  .categories.custom-table {
     position: fixed;
     overflow: clip !important;
     inset: 330px 2.5rem 2.5rem 100px;
@@ -612,7 +612,7 @@ body {
     right: 3rem;
     bottom: 7rem;
   }
-  
+
   .history-container {
     overflow: clip;
     position: absolute;
@@ -622,7 +622,7 @@ body {
     bottom: 3rem;
   }
 
-  .table-container {
+  .categories.custom-table {
     position: fixed;
     overflow: clip !important;
     inset: 330px 2.5rem 2.5rem 250px;

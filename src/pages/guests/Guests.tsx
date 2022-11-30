@@ -92,7 +92,7 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
       }
     }
 
-    setIsDetails(details)
+    setIsDetails(details);
   }, [details]);
 
   useEffect(() => {
@@ -382,9 +382,13 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   return (
-    <div style={details ? { height: '100%' } : { overflow: 'clip', height: '100%' }}>
+    <div
+      style={
+        details ? { height: '100%' } : { overflow: 'clip', height: '100%' }
+      }
+    >
       {!details && (
-        <div>
+        <>
           <PageHeader
             title="Guests"
             subTitle={isMobile ? '' : 'List of Guests'}
@@ -435,27 +439,27 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
               </Row>
             </Col>
           </Row>
-          <InfiniteScroll
-            dataLength={guests.length}
-            next={loadGuests}
-            hasMore={!eof}
-            loader={
-              guestsPage !== 0 &&
-              fetchingGuests && (
-                <div className="scroll-message">
-                  <Spin />
-                </div>
-              )
-            }
-            endMessage={
-              loaded && (
-                <div className="scroll-message">
-                  <b>End of results.</b>
-                </div>
-              )
-            }
-          >
-            <div>
+          <div className="guests custom-table">
+            <InfiniteScroll
+              dataLength={guests.length}
+              next={loadGuests}
+              hasMore={!eof}
+              loader={
+                guestsPage !== 0 &&
+                fetchingGuests && (
+                  <div className="scroll-message">
+                    <Spin />
+                  </div>
+                )
+              }
+              endMessage={
+                loaded && (
+                  <div className="scroll-message">
+                    <b>End of results.</b>
+                  </div>
+                )
+              }
+            >
               <Table
                 className="mt-1"
                 scroll={{ x: true, y: 300 }}
@@ -470,9 +474,9 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
                   onChange: setSelectedRowKeys,
                 }}
               />
-            </div>
-          </InfiniteScroll>
-        </div>
+            </InfiniteScroll>
+          </div>
+        </>
       )}
       {details && (
         <GuestDetail

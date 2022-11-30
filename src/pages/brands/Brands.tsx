@@ -65,15 +65,13 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
     fetch();
   }, []);
 
-
-
   const fetch = async () => {
     const { results }: any = await doFetch(fetchBrands);
     setBrands(results);
   };
 
   useEffect(() => {
-    setIsDetails(details)
+    setIsDetails(details);
 
     if (!details) {
       scrollIntoView(
@@ -608,9 +606,13 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
   ];
 
   return (
-    <div style={details ? { height: '100%' } : { overflow: 'clip', height: '100%' }}>
+    <div
+      style={
+        details ? { height: '100%' } : { overflow: 'clip', height: '100%' }
+      }
+    >
       {!details && (
-        <div>
+        <>
           <PageHeader
             title="Master Brands"
             subTitle={isMobile ? '' : 'List of Master Brands'}
@@ -638,7 +640,7 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
               />
             </Col>
           </Row>
-          <div>
+          <div className="custom-table">
             <Table
               className="mt-15"
               scroll={{ x: true, y: 240 }}
@@ -650,7 +652,7 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
               pagination={false}
             />
           </div>
-        </div>
+        </>
       )}
       {details && (
         <BrandDetail

@@ -118,7 +118,7 @@ const Roles: React.FC<RouteComponentProps> = ({ history, location }) => {
       },
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -149,7 +149,7 @@ const Roles: React.FC<RouteComponentProps> = ({ history, location }) => {
   };
 
   return (
-    <div className="roles" style={{ overflow: 'clip', height: '100%' }}>
+    <div style={{ overflow: 'clip', height: '100%' }}>
       <PageHeader
         title="Roles"
         subTitle={isMobile ? '' : 'List of Roles'}
@@ -178,7 +178,7 @@ const Roles: React.FC<RouteComponentProps> = ({ history, location }) => {
           />
         </Col>
       </Row>
-      <div>
+      <div className="custom-table">
         <Table
           className="mt-15"
           scroll={{ x: true, y: 300 }}

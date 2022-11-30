@@ -58,8 +58,8 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
   };
 
   useEffect(() => {
-    setIsDetails(details)
-  }, [details])
+    setIsDetails(details);
+  }, [details]);
 
   useEffect(() => {
     if (!details) scrollToCenter(lastViewedIndex);
@@ -88,6 +88,7 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
       ),
       dataIndex: 'name',
       width: '20%',
+      align: 'center',
       sorter: (a, b): any => {
         if (a.name && b.name) return a.name.localeCompare(b.name);
         else if (a.name) return -1;
@@ -155,9 +156,13 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
   };
 
   return (
-    <div style={details ? { height: '100%' } : { overflow: 'clip', height: '100%' }}>
+    <div
+      style={
+        details ? { height: '100%' } : { overflow: 'clip', height: '100%' }
+      }
+    >
       {!details && (
-        <div>
+        <>
           <PageHeader
             title="Fan Groups"
             subTitle={isMobile ? '' : 'List of Fan Groups'}
@@ -186,7 +191,7 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
               />
             </Col>
           </Row>
-          <div>
+          <div className="fan-groups custom-table">
             <Table
               className="mt-15"
               scroll={{ x: true, y: 300 }}
@@ -198,7 +203,7 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
               pagination={false}
             />
           </div>
-        </div>
+        </>
       )}
       {details && (
         <FanGroupDetail

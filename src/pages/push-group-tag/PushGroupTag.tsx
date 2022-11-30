@@ -106,7 +106,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
       }
     }
 
-    setIsDetails(details)
+    setIsDetails(details);
   }, [details]);
 
   useEffect(() => {
@@ -340,9 +340,13 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
   };
 
   return (
-    <div style={details ? { height: '100%' } : { overflow: 'clip', height: '100%' }}>
+    <div
+      style={
+        details ? { height: '100%' } : { overflow: 'clip', height: '100%' }
+      }
+    >
       {!details && (
-        <div>
+        <>
           <PageHeader
             title={isMobile ? 'Push Tags to User Groups' : 'Tags'}
             subTitle={isMobile ? '' : 'Push Tags to user groups'}
@@ -410,7 +414,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
               </Row>
             </Col>
           </Row>
-          <div>
+          <div className="custom-table">
             <InfiniteScroll
               dataLength={tags.length}
               next={loadTags}
@@ -444,7 +448,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
               />
             </InfiniteScroll>
           </div>
-        </div>
+        </>
       )}
       {details && <Step2 selectedTags={currentTags} onReturn={onReturnStep2} />}
     </div>

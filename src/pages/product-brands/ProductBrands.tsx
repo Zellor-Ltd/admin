@@ -90,7 +90,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
   useEffect(() => {
     if (!details) scrollToCenter(lastViewedIndex);
 
-    setIsDetails(details)
+    setIsDetails(details);
   }, [details]);
 
   const rebuildVlink = async (productBrand: ProductBrand, index: number) => {
@@ -134,7 +134,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
 
   const columns: ColumnsType<ProductBrand> = [
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -185,7 +185,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -291,7 +291,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
       ),
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -319,7 +319,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -348,7 +348,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
     },
 
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -437,7 +437,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -514,9 +514,13 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   return (
-    <div style={details ? { height: '100%' } : { overflow: 'clip', height: '100%' }}>
+    <div
+      style={
+        details ? { height: '100%' } : { overflow: 'clip', height: '100%' }
+      }
+    >
       {!details && (
-        <div>
+        <>
           <PageHeader
             title="Product Brands"
             subTitle={isMobile ? '' : 'List of Product Brands'}
@@ -545,7 +549,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
               />
             </Col>
           </Row>
-          <div>
+          <div className="custom-table">
             <Table
               className="mt-15"
               scroll={{ x: true, y: 300 }}
@@ -557,7 +561,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
               pagination={false}
             />
           </div>
-        </div>
+        </>
       )}
       {details && (
         <ProductBrandDetail

@@ -688,7 +688,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
       },
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -798,7 +798,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
       scrollToCenter(lastViewedIndex);
     }
 
-    setIsDetails(details)
+    setIsDetails(details);
   }, [details]);
 
   const onSaveProduct = (product: Product) => {
@@ -830,7 +830,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
       case 'alternate':
         return (
           <AlternatePreviewProducts
-          loadedRef={loaded}
+            loadedRef={loaded}
             products={products}
             productBrands={productBrands}
             allCategories={allCategories}
@@ -852,63 +852,61 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
       case 'default':
         if (!details) {
           return (
-            <>
-              <div>
-                <InfiniteScroll
-                  dataLength={products.length}
-                  next={getProducts}
-                  hasMore={!eof}
-                  loader={
-                    page !== 0 &&
-                    loading && (
-                      <div className="scroll-message">
-                        <Spin />
-                      </div>
-                    )
+            <div className="preview custom-table">
+              <InfiniteScroll
+                dataLength={products.length}
+                next={getProducts}
+                hasMore={!eof}
+                loader={
+                  page !== 0 &&
+                  loading && (
+                    <div className="scroll-message">
+                      <Spin />
+                    </div>
+                  )
+                }
+                endMessage={
+                  loaded.current && (
+                    <div className="scroll-message">
+                      <b>End of results.</b>
+                    </div>
+                  )
+                }
+              >
+                <EditableTable
+                  scroll={{ x: true, y: 300 }}
+                  className="mt-4 alternate-table"
+                  rowClassName={(_, index) =>
+                    `scrollable-row-${index} ${
+                      index === lastViewedIndex ? 'selected-row' : ''
+                    }`
                   }
-                  endMessage={
-                    loaded.current && (
-                      <div className="scroll-message">
-                        <b>End of results.</b>
-                      </div>
-                    )
-                  }
-                >
-                  <EditableTable
-                    scroll={{ x: true, y: 300 }}
-                    className="mt-4 alternate-table"
-                    rowClassName={(_, index) =>
-                      `scrollable-row-${index} ${
-                        index === lastViewedIndex ? 'selected-row' : ''
-                      }`
-                    }
-                    rowKey="id"
-                    columns={columns}
-                    dataSource={products}
-                    loading={(loading || disabled) && page === 0}
-                    onSave={onSaveItem}
-                    pagination={false}
-                    rowSelection={{
-                      selectedRowKeys,
-                      onChange: onSelectChange,
-                    }}
-                    expandable={{
-                      expandedRowRender: (record: Product) => (
-                        <ProductExpandedRow
-                          key={record.id}
-                          record={record}
-                          allCategories={allCategories}
-                          onSaveProduct={onSaveCategories}
-                          loading={loadingCategories}
-                          isStaging
-                          productBrands={productBrands}
-                        ></ProductExpandedRow>
-                      ),
-                    }}
-                  />
-                </InfiniteScroll>
-              </div>
-            </>
+                  rowKey="id"
+                  columns={columns}
+                  dataSource={products}
+                  loading={(loading || disabled) && page === 0}
+                  onSave={onSaveItem}
+                  pagination={false}
+                  rowSelection={{
+                    selectedRowKeys,
+                    onChange: onSelectChange,
+                  }}
+                  expandable={{
+                    expandedRowRender: (record: Product) => (
+                      <ProductExpandedRow
+                        key={record.id}
+                        record={record}
+                        allCategories={allCategories}
+                        onSaveProduct={onSaveCategories}
+                        loading={loadingCategories}
+                        isStaging
+                        productBrands={productBrands}
+                      ></ProductExpandedRow>
+                    ),
+                  }}
+                />
+              </InfiniteScroll>
+            </div>
           );
         } else {
           return (
@@ -1196,7 +1194,11 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
   };
 
   return (
-    <div style={details ? { height: '100%' } : { overflow: 'clip', height: '100%' }}>
+    <div
+      style={
+        details ? { height: '100%' } : { overflow: 'clip', height: '100%' }
+      }
+    >
       {!details && (
         <>
           <PageHeader

@@ -104,8 +104,8 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   useEffect(() => {
-    setIsDetails(details)
-    
+    setIsDetails(details);
+
     if (!details) {
       scrollToCenter(lastViewedIndex);
     }
@@ -349,7 +349,11 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   return (
-    <div style={details ? { height: '100%' } : { overflow: 'clip', height: '100%' }}>
+    <div
+      style={
+        details ? { height: '100%' } : { overflow: 'clip', height: '100%' }
+      }
+    >
       {!details && (
         <>
           <PageHeader
@@ -423,26 +427,26 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
             selectedRecord={fanFeedModal}
             setSelectedRecord={setFanFeedModal}
           />
-          <InfiniteScroll
-            dataLength={fans.length}
-            next={updateDisplayedArray}
-            hasMore={!eof}
-            loader={
-              page !== 0 && (
-                <div className="scroll-message">
-                  <Spin spinning={loading} />
-                </div>
-              )
-            }
-            endMessage={
-              page !== 0 && (
-                <div className="scroll-message">
-                  <b>End of results.</b>
-                </div>
-              )
-            }
-          >
-            <div>
+          <div className="custom-table">
+            <InfiniteScroll
+              dataLength={fans.length}
+              next={updateDisplayedArray}
+              hasMore={!eof}
+              loader={
+                page !== 0 && (
+                  <div className="scroll-message">
+                    <Spin spinning={loading} />
+                  </div>
+                )
+              }
+              endMessage={
+                page !== 0 && (
+                  <div className="scroll-message">
+                    <b>End of results.</b>
+                  </div>
+                )
+              }
+            >
               <Table
                 className="mt-1"
                 scroll={{ x: true, y: 300 }}
@@ -457,8 +461,8 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
                   onChange: setSelectedRowKeys,
                 }}
               />
-            </div>
-          </InfiniteScroll>
+            </InfiniteScroll>
+          </div>
         </>
       )}
       {details && (
