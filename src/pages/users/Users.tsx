@@ -33,7 +33,7 @@ const Users: React.FC<RouteComponentProps> = ({ history }) => {
 
   const columns: ColumnsType<User> = [
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -53,7 +53,7 @@ const Users: React.FC<RouteComponentProps> = ({ history }) => {
       },
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -73,7 +73,7 @@ const Users: React.FC<RouteComponentProps> = ({ history }) => {
       },
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -97,7 +97,7 @@ const Users: React.FC<RouteComponentProps> = ({ history }) => {
       },
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{

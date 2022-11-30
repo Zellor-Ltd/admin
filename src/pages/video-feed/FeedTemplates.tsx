@@ -53,8 +53,8 @@ const FeedTemplates: React.FC<RouteComponentProps> = () => {
   const { isMobile, setIsDetails } = useContext(AppContext);
 
   useEffect(() => {
-    setIsDetails(details)
-  }, [details])
+    setIsDetails(details);
+  }, [details]);
 
   const columns: ColumnsType<any> = [
     {
@@ -196,7 +196,7 @@ const FeedTemplates: React.FC<RouteComponentProps> = () => {
       },
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -284,7 +284,11 @@ const FeedTemplates: React.FC<RouteComponentProps> = () => {
   };
 
   return (
-    <div style={details ? { height: '100%' } : { overflow: 'clip', height: '100%' }}>
+    <div
+      style={
+        details ? { height: '100%' } : { overflow: 'clip', height: '100%' }
+      }
+    >
       {!details && (
         <div className="video-feed mb-1">
           <PageHeader

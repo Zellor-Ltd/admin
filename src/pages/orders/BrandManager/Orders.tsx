@@ -210,7 +210,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       scrollToCenter(lastViewedIndex);
     }
 
-    setIsDetails(details)
+    setIsDetails(details);
   }, [details]);
 
   const editFan = (index: number, fan?: Fan) => {
@@ -678,7 +678,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
 
   const cartColumns: ColumnsType<Order> = [
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -697,7 +697,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       align: 'center',
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -738,7 +738,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -762,7 +762,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -788,7 +788,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -813,7 +813,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -839,7 +839,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -873,7 +873,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -1007,7 +1007,11 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   return (
-    <div style={details ? { height: '100%' } : { overflow: 'clip', height: '100%' }}>
+    <div
+      style={
+        details ? { height: '100%' } : { overflow: 'clip', height: '100%' }
+      }
+    >
       {!details && (
         <div className="orders">
           <PageHeader

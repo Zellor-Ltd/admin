@@ -659,7 +659,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
 
   const columns: ColumnsType<any> = [
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -682,7 +682,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
       align: 'center',
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -705,7 +705,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
       align: 'center',
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -723,7 +723,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
       align: 'center',
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -742,7 +742,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
       render: videoFeedId => <CopyValueToClipboard value={videoFeedId} />,
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -760,7 +760,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
       align: 'center',
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -1395,7 +1395,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                     title="positive integers"
                     min={0}
                     max={100}
-                    onChange={(value: any)=>setSegment(value as number)}
+                    onChange={(value: any) => setSegment(value as number)}
                   />
                 </Col>
                 <Col lg={4} xs={24}>
@@ -1766,7 +1766,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
 
   const brandsColumns: ColumnsType<any> = [
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -1783,7 +1783,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
       width: '15%',
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -1800,7 +1800,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
       width: '15%',
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -1817,7 +1817,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
       width: '15%',
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -1870,7 +1870,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
 
   const tagsColumns: ColumnsType<any> = [
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -1887,7 +1887,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
       width: '15%',
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -1904,7 +1904,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
       width: '15%',
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -1921,7 +1921,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
       width: '15%',
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -1938,7 +1938,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
       width: '15%',
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{

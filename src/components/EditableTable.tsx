@@ -90,7 +90,9 @@ const EditableTable: React.FC<EditableTableProps<any>> = (
               showColumnPicker: true,
               btnProps: {
                 className: ' ml-2 mt-05 mb-n1',
-                style: isMobile ? { position: 'fixed', top: '270px', left: '67px'} : { position: 'fixed', top: '270px', left: '240px'},
+                style: isMobile
+                  ? { position: 'fixed', top: '270px', left: '67px' }
+                  : { position: 'fixed', top: '270px', left: '240px' },
               },
             }
           : undefined

@@ -710,7 +710,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       ),
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -759,7 +759,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   useEffect(() => {
     if (!details) scrollToCenter(lastFocusedIndex.current);
 
-    setIsDetails(details)
+    setIsDetails(details);
   }, [details]);
 
   const getFeed = async (event?: Event, resetResults?: boolean) => {
@@ -1139,7 +1139,11 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   };
 
   return (
-    <div style={details ? { height: '100%' } : { overflow: 'clip', height: '100%' }}>
+    <div
+      style={
+        details ? { height: '100%' } : { overflow: 'clip', height: '100%' }
+      }
+    >
       {!details && (
         <div className="video-feed mb-1">
           <PageHeader

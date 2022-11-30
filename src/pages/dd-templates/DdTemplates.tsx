@@ -57,8 +57,8 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   useEffect(() => {
-    setIsDetails(details)
-  }, [details])
+    setIsDetails(details);
+  }, [details]);
 
   useEffect(() => {
     if (!details) scrollToCenter(lastViewedIndex);
@@ -305,7 +305,11 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   return (
-    <div style={details ? { height: '100%' } : { overflow: 'clip', height: '100%' }}>
+    <div
+      style={
+        details ? { height: '100%' } : { overflow: 'clip', height: '100%' }
+      }
+    >
       {!details && (
         <div>
           <PageHeader
@@ -336,7 +340,10 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
               />
             </Col>
           </Row>
-          <div className='table-container' style={{position: 'fixed', top: '255px'}}>
+          <div
+            className="table-container"
+            style={{ position: 'fixed', top: '255px' }}
+          >
             <Table
               className="mt-15"
               scroll={{ x: true, y: '100%' }}

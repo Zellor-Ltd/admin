@@ -118,7 +118,7 @@ const Roles: React.FC<RouteComponentProps> = ({ history, location }) => {
       },
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{

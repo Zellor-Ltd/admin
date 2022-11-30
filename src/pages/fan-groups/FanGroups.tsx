@@ -58,8 +58,8 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
   };
 
   useEffect(() => {
-    setIsDetails(details)
-  }, [details])
+    setIsDetails(details);
+  }, [details]);
 
   useEffect(() => {
     if (!details) scrollToCenter(lastViewedIndex);
@@ -155,7 +155,11 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
   };
 
   return (
-    <div style={details ? { height: '100%' } : { overflow: 'clip', height: '100%' }}>
+    <div
+      style={
+        details ? { height: '100%' } : { overflow: 'clip', height: '100%' }
+      }
+    >
       {!details && (
         <div>
           <PageHeader

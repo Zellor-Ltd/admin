@@ -98,7 +98,8 @@ body {
   max-height: 1000px !important;
 }
 
-.w-100, .w-100 .ant-page-header-heading-extra {
+.w-100,
+.w-100 .ant-page-header-heading-extra {
   width: 100%;
 }
 
@@ -206,16 +207,16 @@ body {
 
 .transactions .ant-table-wrapper,
 .transactions .ant-spin-nested-loading,
-.transactions .ant-spin-container, 
+.transactions .ant-spin-container,
 .transactions .ant-table,
 .transactions .ant-table-container,
 .transactions table {
-  height: 100% !important; 
+  height: 100% !important;
 }
 
 .transactions .ant-table-body {
-  height: 100% !important; 
-  overflow: scroll !important; 
+  height: 100% !important;
+  overflow: scroll !important;
 }
 
 .interests .ant-table-wrapper {
@@ -234,17 +235,17 @@ body {
   z-index: 2;
 }
 
-.table-container .infinite-scroll-component__outerdiv, 
-.table-container .infinite-scroll-component,  
-.table-container .ant-table-wrapper,  
-.table-container .ant-spin-nested-loading, 
+.table-container .infinite-scroll-component__outerdiv,
+.table-container .infinite-scroll-component,
+.table-container .ant-table-wrapper,
+.table-container .ant-spin-nested-loading,
 .table-container .ant-spin-container,
 .table-container .ant-table,
 .table-container .ant-table-container,
 .variant .ant-table-content,
 .variant table,
 .variant colgroup {
-  height: 100% !important; 
+  height: 100% !important;
 }
 
 .table-container .ant-table-body {
@@ -253,9 +254,9 @@ body {
 }
 
 .variant .ant-table-tbody {
-    position: fixed;
-    overflow: scroll;
-    inset: 470px 2.5rem 2.5rem 100px;
+  position: fixed;
+  overflow: scroll;
+  inset: 470px 2.5rem 2.5rem 100px;
 }
 
 .details-checkout {
@@ -264,14 +265,14 @@ body {
   right: 2rem !important;
 }
 
-.payment-history .infinite-scroll-component__outerdiv, 
-.payment-history .infinite-scroll-component,  
-.payment-history .ant-table-wrapper,  
-.payment-history .ant-spin-nested-loading, 
+.payment-history .infinite-scroll-component__outerdiv,
+.payment-history .infinite-scroll-component,
+.payment-history .ant-table-wrapper,
+.payment-history .ant-spin-nested-loading,
 .payment-history .ant-spin-container,
 .payment-history .ant-table,
 .payment-history .ant-table-container {
-  height: 100% !important; 
+  height: 100% !important;
 }
 
 .payment-history .ant-table-body {
@@ -523,7 +524,7 @@ body {
     right: 3rem;
     bottom: 7rem;
   }
-  
+
   .history-container {
     overflow: clip;
     position: absolute;
@@ -612,7 +613,7 @@ body {
     right: 3rem;
     bottom: 7rem;
   }
-  
+
   .history-container {
     overflow: clip;
     position: absolute;

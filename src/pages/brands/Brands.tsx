@@ -65,15 +65,13 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
     fetch();
   }, []);
 
-
-
   const fetch = async () => {
     const { results }: any = await doFetch(fetchBrands);
     setBrands(results);
   };
 
   useEffect(() => {
-    setIsDetails(details)
+    setIsDetails(details);
 
     if (!details) {
       scrollIntoView(
@@ -608,7 +606,11 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
   ];
 
   return (
-    <div style={details ? { height: '100%' } : { overflow: 'clip', height: '100%' }}>
+    <div
+      style={
+        details ? { height: '100%' } : { overflow: 'clip', height: '100%' }
+      }
+    >
       {!details && (
         <div>
           <PageHeader

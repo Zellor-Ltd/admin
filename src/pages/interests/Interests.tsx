@@ -186,10 +186,10 @@ const Interests: React.FC<InterestsProps> = () => {
   const addObj = { icon: <PlusOutlined />, fn: addInterest };
   const removeObj = { icon: <MinusOutlined />, fn: removeInterest };
 
-  const [actionObj, setActionObj] =
-    useState<{ icon: any; fn: (record: FeedItem, index: number) => void }>(
-      removeObj
-    );
+  const [actionObj, setActionObj] = useState<{
+    icon: any;
+    fn: (record: FeedItem, index: number) => void;
+  }>(removeObj);
 
   const handleTabChange = (tab: string) => {
     setSelectedTab(tab);
@@ -268,7 +268,7 @@ const Interests: React.FC<InterestsProps> = () => {
       render: (image: Image) => <AntImage src={image?.url} width={70} />,
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -324,7 +324,7 @@ const Interests: React.FC<InterestsProps> = () => {
             <Tabs.TabPane tab="Interests" key="Interests">
               <div>
                 <SortableTable
-                  className='table-container interests'
+                  className="table-container interests"
                   scroll={{ x: true, y: 300 }}
                   rowKey="id"
                   columns={columns}
@@ -337,7 +337,7 @@ const Interests: React.FC<InterestsProps> = () => {
             <Tabs.TabPane tab="All Categories" key="All Categories">
               <div>
                 <Table
-                  className='table-container interests'
+                  className="table-container interests"
                   scroll={{ x: true, y: 300 }}
                   rowKey="id"
                   columns={columns}

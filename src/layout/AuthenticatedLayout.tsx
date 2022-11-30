@@ -19,19 +19,14 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
   const [style, setStyle] = useState<any>({
     padding: '24 0',
     minHeight: 280,
-    overflow:  'clip',
-  })
+    overflow: 'clip',
+  });
 
   useEffect(() => {
-    if (isDetails) setStyle({ padding: '24 0',
-    minHeight: 280,
-    overflow:  'scroll',
-  });
-     else setStyle({ padding: '24 0',
-     minHeight: 280,
-     overflow:  'clip',
-   })
-  }, [isDetails])
+    if (isDetails)
+      setStyle({ padding: '24 0', minHeight: 280, overflow: 'scroll' });
+    else setStyle({ padding: '24 0', minHeight: 280, overflow: 'clip' });
+  }, [isDetails]);
 
   const appName = useBuildTarget({
     ADMIN: 'Disco Admin',
@@ -93,10 +88,7 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
             })}
           </Sider>
         </div>
-        <Content
-          className="site-layout-background"
-          style={style}
-        >
+        <Content className="site-layout-background" style={style}>
           <ErrorBoundary fallbackComponent={ErrorPage()}>
             {children}
           </ErrorBoundary>

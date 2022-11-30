@@ -488,7 +488,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
   }, [selectedVideoFeed]);
 
   useEffect(() => {
-    setIsDetails(details)
+    setIsDetails(details);
 
     if (!details) scrollToCenter(lastViewedIndex);
   }, [details]);
@@ -785,7 +785,11 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
   };
 
   return (
-    <div style={details ? { height: '100%' } : { overflow: 'clip', height: '100%' }}>
+    <div
+      style={
+        details ? { height: '100%' } : { overflow: 'clip', height: '100%' }
+      }
+    >
       {!details && (
         <>
           <PageHeader
@@ -856,7 +860,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
             </Col>
           </Row>
           <Content>
-            <div className='table-container'>
+            <div className="table-container">
               <Table
                 className={isMobile ? 'mt-n1' : 'mt-15'}
                 scroll={{ x: true, y: 300 }}

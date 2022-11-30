@@ -100,7 +100,7 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   useEffect(() => {
-    setIsDetails(details)
+    setIsDetails(details);
 
     if (!details) {
       scrollIntoView(
@@ -423,7 +423,11 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   return (
-    <div style={details ? { height: '100%' } : { overflow: 'clip', height: '100%' }}>
+    <div
+      style={
+        details ? { height: '100%' } : { overflow: 'clip', height: '100%' }
+      }
+    >
       {!details && (
         <div className="categories">
           <PageHeader
@@ -467,7 +471,10 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
           >
             {categoriesKeys.map(key => (
               <Tabs.TabPane tab={key} key={key}>
-                <div className='table-container' style={{position: 'fixed', top: '222px'}}>
+                <div
+                  className="table-container"
+                  style={{ position: 'fixed', top: '222px' }}
+                >
                   <InfiniteScroll
                     dataLength={categories.length}
                     next={updateDisplayedArray}

@@ -98,7 +98,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
       scrollToCenter(lastViewedIndex);
     }
 
-    setIsDetails(details)
+    setIsDetails(details);
   }, [details]);
 
   const editTag = (index: number, tag?: Tag) => {
@@ -257,7 +257,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
       },
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -308,7 +308,11 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
   };
 
   return (
-    <div style={details ? { height: '100%' } : { overflow: 'clip', height: '100%' }}>
+    <div
+      style={
+        details ? { height: '100%' } : { overflow: 'clip', height: '100%' }
+      }
+    >
       {!details && (
         <>
           <PageHeader

@@ -409,7 +409,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
 
   const storeColumns: ColumnsType<any> = [
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -433,7 +433,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
       },
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -457,7 +457,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
       },
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -482,7 +482,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
       },
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -508,7 +508,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
         entity.price ? currencyRender(entity, 'price') : '-',
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -548,7 +548,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
       },
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{

@@ -68,8 +68,8 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   useEffect(() => {
-    setIsDetails(details)
-  }, [details])
+    setIsDetails(details);
+  }, [details]);
 
   useEffect(() => {
     if (!details) scrollToCenter(lastViewedIndex);
@@ -198,7 +198,7 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -264,7 +264,11 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   return (
-    <div style={details ? { height: '100%' } : { overflow: 'clip', height: '100%' }}>
+    <div
+      style={
+        details ? { height: '100%' } : { overflow: 'clip', height: '100%' }
+      }
+    >
       {!details && (
         <div>
           <PageHeader

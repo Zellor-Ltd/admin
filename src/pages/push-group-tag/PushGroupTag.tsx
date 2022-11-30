@@ -106,7 +106,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
       }
     }
 
-    setIsDetails(details)
+    setIsDetails(details);
   }, [details]);
 
   useEffect(() => {
@@ -340,7 +340,11 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
   };
 
   return (
-    <div style={details ? { height: '100%' } : { overflow: 'clip', height: '100%' }}>
+    <div
+      style={
+        details ? { height: '100%' } : { overflow: 'clip', height: '100%' }
+      }
+    >
       {!details && (
         <div>
           <PageHeader

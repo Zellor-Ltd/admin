@@ -693,7 +693,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
       scrollToCenter(lastViewedIndex);
     }
 
-    setIsDetails(details)
+    setIsDetails(details);
   }, [details]);
 
   const viewProduct = (index: number, record?: Product) => {
@@ -928,7 +928,11 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
   };
 
   return (
-    <div style={details ? { height: '100%' } : { overflow: 'clip', height: '100%' }}>
+    <div
+      style={
+        details ? { height: '100%' } : { overflow: 'clip', height: '100%' }
+      }
+    >
       {!details && (
         <>
           <PageHeader

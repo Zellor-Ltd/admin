@@ -86,7 +86,7 @@ const ModalTag: React.FC<ModalFormProps> = ({
 
   const columns = [
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -104,7 +104,7 @@ const ModalTag: React.FC<ModalFormProps> = ({
       number: true,
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -122,7 +122,7 @@ const ModalTag: React.FC<ModalFormProps> = ({
       number: true,
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -140,7 +140,7 @@ const ModalTag: React.FC<ModalFormProps> = ({
       number: true,
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -158,7 +158,7 @@ const ModalTag: React.FC<ModalFormProps> = ({
       number: true,
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -176,7 +176,7 @@ const ModalTag: React.FC<ModalFormProps> = ({
       number: true,
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{

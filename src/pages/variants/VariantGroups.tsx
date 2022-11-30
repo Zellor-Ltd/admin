@@ -579,7 +579,11 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
   };
 
   return (
-    <div style={details ? { height: '100%' } : { overflow: 'clip', height: '100%' }}>
+    <div
+      style={
+        details ? { height: '100%' } : { overflow: 'clip', height: '100%' }
+      }
+    >
       {!details && (
         <>
           <PageHeader

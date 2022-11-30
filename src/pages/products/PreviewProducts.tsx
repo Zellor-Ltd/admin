@@ -688,7 +688,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
       },
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -798,7 +798,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
       scrollToCenter(lastViewedIndex);
     }
 
-    setIsDetails(details)
+    setIsDetails(details);
   }, [details]);
 
   const onSaveProduct = (product: Product) => {
@@ -830,7 +830,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
       case 'alternate':
         return (
           <AlternatePreviewProducts
-          loadedRef={loaded}
+            loadedRef={loaded}
             products={products}
             productBrands={productBrands}
             allCategories={allCategories}
@@ -1196,7 +1196,11 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
   };
 
   return (
-    <div style={details ? { height: '100%' } : { overflow: 'clip', height: '100%' }}>
+    <div
+      style={
+        details ? { height: '100%' } : { overflow: 'clip', height: '100%' }
+      }
+    >
       {!details && (
         <>
           <PageHeader

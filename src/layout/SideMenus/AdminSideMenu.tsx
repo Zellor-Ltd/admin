@@ -225,7 +225,8 @@ const AdminSideMenu = ({ isMobile }) => {
         <Menu.Item
           key="marketing_direct-links"
           icon={<LinkOutlined />}
-          onClick={() => refreshParent('marketing_direct-links')}>
+          onClick={() => refreshParent('marketing_direct-links')}
+        >
           <Link to="/marketing_direct-links">Direct Links</Link>
         </Menu.Item>
       </SubMenu>

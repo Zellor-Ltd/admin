@@ -406,7 +406,13 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
               </Panel>
             </Collapse>
           )}
-          <div className={payments.length ? 'payment-history' : 'payment-history custom-table'}>
+          <div
+            className={
+              payments.length
+                ? 'payment-history'
+                : 'payment-history custom-table'
+            }
+          >
             <InfiniteScroll
               className={payments.length ? '' : 'custom-table'}
               dataLength={payments.length}
@@ -445,7 +451,25 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
 
                   return (
                     <>
-                      <Table.Summary.Row style={isMobile ? {position: 'fixed', bottom: '3.75rem', right: '3rem', background: 'white', left: '100px'} : {position: 'fixed', bottom: '3.75rem', right: '3rem', background: 'white', left: '250px'}}>
+                      <Table.Summary.Row
+                        style={
+                          isMobile
+                            ? {
+                                position: 'fixed',
+                                bottom: '3.75rem',
+                                right: '3rem',
+                                background: 'white',
+                                left: '100px',
+                              }
+                            : {
+                                position: 'fixed',
+                                bottom: '3.75rem',
+                                right: '3rem',
+                                background: 'white',
+                                left: '250px',
+                              }
+                        }
+                      >
                         <Table.Summary.Cell index={0}>
                           <Typography.Text strong>Total</Typography.Text>
                         </Table.Summary.Cell>
@@ -456,7 +480,10 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
                         <Table.Summary.Cell index={5}>
                           €{totalAmount.current.toFixed(2)}
                         </Table.Summary.Cell>
-                        <Table.Summary.Cell index={6} className='w-100'></Table.Summary.Cell>
+                        <Table.Summary.Cell
+                          index={6}
+                          className="w-100"
+                        ></Table.Summary.Cell>
                       </Table.Summary.Row>
                     </>
                   );

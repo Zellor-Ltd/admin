@@ -41,7 +41,7 @@ const PreRegisteredUsers: React.FC<DashboardProps> = () => {
 
   const preRegistered: ColumnsType<PreReg> = [
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -59,7 +59,8 @@ const PreRegisteredUsers: React.FC<DashboardProps> = () => {
       render: (id: any) => <CopyValueToClipboard value={id} />,
       align: 'center',
     },
-    {       title: (
+    {
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -71,9 +72,12 @@ const PreRegisteredUsers: React.FC<DashboardProps> = () => {
             <Tooltip title="Email">Email</Tooltip>
           </div>
         </div>
-      ), dataIndex: 'email', width: '15%' },
+      ),
+      dataIndex: 'email',
+      width: '15%',
+    },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -94,7 +98,7 @@ const PreRegisteredUsers: React.FC<DashboardProps> = () => {
         moment(hCreationDate).format('DD/MM/YYYY'),
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
