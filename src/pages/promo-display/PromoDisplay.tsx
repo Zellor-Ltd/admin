@@ -270,7 +270,7 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
       }
     >
       {!details && (
-        <div>
+        <>
           <PageHeader
             title="Shop Display"
             subTitle={isMobile ? '' : 'List of Shop Displays'}
@@ -299,7 +299,7 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
               />
             </Col>
           </Row>
-          <div>
+          <div className="promo-display empty custom-table">
             <Table
               className="mt-1"
               scroll={{ x: true, y: 300 }}
@@ -311,7 +311,7 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
               pagination={false}
             />
           </div>
-        </div>
+        </>
       )}
       {details && (
         <PromoDisplayDetail

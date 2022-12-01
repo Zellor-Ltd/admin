@@ -15,7 +15,6 @@ import {
   Collapse,
   Input,
   InputNumber,
-  Layout,
   message,
   PageHeader,
   Popconfirm,
@@ -61,7 +60,6 @@ import { useRequest } from 'hooks/useRequest';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useSelector } from 'react-redux';
 
-const { Content } = Layout;
 const { Panel } = Collapse;
 
 const reduceSegmentsTags = (packages: Segment[]) => {
@@ -710,7 +708,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       ),
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -757,7 +755,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   };
 
   useEffect(() => {
-    setIsDetails(details)
+    setIsDetails(details);
 
     if (!details) scrollToCenter(lastFocusedIndex.current);
   }, [details]);
@@ -1139,9 +1137,13 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   };
 
   return (
-    <div style={details ? { height: '100%' } : { overflow: 'clip', height: '100%' }}>
+    <div
+      style={
+        details ? { height: '100%' } : { overflow: 'clip', height: '100%' }
+      }
+    >
       {!details && (
-        <div className="video-feed mb-1">
+        <>
           <PageHeader
             title="Video Feeds"
             subTitle={isMobile ? '' : 'List of Feeds'}
@@ -1227,7 +1229,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
               </Row>
             </Col>
           </Row>
-          <Content>
+          <div className="custom-table">
             <InfiniteScroll
               dataLength={data.length}
               next={() => getFeed(undefined, false)}
@@ -1260,8 +1262,8 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                 pagination={false}
               />
             </InfiniteScroll>
-          </Content>
-        </div>
+          </div>
+        </>
       )}
       {details && (
         <VideoFeedDetail

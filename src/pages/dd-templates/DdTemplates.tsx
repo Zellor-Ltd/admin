@@ -311,7 +311,7 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
       }
     >
       {!details && (
-        <div>
+        <>
           <PageHeader
             title="Disco Dollar Templates"
             subTitle={isMobile ? '' : 'List of Disco Dollar Templates'}
@@ -341,7 +341,7 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
             </Col>
           </Row>
           <div
-            className="table-container"
+            className="dd-templates empty custom-table"
             style={{ position: 'fixed', top: '255px' }}
           >
             <Table
@@ -355,7 +355,7 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
               pagination={false}
             />
           </div>
-        </div>
+        </>
       )}
       {details && (
         <DdTemplateDetail

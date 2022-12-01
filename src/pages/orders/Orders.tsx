@@ -1013,7 +1013,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       }
     >
       {!details && (
-        <div className="orders">
+        <>
           <PageHeader
             title="Orders"
             subTitle={isMobile ? '' : 'List of Orders'}
@@ -1083,27 +1083,27 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
               </Row>
             </Col>
           </Row>
-          <InfiniteScroll
-            dataLength={data.length}
-            next={loadNext}
-            hasMore={page > 0 && !eof}
-            loader={
-              page !== 0 &&
-              loading && (
-                <div className="scroll-message">
-                  <Spin />
-                </div>
-              )
-            }
-            endMessage={
-              page !== 0 && (
-                <div className="scroll-message">
-                  <b>End of results.</b>
-                </div>
-              )
-            }
-          >
-            <div>
+          <div className="custom-table">
+            <InfiniteScroll
+              dataLength={data.length}
+              next={loadNext}
+              hasMore={page > 0 && !eof}
+              loader={
+                page !== 0 &&
+                loading && (
+                  <div className="scroll-message">
+                    <Spin />
+                  </div>
+                )
+              }
+              endMessage={
+                page !== 0 && (
+                  <div className="scroll-message">
+                    <b>End of results.</b>
+                  </div>
+                )
+              }
+            >
               <Table
                 className="mt-05"
                 scroll={{ x: true, y: 300 }}
@@ -1167,9 +1167,9 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
                   rowExpandable: record => record.cart || record.product,
                 }}
               />
-            </div>
-          </InfiniteScroll>
-        </div>
+            </InfiniteScroll>
+          </div>
+        </>
       )}
       {details && (
         <FanDetail fan={currentFan} onSave={onSaveFan} onCancel={onCancelFan} />

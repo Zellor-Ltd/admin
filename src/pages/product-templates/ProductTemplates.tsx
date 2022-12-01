@@ -473,7 +473,7 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
       },
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -531,7 +531,7 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
       scrollToCenter(lastViewedIndex);
     }
 
-    setIsDetails(details)
+    setIsDetails(details);
   }, [details]);
 
   const viewProductTemplate = (index: number, record?: Product) => {
@@ -581,7 +581,11 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
   };
 
   return (
-    <div style={details ? { height: '100%' } : { overflow: 'clip', height: '100%' }}>
+    <div
+      style={
+        details ? { height: '100%' } : { overflow: 'clip', height: '100%' }
+      }
+    >
       {!details && (
         <>
           <PageHeader
@@ -625,7 +629,7 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
             selectedRecord={productAPITest}
             setSelectedRecord={setProductAPITest}
           />
-          <div>
+          <div className="product-templates empty custom-table">
             <Table
               scroll={{ x: true, y: 300 }}
               className="mt-1"

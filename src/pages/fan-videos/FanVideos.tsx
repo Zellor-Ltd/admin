@@ -13,7 +13,6 @@ import {
   Form,
   Input,
   InputNumber,
-  Layout,
   message,
   PageHeader,
   Popconfirm,
@@ -55,7 +54,6 @@ import { useRequest } from 'hooks/useRequest';
 import moment from 'moment';
 import scrollIntoView from 'scroll-into-view';
 
-const { Content } = Layout;
 const { Panel } = Collapse;
 
 const reduceSegmentsTags = (packages: Segment[]) => {
@@ -488,7 +486,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
   }, [selectedVideoFeed]);
 
   useEffect(() => {
-    setIsDetails(details)
+    setIsDetails(details);
 
     if (!details) scrollToCenter(lastViewedIndex);
   }, [details]);
@@ -785,7 +783,11 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
   };
 
   return (
-    <div style={details ? { height: '100%' } : { overflow: 'clip', height: '100%' }}>
+    <div
+      style={
+        details ? { height: '100%' } : { overflow: 'clip', height: '100%' }
+      }
+    >
       {!details && (
         <>
           <PageHeader
@@ -855,21 +857,18 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
               </Row>
             </Col>
           </Row>
-          <Content>
-            <div className='table-container'>
-              <Table
-                className={isMobile ? 'mt-n1' : 'mt-15'}
-                scroll={{ x: true, y: 300 }}
-                rowClassName={(_, index) => `scrollable-row-${index}`}
-                size="small"
-                columns={feedItemColumns}
-                rowKey="id"
-                dataSource={data}
-                loading={loading}
-                pagination={false}
-              />
-            </div>
-          </Content>
+          <div className="fan-videos empty custom-table of-clip">
+            <Table
+              scroll={{ x: true, y: 300 }}
+              rowClassName={(_, index) => `scrollable-row-${index}`}
+              size="small"
+              columns={feedItemColumns}
+              rowKey="id"
+              dataSource={data}
+              loading={loading}
+              pagination={false}
+            />
+          </div>
         </>
       )}
       {details && (

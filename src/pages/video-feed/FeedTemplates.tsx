@@ -2,7 +2,6 @@
 import { EditOutlined } from '@ant-design/icons';
 import {
   Button,
-  Layout,
   message,
   PageHeader,
   Table,
@@ -31,8 +30,6 @@ import moment from 'moment';
 import { useRequest } from 'hooks/useRequest';
 import VideoFeedDetail from './VideoFeedDetail';
 
-const { Content } = Layout;
-
 const reduceSegmentsTags = (packages: Segment[]) => {
   return packages.reduce((acc: number, curr: Segment) => {
     return acc + curr.tags?.length;
@@ -53,8 +50,8 @@ const FeedTemplates: React.FC<RouteComponentProps> = () => {
   const { isMobile, setIsDetails } = useContext(AppContext);
 
   useEffect(() => {
-    setIsDetails(details)
-  }, [details])
+    setIsDetails(details);
+  }, [details]);
 
   const columns: ColumnsType<any> = [
     {
@@ -196,7 +193,7 @@ const FeedTemplates: React.FC<RouteComponentProps> = () => {
       },
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -284,9 +281,13 @@ const FeedTemplates: React.FC<RouteComponentProps> = () => {
   };
 
   return (
-    <div style={details ? { height: '100%' } : { overflow: 'clip', height: '100%' }}>
+    <div
+      style={
+        details ? { height: '100%' } : { overflow: 'clip', height: '100%' }
+      }
+    >
       {!details && (
-        <div className="video-feed mb-1">
+        <>
           <PageHeader
             title="Feed Templates"
             subTitle={isMobile ? '' : 'List of Feed Templates'}
@@ -300,23 +301,21 @@ const FeedTemplates: React.FC<RouteComponentProps> = () => {
               </Button>,
             ]}
           />
-          <Content>
-            <div>
-              <Table
-                scroll={{ x: true, y: 300 }}
-                className="mt-1"
-                rowClassName={(_, index) =>
-                  `${index === lastViewedIndex ? 'selected-row' : ''}`
-                }
-                size="small"
-                columns={columns}
-                rowKey="id"
-                dataSource={feedTemplates}
-                loading={loading}
-              />
-            </div>
-          </Content>
-        </div>
+          <div className="empty custom-table">
+            <Table
+              scroll={{ x: true, y: 300 }}
+              className="mt-1"
+              rowClassName={(_, index) =>
+                `${index === lastViewedIndex ? 'selected-row' : ''}`
+              }
+              size="small"
+              columns={columns}
+              rowKey="id"
+              dataSource={feedTemplates}
+              loading={loading}
+            />
+          </div>
+        </>
       )}
       {details && (
         <VideoFeedDetail

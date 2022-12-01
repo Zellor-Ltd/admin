@@ -42,7 +42,7 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
       );
     }
 
-    setIsDetails(details)
+    setIsDetails(details);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [details]);
 
@@ -201,7 +201,7 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
         else return 0;
       },
     },
-    { 
+    {
       title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
@@ -241,9 +241,13 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
     },
   ];
   return (
-    <div style={details ? { height: '100%' } : { overflow: 'clip', height: '100%' }}>
+    <div
+      style={
+        details ? { height: '100%' } : { overflow: 'clip', height: '100%' }
+      }
+    >
       {!details && (
-        <div>
+        <>
           <PageHeader
             title="Banners"
             subTitle={isMobile ? '' : 'List of Banners'}
@@ -258,7 +262,7 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
               </Button>,
             ]}
           />
-          <div>
+          <div className="empty custom-table">
             <Table
               scroll={{ x: true, y: 300 }}
               rowClassName={(_, index) => `scrollable-row-${index}`}
@@ -269,7 +273,7 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
               pagination={false}
             />
           </div>
-        </div>
+        </>
       )}
       {details && (
         <HomeScreenDetail

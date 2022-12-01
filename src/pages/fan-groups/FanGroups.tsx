@@ -191,7 +191,7 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
               />
             </Col>
           </Row>
-          <div className="fan-groups custom-table">
+          <div className="empty custom-table">
             <Table
               className="mt-15"
               scroll={{ x: true, y: 300 }}

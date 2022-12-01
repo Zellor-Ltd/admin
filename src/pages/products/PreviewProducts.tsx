@@ -221,7 +221,6 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
       fetchAllCategories(),
     ]).then(() => {
       setLoadingResources(false);
-      loaded.current = true;
     });
   });
 
@@ -281,6 +280,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
     const { results } = await doFetch(() =>
       _fetchStagingProducts(resetResults)
     );
+    loaded.current = true;
     if (resetResults) setProducts(results);
     else setProducts(prev => [...prev.concat(results)]);
   };
@@ -852,7 +852,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
       case 'default':
         if (!details) {
           return (
-            <div className="preview custom-table">
+            <div className="preview empty custom-table">
               <InfiniteScroll
                 dataLength={products.length}
                 next={getProducts}

@@ -94,15 +94,11 @@ body {
   }
 }
 
-.ant-table-body {
-  max-height: 1000px !important;
-}
-
 .w-100,
 .w-100 .ant-page-header-heading-extra,
 .ant-input-number,
 .ant-picker,
-.fan-groups .ant-table-body {
+.empty .ant-table-body {
   width: 100%;
 }
 
@@ -226,41 +222,12 @@ body {
   overflow: scroll;
 }
 
-.categories.custom-table .ant-table-header,
-.categories.custom-table .alternate thead {
-  position: sticky;
-  top: 0;
-  z-index: 2;
-}
-.variant .ant-table-content,
-.variant table,
-.variant colgroup {
-  height: 100% !important;
-}
-
-.variant .ant-table-tbody {
-  position: fixed;
-  overflow: scroll;
-  inset: 470px 2.5rem 2.5rem 100px;
-}
-
 .details-checkout {
   position: absolute !important;
   bottom: 2rem !important;
   right: 2rem !important;
 }
 
-.payment-history .infinite-scroll-component__outerdiv,
-.payment-history .infinite-scroll-component,
-.payment-history .ant-table-wrapper,
-.payment-history .ant-spin-nested-loading,
-.payment-history .ant-spin-container,
-.payment-history .ant-table,
-.payment-history .ant-table-container {
-  height: 100% !important;
-}
-
-.ant-table-empty,
 .custom-table,
 .custom-table table,
 .custom-table .alternate-table,
@@ -271,28 +238,48 @@ body {
 .custom-table .ant-spin-nested-loading,
 .custom-table .infinite-scroll-component__outerdiv,
 .custom-table .infinite-scroll-component,
-.featured-feeds-layout,
-.featured-feeds-layout table,
+.custom-table.empty .ant-table-empty table,
+.preview.empty.custom-table,
+.preview.empty.custom-table .infinite-scroll-component > div,
+.empty .ant-table-body,
+.ant-table-empty,
 .creator-container {
   height: 100% !important;
 }
 
-.custom-table .ant-table-header {
+.promo-display .ant-table-body {
+  overflow: scroll;
+  margin-bottom: 3rem;
+}
+
+.dd-templates table {
+  margin-bottom: 11rem;
+}
+
+.product-templates table {
+  margin-bottom: 9rem;
+}
+
+.promo-display .ant-table-body,
+.custom-table .ant-table-header,
+.custom-table.empty table {
+  height: initial !important;
+}
+
+.of-clip,
+.variant .infinite-scroll-component,
+.preview.empty.custom-table .infinite-scroll-component > div {
+  overflow: clip;
+}
+
+.promo-display .ant-table-body {
+  overflow: auto scroll;
   height: initial !important;
 }
 
 .custom-table .ant-table-body {
   position: absolute;
   bottom: 7rem;
-  top: 55px;
-}
-
-.fan-groups .ant-table-body {
-  position: initial !important;
-}
-
-.categories .ant-table-body {
-  position: sticky;
   top: 55px;
 }
 
@@ -306,30 +293,6 @@ body {
   height: auto !important;
   position: fixed;
   bottom: 3.75rem;
-}
-
-.featured-feeds-layout .ant-pagination {
-  position: fixed;
-  bottom: 3rem;
-  right: 3rem;
-  height: auto !important;
-}
-
-.featured-feeds-layout .ant-table-body {
-  overflow: auto scroll;
-  position: fixed;
-  top: 340px;
-  bottom: 7rem;
-  right: 3rem;
-  left: 240px;
-}
-
-.featured-feeds-layout .ant-table-expanded-row-fixed {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
 }
 
 .video-feed {
@@ -505,6 +468,30 @@ body {
 }
 
 @media (max-width: 992px) {
+  .featured.custom-table {
+    height: calc(100vh - 215px) !important;
+  }
+
+  .categories.empty.custom-table {
+    height: calc(100vh - 265px) !important;
+  }
+
+  .fan-videos.empty.custom-table {
+    height: calc(100vh - 335px) !important;
+  }
+
+  .preview.empty.custom-table {
+    height: calc(100vh - 315px) !important;
+  }
+
+  .variant.empty.custom-table {
+    height: calc(100vh - 260px) !important;
+  }
+
+  .wallets.empty.custom-table {
+    height: calc(100vh - 375px) !important;
+  }
+
   .w-100 .ant-page-header-heading-extra {
     width: 100%;
   }
@@ -531,12 +518,6 @@ body {
     left: 100px;
     right: 3rem;
     bottom: 3rem;
-  }
-
-  .categories.custom-table {
-    position: fixed;
-    overflow: clip !important;
-    inset: 330px 2.5rem 2.5rem 100px;
   }
 
   .ant-layout-sider-children {
@@ -598,6 +579,30 @@ body {
 }
 
 @media (min-width: 992px) {
+  .featured.custom-table {
+    height: calc(100vh - 175px) !important;
+  }
+
+  .categories.empty.custom-table {
+    height: calc(100vh - 265px) !important;
+  }
+
+  .fan-videos.empty.custom-table {
+    height: calc(100vh - 380px) !important;
+  }
+
+  .preview.empty.custom-table {
+    height: calc(100vh - 440px) !important;
+  }
+
+  .variant.empty.custom-table {
+    height: calc(100vh - 435px) !important;
+  }
+
+  .wallets.empty.custom-table {
+    height: calc(100vh - 360px) !important;
+  }
+
   .payment-history {
     position: fixed !important;
     overflow: clip !important;
@@ -620,12 +625,6 @@ body {
     left: 250px;
     right: 3rem;
     bottom: 3rem;
-  }
-
-  .categories.custom-table {
-    position: fixed;
-    overflow: clip !important;
-    inset: 330px 2.5rem 2.5rem 250px;
   }
 
   .site-layout-background {

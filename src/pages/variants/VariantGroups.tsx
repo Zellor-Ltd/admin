@@ -579,7 +579,11 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
   };
 
   return (
-    <div style={details ? { height: '100%' } : { overflow: 'clip', height: '100%' }}>
+    <div
+      style={
+        details ? { height: '100%' } : { overflow: 'clip', height: '100%' }
+      }
+    >
       {!details && (
         <>
           <PageHeader
@@ -644,36 +648,38 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
               </Row>
             </Col>
           </Row>
-          <InfiniteScroll
-            dataLength={products.length}
-            next={getProducts}
-            hasMore={!eof}
-            loader={
-              page !== 0 &&
-              loading && (
-                <div className="scroll-message">
-                  <Spin />
-                </div>
-              )
-            }
-            endMessage={
-              page !== 0 && (
-                <div className="scroll-message">
-                  <b>End of results.</b>
-                </div>
-              )
-            }
-          >
-            <Table
-              scroll={{ x: true, y: 300 }}
-              rowClassName={(_, index) => `scrollable-row-${index}`}
-              rowKey="id"
-              columns={columns}
-              dataSource={products}
-              loading={loading && page === 0}
-              pagination={false}
-            />
-          </InfiniteScroll>
+          <div className="variant empty custom-table">
+            <InfiniteScroll
+              dataLength={products.length}
+              next={getProducts}
+              hasMore={!eof}
+              loader={
+                page !== 0 &&
+                loading && (
+                  <div className="scroll-message">
+                    <Spin />
+                  </div>
+                )
+              }
+              endMessage={
+                page !== 0 && (
+                  <div className="scroll-message">
+                    <b>End of results.</b>
+                  </div>
+                )
+              }
+            >
+              <Table
+                scroll={{ x: true, y: 300 }}
+                rowClassName={(_, index) => `scrollable-row-${index}`}
+                rowKey="id"
+                columns={columns}
+                dataSource={products}
+                loading={loading && page === 0}
+                pagination={false}
+              />
+            </InfiniteScroll>
+          </div>
         </>
       )}
       {details && (

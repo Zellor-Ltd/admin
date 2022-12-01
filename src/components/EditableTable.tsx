@@ -89,10 +89,10 @@ const EditableTable: React.FC<EditableTableProps<any>> = (
               fileName: 'Disco Products',
               showColumnPicker: true,
               btnProps: {
-                className: ' ml-2 mt-05 mb-n1',
+                className: 'ml-2 mt-05 mb-n1',
                 style: isMobile
-                  ? { position: 'fixed', top: '270px', left: '67px' }
-                  : { position: 'fixed', top: '270px', left: '240px' },
+                  ? { position: 'fixed', top: '290px', left: '67px' }
+                  : { position: 'fixed', top: '410px', left: '240px' },
               },
             }
           : undefined

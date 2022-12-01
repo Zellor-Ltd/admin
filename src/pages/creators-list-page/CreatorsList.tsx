@@ -217,7 +217,7 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
       }
     >
       {!details && (
-        <div className="Mastheads">
+        <>
           <PageHeader
             title="Mastheads"
             subTitle={isMobile ? '' : 'List of Mastheads'}
@@ -231,7 +231,7 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
               </Button>,
             ]}
           />
-          <Row gutter={8} className="sticky-filter-box mb-05">
+          <Row gutter={8} className="sticky-filter-box">
             <Col lg={4} xs={24}>
               <Typography.Title level={5}>Search</Typography.Title>
               <Input
@@ -246,9 +246,9 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
               />
             </Col>
           </Row>
-          <div>
+          <div className="empty custom-table">
             <Table
-              className="mt-1"
+              className="mt-15"
               scroll={{ x: true, y: 300 }}
               rowClassName={(_, index) => `scrollable-row-${index}`}
               rowKey="id"
@@ -258,7 +258,7 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
               pagination={false}
             />
           </div>
-        </div>
+        </>
       )}
       {details && (
         <CreatorsPageDetail
