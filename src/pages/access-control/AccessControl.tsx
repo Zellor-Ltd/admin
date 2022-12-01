@@ -144,7 +144,7 @@ const AccessControl: React.FC = () => {
         align="bottom"
         className="sticky-filter-box"
       >
-        <Col lg={4} md={12} xs={24}>
+        <Col lg={4} xs={24}>
           <Typography.Title level={5}>Profile</Typography.Title>
           <Select
             disabled={loading}
