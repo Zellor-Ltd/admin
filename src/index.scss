@@ -98,7 +98,8 @@ body {
   max-height: 1000px !important;
 }
 
-.w-100, .w-100 .ant-page-header-heading-extra {
+.w-100,
+.w-100 .ant-page-header-heading-extra {
   width: 100%;
 }
 
@@ -216,14 +217,14 @@ body {
   inset: 270px 2.5rem 3.75rem 250px !important;
 }
 
-.payment-history .infinite-scroll-component__outerdiv, 
-.payment-history .infinite-scroll-component,  
-.payment-history .ant-table-wrapper,  
-.payment-history .ant-spin-nested-loading, 
+.payment-history .infinite-scroll-component__outerdiv,
+.payment-history .infinite-scroll-component,
+.payment-history .ant-table-wrapper,
+.payment-history .ant-spin-nested-loading,
 .payment-history .ant-spin-container,
 .payment-history .ant-table,
 .payment-history .ant-table-container {
-  height: 100% !important; 
+  height: 100% !important;
 }
 
 .payment-history .ant-table-body {
@@ -240,6 +241,7 @@ body {
 .custom-table .ant-spin-nested-loading,
 .custom-table .infinite-scroll-component__outerdiv,
 .featured-feeds-layout,
+.links .ant-table,
 .creator-container {
   height: 100% !important;
 }
@@ -248,6 +250,11 @@ body {
   position: absolute;
   bottom: 10rem;
   top: 0;
+}
+
+.links .ant-table-body {
+  position: absolute;
+  top: 40px;
 }
 
 .payments-container {
