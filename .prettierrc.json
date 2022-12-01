@@ -3,7 +3,5 @@
   "trailingComma": "es5",
   "arrowParens": "avoid",
   "enum": ["crlf"],
-  "tabWidth": 2,
-  "parser": {
-    "anyOf": ["babel", "typescript", "css", "scss", "json", "json5","json-stringify"]}
+  "tabWidth": 2
 }

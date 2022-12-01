@@ -92,7 +92,7 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
       }
     }
 
-    setIsDetails(details)
+    setIsDetails(details);
   }, [details]);
 
   useEffect(() => {
@@ -382,7 +382,11 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   return (
-    <div style={details ? { height: '100%' } : { overflow: 'clip', height: '100%' }}>
+    <div
+      style={
+        details ? { height: '100%' } : { overflow: 'clip', height: '100%' }
+      }
+    >
       {!details && (
         <div>
           <PageHeader
@@ -397,7 +401,7 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
           >
             <Col lg={16} xs={24}>
               <Row gutter={8}>
-                <Col lg={6} md={12} xs={24}>
+                <Col lg={6} xs={24}>
                   <Typography.Title level={5}>
                     Search by Guest e-mail
                   </Typography.Title>
