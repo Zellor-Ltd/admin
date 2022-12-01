@@ -68,8 +68,8 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   useEffect(() => {
-    setIsDetails(details)
-  }, [details])
+    setIsDetails(details);
+  }, [details]);
 
   useEffect(() => {
     if (!details) scrollToCenter(lastViewedIndex);
@@ -198,7 +198,19 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
     {
-      title: 'Actions',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Actions">Actions</Tooltip>
+          </div>
+        </div>
+      ),
       key: 'action',
       width: '10%',
       align: 'right',
@@ -252,7 +264,11 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   return (
-    <div style={details ? { height: '100%' } : { overflow: 'clip', height: '100%' }}>
+    <div
+      style={
+        details ? { height: '100%' } : { overflow: 'clip', height: '100%' }
+      }
+    >
       {!details && (
         <div>
           <PageHeader
@@ -269,7 +285,7 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
             ]}
           />
           <Row gutter={8} className="sticky-filter-box mb-05">
-            <Col lg={4} md={12} xs={24}>
+            <Col lg={4} xs={24}>
               <Typography.Title level={5}>Search</Typography.Title>
               <Input
                 allowClear

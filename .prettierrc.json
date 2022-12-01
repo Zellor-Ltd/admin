@@ -1,5 +1,7 @@
 {
   "singleQuote": true,
   "trailingComma": "es5",
-  "arrowParens": "avoid"
+  "arrowParens": "avoid",
+  "enum": ["crlf"],
+  "tabWidth": 2
 }

@@ -1,4 +1,4 @@
-import { Col, Row, Card, Statistic, List, Tabs } from 'antd';
+import { Col, Row, Card, Statistic, List, Tabs, Tooltip } from 'antd';
 import { useRequest } from 'hooks/useRequest';
 import {
   GlobalOutlined,
@@ -153,19 +153,67 @@ const Dashboard: React.FC<DashboardProps> = () => {
 
   const data = [
     {
-      title: 'Average Order Value',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Average Order Value">Average Order Value</Tooltip>
+          </div>
+        </div>
+      ),
       value: '€125.00',
     },
     {
-      title: 'Direct Sales',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Direct Sales">Direct Sales</Tooltip>
+          </div>
+        </div>
+      ),
       value: '356',
     },
     {
-      title: 'Creator Sales',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Creator Sales">Creator Sales</Tooltip>
+          </div>
+        </div>
+      ),
       value: '275',
     },
     {
-      title: 'Creator Commission Paid',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Creator Commission Paid">Creator Commission Paid</Tooltip>
+          </div>
+        </div>
+      ),
       value: '€1250.00',
     },
   ];

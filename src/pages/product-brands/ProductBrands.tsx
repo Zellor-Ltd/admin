@@ -90,7 +90,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
   useEffect(() => {
     if (!details) scrollToCenter(lastViewedIndex);
 
-    setIsDetails(details)
+    setIsDetails(details);
   }, [details]);
 
   const rebuildVlink = async (productBrand: ProductBrand, index: number) => {
@@ -134,7 +134,19 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
 
   const columns: ColumnsType<ProductBrand> = [
     {
-      title: '_id',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="_id">_id</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'id',
       width: '6%',
       render: id => <CopyValueToClipboard value={id} />,
@@ -173,7 +185,19 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
     {
-      title: 'vIndex',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="vIndex">vIndex</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'vIndex',
       width: '3%',
       render: (_, productBrand, index) => {
@@ -267,12 +291,23 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
       ),
     },
     {
-      title: 'D%',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="D%">D%</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'discoPercentage',
       width: '8%',
       align: 'center',
       render: (value: string) => <a href=".">{value}</a>,
-
       sorter: (a, b): any => {
         if (a.discoPercentage && b.discoPercentage)
           return a.discoPercentage !== b.discoPercentage
@@ -284,7 +319,19 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
     {
-      title: 'C%',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="C%">C%</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'creatorPercentage',
       width: '8%',
       align: 'center',
@@ -301,7 +348,19 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
     },
 
     {
-      title: 'DD%',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="DD%">DD%</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'maxDiscoDollarPercentage',
       width: '8%',
       align: 'center',
@@ -378,7 +437,19 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
       },
     },
     {
-      title: 'Actions',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Actions">Actions</Tooltip>
+          </div>
+        </div>
+      ),
       key: 'action',
       width: '10%',
       align: 'right',
@@ -443,7 +514,11 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   return (
-    <div style={details ? { height: '100%' } : { overflow: 'clip', height: '100%' }}>
+    <div
+      style={
+        details ? { height: '100%' } : { overflow: 'clip', height: '100%' }
+      }
+    >
       {!details && (
         <div>
           <PageHeader
@@ -460,7 +535,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
             ]}
           />
           <Row className="sticky-filter-box mb-05" gutter={8}>
-            <Col lg={4} md={12} xs={24}>
+            <Col lg={4} xs={24}>
               <Typography.Title level={5}>Search</Typography.Title>
               <Input
                 allowClear

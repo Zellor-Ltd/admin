@@ -205,6 +205,60 @@ body {
   color: rgba(0, 0, 0, 0.45);
 }
 
+.transactions .ant-table-wrapper,
+.transactions .ant-spin-nested-loading,
+.transactions .ant-spin-container,
+.transactions .ant-table,
+.transactions .ant-table-container,
+.transactions table {
+  height: 100% !important;
+}
+
+.transactions .ant-table-body {
+  height: 100% !important;
+  overflow: scroll !important;
+}
+
+.interests .ant-table-wrapper {
+  position: fixed;
+  top: 230px;
+}
+
+.interests .ant-table-tbody {
+  overflow: scroll;
+}
+
+.table-container .ant-table-header,
+.table-container .alternate thead {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.table-container .infinite-scroll-component__outerdiv,
+.table-container .infinite-scroll-component,
+.table-container .ant-table-wrapper,
+.table-container .ant-spin-nested-loading,
+.table-container .ant-spin-container,
+.table-container .ant-table,
+.table-container .ant-table-container,
+.variant .ant-table-content,
+.variant table,
+.variant colgroup {
+  height: 100% !important;
+}
+
+.table-container .ant-table-body {
+  overflow: scroll !important;
+  height: 100% !important;
+}
+
+.variant .ant-table-tbody {
+  position: fixed;
+  overflow: scroll;
+  inset: 470px 2.5rem 2.5rem 100px;
+}
+
 .details-checkout {
   position: absolute !important;
   bottom: 2rem !important;
@@ -482,6 +536,40 @@ body {
 }
 
 @media (max-width: 992px) {
+  .w-100 .ant-page-header-heading-extra {
+    width: 100%;
+  }
+
+  .payment-history {
+    position: fixed !important;
+    overflow: clip !important;
+    inset: 230px 2.5rem 3.75rem 100px !important;
+  }
+
+  .payments-container {
+    overflow: clip;
+    position: absolute;
+    top: 120px;
+    left: 100px;
+    right: 3rem;
+    bottom: 7rem;
+  }
+
+  .history-container {
+    overflow: clip;
+    position: absolute;
+    top: 120px;
+    left: 100px;
+    right: 3rem;
+    bottom: 3rem;
+  }
+
+  .table-container {
+    position: fixed;
+    overflow: clip !important;
+    inset: 330px 2.5rem 2.5rem 100px;
+  }
+
   .ant-layout-sider-children {
     position: fixed;
     overflow: auto;
@@ -541,6 +629,36 @@ body {
 }
 
 @media (min-width: 992px) {
+  .payment-history {
+    position: fixed !important;
+    overflow: clip !important;
+    inset: 270px 2.5rem 3.75rem 250px !important;
+  }
+
+  .payments-container {
+    overflow: clip;
+    position: absolute;
+    top: 120px;
+    left: 250px;
+    right: 3rem;
+    bottom: 7rem;
+  }
+
+  .history-container {
+    overflow: clip;
+    position: absolute;
+    top: 120px;
+    left: 250px;
+    right: 3rem;
+    bottom: 3rem;
+  }
+
+  .table-container {
+    position: fixed;
+    overflow: clip !important;
+    inset: 330px 2.5rem 2.5rem 250px;
+  }
+
   .site-layout-background {
     margin: 24px 16px;
     padding: 24px;

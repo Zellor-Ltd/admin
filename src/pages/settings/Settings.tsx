@@ -134,7 +134,7 @@ const ItemList: React.FC<ItemListProp> = ({ name, isMobile }) => (
         </Button>
         {fields.map(field => (
           <Row gutter={8} key={Math.random()}>
-            <Col lg={12} md={12} xs={24}>
+            <Col lg={12} xs={24}>
               <Form.Item
                 name={[field.name, 'name']}
                 fieldKey={[field.key, 'name']}
@@ -143,7 +143,7 @@ const ItemList: React.FC<ItemListProp> = ({ name, isMobile }) => (
                 <Input allowClear placeholder="Name" />
               </Form.Item>
             </Col>
-            <Col lg={12} md={12} xs={24}>
+            <Col lg={12} xs={24}>
               <Row justify="space-between">
                 <Col>
                   <Typography.Text>Value</Typography.Text>

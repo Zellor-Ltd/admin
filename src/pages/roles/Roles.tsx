@@ -118,7 +118,19 @@ const Roles: React.FC<RouteComponentProps> = ({ history, location }) => {
       },
     },
     {
-      title: 'Actions',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Actions">Actions</Tooltip>
+          </div>
+        </div>
+      ),
       key: 'action',
       width: '5%',
       align: 'right',
@@ -152,7 +164,7 @@ const Roles: React.FC<RouteComponentProps> = ({ history, location }) => {
         ]}
       />
       <Row gutter={8} className="sticky-filter-box mb-05">
-        <Col lg={4} md={12} xs={24}>
+        <Col lg={4} xs={24}>
           <Typography.Title level={5}>Search</Typography.Title>
           <Input
             allowClear

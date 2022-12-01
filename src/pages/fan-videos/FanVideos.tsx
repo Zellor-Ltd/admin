@@ -433,7 +433,19 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
       },
     },
     {
-      title: 'Actions',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Actions">Actions</Tooltip>
+          </div>
+        </div>
+      ),
       key: 'action',
       width: '5%',
       align: 'right',
@@ -844,7 +856,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
             </Col>
           </Row>
           <Content>
-            <div>
+            <div className='table-container'>
               <Table
                 className={isMobile ? 'mt-n1' : 'mt-15'}
                 scroll={{ x: true, y: 300 }}

@@ -274,6 +274,37 @@ const DirectLinkDetail: React.FC<DirectLinkDetailProps> = ({
                 <Input allowClear placeholder="URL" />
               </Form.Item>
             </Col>
+              <Col span={24}>
+                <Form.Item
+                  label="Link Type"
+                  name='linkType'
+                >
+                  <Select
+                    placeholder="Select a Link Type"
+                    disabled={!loaded}
+                    allowClear
+                    showSearch
+                    filterOption={filterOption}
+                  >
+                    
+                    <Select.Option
+                        key='Product'
+                        value='Product'
+                        label='Product'
+                      >
+                        Product
+                      </Select.Option>
+                      <Select.Option
+                        key='Other'
+                        value='Other'
+                        label='Other'
+                      >
+                        Other
+                      </Select.Option>
+                    
+                  </Select>
+                </Form.Item>
+              </Col>
           </Col> 
         </Row>
           <Row gutter={8} justify="end" className="my-1">

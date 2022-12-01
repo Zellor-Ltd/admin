@@ -1,5 +1,5 @@
 import { MenuOutlined } from '@ant-design/icons';
-import { Table } from 'antd';
+import { Table, Tooltip } from 'antd';
 import { TableProps } from 'antd/lib/table';
 import arrayMove from 'array-move';
 import {
@@ -31,7 +31,19 @@ const SortableTable: React.FC<SortableTableProps> = (
 
   const sortableColumns = [
     {
-      title: 'Sort',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Sort">Sort</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'sort',
       width: '5%',
       className: 'drag-visible',

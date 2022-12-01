@@ -1,4 +1,4 @@
-import { Modal, Table, Tag as AntTag } from 'antd';
+import { Modal, Table, Tag as AntTag, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { useRequest } from 'hooks/useRequest';
 import { Fan } from 'interfaces/Fan';
@@ -45,26 +45,74 @@ const FanFeedModal: React.FC<FanFeedModalProps> = ({
 
   const columns: ColumnsType<FeedItem> = [
     {
-      title: 'Title',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Title">Title</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'title',
       width: '15%',
       align: 'center',
     },
     {
-      title: 'Segments',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Segments">Segments</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'package',
       render: (pack: Array<any> = []) => <AntTag>{pack.length}</AntTag>,
       width: '5%',
       align: 'center',
     },
     {
-      title: 'Length',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Length">Length</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'lengthTotal',
       width: '5%',
       align: 'center',
     },
     {
-      title: 'Expiration Date',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Expiration Date">Expiration Date</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'validity',
       width: '5%',
       render: (creationDate: Date) =>
@@ -72,7 +120,19 @@ const FanFeedModal: React.FC<FanFeedModalProps> = ({
       align: 'center',
     },
     {
-      title: 'Tags',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Tags">Tags</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'package',
       width: '5%',
       render: (pack: Array<any> = []) => (

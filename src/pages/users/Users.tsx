@@ -1,5 +1,5 @@
 import { EditOutlined } from '@ant-design/icons';
-import { Button, PageHeader, Table, Tag } from 'antd';
+import { Button, PageHeader, Table, Tag, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { User } from 'interfaces/User';
 import { useEffect, useState } from 'react';
@@ -33,7 +33,19 @@ const Users: React.FC<RouteComponentProps> = ({ history }) => {
 
   const columns: ColumnsType<User> = [
     {
-      title: 'Name',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Name">Name</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'name',
       width: '15%',
       sorter: (a, b) => {
@@ -41,7 +53,19 @@ const Users: React.FC<RouteComponentProps> = ({ history }) => {
       },
     },
     {
-      title: 'E-mail',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="E-mail">E-mail</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'user',
       width: '15%',
       sorter: (a, b) => {
@@ -49,7 +73,19 @@ const Users: React.FC<RouteComponentProps> = ({ history }) => {
       },
     },
     {
-      title: 'Profile',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Profile">Profile</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'profile',
       width: '5%',
       render: (profile = 'Fan') => (
@@ -61,7 +97,19 @@ const Users: React.FC<RouteComponentProps> = ({ history }) => {
       },
     },
     {
-      title: 'Actions',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Actions">Actions</Tooltip>
+          </div>
+        </div>
+      ),
       key: 'action',
       width: '5%',
       align: 'right',

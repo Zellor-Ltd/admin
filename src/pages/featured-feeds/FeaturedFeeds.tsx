@@ -264,7 +264,19 @@ const FeaturedFeed: React.FC<RouteComponentProps> = () => {
       },
     },
     {
-      title: 'Actions',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Actions">Actions</Tooltip>
+          </div>
+        </div>
+      ),
       key: 'action',
       width: '10%',
       align: 'right',
@@ -378,7 +390,7 @@ const FeaturedFeed: React.FC<RouteComponentProps> = () => {
           align="bottom"
           className="mb-05 sticky-filter-box"
         >
-          <Col lg={4} md={12} xs={24}>
+          <Col lg={4} xs={24}>
             <Typography.Title level={5}>List Name</Typography.Title>
 
             <Select
@@ -420,7 +432,7 @@ const FeaturedFeed: React.FC<RouteComponentProps> = () => {
         <DndProvider backend={HTML5Backend}>
           <Table
             scroll={{ x: true, y: 300 }}
-            className="mt-1 featured-feeds-layout"
+            className="mt-05 featured-feeds-layout"
             rowClassName={(_, index) =>
               `${index === lastViewedIndex ? 'selected-row' : ''}`
             }

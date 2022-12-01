@@ -21,6 +21,7 @@ import { useMount } from 'react-use';
 import { SketchPicker } from 'react-color';
 
 interface AlternatePreviewProductsProps {
+  loadedRef: any;
   products: Product[];
   productBrands: ProductBrand[];
   allCategories: any;
@@ -38,6 +39,7 @@ interface AlternatePreviewProductsProps {
 }
 
 const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
+  loadedRef,
   products,
   productBrands,
   allCategories,
@@ -221,7 +223,19 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
 
   const columns: EditableColumnType<Product>[] = [
     {
-      title: 'Id',
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="ID">ID</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'id',
       width: '5%',
       align: 'center',
@@ -229,10 +243,21 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
       render: id => <CopyValueToClipboard value={id} />,
     },
     {
-      title: 'Name',
+     title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Name">Name</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'name',
       width: '10%',
-      ellipsis: true,
       shouldCellUpdate: () => false,
       render: (value: string, record: Product, index: number) => (
         <Tooltip title={value}>
@@ -246,11 +271,22 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
       ),
     },
     {
-      title: 'Tag Image',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Tag Image">Tag Image</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: ['tagImage'],
       width: '10%',
       align: 'left',
-      ellipsis: true,
       shouldCellUpdate: (prevRecord, nextRecord) =>
         prevRecord['tagImage'] !== nextRecord['tagImage'],
       render: (_, record) => (
@@ -275,11 +311,22 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
       ),
     },
     {
-      title: 'Thumbnail',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Thumbnail">Thumbnail</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: ['thumbnailUrl'],
       width: '10%',
       align: 'left',
-      ellipsis: true,
       shouldCellUpdate: (prevRecord, nextRecord) =>
         prevRecord['thumbnailUrl'] !== nextRecord['thumbnailUrl'],
       render: (_, record) => (
@@ -304,11 +351,22 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
       ),
     },
     {
-      title: 'Image',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Image">Image</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: ['image'],
       width: '20%',
       align: 'left',
-      ellipsis: true,
       shouldCellUpdate: (prevRecord, nextRecord) =>
         prevRecord['image'] !== nextRecord['image'],
       render: (_, record) => {
@@ -336,7 +394,19 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
       },
     },
     {
-      title: 'Variant',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Variant">Variant</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'variantId',
       width: '10%',
       shouldCellUpdate: (prevRecord, nextRecord) =>
@@ -358,10 +428,21 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
       ),
     },
     {
-      title: 'Colour',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Colour">Colour</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'colour',
       width: '10%',
-      ellipsis: true,
       shouldCellUpdate: (prevRecord, nextRecord) =>
         prevRecord.colour !== nextRecord.colour,
       render: (value: string, record: Product, index: number) => (
@@ -417,7 +498,19 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
       ),
     },
     {
-      title: 'Colour Title',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Colour Title">Colour Title</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'colourTitle',
       width: '10%',
       shouldCellUpdate: (prevRecord, nextRecord) =>
@@ -438,7 +531,19 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
       ),
     },
     {
-      title: 'Size',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Size">Size</Tooltip>
+          </div>
+        </div>
+      ),
       dataIndex: 'size',
       width: '10%',
       shouldCellUpdate: (prevRecord, nextRecord) =>
@@ -459,7 +564,19 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
       ),
     },
     {
-      title: 'Actions',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Actions">Actions</Tooltip>
+          </div>
+        </div>
+      ),
       key: 'action',
       width: '12%',
       align: 'center',
@@ -514,54 +631,58 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
         });
       }}
     >
-      <InfiniteScroll
-        dataLength={_products.length}
-        next={onNextPage}
-        hasMore={!eof}
-        loader={
-          page !== 0 && (
-            <div className="scroll-message">
-              <Spin />
-            </div>
-          )
-        }
-        endMessage={
-          <div className="scroll-message">
-            <b>End of results.</b>
-          </div>
-        }
-      >
-        <EditableTable
-          rowClassName={(_, index) =>
-            `scrollable-row-${index} ${
-              index === lastViewedIndex ? 'selected-row' : ''
-            }`
+      <div className='alternate table-container'>
+        <InfiniteScroll
+          dataLength={_products.length}
+          next={onNextPage}
+          hasMore={!eof}
+          loader={
+            page !== 0 && (
+              <div className="scroll-message">
+                <Spin />
+              </div>
+            )
           }
-          rowKey="id"
-          columns={columns}
-          dataSource={_products}
-          loading={loading || disabled}
-          onSave={onSaveProduct}
-          pagination={false}
-          rowSelection={{
-            selectedRowKeys,
-            onChange: onSelectChange,
-          }}
-          expandable={{
-            expandedRowRender: (record: Product) => (
-              <ProductExpandedRow
-                key={record.id}
-                record={record}
-                allCategories={allCategories}
-                onSaveProduct={onSaveCategories}
-                loading={loadingCategories}
-                isStaging
-                productBrands={productBrands}
-              ></ProductExpandedRow>
-            ),
-          }}
-        />
-      </InfiniteScroll>
+          endMessage={
+            loadedRef.current && (
+              <div className="scroll-message">
+                <b>End of results.</b>
+              </div>
+            )
+          }
+        >
+          <EditableTable
+            rowClassName={(_, index) =>
+              `scrollable-row-${index} ${
+                index === lastViewedIndex ? 'selected-row' : ''
+              }`
+            }
+            rowKey="id"
+            columns={columns}
+            dataSource={_products}
+            loading={loading || disabled}
+            onSave={onSaveProduct}
+            pagination={false}
+            rowSelection={{
+              selectedRowKeys,
+              onChange: onSelectChange,
+            }}
+            expandable={{
+              expandedRowRender: (record: Product) => (
+                <ProductExpandedRow
+                  key={record.id}
+                  record={record}
+                  allCategories={allCategories}
+                  onSaveProduct={onSaveCategories}
+                  loading={loadingCategories}
+                  isStaging
+                  productBrands={productBrands}
+                ></ProductExpandedRow>
+              ),
+            }}
+          />
+        </InfiniteScroll>
+      </div>
     </Form>
   );
 };

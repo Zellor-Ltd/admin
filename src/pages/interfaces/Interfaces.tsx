@@ -1,4 +1,4 @@
-import { Button, PageHeader, Table } from 'antd';
+import { Button, PageHeader, Table, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { Function } from 'interfaces/Function';
 import { useEffect, useState } from 'react';
@@ -11,10 +11,48 @@ const Interfaces: React.FC<RouteComponentProps> = ({ history }) => {
   const [interfaces, setInterfaces] = useState<Function[]>([]);
   const [loading, setLoading] = useState(false);
   const columns: ColumnsType<Function> = [
-    { title: 'Name', dataIndex: 'name', width: '15%' },
-    { title: 'HTTP Endpoint', dataIndex: 'httpEndpoint', width: '15%' },
+    {       title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Name">Name</Tooltip>
+          </div>
+        </div>
+      ), dataIndex: 'name', width: '15%',
+     },
+    {       title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="HTTP Endpoint">HTTP Endpoint</Tooltip>
+          </div>
+        </div>
+      ), dataIndex: 'httpEndpoint', width: '15%',
+     },
     {
-      title: 'Actions',
+            title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Actions">Actions</Tooltip>
+          </div>
+        </div>
+      ),
       key: 'action',
       width: '5%',
       align: 'right',
