@@ -627,7 +627,7 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
             ]}
           />
           <Row gutter={8} className="mb-05 sticky-filter-box">
-            <Col lg={4} md={12} xs={24}>
+            <Col lg={4} xs={24}>
               <Typography.Title level={5} title="Search">
                 Search
               </Typography.Title>

@@ -63,7 +63,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   useEffect(() => {
-    setIsDetails(details)
+    setIsDetails(details);
 
     if (!details) scrollToCenter(lastViewedIndex);
   }, [details]);
@@ -519,7 +519,11 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   return (
-    <div style={details ? { height: '100%' } : { overflow: 'clip', height: '100%' }}>
+    <div
+      style={
+        details ? { height: '100%' } : { overflow: 'clip', height: '100%' }
+      }
+    >
       {!details && (
         <div className="creator-container">
           <PageHeader
@@ -541,7 +545,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
             justify="space-between"
             className="mb-05 sticky-filter-box"
           >
-            <Col lg={4} md={12} xs={24}>
+            <Col lg={4} xs={24}>
               <Typography.Title level={5}>Search</Typography.Title>
               <Input
                 allowClear

@@ -213,6 +213,29 @@ import CopyToClipboard from 'react-copy-to-clipboard';
                 whiteSpace: 'nowrap',
               }}
             >
+              <Tooltip title="Link Type">Link Type</Tooltip>
+            </div>
+          </div>
+        ),
+        dataIndex: 'linkType',
+        width: '10%',
+        sorter: (a, b): any => {
+          if (a.linkType && b.linkType) return a.linkType.localeCompare(b.linkType as string);
+          else if (a.linkType) return -1;
+          else if (b.linkType) return 1;
+          else return 0;
+        },
+      },
+      {
+        title: (
+          <div style={{ display: 'grid', placeItems: 'stretch' }}>
+            <div
+              style={{
+                textOverflow: 'ellipsis',
+                overflow: 'hidden',
+                whiteSpace: 'nowrap',
+              }}
+            >
               <Tooltip title="Description">Description</Tooltip>
             </div>
           </div>

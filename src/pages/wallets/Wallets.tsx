@@ -245,7 +245,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
                 align="bottom"
                 justify={isMobile ? 'end' : undefined}
               >
-                <Col lg={4} md={12} xs={24}>
+                <Col lg={4} xs={24}>
                   <Typography.Title level={5}>Fan Filter</Typography.Title>
                   <MultipleFetchDebounceSelect
                     style={{ width: '100%' }}
@@ -260,7 +260,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
                   ></MultipleFetchDebounceSelect>
                 </Col>
                 {selectedFan && (
-                  <Col lg={4} md={12} xs={24} className={isMobile ? 'mt-05' : ''}>
+                  <Col lg={4} xs={24} className={isMobile ? 'mt-05' : ''}>
                     <Typography.Title level={5}>Master Brand</Typography.Title>
                     <SimpleSelect
                       showSearch

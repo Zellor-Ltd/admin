@@ -333,7 +333,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
             justify="space-between"
             className="sticky-filter-box mb-05"
           >
-            <Col lg={4} md={12} xs={24}>
+            <Col lg={4} xs={24}>
               <SearchFilterDebounce
                 disabled={refreshing || loading}
                 initialValue={searchFilter}
@@ -343,7 +343,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
                 onPressEnter={fetch}
               />
             </Col>
-            <Col lg={4} md={12} xs={24}>
+            <Col lg={4} xs={24}>
               <Row justify="end">
                 <Col>
                   <Button
