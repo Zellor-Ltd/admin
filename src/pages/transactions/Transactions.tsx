@@ -259,7 +259,7 @@ const Transactions: React.FC<RouteComponentProps> = () => {
         }}
       >
         <Table
-          scroll={{ x: true, y: 300 }}
+          scroll={{ x: true, y: '27em' }}
           rowKey="id"
           columns={columns}
           dataSource={transactions}

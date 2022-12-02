@@ -597,7 +597,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
             >
               <Table
                 className={creators.length ? 'mt-1' : 'mt-1 custom-table'}
-                scroll={{ x: true, y: 300 }}
+                scroll={{ x: true, y: '27em' }}
                 rowClassName={(_, index) => `scrollable-row-${index}`}
                 rowKey="id"
                 columns={columns}

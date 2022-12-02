@@ -1009,7 +1009,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
             selectedRecord={productAPITest}
             setSelectedRecord={setProductAPITest}
           />
-          <div className="custom-table">
+          <div className="empty custom-table">
             <InfiniteScroll
               dataLength={products.length}
               next={getProducts}
@@ -1032,7 +1032,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
             >
               <Table
                 className="mt-1"
-                scroll={{ x: true, y: 300 }}
+                scroll={{ x: true, y: '27em' }}
                 rowClassName={(_, index) =>
                   `scrollable-row-${index} ${
                     index === lastViewedIndex ? 'selected-row' : ''

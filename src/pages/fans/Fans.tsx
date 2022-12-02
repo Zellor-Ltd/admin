@@ -449,7 +449,7 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
             >
               <Table
                 className="mt-1"
-                scroll={{ x: true, y: 300 }}
+                scroll={{ x: true, y: '27em' }}
                 rowClassName={(_, index) => `scrollable-row-${index}`}
                 rowKey="id"
                 columns={columns}

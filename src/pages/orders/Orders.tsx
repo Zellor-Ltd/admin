@@ -1106,7 +1106,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
             >
               <Table
                 className="mt-05"
-                scroll={{ x: true, y: 300 }}
+                scroll={{ x: true, y: '27em' }}
                 rowClassName={(_, index) => `scrollable-row-${index}`}
                 rowKey="id"
                 columns={columns}

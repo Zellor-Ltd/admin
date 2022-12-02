@@ -874,7 +874,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                 }
               >
                 <EditableTable
-                  scroll={{ x: true, y: 300 }}
+                  scroll={{ x: true, y: '27em' }}
                   className="mt-4 alternate-table"
                   rowClassName={(_, index) =>
                     `scrollable-row-${index} ${

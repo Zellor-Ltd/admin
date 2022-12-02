@@ -431,7 +431,7 @@ const FeaturedFeed: React.FC<RouteComponentProps> = () => {
       <div className="featured custom-table">
         <DndProvider backend={HTML5Backend}>
           <Table
-            scroll={{ x: true, y: 300 }}
+            scroll={{ x: true, y: '27em' }}
             className="mt-05"
             rowClassName={(_, index) =>
               `${index === lastViewedIndex ? 'selected-row' : ''}`

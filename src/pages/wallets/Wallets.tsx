@@ -301,7 +301,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
           <div className="wallets empty custom-table">
             <Table
               className="mt-1"
-              scroll={{ x: true, y: 300 }}
+              scroll={{ x: true, y: '27em' }}
               rowClassName={(_, index) => `scrollable-row-${index}`}
               rowKey="key"
               columns={columns}

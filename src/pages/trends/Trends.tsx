@@ -214,7 +214,7 @@ const Trends: React.FC<RouteComponentProps> = props => {
       <div className="custom-table">
         <Table
           className="mt-15"
-          scroll={{ x: true, y: 300 }}
+          scroll={{ x: true, y: '27em' }}
           rowClassName={(_, index) => `scrollable-row-${index}`}
           rowKey="id"
           columns={columns}

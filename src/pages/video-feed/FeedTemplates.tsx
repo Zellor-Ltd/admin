@@ -303,7 +303,7 @@ const FeedTemplates: React.FC<RouteComponentProps> = () => {
           />
           <div className="empty custom-table">
             <Table
-              scroll={{ x: true, y: 300 }}
+              scroll={{ x: true, y: '27em' }}
               className="mt-1"
               rowClassName={(_, index) =>
                 `${index === lastViewedIndex ? 'selected-row' : ''}`
