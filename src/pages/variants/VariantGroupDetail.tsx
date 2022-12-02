@@ -262,7 +262,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
 
   const columns: EditableColumnType<Product>[] = [
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -285,7 +285,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
       },
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -564,7 +564,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
         subTitle={isMobile ? '' : 'Add/Remove Variants'}
         className={isMobile ? 'mb-n1' : ''}
         extra={
-          <Row justify='end'>
+          <Row justify="end">
             <Col>
               <Button type="primary" onClick={() => setDetails(false)}>
                 Go Back
@@ -579,7 +579,8 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
           showArrow={false}
           header={
             <Typography.Title level={5}>
-              &nbsp;&nbsp;&nbsp;&nbsp;<MenuOutlined />
+              &nbsp;&nbsp;&nbsp;&nbsp;
+              <MenuOutlined />
               &nbsp;&nbsp;&nbsp;&nbsp;Variants in Group
             </Typography.Title>
           }
@@ -692,7 +693,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
             </Col>
           </Row>
           <InfiniteScroll
-            className='variant table-container'
+            className="variant table-container"
             dataLength={products.length}
             next={getProducts}
             hasMore={!eof}
