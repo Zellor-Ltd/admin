@@ -50,10 +50,14 @@ const DirectLinkDetail: React.FC<DirectLinkDetailProps> = ({
   );
   const [optionsPage, setOptionsPage] = useState<number>(0);
   const [disableProducts, setDisableProducts] = useState<boolean>(true);
-  const [selectedCreator, setSelectedCreator] = useState<Creator>();
-  const [selectedMasterBrand, setSelectedMasterBrand] = useState<Brand>();
+  const [selectedCreator, setSelectedCreator] = useState<Creator>(
+    directLink?.creator
+  );
+  const [selectedMasterBrand, setSelectedMasterBrand] = useState<Brand>(
+    directLink?.brand
+  );
   const [selectedProductBrand, setSelectedProductBrand] =
-    useState<ProductBrand>();
+    useState<ProductBrand>(directLink?.productBrand);
   const [selectedProduct, setSelectedProduct] = useState<Product>();
 
   const optionMapping: SelectOption = {
@@ -66,6 +70,20 @@ const DirectLinkDetail: React.FC<DirectLinkDetailProps> = ({
     if (brands.length && creators.length && productBrands.length)
       setLoaded(true);
   }, [brands, creators, productBrands]);
+
+  useEffect(() => {
+    if (selectedProductBrand) getProducts();
+    else {
+      setOptionsPage(0);
+      setUserInput('');
+      setProducts([]);
+      setDisableProducts(true);
+    }
+  }, [selectedProductBrand]);
+
+  useEffect(() => {
+    setDisableProducts(!!!products.length);
+  }, [products]);
 
   const onFinish = async () => {
     try {
@@ -137,25 +155,23 @@ const DirectLinkDetail: React.FC<DirectLinkDetailProps> = ({
 
     if (pageToUse === 0) setProducts(response.results);
     else setProducts(prev => [...prev.concat(response.results)]);
-    setDisableProducts(false);
 
     return response.results;
   };
 
   const handleCreatorChange = (value?: string) => {
     const entity = creators.find(item => item.id === value);
-    setSelectedCreator(entity);
+    setSelectedCreator(entity!);
   };
 
   const handleMasterBrandChange = (value?: string) => {
     const entity = brands.find(item => item.id === value);
-    setSelectedMasterBrand(entity);
+    setSelectedMasterBrand(entity!);
   };
 
   const handleProductBrandChange = (value?: string) => {
     const entity = productBrands.find(item => item.id === value);
-    setSelectedProductBrand(entity);
-    getProducts();
+    setSelectedProductBrand(entity!);
   };
 
   const handleProductChange = (value?: string) => {
@@ -265,9 +281,10 @@ const DirectLinkDetail: React.FC<DirectLinkDetailProps> = ({
                   onClear={setUserInput}
                   optionMapping={optionMapping}
                   placeholder="Type to search a Product"
-                  disabled={!loaded || disableProducts}
+                  disabled={disableProducts}
                   input={userInput}
                   options={products}
+                  loadOnClick={false}
                 ></MultipleFetchDebounceSelect>
               </Form.Item>
             </Col>

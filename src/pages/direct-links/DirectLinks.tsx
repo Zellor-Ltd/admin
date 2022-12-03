@@ -196,42 +196,52 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
         else if (b.link) return 1;
         else return 0;
       },
-      {
-        title: (
-          <div style={{ display: 'grid', placeItems: 'stretch' }}>
-            <div
-              style={{
-                textOverflow: 'ellipsis',
-                overflow: 'hidden',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              <Tooltip title="Link Type">Link Type</Tooltip>
-            </div>
+      render: (value: string, record: any, index: number) => (
+        <Link
+          to={location.pathname}
+          onClick={() => handleEditLink(index, record)}
+        >
+          {value}
+        </Link>
+      ),
+    },
+    {
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Link Type">Link Type</Tooltip>
           </div>
-        ),
-        dataIndex: 'linkType',
-        width: '10%',
-        sorter: (a, b): any => {
-          if (a.linkType && b.linkType) return a.linkType.localeCompare(b.linkType as string);
-          else if (a.linkType) return -1;
-          else if (b.linkType) return 1;
-          else return 0;
-        },
+        </div>
+      ),
+      dataIndex: 'linkType',
+      width: '10%',
+      sorter: (a, b): any => {
+        if (a.linkType && b.linkType)
+          return a.linkType.localeCompare(b.linkType as string);
+        else if (a.linkType) return -1;
+        else if (b.linkType) return 1;
+        else return 0;
       },
-      {
-        title: (
-          <div style={{ display: 'grid', placeItems: 'stretch' }}>
-            <div
-              style={{
-                textOverflow: 'ellipsis',
-                overflow: 'hidden',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              <Tooltip title="Description">Description</Tooltip>
-            </div>
+    },
+    {
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Description">Description</Tooltip>
           </div>
+        </div>
       ),
       dataIndex: 'description',
       width: '15%',
@@ -694,7 +704,7 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
       }
     >
       {!details && (
-        <div className="links custom-table">
+        <>
           <PageHeader
             title="Direct Links"
             subTitle={isMobile ? '' : 'List of Direct Links'}
@@ -780,18 +790,20 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
               </Row>
             </Col>
           </Row>
-          <Table
-            className={isMobile ? '' : 'mt-15'}
-            scroll={{ x: true, y: 300 }}
-            rowClassName={(_, index) => `scrollable-row-${index}`}
-            size="small"
-            columns={columns}
-            rowKey="id"
-            dataSource={search(directLinks)}
-            loading={loading}
-            pagination={false}
-          />
-        </div>
+          <div className="links custom-table">
+            <Table
+              className={isMobile ? '' : 'mt-15'}
+              scroll={{ x: true, y: '30em' }}
+              rowClassName={(_, index) => `scrollable-row-${index}`}
+              size="small"
+              columns={columns}
+              rowKey="id"
+              dataSource={search(directLinks)}
+              loading={loading}
+              pagination={false}
+            />
+          </div>
+        </>
       )}
       {details && (
         <DirectLinkDetail

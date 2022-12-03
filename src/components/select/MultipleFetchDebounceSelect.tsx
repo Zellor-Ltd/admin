@@ -16,13 +16,13 @@ interface MultipleFetchDebounceSelectProps {
   optionMapping: SelectOption;
   placeholder: string;
   disabled?: boolean;
-  debounceTimeout?: number;
   style?: React.CSSProperties;
   options?: any;
   setEof?: (eof: boolean) => void;
   loaded?: boolean;
   input?: string;
   id?: string;
+  loadOnClick?: boolean;
 }
 
 const MultipleFetchDebounceSelect: React.FC<
@@ -37,13 +37,13 @@ const MultipleFetchDebounceSelect: React.FC<
   optionMapping,
   placeholder,
   disabled,
-  debounceTimeout = 1000,
   style,
   options,
   setEof,
   loaded,
   input,
   id,
+  loadOnClick = true,
 }) => {
   const mounted = useRef(false);
   const [isFetching, setIsFetching] = useState(false);
@@ -56,6 +56,7 @@ const MultipleFetchDebounceSelect: React.FC<
   const pressedEnter = useRef(false);
   const loadNextPage = useRef(false);
   const [_value, _setValue] = useState<SelectOption>();
+  const inputCounter = useRef<number>(0);
 
   const optionFactory = (option: any) => {
     return {
@@ -108,8 +109,8 @@ const MultipleFetchDebounceSelect: React.FC<
       _setOptions([]);
     };
 
-    return debounce(loadOptions, debounceTimeout);
-  }, [onInput, debounceTimeout, searchFilter.current]);
+    return debounce(loadOptions, 500);
+  }, [onInput, 500, searchFilter.current]);
 
   const getOptions = () => {
     if (blurred.current) {
@@ -163,7 +164,7 @@ const MultipleFetchDebounceSelect: React.FC<
   const _onFocus = () => {
     if (!mounted.current) return;
     blurred.current = false;
-    if (!options?.length) _setUserInput('');
+    if (!options?.length && loadOnClick) _setUserInput('');
     else _setOptions(options.map(optionFactory));
     onFocus?.();
   };
@@ -187,6 +188,14 @@ const MultipleFetchDebounceSelect: React.FC<
     );
   };
 
+  const _onSearch = (value: string) => {
+    inputCounter.current++;
+    if (inputCounter.current < 3) return;
+
+    _setUserInput(value);
+    inputCounter.current = 0;
+  };
+
   return (
     <Select
       id={id}
@@ -201,7 +210,7 @@ const MultipleFetchDebounceSelect: React.FC<
       onFocus={_onFocus}
       onChange={_onChange}
       onClear={_onClear}
-      onSearch={_setUserInput}
+      onSearch={_onSearch}
       value={searchFilter.current?.length ? _value : undefined}
       onInputKeyDown={_onInputKeyDown}
       onPopupScroll={event => handlePopupScroll(event.target)}

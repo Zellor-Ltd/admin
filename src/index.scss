@@ -94,10 +94,6 @@ body {
   }
 }
 
-.ant-table-body {
-  max-height: 1000px !important;
-}
-
 .w-100,
 .w-100 .ant-page-header-heading-extra {
   width: 100%;
@@ -265,6 +261,12 @@ body {
   right: 2rem !important;
 }
 
+.payment-history {
+  position: fixed !important;
+  overflow: clip !important;
+  inset: 270px 2.5rem 3.75rem 250px !important;
+}
+
 .payment-history .infinite-scroll-component__outerdiv,
 .payment-history .infinite-scroll-component,
 .payment-history .ant-table-wrapper,
@@ -280,6 +282,15 @@ body {
   height: 100% !important;
 }
 
+.custom-table {
+  overflow-x: scroll;
+  overflow-y: hidden;
+}
+
+.custom-table.links .ant-table-header {
+  overflow: initial !important;
+}
+
 .ant-table-empty,
 .custom-table,
 .custom-table table,
@@ -289,6 +300,7 @@ body {
 .custom-table .ant-spin-nested-loading,
 .custom-table .infinite-scroll-component__outerdiv,
 .featured-feeds-layout,
+.links .ant-table,
 .creator-container {
   height: 100% !important;
 }
@@ -297,6 +309,29 @@ body {
   position: absolute;
   bottom: 10rem;
   top: 0;
+}
+
+.links .ant-table-body {
+  position: absolute;
+  top: 40px;
+}
+
+.payments-container {
+  overflow: clip;
+  position: absolute;
+  top: 120px;
+  left: 250px;
+  right: 3rem;
+  bottom: 7rem;
+}
+
+.history-container {
+  overflow: clip;
+  position: absolute;
+  top: 120px;
+  left: 250px;
+  right: 3rem;
+  bottom: 3rem;
 }
 
 .history-container .ant-table-summary {
@@ -506,6 +541,10 @@ body {
 }
 
 @media (max-width: 992px) {
+  .links.custom-table {
+    height: calc(100vh - 115px) !important;
+  }
+
   .w-100 .ant-page-header-heading-extra {
     width: 100%;
   }
@@ -599,6 +638,10 @@ body {
 }
 
 @media (min-width: 992px) {
+  .links.custom-table {
+    height: calc(100vh - 200px) !important;
+  }
+
   .payment-history {
     position: fixed !important;
     overflow: clip !important;
