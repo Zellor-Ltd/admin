@@ -785,7 +785,11 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
   return (
     <div
       style={
-        details ? { height: '100%' } : { overflow: 'clip', height: '100%' }
+        details
+          ? { height: '100%' }
+          : activeKey === '1'
+          ? { overflow: 'scroll', height: '100%' }
+          : { overflow: 'clip', height: '100%' }
       }
     >
       {!details && (
@@ -824,7 +828,13 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
                   >
                     <Panel
                       header={
-                        <Typography.Title level={5}>Filter</Typography.Title>
+                        activeKey === '1' ? (
+                          <Typography.Title level={5}>
+                            Click to Collapse
+                          </Typography.Title>
+                        ) : (
+                          <Typography.Title level={5}>Filter</Typography.Title>
+                        )
                       }
                       key="1"
                     >

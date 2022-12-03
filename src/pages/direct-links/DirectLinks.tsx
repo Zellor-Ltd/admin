@@ -737,7 +737,13 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
                 >
                   <Panel
                     header={
-                      <Typography.Title level={5}>Filter</Typography.Title>
+                      activeKey === '1' ? (
+                        <Typography.Title level={5}>
+                          Click to Collapse
+                        </Typography.Title>
+                      ) : (
+                        <Typography.Title level={5}>Filter</Typography.Title>
+                      )
                     }
                     key="1"
                     extra={

@@ -930,7 +930,11 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
   return (
     <div
       style={
-        details ? { height: '100%' } : { overflow: 'clip', height: '100%' }
+        details
+          ? { height: '100%' }
+          : activeKey === '1'
+          ? { overflow: 'scroll', height: '100%' }
+          : { overflow: 'clip', height: '100%' }
       }
     >
       {!details && (
@@ -957,7 +961,15 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                 className="mb-n1"
               >
                 <Panel
-                  header={<Typography.Title level={5}>Filter</Typography.Title>}
+                  header={
+                    activeKey === '1' ? (
+                      <Typography.Title level={5}>
+                        Click to Collapse
+                      </Typography.Title>
+                    ) : (
+                      <Typography.Title level={5}>Filter</Typography.Title>
+                    )
+                  }
                   key="1"
                 >
                   <Filters />

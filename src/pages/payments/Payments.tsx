@@ -56,6 +56,7 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [manualCommission, setManualCommission] = useState<boolean>(false);
   const shouldUpdateDueDate = useRef(false);
   const [updatingDueDate, setUpdatingDueDate] = useState<boolean>(false);
+  const [activeKey, setActiveKey] = useState<string>('1');
 
   useEffect(() => {
     getCreators();
@@ -581,6 +582,11 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
     );
   };
 
+  const handleCollapseChange = () => {
+    if (activeKey === '1') setActiveKey('0');
+    else setActiveKey('1');
+  };
+
   return (
     <div className="payments-container">
       {!manualPayment && !manualCommission && (
@@ -639,9 +645,23 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
             </Row>
           )}
           {isMobile && (
-            <Collapse ghost className="sticky-filter-box" defaultActiveKey={1}>
+            <Collapse
+              ghost
+              className="sticky-filter-box"
+              activeKey={activeKey}
+              onChange={handleCollapseChange}
+              destroyInactivePanel
+            >
               <Panel
-                header={<Typography.Title level={5}>Filter</Typography.Title>}
+                header={
+                  activeKey === '1' ? (
+                    <Typography.Title level={5}>
+                      Click to Collapse
+                    </Typography.Title>
+                  ) : (
+                    <Typography.Title level={5}>Filter</Typography.Title>
+                  )
+                }
                 key="1"
               >
                 <Row justify="end" align="bottom" className="pt-0">
