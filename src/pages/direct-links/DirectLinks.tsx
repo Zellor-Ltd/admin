@@ -704,7 +704,7 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
       }
     >
       {!details && (
-        <div className="links custom-table">
+        <>
           <PageHeader
             title="Direct Links"
             subTitle={isMobile ? '' : 'List of Direct Links'}
@@ -790,18 +790,20 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
               </Row>
             </Col>
           </Row>
-          <Table
-            className={isMobile ? '' : 'mt-15'}
-            scroll={{ x: true, y: '27em' }}
-            rowClassName={(_, index) => `scrollable-row-${index}`}
-            size="small"
-            columns={columns}
-            rowKey="id"
-            dataSource={search(directLinks)}
-            loading={loading}
-            pagination={false}
-          />
-        </div>
+          <div className="links custom-table">
+            <Table
+              className={isMobile ? '' : 'mt-15'}
+              scroll={{ x: true, y: '30em' }}
+              rowClassName={(_, index) => `scrollable-row-${index}`}
+              size="small"
+              columns={columns}
+              rowKey="id"
+              dataSource={search(directLinks)}
+              loading={loading}
+              pagination={false}
+            />
+          </div>
+        </>
       )}
       {details && (
         <DirectLinkDetail

@@ -166,6 +166,8 @@ body {
 .preview.empty.custom-table .infinite-scroll-component > div,
 .empty .ant-table-body,
 .ant-table-empty,
+.featured-feeds-layout,
+.links .ant-table,
 .creator-container {
   height: 100% !important;
 }
@@ -217,6 +219,29 @@ body {
 .payment-history .ant-table-body {
   overflow: scroll !important;
   height: 100% !important;
+}
+
+.links .ant-table-body {
+  position: absolute;
+  top: 40px;
+}
+
+.payments-container {
+  overflow: clip;
+  position: absolute;
+  top: 120px;
+  left: 250px;
+  right: 3rem;
+  bottom: 7rem;
+}
+
+.history-container {
+  overflow: clip;
+  position: absolute;
+  top: 120px;
+  left: 250px;
+  right: 3rem;
+  bottom: 3rem;
 }
 
 .history-container .ant-table-summary {
@@ -398,6 +423,14 @@ body {
 }
 
 @media (max-width: 992px) {
+  .links.custom-table {
+    height: calc(100vh - 115px) !important;
+  }
+
+  .w-100 .ant-page-header-heading-extra {
+    width: 100%;
+  }
+
   .payment-history {
     position: fixed !important;
     overflow: clip !important;
@@ -480,6 +513,10 @@ body {
 }
 
 @media (min-width: 992px) {
+  .links.custom-table {
+    height: calc(100vh - 200px) !important;
+  }
+
   .payment-history {
     position: fixed !important;
     overflow: clip !important;
