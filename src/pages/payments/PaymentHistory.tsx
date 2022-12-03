@@ -395,7 +395,7 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
             </Row>
           )}
           {isMobile && (
-            <Collapse ghost className="sticky-filter-box">
+            <Collapse ghost className="sticky-filter-box" defaultActiveKey={1}>
               <Panel
                 header={<Typography.Title level={5}>Filter</Typography.Title>}
                 key="1"

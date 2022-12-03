@@ -46,7 +46,7 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
   const { isMobile, setIsDetails } = useContext(AppContext);
   const descriptionRef = useRef<any>(null);
   const urlRef = useRef<any>(null);
-  const [activeKey, setActiveKey] = useState<string>('-1');
+  const [activeKey, setActiveKey] = useState<string>('1');
   const [selectedLink, setSelectedLink] = useState<any>();
   const [loading, setLoading] = useState(false);
   const [details, setDetails] = useState<boolean>(false);

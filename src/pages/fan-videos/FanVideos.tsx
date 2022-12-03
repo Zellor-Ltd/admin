@@ -90,7 +90,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
   const inputRef = useRef<any>(null);
   const [loadingResources, setLoadingResources] = useState<boolean>(true);
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
-  const [activeKey, setActiveKey] = useState<string>('-1');
+  const [activeKey, setActiveKey] = useState<string>('1');
   const [offset, setOffset] = useState<number>(64);
   const [panelStyle, setPanelStyle] = useState<React.CSSProperties>({
     top: 64,

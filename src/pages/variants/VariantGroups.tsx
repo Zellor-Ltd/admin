@@ -107,7 +107,7 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
   const [currentSubSubCategory, setCurrentSubSubCategory] =
     useState<ProductCategory>();
 
-  const [activeKey, setActiveKey] = useState<string>('-1');
+  const [activeKey, setActiveKey] = useState<string>('1');
 
   const [offset, setOffset] = useState<number>(64);
   const [panelStyle, setPanelStyle] = useState<React.CSSProperties>({

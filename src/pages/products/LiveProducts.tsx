@@ -120,7 +120,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
     label: 'subSubCategory',
     value: 'id',
   };
-  const [activeKey, setActiveKey] = useState<string>('-1');
+  const [activeKey, setActiveKey] = useState<string>('1');
 
   const [offset, setOffset] = useState<number>(64);
   const [panelStyle, setPanelStyle] = useState<React.CSSProperties>({

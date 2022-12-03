@@ -74,7 +74,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   } = useSelector((state: any) => state.settings);
   const { isMobile, setIsDetails } = useContext(AppContext);
   const inputRef = useRef<any>(null);
-  const [activeKey, setActiveKey] = useState<string>('-1');
+  const [activeKey, setActiveKey] = useState<string>('1');
   const [selectedVideoFeed, setSelectedVideoFeed] = useState<FeedItem>();
   const [loading, setLoading] = useState(false);
   const loaded = useRef<boolean>(false);
