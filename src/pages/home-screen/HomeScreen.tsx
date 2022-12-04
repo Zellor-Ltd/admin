@@ -42,7 +42,7 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
       );
     }
 
-    setIsDetails(details)
+    setIsDetails(details);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [details]);
 
@@ -201,7 +201,7 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
         else return 0;
       },
     },
-    { 
+    {
       title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
@@ -241,7 +241,11 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
     },
   ];
   return (
-    <div style={details ? { height: '100%' } : { overflow: 'clip', height: '100%' }}>
+    <div
+      style={
+        details ? { height: '100%' } : { overflow: 'clip', height: '100%' }
+      }
+    >
       {!details && (
         <div>
           <PageHeader

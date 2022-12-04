@@ -135,7 +135,8 @@ const UserDetail: React.FC<RouteComponentProps> = props => {
   };
 
   const creatorColumns = [
-    {       title: (
+    {
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -147,9 +148,12 @@ const UserDetail: React.FC<RouteComponentProps> = props => {
             <Tooltip title="UserName">UserName</Tooltip>
           </div>
         </div>
-      ), dataIndex: 'userName', width: '15%', },
+      ),
+      dataIndex: 'userName',
+      width: '15%',
+    },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -201,7 +205,8 @@ const UserDetail: React.FC<RouteComponentProps> = props => {
   };
 
   const categoryColumns = [
-    {       title: (
+    {
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -213,9 +218,12 @@ const UserDetail: React.FC<RouteComponentProps> = props => {
             <Tooltip title="Name">Name</Tooltip>
           </div>
         </div>
-      ), dataIndex: 'name', width: '15%' },
+      ),
+      dataIndex: 'name',
+      width: '15%',
+    },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{

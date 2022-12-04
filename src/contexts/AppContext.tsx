@@ -103,7 +103,7 @@ export const AppProvider = ({ children }: { children: JSX.Element }) => {
         isMobile,
         needsMargin,
         isDetails,
-        setIsDetails
+        setIsDetails,
       }}
     >
       <PageInfiniteScrollProvider>{children}</PageInfiniteScrollProvider>

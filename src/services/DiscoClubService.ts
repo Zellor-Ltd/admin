@@ -669,13 +669,14 @@ export const saveLink = (params: any) =>
   instance.put('Disco/Link/Adm/GenerateExternalLink', params);
 
 export const saveDirectLink = (params: any, newItem?: boolean) => {
-  if (newItem) return instance.put('Disco/DirectLink/Adm/AddDirectlLink', params);
+  if (newItem)
+    return instance.put('Disco/DirectLink/Adm/AddDirectlLink', params);
   else return instance.put('Disco/DirectLink/Adm/UpdateDirectlLink', params);
 };
 
 export const saveVideoFeed = (params: FeedItem, newItem?: boolean) => {
-if (newItem) return instance.put('Disco/Feed/Adm/Add', params);
-else return instance.put('Disco/Feed/Update', params);
+  if (newItem) return instance.put('Disco/Feed/Adm/Add', params);
+  else return instance.put('Disco/Feed/Update', params);
 };
 
 export const addFeaturedFeed = (feedId: string, listName: string) =>

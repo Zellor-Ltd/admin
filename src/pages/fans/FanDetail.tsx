@@ -126,7 +126,7 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
   };
 
   const creatorColumns = [
-    { 
+    {
       title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
@@ -139,7 +139,9 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
             <Tooltip title="UserName">UserName</Tooltip>
           </div>
         </div>
-      ), dataIndex: 'userName', width: '15%',
+      ),
+      dataIndex: 'userName',
+      width: '15%',
     },
     {
       title: (
@@ -194,7 +196,7 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
   };
 
   const categoryColumns = [
-    { 
+    {
       title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
@@ -207,10 +209,11 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
             <Tooltip title="Name">Name</Tooltip>
           </div>
         </div>
-      ), dataIndex: 'name', width: '15%',
+      ),
+      dataIndex: 'name',
+      width: '15%',
     },
     {
-      
       title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div

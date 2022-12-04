@@ -43,7 +43,7 @@ const CommissionDetail: React.FC<CommissionDetailProps> = ({
 
   const columns: ColumnType<Product>[] = [
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -62,7 +62,7 @@ const CommissionDetail: React.FC<CommissionDetailProps> = ({
       align: 'center',
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -90,7 +90,7 @@ const CommissionDetail: React.FC<CommissionDetailProps> = ({
       },
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -115,7 +115,7 @@ const CommissionDetail: React.FC<CommissionDetailProps> = ({
       render: (value: number) => `€${value}`,
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -144,7 +144,7 @@ const CommissionDetail: React.FC<CommissionDetailProps> = ({
         }%`,
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -169,7 +169,7 @@ const CommissionDetail: React.FC<CommissionDetailProps> = ({
       render: (value: number) => `€${value}`,
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -194,7 +194,7 @@ const CommissionDetail: React.FC<CommissionDetailProps> = ({
       render: (value: number) => `${value}%`,
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{

@@ -210,7 +210,9 @@ const Dashboard: React.FC<DashboardProps> = () => {
               whiteSpace: 'nowrap',
             }}
           >
-            <Tooltip title="Creator Commission Paid">Creator Commission Paid</Tooltip>
+            <Tooltip title="Creator Commission Paid">
+              Creator Commission Paid
+            </Tooltip>
           </div>
         </div>
       ),

@@ -11,7 +11,8 @@ const Interfaces: React.FC<RouteComponentProps> = ({ history }) => {
   const [interfaces, setInterfaces] = useState<Function[]>([]);
   const [loading, setLoading] = useState(false);
   const columns: ColumnsType<Function> = [
-    {       title: (
+    {
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -23,9 +24,12 @@ const Interfaces: React.FC<RouteComponentProps> = ({ history }) => {
             <Tooltip title="Name">Name</Tooltip>
           </div>
         </div>
-      ), dataIndex: 'name', width: '15%',
-     },
-    {       title: (
+      ),
+      dataIndex: 'name',
+      width: '15%',
+    },
+    {
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -37,10 +41,12 @@ const Interfaces: React.FC<RouteComponentProps> = ({ history }) => {
             <Tooltip title="HTTP Endpoint">HTTP Endpoint</Tooltip>
           </div>
         </div>
-      ), dataIndex: 'httpEndpoint', width: '15%',
-     },
+      ),
+      dataIndex: 'httpEndpoint',
+      width: '15%',
+    },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
