@@ -120,7 +120,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
     label: 'subSubCategory',
     value: 'id',
   };
-  const [activeKey, setActiveKey] = useState<string>('-1');
+  const [activeKey, setActiveKey] = useState<string>('1');
 
   const [offset, setOffset] = useState<number>(64);
   const [panelStyle, setPanelStyle] = useState<React.CSSProperties>({
@@ -693,7 +693,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
       scrollToCenter(lastViewedIndex);
     }
 
-    setIsDetails(details)
+    setIsDetails(details);
   }, [details]);
 
   const viewProduct = (index: number, record?: Product) => {
@@ -928,7 +928,11 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
   };
 
   return (
-    <div style={details ? { height: '100%' } : { overflow: 'clip', height: '100%' }}>
+    <div
+      style={
+        details ? { height: '100%' } : { overflow: 'clip', height: '100%' }
+      }
+    >
       {!details && (
         <>
           <PageHeader
