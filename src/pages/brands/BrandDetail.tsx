@@ -258,11 +258,8 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
       ),
       dataIndex: 'shopName',
       width: '15%',
-      align: 'center',render: (value: string) => (
-      <Tooltip title={value}>
-          {value}
-        </Tooltip>
-      ),
+      align: 'center',
+      render: (value: string) => <Tooltip title={value}>{value}</Tooltip>,
     },
     {
       title: (

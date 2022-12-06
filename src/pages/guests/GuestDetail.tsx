@@ -28,7 +28,7 @@ const GuestDetail: React.FC<GuestDetailProps> = ({ fan, onSave, onCancel }) => {
   const { doRequest } = useRequest({ setLoading });
 
   const creatorColumns = [
-    { 
+    {
       title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
@@ -41,7 +41,9 @@ const GuestDetail: React.FC<GuestDetailProps> = ({ fan, onSave, onCancel }) => {
             <Tooltip title="UserName">UserName</Tooltip>
           </div>
         </div>
-      ), dataIndex: 'userName', width: '15%',
+      ),
+      dataIndex: 'userName',
+      width: '15%',
     },
     {
       title: (
@@ -67,7 +69,8 @@ const GuestDetail: React.FC<GuestDetailProps> = ({ fan, onSave, onCancel }) => {
     },
   ];
 
-  const categoryColumns = [{ 
+  const categoryColumns = [
+    {
       title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
@@ -80,8 +83,11 @@ const GuestDetail: React.FC<GuestDetailProps> = ({ fan, onSave, onCancel }) => {
             <Tooltip title="Name">Name</Tooltip>
           </div>
         </div>
-      ), dataIndex: 'name', width: '100%',
-   }];
+      ),
+      dataIndex: 'name',
+      width: '100%',
+    },
+  ];
 
   const formatUserData = (formUser: any) => {
     const formattedUser = { ...formUser };

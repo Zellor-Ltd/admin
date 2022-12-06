@@ -74,7 +74,7 @@ const WalletDetail: React.FC<WalletDetailProps> = ({
 
   const columns: ColumnsType<WalletTransaction> = [
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -103,7 +103,7 @@ const WalletDetail: React.FC<WalletDetailProps> = ({
         )}`,
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -120,7 +120,7 @@ const WalletDetail: React.FC<WalletDetailProps> = ({
       width: '12%',
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -138,7 +138,7 @@ const WalletDetail: React.FC<WalletDetailProps> = ({
       align: 'center',
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{

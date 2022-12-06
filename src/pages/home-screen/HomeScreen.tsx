@@ -42,7 +42,11 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
       );
     }
 
+<<<<<<< HEAD
     setisScrollable(details);
+=======
+    setIsDetails(details);
+>>>>>>> master
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [details]);
 

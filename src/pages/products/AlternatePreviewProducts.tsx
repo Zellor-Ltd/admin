@@ -243,7 +243,7 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
       render: id => <CopyValueToClipboard value={id} />,
     },
     {
-     title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -271,7 +271,7 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
       ),
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -311,7 +311,7 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
       ),
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -351,7 +351,7 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
       ),
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -394,7 +394,7 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
       },
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -428,7 +428,7 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
       ),
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -498,7 +498,7 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
       ),
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -531,7 +531,7 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
       ),
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -564,7 +564,7 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
       ),
     },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -631,7 +631,7 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
         });
       }}
     >
-      <div className='alternate table-container'>
+      <div className="alternate table-container">
         <InfiniteScroll
           dataLength={_products.length}
           next={onNextPage}

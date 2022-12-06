@@ -29,7 +29,7 @@ const FanActivities: React.FC<DashboardProps> = () => {
 
   const fanActs: ColumnsType<PreReg> = [
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -47,7 +47,8 @@ const FanActivities: React.FC<DashboardProps> = () => {
       render: (id: any) => <CopyValueToClipboard value={id} />,
       align: 'center',
     },
-    {       title: (
+    {
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -59,9 +60,12 @@ const FanActivities: React.FC<DashboardProps> = () => {
             <Tooltip title="User">User</Tooltip>
           </div>
         </div>
-      ), dataIndex: 'user', width: '30%',
-     },
-    {       title: (
+      ),
+      dataIndex: 'user',
+      width: '30%',
+    },
+    {
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -73,9 +77,12 @@ const FanActivities: React.FC<DashboardProps> = () => {
             <Tooltip title="Total DD">Total DD</Tooltip>
           </div>
         </div>
-      ), dataIndex: 'totalDiscoDollars', width: '10%',
-     },
-    {       title: (
+      ),
+      dataIndex: 'totalDiscoDollars',
+      width: '10%',
+    },
+    {
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -87,9 +94,12 @@ const FanActivities: React.FC<DashboardProps> = () => {
             <Tooltip title="Wishlist Items">Wishlist Items</Tooltip>
           </div>
         </div>
-      ), dataIndex: 'wishListItems', width: '10%' },
+      ),
+      dataIndex: 'wishListItems',
+      width: '10%',
+    },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -98,14 +108,17 @@ const FanActivities: React.FC<DashboardProps> = () => {
               whiteSpace: 'nowrap',
             }}
           >
-            <Tooltip title="Logins in the last 10 days">Logins in the last 10 days</Tooltip>
+            <Tooltip title="Logins in the last 10 days">
+              Logins in the last 10 days
+            </Tooltip>
           </div>
         </div>
       ),
       dataIndex: 'last10dayslogins',
-      width: '15%'
+      width: '15%',
     },
-    {       title: (
+    {
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -117,8 +130,12 @@ const FanActivities: React.FC<DashboardProps> = () => {
             <Tooltip title="Total Ordered">Total Ordered</Tooltip>
           </div>
         </div>
-      ), dataIndex: 'totalOrdered', width: '10%' },
-    {       title: (
+      ),
+      dataIndex: 'totalOrdered',
+      width: '10%',
+    },
+    {
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -130,9 +147,12 @@ const FanActivities: React.FC<DashboardProps> = () => {
             <Tooltip title="Items Ordered">Items Ordered</Tooltip>
           </div>
         </div>
-      ), dataIndex: 'itemsOrdered', width: '10%' },
+      ),
+      dataIndex: 'itemsOrdered',
+      width: '10%',
+    },
     {
-            title: (
+      title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
           <div
             style={{
@@ -141,12 +161,14 @@ const FanActivities: React.FC<DashboardProps> = () => {
               whiteSpace: 'nowrap',
             }}
           >
-            <Tooltip title="Videos watched this month">Videos watched this month</Tooltip>
+            <Tooltip title="Videos watched this month">
+              Videos watched this month
+            </Tooltip>
           </div>
         </div>
       ),
       dataIndex: 'feedsWatchedThisMonth',
-      width: '10%'
+      width: '10%',
     },
   ];
 

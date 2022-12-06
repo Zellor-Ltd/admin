@@ -100,7 +100,11 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   useEffect(() => {
+<<<<<<< HEAD
     setisScrollable(details);
+=======
+    setIsDetails(details);
+>>>>>>> master
 
     if (!details) {
       scrollIntoView(
@@ -471,7 +475,14 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
           >
             {categoriesKeys.map(key => (
               <Tabs.TabPane tab={key} key={key}>
+<<<<<<< HEAD
                 <div className="categories empty custom-table">
+=======
+                <div
+                  className="table-container"
+                  style={{ position: 'fixed', top: '222px' }}
+                >
+>>>>>>> master
                   <InfiniteScroll
                     dataLength={categories.length}
                     next={updateDisplayedArray}
