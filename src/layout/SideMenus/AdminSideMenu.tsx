@@ -225,15 +225,9 @@ const AdminSideMenu = ({ isMobile }) => {
         <Menu.Item
           key="direct-links"
           icon={<LinkOutlined />}
-<<<<<<< HEAD
           onClick={() => refreshParent('direct-links')}
         >
           <Link to="/direct-links">Direct Links</Link>
-=======
-          onClick={() => refreshParent('marketing_direct-links')}
-        >
-          <Link to="/marketing_direct-links">Direct Links</Link>
->>>>>>> master
         </Menu.Item>
       </SubMenu>
       <SubMenu key="users" icon={<TeamOutlined />} title="Users">

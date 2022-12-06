@@ -20,7 +20,6 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
   const [style, setStyle] = useState<any>({
     padding: '24 0',
     minHeight: 280,
-<<<<<<< HEAD
     overflow: 'scroll',
   });
 
@@ -37,16 +36,6 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
       setStyle({ padding: '24 0', minHeight: 280, overflow: 'scroll' });
     else setStyle({ padding: '24 0', minHeight: 280, overflow: 'clip' });
   }, [isScrollable]);
-=======
-    overflow: 'clip',
-  });
-
-  useEffect(() => {
-    if (isDetails)
-      setStyle({ padding: '24 0', minHeight: 280, overflow: 'scroll' });
-    else setStyle({ padding: '24 0', minHeight: 280, overflow: 'clip' });
-  }, [isDetails]);
->>>>>>> master
 
   const appName = useBuildTarget({
     ADMIN: 'Disco Admin',
