@@ -16,7 +16,7 @@ const { Header, Sider, Content } = Layout;
 const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
   const { isMobile, isScrollable, setisScrollable } = useContext(AppContext);
   const { children, history, location } = props;
-  const scrollablePages = ['dashboard', 'access-control', 'settings'];
+  const scrollable = ['dashboard', 'access-control', 'settings'];
   const [style, setStyle] = useState<any>({
     padding: '24 0',
     minHeight: 280,
@@ -24,10 +24,8 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
   });
 
   useEffect(() => {
-    scrollablePages.forEach(item => {
-      if (location.pathname.slice(1) === item) setisScrollable(true);
-      else setisScrollable(false);
-    });
+    if (scrollable.includes(location.pathname.slice(1))) setisScrollable(true);
+    else setisScrollable(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location]);
 
