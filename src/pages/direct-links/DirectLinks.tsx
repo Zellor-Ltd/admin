@@ -43,7 +43,7 @@ import CopyToClipboard from 'react-copy-to-clipboard';
 const { Panel } = Collapse;
 
 const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
-  const { isMobile, setIsDetails } = useContext(AppContext);
+  const { isMobile, setisScrollable } = useContext(AppContext);
   const descriptionRef = useRef<any>(null);
   const urlRef = useRef<any>(null);
   const [activeKey, setActiveKey] = useState<string>('1');
@@ -527,7 +527,7 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   useEffect(() => {
-    setIsDetails(details);
+    setisScrollable(details);
     if (!details) scrollToCenter(lastFocusedIndex.current);
   }, [details]);
 
@@ -737,7 +737,13 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
                 >
                   <Panel
                     header={
-                      <Typography.Title level={5}>Filter</Typography.Title>
+                      activeKey === '1' ? (
+                        <Typography.Title level={5}>
+                          Click to Collapse
+                        </Typography.Title>
+                      ) : (
+                        <Typography.Title level={5}>Filter</Typography.Title>
+                      )
                     }
                     key="1"
                     extra={

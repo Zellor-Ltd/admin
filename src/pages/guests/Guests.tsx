@@ -40,7 +40,7 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [details, setDetails] = useState<boolean>(false);
-  const prevPageIsDetails = useRef<boolean>(false);
+  const prevPageisScrollable = useRef<boolean>(false);
   const [currentGuest, setCurrentGuest] = useState<Fan>();
   const { doFetch } = useRequest({ setLoading });
   const [eof, setEof] = useState<boolean>(false);
@@ -54,7 +54,7 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
   const scrolling = useRef(false);
   const [guests, setGuests] = useState<Fan[]>([]);
   const [buffer, setBuffer] = useState<Fan[]>([]);
-  const { isMobile, setIsDetails } = useContext(AppContext);
+  const { isMobile, setisScrollable } = useContext(AppContext);
 
   const fanOptionMapping: SelectOption = {
     key: 'id',
@@ -74,10 +74,10 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
       return;
     }
 
-    prevPageIsDetails.current = false;
+    prevPageisScrollable.current = false;
 
     if (!details) {
-      prevPageIsDetails.current = true;
+      prevPageisScrollable.current = true;
 
       if (guests.length) {
         setUserInput(persistentUserInput);
@@ -92,7 +92,7 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
       }
     }
 
-    setIsDetails(details);
+    setisScrollable(details);
   }, [details]);
 
   useEffect(() => {
@@ -320,7 +320,7 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   const loadGuests = () => {
-    if (prevPageIsDetails.current) return;
+    if (prevPageisScrollable.current) return;
     updatingTable.current = true;
     setEof(false);
     setFetchingGuests(true);
@@ -388,7 +388,7 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
       }
     >
       {!details && (
-        <div>
+        <>
           <PageHeader
             title="Guests"
             subTitle={isMobile ? '' : 'List of Guests'}
@@ -439,30 +439,30 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
               </Row>
             </Col>
           </Row>
-          <InfiniteScroll
-            dataLength={guests.length}
-            next={loadGuests}
-            hasMore={!eof}
-            loader={
-              guestsPage !== 0 &&
-              fetchingGuests && (
-                <div className="scroll-message">
-                  <Spin />
-                </div>
-              )
-            }
-            endMessage={
-              loaded && (
-                <div className="scroll-message">
-                  <b>End of results.</b>
-                </div>
-              )
-            }
-          >
-            <div>
+          <div className="guests custom-table">
+            <InfiniteScroll
+              dataLength={guests.length}
+              next={loadGuests}
+              hasMore={!eof}
+              loader={
+                guestsPage !== 0 &&
+                fetchingGuests && (
+                  <div className="scroll-message">
+                    <Spin />
+                  </div>
+                )
+              }
+              endMessage={
+                loaded && (
+                  <div className="scroll-message">
+                    <b>End of results.</b>
+                  </div>
+                )
+              }
+            >
               <Table
                 className="mt-1"
-                scroll={{ x: true, y: 300 }}
+                scroll={{ x: true, y: '27em' }}
                 rowClassName={(_, index) => `scrollable-row-${index}`}
                 rowKey="id"
                 columns={columns}
@@ -474,9 +474,9 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
                   onChange: setSelectedRowKeys,
                 }}
               />
-            </div>
-          </InfiniteScroll>
-        </div>
+            </InfiniteScroll>
+          </div>
+        </>
       )}
       {details && (
         <GuestDetail

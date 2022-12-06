@@ -65,7 +65,7 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
     'Sub Sub Category': [],
   });
   const [categories, setCategories] = useState<any>([]);
-  const { isMobile, setIsDetails } = useContext(AppContext);
+  const { isMobile, setisScrollable } = useContext(AppContext);
 
   useEffect(() => {
     fetchAllCategories();
@@ -100,7 +100,7 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   useEffect(() => {
-    setIsDetails(details);
+    setisScrollable(details);
 
     if (!details) {
       scrollIntoView(
@@ -429,7 +429,7 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
       }
     >
       {!details && (
-        <div className="categories">
+        <>
           <PageHeader
             title="Categories"
             subTitle={isMobile ? '' : 'List of Categories'}
@@ -471,10 +471,7 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
           >
             {categoriesKeys.map(key => (
               <Tabs.TabPane tab={key} key={key}>
-                <div
-                  className="table-container"
-                  style={{ position: 'fixed', top: '222px' }}
-                >
+                <div className="categories empty custom-table">
                   <InfiniteScroll
                     dataLength={categories.length}
                     next={updateDisplayedArray}
@@ -493,7 +490,7 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
                     }
                   >
                     <Table
-                      scroll={{ x: true, y: 300 }}
+                      scroll={{ x: true, y: '27em' }}
                       rowClassName={(_, index) => `scrollable-row-${index}`}
                       rowKey="id"
                       columns={columns}
@@ -506,7 +503,7 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
               </Tabs.TabPane>
             ))}
           </Tabs>
-        </div>
+        </>
       )}
       {details && (
         <CategoryDetail

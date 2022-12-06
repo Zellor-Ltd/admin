@@ -73,7 +73,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     label: 'user',
     value: 'user',
   };
-  const { isMobile, setIsDetails } = useContext(AppContext);
+  const { isMobile, setisScrollable } = useContext(AppContext);
 
   useMount(async () => {
     const response: any = await fetchSettings();
@@ -210,7 +210,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       scrollToCenter(lastViewedIndex);
     }
 
-    setIsDetails(details);
+    setisScrollable(details);
   }, [details]);
 
   const editFan = (index: number, fan?: Fan) => {
@@ -1013,7 +1013,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       }
     >
       {!details && (
-        <div className="orders">
+        <>
           <PageHeader
             title="Orders"
             subTitle={isMobile ? '' : 'List of Orders'}
@@ -1083,30 +1083,30 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
               </Row>
             </Col>
           </Row>
-          <InfiniteScroll
-            dataLength={data.length}
-            next={loadNext}
-            hasMore={page > 0 && !eof}
-            loader={
-              page !== 0 &&
-              loading && (
-                <div className="scroll-message">
-                  <Spin />
-                </div>
-              )
-            }
-            endMessage={
-              page !== 0 && (
-                <div className="scroll-message">
-                  <b>End of results.</b>
-                </div>
-              )
-            }
-          >
-            <div>
+          <div className="custom-table">
+            <InfiniteScroll
+              dataLength={data.length}
+              next={loadNext}
+              hasMore={page > 0 && !eof}
+              loader={
+                page !== 0 &&
+                loading && (
+                  <div className="scroll-message">
+                    <Spin />
+                  </div>
+                )
+              }
+              endMessage={
+                page !== 0 && (
+                  <div className="scroll-message">
+                    <b>End of results.</b>
+                  </div>
+                )
+              }
+            >
               <Table
                 className="mt-05"
-                scroll={{ x: true, y: 300 }}
+                scroll={{ x: true, y: '27em' }}
                 rowClassName={(_, index) => `scrollable-row-${index}`}
                 rowKey="id"
                 columns={columns}
@@ -1167,9 +1167,9 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
                   rowExpandable: record => record.cart || record.product,
                 }}
               />
-            </div>
-          </InfiniteScroll>
-        </div>
+            </InfiniteScroll>
+          </div>
+        </>
       )}
       {details && (
         <FanDetail fan={currentFan} onSave={onSaveFan} onCancel={onCancelFan} />

@@ -210,10 +210,10 @@ const Endpoints: React.FC<RouteComponentProps> = ({ history, location }) => {
           />
         </Col>
       </Row>
-      <div>
+      <div className="custom-table">
         <Table
           className="mt-1"
-          scroll={{ x: true, y: 300 }}
+          scroll={{ x: true, y: '27em' }}
           rowKey="id"
           columns={columns}
           dataSource={data}

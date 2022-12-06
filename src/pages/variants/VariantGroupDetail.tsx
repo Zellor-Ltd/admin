@@ -56,6 +56,7 @@ interface VariantGroupDetailProps {
   categories: any[];
   subCategories: any[];
   subSubCategories: any[];
+  setDetailsActiveKey: any;
 }
 
 const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
@@ -69,6 +70,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
   categories,
   subCategories,
   subSubCategories,
+  setDetailsActiveKey,
 }) => {
   const [showMore, setShowMore] = useState<boolean>(false);
   const [variants, setVariants] = useState<Product[]>([]);
@@ -132,7 +134,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
     label: 'subSubCategory',
     value: 'id',
   };
-  const [activeKey, setActiveKey] = useState<string>('-1');
+  const [activeKey, setActiveKey] = useState<string>('1');
 
   const [offset, setOffset] = useState<number>(64);
   const [panelStyle, setPanelStyle] = useState<React.CSSProperties>({
@@ -141,6 +143,10 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
   });
   const filterPanelHeight = useRef<number>();
   const windowHeight = window.innerHeight;
+
+  useEffect(() => {
+    setDetailsActiveKey(activeKey);
+  }, [activeKey]);
 
   useEffect(() => {
     const panel = document.getElementById('filterPanel');
@@ -656,7 +662,13 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
                 >
                   <Panel
                     header={
-                      <Typography.Title level={5}>Filters</Typography.Title>
+                      activeKey === '1' ? (
+                        <Typography.Title level={5}>
+                          Click to Collapse
+                        </Typography.Title>
+                      ) : (
+                        <Typography.Title level={5}>Filter</Typography.Title>
+                      )
                     }
                     key="1"
                   >

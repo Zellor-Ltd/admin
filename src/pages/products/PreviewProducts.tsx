@@ -112,7 +112,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
     value: 'id',
   };
 
-  const { isMobile, setIsDetails } = useContext(AppContext);
+  const { isMobile, setisScrollable } = useContext(AppContext);
 
   const productSuperCategoryOptionMapping: SelectOption = {
     key: 'id',
@@ -221,7 +221,6 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
       fetchAllCategories(),
     ]).then(() => {
       setLoadingResources(false);
-      loaded.current = true;
     });
   });
 
@@ -281,6 +280,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
     const { results } = await doFetch(() =>
       _fetchStagingProducts(resetResults)
     );
+    loaded.current = true;
     if (resetResults) setProducts(results);
     else setProducts(prev => [...prev.concat(results)]);
   };
@@ -798,7 +798,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
       scrollToCenter(lastViewedIndex);
     }
 
-    setIsDetails(details);
+    setisScrollable(details);
   }, [details]);
 
   const onSaveProduct = (product: Product) => {
@@ -852,63 +852,61 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
       case 'default':
         if (!details) {
           return (
-            <>
-              <div>
-                <InfiniteScroll
-                  dataLength={products.length}
-                  next={getProducts}
-                  hasMore={!eof}
-                  loader={
-                    page !== 0 &&
-                    loading && (
-                      <div className="scroll-message">
-                        <Spin />
-                      </div>
-                    )
+            <div className="preview empty custom-table">
+              <InfiniteScroll
+                dataLength={products.length}
+                next={getProducts}
+                hasMore={!eof}
+                loader={
+                  page !== 0 &&
+                  loading && (
+                    <div className="scroll-message">
+                      <Spin />
+                    </div>
+                  )
+                }
+                endMessage={
+                  loaded.current && (
+                    <div className="scroll-message">
+                      <b>End of results.</b>
+                    </div>
+                  )
+                }
+              >
+                <EditableTable
+                  scroll={{ x: true, y: '27em' }}
+                  className="mt-4 alternate-table"
+                  rowClassName={(_, index) =>
+                    `scrollable-row-${index} ${
+                      index === lastViewedIndex ? 'selected-row' : ''
+                    }`
                   }
-                  endMessage={
-                    loaded.current && (
-                      <div className="scroll-message">
-                        <b>End of results.</b>
-                      </div>
-                    )
-                  }
-                >
-                  <EditableTable
-                    scroll={{ x: true, y: 300 }}
-                    className="mt-4 alternate-table"
-                    rowClassName={(_, index) =>
-                      `scrollable-row-${index} ${
-                        index === lastViewedIndex ? 'selected-row' : ''
-                      }`
-                    }
-                    rowKey="id"
-                    columns={columns}
-                    dataSource={products}
-                    loading={(loading || disabled) && page === 0}
-                    onSave={onSaveItem}
-                    pagination={false}
-                    rowSelection={{
-                      selectedRowKeys,
-                      onChange: onSelectChange,
-                    }}
-                    expandable={{
-                      expandedRowRender: (record: Product) => (
-                        <ProductExpandedRow
-                          key={record.id}
-                          record={record}
-                          allCategories={allCategories}
-                          onSaveProduct={onSaveCategories}
-                          loading={loadingCategories}
-                          isStaging
-                          productBrands={productBrands}
-                        ></ProductExpandedRow>
-                      ),
-                    }}
-                  />
-                </InfiniteScroll>
-              </div>
-            </>
+                  rowKey="id"
+                  columns={columns}
+                  dataSource={products}
+                  loading={(loading || disabled) && page === 0}
+                  onSave={onSaveItem}
+                  pagination={false}
+                  rowSelection={{
+                    selectedRowKeys,
+                    onChange: onSelectChange,
+                  }}
+                  expandable={{
+                    expandedRowRender: (record: Product) => (
+                      <ProductExpandedRow
+                        key={record.id}
+                        record={record}
+                        allCategories={allCategories}
+                        onSaveProduct={onSaveCategories}
+                        loading={loadingCategories}
+                        isStaging
+                        productBrands={productBrands}
+                      ></ProductExpandedRow>
+                    ),
+                  }}
+                />
+              </InfiniteScroll>
+            </div>
           );
         } else {
           return (
@@ -1198,7 +1196,11 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
   return (
     <div
       style={
-        details ? { height: '100%' } : { overflow: 'clip', height: '100%' }
+        details
+          ? { height: '100%' }
+          : activeKey === '1'
+          ? { overflow: 'scroll', height: '100%' }
+          : { overflow: 'clip', height: '100%' }
       }
     >
       {!details && (
@@ -1272,7 +1274,13 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                 >
                   <Panel
                     header={
-                      <Typography.Title level={5}>Filter</Typography.Title>
+                      activeKey === '1' ? (
+                        <Typography.Title level={5}>
+                          Click to Collapse
+                        </Typography.Title>
+                      ) : (
+                        <Typography.Title level={5}>Filter</Typography.Title>
+                      )
                     }
                     key="1"
                   >

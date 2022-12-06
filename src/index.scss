@@ -10,97 +10,18 @@ body {
   padding: 5px;
   width: 50px;
   top: 64px;
-
-  @media screen and (max-height: 449px) {
-    height: 75vh;
-  }
-
-  @media screen and (min-height: 450px) and (max-height: 549px) {
-    height: 81vh;
-  }
-
-  @media screen and (min-height: 550px) and (max-height: 649px) {
-    height: 83vh;
-  }
-
-  @media screen and (min-height: 650px) and (max-height: 749px) {
-    height: 85vh;
-  }
-
-  @media screen and (min-height: 750px) and (max-height: 849px) {
-    height: 87vh;
-  }
-
-  @media screen and (min-height: 850px) and (max-height: 949px) {
-    height: 88vh;
-  }
-
-  @media screen and (min-height: 950px) and (max-height: 1049px) {
-    height: 89vh;
-  }
-
-  @media screen and (min-height: 1050px) and (max-height: 1149px) {
-    height: 90vh;
-  }
-
-  @media screen and (min-height: 1150px) and (max-height: 1249px) {
-    height: 91vh;
-  }
-
-  @media screen and (min-height: 1250px) and (max-height: 1449px) {
-    height: 92vh;
-  }
-
-  @media screen and (min-height: 1450px) and (max-height: 1649px) {
-    height: 93vh;
-  }
-
-  @media screen and (min-height: 1650px) {
-    height: 94vh;
-  }
+  height: calc(100vh - 105px) !important;
 }
 
 .ant-layout-sider-children {
-  @media screen and (max-height: 449px) {
-    height: 85vh;
-  }
-
-  @media screen and (min-height: 450px) and (max-height: 549px) {
-    height: 89vh;
-  }
-
-  @media screen and (min-height: 550px) and (max-height: 649px) {
-    height: 91vh;
-  }
-
-  @media screen and (min-height: 650px) and (max-height: 749px) {
-    height: 92vh;
-  }
-
-  @media screen and (min-height: 750px) and (max-height: 849px) {
-    height: 93vh;
-  }
-
-  @media screen and (min-height: 850px) and (max-height: 949px) {
-    height: 94vh;
-  }
-
-  @media screen and (min-height: 950px) and (max-height: 1049px) {
-    height: 95vh;
-  }
-
-  @media screen and (min-height: 1050px) {
-    height: 96vh;
-  }
+  height: calc(100vh - 56px) !important;
 }
 
 .w-100,
-.w-100 .ant-page-header-heading-extra {
-  width: 100%;
-}
-
+.w-100 .ant-page-header-heading-extra,
 .ant-input-number,
-.ant-picker {
+.ant-picker,
+.empty .ant-table-body {
   width: 100%;
 }
 
@@ -224,91 +145,80 @@ body {
   overflow: scroll;
 }
 
-.table-container .ant-table-header,
-.table-container .alternate thead {
-  position: sticky;
-  top: 0;
-  z-index: 2;
-}
-
-.table-container .infinite-scroll-component__outerdiv,
-.table-container .infinite-scroll-component,
-.table-container .ant-table-wrapper,
-.table-container .ant-spin-nested-loading,
-.table-container .ant-spin-container,
-.table-container .ant-table,
-.table-container .ant-table-container,
-.variant .ant-table-content,
-.variant table,
-.variant colgroup {
-  height: 100% !important;
-}
-
-.table-container .ant-table-body {
-  overflow: scroll !important;
-  height: 100% !important;
-}
-
-.variant .ant-table-tbody {
-  position: fixed;
-  overflow: scroll;
-  inset: 470px 2.5rem 2.5rem 100px;
-}
-
 .details-checkout {
   position: absolute !important;
   bottom: 2rem !important;
   right: 2rem !important;
 }
 
-.payment-history {
-  position: fixed !important;
-  overflow: clip !important;
-  inset: 270px 2.5rem 3.75rem 250px !important;
-}
-
-.payment-history .infinite-scroll-component__outerdiv,
-.payment-history .infinite-scroll-component,
-.payment-history .ant-table-wrapper,
-.payment-history .ant-spin-nested-loading,
-.payment-history .ant-spin-container,
-.payment-history .ant-table,
-.payment-history .ant-table-container {
-  height: 100% !important;
-}
-
-.payment-history .ant-table-body {
-  overflow: scroll !important;
-  height: 100% !important;
-}
-
-.custom-table {
-  overflow-x: scroll;
-  overflow-y: hidden;
-}
-
-.custom-table.links .ant-table-header {
-  overflow: initial !important;
-}
-
-.ant-table-empty,
 .custom-table,
 .custom-table table,
-.custom-table.links .ant-table-wrapper,
+.custom-table .alternate-table,
+.custom-table .ant-table,
+.custom-table .ant-table-wrapper,
 .custom-table .ant-spin-container,
 .custom-table .ant-table-container,
 .custom-table .ant-spin-nested-loading,
 .custom-table .infinite-scroll-component__outerdiv,
+.custom-table .infinite-scroll-component,
+.custom-table.empty .ant-table-empty table,
+.preview.empty.custom-table,
+.preview.empty.custom-table .infinite-scroll-component > div,
+.empty .ant-table-body,
+.ant-table-empty,
 .featured-feeds-layout,
 .links .ant-table,
 .creator-container {
   height: 100% !important;
 }
 
+.custom-table.brands .ant-table-header {
+  overflow: initial !important;
+}
+
+.promo-display .ant-table-body {
+  overflow: scroll;
+  margin-bottom: 3rem;
+}
+
+.dd-templates table {
+  margin-bottom: 11rem;
+}
+
+.product-templates table {
+  margin-bottom: 9rem;
+}
+
+.promo-display .ant-table-body,
+.custom-table .ant-table-header,
+.custom-table.empty table {
+  height: initial !important;
+}
+
+.of-clip,
+.variant .infinite-scroll-component,
+.preview.empty.custom-table .infinite-scroll-component > div {
+  overflow: clip;
+}
+
+.promo-display .ant-table-body {
+  overflow: auto scroll;
+  height: initial !important;
+}
+
 .custom-table .ant-table-body {
   position: absolute;
-  bottom: 10rem;
-  top: 0;
+  top: 55px;
+}
+
+.custom-table {
+  overflow-x: scroll;
+}
+
+.interests .ant-table-body,
+.payment-history .ant-table-body {
+  overflow: scroll !important;
+  height: 100% !important;
 }
 
 .links .ant-table-body {
@@ -338,34 +248,6 @@ body {
   height: auto !important;
   position: fixed;
   bottom: 3.75rem;
-}
-
-.featured-feeds-layout .ant-pagination {
-  position: fixed;
-  bottom: 3rem;
-  right: 3rem;
-  height: auto !important;
-}
-
-.featured-feeds-layout .ant-table-body {
-  overflow: auto scroll;
-  position: fixed;
-  top: 340px;
-  bottom: 7rem;
-  right: 3rem;
-  left: 240px;
-}
-
-.featured-feeds-layout table {
-  height: 100%;
-}
-
-.featured-feeds-layout .ant-table-expanded-row-fixed {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
 }
 
 .video-feed {
@@ -573,12 +455,6 @@ body {
     bottom: 3rem;
   }
 
-  .table-container {
-    position: fixed;
-    overflow: clip !important;
-    inset: 330px 2.5rem 2.5rem 100px;
-  }
-
   .ant-layout-sider-children {
     position: fixed;
     overflow: auto;
@@ -611,7 +487,6 @@ body {
 
   .ant-layout-header {
     white-space: nowrap;
-    overflow: hidden;
     text-overflow: ellipsis;
   }
 
@@ -664,12 +539,6 @@ body {
     left: 250px;
     right: 3rem;
     bottom: 3rem;
-  }
-
-  .table-container {
-    position: fixed;
-    overflow: clip !important;
-    inset: 330px 2.5rem 2.5rem 250px;
   }
 
   .site-layout-background {

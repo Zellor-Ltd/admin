@@ -43,7 +43,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [fetchingTags, setFetchingTags] = useState<boolean>(false);
   const [buffer, setBuffer] = useState<Tag[]>([]);
   const [loaded, setLoaded] = useState<boolean>(false);
-  const prevPageIsDetails = useRef<boolean>(false);
+  const prevPageisScrollable = useRef<boolean>(false);
   const updatingTable = useRef(false);
   const scrolling = useRef(false);
   const mounted = useRef(false);
@@ -54,7 +54,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
     value: 'id',
   };
 
-  const { isMobile, setIsDetails } = useContext(AppContext);
+  const { isMobile, setisScrollable } = useContext(AppContext);
 
   const tagOptionMapping: SelectOption = {
     key: 'id',
@@ -84,10 +84,10 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
       return;
     }
 
-    prevPageIsDetails.current = false;
+    prevPageisScrollable.current = false;
 
     if (!details) {
-      prevPageIsDetails.current = true;
+      prevPageisScrollable.current = true;
 
       if (tags.length) {
         setUserInput(persistentUserInput);
@@ -106,7 +106,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
       }
     }
 
-    setIsDetails(details);
+    setisScrollable(details);
   }, [details]);
 
   useEffect(() => {
@@ -291,7 +291,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
   };
 
   const loadTags = () => {
-    if (prevPageIsDetails.current) return;
+    if (prevPageisScrollable.current) return;
     updatingTable.current = true;
     setEof(false);
     setFetchingTags(true);
@@ -346,7 +346,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
       }
     >
       {!details && (
-        <div>
+        <>
           <PageHeader
             title={isMobile ? 'Push Tags to User Groups' : 'Tags'}
             subTitle={isMobile ? '' : 'Push Tags to user groups'}
@@ -414,7 +414,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
               </Row>
             </Col>
           </Row>
-          <div>
+          <div className="custom-table">
             <InfiniteScroll
               dataLength={tags.length}
               next={loadTags}
@@ -437,7 +437,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
             >
               <Table
                 className="mt-1"
-                scroll={{ x: true, y: 300 }}
+                scroll={{ x: true, y: '27em' }}
                 rowClassName={(_, index) => `scrollable-row-${index}`}
                 rowSelection={rowSelection}
                 rowKey="id"
@@ -448,7 +448,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
               />
             </InfiniteScroll>
           </div>
-        </div>
+        </>
       )}
       {details && <Step2 selectedTags={currentTags} onReturn={onReturnStep2} />}
     </div>

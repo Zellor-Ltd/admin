@@ -15,7 +15,6 @@ import {
   Collapse,
   Input,
   InputNumber,
-  Layout,
   message,
   PageHeader,
   Popconfirm,
@@ -61,7 +60,6 @@ import { useRequest } from 'hooks/useRequest';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useSelector } from 'react-redux';
 
-const { Content } = Layout;
 const { Panel } = Collapse;
 
 const reduceSegmentsTags = (packages: Segment[]) => {
@@ -74,7 +72,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const {
     settings: { feedList = [] },
   } = useSelector((state: any) => state.settings);
-  const { isMobile, setIsDetails } = useContext(AppContext);
+  const { isMobile, setisScrollable } = useContext(AppContext);
   const inputRef = useRef<any>(null);
   const [activeKey, setActiveKey] = useState<string>('1');
   const [selectedVideoFeed, setSelectedVideoFeed] = useState<FeedItem>();
@@ -757,7 +755,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   };
 
   useEffect(() => {
-    setIsDetails(details);
+    setisScrollable(details);
 
     if (!details) scrollToCenter(lastFocusedIndex.current);
   }, [details]);
@@ -1141,11 +1139,15 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   return (
     <div
       style={
-        details ? { height: '100%' } : { overflow: 'clip', height: '100%' }
+        details
+          ? { height: '100%' }
+          : activeKey === '1'
+          ? { overflow: 'scroll', height: '100%' }
+          : { overflow: 'clip', height: '100%' }
       }
     >
       {!details && (
-        <div className="video-feed mb-1">
+        <>
           <PageHeader
             title="Video Feeds"
             subTitle={isMobile ? '' : 'List of Feeds'}
@@ -1178,7 +1180,13 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                 >
                   <Panel
                     header={
-                      <Typography.Title level={5}>Filter</Typography.Title>
+                      activeKey === '1' ? (
+                        <Typography.Title level={5}>
+                          Click to Collapse
+                        </Typography.Title>
+                      ) : (
+                        <Typography.Title level={5}>Filter</Typography.Title>
+                      )
                     }
                     key="1"
                     extra={
@@ -1231,7 +1239,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
               </Row>
             </Col>
           </Row>
-          <Content>
+          <div className="custom-table">
             <InfiniteScroll
               dataLength={data.length}
               next={() => getFeed(undefined, false)}
@@ -1254,7 +1262,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
             >
               <Table
                 className={isMobile ? '' : 'mt-15'}
-                scroll={{ x: true, y: 300 }}
+                scroll={{ x: true, y: '27em' }}
                 rowClassName={(_, index) => `scrollable-row-${index}`}
                 size="small"
                 columns={feedItemColumns}
@@ -1264,8 +1272,8 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                 pagination={false}
               />
             </InfiniteScroll>
-          </Content>
-        </div>
+          </div>
+        </>
       )}
       {details && (
         <VideoFeedDetail

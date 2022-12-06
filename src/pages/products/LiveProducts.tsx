@@ -51,7 +51,7 @@ import { ProductCategory } from 'interfaces/Category';
 const { Panel } = Collapse;
 
 const LiveProducts: React.FC<RouteComponentProps> = () => {
-  const { isMobile, setIsDetails } = useContext(AppContext);
+  const { isMobile, setisScrollable } = useContext(AppContext);
   const inputRef = useRef<any>(null);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
@@ -693,7 +693,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
       scrollToCenter(lastViewedIndex);
     }
 
-    setIsDetails(details);
+    setisScrollable(details);
   }, [details]);
 
   const viewProduct = (index: number, record?: Product) => {
@@ -930,7 +930,11 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
   return (
     <div
       style={
-        details ? { height: '100%' } : { overflow: 'clip', height: '100%' }
+        details
+          ? { height: '100%' }
+          : activeKey === '1'
+          ? { overflow: 'scroll', height: '100%' }
+          : { overflow: 'clip', height: '100%' }
       }
     >
       {!details && (
@@ -957,7 +961,15 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                 className="mb-n1"
               >
                 <Panel
-                  header={<Typography.Title level={5}>Filter</Typography.Title>}
+                  header={
+                    activeKey === '1' ? (
+                      <Typography.Title level={5}>
+                        Click to Collapse
+                      </Typography.Title>
+                    ) : (
+                      <Typography.Title level={5}>Filter</Typography.Title>
+                    )
+                  }
                   key="1"
                 >
                   <Filters />
@@ -1009,7 +1021,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
             selectedRecord={productAPITest}
             setSelectedRecord={setProductAPITest}
           />
-          <div>
+          <div className="empty custom-table">
             <InfiniteScroll
               dataLength={products.length}
               next={getProducts}
@@ -1032,7 +1044,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
             >
               <Table
                 className="mt-1"
-                scroll={{ x: true, y: 300 }}
+                scroll={{ x: true, y: '27em' }}
                 rowClassName={(_, index) =>
                   `scrollable-row-${index} ${
                     index === lastViewedIndex ? 'selected-row' : ''

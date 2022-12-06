@@ -20,7 +20,7 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [details, setDetails] = useState<boolean>(false);
   const [currentBanner, setCurrentBanner] = useState<Banner>();
-  const { isMobile, setIsDetails } = useContext(AppContext);
+  const { isMobile, setisScrollable } = useContext(AppContext);
 
   const getBanners = async () => {
     const response = await doFetch(() => fetchBanners());
@@ -42,7 +42,7 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
       );
     }
 
-    setIsDetails(details);
+    setisScrollable(details);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [details]);
 
@@ -247,7 +247,7 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
       }
     >
       {!details && (
-        <div>
+        <>
           <PageHeader
             title="Banners"
             subTitle={isMobile ? '' : 'List of Banners'}
@@ -262,9 +262,9 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
               </Button>,
             ]}
           />
-          <div>
+          <div className="empty custom-table">
             <Table
-              scroll={{ x: true, y: 300 }}
+              scroll={{ x: true, y: '27em' }}
               rowClassName={(_, index) => `scrollable-row-${index}`}
               rowKey="id"
               columns={columns}
@@ -273,7 +273,7 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
               pagination={false}
             />
           </div>
-        </div>
+        </>
       )}
       {details && (
         <HomeScreenDetail

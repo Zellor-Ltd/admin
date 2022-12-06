@@ -176,54 +176,52 @@ const Trends: React.FC<RouteComponentProps> = props => {
 
   return (
     <div style={{ overflow: 'clip', height: '100%' }}>
-      <div>
-        <PageHeader
-          title="Trends"
-          subTitle={isMobile ? '' : 'List of Trends'}
-          className={isMobile ? 'mb-05' : ''}
-        />
-        <Row
-          gutter={8}
-          align="bottom"
-          justify="space-between"
-          className="mb-05 sticky-filter-box"
-        >
-          <Col lg={4} xs={24}>
-            <Typography.Title level={5}>Search</Typography.Title>
-            <Input
-              allowClear
-              disabled={loading}
-              placeholder="Search by Description"
-              suffix={<SearchOutlined />}
-              value={filter}
-              onChange={event => {
-                setFilter(event.target.value);
-              }}
-            />
-          </Col>
-          <Col lg={4} xs={24}>
-            <Row justify="end" className="mt-1">
-              <Col>
-                <Button type="primary" onClick={getResources} loading={loading}>
-                  Search
-                  <SearchOutlined style={{ color: 'white' }} />
-                </Button>
-              </Col>
-            </Row>
-          </Col>
-        </Row>
-        <div>
-          <Table
-            className="mt-15"
-            scroll={{ x: true, y: 300 }}
-            rowClassName={(_, index) => `scrollable-row-${index}`}
-            rowKey="id"
-            columns={columns}
-            dataSource={data}
-            loading={loading}
-            pagination={false}
+      <PageHeader
+        title="Trends"
+        subTitle={isMobile ? '' : 'List of Trends'}
+        className={isMobile ? 'mb-05' : ''}
+      />
+      <Row
+        gutter={8}
+        align="bottom"
+        justify="space-between"
+        className="mb-05 sticky-filter-box"
+      >
+        <Col lg={4} md={12} xs={24}>
+          <Typography.Title level={5}>Search</Typography.Title>
+          <Input
+            allowClear
+            disabled={loading}
+            placeholder="Search by Description"
+            suffix={<SearchOutlined />}
+            value={filter}
+            onChange={event => {
+              setFilter(event.target.value);
+            }}
           />
-        </div>
+        </Col>
+        <Col lg={4} md={12} xs={24}>
+          <Row justify="end" className="mt-1">
+            <Col>
+              <Button type="primary" onClick={getResources} loading={loading}>
+                Search
+                <SearchOutlined style={{ color: 'white' }} />
+              </Button>
+            </Col>
+          </Row>
+        </Col>
+      </Row>
+      <div className="custom-table">
+        <Table
+          className="mt-15"
+          scroll={{ x: true, y: '27em' }}
+          rowClassName={(_, index) => `scrollable-row-${index}`}
+          rowKey="id"
+          columns={columns}
+          dataSource={data}
+          loading={loading}
+          pagination={false}
+        />
       </div>
     </div>
   );

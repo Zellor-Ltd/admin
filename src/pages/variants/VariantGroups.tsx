@@ -108,7 +108,7 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
     useState<ProductCategory>();
 
   const [activeKey, setActiveKey] = useState<string>('1');
-
+  const [detailsActiveKey, setDetailsActiveKey] = useState<string>('1');
   const [offset, setOffset] = useState<number>(64);
   const [panelStyle, setPanelStyle] = useState<React.CSSProperties>({
     top: 64,
@@ -581,7 +581,9 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
   return (
     <div
       style={
-        details ? { height: '100%' } : { overflow: 'clip', height: '100%' }
+        activeKey === '1' || detailsActiveKey === '1'
+          ? { overflow: 'scroll', height: '100%' }
+          : { overflow: 'clip', height: '100%' }
       }
     >
       {!details && (
@@ -610,7 +612,13 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
                   >
                     <Panel
                       header={
-                        <Typography.Title level={5}>Filters</Typography.Title>
+                        activeKey === '1' ? (
+                          <Typography.Title level={5}>
+                            Click to Collapse
+                          </Typography.Title>
+                        ) : (
+                          <Typography.Title level={5}>Filter</Typography.Title>
+                        )
                       }
                       key="1"
                     >
@@ -648,36 +656,38 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
               </Row>
             </Col>
           </Row>
-          <InfiniteScroll
-            dataLength={products.length}
-            next={getProducts}
-            hasMore={!eof}
-            loader={
-              page !== 0 &&
-              loading && (
-                <div className="scroll-message">
-                  <Spin />
-                </div>
-              )
-            }
-            endMessage={
-              page !== 0 && (
-                <div className="scroll-message">
-                  <b>End of results.</b>
-                </div>
-              )
-            }
-          >
-            <Table
-              scroll={{ x: true, y: 300 }}
-              rowClassName={(_, index) => `scrollable-row-${index}`}
-              rowKey="id"
-              columns={columns}
-              dataSource={products}
-              loading={loading && page === 0}
-              pagination={false}
-            />
-          </InfiniteScroll>
+          <div className="variant empty custom-table">
+            <InfiniteScroll
+              dataLength={products.length}
+              next={getProducts}
+              hasMore={!eof}
+              loader={
+                page !== 0 &&
+                loading && (
+                  <div className="scroll-message">
+                    <Spin />
+                  </div>
+                )
+              }
+              endMessage={
+                page !== 0 && (
+                  <div className="scroll-message">
+                    <b>End of results.</b>
+                  </div>
+                )
+              }
+            >
+              <Table
+                scroll={{ x: true, y: '27em' }}
+                rowClassName={(_, index) => `scrollable-row-${index}`}
+                rowKey="id"
+                columns={columns}
+                dataSource={products}
+                loading={loading && page === 0}
+                pagination={false}
+              />
+            </InfiniteScroll>
+          </div>
         </>
       )}
       {details && (
@@ -692,6 +702,7 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
           categories={categories}
           subCategories={subCategories}
           subSubCategories={subSubCategories}
+          setDetailsActiveKey={setDetailsActiveKey}
         />
       )}
     </div>

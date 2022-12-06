@@ -30,7 +30,7 @@ import { useMount } from 'react-use';
 import ProductDetail from 'pages/products/ProductDetail';
 
 const ProductTemplates: React.FC<RouteComponentProps> = () => {
-  const { isMobile, setIsDetails } = useContext(AppContext);
+  const { isMobile, setisScrollable } = useContext(AppContext);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -531,7 +531,7 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
       scrollToCenter(lastViewedIndex);
     }
 
-    setIsDetails(details);
+    setisScrollable(details);
   }, [details]);
 
   const viewProductTemplate = (index: number, record?: Product) => {
@@ -629,9 +629,9 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
             selectedRecord={productAPITest}
             setSelectedRecord={setProductAPITest}
           />
-          <div>
+          <div className="product-templates empty custom-table">
             <Table
-              scroll={{ x: true, y: 300 }}
+              scroll={{ x: true, y: '27em' }}
               className="mt-1"
               rowClassName={(_, index) =>
                 `scrollable-row-${index} ${

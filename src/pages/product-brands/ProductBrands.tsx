@@ -51,7 +51,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
   const [data, setData] = useState<ProductBrand[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [filter, setFilter] = useState<string>('');
-  const { isMobile, setIsDetails } = useContext(AppContext);
+  const { isMobile, setisScrollable } = useContext(AppContext);
   const { fetchAllCategories, allCategories } = useAllCategories({});
   const [updatingVIndex, setUpdatingVIndex] = useState<Record<string, boolean>>(
     {}
@@ -90,7 +90,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
   useEffect(() => {
     if (!details) scrollToCenter(lastViewedIndex);
 
-    setIsDetails(details);
+    setisScrollable(details);
   }, [details]);
 
   const rebuildVlink = async (productBrand: ProductBrand, index: number) => {
@@ -520,7 +520,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
       }
     >
       {!details && (
-        <div>
+        <>
           <PageHeader
             title="Product Brands"
             subTitle={isMobile ? '' : 'List of Product Brands'}
@@ -549,10 +549,10 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
               />
             </Col>
           </Row>
-          <div>
+          <div className="empty custom-table">
             <Table
               className="mt-15"
-              scroll={{ x: true, y: 300 }}
+              scroll={{ x: true, y: '27em' }}
               rowClassName={(_, index) => `scrollable-row-${index}`}
               rowKey="id"
               columns={columns}
@@ -561,7 +561,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
               pagination={false}
             />
           </div>
-        </div>
+        </>
       )}
       {details && (
         <ProductBrandDetail

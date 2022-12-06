@@ -14,19 +14,26 @@ import BrandManagerSideMenu from './SideMenus/BrandManagerSideMenu';
 const { Header, Sider, Content } = Layout;
 
 const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
-  const { isMobile, isDetails } = useContext(AppContext);
-  const { children, history } = props;
+  const { isMobile, isScrollable, setisScrollable } = useContext(AppContext);
+  const { children, history, location } = props;
+  const scrollable = ['dashboard', 'access-control', 'settings'];
   const [style, setStyle] = useState<any>({
     padding: '24 0',
     minHeight: 280,
-    overflow: 'clip',
+    overflow: 'scroll',
   });
 
   useEffect(() => {
-    if (isDetails)
+    if (scrollable.includes(location.pathname.slice(1))) setisScrollable(true);
+    else setisScrollable(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location]);
+
+  useEffect(() => {
+    if (isScrollable)
       setStyle({ padding: '24 0', minHeight: 280, overflow: 'scroll' });
     else setStyle({ padding: '24 0', minHeight: 280, overflow: 'clip' });
-  }, [isDetails]);
+  }, [isScrollable]);
 
   const appName = useBuildTarget({
     ADMIN: 'Disco Admin',

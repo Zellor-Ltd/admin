@@ -380,59 +380,59 @@ const FeaturedFeed: React.FC<RouteComponentProps> = () => {
 
   return (
     <div style={{ overflow: 'clip', height: '100%' }}>
-      <div className="mb-1">
-        <PageHeader
-          title="Featured Feeds"
-          subTitle={isMobile ? '' : 'List of Featured Feeds'}
-        />
-        <Row
-          justify="space-between"
-          align="bottom"
-          className="mb-05 sticky-filter-box"
-        >
-          <Col lg={4} xs={24}>
-            <Typography.Title level={5}>List Name</Typography.Title>
+      <PageHeader
+        title="Featured Feeds"
+        subTitle={isMobile ? '' : 'List of Featured Feeds'}
+      />
+      <Row
+        justify="space-between"
+        align="bottom"
+        className="mb-05 sticky-filter-box"
+      >
+        <Col lg={4} xs={24}>
+          <Typography.Title level={5}>List Name</Typography.Title>
 
-            <Select
-              style={{ width: '100%' }}
-              onChange={value => fetch(value)}
-              placeholder="List name"
-              showSearch
-              allowClear
-              disabled={!feedList.length || loading}
-              filterOption={filterOption}
-            >
-              {feedList.map((curr: any) => (
-                <Select.Option
-                  key={curr.value}
-                  value={curr.value}
-                  label={curr.name}
-                >
-                  {curr.name}
-                </Select.Option>
-              ))}
-            </Select>
-          </Col>
-          <Col lg={4} xs={24}>
-            <Row justify="end">
-              <Col>
-                <Button
-                  key="2"
-                  type="primary"
-                  disabled={featuredFeeds === listRef || !featuredFeeds?.length}
-                  className={isMobile ? 'mt-15' : ''}
-                  onClick={handleDeploy}
-                >
-                  Deploy
-                </Button>
-              </Col>
-            </Row>
-          </Col>
-        </Row>
+          <Select
+            style={{ width: '100%' }}
+            onChange={value => fetch(value)}
+            placeholder="List name"
+            showSearch
+            allowClear
+            disabled={!feedList.length || loading}
+            filterOption={filterOption}
+          >
+            {feedList.map((curr: any) => (
+              <Select.Option
+                key={curr.value}
+                value={curr.value}
+                label={curr.name}
+              >
+                {curr.name}
+              </Select.Option>
+            ))}
+          </Select>
+        </Col>
+        <Col lg={4} xs={24}>
+          <Row justify="end">
+            <Col>
+              <Button
+                key="2"
+                type="primary"
+                disabled={featuredFeeds === listRef || !featuredFeeds?.length}
+                className={isMobile ? 'mt-15' : ''}
+                onClick={handleDeploy}
+              >
+                Deploy
+              </Button>
+            </Col>
+          </Row>
+        </Col>
+      </Row>
+      <div className="featured custom-table">
         <DndProvider backend={HTML5Backend}>
           <Table
-            scroll={{ x: true, y: 300 }}
-            className="mt-05 featured-feeds-layout"
+            scroll={{ x: true, y: '27em' }}
+            className="mt-05"
             rowClassName={(_, index) =>
               `${index === lastViewedIndex ? 'selected-row' : ''}`
             }

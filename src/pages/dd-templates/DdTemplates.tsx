@@ -36,7 +36,7 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
   const [buffer, setBuffer] = useState<DdTemplate[]>([]);
   const [data, setData] = useState<DdTemplate[]>([]);
   const [filter, setFilter] = useState<string>('');
-  const { isMobile, setIsDetails } = useContext(AppContext);
+  const { isMobile, setisScrollable } = useContext(AppContext);
 
   useEffect(() => {
     getResources();
@@ -57,7 +57,7 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   useEffect(() => {
-    setIsDetails(details);
+    setisScrollable(details);
   }, [details]);
 
   useEffect(() => {
@@ -311,7 +311,7 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
       }
     >
       {!details && (
-        <div>
+        <>
           <PageHeader
             title="Disco Dollar Templates"
             subTitle={isMobile ? '' : 'List of Disco Dollar Templates'}
@@ -341,12 +341,12 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
             </Col>
           </Row>
           <div
-            className="table-container"
+            className="dd-templates empty custom-table"
             style={{ position: 'fixed', top: '255px' }}
           >
             <Table
               className="mt-15"
-              scroll={{ x: true, y: '100%' }}
+              scroll={{ x: true, y: '27em' }}
               rowClassName={(_, index) => `scrollable-row-${index}`}
               rowKey="id"
               columns={columns}
@@ -355,7 +355,7 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
               pagination={false}
             />
           </div>
-        </div>
+        </>
       )}
       {details && (
         <DdTemplateDetail

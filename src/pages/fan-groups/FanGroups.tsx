@@ -30,7 +30,7 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
   const [buffer, setBuffer] = useState<FanGroup[]>([]);
   const [data, setData] = useState<FanGroup[]>([]);
   const [filter, setFilter] = useState<string>('');
-  const { isMobile, setIsDetails } = useContext(AppContext);
+  const { isMobile, setisScrollable } = useContext(AppContext);
 
   useEffect(() => {
     getResources();
@@ -58,7 +58,7 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
   };
 
   useEffect(() => {
-    setIsDetails(details);
+    setisScrollable(details);
   }, [details]);
 
   useEffect(() => {
@@ -88,6 +88,7 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
       ),
       dataIndex: 'name',
       width: '20%',
+      align: 'center',
       sorter: (a, b): any => {
         if (a.name && b.name) return a.name.localeCompare(b.name);
         else if (a.name) return -1;
@@ -161,7 +162,7 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
       }
     >
       {!details && (
-        <div>
+        <>
           <PageHeader
             title="Fan Groups"
             subTitle={isMobile ? '' : 'List of Fan Groups'}
@@ -190,10 +191,10 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
               />
             </Col>
           </Row>
-          <div>
+          <div className="empty custom-table">
             <Table
               className="mt-15"
-              scroll={{ x: true, y: 300 }}
+              scroll={{ x: true, y: '27em' }}
               rowClassName={(_, index) => `scrollable-row-${index}`}
               rowKey="id"
               columns={columns}
@@ -202,7 +203,7 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
               pagination={false}
             />
           </div>
-        </div>
+        </>
       )}
       {details && (
         <FanGroupDetail

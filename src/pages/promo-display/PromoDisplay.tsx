@@ -40,7 +40,7 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
   const [buffer, setBuffer] = useState<PromoDisplay[]>([]);
   const [data, setData] = useState<PromoDisplay[]>([]);
   const [filter, setFilter] = useState<string>('');
-  const { isMobile, setIsDetails } = useContext(AppContext);
+  const { isMobile, setisScrollable } = useContext(AppContext);
 
   useEffect(() => {
     getResources();
@@ -68,7 +68,7 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   useEffect(() => {
-    setIsDetails(details);
+    setisScrollable(details);
   }, [details]);
 
   useEffect(() => {
@@ -270,7 +270,7 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
       }
     >
       {!details && (
-        <div>
+        <>
           <PageHeader
             title="Shop Display"
             subTitle={isMobile ? '' : 'List of Shop Displays'}
@@ -299,10 +299,10 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
               />
             </Col>
           </Row>
-          <div>
+          <div className="promo-display empty custom-table">
             <Table
               className="mt-1"
-              scroll={{ x: true, y: 300 }}
+              scroll={{ x: true, y: '27em' }}
               rowClassName={(_, index) => `scrollable-row-${index}`}
               rowKey="id"
               columns={columns}
@@ -311,7 +311,7 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
               pagination={false}
             />
           </div>
-        </div>
+        </>
       )}
       {details && (
         <PromoDisplayDetail

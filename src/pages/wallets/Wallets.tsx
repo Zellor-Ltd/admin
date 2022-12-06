@@ -229,7 +229,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
   return (
     <div style={{ overflow: 'clip', height: '100%' }}>
       {!details && (
-        <div className="wallets">
+        <>
           <PageHeader
             title="Fan Wallets"
             subTitle={isMobile ? '' : 'List of Fan wallets'}
@@ -298,10 +298,10 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
               </Row>
             </Col>
           </Row>
-          <div>
+          <div className="wallets empty custom-table">
             <Table
               className="mt-1"
-              scroll={{ x: true, y: 300 }}
+              scroll={{ x: true, y: '27em' }}
               rowClassName={(_, index) => `scrollable-row-${index}`}
               rowKey="key"
               columns={columns}
@@ -309,7 +309,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
               pagination={false}
             />
           </div>
-        </div>
+        </>
       )}
       {details && (
         <WalletDetail

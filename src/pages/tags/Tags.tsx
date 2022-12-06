@@ -40,7 +40,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(true);
   const [tags, setTags] = useState<Tag[]>([]);
-  const { isMobile, setIsDetails } = useContext(AppContext);
+  const { isMobile, setisScrollable } = useContext(AppContext);
   const isMounted = useRef<boolean>(false);
 
   useEffect(() => {
@@ -98,7 +98,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
       scrollToCenter(lastViewedIndex);
     }
 
-    setIsDetails(details);
+    setisScrollable(details);
   }, [details]);
 
   const editTag = (index: number, tag?: Tag) => {
@@ -359,7 +359,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
               </Row>
             </Col>
           </Row>
-          <div>
+          <div className="custom-table">
             <InfiniteScroll
               dataLength={tags.length}
               next={fetch}
@@ -381,7 +381,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
             >
               <Table
                 className="mt-1"
-                scroll={{ x: true, y: 300 }}
+                scroll={{ x: true, y: '27em' }}
                 rowClassName={(_, index) => `scrollable-row-${index}`}
                 rowKey="id"
                 columns={columns}

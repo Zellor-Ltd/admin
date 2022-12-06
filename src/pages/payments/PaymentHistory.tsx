@@ -43,6 +43,7 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
   const [currentCreator, setCurrentCreator] = useState<Creator>();
   const [dateFrom, setDateFrom] = useState<string>();
   const [dateTo, setDateTo] = useState<string>();
+  const [activeKey, setActiveKey] = useState<string>('1');
 
   useEffect(() => {
     if (!details) {
@@ -381,6 +382,11 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
     );
   };
 
+  const handleCollapseChange = () => {
+    if (activeKey === '1') setActiveKey('0');
+    else setActiveKey('1');
+  };
+
   return (
     <div className="history-container">
       {!details && (
@@ -395,9 +401,23 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
             </Row>
           )}
           {isMobile && (
-            <Collapse ghost className="sticky-filter-box" defaultActiveKey={1}>
+            <Collapse
+              ghost
+              className="sticky-filter-box"
+              activeKey={activeKey}
+              onChange={handleCollapseChange}
+              destroyInactivePanel
+            >
               <Panel
-                header={<Typography.Title level={5}>Filter</Typography.Title>}
+                header={
+                  activeKey === '1' ? (
+                    <Typography.Title level={5}>
+                      Click to Collapse
+                    </Typography.Title>
+                  ) : (
+                    <Typography.Title level={5}>Filter</Typography.Title>
+                  )
+                }
                 key="1"
               >
                 <Row align="bottom" justify="end" className="pt-0">
@@ -406,13 +426,7 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
               </Panel>
             </Collapse>
           )}
-          <div
-            className={
-              payments.length
-                ? 'payment-history'
-                : 'payment-history custom-table'
-            }
-          >
+          <div className="custom-table">
             <InfiniteScroll
               className={payments.length ? '' : 'custom-table'}
               dataLength={payments.length}
@@ -435,7 +449,7 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
             >
               <Table
                 className={payments.length ? '' : 'custom-table'}
-                scroll={{ x: true, y: 300 }}
+                scroll={{ x: true, y: '27em' }}
                 rowClassName={(_, index) => `scrollable-row-${index}`}
                 rowKey="id"
                 columns={columns}
@@ -456,14 +470,14 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
                           isMobile
                             ? {
                                 position: 'fixed',
-                                bottom: '3.75rem',
+                                bottom: '3rem',
                                 right: '3rem',
                                 background: 'white',
                                 left: '100px',
                               }
                             : {
                                 position: 'fixed',
-                                bottom: '3.75rem',
+                                bottom: '3rem',
                                 right: '3rem',
                                 background: 'white',
                                 left: '250px',
