@@ -1198,7 +1198,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
       style={
         details
           ? { height: '100%' }
-          : activeKey === '1'
+          : isMobile && activeKey === '1'
           ? { overflow: 'scroll', height: '100%' }
           : { overflow: 'clip', height: '100%' }
       }
@@ -1322,7 +1322,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                     type="primary"
                     onClick={() => getProducts(true)}
                     loading={loading}
-                    className="ml-1"
+                    className="ml-1 mr-05"
                   >
                     Search
                     <SearchOutlined style={{ color: 'white' }} />

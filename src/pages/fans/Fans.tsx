@@ -372,7 +372,7 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
           <Row
             align="bottom"
             justify="space-between"
-            className="sticky-filter-box mb-05"
+            className="sticky-filter-box mb-15"
           >
             <Col lg={16} xs={24}>
               <Row gutter={8}>
@@ -427,7 +427,7 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
             selectedRecord={fanFeedModal}
             setSelectedRecord={setFanFeedModal}
           />
-          <div className="custom-table">
+          <div className="empty custom-table">
             <InfiniteScroll
               dataLength={fans.length}
               next={updateDisplayedArray}
@@ -448,8 +448,7 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
               }
             >
               <Table
-                className="mt-1"
-                scroll={{ x: true, y: '27em' }}
+                scroll={{ x: true, y: '29em' }}
                 rowClassName={(_, index) => `scrollable-row-${index}`}
                 rowKey="id"
                 columns={columns}

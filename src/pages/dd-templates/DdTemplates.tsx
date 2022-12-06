@@ -341,8 +341,8 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
             </Col>
           </Row>
           <div
-            className="dd-templates empty custom-table"
-            style={{ position: 'fixed', top: '255px' }}
+            className="
+            empty custom-table"
           >
             <Table
               className="mt-15"

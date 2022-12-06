@@ -932,7 +932,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
       style={
         details
           ? { height: '100%' }
-          : activeKey === '1'
+          : isMobile && activeKey === '1'
           ? { overflow: 'scroll', height: '100%' }
           : { overflow: 'clip', height: '100%' }
       }
@@ -946,7 +946,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
           <Row
             align="bottom"
             justify="space-between"
-            className="sticky-filter-box mb-05"
+            className="sticky-filter-box"
             id="filterPanel"
             style={panelStyle}
           >
@@ -1044,7 +1044,6 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
               }
             >
               <Table
-                className="mt-1"
                 scroll={{ x: true, y: '27em' }}
                 rowClassName={(_, index) =>
                   `scrollable-row-${index} ${

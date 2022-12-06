@@ -424,6 +424,7 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
 
   return (
     <div
+      className="categories"
       style={
         details ? { height: '100%' } : { overflow: 'clip', height: '100%' }
       }
@@ -471,7 +472,7 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
           >
             {categoriesKeys.map(key => (
               <Tabs.TabPane tab={key} key={key}>
-                <div className="categories empty custom-table">
+                <div className="empty custom-table">
                   <InfiniteScroll
                     dataLength={categories.length}
                     next={updateDisplayedArray}
@@ -490,7 +491,7 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
                     }
                   >
                     <Table
-                      scroll={{ x: true, y: '27em' }}
+                      scroll={{ x: true, y: '32em' }}
                       rowClassName={(_, index) => `scrollable-row-${index}`}
                       rowKey="id"
                       columns={columns}

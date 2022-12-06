@@ -124,11 +124,11 @@ body {
 
 .interests .ant-table-wrapper {
   position: fixed;
-  top: 230px;
+  top: 14.5rem;
 }
 
-.interests .ant-table-tbody {
-  overflow: scroll;
+.interests table {
+  table-layout: auto !important;
 }
 
 .details-checkout {
@@ -152,22 +152,10 @@ body {
 .preview.empty.custom-table .infinite-scroll-component > div,
 .empty .ant-table-body,
 .ant-table-empty,
-.featured-feeds-layout,
-.links .ant-table,
-.creator-container {
+.creator-container,
+.categories .ant-tabs,
+.categories .ant-tabs-content {
   height: 100% !important;
-}
-
-.custom-table.brands .ant-table-header {
-  overflow: initial !important;
-}
-
-.dd-templates table {
-  margin-bottom: 11rem;
-}
-
-.product-templates table {
-  margin-bottom: 9rem;
 }
 
 .custom-table .ant-table-header,
@@ -188,17 +176,19 @@ body {
 
 .custom-table {
   overflow-x: scroll;
+  overflow-y: clip;
+}
+
+.categories .ant-table-header {
+  position: sticky;
+  top: 0;
+  z-index: 2;
 }
 
 .interests .ant-table-body,
 .payment-history .ant-table-body {
   overflow: scroll !important;
   height: 100% !important;
-}
-
-.links .ant-table-body {
-  position: absolute;
-  top: 40px;
 }
 
 .payments-container {

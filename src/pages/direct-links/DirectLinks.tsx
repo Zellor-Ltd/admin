@@ -799,9 +799,8 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
               </Row>
             </Col>
           </Row>
-          <div className="links custom-table">
+          <div className="empty custom-table">
             <Table
-              className={isMobile ? '' : 'mt-15'}
               scroll={{ x: true, y: '30em' }}
               rowClassName={(_, index) => `scrollable-row-${index}`}
               size="small"
