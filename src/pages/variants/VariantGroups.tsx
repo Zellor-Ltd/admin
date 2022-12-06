@@ -635,7 +635,7 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
                     type="text"
                     onClick={collapse}
                     style={{
-                      display: activeKey === '1' ? 'block' : 'none',
+                      display: isMobile && activeKey === '1' ? 'block' : 'none',
                       background: 'none',
                     }}
                   >

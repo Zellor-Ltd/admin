@@ -769,19 +769,22 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
               <Row
                 justify="space-between"
                 align="bottom"
-                className={isMobile ? 'mb-1 mt-1' : ''}
+                className={isMobile ? 'my-1' : 'mr-05'}
               >
-                <Col flex="auto">
-                  <Button
-                    type="text"
-                    onClick={collapse}
-                    style={{
-                      display: activeKey === '1' ? 'block' : 'none',
-                      background: 'none',
-                    }}
-                  >
-                    <UpOutlined />
-                  </Button>
+                <Col>
+                  <Col flex="auto">
+                    <Button
+                      type="text"
+                      onClick={collapse}
+                      style={{
+                        display:
+                          isMobile && activeKey === '1' ? 'block' : 'none',
+                        background: 'none',
+                      }}
+                    >
+                      <UpOutlined />
+                    </Button>
+                  </Col>
                 </Col>
                 {!isMobile && (
                   <Button
