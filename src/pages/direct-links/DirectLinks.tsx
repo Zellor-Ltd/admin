@@ -449,7 +449,7 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
             </div>
           </Col>
           <Col span={4}>
-            <CopyToClipboard text={value}>
+            <CopyToClipboard text={`https://link.discoclub.com/d/${value}`}>
               <Button
                 type="link"
                 onClick={() => {
