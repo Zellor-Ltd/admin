@@ -299,10 +299,10 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
               />
             </Col>
           </Row>
-          <div className="promo-display empty custom-table">
+          <div className="empty custom-table">
             <Table
               className="mt-1"
-              scroll={{ x: true, y: '27em' }}
+              scroll={{ x: true, y: '30em' }}
               rowClassName={(_, index) => `scrollable-row-${index}`}
               rowKey="id"
               columns={columns}

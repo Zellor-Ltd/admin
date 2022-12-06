@@ -122,20 +122,6 @@ body {
   color: rgba(0, 0, 0, 0.45);
 }
 
-.transactions .ant-table-wrapper,
-.transactions .ant-spin-nested-loading,
-.transactions .ant-spin-container,
-.transactions .ant-table,
-.transactions .ant-table-container,
-.transactions table {
-  height: 100% !important;
-}
-
-.transactions .ant-table-body {
-  height: 100% !important;
-  overflow: scroll !important;
-}
-
 .interests .ant-table-wrapper {
   position: fixed;
   top: 230px;
@@ -176,11 +162,6 @@ body {
   overflow: initial !important;
 }
 
-.promo-display .ant-table-body {
-  overflow: scroll;
-  margin-bottom: 3rem;
-}
-
 .dd-templates table {
   margin-bottom: 11rem;
 }
@@ -189,7 +170,6 @@ body {
   margin-bottom: 9rem;
 }
 
-.promo-display .ant-table-body,
 .custom-table .ant-table-header,
 .custom-table.empty table {
   height: initial !important;
@@ -199,11 +179,6 @@ body {
 .variant .infinite-scroll-component,
 .preview.empty.custom-table .infinite-scroll-component > div {
   overflow: clip;
-}
-
-.promo-display .ant-table-body {
-  overflow: auto scroll;
-  height: initial !important;
 }
 
 .custom-table .ant-table-body {
