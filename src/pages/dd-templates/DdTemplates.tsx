@@ -36,7 +36,7 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
   const [buffer, setBuffer] = useState<DdTemplate[]>([]);
   const [data, setData] = useState<DdTemplate[]>([]);
   const [filter, setFilter] = useState<string>('');
-  const { isMobile, setIsDetails } = useContext(AppContext);
+  const { isMobile, setisScrollable } = useContext(AppContext);
 
   useEffect(() => {
     getResources();
@@ -57,7 +57,7 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   useEffect(() => {
-    setIsDetails(details);
+    setisScrollable(details);
   }, [details]);
 
   useEffect(() => {

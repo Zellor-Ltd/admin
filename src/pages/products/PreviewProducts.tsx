@@ -112,7 +112,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
     value: 'id',
   };
 
-  const { isMobile, setIsDetails } = useContext(AppContext);
+  const { isMobile, setisScrollable } = useContext(AppContext);
 
   const productSuperCategoryOptionMapping: SelectOption = {
     key: 'id',
@@ -798,7 +798,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
       scrollToCenter(lastViewedIndex);
     }
 
-    setIsDetails(details);
+    setisScrollable(details);
   }, [details]);
 
   const onSaveProduct = (product: Product) => {

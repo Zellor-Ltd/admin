@@ -39,7 +39,7 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
   const [buffer, setBuffer] = useState<Masthead[]>([]);
   const [data, setData] = useState<Masthead[]>([]);
   const [filter, setFilter] = useState<string>('');
-  const { isMobile, setIsDetails } = useContext(AppContext);
+  const { isMobile, setisScrollable } = useContext(AppContext);
 
   const getResources = useCallback(async () => {
     const { results } = await doFetch(fetchMastheads);
@@ -56,7 +56,7 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
   }, [filter, buffer]);
 
   useEffect(() => {
-    setIsDetails(details);
+    setisScrollable(details);
 
     if (!details) scrollToCenter(lastViewedIndex);
   }, [details]);

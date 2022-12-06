@@ -40,7 +40,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(true);
   const [tags, setTags] = useState<Tag[]>([]);
-  const { isMobile, setIsDetails } = useContext(AppContext);
+  const { isMobile, setisScrollable } = useContext(AppContext);
   const isMounted = useRef<boolean>(false);
 
   useEffect(() => {
@@ -98,7 +98,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
       scrollToCenter(lastViewedIndex);
     }
 
-    setIsDetails(details);
+    setisScrollable(details);
   }, [details]);
 
   const editTag = (index: number, tag?: Tag) => {

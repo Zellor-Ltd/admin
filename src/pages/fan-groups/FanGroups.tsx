@@ -30,7 +30,7 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
   const [buffer, setBuffer] = useState<FanGroup[]>([]);
   const [data, setData] = useState<FanGroup[]>([]);
   const [filter, setFilter] = useState<string>('');
-  const { isMobile, setIsDetails } = useContext(AppContext);
+  const { isMobile, setisScrollable } = useContext(AppContext);
 
   useEffect(() => {
     getResources();
@@ -58,7 +58,7 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
   };
 
   useEffect(() => {
-    setIsDetails(details);
+    setisScrollable(details);
   }, [details]);
 
   useEffect(() => {

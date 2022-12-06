@@ -65,7 +65,7 @@ function AdminRoutes() {
       />
       <AppRoute path="/login" component={Login} layout={OpenLayout} />
       <AppRoute
-        path="/variant_groups"
+        path="/variant-groups"
         component={VariantGroups}
         layout={AuthenticatedLayout}
       />
@@ -115,47 +115,39 @@ function AdminRoutes() {
         layout={AuthenticatedLayout}
       />
       <AppRoute
-        path="/users_creators"
+        path="/creators"
         component={Creators}
         layout={AuthenticatedLayout}
       />
       <AppRoute
-        path="/settings_trends"
+        path="/trends"
         component={Trends}
         layout={AuthenticatedLayout}
       />
       <AppRoute
-        path="/settings_categories"
+        path="/categories"
         component={Categories}
         layout={AuthenticatedLayout}
       />
-      <AppRoute
-        path="/settings_tags"
-        component={Tags}
-        layout={AuthenticatedLayout}
-      />
+      <AppRoute path="/tags" component={Tags} layout={AuthenticatedLayout} />
       <AppRoute
         path="/brands"
         component={Brands}
         layout={AuthenticatedLayout}
       />
       <AppRoute
-        path="/settings_endpoints/endpoint"
+        path="/endpoints/endpoint"
         component={EndpointDetail}
         layout={AuthenticatedLayout}
       />
       <AppRoute
-        path="/settings_endpoints"
+        path="/endpoints"
         component={Endpoints}
         layout={AuthenticatedLayout}
       />
+      <AppRoute path="/fans" component={Fans} layout={AuthenticatedLayout} />
       <AppRoute
-        path="/users_fans"
-        component={Fans}
-        layout={AuthenticatedLayout}
-      />
-      <AppRoute
-        path="/users_guests"
+        path="/guests"
         component={Guests}
         layout={AuthenticatedLayout}
       />
@@ -165,22 +157,18 @@ function AdminRoutes() {
         layout={AuthenticatedLayout}
       />
       <AppRoute
-        path="/settings_roles/role"
+        path="/roles/role"
         component={RoleDetail}
         layout={AuthenticatedLayout}
       />
+      <AppRoute path="/roles" component={Roles} layout={AuthenticatedLayout} />
       <AppRoute
-        path="/settings_roles"
-        component={Roles}
-        layout={AuthenticatedLayout}
-      />
-      <AppRoute
-        path="/settings_settings"
+        path="/settings"
         component={Settings}
         layout={AuthenticatedLayout}
       />
       <AppRoute
-        path="/settings_access-control"
+        path="/access-control"
         component={AccessControl}
         layout={AuthenticatedLayout}
       />
@@ -200,17 +188,17 @@ function AdminRoutes() {
         layout={AuthenticatedLayout}
       />
       <AppRoute
-        path="/marketing_creators-list"
+        path="/creator-list"
         component={CreatorsList}
         layout={AuthenticatedLayout}
       />
       <AppRoute
-        path="/marketing_direct-links"
+        path="/direct-links"
         component={DirectLinks}
         layout={AuthenticatedLayout}
       />
       <AppRoute
-        path="/marketing_promotions"
+        path="/promotions"
         component={Promotions}
         layout={AuthenticatedLayout}
       />
@@ -220,27 +208,27 @@ function AdminRoutes() {
         layout={AuthenticatedLayout}
       />
       <AppRoute
-        path="/marketing_promo-displays"
+        path="/promo-displays"
         component={PromoDisplay}
         layout={AuthenticatedLayout}
       />
       <AppRoute
-        path="/marketing_home-screen"
+        path="/home-screen"
         component={HomeScreen}
         layout={AuthenticatedLayout}
       />
       <AppRoute
-        path="/settings_interests"
+        path="/interests"
         component={Interests}
         layout={AuthenticatedLayout}
       />
       <AppRoute
-        path="/settings_fixed-videos"
+        path="/fixed-videos"
         component={FixedVideo}
         layout={AuthenticatedLayout}
       />
       <AppRoute
-        path="/settings_fan-groups"
+        path="/fan-groups"
         component={FanGroups}
         layout={AuthenticatedLayout}
       />
@@ -250,17 +238,17 @@ function AdminRoutes() {
         layout={AuthenticatedLayout}
       />
       <AppRoute
-        path="/settings_master-password"
+        path="/master-password"
         component={MasterPassword}
         layout={AuthenticatedLayout}
       />
       <AppRoute
-        path="/settings_push-group-tag/step2"
+        path="/push-group-tag/step2"
         component={PushGroupTagStep2}
         layout={AuthenticatedLayout}
       />
       <AppRoute
-        path="/settings_push-group-tag"
+        path="/push-group-tag"
         component={PushGroupTag}
         layout={AuthenticatedLayout}
       />

@@ -30,8 +30,8 @@ interface AppContextProps {
   doRequest: DoRequest;
   refreshContext: Function;
   isMobile: boolean;
-  isDetails: boolean;
-  setIsDetails: (boolean) => void;
+  isScrollable: boolean;
+  setisScrollable: (boolean) => void;
   needsMargin: boolean;
 }
 
@@ -44,7 +44,7 @@ export const AppProvider = ({ children }: { children: JSX.Element }) => {
   const [filterValues, setFilterValues] = useState<FilterValue>({});
   const [lastVisitedPage, setLastVisitedPage] = useState<string>('');
   const [tableData, setTableData] = useState<any[]>([]);
-  const [isDetails, setIsDetails] = useState<boolean>(false);
+  const [isScrollable, setisScrollable] = useState<boolean>(false);
   const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
   const [needsMargin, setNeedsMargin] = useState<boolean>(
     window.innerWidth < 1716 && window.innerWidth > 1376
@@ -102,8 +102,8 @@ export const AppProvider = ({ children }: { children: JSX.Element }) => {
         refreshContext,
         isMobile,
         needsMargin,
-        isDetails,
-        setIsDetails
+        isScrollable,
+        setisScrollable,
       }}
     >
       <PageInfiniteScrollProvider>{children}</PageInfiniteScrollProvider>

@@ -40,7 +40,7 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [details, setDetails] = useState<boolean>(false);
-  const prevPageIsDetails = useRef<boolean>(false);
+  const prevPageisScrollable = useRef<boolean>(false);
   const [currentGuest, setCurrentGuest] = useState<Fan>();
   const { doFetch } = useRequest({ setLoading });
   const [eof, setEof] = useState<boolean>(false);
@@ -54,7 +54,7 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
   const scrolling = useRef(false);
   const [guests, setGuests] = useState<Fan[]>([]);
   const [buffer, setBuffer] = useState<Fan[]>([]);
-  const { isMobile, setIsDetails } = useContext(AppContext);
+  const { isMobile, setisScrollable } = useContext(AppContext);
 
   const fanOptionMapping: SelectOption = {
     key: 'id',
@@ -74,10 +74,10 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
       return;
     }
 
-    prevPageIsDetails.current = false;
+    prevPageisScrollable.current = false;
 
     if (!details) {
-      prevPageIsDetails.current = true;
+      prevPageisScrollable.current = true;
 
       if (guests.length) {
         setUserInput(persistentUserInput);
@@ -92,7 +92,7 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
       }
     }
 
-    setIsDetails(details);
+    setisScrollable(details);
   }, [details]);
 
   useEffect(() => {
@@ -320,7 +320,7 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   const loadGuests = () => {
-    if (prevPageIsDetails.current) return;
+    if (prevPageisScrollable.current) return;
     updatingTable.current = true;
     setEof(false);
     setFetchingGuests(true);

@@ -39,7 +39,7 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
   const [data, setData] = useState<Promotion[]>([]);
   const [dateFilter, setDateFilter] = useState<any[]>([]);
   const [idFilter, setIdFilter] = useState<string>('');
-  const { isMobile, setIsDetails } = useContext(AppContext);
+  const { isMobile, setisScrollable } = useContext(AppContext);
 
   const getResources = useCallback(async () => {
     await getPromotions();
@@ -66,7 +66,7 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   useEffect(() => {
-    setIsDetails(details);
+    setisScrollable(details);
 
     if (!details) scrollToCenter(lastViewedIndex);
   }, [details]);

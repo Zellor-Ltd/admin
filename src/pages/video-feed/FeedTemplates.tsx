@@ -47,10 +47,10 @@ const FeedTemplates: React.FC<RouteComponentProps> = () => {
   const [loaded, setLoaded] = useState<boolean>(false);
   const [feedTemplates, setFeedTemplates] = useState<any[]>([]);
   const { doFetch } = useRequest({ setLoading });
-  const { isMobile, setIsDetails } = useContext(AppContext);
+  const { isMobile, setisScrollable } = useContext(AppContext);
 
   useEffect(() => {
-    setIsDetails(details);
+    setisScrollable(details);
   }, [details]);
 
   const columns: ColumnsType<any> = [

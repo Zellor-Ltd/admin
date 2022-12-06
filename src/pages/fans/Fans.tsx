@@ -55,7 +55,7 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
   const [fans, setFans] = useState<Fan[]>([]);
   const [searchFilter, setSearchFilter] = useState<string>();
   const [refreshing, setRefreshing] = useState<boolean>(false);
-  const { isMobile, setIsDetails } = useContext(AppContext);
+  const { isMobile, setisScrollable } = useContext(AppContext);
 
   useEffect(() => {
     if (refreshing) {
@@ -104,7 +104,7 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   useEffect(() => {
-    setIsDetails(details);
+    setisScrollable(details);
 
     if (!details) {
       scrollToCenter(lastViewedIndex);

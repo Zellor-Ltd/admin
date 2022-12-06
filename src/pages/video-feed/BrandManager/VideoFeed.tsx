@@ -72,7 +72,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const {
     settings: { feedList = [] },
   } = useSelector((state: any) => state.settings);
-  const { isMobile, setIsDetails } = useContext(AppContext);
+  const { isMobile, setisScrollable } = useContext(AppContext);
   const inputRef = useRef<any>(null);
   const [activeKey, setActiveKey] = useState<string>('1');
   const [selectedVideoFeed, setSelectedVideoFeed] = useState<FeedItem>();
@@ -755,7 +755,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   };
 
   useEffect(() => {
-    setIsDetails(details);
+    setisScrollable(details);
 
     if (!details) scrollToCenter(lastFocusedIndex.current);
   }, [details]);

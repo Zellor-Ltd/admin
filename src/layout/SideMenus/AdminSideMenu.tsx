@@ -106,11 +106,11 @@ const AdminSideMenu = ({ isMobile }) => {
         <Link to="/preview-products">Preview Products</Link>
       </Menu.Item>
       <Menu.Item
-        key="variant_groups"
+        key="variant-groups"
         icon={<PartitionOutlined />}
-        onClick={() => refreshParent('variant_groups')}
+        onClick={() => refreshParent('variant-groups')}
       >
-        <Link to="/variant_groups">Variant Groups</Link>
+        <Link to="/variant-groups">Variant Groups</Link>
       </Menu.Item>
       <Menu.Item
         key="feed"
@@ -195,119 +195,120 @@ const AdminSideMenu = ({ isMobile }) => {
       </Menu.Item>
       <SubMenu key="marketing" icon={<RocketOutlined />} title="Marketing">
         <Menu.Item
-          key="marketing_creators-list"
+          key="creator-list"
           icon={<UserOutlined />}
-          onClick={() => refreshParent('marketing_creators-list')}
+          onClick={() => refreshParent('creator-list')}
         >
-          <Link to="/marketing_creators-list">Creator List</Link>
+          <Link to="/creator-list">Creator List</Link>
         </Menu.Item>
         <Menu.Item
-          key="marketing_home-screen"
+          key="home-screen"
           icon={<IdcardOutlined />}
-          onClick={() => refreshParent('marketing_home-screen')}
+          onClick={() => refreshParent('home-screen')}
         >
-          <Link to="/marketing_home-screen">Home Screen</Link>
+          <Link to="/home-screen">Home Screen</Link>
         </Menu.Item>
         <Menu.Item
-          key="marketing_promo-displays"
+          key="promo-displays"
           icon={<GiftOutlined />}
-          onClick={() => refreshParent('marketing_promo-displays')}
+          onClick={() => refreshParent('promo-displays')}
         >
-          <Link to="/marketing_promo-displays">Shop Display</Link>
+          <Link to="/promo-displays">Shop Display</Link>
         </Menu.Item>
         <Menu.Item
-          key="marketing_promotions"
+          key="promotions"
           icon={<SoundOutlined />}
-          onClick={() => refreshParent('marketing_promotions')}
+          onClick={() => refreshParent('promotions')}
         >
-          <Link to="/marketing_promotions">Promotions</Link>
+          <Link to="/promotions">Promotions</Link>
         </Menu.Item>
         <Menu.Item
-          key="marketing_direct-links"
+          key="direct-links"
           icon={<LinkOutlined />}
-          onClick={() => refreshParent('marketing_direct-links')}>
-          <Link to="/marketing_direct-links">Direct Links</Link>
+          onClick={() => refreshParent('direct-links')}
+        >
+          <Link to="/direct-links">Direct Links</Link>
         </Menu.Item>
       </SubMenu>
       <SubMenu key="users" icon={<TeamOutlined />} title="Users">
         <Menu.Item
-          key="users_fans"
+          key="fans"
           icon={<UserOutlined />}
-          onClick={() => refreshParent('users_fans')}
+          onClick={() => refreshParent('fans')}
         >
-          <Link to="/users_fans">Fans</Link>
+          <Link to="/fans">Fans</Link>
         </Menu.Item>
         <Menu.Item
-          key="users_guests"
+          key="guests"
           icon={<UserOutlined />}
-          onClick={() => refreshParent('users_guests')}
+          onClick={() => refreshParent('guests')}
         >
-          <Link to="/users_guests">Guests</Link>
+          <Link to="/guests">Guests</Link>
         </Menu.Item>
         <Menu.Item
           key="creators"
           icon={<UserOutlined />}
-          onClick={() => refreshParent('users_creators')}
+          onClick={() => refreshParent('creators')}
         >
-          <Link to="/users_creators">Creators</Link>
+          <Link to="/creators">Creators</Link>
         </Menu.Item>
       </SubMenu>
       <SubMenu key="settings" icon={<SettingOutlined />} title="Settings">
-        <Menu.Item key="settings_access-control" icon={<ControlOutlined />}>
-          <Link to="/settings_access-control">Access Control</Link>
+        <Menu.Item key="access-control" icon={<ControlOutlined />}>
+          <Link to="/access-control">Access Control</Link>
         </Menu.Item>
         <Menu.Item
-          key="settings_endpoints"
+          key="endpoints"
           icon={<CloudServerOutlined />}
-          onClick={() => refreshParent('settings_endpoints')}
+          onClick={() => refreshParent('endpoints')}
         >
-          <Link to="/settings_endpoints">Endpoints</Link>
+          <Link to="/endpoints">Endpoints</Link>
         </Menu.Item>
         <Menu.Item
-          key="settings_roles"
+          key="roles"
           icon={<ApartmentOutlined />}
-          onClick={() => refreshParent('settings_roles')}
+          onClick={() => refreshParent('roles')}
         >
-          <Link to="/settings_roles">Roles</Link>
+          <Link to="/roles">Roles</Link>
         </Menu.Item>
-        <Menu.Item key="settings_settings" icon={<SettingOutlined />}>
-          <Link to="/settings_settings">Settings</Link>
+        <Menu.Item key="settings" icon={<SettingOutlined />}>
+          <Link to="/settings">Settings</Link>
         </Menu.Item>
         <Menu.Item
-          key="settings_categories"
+          key="categories"
           icon={<BarsOutlined />}
-          onClick={() => refreshParent('settings_categories')}
+          onClick={() => refreshParent('categories')}
         >
-          <Link to="/settings_categories">Categories</Link>
+          <Link to="/categories">Categories</Link>
         </Menu.Item>
-        <Menu.Item key="settings_interests" icon={<LikeOutlined />}>
-          <Link to="/settings_interests">Interests</Link>
+        <Menu.Item key="interests" icon={<LikeOutlined />}>
+          <Link to="/interests">Interests</Link>
         </Menu.Item>
-        <Menu.Item key="settings_trends" icon={<LineChartOutlined />}>
-          <Link to="/settings_trends">Trends</Link>
+        <Menu.Item key="trends" icon={<LineChartOutlined />}>
+          <Link to="/trends">Trends</Link>
         </Menu.Item>
-        <Menu.Item key="settings_fixed-videos" icon={<PlaySquareOutlined />}>
-          <Link to="/settings_fixed-videos">Fixed Videos</Link>
+        <Menu.Item key="fixed-videos" icon={<PlaySquareOutlined />}>
+          <Link to="/fixed-videos">Fixed Videos</Link>
         </Menu.Item>
         <Menu.Item
-          key="settings_fan-groups"
+          key="fan-groups"
           icon={<TeamOutlined />}
-          onClick={() => refreshParent('settings_fan-groups')}
+          onClick={() => refreshParent('fan-groups')}
         >
-          <Link to="/settings_fan-groups">Fan Groups</Link>
+          <Link to="/fan-groups">Fan Groups</Link>
         </Menu.Item>
         <Menu.Item
-          key="settings_tags"
+          key="tags"
           icon={<TagOutlined />}
-          onClick={() => refreshParent('settings_tags')}
+          onClick={() => refreshParent('tags')}
         >
-          <Link to="/settings_tags">Tags</Link>
+          <Link to="/tags">Tags</Link>
         </Menu.Item>
-        <Menu.Item key="settings_push-group-tag" icon={<ToTopOutlined />}>
-          <Link to="/settings_push-group-tag">Push Group Tag</Link>
+        <Menu.Item key="push-group-tag" icon={<ToTopOutlined />}>
+          <Link to="/push-group-tag">Push Group Tag</Link>
         </Menu.Item>
-        <Menu.Item key="settings_master-password" icon={<LockOutlined />}>
-          <Link to="/settings_master-password">Master Password</Link>
+        <Menu.Item key="master-password" icon={<LockOutlined />}>
+          <Link to="/master-password">Master Password</Link>
         </Menu.Item>
       </SubMenu>
     </Menu>
