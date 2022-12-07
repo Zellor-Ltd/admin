@@ -341,12 +341,12 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
             </Col>
           </Row>
           <div
-            className="dd-templates empty custom-table"
-            style={{ position: 'fixed', top: '255px' }}
+            className="
+            empty custom-table"
           >
             <Table
               className="mt-15"
-              scroll={{ x: true, y: '27em' }}
+              scroll={{ x: true, y: '30em' }}
               rowClassName={(_, index) => `scrollable-row-${index}`}
               rowKey="id"
               columns={columns}

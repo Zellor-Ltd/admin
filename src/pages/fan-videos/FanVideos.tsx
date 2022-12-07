@@ -787,7 +787,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
       style={
         details
           ? { height: '100%' }
-          : activeKey === '1'
+          : isMobile && activeKey === '1'
           ? { overflow: 'scroll', height: '100%' }
           : { overflow: 'clip', height: '100%' }
       }
@@ -851,7 +851,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
                     type="text"
                     onClick={collapse}
                     style={{
-                      display: activeKey === '1' ? 'block' : 'none',
+                      display: isMobile && activeKey === '1' ? 'block' : 'none',
                       background: 'none',
                     }}
                   >

@@ -301,7 +301,7 @@ const Interests: React.FC<InterestsProps> = () => {
   };
 
   return (
-    <div className="interests" style={{ overflow: 'clip', height: '100%' }}>
+    <div style={{ overflow: 'clip', height: '100%' }}>
       <PageHeader
         title="Interests"
         className={isMobile ? 'mb-n1' : ''}
@@ -324,7 +324,7 @@ const Interests: React.FC<InterestsProps> = () => {
             <Tabs.TabPane tab="Interests" key="Interests">
               <div className="interests custom-table">
                 <SortableTable
-                  scroll={{ x: true, y: '27em' }}
+                  scroll={{ x: true, y: '34em' }}
                   rowKey="id"
                   columns={columns}
                   dataSource={interests}
@@ -336,7 +336,7 @@ const Interests: React.FC<InterestsProps> = () => {
             <Tabs.TabPane tab="All Categories" key="All Categories">
               <div className="interests custom-table">
                 <Table
-                  scroll={{ x: true, y: '27em' }}
+                  scroll={{ x: true, y: '34em' }}
                   rowKey="id"
                   columns={columns}
                   dataSource={mergedCategories}

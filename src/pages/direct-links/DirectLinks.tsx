@@ -769,19 +769,22 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
               <Row
                 justify="space-between"
                 align="bottom"
-                className={isMobile ? 'mb-1 mt-1' : ''}
+                className={isMobile ? 'my-1' : 'mr-05'}
               >
-                <Col flex="auto">
-                  <Button
-                    type="text"
-                    onClick={collapse}
-                    style={{
-                      display: activeKey === '1' ? 'block' : 'none',
-                      background: 'none',
-                    }}
-                  >
-                    <UpOutlined />
-                  </Button>
+                <Col>
+                  <Col flex="auto">
+                    <Button
+                      type="text"
+                      onClick={collapse}
+                      style={{
+                        display:
+                          isMobile && activeKey === '1' ? 'block' : 'none',
+                        background: 'none',
+                      }}
+                    >
+                      <UpOutlined />
+                    </Button>
+                  </Col>
                 </Col>
                 {!isMobile && (
                   <Button
@@ -796,9 +799,8 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
               </Row>
             </Col>
           </Row>
-          <div className="links custom-table">
+          <div className="empty custom-table">
             <Table
-              className={isMobile ? '' : 'mt-15'}
               scroll={{ x: true, y: '30em' }}
               rowClassName={(_, index) => `scrollable-row-${index}`}
               size="small"

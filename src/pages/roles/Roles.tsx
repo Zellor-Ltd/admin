@@ -178,10 +178,9 @@ const Roles: React.FC<RouteComponentProps> = ({ history, location }) => {
           />
         </Col>
       </Row>
-      <div className="custom-table">
+      <div className="empty custom-table">
         <Table
-          className="mt-15"
-          scroll={{ x: true, y: '27em' }}
+          scroll={{ x: true, y: '30em' }}
           rowKey="id"
           columns={columns}
           dataSource={data}

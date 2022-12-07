@@ -84,7 +84,7 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
   const columns: EditableColumnType<Product>[] = [
     {
       title: (
-        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+        <div style={{ display: 'grid', placeItems: 'stretch', width: '.5rem' }}>
           <div
             style={{
               textOverflow: 'ellipsis',
@@ -97,7 +97,7 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
         </div>
       ),
       dataIndex: 'id',
-      width: '1%',
+      width: '5%',
       render: id => <CopyValueToClipboard value={id} />,
       align: 'center',
     },
@@ -116,7 +116,7 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
         </div>
       ),
       dataIndex: 'name',
-      width: '17%',
+      width: '15%',
       shouldCellUpdate: (prevRecord, nextRecord) =>
         prevRecord.name != nextRecord.name,
       render: (value: string, record, index) => (
@@ -197,7 +197,7 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
         </div>
       ),
       dataIndex: 'outOfStock',
-      width: '7%',
+      width: '10%',
       align: 'center',
       shouldCellUpdate: (prevRecord, nextRecord) =>
         prevRecord.outOfStock != nextRecord.outOfStock,
@@ -224,7 +224,7 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
         </div>
       ),
       dataIndex: 'maxDiscoDollars',
-      width: '7%',
+      width: '10%',
       align: 'center',
       responsive: ['sm'],
       shouldCellUpdate: (prevRecord, nextRecord) =>
@@ -252,7 +252,7 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
         </div>
       ),
       dataIndex: 'discoPercentage',
-      width: '8%',
+      width: '10%',
       align: 'center',
       responsive: ['sm'],
       shouldCellUpdate: (prevRecord, nextRecord) =>
@@ -280,7 +280,7 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
         </div>
       ),
       dataIndex: 'shopifyUniqueId',
-      width: '7%',
+      width: '10%',
       align: 'center',
       responsive: ['sm'],
       sorter: (a, b): any => {
@@ -306,7 +306,7 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
         </div>
       ),
       dataIndex: 'importRunId',
-      width: '7%',
+      width: '10%',
       align: 'center',
       responsive: ['sm'],
       render: importRunId => <CopyValueToClipboard value={importRunId} />,
@@ -359,7 +359,7 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
         </div>
       ),
       dataIndex: 'status',
-      width: '12%',
+      width: '10%',
       align: 'center',
       responsive: ['sm'],
       shouldCellUpdate: (prevRecord, nextRecord) =>

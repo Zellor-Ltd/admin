@@ -426,9 +426,8 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
               </Panel>
             </Collapse>
           )}
-          <div className="custom-table">
+          <div className="empty custom-table">
             <InfiniteScroll
-              className={payments.length ? '' : 'custom-table'}
               dataLength={payments.length}
               next={getPayments}
               hasMore={!eof}
@@ -448,7 +447,6 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
               }
             >
               <Table
-                className={payments.length ? '' : 'custom-table'}
                 scroll={{ x: true, y: '27em' }}
                 rowClassName={(_, index) => `scrollable-row-${index}`}
                 rowKey="id"

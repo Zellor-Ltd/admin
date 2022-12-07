@@ -543,7 +543,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
             gutter={8}
             align="bottom"
             justify="space-between"
-            className="mb-05 sticky-filter-box"
+            className="sticky-filter-box mb-15"
           >
             <Col lg={4} xs={24}>
               <Typography.Title level={5}>Search</Typography.Title>
@@ -574,7 +574,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
               </Row>
             </Col>
           </Row>
-          <div className={creators.length ? '' : 'custom-table'}>
+          <div className="empty custom-table">
             <InfiniteScroll
               dataLength={creators.length}
               next={() => fetch(true)}
@@ -593,11 +593,9 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
                   </div>
                 )
               }
-              className={creators.length ? '' : 'custom-table'}
             >
               <Table
-                className={creators.length ? 'mt-1' : 'mt-1 custom-table'}
-                scroll={{ x: true, y: '27em' }}
+                scroll={{ x: true, y: '29em' }}
                 rowClassName={(_, index) => `scrollable-row-${index}`}
                 rowKey="id"
                 columns={columns}

@@ -392,7 +392,7 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
           <PageHeader
             title="Guests"
             subTitle={isMobile ? '' : 'List of Guests'}
-            className={isMobile ? 'my-05' : ''}
+            className={isMobile ? 'my-05 mb-1' : 'mb-1'}
           />
           <Row
             align="bottom"
@@ -439,7 +439,7 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
               </Row>
             </Col>
           </Row>
-          <div className="guests custom-table">
+          <div className="empty custom-table">
             <InfiniteScroll
               dataLength={guests.length}
               next={loadGuests}
@@ -461,8 +461,7 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
               }
             >
               <Table
-                className="mt-1"
-                scroll={{ x: true, y: '27em' }}
+                scroll={{ x: true, y: '29em' }}
                 rowClassName={(_, index) => `scrollable-row-${index}`}
                 rowKey="id"
                 columns={columns}

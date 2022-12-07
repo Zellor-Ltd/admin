@@ -1141,7 +1141,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       style={
         details
           ? { height: '100%' }
-          : activeKey === '1'
+          : isMobile && activeKey === '1'
           ? { overflow: 'scroll', height: '100%' }
           : { overflow: 'clip', height: '100%' }
       }
@@ -1165,7 +1165,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
           <Row
             align="bottom"
             justify="space-between"
-            className="sticky-filter-box mb-05"
+            className="sticky-filter-box mb-1"
             id="filterPanel"
             style={panelStyle}
           >
@@ -1219,7 +1219,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                     type="text"
                     onClick={collapse}
                     style={{
-                      display: activeKey === '1' ? 'block' : 'none',
+                      display: isMobile && activeKey === '1' ? 'block' : 'none',
                       background: 'none',
                     }}
                   >
@@ -1239,7 +1239,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
               </Row>
             </Col>
           </Row>
-          <div className="custom-table">
+          <div className="empty custom-table">
             <InfiniteScroll
               dataLength={data.length}
               next={() => getFeed(undefined, false)}
@@ -1261,7 +1261,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
               }
             >
               <Table
-                className={isMobile ? '' : 'mt-15'}
                 scroll={{ x: true, y: '27em' }}
                 rowClassName={(_, index) => `scrollable-row-${index}`}
                 size="small"
