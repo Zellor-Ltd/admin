@@ -250,7 +250,7 @@ const Transactions: React.FC<RouteComponentProps> = () => {
           ></MultipleFetchDebounceSelect>
         </Col>
       </Row>
-      <div className="empty custom-table">
+      <div className="custom-table">
         <Table
           scroll={{ x: true, y: '30em' }}
           rowKey="id"

@@ -21,7 +21,7 @@ body {
 .w-100 .ant-page-header-heading-extra,
 .ant-input-number,
 .ant-picker,
-.empty .ant-table-body {
+.custom-table .ant-table-body {
   width: 100%;
 }
 
@@ -123,8 +123,8 @@ body {
 }
 
 .interests .ant-table-wrapper {
-  position: fixed;
-  top: 14.5rem;
+  position: fixed !important;
+  top: 14.5rem !important;
 }
 
 .interests table {
@@ -146,9 +146,9 @@ body {
 .custom-table .ant-spin-nested-loading,
 .custom-table .infinite-scroll-component__outerdiv,
 .custom-table .infinite-scroll-component,
-.custom-table.empty .ant-table-empty table,
-.preview.empty.custom-table .infinite-scroll-component > div,
-.empty .ant-table-body,
+.custom-table .ant-table-empty table,
+.custom-table.preview .infinite-scroll-component > div,
+.custom-table .ant-table-body,
 .ant-table-empty,
 .creator-container,
 .categories .ant-tabs,
@@ -156,25 +156,28 @@ body {
   height: 100% !important;
 }
 
-.preview.empty.custom-table .infinite-scroll-component {
+.custom-table.preview .infinite-scroll-component {
   height: 30rem !important;
 }
 
-.preview.empty.custom-table .infinite-scroll-component > div > div {
+.custom-table.preview .infinite-scroll-component > div > div {
   margin-bottom: 0 !important;
 }
 
 .custom-table .ant-table-header,
-.custom-table.empty table {
+.custom-table table {
   height: initial !important;
-}
-.of-clip {
-  overflow: clip;
 }
 
 .custom-table .ant-table-content {
   overflow: initial !important;
   height: 100%;
+}
+
+.custom-table .ant-table-header {
+  position: sticky;
+  top: 0;
+  z-index: 2;
 }
 
 .custom-table .ant-table-body {
@@ -191,12 +194,6 @@ body {
 .custom-table {
   overflow-x: scroll;
   overflow-y: clip;
-}
-
-.custom-table .ant-table-header {
-  position: sticky;
-  top: 0;
-  z-index: 2;
 }
 
 .interests .ant-table-body {
@@ -312,10 +309,6 @@ body {
   padding: 14px;
 }
 
-.pt-0 {
-  padding-top: 0;
-}
-
 /* width */
 ::-webkit-scrollbar {
   width: 3.4px;
@@ -340,13 +333,6 @@ body {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-.custom-collapse {
-  border: 1px solid transparent;
-  border-radius: 2px;
-  border-color: #d9d9d9;
-  background: #fff;
 }
 
 .sider-arrow {
@@ -401,14 +387,6 @@ body {
 }
 
 @media (max-width: 992px) {
-  .links.custom-table {
-    height: calc(100vh - 115px) !important;
-  }
-
-  .w-100 .ant-page-header-heading-extra {
-    width: 100%;
-  }
-
   .payments-container {
     overflow: clip;
     position: absolute;
@@ -439,10 +417,6 @@ body {
   .sider-container {
     background: #001529;
     width: 52px;
-  }
-
-  .hidden-on-mobile {
-    display: none;
   }
 
   .ant-page-header {
@@ -485,10 +459,6 @@ body {
 }
 
 @media (min-width: 992px) {
-  .links.custom-table {
-    height: calc(100vh - 200px) !important;
-  }
-
   .payments-container {
     overflow: clip;
     position: absolute;
@@ -539,6 +509,14 @@ body {
 .product-sketch-picker {
   transform: scale(0.75) !important;
   margin-top: -10px;
+}
+
+.of-clip {
+  overflow: clip;
+}
+
+.pt-0 {
+  padding-top: 0;
 }
 
 .mx-0 {

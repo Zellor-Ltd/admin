@@ -867,7 +867,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
               </Row>
             </Col>
           </Row>
-          <div className="fan-videos empty custom-table of-clip">
+          <div className="fan-videos custom-table of-clip">
             <Table
               scroll={{ x: true, y: '27em' }}
               rowClassName={(_, index) => `scrollable-row-${index}`}

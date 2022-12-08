@@ -1083,7 +1083,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
               </Row>
             </Col>
           </Row>
-          <div className="empty custom-table">
+          <div className="custom-table">
             <InfiniteScroll
               height="30rem"
               dataLength={data.length}

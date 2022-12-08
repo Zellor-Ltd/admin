@@ -301,7 +301,7 @@ const FeedTemplates: React.FC<RouteComponentProps> = () => {
               </Button>,
             ]}
           />
-          <div className="empty custom-table">
+          <div className="custom-table">
             <Table
               scroll={{ x: true, y: '27em' }}
               className="mt-1"

@@ -426,7 +426,7 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
               </Panel>
             </Collapse>
           )}
-          <div className="empty custom-table">
+          <div className="custom-table">
             <InfiniteScroll
               height="27rem"
               dataLength={payments.length}

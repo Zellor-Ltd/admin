@@ -570,7 +570,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
               </Row>
             </Col>
           </Row>
-          <div className="empty custom-table">
+          <div className="custom-table">
             <InfiniteScroll
               height="29rem"
               dataLength={creators.length}

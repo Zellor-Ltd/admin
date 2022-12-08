@@ -852,7 +852,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
       case 'default':
         if (!details) {
           return (
-            <div className="preview empty custom-table">
+            <div className="preview custom-table">
               <InfiniteScroll
                 height="27rem"
                 dataLength={products.length}

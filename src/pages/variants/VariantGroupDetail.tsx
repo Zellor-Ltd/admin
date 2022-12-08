@@ -708,7 +708,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
               </Row>
             </Col>
           </Row>
-          <div className="empty custom-table">
+          <div className="custom-table">
             <InfiniteScroll
               height="24.5rem"
               dataLength={products.length}

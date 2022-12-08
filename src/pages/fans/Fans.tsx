@@ -426,7 +426,7 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
             selectedRecord={fanFeedModal}
             setSelectedRecord={setFanFeedModal}
           />
-          <div className="empty custom-table">
+          <div className="custom-table">
             <InfiniteScroll
               height="29rem"
               dataLength={fans.length}

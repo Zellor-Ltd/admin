@@ -629,7 +629,7 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
             selectedRecord={productAPITest}
             setSelectedRecord={setProductAPITest}
           />
-          <div className="product-templates empty custom-table">
+          <div className="product-templates custom-table">
             <Table
               scroll={{ x: true, y: '27em' }}
               className="mt-1"

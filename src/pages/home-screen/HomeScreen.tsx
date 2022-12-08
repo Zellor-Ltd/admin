@@ -262,7 +262,7 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
               </Button>,
             ]}
           />
-          <div className="empty custom-table">
+          <div className="custom-table">
             <Table
               scroll={{ x: true, y: '27em' }}
               rowClassName={(_, index) => `scrollable-row-${index}`}

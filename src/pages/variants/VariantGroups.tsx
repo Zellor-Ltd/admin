@@ -659,7 +659,7 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
               </Row>
             </Col>
           </Row>
-          <div className="empty custom-table">
+          <div className="custom-table">
             <InfiniteScroll
               height="27rem"
               dataLength={products.length}

@@ -211,7 +211,7 @@ const Trends: React.FC<RouteComponentProps> = props => {
           </Row>
         </Col>
       </Row>
-      <div className="empty custom-table">
+      <div className="custom-table">
         <Table
           scroll={{ x: true, y: '30em' }}
           rowClassName={(_, index) => `scrollable-row-${index}`}
