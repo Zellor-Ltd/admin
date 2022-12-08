@@ -102,14 +102,31 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
     useState<ProductCategory>();
   const { doFetch, doRequest } = useRequest({ setLoading });
   const [loaded, setLoaded] = useState<boolean>(false);
+  const [style, setStyle] = useState<any>();
+  const { isMobile } = useContext(AppContext);
+
+  useEffect(() => {
+    if (isMobile)
+      setStyle({
+        fontSize: '16px',
+        lineHeight: 1.5,
+        position: 'relative',
+        left: '-.1rem',
+      });
+    else
+      setStyle({
+        fontSize: '16px',
+        lineHeight: 1.5,
+        position: 'relative',
+        left: '.8rem',
+      });
+  }, [isMobile]);
 
   const optionMapping: SelectOption = {
     key: 'id',
     label: 'brandName',
     value: 'id',
   };
-
-  const { isMobile } = useContext(AppContext);
 
   const productSuperCategoryOptionMapping: SelectOption = {
     key: 'id',
@@ -140,6 +157,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
   const [panelStyle, setPanelStyle] = useState<React.CSSProperties>({
     top: 64,
     marginBottom: '0.5rem',
+    zIndex: 3,
   });
   const filterPanelHeight = useRef<number>();
   const windowHeight = window.innerHeight;
@@ -179,7 +197,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
   };
 
   useEffect(() => {
-    setPanelStyle({ top: offset });
+    setPanelStyle({ zIndex: 3, top: offset });
   }, [offset]);
 
   useEffect(() => {
@@ -553,13 +571,11 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
   };
 
   const collapse = (shouldCollapse?: any) => {
-    if (shouldCollapse && isMobile) {
-      if (activeKey === '1') setActiveKey('0');
-    }
+    if (shouldCollapse && isMobile && activeKey === '1') setActiveKey('0');
   };
 
   const handleCollapseChange = () => {
-    if (activeKey === '1') setActiveKey('0');
+    if (isMobile && activeKey === '1') setActiveKey('0');
     else setActiveKey('1');
   };
 
@@ -627,15 +643,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
         onClick={() => setShowMore(prev => !prev)}
         className="ml-1 mb-1"
       >
-        <Typography.Title
-          level={5}
-          style={{
-            fontSize: '16px',
-            lineHeight: 1.5,
-            position: 'relative',
-            left: '-4px',
-          }}
-        >
+        <Typography.Title level={5} style={style}>
           <PlusOutlined />
           &nbsp;&nbsp;&nbsp;&nbsp;Add Variants
         </Typography.Title>
@@ -704,36 +712,37 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
               </Row>
             </Col>
           </Row>
-          <InfiniteScroll
-            className="variant table-container"
-            dataLength={products.length}
-            next={getProducts}
-            hasMore={!eof}
-            loader={
-              page !== 0 && (
-                <div className="scroll-message">
-                  <Spin />
-                </div>
-              )
-            }
-            endMessage={
-              loaded && (
-                <div className="scroll-message">
-                  <b>End of results.</b>
-                </div>
-              )
-            }
-          >
-            <Table
-              scroll={{ x: true }}
-              rowClassName={(_, index) => `scrollable-row-${index}`}
-              rowKey="id"
-              columns={columns}
-              dataSource={products}
-              loading={loading}
-              pagination={false}
-            />
-          </InfiniteScroll>
+          <div className="empty custom-table">
+            <InfiniteScroll
+              dataLength={products.length}
+              next={getProducts}
+              hasMore={!eof}
+              loader={
+                page !== 0 && (
+                  <div className="scroll-message">
+                    <Spin />
+                  </div>
+                )
+              }
+              endMessage={
+                loaded && (
+                  <div className="scroll-message">
+                    <b>End of results.</b>
+                  </div>
+                )
+              }
+            >
+              <Table
+                scroll={{ x: true, y: '24.5rem' }}
+                rowClassName={(_, index) => `scrollable-row-${index}`}
+                rowKey="id"
+                columns={columns}
+                dataSource={products}
+                loading={loading}
+                pagination={false}
+              />
+            </InfiniteScroll>
+          </div>
         </>
       )}
     </>
