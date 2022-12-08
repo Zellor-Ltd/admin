@@ -106,7 +106,7 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
     useState<ProductCategory>();
   const [currentSubSubCategory, setCurrentSubSubCategory] =
     useState<ProductCategory>();
-
+  const [style, setStyle] = useState<any>();
   const [activeKey, setActiveKey] = useState<string>('1');
   const [detailsActiveKey, setDetailsActiveKey] = useState<string>('1');
   const [offset, setOffset] = useState<number>(64);
@@ -147,6 +147,15 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
         : true)
     );
   });
+
+  useEffect(() => {
+    if (
+      isMobile &&
+      ((!details && activeKey === '1') || (details && detailsActiveKey === '1'))
+    )
+      setStyle({ overflow: 'scroll', height: '100%' });
+    else setStyle({ overflow: 'clip', height: '100%' });
+  }, [isMobile, activeKey, details, detailsActiveKey]);
 
   useEffect(() => {
     const panel = document.getElementById('filterPanel');
@@ -568,24 +577,19 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
   };
 
   const collapse = (shouldCollapse?: any) => {
-    if (shouldCollapse && isMobile) {
-      if (activeKey === '1') setActiveKey('0');
-    }
+    if (isMobile && !details && activeKey === '1' && shouldCollapse)
+      setActiveKey('0');
   };
 
   const handleCollapseChange = () => {
-    if (activeKey === '1') setActiveKey('0');
-    else setActiveKey('1');
+    if (isMobile && !details) {
+      if (activeKey === '1') setActiveKey('0');
+      else setActiveKey('1');
+    }
   };
 
   return (
-    <div
-      style={
-        isMobile && (activeKey === '1' || detailsActiveKey === '1')
-          ? { overflow: 'scroll', height: '100%' }
-          : { overflow: 'clip', height: '100%' }
-      }
-    >
+    <div style={style}>
       {!details && (
         <>
           <PageHeader

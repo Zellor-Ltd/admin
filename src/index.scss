@@ -168,7 +168,6 @@ body {
 .custom-table.empty table {
   height: initial !important;
 }
-
 .of-clip {
   overflow: clip;
 }
@@ -194,14 +193,13 @@ body {
   overflow-y: clip;
 }
 
-.categories .ant-table-header {
+.custom-table .ant-table-header {
   position: sticky;
   top: 0;
   z-index: 2;
 }
 
-.interests .ant-table-body,
-.payment-history .ant-table-body {
+.interests .ant-table-body {
   overflow: scroll !important;
   height: 100% !important;
 }
@@ -411,12 +409,6 @@ body {
     width: 100%;
   }
 
-  .payment-history {
-    position: fixed !important;
-    overflow: clip !important;
-    inset: 230px 2.5rem 3.75rem 100px !important;
-  }
-
   .payments-container {
     overflow: clip;
     position: absolute;
@@ -495,12 +487,6 @@ body {
 @media (min-width: 992px) {
   .links.custom-table {
     height: calc(100vh - 200px) !important;
-  }
-
-  .payment-history {
-    position: fixed !important;
-    overflow: clip !important;
-    inset: 270px 2.5rem 3.75rem 250px !important;
   }
 
   .payments-container {
