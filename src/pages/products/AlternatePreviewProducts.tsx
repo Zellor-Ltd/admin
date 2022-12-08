@@ -631,7 +631,7 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
         });
       }}
     >
-      <div className="preview empty custom-table">
+      <div className="preview custom-table">
         <InfiniteScroll
           height="30rem"
           dataLength={_products.length}

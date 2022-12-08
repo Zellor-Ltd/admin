@@ -670,7 +670,7 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
               </Panel>
             </Collapse>
           )}
-          <div className="empty custom-table">
+          <div className="custom-table">
             <Table
               scroll={{ x: true, y: '25em' }}
               rowClassName={(_, index) => `scrollable-row-${index}`}

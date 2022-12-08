@@ -1019,7 +1019,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
             selectedRecord={productAPITest}
             setSelectedRecord={setProductAPITest}
           />
-          <div className="empty custom-table">
+          <div className="custom-table">
             <InfiniteScroll
               height="35rem"
               dataLength={products.length}

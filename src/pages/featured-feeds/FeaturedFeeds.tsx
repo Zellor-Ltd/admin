@@ -428,7 +428,7 @@ const FeaturedFeed: React.FC<RouteComponentProps> = () => {
           </Row>
         </Col>
       </Row>
-      <div className="empty custom-table">
+      <div className="custom-table">
         <DndProvider backend={HTML5Backend}>
           <Table
             scroll={{ x: true, y: '27em' }}

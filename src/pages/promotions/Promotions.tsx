@@ -311,7 +311,7 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
               />
             </Col>
           </Row>
-          <div className="empty custom-table of-clip">
+          <div className="custom-table of-clip">
             <Table
               className="mt-1"
               scroll={{ x: true, y: '27em' }}

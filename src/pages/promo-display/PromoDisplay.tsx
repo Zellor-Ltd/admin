@@ -299,7 +299,7 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
               />
             </Col>
           </Row>
-          <div className="empty custom-table">
+          <div className="custom-table">
             <Table
               className="mt-1"
               scroll={{ x: true, y: '30em' }}

@@ -412,7 +412,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
               </Row>
             </Col>
           </Row>
-          <div className="empty custom-table">
+          <div className="custom-table">
             <InfiniteScroll
               height="30rem"
               dataLength={tags.length}
