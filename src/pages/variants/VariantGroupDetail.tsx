@@ -704,36 +704,37 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
               </Row>
             </Col>
           </Row>
-          <InfiniteScroll
-            className="variant table-container"
-            dataLength={products.length}
-            next={getProducts}
-            hasMore={!eof}
-            loader={
-              page !== 0 && (
-                <div className="scroll-message">
-                  <Spin />
-                </div>
-              )
-            }
-            endMessage={
-              loaded && (
-                <div className="scroll-message">
-                  <b>End of results.</b>
-                </div>
-              )
-            }
-          >
-            <Table
-              scroll={{ x: true }}
-              rowClassName={(_, index) => `scrollable-row-${index}`}
-              rowKey="id"
-              columns={columns}
-              dataSource={products}
-              loading={loading}
-              pagination={false}
-            />
-          </InfiniteScroll>
+          <div className="empty custom-table">
+            <InfiniteScroll
+              dataLength={products.length}
+              next={getProducts}
+              hasMore={!eof}
+              loader={
+                page !== 0 && (
+                  <div className="scroll-message">
+                    <Spin />
+                  </div>
+                )
+              }
+              endMessage={
+                loaded && (
+                  <div className="scroll-message">
+                    <b>End of results.</b>
+                  </div>
+                )
+              }
+            >
+              <Table
+                scroll={{ x: true }}
+                rowClassName={(_, index) => `scrollable-row-${index}`}
+                rowKey="id"
+                columns={columns}
+                dataSource={products}
+                loading={loading}
+                pagination={false}
+              />
+            </InfiniteScroll>
+          </div>
         </>
       )}
     </>

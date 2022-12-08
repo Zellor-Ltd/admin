@@ -403,9 +403,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
                   <Button
                     className={isMobile ? 'mt-1' : ''}
                     type="primary"
-                    disabled={
-                      !selectedRowKeys.length || fetchingTags || !brands.length
-                    }
+                    disabled={!selectedRowKeys.length || !brands.length}
                     onClick={selectTags}
                   >
                     Next
@@ -416,6 +414,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
           </Row>
           <div className="empty custom-table">
             <InfiniteScroll
+              height="30rem"
               dataLength={tags.length}
               next={loadTags}
               hasMore={!eof}
@@ -436,7 +435,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
               }
             >
               <Table
-                scroll={{ x: true, y: '30em' }}
+                scroll={{ x: true }}
                 rowClassName={(_, index) => `scrollable-row-${index}`}
                 rowSelection={rowSelection}
                 rowKey="id"

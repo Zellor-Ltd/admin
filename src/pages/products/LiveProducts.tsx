@@ -72,7 +72,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
   const [currentMasterBrand, setCurrentMasterBrand] = useState<string>();
   const [currentProductBrand, setCurrentProductBrand] = useState<string>();
   const [page, setPage] = useState<number>(0);
-  const [eof, setEof] = useState<boolean>(true);
+  const [eof, setEof] = useState<boolean>(false);
   const loaded = useRef<boolean>(false);
   const [details, setDetails] = useState<boolean>(false);
   const [currentProduct, setCurrentProduct] = useState<Product>();
@@ -689,9 +689,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
   };
 
   useEffect(() => {
-    if (!details) {
-      scrollToCenter(lastViewedIndex);
-    }
+    if (!details) scrollToCenter(lastViewedIndex);
 
     setisScrollable(details);
   }, [details]);
@@ -946,7 +944,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
           <Row
             align="bottom"
             justify="space-between"
-            className="sticky-filter-box"
+            className="sticky-filter-box mb-15"
             id="filterPanel"
             style={panelStyle}
           >
@@ -1001,7 +999,6 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                       <Button
                         type="primary"
                         onClick={() => getProducts(true)}
-                        loading={loading}
                         className="mr-1"
                         style={{
                           position: 'relative',
@@ -1024,6 +1021,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
           />
           <div className="empty custom-table">
             <InfiniteScroll
+              height="35rem"
               dataLength={products.length}
               next={getProducts}
               hasMore={!eof}
@@ -1044,7 +1042,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
               }
             >
               <Table
-                scroll={{ x: true, y: '27em' }}
+                scroll={{ x: true }}
                 rowClassName={(_, index) =>
                   `scrollable-row-${index} ${
                     index === lastViewedIndex ? 'selected-row' : ''
@@ -1053,7 +1051,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                 rowKey="id"
                 columns={columns}
                 dataSource={products}
-                loading={!products.length && loading && page === 0}
+                loading={loading}
                 pagination={false}
                 rowSelection={{
                   selectedRowKeys,

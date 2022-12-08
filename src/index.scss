@@ -164,14 +164,24 @@ body {
 }
 
 .of-clip,
-.variant .infinite-scroll-component,
 .preview.empty.custom-table .infinite-scroll-component > div {
   overflow: clip;
+}
+
+.custom-table .ant-table-content {
+  overflow: initial !important;
+  height: 100%;
 }
 
 .custom-table .ant-table-body {
   position: absolute;
   top: 55px;
+}
+
+.custom-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 2;
 }
 
 .custom-table {

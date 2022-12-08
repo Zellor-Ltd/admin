@@ -642,7 +642,7 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
           </Row>
           <div className="empty custom-table">
             <Table
-              scroll={{ x: true, y: '30.5em' }}
+              scroll={{ x: true, y: '31em' }}
               rowClassName={(_, index) => `scrollable-row-${index}`}
               rowKey="id"
               columns={columns}

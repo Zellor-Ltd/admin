@@ -86,7 +86,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
   const [outOfStockFilter, setOutOfStockFilter] = useState<boolean>(false);
   const [unclassifiedFilter, setUnclassifiedFilter] = useState<boolean>(false);
   const [page, setPage] = useState<number>(0);
-  const [eof, setEof] = useState<boolean>(true);
+  const [eof, setEof] = useState<boolean>(false);
   const [products, setProducts] = useState<Product[]>([]);
 
   const [currentMasterBrand, setCurrentMasterBrand] = useState<string>();
@@ -854,6 +854,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
           return (
             <div className="preview empty custom-table">
               <InfiniteScroll
+                height="27rem"
                 dataLength={products.length}
                 next={getProducts}
                 hasMore={!eof}
@@ -874,8 +875,8 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                 }
               >
                 <EditableTable
-                  scroll={{ x: true, y: '27em' }}
-                  className="mt-4 alternate-table"
+                  scroll={{ x: true }}
+                  className="alternate-table"
                   rowClassName={(_, index) =>
                     `scrollable-row-${index} ${
                       index === lastViewedIndex ? 'selected-row' : ''
@@ -884,7 +885,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                   rowKey="id"
                   columns={columns}
                   dataSource={products}
-                  loading={(loading || disabled) && page === 0}
+                  loading={loading || disabled}
                   onSave={onSaveItem}
                   pagination={false}
                   rowSelection={{
