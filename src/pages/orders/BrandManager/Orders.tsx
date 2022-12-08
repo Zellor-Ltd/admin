@@ -1085,6 +1085,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
           </Row>
           <div className="empty custom-table">
             <InfiniteScroll
+              height="30rem"
               dataLength={data.length}
               next={loadNext}
               hasMore={page > 0 && !eof}
@@ -1105,7 +1106,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
               }
             >
               <Table
-                scroll={{ x: true, y: '30em' }}
+                scroll={{ x: true }}
                 rowClassName={(_, index) => `scrollable-row-${index}`}
                 rowKey="id"
                 columns={columns}

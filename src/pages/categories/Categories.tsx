@@ -474,6 +474,7 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
               <Tabs.TabPane tab={key} key={key}>
                 <div className="empty custom-table">
                   <InfiniteScroll
+                    height="32rem"
                     dataLength={categories.length}
                     next={updateDisplayedArray}
                     hasMore={!eof}
@@ -491,7 +492,7 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
                     }
                   >
                     <Table
-                      scroll={{ x: true, y: '32em' }}
+                      scroll={{ x: true }}
                       rowClassName={(_, index) => `scrollable-row-${index}`}
                       rowKey="id"
                       columns={columns}

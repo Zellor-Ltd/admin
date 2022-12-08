@@ -115,7 +115,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const lastFocusedIndex = useRef<number>(-1);
   const bufferIndex = useRef<number>(-1);
   const [page, setPage] = useState<number>(0);
-  const [eof, setEof] = useState<boolean>(true);
+  const [eof, setEof] = useState<boolean>(false);
   const [data, setData] = useState<any[]>([]);
   const [selectedFeed, setSelectedFeed] = useState<FeedItem>();
   const selectRef = useRef<any>(null);
@@ -1230,7 +1230,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                   <Button
                     type="primary"
                     onClick={() => getFeed(undefined, true)}
-                    loading={loading}
                   >
                     Search
                     <SearchOutlined style={{ color: 'white' }} />
@@ -1241,6 +1240,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
           </Row>
           <div className="empty custom-table">
             <InfiniteScroll
+              height="27rem"
               dataLength={data.length}
               next={() => getFeed(undefined, false)}
               hasMore={!eof}
@@ -1261,13 +1261,13 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
               }
             >
               <Table
-                scroll={{ x: true, y: '27em' }}
+                scroll={{ x: true }}
                 rowClassName={(_, index) => `scrollable-row-${index}`}
                 size="small"
                 columns={feedItemColumns}
                 rowKey="id"
                 dataSource={data}
-                loading={loading && page === 0}
+                loading={loading}
                 pagination={false}
               />
             </InfiniteScroll>

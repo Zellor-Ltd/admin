@@ -700,11 +700,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
                   </Button>
                 </Col>
                 <Col>
-                  <Button
-                    type="primary"
-                    onClick={() => getProducts(true)}
-                    loading={loading}
-                  >
+                  <Button type="primary" onClick={() => getProducts(true)}>
                     Search
                     <SearchOutlined style={{ color: 'white' }} />
                   </Button>
@@ -714,6 +710,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
           </Row>
           <div className="empty custom-table">
             <InfiniteScroll
+              height="24.5rem"
               dataLength={products.length}
               next={getProducts}
               hasMore={!eof}
@@ -733,7 +730,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
               }
             >
               <Table
-                scroll={{ x: true, y: '24.5rem' }}
+                scroll={{ x: true }}
                 rowClassName={(_, index) => `scrollable-row-${index}`}
                 rowKey="id"
                 columns={columns}

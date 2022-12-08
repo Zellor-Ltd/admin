@@ -562,11 +562,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
             <Col lg={8} xs={24}>
               <Row justify="end" className={isMobile ? 'mt-2' : 'mr-06'}>
                 <Col>
-                  <Button
-                    type="primary"
-                    onClick={() => fetch()}
-                    loading={loading}
-                  >
+                  <Button type="primary" onClick={() => fetch()}>
                     Search
                     <SearchOutlined style={{ color: 'white' }} />
                   </Button>
@@ -576,6 +572,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
           </Row>
           <div className="empty custom-table">
             <InfiniteScroll
+              height="29rem"
               dataLength={creators.length}
               next={() => fetch(true)}
               hasMore={!eof}
@@ -595,7 +592,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
               }
             >
               <Table
-                scroll={{ x: true, y: '29em' }}
+                scroll={{ x: true }}
                 rowClassName={(_, index) => `scrollable-row-${index}`}
                 rowKey="id"
                 columns={columns}

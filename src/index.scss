@@ -139,7 +139,6 @@ body {
 
 .custom-table,
 .custom-table table,
-.custom-table .alternate-table,
 .custom-table .ant-table,
 .custom-table .ant-table-wrapper,
 .custom-table .ant-spin-container,
@@ -148,7 +147,6 @@ body {
 .custom-table .infinite-scroll-component__outerdiv,
 .custom-table .infinite-scroll-component,
 .custom-table.empty .ant-table-empty table,
-.preview.empty.custom-table,
 .preview.empty.custom-table .infinite-scroll-component > div,
 .empty .ant-table-body,
 .ant-table-empty,
@@ -158,19 +156,36 @@ body {
   height: 100% !important;
 }
 
+.preview.empty.custom-table .infinite-scroll-component {
+  height: 30rem !important;
+}
+
+.preview.empty.custom-table .infinite-scroll-component > div > div {
+  margin-bottom: 0 !important;
+}
+
 .custom-table .ant-table-header,
 .custom-table.empty table {
   height: initial !important;
 }
-
-.of-clip,
-.preview.empty.custom-table .infinite-scroll-component > div {
+.of-clip {
   overflow: clip;
+}
+
+.custom-table .ant-table-content {
+  overflow: initial !important;
+  height: 100%;
 }
 
 .custom-table .ant-table-body {
   position: absolute;
   top: 55px;
+}
+
+.custom-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 2;
 }
 
 .custom-table {

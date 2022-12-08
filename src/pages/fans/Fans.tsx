@@ -409,7 +409,6 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
                   <Button
                     type="primary"
                     onClick={getResources}
-                    loading={loading}
                     className={isMobile ? '' : 'mr-06'}
                   >
                     Search
@@ -429,6 +428,7 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
           />
           <div className="empty custom-table">
             <InfiniteScroll
+              height="29rem"
               dataLength={fans.length}
               next={updateDisplayedArray}
               hasMore={!eof}
@@ -448,12 +448,12 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
               }
             >
               <Table
-                scroll={{ x: true, y: '29em' }}
+                scroll={{ x: true }}
                 rowClassName={(_, index) => `scrollable-row-${index}`}
                 rowKey="id"
                 columns={columns}
                 dataSource={fans}
-                loading={refreshing}
+                loading={refreshing || loading}
                 pagination={false}
                 rowSelection={{
                   selectedRowKeys,

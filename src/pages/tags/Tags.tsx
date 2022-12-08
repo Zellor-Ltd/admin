@@ -38,7 +38,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
   const { doFetch, doRequest } = useRequest({ setLoading });
   const [searchFilter, setSearchFilter] = usePageFilter<string>('search');
   const [page, setPage] = useState<number>(0);
-  const [eof, setEof] = useState<boolean>(true);
+  const [eof, setEof] = useState<boolean>(false);
   const [tags, setTags] = useState<Tag[]>([]);
   const { isMobile, setisScrollable } = useContext(AppContext);
   const isMounted = useRef<boolean>(false);
@@ -350,7 +350,6 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
                     type="primary"
                     className={isMobile ? 'mt-1' : 'mt-1 mr-06'}
                     onClick={() => fetch(true)}
-                    loading={loading}
                   >
                     Search
                     <SearchOutlined style={{ color: 'white' }} />
@@ -361,6 +360,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
           </Row>
           <div className="empty custom-table">
             <InfiniteScroll
+              height="30rem"
               dataLength={tags.length}
               next={fetch}
               hasMore={!eof}
@@ -380,12 +380,12 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
               }
             >
               <Table
-                scroll={{ x: true, y: '30em' }}
+                scroll={{ x: true }}
                 rowClassName={(_, index) => `scrollable-row-${index}`}
                 rowKey="id"
                 columns={columns}
                 dataSource={tags}
-                loading={refreshing || (!tags.length && loading)}
+                loading={refreshing || loading}
                 pagination={false}
               />
             </InfiniteScroll>

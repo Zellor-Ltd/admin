@@ -427,11 +427,7 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
             <Col lg={8} xs={24}>
               <Row justify="end" className={isMobile ? 'mt-2' : ''}>
                 <Col>
-                  <Button
-                    type="primary"
-                    onClick={searchGuests}
-                    disabled={fetchingGuests}
-                  >
+                  <Button type="primary" onClick={searchGuests}>
                     Search
                     <SearchOutlined style={{ color: 'white' }} />
                   </Button>
@@ -441,6 +437,7 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
           </Row>
           <div className="empty custom-table">
             <InfiniteScroll
+              height="29rem"
               dataLength={guests.length}
               next={loadGuests}
               hasMore={!eof}
@@ -461,7 +458,7 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
               }
             >
               <Table
-                scroll={{ x: true, y: '29em' }}
+                scroll={{ x: true }}
                 rowClassName={(_, index) => `scrollable-row-${index}`}
                 rowKey="id"
                 columns={columns}

@@ -650,7 +650,6 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
                   <Button
                     type="primary"
                     onClick={() => getProducts(true)}
-                    loading={loading}
                     className="mr-1"
                   >
                     Search
@@ -662,6 +661,7 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
           </Row>
           <div className="empty custom-table">
             <InfiniteScroll
+              height="27rem"
               dataLength={products.length}
               next={getProducts}
               hasMore={!eof}
@@ -682,12 +682,12 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
               }
             >
               <Table
-                scroll={{ x: true, y: '32em' }}
+                scroll={{ x: true }}
                 rowClassName={(_, index) => `scrollable-row-${index}`}
                 rowKey="id"
                 columns={columns}
                 dataSource={products}
-                loading={loading && page === 0}
+                loading={loading}
                 pagination={false}
               />
             </InfiniteScroll>
