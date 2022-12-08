@@ -876,7 +876,6 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
               >
                 <EditableTable
                   scroll={{ x: true }}
-                  className="alternate-table"
                   rowClassName={(_, index) =>
                     `scrollable-row-${index} ${
                       index === lastViewedIndex ? 'selected-row' : ''
@@ -1322,7 +1321,6 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                   <Button
                     type="primary"
                     onClick={() => getProducts(true)}
-                    loading={loading}
                     className="ml-1 mr-05"
                   >
                     Search

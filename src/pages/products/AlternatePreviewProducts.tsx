@@ -631,8 +631,9 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
         });
       }}
     >
-      <div className="alternate table-container">
+      <div className="preview empty custom-table">
         <InfiniteScroll
+          height="30rem"
           dataLength={_products.length}
           next={onNextPage}
           hasMore={!eof}
@@ -652,6 +653,7 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
           }
         >
           <EditableTable
+            scroll={{ x: true }}
             rowClassName={(_, index) =>
               `scrollable-row-${index} ${
                 index === lastViewedIndex ? 'selected-row' : ''
