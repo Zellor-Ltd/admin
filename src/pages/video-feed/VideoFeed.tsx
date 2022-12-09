@@ -146,6 +146,8 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   };
 
   useEffect(() => {
+    if (!loaded.current) return;
+
     if (search(buffer).length < 30 && loadMore.current)
       getFeed(undefined, false);
     else setData(search(buffer));
@@ -753,6 +755,10 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       document.querySelector(`.scrollable-row-${index}`) as HTMLElement
     );
   };
+
+  useEffect(() => {
+    if (data.length) loaded.current = true;
+  }, [data]);
 
   useEffect(() => {
     setisScrollable(details);
