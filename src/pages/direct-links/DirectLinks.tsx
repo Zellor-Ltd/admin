@@ -178,6 +178,12 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
     return option?.label?.toUpperCase().includes(input?.toUpperCase());
   };
 
+  const handleClone = (index: number, record?: any) => {
+    lastFocusedIndex.current = index;
+    setSelectedLink({ ...(record as any), cloning: true });
+    setDetails(true);
+  };
+
   const columns: ColumnsType<any> = [
     {
       title: (
@@ -407,7 +413,7 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
           </div>
         </div>
       ),
-      width: '10%',
+      width: '5%',
       dataIndex: 'url',
       sorter: (a, b): any => {
         if (a.url && b.url) return a.url.localeCompare(b.url as string);
@@ -430,7 +436,7 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
           </div>
         </div>
       ),
-      width: '15%',
+      width: '10%',
       dataIndex: 'link',
       render: (value: string) => (
         <Row>
@@ -481,6 +487,33 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
         else if (b.link) return 1;
         else return 0;
       },
+    },
+    {
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Clone">Clone</Tooltip>
+          </div>
+        </div>
+      ),
+      width: '5%',
+      align: 'center',
+      render: (value: string, record: any, index: number) => (
+        <>
+          <Link
+            onClick={() => handleClone(index, record)}
+            to={{ pathname: window.location.pathname, state: record }}
+          >
+            <CopyOutlined />
+          </Link>
+        </>
+      ),
     },
     {
       title: (

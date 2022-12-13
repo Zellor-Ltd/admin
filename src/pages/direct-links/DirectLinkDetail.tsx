@@ -13,7 +13,7 @@ import { RichTextEditor } from 'components/RichTextEditor';
 import { useRequest } from 'hooks/useRequest';
 import { Brand } from 'interfaces/Brand';
 import { Creator } from 'interfaces/Creator';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { fetchProducts, saveDirectLink } from 'services/DiscoClubService';
 import '@pathofdev/react-tag-input/build/index.css';
 import { ProductBrand } from 'interfaces/ProductBrand';
@@ -21,6 +21,7 @@ import DOMPurify from 'isomorphic-dompurify';
 import { Product } from 'interfaces/Product';
 import MultipleFetchDebounceSelect from 'components/select/MultipleFetchDebounceSelect';
 import { SelectOption } from 'interfaces/SelectOption';
+import scrollIntoView from 'scroll-into-view-if-needed';
 
 interface DirectLinkDetailProps {
   onSave?: (record: any, newItem?: boolean, cloning?: boolean) => void;
@@ -54,19 +55,34 @@ const DirectLinkDetail: React.FC<DirectLinkDetailProps> = ({
     directLink?.creator
   );
   const [selectedMasterBrand, setSelectedMasterBrand] = useState<Brand>(
-    directLink?.brand
+    directLink?.masterBrand
   );
   const [selectedProductBrand, setSelectedProductBrand] =
     useState<ProductBrand>(directLink?.productBrand);
   const [selectedProduct, setSelectedProduct] = useState<Product>(
     directLink?.product
   );
+  let idRef = useRef<Input>(null);
+  const mounted = useRef<boolean>(false);
+  const previousID = directLink?.cloning ? directLink?.id : undefined;
 
   const optionMapping: SelectOption = {
     label: 'name',
     value: 'id',
     key: 'id',
   };
+
+  useEffect(() => {
+    if (!mounted.current) {
+      mounted.current = true;
+      return;
+    }
+
+    if (directLink?.cloning) {
+      idRef.current!.focus();
+      scrollIntoView(document.getElementById('linkId')!);
+    }
+  });
 
   useEffect(() => {
     if (brands.length && creators.length && productBrands.length)
@@ -90,6 +106,13 @@ const DirectLinkDetail: React.FC<DirectLinkDetailProps> = ({
   const onFinish = async () => {
     try {
       const item = form.getFieldsValue(true);
+
+      if (directLink?.cloning && item.id === previousID) {
+        idRef.current!.focus();
+        message.warning('Please change link ID.');
+        scrollIntoView(document.getElementById('linkId')!);
+        return;
+      }
 
       if (item.description)
         item.description = DOMPurify.sanitize(item.description);
@@ -117,6 +140,16 @@ const DirectLinkDetail: React.FC<DirectLinkDetailProps> = ({
         item.product = { id: selectedProduct!.id, name: selectedProduct!.name };
 
       if (directLink?.id) {
+        if (directLink.cloning && item.id !== previousID) {
+          const response = await doRequest(() => saveDirectLink(item, true));
+          onSave?.(
+            { ...item, id: response.result, cloning: false },
+            true,
+            true
+          );
+          return;
+        }
+
         await doRequest(() => saveDirectLink(item));
         onSave?.(item);
         return;
@@ -193,6 +226,19 @@ const DirectLinkDetail: React.FC<DirectLinkDetailProps> = ({
       >
         <Row gutter={8}>
           <Col lg={12} xs={24}>
+            <Col span={24}>
+              <Form.Item
+                name="id"
+                label={directLink?.cloning ? 'ID - Change needed' : 'ID'}
+              >
+                <Input
+                  disabled={!directLink?.cloning}
+                  ref={idRef}
+                  id="linkId"
+                  placeholder="No input needed"
+                />
+              </Form.Item>
+            </Col>
             <Col span={24}>
               <Form.Item label="Link" name="link">
                 <Input allowClear placeholder="Link" />
