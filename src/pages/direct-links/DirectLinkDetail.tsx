@@ -58,7 +58,9 @@ const DirectLinkDetail: React.FC<DirectLinkDetailProps> = ({
   );
   const [selectedProductBrand, setSelectedProductBrand] =
     useState<ProductBrand>(directLink?.productBrand);
-  const [selectedProduct, setSelectedProduct] = useState<Product>();
+  const [selectedProduct, setSelectedProduct] = useState<Product>(
+    directLink?.product
+  );
 
   const optionMapping: SelectOption = {
     label: 'name',
@@ -114,18 +116,14 @@ const DirectLinkDetail: React.FC<DirectLinkDetailProps> = ({
       if (item.product)
         item.product = { id: selectedProduct!.id, name: selectedProduct!.name };
 
-      // adding record
-      if (!directLink?.id) {
-        const response = await doRequest(() => saveDirectLink(item, true));
-        onSave?.({ ...item, id: response.result }, true, false);
-      }
-
-      // updating record
       if (directLink?.id) {
         await doRequest(() => saveDirectLink(item));
         onSave?.(item);
         return;
       }
+
+      const response = await doRequest(() => saveDirectLink(item, true));
+      onSave?.({ ...item, id: response.result }, true, false);
     } catch (error: any) {
       message.error('Error: ' + error.error);
     }
@@ -176,7 +174,7 @@ const DirectLinkDetail: React.FC<DirectLinkDetailProps> = ({
 
   const handleProductChange = (value?: string) => {
     const entity = products.find(item => item.id === value);
-    setSelectedProduct(entity);
+    setSelectedProduct(entity!);
     setUserInput(value);
   };
 

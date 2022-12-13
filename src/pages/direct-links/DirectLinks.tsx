@@ -54,7 +54,7 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
   const [brands, setBrands] = useState<Brand[]>([]);
   const [productBrands, setProductBrands] = useState([]);
   const [directLinks, setDirectLinks] = useState<any[]>([]);
-
+  const [style, setStyle] = useState<any>();
   // Filter state
   const [brandFilter, setBrandFilter] = useState<Brand>();
   const [productBrandFilter, setProductBrandFilter] = useState<string>();
@@ -126,6 +126,11 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
       };
     }
   });
+
+  useEffect(() => {
+    if (!details) setStyle({ overflow: 'clip', height: '100%' });
+    else setStyle({ overflow: 'scroll', height: '100%' });
+  }, [details]);
 
   const updateOffset = () => {
     if (activeKey === '1') {
@@ -698,11 +703,7 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   return (
-    <div
-      style={
-        details ? { height: '100%' } : { overflow: 'clip', height: '100%' }
-      }
-    >
+    <div style={style}>
       {!details && (
         <>
           <PageHeader
