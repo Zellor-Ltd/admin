@@ -70,7 +70,6 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
   const windowHeight = window.innerHeight;
   const lastFocusedIndex = useRef<number>(-1);
   const directLinksIndex = useRef<number>(-1);
-  const [style, setStyle] = useState<any>();
 
   useEffect(() => {
     if (!details) setStyle({ overflow: 'clip', height: '100%' });
