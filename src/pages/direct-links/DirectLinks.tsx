@@ -72,6 +72,11 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
   const directLinksIndex = useRef<number>(-1);
 
   useEffect(() => {
+    if (!details) setStyle({ overflow: 'clip', height: '100%' });
+    else setStyle({ overflow: 'scroll', height: '100%' });
+  }, [details]);
+
+  useEffect(() => {
     getDetailsResources();
   }, []);
 
@@ -126,11 +131,6 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
       };
     }
   });
-
-  useEffect(() => {
-    if (!details) setStyle({ overflow: 'clip', height: '100%' });
-    else setStyle({ overflow: 'scroll', height: '100%' });
-  }, [details]);
 
   const updateOffset = () => {
     if (activeKey === '1') {
@@ -563,6 +563,11 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
       document.querySelector(`.scrollable-row-${index}`) as HTMLElement
     );
   };
+
+  useEffect(() => {
+    setisScrollable(details);
+    if (!details) scrollToCenter(lastFocusedIndex.current);
+  }, [details]);
 
   const getDirectLinks = async (event?: Event, resetResults?: boolean) => {
     if (event && activeKey !== '1') event.stopPropagation();
