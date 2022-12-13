@@ -55,7 +55,7 @@ const DirectLinkDetail: React.FC<DirectLinkDetailProps> = ({
     directLink?.creator
   );
   const [selectedMasterBrand, setSelectedMasterBrand] = useState<Brand>(
-    directLink?.masterBrand
+    directLink?.brand
   );
   const [selectedProductBrand, setSelectedProductBrand] =
     useState<ProductBrand>(directLink?.productBrand);
@@ -124,8 +124,8 @@ const DirectLinkDetail: React.FC<DirectLinkDetailProps> = ({
           firstName: selectedCreator!.firstName,
         };
 
-      if (item.masterBrand)
-        item.masterBrand = {
+      if (item.brand)
+        item.brand = {
           id: selectedMasterBrand!.id,
           brandName: selectedMasterBrand!.brandName,
         };
@@ -273,7 +273,7 @@ const DirectLinkDetail: React.FC<DirectLinkDetailProps> = ({
               </Form.Item>
             </Col>
             <Col span={24}>
-              <Form.Item label="Master Brand" name={['masterBrand', 'id']}>
+              <Form.Item label="Master Brand" name={['brand', 'id']}>
                 <Select
                   placeholder="Select a Master Brand"
                   disabled={!loaded}
