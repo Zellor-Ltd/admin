@@ -948,7 +948,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
             <Typography.Title level={5}>Product Name</Typography.Title>
             <Input
               allowClear
-              disabled={loadingResources || loading || disabled}
+              disabled={loadingResources}
               ref={inputRef}
               onChange={event => setSearchFilter(event.target.value)}
               suffix={<SearchOutlined />}
@@ -967,7 +967,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
               selectedOption={brandFilter?.brandName}
               optionMapping={optionMapping}
               placeholder="Select a Master Brand"
-              disabled={loadingResources || loading || disabled}
+              disabled={loadingResources}
               allowClear
             ></SimpleSelect>
           </Col>
@@ -981,14 +981,14 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
               selectedOption={productBrandFilter?.brandName}
               optionMapping={optionMapping}
               placeholder="Select a Product Brand"
-              disabled={loadingResources || loading || disabled}
+              disabled={loadingResources}
               allowClear
             ></SimpleSelect>
           </Col>
           <Col lg={6} xs={24}>
             <Typography.Title level={5}>Status</Typography.Title>
             <Select
-              disabled={loadingResources || loading || disabled}
+              disabled={loadingResources}
               placeholder="Select a Status"
               style={{ width: '100%' }}
               onChange={setProductStatusFilter}
@@ -1021,7 +1021,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
               selectedOption={currentSuperCategory?.id}
               optionMapping={productSuperCategoryOptionMapping}
               placeholder="Select a Super Category"
-              disabled={loadingResources || loading || disabled}
+              disabled={loadingResources}
               allowClear
             ></SimpleSelect>
           </Col>
@@ -1039,7 +1039,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
               selectedOption={currentCategory?.id ?? null}
               optionMapping={productCategoryOptionMapping}
               placeholder="Select a Category"
-              disabled={loadingResources || loading || disabled}
+              disabled={loadingResources}
               allowClear
             ></SimpleSelect>
           </Col>
@@ -1064,8 +1064,6 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
               placeholder="Select a Sub Category"
               disabled={
                 loadingResources ||
-                loading ||
-                disabled ||
                 !allCategories['Sub Category'].filter(item => {
                   return (
                     (currentCategory
@@ -1105,8 +1103,6 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
               placeholder="Select a Sub Sub Category"
               disabled={
                 loadingResources ||
-                loading ||
-                disabled ||
                 !allCategories['Sub Sub Category'].filter(item => {
                   return (
                     (currentSubCategory
@@ -1129,7 +1125,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
             <Typography.Title level={5}>Run ID</Typography.Title>
             <Input
               allowClear
-              disabled={loadingResources || loading || disabled}
+              disabled={loadingResources}
               onChange={evt => {
                 setRunIdFilter(evt.target.value);
               }}
@@ -1141,7 +1137,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
           </Col>
           <Col lg={6} xs={24}>
             <Checkbox
-              disabled={loadingResources || loading || disabled}
+              disabled={loadingResources}
               onChange={handleFilterOutOfStock}
               className={isMobile ? 'mt-1 mb-1' : 'mt-2 mb-05'}
             >
@@ -1160,7 +1156,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
           </Col>
           <Col lg={6} xs={24}>
             <Checkbox
-              disabled={loadingResources || loading || disabled}
+              disabled={loadingResources}
               onChange={handleFilterClassified}
               className={isMobile ? 'mb-2' : 'mt-2 mb-05'}
             >
@@ -1226,7 +1222,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                 <Col>
                   <Input
                     allowClear
-                    disabled={loadingResources || loading || disabled}
+                    disabled={loadingResources}
                     onChange={event => setBarcodeFilter(event.target.value)}
                     suffix={<SearchOutlined />}
                     value={barcodeFilter}

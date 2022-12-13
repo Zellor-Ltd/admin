@@ -748,7 +748,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
               <Typography.Title level={5}>Product Name</Typography.Title>
               <Input
                 allowClear
-                disabled={loadingResources || loading}
+                disabled={loadingResources}
                 ref={inputRef}
                 onChange={event => setSearchFilter(event.target.value)}
                 suffix={<SearchOutlined />}
@@ -767,7 +767,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                 selectedOption={brandFilter?.brandName}
                 optionMapping={optionMapping}
                 placeholder="Select a Master Brand"
-                disabled={loadingResources || loading}
+                disabled={loadingResources}
                 allowClear
               ></SimpleSelect>
             </Col>
@@ -783,14 +783,14 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                 selectedOption={productBrandFilter?.brandName}
                 optionMapping={optionMapping}
                 placeholder="Select a Product Brand"
-                disabled={loadingResources || loading}
+                disabled={loadingResources}
                 allowClear
               ></SimpleSelect>
             </Col>
             <Col lg={6} xs={24}>
               <Typography.Title level={5}>Status</Typography.Title>
               <Select
-                disabled={loadingResources || loading}
+                disabled={loadingResources}
                 placeholder="Select a Status"
                 style={{ width: '100%' }}
                 onChange={setProductStatusFilter}
@@ -825,7 +825,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                 selectedOption={productSuperCategoryFilter?.id}
                 optionMapping={productSuperCategoryOptionMapping}
                 placeholder="Select a Super Category"
-                disabled={loadingResources || loading}
+                disabled={loadingResources}
                 allowClear
               ></SimpleSelect>
             </Col>
@@ -839,7 +839,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                 selectedOption={productCategoryFilter?.id}
                 optionMapping={productCategoryOptionMapping}
                 placeholder="Select a Category"
-                disabled={loadingResources || loading}
+                disabled={loadingResources}
                 allowClear
               ></SimpleSelect>
             </Col>
@@ -855,7 +855,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                 selectedOption={productSubCategoryFilter?.id}
                 optionMapping={productSubCategoryOptionMapping}
                 placeholder="Select a Sub Category"
-                disabled={loadingResources || loading}
+                disabled={loadingResources}
                 allowClear
               ></SimpleSelect>
             </Col>
@@ -871,7 +871,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
                 selectedOption={productSubSubCategoryFilter?.id}
                 optionMapping={productSubSubCategoryOptionMapping}
                 placeholder="Select a Sub Sub Category"
-                disabled={loadingResources || loading}
+                disabled={loadingResources}
                 allowClear
               ></SimpleSelect>
             </Col>
@@ -879,7 +879,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
               <Typography.Title level={5}>Run ID</Typography.Title>
               <Input
                 allowClear
-                disabled={loadingResources || loading}
+                disabled={loadingResources}
                 onChange={evt => {
                   setRunIdFilter(evt.target.value);
                 }}
@@ -891,7 +891,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
             </Col>
             <Col lg={6} xs={24}>
               <Checkbox
-                disabled={loadingResources || loading}
+                disabled={loadingResources}
                 onChange={handleFilterOutOfStock}
                 className={isMobile ? 'mt-1 mb-2' : 'mt-2 mb-05'}
               >

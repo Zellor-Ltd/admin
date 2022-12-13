@@ -28,7 +28,7 @@ import CommissionDetail from './CommissionDetail';
 const { Panel } = Collapse;
 
 const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
-  const [loading, setLoading] = useState<boolean>(false);
+  const [, setLoading] = useState<boolean>(false);
   const { doFetch } = useRequest({ setLoading });
   const { isMobile } = useContext(AppContext);
   const [creators, setCreators] = useState<Creator[]>([]);
@@ -344,7 +344,7 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
                 placeholder="Creator"
                 showSearch
                 allowClear
-                disabled={!creators.length || loading || refreshing}
+                disabled={!creators.length}
                 filterOption={filterOption}
               >
                 {creators.map((curr: any) => (
@@ -365,7 +365,7 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
               <DatePicker.RangePicker
                 onChange={onChangeRangePicker}
                 className="mb-1"
-                disabled={!creators.length || loading || refreshing}
+                disabled={!creators.length}
                 ranges={{
                   Today: [moment(), moment()],
                   'This Month': [

@@ -1034,7 +1034,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
                     style={{ width: '100%' }}
                     placeholder="Select a Master Brand"
                     value={brandId}
-                    disabled={!brands.length || refreshing}
+                    disabled={!brands.length}
                     showSearch
                     filterOption={filterOption}
                   >
@@ -1060,7 +1060,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
                     placeholder="Search by Fan E-mail"
                     options={fans}
                     input={fanFilterInput}
-                    disabled={!brands.length || refreshing}
+                    disabled={!brands.length}
                     onInputKeyDown={(event: HTMLInputElement) =>
                       handleKeyDown(event)
                     }

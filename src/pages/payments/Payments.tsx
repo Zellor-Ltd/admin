@@ -539,7 +539,7 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
                 placeholder="Creator"
                 showSearch
                 allowClear
-                disabled={!creators.length || loading}
+                disabled={!creators.length}
                 filterOption={filterOption}
               >
                 {creators.map((curr: any) => (
@@ -563,7 +563,7 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
                 value={currentStatus}
                 placeholder="Status"
                 className="mb-1"
-                disabled={!creators.length || loading}
+                disabled={!creators.length}
                 showSearch
                 allowClear
                 filterOption={filterOption}

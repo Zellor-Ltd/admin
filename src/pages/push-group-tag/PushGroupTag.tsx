@@ -364,7 +364,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
                     Search by Tag Name
                   </Typography.Title>
                   <MultipleFetchDebounceSelect
-                    disabled={fetchingTags || !brands.length}
+                    disabled={!brands.length}
                     style={{ width: '100%' }}
                     input={userInput}
                     loaded={loaded}
@@ -391,7 +391,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
                     style={{ width: '100%' }}
                     optionMapping={optionMapping}
                     placeholder="Select a Master Brand"
-                    disabled={fetchingTags || !brands.length}
+                    disabled={!brands.length}
                     allowClear
                   ></SimpleSelect>
                 </Col>
