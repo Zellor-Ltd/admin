@@ -47,6 +47,12 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
   const updatingTable = useRef(false);
   const scrolling = useRef(false);
   const mounted = useRef(false);
+  const [style, setStyle] = useState<any>();
+
+  useEffect(() => {
+    if (!details) setStyle({ overflow: 'clip', height: '100%' });
+    else setStyle({ overflow: 'scroll', height: '100%' });
+  }, [details]);
 
   const optionMapping: SelectOption = {
     key: 'id',
@@ -340,11 +346,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
   };
 
   return (
-    <div
-      style={
-        details ? { height: '100%' } : { overflow: 'clip', height: '100%' }
-      }
-    >
+    <div style={style}>
       {!details && (
         <>
           <PageHeader

@@ -56,6 +56,12 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
   const [searchFilter, setSearchFilter] = useState<string>();
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const { isMobile, setisScrollable } = useContext(AppContext);
+  const [style, setStyle] = useState<any>();
+
+  useEffect(() => {
+    if (!details) setStyle({ overflow: 'clip', height: '100%' });
+    else setStyle({ overflow: 'scroll', height: '100%' });
+  }, [details]);
 
   useEffect(() => {
     if (refreshing) {
@@ -349,11 +355,7 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   return (
-    <div
-      style={
-        details ? { height: '100%' } : { overflow: 'clip', height: '100%' }
-      }
-    >
+    <div style={style}>
       {!details && (
         <>
           <PageHeader

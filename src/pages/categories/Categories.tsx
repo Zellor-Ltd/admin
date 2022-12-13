@@ -66,6 +66,7 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
   });
   const [categories, setCategories] = useState<any>([]);
   const { isMobile, setisScrollable } = useContext(AppContext);
+  const [style, setStyle] = useState<any>();
 
   useEffect(() => {
     fetchAllCategories();
@@ -84,6 +85,11 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
       setRefreshing(false);
     }
   }, [refreshing]);
+
+  useEffect(() => {
+    if (!details) setStyle({ overflow: 'clip', height: '100%' });
+    else setStyle({ overflow: 'scroll', height: '100%' });
+  }, [details]);
 
   const updateDisplayedArray = async () => {
     if (!content[selectedTab].length) return;
@@ -423,12 +429,7 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   return (
-    <div
-      className="categories"
-      style={
-        details ? { height: '100%' } : { overflow: 'clip', height: '100%' }
-      }
-    >
+    <div className="categories" style={style}>
       {!details && (
         <>
           <PageHeader

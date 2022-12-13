@@ -37,6 +37,12 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
   const [data, setData] = useState<DdTemplate[]>([]);
   const [filter, setFilter] = useState<string>('');
   const { isMobile, setisScrollable } = useContext(AppContext);
+  const [style, setStyle] = useState<any>();
+
+  useEffect(() => {
+    if (!details) setStyle({ overflow: 'clip', height: '100%' });
+    else setStyle({ overflow: 'scroll', height: '100%' });
+  }, [details]);
 
   useEffect(() => {
     getResources();
@@ -305,11 +311,7 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   return (
-    <div
-      style={
-        details ? { height: '100%' } : { overflow: 'clip', height: '100%' }
-      }
-    >
+    <div style={style}>
       {!details && (
         <>
           <PageHeader

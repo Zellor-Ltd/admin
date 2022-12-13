@@ -55,6 +55,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
   const [updatingVIndex, setUpdatingVIndex] = useState<Record<string, boolean>>(
     {}
   );
+  const [style, setStyle] = useState<any>();
 
   const scrollToCenter = (index: number) => {
     scrollIntoView(
@@ -64,8 +65,12 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
 
   useEffect(() => {
     setisScrollable(details);
-
     if (!details) scrollToCenter(lastViewedIndex);
+  }, [details]);
+
+  useEffect(() => {
+    if (!details) setStyle({ overflow: 'clip', height: '100%' });
+    else setStyle({ overflow: 'scroll', height: '100%' });
   }, [details]);
 
   const fetch = async (loadNextPage?: boolean) => {
@@ -519,11 +524,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   return (
-    <div
-      style={
-        details ? { height: '100%' } : { overflow: 'clip', height: '100%' }
-      }
-    >
+    <div style={style}>
       {!details && (
         <div className="creator-container">
           <PageHeader

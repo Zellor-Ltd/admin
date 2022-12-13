@@ -21,6 +21,12 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [details, setDetails] = useState<boolean>(false);
   const [currentBanner, setCurrentBanner] = useState<Banner>();
   const { isMobile, setisScrollable } = useContext(AppContext);
+  const [style, setStyle] = useState<any>();
+
+  useEffect(() => {
+    if (!details) setStyle({ overflow: 'clip', height: '100%' });
+    else setStyle({ overflow: 'scroll', height: '100%' });
+  }, [details]);
 
   const getBanners = async () => {
     const response = await doFetch(() => fetchBanners());
@@ -241,11 +247,7 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
     },
   ];
   return (
-    <div
-      style={
-        details ? { height: '100%' } : { overflow: 'clip', height: '100%' }
-      }
-    >
+    <div style={style}>
       {!details && (
         <>
           <PageHeader

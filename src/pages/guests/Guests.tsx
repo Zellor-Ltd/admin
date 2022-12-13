@@ -55,6 +55,12 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
   const [guests, setGuests] = useState<Fan[]>([]);
   const [buffer, setBuffer] = useState<Fan[]>([]);
   const { isMobile, setisScrollable } = useContext(AppContext);
+  const [style, setStyle] = useState<any>();
+
+  useEffect(() => {
+    if (!details) setStyle({ overflow: 'clip', height: '100%' });
+    else setStyle({ overflow: 'scroll', height: '100%' });
+  }, [details]);
 
   const fanOptionMapping: SelectOption = {
     key: 'id',
@@ -382,11 +388,7 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   return (
-    <div
-      style={
-        details ? { height: '100%' } : { overflow: 'clip', height: '100%' }
-      }
-    >
+    <div style={style}>
       {!details && (
         <>
           <PageHeader

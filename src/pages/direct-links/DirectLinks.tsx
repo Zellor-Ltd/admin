@@ -54,7 +54,7 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
   const [brands, setBrands] = useState<Brand[]>([]);
   const [productBrands, setProductBrands] = useState([]);
   const [directLinks, setDirectLinks] = useState<any[]>([]);
-
+  const [style, setStyle] = useState<any>();
   // Filter state
   const [brandFilter, setBrandFilter] = useState<Brand>();
   const [productBrandFilter, setProductBrandFilter] = useState<string>();
@@ -70,6 +70,12 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
   const windowHeight = window.innerHeight;
   const lastFocusedIndex = useRef<number>(-1);
   const directLinksIndex = useRef<number>(-1);
+  const [style, setStyle] = useState<any>();
+
+  useEffect(() => {
+    if (!details) setStyle({ overflow: 'clip', height: '100%' });
+    else setStyle({ overflow: 'scroll', height: '100%' });
+  }, [details]);
 
   useEffect(() => {
     getDetailsResources();
@@ -127,6 +133,11 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
     }
   });
 
+  useEffect(() => {
+    if (!details) setStyle({ overflow: 'clip', height: '100%' });
+    else setStyle({ overflow: 'scroll', height: '100%' });
+  }, [details]);
+
   const updateOffset = () => {
     if (activeKey === '1') {
       filterPanelHeight.current =
@@ -171,6 +182,12 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
 
   const filterOption = (input: string, option: any) => {
     return option?.label?.toUpperCase().includes(input?.toUpperCase());
+  };
+
+  const handleClone = (index: number, record?: any) => {
+    lastFocusedIndex.current = index;
+    setSelectedLink({ ...(record as any), cloning: true });
+    setDetails(true);
   };
 
   const columns: ColumnsType<any> = [
@@ -402,7 +419,7 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
           </div>
         </div>
       ),
-      width: '10%',
+      width: '5%',
       dataIndex: 'url',
       sorter: (a, b): any => {
         if (a.url && b.url) return a.url.localeCompare(b.url as string);
@@ -425,7 +442,7 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
           </div>
         </div>
       ),
-      width: '15%',
+      width: '10%',
       dataIndex: 'link',
       render: (value: string) => (
         <Row>
@@ -476,6 +493,33 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
         else if (b.link) return 1;
         else return 0;
       },
+    },
+    {
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Clone">Clone</Tooltip>
+          </div>
+        </div>
+      ),
+      width: '5%',
+      align: 'center',
+      render: (value: string, record: any, index: number) => (
+        <>
+          <Link
+            onClick={() => handleClone(index, record)}
+            to={{ pathname: window.location.pathname, state: record }}
+          >
+            <CopyOutlined />
+          </Link>
+        </>
+      ),
     },
     {
       title: (
@@ -698,11 +742,7 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   return (
-    <div
-      style={
-        details ? { height: '100%' } : { overflow: 'clip', height: '100%' }
-      }
-    >
+    <div style={style}>
       {!details && (
         <>
           <PageHeader
