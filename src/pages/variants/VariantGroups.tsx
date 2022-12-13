@@ -377,7 +377,7 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
             <Typography.Title level={5}>Product Name</Typography.Title>
             <Input
               allowClear
-              disabled={loadingResources || loading}
+              disabled={loadingResources}
               value={searchFilter}
               onChange={event => setSearchFilter(event.target.value)}
               placeholder="Search by Name"
@@ -394,7 +394,7 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
               selectedOption={brandFilter?.brandName}
               optionMapping={optionMapping}
               placeholder="Select a Master Brand"
-              disabled={loadingResources || loading}
+              disabled={loadingResources}
               allowClear
             ></SimpleSelect>
           </Col>
@@ -408,14 +408,14 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
               selectedOption={productBrandFilter?.brandName}
               optionMapping={optionMapping}
               placeholder="Select a Product Brand"
-              disabled={loadingResources || loading}
+              disabled={loadingResources}
               allowClear
             ></SimpleSelect>
           </Col>
           <Col lg={6} xs={24}>
             <Typography.Title level={5}>Status</Typography.Title>
             <Select
-              disabled={loadingResources || loading}
+              disabled={loadingResources}
               placeholder="Select a Status"
               style={{ width: '100%' }}
               onChange={setProductStatusFilter}
@@ -442,7 +442,7 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
               selectedOption={currentSuperCategory?.id}
               optionMapping={productSuperCategoryOptionMapping}
               placeholder="Select a Super Category"
-              disabled={loadingResources || loading}
+              disabled={loadingResources}
               allowClear
             ></SimpleSelect>
           </Col>
@@ -456,7 +456,7 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
               selectedOption={currentCategory?.id ?? null}
               optionMapping={productCategoryOptionMapping}
               placeholder="Select a Category"
-              disabled={loadingResources || loading}
+              disabled={loadingResources}
               allowClear
             ></SimpleSelect>
           </Col>
@@ -472,7 +472,6 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
               placeholder="Select a Sub Category"
               disabled={
                 loadingResources ||
-                loading ||
                 !allCategories['Sub Category'].filter(item => {
                   return (
                     (currentCategory
@@ -500,7 +499,6 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
               placeholder="Select a Sub Sub Category"
               disabled={
                 loadingResources ||
-                loading ||
                 !allCategories['Sub Sub Category'].filter(item => {
                   return (
                     (currentSubCategory
@@ -523,7 +521,7 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
             <Typography.Title level={5}>Run ID</Typography.Title>
             <Input
               allowClear
-              disabled={loadingResources || loading}
+              disabled={loadingResources}
               onChange={evt => {
                 setRunIdFilter(evt.target.value);
               }}
@@ -535,7 +533,7 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
           </Col>
           <Col lg={6} xs={24}>
             <Checkbox
-              disabled={loadingResources || loading}
+              disabled={loadingResources}
               onChange={handleFilterOutOfStock}
               className={isMobile ? 'mt-1 mb-1' : 'mt-2 mb-05'}
             >
@@ -554,7 +552,7 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
           </Col>
           <Col lg={6} xs={24}>
             <Checkbox
-              disabled={loadingResources || loading}
+              disabled={loadingResources}
               onChange={handleFilterClassified}
               className={isMobile ? 'mb-2' : 'mt-2 mb-05'}
             >

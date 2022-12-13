@@ -943,7 +943,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
             </Typography.Title>
             <Input
               allowClear
-              disabled={loadingResources || loading}
+              disabled={loadingResources}
               ref={inputRef}
               onChange={event => setTitleFilter(event.target.value)}
               suffix={<SearchOutlined />}
@@ -962,7 +962,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
               selectedOption={brandFilter?.id}
               optionMapping={masterBrandMapping}
               placeholder="Select a Master Brand"
-              disabled={loadingResources || loading}
+              disabled={loadingResources}
               allowClear
             />
           </Col>
@@ -976,7 +976,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
               selectedOption={productBrandFilter}
               optionMapping={productBrandMapping}
               placeholder="Select a Product Brand"
-              disabled={loadingResources || loading}
+              disabled={loadingResources}
               allowClear
             />
           </Col>
@@ -984,7 +984,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
             <Typography.Title level={5}>Status</Typography.Title>
             <Select
               placeholder="Select a Status"
-              disabled={loadingResources || loading}
+              disabled={loadingResources}
               onChange={setStatusFilter}
               style={{ width: '100%' }}
               filterOption={filterOption}
@@ -1016,7 +1016,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
               optionMapping={categoryMapping}
               placeholder="Select a Category"
               allowClear
-              disabled={loadingResources || loading}
+              disabled={loadingResources}
             />
           </Col>
           <Col lg={5} xs={24}>
@@ -1030,13 +1030,13 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
               optionMapping={videoTypeMapping || loading}
               placeholder="Select a Video Type"
               allowClear
-              disabled={loadingResources || loading}
+              disabled={loadingResources}
             />
           </Col>
           <Col lg={5} xs={24}>
             <Typography.Title level={5}>Start Index</Typography.Title>
             <InputNumber
-              disabled={loadingResources || loading}
+              disabled={loadingResources}
               min={0}
               onChange={startIndex => setIndexFilter(startIndex ?? undefined)}
               placeholder="Select an Index"
@@ -1047,7 +1047,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
             <Typography.Title level={5}>Creator</Typography.Title>
             <Select
               placeholder="Select a Creator"
-              disabled={loadingResources || loading}
+              disabled={loadingResources}
               onChange={setCreatorFilter}
               value={creatorFilter}
               style={{ width: '100%' }}
@@ -1069,7 +1069,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
           <Col lg={5} xs={24}>
             <Typography.Title level={5}>Date Sort</Typography.Title>
             <Select
-              disabled={loadingResources || loading}
+              disabled={loadingResources}
               onChange={setDateSortFilter}
               placeholder="Select a Sorting Option"
               style={{ width: '100%' }}
@@ -1100,7 +1100,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
           <Col lg={5} xs={24}>
             <Typography.Title level={5}>List Name</Typography.Title>
             <Select
-              disabled={loadingResources || loading}
+              disabled={loadingResources}
               onChange={setList}
               placeholder="Select a List"
               style={{ width: '100%' }}

@@ -657,7 +657,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
             </Typography.Title>
             <Input
               allowClear
-              disabled={loadingResources || loading}
+              disabled={loadingResources}
               ref={inputRef}
               onChange={event => setTitleFilter(event.target.value)}
               suffix={<SearchOutlined />}
@@ -676,7 +676,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
               selectedOption={brandFilter?.id}
               optionMapping={masterBrandMapping}
               placeholder="Select a Master Brand"
-              disabled={loadingResources || loading}
+              disabled={loadingResources}
               allowClear
             />
           </Col>
@@ -690,7 +690,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
               selectedOption={productBrandFilter}
               optionMapping={productBrandMapping}
               placeholder="Select a Product Brand"
-              disabled={loadingResources || loading}
+              disabled={loadingResources}
               allowClear
             />
           </Col>
@@ -698,7 +698,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
             <Typography.Title level={5}>Status</Typography.Title>
             <Select
               placeholder="Select a Status"
-              disabled={loadingResources || loading}
+              disabled={loadingResources}
               onChange={setStatusFilter}
               style={{ width: '100%' }}
               filterOption={filterOption}
@@ -730,13 +730,13 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
               optionMapping={categoryMapping}
               placeholder="Select a Category"
               allowClear
-              disabled={loadingResources || loading}
+              disabled={loadingResources}
             />
           </Col>
           <Col lg={6} xs={24}>
             <Typography.Title level={5}>Start Index</Typography.Title>
             <InputNumber
-              disabled={loadingResources || loading}
+              disabled={loadingResources}
               min={0}
               onChange={startIndex => setIndexFilter(startIndex ?? undefined)}
               placeholder="Select an Index"
@@ -747,7 +747,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
             <Typography.Title level={5}>Creator</Typography.Title>
             <Select
               placeholder="Select a Creator"
-              disabled={loadingResources || loading}
+              disabled={loadingResources}
               onChange={setCreatorFilter}
               value={creatorFilter}
               style={{ width: '100%' }}
