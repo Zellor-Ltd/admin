@@ -564,11 +564,6 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
     );
   };
 
-  useEffect(() => {
-    setisScrollable(details);
-    if (!details) scrollToCenter(lastFocusedIndex.current);
-  }, [details]);
-
   const getDirectLinks = async (event?: Event, resetResults?: boolean) => {
     if (event && activeKey !== '1') event.stopPropagation();
     try {
