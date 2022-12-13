@@ -47,6 +47,12 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
   const [currentTemplate, setCurrentTemplate] = useState<Product>();
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [productTemplates, setProductTemplates] = useState<Product[]>([]);
+  const [style, setStyle] = useState<any>();
+
+  useEffect(() => {
+    if (!details) setStyle({ overflow: 'clip', height: '100%' });
+    else setStyle({ overflow: 'scroll', height: '100%' });
+  }, [details]);
 
   useMount(async () => {
     const getBrands = async () => {
@@ -581,11 +587,7 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
   };
 
   return (
-    <div
-      style={
-        details ? { height: '100%' } : { overflow: 'clip', height: '100%' }
-      }
-    >
+    <div style={style}>
       {!details && (
         <>
           <PageHeader
