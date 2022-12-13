@@ -78,6 +78,11 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
   }, [details]);
 
   useEffect(() => {
+    if (!details) setStyle({ overflow: 'clip', height: '100%' });
+    else setStyle({ overflow: 'scroll', height: '100%' });
+  }, [details]);
+
+  useEffect(() => {
     getDetailsResources();
   }, []);
 
@@ -132,11 +137,6 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
       };
     }
   });
-
-  useEffect(() => {
-    if (!details) setStyle({ overflow: 'clip', height: '100%' });
-    else setStyle({ overflow: 'scroll', height: '100%' });
-  }, [details]);
 
   const updateOffset = () => {
     if (activeKey === '1') {
