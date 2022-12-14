@@ -368,102 +368,104 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
   const BrandVaultForm: React.FC<any> = () => {
     return (
       <>
-        {vaultOptions ? (
-          <Form name="brandVaultForm" layout="vertical" form={vaultForm}>
-            <Col>
-              <Col lg={12} xs={24}>
-                <Col span={24}>
-                  <Form.Item
-                    label="Key"
-                    name="key"
-                    rules={[{ required: true, message: 'Key is required.' }]}
-                    initialValue={currentVault?.key}
-                  >
-                    <Input allowClear id="vaultKey" placeholder="Vault Key" />
-                  </Form.Item>
-                </Col>
-                <Col span={24}>
-                  <Form.Item
-                    label="Shop Name"
-                    name="shopName"
-                    rules={[
-                      { required: true, message: 'Shop Name is required.' },
-                    ]}
-                    initialValue={brand ? brand.shopName : ''}
-                  >
-                    <Input
-                      allowClear
-                      id="vaultShopName"
-                      placeholder="Vault Shop Name"
-                    />
-                  </Form.Item>
-                </Col>
-                <Col span={24}>
-                  <Form.Item
-                    label="API Shop Name"
-                    name="apiShopName"
-                    rules={[
-                      { required: true, message: 'API Shop Name is required.' },
-                    ]}
-                    initialValue={currentVault?.apiShopName}
-                  >
-                    <Input
-                      allowClear
-                      id="vaultApiShopName"
-                      placeholder="Vault API Shop Name"
-                    />
-                  </Form.Item>
-                </Col>
-                <Col span={24}>
-                  <Form.Item
-                    label="Token"
-                    name="token"
-                    rules={[{ required: true, message: 'Token is required' }]}
-                    initialValue={currentVault?.token}
-                  >
-                    <Input
-                      allowClear
-                      type="password"
-                      id="vaultToken"
-                      placeholder="Token"
-                    />
-                  </Form.Item>
-                </Col>
-              </Col>
-              <Row gutter={8} justify="end">
-                <Col>
-                  <Button type="default" onClick={() => returnFromVault()}>
-                    Cancel
-                  </Button>
-                </Col>
-                <Col>
-                  <Button
-                    loading={loading}
-                    type="primary"
-                    onClick={() => saveItem(currentVault)}
-                  >
-                    Save Vault
-                  </Button>
-                </Col>
-              </Row>
-            </Col>
-          </Form>
-        ) : (
+        <Form name="brandVaultForm" layout="vertical" form={vaultForm}>
           <Col>
-            <Row gutter={8}>
+            <Col lg={12} xs={24}>
               <Col span={24}>
-                <Table
-                  rowClassName={(_, index) => `scrollable-row-${index}`}
-                  rowKey="id"
-                  columns={columns}
-                  dataSource={vaults}
+                <Form.Item
+                  label="Key"
+                  name="key"
+                  rules={[{ required: true, message: 'Key is required.' }]}
+                  initialValue={currentVault?.key}
+                >
+                  <Input allowClear id="vaultKey" placeholder="Vault Key" />
+                </Form.Item>
+              </Col>
+              <Col span={24}>
+                <Form.Item
+                  label="Shop Name"
+                  name="shopName"
+                  rules={[
+                    { required: true, message: 'Shop Name is required.' },
+                  ]}
+                  initialValue={brand ? brand.shopName : ''}
+                >
+                  <Input
+                    allowClear
+                    id="vaultShopName"
+                    placeholder="Vault Shop Name"
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={24}>
+                <Form.Item
+                  label="API Shop Name"
+                  name="apiShopName"
+                  rules={[
+                    { required: true, message: 'API Shop Name is required.' },
+                  ]}
+                  initialValue={currentVault?.apiShopName}
+                >
+                  <Input
+                    allowClear
+                    id="vaultApiShopName"
+                    placeholder="Vault API Shop Name"
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={24}>
+                <Form.Item
+                  label="Token"
+                  name="token"
+                  rules={[{ required: true, message: 'Token is required' }]}
+                  initialValue={currentVault?.token}
+                >
+                  <Input
+                    allowClear
+                    type="password"
+                    id="vaultToken"
+                    placeholder="Token"
+                  />
+                </Form.Item>
+              </Col>
+            </Col>
+            <Row gutter={8} justify="end">
+              <Col>
+                <Button type="default" onClick={() => returnFromVault()}>
+                  Cancel
+                </Button>
+              </Col>
+              <Col>
+                <Button
                   loading={loading}
-                />
+                  type="primary"
+                  onClick={() => saveItem(currentVault)}
+                >
+                  Save Vault
+                </Button>
               </Col>
             </Row>
           </Col>
-        )}
+        </Form>
       </>
+    );
+  };
+
+  const BrandVaultList: React.FC<any> = () => {
+    return (
+      <Col>
+        <Row gutter={8}>
+          <Col span={24}>
+            <Table
+              rowClassName={(_, index) => `scrollable-row-${index}`}
+              rowKey="id"
+              columns={columns}
+              dataSource={vaults}
+              loading={loading}
+            />
+          </Col>
+        </Row>
+      </Col>
     );
   };
 
@@ -1244,6 +1246,8 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
             </Row>
           )}
         </Form>
+        {activeTabKey === 'Secrets' && !vaultOptions && <BrandVaultList />}
+
         {activeTabKey === 'Secrets' && vaultOptions && <BrandVaultForm />}
       </Form.Provider>
     </>
