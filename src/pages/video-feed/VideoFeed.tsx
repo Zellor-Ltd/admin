@@ -146,7 +146,10 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   };
 
   useEffect(() => {
-    if (!loaded.current) return;
+    if (!loaded.current) {
+      loaded.current = true;
+      return;
+    }
 
     if (search(buffer).length < 30 && loadMore.current)
       getFeed(undefined, false);
