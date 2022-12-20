@@ -109,6 +109,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const [panelStyle, setPanelStyle] = useState<React.CSSProperties>({
     top: 64,
     marginBottom: '0.5rem',
+    zIndex: 3,
   });
   const filterPanelHeight = useRef<number>();
   const windowHeight = window.innerHeight;
@@ -120,6 +121,13 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const [selectedFeed, setSelectedFeed] = useState<FeedItem>();
   const selectRef = useRef<any>(null);
   const loadMore = useRef<boolean>(false);
+  const [style, setStyle] = useState<any>();
+
+  useEffect(() => {
+    if (details || (isMobile && activeKey === '1'))
+      setStyle({ overflow: 'scroll', height: '100%' });
+    else setStyle({ overflow: 'clip', height: '100%' });
+  }, [details, isMobile, activeKey]);
 
   useEffect(() => {
     getDetailsResources();
@@ -197,7 +205,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   };
 
   useEffect(() => {
-    setPanelStyle({ top: offset });
+    setPanelStyle({ top: offset, zIndex: 3 });
   }, [offset]);
 
   useEffect(() => {
@@ -1146,15 +1154,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   };
 
   return (
-    <div
-      style={
-        details
-          ? { height: '100%' }
-          : isMobile && activeKey === '1'
-          ? { overflow: 'scroll', height: '100%' }
-          : { overflow: 'clip', height: '100%' }
-      }
-    >
+    <div style={style}>
       {!details && (
         <>
           <PageHeader

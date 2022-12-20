@@ -101,18 +101,24 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
     useState<ProductCategory>();
   const [currentSubSubCategory, setCurrentSubSubCategory] =
     useState<ProductCategory>();
-
+  const [style, setStyle] = useState<any>();
+  const { isMobile, setisScrollable } = useContext(AppContext);
   const { doFetch, doRequest } = useRequest({ setLoading });
   const { doRequest: saveCategories, loading: loadingCategories } =
     useRequest();
+  const [activeKey, setActiveKey] = useState<string>('1');
+
+  useEffect(() => {
+    if (details || (isMobile && activeKey === '1'))
+      setStyle({ overflow: 'scroll', height: '100%' });
+    else setStyle({ overflow: 'clip', height: '100%' });
+  }, [details, isMobile, activeKey]);
 
   const optionMapping: SelectOption = {
     key: 'id',
     label: 'brandName',
     value: 'id',
   };
-
-  const { isMobile, setisScrollable } = useContext(AppContext);
 
   const productSuperCategoryOptionMapping: SelectOption = {
     key: 'id',
@@ -138,12 +144,11 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
     value: 'id',
   };
 
-  const [activeKey, setActiveKey] = useState<string>('1');
-
   const [offset, setOffset] = useState<number>(64);
   const [panelStyle, setPanelStyle] = useState<React.CSSProperties>({
     top: 64,
     marginBottom: '0.5rem',
+    zIndex: 3,
   });
   const filterPanelHeight = useRef<number>();
   const windowHeight = window.innerHeight;
@@ -179,7 +184,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
   };
 
   useEffect(() => {
-    setPanelStyle({ top: offset });
+    setPanelStyle({ top: offset, zIndex: 3 });
   }, [offset]);
 
   useEffect(() => {
@@ -1190,15 +1195,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
   };
 
   return (
-    <div
-      style={
-        details
-          ? { height: '100%' }
-          : isMobile && activeKey === '1'
-          ? { overflow: 'scroll', height: '100%' }
-          : { overflow: 'clip', height: '100%' }
-      }
-    >
+    <div style={style}>
       {!details && (
         <>
           <PageHeader

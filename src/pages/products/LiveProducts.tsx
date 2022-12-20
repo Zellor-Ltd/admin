@@ -126,9 +126,17 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
   const [panelStyle, setPanelStyle] = useState<React.CSSProperties>({
     top: 64,
     marginBottom: '0.5rem',
+    zIndex: 3,
   });
+  const [style, setStyle] = useState<any>();
   const filterPanelHeight = useRef<number>();
   const windowHeight = window.innerHeight;
+
+  useEffect(() => {
+    if (details || (isMobile && activeKey === '1'))
+      setStyle({ overflow: 'scroll', height: '100%' });
+    else setStyle({ overflow: 'clip', height: '100%' });
+  }, [details, isMobile, activeKey]);
 
   useEffect(() => {
     const panel = document.getElementById('filterPanel');
@@ -161,7 +169,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
   };
 
   useEffect(() => {
-    setPanelStyle({ top: offset });
+    setPanelStyle({ top: offset, zIndex: 3 });
   }, [offset]);
 
   const handleFilterOutOfStock = (e: CheckboxChangeEvent) => {
@@ -926,15 +934,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
   };
 
   return (
-    <div
-      style={
-        details
-          ? { height: '100%' }
-          : isMobile && activeKey === '1'
-          ? { overflow: 'scroll', height: '100%' }
-          : { overflow: 'clip', height: '100%' }
-      }
-    >
+    <div style={style}>
       {!details && (
         <>
           <PageHeader
