@@ -18,8 +18,8 @@ import {
   Slider,
   Table,
   Tabs,
-  Switch,
   Tooltip,
+  Switch,
   Typography,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
@@ -148,7 +148,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
   );
   let idRef = useRef<Input>(null);
   const mounted = useRef<boolean>(false);
-  const previousID = feedItem?.cloning ? feedItem?.id : undefined;
+  const previousID = feedItem?.cloning ? feedItem?.id.slice(0, -4) : undefined;
 
   useEffect(() => {
     if (!mounted.current) {
@@ -2197,18 +2197,34 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
           onFinishFailed={({ errorFields }) => handleFinishFailed(errorFields)}
           layout="vertical"
           className="video-feed"
-          initialValues={{
-            ...feedItem,
-            language: feedItem?.language ?? 'English',
-            index: feedItem?.index ?? 1000,
-            selectedOption: feedItem?.selectedOption ?? selectedOption,
-            goLiveDate: feedItem?.['goLiveDate']
-              ? moment(feedItem?.['goLiveDate'])
-              : undefined,
-            validity: feedItem?.['validity']
-              ? moment(feedItem?.['validity'])
-              : undefined,
-          }}
+          initialValues={
+            previousID
+              ? {
+                  ...feedItem,
+                  id: feedItem!.id.slice(0, -4),
+                  language: feedItem?.language ?? 'English',
+                  index: feedItem?.index ?? 1000,
+                  selectedOption: feedItem?.selectedOption ?? selectedOption,
+                  goLiveDate: feedItem?.['goLiveDate']
+                    ? moment(feedItem?.['goLiveDate'])
+                    : undefined,
+                  validity: feedItem?.['validity']
+                    ? moment(feedItem?.['validity'])
+                    : undefined,
+                }
+              : {
+                  ...feedItem,
+                  language: feedItem?.language ?? 'English',
+                  index: feedItem?.index ?? 1000,
+                  selectedOption: feedItem?.selectedOption ?? selectedOption,
+                  goLiveDate: feedItem?.['goLiveDate']
+                    ? moment(feedItem?.['goLiveDate'])
+                    : undefined,
+                  validity: feedItem?.['validity']
+                    ? moment(feedItem?.['validity'])
+                    : undefined,
+                }
+          }
         >
           {!selectedSegment && <VideoUpdatePage />}
         </Form>
