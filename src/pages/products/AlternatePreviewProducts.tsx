@@ -6,7 +6,7 @@ import EditableTable, {
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useRequest } from '../../hooks/useRequest';
 import { Product } from '../../interfaces/Product';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   saveStagingProduct,
@@ -19,6 +19,7 @@ import { Image } from '../../interfaces/Image';
 import scrollIntoView from 'scroll-into-view';
 import { useMount } from 'react-use';
 import { SketchPicker } from 'react-color';
+import { AppContext } from 'contexts/AppContext';
 
 interface AlternatePreviewProductsProps {
   loadedRef: any;
@@ -59,6 +60,14 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
   const [loading, setLoading] = useState<boolean>(false);
   const [_products, _setProducts] = useState<Product[]>([]);
   const viewPicker = useRef<boolean>(false);
+  const { isMobile } = useContext(AppContext);
+  const [btnStyle, setBtnStyle] = useState<any>();
+
+  useEffect(() => {
+    if (isMobile)
+      setBtnStyle({ position: 'fixed', top: '17rem', right: '3.5rem' });
+    else setBtnStyle({ position: 'fixed', top: '25.5rem', left: '15rem' });
+  }, [isMobile]);
 
   useEffect(() => {
     const productsMap = new Map<string, Product>();
@@ -669,6 +678,7 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
               selectedRowKeys,
               onChange: onSelectChange,
             }}
+            btnStyle={btnStyle}
             expandable={{
               expandedRowRender: (record: Product) => (
                 <ProductExpandedRow

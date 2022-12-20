@@ -106,13 +106,20 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
   const { doRequest: saveCategories, loading: loadingCategories } =
     useRequest();
 
+  const { isMobile, setisScrollable } = useContext(AppContext);
+  const [btnStyle, setBtnStyle] = useState<any>();
+
+  useEffect(() => {
+    if (isMobile)
+      setBtnStyle({ position: 'fixed', top: '17rem', right: '3.5rem' });
+    else setBtnStyle({ position: 'fixed', top: '25.5rem', left: '15rem' });
+  }, [isMobile]);
+
   const optionMapping: SelectOption = {
     key: 'id',
     label: 'brandName',
     value: 'id',
   };
-
-  const { isMobile, setisScrollable } = useContext(AppContext);
 
   const productSuperCategoryOptionMapping: SelectOption = {
     key: 'id',
@@ -144,6 +151,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
   const [panelStyle, setPanelStyle] = useState<React.CSSProperties>({
     top: 64,
     marginBottom: '0.5rem',
+    zIndex: 3,
   });
   const filterPanelHeight = useRef<number>();
   const windowHeight = window.innerHeight;
@@ -179,7 +187,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
   };
 
   useEffect(() => {
-    setPanelStyle({ top: offset });
+    setPanelStyle({ top: offset, zIndex: 3 });
   }, [offset]);
 
   useEffect(() => {
@@ -891,6 +899,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                     selectedRowKeys,
                     onChange: onSelectChange,
                   }}
+                  btnStyle={btnStyle}
                   expandable={{
                     expandedRowRender: (record: Product) => (
                       <ProductExpandedRow
