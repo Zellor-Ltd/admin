@@ -862,7 +862,24 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
 
   const handleClone = (index: number, videoFeed?: FeedItem) => {
     lastFocusedIndex.current = index;
-    setSelectedVideoFeed({ ...(videoFeed as any), cloning: true });
+    if (videoFeed?.package) {
+      const pkg = videoFeed?.package?.map((item: any) => {
+        return { ...item, shareLink: undefined };
+      });
+      setSelectedVideoFeed({
+        ...(videoFeed as any),
+        cloning: true,
+        shareLink: undefined,
+        package: pkg,
+      });
+    }
+    if (!videoFeed?.package) {
+      setSelectedVideoFeed({
+        ...(videoFeed as any),
+        cloning: true,
+        shareLink: undefined,
+      });
+    }
     setDetails(true);
   };
 
