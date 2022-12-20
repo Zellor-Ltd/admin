@@ -64,7 +64,9 @@ const DirectLinkDetail: React.FC<DirectLinkDetailProps> = ({
   );
   let idRef = useRef<Input>(null);
   const mounted = useRef<boolean>(false);
-  const previousID = directLink?.cloning ? directLink?.id : undefined;
+  const previousID = directLink?.cloning
+    ? directLink?.id.slice(0, -4)
+    : undefined;
 
   const optionMapping: SelectOption = {
     label: 'name',
@@ -222,7 +224,11 @@ const DirectLinkDetail: React.FC<DirectLinkDetailProps> = ({
         name="form"
         onFinishFailed={({ errorFields }) => handleFinishFailed(errorFields)}
         layout="vertical"
-        initialValues={directLink}
+        initialValues={
+          previousID
+            ? { ...directLink, id: directLink.id.slice(0, -4) }
+            : directLink
+        }
       >
         <Row gutter={8}>
           <Col lg={12} xs={24}>
