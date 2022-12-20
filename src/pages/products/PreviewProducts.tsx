@@ -114,6 +114,15 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
     else setStyle({ overflow: 'clip', height: '100%' });
   }, [details, isMobile, activeKey]);
 
+  const { isMobile, setisScrollable } = useContext(AppContext);
+  const [btnStyle, setBtnStyle] = useState<any>();
+
+  useEffect(() => {
+    if (isMobile)
+      setBtnStyle({ position: 'fixed', top: '17rem', right: '3.5rem' });
+    else setBtnStyle({ position: 'fixed', top: '25.5rem', left: '15rem' });
+  }, [isMobile]);
+
   const optionMapping: SelectOption = {
     key: 'id',
     label: 'brandName',
@@ -896,6 +905,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
                     selectedRowKeys,
                     onChange: onSelectChange,
                   }}
+                  btnStyle={btnStyle}
                   expandable={{
                     expandedRowRender: (record: Product) => (
                       <ProductExpandedRow

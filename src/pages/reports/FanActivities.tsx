@@ -16,6 +16,13 @@ const FanActivities: React.FC<DashboardProps> = () => {
   const { doFetch } = useRequest({ setLoading });
   const [fanActivity, setFanActivity] = useState<FanActivity[]>([]);
   const { isMobile } = useContext(AppContext);
+  const [btnStyle, setBtnStyle] = useState<any>();
+
+  useEffect(() => {
+    if (isMobile)
+      setBtnStyle({ position: 'fixed', top: '9.5rem', right: '3.5rem' });
+    else setBtnStyle({ position: 'fixed', top: '9rem', right: '3rem' });
+  }, [isMobile]);
 
   const getFanActivity = async () => {
     const { results } = await doFetch(fetchFanActivity);
@@ -199,6 +206,7 @@ const FanActivities: React.FC<DashboardProps> = () => {
           columns={fanActs}
           dataSource={fanActivity}
           onSave={() => console.log('saved')}
+          btnStyle={btnStyle}
         />
       </div>
     </>
