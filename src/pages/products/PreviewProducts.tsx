@@ -108,14 +108,13 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
     useRequest();
   const [activeKey, setActiveKey] = useState<string>('1');
 
+  const [btnStyle, setBtnStyle] = useState<any>();
+
   useEffect(() => {
     if (details || (isMobile && activeKey === '1'))
       setStyle({ overflow: 'scroll', height: '100%' });
     else setStyle({ overflow: 'clip', height: '100%' });
   }, [details, isMobile, activeKey]);
-
-  const { isMobile, setisScrollable } = useContext(AppContext);
-  const [btnStyle, setBtnStyle] = useState<any>();
 
   useEffect(() => {
     if (isMobile)
