@@ -48,6 +48,7 @@ import ProductTemplates from 'pages/product-templates/ProductTemplates';
 import FixedVideo from 'pages/fixed-videos/FixedVideo';
 import FeaturedFeeds from 'pages/featured-feeds/FeaturedFeeds';
 import DirectLinks from 'pages/direct-links/DirectLinks';
+import Rebuilds from 'pages/rebuilds/Rebuilds';
 
 function AdminRoutes() {
   return (
@@ -165,6 +166,11 @@ function AdminRoutes() {
       <AppRoute
         path="/settings"
         component={Settings}
+        layout={AuthenticatedLayout}
+      />
+      <AppRoute
+        path="/rebuilds"
+        component={Rebuilds}
         layout={AuthenticatedLayout}
       />
       <AppRoute
