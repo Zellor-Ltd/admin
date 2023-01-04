@@ -177,10 +177,13 @@ export const lockFeedToUser = (feedId: string, userId: string) =>
 export const unlockFeed = (id: string) =>
   instance.get(`/Disco/Feed/RebuildOne/${id}`);
 
-export const rebuildAllFeedd = () => instance.get('/Disco/Feed/RebuildAll');
+export const rebuildAllFeed = () => instance.get('/Disco/Feed/RebuildAll');
 
 export const rebuildLink = (input: string) =>
   instance.get(`/Disco/DataMgm/RebuildOneVideoLink/${input}`);
+
+export const rebuildPage = (params: any) =>
+  instance.post('/api/v2/revalidate', params);
 
 export const transferStageProduct = (productId: string) =>
   instance.get(`Disco/Staging/Product/Transfer/${productId}`);
