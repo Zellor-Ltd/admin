@@ -179,11 +179,8 @@ export const unlockFeed = (id: string) =>
 
 export const rebuildAllFeed = () => instance.get('/Disco/Feed/RebuildAll');
 
-export const rebuildLink = (input: string) =>
-  instance.get(`/Disco/DataMgm/RebuildOneVideoLink/${input}`);
-
-export const rebuildPage = (params: any) =>
-  instance.post('/api/v2/revalidate', params);
+export const rebuildLink = (params: any) =>
+  instance.post('/Api/V2/Revalidate', params);
 
 export const transferStageProduct = (productId: string) =>
   instance.get(`Disco/Staging/Product/Transfer/${productId}`);
