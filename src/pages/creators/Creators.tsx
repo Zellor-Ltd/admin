@@ -108,7 +108,9 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   const rebuildVlink = async (creator: Creator, index: number) => {
-    const { result }: any = await doFetch(() => rebuildLink(creator.userName!));
+    const { result }: any = await doFetch(() =>
+      rebuildLink(`paths: ["/Creators"]`)
+    );
     if (result) {
       creators[index] = { ...creator, userName: result };
       setCreators([...creators]);

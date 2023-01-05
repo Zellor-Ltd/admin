@@ -35,6 +35,7 @@ import {
   CreditCardOutlined,
   PlaySquareOutlined,
   PicLeftOutlined,
+  FileSyncOutlined,
 } from '@ant-design/icons';
 import { Menu } from 'antd';
 import SubMenu from 'antd/lib/menu/SubMenu';
@@ -256,6 +257,13 @@ const AdminSideMenu = ({ isMobile }) => {
       <SubMenu key="settings" icon={<SettingOutlined />} title="Settings">
         <Menu.Item key="access-control" icon={<ControlOutlined />}>
           <Link to="/access-control">Access Control</Link>
+        </Menu.Item>
+        <Menu.Item
+          key="rebuilds"
+          icon={<FileSyncOutlined />}
+          onClick={() => refreshParent('rebuilds')}
+        >
+          <Link to="/rebuilds">Rebuilds</Link>
         </Menu.Item>
         <Menu.Item
           key="endpoints"

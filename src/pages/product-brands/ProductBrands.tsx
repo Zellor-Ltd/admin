@@ -101,7 +101,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
 
   const rebuildVlink = async (productBrand: ProductBrand, index: number) => {
     const { result }: any = await doFetch(() =>
-      rebuildLink(productBrand.brandLink!)
+      rebuildLink(`paths: ["/ProductBrands"]`)
     );
     if (result) {
       data[index] = { ...productBrand, brandLink: result };
