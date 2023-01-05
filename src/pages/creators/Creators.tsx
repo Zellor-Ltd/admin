@@ -217,6 +217,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
         } else {
           return (
             <InputNumber
+              style={{ minWidth: '60px' }}
               type="number"
               value={creator.vIndex}
               onFocus={event => event.stopPropagation()}
