@@ -178,7 +178,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
           </div>
         </div>
       ),
-      width: '15%',
+      width: '13%',
       render: (_, record: Creator, index: number) => (
         <Link to={location.pathname} onClick={() => editCreator(index, record)}>
           {`${record.firstName ?? ''} ${record.lastName ?? ''}`}
@@ -207,7 +207,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
         </div>
       ),
       dataIndex: 'vIndex',
-      width: '3%',
+      width: '12%',
       render: (_, creator, index) => {
         if (updatingVIndex[creator.id]) {
           const antIcon = <LoadingOutlined spin />;
