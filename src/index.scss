@@ -142,9 +142,14 @@ body {
   top: 4rem;
 }
 
+.custom-table.creators {
+  height: calc(100% - 176px) !important;
+}
+
 .custom-table,
 .custom-table table,
 .custom-table .ant-table,
+.custom-table.creators table,
 .custom-table .ant-table-wrapper,
 .custom-table .ant-spin-container,
 .custom-table .ant-table-container,
