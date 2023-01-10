@@ -587,13 +587,6 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
                   </div>
                 )
               }
-              endMessage={
-                page !== 0 && (
-                  <div className="scroll-message">
-                    <b>End of results.</b>
-                  </div>
-                )
-              }
             >
               <Table
                 scroll={{ x: true }}
