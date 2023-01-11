@@ -63,6 +63,22 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
   const toFocus = useRef<any>();
   const [showModal, setShowModal] = useState<boolean>(false);
   const [ageRange, setAgeRange] = useState<[number, number]>([12, 100]);
+  const [hex, setHex] = useState<string>(productBrand?.brandTxtColor ?? '');
+
+  const ColorPicker: React.FC<any> = ({ onChange }) => {
+    useEffect(() => {
+      onChange(hex);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [hex]);
+
+    return (
+      <TwitterPicker
+        width="100%"
+        color={hex}
+        onChangeComplete={(value: any) => setHex(value.hex)}
+      />
+    );
+  };
 
   const onFinish = async () => {
     try {
@@ -779,13 +795,3 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
 };
 
 export default ProductBrandsDetail;
-
-const ColorPicker: React.FC<any> = props => {
-  const { onChange } = props;
-  return (
-    <TwitterPicker
-      width="100%"
-      onChangeComplete={(value: any) => onChange(value.hex)}
-    />
-  );
-};
