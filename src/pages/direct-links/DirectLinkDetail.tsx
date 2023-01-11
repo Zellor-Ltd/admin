@@ -339,6 +339,11 @@ const DirectLinkDetail: React.FC<DirectLinkDetailProps> = ({
               </Form.Item>
             </Col>
             <Col span={24}>
+              <Form.Item label="Video" name="video">
+                <Input allowClear placeholder="Video" maxLength={200} />
+              </Form.Item>
+            </Col>
+            <Col span={24}>
               <Form.Item label="URL" name="url">
                 <Input allowClear placeholder="URL" />
               </Form.Item>
