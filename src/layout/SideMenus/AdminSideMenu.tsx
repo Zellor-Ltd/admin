@@ -54,7 +54,7 @@ const AdminSideMenu = ({ isMobile }) => {
     <Menu
       theme="dark"
       mode="inline"
-      defaultSelectedKeys={[pathname]}
+      selectedKeys={[pathname]}
       defaultOpenKeys={[parentMenu]}
     >
       <Menu.Item
