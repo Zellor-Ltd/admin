@@ -241,9 +241,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
 
   const rebuildVlink = async (value: string, record: any, index: number) => {
     lastFocusedIndex.current = index;
-    const { result }: any = await doFetch(() =>
-      rebuildLink(`paths: ["/Feeds"]`)
-    );
+    const { result }: any = await doFetch(() => rebuildLink(value));
     if (result) {
       buffer[index] = { ...record, shareLink: result, rebuilt: true };
       setData([...buffer]);

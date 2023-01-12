@@ -32,6 +32,21 @@ export const instance = axios.create({
   headers: { 'Content-Type': 'application/json' },
 });
 
+export const discoInstance = axios.create({
+  baseURL: 'https://discoclub.com',
+  headers: {
+    'Content-Type': 'application/json',
+    'Referrer-Policy': 'origin-when-cross-origin',
+  },
+});
+
+export const vLinkInstance = axios.create({
+  baseURL: 'https://vlink.ie',
+  headers: {
+    'Content-Type': 'application/json',
+    'Referrer-Policy': 'origin-when-cross-origin',
+  },
+});
 interface IDelete {
   id: string;
 }
@@ -179,8 +194,13 @@ export const unlockFeed = (id: string) =>
 
 export const rebuildAllFeed = () => instance.get('/Disco/Feed/RebuildAll');
 
-export const rebuildLink = (params: any) =>
-  instance.post('/Api/V2/Revalidate', params);
+export const rebuildLink = (input: string) =>
+  instance.get(`/Disco/DataMgm/RebuildOneVideoLink/${input}`);
+
+export const rebuildVLink = (params: any) => {
+  discoInstance.post('/api/v2/revalidate-feed', params);
+  vLinkInstance.post('/api/v2/revalidate-feed', params);
+};
 
 export const transferStageProduct = (productId: string) =>
   instance.get(`Disco/Staging/Product/Transfer/${productId}`);

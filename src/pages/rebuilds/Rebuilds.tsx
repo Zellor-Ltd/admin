@@ -1,7 +1,7 @@
 import { Button, Col, PageHeader, Row } from 'antd';
 import { useRequest } from '../../hooks/useRequest';
 import { useState } from 'react';
-import { rebuildLink } from '../../services/DiscoClubService';
+import { rebuildVLink } from '../../services/DiscoClubService';
 import { RouteComponentProps } from 'react-router-dom';
 
 const Rebuilds: React.FC<RouteComponentProps> = () => {
@@ -9,7 +9,13 @@ const Rebuilds: React.FC<RouteComponentProps> = () => {
   const { doRequest } = useRequest({ setLoading });
 
   const rebuild = async (path: string) => {
-    await doRequest(() => rebuildLink(`paths: ["${path}"]`));
+    await doRequest(async () => rebuildVLink(`paths: ["${path}"]`));
+  };
+
+  const rebuildDisco = async () => {
+    await doRequest(async () =>
+      rebuildVLink({ category: 'all', trend: 'all' })
+    );
   };
 
   return (
@@ -27,7 +33,7 @@ const Rebuilds: React.FC<RouteComponentProps> = () => {
                   <Button
                     loading={loading}
                     type="primary"
-                    onClick={() => rebuild('/Feeds/All/All')}
+                    onClick={rebuildDisco}
                   >
                     Rebuild
                   </Button>
@@ -41,6 +47,7 @@ const Rebuilds: React.FC<RouteComponentProps> = () => {
               <Row justify="end">
                 <Col>
                   <Button
+                    disabled
                     loading={loading}
                     type="primary"
                     onClick={() => rebuild('/Brands')}
@@ -57,6 +64,7 @@ const Rebuilds: React.FC<RouteComponentProps> = () => {
               <Row justify="end">
                 <Col>
                   <Button
+                    disabled
                     loading={loading}
                     type="primary"
                     onClick={() => rebuild('/ProductBrands')}
@@ -73,6 +81,7 @@ const Rebuilds: React.FC<RouteComponentProps> = () => {
               <Row justify="end">
                 <Col>
                   <Button
+                    disabled
                     loading={loading}
                     type="primary"
                     onClick={() => rebuild('/Creators')}
@@ -89,6 +98,7 @@ const Rebuilds: React.FC<RouteComponentProps> = () => {
               <Row justify="end">
                 <Col>
                   <Button
+                    disabled
                     loading={loading}
                     type="primary"
                     onClick={() => rebuild('/Feeds')}
