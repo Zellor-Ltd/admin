@@ -1,4 +1,5 @@
 export interface ProductBrand {
+  displayInGrid?: boolean;
   vIndex?: number;
   brandLink?: string;
   searchTags: any[];
