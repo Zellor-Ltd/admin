@@ -39,6 +39,7 @@ import ProductBrandDetail from './ProductBrandDetail';
 import scrollIntoView from 'scroll-into-view';
 import { Brand } from 'interfaces/Brand';
 import useAllCategories from 'hooks/useAllCategories';
+import { SimpleSwitch } from 'components/SimpleSwitch';
 
 const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -136,6 +137,19 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
       delete newValue[record.id];
       return newValue;
     });
+  };
+
+  const handleSwitchChange = async (
+    productBrand: ProductBrand,
+    toggled: boolean
+  ) => {
+    try {
+      productBrand.displayInGrid = toggled;
+      await doRequest(() => saveProductBrand(productBrand));
+      message.success('Register updated with success.');
+    } catch (error) {
+      message.error("Error: Couldn't set brand property. Try again.");
+    }
   };
 
   const columns: ColumnsType<ProductBrand> = [
@@ -237,6 +251,36 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
         if (a.vIndex && b.vIndex) return a.vIndex - b.vIndex;
         else if (a.vIndex) return -1;
         else if (b.vIndex) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Display in Grid">Display in Grid</Tooltip>
+          </div>
+        </div>
+      ),
+      dataIndex: 'displayInGrid',
+      width: '15%',
+      align: 'center',
+      render: (value: any, record: ProductBrand) => (
+        <SimpleSwitch
+          toggled={!!record.displayInGrid}
+          handleSwitchChange={toggled => handleSwitchChange(record, toggled)}
+        />
+      ),
+      sorter: (a, b): any => {
+        if (a.displayInGrid && b.displayInGrid) return 0;
+        else if (a.displayInGrid) return -1;
+        else if (b.displayInGrid) return 1;
         else return 0;
       },
     },
