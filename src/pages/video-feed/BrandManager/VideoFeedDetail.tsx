@@ -67,13 +67,12 @@ interface DraggableBodyRowProps
 
 const type = 'DraggableBodyRow';
 interface VideoFeedDetailProps {
-  onSave?: (record: FeedItem, newItem?: boolean, cloning?: boolean) => void;
+  onSave?: (record: FeedItem, newItem?: boolean) => void;
   onCancel?: () => void;
   feedItem?: FeedItem;
   brands: Brand[];
   creators: Creator[];
   productBrands: ProductBrand[];
-  setDetails?: (boolean) => void;
   isFanVideo?: boolean;
   template?: boolean;
 }
@@ -85,7 +84,6 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
   brands,
   creators,
   productBrands,
-  setDetails,
   isFanVideo,
   template,
 }) => {
@@ -146,21 +144,6 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
   const [vLinkProductBrandIcons, setVLinkProductBrandIcons] = useState<any[]>(
     []
   );
-  let idRef = useRef<Input>(null);
-  const mounted = useRef<boolean>(false);
-  const previousID = feedItem?.cloning ? feedItem?.id.slice(0, -4) : undefined;
-
-  useEffect(() => {
-    if (!mounted.current) {
-      mounted.current = true;
-      return;
-    }
-
-    if (feedItem?.cloning) {
-      idRef.current!.focus();
-      scrollIntoView(document.getElementById('feedId'));
-    }
-  });
 
   useEffect(() => {
     if (brands.length && creators.length && productBrands.length)
@@ -457,14 +440,6 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
       if (item.creatorHtml)
         item.creatorHtml = DOMPurify.sanitize(item.creatorHtml);
 
-      if (feedItem?.cloning && item.id === previousID) {
-        idRef.current!.focus();
-        setVideoTab('Video Details');
-        message.warning('Please change video feed ID.');
-        scrollIntoView(document.getElementById('feedId'));
-        return;
-      }
-
       item.goLiveDate = moment(item.goLiveDate).format();
       item.validity = moment(item.validity).format();
       item.status = status;
@@ -474,24 +449,8 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
         return { ...pack, tags: pack.tags ?? [] };
       });
 
-      // updating record
-      if (feedItem?.id && !feedItem?.cloning) {
-        await doRequest(() => saveVideoFeed(item));
-        onSave?.(item);
-        return;
-      }
-
-      // adding record
-      if (!feedItem?.id) {
-        const response = await doRequest(() => saveVideoFeed(item, true));
-        onSave?.({ ...item, id: response.result }, true, false);
-      }
-
-      // cloning record
-      if (feedItem?.cloning && item.id !== previousID) {
-        const response = await doRequest(() => saveVideoFeed(item, true));
-        onSave?.({ ...item, id: response.result, cloning: false }, true, true);
-      }
+      await doRequest(() => saveVideoFeed(item));
+      onSave?.(item, !!!feedItem?.id);
     } catch (error: any) {
       message.error('Error: ' + error.error);
     }
@@ -793,20 +752,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
             <Row gutter={8}>
               <Col span={24}>
                 <Row gutter={8}>
-                  <Col lg={12} xs={24}>
-                    <Form.Item
-                      name="id"
-                      label={feedItem?.cloning ? 'ID - Change needed' : 'ID'}
-                    >
-                      <Input
-                        disabled={!feedItem?.cloning}
-                        ref={idRef}
-                        id="feedId"
-                        placeholder="No input needed"
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col lg={12} xs={24}>
+                  <Col lg={12} xs={24} className="mb-1">
                     <Row
                       align="bottom"
                       justify={isMobile ? 'end' : undefined}
@@ -836,6 +782,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                       </Col>
                     </Row>
                   </Col>
+                  <Col lg={12} xs={24} className="mb-1"></Col>
                   <Col lg={12} xs={24}>
                     <Form.Item label="Status">
                       <Select
@@ -2197,34 +2144,18 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
           onFinishFailed={({ errorFields }) => handleFinishFailed(errorFields)}
           layout="vertical"
           className="video-feed"
-          initialValues={
-            previousID
-              ? {
-                  ...feedItem,
-                  id: feedItem!.id.slice(0, -4),
-                  language: feedItem?.language ?? 'English',
-                  index: feedItem?.index ?? 1000,
-                  selectedOption: feedItem?.selectedOption ?? selectedOption,
-                  goLiveDate: feedItem?.['goLiveDate']
-                    ? moment(feedItem?.['goLiveDate'])
-                    : undefined,
-                  validity: feedItem?.['validity']
-                    ? moment(feedItem?.['validity'])
-                    : undefined,
-                }
-              : {
-                  ...feedItem,
-                  language: feedItem?.language ?? 'English',
-                  index: feedItem?.index ?? 1000,
-                  selectedOption: feedItem?.selectedOption ?? selectedOption,
-                  goLiveDate: feedItem?.['goLiveDate']
-                    ? moment(feedItem?.['goLiveDate'])
-                    : undefined,
-                  validity: feedItem?.['validity']
-                    ? moment(feedItem?.['validity'])
-                    : undefined,
-                }
-          }
+          initialValues={{
+            ...feedItem,
+            language: feedItem?.language ?? 'English',
+            index: feedItem?.index ?? 1000,
+            selectedOption: feedItem?.selectedOption ?? selectedOption,
+            goLiveDate: feedItem?.['goLiveDate']
+              ? moment(feedItem?.['goLiveDate'])
+              : undefined,
+            validity: feedItem?.['validity']
+              ? moment(feedItem?.['validity'])
+              : undefined,
+          }}
         >
           {!selectedSegment && <VideoUpdatePage />}
         </Form>
