@@ -640,14 +640,14 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
     shouldUpdateIndex.current = false;
   };
 
-  const onSaveItem = (record: FeedItem) => {
+  const handleSave = (record: FeedItem) => {
     refreshItem(record);
     setDetails(false);
     feedForm.resetFields();
     setSelectedVideoFeed(undefined);
   };
 
-  const onCancelItem = () => {
+  const handleCancel = () => {
     setDetails(false);
   };
 
@@ -883,13 +883,12 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
       )}
       {details && (
         <VideoFeedDetail
-          onSave={onSaveItem}
-          onCancel={onCancelItem}
+          onSave={handleSave}
+          onCancel={handleCancel}
           feedItem={selectedVideoFeed}
           brands={brands}
           creators={creators}
           productBrands={productBrands}
-          setDetails={setDetails}
           isFanVideo
         />
       )}

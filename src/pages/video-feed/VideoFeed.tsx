@@ -398,8 +398,8 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       render: (value: string, feedItem: FeedItem, index: number) => (
         <Link
           onFocus={() => (bufferIndex.current = buffer.indexOf(feedItem))}
-          onClick={() => onEditFeedItem(index, feedItem)}
-          to={{ pathname: window.location.pathname, state: feedItem }}
+          onClick={() => handleEdit(index, feedItem)}
+          to={{ pathname: window.location.pathname }}
         >
           {value}
         </Link>
@@ -712,7 +712,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
         <>
           <Link
             onFocus={() => (bufferIndex.current = buffer.indexOf(feedItem))}
-            onClick={() => handleClone(index, feedItem)}
+            onClick={() => handleEdit(index, feedItem, true)}
             to={{ pathname: window.location.pathname, state: feedItem }}
           >
             <CopyOutlined />
@@ -741,7 +741,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
         <>
           <Link
             onFocus={() => (bufferIndex.current = buffer.indexOf(feedItem))}
-            onClick={() => onEditFeedItem(index, feedItem)}
+            onClick={() => handleEdit(index, feedItem)}
             to={{ pathname: window.location.pathname, state: feedItem }}
           >
             <EditOutlined />
@@ -847,12 +847,8 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     setBuffer(buffer.filter(item => item.id !== _id));
   };
 
-  const refreshTable = (
-    record: FeedItem,
-    newItem?: boolean,
-    cloning?: boolean
-  ) => {
-    if (cloning) {
+  const refreshTable = (record: FeedItem, inserting?: boolean) => {
+    if (inserting) {
       const newIndex = lastFocusedIndex.current + 1;
       buffer.splice(newIndex, 0, record);
       lastFocusedIndex.current = newIndex;
@@ -862,32 +858,33 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     scrollToCenter(lastFocusedIndex.current);
   };
 
-  const onEditFeedItem = (index: number, videoFeed?: FeedItem) => {
+  const handleEdit = (
+    index: number,
+    videoFeed?: FeedItem,
+    cloning?: boolean
+  ) => {
     lastFocusedIndex.current = index;
-    setSelectedVideoFeed({ ...(videoFeed as any) });
-    setDetails(true);
-  };
 
-  const handleClone = (index: number, videoFeed?: FeedItem) => {
-    lastFocusedIndex.current = index;
-    if (videoFeed?.package) {
-      const pkg = videoFeed?.package?.map((item: any) => {
-        return { ...item, shareLink: undefined };
-      });
-      setSelectedVideoFeed({
-        ...(videoFeed as any),
-        cloning: true,
-        shareLink: undefined,
-        package: pkg,
-      });
-    }
-    if (!videoFeed?.package) {
-      setSelectedVideoFeed({
-        ...(videoFeed as any),
-        cloning: true,
-        shareLink: undefined,
-      });
-    }
+    if (cloning) {
+      if (videoFeed?.package) {
+        const pkg = videoFeed?.package?.map((item: any) => {
+          return { ...item, shareLink: undefined };
+        });
+        setSelectedVideoFeed({
+          ...(videoFeed as any),
+          id: undefined,
+          shareLink: undefined,
+          package: pkg,
+        });
+      }
+      if (!videoFeed?.package) {
+        setSelectedVideoFeed({
+          ...(videoFeed as any),
+          id: undefined,
+          shareLink: undefined,
+        });
+      }
+    } else setSelectedVideoFeed({ ...(videoFeed as any), id: undefined });
     setDetails(true);
   };
 
@@ -949,21 +946,17 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     });
   };
 
-  const handleSave = (
-    record: FeedItem,
-    newItem?: boolean,
-    cloning?: boolean
-  ) => {
+  const handleSave = (record: FeedItem, newItem?: boolean) => {
     if (newItem) {
       setIndexFilter(undefined);
       setCreatorFilter(undefined);
       setCategoryFilter(undefined);
     }
-    refreshTable(record, newItem, cloning);
+    refreshTable(record, newItem);
     setSelectedVideoFeed(undefined);
   };
 
-  const onCancelItem = () => {
+  const handleCancel = () => {
     setDetails(false);
   };
 
@@ -1181,7 +1174,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
               <Button
                 key="2"
                 className={isMobile ? 'mt-05' : ''}
-                onClick={() => onEditFeedItem(buffer.length - 1)}
+                onClick={() => handleEdit(buffer.length - 1)}
               >
                 New Item
               </Button>,
@@ -1303,12 +1296,11 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       {details && (
         <VideoFeedDetail
           onSave={handleSave}
-          onCancel={onCancelItem}
+          onCancel={handleCancel}
           feedItem={selectedVideoFeed}
           brands={brands}
           creators={creators}
           productBrands={productBrands}
-          setDetails={setDetails}
         />
       )}
     </div>

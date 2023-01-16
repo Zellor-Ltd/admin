@@ -694,8 +694,8 @@ export const saveDirectLink = (params: any, newItem?: boolean) => {
   else return instance.put('Disco/DirectLink/Adm/UpdateDirectlLink', params);
 };
 
-export const saveVideoFeed = (params: FeedItem, newItem?: boolean) => {
-  if (newItem) return instance.put('Disco/Feed/Adm/Add', params);
+export const saveVideoFeed = (params: FeedItem) => {
+  if (!params.id) return instance.put('Disco/Feed/Adm/Add', params);
   else return instance.put('Disco/Feed/Update', params);
 };
 

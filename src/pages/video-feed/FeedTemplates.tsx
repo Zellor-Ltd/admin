@@ -276,13 +276,13 @@ const FeedTemplates: React.FC<RouteComponentProps> = () => {
     setDetails(true);
   };
 
-  const onSaveItem = (record: any) => {
+  const handleSave = (record: any) => {
     refreshItem(record);
     setDetails(false);
     setselectedFeedTemplate(undefined);
   };
 
-  const onCancelItem = () => {
+  const handleCancel = () => {
     setDetails(false);
   };
 
@@ -321,13 +321,12 @@ const FeedTemplates: React.FC<RouteComponentProps> = () => {
       )}
       {details && (
         <VideoFeedDetail
-          onSave={onSaveItem}
-          onCancel={onCancelItem}
+          onSave={handleSave}
+          onCancel={handleCancel}
           feedItem={selectedFeedTemplate}
           brands={brands}
           creators={creators}
           productBrands={productBrands}
-          setDetails={setDetails}
           template
         />
       )}
