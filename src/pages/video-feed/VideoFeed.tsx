@@ -884,7 +884,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
           shareLink: undefined,
         });
       }
-    } else setSelectedVideoFeed({ ...(videoFeed as any), id: undefined });
+    } else setSelectedVideoFeed(videoFeed);
     setDetails(true);
   };
 
