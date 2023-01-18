@@ -50,7 +50,6 @@ const DirectLinkDetail: React.FC<DirectLinkDetailProps> = ({
     directLink?.product?.name
   );
   const [optionsPage, setOptionsPage] = useState<number>(0);
-  const [disableProducts, setDisableProducts] = useState<boolean>(true);
   const [selectedCreator, setSelectedCreator] = useState<Creator>(
     directLink?.creator
   );
@@ -59,6 +58,9 @@ const DirectLinkDetail: React.FC<DirectLinkDetailProps> = ({
   );
   const [selectedProductBrand, setSelectedProductBrand] =
     useState<ProductBrand>(directLink?.productBrand);
+  const [disableProducts, setDisableProducts] = useState<boolean>(
+    !!!selectedProductBrand
+  );
   const [selectedProduct, setSelectedProduct] = useState<Product>(
     directLink?.product
   );
@@ -92,10 +94,11 @@ const DirectLinkDetail: React.FC<DirectLinkDetailProps> = ({
   }, [brands, creators, productBrands]);
 
   useEffect(() => {
-    if (selectedProductBrand) getProducts();
-    else {
+    if (selectedProductBrand) {
+      getProducts(userInput);
+      setDisableProducts(false);
+    } else {
       setOptionsPage(0);
-      setUserInput('');
       setProducts([]);
       setDisableProducts(true);
     }
