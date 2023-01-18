@@ -44,7 +44,8 @@ const { Panel } = Collapse;
 
 const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
   const { isMobile, setisScrollable } = useContext(AppContext);
-  const descriptionRef = useRef<any>(null);
+  const linkRef = useRef<any>(null);
+  const videoRef = useRef<any>(null);
   const urlRef = useRef<any>(null);
   const [activeKey, setActiveKey] = useState<string>('1');
   const [selectedLink, setSelectedLink] = useState<any>();
@@ -58,9 +59,11 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
   // Filter state
   const [brandFilter, setBrandFilter] = useState<Brand>();
   const [productBrandFilter, setProductBrandFilter] = useState<string>();
-  const [descriptionFilter, setDescriptionFilter] = useState<string>();
+  const [linkFilter, setLinkFilter] = useState<string>();
+  const [linkTypeFilter, setLinkTypeFilter] = useState<'Product' | 'Other'>();
+  const [videoFilter, setVideoFilter] = useState<string>();
   const [urlFilter, setUrlFilter] = useState<string>();
-  const [creatorFilter, setCreatorFilter] = useState<string>();
+  const [creatorFilter, setCreatorFilter] = useState<Creator>();
   const [offset, setOffset] = useState<number>(64);
   const [panelStyle, setPanelStyle] = useState<React.CSSProperties>({
     top: 64,
@@ -87,9 +90,19 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
 
   const search = rows => {
     let updatedRows = rows;
+    if (linkFilter) {
+      updatedRows = updatedRows.filter(
+        row => row.category?.indexOf(linkFilter) > -1
+      );
+    }
+    if (creatorFilter) {
+      updatedRows = updatedRows.filter(
+        row => row?.creator?.firstName?.indexOf(creatorFilter.firstName) > -1
+      );
+    }
     if (brandFilter) {
       updatedRows = updatedRows.filter(
-        row => row?.brand?.brandName?.indexOf(brandFilter) > -1
+        row => row?.brand?.brandName?.indexOf(brandFilter.brandName) > -1
       );
     }
     if (productBrandFilter) {
@@ -97,19 +110,19 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
         row => row?.productBrand?.brandName?.indexOf(productBrandFilter) > -1
       );
     }
-    if (creatorFilter) {
+    if (videoFilter) {
       updatedRows = updatedRows.filter(
-        row => row?.creator?.firstName?.indexOf(creatorFilter) > -1
-      );
-    }
-    if (descriptionFilter) {
-      updatedRows = updatedRows.filter(
-        row => row.category?.indexOf(descriptionFilter) > -1
+        row => row.category?.indexOf(videoFilter) > -1
       );
     }
     if (urlFilter) {
       updatedRows = updatedRows.filter(
         row => row.category?.indexOf(urlFilter) > -1
+      );
+    }
+    if (linkTypeFilter) {
+      updatedRows = updatedRows.filter(
+        row => row.category?.indexOf(linkTypeFilter) > -1
       );
     }
     return updatedRows;
@@ -154,11 +167,18 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
   }, [offset]);
 
   useEffect(() => {
-    if (descriptionRef.current)
-      descriptionRef.current.focus({
+    if (linkRef.current)
+      linkRef.current.focus({
         cursor: 'end',
       });
-  }, [descriptionFilter]);
+  }, [linkFilter]);
+
+  useEffect(() => {
+    if (videoRef.current)
+      videoRef.current.focus({
+        cursor: 'end',
+      });
+  }, [videoFilter]);
 
   useEffect(() => {
     if (urlRef.current)
@@ -166,6 +186,12 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
         cursor: 'end',
       });
   }, [urlFilter]);
+
+  const creatorMapping: SelectOption = {
+    key: 'id',
+    value: 'id',
+    label: 'firstName',
+  };
 
   const masterBrandMapping: SelectOption = {
     key: 'id',
@@ -580,7 +606,15 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
       if (event) collapse(event);
       if (resetResults) scrollToCenter(0);
       setLoading(true);
-      const { results }: any = await fetchDirectLinks();
+      const { results }: any = await fetchDirectLinks({
+        link: linkFilter,
+        creatorId: creatorFilter?.id,
+        brandId: brandFilter?.id,
+        productBrandId: productBrandFilter,
+        video: videoFilter,
+        url: urlFilter,
+        linkType: linkTypeFilter,
+      });
       setDirectLinks(results);
     } catch (error) {
       message.error('Error to get links');
@@ -628,7 +662,9 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
       setBrandFilter(undefined);
       setProductBrandFilter(undefined);
       setCreatorFilter(undefined);
-      setDescriptionFilter(undefined);
+      setLinkFilter(undefined);
+      setLinkTypeFilter(undefined);
+      setVideoFilter(undefined);
       setUrlFilter(undefined);
     }
     refreshTable(record);
@@ -644,42 +680,31 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
       <>
         <Row gutter={[8, 8]} align="bottom">
           <Col lg={5} xs={24}>
-            <Typography.Title level={5} title="Description">
-              Description
+            <Typography.Title level={5} title="Link">
+              Link
             </Typography.Title>
             <Input
               allowClear
-              disabled
-              ref={descriptionRef}
-              onChange={event => setDescriptionFilter(event.target.value)}
+              ref={linkRef}
+              onChange={event => setLinkFilter(event.target.value)}
               suffix={<SearchOutlined />}
-              value={descriptionFilter}
-              placeholder="Search by Description"
+              value={linkFilter}
+              placeholder="Search by Link"
               onPressEnter={() => getDirectLinks(undefined, true)}
             />
           </Col>
           <Col lg={5} xs={24}>
             <Typography.Title level={5}>Creator</Typography.Title>
-            <Select
-              placeholder="Select a Creator"
-              disabled
-              onChange={setCreatorFilter}
-              value={creatorFilter}
-              style={{ width: '100%' }}
-              filterOption={filterOption}
-              allowClear
+            <SimpleSelect
               showSearch
-            >
-              {creators.map((curr: any) => (
-                <Select.Option
-                  key={curr.id}
-                  value={curr.firstName}
-                  label={curr.firstName}
-                >
-                  {curr.firstName}
-                </Select.Option>
-              ))}
-            </Select>
+              data={creators}
+              onChange={(_, creator) => setCreatorFilter(creator)}
+              style={{ width: '100%' }}
+              selectedOption={creatorFilter?.id}
+              optionMapping={creatorMapping}
+              placeholder="Select a Creator"
+              allowClear
+            />
           </Col>
           <Col lg={5} xs={24}>
             <Typography.Title level={5}>Master Brand</Typography.Title>
@@ -691,7 +716,6 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
               selectedOption={brandFilter?.id}
               optionMapping={masterBrandMapping}
               placeholder="Select a Master Brand"
-              disabled
               allowClear
             />
           </Col>
@@ -705,8 +729,21 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
               selectedOption={productBrandFilter}
               optionMapping={productBrandMapping}
               placeholder="Select a Product Brand"
-              disabled
               allowClear
+            />
+          </Col>
+          <Col lg={5} xs={24}>
+            <Typography.Title level={5} title="Video">
+              Video
+            </Typography.Title>
+            <Input
+              allowClear
+              ref={videoRef}
+              onChange={event => setVideoFilter(event.target.value)}
+              suffix={<SearchOutlined />}
+              value={videoFilter}
+              placeholder="Search by Video"
+              onPressEnter={() => getDirectLinks(undefined, true)}
             />
           </Col>
           <Col lg={5} xs={24}>
@@ -715,7 +752,6 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
             </Typography.Title>
             <Input
               allowClear
-              disabled
               ref={urlRef}
               onChange={event => setUrlFilter(event.target.value)}
               suffix={<SearchOutlined />}
@@ -723,6 +759,27 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
               placeholder="Search by URL"
               onPressEnter={() => getDirectLinks(undefined, true)}
             />
+          </Col>
+          <Col lg={5} xs={24}>
+            <Typography.Title level={5} title="Link Type">
+              Link Type
+            </Typography.Title>
+            <Select
+              placeholder="Select a Link Type"
+              allowClear
+              showSearch
+              filterOption={filterOption}
+              onChange={setLinkTypeFilter}
+              value={linkTypeFilter}
+              style={{ width: '100%' }}
+            >
+              <Select.Option key="Product" value="Product" label="Product">
+                Product
+              </Select.Option>
+              <Select.Option key="Other" value="Other" label="Other">
+                Other
+              </Select.Option>
+            </Select>
           </Col>
         </Row>
       </>
