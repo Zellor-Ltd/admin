@@ -402,9 +402,9 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
               <Col lg={4}>
                 <Form.Item label="Cover Picture">
                   <Upload.ImageUpload
-                    type="coverPictureUrl"
-                    fileList={creator?.coverPictureUrl}
-                    formProp="coverPictureUrl"
+                    type="coverPicture"
+                    fileList={creator?.coverPicture}
+                    formProp="coverPicture"
                     form={form}
                   />
                 </Form.Item>
