@@ -240,12 +240,15 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   };
 
   const rebuildVlink = async (value: string, record: any, index: number) => {
-    lastFocusedIndex.current = index;
-    const { result }: any = await doFetch(() => rebuildLink(value));
-    if (result) {
-      buffer[index] = { ...record, shareLink: result, rebuilt: true };
-      setData([...buffer]);
-    }
+    try {
+      lastFocusedIndex.current = index;
+      const { result }: any = await doFetch(() => rebuildLink(value));
+      if (result) {
+        buffer[index] = { ...record, shareLink: result, rebuilt: true };
+        setData([...buffer]);
+      }
+      message.success('Rebuild successful.');
+    } catch {}
   };
 
   const addToList = async (value: string, feedItem: FeedItem) => {

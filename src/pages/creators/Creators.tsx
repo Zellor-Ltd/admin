@@ -108,11 +108,16 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   const rebuildVlink = async (creator: Creator, index: number) => {
-    const { result }: any = await doFetch(() => rebuildLink(creator.userName!));
-    if (result) {
-      creators[index] = { ...creator, userName: result };
-      setCreators([...creators]);
-    }
+    try {
+      const { result }: any = await doFetch(() =>
+        rebuildLink(creator.userName!)
+      );
+      if (result) {
+        creators[index] = { ...creator, userName: result };
+        setCreators([...creators]);
+      }
+      message.success('Rebuild successful.');
+    } catch {}
   };
 
   const updateVIndex = async (record: Creator, input?: number) => {
