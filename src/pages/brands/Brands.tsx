@@ -30,7 +30,7 @@ import { discoBrandId } from 'helpers/constants';
 import { Brand } from 'interfaces/Brand';
 import { useContext, useEffect, useState } from 'react';
 import { AppContext } from 'contexts/AppContext';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import { Link, RouteComponentProps, useHistory } from 'react-router-dom';
 import {
   deleteBrand,
   fetchBrands,
@@ -49,6 +49,7 @@ const tagColorByStatus: any = {
 };
 
 const Brands: React.FC<RouteComponentProps> = ({ location }) => {
+  const { lastVisitedPage } = useContext(AppContext);
   const [details, setDetails] = useState<boolean>(false);
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [loading, setLoading] = useState<boolean>(false);
@@ -61,6 +62,24 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
     {}
   );
   const [style, setStyle] = useState<any>();
+  const history = useHistory();
+
+  let pauseRouting = history.block((loc: any) => {
+    if (details) {
+      pauseRouting();
+      loc.retry();
+      //todo fix URL after preventing routing
+      window.history.replaceState(null, 'null', lastVisitedPage);
+    }
+  });
+
+  useEffect(() => {
+    history.listen((_, action) => {
+      if (action === 'POP') {
+        pauseRouting();
+      }
+    });
+  });
 
   useEffect(() => {
     fetch();

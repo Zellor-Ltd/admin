@@ -33,11 +33,14 @@ interface AppContextProps {
   isScrollable: boolean;
   setisScrollable: (boolean) => void;
   needsMargin: boolean;
+  details: boolean;
+  setDetails: (value: boolean) => void;
 }
 
 export const AppContext = React.createContext({} as AppContextProps);
 
 export const AppProvider = ({ children }: { children: JSX.Element }) => {
+  const [details, setDetails] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const { doFetch, doRequest } = useRequest({ setLoading });
@@ -104,6 +107,8 @@ export const AppProvider = ({ children }: { children: JSX.Element }) => {
         needsMargin,
         isScrollable,
         setisScrollable,
+        details,
+        setDetails,
       }}
     >
       <PageInfiniteScrollProvider>{children}</PageInfiniteScrollProvider>
