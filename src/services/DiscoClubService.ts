@@ -235,7 +235,32 @@ export const updateUsersFeedByGroup = (groupName: string, params: any) =>
 
 export const fetchStartupVideo = () => instance.get('Wi/Ep/GetStartupVideo');
 
-export const fetchDirectLinks = () => instance.get('Disco/DirectLink/Adm/List');
+export const fetchDirectLinks = ({
+  link,
+  creatorId,
+  brandId,
+  productBrandId,
+  video,
+  url,
+  linkType,
+}: {
+  link?: string;
+  creatorId?: string;
+  brandId?: string;
+  productBrandId?: string;
+  video?: string;
+  url?: string;
+  linkType?: 'Product' | 'Other';
+}) =>
+  instance.put(`Disco/DirectLink/Adm/List`, {
+    link,
+    creatorId,
+    brandId,
+    productBrandId,
+    video,
+    url,
+    linkType,
+  });
 
 export const fetchVideoFeed = () => instance.get('Wi/Ep/ListVideoFeed');
 export const fetchVideoFeedV2 = ({
