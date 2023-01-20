@@ -21,7 +21,7 @@ import {
   Typography,
 } from 'antd';
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import { Link, RouteComponentProps, useHistory } from 'react-router-dom';
 import './Products.scss';
 import CopyValueToClipboard from '../../components/CopyValueToClipboard';
 import { EditableColumnType } from 'components/EditableTable';
@@ -90,6 +90,13 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
     useState<ProductCategory>();
   const [productSubSubCategoryFilter, setProductSubSubCategoryFilter] =
     useState<ProductCategory>();
+  const history = useHistory();
+
+  useEffect(() => {
+    history.listen((_, action) => {
+      if (action === 'POP' && details) setDetails(false);
+    });
+  });
 
   const optionMapping: SelectOption = {
     key: 'id',
@@ -719,6 +726,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
       setCurrentProductBrand(record);
     }
     setDetails(true);
+    history.push(window.location.pathname);
   };
 
   const refreshItem = (record: Product) => {

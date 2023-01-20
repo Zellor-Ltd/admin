@@ -22,7 +22,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import scrollIntoView from 'scroll-into-view';
 import { Payment } from 'interfaces/Payment';
 import { ColumnsType } from 'antd/lib/table';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import { Link, RouteComponentProps, useHistory } from 'react-router-dom';
 import CommissionDetail from './CommissionDetail';
 
 const { Panel } = Collapse;
@@ -44,6 +44,13 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
   const [dateFrom, setDateFrom] = useState<string>();
   const [dateTo, setDateTo] = useState<string>();
   const [activeKey, setActiveKey] = useState<string>('1');
+  const history = useHistory();
+
+  useEffect(() => {
+    history.listen((_, action) => {
+      if (action === 'POP' && details) setDetails(false);
+    });
+  });
 
   useEffect(() => {
     if (!details) {
@@ -118,6 +125,7 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
     setLastViewedIndex(index);
     setCurrentPayment(payment);
     setDetails(true);
+    history.push(window.location.pathname);
   };
 
   const columns: ColumnsType<Payment> = [

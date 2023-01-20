@@ -7,13 +7,13 @@ import { Banner } from '../../interfaces/Banner';
 import moment from 'moment';
 import { useContext, useState, useEffect } from 'react';
 import { AppContext } from 'contexts/AppContext';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import { Link, RouteComponentProps, useHistory } from 'react-router-dom';
 import { fetchBanners, deleteBanner } from 'services/DiscoClubService';
 import CopyValueToClipboard from '../../components/CopyValueToClipboard';
 import scrollIntoView from 'scroll-into-view';
 import HomeScreenDetail from './HomeScreenDetail';
 
-const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
+const HomeScreen: React.FC<RouteComponentProps> = ({ location }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const { doFetch, doRequest } = useRequest({ setLoading });
   const [banners, setBanners] = useState<Banner[]>([]);
@@ -22,6 +22,13 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
   const [currentBanner, setCurrentBanner] = useState<Banner>();
   const { isMobile, setisScrollable } = useContext(AppContext);
   const [style, setStyle] = useState<any>();
+  const history = useHistory();
+
+  useEffect(() => {
+    history.listen((_, action) => {
+      if (action === 'POP' && details) setDetails(false);
+    });
+  });
 
   useEffect(() => {
     if (!details) setStyle({ overflow: 'clip', height: '100%' });
@@ -56,6 +63,7 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ history, location }) => {
     setLastViewedIndex(index);
     setCurrentBanner(banner);
     setDetails(true);
+    history.push(window.location.pathname);
   };
 
   const deleteItem = async (id: string, index: number) => {

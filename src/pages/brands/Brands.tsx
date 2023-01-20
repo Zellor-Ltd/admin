@@ -49,7 +49,6 @@ const tagColorByStatus: any = {
 };
 
 const Brands: React.FC<RouteComponentProps> = ({ location }) => {
-  const { lastVisitedPage } = useContext(AppContext);
   const [details, setDetails] = useState<boolean>(false);
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [loading, setLoading] = useState<boolean>(false);
@@ -64,20 +63,9 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
   const [style, setStyle] = useState<any>();
   const history = useHistory();
 
-  let pauseRouting = history.block((loc: any) => {
-    if (details) {
-      pauseRouting();
-      loc.retry();
-      //todo fix URL after preventing routing
-      window.history.replaceState(null, 'null', lastVisitedPage);
-    }
-  });
-
   useEffect(() => {
     history.listen((_, action) => {
-      if (action === 'POP') {
-        pauseRouting();
-      }
+      if (action === 'POP' && details) setDetails(false);
     });
   });
 
@@ -153,6 +141,7 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
     setLastViewedIndex(index);
     setCurrentBrand(brand);
     setDetails(true);
+    history.push(window.location.pathname);
   };
 
   const refreshItem = (record: Brand) => {

@@ -23,7 +23,7 @@ import { Promotion } from 'interfaces/Promotion';
 import moment from 'moment';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { AppContext } from 'contexts/AppContext';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import { Link, RouteComponentProps, useHistory } from 'react-router-dom';
 import { deletePromotion, fetchPromotions } from 'services/DiscoClubService';
 import CopyValueToClipboard from 'components/CopyValueToClipboard';
 import scrollIntoView from 'scroll-into-view';
@@ -41,6 +41,13 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
   const [idFilter, setIdFilter] = useState<string>('');
   const { isMobile, setisScrollable } = useContext(AppContext);
   const [style, setStyle] = useState<any>();
+  const history = useHistory();
+
+  useEffect(() => {
+    history.listen((_, action) => {
+      if (action === 'POP' && details) setDetails(false);
+    });
+  });
 
   useEffect(() => {
     if (!details) setStyle({ overflow: 'clip', height: '100%' });
@@ -256,6 +263,7 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
     setLastViewedIndex(index);
     setCurrentPromotion(promotion);
     setDetails(true);
+    history.push(window.location.pathname);
   };
 
   const deleteItem = async (id: string, index: number) => {

@@ -18,7 +18,7 @@ import { useRequest } from 'hooks/useRequest';
 import { Fan } from 'interfaces/Fan';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { AppContext } from 'contexts/AppContext';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import { Link, RouteComponentProps, useHistory } from 'react-router-dom';
 import { fetchGuests } from 'services/DiscoClubService';
 import scrollIntoView from 'scroll-into-view';
 import GuestDetail from './GuestDetail';
@@ -56,6 +56,13 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
   const [buffer, setBuffer] = useState<Fan[]>([]);
   const { isMobile, setisScrollable } = useContext(AppContext);
   const [style, setStyle] = useState<any>();
+  const history = useHistory();
+
+  useEffect(() => {
+    history.listen((_, action) => {
+      if (action === 'POP' && details) setDetails(false);
+    });
+  });
 
   useEffect(() => {
     if (!details) setStyle({ overflow: 'clip', height: '100%' });
@@ -316,6 +323,7 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
     setLastViewedIndex(index);
     setCurrentGuest(fan);
     setDetails(true);
+    history.push(window.location.pathname);
   };
 
   const searchGuests = () => {

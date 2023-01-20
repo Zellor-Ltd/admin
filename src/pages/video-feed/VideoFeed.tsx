@@ -32,7 +32,12 @@ import { FeedItem } from 'interfaces/FeedItem';
 import { Segment } from 'interfaces/Segment';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { AppContext } from 'contexts/AppContext';
-import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
+import {
+  Link,
+  RouteComponentProps,
+  useHistory,
+  withRouter,
+} from 'react-router-dom';
 import {
   deleteVideoFeed,
   fetchBrands,
@@ -122,6 +127,13 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const selectRef = useRef<any>(null);
   const loadMore = useRef<boolean>(false);
   const [style, setStyle] = useState<any>();
+  const history = useHistory();
+
+  useEffect(() => {
+    history.listen((_, action) => {
+      if (action === 'POP' && details) setDetails(false);
+    });
+  });
 
   useEffect(() => {
     if (details || (isMobile && activeKey === '1'))
@@ -886,6 +898,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       }
     } else setSelectedVideoFeed(videoFeed);
     setDetails(true);
+    history.push(window.location.pathname);
   };
 
   const updateIndex = async (record: FeedItem, value?: number) => {

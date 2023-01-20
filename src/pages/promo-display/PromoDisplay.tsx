@@ -21,7 +21,7 @@ import { PromoDisplay } from 'interfaces/PromoDisplay';
 import moment from 'moment';
 import { useContext, useEffect, useState } from 'react';
 import { AppContext } from 'contexts/AppContext';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import { Link, RouteComponentProps, useHistory } from 'react-router-dom';
 import {
   deletePromoDisplay,
   fetchPromoDisplays,
@@ -42,6 +42,13 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
   const [filter, setFilter] = useState<string>('');
   const { isMobile, setisScrollable } = useContext(AppContext);
   const [style, setStyle] = useState<any>();
+  const history = useHistory();
+
+  useEffect(() => {
+    history.listen((_, action) => {
+      if (action === 'POP' && details) setDetails(false);
+    });
+  });
 
   useEffect(() => {
     if (!details) setStyle({ overflow: 'clip', height: '100%' });
@@ -85,6 +92,7 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
     setLastViewedIndex(index);
     setCurrentPromoDisplay(promoDisplay);
     setDetails(true);
+    history.push(window.location.pathname);
   };
 
   const deleteItem = async (id: string, index: number) => {

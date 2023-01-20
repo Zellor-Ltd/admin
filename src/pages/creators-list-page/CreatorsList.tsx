@@ -21,7 +21,7 @@ import { useRequest } from '../../hooks/useRequest';
 import { Masthead } from '../../interfaces/Masthead';
 import { useCallback, useContext, useState, useEffect } from 'react';
 import { AppContext } from 'contexts/AppContext';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import { Link, RouteComponentProps, useHistory } from 'react-router-dom';
 import {
   deleteMasthead,
   fetchMastheads,
@@ -41,6 +41,13 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
   const [filter, setFilter] = useState<string>('');
   const { isMobile, setisScrollable } = useContext(AppContext);
   const [style, setStyle] = useState<any>();
+  const history = useHistory();
+
+  useEffect(() => {
+    history.listen((_, action) => {
+      if (action === 'POP' && details) setDetails(false);
+    });
+  });
 
   useEffect(() => {
     if (!details) setStyle({ overflow: 'clip', height: '100%' });
@@ -189,6 +196,7 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
     setLastViewedIndex(index);
     setCurrentMasthead(masthead);
     setDetails(true);
+    history.push(window.location.pathname);
   };
 
   const deleteItem = async (id: string) => {
