@@ -246,7 +246,7 @@ const DirectLinkDetail: React.FC<DirectLinkDetailProps> = ({
               </Form.Item>
             </Col>
             <Col span={24}>
-              <Form.Item label="Link" name="link">
+              <Form.Item label="Link" name="link" required>
                 <Input allowClear placeholder="Link" />
               </Form.Item>
             </Col>
@@ -344,7 +344,7 @@ const DirectLinkDetail: React.FC<DirectLinkDetailProps> = ({
               </Form.Item>
             </Col>
             <Col span={24}>
-              <Form.Item label="URL" name="url">
+              <Form.Item label="URL" name="url" required>
                 <Input allowClear placeholder="URL" />
               </Form.Item>
             </Col>
