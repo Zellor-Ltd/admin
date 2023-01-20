@@ -159,13 +159,16 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   const rebuildVlink = async (brand: Brand, index: number) => {
-    const { result }: any = await doFetch(() =>
-      rebuildLink(brand.masterBrandLink!)
-    );
-    if (result) {
-      brands[index] = { ...brand, masterBrandLink: result };
-      setBrands([...brands]);
-    }
+    try {
+      const { result }: any = await doFetch(() =>
+        rebuildLink(brand.masterBrandLink!)
+      );
+      if (result) {
+        brands[index] = { ...brand, masterBrandLink: result };
+        setBrands([...brands]);
+      }
+      message.success('Rebuild successful.');
+    } catch {}
   };
 
   const updateVIndex = async (record: Brand, input?: number) => {
