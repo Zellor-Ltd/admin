@@ -27,7 +27,7 @@ import CopyValueToClipboard from 'components/CopyValueToClipboard';
 import { Creator } from 'interfaces/Creator';
 import React, { useContext, useEffect, useState } from 'react';
 import { AppContext } from 'contexts/AppContext';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import { Link, RouteComponentProps, useHistory } from 'react-router-dom';
 import {
   deleteCreator,
   fetchCreators,
@@ -56,6 +56,13 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
     {}
   );
   const [style, setStyle] = useState<any>();
+  const history = useHistory();
+
+  useEffect(() => {
+    history.listen((_, action) => {
+      if (action === 'POP' && details) setDetails(false);
+    });
+  });
 
   const scrollToCenter = (index: number) => {
     scrollIntoView(
@@ -95,6 +102,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
     setLastViewedIndex(index);
     setCurrentCreator(creator);
     setDetails(true);
+    history.push(window.location.pathname);
   };
 
   const handleSwitchChange = async (creator: Creator, toggled: boolean) => {

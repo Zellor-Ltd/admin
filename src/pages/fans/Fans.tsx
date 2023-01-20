@@ -25,7 +25,7 @@ import { Fan } from 'interfaces/Fan';
 import EditFanModal from 'pages/fans/EditFanModal';
 import React, { useContext, useState, useEffect } from 'react';
 import { AppContext } from 'contexts/AppContext';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import { Link, RouteComponentProps, useHistory } from 'react-router-dom';
 import { fetchFans } from 'services/DiscoClubService';
 import FanAPITestModal from './FanAPITestModal';
 import FanFeedModal from './FanFeedModal';
@@ -57,6 +57,13 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const { isMobile, setisScrollable } = useContext(AppContext);
   const [style, setStyle] = useState<any>();
+  const history = useHistory();
+
+  useEffect(() => {
+    history.listen((_, action) => {
+      if (action === 'POP' && details) setDetails(false);
+    });
+  });
 
   useEffect(() => {
     if (!details) setStyle({ overflow: 'clip', height: '100%' });
@@ -121,6 +128,7 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
     setLastViewedIndex(index);
     setCurrentFan(fan);
     setDetails(true);
+    history.push(window.location.pathname);
   };
 
   const columns: ColumnsType<Fan> = [

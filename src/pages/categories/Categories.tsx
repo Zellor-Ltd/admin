@@ -30,7 +30,7 @@ import { Image } from 'interfaces/Image';
 import { useContext, useState, useEffect, useRef } from 'react';
 import { AppContext } from 'contexts/AppContext';
 import Highlighter from 'react-highlight-words';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import { Link, RouteComponentProps, useHistory } from 'react-router-dom';
 import { productCategoriesAPI } from 'services/DiscoClubService';
 import CopyValueToClipboard from 'components/CopyValueToClipboard';
 import scrollIntoView from 'scroll-into-view';
@@ -67,6 +67,13 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
   const [categories, setCategories] = useState<any>([]);
   const { isMobile, setisScrollable } = useContext(AppContext);
   const [style, setStyle] = useState<any>();
+  const history = useHistory();
+
+  useEffect(() => {
+    history.listen((_, action) => {
+      if (action === 'POP' && details) setDetails(false);
+    });
+  });
 
   useEffect(() => {
     fetchAllCategories();
@@ -126,6 +133,7 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
     setLastViewedIndex(index);
     setCurrentProductCategory(productCategory);
     setDetails(true);
+    history.push(window.location.pathname);
   };
 
   const deleteItem = async (id: string) => {

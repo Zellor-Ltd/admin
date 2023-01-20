@@ -15,7 +15,7 @@ import { FanGroup } from 'interfaces/FanGroup';
 import moment from 'moment';
 import { useContext, useState, useEffect } from 'react';
 import { AppContext } from 'contexts/AppContext';
-import { RouteComponentProps } from 'react-router-dom';
+import { RouteComponentProps, useHistory } from 'react-router-dom';
 import { fetchFanGroups } from 'services/DiscoClubService';
 import scrollIntoView from 'scroll-into-view';
 import FanGroupDetail from './FanGroupDetail';
@@ -32,6 +32,13 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
   const [filter, setFilter] = useState<string>('');
   const { isMobile, setisScrollable } = useContext(AppContext);
   const [style, setStyle] = useState<any>();
+  const history = useHistory();
+
+  useEffect(() => {
+    history.listen((_, action) => {
+      if (action === 'POP' && details) setDetails(false);
+    });
+  });
 
   useEffect(() => {
     if (!details) setStyle({ overflow: 'clip', height: '100%' });
@@ -75,6 +82,7 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
     setLastViewedIndex(index);
     setCurrentFanGroup(fanGroup);
     setDetails(true);
+    history.push(window.location.pathname);
   };
 
   const columns: ColumnsType<FanGroup> = [

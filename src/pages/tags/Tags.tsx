@@ -22,12 +22,12 @@ import { useRequest } from 'hooks/useRequest';
 import { Tag } from 'interfaces/Tag';
 import { useContext, useEffect, useRef, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import { Link, RouteComponentProps, useHistory } from 'react-router-dom';
 import { deleteTag, fetchTags } from 'services/DiscoClubService';
 import scrollIntoView from 'scroll-into-view';
 import TagDetail from './TagDetail';
 
-const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
+const Tags: React.FC<RouteComponentProps> = ({ location }) => {
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(0);
   const [details, setDetails] = useState<boolean>(false);
   const [currentTag, setCurrentTag] = useState<Tag>();
@@ -43,6 +43,13 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
   const { isMobile, setisScrollable } = useContext(AppContext);
   const isMounted = useRef<boolean>(false);
   const [style, setStyle] = useState<any>();
+  const history = useHistory();
+
+  useEffect(() => {
+    history.listen((_, action) => {
+      if (action === 'POP' && details) setDetails(false);
+    });
+  });
 
   useEffect(() => {
     if (!details) setStyle({ overflow: 'clip', height: '100%' });
@@ -111,6 +118,7 @@ const Tags: React.FC<RouteComponentProps> = ({ history, location }) => {
     setLastViewedIndex(index);
     setCurrentTag(tag);
     setDetails(true);
+    history.push(window.location.pathname);
   };
 
   const deleteItem = async (id: string, index: number) => {

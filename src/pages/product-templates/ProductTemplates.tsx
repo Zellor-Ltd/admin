@@ -7,7 +7,7 @@ import {
 } from '@ant-design/icons';
 import { Button, Col, PageHeader, Row, Table, Tooltip } from 'antd';
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import { Link, RouteComponentProps, useHistory } from 'react-router-dom';
 import 'pages/products/Products.scss';
 import CopyValueToClipboard from 'components/CopyValueToClipboard';
 import { EditableColumnType } from 'components/EditableTable';
@@ -48,6 +48,13 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [productTemplates, setProductTemplates] = useState<Product[]>([]);
   const [style, setStyle] = useState<any>();
+  const history = useHistory();
+
+  useEffect(() => {
+    history.listen((_, action) => {
+      if (action === 'POP' && details) setDetails(false);
+    });
+  });
 
   useEffect(() => {
     if (!details) setStyle({ overflow: 'clip', height: '100%' });
@@ -557,6 +564,7 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
       setCurrentProductBrand(record);
     }
     setDetails(true);
+    history.push(window.location.pathname);
   };
 
   const refreshItem = (record: Product) => {
@@ -584,6 +592,7 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
     setCurrentProductBrand(undefined);
     setLastViewedIndex(index);
     setDetails(true);
+    history.push(window.location.pathname);
   };
 
   return (

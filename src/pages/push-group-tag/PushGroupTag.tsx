@@ -15,7 +15,7 @@ import { Brand } from 'interfaces/Brand';
 import { Tag } from 'interfaces/Tag';
 import { useContext, useEffect, useState, useRef } from 'react';
 import { AppContext } from 'contexts/AppContext';
-import { RouteComponentProps } from 'react-router-dom';
+import { RouteComponentProps, useHistory } from 'react-router-dom';
 import { fetchBrands, fetchTags } from 'services/DiscoClubService';
 import SimpleSelect from 'components/select/SimpleSelect';
 import { SelectOption } from '../../interfaces/SelectOption';
@@ -25,7 +25,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import MultipleFetchDebounceSelect from 'components/select/MultipleFetchDebounceSelect';
 import { usePrevious } from 'react-use';
 
-const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
+const PushGroupTag: React.FC<RouteComponentProps> = () => {
   const [, setLoading] = useState<boolean>(false);
   const { doFetch } = useRequest({ setLoading });
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
@@ -48,6 +48,13 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
   const scrolling = useRef(false);
   const mounted = useRef(false);
   const [style, setStyle] = useState<any>();
+  const history = useHistory();
+
+  useEffect(() => {
+    history.listen((_, action) => {
+      if (action === 'POP' && details) setDetails(false);
+    });
+  });
 
   useEffect(() => {
     if (!details) setStyle({ overflow: 'clip', height: '100%' });
@@ -267,6 +274,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = ({ history, location }) => {
   const selectTags = () => {
     setCurrentTags(tags.filter(tag => selectedRowKeys.includes(tag.id)));
     setDetails(true);
+    history.push(window.location.pathname);
   };
 
   const onSelectChange = (selectedRowKeys: any, selectedRows: any) => {

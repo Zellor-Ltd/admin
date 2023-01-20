@@ -30,7 +30,7 @@ import { Brand } from 'interfaces/Brand';
 import { Product } from 'interfaces/Product';
 import moment from 'moment';
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import { Link, RouteComponentProps, useHistory } from 'react-router-dom';
 import {
   addVariant,
   barcodeLookup,
@@ -107,8 +107,14 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
   const { doRequest: saveCategories, loading: loadingCategories } =
     useRequest();
   const [activeKey, setActiveKey] = useState<string>('1');
-
   const [btnStyle, setBtnStyle] = useState<any>();
+  const history = useHistory();
+
+  useEffect(() => {
+    history.listen((_, action) => {
+      if (action === 'POP' && details) setDetails(false);
+    });
+  });
 
   useEffect(() => {
     if (details || (isMobile && activeKey === '1'))
@@ -776,6 +782,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
     }
     setLastViewedIndex(index);
     setDetails(true);
+    history.push(window.location.pathname);
   };
 
   const editProduct = (
@@ -798,6 +805,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
     }
     setViewName('default');
     setDetails(true);
+    history.push(window.location.pathname);
   };
 
   const scrollToCenter = (index: number) => {

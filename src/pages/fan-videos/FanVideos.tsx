@@ -30,7 +30,12 @@ import { FeedItem } from 'interfaces/FeedItem';
 import { Segment } from 'interfaces/Segment';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { AppContext } from 'contexts/AppContext';
-import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
+import {
+  Link,
+  RouteComponentProps,
+  useHistory,
+  withRouter,
+} from 'react-router-dom';
 import {
   deleteVideoFeed,
   fetchBrands,
@@ -100,6 +105,13 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
   const filterPanelHeight = useRef<number>();
   const windowHeight = window.innerHeight;
   const [style, setStyle] = useState<any>();
+  const history = useHistory();
+
+  useEffect(() => {
+    history.listen((_, action) => {
+      if (action === 'POP' && details) setDetails(false);
+    });
+  });
 
   useEffect(() => {
     if (details || (isMobile && activeKey === '1'))
@@ -588,6 +600,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
     setLastViewedIndex(index);
     setSelectedVideoFeed(videoFeed);
     setDetails(true);
+    history.push(window.location.pathname);
   };
 
   const handleIndexChange = (newIndex?: number, feedItem?: FeedItem) => {

@@ -25,7 +25,7 @@ import { useRequest } from 'hooks/useRequest';
 import { Brand } from 'interfaces/Brand';
 import { Product } from 'interfaces/Product';
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { RouteComponentProps } from 'react-router-dom';
+import { RouteComponentProps, useHistory } from 'react-router-dom';
 import {
   fetchBrands,
   fetchProductBrands,
@@ -146,6 +146,13 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
         ? item.superCategory === currentSuperCategory.superCategory
         : true)
     );
+  });
+  const history = useHistory();
+
+  useEffect(() => {
+    history.listen((_, action) => {
+      if (action === 'POP' && details) setDetails(false);
+    });
   });
 
   useEffect(() => {
@@ -274,6 +281,7 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
   const handleEdit = (product: Product) => {
     setCurrentGroup(product);
     setDetails(true);
+    history.push(window.location.pathname);
   };
 
   const handleFilterOutOfStock = (e: CheckboxChangeEvent) => {

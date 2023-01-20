@@ -23,7 +23,7 @@ import {
 import { ColumnsType } from 'antd/lib/table';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { AppContext } from 'contexts/AppContext';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import { Link, RouteComponentProps, useHistory } from 'react-router-dom';
 import {
   deleteDirectLink,
   fetchBrands,
@@ -73,6 +73,13 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
   const windowHeight = window.innerHeight;
   const lastFocusedIndex = useRef<number>(-1);
   const directLinksIndex = useRef<number>(-1);
+  const history = useHistory();
+
+  useEffect(() => {
+    history.listen((_, action) => {
+      if (action === 'POP' && details) setDetails(false);
+    });
+  });
 
   useEffect(() => {
     if (!details) setStyle({ overflow: 'clip', height: '100%' });
@@ -213,6 +220,7 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
     lastFocusedIndex.current = index;
     setSelectedLink({ ...(record as any), cloning: true });
     setDetails(true);
+    history.push(window.location.pathname);
   };
 
   const columns: ColumnsType<any> = [
@@ -655,6 +663,7 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
     lastFocusedIndex.current = index;
     setSelectedLink({ ...(directLink as any) });
     setDetails(true);
+    history.push(window.location.pathname);
   };
 
   const handleSave = (record: any, newItem?: boolean) => {

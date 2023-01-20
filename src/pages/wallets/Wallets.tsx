@@ -9,7 +9,7 @@ import { Wallet } from 'interfaces/Wallet';
 import { WalletDetailParams } from 'interfaces/WalletTransactions';
 import { useContext, useEffect, useState } from 'react';
 import { AppContext } from 'contexts/AppContext';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import { Link, RouteComponentProps, useHistory } from 'react-router-dom';
 import {
   fetchBalancePerBrand,
   fetchBrands,
@@ -32,6 +32,13 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
   const [fans, setFans] = useState<Fan[]>([]);
   const [userInput, setUserInput] = useState<string>();
   const { isMobile } = useContext(AppContext);
+  const history = useHistory();
+
+  useEffect(() => {
+    history.listen((_, action) => {
+      if (action === 'POP' && details) setDetails(false);
+    });
+  });
 
   const optionMapping: SelectOption = {
     key: 'id',
@@ -69,6 +76,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
   const handleEditWallet = (index: number) => {
     setLastViewedIndex(index);
     setDetails(true);
+    history.push(window.location.pathname);
   };
 
   const handleResetWallet = (record?: Wallet) => {

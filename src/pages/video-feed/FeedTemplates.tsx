@@ -14,7 +14,12 @@ import { FeedItem } from 'interfaces/FeedItem';
 import { Segment } from 'interfaces/Segment';
 import React, { useContext, useEffect, useState } from 'react';
 import { AppContext } from 'contexts/AppContext';
-import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
+import {
+  Link,
+  RouteComponentProps,
+  useHistory,
+  withRouter,
+} from 'react-router-dom';
 import {
   fetchBrands,
   fetchCreators,
@@ -49,6 +54,13 @@ const FeedTemplates: React.FC<RouteComponentProps> = () => {
   const { doFetch } = useRequest({ setLoading });
   const { isMobile, setisScrollable } = useContext(AppContext);
   const [style, setStyle] = useState<any>();
+  const history = useHistory();
+
+  useEffect(() => {
+    history.listen((_, action) => {
+      if (action === 'POP' && details) setDetails(false);
+    });
+  });
 
   useEffect(() => {
     if (!details) setStyle({ overflow: 'clip', height: '100%' });
@@ -274,6 +286,7 @@ const FeedTemplates: React.FC<RouteComponentProps> = () => {
     setLastViewedIndex(index);
     setselectedFeedTemplate(feedTemplate);
     setDetails(true);
+    history.push(window.location.pathname);
   };
 
   const handleSave = (record: any) => {

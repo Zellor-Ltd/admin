@@ -24,7 +24,7 @@ import moment from 'moment';
 import { useContext, useRef, useState, useEffect } from 'react';
 import { AppContext } from 'contexts/AppContext';
 import Highlighter from 'react-highlight-words';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import { Link, RouteComponentProps, useHistory } from 'react-router-dom';
 import {
   fetchBrands,
   fetchFans,
@@ -68,6 +68,13 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   const [cartTableContent, setCartTableContent] = useState<any>();
   const [expandedRowKeys, setExpandedRowKeys] = useState<string[]>();
   const [style, setStyle] = useState<any>();
+  const history = useHistory();
+
+  useEffect(() => {
+    history.listen((_, action) => {
+      if (action === 'POP' && details) setDetails(false);
+    });
+  });
 
   useEffect(() => {
     if (!details) setStyle({ overflow: 'clip', height: '100%' });
@@ -223,6 +230,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     setLastViewedIndex(index);
     setCurrentFan(fan);
     setDetails(true);
+    history.push(window.location.pathname);
   };
 
   const getColumnSearchProps = (dataIndex: any) => ({
