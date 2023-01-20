@@ -59,7 +59,7 @@ const DirectLinkDetail: React.FC<DirectLinkDetailProps> = ({
   const [selectedProductBrand, setSelectedProductBrand] =
     useState<ProductBrand>(directLink?.productBrand);
   const [disableProducts, setDisableProducts] = useState<boolean>(
-    !!!selectedProductBrand
+    directLink?.linkType === 'Other'
   );
   const [selectedProduct, setSelectedProduct] = useState<Product>(
     directLink?.product
@@ -96,17 +96,11 @@ const DirectLinkDetail: React.FC<DirectLinkDetailProps> = ({
   useEffect(() => {
     if (selectedProductBrand) {
       getProducts(userInput);
-      setDisableProducts(false);
     } else {
       setOptionsPage(0);
       setProducts([]);
-      setDisableProducts(true);
     }
   }, [selectedProductBrand]);
-
-  useEffect(() => {
-    setDisableProducts(!!!products.length);
-  }, [products]);
 
   const onFinish = async () => {
     try {
@@ -229,8 +223,12 @@ const DirectLinkDetail: React.FC<DirectLinkDetailProps> = ({
         layout="vertical"
         initialValues={
           previousID
-            ? { ...directLink, id: directLink.id.slice(0, -4) }
-            : directLink
+            ? {
+                ...directLink,
+                id: directLink.id.slice(0, -4),
+                linkType: directLink.linkType ?? 'Product',
+              }
+            : { ...directLink, linkType: directLink.linkType ?? 'Product' }
         }
       >
         <Row gutter={8}>
@@ -352,13 +350,16 @@ const DirectLinkDetail: React.FC<DirectLinkDetailProps> = ({
               </Form.Item>
             </Col>
             <Col span={24}>
-              <Form.Item label="Link Type" name="linkType">
+              <Form.Item label="Link Type" name="linkType" required>
                 <Select
                   placeholder="Select a Link Type"
                   disabled={!loaded}
                   allowClear
                   showSearch
                   filterOption={filterOption}
+                  onChange={(value: string) =>
+                    setDisableProducts(value === 'Other')
+                  }
                 >
                   <Select.Option key="Product" value="Product" label="Product">
                     Product
