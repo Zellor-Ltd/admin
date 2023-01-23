@@ -39,6 +39,7 @@ import { SelectOption } from 'interfaces/SelectOption';
 import DirectLinkDetail from './DirectLinkDetail';
 import scrollIntoView from 'scroll-into-view';
 import CopyToClipboard from 'react-copy-to-clipboard';
+import { ProductBrand } from 'interfaces/ProductBrand';
 
 const { Panel } = Collapse;
 
@@ -58,7 +59,7 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
   const [style, setStyle] = useState<any>();
   // Filter state
   const [brandFilter, setBrandFilter] = useState<Brand>();
-  const [productBrandFilter, setProductBrandFilter] = useState<string>();
+  const [productBrandFilter, setProductBrandFilter] = useState<ProductBrand>();
   const [linkFilter, setLinkFilter] = useState<string>();
   const [linkTypeFilter, setLinkTypeFilter] = useState<'Product' | 'Other'>();
   const [videoFilter, setVideoFilter] = useState<string>();
@@ -99,7 +100,7 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
     let updatedRows = rows;
     if (linkFilter) {
       updatedRows = updatedRows.filter(
-        row => row.category?.indexOf(linkFilter) > -1
+        row => row.link?.indexOf(linkFilter) > -1
       );
     }
     if (creatorFilter) {
@@ -114,22 +115,22 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
     }
     if (productBrandFilter) {
       updatedRows = updatedRows.filter(
-        row => row?.productBrand?.brandName?.indexOf(productBrandFilter) > -1
+        row =>
+          row?.productBrand?.brandName?.indexOf(productBrandFilter.brandName) >
+          -1
       );
     }
     if (videoFilter) {
       updatedRows = updatedRows.filter(
-        row => row.category?.indexOf(videoFilter) > -1
+        row => row.video?.indexOf(videoFilter) > -1
       );
     }
     if (urlFilter) {
-      updatedRows = updatedRows.filter(
-        row => row.category?.indexOf(urlFilter) > -1
-      );
+      updatedRows = updatedRows.filter(row => row.url?.indexOf(urlFilter) > -1);
     }
     if (linkTypeFilter) {
       updatedRows = updatedRows.filter(
-        row => row.category?.indexOf(linkTypeFilter) > -1
+        row => row.linkType?.indexOf(linkTypeFilter) > -1
       );
     }
     return updatedRows;
@@ -618,7 +619,7 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
         link: linkFilter,
         creatorId: creatorFilter?.id,
         brandId: brandFilter?.id,
-        productBrandId: productBrandFilter,
+        productBrandId: productBrandFilter?.id,
         video: videoFilter,
         url: urlFilter,
         linkType: linkTypeFilter,
@@ -733,9 +734,11 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
             <SimpleSelect
               showSearch
               data={productBrands}
-              onChange={setProductBrandFilter}
+              onChange={(_, productBrand) =>
+                setProductBrandFilter(productBrand)
+              }
               style={{ width: '100%' }}
-              selectedOption={productBrandFilter}
+              selectedOption={productBrandFilter?.id}
               optionMapping={productBrandMapping}
               placeholder="Select a Product Brand"
               allowClear
