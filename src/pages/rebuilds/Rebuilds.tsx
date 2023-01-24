@@ -21,7 +21,7 @@ const Rebuilds: React.FC<RouteComponentProps> = () => {
         category: 'all',
         trend: 'all',
       });
-      if (success) msg.success(`Success: ${message}`);
+      if (success) msg.success(message);
     } catch (error: any) {
       msg.error(`Error: ${error.error ?? 'Failed to rebuild. Try again.'} `);
     }

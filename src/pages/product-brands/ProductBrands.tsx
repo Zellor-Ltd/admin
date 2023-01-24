@@ -116,7 +116,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
       if (success) {
         data[index] = { ...productBrand, brandLink: result };
         setData([...data]);
-        msg.success(`Success: ${message}`);
+        msg.success(message);
       }
     } catch {}
   };

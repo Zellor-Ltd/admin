@@ -166,7 +166,7 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
       if (success) {
         brands[index] = { ...brand, masterBrandLink: result };
         setBrands([...brands]);
-        msg.success(`Success: ${message}`);
+        msg.success(message);
       }
     } catch {}
   };
