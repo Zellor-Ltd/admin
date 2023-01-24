@@ -1,4 +1,4 @@
-import { Button, Col, message, PageHeader, Row } from 'antd';
+import { Button, Col, message as msg, PageHeader, Row } from 'antd';
 import { useRequest } from '../../hooks/useRequest';
 import { useState } from 'react';
 import { rebuildVLink } from '../../services/DiscoClubService';
@@ -11,20 +11,19 @@ const Rebuilds: React.FC<RouteComponentProps> = () => {
   const rebuild = async (path: string) => {
     try {
       await doRequest(async () => rebuildVLink(`paths: ["${path}"]`));
-      message.success('Rebuild successful.');
+      msg.success('Rebuild successful.');
     } catch {}
   };
 
   const rebuildDisco = async () => {
     try {
-      await doRequest(async () =>
-        rebuildVLink({ category: 'all', trend: 'all' })
-      );
-      message.success('Rebuild successful.');
+      const { success, message }: any = await rebuildVLink({
+        category: 'all',
+        trend: 'all',
+      });
+      if (success) msg.success(`Success: ${message}`);
     } catch (error: any) {
-      message.error(
-        `Error: ${error.error ?? 'Failed to rebuild. Try again.'} `
-      );
+      msg.error(`Error: ${error.error ?? 'Failed to rebuild. Try again.'} `);
     }
   };
 

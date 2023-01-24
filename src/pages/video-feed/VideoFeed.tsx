@@ -15,7 +15,7 @@ import {
   Collapse,
   Input,
   InputNumber,
-  message,
+  message as msg,
   PageHeader,
   Popconfirm,
   Row,
@@ -61,7 +61,6 @@ import VideoFeedDetail from './VideoFeedDetail';
 import { statusList, videoTypeList } from 'components/select/select.utils';
 import moment from 'moment';
 import scrollIntoView from 'scroll-into-view';
-import { useRequest } from 'hooks/useRequest';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useSelector } from 'react-redux';
 
@@ -83,7 +82,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const [selectedVideoFeed, setSelectedVideoFeed] = useState<FeedItem>();
   const [loading, setLoading] = useState(false);
   const loaded = useRef<boolean>(false);
-  const { doFetch } = useRequest({ setLoading });
   const [loadingResources, setLoadingResources] = useState<boolean>(true);
   const [details, setDetails] = useState<boolean>(false);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -254,19 +252,19 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const rebuildVlink = async (value: string, record: any, index: number) => {
     try {
       lastFocusedIndex.current = index;
-      const { result }: any = await doFetch(() => rebuildLink(value));
-      if (result) {
+      const { result, success, message }: any = await rebuildLink(value);
+      if (success) {
         buffer[index] = { ...record, shareLink: result, rebuilt: true };
         setData([...buffer]);
+        msg.success(`Success: ${message}`);
       }
-      message.success('Rebuild successful.');
     } catch {}
   };
 
   const addToList = async (value: string, feedItem: FeedItem) => {
     try {
       await addFeaturedFeed(feedItem.id, value);
-      message.success('Register updated with success.');
+      msg.success('Register updated with success.');
     } catch (err) {
       console.error(`Error while trying to update list.`, err);
     } finally {
@@ -826,7 +824,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       if (results.length < 30) setEof(true);
       return results;
     } catch (error) {
-      message.error('Error to get feed');
+      msg.error('Error to get feed');
     }
   };
 
@@ -919,7 +917,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
 
     try {
       await saveVideoFeed(record);
-      message.success('Register updated with success.');
+      msg.success('Register updated with success.');
     } catch (err) {
       console.error(`Error while trying to update index.`, err);
     }
@@ -948,7 +946,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
 
     try {
       await saveVideoFeed(record);
-      message.success('Register updated with success.');
+      msg.success('Register updated with success.');
     } catch (err) {
       console.error(`Error while trying to update index.`, err);
     }

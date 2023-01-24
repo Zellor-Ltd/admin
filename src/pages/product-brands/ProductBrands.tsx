@@ -11,7 +11,7 @@ import {
   Col,
   Input,
   InputNumber,
-  message,
+  message as msg,
   PageHeader,
   Popconfirm,
   Row,
@@ -109,14 +109,15 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
 
   const rebuildVlink = async (productBrand: ProductBrand, index: number) => {
     try {
-      const { result }: any = await doFetch(() =>
-        rebuildLink(productBrand.brandLink!)
+      const { result, success, message }: any = await rebuildLink(
+        productBrand.brandLink!
       );
-      if (result) {
+
+      if (success) {
         data[index] = { ...productBrand, brandLink: result };
         setData([...data]);
+        msg.success(`Success: ${message}`);
       }
-      message.success('Rebuild successful.');
     } catch {}
   };
 
@@ -135,7 +136,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
 
     try {
       await saveProductBrand(record);
-      message.success('Register updated with success.');
+      msg.success('Register updated with success.');
     } catch (err) {
       console.error(`Error while trying to update index.`, err);
     }
@@ -156,9 +157,9 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
     try {
       productBrand.displayInGrid = toggled;
       await doRequest(() => saveProductBrand(productBrand));
-      message.success('Register updated with success.');
+      msg.success('Register updated with success.');
     } catch (error) {
-      message.error("Error: Couldn't set brand property. Try again.");
+      msg.error("Error: Couldn't set brand property. Try again.");
     }
   };
 
