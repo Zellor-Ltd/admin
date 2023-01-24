@@ -256,7 +256,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       if (success) {
         buffer[index] = { ...record, shareLink: result, rebuilt: true };
         setData([...buffer]);
-        msg.success(`Success: ${message}`);
+        msg.success(message);
       }
     } catch {}
   };

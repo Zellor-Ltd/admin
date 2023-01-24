@@ -123,7 +123,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
       if (success) {
         creators[index] = { ...creator, userName: result };
         setCreators([...creators]);
-        msg.success(`Success: ${message}`);
+        msg.success(message);
       }
     } catch {}
   };
