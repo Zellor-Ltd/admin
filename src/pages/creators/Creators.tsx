@@ -13,7 +13,7 @@ import {
   Col,
   Input,
   InputNumber,
-  message,
+  message as msg,
   PageHeader,
   Popconfirm,
   Row,
@@ -109,22 +109,22 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
     try {
       creator.displayInCreatorGrid = toggled;
       await saveCreator(creator);
-      message.success('Register updated with success.');
+      msg.success('Register updated with success.');
     } catch (error) {
-      message.error("Error: Couldn't set property. Try again.");
+      msg.error("Error: Couldn't set property. Try again.");
     }
   };
 
   const rebuildVlink = async (creator: Creator, index: number) => {
     try {
-      const { result }: any = await doFetch(() =>
-        rebuildLink(creator.userName!)
+      const { result, success, message }: any = await rebuildLink(
+        creator.userName!
       );
-      if (result) {
+      if (success) {
         creators[index] = { ...creator, userName: result };
         setCreators([...creators]);
+        msg.success(`Success: ${message}`);
       }
-      message.success('Rebuild successful.');
     } catch {}
   };
 
@@ -143,7 +143,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
 
     try {
       await saveCreator(record);
-      message.success('Register updated with success.');
+      msg.success('Register updated with success.');
     } catch (err) {
       console.error(`Error while trying to update index.`, err);
     }

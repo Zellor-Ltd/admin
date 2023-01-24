@@ -14,7 +14,7 @@ import {
   Col,
   Input,
   InputNumber,
-  message,
+  message as msg,
   PageHeader,
   Popconfirm,
   Row,
@@ -131,9 +131,9 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
     try {
       brand[switchType] = toggled;
       await saveBrand(brand);
-      message.success('Register updated with success.');
+      msg.success('Register updated with success.');
     } catch (error) {
-      message.error("Error: Couldn't set brand property. Try again.");
+      msg.error("Error: Couldn't set brand property. Try again.");
     }
   };
 
@@ -160,14 +160,14 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
 
   const rebuildVlink = async (brand: Brand, index: number) => {
     try {
-      const { result }: any = await doFetch(() =>
-        rebuildLink(brand.masterBrandLink!)
+      const { result, success, message }: any = await rebuildLink(
+        brand.masterBrandLink!
       );
-      if (result) {
+      if (success) {
         brands[index] = { ...brand, masterBrandLink: result };
         setBrands([...brands]);
+        msg.success(`Success: ${message}`);
       }
-      message.success('Rebuild successful.');
     } catch {}
   };
 
@@ -186,7 +186,7 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
 
     try {
       await saveBrand(record);
-      message.success('Register updated with success.');
+      msg.success('Register updated with success.');
     } catch (err) {
       console.error(`Error while trying to update index.`, err);
     }
