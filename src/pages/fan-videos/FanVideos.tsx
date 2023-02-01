@@ -40,7 +40,6 @@ import {
   deleteVideoFeed,
   fetchBrands,
   fetchCategories,
-  fetchCreators,
   fetchProductBrands,
   fetchVideoFeedV2,
   saveVideoFeed,
@@ -58,6 +57,7 @@ import { statusList } from 'components/select/select.utils';
 import { useRequest } from 'hooks/useRequest';
 import moment from 'moment';
 import scrollIntoView from 'scroll-into-view';
+import CreatorsMultipleFetchDebounceSelect from 'pages/creators/components/CreatorsMultipleFetchDebounceSelect';
 
 const { Panel } = Collapse;
 
@@ -91,7 +91,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
   const [titleFilter, setTitleFilter] = useState<string>();
   const [categoryFilter, setCategoryFilter] = useState<string>();
   const [indexFilter, setIndexFilter] = useState<number>();
-  const [creatorFilter, setCreatorFilter] = useState<string>();
+  const [creatorFilter, setCreatorFilter] = useState<Creator | null>();
   const inputRef = useRef<any>(null);
   const [loadingResources, setLoadingResources] = useState<boolean>(true);
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
@@ -537,12 +537,6 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
   };
 
   const getDetailsResources = async () => {
-    async function getcreators() {
-      const response: any = await fetchCreators({
-        query: '',
-      });
-      setCreators(response.results);
-    }
     async function getCategories() {
       const response: any = await fetchCategories();
       setCategories(response.results);
@@ -556,7 +550,6 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
       setProductBrands(response.results);
     }
     await Promise.all([
-      getcreators(),
       getCategories(),
       getBrands(),
       getProductBrands(),
@@ -572,7 +565,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
     }
     if (creatorFilter) {
       updatedRows = updatedRows.filter(
-        row => row?.creator?.firstName?.indexOf(creatorFilter) > -1
+        row => row?.creator?.firstName?.indexOf(creatorFilter?.firstName ?? '') > -1
       );
     }
     if (categoryFilter) {
@@ -766,26 +759,12 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
           </Col>
           <Col lg={6} xs={24}>
             <Typography.Title level={5}>Creator</Typography.Title>
-            <Select
-              placeholder="Select a Creator"
+            <CreatorsMultipleFetchDebounceSelect
+              onChangeCreator={(_, creator) => setCreatorFilter(creator)}
+              input={creatorFilter?.firstName}
+              onClear={() => setCreatorFilter(undefined)}
               disabled={loadingResources}
-              onChange={setCreatorFilter}
-              value={creatorFilter}
-              style={{ width: '100%' }}
-              filterOption={filterOption}
-              allowClear
-              showSearch
-            >
-              {creators.map((curr: any) => (
-                <Select.Option
-                  key={curr.id}
-                  value={curr.firstName}
-                  label={curr.firstName}
-                >
-                  {curr.firstName}
-                </Select.Option>
-              ))}
-            </Select>
+            />
           </Col>
         </Row>
       </>

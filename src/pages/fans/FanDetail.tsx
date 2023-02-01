@@ -34,6 +34,7 @@ import {
 import FanGroupDropdown from './FanGroupDropdown';
 import scrollIntoView from 'scroll-into-view';
 import moment from 'moment';
+import CreatorsMultipleFetchDebounceSelect from 'pages/creators/components/CreatorsMultipleFetchDebounceSelect';
 interface FanDetailProps {
   fan: any;
   onSave?: (record: Fan) => void;
@@ -102,10 +103,9 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
     getCurrencies();
   }, [form]);
 
-  const onChangeCreator = (key: string) => {
-    if (key) {
-      const { id, firstName, lastName, userName } =
-        creators.find(creator => creator.userName === key) || {};
+  const onChangeCreator = (creator: Creator) => {
+    if (creator) {
+      const { id, firstName, lastName, userName } = creator;
       const followingCreators = form.getFieldValue('followingCreators') || [];
       form.setFieldsValue({
         followingCreators: [
@@ -565,29 +565,9 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
                             Following Creators
                           </Typography.Title>
                           <Form.Item>
-                            <Select
-                              placeholder="Please select a Creator"
-                              onChange={onChangeCreator}
-                              allowClear
-                              showSearch
-                              filterOption={filterOption}
-                            >
-                              {creators
-                                .filter(
-                                  creat =>
-                                    !followingCreators
-                                      .map(follow => follow.userName)
-                                      .includes(creat.userName)
-                                )
-                                .map(creator => (
-                                  <Select.Option
-                                    key={creator.id}
-                                    value={creator.userName}
-                                  >
-                                    {creator.userName}
-                                  </Select.Option>
-                                ))}
-                            </Select>
+                          <CreatorsMultipleFetchDebounceSelect
+                            onChangeCreator={(_, creator) => onChangeCreator(creator)}
+                          />
                           </Form.Item>
                         </Col>
                         <Col span={24}>

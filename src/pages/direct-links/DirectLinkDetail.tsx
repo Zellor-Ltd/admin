@@ -22,13 +22,13 @@ import { Product } from 'interfaces/Product';
 import MultipleFetchDebounceSelect from 'components/select/MultipleFetchDebounceSelect';
 import { SelectOption } from 'interfaces/SelectOption';
 import scrollIntoView from 'scroll-into-view-if-needed';
+import CreatorsMultipleFetchDebounceSelect from 'pages/creators/components/CreatorsMultipleFetchDebounceSelect';
 
 interface DirectLinkDetailProps {
   onSave?: (record: any, newItem?: boolean, cloning?: boolean) => void;
   onCancel?: () => void;
   directLink?: any;
   brands: Brand[];
-  creators: Creator[];
   productBrands: ProductBrand[];
   setDetails?: (boolean) => void;
 }
@@ -38,7 +38,6 @@ const DirectLinkDetail: React.FC<DirectLinkDetailProps> = ({
   onCancel,
   directLink,
   brands,
-  creators,
   productBrands,
 }) => {
   const [form] = Form.useForm();
@@ -50,7 +49,7 @@ const DirectLinkDetail: React.FC<DirectLinkDetailProps> = ({
     directLink?.product?.name
   );
   const [optionsPage, setOptionsPage] = useState<number>(0);
-  const [selectedCreator, setSelectedCreator] = useState<Creator>(
+  const [selectedCreator, setSelectedCreator] = useState<Creator | null>(
     directLink?.creator
   );
   const [selectedMasterBrand, setSelectedMasterBrand] = useState<Brand>(
@@ -89,9 +88,9 @@ const DirectLinkDetail: React.FC<DirectLinkDetailProps> = ({
   });
 
   useEffect(() => {
-    if (brands.length && creators.length && productBrands.length)
+    if (brands.length && productBrands.length)
       setLoaded(true);
-  }, [brands, creators, productBrands]);
+  }, [brands, productBrands]);
 
   useEffect(() => {
     if (selectedProductBrand) {
@@ -189,11 +188,6 @@ const DirectLinkDetail: React.FC<DirectLinkDetailProps> = ({
     return response.results;
   };
 
-  const handleCreatorChange = (value?: string) => {
-    const entity = creators.find(item => item.id === value);
-    setSelectedCreator(entity!);
-  };
-
   const handleMasterBrandChange = (value?: string) => {
     const entity = brands.find(item => item.id === value);
     setSelectedMasterBrand(entity!);
@@ -258,27 +252,15 @@ const DirectLinkDetail: React.FC<DirectLinkDetailProps> = ({
             </Col>
             <Col span={24}>
               <Form.Item label="Creator" name={['creator', 'id']}>
-                <Select
+                <CreatorsMultipleFetchDebounceSelect
+                  onChangeCreator={(_, creator) => setSelectedCreator(creator)}
+                  input={selectedCreator?.firstName}
+                  onClear={() => setSelectedCreator(null)}
                   disabled={!loaded}
-                  placeholder="Select a Creator"
-                  allowClear
-                  showSearch
-                  style={{ width: '100%' }}
-                  filterOption={filterOption}
-                  onChange={(value: any) => handleCreatorChange(value)}
-                >
-                  {creators.map(creator => (
-                    <Select.Option
-                      key={creator.id}
-                      value={creator.id}
-                      label={creator.firstName}
-                    >
-                      {creator.firstName}
-                    </Select.Option>
-                  ))}
-                </Select>
+                />
               </Form.Item>
             </Col>
+
             <Col span={24}>
               <Form.Item label="Master Brand" name={['brand', 'id']}>
                 <Select
