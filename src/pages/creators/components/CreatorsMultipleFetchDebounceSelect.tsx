@@ -30,6 +30,10 @@ const CreatorsMultipleFetchDebounceSelect: React.FC<CreatorsMultipleFetchDebounc
     };
     
     const getCreators = async (input?: string, loadNextPage?: boolean) => {
+
+        if (!input) {
+            return []
+        }
         const pageToUse = !!!loadNextPage ? 0 : optionsPage;
         const response = await doFetch(() =>
             fetchCreators({
