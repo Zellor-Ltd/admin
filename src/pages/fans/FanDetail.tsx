@@ -25,7 +25,6 @@ import { ServerAlias } from 'interfaces/ServerAlias';
 import { useEffect, useRef, useState } from 'react';
 import {
   fetchCategories,
-  fetchCreators,
   fetchCurrencies,
   fetchServersList,
   resetUser,
@@ -69,7 +68,6 @@ const prefixSelector = (prefix: string) => (
 
 const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
   const [loading, setLoading] = useState(false);
-  const [creators, setCreators] = useState<Creator[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [serversList, setServersList] = useState<ServerAlias[]>([]);
   const [currencies, setCurrencies] = useState<Currency[]>([]);
@@ -79,12 +77,6 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
   const toFocus = useRef<any>();
 
   useEffect(() => {
-    const getCreators = async () => {
-      const response: any = await fetchCreators({
-        query: '',
-      });
-      setCreators(response.results);
-    };
     const getCategories = async () => {
       const response: any = await fetchCategories();
       setCategories(response.results);
@@ -97,7 +89,6 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
       const response: any = await fetchCurrencies();
       setCurrencies(response.results);
     };
-    getCreators();
     getCategories();
     getServersList();
     getCurrencies();

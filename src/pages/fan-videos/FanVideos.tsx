@@ -879,7 +879,6 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
           onCancel={handleCancel}
           feedItem={selectedVideoFeed}
           brands={brands}
-          creators={creators}
           productBrands={productBrands}
           isFanVideo
         />

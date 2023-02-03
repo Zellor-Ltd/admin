@@ -338,7 +338,6 @@ const FeedTemplates: React.FC<RouteComponentProps> = () => {
           onCancel={handleCancel}
           feedItem={selectedFeedTemplate}
           brands={brands}
-          creators={creators}
           productBrands={productBrands}
           template
         />

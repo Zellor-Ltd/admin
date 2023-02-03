@@ -27,7 +27,6 @@ import { Link, RouteComponentProps, useHistory } from 'react-router-dom';
 import {
   deleteDirectLink,
   fetchBrands,
-  fetchCreators,
   fetchProductBrands,
   fetchDirectLinks,
 } from 'services/DiscoClubService';
@@ -53,7 +52,6 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
   const [selectedLink, setSelectedLink] = useState<any>();
   const [loading, setLoading] = useState(false);
   const [details, setDetails] = useState<boolean>(false);
-  const [creators, setCreators] = useState<Creator[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [productBrands, setProductBrands] = useState([]);
   const [directLinks, setDirectLinks] = useState<any[]>([]);
@@ -195,12 +193,6 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
         cursor: 'end',
       });
   }, [urlFilter]);
-
-  const creatorMapping: SelectOption = {
-    key: 'id',
-    value: 'id',
-    label: 'firstName',
-  };
 
   const masterBrandMapping: SelectOption = {
     key: 'id',

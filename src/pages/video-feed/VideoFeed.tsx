@@ -1294,7 +1294,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
           onCancel={handleCancel}
           feedItem={selectedVideoFeed}
           brands={brands}
-          creators={creators}
           productBrands={productBrands}
         />
       )}

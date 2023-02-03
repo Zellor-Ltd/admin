@@ -40,7 +40,7 @@ import React, {
   useState,
 } from 'react';
 import { useSelector } from 'react-redux';
-import { fetchLinks, saveLink, saveVideoFeed } from 'services/DiscoClubService';
+import { fetchCreators, fetchLinks, saveLink, saveVideoFeed } from 'services/DiscoClubService';
 import BrandForm from './BrandForm';
 import TagForm from './TagForm';
 import './VideoFeed.scss';
@@ -56,6 +56,7 @@ import update from 'immutability-helper';
 import scrollIntoView from 'scroll-into-view';
 import { AppContext } from 'contexts/AppContext';
 import DOMPurify from 'isomorphic-dompurify';
+import CreatorsMultipleFetchDebounceSelect from 'pages/creators/components/CreatorsMultipleFetchDebounceSelect';
 
 const { Title } = Typography;
 
@@ -71,7 +72,6 @@ interface VideoFeedDetailProps {
   onCancel?: () => void;
   feedItem?: FeedItem;
   brands: Brand[];
-  creators: Creator[];
   productBrands: ProductBrand[];
   isFanVideo?: boolean;
   template?: boolean;
@@ -82,7 +82,6 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
   onCancel,
   feedItem,
   brands,
-  creators,
   productBrands,
   isFanVideo,
   template,
@@ -120,7 +119,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
   );
   const { doFetch, doRequest } = useRequest({ setLoading });
   const [includeVideo, setIncludeVideo] = useState<boolean>(false);
-  const [videoCreator, setVideoCreator] = useState<Creator>();
+  const [videoCreator, setVideoCreator] = useState<Creator | null>();
   const [selectedLinkType, setSelectedLinkType] = useState<string>();
   const [selectedSocialPlatform, setSelectedSocialPlatform] =
     useState<string>();
@@ -130,7 +129,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
   const [selectedOption, setSelectedOption] = useState<
     'productBrand' | 'creator'
   >(feedItem?.selectedOption ?? 'productBrand');
-  const [currentCreator, setCurrentCreator] = useState<Creator>();
+  const [currentCreator, setCurrentCreator] = useState<Creator | null>();
   const [listingProductBrand, setListingProductBrand] =
     useState<ProductBrand>();
   const [currentBrandIcon, setCurrentBrandIcon] = useState<any>();
@@ -146,9 +145,9 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
   );
 
   useEffect(() => {
-    if (brands.length && creators.length && productBrands.length)
+    if (brands.length && productBrands.length)
       setLoaded(true);
-  }, [brands, creators, productBrands]);
+  }, [brands, productBrands]);
 
   useEffect(() => {
     if (videoTab === 'Links') {
@@ -164,9 +163,10 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
 
   useEffect(() => {
     if (selectedOption === 'creator') {
-      setCurrentCreator(
-        creators.find(item => item.id === feedItem?.selectedId)
-      );
+      //TODO: harold - create an endpoint to get creator by id
+      //setCurrentCreator(
+      //  creators.find(item => item.id === feedItem?.selectedId)
+      //);
     } else {
       const selectedProductBrand = productBrands.find(
         item => item.id === feedItem?.selectedId
@@ -306,9 +306,8 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
       setTagBuffer(segmentForm.getFieldValue('tags'));
   }, [selectedSegment]);
 
-  const onChangeCreator = (value: string) => {
-    const selectedCreator = creators.find(item => item.id === value);
-    setCurrentCreator(selectedCreator);
+  const onChangeCreator = (creator: Creator | null) => {
+    setCurrentCreator(creator);
   };
 
   const handleBrandChange = (
@@ -531,8 +530,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
     segmentForm.setFieldsValue(segment);
   };
 
-  const onCreatorChange = (key: string) => {
-    const creator = creators.find(creator => creator.id === key);
+  const onCreatorChange = (creator: Creator | null) => {
     setVideoCreator(creator);
     const feedItem = feedForm.getFieldsValue(true) as FeedItem;
     feedForm.setFieldsValue({
@@ -739,8 +737,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
     },
   ];
 
-  const onSelectCreator = (value: string) => {
-    const creator = creators.find(item => item.id === value);
+  const onSelectCreator = (creator: Creator | null) => {
     setVideoCreator(creator);
   };
 
@@ -868,25 +865,11 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
               {!isFanVideo && (
                 <Col span={24}>
                   <Form.Item label="Creator">
-                    <Select
-                      placeholder="Please select a creator"
-                      onChange={onCreatorChange}
-                      value={videoCreator?.id}
-                      disabled={!loaded}
-                      filterOption={filterOption}
-                      allowClear
-                      showSearch
-                    >
-                      {creators.map((creator: any) => (
-                        <Select.Option
-                          key={creator.id}
-                          value={creator.id}
-                          label={creator.firstName}
-                        >
-                          {creator.firstName} {creator.lastName}
-                        </Select.Option>
-                      ))}
-                    </Select>
+                    <CreatorsMultipleFetchDebounceSelect
+                      onChangeCreator={(_, creator) => onCreatorChange(creator)}
+                      input={videoCreator?.firstName}
+                      onClear={() => onCreatorChange(null)}
+                    />
                   </Form.Item>
                 </Col>
               )}
@@ -1258,27 +1241,12 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                       },
                     ]}
                   >
-                    <Select
-                      id="creator"
-                      placeholder="Select a Creator"
-                      disabled={!loaded}
-                      onChange={onChangeCreator}
-                      style={{ width: '100%' }}
-                      allowClear
-                      showSearch
-                      filterOption={filterOption}
-                      value={currentCreator?.id}
-                    >
-                      {creators.map((curr: Creator) => (
-                        <Select.Option
-                          key={curr.id}
-                          value={curr.id}
-                          label={curr.firstName}
-                        >
-                          {curr.firstName}
-                        </Select.Option>
-                      ))}
-                    </Select>
+                     <CreatorsMultipleFetchDebounceSelect
+                        onChangeCreator={(_, creator) => onChangeCreator(creator)}
+                        input={currentCreator?.firstName}
+                        onClear={() => onChangeCreator(null)}
+                        disabled={!loaded}
+                      />
                   </Form.Item>
                   {currentCreator && (
                     <Image
@@ -1295,26 +1263,12 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
               <div style={{ display: 'none' }}>
                 <Col lg={4} xs={24}>
                   <Typography.Title level={5}>Creator</Typography.Title>
-                  <Select
-                    disabled={!loaded}
-                    style={{ width: '100%' }}
-                    onSelect={onSelectCreator}
-                    value={videoCreator?.id}
-                    filterOption={filterOption}
-                    placeholder="Creator"
-                    allowClear
-                    showSearch
-                  >
-                    {creators.map((curr: any) => (
-                      <Select.Option
-                        key={curr.id}
-                        value={curr.id}
-                        label={curr.firstName}
-                      >
-                        {curr.firstName}
-                      </Select.Option>
-                    ))}
-                  </Select>
+                    <CreatorsMultipleFetchDebounceSelect
+                        onChangeCreator={(_, creator) => onSelectCreator(creator)}
+                        input={videoCreator?.firstName}
+                        onClear={() => onSelectCreator(null)}
+                        disabled={!loaded}
+                    />
                 </Col>
                 <Col lg={4} xs={24}>
                   <Typography.Title level={5}>Social platform</Typography.Title>
@@ -1659,24 +1613,12 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
               </Col>
               <Col lg={8} xs={24}>
                 <Form.Item label="Creator" name={['vLink', 'creator']}>
-                  <Select
-                    disabled={!creators.length}
-                    placeholder="Select a Creator"
-                    style={{ width: '100%' }}
-                    allowClear
-                    showSearch
-                    filterOption={filterOption}
-                  >
-                    {creators.map(creator => (
-                      <Select.Option
-                        key={creator.id}
-                        value={creator.id}
-                        label={creator.firstName}
-                      >
-                        {creator.firstName}
-                      </Select.Option>
-                    ))}
-                  </Select>
+                    <CreatorsMultipleFetchDebounceSelect
+                          onChangeCreator={(_, creator) => onCreatorChange(creator)}
+                          input={videoCreator?.firstName}
+                          onClear={() => onCreatorChange(null)}
+                          disabled={!loaded}
+                    />
                 </Form.Item>
               </Col>
             </Row>

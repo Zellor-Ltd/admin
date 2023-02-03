@@ -11,10 +11,7 @@ interface DevelopmentDetailProps {
 
 }
 
-const DevelopmentDetail: React.FC<DevelopmentDetailProps> = ({
-
-
-}) => {
+const DevelopmentDetail: React.FC<DevelopmentDetailProps> = () => {
     const [creatorFilter, setCreatorFilter] = useState<Creator>();
 
     return (
@@ -25,6 +22,8 @@ const DevelopmentDetail: React.FC<DevelopmentDetailProps> = ({
 
             <CreatorsMultipleFetchDebounceSelect
               onChangeCreator={(_, creator) => setCreatorFilter(creator)}
+              input={creatorFilter?.firstName}
+              onClear={() => setCreatorFilter(undefined)}
             />
 
             <h1>{creatorFilter?.firstName}</h1>

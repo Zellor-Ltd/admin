@@ -42,7 +42,6 @@ import {
   deleteVideoFeed,
   fetchBrands,
   fetchCategories,
-  fetchCreators,
   fetchProductBrands,
   fetchVideoFeedV3,
   rebuildLink,
@@ -64,6 +63,7 @@ import scrollIntoView from 'scroll-into-view';
 import { useRequest } from 'hooks/useRequest';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useSelector } from 'react-redux';
+import CreatorsMultipleFetchDebounceSelect from 'pages/creators/components/CreatorsMultipleFetchDebounceSelect';
 
 const { Panel } = Collapse;
 
@@ -87,7 +87,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const [loadingResources, setLoadingResources] = useState<boolean>(true);
   const [details, setDetails] = useState<boolean>(false);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [creators, setCreators] = useState<Creator[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [productBrands, setProductBrands] = useState([]);
   const [list, setList] = useState([]);
@@ -108,7 +107,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const [titleFilter, setTitleFilter] = useState<string>();
   const [categoryFilter, setCategoryFilter] = useState<string>();
   const [indexFilter, setIndexFilter] = useState<number>();
-  const [creatorFilter, setCreatorFilter] = useState<string>();
+  const [creatorFilter, setCreatorFilter] = useState<Creator | null>();
   const [dateSortFilter, setDateSortFilter] = useState<string>();
   const [offset, setOffset] = useState<number>(64);
   const [panelStyle, setPanelStyle] = useState<React.CSSProperties>({
@@ -152,9 +151,9 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
         return row.index && row.index === indexFilter;
       });
     }
-    if (creatorFilter) {
+    if (creatorFilter?.firstName) {
       updatedRows = updatedRows.filter(
-        row => row?.creator?.firstName?.indexOf(creatorFilter) > -1
+        row => row?.creator?.firstName?.indexOf(creatorFilter?.firstName) > -1
       );
     }
     if (categoryFilter) {
@@ -831,12 +830,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   };
 
   const getDetailsResources = async () => {
-    async function getcreators() {
-      const response: any = await fetchCreators({
-        query: '',
-      });
-      setCreators(response.results);
-    }
     async function getCategories() {
       const response: any = await fetchCategories();
       setCategories(response.results);
@@ -850,7 +843,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       setProductBrands(response.results);
     }
     await Promise.all([
-      getcreators(),
       getCategories(),
       getBrands(),
       getProductBrands(),
@@ -965,7 +957,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const handleSave = (record: FeedItem, newItem?: boolean) => {
     if (newItem) {
       setIndexFilter(undefined);
-      setCreatorFilter(undefined);
+      setCreatorFilter(null);
       setCategoryFilter(undefined);
     }
     refreshTable(record, newItem);
@@ -1088,26 +1080,11 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
           </Col>
           <Col lg={5} xs={24}>
             <Typography.Title level={5}>Creator</Typography.Title>
-            <Select
-              placeholder="Select a Creator"
-              disabled={loadingResources}
-              onChange={setCreatorFilter}
-              value={creatorFilter}
-              style={{ width: '100%' }}
-              filterOption={filterOption}
-              allowClear
-              showSearch
-            >
-              {creators.map((curr: any) => (
-                <Select.Option
-                  key={curr.id}
-                  value={curr.firstName}
-                  label={curr.firstName}
-                >
-                  {curr.firstName}
-                </Select.Option>
-              ))}
-            </Select>
+            <CreatorsMultipleFetchDebounceSelect
+              onChangeCreator={(_, creator) => setCreatorFilter(creator)}
+              input={creatorFilter?.firstName}
+              onClear={() => setCreatorFilter(null)}
+            />
           </Col>
           <Col lg={5} xs={24}>
             <Typography.Title level={5}>Date Sort</Typography.Title>
@@ -1315,7 +1292,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
           onCancel={handleCancel}
           feedItem={selectedVideoFeed}
           brands={brands}
-          creators={creators}
           productBrands={productBrands}
         />
       )}
