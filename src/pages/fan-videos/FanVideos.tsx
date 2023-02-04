@@ -74,7 +74,6 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
   const [loading, setLoading] = useState(false);
   const [details, setDetails] = useState<boolean>(false);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [creators, setCreators] = useState<Creator[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [productBrands, setProductBrands] = useState([]);
   const [buffer, setBuffer] = useState<any[]>([]);

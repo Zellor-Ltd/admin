@@ -87,7 +87,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const [loadingResources, setLoadingResources] = useState<boolean>(true);
   const [details, setDetails] = useState<boolean>(false);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [creators, setCreators] = useState<Creator[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [productBrands, setProductBrands] = useState([]);
   const [list, setList] = useState([]);

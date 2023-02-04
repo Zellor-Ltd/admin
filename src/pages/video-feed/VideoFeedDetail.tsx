@@ -57,7 +57,6 @@ import scrollIntoView from 'scroll-into-view';
 import { AppContext } from 'contexts/AppContext';
 import DOMPurify from 'isomorphic-dompurify';
 import CreatorsMultipleFetchDebounceSelect from 'pages/creators/components/CreatorsMultipleFetchDebounceSelect';
-import { log } from 'console';
 
 const { Title } = Typography;
 
