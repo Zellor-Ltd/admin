@@ -510,7 +510,13 @@ export const fetchCreators = ({
 }) =>
   instance.post(`Disco/Creator/Adm/List/${page}/`, {
     query,
-  });
+});
+
+export const fetchCreatorById = ({
+  creatorId,
+}: {
+  creatorId: String;
+}) => instance.get(`Disco/Creator/V2/Page/${creatorId}`);
 
 export const fetchUsers = () => instance.get('Wi/Ep/ListUsers');
 

@@ -40,7 +40,7 @@ import React, {
   useState,
 } from 'react';
 import { useSelector } from 'react-redux';
-import { fetchCreators, fetchLinks, saveLink, saveVideoFeed } from 'services/DiscoClubService';
+import { fetchCreatorById, fetchLinks, saveLink, saveVideoFeed } from 'services/DiscoClubService';
 import BrandForm from './BrandForm';
 import TagForm from './TagForm';
 import './VideoFeed.scss';
@@ -57,6 +57,7 @@ import scrollIntoView from 'scroll-into-view';
 import { AppContext } from 'contexts/AppContext';
 import DOMPurify from 'isomorphic-dompurify';
 import CreatorsMultipleFetchDebounceSelect from 'pages/creators/components/CreatorsMultipleFetchDebounceSelect';
+import { log } from 'console';
 
 const { Title } = Typography;
 
@@ -161,12 +162,25 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
     setLinks(results);
   };
 
+  const fetchCreator = async ({
+    creatorId
+  }: {
+    creatorId: String
+  }) => {
+    const { result } = await doFetch(() => fetchCreatorById({creatorId}));
+    const creator = result.creator;
+    creator.id = creatorId
+    creator.firstName = creator.name
+    setCurrentCreator(creator);
+  };
+
   useEffect(() => {
     if (selectedOption === 'creator') {
-      //TODO: harold - create an endpoint to get creator by id
-      //setCurrentCreator(
-      //  creators.find(item => item.id === feedItem?.selectedId)
-      //);
+      
+      if (feedItem?.selectedId) {
+        fetchCreator({creatorId: feedItem?.selectedId})
+      }
+     
     } else {
       const selectedProductBrand = productBrands.find(
         item => item.id === feedItem?.selectedId
@@ -307,6 +321,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
   }, [selectedSegment]);
 
   const onChangeCreator = (creator: Creator | null) => {
+    console.log("onChangeCreator",creator);
     setCurrentCreator(creator);
   };
 
