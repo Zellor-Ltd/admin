@@ -49,6 +49,8 @@ import FixedVideo from 'pages/fixed-videos/FixedVideo';
 import FeaturedFeeds from 'pages/featured-feeds/FeaturedFeeds';
 import DirectLinks from 'pages/direct-links/DirectLinks';
 import Rebuilds from 'pages/rebuilds/Rebuilds';
+import DevelopmentDetail from 'pages/development/development';
+import { __isDev__ } from 'helpers/constants';
 
 function AdminRoutes() {
   return (
@@ -278,6 +280,15 @@ function AdminRoutes() {
         component={RegsPerDay}
         layout={AuthenticatedLayout}
       />
+      {
+        __isDev__ ?
+        <AppRoute
+          path="/development"
+          component={DevelopmentDetail}
+          layout={AuthenticatedLayout}
+        />
+        : null
+      }
     </Switch>
   );
 }

@@ -27,7 +27,6 @@ import { Link, RouteComponentProps, useHistory } from 'react-router-dom';
 import {
   deleteDirectLink,
   fetchBrands,
-  fetchCreators,
   fetchProductBrands,
   fetchDirectLinks,
 } from 'services/DiscoClubService';
@@ -40,6 +39,7 @@ import DirectLinkDetail from './DirectLinkDetail';
 import scrollIntoView from 'scroll-into-view';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import { ProductBrand } from 'interfaces/ProductBrand';
+import CreatorsMultipleFetchDebounceSelect from 'pages/creators/components/CreatorsMultipleFetchDebounceSelect';
 
 const { Panel } = Collapse;
 
@@ -52,7 +52,6 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
   const [selectedLink, setSelectedLink] = useState<any>();
   const [loading, setLoading] = useState(false);
   const [details, setDetails] = useState<boolean>(false);
-  const [creators, setCreators] = useState<Creator[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [productBrands, setProductBrands] = useState([]);
   const [directLinks, setDirectLinks] = useState<any[]>([]);
@@ -194,12 +193,6 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
         cursor: 'end',
       });
   }, [urlFilter]);
-
-  const creatorMapping: SelectOption = {
-    key: 'id',
-    value: 'id',
-    label: 'firstName',
-  };
 
   const masterBrandMapping: SelectOption = {
     key: 'id',
@@ -631,12 +624,6 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   const getDetailsResources = async () => {
-    async function getcreators() {
-      const response: any = await fetchCreators({
-        query: '',
-      });
-      setCreators(response.results);
-    }
     async function getBrands() {
       const response: any = await fetchBrands();
       setBrands(response.results);
@@ -645,7 +632,7 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
       const response: any = await fetchProductBrands();
       setProductBrands(response.results);
     }
-    await Promise.all([getcreators(), getBrands(), getProductBrands()]);
+    await Promise.all([getBrands(), getProductBrands()]);
   };
 
   const deleteItem = async (_id: string) => {
@@ -705,15 +692,10 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
           </Col>
           <Col lg={5} xs={24}>
             <Typography.Title level={5}>Creator</Typography.Title>
-            <SimpleSelect
-              showSearch
-              data={creators}
-              onChange={(_, creator) => setCreatorFilter(creator)}
-              style={{ width: '100%' }}
-              selectedOption={creatorFilter?.id}
-              optionMapping={creatorMapping}
-              placeholder="Select a Creator"
-              allowClear
+            <CreatorsMultipleFetchDebounceSelect
+              onChangeCreator={(_, creator) => setCreatorFilter(creator)}
+              input={creatorFilter?.firstName}
+              onClear={() => setCreatorFilter(undefined)}
             />
           </Col>
           <Col lg={5} xs={24}>
@@ -927,7 +909,6 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
           onCancel={onCancelItem}
           directLink={selectedLink}
           brands={brands}
-          creators={creators}
           productBrands={productBrands}
           setDetails={setDetails}
         />

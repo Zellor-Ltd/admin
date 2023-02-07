@@ -25,7 +25,6 @@ import { ServerAlias } from 'interfaces/ServerAlias';
 import { useEffect, useRef, useState } from 'react';
 import {
   fetchCategories,
-  fetchCreators,
   fetchCurrencies,
   fetchServersList,
   resetUser,
@@ -34,6 +33,7 @@ import {
 import FanGroupDropdown from './FanGroupDropdown';
 import scrollIntoView from 'scroll-into-view';
 import moment from 'moment';
+import CreatorsMultipleFetchDebounceSelect from 'pages/creators/components/CreatorsMultipleFetchDebounceSelect';
 interface FanDetailProps {
   fan: any;
   onSave?: (record: Fan) => void;
@@ -68,7 +68,6 @@ const prefixSelector = (prefix: string) => (
 
 const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
   const [loading, setLoading] = useState(false);
-  const [creators, setCreators] = useState<Creator[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [serversList, setServersList] = useState<ServerAlias[]>([]);
   const [currencies, setCurrencies] = useState<Currency[]>([]);
@@ -78,12 +77,6 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
   const toFocus = useRef<any>();
 
   useEffect(() => {
-    const getCreators = async () => {
-      const response: any = await fetchCreators({
-        query: '',
-      });
-      setCreators(response.results);
-    };
     const getCategories = async () => {
       const response: any = await fetchCategories();
       setCategories(response.results);
@@ -96,16 +89,14 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
       const response: any = await fetchCurrencies();
       setCurrencies(response.results);
     };
-    getCreators();
     getCategories();
     getServersList();
     getCurrencies();
   }, [form]);
 
-  const onChangeCreator = (key: string) => {
-    if (key) {
-      const { id, firstName, lastName, userName } =
-        creators.find(creator => creator.userName === key) || {};
+  const onChangeCreator = (creator: Creator) => {
+    if (creator) {
+      const { id, firstName, lastName, userName } = creator;
       const followingCreators = form.getFieldValue('followingCreators') || [];
       form.setFieldsValue({
         followingCreators: [
@@ -565,29 +556,9 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
                             Following Creators
                           </Typography.Title>
                           <Form.Item>
-                            <Select
-                              placeholder="Please select a Creator"
-                              onChange={onChangeCreator}
-                              allowClear
-                              showSearch
-                              filterOption={filterOption}
-                            >
-                              {creators
-                                .filter(
-                                  creat =>
-                                    !followingCreators
-                                      .map(follow => follow.userName)
-                                      .includes(creat.userName)
-                                )
-                                .map(creator => (
-                                  <Select.Option
-                                    key={creator.id}
-                                    value={creator.userName}
-                                  >
-                                    {creator.userName}
-                                  </Select.Option>
-                                ))}
-                            </Select>
+                          <CreatorsMultipleFetchDebounceSelect
+                            onChangeCreator={(_, creator) => onChangeCreator(creator)}
+                          />
                           </Form.Item>
                         </Col>
                         <Col span={24}>

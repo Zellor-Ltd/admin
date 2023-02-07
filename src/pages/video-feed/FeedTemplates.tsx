@@ -22,13 +22,11 @@ import {
 } from 'react-router-dom';
 import {
   fetchBrands,
-  fetchCreators,
   fetchProductBrands,
   fetchFeedTemplates,
 } from 'services/DiscoClubService';
 import { Brand } from 'interfaces/Brand';
 import '@pathofdev/react-tag-input/build/index.css';
-import { Creator } from 'interfaces/Creator';
 import './VideoFeed.scss';
 import './VideoFeedDetail.scss';
 import moment from 'moment';
@@ -45,7 +43,6 @@ const FeedTemplates: React.FC<RouteComponentProps> = () => {
   const [selectedFeedTemplate, setselectedFeedTemplate] = useState<FeedItem>();
   const [loading, setLoading] = useState(false);
   const [details, setDetails] = useState<boolean>(false);
-  const [creators, setCreators] = useState<Creator[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [productBrands, setProductBrands] = useState([]);
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
@@ -256,12 +253,6 @@ const FeedTemplates: React.FC<RouteComponentProps> = () => {
   };
 
   const getDetailsResources = async () => {
-    async function getcreators() {
-      const response: any = await fetchCreators({
-        query: '',
-      });
-      setCreators(response.results);
-    }
     async function getBrands() {
       const response: any = await fetchBrands();
       setBrands(response.results);
@@ -270,7 +261,7 @@ const FeedTemplates: React.FC<RouteComponentProps> = () => {
       const response: any = await fetchProductBrands();
       setProductBrands(response.results);
     }
-    await Promise.all([getcreators(), getBrands(), getProductBrands()]);
+    await Promise.all([getBrands(), getProductBrands()]);
   };
 
   const refreshItem = (record: any) => {
@@ -338,7 +329,6 @@ const FeedTemplates: React.FC<RouteComponentProps> = () => {
           onCancel={handleCancel}
           feedItem={selectedFeedTemplate}
           brands={brands}
-          creators={creators}
           productBrands={productBrands}
           template
         />
