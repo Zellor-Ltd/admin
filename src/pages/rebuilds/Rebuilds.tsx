@@ -1,4 +1,4 @@
-import { Button, Col, message as msg, PageHeader, Row } from 'antd';
+import { Button, Col, PageHeader, Row } from 'antd';
 import { useRequest } from '../../hooks/useRequest';
 import { useState } from 'react';
 import { rebuildVLink } from '../../services/DiscoClubService';
@@ -6,25 +6,26 @@ import { RouteComponentProps } from 'react-router-dom';
 
 const Rebuilds: React.FC<RouteComponentProps> = () => {
   const [loading, setLoading] = useState<boolean>(false);
+  const [processName, setProcessName] = useState<String>("");
   const { doRequest } = useRequest({ setLoading });
 
-  const rebuild = async (path: string) => {
+  const rebuild = async (
+    path: string,
+    feature: string = ""
+    ) => {
     try {
-      await doRequest(async () => rebuildVLink(`paths: ["${path}"]`));
-      msg.success('Rebuild successful.');
-    } catch {}
+      setProcessName(path)
+      await doRequest(
+        async () => rebuildVLink(path),
+        `Rebuild: ${feature} successful`
+      )
+    } catch (error: any) {
+      setLoading(false)
+    }
   };
 
-  const rebuildDisco = async () => {
-    try {
-      const { success, message }: any = await rebuildVLink({
-        category: 'all',
-        trend: 'all',
-      });
-      if (success) msg.success(message);
-    } catch (error: any) {
-      msg.error(`Error: ${error.error ?? 'Failed to rebuild. Try again.'} `);
-    }
+  const isLoadingByProcess = (path: string): boolean => {
+    return (loading && processName === path)
   };
 
   return (
@@ -40,9 +41,10 @@ const Rebuilds: React.FC<RouteComponentProps> = () => {
               <Row justify="end">
                 <Col>
                   <Button
-                    loading={loading}
+                    disabled={loading}
+                    loading={isLoadingByProcess('/Discoclub')}
                     type="primary"
-                    onClick={rebuildDisco}
+                    onClick={() => rebuild('/Discoclub','Discoclub.com')}
                   >
                     Rebuild
                   </Button>
@@ -56,10 +58,10 @@ const Rebuilds: React.FC<RouteComponentProps> = () => {
               <Row justify="end">
                 <Col>
                   <Button
-                    disabled
-                    loading={loading}
+                    disabled={loading}
+                    loading={isLoadingByProcess('/Brands')}
                     type="primary"
-                    onClick={() => rebuild('/Brands')}
+                    onClick={() => rebuild('/Brands','Brands')}
                   >
                     Rebuild
                   </Button>
@@ -73,10 +75,10 @@ const Rebuilds: React.FC<RouteComponentProps> = () => {
               <Row justify="end">
                 <Col>
                   <Button
-                    disabled
-                    loading={loading}
+                    disabled={loading}
+                    loading={isLoadingByProcess('/ProductBrands')}
                     type="primary"
-                    onClick={() => rebuild('/ProductBrands')}
+                    onClick={() => rebuild('/ProductBrands','Product Brands')}
                   >
                     Rebuild
                   </Button>
@@ -90,10 +92,10 @@ const Rebuilds: React.FC<RouteComponentProps> = () => {
               <Row justify="end">
                 <Col>
                   <Button
-                    disabled
-                    loading={loading}
+                    disabled={loading}
+                    loading={isLoadingByProcess('/Creators')}
                     type="primary"
-                    onClick={() => rebuild('/Creators')}
+                    onClick={() => rebuild('/Creators','Creators')}
                   >
                     Rebuild
                   </Button>
@@ -107,10 +109,10 @@ const Rebuilds: React.FC<RouteComponentProps> = () => {
               <Row justify="end">
                 <Col>
                   <Button
-                    disabled
-                    loading={loading}
+                    disabled={loading}
+                    loading={isLoadingByProcess('/Feeds')}
                     type="primary"
-                    onClick={() => rebuild('/Feeds')}
+                    onClick={() => rebuild('/Feeds','Feeds')}
                   >
                     Rebuild
                   </Button>
