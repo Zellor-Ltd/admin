@@ -42,9 +42,9 @@ const Rebuilds: React.FC<RouteComponentProps> = () => {
                 <Col>
                   <Button
                     disabled={loading}
-                    loading={isLoadingByProcess('/Discoclub')}
+                    loading={isLoadingByProcess('feeds/All/All')}
                     type="primary"
-                    onClick={() => rebuild('/Discoclub','Discoclub.com')}
+                    onClick={() => rebuild('feeds/All/All','Discoclub.com')}
                   >
                     Rebuild
                   </Button>
@@ -59,9 +59,9 @@ const Rebuilds: React.FC<RouteComponentProps> = () => {
                 <Col>
                   <Button
                     disabled={loading}
-                    loading={isLoadingByProcess('/Brands')}
+                    loading={isLoadingByProcess('Brands')}
                     type="primary"
-                    onClick={() => rebuild('/Brands','Brands')}
+                    onClick={() => rebuild('Brands','Brands')}
                   >
                     Rebuild
                   </Button>
@@ -76,9 +76,9 @@ const Rebuilds: React.FC<RouteComponentProps> = () => {
                 <Col>
                   <Button
                     disabled={loading}
-                    loading={isLoadingByProcess('/ProductBrands')}
+                    loading={isLoadingByProcess('ProductBrands')}
                     type="primary"
-                    onClick={() => rebuild('/ProductBrands','Product Brands')}
+                    onClick={() => rebuild('ProductBrands','Product Brands')}
                   >
                     Rebuild
                   </Button>
@@ -93,9 +93,9 @@ const Rebuilds: React.FC<RouteComponentProps> = () => {
                 <Col>
                   <Button
                     disabled={loading}
-                    loading={isLoadingByProcess('/Creators')}
+                    loading={isLoadingByProcess('Creators')}
                     type="primary"
-                    onClick={() => rebuild('/Creators','Creators')}
+                    onClick={() => rebuild('Creators','Creators')}
                   >
                     Rebuild
                   </Button>
@@ -110,9 +110,9 @@ const Rebuilds: React.FC<RouteComponentProps> = () => {
                 <Col>
                   <Button
                     disabled={loading}
-                    loading={isLoadingByProcess('/Feeds')}
+                    loading={isLoadingByProcess('Feeds')}
                     type="primary"
-                    onClick={() => rebuild('/Feeds','Feeds')}
+                    onClick={() => rebuild('Feeds','Feeds')}
                   >
                     Rebuild
                   </Button>
