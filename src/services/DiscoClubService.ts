@@ -1038,3 +1038,6 @@ export const deletePreReg = (params: PreReg) =>
 
 export const deleteMasthead = (params: Banner) =>
   instance.put('Wi/Ep/RemoveCreatorMastHead', params);
+
+export const deleteLink = (id: string) =>
+  instance.delete(`Disco/Link/Adm/Remove/${id}`);

@@ -40,7 +40,7 @@ import React, {
   useState,
 } from 'react';
 import { useSelector } from 'react-redux';
-import { fetchCreatorById, fetchLinks, saveLink, saveVideoFeed } from 'services/DiscoClubService';
+import { deleteLink, fetchCreatorById, fetchLinks, saveLink, saveVideoFeed } from 'services/DiscoClubService';
 import BrandForm from './BrandForm';
 import TagForm from './TagForm';
 import './VideoFeed.scss';
@@ -569,6 +569,14 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
     });
   };
 
+  const handleDeleteLink = async (_id: string) => {
+    
+    const { success }: any = await deleteLink(_id);    
+    if (success) {
+      setLinks(links.filter(item => item.id !== _id));
+    }
+  };
+
   const handleSwitchChange = async () => {
     if (selectedOption === 'productBrand') {
       setSelectedOption('creator');
@@ -644,7 +652,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
         </div>
       ),
       dataIndex: 'id',
-      width: '20%',
+      width: '10%',
       render: link => (
         <CopyValueToClipboard
           value={'https://link.discoclub.com/' + link?.substring(0, 9)}
@@ -748,6 +756,39 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
       width: '15%',
       align: 'center',
       render: value => (value ? 'Yes' : 'No'),
+    },
+    {
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Actions">Actions</Tooltip>
+          </div>
+        </div>
+      ),
+      key: 'action',
+      dataIndex: 'id',
+      width: '10%',
+      align: 'right',
+      render: linkId => (
+        <>
+          <Popconfirm
+            title="Are you sure？"
+            okText="Yes"
+            cancelText="No"
+            onConfirm={() => handleDeleteLink(linkId)}
+          >
+            <Button type="link" style={{ padding: 0, margin: 6 }}>
+              <DeleteOutlined />
+            </Button>
+          </Popconfirm>
+        </>
+      ),
     },
   ];
 
