@@ -186,6 +186,9 @@ export const rebuildVLink = (path: string) =>
     id: path
   });
 
+export const propagateVLink = (path: string) =>
+    instance.get(`/Disco/DataMgm/PropagateOneVideoLink/${path}`);
+
 export const transferStageProduct = (productId: string) =>
   instance.get(`Disco/Staging/Product/Transfer/${productId}`);
 

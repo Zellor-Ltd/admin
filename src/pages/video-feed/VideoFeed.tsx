@@ -44,7 +44,7 @@ import {
   fetchCategories,
   fetchProductBrands,
   fetchVideoFeedV3,
-  rebuildLink,
+  propagateVLink,
   addFeaturedFeed,
   saveVideoFeed,
 } from 'services/DiscoClubService';
@@ -248,10 +248,10 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     value: 'value',
   };
 
-  const rebuildVlink = async (value: string, record: any, index: number) => {
+  const propagatevlink = async (value: string, record: any, index: number) => {
     try {
       lastFocusedIndex.current = index;
-      const { result, success, message }: any = await rebuildLink(value);
+        const { result, success, message }: any = await propagateVLink(value);
       if (success) {
         buffer[index] = { ...record, shareLink: result, rebuilt: true };
         setData([...buffer]);
@@ -685,7 +685,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
             block
             onFocus={() => (bufferIndex.current = buffer.indexOf(record))}
             onClick={() =>
-              rebuildVlink(
+              propagatevlink(
                 record.package
                   ?.find(pack => pack.shareLink)
                   ?.shareLink?.slice(
