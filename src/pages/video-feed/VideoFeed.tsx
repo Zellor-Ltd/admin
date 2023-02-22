@@ -299,7 +299,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
         </div>
       ),
       dataIndex: 'id',
-      width: '3%',
+      width: '6%',
       render: id => <CopyValueToClipboard value={id} />,
       align: 'center',
     },
@@ -318,34 +318,30 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
         </div>
       ),
       dataIndex: 'index',
-      width: '3%',
+      width: '6%',
       render: (_, feedItem, index) => {
         if (updatingIndex[feedItem?.id]) {
           const antIcon = <LoadingOutlined spin />;
           return <Spin indicator={antIcon} />;
         } else {
           return (
-            <InputNumber
-              type="number"
-              value={feedItem?.index}
-              onFocus={event => event.stopPropagation()}
-              onBlur={(event: any) =>
-                updateIndex(feedItem, event.target.value as unknown as any)
-              }
-              onPressEnter={(event: any) =>
-                updateIndex(feedItem, event.target.value as unknown as any)
-              }
-            />
+            <div style={{ minWidth: 10 }}>
+              <InputNumber
+                type="number"
+                value={feedItem?.index}
+                onFocus={event => event.stopPropagation()}
+                onBlur={(event: any) =>
+                  updateIndex(feedItem, event.target.value as unknown as any)
+                }
+                onPressEnter={(event: any) =>
+                  updateIndex(feedItem, event.target.value as unknown as any)
+                }
+              />
+            </div>
           );
         }
       },
       align: 'center',
-      sorter: (a, b): any => {
-        if (a.index && b.index) return a.index - b.index;
-        else if (a.index) return -1;
-        else if (b.index) return 1;
-        else return 0;
-      },
     },
     {
       title: (
@@ -362,7 +358,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
         </div>
       ),
       dataIndex: 'vIndex',
-      width: '3%',
+      width: '6%',
       render: (_, feedItem) => {
         if (updatingVIndex[feedItem?.id]) {
           const antIcon = <LoadingOutlined spin />;
@@ -384,12 +380,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
         }
       },
       align: 'center',
-      sorter: (a, b): any => {
-        if (a.vIndex && b.vIndex) return a.vIndex - b.vIndex;
-        else if (a.vIndex) return -1;
-        else if (b.vIndex) return 1;
-        else return 0;
-      },
     },
     {
       title: (
@@ -406,7 +396,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
         </div>
       ),
       dataIndex: 'title',
-      width: '18%',
+      width: '15%',
       render: (value: string, feedItem: FeedItem, index: number) => (
         <Link
           onFocus={() => (bufferIndex.current = buffer.indexOf(feedItem))}
@@ -416,12 +406,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
           {value}
         </Link>
       ),
-      sorter: (a, b): any => {
-        if (a.title && b.title) return a.title.localeCompare(b.title as string);
-        else if (a.title) return -1;
-        else if (b.title) return 1;
-        else return 0;
-      },
     },
     {
       title: (
@@ -439,7 +423,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       ),
       dataIndex: 'package',
       render: (pack: Array<any> = []) => <AntTag>{pack?.length ?? 0}</AntTag>,
-      width: '5%',
+      width: '8%',
       align: 'center',
     },
     {
@@ -457,15 +441,8 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
         </div>
       ),
       dataIndex: 'lengthTotal',
-      width: '5%',
+      width: '8%',
       align: 'center',
-      sorter: (a, b): any => {
-        if (a.lengthTotal && b.lengthTotal)
-          return a.lengthTotal - b.lengthTotal;
-        else if (a.lengthTotal) return -1;
-        else if (b.lengthTotal) return 1;
-        else return 0;
-      },
     },
     {
       title: (
@@ -482,7 +459,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
         </div>
       ),
       dataIndex: 'hCreationDate',
-      width: '10%',
+      width: '8%',
       render: (creation: Date) =>
         creation
           ? new Date(creation).toLocaleDateString('en-GB') +
@@ -490,16 +467,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
             new Date(creation).toLocaleTimeString('en-GB')
           : '-',
       align: 'center',
-      sorter: (a, b): any => {
-        if (a.hCreationDate && b.hCreationDate)
-          return (
-            moment(a.hCreationDate as Date).unix() -
-            moment(b.hCreationDate).unix()
-          );
-        else if (a.hCreationDate) return -1;
-        else if (b.hCreationDate) return 1;
-        else return 0;
-      },
     },
     {
       title: (
@@ -521,13 +488,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
         <AntTag>{reduceSegmentsTags(pack)}</AntTag>
       ),
       align: 'center',
-      sorter: (a, b): any => {
-        if (a.package && b.package)
-          return reduceSegmentsTags(a.package) - reduceSegmentsTags(b.package);
-        else if (a.package) return -1;
-        else if (b.package) return 1;
-        else return 0;
-      },
     },
     {
       title: (
@@ -544,16 +504,9 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
         </div>
       ),
       dataIndex: 'status',
-      width: '7%',
+      width: '6%',
       align: 'center',
       responsive: ['sm'],
-      sorter: (a, b): any => {
-        if (a.status && b.status)
-          return a.status.localeCompare(b.status as string);
-        else if (a.status) return -1;
-        else if (b.status) return 1;
-        else return 0;
-      },
     },
     {
       title: (
@@ -569,41 +522,33 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
           </div>
         </div>
       ),
-      width: '18%',
+      width: '10%',
       render: (_: string, record: any) => (
-        <Link
-          onClick={() =>
-            window
-              .open(
-                record && record.rebuilt
-                  ? record.shareLink ?? ''
-                  : record.package?.find(pack => pack.shareLink)?.shareLink ??
-                      '',
-                '_blank'
-              )
-              ?.focus()
-          }
-          to={{ pathname: window.location.pathname }}
-        >
-          {record
-            ? record.rebuilt
-              ? record.shareLink ?? ''
-              : record.package?.find(pack => pack.shareLink)?.shareLink ?? ''
-            : ''}
-        </Link>
+        <div style={{wordWrap: 'break-word', wordBreak: 'break-word' }}>
+          <Link
+            onClick={() =>
+              window
+                .open(
+                  record && record.rebuilt
+                    ? record.shareLink ?? ''
+                    : record.package?.find(pack => pack.shareLink)?.shareLink ??
+                    '',
+                  '_blank'
+                )
+                ?.focus()
+            }
+            to={{ pathname: window.location.pathname }}
+          >
+            {record
+              ? record.rebuilt
+                ? record.shareLink ?? ''
+                : record.package?.find(pack => pack.shareLink)?.shareLink ?? ''
+              : ''}
+          </Link>
+
+        </div>
+
       ),
-      sorter: (a: any, b: any): any => {
-        if (a.shareLink && b.shareLink) {
-          const linkA = a.shareLink;
-          const linkB = b.shareLink;
-          if (linkA && linkB) return linkA.localeCompare(linkB);
-          else if (linkA) return -1;
-          else if (linkB) return 1;
-          else return 0;
-        } else if (a.shareLink) return -1;
-        else if (b.shareLink) return 1;
-        else return 0;
-      },
     },
     {
       title: (
@@ -676,7 +621,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
           </div>
         </div>
       ),
-      width: '5%',
+      width: '10%',
       align: 'center',
       render: (_: string, record: any, index: number) => (
         <>
@@ -718,7 +663,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
           </div>
         </div>
       ),
-      width: '5%',
+      width: '10%',
       align: 'center',
       render: (_, feedItem: FeedItem, index: number) => (
         <>
@@ -750,7 +695,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       width: '10%',
       align: 'right',
       render: (_, feedItem: FeedItem, index: number) => (
-        <>
+        <div style={{ minWidth: 50 }}>
           <Link
             onFocus={() => (bufferIndex.current = buffer.indexOf(feedItem))}
             onClick={() => handleEdit(index, feedItem)}
@@ -768,7 +713,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
               <DeleteOutlined />
             </Button>
           </Popconfirm>
-        </>
+        </div>
       ),
     },
   ];
