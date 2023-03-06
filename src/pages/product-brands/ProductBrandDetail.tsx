@@ -302,7 +302,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
             <Tabs.TabPane forceRender tab="Details" key="Details">
               <Col lg={12} xs={24}>
                 <Row gutter={8}>
-                  <Col span={24}>
+                  <Col lg={12} xs={24}>
                     <Form.Item
                       name="propagationNeeded"
                       label="Propagation Needed"
@@ -311,6 +311,16 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                       <Switch />
                     </Form.Item>
                   </Col>
+                  <Col lg={12} xs={24}>
+                    <Form.Item
+                      name="showPriceInApp"
+                      label="Show Price In App"
+                      valuePropName="checked"
+                    >
+                      <Switch />
+                    </Form.Item>
+                  </Col>
+
                   <Col lg={12} xs={24}>
                     <Form.Item
                       label="Product Brand Name"
