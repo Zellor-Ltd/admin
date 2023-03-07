@@ -175,11 +175,11 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
 
   useEffect(() => {
     if (selectedOption === 'creator') {
-      
+
       if (feedItem?.selectedId) {
         fetchCreator({creatorId: feedItem?.selectedId})
       }
-     
+
     } else {
       const selectedProductBrand = productBrands.find(
         item => item.id === feedItem?.selectedId
@@ -199,7 +199,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
       setVLinkBrandIcon(
         feedForm.getFieldValue(
           ['vLink', 'brand', 'selectedLogoUrl'] ??
-            feedItem?.vLink.brand.selectedLogoUrl
+          feedItem?.vLink.brand.selectedLogoUrl
         )
       );
     }
@@ -214,13 +214,13 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
       setVLinkProductBrandIcon(
         feedForm.getFieldValue(
           ['vLink', 'productBrand', 'selectedLogoUrl'] ??
-            feedItem?.vLink.productBrand.selectedLogoUrl
+          feedItem?.vLink.productBrand.selectedLogoUrl
         )
       );
       setVLinkProductBrandWhiteLogo(
         feedForm.getFieldValue(
           ['vLink', 'productBrand', 'selectedWhiteLogoUrl'] ??
-            feedItem?.vLink.productBrand.selectedWhiteLogoUrl
+          feedItem?.vLink.productBrand.selectedWhiteLogoUrl
         )
       );
     }
@@ -433,8 +433,8 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
             ? `${feedItem.title.substr(0, 50) ?? ''} Update`
             : `${feedItem.title ?? ''} Update`
           : template
-          ? 'New Video Feed Template'
-          : 'New Video Feed'
+            ? 'New Video Feed Template'
+            : 'New Video Feed'
       );
   }, [selectedSegment, showBrandForm, showTagForm]);
 
@@ -570,8 +570,8 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
   };
 
   const handleDeleteLink = async (_id: string) => {
-    
-    const { success }: any = await deleteLink(_id);    
+
+    const { success }: any = await deleteLink(_id);
     if (success) {
       setLinks(links.filter(item => item.id !== _id));
     }
@@ -625,15 +625,20 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
   };
 
   const handleGenerateLink = async () => {
-    const { results }: any = await saveLink({
-      videoFeedId: feedItem?.id as string,
-      creatorId: videoCreator?.id,
-      includeVideo: includeVideo,
-      socialPlatform: selectedSocialPlatform,
-      segment: segment,
-      linkType: selectedLinkType,
-    });
-    setLinks(results);
+    setLoading(true)
+    try {
+      const { results }: any = await saveLink({
+        videoFeedId: feedItem?.id as string,
+        creatorId: feedItem?.creator?.id,
+        includeVideo: includeVideo,
+        socialPlatform: selectedSocialPlatform,
+        segment: segment,
+        linkType: selectedLinkType,
+      });
+      fetch()
+    } catch (error) {
+      setLoading(false)
+    }
   };
 
   const columns: ColumnsType<any> = [
@@ -777,16 +782,21 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
       align: 'right',
       render: linkId => (
         <>
-          <Popconfirm
-            title="Are you sure？"
-            okText="Yes"
-            cancelText="No"
-            onConfirm={() => handleDeleteLink(linkId)}
-          >
-            <Button type="link" style={{ padding: 0, margin: 6 }}>
-              <DeleteOutlined />
-            </Button>
-          </Popconfirm>
+          {
+            links.length > 1 &&
+
+            <Popconfirm
+              title="Are you sure？"
+              okText="Yes"
+              cancelText="No"
+              onConfirm={() => handleDeleteLink(linkId)}
+            >
+              <Button type="link" style={{ padding: 0, margin: 6 }}>
+                <DeleteOutlined disabled={true} />
+              </Button>
+            </Popconfirm>
+
+          }
         </>
       ),
     },
@@ -1142,46 +1152,46 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                             key={segment.sequence}
                             className={`segment-thumbnail ${
                               (selectedSegmentIndex === segmentIndex &&
-                                'selected') ||
+                              'selected') ||
                               ''
-                            }`}
+                              }`}
                             onClick={() => onEditSegment(segment, segmentIndex)}
                           >
                             {segment?.thumbnail?.url
                               ? [
-                                  <img
-                                    alt={segment.thumbnail || 'Thumbnail'}
-                                    src={segment.thumbnail?.url}
-                                    key={segment.thumbnail?.url}
-                                    style={{
-                                      height: '256px',
-                                      width: 'auto',
-                                    }}
-                                  />,
-                                  <Button
-                                    icon={<DeleteOutlined />}
-                                    shape="circle"
-                                    danger
-                                    type="primary"
-                                    className="remove-button"
-                                    key={`botao_${segment.thumbnail?.url}`}
-                                    onClick={evt =>
-                                      onDeleteSegment(evt, segmentIndex)
-                                    }
-                                  />,
-                                ]
+                                <img
+                                  alt={segment.thumbnail || 'Thumbnail'}
+                                  src={segment.thumbnail?.url}
+                                  key={segment.thumbnail?.url}
+                                  style={{
+                                    height: '256px',
+                                    width: 'auto',
+                                  }}
+                                />,
+                                <Button
+                                  icon={<DeleteOutlined />}
+                                  shape="circle"
+                                  danger
+                                  type="primary"
+                                  className="remove-button"
+                                  key={`botao_${segment.thumbnail?.url}`}
+                                  onClick={evt =>
+                                    onDeleteSegment(evt, segmentIndex)
+                                  }
+                                />,
+                              ]
                               : [
-                                  <Button
-                                    icon={<DeleteOutlined />}
-                                    shape="circle"
-                                    type="primary"
-                                    danger
-                                    onClick={evt =>
-                                      onDeleteSegment(evt, segmentIndex)
-                                    }
-                                  />,
-                                  <div>No Thumbnail</div>,
-                                ]}
+                                <Button
+                                  icon={<DeleteOutlined />}
+                                  shape="circle"
+                                  type="primary"
+                                  danger
+                                  onClick={evt =>
+                                    onDeleteSegment(evt, segmentIndex)
+                                  }
+                                />,
+                                <div>No Thumbnail</div>,
+                              ]}
                             <p />
                             <p>
                               <a href={segment.shareLink}>
@@ -1296,12 +1306,12 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                       },
                     ]}
                   >
-                     <CreatorsMultipleFetchDebounceSelect
-                        onChangeCreator={(_, creator) => onChangeCreator(creator)}
-                        input={currentCreator?.firstName}
-                        onClear={() => onChangeCreator(null)}
-                        disabled={!loaded}
-                      />
+                    <CreatorsMultipleFetchDebounceSelect
+                      onChangeCreator={(_, creator) => onChangeCreator(creator)}
+                      input={currentCreator?.firstName}
+                      onClear={() => onChangeCreator(null)}
+                      disabled={!loaded}
+                    />
                   </Form.Item>
                   {currentCreator && (
                     <Image
@@ -1318,12 +1328,12 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
               <div style={{ display: 'none' }}>
                 <Col lg={4} xs={24}>
                   <Typography.Title level={5}>Creator</Typography.Title>
-                    <CreatorsMultipleFetchDebounceSelect
-                        onChangeCreator={(_, creator) => onSelectCreator(creator)}
-                        input={videoCreator?.firstName}
-                        onClear={() => onSelectCreator(null)}
-                        disabled={!loaded}
-                    />
+                  <CreatorsMultipleFetchDebounceSelect
+                    onChangeCreator={(_, creator) => onSelectCreator(creator)}
+                    input={videoCreator?.firstName}
+                    onClear={() => onSelectCreator(null)}
+                    disabled={!loaded}
+                  />
                 </Col>
                 <Col lg={4} xs={24}>
                   <Typography.Title level={5}>Social platform</Typography.Title>
@@ -1379,18 +1389,19 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                     onChange={evt => setIncludeVideo(evt.target.checked)}
                   ></Checkbox>
                 </Col>
-                <Col lg={4} xs={24}>
+              </div>
+              <Col span={24}>
+                <Row justify="space-between" className="my-1">
+                  <Typography.Title level={5}>Shared Link:</Typography.Title>
                   <Button
                     type="default"
                     onClick={handleGenerateLink}
-                    disabled={!videoCreator || !selectedSocialPlatform}
+                    disabled={links.length > 0 || loading}
+                    loading={loading}
                   >
                     Generate Link
                   </Button>
-                </Col>
-              </div>
-              <Col span={24}>
-                <Typography.Title level={5}>Shared Link:</Typography.Title>
+                </Row>
                 <Table
                   columns={columns}
                   rowKey="id"
@@ -1565,14 +1576,14 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                       'productBrand',
                       'id',
                     ]) && (
-                      <Form.Item
-                        label="Show Price"
-                        name={['vLink', 'productBrand', 'showPrice']}
-                        valuePropName="checked"
-                      >
-                        <Switch />
-                      </Form.Item>
-                    )}
+                        <Form.Item
+                          label="Show Price"
+                          name={['vLink', 'productBrand', 'showPrice']}
+                          valuePropName="checked"
+                        >
+                          <Switch />
+                        </Form.Item>
+                      )}
                   </Col>
                   <Col span={24}>
                     {feedForm.getFieldValue([
@@ -1580,32 +1591,32 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                       'productBrand',
                       'id',
                     ]) && (
-                      <Form.Item
-                        label="Icon"
-                        name={['vLink', 'productBrand', 'selectedLogoUrl']}
-                      >
-                        <Select
-                          placeholder="Select an icon"
-                          disabled={!loaded}
-                          allowClear
-                          showSearch
-                          filterOption={filterOption}
-                          onChange={value =>
-                            onChangeIcon('vLinkProductBrand', value)
-                          }
+                        <Form.Item
+                          label="Icon"
+                          name={['vLink', 'productBrand', 'selectedLogoUrl']}
                         >
-                          {vLinkProductBrandIcons.map((icon: any) => (
-                            <Select.Option
-                              key={icon.key}
-                              value={icon.value}
-                              label={icon.label}
-                            >
-                              {icon.label}
-                            </Select.Option>
-                          ))}
-                        </Select>
-                      </Form.Item>
-                    )}
+                          <Select
+                            placeholder="Select an icon"
+                            disabled={!loaded}
+                            allowClear
+                            showSearch
+                            filterOption={filterOption}
+                            onChange={value =>
+                              onChangeIcon('vLinkProductBrand', value)
+                            }
+                          >
+                            {vLinkProductBrandIcons.map((icon: any) => (
+                              <Select.Option
+                                key={icon.key}
+                                value={icon.value}
+                                label={icon.label}
+                              >
+                                {icon.label}
+                              </Select.Option>
+                            ))}
+                          </Select>
+                        </Form.Item>
+                      )}
                   </Col>
                   <Col span={8}>
                     <Row justify={isMobile ? 'end' : undefined}>
@@ -1625,32 +1636,32 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                       'productBrand',
                       'id',
                     ]) && (
-                      <Form.Item
-                        label="White Logo"
-                        name={['vLink', 'productBrand', 'selectedWhiteLogoUrl']}
-                      >
-                        <Select
-                          placeholder="Select a white logo"
-                          disabled={!loaded}
-                          allowClear
-                          showSearch
-                          filterOption={filterOption}
-                          onChange={value =>
-                            onChangeIcon('vLinkProductBrandWhiteLogo', value)
-                          }
+                        <Form.Item
+                          label="White Logo"
+                          name={['vLink', 'productBrand', 'selectedWhiteLogoUrl']}
                         >
-                          {vLinkProductBrandIcons.map((icon: any) => (
-                            <Select.Option
-                              key={icon.key}
-                              value={icon.value}
-                              label={icon.label}
-                            >
-                              {icon.label}
-                            </Select.Option>
-                          ))}
-                        </Select>
-                      </Form.Item>
-                    )}
+                          <Select
+                            placeholder="Select a white logo"
+                            disabled={!loaded}
+                            allowClear
+                            showSearch
+                            filterOption={filterOption}
+                            onChange={value =>
+                              onChangeIcon('vLinkProductBrandWhiteLogo', value)
+                            }
+                          >
+                            {vLinkProductBrandIcons.map((icon: any) => (
+                              <Select.Option
+                                key={icon.key}
+                                value={icon.value}
+                                label={icon.label}
+                              >
+                                {icon.label}
+                              </Select.Option>
+                            ))}
+                          </Select>
+                        </Form.Item>
+                      )}
                   </Col>
                   <Col span={8}>
                     <Row justify={isMobile ? 'end' : undefined}>
@@ -1668,12 +1679,12 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
               </Col>
               <Col lg={8} xs={24}>
                 <Form.Item label="Creator" name={['vLink', 'creator']}>
-                    <CreatorsMultipleFetchDebounceSelect
-                          onChangeCreator={(_, creator) => onCreatorChange(creator)}
-                          input={videoCreator?.firstName}
-                          onClear={() => onCreatorChange(null)}
-                          disabled={!loaded}
-                    />
+                  <CreatorsMultipleFetchDebounceSelect
+                    onChangeCreator={(_, creator) => onCreatorChange(creator)}
+                    input={videoCreator?.firstName}
+                    onClear={() => onCreatorChange(null)}
+                    disabled={!loaded}
+                  />
                 </Form.Item>
               </Col>
             </Row>
@@ -1997,7 +2008,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                   forceRender
                   tab={`Master Brands (${
                     selectedSegment!.brands?.length || 0
-                  })`}
+                    })`}
                   key="Master Brands"
                 >
                   <Button
