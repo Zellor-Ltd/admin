@@ -149,11 +149,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
         return row.index && row.index === indexFilter;
       });
     }
-    if (creatorFilter) {
-      updatedRows = updatedRows.filter(
-        row => row?.creator?.firstName?.indexOf(creatorFilter?.firstName ?? '') > -1
-      );
-    }
     if (categoryFilter) {
       updatedRows = updatedRows.filter(
         row => row.category?.indexOf(categoryFilter) > -1
@@ -763,6 +758,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
         videoType: videoTypeFilter,
         productBrandId: productBrandFilter,
         dateSort: dateSortFilter,
+        creatorId: creatorFilter?.id,
       });
       setPage(pageToUse + 1);
       if (results.length < 30) setEof(true);
