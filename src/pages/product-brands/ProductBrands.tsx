@@ -43,6 +43,7 @@ import { SimpleSwitch } from 'components/SimpleSwitch';
 
 const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
   const [loading, setLoading] = useState<boolean>(false);
+  const [loadingRow, setLoadingRow] = useState<string>("");
   const { doFetch, doRequest } = useRequest({ setLoading });
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [details, setDetails] = useState<boolean>(false);
@@ -109,6 +110,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
 
   const rebuildVlink = async (productBrand: ProductBrand, index: number) => {
     try {
+      setLoadingRow(productBrand.brandLink ?? "");
       const { result, success, message }: any = await rebuildLink(
         productBrand.brandLink!
       );
@@ -119,6 +121,9 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
         msg.success(message);
       }
     } catch {}
+    finally {
+      setLoadingRow("");
+    } 
   };
 
   const updateVIndex = async (record: ProductBrand, input?: number) => {
@@ -344,9 +349,10 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
             type="link"
             block
             onClick={() => rebuildVlink(record, index)}
-            disabled={!record.brandLink}
+            disabled={!record.brandLink || loadingRow !== ""}
+            loading={loadingRow === record.brandLink}
           >
-            <RedoOutlined />
+            {loadingRow !== record.brandLink && <RedoOutlined />}
           </Button>
         </>
       ),

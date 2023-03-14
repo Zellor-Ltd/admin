@@ -52,6 +52,7 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
   const [details, setDetails] = useState<boolean>(false);
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [loading, setLoading] = useState<boolean>(false);
+  const [loadingRow, setLoadingRow] = useState<string>("");
   const { doFetch } = useRequest({ setLoading });
   const [brands, setBrands] = useState<Brand[]>([]);
   const [filterText, setFilterText] = useState('');
@@ -160,6 +161,7 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
 
   const rebuildVlink = async (brand: Brand, index: number) => {
     try {
+      setLoadingRow(brand.masterBrandLink ?? "");
       const { result, success, message }: any = await rebuildLink(
         brand.masterBrandLink!
       );
@@ -169,6 +171,9 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
         msg.success(message);
       }
     } catch {}
+    finally {
+      setLoadingRow("");
+    } 
   };
 
   const updateVIndex = async (record: Brand, input?: number) => {
@@ -346,9 +351,10 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
             type="link"
             block
             onClick={() => rebuildVlink(record, index)}
-            disabled={!record.masterBrandLink}
+            disabled={!record.masterBrandLink  || loadingRow !== ""}
+            loading={loadingRow === record.masterBrandLink}
           >
-            <RedoOutlined />
+             {loadingRow !== record.masterBrandLink && <RedoOutlined />}
           </Button>
         </>
       ),
