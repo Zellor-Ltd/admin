@@ -58,7 +58,6 @@ import SimpleSelect from 'components/select/SimpleSelect';
 import { SelectOption } from 'interfaces/SelectOption';
 import VideoFeedDetail from './VideoFeedDetail';
 import { statusList, videoTypeList } from 'components/select/select.utils';
-import moment from 'moment';
 import scrollIntoView from 'scroll-into-view';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useSelector } from 'react-redux';
@@ -81,6 +80,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const [activeKey, setActiveKey] = useState<string>('1');
   const [selectedVideoFeed, setSelectedVideoFeed] = useState<FeedItem>();
   const [loading, setLoading] = useState(false);
+  const [loadingRow, setLoadingRow] = useState<string>("");
   const loaded = useRef<boolean>(false);
   const [loadingResources, setLoadingResources] = useState<boolean>(true);
   const [details, setDetails] = useState<boolean>(false);
@@ -250,6 +250,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
 
   const propagatevlink = async (value: string, record: any, index: number) => {
     try {
+      setLoadingRow(value);
       lastFocusedIndex.current = index;
         const { result, success, message }: any = await propagateVLink(value);
       if (success) {
@@ -257,8 +258,23 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
         setData([...buffer]);
         msg.success(message);
       }
-    } catch {}
+    } catch {} 
+    finally {
+      setLoadingRow("");
+    } 
   };
+
+  const getvLinkId = (record: any): string => {
+
+    let vlinkId = record.package
+      ?.find(pack => pack.shareLink)
+      ?.shareLink
+      ?.split("/")
+      ?.slice(-1)
+      ?.toString()
+
+    return vlinkId
+  }
 
   const addToList = async (value: string, feedItem: FeedItem) => {
     try {
@@ -631,20 +647,15 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
             onFocus={() => (bufferIndex.current = buffer.indexOf(record))}
             onClick={() =>
               propagatevlink(
-                record.package
-                  ?.find(pack => pack.shareLink)
-                  ?.shareLink?.slice(
-                    17,
-                    record.package?.find(pack => pack.shareLink)?.shareLink
-                      ?.length
-                  ),
+                getvLinkId(record),
                 record,
                 index
               )
             }
-            disabled={!record?.package?.find(pack => pack.shareLink)}
+            disabled={!record?.package?.find(pack => pack.shareLink) || loadingRow !== ""}
+            loading={loadingRow === getvLinkId(record)}
           >
-            <RedoOutlined />
+            {loadingRow !== getvLinkId(record) && <RedoOutlined />}
           </Button>
         </>
       ),

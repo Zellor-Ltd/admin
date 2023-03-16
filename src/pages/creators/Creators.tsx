@@ -42,6 +42,7 @@ import scrollIntoView from 'scroll-into-view';
 
 const Creators: React.FC<RouteComponentProps> = ({ location }) => {
   const [loading, setLoading] = useState<boolean>(false);
+  const [loadingRow, setLoadingRow] = useState<string>("");
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [details, setDetails] = useState<boolean>(false);
   const [currentCreator, setCurrentCreator] = useState<Creator>();
@@ -117,6 +118,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
 
   const rebuildVlink = async (creator: Creator, index: number) => {
     try {
+      setLoadingRow(creator.userName);      
       const { result, success, message }: any = await rebuildLink(
         creator.userName!
       );
@@ -126,6 +128,9 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
         msg.success(message);
       }
     } catch {}
+    finally {
+      setLoadingRow("");
+    }
   };
 
   const updateVIndex = async (record: Creator, input?: number) => {
@@ -324,9 +329,10 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
             type="link"
             block
             onClick={() => rebuildVlink(record, index)}
-            disabled={!record.userName}
+            disabled={!record.userName || loadingRow !== ""}  
+            loading={loadingRow === record.userName}
           >
-            <RedoOutlined />
+            {loadingRow !== record.userName && <RedoOutlined />}
           </Button>
         </>
       ),
