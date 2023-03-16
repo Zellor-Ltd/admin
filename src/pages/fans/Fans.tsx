@@ -196,7 +196,7 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
         </div>
       ),
       dataIndex: 'hCreationDate',
-      width: '15%',
+      width: '7%',
       align: 'center',
       render: (value: Date) => (
         <>
@@ -225,12 +225,46 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
               whiteSpace: 'nowrap',
             }}
           >
+            <Tooltip title="Creation">Sign up</Tooltip>
+          </div>
+        </div>
+      ),
+      dataIndex: 'signUpDate',
+      width: '7%',
+      align: 'center',
+      render: (value: Date) => (
+        <>
+          <div>{moment(value).format('DD/MM/YYYY')}</div>
+          <div>{moment(value).format('HH:mm')}</div>
+        </>
+      ),
+      sorter: (a, b): any => {
+        if (a.signUpDate && b.signUpDate)
+          return (
+            moment(a.signUpDate as Date).unix() -
+            moment(b.signUpDate).unix()
+          );
+        else if (a.signUpDate) return -1;
+        else if (b.signUpDate) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
             <Tooltip title="E-mail">E-mail</Tooltip>
           </div>
         </div>
       ),
       dataIndex: 'user',
-      width: '25%',
+      width: '20%',
       align: 'center',
       sorter: (a, b): any => {
         if (a.user && b.user) return a.user.localeCompare(b.user);
