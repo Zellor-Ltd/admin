@@ -335,7 +335,10 @@ const FanDetail: React.FC<FanDetailProps> = ({ fan, onSave, onCancel }) => {
                 postalCode: fan?.addresses?.[0]?.postalCode,
                 birthday: fan?.['birthday']
                   ? moment(fan?.['birthday'])
-                  : undefined,
+                  : undefined,                  
+                signUpDate: fan?.['signUpDate']
+                ? moment(fan?.['signUpDate'])
+                : undefined,
               }
             : undefined
         }
