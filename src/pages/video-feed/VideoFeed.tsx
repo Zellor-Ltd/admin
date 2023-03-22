@@ -83,6 +83,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const [loadingRow, setLoadingRow] = useState<string>("");
   const loaded = useRef<boolean>(false);
   const [loadingResources, setLoadingResources] = useState<boolean>(true);
+  const [isCloning, setIsCloning] = useState<boolean>(false);
   const [details, setDetails] = useState<boolean>(false);
   const [categories, setCategories] = useState<Category[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
@@ -128,7 +129,10 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
 
   useEffect(() => {
     history.listen((_, action) => {
-      if (action === 'POP' && details) setDetails(false);
+      if (action === 'POP' && details) {
+        setDetails(false);
+        setIsCloning(false);
+      }
     });
   });
 
@@ -812,6 +816,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     } else buffer[lastFocusedIndex.current] = record;
     setBuffer([...buffer]);
     setDetails(false);
+    setIsCloning(false);
     scrollToCenter(lastFocusedIndex.current);
   };
 
@@ -823,6 +828,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     lastFocusedIndex.current = index;
 
     if (cloning) {
+      
       if (videoFeed?.package) {
         const pkg = videoFeed?.package?.map((item: any) => {
           return { ...item, shareLink: undefined };
@@ -832,15 +838,18 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
           id: undefined,
           shareLink: undefined,
           package: pkg,
+          title: `Cloned - ${videoFeed?.title}`
         });
       }
       if (!videoFeed?.package) {
         setSelectedVideoFeed({
           ...(videoFeed as any),
           id: undefined,
-          shareLink: undefined,
+          shareLink: undefined,   
+          title: `Cloned - ${videoFeed?.title}`      
         });
       }
+      setIsCloning(true)
     } else setSelectedVideoFeed(videoFeed);
     setDetails(true);
     history.push(window.location.pathname);
@@ -916,6 +925,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
 
   const handleCancel = () => {
     setDetails(false);
+    setIsCloning(false);
   };
 
   const Filters = () => {
@@ -1244,6 +1254,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
           feedItem={selectedVideoFeed}
           brands={brands}
           productBrands={productBrands}
+          isCloning={isCloning}
         />
       )}
     </div>
