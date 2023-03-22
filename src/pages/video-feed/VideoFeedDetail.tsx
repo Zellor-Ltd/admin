@@ -40,7 +40,7 @@ import React, {
   useState,
 } from 'react';
 import { useSelector } from 'react-redux';
-import { deleteLink, fetchCreatorById, fetchLinks, saveLink, saveVideoFeed } from 'services/DiscoClubService';
+import { deleteLink, fetchCreatorById, fetchLinks, saveLink, saveVideoFeed, fetchVideoFeedV3 } from 'services/DiscoClubService';
 import BrandForm from './BrandForm';
 import TagForm from './TagForm';
 import './VideoFeed.scss';
@@ -75,6 +75,7 @@ interface VideoFeedDetailProps {
   productBrands: ProductBrand[];
   isFanVideo?: boolean;
   template?: boolean;
+  isCloning?: boolean;
 }
 
 const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
@@ -85,6 +86,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
   productBrands,
   isFanVideo,
   template,
+  isCloning,
 }) => {
   const {
     settings: {
@@ -174,6 +176,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
   };
 
   useEffect(() => {
+
     if (selectedOption === 'creator') {
 
       if (feedItem?.selectedId) {
@@ -461,9 +464,12 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
       item.package = item.package?.map(pack => {
         return { ...pack, tags: pack.tags ?? [] };
       });
-
-      await doRequest(() => saveVideoFeed(item));
-      onSave?.(item, !!!feedItem?.id);
+      const { result } = await doRequest(() => saveVideoFeed(item,isCloning ?? false));
+      const resposeGetVideo = await doRequest(() => fetchVideoFeedV3({
+        page: 0,
+        videoFeedId: result
+      }));
+      onSave?.(resposeGetVideo.results.find(() => true) ?? item, !!!feedItem?.id);
     } catch (error: any) {
       message.error('Error: ' + error.error);
     }

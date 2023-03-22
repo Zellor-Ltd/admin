@@ -291,6 +291,7 @@ export const fetchVideoFeedV3 = ({
   dateSort,
   page = 0,
   creatorId,
+  videoFeedId,
 }: {
   query?: string;
   brandId?: string;
@@ -301,6 +302,7 @@ export const fetchVideoFeedV3 = ({
   categoryId?: string;
   dateSort?: string;
   creatorId?: string;
+  videoFeedId?: string;
 } & Pagination) =>
   instance.put(`Disco/Feed/Adm/List/${page}`, {
     query,
@@ -311,7 +313,8 @@ export const fetchVideoFeedV3 = ({
     startIndex,
     categoryId,
     dateSort,
-    creatorId
+    creatorId,
+    videoFeedId
   });
 
 export const fetchVideoFeed2 = () => instance.get('Wi/Ep/GetVideoFeed');
@@ -715,9 +718,10 @@ export const saveDirectLink = (params: any, newItem?: boolean) => {
   else return instance.put('Disco/DirectLink/Adm/UpdateDirectlLink', params);
 };
 
-export const saveVideoFeed = (params: FeedItem) => {
-  if (!params.id) return instance.put('Disco/Feed/Adm/Add', params);
-  else return instance.put('Disco/Feed/Update', params);
+export const saveVideoFeed = (params: FeedItem, isCloning?: boolean) => {
+  
+  if (!params.id) return instance.put('Disco/Feed/Adm/Add',{feed:params,isCloning});
+  else return instance.put('Disco/Feed/Update',params);
 };
 
 export const addFeaturedFeed = (feedId: string, listName: string) =>
