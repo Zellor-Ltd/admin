@@ -19,9 +19,11 @@ import { RouteComponentProps } from 'react-router-dom';
 import { fetchTrends, saveTrend } from 'services/DiscoClubService';
 import { LoadingOutlined, SearchOutlined } from '@ant-design/icons';
 import scrollIntoView from 'scroll-into-view';
+import { SimpleSwitch } from 'components/SimpleSwitch';
 
 const Trends: React.FC<RouteComponentProps> = props => {
   const [loading, setLoading] = useState<boolean>(false);
+  const [loadingSwitch, setLoadingSwitch] = useState<String>("");
   const { doFetch } = useRequest({ setLoading });
   const [filter, setFilter] = useState<string>('');
   const [updatingTrendIndex, setUpdatingIndex] = useState<
@@ -82,7 +84,7 @@ const Trends: React.FC<RouteComponentProps> = props => {
 
     try {
       await saveTrend(trend);
-      message.success('Register updated with success.');
+      message.success(`Register ${trend.tag} updated with success.`);
     } catch (err) {
       console.error(
         `Error while trying to update Trend[${trend.id}] index.`,
@@ -100,6 +102,26 @@ const Trends: React.FC<RouteComponentProps> = props => {
     });
 
     shouldUpdateIndex.current = false;
+  };
+
+  const handleSwitchChange = async (
+    trend: any,
+    toggled: boolean
+  ) => {
+    try {
+      setLoadingSwitch(trend.id)
+      trend.enabled = toggled
+      await saveTrend(trend);
+      message.success(`Register ${trend.tag} updated with success.`);
+    } catch (err) {
+      console.error(
+        `Error while trying to update Trend[${trend.id}] index.`,
+        err
+      );
+      message.success('Error while trying to update Trend index.');
+    } finally {
+      setLoadingSwitch("")
+    }
   };
 
   const columns: ColumnsType<any> = [
@@ -158,11 +180,45 @@ const Trends: React.FC<RouteComponentProps> = props => {
         </div>
       ),
       dataIndex: 'tag',
-      width: '90%',
+      width: '70%',
       sorter: (a, b): any => {
         if (a.tag && b.tag) return a.tag.localeCompare(b.tag);
         else if (a.tag) return -1;
         else if (b.tag) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Enabled">Enabled</Tooltip>
+          </div>
+        </div>
+      ),
+      dataIndex: 'enabled',
+      width: '10%',
+      align: 'center',
+      render: (_: any, record: any) => (
+        <SimpleSwitch
+          toggled={!!record.enabled}
+          handleSwitchChange={(toggled: boolean) =>
+            handleSwitchChange(record, toggled)
+          }
+          loading={loadingSwitch === record.id}
+          disabled={loadingSwitch === record.id}
+        />
+      ),
+      sorter: (a, b): any => {
+        if (a.enabled && b.enabled) return 0;
+        else if (a.enabled) return -1;
+        else if (b.enabled) return 1;
         else return 0;
       },
     },

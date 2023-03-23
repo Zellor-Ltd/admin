@@ -4,7 +4,9 @@ import React, { useState } from 'react';
 export const SimpleSwitch: React.FC<{
   toggled: boolean;
   handleSwitchChange: Function;
-}> = ({ toggled, handleSwitchChange }) => {
+  loading?: boolean;
+  disabled?: boolean;
+}> = ({ toggled, handleSwitchChange, loading, disabled }) => {
   const [checked, setChecked] = useState<boolean>(toggled);
 
   return (
@@ -15,6 +17,8 @@ export const SimpleSwitch: React.FC<{
           handleSwitchChange(toggled);
         }}
         checked={checked}
+        loading={loading ?? false}
+        disabled={disabled ?? false}
       />
     </>
   );
