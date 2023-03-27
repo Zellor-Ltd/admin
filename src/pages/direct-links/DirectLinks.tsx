@@ -488,12 +488,12 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
                   whiteSpace: 'nowrap',
                 }}
               >
-                https://link.discoclub.com/d/{value}
+                https://link.beautybuzz.io/d/{value}
               </div>
             </div>
           </Col>
           <Col span={4}>
-            <CopyToClipboard text={`https://link.discoclub.com/d/${value}`}>
+            <CopyToClipboard text={`https://link.beautybuzz.io/d/${value}`}>
               <Button
                 type="link"
                 onClick={() => {
