@@ -207,7 +207,7 @@ const DirectLinkDetail: React.FC<DirectLinkDetailProps> = ({
   return (
     <div>
       <PageHeader
-        title={directLink ? 'Direct Link Update' : 'New Direct Link'}
+        title={directLink ? 'Platform Link Update' : 'New Direct Link'}
       />
       <Form
         form={form}

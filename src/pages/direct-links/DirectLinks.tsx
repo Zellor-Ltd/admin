@@ -796,8 +796,8 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
       {!details && (
         <>
           <PageHeader
-            title="Direct Links"
-            subTitle={isMobile ? '' : 'List of Direct Links'}
+            title="Platform Links"
+                      subTitle={isMobile ? '' : 'List of Platform Links'}
             extra={[
               <Button
                 key="2"
