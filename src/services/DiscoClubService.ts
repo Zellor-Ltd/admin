@@ -292,6 +292,7 @@ export const fetchVideoFeedV3 = ({
   page = 0,
   creatorId,
   videoFeedId,
+  category,
 }: {
   query?: string;
   brandId?: string;
@@ -303,6 +304,7 @@ export const fetchVideoFeedV3 = ({
   dateSort?: string;
   creatorId?: string;
   videoFeedId?: string;
+  category?: string;
 } & Pagination) =>
   instance.put(`Disco/Feed/Adm/List/${page}`, {
     query,
@@ -314,7 +316,8 @@ export const fetchVideoFeedV3 = ({
     categoryId,
     dateSort,
     creatorId,
-    videoFeedId
+    videoFeedId,
+    category
   });
 
 export const fetchVideoFeed2 = () => instance.get('Wi/Ep/GetVideoFeed');

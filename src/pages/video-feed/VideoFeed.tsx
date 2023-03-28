@@ -174,11 +174,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   }, [buffer]);
 
   useEffect(() => {
-    loadMore.current = true;
-    setBuffer([...buffer]);
-  }, [indexFilter, creatorFilter, categoryFilter]);
-
-  useEffect(() => {
     setLoading(false);
   }, [data]);
 
@@ -221,7 +216,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       inputRef.current.focus({
         cursor: 'end',
       });
-  }, [titleFilter]);
+  }, [titleFilter,indexFilter]);
 
   const masterBrandMapping: SelectOption = {
     key: 'id',
@@ -774,6 +769,8 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
         productBrandId: productBrandFilter,
         dateSort: dateSortFilter,
         creatorId: creatorFilter?.id,
+        category: categoryFilter,
+        startIndex: indexFilter
       });
       setPage(pageToUse + 1);
       if (results.length < 30) setEof(true);
@@ -1033,9 +1030,11 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
             <InputNumber
               disabled={loadingResources}
               min={0}
+              ref={inputRef}
               onChange={startIndex => setIndexFilter(startIndex ?? undefined)}
               placeholder="Select an Index"
               value={indexFilter}
+              onPressEnter={() => getFeed(undefined, true)}
             />
           </Col>
           <Col lg={5} xs={24}>
