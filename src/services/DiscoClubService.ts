@@ -192,6 +192,10 @@ export const propagateVLink = (path: string) =>
 export const transferStageProduct = (productId: string) =>
   instance.get(`Disco/Staging/Product/Transfer/${productId}`);
 
+  export const exportToShopifyProduct = (productId: string) =>
+  instance.get(`/Disco/Product/ExportToShopify/${productId}`);
+  
+
 export const lockFeedMixer = (userId: string) =>
   instance.get(`Disco/Feed/LockUnlockUser/${userId}/y`);
 

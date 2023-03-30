@@ -9,6 +9,7 @@ import { Product } from '../../interfaces/Product';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
+  exportToShopifyProduct,
   saveStagingProduct,
   transferStageProduct,
 } from '../../services/DiscoClubService';
@@ -596,6 +597,7 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
             type="primary"
             loading={loading}
             onClick={() => onSaveChanges(record, index)}
+            disabled={loading}
           >
             Save Changes
           </Button>
@@ -607,6 +609,13 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
           >
             Promote
           </Button>
+          <Button
+            onClick={() => handleUploadToShopify(record.id)}
+            type="default"
+            style={{ margin: '0.5rem' }}
+          >
+            Upload
+          </Button>
         </>
       ),
     },
@@ -614,6 +623,12 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
 
   const handleStage = async (productId: string) => {
     await doRequest(() => transferStageProduct(productId), 'Product commited.');
+  };
+
+  const handleUploadToShopify = async (productId: string) => {
+    const response: any = await doRequest(() => exportToShopifyProduct(productId),'',true);
+    if (response.success) message.success(response.message);
+    else message.error('Error: ' + response.error);
   };
 
   useMount(() => {
