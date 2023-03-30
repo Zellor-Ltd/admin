@@ -119,9 +119,14 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   const filterBrand = () => {
-    return brands.filter(brand =>
-      brand.brandName?.toUpperCase().includes(filterText?.toUpperCase())
-    );
+
+    if (filterText) {
+      return brands.filter(brand =>
+        brand.brandName?.toUpperCase().includes(filterText?.toUpperCase())
+      );
+    }
+
+    return brands    
   };
 
   const handleSwitchChange = async (
