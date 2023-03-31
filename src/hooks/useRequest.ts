@@ -58,8 +58,9 @@ export const useRequest = ({
     request(action, undefined, completeResponse);
   const doRequest = (
     action: action,
-    successMsg: string = 'Register updated with success.'
-  ) => request(action, successMsg);
+    successMsg: string = 'Register updated with success.',
+    completeResponse?: boolean
+  ) => request(action, successMsg, completeResponse);
   const doAPITest = (action: action) => request(action, 'Test Passed.', true);
 
   return { doFetch, doRequest, doAPITest, loading: _loading };

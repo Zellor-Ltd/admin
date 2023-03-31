@@ -35,6 +35,7 @@ import {
   addVariant,
   barcodeLookup,
   deleteStagingProduct,
+  exportToShopifyProduct,
   fetchBrands,
   fetchProductBrands,
   fetchStagingProducts,
@@ -330,6 +331,13 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
     await getProducts(true);
   };
 
+  const handleUploadToShopify = async (productId: string) => {
+    const response: any = await doRequest(() => exportToShopifyProduct(productId),'',true);
+    if (response.success) message.success(response.message);    
+    else message.error('Error: ' + response.error);
+    await getProducts(true);
+  };
+
   const handleFilterOutOfStock = (e: CheckboxChangeEvent) => {
     setOutOfStockFilter(e.target.checked);
   };
@@ -369,7 +377,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
         </div>
       ),
       dataIndex: 'name',
-      width: '15%',
+      width: '10%',
       render: (value: string, record: Product, index: number) => (
         <>
           <Link
@@ -420,7 +428,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
         </div>
       ),
       dataIndex: ['brand', 'brandName'],
-      width: '15%',
+      width: '10%',
       align: 'center',
       sorter: (a, b): any => {
         if (a.brand && b.brand)
@@ -721,7 +729,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
         </div>
       ),
       key: 'action',
-      width: '12%',
+      width: '10%',
       align: 'right',
       render: (_, record: Product, index: number) => (
         <>
@@ -749,6 +757,13 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
             onClick={() => handleStage(record.id)}
             type="link"
             style={{ color: 'green', padding: 0, margin: 6 }}
+          >
+            <ArrowRightOutlined />
+          </Button>
+          <Button
+            onClick={() => handleUploadToShopify(record.id)}
+            type="link"
+            style={{ color: 'red', padding: 0, margin: 6 }}
           >
             <ArrowRightOutlined />
           </Button>
