@@ -122,6 +122,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
   const { doFetch, doRequest } = useRequest({ setLoading });
   const [includeVideo, setIncludeVideo] = useState<boolean>(false);
   const [videoCreator, setVideoCreator] = useState<Creator | null>();
+  const [vLinkCreator, setvLinkCreator] = useState<Creator | null>();
   const [selectedLinkType, setSelectedLinkType] = useState<string>();
   const [selectedSocialPlatform, setSelectedSocialPlatform] =
     useState<string>();
@@ -163,11 +164,15 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
     setLinks(results);
   };
 
-  const fetchCreator = async ({
+  const fetchCurrentCreator = async ({
     creatorId
   }: {
     creatorId: String
   }) => {
+
+    if (!creatorId) {
+      return
+    } 
     const { result } = await doFetch(() => fetchCreatorById({creatorId}));
     const creator = result.creator;
     creator.id = creatorId
@@ -175,12 +180,27 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
     setCurrentCreator(creator);
   };
 
+  const fetchvLinkCreator = async ({
+    creatorId
+  }: {
+    creatorId: String
+  }) => {
+    if (!creatorId) {
+      return
+    }
+    const { result } = await doFetch(() => fetchCreatorById({creatorId}));
+    const creator = result.creator;
+    creator.id = creatorId
+    creator.firstName = creator.name
+    setvLinkCreator(creator);
+  };
+
   useEffect(() => {
 
     if (selectedOption === 'creator') {
 
       if (feedItem?.selectedId) {
-        fetchCreator({creatorId: feedItem?.selectedId})
+        fetchCurrentCreator({creatorId: feedItem?.selectedId})
       }
 
     } else {
@@ -194,6 +214,10 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
 
     if (feedItem?.creator) {
       setVideoCreator(feedItem?.creator);
+    }
+
+    if (feedItem?.vLink?.creator) {
+      fetchvLinkCreator({creatorId: feedItem?.vLink?.creator})
     }
 
     if (feedItem?.vLink?.brand) {
@@ -323,23 +347,29 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
   }, [selectedSegment]);
 
   const onChangeCreator = (creator: Creator | null) => {
-    console.log("onChangeCreator",creator);
     setCurrentCreator(creator);
   };
+  
 
   const handleBrandChange = (
-    type: 'listing' | 'vLinkBrand' | 'vLinkProductBrand',
+    type: 'listing' | 'vLinkBrand' | 'vLinkProductBrand' | 'vLinkCreator',
     id?: string
   ) => {
+
     if (type === 'vLinkBrand') {
       const entity = brands?.find(item => item.id === id);
       loadIcons('vLinkBrand', entity);
       let vLinkFields = feedForm.getFieldValue('vLink');
-      vLinkFields.brand.brandName = entity?.brandName;
-      vLinkFields.brand.showPrice = false;
-      vLinkFields.brand.selectedLogoUrl = undefined;
+      if (entity) {
+        vLinkFields.brand.brandName = entity?.brandName;
+        vLinkFields.brand.showPrice = false;
+        vLinkFields.brand.selectedLogoUrl = undefined;  
+      } else {
+        vLinkFields.brand = undefined;
+      }
+
       feedForm.setFieldsValue({
-        vLink: vLinkFields.brand,
+        vLink: vLinkFields,
       });
       setVLinkBrandIcon(undefined);
       return;
@@ -350,12 +380,16 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
     if (type === 'vLinkProductBrand') {
       loadIcons('vLinkProductBrand', entity);
       let vLinkFields = feedForm.getFieldValue('vLink');
-      vLinkFields.productBrand.brandName = entity?.brandName;
-      vLinkFields.productBrand.showPrice = false;
-      vLinkFields.productBrand.selectedLogoUrl = undefined;
-      vLinkFields.productBrand.selectedWhiteLogoUrl = undefined;
+      if (entity) {
+        vLinkFields.productBrand.brandName = entity?.brandName;
+        vLinkFields.productBrand.showPrice = false;
+        vLinkFields.productBrand.selectedLogoUrl = undefined;
+        vLinkFields.productBrand.selectedWhiteLogoUrl = undefined;
+      } else {
+        vLinkFields.productBrand = undefined;
+      }            
       feedForm.setFieldsValue({
-        vLink: vLinkFields.productBrand,
+        vLink: vLinkFields,
       });
       setVLinkProductBrandIcon(undefined);
       setVLinkProductBrandWhiteLogo(undefined);
@@ -365,6 +399,15 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
     if (type === 'listing') {
       setListingProductBrand(entity);
       loadIcons('productBrand', entity);
+    }
+
+    if (type === 'vLinkCreator') {
+      let vLinkFields = feedForm.getFieldValue('vLink');
+      vLinkFields.creator = id;
+      feedForm.setFieldsValue({
+        vLink: vLinkFields,
+      });
+      return;
     }
   };
 
@@ -464,10 +507,12 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
       item.package = item.package?.map(pack => {
         return { ...pack, tags: pack.tags ?? [] };
       });
+
       const { result } = await doRequest(() => saveVideoFeed(item,isCloning ?? false));
+      const videoFeedId = item.id ?? result
       const resposeGetVideo = await doRequest(() => fetchVideoFeedV3({
         page: 0,
-        videoFeedId: result
+        videoFeedId: videoFeedId
       }));
       onSave?.(resposeGetVideo.results.find(() => true) ?? item, !!!feedItem?.id);
     } catch (error: any) {
@@ -1686,9 +1731,15 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
               <Col lg={8} xs={24}>
                 <Form.Item label="Creator" name={['vLink', 'creator']}>
                   <CreatorsMultipleFetchDebounceSelect
-                    onChangeCreator={(_, creator) => onCreatorChange(creator)}
-                    input={videoCreator?.firstName}
-                    onClear={() => onCreatorChange(null)}
+                    onChangeCreator={(_, creator) => {
+                      setvLinkCreator(creator);
+                      handleBrandChange('vLinkCreator', creator.id);
+                    }}
+                    input={vLinkCreator?.firstName}
+                    onClear={() => {
+                      setvLinkCreator(null);
+                      handleBrandChange('vLinkCreator', undefined);
+                    }}
                     disabled={!loaded}
                   />
                 </Form.Item>
