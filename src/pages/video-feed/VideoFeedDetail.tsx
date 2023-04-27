@@ -958,6 +958,11 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                 </Form.Item>
               </Col>
               <Col span={24}>
+                <Form.Item name="videoLabel" label="Video Label">
+                  <Input allowClear maxLength={25} placeholder="Video Label" />
+                </Form.Item>
+              </Col>
+              <Col span={24}>
                 <Form.Item name="category" label="Category">
                   <Select
                     placeholder="Please select a category"
