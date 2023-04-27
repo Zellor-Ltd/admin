@@ -76,7 +76,8 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     settings: { feedList = [] },
   } = useSelector((state: any) => state.settings);
   const { isMobile, setisScrollable } = useContext(AppContext);
-  const inputRef = useRef<any>(null);
+  const inputRefTitle = useRef<any>(null);
+  const inputRefIndex = useRef<any>(null);
   const [activeKey, setActiveKey] = useState<string>('1');
   const [selectedVideoFeed, setSelectedVideoFeed] = useState<FeedItem>();
   const [loading, setLoading] = useState(false);
@@ -212,11 +213,18 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   }, [offset]);
 
   useEffect(() => {
-    if (inputRef.current)
-      inputRef.current.focus({
+    if (inputRefIndex.current)
+      inputRefIndex.current.focus({
         cursor: 'end',
       });
-  }, [titleFilter,indexFilter]);
+  }, [indexFilter]);
+
+  useEffect(() => {
+    if (inputRefTitle.current)
+      inputRefTitle.current.focus({
+        cursor: 'end',
+      });
+  }, [titleFilter]);
 
   const masterBrandMapping: SelectOption = {
     key: 'id',
@@ -936,7 +944,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
             <Input
               allowClear
               disabled={loadingResources}
-              ref={inputRef}
+              ref={inputRefTitle}
               onChange={event => setTitleFilter(event.target.value)}
               suffix={<SearchOutlined />}
               value={titleFilter}
@@ -1030,7 +1038,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
             <InputNumber
               disabled={loadingResources}
               min={0}
-              ref={inputRef}
+              ref={inputRefIndex}
               onChange={startIndex => setIndexFilter(startIndex ?? undefined)}
               placeholder="Select an Index"
               value={indexFilter}
