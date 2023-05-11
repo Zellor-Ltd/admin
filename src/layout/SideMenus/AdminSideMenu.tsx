@@ -121,6 +121,13 @@ const AdminSideMenu = ({ isMobile }) => {
         <Link to="/feed">Video Feeds</Link>
       </Menu.Item>
       <Menu.Item
+        key="link-organizer"
+        icon={<MobileOutlined />}
+        onClick={() => refreshParent('link-organizer')}
+      >
+        <Link to="/link-organizer">Link Organizer</Link>
+      </Menu.Item>
+      <Menu.Item
         key="featured-feeds"
         icon={<PicLeftOutlined />}
         onClick={() => refreshParent('featured-feeds')}

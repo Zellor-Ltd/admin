@@ -51,6 +51,7 @@ import DirectLinks from 'pages/direct-links/DirectLinks';
 import Rebuilds from 'pages/rebuilds/Rebuilds';
 import DevelopmentDetail from 'pages/development/development';
 import { __isDev__ } from 'helpers/constants';
+import LinkOrganizer from 'pages/link-organizer/LinkOrganizer';
 
 function AdminRoutes() {
   return (
@@ -278,6 +279,11 @@ function AdminRoutes() {
       <AppRoute
         path="/regs-per-day"
         component={RegsPerDay}
+        layout={AuthenticatedLayout}
+      />
+      <AppRoute
+        path="/link-organizer"
+        component={LinkOrganizer}
         layout={AuthenticatedLayout}
       />
       {
