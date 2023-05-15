@@ -3,15 +3,14 @@ import { ColumnsType } from "antd/lib/table";
 import { SortableTable } from "components";
 import { useRequest } from "hooks/useRequest";
 import { useState } from "react";
-import { updateLinkBrand } from "services/DiscoClubService";
 
-interface LinkOrganizerTabBrandDetailProps {
+interface LinkOrganizerDetailProps {
     record: any;
-    onSave?: () => void;
-    onCancel?: () => void;
+    onSave: (record: any, setLoading: any) => void;
+    onCancel: () => void;
 }
 
-const LinkOrganizerTabBrandDetail: React.FC<LinkOrganizerTabBrandDetailProps> = ({
+const LinkOrganizerDetail: React.FC<LinkOrganizerDetailProps> = ({
     record,
     onSave,
     onCancel
@@ -29,11 +28,7 @@ const LinkOrganizerTabBrandDetail: React.FC<LinkOrganizerTabBrandDetailProps> = 
             item.lIndex = orderCount;
             orderCount++;
         });
-
-        await doFetch(() =>
-            updateLinkBrand(newRecord)
-        );
-        onSave?.()
+         onSave(newRecord,setLoading)        
     }
 
     const columns: ColumnsType<any> = [
@@ -164,7 +159,7 @@ const LinkOrganizerTabBrandDetail: React.FC<LinkOrganizerTabBrandDetailProps> = 
                 <Col flex="100px">
                     <Button 
                         type="default" 
-                        onClick={() => onCancel?.()}>
+                        onClick={() => onCancel()}>
                         Cancel
                     </Button>
                 </Col>
@@ -185,4 +180,4 @@ const LinkOrganizerTabBrandDetail: React.FC<LinkOrganizerTabBrandDetailProps> = 
     );
 };
 
-export default LinkOrganizerTabBrandDetail;
+export default LinkOrganizerDetail;

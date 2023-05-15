@@ -6,8 +6,8 @@ import { useRequest } from "hooks/useRequest";
 import moment from "moment";
 import { useEffect, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
-import { fetchLinkBrand } from "services/DiscoClubService";
-import LinkOrganizerTabBrandDetail from "./LinkOrganizerTabBrandDetail";
+import { fetchLinkBrand, updateLinkBrand } from "services/DiscoClubService";
+import LinkOrganizerDetail from "./LinkOrganizerDetail";
 
 interface LinkOrganizerTabBrandProps { }
 
@@ -42,8 +42,14 @@ const LinkOrganizerTabBrand: React.FC<LinkOrganizerTabBrandProps> = () => {
         history.push(window.location.pathname);
     };
 
-    const onSaveRecord = () => {
-        setDetails(false);
+    const onSaveRecord = async (record: any, setLoadingLocal: any) => {
+        try {
+            setLoadingLocal(true)
+            await updateLinkBrand(record)
+            setDetails(false);
+        } finally {
+            setLoadingLocal(true)
+        }
     };
 
     const onCancelRecord = () => {
@@ -126,13 +132,13 @@ const LinkOrganizerTabBrand: React.FC<LinkOrganizerTabBrandProps> = () => {
                     </div>
                 </div>
             ),
-            dataIndex: 'iLastUpdate',
+            dataIndex: 'hLastUpdate',
             width: '10%',
-            render: (creation: Date) =>
-                creation
-                    ? new Date(creation).toLocaleDateString('en-GB') +
+            render: (datetime: Date) =>
+                datetime
+                    ? new Date(datetime).toLocaleDateString('en-GB') +
                     ' ' +
-                    new Date(creation).toLocaleTimeString('en-GB')
+                    new Date(datetime).toLocaleTimeString('en-GB')
                     : '-',
             align: 'center',
             sorter: (a, b): any => {
@@ -189,7 +195,10 @@ const LinkOrganizerTabBrand: React.FC<LinkOrganizerTabBrandProps> = () => {
             )}
 
             {details && (
-                <LinkOrganizerTabBrandDetail record={currentRecord} onSave={onSaveRecord} onCancel={onCancelRecord} />
+                <LinkOrganizerDetail
+                    record={currentRecord}
+                    onSave={onSaveRecord}
+                    onCancel={onCancelRecord} />
             )}
         </div>
     );

@@ -122,7 +122,7 @@ const AdminSideMenu = ({ isMobile }) => {
       </Menu.Item>
       <Menu.Item
         key="link-organizer"
-        icon={<MobileOutlined />}
+        icon={<LinkOutlined />}
         onClick={() => refreshParent('link-organizer')}
       >
         <Link to="/link-organizer">Link Organizer</Link>
