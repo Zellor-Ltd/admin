@@ -1058,3 +1058,27 @@ export const deleteMasthead = (params: Banner) =>
 
 export const deleteLink = (id: string) =>
   instance.delete(`Disco/Link/Adm/Remove/${id}`);
+
+export const fetchLinkBrand = (param: any) =>
+  instance.post('Disco/LinkBrand/adm/search', param);
+
+export const updateLinkBrand = (param: any) =>
+  instance.post('Disco/LinkBrand/adm/update', param);  
+
+export const fetchLinkProductBrand = (param: any) =>
+  instance.post('Disco/LinkProductBrand/adm/search', param);  
+
+export const updateLinkProductBrand = (param: any) =>
+  instance.post('Disco/LinkProductBrand/adm/update', param);  
+
+export const fetchLinkProduct = (param: any) =>
+  instance.post('Disco/LinkProduct/adm/search', param);  
+
+export const updateLinkProduct = (param: any) =>
+  instance.post('Disco/LinkProduct/adm/update', param);  
+
+export const fetchLinkCreator = (param: any) =>
+  instance.post('Disco/LinkCreator/adm/search', param);
+
+export const updateLinkCreator = (param: any) =>
+  instance.post('Disco/LinkCreator/adm/update', param);  
