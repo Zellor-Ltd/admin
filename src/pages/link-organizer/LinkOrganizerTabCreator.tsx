@@ -67,7 +67,7 @@ const LinkOrganizerTabCreator: React.FC<LinkOrganizerTabCreatorProps> = () => {
                             whiteSpace: 'nowrap',
                         }}
                     >
-                        <Tooltip title="_id">_id</Tooltip>
+                        <Tooltip title="id">id</Tooltip>
                     </div>
                 </div>
             ),
@@ -93,7 +93,7 @@ const LinkOrganizerTabCreator: React.FC<LinkOrganizerTabCreatorProps> = () => {
             dataIndex: 'creator',
             width: '30%',
             render: (creator: any) => (
-                creator.name
+                creator?.name?.trim() === "" ? creator?.userName : creator?.name
             ),
             align: 'center',
         },
@@ -182,16 +182,18 @@ const LinkOrganizerTabCreator: React.FC<LinkOrganizerTabCreatorProps> = () => {
     ];
 
     return (
-        <div>
+        <>
             {!details && (
-                <div className="custom-table">
-                    <Table
-                        rowKey="id"
-                        columns={columns}
-                        dataSource={listData}
-                        loading={loading}
-                    />
-                </div>
+                <Table
+                    rowClassName={(_, index) => `scrollable-row-${index}`}
+                    rowKey="id"
+                    columns={columns}
+                    dataSource={listData}
+                    loading={loading}
+                    pagination={false}
+                    scroll={{ y: 240, x: true }}
+                    size="small"
+                />
             )}
 
             {details && (
@@ -200,7 +202,7 @@ const LinkOrganizerTabCreator: React.FC<LinkOrganizerTabCreatorProps> = () => {
                     onSave={onSaveRecord}
                     onCancel={onCancelRecord} />
             )}
-        </div>
+        </>
     );
 };
 
