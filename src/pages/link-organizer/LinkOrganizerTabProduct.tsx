@@ -67,7 +67,7 @@ const LinkOrganizerTabProduct: React.FC<LinkOrganizerTabProductProps> = () => {
                             whiteSpace: 'nowrap',
                         }}
                     >
-                        <Tooltip title="_id">_id</Tooltip>
+                        <Tooltip title="id">id</Tooltip>
                     </div>
                 </div>
             ),
@@ -203,16 +203,18 @@ const LinkOrganizerTabProduct: React.FC<LinkOrganizerTabProductProps> = () => {
     ];
 
     return (
-        <div>
+        <>
             {!details && (
-                <div className="custom-table">
-                    <Table
-                        rowKey="id"
-                        columns={columns}
-                        dataSource={listData}
-                        loading={loading}
-                    />
-                </div>
+                <Table
+                    rowClassName={(_, index) => `scrollable-row-${index}`}
+                    rowKey="id"
+                    columns={columns}
+                    dataSource={listData}
+                    loading={loading}
+                    pagination={false}
+                    scroll={{ y: 240, x: true }}
+                    size="small"
+                />
             )}
 
             {details && (
@@ -221,7 +223,7 @@ const LinkOrganizerTabProduct: React.FC<LinkOrganizerTabProductProps> = () => {
                     onSave={onSaveRecord}
                     onCancel={onCancelRecord} />
             )}
-        </div>
+        </>
     );
 };
 
