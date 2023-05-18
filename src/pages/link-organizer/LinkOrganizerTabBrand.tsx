@@ -90,10 +90,10 @@ const LinkOrganizerTabBrand: React.FC<LinkOrganizerTabBrandProps> = () => {
                     </div>
                 </div>
             ),
-            dataIndex: 'brand',
+            dataIndex: 'productBrand',
             width: '30%',
-            render: (brand: any) => (
-                brand?.name
+            render: (productBrand: any) => (
+                productBrand?.brandName
             ),
             align: 'center',
         },
