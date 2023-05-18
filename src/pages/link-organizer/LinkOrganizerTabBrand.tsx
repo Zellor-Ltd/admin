@@ -33,7 +33,7 @@ const LinkOrganizerTabBrand: React.FC<LinkOrganizerTabBrandProps> = () => {
         const response = await doFetch(() =>
             fetchLinkBrand({})
         );
-        setListData(response.result)
+        setListData(response.results)
     };
 
     const onEditRecord = (index: number, record?: any) => {
