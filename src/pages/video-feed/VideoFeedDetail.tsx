@@ -95,6 +95,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
       category = [],
       linkType = [],
       videoType = [],
+      videoLabel = [],
     },
   } = useSelector((state: any) => state.settings);
   const { isMobile } = useContext(AppContext);
@@ -959,7 +960,23 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
               </Col>
               <Col span={24}>
                 <Form.Item name="videoLabel" label="Video Label">
-                  <Input allowClear maxLength={25} placeholder="Video Label" />
+                    <Select
+                      id="videoLabel"
+                      placeholder="Please select a video label"
+                      allowClear
+                      showSearch
+                      filterOption={filterOption}
+                    >
+                      {videoLabel.map((label: any) => (
+                        <Select.Option
+                          key={label.value}
+                          value={label.value}
+                          label={label.name}
+                        >
+                          {label.name}
+                        </Select.Option>
+                      ))}
+                    </Select>
                 </Form.Item>
               </Col>
               <Col span={24}>
