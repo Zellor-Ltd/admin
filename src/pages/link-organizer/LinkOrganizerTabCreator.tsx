@@ -33,7 +33,7 @@ const LinkOrganizerTabCreator: React.FC<LinkOrganizerTabCreatorProps> = () => {
         const response = await doFetch(() =>
             fetchLinkCreator({})
         );
-        setListData(response.result)
+        setListData(response.results)
     };
 
     const onEditRecord = (index: number, record?: any) => {
