@@ -8,6 +8,7 @@ import LinkOrganizerTabBrand from './LinkOrganizerTabBrand';
 import LinkOrganizerTabProductBrand from './LinkOrganizerTabProductBrand';
 import LinkOrganizerTabProduct from './LinkOrganizerTabProduct';
 import LinkOrganizerTabCreator from './LinkOrganizerTabCreator';
+import CustomTab from './CustomTab';
 
 const LinkOrganizer: React.FC<RouteComponentProps> = ({ location }) => {
   const [selectedTab, setSelectedTab] = useState<string>('brand');
@@ -39,6 +40,9 @@ const LinkOrganizer: React.FC<RouteComponentProps> = ({ location }) => {
           </Tabs.TabPane>
           <Tabs.TabPane tab="Creator" key="creator">
             <LinkOrganizerTabCreator />
+          </Tabs.TabPane>
+          <Tabs.TabPane tab="Custom" key="custom">
+            <CustomTab />
           </Tabs.TabPane>
         </Tabs>
       </>
