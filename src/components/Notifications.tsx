@@ -1,7 +1,7 @@
 import { BellOutlined, CloseOutlined } from '@ant-design/icons';
 /* import { Client } from '@stomp/stompjs'; */
 import { Button, Col, Dropdown, Menu, Row } from 'antd';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 interface NotificationsProps {}
 
