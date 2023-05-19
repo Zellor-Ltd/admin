@@ -1,5 +1,5 @@
 import { BellOutlined, CloseOutlined } from '@ant-design/icons';
-import { Client } from '@stomp/stompjs';
+/* import { Client } from '@stomp/stompjs'; */
 import { Button, Col, Dropdown, Menu, Row } from 'antd';
 import React, { useEffect, useState } from 'react';
 
@@ -9,7 +9,7 @@ export const Notifications: React.FC<NotificationsProps> = () => {
   const [showAlerts, setShowAlerts] = useState<boolean>(false);
   const [messages, setMessages] = useState<string[]>([]);
 
-  useEffect(() => {
+  /* useEffect(() => {
     const [brokerURL, login, passcode, exchange] =
       process.env.REACT_APP_STOMP_SERVER?.split('|') || [];
     const client = new Client({
@@ -29,7 +29,7 @@ export const Notifications: React.FC<NotificationsProps> = () => {
     return () => {
       client.deactivate();
     };
-  }, []);
+  }, []); */
 
   const removeMessage = (index: number) => {
     setMessages([...messages.slice(0, index), ...messages.slice(index + 1)]);
