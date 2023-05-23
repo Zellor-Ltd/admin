@@ -23,6 +23,12 @@ const LinkOrganizer: React.FC<RouteComponentProps> = ({ location }) => {
         <PageHeader
           title="Link Organizer"
           className="mb-n05"
+          /* extra={selectedTab === 'custom' && <Button
+          key="1"
+          onClick={() => editBrand(filterBrand().length)}
+        >
+          New Item
+        </Button>} */
         />
         <Tabs
           className="tab-page"

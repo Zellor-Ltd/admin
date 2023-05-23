@@ -1,4 +1,4 @@
-import { Button, Col, Form, Input, Row, Select, message } from "antd";
+import { Button, Col, Form, Image, Input, Row, Select, message } from "antd";
 import SimpleSelect from "components/select/SimpleSelect";
 import { useRequest } from "hooks/useRequest";
 import { SelectOption } from "interfaces/SelectOption";
@@ -28,9 +28,9 @@ const CustomTabDetails: React.FC<CustomTabDetailsProps> = ({links}) => {
         return response.results;
     };
 
-    const filterOption = (input: string, option: any) => {
-      return option?.children?.toUpperCase().includes(input?.toUpperCase());
-    };
+    useEffect(() => {
+      console.log(links)
+    }, [])
 
     const onFinish = async () => {
       setLoading(true);
@@ -62,7 +62,7 @@ const CustomTabDetails: React.FC<CustomTabDetailsProps> = ({links}) => {
                 </Form.Item>
               </Col>
               <Col xs={24} lg={12}>
-                <p className="mb-05">Add Link</p>
+                <p className="mb-05">Select new Link</p>
                 <DebounceSelect 
                   fetchOptions={(value) => fetch(value)}
                   style={{ width: '100%' }}
@@ -76,8 +76,13 @@ const CustomTabDetails: React.FC<CustomTabDetailsProps> = ({links}) => {
                     label: "'feed']['title'"
                   }}
                 />
-              </Col><Col span={24}>
-               
+              </Col>
+              <Col span={24}><div>
+                {links.map((item) => {return (
+                  <div className="custom-link-item">
+                    <Image height={150} src={item.feed.package[0].thumbnailUrl} />
+                    <p><a>{item.feed.package[0].videoUrl.substring(0,20)}...</a><br/>{item.feed.shortDescription}<br/>{item.feed.videoType.join("/")}</p>
+                  </div>)})}</div>
             </Col>
           </Row>
           <Row gutter={8} justify="end">
