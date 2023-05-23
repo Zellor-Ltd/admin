@@ -14,7 +14,7 @@ import LinkOrganizerTabCreator from './LinkOrganizerTabCreator';
 import { EditOutlined } from '@ant-design/icons';
 import { ColumnsType } from 'antd/lib/table';
 import { useRequest } from 'hooks/useRequest';
-import { fetchCustomLinkLists, updateCustomLinkList } from 'services/DiscoClubService';
+import { fetchCustomLinkLists } from 'services/DiscoClubService';
 import CustomTabDetails from './CustomTabDetails';
 
 const LinkOrganizer: React.FC<RouteComponentProps> = ({ location }) => {

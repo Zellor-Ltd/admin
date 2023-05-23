@@ -1089,7 +1089,7 @@ export const fetchCustomLinkLists = (params: any) =>
 export const fetchCustomLinks = (params: any) =>
   instance.get(`Disco/LinkCustom/Adm/SearchLinks/${params}`);  
 
-export const updateCustomLinkList = (params: any) => {
+export const saveCustomLinkList = (params: any) => {
   if (params.id)     
     instance.post('Disco/LinkCustom/Adm/Update', params);  
   else

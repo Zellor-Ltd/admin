@@ -1,14 +1,9 @@
 import { Button, Col, Form, Image, Input, Row, Select, message } from "antd";
-import SimpleSelect from "components/select/SimpleSelect";
 import { useRequest } from "hooks/useRequest";
-import { SelectOption } from "interfaces/SelectOption";
-import { filter } from "lodash";
 import { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { fetchCustomLinks, updateCustomLinkList } from "services/DiscoClubService";
+import { fetchCustomLinks, saveCustomLinkList } from "services/DiscoClubService";
 import { DebounceSelect } from 'components/select/DebounceSelect'
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
 
 interface CustomTabDetailsProps {
     customList?: any;
@@ -20,27 +15,36 @@ const CustomTabDetails: React.FC<CustomTabDetailsProps> = ({customList}) => {
     const { doFetch } = useRequest({ setLoading });
     const history = useHistory();
     const [form] = Form.useForm();
-    const [linkList, setLinkList] = useState<any[]>([]);
+    const [itemLinks, setItemLinks] = useState<any[]>(customList?.links ?? []);
+    const [_, setQueriedLinks] = useState<any[]>([]);
     const [selectedLink, setSelectedLink] = useState<any>();
     const [focusIndex, setFocusIndex] = useState<number>(0);
+
+    //all links = fetched, populating debounceselect
+    //item links = initial, updated as needed
+
+    useEffect(() => {
+      setItemLinks([...itemLinks, selectedLink])
+    }, [selectedLink])
 
     const fetch = async (query: string) => {
         const response = await doFetch(() => fetchCustomLinks(query)
         );
-        setLinkList(response.results);
+        setQueriedLinks(response.results);
         return response.results;
     };
 
     const onFinish = async () => {
       setLoading(true);
       try {
-        const role = form.getFieldsValue(true);
-        role.description = form.getFieldValue('description');
-        /* await */ /* saveRole(role); */
-        setLoading(false);
-        message.success('Register updated with success.');
+        const customListForm = form.getFieldsValue(true);
+        customListForm.links = itemLinks;
+        saveCustomLinkList(customListForm); 
+        message.success('List saved with success.');
         history.goBack();
       } catch (error) {
+        message.error('Something went wrong. Try again later.');
+      } finally {
         setLoading(false);
       }
     };
@@ -76,13 +80,20 @@ const CustomTabDetails: React.FC<CustomTabDetailsProps> = ({customList}) => {
                   }}
                 />
               </Col>
-              <Col span={24}><div className="custom-link-container">
-                {customList.links?.map((item, index) => {return (
-                  <div className={index === focusIndex ? "custom-link-item carousel-focus" : "custom-link-item"} onClick={() => setFocusIndex(index)}>
-                    <Image height={150} src={item.feed.package[0].thumbnailUrl} />
-                    <p><a>{item.feed.package[0].videoUrl.substring(0,20)}...</a><br/>{item.feed.shortDescription}<br/>Type: {item.feed.videoType.join("/")}</p>
-                    </div>
-                  )})}</div>
+              <Col span={24}>
+                <div className="custom-link-container">
+                  {itemLinks.length && itemLinks.map((item, index) => {
+                    return (
+                      <div key={item ? item?.id : '0'} className={index === focusIndex ? "custom-link-item carousel-focus" : "custom-link-item"} onClick={() => setFocusIndex(index)}>
+                        <Image height={150} src={item?.feed?.package[0]?.thumbnailUrl} />
+                        <p>
+                          <a>{item?.feed?.package[0]?.videoUrl?.substring(0,20)}{item?.feed?.package[0]?.videoUrl && '...'}</a>
+                          <br/>{item?.feed?.shortDescription?.substring(0,20)}{item?.feed?.shortDescription && '...'}
+                          <br/>Type: {item?.feed?.videoType?.join("/")}
+                        </p>
+                      </div>
+                    )})}
+                </div>
             </Col>
           </Row>
           <Row gutter={8} justify="end">
