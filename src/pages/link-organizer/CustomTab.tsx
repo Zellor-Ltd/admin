@@ -5,7 +5,7 @@ import { useRequest } from "hooks/useRequest";
 import { useEffect, useState } from "react";
 import CustomTabDetails from "./CustomTabDetails";
 import { Link, useHistory } from "react-router-dom";
-import { fetchLinkBrand, updateLinkBrand } from "services/DiscoClubService";
+import { fetchCustomLinkLists, updateCustomLinkList } from "services/DiscoClubService";
 
 
 const CustomTab: React.FC<any> = () => {
@@ -28,7 +28,7 @@ const CustomTab: React.FC<any> = () => {
 
     const fetch = async () => {
         const response = await doFetch(() =>
-            fetchLinkBrand({})
+            fetchCustomLinkLists({})
         );
         setListData(response.results)
     };
@@ -42,7 +42,7 @@ const CustomTab: React.FC<any> = () => {
     const onSaveRecord = async (record: any, setLoadingLocal: any) => {
         try {
             setLoadingLocal(true)
-            await updateLinkBrand(record)
+            await updateCustomLinkList(record)
             setDetails(false);
         } finally {
             setLoadingLocal(true)
@@ -70,9 +70,6 @@ const CustomTab: React.FC<any> = () => {
             ),
             dataIndex: 'name',
             width: '30%',
-            /* render: (productBrand: any) => (
-                productBrand?.brandName
-            ), */
             align: 'center',
         },
         {
@@ -120,7 +117,7 @@ const CustomTab: React.FC<any> = () => {
             )}
 
             {details && (
-                <CustomTabDetails list={currentRecord} />
+                <CustomTabDetails links={currentRecord.links} />
             )}
         </>
     );

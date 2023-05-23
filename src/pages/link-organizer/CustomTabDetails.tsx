@@ -1,17 +1,37 @@
-import { Button, Col, Form, Input, Row, message } from "antd";
+import { Button, Col, Form, Input, Row, Select, message } from "antd";
 import { SimpleCarousel } from "components/SimpleCarousel";
-import { useState } from "react";
+import SimpleSelect from "components/select/SimpleSelect";
+import { useRequest } from "hooks/useRequest";
+import { SelectOption } from "interfaces/SelectOption";
+import { filter } from "lodash";
+import { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
+import { fetchCustomLinks, updateCustomLinkList } from "services/DiscoClubService";
+import { DebounceSelect } from 'components/select/DebounceSelect'
 
 interface CustomTabDetailsProps {
-    list: any;
+    links: any;
 }
 
 
-const CustomTabDetails: React.FC<CustomTabDetailsProps> = ({list}) => {
+const CustomTabDetails: React.FC<CustomTabDetailsProps> = ({links}) => {
     const [loading, setLoading] = useState(false);
+    const { doFetch } = useRequest({ setLoading });
     const history = useHistory();
     const [form] = Form.useForm();
+    const [linkList, setLinkList] = useState<any[]>([]);
+    const [selectedLink, setSelectedLink] = useState<any>();
+
+    const fetch = async (query: string) => {
+        const response = await doFetch(() => fetchCustomLinks(query)
+        );
+        setLinkList(response.results);
+        return response.results;
+    };
+
+    const filterOption = (input: string, option: any) => {
+      return option?.children?.toUpperCase().includes(input?.toUpperCase());
+    };
 
     const onFinish = async () => {
       setLoading(true);
@@ -33,29 +53,41 @@ const CustomTabDetails: React.FC<CustomTabDetailsProps> = ({list}) => {
           name="roleForm"
           layout="vertical"
           form={form}
-          initialValues={list}
+          initialValues={links}
           onFinish={onFinish}
         >
           <Row gutter={8}>
-              <Col span={24}>
-                <Form.Item label="Name" name="name">
-                  <Input allowClear placeholder="Name" />
+              <Col xs={24} lg={12}>
+                <Form.Item label="List Name" name="name">
+                  <Input allowClear placeholder="Enter a name" />
                 </Form.Item>
               </Col>
-              <Col span={24}>
-                <p>select new link goes here</p>
+              <Col xs={24} lg={12}>
+                <p className="mb-05">Add Link</p>
+                <DebounceSelect 
+                  fetchOptions={(value) => fetch(value)}
+                  style={{ width: '100%' }}
+                  placeholder="Type to search"
+                  onChange={(_, entity) =>
+                    setSelectedLink(entity)
+                  }
+                  optionMapping={{
+                    key: 'id',
+                    value: 'id',
+                    label: "'feed']['title'"
+                  }}
+                />
               </Col><Col span={24}>
-                <SimpleCarousel content={list}/>
+                 {/* <SimpleCarousel links={links}/>  */}
             </Col>
           </Row>
-          <Row gutter={8} justify="end">
+          <Row gutter={8} justify="end" className="mt-2">
             <Col>
               <Button type="default" onClick={() => history.goBack()}>
                 Cancel
               </Button>
             </Col>
             <Col>
-              <Col>
                 <Button
                   type="primary"
                   htmlType="submit"
@@ -64,7 +96,6 @@ const CustomTabDetails: React.FC<CustomTabDetailsProps> = ({list}) => {
                 >
                   Save Changes
                 </Button>
-              </Col>
             </Col>
           </Row>
         </Form>

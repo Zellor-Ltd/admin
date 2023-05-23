@@ -1,24 +1,25 @@
-import React from 'react';
-import { Carousel } from 'antd';
-import { FeedItem } from 'interfaces/FeedItem';
+import React, {useEffect} from 'react';
+import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
+import { Carousel } from 'react-responsive-carousel';
 
-export const SimpleCarousel: React.FC<{
-    content: any[]
-  }> = ({ content }) => {  
-    
-/*   const onChange = (currentSlide: number) => {
-    console.log(currentSlide);
-  }; */
-
+/* <Carousel  afterChange={onChange} >
+{links.map((item) => {
   return (
-    <Carousel /* afterChange={onChange} */>
-      {content.map((item) => {
-        return (
-          <div>
-          <h3 className='carousel-item'>{item.id}</h3>
-        </div>
-      )})}
-    </Carousel>
-  );
+    <div>
+    <h3 className='carousel-item'>{item.id}</h3>
+  </div>
+)})}
+</Carousel> */
 
-};
+export const SimpleCarousel = ({links}) => {
+
+        return (
+          <Carousel showThumbs={false}>
+            {links.map((item, index) => {
+            return (
+              <div>
+              <p>{index}</p>
+            </div>)})}
+            </Carousel>
+        );
+    }; 

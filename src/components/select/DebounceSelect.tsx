@@ -5,7 +5,7 @@ import debounce from 'lodash/debounce';
 import { SelectOption } from '../../interfaces/SelectOption';
 
 interface DebounceSelectProps {
-  fetchOptions: (search: string) => Promise<any[]>;
+  fetchOptions: (search: string) => any;
   onChange: (value: string, entity?: any) => void;
   optionMapping: SelectOption;
   placeholder: string;
@@ -15,7 +15,7 @@ interface DebounceSelectProps {
   style?: React.CSSProperties;
 }
 
-const DebounceSelect: React.FC<DebounceSelectProps> = ({
+export const DebounceSelect: React.FC<DebounceSelectProps> = ({
   fetchOptions,
   onChange,
   optionMapping,
@@ -32,10 +32,11 @@ const DebounceSelect: React.FC<DebounceSelectProps> = ({
   const fetchRef = useRef(0);
 
   const optionFactory = (option: any) => {
+    console.log(`${optionMapping.label}: ${option[optionMapping.label]}`)
     return {
       label: option[optionMapping.label],
       value: option[optionMapping.value],
-      key: option[optionMapping.value],
+      key: option[optionMapping.key],
     };
   };
 
@@ -105,6 +106,7 @@ const DebounceSelect: React.FC<DebounceSelectProps> = ({
         disabled={disabled}
         value={_selectedOption}
         loading={fetching}
+        style={style}
       />
     </div>
   );
