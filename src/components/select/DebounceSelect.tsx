@@ -32,7 +32,6 @@ export const DebounceSelect: React.FC<DebounceSelectProps> = ({
   const fetchRef = useRef(0);
 
   const optionFactory = (option: any) => {
-    console.log(`${optionMapping.label}: ${option[optionMapping.label]}`)
     return {
       label: option[optionMapping.label],
       value: option[optionMapping.value],

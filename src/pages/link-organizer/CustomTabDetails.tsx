@@ -1,5 +1,4 @@
 import { Button, Col, Form, Input, Row, Select, message } from "antd";
-import { SimpleCarousel } from "components/SimpleCarousel";
 import SimpleSelect from "components/select/SimpleSelect";
 import { useRequest } from "hooks/useRequest";
 import { SelectOption } from "interfaces/SelectOption";
@@ -78,10 +77,10 @@ const CustomTabDetails: React.FC<CustomTabDetailsProps> = ({links}) => {
                   }}
                 />
               </Col><Col span={24}>
-                 {/* <SimpleCarousel links={links}/>  */}
+               
             </Col>
           </Row>
-          <Row gutter={8} justify="end" className="mt-2">
+          <Row gutter={8} justify="end">
             <Col>
               <Button type="default" onClick={() => history.goBack()}>
                 Cancel
