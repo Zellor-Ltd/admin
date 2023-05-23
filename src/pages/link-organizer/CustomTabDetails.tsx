@@ -20,10 +20,8 @@ const CustomTabDetails: React.FC<CustomTabDetailsProps> = ({customList}) => {
     const [selectedLink, setSelectedLink] = useState<any>();
     const [focusIndex, setFocusIndex] = useState<number>(0);
 
-    //all links = fetched, populating debounceselect
-    //item links = initial, updated as needed
-
     useEffect(() => {
+      if (selectedLink)
       setItemLinks([...itemLinks, selectedLink])
     }, [selectedLink])
 
@@ -71,8 +69,9 @@ const CustomTabDetails: React.FC<CustomTabDetailsProps> = ({customList}) => {
                   style={{ width: '100%' }}
                   placeholder="Type to search"
                   onChange={(_, entity) =>
+                    {if (entity)
                     setSelectedLink(entity)
-                  }
+                  }}
                   optionMapping={{
                     key: 'id',
                     value: 'id',
@@ -80,11 +79,12 @@ const CustomTabDetails: React.FC<CustomTabDetailsProps> = ({customList}) => {
                   }}
                 />
               </Col>
+              {itemLinks.length && 
               <Col span={24}>
                 <div className="custom-link-container">
-                  {itemLinks.length && itemLinks.map((item, index) => {
+                  {itemLinks.map((item, index) => {
                     return (
-                      <div key={item ? item?.id : '0'} className={index === focusIndex ? "custom-link-item carousel-focus" : "custom-link-item"} onClick={() => setFocusIndex(index)}>
+                      <div key={item ? item?.id : 0} className={index === focusIndex ? "custom-link-item carousel-focus" : "custom-link-item"} onClick={() => setFocusIndex(index)}>
                         <Image height={150} src={item?.feed?.package[0]?.thumbnailUrl} />
                         <p>
                           <a>{item?.feed?.package[0]?.videoUrl?.substring(0,20)}{item?.feed?.package[0]?.videoUrl && '...'}</a>
@@ -94,7 +94,7 @@ const CustomTabDetails: React.FC<CustomTabDetailsProps> = ({customList}) => {
                       </div>
                     )})}
                 </div>
-            </Col>
+            </Col>}
           </Row>
           <Row gutter={8} justify="end">
             <Col>
