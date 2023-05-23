@@ -22,6 +22,7 @@ const CustomTabDetails: React.FC<CustomTabDetailsProps> = ({links}) => {
     const [form] = Form.useForm();
     const [linkList, setLinkList] = useState<any[]>([]);
     const [selectedLink, setSelectedLink] = useState<any>();
+    const [focusIndex, setFocusIndex] = useState<number>(0);
 
     const fetch = async (query: string) => {
         const response = await doFetch(() => fetchCustomLinks(query)
@@ -76,10 +77,10 @@ const CustomTabDetails: React.FC<CustomTabDetailsProps> = ({links}) => {
                 />
               </Col>
               <Col span={24}><div className="custom-link-container">
-                {links?.map((item) => {return (
-                  <div className="custom-link-item">
+                {links?.map((item, index) => {return (
+                  <div className={index === focusIndex ? "custom-link-item carousel-focus" : "custom-link-item"} onClick={() => setFocusIndex(index)}>
                     <Image height={150} src={item.feed.package[0].thumbnailUrl} />
-                    <p><a>{item.feed.package[0].videoUrl.substring(0,20)}...</a><br/>{item.feed.shortDescription}<br/>{item.feed.videoType.join("/")}</p>
+                    <p><a>{item.feed.package[0].videoUrl.substring(0,20)}...</a><br/>{item.feed.shortDescription}<br/>Type: {item.feed.videoType.join("/")}</p>
                     </div>
                   )})}</div>
             </Col>
