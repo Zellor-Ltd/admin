@@ -11,11 +11,11 @@ import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 
 interface CustomTabDetailsProps {
-    links?: any;
+    customList?: any;
 }
 
 
-const CustomTabDetails: React.FC<CustomTabDetailsProps> = ({links}) => {
+const CustomTabDetails: React.FC<CustomTabDetailsProps> = ({customList}) => {
     const [loading, setLoading] = useState(false);
     const { doFetch } = useRequest({ setLoading });
     const history = useHistory();
@@ -51,7 +51,7 @@ const CustomTabDetails: React.FC<CustomTabDetailsProps> = ({links}) => {
           name="roleForm"
           layout="vertical"
           form={form}
-          initialValues={links}
+          initialValues={customList}
           onFinish={onFinish}
         >
           <Row gutter={8}>
@@ -61,7 +61,7 @@ const CustomTabDetails: React.FC<CustomTabDetailsProps> = ({links}) => {
                 </Form.Item>
               </Col>
               <Col xs={24} lg={12}>
-                <p className="mb-05">Select new Link</p>
+                <p className="mb-05">Insert new Link</p>
                 <DebounceSelect 
                   fetchOptions={(value) => fetch(value)}
                   style={{ width: '100%' }}
@@ -77,7 +77,7 @@ const CustomTabDetails: React.FC<CustomTabDetailsProps> = ({links}) => {
                 />
               </Col>
               <Col span={24}><div className="custom-link-container">
-                {links?.map((item, index) => {return (
+                {customList.links?.map((item, index) => {return (
                   <div className={index === focusIndex ? "custom-link-item carousel-focus" : "custom-link-item"} onClick={() => setFocusIndex(index)}>
                     <Image height={150} src={item.feed.package[0].thumbnailUrl} />
                     <p><a>{item.feed.package[0].videoUrl.substring(0,20)}...</a><br/>{item.feed.shortDescription}<br/>Type: {item.feed.videoType.join("/")}</p>

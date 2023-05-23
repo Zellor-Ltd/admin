@@ -160,7 +160,7 @@ const CustomTab = () => {
             className="mb-n05"
             
           />
-          <CustomTabDetails links={currentCustomList?.links} />
+          <CustomTabDetails customList={currentCustomList} />
         </>
       )}
     </div>
