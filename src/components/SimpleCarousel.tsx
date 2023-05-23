@@ -3,7 +3,7 @@ import { Carousel } from 'antd';
 import { FeedItem } from 'interfaces/FeedItem';
 
 export const SimpleCarousel: React.FC<{
-    content: FeedItem[]
+    content: any[]
   }> = ({ content }) => {  
     
 /*   const onChange = (currentSlide: number) => {
@@ -15,7 +15,7 @@ export const SimpleCarousel: React.FC<{
       {content.map((item) => {
         return (
           <div>
-          <h3 className='carousel-item'>{item}</h3>
+          <h3 className='carousel-item'>{item.id}</h3>
         </div>
       )})}
     </Carousel>

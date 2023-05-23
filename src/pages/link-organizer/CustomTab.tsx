@@ -3,9 +3,9 @@ import { Table, Tooltip } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import { useRequest } from "hooks/useRequest";
 import { useEffect, useState } from "react";
+import CustomTabDetails from "./CustomTabDetails";
 import { Link, useHistory } from "react-router-dom";
 import { fetchLinkBrand, updateLinkBrand } from "services/DiscoClubService";
-import LinkOrganizerDetail from "./LinkOrganizerDetail";
 
 
 const CustomTab: React.FC<any> = () => {
@@ -120,10 +120,7 @@ const CustomTab: React.FC<any> = () => {
             )}
 
             {details && (
-                <LinkOrganizerDetail
-                    record={currentRecord}
-                    onSave={onSaveRecord}
-                    onCancel={onCancelRecord} />
+                <CustomTabDetails list={currentRecord} />
             )}
         </>
     );
