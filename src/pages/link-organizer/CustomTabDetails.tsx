@@ -7,6 +7,8 @@ import { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { fetchCustomLinks, updateCustomLinkList } from "services/DiscoClubService";
 import { DebounceSelect } from 'components/select/DebounceSelect'
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 
 interface CustomTabDetailsProps {
     links: any;
@@ -77,12 +79,13 @@ const CustomTabDetails: React.FC<CustomTabDetailsProps> = ({links}) => {
                   }}
                 />
               </Col>
-              <Col span={24}><div>
+              <Col span={24}><div className="custom-link-container">
                 {links.map((item) => {return (
                   <div className="custom-link-item">
                     <Image height={150} src={item.feed.package[0].thumbnailUrl} />
                     <p><a>{item.feed.package[0].videoUrl.substring(0,20)}...</a><br/>{item.feed.shortDescription}<br/>{item.feed.videoType.join("/")}</p>
-                  </div>)})}</div>
+                    </div>
+                  )})}</div>
             </Col>
           </Row>
           <Row gutter={8} justify="end">
