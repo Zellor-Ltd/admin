@@ -1059,26 +1059,39 @@ export const deleteMasthead = (params: Banner) =>
 export const deleteLink = (id: string) =>
   instance.delete(`Disco/Link/Adm/Remove/${id}`);
 
-export const fetchLinkBrand = (param: any) =>
-  instance.post('Disco/LinkBrand/adm/search', param);
+export const fetchLinkBrand = (params: any) =>
+  instance.post('Disco/LinkBrand/adm/search', params);
 
-export const updateLinkBrand = (param: any) =>
-  instance.post('Disco/LinkBrand/adm/update', param);  
+export const updateLinkBrand = (params: any) =>
+  instance.post('Disco/LinkBrand/adm/update', params);  
 
-export const fetchLinkProductBrand = (param: any) =>
-  instance.post('Disco/LinkProductBrand/adm/search', param);  
+export const fetchLinkProductBrand = (params: any) =>
+  instance.post('Disco/LinkProductBrand/adm/search', params);  
 
-export const updateLinkProductBrand = (param: any) =>
-  instance.post('Disco/LinkProductBrand/adm/update', param);  
+export const updateLinkProductBrand = (params: any) =>
+  instance.post('Disco/LinkProductBrand/adm/update', params);  
 
-export const fetchLinkProduct = (param: any) =>
-  instance.post('Disco/LinkProduct/adm/search', param);  
+export const fetchLinkProduct = (params: any) =>
+  instance.post('Disco/LinkProduct/adm/search', params);  
 
-export const updateLinkProduct = (param: any) =>
-  instance.post('Disco/LinkProduct/adm/update', param);  
+export const updateLinkProduct = (params: any) =>
+  instance.post('Disco/LinkProduct/adm/update', params);  
 
-export const fetchLinkCreator = (param: any) =>
-  instance.post('Disco/LinkCreator/adm/search', param);
+export const fetchLinkCreator = (params: any) =>
+  instance.post('Disco/LinkCreator/adm/search', params);
 
-export const updateLinkCreator = (param: any) =>
-  instance.post('Disco/LinkCreator/adm/update', param);  
+export const updateLinkCreator = (params: any) =>
+  instance.post('Disco/LinkCreator/adm/update', params);  
+
+export const fetchCustomLinkLists = (params: any) =>
+  instance.post('Disco/LinkCustom/Adm/Search/', params);
+
+export const fetchCustomLinks = (params: any) =>
+  instance.get(`Disco/LinkCustom/Adm/SearchLinks/${params}`);  
+
+export const saveCustomLinkList = (params: any) => {
+  if (params.id)     
+    instance.post('Disco/LinkCustom/Adm/Update', params);  
+  else
+    instance.post('Disco/LinkCustom/Adm/Add', params);  
+};  

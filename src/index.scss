@@ -206,6 +206,36 @@ body {
   overflow-y: clip;
 }
 
+.custom-link-container {
+  display: flex;
+  overflow-x: scroll;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+.custom-link-item {
+  border: 1px solid #d9d9d9;
+  min-width: 200px;
+  height: 250px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  flex: initial;
+}
+
+.carousel-focus {
+  border: 0.4px solid #1890ff;
+}
+
+.custom-link-item p {
+  margin-bottom: 0;
+  margin-top: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .interests .ant-table-body {
   overflow: scroll !important;
   height: 100% !important;
@@ -520,6 +550,15 @@ body {
   }
 }
 
+.carousel-item {
+  margin: 0;
+  height: '160px';
+  color: '#fff';
+  line-height: '160px';
+  text-align: 'center';
+  background: '#364d79';
+}
+
 .product-sketch-picker {
   transform: scale(0.75) !important;
   margin-top: -10px;
@@ -531,6 +570,11 @@ body {
 
 .pt-0 {
   padding-top: 0;
+}
+
+.px-0 {
+  padding-left: 0;
+  padding-right: 0;
 }
 
 .mx-0 {
@@ -573,7 +617,6 @@ body {
 
 .my-05 {
   margin-top: 0.5rem;
-
   margin-bottom: 0.5rem;
 }
 
