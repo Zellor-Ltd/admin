@@ -5,33 +5,32 @@ import {
   Tabs,
   Tooltip,
 } from 'antd';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link, RouteComponentProps, useHistory } from 'react-router-dom';
-import LinkOrganizerTabProductBrand from './LinkOrganizerTabProductBrand';
 import { EditOutlined } from '@ant-design/icons';
 import { ColumnsType } from 'antd/lib/table';
 import { useRequest } from 'hooks/useRequest';
-import { fetchCustomLinkLists, fetchLinkBrand, fetchLinkCreator, fetchLinkProduct, updateLinkBrand } from 'services/DiscoClubService';
+import { fetchCustomLinkLists, fetchLinkBrand, fetchLinkCreator, fetchLinkProduct, fetchLinkProductBrand, updateLinkBrand } from 'services/DiscoClubService';
 import CustomDetails from './CustomDetails';
 import CopyValueToClipboard from 'components/CopyValueToClipboard';
 import moment from 'moment';
 import LinkOrganizerDetail from './LinkOrganizerDetail';
 
-const LinkOrganizer: React.FC<RouteComponentProps> = ({ location }) => {
+const LinkOrganizer: React.FC<RouteComponentProps> = () => {
   const [selectedTab, setSelectedTab] = useState<string>('brand');
   const [loading, setLoading] = useState(false);
   const { doFetch } = useRequest({ setLoading });
-  const [customLinkLists, setCustomLinkLists] = useState<any[]>([]);
   const [details, setDetails] = useState<boolean>(false);
-  const [currentCustomList, setCurrentCustomList] = useState<any>();
   const history = useHistory();
-  const [brands, setBrands] = useState<any[]>([]);
-  const [currentRecord, setCurrentRecord] = useState<any>();    
-  const [creators, setCreators] = useState<any[]>([]);
-  const [products, setProducts] = useState<any[]>([]);
-  //todo gather all fetched data in one state
-
-  //todo check if removelistener available
+  const [currentRecord, setCurrentRecord] = useState<any>(); 
+  const [fetchedData, setFetchedData] = useState<any>({
+    brands: [],
+    productBrands: [],
+    products: [],
+    creators: [],
+    customLinkLists: []
+  });
+  
   useEffect(() => {
       history.listen((_, action) => {
           if (action === 'POP' && details) setDetails(false);
@@ -39,48 +38,62 @@ const LinkOrganizer: React.FC<RouteComponentProps> = ({ location }) => {
   });
 
   useEffect(() => {
-    getBrandData();
-    getProductData();
-    getCreatorData();
-    getCustomData();
-  }, []);
+    getResources()
+  }, [])
 
-  const getBrandData = async () => {
-      const response = await doFetch(() =>
-          fetchLinkBrand({})
-      );
-      setBrands(response.results)
-  };
+  const getResources = useMemo(() => 
+    {const loadData = async () => {
 
-  const getProductData = async () => {
-      const response = await doFetch(() =>
-          fetchLinkProduct({})
-      );
-      setProducts(response.results)
-  };
+      const getBrandData = async () => {
+        const response = await doFetch(() =>
+            fetchLinkBrand({})
+        );
+        return response.results;
+      };
+      const getProductBrandData = async () => {
+          const response = await doFetch(() =>
+              fetchLinkProductBrand({})
+          );
+          return response.results;
+      };
+      const getProductData = async () => {
+          const response = await doFetch(() =>
+              fetchLinkProduct({})
+          );
+          return response.results;
+      };
+      const getCreatorData = async () => {
+          const response = await doFetch(() =>
+              fetchLinkCreator({})
+          );
+          return response.results;
+      };
+      const getCustomData = async () => {
+          const response = await doFetch(() =>
+              fetchCustomLinkLists({})
+          );
+          return response.results;
+      };
 
-  const getCreatorData = async () => {
-      const response = await doFetch(() =>
-          fetchLinkCreator({})
-      );
-      setCreators(response.results)
-  };
+      const brandData = await getBrandData();
+      const productBrandData = await getProductBrandData();
+      const productData = await getProductData();
+      const creatorData = await getCreatorData();
+      const customData = await getCustomData();
 
-  const getCustomData = async () => {
-      const response = await doFetch(() =>
-          fetchCustomLinkLists({})
-      );
-      setCustomLinkLists(response.results)
-  };
+      setFetchedData({
+      brands: brandData, productBrands: productBrandData, products: productData, creators: creatorData, customLinkLists: customData, 
+      })
+    }
+    return loadData
+}, [])
 
-  //todo test this
   const handleTabChange = (value: string) => {
     setSelectedTab(value);
   };
 
   const handleEditRecord = (record?: any) => {
-    //todo update this: if activetab is custom, this. else, setcurrentrecord
-    setCurrentCustomList(record);
+      setCurrentRecord(record);
     setDetails(true);
     history.push(window.location.pathname);
   };
@@ -100,17 +113,17 @@ const LinkOrganizer: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   const handleSaveCustomList = (record: any) => {
-    const listItem = customLinkLists.find(item => item.id === record.id)
+    const listItem = fetchedData.customLinkLists.find(item => item.id === record.id)
     if (!listItem){
-      refreshTable(record, customLinkLists.length)
+      refreshTable(record, fetchedData.customLinkLists.length)
       return
     }
-    const index = customLinkLists.indexOf(listItem)
+    const index = fetchedData.customLinkLists.indexOf(listItem)
     refreshTable(record, index);
   };
 
   const refreshTable = (record: any, index: number) => {
-      setCustomLinkLists(prev => [...prev.slice(0, index), record, ...prev.slice(index + 1)]);
+      setFetchedData({...fetchedData, customLinkLists: prev => [...prev.slice(0, index), record, ...prev.slice(index + 1)]});
   }
 
   const brandColumns: ColumnsType<any> = [
@@ -151,6 +164,131 @@ const LinkOrganizer: React.FC<RouteComponentProps> = ({ location }) => {
           width: '30%',
           render: (productBrand: any) => (
               productBrand?.brandName
+          ),
+          align: 'center',
+      },
+      {
+          title: (
+              <div style={{ display: 'grid', placeItems: 'stretch' }}>
+                  <div
+                      style={{
+                          textOverflow: 'ellipsis',
+                          overflow: 'hidden',
+                          whiteSpace: 'nowrap',
+                      }}
+                  >
+                      <Tooltip title="Links">Links</Tooltip>
+                  </div>
+              </div>
+          ),
+          dataIndex: 'links',
+          width: '5%',
+          render: (links: [any]) => (
+              links.length
+          ),
+          align: 'center',
+      },
+      {
+          title: (
+              <div style={{ display: 'grid', placeItems: 'stretch' }}>
+                  <div
+                      style={{
+                          textOverflow: 'ellipsis',
+                          overflow: 'hidden',
+                          whiteSpace: 'nowrap',
+                      }}
+                  >
+                      <Tooltip title="Last Update">Last Update</Tooltip>
+                  </div>
+              </div>
+          ),
+          dataIndex: 'hLastUpdate',
+          width: '10%',
+          render: (datetime: Date) =>
+              datetime
+                  ? new Date(datetime).toLocaleDateString('en-GB') +
+                  ' ' +
+                  new Date(datetime).toLocaleTimeString('en-GB')
+                  : '-',
+          align: 'center',
+          sorter: (a, b): any => {
+              if (a.iLastUpdate && b.iLastUpdate)
+                  return (
+                      moment(a.iLastUpdate as Date).unix() -
+                      moment(b.iLastUpdate).unix()
+                  );
+              else if (a.iLastUpdate) return -1;
+              else if (b.iLastUpdate) return 1;
+              else return 0;
+          },
+      },
+      {
+          title: (
+              <div style={{ display: 'grid', placeItems: 'stretch' }}>
+                  <div
+                      style={{
+                          textOverflow: 'ellipsis',
+                          overflow: 'hidden',
+                          whiteSpace: 'nowrap',
+                      }}
+                  >
+                      <Tooltip title="Actions">Actions</Tooltip>
+                  </div>
+              </div>
+          ),
+          key: 'action',
+          width: '5%',
+          align: 'right',
+          render: (_, record) => (
+              <>
+                  <Link
+                      to={{ pathname: window.location.pathname, state: record }}
+                      onClick={() => handleEditRecord(record)}>
+                      <EditOutlined />
+                  </Link>
+              </>
+          ),
+      },
+  ];
+
+  const productBrandColumns: ColumnsType<any> = [
+      {
+          title: (
+              <div style={{ display: 'grid', placeItems: 'stretch' }}>
+                  <div
+                      style={{
+                          textOverflow: 'ellipsis',
+                          overflow: 'hidden',
+                          whiteSpace: 'nowrap',
+                      }}
+                  >
+                      <Tooltip title="id">id</Tooltip>
+                  </div>
+              </div>
+          ),
+          dataIndex: 'id',
+          width: '3%',
+          render: id => <CopyValueToClipboard value={id} />,
+          align: 'center',
+      },
+      {
+          title: (
+              <div style={{ display: 'grid', placeItems: 'stretch' }}>
+                  <div
+                      style={{
+                          textOverflow: 'ellipsis',
+                          overflow: 'hidden',
+                          whiteSpace: 'nowrap',
+                      }}
+                  >
+                      <Tooltip title="Product Brand">Product Brand</Tooltip>
+                  </div>
+              </div>
+          ),
+          dataIndex: 'productBrand',
+          width: '30%',
+          render: (productBrand: any) => (
+              productBrand.brandName
           ),
           align: 'center',
       },
@@ -582,7 +720,7 @@ const LinkOrganizer: React.FC<RouteComponentProps> = ({ location }) => {
               rowClassName={(_, index) => `scrollable-row-${index}`}
               rowKey="id"
               columns={brandColumns}
-              dataSource={brands}
+              dataSource={fetchedData.brands}
               loading={loading}
               pagination={false}
               scroll={{ y: 240, x: true }}
@@ -590,14 +728,23 @@ const LinkOrganizer: React.FC<RouteComponentProps> = ({ location }) => {
           />
           </Tabs.TabPane>
           <Tabs.TabPane tab="Product Brand" key="productBrand">
-            <LinkOrganizerTabProductBrand />
+            <Table  
+                rowClassName={(_, index) => `scrollable-row-${index}`}
+                rowKey="id"
+                columns={productBrandColumns}
+                dataSource={fetchedData.productBrands}
+                loading={loading}
+                pagination={false}
+                scroll={{ y: 240, x: true }}
+                size="small"
+            />
           </Tabs.TabPane>
           <Tabs.TabPane tab="Product" key="product">
             <Table
                 rowClassName={(_, index) => `scrollable-row-${index}`}
                 rowKey="id"
                 columns={productColumns}
-                dataSource={products}
+                dataSource={fetchedData.products}
                 loading={loading}
                 pagination={false}
                 scroll={{ y: 240, x: true }}
@@ -609,7 +756,7 @@ const LinkOrganizer: React.FC<RouteComponentProps> = ({ location }) => {
                     rowClassName={(_, index) => `scrollable-row-${index}`}
                     rowKey="id"
                     columns={creatorColumns}
-                    dataSource={creators}
+                    dataSource={fetchedData.creators}
                     loading={loading}
                     pagination={false}
                     scroll={{ y: 240, x: true }}
@@ -621,7 +768,7 @@ const LinkOrganizer: React.FC<RouteComponentProps> = ({ location }) => {
                 rowClassName={(_, index) => `scrollable-row-${index}`}
                 rowKey="id"
                 columns={customColumns}
-                dataSource={customLinkLists}
+                dataSource={fetchedData.customLinkLists}
                 loading={loading}
                 pagination={false}
                 scroll={{ y: 240, x: true }}
@@ -631,18 +778,17 @@ const LinkOrganizer: React.FC<RouteComponentProps> = ({ location }) => {
         </Tabs>
         </>
       )}
-      {/* //todo update tabkey on tab change to display conditionally */}
-      {details && (
+      {selectedTab === 'custom' && details && (
         <>      
           <PageHeader
-            title={currentCustomList ? `Edit ${currentCustomList.name}` : "New Link List"}
+            title={currentRecord ? `Edit ${currentRecord.name}` : "New Link List"}
             className="mb-n05"
             
           />
-          <CustomDetails customList={currentCustomList} onSave={handleSaveCustomList} />
+          <CustomDetails customList={currentRecord} onSave={handleSaveCustomList} />
         </>
       )}
-      {details && (
+      {selectedTab !== 'custom' && details && (
           <LinkOrganizerDetail
               record={currentRecord}
               onSave={handleSaveRecord}
