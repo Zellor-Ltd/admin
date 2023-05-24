@@ -1,14 +1,17 @@
 import { Button, Col, Form, Image, Input, Row, Select, message } from "antd";
 import { useRequest } from "hooks/useRequest";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { fetchCustomLinks, saveCustomLinkList } from "services/DiscoClubService";
 import { DebounceSelect } from 'components/select/DebounceSelect'
+import { DndProvider, useDrop } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
+import { useDrag } from 'react-dnd'
+import update from 'immutability-helper';
 
 interface CustomTabDetailsProps {
     customList?: any;
 }
-
 
 const CustomTabDetails: React.FC<CustomTabDetailsProps> = ({customList}) => {
     const [loading, setLoading] = useState(false);
@@ -47,6 +50,67 @@ const CustomTabDetails: React.FC<CustomTabDetailsProps> = ({customList}) => {
       }
     };
 
+    const type = 'carousel-item'
+    const DraggableBodyRow = ({
+      index,
+      className,
+      key,
+      onClick,
+      children
+    }: any) => {
+      const ref = useRef<HTMLDivElement>(null);
+      const [{ isOver }, drop] = useDrop({
+        accept: type,
+        collect: monitor => {
+          const { index: dragIndex } = (monitor.getItem() || {}) as any;
+          if (dragIndex === index) {
+            return {};
+          }
+          return {
+            isOver: monitor.isOver(),
+          };
+        },
+        drop: (item: { index: number }) => {
+          moveRow(item.index, index);
+        },
+      });
+      const [, drag] = useDrag({
+        type,
+        item: { index },
+        collect: monitor => ({
+          isDragging: monitor.isDragging(),
+        }),
+      });
+      drop(drag(ref));
+
+      const moveRow = useCallback(
+        (dragIndex: number, hoverIndex: number) => {
+          if (!itemLinks.length) return;
+          const dragRow = itemLinks[dragIndex];
+          setItemLinks(
+            update(itemLinks, {
+              $splice: [
+                [dragIndex, 1],
+                [hoverIndex, 0, dragRow],
+              ],
+            })
+          );
+        },
+        [itemLinks]
+      );
+  
+      return (
+        <div
+          ref={ref}
+          className={className}
+          style={{ cursor: 'move' }}
+          key={key}
+          onClick={onClick}
+        >{children}
+        </div>
+      );
+    };
+    
     return (
       <>
         <Form
@@ -81,19 +145,21 @@ const CustomTabDetails: React.FC<CustomTabDetailsProps> = ({customList}) => {
               </Col>
               {itemLinks.length && 
               <Col span={24}>
+                <DndProvider backend={HTML5Backend}>
                 <div className="custom-link-container">
                   {itemLinks.map((item, index) => {
                     return (
-                      <div key={item ? item?.id : 0} className={index === focusIndex ? "custom-link-item carousel-focus" : "custom-link-item"} onClick={() => setFocusIndex(index)}>
+                      <DraggableBodyRow key={item ? item?.id : 0} className={index === focusIndex ? "custom-link-item carousel-focus mr-1" : "custom-link-item mr-1"} onClick={() => setFocusIndex(index)}>
                         <Image height={150} src={item?.feed?.package[0]?.thumbnailUrl} />
                         <p>
                           <a>{item?.feed?.package[0]?.videoUrl?.substring(0,20)}{item?.feed?.package[0]?.videoUrl && '...'}</a>
                           <br/>{item?.feed?.shortDescription?.substring(0,20)}{item?.feed?.shortDescription && '...'}
                           <br/>Type: {item?.feed?.videoType?.join("/")}
                         </p>
-                      </div>
+                      </DraggableBodyRow>
                     )})}
                 </div>
+                </DndProvider>
             </Col>}
           </Row>
           <Row gutter={8} justify="end">
