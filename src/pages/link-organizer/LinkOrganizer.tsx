@@ -15,7 +15,7 @@ import { EditOutlined } from '@ant-design/icons';
 import { ColumnsType } from 'antd/lib/table';
 import { useRequest } from 'hooks/useRequest';
 import { fetchCustomLinkLists } from 'services/DiscoClubService';
-import CustomTabDetails from './CustomTabDetails';
+import CustomDetails from './CustomDetails';
 
 const LinkOrganizer: React.FC<RouteComponentProps> = ({ location }) => {
   const [selectedTab, setSelectedTab] = useState<string>('brand');
@@ -47,11 +47,25 @@ const LinkOrganizer: React.FC<RouteComponentProps> = ({ location }) => {
     setSelectedTab(value);
   };
 
-  const handleCustomListEdit = (_: number, record?: any) => {
+  const handleEditCustomList = (record?: any) => {
     setCurrentCustomList(record);
     setDetails(true);
     history.push(window.location.pathname);
-};
+  };
+
+  const handleSaveCustomList = (record: any) => {
+    const listItem = customLinkLists.find(item => item.id === record.id)
+    if (!listItem){
+      refreshTable(record, customLinkLists.length)
+      return
+    }
+    const index = customLinkLists.indexOf(listItem)
+    refreshTable(record, index);
+  };
+
+  const refreshTable = (record: any, index: number) => {
+      setCustomLinkLists(prev => [...prev.slice(0, index), record, ...prev.slice(index + 1)]);
+  }
 
   const customColumns: ColumnsType<any> = [
     {
@@ -93,7 +107,7 @@ const LinkOrganizer: React.FC<RouteComponentProps> = ({ location }) => {
             <>
                 <Link
                     to={{ pathname: window.location.pathname, state: record }}
-                    onClick={() => handleCustomListEdit(index, record)}>
+                    onClick={() => handleEditCustomList(record)}>
                     <EditOutlined />
                 </Link>
             </>
@@ -125,7 +139,7 @@ const CustomTab = () => {
           extra={selectedTab === 'custom' && <Button
           key="1"
           type="primary"
-          onClick={() => handleCustomListEdit(0)}
+          onClick={() => handleEditCustomList()}
         >
           New Link List
         </Button>}
@@ -160,7 +174,7 @@ const CustomTab = () => {
             className="mb-n05"
             
           />
-          <CustomTabDetails customList={currentCustomList} />
+          <CustomDetails customList={currentCustomList} onSave={handleSaveCustomList} />
         </>
       )}
     </div>
