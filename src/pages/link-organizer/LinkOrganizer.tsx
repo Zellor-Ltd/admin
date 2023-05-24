@@ -631,7 +631,7 @@ const LinkOrganizer: React.FC<RouteComponentProps> = ({ location }) => {
         </Tabs>
         </>
       )}
-      //todo update tabkey on tab change to display conditionally
+      {/* //todo update tabkey on tab change to display conditionally */}
       {details && (
         <>      
           <PageHeader
