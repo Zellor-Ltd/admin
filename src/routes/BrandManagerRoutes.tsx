@@ -2,13 +2,12 @@ import AppRoute from './AppRoute';
 import AuthenticatedLayout from 'layout/AuthenticatedLayout';
 import OpenLayout from 'layout/OpenLayout';
 import Login from 'pages/login/Login';
-import ProductDetail from 'pages/products/ProductDetail';
-import PreviewProducts from 'pages/products/PreviewProducts';
 import { Redirect, Switch } from 'react-router-dom';
-import Orders from 'pages/orders/BrandManager/Orders';
 import VideoFeed from 'pages/video-feed/BrandManager/VideoFeed';
 import VideoFeedDetail from 'pages/video-feed/BrandManager/VideoFeedDetail';
 import BrandDashboard from 'pages/dashboard/BrandDashboard';
+import LinkOrganizer from 'pages/link-organizer/LinkOrganizer';
+import LiveProducts from 'pages/products/LiveProducts';
 
 function BrandManagerRoutes() {
   return (
@@ -19,16 +18,10 @@ function BrandManagerRoutes() {
         returnComponent
         component={<Redirect to="/brand-dashboard" />}
       />
-
       <AppRoute path="/login" component={Login} layout={OpenLayout} />
       <AppRoute
-        path="/products/product/:productMode"
-        component={ProductDetail}
-        layout={AuthenticatedLayout}
-      />
-      <AppRoute
-        path="/preview-list/product/:productMode"
-        component={ProductDetail}
+        path="/products"
+        component={LiveProducts}
         layout={AuthenticatedLayout}
       />
       <AppRoute
@@ -37,13 +30,8 @@ function BrandManagerRoutes() {
         layout={AuthenticatedLayout}
       />
       <AppRoute
-        path="/preview-list"
-        component={PreviewProducts}
-        layout={AuthenticatedLayout}
-      />
-      <AppRoute
-        path="/orders"
-        component={Orders}
+        path="/link-organizer"
+        component={LinkOrganizer}
         layout={AuthenticatedLayout}
       />
       <AppRoute
