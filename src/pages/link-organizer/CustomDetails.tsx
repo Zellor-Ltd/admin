@@ -9,11 +9,12 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import { useDrag } from 'react-dnd'
 import update from 'immutability-helper';
 
-interface CustomTabDetailsProps {
+interface CustomDetailsProps {
     customList?: any;
+    onSave: any;
 }
 
-const CustomTabDetails: React.FC<CustomTabDetailsProps> = ({customList}) => {
+const CustomDetails: React.FC<CustomDetailsProps> = ({customList, onSave}) => {
     const [loading, setLoading] = useState(false);
     const { doFetch } = useRequest({ setLoading });
     const history = useHistory();
@@ -40,13 +41,16 @@ const CustomTabDetails: React.FC<CustomTabDetailsProps> = ({customList}) => {
       try {
         const customListForm = form.getFieldsValue(true);
         customListForm.links = itemLinks;
-        saveCustomLinkList(customListForm); 
+        const response: any = await saveCustomLinkList(customListForm); 
+        customListForm.id ?
+        onSave(customListForm) :
+        onSave({...customListForm, id: response.result})
         message.success('List saved with success.');
-        history.goBack();
       } catch (error) {
         message.error('Something went wrong. Try again later.');
       } finally {
         setLoading(false);
+        history.goBack()
       }
     };
 
@@ -185,4 +189,4 @@ const CustomTabDetails: React.FC<CustomTabDetailsProps> = ({customList}) => {
 
 };
 
-export default CustomTabDetails;
+export default CustomDetails;

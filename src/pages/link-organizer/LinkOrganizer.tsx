@@ -5,27 +5,32 @@ import {
   Tabs,
   Tooltip,
 } from 'antd';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link, RouteComponentProps, useHistory } from 'react-router-dom';
-import LinkOrganizerTabBrand from './LinkOrganizerTabBrand';
-import LinkOrganizerTabProductBrand from './LinkOrganizerTabProductBrand';
-import LinkOrganizerTabProduct from './LinkOrganizerTabProduct';
-import LinkOrganizerTabCreator from './LinkOrganizerTabCreator';
 import { EditOutlined } from '@ant-design/icons';
 import { ColumnsType } from 'antd/lib/table';
 import { useRequest } from 'hooks/useRequest';
-import { fetchCustomLinkLists } from 'services/DiscoClubService';
-import CustomTabDetails from './CustomTabDetails';
+import { fetchCustomLinkLists, fetchLinkBrand, fetchLinkCreator, fetchLinkProduct, fetchLinkProductBrand, updateLinkBrand } from 'services/DiscoClubService';
+import CustomDetails from './CustomDetails';
+import CopyValueToClipboard from 'components/CopyValueToClipboard';
+import moment from 'moment';
+import LinkOrganizerDetail from './LinkOrganizerDetail';
 
-const LinkOrganizer: React.FC<RouteComponentProps> = ({ location }) => {
+const LinkOrganizer: React.FC<RouteComponentProps> = () => {
   const [selectedTab, setSelectedTab] = useState<string>('brand');
   const [loading, setLoading] = useState(false);
   const { doFetch } = useRequest({ setLoading });
-  const [customLinkLists, setCustomLinkLists] = useState<any[]>([]);
   const [details, setDetails] = useState<boolean>(false);
-  const [currentCustomList, setCurrentCustomList] = useState<any>();
   const history = useHistory();
-
+  const [currentRecord, setCurrentRecord] = useState<any>(); 
+  const [fetchedData, setFetchedData] = useState<any>({
+    brands: [],
+    productBrands: [],
+    products: [],
+    creators: [],
+    customLinkLists: []
+  });
+  
   useEffect(() => {
       history.listen((_, action) => {
           if (action === 'POP' && details) setDetails(false);
@@ -33,25 +38,614 @@ const LinkOrganizer: React.FC<RouteComponentProps> = ({ location }) => {
   });
 
   useEffect(() => {
-      fetch()
-  }, []);
+    getResources()
+  }, [])
 
-  const fetch = async () => {
-      const response = await doFetch(() =>
-          fetchCustomLinkLists({})
-      );
-      setCustomLinkLists(response.results)
-  };
+  const getResources = useMemo(() => 
+    {const loadData = async () => {
+
+      const getBrandData = async () => {
+        const response = await doFetch(() =>
+            fetchLinkBrand({})
+        );
+        return response.results;
+      };
+      const getProductBrandData = async () => {
+          const response = await doFetch(() =>
+              fetchLinkProductBrand({})
+          );
+          return response.results;
+      };
+      const getProductData = async () => {
+          const response = await doFetch(() =>
+              fetchLinkProduct({})
+          );
+          return response.results;
+      };
+      const getCreatorData = async () => {
+          const response = await doFetch(() =>
+              fetchLinkCreator({})
+          );
+          return response.results;
+      };
+      const getCustomData = async () => {
+          const response = await doFetch(() =>
+              fetchCustomLinkLists({})
+          );
+          return response.results;
+      };
+
+      const brandData = await getBrandData();
+      const productBrandData = await getProductBrandData();
+      const productData = await getProductData();
+      const creatorData = await getCreatorData();
+      const customData = await getCustomData();
+
+      setFetchedData({
+      brands: brandData, productBrands: productBrandData, products: productData, creators: creatorData, customLinkLists: customData, 
+      })
+    }
+    return loadData
+}, [])
 
   const handleTabChange = (value: string) => {
     setSelectedTab(value);
   };
 
-  const handleCustomListEdit = (_: number, record?: any) => {
-    setCurrentCustomList(record);
+  const handleEditRecord = (record?: any) => {
+      setCurrentRecord(record);
     setDetails(true);
     history.push(window.location.pathname);
-};
+  };
+
+  const handleSaveRecord = async (record: any, setLoadingLocal: any) => {
+      try {
+          setLoadingLocal(true)
+          await updateLinkBrand(record)
+          setDetails(false);
+      } finally {
+          setLoadingLocal(true)
+      }
+  };
+
+  const handleCancelRecord = () => {
+      setDetails(false);
+  };
+
+  const handleSaveCustomList = (record: any) => {
+    const listItem = fetchedData.customLinkLists.find(item => item.id === record.id)
+    if (!listItem){
+      refreshTable(record, fetchedData.customLinkLists.length)
+      return
+    }
+    const index = fetchedData.customLinkLists.indexOf(listItem)
+    refreshTable(record, index);
+  };
+
+  const refreshTable = (record: any, index: number) => {
+      setFetchedData({...fetchedData, customLinkLists: prev => [...prev.slice(0, index), record, ...prev.slice(index + 1)]});
+  }
+
+  const brandColumns: ColumnsType<any> = [
+      {
+          title: (
+              <div style={{ display: 'grid', placeItems: 'stretch' }}>
+                  <div
+                      style={{
+                          textOverflow: 'ellipsis',
+                          overflow: 'hidden',
+                          whiteSpace: 'nowrap',
+                      }}
+                  >
+                      <Tooltip title="id">id</Tooltip>
+                  </div>
+              </div>
+          ),
+          dataIndex: 'id',
+          width: '3%',
+          render: id => <CopyValueToClipboard value={id} />,
+          align: 'center',
+      },
+      {
+          title: (
+              <div style={{ display: 'grid', placeItems: 'stretch' }}>
+                  <div
+                      style={{
+                          textOverflow: 'ellipsis',
+                          overflow: 'hidden',
+                          whiteSpace: 'nowrap',
+                      }}
+                  >
+                      <Tooltip title="brand">Brand</Tooltip>
+                  </div>
+              </div>
+          ),
+          dataIndex: 'productBrand',
+          width: '30%',
+          render: (productBrand: any) => (
+              productBrand?.brandName
+          ),
+          align: 'center',
+      },
+      {
+          title: (
+              <div style={{ display: 'grid', placeItems: 'stretch' }}>
+                  <div
+                      style={{
+                          textOverflow: 'ellipsis',
+                          overflow: 'hidden',
+                          whiteSpace: 'nowrap',
+                      }}
+                  >
+                      <Tooltip title="Links">Links</Tooltip>
+                  </div>
+              </div>
+          ),
+          dataIndex: 'links',
+          width: '5%',
+          render: (links: [any]) => (
+              links.length
+          ),
+          align: 'center',
+      },
+      {
+          title: (
+              <div style={{ display: 'grid', placeItems: 'stretch' }}>
+                  <div
+                      style={{
+                          textOverflow: 'ellipsis',
+                          overflow: 'hidden',
+                          whiteSpace: 'nowrap',
+                      }}
+                  >
+                      <Tooltip title="Last Update">Last Update</Tooltip>
+                  </div>
+              </div>
+          ),
+          dataIndex: 'hLastUpdate',
+          width: '10%',
+          render: (datetime: Date) =>
+              datetime
+                  ? new Date(datetime).toLocaleDateString('en-GB') +
+                  ' ' +
+                  new Date(datetime).toLocaleTimeString('en-GB')
+                  : '-',
+          align: 'center',
+          sorter: (a, b): any => {
+              if (a.iLastUpdate && b.iLastUpdate)
+                  return (
+                      moment(a.iLastUpdate as Date).unix() -
+                      moment(b.iLastUpdate).unix()
+                  );
+              else if (a.iLastUpdate) return -1;
+              else if (b.iLastUpdate) return 1;
+              else return 0;
+          },
+      },
+      {
+          title: (
+              <div style={{ display: 'grid', placeItems: 'stretch' }}>
+                  <div
+                      style={{
+                          textOverflow: 'ellipsis',
+                          overflow: 'hidden',
+                          whiteSpace: 'nowrap',
+                      }}
+                  >
+                      <Tooltip title="Actions">Actions</Tooltip>
+                  </div>
+              </div>
+          ),
+          key: 'action',
+          width: '5%',
+          align: 'right',
+          render: (_, record) => (
+              <>
+                  <Link
+                      to={{ pathname: window.location.pathname, state: record }}
+                      onClick={() => handleEditRecord(record)}>
+                      <EditOutlined />
+                  </Link>
+              </>
+          ),
+      },
+  ];
+
+  const productBrandColumns: ColumnsType<any> = [
+      {
+          title: (
+              <div style={{ display: 'grid', placeItems: 'stretch' }}>
+                  <div
+                      style={{
+                          textOverflow: 'ellipsis',
+                          overflow: 'hidden',
+                          whiteSpace: 'nowrap',
+                      }}
+                  >
+                      <Tooltip title="id">id</Tooltip>
+                  </div>
+              </div>
+          ),
+          dataIndex: 'id',
+          width: '3%',
+          render: id => <CopyValueToClipboard value={id} />,
+          align: 'center',
+      },
+      {
+          title: (
+              <div style={{ display: 'grid', placeItems: 'stretch' }}>
+                  <div
+                      style={{
+                          textOverflow: 'ellipsis',
+                          overflow: 'hidden',
+                          whiteSpace: 'nowrap',
+                      }}
+                  >
+                      <Tooltip title="Product Brand">Product Brand</Tooltip>
+                  </div>
+              </div>
+          ),
+          dataIndex: 'productBrand',
+          width: '30%',
+          render: (productBrand: any) => (
+              productBrand.brandName
+          ),
+          align: 'center',
+      },
+      {
+          title: (
+              <div style={{ display: 'grid', placeItems: 'stretch' }}>
+                  <div
+                      style={{
+                          textOverflow: 'ellipsis',
+                          overflow: 'hidden',
+                          whiteSpace: 'nowrap',
+                      }}
+                  >
+                      <Tooltip title="Links">Links</Tooltip>
+                  </div>
+              </div>
+          ),
+          dataIndex: 'links',
+          width: '5%',
+          render: (links: [any]) => (
+              links.length
+          ),
+          align: 'center',
+      },
+      {
+          title: (
+              <div style={{ display: 'grid', placeItems: 'stretch' }}>
+                  <div
+                      style={{
+                          textOverflow: 'ellipsis',
+                          overflow: 'hidden',
+                          whiteSpace: 'nowrap',
+                      }}
+                  >
+                      <Tooltip title="Last Update">Last Update</Tooltip>
+                  </div>
+              </div>
+          ),
+          dataIndex: 'hLastUpdate',
+          width: '10%',
+          render: (datetime: Date) =>
+              datetime
+                  ? new Date(datetime).toLocaleDateString('en-GB') +
+                  ' ' +
+                  new Date(datetime).toLocaleTimeString('en-GB')
+                  : '-',
+          align: 'center',
+          sorter: (a, b): any => {
+              if (a.iLastUpdate && b.iLastUpdate)
+                  return (
+                      moment(a.iLastUpdate as Date).unix() -
+                      moment(b.iLastUpdate).unix()
+                  );
+              else if (a.iLastUpdate) return -1;
+              else if (b.iLastUpdate) return 1;
+              else return 0;
+          },
+      },
+      {
+          title: (
+              <div style={{ display: 'grid', placeItems: 'stretch' }}>
+                  <div
+                      style={{
+                          textOverflow: 'ellipsis',
+                          overflow: 'hidden',
+                          whiteSpace: 'nowrap',
+                      }}
+                  >
+                      <Tooltip title="Actions">Actions</Tooltip>
+                  </div>
+              </div>
+          ),
+          key: 'action',
+          width: '5%',
+          align: 'right',
+          render: (_, record) => (
+              <>
+                  <Link
+                      to={{ pathname: window.location.pathname, state: record }}
+                      onClick={() => handleEditRecord(record)}>
+                      <EditOutlined />
+                  </Link>
+              </>
+          ),
+      },
+  ];
+
+  const productColumns: ColumnsType<any> = [
+      {
+          title: (
+              <div style={{ display: 'grid', placeItems: 'stretch' }}>
+                  <div
+                      style={{
+                          textOverflow: 'ellipsis',
+                          overflow: 'hidden',
+                          whiteSpace: 'nowrap',
+                      }}
+                  >
+                      <Tooltip title="id">id</Tooltip>
+                  </div>
+              </div>
+          ),
+          dataIndex: 'id',
+          width: '3%',
+          render: id => <CopyValueToClipboard value={id} />,
+          align: 'center',
+      },
+      {
+          title: (
+              <div style={{ display: 'grid', placeItems: 'stretch' }}>
+                  <div
+                      style={{
+                          textOverflow: 'ellipsis',
+                          overflow: 'hidden',
+                          whiteSpace: 'nowrap',
+                      }}
+                  >
+                      <Tooltip title="Product">Product</Tooltip>
+                  </div>
+              </div>
+          ),
+          dataIndex: 'product',
+          width: '30%',
+          render: (product: any) => (
+              product.name
+          ),
+          align: 'center',
+      },
+      {
+          title: (
+              <div style={{ display: 'grid', placeItems: 'stretch' }}>
+                  <div
+                      style={{
+                          textOverflow: 'ellipsis',
+                          overflow: 'hidden',
+                          whiteSpace: 'nowrap',
+                      }}
+                  >
+                      <Tooltip title="Product Brand">Product Brand</Tooltip>
+                  </div>
+              </div>
+          ),
+          dataIndex: 'productBrand',
+          width: '30%',
+          render: (productBrand: any) => (
+              productBrand.brandName
+          ),
+          align: 'center',
+      },
+      {
+          title: (
+              <div style={{ display: 'grid', placeItems: 'stretch' }}>
+                  <div
+                      style={{
+                          textOverflow: 'ellipsis',
+                          overflow: 'hidden',
+                          whiteSpace: 'nowrap',
+                      }}
+                  >
+                      <Tooltip title="Links">Links</Tooltip>
+                  </div>
+              </div>
+          ),
+          dataIndex: 'links',
+          width: '5%',
+          render: (links: [any]) => (
+              links.length
+          ),
+          align: 'center',
+      },
+      {
+          title: (
+              <div style={{ display: 'grid', placeItems: 'stretch' }}>
+                  <div
+                      style={{
+                          textOverflow: 'ellipsis',
+                          overflow: 'hidden',
+                          whiteSpace: 'nowrap',
+                      }}
+                  >
+                      <Tooltip title="Last Update">Last Update</Tooltip>
+                  </div>
+              </div>
+          ),
+          dataIndex: 'hLastUpdate',
+          width: '10%',
+          render: (datetime: Date) =>
+              datetime
+                  ? new Date(datetime).toLocaleDateString('en-GB') +
+                  ' ' +
+                  new Date(datetime).toLocaleTimeString('en-GB')
+                  : '-',
+          align: 'center',
+          sorter: (a, b): any => {
+              if (a.iLastUpdate && b.iLastUpdate)
+                  return (
+                      moment(a.iLastUpdate as Date).unix() -
+                      moment(b.iLastUpdate).unix()
+                  );
+              else if (a.iLastUpdate) return -1;
+              else if (b.iLastUpdate) return 1;
+              else return 0;
+          },
+      },
+      {
+          title: (
+              <div style={{ display: 'grid', placeItems: 'stretch' }}>
+                  <div
+                      style={{
+                          textOverflow: 'ellipsis',
+                          overflow: 'hidden',
+                          whiteSpace: 'nowrap',
+                      }}
+                  >
+                      <Tooltip title="Actions">Actions</Tooltip>
+                  </div>
+              </div>
+          ),
+          key: 'action',
+          width: '5%',
+          align: 'right',
+          render: (_, record) => (
+              <>
+                  <Link
+                      to={{ pathname: window.location.pathname, state: record }}
+                      onClick={() => handleEditRecord(record)}>
+                      <EditOutlined />
+                  </Link>
+              </>
+          ),
+      },
+  ];
+
+  const creatorColumns: ColumnsType<any> = [
+      {
+          title: (
+              <div style={{ display: 'grid', placeItems: 'stretch' }}>
+                  <div
+                      style={{
+                          textOverflow: 'ellipsis',
+                          overflow: 'hidden',
+                          whiteSpace: 'nowrap',
+                      }}
+                  >
+                      <Tooltip title="id">id</Tooltip>
+                  </div>
+              </div>
+          ),
+          dataIndex: 'id',
+          width: '3%',
+          render: id => <CopyValueToClipboard value={id} />,
+          align: 'center',
+      },
+      {
+          title: (
+              <div style={{ display: 'grid', placeItems: 'stretch' }}>
+                  <div
+                      style={{
+                          textOverflow: 'ellipsis',
+                          overflow: 'hidden',
+                          whiteSpace: 'nowrap',
+                      }}
+                  >
+                      <Tooltip title="creator">Creator</Tooltip>
+                  </div>
+              </div>
+          ),
+          dataIndex: 'creator',
+          width: '30%',
+          render: (creator: any) => (
+              creator?.name?.trim() === "" ? creator?.userName : creator?.name
+          ),
+          align: 'center',
+      },
+      {
+          title: (
+              <div style={{ display: 'grid', placeItems: 'stretch' }}>
+                  <div
+                      style={{
+                          textOverflow: 'ellipsis',
+                          overflow: 'hidden',
+                          whiteSpace: 'nowrap',
+                      }}
+                  >
+                      <Tooltip title="Links">Links</Tooltip>
+                  </div>
+              </div>
+          ),
+          dataIndex: 'links',
+          width: '5%',
+          render: (links: [any]) => (
+              links.length
+          ),
+          align: 'center',
+      },
+      {
+          title: (
+              <div style={{ display: 'grid', placeItems: 'stretch' }}>
+                  <div
+                      style={{
+                          textOverflow: 'ellipsis',
+                          overflow: 'hidden',
+                          whiteSpace: 'nowrap',
+                      }}
+                  >
+                      <Tooltip title="Last Update">Last Update</Tooltip>
+                  </div>
+              </div>
+          ),
+          dataIndex: 'hLastUpdate',
+          width: '10%',
+          render: (datetime: Date) =>
+              datetime
+                  ? new Date(datetime).toLocaleDateString('en-GB') +
+                  ' ' +
+                  new Date(datetime).toLocaleTimeString('en-GB')
+                  : '-',
+          align: 'center',
+          sorter: (a, b): any => {
+              if (a.iLastUpdate && b.iLastUpdate)
+                  return (
+                      moment(a.iLastUpdate as Date).unix() -
+                      moment(b.iLastUpdate).unix()
+                  );
+              else if (a.iLastUpdate) return -1;
+              else if (b.iLastUpdate) return 1;
+              else return 0;
+          },
+      },
+      {
+          title: (
+              <div style={{ display: 'grid', placeItems: 'stretch' }}>
+                  <div
+                      style={{
+                          textOverflow: 'ellipsis',
+                          overflow: 'hidden',
+                          whiteSpace: 'nowrap',
+                      }}
+                  >
+                      <Tooltip title="Actions">Actions</Tooltip>
+                  </div>
+              </div>
+          ),
+          key: 'action',
+          width: '5%',
+          align: 'right',
+          render: (_, record) => (
+              <>
+                  <Link
+                      to={{ pathname: window.location.pathname, state: record }}
+                      onClick={() => handleEditRecord(record)}>
+                      <EditOutlined />
+                  </Link>
+              </>
+          ),
+      },
+  ];
 
   const customColumns: ColumnsType<any> = [
     {
@@ -93,27 +687,13 @@ const LinkOrganizer: React.FC<RouteComponentProps> = ({ location }) => {
             <>
                 <Link
                     to={{ pathname: window.location.pathname, state: record }}
-                    onClick={() => handleCustomListEdit(index, record)}>
+                    onClick={() => handleEditRecord(record)}>
                     <EditOutlined />
                 </Link>
             </>
         ),
     },
 ];
-
-const CustomTab = () => {
-  return (
-    <Table
-        rowClassName={(_, index) => `scrollable-row-${index}`}
-        rowKey="id"
-        columns={customColumns}
-        dataSource={customLinkLists}
-        loading={loading}
-        pagination={false}
-        scroll={{ y: 240, x: true }}
-        size="small"
-    />)
-}
 
   return (
     <div className="link-organizer">
@@ -125,7 +705,7 @@ const CustomTab = () => {
           extra={selectedTab === 'custom' && <Button
           key="1"
           type="primary"
-          onClick={() => handleCustomListEdit(0)}
+          onClick={() => handleEditRecord()}
         >
           New Link List
         </Button>}
@@ -136,32 +716,83 @@ const CustomTab = () => {
           activeKey={selectedTab}
         >
           <Tabs.TabPane tab="Brand" key="brand">
-            <LinkOrganizerTabBrand />
+          <Table
+              rowClassName={(_, index) => `scrollable-row-${index}`}
+              rowKey="id"
+              columns={brandColumns}
+              dataSource={fetchedData.brands}
+              loading={loading}
+              pagination={false}
+              scroll={{ y: 240, x: true }}
+              size="small"
+          />
           </Tabs.TabPane>
           <Tabs.TabPane tab="Product Brand" key="productBrand">
-            <LinkOrganizerTabProductBrand />
+            <Table  
+                rowClassName={(_, index) => `scrollable-row-${index}`}
+                rowKey="id"
+                columns={productBrandColumns}
+                dataSource={fetchedData.productBrands}
+                loading={loading}
+                pagination={false}
+                scroll={{ y: 240, x: true }}
+                size="small"
+            />
           </Tabs.TabPane>
           <Tabs.TabPane tab="Product" key="product">
-            <LinkOrganizerTabProduct />
+            <Table
+                rowClassName={(_, index) => `scrollable-row-${index}`}
+                rowKey="id"
+                columns={productColumns}
+                dataSource={fetchedData.products}
+                loading={loading}
+                pagination={false}
+                scroll={{ y: 240, x: true }}
+                size="small"
+            />
           </Tabs.TabPane>
           <Tabs.TabPane tab="Creator" key="creator">
-            <LinkOrganizerTabCreator />
+          <Table
+                    rowClassName={(_, index) => `scrollable-row-${index}`}
+                    rowKey="id"
+                    columns={creatorColumns}
+                    dataSource={fetchedData.creators}
+                    loading={loading}
+                    pagination={false}
+                    scroll={{ y: 240, x: true }}
+                    size="small"
+                />
           </Tabs.TabPane>
           <Tabs.TabPane tab="Custom" key="custom">
-            <CustomTab />
+            <Table
+                rowClassName={(_, index) => `scrollable-row-${index}`}
+                rowKey="id"
+                columns={customColumns}
+                dataSource={fetchedData.customLinkLists}
+                loading={loading}
+                pagination={false}
+                scroll={{ y: 240, x: true }}
+                size="small"
+            />
           </Tabs.TabPane>
         </Tabs>
         </>
       )}
-      {details && (
+      {selectedTab === 'custom' && details && (
         <>      
           <PageHeader
-            title={currentCustomList ? `Edit ${currentCustomList.name}` : "New Link List"}
+            title={currentRecord ? `Edit ${currentRecord.name}` : "New Link List"}
             className="mb-n05"
             
           />
-          <CustomTabDetails customList={currentCustomList} />
+          <CustomDetails customList={currentRecord} onSave={handleSaveCustomList} />
         </>
+      )}
+      {selectedTab !== 'custom' && details && (
+          <LinkOrganizerDetail
+              record={currentRecord}
+              onSave={handleSaveRecord}
+              onCancel={handleCancelRecord} />
       )}
     </div>
   );
