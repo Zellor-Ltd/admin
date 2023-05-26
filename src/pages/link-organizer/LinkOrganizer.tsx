@@ -5,7 +5,7 @@ import {
   Tabs,
   Tooltip,
 } from 'antd';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, RouteComponentProps, useHistory } from 'react-router-dom';
 import { EditOutlined } from '@ant-design/icons';
 import { ColumnsType } from 'antd/lib/table';
@@ -20,16 +20,14 @@ const LinkOrganizer: React.FC<RouteComponentProps> = () => {
   const [selectedTab, setSelectedTab] = useState<string>('brand');
   const [loading, setLoading] = useState(false);
   const { doFetch } = useRequest({ setLoading });
+  const [customLinkLists, setCustomLinkLists] = useState<any[]>([]);
   const [details, setDetails] = useState<boolean>(false);
   const history = useHistory();
+  const [brands, setBrands] = useState<any[]>([]);
   const [currentRecord, setCurrentRecord] = useState<any>(); 
-  const [fetchedData, setFetchedData] = useState<any>({
-    brands: [],
-    productBrands: [],
-    products: [],
-    creators: [],
-    customLinkLists: []
-  });
+  const [creators, setCreators] = useState<any[]>([]);
+  const [products, setProducts] = useState<any[]>([]);
+  const [productBrands, setProductBrands] = useState<any[]>([]);
   
   useEffect(() => {
       history.listen((_, action) => {
@@ -38,55 +36,45 @@ const LinkOrganizer: React.FC<RouteComponentProps> = () => {
   });
 
   useEffect(() => {
-    getResources()
-  }, [])
-
-  const getResources = useMemo(() => 
-    {const loadData = async () => {
+    getBrandData();
+    getProductData();
+    getCreatorData();
+    getCustomData();
+  }, []);
 
       const getBrandData = async () => {
         const response = await doFetch(() =>
             fetchLinkBrand({})
         );
-        return response.results;
+      setBrands(response.results)
       };
+
       const getProductBrandData = async () => {
           const response = await doFetch(() =>
               fetchLinkProductBrand({})
           );
-          return response.results;
+          setProductBrands(response.results)
       };
       const getProductData = async () => {
           const response = await doFetch(() =>
               fetchLinkProduct({})
           );
-          return response.results;
+      setProducts(response.results)
       };
+
       const getCreatorData = async () => {
           const response = await doFetch(() =>
               fetchLinkCreator({})
           );
-          return response.results;
+      setCreators(response.results)
       };
+
       const getCustomData = async () => {
           const response = await doFetch(() =>
               fetchCustomLinkLists({})
           );
-          return response.results;
+      setCustomLinkLists(response.results)
       };
-
-      const brandData = await getBrandData();
-      const productBrandData = await getProductBrandData();
-      const productData = await getProductData();
-      const creatorData = await getCreatorData();
-      const customData = await getCustomData();
-
-      setFetchedData({
-      brands: brandData, productBrands: productBrandData, products: productData, creators: creatorData, customLinkLists: customData, 
-      })
-    }
-    return loadData
-}, [])
 
   const handleTabChange = (value: string) => {
     setSelectedTab(value);
@@ -113,17 +101,17 @@ const LinkOrganizer: React.FC<RouteComponentProps> = () => {
   };
 
   const handleSaveCustomList = (record: any) => {
-    const listItem = fetchedData.customLinkLists.find(item => item.id === record.id)
+    const listItem = customLinkLists.find(item => item.id === record.id)
     if (!listItem){
-      refreshTable(record, fetchedData.customLinkLists.length)
+      refreshTable(record, customLinkLists.length)
       return
     }
-    const index = fetchedData.customLinkLists.indexOf(listItem)
+    const index = customLinkLists.indexOf(listItem)
     refreshTable(record, index);
   };
 
   const refreshTable = (record: any, index: number) => {
-      setFetchedData({...fetchedData, customLinkLists: prev => [...prev.slice(0, index), record, ...prev.slice(index + 1)]});
+      setCustomLinkLists(prev => [...prev.slice(0, index), record, ...prev.slice(index + 1)]);
   }
 
   const brandColumns: ColumnsType<any> = [
@@ -720,7 +708,7 @@ const LinkOrganizer: React.FC<RouteComponentProps> = () => {
               rowClassName={(_, index) => `scrollable-row-${index}`}
               rowKey="id"
               columns={brandColumns}
-              dataSource={fetchedData.brands}
+              dataSource={brands}
               loading={loading}
               pagination={false}
               scroll={{ y: 240, x: true }}
@@ -732,7 +720,7 @@ const LinkOrganizer: React.FC<RouteComponentProps> = () => {
                 rowClassName={(_, index) => `scrollable-row-${index}`}
                 rowKey="id"
                 columns={productBrandColumns}
-                dataSource={fetchedData.productBrands}
+                dataSource={productBrands}
                 loading={loading}
                 pagination={false}
                 scroll={{ y: 240, x: true }}
@@ -744,7 +732,7 @@ const LinkOrganizer: React.FC<RouteComponentProps> = () => {
                 rowClassName={(_, index) => `scrollable-row-${index}`}
                 rowKey="id"
                 columns={productColumns}
-                dataSource={fetchedData.products}
+                dataSource={products}
                 loading={loading}
                 pagination={false}
                 scroll={{ y: 240, x: true }}
@@ -756,7 +744,7 @@ const LinkOrganizer: React.FC<RouteComponentProps> = () => {
                     rowClassName={(_, index) => `scrollable-row-${index}`}
                     rowKey="id"
                     columns={creatorColumns}
-                    dataSource={fetchedData.creators}
+                    dataSource={creators}
                     loading={loading}
                     pagination={false}
                     scroll={{ y: 240, x: true }}
@@ -768,7 +756,7 @@ const LinkOrganizer: React.FC<RouteComponentProps> = () => {
                 rowClassName={(_, index) => `scrollable-row-${index}`}
                 rowKey="id"
                 columns={customColumns}
-                dataSource={fetchedData.customLinkLists}
+                dataSource={customLinkLists}
                 loading={loading}
                 pagination={false}
                 scroll={{ y: 240, x: true }}
