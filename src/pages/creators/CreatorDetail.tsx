@@ -366,7 +366,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                     ref={inputRef}
                     type="url"
                     className={instaLink ? 'instalink-input' : undefined}
-                    value={instaLink ? `https://vlink.ie/${instaLink}` : ''}
+                    value={instaLink ? `https://beautybuzz.io/${instaLink}` : ''}
                     onFocus={event => handleInstaLinkFocus(event)}
                   />
                 </Form.Item>
