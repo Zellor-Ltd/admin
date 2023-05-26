@@ -1,8 +1,7 @@
-import { Button, Col, Row, Tooltip, message } from "antd";
+import { Button, Col, Image, Row, Tooltip } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import { SortableTable } from "components";
 import { SimpleSwitch } from "components/SimpleSwitch";
-import { useRequest } from "hooks/useRequest";
 import { useState } from "react";
 
 interface LinkOrganizerDetailProps {
@@ -71,11 +70,9 @@ const LinkOrganizerDetail: React.FC<LinkOrganizerDetailProps> = ({
                     </div>
                 </div>
             ),
-            dataIndex: 'productBrand',
+            dataIndex: ['feed','package'],
             width: '30%',
-            render: (productBrand: any) => (
-                productBrand?.brandName
-            ),
+            render: (value: any[]) => <Image height={40} src={value[0]?.thumbnailUrl} />,
             align: 'center',
         },
         {
@@ -155,10 +152,12 @@ const LinkOrganizerDetail: React.FC<LinkOrganizerDetailProps> = ({
                     </div>
                 </div>
             ),
-            dataIndex: 'feed',
+            dataIndex: ['feed','shortDescription'],
             width: '30%',
-            render: (feed: any) => (
-                feed?.shortDescription
+            render: (value?: string) => (
+                <>
+                    {value?.slice(0,30)}{value?.length! > 30 && '...'}
+                </>            
             ),
             align: 'center',
         },
