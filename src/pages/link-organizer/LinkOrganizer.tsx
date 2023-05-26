@@ -4,6 +4,7 @@ import {
   Table,
   Tabs,
   Tooltip,
+  message,
 } from 'antd';
 import { useEffect, useState } from 'react';
 import { Link, RouteComponentProps, useHistory } from 'react-router-dom';
@@ -15,6 +16,7 @@ import CustomDetails from './CustomDetails';
 import CopyValueToClipboard from 'components/CopyValueToClipboard';
 import moment from 'moment';
 import LinkOrganizerDetail from './LinkOrganizerDetail';
+import { SimpleSwitch } from 'components/SimpleSwitch';
 
 const LinkOrganizer: React.FC<RouteComponentProps> = () => {
   const [selectedTab, setSelectedTab] = useState<string>('brand');
@@ -114,6 +116,19 @@ const LinkOrganizer: React.FC<RouteComponentProps> = () => {
   const refreshTable = (record: any, index: number) => {
       setCustomLinkLists(prev => [...prev.slice(0, index), record, ...prev.slice(index + 1)]);
   }
+
+  const handleSwitchChange = async (
+    record: any,
+    toggled: boolean
+  ) => {
+    try {
+      record.deleted = toggled;
+      await updateLinkBrand(record);
+      message.success('Register updated with success.');
+    } catch (error) {
+      message.error("Error: Couldn't set 'deleted' property. Try again.");
+    }
+  };
 
   const brandColumns: ColumnsType<any> = [
       {
@@ -237,6 +252,38 @@ const LinkOrganizer: React.FC<RouteComponentProps> = () => {
               else if (b.iLastUpdate) return 1;
               else return 0;
           },
+      },
+      {
+        title: (
+          <div style={{ display: 'grid', placeItems: 'stretch' }}>
+            <div
+              style={{
+                textOverflow: 'ellipsis',
+                overflow: 'hidden',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              <Tooltip title="Deleted">Deleted</Tooltip>
+            </div>
+          </div>
+        ),
+        dataIndex: 'deleted',
+        width: '10%',
+        align: 'center',
+        render: (_: any, record: any) => (
+          <SimpleSwitch
+            toggled={!!record.deleted}
+            handleSwitchChange={(toggled: boolean) =>
+              handleSwitchChange(record, toggled)
+            }
+          />
+        ),
+        sorter: (a, b): any => {
+          if (a.deleted && b.deleted) return 0;
+          else if (a.deleted) return -1;
+          else if (b.deleted) return 1;
+          else return 0;
+        },
       },
       {
           title: (
@@ -389,6 +436,38 @@ const LinkOrganizer: React.FC<RouteComponentProps> = () => {
               else if (b.iLastUpdate) return 1;
               else return 0;
           },
+      },
+      {
+        title: (
+          <div style={{ display: 'grid', placeItems: 'stretch' }}>
+            <div
+              style={{
+                textOverflow: 'ellipsis',
+                overflow: 'hidden',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              <Tooltip title="Deleted">Deleted</Tooltip>
+            </div>
+          </div>
+        ),
+        dataIndex: 'deleted',
+        width: '10%',
+        align: 'center',
+        render: (_: any, record: any) => (
+          <SimpleSwitch
+            toggled={!!record.deleted}
+            handleSwitchChange={(toggled: boolean) =>
+              handleSwitchChange(record, toggled)
+            }
+          />
+        ),
+        sorter: (a, b): any => {
+          if (a.deleted && b.deleted) return 0;
+          else if (a.deleted) return -1;
+          else if (b.deleted) return 1;
+          else return 0;
+        },
       },
       {
           title: (
@@ -564,6 +643,38 @@ const LinkOrganizer: React.FC<RouteComponentProps> = () => {
           },
       },
       {
+        title: (
+          <div style={{ display: 'grid', placeItems: 'stretch' }}>
+            <div
+              style={{
+                textOverflow: 'ellipsis',
+                overflow: 'hidden',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              <Tooltip title="Deleted">Deleted</Tooltip>
+            </div>
+          </div>
+        ),
+        dataIndex: 'deleted',
+        width: '10%',
+        align: 'center',
+        render: (_: any, record: any) => (
+          <SimpleSwitch
+            toggled={!!record.deleted}
+            handleSwitchChange={(toggled: boolean) =>
+              handleSwitchChange(record, toggled)
+            }
+          />
+        ),
+        sorter: (a, b): any => {
+          if (a.deleted && b.deleted) return 0;
+          else if (a.deleted) return -1;
+          else if (b.deleted) return 1;
+          else return 0;
+        },
+      },
+      {
           title: (
               <div style={{ display: 'grid', placeItems: 'stretch' }}>
                   <div
@@ -714,6 +825,38 @@ const LinkOrganizer: React.FC<RouteComponentProps> = () => {
               else if (b.iLastUpdate) return 1;
               else return 0;
           },
+      },
+      {
+        title: (
+          <div style={{ display: 'grid', placeItems: 'stretch' }}>
+            <div
+              style={{
+                textOverflow: 'ellipsis',
+                overflow: 'hidden',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              <Tooltip title="Deleted">Deleted</Tooltip>
+            </div>
+          </div>
+        ),
+        dataIndex: 'deleted',
+        width: '10%',
+        align: 'center',
+        render: (_: any, record: any) => (
+          <SimpleSwitch
+            toggled={!!record.deleted}
+            handleSwitchChange={(toggled: boolean) =>
+              handleSwitchChange(record, toggled)
+            }
+          />
+        ),
+        sorter: (a, b): any => {
+          if (a.deleted && b.deleted) return 0;
+          else if (a.deleted) return -1;
+          else if (b.deleted) return 1;
+          else return 0;
+        },
       },
       {
           title: (
