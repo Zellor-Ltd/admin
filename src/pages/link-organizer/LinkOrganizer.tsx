@@ -37,6 +37,7 @@ const LinkOrganizer: React.FC<RouteComponentProps> = () => {
 
   useEffect(() => {
     getBrandData();
+    getProductBrandData();
     getProductData();
     getCreatorData();
     getCustomData();
@@ -133,6 +134,33 @@ const LinkOrganizer: React.FC<RouteComponentProps> = () => {
           width: '3%',
           render: id => <CopyValueToClipboard value={id} />,
           align: 'center',
+      },
+      {
+        title: (
+          <div style={{ display: 'grid', placeItems: 'stretch' }}>
+            <div
+              style={{
+                textOverflow: 'ellipsis',
+                overflow: 'hidden',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              <Tooltip title="Link">Link</Tooltip>
+            </div>
+          </div>
+        ),
+        dataIndex: 'id',
+        width: '10%',
+        align: 'center',
+        render: (value: string) => (
+          <a
+            href={'https://beautybuzz.io/' + value.slice(0, -4)}
+            target="blank"
+            style={value ? {} : { pointerEvents: 'none' }}
+          >
+            {value ? `https://beautybuzz.io/${value.slice(0, -4)}` : '-'}
+          </a>
+        ),
       },
       {
           title: (
@@ -260,6 +288,33 @@ const LinkOrganizer: React.FC<RouteComponentProps> = () => {
           align: 'center',
       },
       {
+        title: (
+          <div style={{ display: 'grid', placeItems: 'stretch' }}>
+            <div
+              style={{
+                textOverflow: 'ellipsis',
+                overflow: 'hidden',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              <Tooltip title="Link">Link</Tooltip>
+            </div>
+          </div>
+        ),
+        dataIndex: 'id',
+        width: '10%',
+        align: 'center',
+        render: (value: string) => (
+          <a
+            href={'https://beautybuzz.io/' + value.slice(0, -4)}
+            target="blank"
+            style={value ? {} : { pointerEvents: 'none' }}
+          >
+            {value ? `https://beautybuzz.io/${value.slice(0, -4)}` : '-'}
+          </a>
+        ),
+      },
+      {
           title: (
               <div style={{ display: 'grid', placeItems: 'stretch' }}>
                   <div
@@ -383,6 +438,33 @@ const LinkOrganizer: React.FC<RouteComponentProps> = () => {
           width: '3%',
           render: id => <CopyValueToClipboard value={id} />,
           align: 'center',
+      },
+      {
+        title: (
+          <div style={{ display: 'grid', placeItems: 'stretch' }}>
+            <div
+              style={{
+                textOverflow: 'ellipsis',
+                overflow: 'hidden',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              <Tooltip title="Link">Link</Tooltip>
+            </div>
+          </div>
+        ),
+        dataIndex: 'id',
+        width: '10%',
+        align: 'center',
+        render: (value: string) => (
+          <a
+            href={'https://beautybuzz.io/' + value.slice(0, -4)}
+            target="blank"
+            style={value ? {} : { pointerEvents: 'none' }}
+          >
+            {value ? `https://beautybuzz.io/${value.slice(0, -4)}` : '-'}
+          </a>
+        ),
       },
       {
           title: (
@@ -531,6 +613,33 @@ const LinkOrganizer: React.FC<RouteComponentProps> = () => {
           align: 'center',
       },
       {
+        title: (
+          <div style={{ display: 'grid', placeItems: 'stretch' }}>
+            <div
+              style={{
+                textOverflow: 'ellipsis',
+                overflow: 'hidden',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              <Tooltip title="Link">Link</Tooltip>
+            </div>
+          </div>
+        ),
+        dataIndex: 'id',
+        width: '10%',
+        align: 'center',
+        render: (value: string) => (
+          <a
+            href={'https://beautybuzz.io/' + value.slice(0, -4)}
+            target="blank"
+            style={value ? {} : { pointerEvents: 'none' }}
+          >
+            {value ? `https://beautybuzz.io/${value.slice(0, -4)}` : '-'}
+          </a>
+        ),
+      },
+      {
           title: (
               <div style={{ display: 'grid', placeItems: 'stretch' }}>
                   <div
@@ -646,6 +755,52 @@ const LinkOrganizer: React.FC<RouteComponentProps> = () => {
                         whiteSpace: 'nowrap',
                     }}
                 >
+                    <Tooltip title="id">id</Tooltip>
+                </div>
+            </div>
+        ),
+        dataIndex: 'id',
+        width: '3%',
+        render: id => <CopyValueToClipboard value={id} />,
+        align: 'center',
+    },
+    {
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Link">Link</Tooltip>
+          </div>
+        </div>
+      ),
+      dataIndex: 'id',
+      width: '10%',
+      align: 'center',
+      render: (value: string) => (
+        <a
+          href={'https://beautybuzz.io/' + value.slice(0, -4)}
+          target="blank"
+          style={value ? {} : { pointerEvents: 'none' }}
+        >
+          {value ? `https://beautybuzz.io/${value.slice(0, -4)}` : '-'}
+        </a>
+      ),
+    },
+    {
+        title: (
+            <div style={{ display: 'grid', placeItems: 'stretch' }}>
+                <div
+                    style={{
+                        textOverflow: 'ellipsis',
+                        overflow: 'hidden',
+                        whiteSpace: 'nowrap',
+                    }}
+                >
                     <Tooltip title="Name">Name</Tooltip>
                 </div>
             </div>
@@ -664,7 +819,28 @@ const LinkOrganizer: React.FC<RouteComponentProps> = () => {
                         whiteSpace: 'nowrap',
                     }}
                 >
-                    <Tooltip title="Edit">Edit</Tooltip>
+                    <Tooltip title="Links">Links</Tooltip>
+                </div>
+            </div>
+        ),
+        dataIndex: 'links',
+        width: '5%',
+        render: (links: [any]) => (
+            links.length
+        ),
+        align: 'center',
+    },
+    {
+        title: (
+            <div style={{ display: 'grid', placeItems: 'stretch' }}>
+                <div
+                    style={{
+                        textOverflow: 'ellipsis',
+                        overflow: 'hidden',
+                        whiteSpace: 'nowrap',
+                    }}
+                >
+                    <Tooltip title="Actions">Actions</Tooltip>
                 </div>
             </div>
         ),
