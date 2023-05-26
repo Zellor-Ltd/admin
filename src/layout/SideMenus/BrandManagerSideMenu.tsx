@@ -2,7 +2,7 @@ import {
   FundOutlined,
   TagOutlined,
   HeartFilled,
-  ShoppingCartOutlined,
+  LinkOutlined,
 } from '@ant-design/icons';
 import { Menu } from 'antd';
 import { Link } from 'react-router-dom';
@@ -13,14 +13,14 @@ const AdminSideMenu = () => {
       <Menu.Item key="brand-dashboard" icon={<FundOutlined />}>
         <Link to="/brand-dashboard">Dashboard</Link>
       </Menu.Item>
-      <Menu.Item key="preview-list" icon={<TagOutlined />}>
-        <Link to="/preview-list">Products</Link>
+      <Menu.Item key="products" icon={<TagOutlined />}>
+        <Link to="/products">Products</Link>
       </Menu.Item>
       <Menu.Item key="feed" icon={<HeartFilled />}>
         <Link to="/feed">Videos Feed</Link>
       </Menu.Item>
-      <Menu.Item key="orders" icon={<ShoppingCartOutlined />}>
-        <Link to="/orders">Orders</Link>
+      <Menu.Item key="link-organizer" icon={<LinkOutlined />}>
+        <Link to="/link-organizer">Link Organizer</Link>
       </Menu.Item>
     </Menu>
   );
