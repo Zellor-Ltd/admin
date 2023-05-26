@@ -1,7 +1,6 @@
 import { Button, Col, Row, Tooltip } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import { SortableTable } from "components";
-import { useRequest } from "hooks/useRequest";
 import { useState } from "react";
 
 interface LinkOrganizerDetailProps {
@@ -15,8 +14,7 @@ const LinkOrganizerDetail: React.FC<LinkOrganizerDetailProps> = ({
     onSave,
     onCancel
 }) => {
-    const [loading, setLoading] = useState(false)
-    const { doFetch } = useRequest({ setLoading });
+    const [loading, setLoading] = useState(false);
     const [links, setLinks] = useState<any[]>(record.links);
 
     const onSaveData = async () => {

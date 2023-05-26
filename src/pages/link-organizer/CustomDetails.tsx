@@ -1,13 +1,13 @@
-import { Button, Col, Form, Image, Input, Row, Select, message } from "antd";
+import { Button, Col, Form, Input, Modal, Popconfirm, Row, Tooltip, message } from "antd";
 import { useRequest } from "hooks/useRequest";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { fetchCustomLinks, saveCustomLinkList } from "services/DiscoClubService";
 import { DebounceSelect } from 'components/select/DebounceSelect'
-import { DndProvider, useDrop } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
-import { useDrag } from 'react-dnd'
-import update from 'immutability-helper';
+import { SortableTable } from "components";
+import { ColumnsType } from "antd/lib/table";
+import { DeleteOutlined } from "@ant-design/icons";
+import { Upload } from 'components';
 
 interface CustomDetailsProps {
     customList?: any;
@@ -19,10 +19,11 @@ const CustomDetails: React.FC<CustomDetailsProps> = ({customList, onSave}) => {
     const { doFetch } = useRequest({ setLoading });
     const history = useHistory();
     const [form] = Form.useForm();
+    const [customItemForm] = Form.useForm();
     const [itemLinks, setItemLinks] = useState<any[]>(customList?.links ?? []);
     const [_, setQueriedLinks] = useState<any[]>([]);
     const [selectedLink, setSelectedLink] = useState<any>();
-    const [focusIndex, setFocusIndex] = useState<number>(0);
+    const [showModal, setShowModal] = useState<boolean>(false);
 
     useEffect(() => {
       if (selectedLink)
@@ -54,66 +55,161 @@ const CustomDetails: React.FC<CustomDetailsProps> = ({customList, onSave}) => {
       }
     };
 
-    const type = 'carousel-item'
-    const DraggableBodyRow = ({
-      index,
-      className,
-      key,
-      onClick,
-      children
-    }: any) => {
-      const ref = useRef<HTMLDivElement>(null);
-      const [{ isOver }, drop] = useDrop({
-        accept: type,
-        collect: monitor => {
-          const { index: dragIndex } = (monitor.getItem() || {}) as any;
-          if (dragIndex === index) {
-            return {};
-          }
-          return {
-            isOver: monitor.isOver(),
-          };
-        },
-        drop: (item: { index: number }) => {
-          moveRow(item.index, index);
-        },
-      });
-      const [, drag] = useDrag({
-        type,
-        item: { index },
-        collect: monitor => ({
-          isDragging: monitor.isDragging(),
-        }),
-      });
-      drop(drag(ref));
-
-      const moveRow = useCallback(
-        (dragIndex: number, hoverIndex: number) => {
-          if (!itemLinks.length) return;
-          const dragRow = itemLinks[dragIndex];
-          setItemLinks(
-            update(itemLinks, {
-              $splice: [
-                [dragIndex, 1],
-                [hoverIndex, 0, dragRow],
-              ],
-            })
-          );
-        },
-        [itemLinks]
-      );
-  
-      return (
-        <div
-          ref={ref}
-          className={className}
-          style={{ cursor: 'move' }}
-          key={key}
-          onClick={onClick}
-        >{children}
-        </div>
-      );
+    const deleteItem = async (record: any) => {
+      const updatedLinks = itemLinks.filter((item:any) => item.id !== record.id);
+      setItemLinks(updatedLinks);
     };
+
+    const handleAddItem = () => {
+      const newItem = customItemForm.getFieldsValue(true);
+      if (newItem) {
+      setItemLinks([...itemLinks, newItem]);
+      setShowModal(false);
+      }
+      else message.warning("Can't add an empty item!");
+    }
+
+    const columns: ColumnsType<any> = [
+        {
+            title: (
+                <div style={{ display: 'grid', placeItems: 'stretch' }}>
+                    <div
+                        style={{
+                            textOverflow: 'ellipsis',
+                            overflow: 'hidden',
+                            whiteSpace: 'nowrap',
+                        }}
+                    >
+                        <Tooltip title="Link">Link</Tooltip>
+                    </div>
+                </div>
+            ),
+            dataIndex: 'id',
+            width: '10%',
+            render: id => 
+                {if (id)
+                  return <a href={'https://beautybuzz.io/' + id?.replace('_STR', '')} target="blank">
+                    {id?.replace('_STR', '')}
+                </a>}
+            ,
+            align: 'center',
+        },
+        {
+            title: (
+                <div style={{ display: 'grid', placeItems: 'stretch' }}>
+                    <div
+                        style={{
+                            textOverflow: 'ellipsis',
+                            overflow: 'hidden',
+                            whiteSpace: 'nowrap',
+                        }}
+                    >
+                        <Tooltip title="Label">Label</Tooltip>
+                    </div>
+                </div>
+            ),
+            dataIndex: 'value',
+            width: '10%',
+            align: 'center',
+        },
+        {
+            title: (
+                <div style={{ display: 'grid', placeItems: 'stretch' }}>
+                    <div
+                        style={{
+                            textOverflow: 'ellipsis',
+                            overflow: 'hidden',
+                            whiteSpace: 'nowrap',
+                        }}
+                    >
+                        <Tooltip title="Description">Description</Tooltip>
+                    </div>
+                </div>
+            ),
+            dataIndex: 'shortDescription',
+            width: '30%',
+            render: (value?: string) => (
+              <>
+                  {value?.slice(0,30)}{value?.length! > 30 && '...'}
+              </>            
+          ),
+            align: 'center',
+        },
+        {
+            title: (
+                <div style={{ display: 'grid', placeItems: 'stretch' }}>
+                    <div
+                        style={{
+                            textOverflow: 'ellipsis',
+                            overflow: 'hidden',
+                            whiteSpace: 'nowrap',
+                        }}
+                    >
+                        <Tooltip title="Actions">Actions</Tooltip>
+                    </div>
+                </div>
+            ),
+            key: 'action',
+            width: '5%',
+            align: 'right',
+            render: (_, record: any) => (
+              <>
+                <Popconfirm
+                  title="Are you sure？"
+                  okText="Yes"
+                  cancelText="No"
+                  onConfirm={() => deleteItem(record)}
+                >
+                  <Button type="link" style={{ padding: 0, margin: 6 }}>
+                    <DeleteOutlined />
+                  </Button>
+                </Popconfirm>
+              </>
+            ),
+        },
+    ];
+
+    const NewCustomItemModal = () => {
+      return (
+        <Form
+          form={customItemForm}
+          name="segmentForm"
+          layout="vertical"
+          initialValues={undefined}
+        >
+        <Row>
+        <Col xs={24} lg={12} style={{paddingRight: '0.5rem'}}>
+          <Form.Item label="Label" name="label">
+            <Input placeholder="Enter a Label" />
+          </Form.Item>
+          </Col>  
+        <Col xs={24} lg={12} style={{paddingLeft: '0.5rem'}}>
+          <Form.Item label="Short Description" name="shortDescription">
+            <Input placeholder="Enter a Short Description"/>
+          </Form.Item>
+          </Col>  
+        <Col span={12}>
+          <Form.Item label="Video">
+            <Upload.VideoUpload
+              fileList={undefined}
+              formProp="video"
+              form={customItemForm}
+            />
+          </Form.Item>
+        </Col>
+        <Col span={12}>
+          <Form.Item label="Thumbnail URL">
+            <Upload.ImageUpload
+              type="thumbnail"
+              fileList={undefined}
+              formProp="thumbnail"
+              form={customItemForm}
+            />
+          </Form.Item>
+        </Col>
+      </Row></Form>
+      )
+    }
     
     return (
       <>
@@ -125,17 +221,19 @@ const CustomDetails: React.FC<CustomDetailsProps> = ({customList, onSave}) => {
           onFinish={onFinish}
         >
           <Row gutter={8}>
-              <Col xs={24} lg={12}>
+              <Col span={24}>
                 <Form.Item label="List Name" name="name">
                   <Input allowClear placeholder="Enter a name" />
                 </Form.Item>
               </Col>
-              <Col xs={24} lg={12}>
-                <p className="mb-05">Insert new Link</p>
+                  <Col span={24}><h3 className="mb-05">Insert Link</h3></Col>
+                <Col span={24}>
+                  <Row>
+                    <Col flex='auto'>
                 <DebounceSelect 
                   fetchOptions={(value) => fetch(value)}
                   style={{ width: '100%' }}
-                  placeholder="Type to search"
+                  placeholder="Type to search existing Link"
                   onChange={(_, entity) =>
                     {if (entity)
                     setSelectedLink(entity)
@@ -145,26 +243,40 @@ const CustomDetails: React.FC<CustomDetailsProps> = ({customList, onSave}) => {
                     value: 'id',
                     label: "'feed']['title'"
                   }}
+                /></Col>
+                  <Col flex='100px'><Button
+                key="1"
+                type="primary"
+                className="ml-1"
+                onClick={() => setShowModal(true)}
+              >
+                Create Link
+              </Button></Col>
+              </Row>
+                </Col>
+              <Col span={24}>
+                <SortableTable
+                  scroll={{ x: true, y: '34em' }}
+                  rowKey="id"
+                  columns={columns}
+                  dataSource={itemLinks}
+                  setDataSource={setItemLinks}
+                  loading={loading}
+                  className="my-2"
                 />
               </Col>
-              {itemLinks.length && 
               <Col span={24}>
-                <DndProvider backend={HTML5Backend}>
-                <div className="custom-link-container">
-                  {itemLinks.map((item, index) => {
-                    return (
-                      <DraggableBodyRow key={item ? item?.id : 0} className={index === focusIndex ? "custom-link-item carousel-focus mr-1" : "custom-link-item mr-1"} onClick={() => setFocusIndex(index)}>
-                        <Image height={150} src={item?.feed?.package[0]?.thumbnailUrl} />
-                        <p>
-                          <a>{item?.feed?.package[0]?.videoUrl?.substring(0,20)}{item?.feed?.package[0]?.videoUrl && '...'}</a>
-                          <br/>{item?.feed?.shortDescription?.substring(0,20)}{item?.feed?.shortDescription && '...'}
-                          <br/>Type: {item?.feed?.videoType?.join("/")}
-                        </p>
-                      </DraggableBodyRow>
-                    )})}
-                </div>
-                </DndProvider>
-            </Col>}
+              <Modal
+                title="Create Custom Link"
+                visible={showModal}
+                onOk={handleAddItem}
+                onCancel={() => setShowModal(false)}
+                okText="Save"
+                cancelText="Cancel"
+              >
+                <NewCustomItemModal />
+              </Modal>
+            </Col>
           </Row>
           <Row gutter={8} justify="end">
             <Col>
