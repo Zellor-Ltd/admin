@@ -11,25 +11,24 @@ import { Link, RouteComponentProps, useHistory } from 'react-router-dom';
 import { EditOutlined } from '@ant-design/icons';
 import { ColumnsType } from 'antd/lib/table';
 import { useRequest } from 'hooks/useRequest';
-import { fetchCustomLinkLists, fetchLinkBrand, fetchLinkCreator, fetchLinkProduct, fetchLinkProductBrand, updateLinkBrand } from 'services/DiscoClubService';
+import { fetchCustomLinks, fetchLinkBrand, fetchLinkCreator, fetchLinkProduct, fetchLinkProductBrand, saveCustomLinkList, updateLinkBrand, updateLinkCreator, updateLinkProduct, updateLinkProductBrand } from 'services/DiscoClubService';
 import CustomDetails from './CustomDetails';
 import CopyValueToClipboard from 'components/CopyValueToClipboard';
 import moment from 'moment';
 import LinkOrganizerDetail from './LinkOrganizerDetail';
-import { SimpleSwitch } from 'components/SimpleSwitch';
 
 const LinkOrganizer: React.FC<RouteComponentProps> = () => {
   const [selectedTab, setSelectedTab] = useState<string>('brand');
   const [loading, setLoading] = useState(false);
   const { doFetch } = useRequest({ setLoading });
-  const [customLinkLists, setCustomLinkLists] = useState<any[]>([]);
   const [details, setDetails] = useState<boolean>(false);
   const history = useHistory();
   const [brands, setBrands] = useState<any[]>([]);
-  const [currentRecord, setCurrentRecord] = useState<any>(); 
+  const [currentList, setCurrentList] = useState<any>(); 
   const [creators, setCreators] = useState<any[]>([]);
   const [products, setProducts] = useState<any[]>([]);
   const [productBrands, setProductBrands] = useState<any[]>([]);
+  const [custom, setCustom] = useState<any[]>([]);
   
   useEffect(() => {
       history.listen((_, action) => {
@@ -74,28 +73,55 @@ const LinkOrganizer: React.FC<RouteComponentProps> = () => {
 
       const getCustomData = async () => {
           const response = await doFetch(() =>
-              fetchCustomLinkLists({})
+          fetchCustomLinks({})
           );
-      setCustomLinkLists(response.results)
+      setCustom(response.results)
       };
 
   const handleTabChange = (value: string) => {
     setSelectedTab(value);
   };
 
-  const handleEditRecord = (record?: any) => {
-      setCurrentRecord(record);
+  const handleEditRecord = (list?: any) => {
+      setCurrentList(list);
     setDetails(true);
     history.push(window.location.pathname);
   };
 
-  const handleSaveRecord = async (record: any, setLoadingLocal: any) => {
+  const handleSaveRecord = async (record: any, setLoadingLocal: any, tabName: string) => {
       try {
-          setLoadingLocal(true)
-          await updateLinkBrand(record)
-          setDetails(false);
-      } finally {
-          setLoadingLocal(true)
+          setLoadingLocal(true);
+          const updatedLinks = currentList.links.map((item: any) => {
+            if (item.id === record.id)
+              return record;
+            else 
+              return item;
+          })
+
+          switch (tabName) {
+            case 'brand':
+                await updateLinkBrand({...currentList, links: updatedLinks});
+                break;
+            case 'productBrand':
+                await updateLinkProductBrand({...currentList, links: updatedLinks});
+                break
+            case 'product':
+                await updateLinkProduct({...currentList, links: updatedLinks});
+                break
+            case 'creator':
+                await updateLinkCreator({...currentList, links: updatedLinks});
+                break
+            case 'custom':
+                await saveCustomLinkList({...currentList, links: updatedLinks, tp: "s"});
+                break
+          }
+          
+          message.success('Register updated with success.');
+      } catch (error: any) {
+        message.error('Error: ' + error.error)
+      }
+       finally {
+          setLoadingLocal(false);
       }
   };
 
@@ -104,30 +130,17 @@ const LinkOrganizer: React.FC<RouteComponentProps> = () => {
   };
 
   const handleSaveCustomList = (record: any) => {
-    const listItem = customLinkLists.find(item => item.id === record.id)
+    const listItem = custom.find(item => item.id === record.id)
     if (!listItem){
-      refreshTable(record, customLinkLists.length)
+      refreshTable(record, custom.length)
       return
     }
-    const index = customLinkLists.indexOf(listItem)
+    const index = custom.indexOf(listItem)
     refreshTable(record, index);
   };
 
   const refreshTable = (record: any, index: number) => {
-      setCustomLinkLists(prev => [...prev.slice(0, index), record, ...prev.slice(index + 1)]);
-  }
-
-  const handleSwitchChange = async (
-    record: any,
-    toggled: boolean
-  ) => {
-    try {
-      record.deleted = toggled;
-      await updateLinkBrand(record);
-      message.success('Register updated with success.');
-    } catch (error) {
-      message.error("Error: Couldn't set 'deleted' property. Try again.");
-    }
+      setCustom(prev => [...prev.slice(0, index), record, ...prev.slice(index + 1)]);
   };
 
   const brandColumns: ColumnsType<any> = [
@@ -187,7 +200,7 @@ const LinkOrganizer: React.FC<RouteComponentProps> = () => {
                           whiteSpace: 'nowrap',
                       }}
                   >
-                      <Tooltip title="brand">Brand</Tooltip>
+                      <Tooltip title="Brand">Brand</Tooltip>
                   </div>
               </div>
           ),
@@ -252,38 +265,6 @@ const LinkOrganizer: React.FC<RouteComponentProps> = () => {
               else if (b.iLastUpdate) return 1;
               else return 0;
           },
-      },
-      {
-        title: (
-          <div style={{ display: 'grid', placeItems: 'stretch' }}>
-            <div
-              style={{
-                textOverflow: 'ellipsis',
-                overflow: 'hidden',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              <Tooltip title="Deleted">Deleted</Tooltip>
-            </div>
-          </div>
-        ),
-        dataIndex: 'deleted',
-        width: '10%',
-        align: 'center',
-        render: (_: any, record: any) => (
-          <SimpleSwitch
-            toggled={!!record.deleted}
-            handleSwitchChange={(toggled: boolean) =>
-              handleSwitchChange(record, toggled)
-            }
-          />
-        ),
-        sorter: (a, b): any => {
-          if (a.deleted && b.deleted) return 0;
-          else if (a.deleted) return -1;
-          else if (b.deleted) return 1;
-          else return 0;
-        },
       },
       {
           title: (
@@ -436,38 +417,6 @@ const LinkOrganizer: React.FC<RouteComponentProps> = () => {
               else if (b.iLastUpdate) return 1;
               else return 0;
           },
-      },
-      {
-        title: (
-          <div style={{ display: 'grid', placeItems: 'stretch' }}>
-            <div
-              style={{
-                textOverflow: 'ellipsis',
-                overflow: 'hidden',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              <Tooltip title="Deleted">Deleted</Tooltip>
-            </div>
-          </div>
-        ),
-        dataIndex: 'deleted',
-        width: '10%',
-        align: 'center',
-        render: (_: any, record: any) => (
-          <SimpleSwitch
-            toggled={!!record.deleted}
-            handleSwitchChange={(toggled: boolean) =>
-              handleSwitchChange(record, toggled)
-            }
-          />
-        ),
-        sorter: (a, b): any => {
-          if (a.deleted && b.deleted) return 0;
-          else if (a.deleted) return -1;
-          else if (b.deleted) return 1;
-          else return 0;
-        },
       },
       {
           title: (
@@ -643,38 +592,6 @@ const LinkOrganizer: React.FC<RouteComponentProps> = () => {
           },
       },
       {
-        title: (
-          <div style={{ display: 'grid', placeItems: 'stretch' }}>
-            <div
-              style={{
-                textOverflow: 'ellipsis',
-                overflow: 'hidden',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              <Tooltip title="Deleted">Deleted</Tooltip>
-            </div>
-          </div>
-        ),
-        dataIndex: 'deleted',
-        width: '10%',
-        align: 'center',
-        render: (_: any, record: any) => (
-          <SimpleSwitch
-            toggled={!!record.deleted}
-            handleSwitchChange={(toggled: boolean) =>
-              handleSwitchChange(record, toggled)
-            }
-          />
-        ),
-        sorter: (a, b): any => {
-          if (a.deleted && b.deleted) return 0;
-          else if (a.deleted) return -1;
-          else if (b.deleted) return 1;
-          else return 0;
-        },
-      },
-      {
           title: (
               <div style={{ display: 'grid', placeItems: 'stretch' }}>
                   <div
@@ -827,38 +744,6 @@ const LinkOrganizer: React.FC<RouteComponentProps> = () => {
           },
       },
       {
-        title: (
-          <div style={{ display: 'grid', placeItems: 'stretch' }}>
-            <div
-              style={{
-                textOverflow: 'ellipsis',
-                overflow: 'hidden',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              <Tooltip title="Deleted">Deleted</Tooltip>
-            </div>
-          </div>
-        ),
-        dataIndex: 'deleted',
-        width: '10%',
-        align: 'center',
-        render: (_: any, record: any) => (
-          <SimpleSwitch
-            toggled={!!record.deleted}
-            handleSwitchChange={(toggled: boolean) =>
-              handleSwitchChange(record, toggled)
-            }
-          />
-        ),
-        sorter: (a, b): any => {
-          if (a.deleted && b.deleted) return 0;
-          else if (a.deleted) return -1;
-          else if (b.deleted) return 1;
-          else return 0;
-        },
-      },
-      {
           title: (
               <div style={{ display: 'grid', placeItems: 'stretch' }}>
                   <div
@@ -969,7 +854,7 @@ const LinkOrganizer: React.FC<RouteComponentProps> = () => {
         dataIndex: 'links',
         width: '5%',
         render: (links: [any]) => (
-            links.length
+            links ? links.length : '0'
         ),
         align: 'center',
     },
@@ -1075,7 +960,7 @@ const LinkOrganizer: React.FC<RouteComponentProps> = () => {
                 rowClassName={(_, index) => `scrollable-row-${index}`}
                 rowKey="id"
                 columns={customColumns}
-                dataSource={customLinkLists}
+                dataSource={custom}
                 loading={loading}
                 pagination={false}
                 scroll={{ y: 240, x: true }}
@@ -1088,18 +973,19 @@ const LinkOrganizer: React.FC<RouteComponentProps> = () => {
       {selectedTab === 'custom' && details && (
         <>      
           <PageHeader
-            title={currentRecord ? `Edit ${currentRecord.name}` : "New Link List"}
+            title={currentList ? `Edit ${currentList.name}` : "New Link List"}
             className="mb-n05"
             
           />
-          <CustomDetails customList={currentRecord} onSave={handleSaveCustomList} />
+          <CustomDetails customList={currentList} onSave={handleSaveCustomList} />
         </>
       )}
       {selectedTab !== 'custom' && details && (
           <LinkOrganizerDetail
-              record={currentRecord}
+              record={currentList}
               onSave={handleSaveRecord}
-              onCancel={handleCancelRecord} />
+              onCancel={handleCancelRecord}
+              tabName={selectedTab} />
       )}
     </div>
   );
