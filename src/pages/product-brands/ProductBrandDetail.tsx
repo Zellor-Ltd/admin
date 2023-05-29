@@ -490,7 +490,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                       <Input
                         placeholder="Brand Link"
                         allowClear
-                        prefix="https://vlink.ie/"
+                        prefix="https://beautybuzz.io/"
                       />
                     </Form.Item>
                   </Col>

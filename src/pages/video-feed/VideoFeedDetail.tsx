@@ -734,7 +734,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
       dataIndex: 'id',
       width: '15%',
       render: id => (
-        <a href={'https://vlink.ie/' + id.replace('_STR', '')} target="blank">
+        <a href={'https://beautybuzz.io/' + id.replace('_STR', '')} target="blank">
           {id.replace('_STR', '')}
         </a>
       ),
