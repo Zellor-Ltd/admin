@@ -180,18 +180,22 @@ const LinkOrganizer: React.FC<RouteComponentProps> = () => {
           </div>
         </div>
       ),
-      dataIndex: 'id',
+      dataIndex: ['brand', 'masterBrandLink'],
       width: '10%',
       align: 'center',
-      render: (value: string) => (
-        <a
-          href={'https://beautybuzz.io/' + value.slice(0, -4)}
-          target="blank"
-          style={value ? {} : { pointerEvents: 'none' }}
-        >
-          {value ? `https://beautybuzz.io/${value.slice(0, -4)}` : '-'}
-        </a>
-      ),
+      render: (value: string) => {
+        if (value)
+          return (
+            <a
+              href={'https://beautybuzz.io/' + value.slice(0, -4)}
+              target="blank"
+              style={value ? {} : { pointerEvents: 'none' }}
+            >
+              {value ? `https://beautybuzz.io/${value.slice(0, -4)}` : '-'}
+            </a>
+          );
+        else return '-';
+      },
     },
     {
       title: (
@@ -328,18 +332,22 @@ const LinkOrganizer: React.FC<RouteComponentProps> = () => {
           </div>
         </div>
       ),
-      dataIndex: 'id',
+      dataIndex: ['brand', 'brandLink'],
       width: '10%',
       align: 'center',
-      render: (value: string) => (
-        <a
-          href={'https://beautybuzz.io/' + value.slice(0, -4)}
-          target="blank"
-          style={value ? {} : { pointerEvents: 'none' }}
-        >
-          {value ? `https://beautybuzz.io/${value.slice(0, -4)}` : '-'}
-        </a>
-      ),
+      render: (value: string) => {
+        if (value)
+          return (
+            <a
+              href={'https://beautybuzz.io/' + value.slice(0, -4)}
+              target="blank"
+              style={value ? {} : { pointerEvents: 'none' }}
+            >
+              {value ? `https://beautybuzz.io/${value.slice(0, -4)}` : '-'}
+            </a>
+          );
+        else return '-';
+      },
     },
     {
       title: (
@@ -479,15 +487,19 @@ const LinkOrganizer: React.FC<RouteComponentProps> = () => {
       dataIndex: 'id',
       width: '10%',
       align: 'center',
-      render: (value: string) => (
-        <a
-          href={'https://beautybuzz.io/' + value.slice(0, -4)}
-          target="blank"
-          style={value ? {} : { pointerEvents: 'none' }}
-        >
-          {value ? `https://beautybuzz.io/${value.slice(0, -4)}` : '-'}
-        </a>
-      ),
+      render: (value: string) => {
+        if (value)
+          return (
+            <a
+              href={'https://beautybuzz.io/' + value.slice(0, -4)}
+              target="blank"
+              style={value ? {} : { pointerEvents: 'none' }}
+            >
+              {value ? `https://beautybuzz.io/${value.slice(0, -4)}` : '-'}
+            </a>
+          );
+        else return '-';
+      },
     },
     {
       title: (
@@ -650,7 +662,7 @@ const LinkOrganizer: React.FC<RouteComponentProps> = () => {
         if (value)
           return (
             <a
-              href={'https://beautybuzz.io/' + value?.slice(0, -4)}
+              href={'https://beautybuzz.io/' + value.slice(0, -4)}
               target="blank"
               style={value ? {} : { pointerEvents: 'none' }}
             >
@@ -799,15 +811,19 @@ const LinkOrganizer: React.FC<RouteComponentProps> = () => {
       dataIndex: 'id',
       width: '10%',
       align: 'center',
-      render: (value: string) => (
-        <a
-          href={'https://beautybuzz.io/' + value.slice(0, -4)}
-          target="blank"
-          style={value ? {} : { pointerEvents: 'none' }}
-        >
-          {value ? `https://beautybuzz.io/${value.slice(0, -4)}` : '-'}
-        </a>
-      ),
+      render: (value: string) => {
+        if (value)
+          return (
+            <a
+              href={'https://beautybuzz.io/' + value.slice(0, -4)}
+              target="blank"
+              style={value ? {} : { pointerEvents: 'none' }}
+            >
+              {value ? `https://beautybuzz.io/${value.slice(0, -4)}` : '-'}
+            </a>
+          );
+        else return '-';
+      },
     },
     {
       title: (

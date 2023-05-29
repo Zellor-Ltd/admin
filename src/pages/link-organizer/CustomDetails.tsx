@@ -70,14 +70,28 @@ const CustomDetails: React.FC<CustomDetailsProps> = ({
     }
   };
 
-  const deleteItem = async (record: any) => {
-    const updatedLinks = itemLinks.filter((item: any) => item.id !== record.id);
+  const deleteItem = async (index: number) => {
+    const updatedLinks = [
+      ...itemLinks.slice(0, index),
+      ...itemLinks.slice(index + 1),
+    ];
     setItemLinks(updatedLinks);
   };
 
   const handleAddItem = () => {
     const newItem = customItemForm.getFieldsValue(true);
+
     if (newItem) {
+      const pkg = [
+        {
+          videoUrl: newItem.video?.url,
+          thumbnailUrl: newItem.thumbnail?.url,
+        },
+      ];
+      newItem.feed.package = pkg;
+      newItem.video = undefined;
+      newItem.thumbnail = undefined;
+
       setItemLinks([...itemLinks, newItem]);
       setShowModal(false);
     } else message.warning("Can't add an empty item!");
@@ -149,7 +163,7 @@ const CustomDetails: React.FC<CustomDetailsProps> = ({
           </div>
         </div>
       ),
-      dataIndex: 'value',
+      dataIndex: ['feed', 'title'],
       width: '10%',
       align: 'center',
     },
@@ -167,7 +181,7 @@ const CustomDetails: React.FC<CustomDetailsProps> = ({
           </div>
         </div>
       ),
-      dataIndex: 'shortDescription',
+      dataIndex: ['feed', 'shortDescription'],
       width: '30%',
       render: (value?: string) => (
         <>
@@ -196,13 +210,13 @@ const CustomDetails: React.FC<CustomDetailsProps> = ({
       key: 'action',
       width: '5%',
       align: 'right',
-      render: (_, record: any) => (
+      render: (_, __, index: number) => (
         <>
           <Popconfirm
             title="Are you sure？"
             okText="Yes"
             cancelText="No"
-            onConfirm={() => deleteItem(record)}
+            onConfirm={() => deleteItem(index)}
           >
             <Button type="link" style={{ padding: 0, margin: 6 }}>
               <DeleteOutlined />
@@ -223,12 +237,15 @@ const CustomDetails: React.FC<CustomDetailsProps> = ({
       >
         <Row>
           <Col xs={24} lg={12} style={{ paddingRight: '0.5rem' }}>
-            <Form.Item label="Label" name="label">
+            <Form.Item label="Label" name={['feed', 'title']}>
               <Input placeholder="Enter a Label" />
             </Form.Item>
           </Col>
           <Col xs={24} lg={12} style={{ paddingLeft: '0.5rem' }}>
-            <Form.Item label="Short Description" name="shortDescription">
+            <Form.Item
+              label="Short Description"
+              name={['feed', 'shortDescription']}
+            >
               <Input placeholder="Enter a Short Description" />
             </Form.Item>
           </Col>
