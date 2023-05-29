@@ -41,36 +41,33 @@ const LinkOrganizer: React.FC<RouteComponentProps> = () => {
   });
 
   useEffect(() => {
+    const getBrandData = async () => {
+      const response = await doFetch(() => fetchLinkBrand({}));
+      setBrands(response.results);
+    };
+    const getProductBrandData = async () => {
+      const response = await doFetch(() => fetchLinkProductBrand({}));
+      setProductBrands(response.results);
+    };
+    const getProductData = async () => {
+      const response = await doFetch(() => fetchLinkProduct({}));
+      setProducts(response.results);
+    };
+    const getCreatorData = async () => {
+      const response = await doFetch(() => fetchLinkCreator({}));
+      setCreators(response.results);
+    };
+    const getCustomData = async () => {
+      const response = await doFetch(() => fetchCustomLinkLists({}));
+      setCustom(response.results);
+    };
+
     getBrandData();
     getProductBrandData();
     getProductData();
     getCreatorData();
     getCustomData();
-  }, []);
-
-  const getBrandData = async () => {
-    const response = await doFetch(() => fetchLinkBrand({}));
-    setBrands(response.results);
-  };
-
-  const getProductBrandData = async () => {
-    const response = await doFetch(() => fetchLinkProductBrand({}));
-    setProductBrands(response.results);
-  };
-  const getProductData = async () => {
-    const response = await doFetch(() => fetchLinkProduct({}));
-    setProducts(response.results);
-  };
-
-  const getCreatorData = async () => {
-    const response = await doFetch(() => fetchLinkCreator({}));
-    setCreators(response.results);
-  };
-
-  const getCustomData = async () => {
-    const response = await doFetch(() => fetchCustomLinkLists({}));
-    setCustom(response.results);
-  };
+  }, [doFetch]);
 
   const handleTabChange = (value: string) => {
     setSelectedTab(value);
