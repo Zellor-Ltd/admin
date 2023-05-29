@@ -89,11 +89,29 @@ const CustomDetails: React.FC<CustomDetailsProps> = ({
           thumbnailUrl: newItem.thumbnail?.url,
         },
       ];
-      newItem.feed.package = pkg;
-      newItem.video = undefined;
-      newItem.thumbnail = undefined;
 
-      setItemLinks([...itemLinks, newItem]);
+      const feed = {
+        title: null,
+        videoLabel: 'selected',
+        shortDescription: 'informed by user',
+        creator: null,
+        package: pkg,
+        searchTags: null,
+        category: null,
+        videoType: ['Custom'],
+      };
+
+      const configuredItem = {
+        index: 2,
+        hIndex: 889,
+        vIndex: 1000,
+        videoFeedId: null,
+        socialPlatform: 'Disco Club',
+        includeVideo: true,
+        feed: feed,
+      };
+
+      setItemLinks([...itemLinks, configuredItem]);
       setShowModal(false);
     } else message.warning("Can't add an empty item!");
   };
