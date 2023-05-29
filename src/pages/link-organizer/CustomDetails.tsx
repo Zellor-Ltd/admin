@@ -38,12 +38,13 @@ const CustomDetails: React.FC<CustomDetailsProps> = ({
   const [form] = Form.useForm();
   const [customItemForm] = Form.useForm();
   const [itemLinks, setItemLinks] = useState<any[]>(customList?.links ?? []);
-  const [_, setQueriedLinks] = useState<any[]>([]);
+  const [, setQueriedLinks] = useState<any[]>([]);
   const [selectedLink, setSelectedLink] = useState<any>();
   const [showModal, setShowModal] = useState<boolean>(false);
 
   useEffect(() => {
     if (selectedLink) setItemLinks([...itemLinks, selectedLink]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedLink]);
 
   const fetch = async (query: string) => {
