@@ -1,35 +1,36 @@
-import { Button, Col, Row, Tooltip } from "antd";
+import { Button, Col, Image, Row, Tooltip } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import { SortableTable } from "components";
-import { useRequest } from "hooks/useRequest";
+import { SimpleSwitch } from "components/SimpleSwitch";
 import { useState } from "react";
 
 interface LinkOrganizerDetailProps {
     record: any;
-    onSave: (record: any, setLoading: any) => void;
+    onSave: (record: any, setLoading: any, tabName: string) => void;
     onCancel: () => void;
+    tabName: string;
 }
 
 const LinkOrganizerDetail: React.FC<LinkOrganizerDetailProps> = ({
     record,
     onSave,
-    onCancel
+    onCancel,
+    tabName
 }) => {
-    const [loading, setLoading] = useState(false)
-    const { doFetch } = useRequest({ setLoading });
+    const [loading, setLoading] = useState(false);
     const [links, setLinks] = useState<any[]>(record.links);
 
-    const onSaveData = async () => {
+    const onSaveData =  () => {
+         onSave(record, setLoading, tabName)     
+    };
 
-        let newRecord = record;
-        newRecord.links = links;
-        let orderCount = 0
-        newRecord.links.forEach(item => {
-            item.lIndex = orderCount;
-            orderCount++;
-        });
-         onSave(newRecord,setLoading)        
-    }
+    const handleSwitchChange = async (
+      record: any,
+      toggled: boolean
+    ) => {
+        record.deleted = toggled;
+        onSave(record, setLoading, tabName);
+    };
 
     const columns: ColumnsType<any> = [
         {
@@ -53,6 +54,25 @@ const LinkOrganizerDetail: React.FC<LinkOrganizerDetailProps> = ({
                     {id.replace('_STR', '')}
                 </a>
             ),
+            align: 'center',
+        },
+        {
+            title: (
+                <div style={{ display: 'grid', placeItems: 'stretch' }}>
+                    <div
+                        style={{
+                            textOverflow: 'ellipsis',
+                            overflow: 'hidden',
+                            whiteSpace: 'nowrap',
+                        }}
+                    >
+                        <Tooltip title="Thumbnail">Thumbnail</Tooltip>
+                    </div>
+                </div>
+            ),
+            dataIndex: ['feed','package'],
+            width: '30%',
+            render: (value: any[]) => <Image height={40} src={value[0]?.thumbnailUrl} />,
             align: 'center',
         },
         {
@@ -132,12 +152,46 @@ const LinkOrganizerDetail: React.FC<LinkOrganizerDetailProps> = ({
                     </div>
                 </div>
             ),
-            dataIndex: 'feed',
+            dataIndex: ['feed','shortDescription'],
             width: '30%',
-            render: (feed: any) => (
-                feed?.shortDescription
+            render: (value?: string) => (
+                <>
+                    {value?.slice(0,30)}{value?.length! > 30 && '...'}
+                </>            
             ),
             align: 'center',
+        },
+        {
+          title: (
+            <div style={{ display: 'grid', placeItems: 'stretch' }}>
+              <div
+                style={{
+                  textOverflow: 'ellipsis',
+                  overflow: 'hidden',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                <Tooltip title="Deleted">Deleted</Tooltip>
+              </div>
+            </div>
+          ),
+          dataIndex: 'deleted',
+          width: '10%',
+          align: 'center',
+          render: (_: any, record: any) => (
+            <SimpleSwitch
+              toggled={!!record.deleted}
+              handleSwitchChange={(toggled: boolean) =>
+                handleSwitchChange(record, toggled)
+              }
+            />
+          ),
+          sorter: (a, b): any => {
+            if (a.deleted && b.deleted) return 0;
+            else if (a.deleted) return -1;
+            else if (b.deleted) return 1;
+            else return 0;
+          },
         },
     ];
 
