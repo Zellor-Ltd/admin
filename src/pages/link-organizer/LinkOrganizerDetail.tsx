@@ -71,9 +71,10 @@ const LinkOrganizerDetail: React.FC<LinkOrganizerDetailProps> = ({
         </div>
       ),
       dataIndex: ['feed', 'package'],
-      width: '30%',
+      width: '10%',
+      className: 'p-05',
       render: (value: any[]) => (
-        <Image height={40} src={value[0]?.thumbnailUrl} />
+        <Image height={60} src={value[0]?.thumbnailUrl} />
       ),
       align: 'center',
     },
@@ -125,26 +126,7 @@ const LinkOrganizerDetail: React.FC<LinkOrganizerDetailProps> = ({
               whiteSpace: 'nowrap',
             }}
           >
-            <Tooltip title="Brand">Brand</Tooltip>
-          </div>
-        </div>
-      ),
-      dataIndex: 'brand',
-      width: '20%',
-      render: (brand: any) => brand?.name,
-      align: 'center',
-    },
-    {
-      title: (
-        <div style={{ display: 'grid', placeItems: 'stretch' }}>
-          <div
-            style={{
-              textOverflow: 'ellipsis',
-              overflow: 'hidden',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            <Tooltip title="Description">Description</Tooltip>
+            <Tooltip title="Description">Short Description</Tooltip>
           </div>
         </div>
       ),
@@ -152,8 +134,10 @@ const LinkOrganizerDetail: React.FC<LinkOrganizerDetailProps> = ({
       width: '30%',
       render: (value?: string) => (
         <>
-          {value?.slice(0, 30)}
-          {value?.length! > 30 && '...'}
+          <Tooltip title={value}>
+            {value?.slice(0, 50)}
+            {value?.length! > 50 && '...'}
+          </Tooltip>
         </>
       ),
       align: 'center',
