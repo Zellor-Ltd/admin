@@ -49,7 +49,7 @@ const LinkOrganizerDetail: React.FC<LinkOrganizerDetailProps> = ({
             dataIndex: 'id',
             width: '10%',
             render: id => (
-                <a href={'https://vlink.ie/' + id.replace('_STR', '')} target="blank">
+                <a href={'https://beautybuzz.io/' + id.replace('_STR', '')} target="blank">
                     {id.replace('_STR', '')}
                 </a>
             ),
