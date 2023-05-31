@@ -1,5 +1,5 @@
 import { Button, PageHeader, Table, Tabs, Tooltip, message } from 'antd';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link, RouteComponentProps, useHistory } from 'react-router-dom';
 import { EditOutlined } from '@ant-design/icons';
 import { ColumnsType } from 'antd/lib/table';
@@ -41,36 +41,71 @@ const LinkOrganizer: React.FC<RouteComponentProps> = () => {
   });
 
   useEffect(() => {
-    const getBrandData = async () => {
+    getBrandData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const getBrandData = useMemo(() => {
+    const fetchData = async () => {
       const response = await doFetch(() => fetchLinkBrand({}));
       setBrands(response.results);
     };
-    const getProductBrandData = async () => {
+    return fetchData;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  const getProductBrandData = useMemo(() => {
+    const fetchData = async () => {
       const response = await doFetch(() => fetchLinkProductBrand({}));
       setProductBrands(response.results);
     };
-    const getProductData = async () => {
+    return fetchData;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const getProductData = useMemo(() => {
+    const fetchData = async () => {
       const response = await doFetch(() => fetchLinkProduct({}));
       setProducts(response.results);
     };
-    const getCreatorData = async () => {
+    return fetchData;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  const getCreatorData = useMemo(() => {
+    const fetchData = async () => {
       const response = await doFetch(() => fetchLinkCreator({}));
       setCreators(response.results);
     };
-    const getCustomData = async () => {
+    return fetchData;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  const getCustomData = useMemo(() => {
+    const fetchData = async () => {
       const response = await doFetch(() => fetchCustomLinkLists({}));
       setCustom(response.results);
     };
-
-    getBrandData();
-    getProductBrandData();
-    getProductData();
-    getCreatorData();
-    getCustomData();
-  }, [doFetch]);
+    return fetchData;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleTabChange = (value: string) => {
     setSelectedTab(value);
+    switch (value) {
+      case 'brand':
+        if (!brands.length) getBrandData();
+        break;
+      case 'productBrand':
+        if (!productBrands.length) getProductBrandData();
+        break;
+      case 'product':
+        if (!products.length) getProductData();
+        break;
+      case 'creator':
+        if (!creators.length) getCreatorData();
+        break;
+      case 'custom':
+        if (!custom.length) getCustomData();
+        break;
+    }
   };
 
   const handleEditRecord = (list?: any) => {
