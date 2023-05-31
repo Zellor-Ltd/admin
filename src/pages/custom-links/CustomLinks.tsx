@@ -176,7 +176,7 @@ const CustomLinks: React.FC<RouteComponentProps> = () => {
       key: 'action',
       width: '5%',
       align: 'right',
-      render: (_, record, index: number) => (
+      render: (_, record: any) => (
         <>
           <Link
             to={{ pathname: window.location.pathname, state: record }}

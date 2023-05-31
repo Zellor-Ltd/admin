@@ -20,7 +20,7 @@ import {
 import { DebounceSelect } from 'components/select/DebounceSelect';
 import { SortableTable } from 'components';
 import { ColumnsType } from 'antd/lib/table';
-import { DeleteOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { Upload } from 'components';
 
 interface CustomLinkDetailsProps {
@@ -39,13 +39,14 @@ const CustomLinkDetails: React.FC<CustomLinkDetailsProps> = ({
   const [customItemForm] = Form.useForm();
   const [itemLinks, setItemLinks] = useState<any[]>(customList?.links ?? []);
   const [, setQueriedLinks] = useState<any[]>([]);
-  const [selectedLink, setSelectedLink] = useState<any>();
+  const [insertedLink, setInsertedLink] = useState<any>();
+  const [currentLink, setCurrentLink] = useState<any>();
   const [showModal, setShowModal] = useState<boolean>(false);
 
   useEffect(() => {
-    if (selectedLink) setItemLinks([...itemLinks, selectedLink]);
+    if (insertedLink) setItemLinks([...itemLinks, insertedLink]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedLink]);
+  }, [insertedLink]);
 
   const fetch = async (query: string) => {
     const response = await doFetch(() => fetchCustomLinks(query));
@@ -115,6 +116,11 @@ const CustomLinkDetails: React.FC<CustomLinkDetailsProps> = ({
       setItemLinks([...itemLinks, configuredItem]);
       setShowModal(false);
     } else message.warning("Can't add an empty item!");
+  };
+
+  const handleEdit = (record?: any) => {
+    setCurrentLink(record);
+    setShowModal(true);
   };
 
   const columns: ColumnsType<any> = [
@@ -228,10 +234,13 @@ const CustomLinkDetails: React.FC<CustomLinkDetailsProps> = ({
         </div>
       ),
       key: 'action',
-      width: '5%',
+      width: '15%',
       align: 'right',
-      render: (_, __, index: number) => (
+      render: (_, record: any, index: number) => (
         <>
+          <Button type="link" onClick={() => handleEdit(record)}>
+            <EditOutlined />
+          </Button>
           <Popconfirm
             title="Are you sure？"
             okText="Yes"
@@ -247,13 +256,13 @@ const CustomLinkDetails: React.FC<CustomLinkDetailsProps> = ({
     },
   ];
 
-  const NewCustomItemModal = () => {
+  const ItemModal = () => {
     return (
       <Form
         form={customItemForm}
         name="segmentForm"
         layout="vertical"
-        initialValues={undefined}
+        initialValues={currentLink}
       >
         <Row>
           <Col xs={24} lg={12} style={{ paddingRight: '0.5rem' }}>
@@ -319,7 +328,7 @@ const CustomLinkDetails: React.FC<CustomLinkDetailsProps> = ({
                   style={{ width: '100%' }}
                   placeholder="Type to search existing Link"
                   onChange={(_, entity) => {
-                    if (entity) setSelectedLink(entity);
+                    if (entity) setInsertedLink(entity);
                   }}
                   optionMapping={{
                     key: 'id',
@@ -333,7 +342,7 @@ const CustomLinkDetails: React.FC<CustomLinkDetailsProps> = ({
                   key="1"
                   type="primary"
                   className="ml-1"
-                  onClick={() => setShowModal(true)}
+                  onClick={() => handleEdit()}
                 >
                   Create Link
                 </Button>
@@ -360,7 +369,7 @@ const CustomLinkDetails: React.FC<CustomLinkDetailsProps> = ({
               okText="Save"
               cancelText="Cancel"
             >
-              <NewCustomItemModal />
+              <ItemModal />
             </Modal>
           </Col>
         </Row>
