@@ -334,7 +334,7 @@ const CustomLinkDetails: React.FC<CustomLinkDetailsProps> = ({
                   optionMapping={{
                     key: 'id',
                     value: 'id',
-                    label: ['feed', 'shortDescription'],
+                    label: 'id',
                   }}
                 />
               </Col>
