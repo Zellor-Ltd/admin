@@ -23,12 +23,12 @@ import { ColumnsType } from 'antd/lib/table';
 import { DeleteOutlined } from '@ant-design/icons';
 import { Upload } from 'components';
 
-interface CustomDetailsProps {
+interface CustomLinkDetailsProps {
   customList?: any;
   onSave: any;
 }
 
-const CustomDetails: React.FC<CustomDetailsProps> = ({
+const CustomLinkDetails: React.FC<CustomLinkDetailsProps> = ({
   customList,
   onSave,
 }) => {
@@ -312,8 +312,8 @@ const CustomDetails: React.FC<CustomDetailsProps> = ({
             <h3 className="mb-05">Insert Link</h3>
           </Col>
           <Col span={24}>
-            <Row>
-              <Col flex="auto">
+            <Row justify="end">
+              <Col flex="auto" className="mb-1">
                 <DebounceSelect
                   fetchOptions={value => fetch(value)}
                   style={{ width: '100%' }}
@@ -386,4 +386,4 @@ const CustomDetails: React.FC<CustomDetailsProps> = ({
   );
 };
 
-export default CustomDetails;
+export default CustomLinkDetails;

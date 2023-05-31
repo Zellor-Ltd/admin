@@ -14,7 +14,7 @@ import { EditOutlined, SearchOutlined } from '@ant-design/icons';
 import { ColumnsType } from 'antd/lib/table';
 import { useRequest } from 'hooks/useRequest';
 import { fetchCustomLinkLists } from 'services/DiscoClubService';
-import CustomDetails from './CustomDetails';
+import CustomDetails from './CustomLinkDetails';
 import CopyValueToClipboard from 'components/CopyValueToClipboard';
 
 const CustomLinks: React.FC<RouteComponentProps> = () => {
@@ -208,7 +208,7 @@ const CustomLinks: React.FC<RouteComponentProps> = () => {
             justify="space-between"
             className="mb-05 sticky-filter-box"
           >
-            <Col lg={4} md={12} xs={24}>
+            <Col lg={4} md={12} xs={24} className="mb-1">
               <Typography.Title level={5}>Search</Typography.Title>
               <Input
                 allowClear
