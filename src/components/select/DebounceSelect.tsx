@@ -6,7 +6,7 @@ import { SelectOption } from '../../interfaces/SelectOption';
 interface DebounceSelectProps {
   fetchOptions: (search: string) => any;
   onChange: (value: string, entity?: any) => void;
-  optionMapping: any;
+  optionMapping: SelectOption;
   placeholder: string;
   disabled?: boolean;
   value?: string;
@@ -32,7 +32,7 @@ export const DebounceSelect: React.FC<DebounceSelectProps> = ({
 
   const optionFactory = (option: any) => {
     return {
-      label: option[optionMapping.label[0]][optionMapping.label[1]],
+      label: option[optionMapping.label],
       value: option[optionMapping.value],
       key: option[optionMapping.key],
     };
