@@ -73,7 +73,7 @@ const CustomLinkDetails: React.FC<CustomLinkDetailsProps> = ({
     }
   };
 
-  const deleteItem = async (index: number) => {
+  const handleDelete = async (index: number) => {
     const updatedLinks = [
       ...itemLinks.slice(0, index),
       ...itemLinks.slice(index + 1),
@@ -245,7 +245,7 @@ const CustomLinkDetails: React.FC<CustomLinkDetailsProps> = ({
             title="Are you sure？"
             okText="Yes"
             cancelText="No"
-            onConfirm={() => deleteItem(index)}
+            onConfirm={() => handleDelete(index)}
           >
             <Button type="link" style={{ padding: 0, margin: 6 }}>
               <DeleteOutlined />

@@ -3,6 +3,7 @@ import {
   Col,
   Input,
   PageHeader,
+  Popconfirm,
   Row,
   Table,
   Tooltip,
@@ -10,16 +11,23 @@ import {
 } from 'antd';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, RouteComponentProps, useHistory } from 'react-router-dom';
-import { EditOutlined, SearchOutlined } from '@ant-design/icons';
+import {
+  DeleteOutlined,
+  EditOutlined,
+  SearchOutlined,
+} from '@ant-design/icons';
 import { ColumnsType } from 'antd/lib/table';
 import { useRequest } from 'hooks/useRequest';
-import { fetchCustomLinkLists } from 'services/DiscoClubService';
+import {
+  fetchCustomLinkLists,
+  deleteCustomLinkList,
+} from 'services/DiscoClubService';
 import CustomDetails from './CustomLinkDetails';
 import CopyValueToClipboard from 'components/CopyValueToClipboard';
 
 const CustomLinks: React.FC<RouteComponentProps> = () => {
   const [loading, setLoading] = useState(false);
-  const { doFetch } = useRequest({ setLoading });
+  const { doFetch, doRequest } = useRequest({ setLoading });
   const [details, setDetails] = useState<boolean>(false);
   const history = useHistory();
   const [currentList, setCurrentList] = useState<any>();
@@ -43,7 +51,7 @@ const CustomLinks: React.FC<RouteComponentProps> = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleEditRecord = (list?: any) => {
+  const handleEdit = (list?: any) => {
     setCurrentList(list);
     setDetails(true);
     history.push(window.location.pathname);
@@ -57,6 +65,11 @@ const CustomLinks: React.FC<RouteComponentProps> = () => {
     }
     const index = custom.indexOf(listItem);
     refreshTable(record, index);
+  };
+
+  const handleDelete = async (id: string, index: number) => {
+    await doRequest(() => deleteCustomLinkList({ id }));
+    setCustom(prev => [...prev.slice(0, index), ...prev.slice(index + 1)]);
   };
 
   const handleSearch = (query: string) => {
@@ -176,14 +189,24 @@ const CustomLinks: React.FC<RouteComponentProps> = () => {
       key: 'action',
       width: '5%',
       align: 'right',
-      render: (_, record: any) => (
+      render: (_, record: any, index: number) => (
         <>
           <Link
             to={{ pathname: window.location.pathname, state: record }}
-            onClick={() => handleEditRecord(record)}
+            onClick={() => handleEdit(record)}
           >
             <EditOutlined />
           </Link>
+          <Popconfirm
+            title="Are you sure？"
+            okText="Yes"
+            cancelText="No"
+            onConfirm={() => handleDelete(record.id, index)}
+          >
+            <Button type="link" style={{ padding: 0, margin: 6 }}>
+              <DeleteOutlined />
+            </Button>
+          </Popconfirm>
         </>
       ),
     },
@@ -197,7 +220,7 @@ const CustomLinks: React.FC<RouteComponentProps> = () => {
             title="Custom Links"
             className="mb-n05"
             extra={
-              <Button key="1" type="primary" onClick={() => handleEditRecord()}>
+              <Button key="1" type="primary" onClick={() => handleEdit()}>
                 New Link List
               </Button>
             }
