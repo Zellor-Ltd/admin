@@ -260,13 +260,13 @@ const CustomLinkDetails: React.FC<CustomLinkDetailsProps> = ({
     return (
       <Form
         form={customItemForm}
-        name="segmentForm"
+        name="customItemForm"
         layout="vertical"
         initialValues={currentLink}
       >
         <Row>
           <Col xs={24} lg={12} style={{ paddingRight: '0.5rem' }}>
-            <Form.Item label="Label" name={['feed', 'title']}>
+            <Form.Item label="Label" name={['feed', 'title']} required>
               <Input placeholder="Enter a Label" />
             </Form.Item>
           </Col>
@@ -274,12 +274,13 @@ const CustomLinkDetails: React.FC<CustomLinkDetailsProps> = ({
             <Form.Item
               label="Short Description"
               name={['feed', 'shortDescription']}
+              required
             >
               <Input placeholder="Enter a Short Description" />
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item label="Video">
+            <Form.Item label="Video" required>
               <Upload.VideoUpload
                 fileList={undefined}
                 formProp="video"
@@ -288,7 +289,7 @@ const CustomLinkDetails: React.FC<CustomLinkDetailsProps> = ({
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item label="Thumbnail URL">
+            <Form.Item label="Thumbnail URL" required>
               <Upload.ImageUpload
                 type="thumbnail"
                 fileList={undefined}
