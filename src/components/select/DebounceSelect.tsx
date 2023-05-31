@@ -1,13 +1,12 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-
-import { Select, Spin } from 'antd';
+import { Col, Image, Row, Select, Spin } from 'antd';
 import debounce from 'lodash/debounce';
 import { SelectOption } from '../../interfaces/SelectOption';
 
 interface DebounceSelectProps {
   fetchOptions: (search: string) => any;
   onChange: (value: string, entity?: any) => void;
-  optionMapping: SelectOption;
+  optionMapping: any;
   placeholder: string;
   disabled?: boolean;
   value?: string;
@@ -26,14 +25,14 @@ export const DebounceSelect: React.FC<DebounceSelectProps> = ({
   style,
 }) => {
   const [fetching, setFetching] = useState(false);
-  const [options, setOptions] = useState<SelectOption[]>([]);
+  const [, setOptions] = useState<SelectOption[]>([]);
   const [_selectedOption, _setSelectedOption] = useState<SelectOption>();
   const fetchedEntities = useRef<any[]>([]);
   const fetchRef = useRef(0);
 
   const optionFactory = (option: any) => {
     return {
-      label: option[optionMapping.label],
+      label: option[optionMapping.label[0]][optionMapping.label[1]],
       value: option[optionMapping.value],
       key: option[optionMapping.key],
     };
@@ -101,11 +100,29 @@ export const DebounceSelect: React.FC<DebounceSelectProps> = ({
         onChange={_onChange}
         onSearch={debounceFetcher}
         notFoundContent={fetching ? <Spin size="small" /> : null}
-        options={options}
         disabled={disabled}
         value={_selectedOption}
         loading={fetching}
         style={style}
+        options={fetchedEntities.current.map((item: any) => {
+          return {
+            label: (
+              <Row justify="space-between">
+                <Col>{item?.feed?.shortDescription}</Col>
+                <Col>
+                  {item.feed?.package?.length && (
+                    <Image
+                      height={25}
+                      src={item.feed.package[0].thumbnailUrl}
+                    />
+                  )}
+                </Col>
+              </Row>
+            ) as unknown as string,
+            value: item.id,
+            key: item.id,
+          };
+        })}
       />
     </div>
   );
