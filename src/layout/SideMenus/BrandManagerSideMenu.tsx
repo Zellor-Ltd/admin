@@ -6,9 +6,10 @@ import {
   HddOutlined,
 } from '@ant-design/icons';
 import { Menu } from 'antd';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useHistory, useLocation } from 'react-router-dom';
 
 const AdminSideMenu = () => {
+  const history = useHistory();
   const [, pathname] = useLocation().pathname.split('/');
   const refreshParent = (path: string) => {
     if (pathname === path) history.go(0);
