@@ -427,6 +427,15 @@ body {
 }
 
 @media (max-width: 992px) {
+  .br-buttons {
+    position: fixed;
+    right: 2.7rem;
+    bottom: 2rem;
+    left: 5rem;
+    padding-top: 1.5rem;
+    z-index: 1;
+  }
+
   .payments-container {
     overflow: clip;
     position: absolute;
@@ -503,6 +512,15 @@ body {
 }
 
 @media (min-width: 992px) {
+  .br-buttons {
+    position: fixed;
+    right: 2.7rem;
+    bottom: 2rem;
+    left: 15rem;
+    padding-top: 1.5rem;
+    z-index: 1;
+  }
+
   .payments-container {
     overflow: clip;
     position: absolute;
@@ -566,6 +584,10 @@ body {
 
 .of-clip {
   overflow: clip;
+}
+
+.bg-white {
+  background: white;
 }
 
 .pt-0 {

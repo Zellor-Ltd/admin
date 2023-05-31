@@ -16,7 +16,13 @@ const { Header, Sider, Content } = Layout;
 const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
   const { isMobile, isScrollable, setisScrollable } = useContext(AppContext);
   const { children, history, location } = props;
-  const scrollable = ['dashboard', 'access-control', 'settings', 'link-organizer'];
+  const scrollable = [
+    'dashboard',
+    'access-control',
+    'settings',
+    'link-organizer',
+    'custom-links',
+  ];
   const [style, setStyle] = useState<any>({
     padding: '24 0',
     minHeight: 280,

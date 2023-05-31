@@ -58,6 +58,7 @@ const CustomDetails: React.FC<CustomDetailsProps> = ({
     try {
       const customListForm = form.getFieldsValue(true);
       customListForm.links = itemLinks;
+      customListForm.tp = 's';
       const response: any = await saveCustomLinkList(customListForm);
       customListForm.id
         ? onSave(customListForm)
@@ -363,7 +364,7 @@ const CustomDetails: React.FC<CustomDetailsProps> = ({
             </Modal>
           </Col>
         </Row>
-        <Row gutter={8} justify="end">
+        <Row gutter={8} justify="end" className="br-buttons bg-white">
           <Col>
             <Button type="default" onClick={() => history.goBack()}>
               Cancel
