@@ -8,6 +8,7 @@ import VideoFeedDetail from 'pages/video-feed/BrandManager/VideoFeedDetail';
 import BrandDashboard from 'pages/dashboard/BrandDashboard';
 import LinkOrganizer from 'pages/link-organizer/LinkOrganizer';
 import LiveProducts from 'pages/products/LiveProducts';
+import CustomLinks from 'pages/custom-links/CustomLinks';
 
 function BrandManagerRoutes() {
   return (
@@ -32,6 +33,11 @@ function BrandManagerRoutes() {
       <AppRoute
         path="/link-organizer"
         component={LinkOrganizer}
+        layout={AuthenticatedLayout}
+      />
+      <AppRoute
+        path="/custom-links"
+        component={CustomLinks}
         layout={AuthenticatedLayout}
       />
       <AppRoute

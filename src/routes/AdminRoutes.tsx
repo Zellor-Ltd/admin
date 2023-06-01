@@ -52,6 +52,7 @@ import Rebuilds from 'pages/rebuilds/Rebuilds';
 import DevelopmentDetail from 'pages/development/development';
 import { __isDev__ } from 'helpers/constants';
 import LinkOrganizer from 'pages/link-organizer/LinkOrganizer';
+import CustomLinks from 'pages/custom-links/CustomLinks';
 
 function AdminRoutes() {
   return (
@@ -286,15 +287,18 @@ function AdminRoutes() {
         component={LinkOrganizer}
         layout={AuthenticatedLayout}
       />
-      {
-        __isDev__ ?
+      <AppRoute
+        path="/custom-links"
+        component={CustomLinks}
+        layout={AuthenticatedLayout}
+      />
+      {__isDev__ ? (
         <AppRoute
           path="/development"
           component={DevelopmentDetail}
           layout={AuthenticatedLayout}
         />
-        : null
-      }
+      ) : null}
     </Switch>
   );
 }

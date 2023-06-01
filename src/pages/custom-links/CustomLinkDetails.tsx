@@ -20,15 +20,15 @@ import {
 import { DebounceSelect } from 'components/select/DebounceSelect';
 import { SortableTable } from 'components';
 import { ColumnsType } from 'antd/lib/table';
-import { DeleteOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { Upload } from 'components';
 
-interface CustomDetailsProps {
+interface CustomLinkDetailsProps {
   customList?: any;
   onSave: any;
 }
 
-const CustomDetails: React.FC<CustomDetailsProps> = ({
+const CustomLinkDetails: React.FC<CustomLinkDetailsProps> = ({
   customList,
   onSave,
 }) => {
@@ -39,13 +39,14 @@ const CustomDetails: React.FC<CustomDetailsProps> = ({
   const [customItemForm] = Form.useForm();
   const [itemLinks, setItemLinks] = useState<any[]>(customList?.links ?? []);
   const [, setQueriedLinks] = useState<any[]>([]);
-  const [selectedLink, setSelectedLink] = useState<any>();
+  const [insertedLink, setInsertedLink] = useState<any>();
+  const [currentLink, setCurrentLink] = useState<any>();
   const [showModal, setShowModal] = useState<boolean>(false);
 
   useEffect(() => {
-    if (selectedLink) setItemLinks([...itemLinks, selectedLink]);
+    if (insertedLink) setItemLinks([...itemLinks, insertedLink]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedLink]);
+  }, [insertedLink]);
 
   const fetch = async (query: string) => {
     const response = await doFetch(() => fetchCustomLinks(query));
@@ -58,6 +59,7 @@ const CustomDetails: React.FC<CustomDetailsProps> = ({
     try {
       const customListForm = form.getFieldsValue(true);
       customListForm.links = itemLinks;
+      customListForm.tp = 's';
       const response: any = await saveCustomLinkList(customListForm);
       customListForm.id
         ? onSave(customListForm)
@@ -71,7 +73,7 @@ const CustomDetails: React.FC<CustomDetailsProps> = ({
     }
   };
 
-  const deleteItem = async (index: number) => {
+  const handleDelete = async (index: number) => {
     const updatedLinks = [
       ...itemLinks.slice(0, index),
       ...itemLinks.slice(index + 1),
@@ -114,6 +116,11 @@ const CustomDetails: React.FC<CustomDetailsProps> = ({
       setItemLinks([...itemLinks, configuredItem]);
       setShowModal(false);
     } else message.warning("Can't add an empty item!");
+  };
+
+  const handleEdit = (record?: any) => {
+    setCurrentLink(record);
+    setShowModal(true);
   };
 
   const columns: ColumnsType<any> = [
@@ -227,15 +234,18 @@ const CustomDetails: React.FC<CustomDetailsProps> = ({
         </div>
       ),
       key: 'action',
-      width: '5%',
+      width: '15%',
       align: 'right',
-      render: (_, __, index: number) => (
+      render: (_, record: any, index: number) => (
         <>
+          <Button type="link" onClick={() => handleEdit(record)}>
+            <EditOutlined />
+          </Button>
           <Popconfirm
             title="Are you sure？"
             okText="Yes"
             cancelText="No"
-            onConfirm={() => deleteItem(index)}
+            onConfirm={() => handleDelete(index)}
           >
             <Button type="link" style={{ padding: 0, margin: 6 }}>
               <DeleteOutlined />
@@ -246,17 +256,17 @@ const CustomDetails: React.FC<CustomDetailsProps> = ({
     },
   ];
 
-  const NewCustomItemModal = () => {
+  const ItemModal = () => {
     return (
       <Form
         form={customItemForm}
-        name="segmentForm"
+        name="customItemForm"
         layout="vertical"
-        initialValues={undefined}
+        initialValues={currentLink}
       >
         <Row>
           <Col xs={24} lg={12} style={{ paddingRight: '0.5rem' }}>
-            <Form.Item label="Label" name={['feed', 'title']}>
+            <Form.Item label="Label" name={['feed', 'title']} required>
               <Input placeholder="Enter a Label" />
             </Form.Item>
           </Col>
@@ -264,12 +274,13 @@ const CustomDetails: React.FC<CustomDetailsProps> = ({
             <Form.Item
               label="Short Description"
               name={['feed', 'shortDescription']}
+              required
             >
               <Input placeholder="Enter a Short Description" />
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item label="Video">
+            <Form.Item label="Video" required>
               <Upload.VideoUpload
                 fileList={undefined}
                 formProp="video"
@@ -278,7 +289,7 @@ const CustomDetails: React.FC<CustomDetailsProps> = ({
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item label="Thumbnail URL">
+            <Form.Item label="Thumbnail URL" required>
               <Upload.ImageUpload
                 type="thumbnail"
                 fileList={undefined}
@@ -311,19 +322,19 @@ const CustomDetails: React.FC<CustomDetailsProps> = ({
             <h3 className="mb-05">Insert Link</h3>
           </Col>
           <Col span={24}>
-            <Row>
-              <Col flex="auto">
+            <Row justify="end">
+              <Col flex="auto" className="mb-1">
                 <DebounceSelect
                   fetchOptions={value => fetch(value)}
                   style={{ width: '100%' }}
                   placeholder="Type to search existing Link"
                   onChange={(_, entity) => {
-                    if (entity) setSelectedLink(entity);
+                    if (entity) setInsertedLink(entity);
                   }}
                   optionMapping={{
                     key: 'id',
                     value: 'id',
-                    label: "'feed']['title'",
+                    label: 'id',
                   }}
                 />
               </Col>
@@ -332,7 +343,7 @@ const CustomDetails: React.FC<CustomDetailsProps> = ({
                   key="1"
                   type="primary"
                   className="ml-1"
-                  onClick={() => setShowModal(true)}
+                  onClick={() => handleEdit()}
                 >
                   Create Link
                 </Button>
@@ -359,11 +370,11 @@ const CustomDetails: React.FC<CustomDetailsProps> = ({
               okText="Save"
               cancelText="Cancel"
             >
-              <NewCustomItemModal />
+              <ItemModal />
             </Modal>
           </Col>
         </Row>
-        <Row gutter={8} justify="end">
+        <Row gutter={8} justify="end" className="br-buttons bg-white">
           <Col>
             <Button type="default" onClick={() => history.goBack()}>
               Cancel
@@ -385,4 +396,4 @@ const CustomDetails: React.FC<CustomDetailsProps> = ({
   );
 };
 
-export default CustomDetails;
+export default CustomLinkDetails;

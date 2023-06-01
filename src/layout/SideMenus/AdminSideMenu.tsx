@@ -36,6 +36,7 @@ import {
   PlaySquareOutlined,
   PicLeftOutlined,
   FileSyncOutlined,
+  HddOutlined,
 } from '@ant-design/icons';
 import { Menu } from 'antd';
 import SubMenu from 'antd/lib/menu/SubMenu';
@@ -126,6 +127,13 @@ const AdminSideMenu = ({ isMobile }) => {
         onClick={() => refreshParent('link-organizer')}
       >
         <Link to="/link-organizer">Link Organizer</Link>
+      </Menu.Item>
+      <Menu.Item
+        key="custom-links"
+        icon={<HddOutlined />}
+        onClick={() => refreshParent('custom-links')}
+      >
+        <Link to="/custom-links">Custom Links</Link>
       </Menu.Item>
       <Menu.Item
         key="featured-feeds"
