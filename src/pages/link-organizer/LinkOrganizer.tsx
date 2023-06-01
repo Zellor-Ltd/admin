@@ -1,7 +1,18 @@
-import { Button, PageHeader, Table, Tabs, Tooltip, message } from 'antd';
-import { useEffect, useState } from 'react';
+import {
+  Button,
+  Col,
+  Input,
+  PageHeader,
+  Row,
+  Table,
+  Tabs,
+  Tooltip,
+  Typography,
+  message,
+} from 'antd';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, RouteComponentProps, useHistory } from 'react-router-dom';
-import { EditOutlined } from '@ant-design/icons';
+import { EditOutlined, SearchOutlined } from '@ant-design/icons';
 import { ColumnsType } from 'antd/lib/table';
 import { useRequest } from 'hooks/useRequest';
 import {
@@ -33,6 +44,7 @@ const LinkOrganizer: React.FC<RouteComponentProps> = () => {
   const [products, setProducts] = useState<any[]>([]);
   const [productBrands, setProductBrands] = useState<any[]>([]);
   const [custom, setCustom] = useState<any[]>([]);
+  const filter = useRef<any>();
 
   useEffect(() => {
     history.listen((_, action) => {
@@ -40,34 +52,53 @@ const LinkOrganizer: React.FC<RouteComponentProps> = () => {
     });
   });
 
-  useEffect(() => {
-    const getBrandData = async () => {
-      const response = await doFetch(() => fetchLinkBrand({}));
+  const getBrandData = useMemo(() => {
+    const fetchData = async (query: string) => {
+      const response = await doFetch(() => fetchLinkBrand({ term: query }));
       setBrands(response.results);
     };
-    const getProductBrandData = async () => {
-      const response = await doFetch(() => fetchLinkProductBrand({}));
+    return fetchData;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  const getProductBrandData = useMemo(() => {
+    const fetchData = async (query: string) => {
+      const response = await doFetch(() =>
+        fetchLinkProductBrand({ term: query })
+      );
       setProductBrands(response.results);
     };
-    const getProductData = async () => {
-      const response = await doFetch(() => fetchLinkProduct({}));
-      setProducts(response.results);
+    return fetchData;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const getProductData = useMemo(() => {
+    const fetchData = async (query: string) => {
+      if (query) {
+        const response = await doFetch(() => fetchLinkProduct({ term: query }));
+        setProducts(response.results);
+      } else message.warning('Must specify search filter to get product data!');
     };
-    const getCreatorData = async () => {
-      const response = await doFetch(() => fetchLinkCreator({}));
+    return fetchData;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  const getCreatorData = useMemo(() => {
+    const fetchData = async (query: string) => {
+      const response = await doFetch(() => fetchLinkCreator({ term: query }));
       setCreators(response.results);
     };
-    const getCustomData = async () => {
-      const response = await doFetch(() => fetchCustomLinkLists({}));
+    return fetchData;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  const getCustomData = useMemo(() => {
+    const fetchData = async (query: string) => {
+      const response = await doFetch(() =>
+        fetchCustomLinkLists({ term: query })
+      );
       setCustom(response.results);
     };
-
-    getBrandData();
-    getProductBrandData();
-    getProductData();
-    getCreatorData();
-    getCustomData();
-  }, [doFetch]);
+    return fetchData;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleTabChange = (value: string) => {
     setSelectedTab(value);
@@ -133,6 +164,26 @@ const LinkOrganizer: React.FC<RouteComponentProps> = () => {
     }
     const index = custom.indexOf(listItem);
     refreshTable(record, index);
+  };
+
+  const handleSearch = (query: string) => {
+    switch (selectedTab) {
+      case 'brand':
+        getBrandData(query);
+        break;
+      case 'productBrand':
+        getProductBrandData(query);
+        break;
+      case 'product':
+        getProductData(query);
+        break;
+      case 'creator':
+        getCreatorData(query);
+        break;
+      case 'custom':
+        getCustomData(query);
+        break;
+    }
   };
 
   const refreshTable = (record: any, index: number) => {
@@ -908,6 +959,40 @@ const LinkOrganizer: React.FC<RouteComponentProps> = () => {
               )
             }
           />
+          <Row
+            gutter={8}
+            align="bottom"
+            justify="space-between"
+            className="mb-05 sticky-filter-box"
+          >
+            <Col lg={4} md={12} xs={24}>
+              <Typography.Title level={5}>Search</Typography.Title>
+              <Input
+                allowClear
+                disabled={loading}
+                placeholder="Search by Description"
+                suffix={<SearchOutlined />}
+                value={filter.current}
+                onChange={(e: any) => {
+                  filter.current = e.target.value;
+                }}
+              />
+            </Col>
+            <Col lg={4} md={12} xs={24}>
+              <Row justify="end" className="mt-1">
+                <Col>
+                  <Button
+                    type="primary"
+                    onClick={() => handleSearch(filter.current)}
+                    loading={loading}
+                  >
+                    Search
+                    <SearchOutlined style={{ color: 'white' }} />
+                  </Button>
+                </Col>
+              </Row>
+            </Col>
+          </Row>
           <Tabs
             className="tab-page"
             onChange={handleTabChange}

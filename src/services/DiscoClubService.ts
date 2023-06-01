@@ -183,18 +183,17 @@ export const rebuildLink = (input: string) =>
 
 export const rebuildVLink = (path: string) =>
   instance.post('/Disco/Link/Adm/Revalidade', {
-    id: path
+    id: path,
   });
 
 export const propagateVLink = (path: string) =>
-    instance.get(`/Disco/DataMgm/PropagateOneVideoLink/${path}`);
+  instance.get(`/Disco/DataMgm/PropagateOneVideoLink/${path}`);
 
 export const transferStageProduct = (productId: string) =>
   instance.get(`Disco/Staging/Product/Transfer/${productId}`);
 
-  export const exportToShopifyProduct = (productId: string) =>
+export const exportToShopifyProduct = (productId: string) =>
   instance.get(`/Disco/Product/ExportToShopify/${productId}`);
-  
 
 export const lockFeedMixer = (userId: string) =>
   instance.get(`Disco/Feed/LockUnlockUser/${userId}/y`);
@@ -321,7 +320,7 @@ export const fetchVideoFeedV3 = ({
     dateSort,
     creatorId,
     videoFeedId,
-    category
+    category,
   });
 
 export const fetchVideoFeed2 = () => instance.get('Wi/Ep/GetVideoFeed');
@@ -510,13 +509,10 @@ export const fetchCreators = ({
 }) =>
   instance.post(`Disco/Creator/Adm/List/${page}/`, {
     query,
-});
+  });
 
-export const fetchCreatorById = ({
-  creatorId,
-}: {
-  creatorId: String;
-}) => instance.get(`Disco/Creator/V2/Page/${creatorId}`);
+export const fetchCreatorById = ({ creatorId }: { creatorId: String }) =>
+  instance.get(`Disco/Creator/V2/Page/${creatorId}`);
 
 export const fetchUsers = () => instance.get('Wi/Ep/ListUsers');
 
@@ -726,9 +722,9 @@ export const saveDirectLink = (params: any, newItem?: boolean) => {
 };
 
 export const saveVideoFeed = (params: FeedItem, isCloning?: boolean) => {
-  
-  if (!params.id) return instance.put('Disco/Feed/Adm/Add',{feed:params,isCloning});
-  else return instance.put('Disco/Feed/Update',params);
+  if (!params.id)
+    return instance.put('Disco/Feed/Adm/Add', { feed: params, isCloning });
+  else return instance.put('Disco/Feed/Update', params);
 };
 
 export const addFeaturedFeed = (feedId: string, listName: string) =>
@@ -985,26 +981,33 @@ export const deleteBrandVault = (id: string) => {
   }
 };
 
-export const deletePrivileges = (data: Privilege) =>
-  {return instance.delete('Disco/Identity/Adm/RemovePrivillege', { data });}
+export const deletePrivileges = (data: Privilege) => {
+  return instance.delete('Disco/Identity/Adm/RemovePrivillege', { data });
+};
 
-export const deleteDirectLink = (id: string) =>
-  {return instance.delete(`Disco/DirectLink/Adm/RemoveDirectlLink/${id}`);}
+export const deleteDirectLink = (id: string) => {
+  return instance.delete(`Disco/DirectLink/Adm/RemoveDirectlLink/${id}`);
+};
 
-export const deleteVideoFeed = (id: string) =>
-  {return instance.delete(`Disco/Feed/Delete/${id}`);}
+export const deleteVideoFeed = (id: string) => {
+  return instance.delete(`Disco/Feed/Delete/${id}`);
+};
 
-export const deleteFeaturedFeed = (id: string) =>
-  {return instance.delete(`Disco/Feed/Adm/Featured/Remove/${id}`);}
+export const deleteFeaturedFeed = (id: string) => {
+  return instance.delete(`Disco/Feed/Adm/Featured/Remove/${id}`);
+};
 
-export const deleteTag = (data: IDelete) =>
-  {return instance.delete('Wi/Ep/RemoveTag', { data });}
+export const deleteTag = (data: IDelete) => {
+  return instance.delete('Wi/Ep/RemoveTag', { data });
+};
 
-export const deleteCreator = (id: string) =>
-  {return instance.delete(`Disco/Creator/Delete/${id}`);}
+export const deleteCreator = (id: string) => {
+  return instance.delete(`Disco/Creator/Delete/${id}`);
+};
 
-export const deleteProductBrand = (id: string) =>
-  {return instance.delete(`Disco/ProductBrand/Adm/Delete/${id}`);}
+export const deleteProductBrand = (id: string) => {
+  return instance.delete(`Disco/ProductBrand/Adm/Delete/${id}`);
+};
 
 export const deleteVariantGroup = (id: string) => {
   if (id) {
@@ -1012,110 +1015,112 @@ export const deleteVariantGroup = (id: string) => {
   }
 };
 
-export const deleteVariant = (productId: string, variantId: string) =>
-  {return instance.get(
+export const deleteVariant = (productId: string, variantId: string) => {
+  return instance.get(
     `Disco/Product/RemoveFromVariantGroup/${productId}/${variantId}`
-  );}
+  );
+};
 
-export const deleteStagingProduct = (id: string) =>
-{
-  return instance.delete(`Disco/Staging/Product/Remove/${id}`);}
+export const deleteStagingProduct = (id: string) => {
+  return instance.delete(`Disco/Staging/Product/Remove/${id}`);
+};
 
-export const deleteProductTemplate = (data: AnyAction) =>
-{
-  return instance.delete('Wi/Ep/RemoveProductTemplate', { data });}
+export const deleteProductTemplate = (data: AnyAction) => {
+  return instance.delete('Wi/Ep/RemoveProductTemplate', { data });
+};
 
-export const deleteBrand = (data: IDelete) =>
-{
-  return instance.delete('Wi/Ep/RemoveBrand', { data });}
+export const deleteBrand = (data: IDelete) => {
+  return instance.delete('Wi/Ep/RemoveBrand', { data });
+};
 
-export const deleteCategory = (data: IDelete) =>
-{
-  return instance.delete('Wi/Ep/RemoveCategory', { data });}
+export const deleteCategory = (data: IDelete) => {
+  return instance.delete('Wi/Ep/RemoveCategory', { data });
+};
 
-export const deletePromoCode = (data: IDelete) =>
-{
-  return instance.delete('Wi/Ep/RemovePromoCode', { data });}
+export const deletePromoCode = (data: IDelete) => {
+  return instance.delete('Wi/Ep/RemovePromoCode', { data });
+};
 
-export const deletePromotion = (data: IDelete) =>
-{
-  return instance.delete('Wi/Ep/RemovePromotion', { data });}
+export const deletePromotion = (data: IDelete) => {
+  return instance.delete('Wi/Ep/RemovePromotion', { data });
+};
 
-export const deleteDdTemplate = (data: IDelete) =>
-{
-  return instance.delete('Wi/Ep/RemoveDdTemplate', { data });}
+export const deleteDdTemplate = (data: IDelete) => {
+  return instance.delete('Wi/Ep/RemoveDdTemplate', { data });
+};
 
-export const deletePromoDisplay = (data: IDelete) =>
-{
-  return instance.delete('Wi/Ep/RemovePromoDisplay', { data });}
+export const deletePromoDisplay = (data: IDelete) => {
+  return instance.delete('Wi/Ep/RemovePromoDisplay', { data });
+};
 
-export const deleteFanGroup = (data: IDelete) =>
-{
-  return instance.delete('Wi/Ep/RemoveFanGroup', { data });}
+export const deleteFanGroup = (data: IDelete) => {
+  return instance.delete('Wi/Ep/RemoveFanGroup', { data });
+};
 
-export const deleteGuest = (id: string) =>
-{
-  return instance.delete(`Disco/Identity/Adm/DeleteGuest/${id}`);}
+export const deleteGuest = (id: string) => {
+  return instance.delete(`Disco/Identity/Adm/DeleteGuest/${id}`);
+};
 
-export const deleteBanner = (params: Banner) =>
-{
-  return instance.put('Wi/Ep/RemoveFeedBanner', params);}
+export const deleteBanner = (params: Banner) => {
+  return instance.put('Wi/Ep/RemoveFeedBanner', params);
+};
 
-export const deletePreReg = (params: PreReg) => 
-{
-  return instance.put('Wi/Ep/SetPreRegs', params);}
+export const deletePreReg = (params: PreReg) => {
+  return instance.put('Wi/Ep/SetPreRegs', params);
+};
 
-export const deleteMasthead = (params: Banner) =>
-{
-  return instance.put('Wi/Ep/RemoveCreatorMastHead', params);}
+export const deleteMasthead = (params: Banner) => {
+  return instance.put('Wi/Ep/RemoveCreatorMastHead', params);
+};
 
-export const deleteLink = (id: string) =>
-{
-  return instance.delete(`Disco/Link/Adm/Remove/${id}`);}
+export const deleteLink = (id: string) => {
+  return instance.delete(`Disco/Link/Adm/Remove/${id}`);
+};
 
-export const fetchLinkBrand = (params: any) =>
-{
-  return instance.post('Disco/LinkBrand/adm/search', params);}
+export const fetchLinkBrand = (params: any) => {
+  return instance.post('Disco/LinkBrand/adm/search', params);
+};
 
-export const updateLinkBrand = (params: any) =>
-{
-  return instance.post('Disco/LinkBrand/adm/update', params);  }
+export const updateLinkBrand = (params: any) => {
+  return instance.post('Disco/LinkBrand/adm/update', params);
+};
 
-export const fetchLinkProductBrand = (params: any) =>
-{
-  return instance.post('Disco/LinkProductBrand/adm/search', params);  }
+export const fetchLinkProductBrand = (params: any) => {
+  return instance.post('Disco/LinkProductBrand/adm/search', params);
+};
 
-export const updateLinkProductBrand = (params: any) =>
-{
-  return instance.post('Disco/LinkProductBrand/adm/update', params);  }
+export const updateLinkProductBrand = (params: any) => {
+  return instance.post('Disco/LinkProductBrand/adm/update', params);
+};
 
-export const fetchLinkProduct = (params: any) =>
-{
-  return instance.post('Disco/LinkProduct/adm/search', params);  }
+export const fetchLinkProduct = (params: any) => {
+  return instance.post('Disco/LinkProduct/adm/search', params);
+};
 
-export const updateLinkProduct = (params: any) =>
-{
-  return instance.post('Disco/LinkProduct/adm/update', params);  }
+export const updateLinkProduct = (params: any) => {
+  return instance.post('Disco/LinkProduct/adm/update', params);
+};
 
-export const fetchLinkCreator = (params: any) =>
-{
-  return instance.post('Disco/LinkCreator/adm/search', params);}
+export const fetchLinkCreator = (params: any) => {
+  return instance.post('Disco/LinkCreator/adm/search', params);
+};
 
-export const updateLinkCreator = (params: any) =>
-{
-  return instance.post('Disco/LinkCreator/adm/update', params);  }
+export const updateLinkCreator = (params: any) => {
+  return instance.post('Disco/LinkCreator/adm/update', params);
+};
 
-export const fetchCustomLinkLists = (params: any) =>
-{
-  return instance.post('Disco/LinkCustom/Adm/Search/', params);}
+export const fetchCustomLinkLists = (params: any) => {
+  return instance.post('Disco/LinkCustom/Adm/Search/', params);
+};
 
-export const fetchCustomLinks = (params: any) =>
-{
-  return instance.get(`Disco/LinkCustom/Adm/SearchLinks/${params}`);  }
+export const fetchCustomLinks = (params: string) => {
+  return instance.get(`Disco/LinkCustom/Adm/SearchLinks/${params}`);
+};
 
 export const saveCustomLinkList = (params: any) => {
-  if (params.id)     
-    {return instance.post('Disco/LinkCustom/Adm/Update', params);  }
-  else
-    {return instance.post('Disco/LinkCustom/Adm/Add', params);  }
-};  
+  if (params.id) {
+    return instance.post('Disco/LinkCustom/Adm/Update', params);
+  } else {
+    return instance.post('Disco/LinkCustom/Adm/Add', params);
+  }
+};
