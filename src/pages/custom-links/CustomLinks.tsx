@@ -9,7 +9,7 @@ import {
   Tooltip,
   Typography,
 } from 'antd';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, RouteComponentProps, useHistory } from 'react-router-dom';
 import {
   DeleteOutlined,
@@ -24,8 +24,10 @@ import {
 } from 'services/DiscoClubService';
 import CustomDetails from './CustomLinkDetails';
 import CopyValueToClipboard from 'components/CopyValueToClipboard';
+import { AppContext } from 'contexts/AppContext';
 
 const CustomLinks: React.FC<RouteComponentProps> = () => {
+  const { isMobile } = useContext(AppContext);
   const [loading, setLoading] = useState(false);
   const { doFetch, doRequest } = useRequest({ setLoading });
   const [details, setDetails] = useState<boolean>(false);
@@ -95,25 +97,6 @@ const CustomLinks: React.FC<RouteComponentProps> = () => {
               whiteSpace: 'nowrap',
             }}
           >
-            <Tooltip title="id">id</Tooltip>
-          </div>
-        </div>
-      ),
-      dataIndex: 'id',
-      width: '3%',
-      render: id => <CopyValueToClipboard value={id} />,
-      align: 'center',
-    },
-    {
-      title: (
-        <div style={{ display: 'grid', placeItems: 'stretch' }}>
-          <div
-            style={{
-              textOverflow: 'ellipsis',
-              overflow: 'hidden',
-              whiteSpace: 'nowrap',
-            }}
-          >
             <Tooltip title="Link">Link</Tooltip>
           </div>
         </div>
@@ -124,13 +107,24 @@ const CustomLinks: React.FC<RouteComponentProps> = () => {
       render: (value: string) => {
         if (value)
           return (
-            <a
-              href={'https://beautybuzz.io/' + value.slice(0, -4)}
-              target="blank"
-              style={value ? {} : { pointerEvents: 'none' }}
-            >
-              {value ? `https://beautybuzz.io/${value.slice(0, -4)}` : '-'}
-            </a>
+            <>
+              <div style={{ transform: 'scale(0.8)', display: 'inline-block' }}>
+                <Tooltip title="Click to copy">
+                  <CopyValueToClipboard
+                    value={'https://beautybuzz.io/' + value.slice(0, -4)}
+                  />
+                </Tooltip>
+              </div>{' '}
+              <a
+                href={'https://beautybuzz.io/' + value.slice(0, -4)}
+                target="blank"
+                style={value ? {} : { pointerEvents: 'none' }}
+              >
+                <Tooltip title={'https://beautybuzz.io/' + value.slice(0, -4)}>
+                  Click to open
+                </Tooltip>
+              </a>
+            </>
           );
         else return '-';
       },
@@ -228,33 +222,44 @@ const CustomLinks: React.FC<RouteComponentProps> = () => {
           <Row
             gutter={8}
             align="bottom"
-            justify="space-between"
+            justify="end"
             className="mb-05 sticky-filter-box"
           >
-            <Col lg={4} md={12} xs={24} className="mb-1">
-              <Typography.Title level={5}>Search</Typography.Title>
-              <Input
-                allowClear
-                disabled={loading}
-                placeholder="Search by Description"
-                suffix={<SearchOutlined />}
-                value={filter.current}
-                onChange={(e: any) => {
-                  filter.current = e.target.value;
-                }}
-              />
-            </Col>
-            <Col lg={4} md={12} xs={24}>
-              <Row justify="end" className="mt-1">
+            <Col lg={12} xs={24} style={{ paddingRight: '0px' }}>
+              <Row justify="end">
+                <Col lg={12} xs={24}>
+                  <Typography.Title level={5}>Search</Typography.Title>
+                  <Input
+                    allowClear
+                    disabled={loading}
+                    placeholder="Search by description"
+                    style={{ paddingRight: '4px' }}
+                    suffix={<SearchOutlined />}
+                    value={filter.current}
+                    onChange={(e: any) => {
+                      filter.current = e.target.value;
+                    }}
+                  />
+                </Col>
                 <Col>
-                  <Button
-                    type="primary"
-                    onClick={() => handleSearch(filter.current)}
-                    loading={loading}
-                  >
-                    Search
-                    <SearchOutlined style={{ color: 'white' }} />
-                  </Button>
+                  <Row justify="end">
+                    <Col>
+                      {!isMobile && (
+                        <Typography.Title level={5} style={{ color: 'white' }}>
+                          nothing
+                        </Typography.Title>
+                      )}
+                      <Button
+                        type="primary"
+                        onClick={() => handleSearch(filter.current)}
+                        loading={loading}
+                        className={isMobile ? 'mt-15' : 'mr-075 ml-1'}
+                      >
+                        Search
+                        <SearchOutlined style={{ color: 'white' }} />
+                      </Button>
+                    </Col>
+                  </Row>
                 </Col>
               </Row>
             </Col>
