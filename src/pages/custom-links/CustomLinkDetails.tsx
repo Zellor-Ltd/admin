@@ -4,7 +4,6 @@ import {
   Form,
   Image,
   Input,
-  Modal,
   Popconfirm,
   Row,
   Tooltip,
@@ -17,7 +16,7 @@ import { saveCustomLinkList } from 'services/DiscoClubService';
 import { SortableTable } from 'components';
 import { ColumnsType } from 'antd/lib/table';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import { Upload } from 'components';
+import CustomLinkModal from './CustomLinkModal';
 
 interface CustomLinkDetailsProps {
   customList?: any;
@@ -32,11 +31,11 @@ const CustomLinkDetails: React.FC<CustomLinkDetailsProps> = ({
   const { doFetch } = useRequest({ setLoading });
   const history = useHistory();
   const [form] = Form.useForm();
-  const [customItemForm] = Form.useForm();
   const [itemLinks, setItemLinks] = useState<any[]>(customList?.links ?? []);
   const [currentLink, setCurrentLink] = useState<any>();
   const [showModal, setShowModal] = useState<boolean>(false);
   const reordered = useRef<boolean>(false);
+  const editing = useRef<boolean>(false);
 
   useEffect(() => {
     if (reordered.current) {
@@ -76,44 +75,8 @@ const CustomLinkDetails: React.FC<CustomLinkDetailsProps> = ({
     setItemLinks(updatedLinks);
   };
 
-  const handleAddItem = () => {
-    const newItem = customItemForm.getFieldsValue(true);
-
-    if (newItem) {
-      const pkg = [
-        {
-          videoUrl: newItem.video?.url,
-          thumbnailUrl: newItem.thumbnail?.url,
-        },
-      ];
-
-      const feed = {
-        title: null,
-        videoLabel: 'selected',
-        shortDescription: 'informed by user',
-        creator: null,
-        package: pkg,
-        searchTags: null,
-        category: null,
-        videoType: ['Custom'],
-      };
-
-      const configuredItem = {
-        index: 2,
-        hIndex: 889,
-        vIndex: 1000,
-        videoFeedId: null,
-        socialPlatform: 'Disco Club',
-        includeVideo: true,
-        feed: feed,
-      };
-
-      setItemLinks([...itemLinks, configuredItem]);
-      setShowModal(false);
-    } else message.warning("Can't add an empty item!");
-  };
-
   const handleEdit = (record?: any) => {
+    editing.current = true;
     setCurrentLink(record);
     setShowModal(true);
   };
@@ -251,53 +214,6 @@ const CustomLinkDetails: React.FC<CustomLinkDetailsProps> = ({
     },
   ];
 
-  const ItemModal = () => {
-    return (
-      <Form
-        form={customItemForm}
-        name="customItemForm"
-        layout="vertical"
-        initialValues={currentLink}
-      >
-        <Row>
-          <Col xs={24} lg={12} style={{ paddingRight: '0.5rem' }}>
-            <Form.Item label="Label" name={['feed', 'title']} required>
-              <Input placeholder="Enter a Label" />
-            </Form.Item>
-          </Col>
-          <Col xs={24} lg={12} style={{ paddingLeft: '0.5rem' }}>
-            <Form.Item
-              label="Short Description"
-              name={['feed', 'shortDescription']}
-              required
-            >
-              <Input placeholder="Enter a Short Description" />
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Form.Item label="Video" required>
-              <Upload.VideoUpload
-                fileList={undefined}
-                formProp="video"
-                form={customItemForm}
-              />
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Form.Item label="Thumbnail URL" required>
-              <Upload.ImageUpload
-                type="thumbnail"
-                fileList={undefined}
-                formProp="thumbnail"
-                form={customItemForm}
-              />
-            </Form.Item>
-          </Col>
-        </Row>
-      </Form>
-    );
-  };
-
   return (
     <>
       <Form
@@ -339,32 +255,18 @@ const CustomLinkDetails: React.FC<CustomLinkDetailsProps> = ({
             />
           </Col>
           <Col span={24}>
-            <Modal
-              title="Create Custom Link"
-              visible={showModal}
-              onOk={handleAddItem}
-              onCancel={() => setShowModal(false)}
-              okText="Save"
-              cancelText="Cancel"
-            >
-              <ItemModal />
-            </Modal>
+            <CustomLinkModal
+              link={currentLink}
+              editing={editing}
+              showModal={showModal}
+              setShowModal={setShowModal}
+            />
           </Col>
         </Row>
         <Row gutter={8} justify="end" className="br-buttons bg-white">
           <Col>
             <Button type="default" onClick={() => history.goBack()}>
-              Cancel
-            </Button>
-          </Col>
-          <Col>
-            <Button
-              type="primary"
-              htmlType="submit"
-              loading={loading}
-              className="mb-1"
-            >
-              Save Changes
+              Done
             </Button>
           </Col>
         </Row>
