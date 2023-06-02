@@ -1113,7 +1113,7 @@ export const fetchCustomLinkLists = (params: any) => {
   return instance.post('Disco/LinkCustom/Adm/Search/', params);
 };
 
-export const fetchCustomLinks = (params: string) => {
+export const fetchCustomLinkList = (params: string) => {
   return instance.get(`Disco/LinkCustom/Adm/SearchLinks/${params}`);
 };
 
