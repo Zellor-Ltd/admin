@@ -11,13 +11,9 @@ import {
   message,
 } from 'antd';
 import { useRequest } from 'hooks/useRequest';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import {
-  fetchCustomLinks,
-  saveCustomLinkList,
-} from 'services/DiscoClubService';
-import { DebounceSelect } from 'components/select/DebounceSelect';
+import { saveCustomLinkList } from 'services/DiscoClubService';
 import { SortableTable } from 'components';
 import { ColumnsType } from 'antd/lib/table';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
@@ -38,39 +34,38 @@ const CustomLinkDetails: React.FC<CustomLinkDetailsProps> = ({
   const [form] = Form.useForm();
   const [customItemForm] = Form.useForm();
   const [itemLinks, setItemLinks] = useState<any[]>(customList?.links ?? []);
-  const [, setQueriedLinks] = useState<any[]>([]);
-  const [insertedLink, setInsertedLink] = useState<any>();
   const [currentLink, setCurrentLink] = useState<any>();
   const [showModal, setShowModal] = useState<boolean>(false);
+  const reordered = useRef<boolean>(false);
 
   useEffect(() => {
-    if (insertedLink) setItemLinks([...itemLinks, insertedLink]);
+    if (reordered.current) {
+      onFinish(true);
+      reordered.current = false;
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [insertedLink]);
+  }, [itemLinks]);
 
-  const fetch = async (query: string) => {
-    const response = await doFetch(() => fetchCustomLinks(query));
-    setQueriedLinks(response.results);
-    return response.results;
-  };
-
-  const onFinish = async () => {
-    setLoading(true);
+  const onFinish = async (stayOnPage?: boolean) => {
     try {
       const customListForm = form.getFieldsValue(true);
       customListForm.links = itemLinks;
       customListForm.tp = 's';
-      const response: any = await saveCustomLinkList(customListForm);
+      const response = await doFetch(() => saveCustomLinkList(customListForm));
       customListForm.id
         ? onSave(customListForm)
         : onSave({ ...customListForm, id: response.result });
-      message.success('List saved with success.');
+      message.success('List registered with success.');
     } catch (error) {
       message.error('Something went wrong. Try again later.');
     } finally {
-      setLoading(false);
-      history.goBack();
+      if (!stayOnPage) history.goBack();
     }
+  };
+
+  const saveReorderedList = (list: any[]) => {
+    reordered.current = true;
+    setItemLinks(list);
   };
 
   const handleDelete = async (index: number) => {
@@ -319,25 +314,7 @@ const CustomLinkDetails: React.FC<CustomLinkDetailsProps> = ({
             </Form.Item>
           </Col>
           <Col span={24}>
-            <h3 className="mb-05">Insert Link</h3>
-          </Col>
-          <Col span={24}>
             <Row justify="end">
-              <Col flex="auto" className="mb-1">
-                <DebounceSelect
-                  fetchOptions={value => fetch(value)}
-                  style={{ width: '100%' }}
-                  placeholder="Type to search existing Link"
-                  onChange={(_, entity) => {
-                    if (entity) setInsertedLink(entity);
-                  }}
-                  optionMapping={{
-                    key: 'id',
-                    value: 'id',
-                    label: 'id',
-                  }}
-                />
-              </Col>
               <Col flex="100px">
                 <Button
                   key="1"
@@ -345,7 +322,7 @@ const CustomLinkDetails: React.FC<CustomLinkDetailsProps> = ({
                   className="ml-1"
                   onClick={() => handleEdit()}
                 >
-                  Create Link
+                  New Link
                 </Button>
               </Col>
             </Row>
@@ -356,7 +333,7 @@ const CustomLinkDetails: React.FC<CustomLinkDetailsProps> = ({
               rowKey="id"
               columns={columns}
               dataSource={itemLinks}
-              setDataSource={setItemLinks}
+              setDataSource={saveReorderedList}
               loading={loading}
               className="my-2"
             />
