@@ -12,11 +12,12 @@ import {
 import { useRequest } from 'hooks/useRequest';
 import { useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { saveCustomLinkList } from 'services/DiscoClubService';
+import { fetchBrands, saveCustomLinkList } from 'services/DiscoClubService';
 import { SortableTable } from 'components';
 import { ColumnsType } from 'antd/lib/table';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import CustomLinkModal from './CustomLinkModal';
+import { Brand } from 'interfaces/Brand';
 
 interface CustomLinkDetailsProps {
   customList?: any;
@@ -34,6 +35,7 @@ const CustomLinkDetails: React.FC<CustomLinkDetailsProps> = ({
   const [itemLinks, setItemLinks] = useState<any[]>(customList?.links ?? []);
   const [currentLink, setCurrentLink] = useState<any>();
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [brands, setBrands] = useState<Brand[]>([]);
   const reordered = useRef<boolean>(false);
   const editing = useRef<boolean>(false);
 
@@ -44,6 +46,15 @@ const CustomLinkDetails: React.FC<CustomLinkDetailsProps> = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [itemLinks]);
+
+  useEffect(() => {
+    getBrands();
+  }, []);
+
+  const getBrands = async () => {
+    const response: any = await doFetch(() => fetchBrands());
+    setBrands(response.results);
+  };
 
   const onFinish = async (stayOnPage?: boolean) => {
     try {
@@ -76,7 +87,7 @@ const CustomLinkDetails: React.FC<CustomLinkDetailsProps> = ({
   };
 
   const handleEdit = (record?: any) => {
-    editing.current = true;
+    if (record) editing.current = true;
     setCurrentLink(record);
     setShowModal(true);
   };
@@ -258,6 +269,7 @@ const CustomLinkDetails: React.FC<CustomLinkDetailsProps> = ({
             <CustomLinkModal
               link={currentLink}
               editing={editing}
+              brands={brands}
               showModal={showModal}
               setShowModal={setShowModal}
             />
