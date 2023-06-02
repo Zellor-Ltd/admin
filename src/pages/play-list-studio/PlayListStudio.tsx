@@ -22,11 +22,11 @@ import {
   fetchCustomLinkLists,
   deleteCustomLinkList,
 } from 'services/DiscoClubService';
-import CustomDetails from './CustomLinkDetails';
+import StudioDetails from './StudioDetails';
 import CopyValueToClipboard from 'components/CopyValueToClipboard';
 import { AppContext } from 'contexts/AppContext';
 
-const CustomLinks: React.FC<RouteComponentProps> = () => {
+const PlayListStudio: React.FC<RouteComponentProps> = () => {
   const { isMobile } = useContext(AppContext);
   const [loading, setLoading] = useState(false);
   const { doFetch, doRequest } = useRequest({ setLoading });
@@ -207,11 +207,11 @@ const CustomLinks: React.FC<RouteComponentProps> = () => {
   ];
 
   return (
-    <div className="link-organizer">
+    <div className="play-lists">
       {!details && (
         <>
           <PageHeader
-            title="Custom Links"
+            title="Play List Studio"
             className="mb-n05"
             extra={
               <Button key="1" type="primary" onClick={() => handleEdit()}>
@@ -282,11 +282,11 @@ const CustomLinks: React.FC<RouteComponentProps> = () => {
             title={currentList ? `Edit ${currentList.name}` : 'New Link List'}
             className="mb-n05"
           />
-          <CustomDetails customList={currentList} onSave={handleSave} />
+          <StudioDetails customList={currentList} onSave={handleSave} />
         </>
       )}
     </div>
   );
 };
 
-export default CustomLinks;
+export default PlayListStudio;

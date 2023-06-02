@@ -27,9 +27,9 @@ import {
 } from 'services/DiscoClubService';
 import CopyValueToClipboard from 'components/CopyValueToClipboard';
 import moment from 'moment';
-import LinkOrganizerDetail from './LinkOrganizerDetail';
+import PlayListDetails from './PlayListDetails';
 
-const LinkOrganizer: React.FC<RouteComponentProps> = () => {
+const PlayLists: React.FC<RouteComponentProps> = () => {
   const [selectedTab, setSelectedTab] = useState<string>('brand');
   const [loading, setLoading] = useState(false);
   const { doFetch } = useRequest({ setLoading });
@@ -780,10 +780,10 @@ const LinkOrganizer: React.FC<RouteComponentProps> = () => {
   ];
 
   return (
-    <div className="link-organizer">
+    <div className="play-lists">
       {!details && (
         <>
-          <PageHeader title="Link Organizer" className="mb-n05" />
+          <PageHeader title="Play Lists" className="mb-n05" />
           <Row
             gutter={8}
             align="bottom"
@@ -875,7 +875,7 @@ const LinkOrganizer: React.FC<RouteComponentProps> = () => {
         </>
       )}
       {details && (
-        <LinkOrganizerDetail
+        <PlayListDetails
           record={currentList}
           onSave={handleSaveRecord}
           onCancel={handleCancelRecord}
@@ -886,4 +886,4 @@ const LinkOrganizer: React.FC<RouteComponentProps> = () => {
   );
 };
 
-export default LinkOrganizer;
+export default PlayLists;

@@ -12,7 +12,7 @@ import {
 } from 'antd';
 import { useRequest } from 'hooks/useRequest';
 import { Ref, RefObject, useRef, useState } from 'react';
-import { fetchCustomLinks } from 'services/DiscoClubService';
+import { fetchCustomLinkList } from 'services/DiscoClubService';
 import { DebounceSelect } from 'components/select/DebounceSelect';
 import { Upload } from 'components';
 import { DndProvider } from 'react-dnd';
@@ -20,14 +20,14 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { ColumnsType } from 'antd/lib/table';
 
-interface CustomLinkModalProps {
+interface StudioModalProps {
   link?: any;
   editing: any;
   showModal: boolean;
   setShowModal: (value: boolean) => void;
 }
 
-const CustomLinkModal: React.FC<CustomLinkModalProps> = ({
+const StudioModal: React.FC<StudioModalProps> = ({
   link,
   editing,
   showModal,
@@ -43,7 +43,7 @@ const CustomLinkModal: React.FC<CustomLinkModalProps> = ({
   const [tagDetails, setTagDetails] = useState<boolean>(false);
 
   const getOptions = async (query: string) => {
-    const response = await doFetch(() => fetchCustomLinks(query));
+    const response = await doFetch(() => fetchCustomLinkList(query));
     setQueriedLinks(response.results);
     return response.results;
   };
@@ -287,4 +287,4 @@ const CustomLinkModal: React.FC<CustomLinkModalProps> = ({
   );
 };
 
-export default CustomLinkModal;
+export default StudioModal;

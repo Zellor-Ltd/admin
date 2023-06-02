@@ -16,14 +16,14 @@ import { saveCustomLinkList } from 'services/DiscoClubService';
 import { SortableTable } from 'components';
 import { ColumnsType } from 'antd/lib/table';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import CustomLinkModal from './CustomLinkModal';
+import StudioModal from './StudioModal';
 
-interface CustomLinkDetailsProps {
+interface StudioDetailsProps {
   customList?: any;
   onSave: any;
 }
 
-const CustomLinkDetails: React.FC<CustomLinkDetailsProps> = ({
+const StudioDetails: React.FC<StudioDetailsProps> = ({
   customList,
   onSave,
 }) => {
@@ -255,7 +255,7 @@ const CustomLinkDetails: React.FC<CustomLinkDetailsProps> = ({
             />
           </Col>
           <Col span={24}>
-            <CustomLinkModal
+            <StudioModal
               link={currentLink}
               editing={editing}
               showModal={showModal}
@@ -275,4 +275,4 @@ const CustomLinkDetails: React.FC<CustomLinkDetailsProps> = ({
   );
 };
 
-export default CustomLinkDetails;
+export default StudioDetails;
