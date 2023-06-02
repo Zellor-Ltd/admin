@@ -280,6 +280,7 @@ const CustomLinkModal: React.FC<CustomLinkModalProps> = ({
               />
             </>
           )}
+          {tagDetails && <></>}
         </Tabs.TabPane>
       </Tabs>
     </Modal>
