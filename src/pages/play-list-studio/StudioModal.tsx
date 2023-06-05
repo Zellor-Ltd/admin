@@ -13,8 +13,8 @@ import {
   Tooltip,
 } from 'antd';
 import { useRequest } from 'hooks/useRequest';
-import { useEffect, useState } from 'react';
-import { fetchCustomLinks, fetchTags } from 'services/DiscoClubService';
+import { Ref, RefObject, useRef, useState } from 'react';
+import { fetchCustomLinkList, fetchTags } from 'services/DiscoClubService';
 import { DebounceSelect } from 'components/select/DebounceSelect';
 import { Upload } from 'components';
 import { DeleteOutlined } from '@ant-design/icons';
@@ -29,7 +29,7 @@ const tagOptionMapping: SelectOption = {
   key: 'id',
 };
 
-interface CustomLinkModalProps {
+interface StudioModalProps {
   link?: any;
   editing: any;
   brands: Brand[];
@@ -37,7 +37,7 @@ interface CustomLinkModalProps {
   setShowModal: (value: boolean) => void;
 }
 
-const CustomLinkModal: React.FC<CustomLinkModalProps> = ({
+const StudioModal: React.FC<StudioModalProps> = ({
   link,
   editing,
   brands,
@@ -54,10 +54,6 @@ const CustomLinkModal: React.FC<CustomLinkModalProps> = ({
   const [optionsPage, setOptionsPage] = useState<number>(0);
   const [selectedBrandId, setSelectedBrandId] = useState<string | undefined>();
   const [currentLink, setCurrentLink] = useState<any>(link);
-
-  useEffect(() => {
-    setActiveTabKey('Details');
-  }, [currentLink]);
 
   const handleTabChange = (activeKey: string) => {
     setActiveTabKey(activeKey);
@@ -316,7 +312,7 @@ const CustomLinkModal: React.FC<CustomLinkModalProps> = ({
         <Tabs.TabPane forceRender tab="Search" key="Search">
           <h3 className="mb-05">Search Links</h3>
           <DebounceSelect
-            fetcherFunction={(value: string) => fetchCustomLinks(value)}
+            fetcherFunction={(value: string) => fetchCustomLinkList(value)}
             style={{ width: '100%' }}
             disabled={editing.current}
             placeholder="Type to search existing Link"
@@ -420,4 +416,4 @@ const CustomLinkModal: React.FC<CustomLinkModalProps> = ({
   );
 };
 
-export default CustomLinkModal;
+export default StudioModal;

@@ -35,18 +35,18 @@ const AdminSideMenu = () => {
         <Link to="/feed">Videos Feed</Link>
       </Menu.Item>
       <Menu.Item
-        key="link-organizer"
+        key="play-lists"
         icon={<LinkOutlined />}
-        onClick={() => refreshParent('link-organizer')}
+        onClick={() => refreshParent('play-lists')}
       >
-        <Link to="/link-organizer">Link Organizer</Link>
+        <Link to="/play-lists">Play Lists</Link>
       </Menu.Item>
       <Menu.Item
-        key="custom-links"
+        key="play-list-studio"
         icon={<HddOutlined />}
-        onClick={() => refreshParent('custom-links')}
+        onClick={() => refreshParent('play-list-studio')}
       >
-        <Link to="/custom-links">Custom Links</Link>
+        <Link to="/play-list-studio">Play List Studio</Link>
       </Menu.Item>
     </Menu>
   );

@@ -51,8 +51,8 @@ import DirectLinks from 'pages/direct-links/DirectLinks';
 import Rebuilds from 'pages/rebuilds/Rebuilds';
 import DevelopmentDetail from 'pages/development/development';
 import { __isDev__ } from 'helpers/constants';
-import LinkOrganizer from 'pages/link-organizer/LinkOrganizer';
-import CustomLinks from 'pages/custom-links/CustomLinks';
+import PlayLists from 'pages/play-lists/PlayLists';
+import PlayListStudio from 'pages/play-list-studio/PlayListStudio';
 
 function AdminRoutes() {
   return (
@@ -283,13 +283,13 @@ function AdminRoutes() {
         layout={AuthenticatedLayout}
       />
       <AppRoute
-        path="/link-organizer"
-        component={LinkOrganizer}
+        path="/play-lists"
+        component={PlayLists}
         layout={AuthenticatedLayout}
       />
       <AppRoute
-        path="/custom-links"
-        component={CustomLinks}
+        path="/play-list-studio"
+        component={PlayListStudio}
         layout={AuthenticatedLayout}
       />
       {__isDev__ ? (

@@ -4,14 +4,14 @@ import { SortableTable } from 'components';
 import { SimpleSwitch } from 'components/SimpleSwitch';
 import { useState } from 'react';
 
-interface LinkOrganizerDetailProps {
+interface PlayListDetailProps {
   record: any;
   onSave: (record: any, setLoading: any, tabName: string) => void;
   onCancel: () => void;
   tabName: string;
 }
 
-const LinkOrganizerDetail: React.FC<LinkOrganizerDetailProps> = ({
+const PlayListDetails: React.FC<PlayListDetailProps> = ({
   record,
   onSave,
   onCancel,
@@ -213,4 +213,4 @@ const LinkOrganizerDetail: React.FC<LinkOrganizerDetailProps> = ({
   );
 };
 
-export default LinkOrganizerDetail;
+export default PlayListDetails;
