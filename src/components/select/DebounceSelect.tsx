@@ -23,6 +23,7 @@ export const DebounceSelect: React.FC<DebounceSelectProps> = ({
   style,
 }) => {
   const [fetching, setFetching] = useState(false);
+  const data = useRef<any[]>([]);
   const [options, setOptions] = useState<SelectOption[]>([]);
   const [_selectedOption, _setSelectedOption] = useState<SelectOption>();
   const fetchRef = useRef(0);
@@ -32,6 +33,7 @@ export const DebounceSelect: React.FC<DebounceSelectProps> = ({
       fetchRef.current += 1;
       const fetchId = fetchRef.current;
       setOptions([]);
+      data.current = [];
       setFetching(true);
 
       if (value) {
@@ -39,8 +41,9 @@ export const DebounceSelect: React.FC<DebounceSelectProps> = ({
         if (fetchId !== fetchRef.current) return;
 
         fetcherFunction(value.toUpperCase()).then((response: any) => {
-          if (!response?.results?.length) setOptions([]);
-          else
+          if (!response?.results?.length) return;
+          else {
+            data.current = response.results;
             setOptions(
               response?.results?.map((item: any) => {
                 return {
@@ -62,6 +65,7 @@ export const DebounceSelect: React.FC<DebounceSelectProps> = ({
                 };
               })
             );
+          }
           setFetching(false);
 
           if (isInit) {
@@ -82,9 +86,8 @@ export const DebounceSelect: React.FC<DebounceSelectProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetcherFunction, debounceTimeout]);
 
-  // todo start here on monday
   const _onChange = (option: { value: string; label: string; key: string }) => {
-    const selectedEntity = options.find(entity =>
+    const selectedEntity = data.current.find(entity =>
       entity[optionMapping.value]
         ?.toUpperCase()
         .includes(option.value?.toUpperCase())

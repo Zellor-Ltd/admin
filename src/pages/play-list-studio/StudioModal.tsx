@@ -13,7 +13,7 @@ import {
   Tooltip,
 } from 'antd';
 import { useRequest } from 'hooks/useRequest';
-import { Ref, RefObject, useRef, useState } from 'react';
+import { Ref, RefObject, useContext, useEffect, useRef, useState } from 'react';
 import { fetchCustomLinkList, fetchTags } from 'services/DiscoClubService';
 import { DebounceSelect } from 'components/select/DebounceSelect';
 import { Upload } from 'components';
@@ -22,6 +22,7 @@ import { ColumnsType } from 'antd/lib/table';
 import MultipleFetchDebounceSelect from 'components/select/MultipleFetchDebounceSelect';
 import { Brand } from 'interfaces/Brand';
 import { SelectOption } from 'interfaces/SelectOption';
+import { AppContext } from 'contexts/AppContext';
 
 const tagOptionMapping: SelectOption = {
   label: 'tagName',
@@ -44,8 +45,8 @@ const StudioModal: React.FC<StudioModalProps> = ({
   showModal,
   setShowModal,
 }) => {
-  const [, setLoading] = useState(false);
-  const [customItemForm] = Form.useForm();
+  const { isMobile } = useContext(AppContext);
+  const [customForm] = Form.useForm();
   const [tagForm] = Form.useForm();
   const [activeTabKey, setActiveTabKey] = useState('Details');
   const [tags, setTags] = useState<any[]>(link?.feed?.package[0]?.tags ?? []);
@@ -54,6 +55,11 @@ const StudioModal: React.FC<StudioModalProps> = ({
   const [optionsPage, setOptionsPage] = useState<number>(0);
   const [selectedBrandId, setSelectedBrandId] = useState<string | undefined>();
   const [currentLink, setCurrentLink] = useState<any>(link);
+
+  useEffect(() => {
+    customForm.resetFields();
+    setActiveTabKey('Details');
+  }, [currentLink]);
 
   const handleTabChange = (activeKey: string) => {
     setActiveTabKey(activeKey);
@@ -210,7 +216,7 @@ const StudioModal: React.FC<StudioModalProps> = ({
   const handleSaveLink = () => {
     //save list with link updated
     /* 
-      const newItem = customItemForm.getFieldsValue(true);
+      const newItem = customForm.getFieldsValue(true);
   
       if (newItem) {
         const pkg = [
@@ -263,18 +269,26 @@ const StudioModal: React.FC<StudioModalProps> = ({
       >
         <Tabs.TabPane forceRender tab="Details" key="Details">
           <Form
-            form={customItemForm}
-            name="customItemForm"
+            form={customForm}
+            name="customForm"
             layout="vertical"
             initialValues={currentLink}
           >
             <Row>
-              <Col xs={24} lg={12} style={{ paddingRight: '0.5rem' }}>
-                <Form.Item label="Label" name={['feed', 'title']} required>
+              <Col
+                xs={24}
+                lg={12}
+                style={isMobile ? {} : { paddingRight: '0.5rem' }}
+              >
+                <Form.Item label="Label" name={['feed', 'videoLabel']} required>
                   <Input placeholder="Enter a Label" />
                 </Form.Item>
               </Col>
-              <Col xs={24} lg={12} style={{ paddingLeft: '0.5rem' }}>
+              <Col
+                xs={24}
+                lg={12}
+                style={isMobile ? {} : { paddingLeft: '0.5rem' }}
+              >
                 <Form.Item
                   label="Short Description"
                   name={['feed', 'shortDescription']}
@@ -288,19 +302,41 @@ const StudioModal: React.FC<StudioModalProps> = ({
                   <Col span={12}>
                     <Form.Item label="Video" required>
                       <Upload.VideoUpload
-                        fileList={undefined}
+                        maxCount={1}
+                        fileList={
+                          currentLink?.feed?.package[0]?.videoUrl
+                            ? {
+                                url: currentLink?.feed?.package[0]?.videoUrl,
+                                oldUrl: currentLink?.feed?.package[0]?.videoUrl,
+                                originUrl:
+                                  currentLink?.feed?.package[0]?.videoUrl,
+                              }
+                            : undefined
+                        }
                         formProp="video"
-                        form={customItemForm}
+                        form={customForm}
                       />
                     </Form.Item>
                   </Col>
                   <Col span={12}>
                     <Form.Item label="Thumbnail URL" required>
                       <Upload.ImageUpload
+                        maxCount={1}
                         type="thumbnail"
-                        fileList={undefined}
+                        fileList={
+                          currentLink?.feed?.package[0]?.thumbnailUrl
+                            ? {
+                                url: currentLink?.feed?.package[0]
+                                  ?.thumbnailUrl,
+                                oldUrl:
+                                  currentLink?.feed?.package[0]?.thumbnailUrl,
+                                originUrl:
+                                  currentLink?.feed?.package[0]?.thumbnailUrl,
+                              }
+                            : undefined
+                        }
                         formProp="thumbnail"
-                        form={customItemForm}
+                        form={customForm}
                       />
                     </Form.Item>
                   </Col>
@@ -403,7 +439,7 @@ const StudioModal: React.FC<StudioModalProps> = ({
                   </Col>
                   <Col>
                     <Button type="primary" htmlType="submit">
-                      Save Tag
+                      Add Tag
                     </Button>
                   </Col>
                 </Row>
