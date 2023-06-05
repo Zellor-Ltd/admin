@@ -33,8 +33,9 @@ const PlayListStudio: React.FC<RouteComponentProps> = () => {
   const [details, setDetails] = useState<boolean>(false);
   const history = useHistory();
   const [currentList, setCurrentList] = useState<any>();
-  const [custom, setCustom] = useState<any[]>([]);
+  const [list, setList] = useState<any[]>([]);
   const filter = useRef<any>();
+  const listIndex = useRef<number>(0);
 
   useEffect(() => {
     history.listen((_, action) => {
@@ -47,31 +48,32 @@ const PlayListStudio: React.FC<RouteComponentProps> = () => {
       const response = await doFetch(() =>
         fetchCustomLinkLists({ term: query })
       );
-      setCustom(response.results);
+      setList(response.results);
     };
     return fetchData;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleEdit = (list?: any) => {
+  const handleEdit = (index: number, list?: any) => {
     setCurrentList(list);
+    listIndex.current = index;
     setDetails(true);
     history.push(window.location.pathname);
   };
 
   const handleSave = (record: any) => {
-    const listItem = custom.find(item => item.id === record.id);
+    const listItem = list.find(item => item.id === record.id);
     if (!listItem) {
-      refreshTable(record, custom.length);
+      refreshTable(record, list.length);
       return;
     }
-    const index = custom.indexOf(listItem);
+    const index = list.indexOf(listItem);
     refreshTable(record, index);
   };
 
   const handleDelete = async (id: string, index: number) => {
     await doRequest(() => deleteCustomLinkList({ id }));
-    setCustom(prev => [...prev.slice(0, index), ...prev.slice(index + 1)]);
+    setList(prev => [...prev.slice(0, index), ...prev.slice(index + 1)]);
   };
 
   const handleSearch = (query: string) => {
@@ -79,7 +81,7 @@ const PlayListStudio: React.FC<RouteComponentProps> = () => {
   };
 
   const refreshTable = (record: any, index: number) => {
-    setCustom(prev => [
+    setList(prev => [
       ...prev.slice(0, index),
       record,
       ...prev.slice(index + 1),
@@ -187,7 +189,7 @@ const PlayListStudio: React.FC<RouteComponentProps> = () => {
         <>
           <Link
             to={{ pathname: window.location.pathname, state: record }}
-            onClick={() => handleEdit(record)}
+            onClick={() => handleEdit(index, record)}
           >
             <EditOutlined />
           </Link>
@@ -214,7 +216,7 @@ const PlayListStudio: React.FC<RouteComponentProps> = () => {
             title="Play List Studio"
             className="mb-n05"
             extra={
-              <Button key="1" type="primary" onClick={() => handleEdit()}>
+              <Button key="1" type="primary" onClick={() => handleEdit(0)}>
                 New Link List
               </Button>
             }
@@ -268,7 +270,7 @@ const PlayListStudio: React.FC<RouteComponentProps> = () => {
             rowClassName={(_, index) => `scrollable-row-${index}`}
             rowKey="id"
             columns={customColumns}
-            dataSource={custom}
+            dataSource={list}
             loading={loading}
             pagination={false}
             scroll={{ y: 240, x: true }}
@@ -279,10 +281,16 @@ const PlayListStudio: React.FC<RouteComponentProps> = () => {
       {details && (
         <>
           <PageHeader
-            title={currentList ? `Edit ${currentList.name}` : 'New Link List'}
+            title={
+              currentList?.name ? `Edit ${currentList.name}` : 'New Link List'
+            }
             className="mb-n05"
           />
-          <StudioDetails customList={currentList} onSave={handleSave} />
+          <StudioDetails
+            currentList={currentList}
+            setDetails={setDetails}
+            onSave={handleSave}
+          />
         </>
       )}
     </div>

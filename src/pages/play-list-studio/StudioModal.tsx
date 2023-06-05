@@ -11,6 +11,7 @@ import {
   Table,
   Tabs,
   Tooltip,
+  message,
 } from 'antd';
 import { useRequest } from 'hooks/useRequest';
 import { Ref, RefObject, useContext, useEffect, useRef, useState } from 'react';
@@ -35,6 +36,8 @@ interface StudioModalProps {
   editing: any;
   brands: Brand[];
   showModal: boolean;
+  currentList?: any;
+  onFinish: any;
   setShowModal: (value: boolean) => void;
 }
 
@@ -43,13 +46,18 @@ const StudioModal: React.FC<StudioModalProps> = ({
   editing,
   brands,
   showModal,
+  currentList,
+  onFinish,
   setShowModal,
 }) => {
   const { isMobile } = useContext(AppContext);
   const [customForm] = Form.useForm();
   const [tagForm] = Form.useForm();
   const [activeTabKey, setActiveTabKey] = useState('Details');
-  const [tags, setTags] = useState<any[]>(link?.feed?.package[0]?.tags ?? []);
+  const [tags, setTags] = useState<any[]>([]);
+  const [linkTags, setLinkTags] = useState<any[]>(
+    link?.feed?.package[0]?.tags ?? []
+  );
   const [tagDetails, setTagDetails] = useState<boolean>(false);
   const [userInput, setUserInput] = useState<string | undefined>();
   const [optionsPage, setOptionsPage] = useState<number>(0);
@@ -57,8 +65,10 @@ const StudioModal: React.FC<StudioModalProps> = ({
   const [currentLink, setCurrentLink] = useState<any>(link);
 
   useEffect(() => {
-    customForm.resetFields();
-    setActiveTabKey('Details');
+    if (currentLink) {
+      customForm.resetFields();
+      setActiveTabKey('Details');
+    }
   }, [currentLink]);
 
   const handleTabChange = (activeKey: string) => {
@@ -69,8 +79,6 @@ const StudioModal: React.FC<StudioModalProps> = ({
     if (editing.current) editing.current = false;
     setShowModal(false);
   };
-
-  const handleLinkSelect = (entity: any) => {};
 
   const tagColumns: ColumnsType<any> = [
     {
@@ -155,10 +163,12 @@ const StudioModal: React.FC<StudioModalProps> = ({
             <Button
               type="link"
               style={{ padding: 0, margin: 6 }}
-              onClick={() => {
-                const updatedTags = tags.splice(index, 1);
-                setTags(updatedTags);
-              }}
+              onClick={() =>
+                setLinkTags(prev => [
+                  ...prev.slice(0, index),
+                  ...prev.slice(index + 1),
+                ])
+              }
             >
               <DeleteOutlined />
             </Button>
@@ -209,55 +219,66 @@ const StudioModal: React.FC<StudioModalProps> = ({
   };
 
   const onFinishTagForm = () => {
-    //update link with new tag array
+    const newTag = tagForm.getFieldsValue(true);
+    setLinkTags([...linkTags, newTag]);
     setTagDetails(false);
   };
 
-  const handleSaveLink = () => {
-    //save list with link updated
-    /* 
-      const newItem = customForm.getFieldsValue(true);
-  
-      if (newItem) {
-        const pkg = [
-          {
-            videoUrl: newItem.video?.url,
-            thumbnailUrl: newItem.thumbnail?.url,
-          },
-        ];
-  
-        const feed = {
+  const saveOnClose = () => {
+    const item = customForm.getFieldsValue(true);
+
+    if (item) {
+      const configuredItem = {
+        index: 2,
+        hIndex: 889,
+        vIndex: 1000,
+        videoFeedId: null,
+        socialPlatform: 'Disco Club',
+        includeVideo: true,
+        feed: {
           title: null,
-          videoLabel: 'selected',
-          shortDescription: 'informed by user',
+          videoLabel: item?.feed?.videoLabel,
+          shortDescription: item?.feed?.shortDescription,
           creator: null,
-          package: pkg,
+          package: [
+            {
+              tags: linkTags,
+              videoUrl: item?.video?.url,
+              thumbnailUrl: item?.thumbnail?.url,
+            },
+          ],
           searchTags: null,
           category: null,
           videoType: ['Custom'],
-        };
-  
-        const configuredItem = {
-          index: 2,
-          hIndex: 889,
-          vIndex: 1000,
-          videoFeedId: null,
-          socialPlatform: 'Disco Club',
-          includeVideo: true,
-          feed: feed,
-        };
-  
-        setItemLinks([...itemLinks, configuredItem]);
-        setShowModal(false);
-      } else message.warning("Can't add an empty item!"); */
-    //add link and save table too
+        },
+      };
+
+      const index =
+        currentList?.links && link ? currentList.links.indexOf(link) : 0;
+      const newLinkList = currentList
+        ? [
+            ...currentList.links?.slice(0, index),
+            configuredItem,
+            ...currentList.links?.slice(index + 1),
+          ]
+        : [configuredItem];
+      if (!currentList?.name) {
+        message.error(
+          "Error: Can't update list with no name. Enter a name and try again."
+        );
+        return;
+      } else {
+        onFinish(currentList?.name, newLinkList);
+      }
+      setShowModal(false);
+    } else message.warning("Can't add an empty item!");
   };
 
   return (
     <Modal
       title={editing.current ? 'Edit Link' : 'New Link'}
       visible={showModal}
-      onOk={handleSaveLink}
+      onOk={saveOnClose}
       onCancel={handleCancel}
       okText="Save"
       cancelText="Cancel"
@@ -280,7 +301,12 @@ const StudioModal: React.FC<StudioModalProps> = ({
                 lg={12}
                 style={isMobile ? {} : { paddingRight: '0.5rem' }}
               >
-                <Form.Item label="Label" name={['feed', 'videoLabel']} required>
+                <Form.Item
+                  label="Label"
+                  name={['feed', 'videoLabel']}
+                  required
+                  shouldUpdate
+                >
                   <Input placeholder="Enter a Label" />
                 </Form.Item>
               </Col>
@@ -293,6 +319,7 @@ const StudioModal: React.FC<StudioModalProps> = ({
                   label="Short Description"
                   name={['feed', 'shortDescription']}
                   required
+                  shouldUpdate
                 >
                   <Input placeholder="Enter a Short Description" />
                 </Form.Item>
@@ -361,7 +388,7 @@ const StudioModal: React.FC<StudioModalProps> = ({
           />
         </Tabs.TabPane>
         <Tabs.TabPane forceRender tab="Tags" key="Tags">
-          {!tagDetails && (
+          {activeTabKey === 'Tags' && !tagDetails && (
             <>
               <Button
                 type="default"
@@ -375,12 +402,12 @@ const StudioModal: React.FC<StudioModalProps> = ({
               <Table
                 rowKey="id"
                 columns={tagColumns}
-                dataSource={tags}
+                dataSource={linkTags}
                 pagination={false}
               />
             </>
           )}
-          {tagDetails && (
+          {activeTabKey === 'Tags' && tagDetails && (
             <>
               <Form
                 name="tagForm"

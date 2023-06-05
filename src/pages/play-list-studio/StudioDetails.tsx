@@ -18,34 +18,47 @@ import { ColumnsType } from 'antd/lib/table';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import StudioModal from './StudioModal';
 import { Brand } from 'interfaces/Brand';
+import scrollIntoView from 'scroll-into-view';
 
 interface StudioDetailsProps {
-  customList?: any;
+  currentList?: any;
   onSave: any;
+  setDetails: any;
 }
 
 const StudioDetails: React.FC<StudioDetailsProps> = ({
-  customList,
+  currentList,
   onSave,
+  setDetails,
 }) => {
   const [loading, setLoading] = useState(false);
   const { doFetch } = useRequest({ setLoading });
   const history = useHistory();
   const [form] = Form.useForm();
-  const [itemLinks, setItemLinks] = useState<any[]>(customList?.links ?? []);
-  const [currentLink, setCurrentLink] = useState<any>();
+  const [itemLinks, setItemLinks] = useState<any[]>(currentList?.links ?? []);
+  const [link, setLink] = useState<any>();
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [disableButton, setDisableButton] = useState<boolean>(true);
   const [brands, setBrands] = useState<Brand[]>([]);
   const reordered = useRef<boolean>(false);
   const editing = useRef<boolean>(false);
+  const mounted = useRef<boolean>(false);
 
   useEffect(() => {
     if (reordered.current) {
-      onFinish(true);
+      onFinish();
       reordered.current = false;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [itemLinks]);
+
+  useEffect(() => {
+    if (!mounted.current) {
+      mounted.current = true;
+      return;
+    }
+    setShowModal(true);
+  }, [link]);
 
   useEffect(() => {
     getBrands();
@@ -56,11 +69,18 @@ const StudioDetails: React.FC<StudioDetailsProps> = ({
     setBrands(response.results);
   };
 
-  const onFinish = async (stayOnPage?: boolean) => {
+  const onFinish = async (name?: string, links?: any[]) => {
     try {
+      if (name) form.setFieldsValue({ name: name });
       const customListForm = form.getFieldsValue(true);
-      customListForm.links = itemLinks;
+      if (!customListForm.name) {
+        const nameField = document.getElementById('nameField');
+        scrollIntoView(nameField);
+        return;
+      }
+      customListForm.links = links ?? itemLinks;
       customListForm.tp = 's';
+      customListForm.name = customListForm.name.name ?? customListForm.name;
       const response = await doFetch(() => saveCustomLinkList(customListForm));
       customListForm.id
         ? onSave(customListForm)
@@ -69,7 +89,8 @@ const StudioDetails: React.FC<StudioDetailsProps> = ({
     } catch (error) {
       message.error('Something went wrong. Try again later.');
     } finally {
-      if (!stayOnPage) history.goBack();
+      setShowModal(false);
+      setDetails(false);
     }
   };
 
@@ -88,8 +109,7 @@ const StudioDetails: React.FC<StudioDetailsProps> = ({
 
   const handleEdit = (record?: any) => {
     if (record) editing.current = true;
-    setCurrentLink(record);
-    setShowModal(true);
+    setLink(record ?? {});
   };
 
   const columns: ColumnsType<any> = [
@@ -119,6 +139,7 @@ const StudioDetails: React.FC<StudioDetailsProps> = ({
               {id?.replace('_STR', '')}
             </a>
           );
+        else return '-';
       },
       align: 'center',
     },
@@ -158,7 +179,7 @@ const StudioDetails: React.FC<StudioDetailsProps> = ({
           </div>
         </div>
       ),
-      dataIndex: ['feed', 'title'],
+      dataIndex: ['feed', 'videoLabel'],
       width: '10%',
       align: 'center',
     },
@@ -225,18 +246,33 @@ const StudioDetails: React.FC<StudioDetailsProps> = ({
     },
   ];
 
+  const checkName = (_: any, value: string) => {
+    if (value?.length > 0) {
+      setDisableButton(false);
+      return Promise.resolve();
+    }
+    setDisableButton(true);
+    return Promise.reject(new Error('List must include name!'));
+  };
+
   return (
     <>
       <Form
-        name="roleForm"
+        name="form"
         layout="vertical"
         form={form}
-        initialValues={customList}
+        initialValues={currentList}
         onFinish={onFinish}
       >
         <Row gutter={8}>
           <Col span={24}>
-            <Form.Item label="List Name" name="name">
+            <Form.Item
+              label="List Name"
+              name="name"
+              id="nameField"
+              rules={[{ validator: checkName }]}
+              required
+            >
               <Input allowClear placeholder="Enter a name" />
             </Form.Item>
           </Col>
@@ -247,6 +283,7 @@ const StudioDetails: React.FC<StudioDetailsProps> = ({
                   key="1"
                   type="primary"
                   className="ml-1"
+                  disabled={disableButton}
                   onClick={() => handleEdit()}
                 >
                   New Link
@@ -266,19 +303,28 @@ const StudioDetails: React.FC<StudioDetailsProps> = ({
             />
           </Col>
           <Col span={24}>
-            <StudioModal
-              link={currentLink}
-              editing={editing}
-              brands={brands}
-              showModal={showModal}
-              setShowModal={setShowModal}
-            />
+            {showModal && (
+              <StudioModal
+                link={link}
+                editing={editing}
+                brands={brands}
+                showModal={showModal}
+                onFinish={onFinish}
+                currentList={currentList}
+                setShowModal={setShowModal}
+              />
+            )}
           </Col>
         </Row>
         <Row gutter={8} justify="end" className="br-buttons bg-white">
           <Col>
             <Button type="default" onClick={() => history.goBack()}>
-              Done
+              Go Back
+            </Button>
+          </Col>
+          <Col>
+            <Button type="primary" htmlType="submit" className="ml-1">
+              Save Changes
             </Button>
           </Col>
         </Row>
