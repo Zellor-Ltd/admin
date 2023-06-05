@@ -12,7 +12,7 @@ import {
 import { useRequest } from 'hooks/useRequest';
 import { useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { fetchBrands, saveCustomLinkList } from 'services/DiscoClubService';
+import { saveCustomLinkList } from 'services/DiscoClubService';
 import { SortableTable } from 'components';
 import { ColumnsType } from 'antd/lib/table';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
@@ -24,12 +24,14 @@ interface StudioDetailsProps {
   currentList?: any;
   onSave: any;
   setDetails: any;
+  brands: Brand[];
 }
 
 const StudioDetails: React.FC<StudioDetailsProps> = ({
   currentList,
   onSave,
   setDetails,
+  brands,
 }) => {
   const [loading, setLoading] = useState(false);
   const { doFetch } = useRequest({ setLoading });
@@ -38,8 +40,9 @@ const StudioDetails: React.FC<StudioDetailsProps> = ({
   const [itemLinks, setItemLinks] = useState<any[]>(currentList?.links ?? []);
   const [link, setLink] = useState<any>();
   const [showModal, setShowModal] = useState<boolean>(false);
-  const [disableButton, setDisableButton] = useState<boolean>(true);
-  const [brands, setBrands] = useState<Brand[]>([]);
+  const [disableButton, setDisableButton] = useState<boolean>(
+    !!!currentList?.name
+  );
   const reordered = useRef<boolean>(false);
   const editing = useRef<boolean>(false);
   const mounted = useRef<boolean>(false);
@@ -59,15 +62,6 @@ const StudioDetails: React.FC<StudioDetailsProps> = ({
     }
     setShowModal(true);
   }, [link]);
-
-  useEffect(() => {
-    getBrands();
-  }, []);
-
-  const getBrands = async () => {
-    const response: any = await doFetch(() => fetchBrands());
-    setBrands(response.results);
-  };
 
   const onFinish = async (name?: string, links?: any[]) => {
     try {

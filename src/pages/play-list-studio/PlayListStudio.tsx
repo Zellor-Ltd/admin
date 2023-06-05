@@ -21,10 +21,12 @@ import { useRequest } from 'hooks/useRequest';
 import {
   fetchCustomLinkLists,
   deleteCustomLinkList,
+  fetchBrands,
 } from 'services/DiscoClubService';
 import StudioDetails from './StudioDetails';
 import CopyValueToClipboard from 'components/CopyValueToClipboard';
 import { AppContext } from 'contexts/AppContext';
+import { Brand } from 'interfaces/Brand';
 
 const PlayListStudio: React.FC<RouteComponentProps> = () => {
   const { isMobile } = useContext(AppContext);
@@ -33,6 +35,7 @@ const PlayListStudio: React.FC<RouteComponentProps> = () => {
   const [details, setDetails] = useState<boolean>(false);
   const history = useHistory();
   const [currentList, setCurrentList] = useState<any>();
+  const [brands, setBrands] = useState<Brand[]>([]);
   const [list, setList] = useState<any[]>([]);
   const filter = useRef<any>();
   const listIndex = useRef<number>(0);
@@ -42,6 +45,16 @@ const PlayListStudio: React.FC<RouteComponentProps> = () => {
       if (action === 'POP' && details) setDetails(false);
     });
   });
+
+  useEffect(() => {
+    getBrands();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const getBrands = async () => {
+    const response: any = await doFetch(() => fetchBrands());
+    setBrands(response.results);
+  };
 
   const getCustomData = useMemo(() => {
     const fetchData = async (query: string) => {
@@ -290,6 +303,7 @@ const PlayListStudio: React.FC<RouteComponentProps> = () => {
             currentList={currentList}
             setDetails={setDetails}
             onSave={handleSave}
+            brands={brands}
           />
         </>
       )}
