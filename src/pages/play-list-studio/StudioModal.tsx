@@ -254,23 +254,25 @@ const StudioModal: React.FC<StudioModalProps> = ({
         },
       };
 
-      const index =
-        currentList?.links && link ? currentList.links.indexOf(link) : 0;
-      const newLinkList = currentList
+      const index = link?.id
+        ? currentList?.links?.indexOf(link)
+        : currentList?.links?.length;
+
+      const newLinks = currentList?.links?.length
         ? [
             ...currentList.links?.slice(0, index),
             configuredItem,
             ...currentList.links?.slice(index + 1),
           ]
         : [configuredItem];
+
       if (!currentList?.name) {
         message.error(
           "Error: Can't update list with no name. Enter a name and try again."
         );
         return;
-      } else {
-        onFinish(currentList?.name, newLinkList);
-      }
+      } else onFinish(currentList?.name, newLinks);
+
       setShowModal(false);
     } else message.warning("Can't add an empty item!");
   };
