@@ -243,8 +243,9 @@ const StudioModal: React.FC<StudioModalProps> = ({
           package: [
             {
               tags: linkTags,
-              videoUrl: item?.video?.url,
-              thumbnailUrl: item?.thumbnail?.url,
+              videoUrl: item?.video?.url ?? item?.feed?.package[0]?.videoUrl,
+              thumbnailUrl:
+                item?.thumbnail?.url ?? item?.feed?.package[0]?.thumbnailUrl,
             },
           ],
           searchTags: null,
@@ -327,7 +328,7 @@ const StudioModal: React.FC<StudioModalProps> = ({
               {!editing.current && (
                 <>
                   <Col span={12}>
-                    <Form.Item label="Video" required>
+                    <Form.Item label="Video" name="video" required>
                       <Upload.VideoUpload
                         maxCount={1}
                         fileList={
@@ -346,7 +347,7 @@ const StudioModal: React.FC<StudioModalProps> = ({
                     </Form.Item>
                   </Col>
                   <Col span={12}>
-                    <Form.Item label="Thumbnail URL" required>
+                    <Form.Item label="Thumbnail URL" name="thumbnail" required>
                       <Upload.ImageUpload
                         maxCount={1}
                         type="thumbnail"
