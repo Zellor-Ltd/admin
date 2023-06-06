@@ -224,7 +224,7 @@ const StudioModal: React.FC<StudioModalProps> = ({
     setTagDetails(false);
   };
 
-  const saveOnClose = () => {
+  const saveOnOk = () => {
     const item = customForm.getFieldsValue(true);
 
     if (item) {
@@ -243,8 +243,9 @@ const StudioModal: React.FC<StudioModalProps> = ({
           package: [
             {
               tags: linkTags,
-              videoUrl: item?.video?.url,
-              thumbnailUrl: item?.thumbnail?.url,
+              videoUrl: item?.video?.url ?? item?.feed?.package[0]?.videoUrl,
+              thumbnailUrl:
+                item?.thumbnail?.url ?? item?.feed?.package[0]?.thumbnailUrl,
             },
           ],
           searchTags: null,
@@ -253,23 +254,25 @@ const StudioModal: React.FC<StudioModalProps> = ({
         },
       };
 
-      const index =
-        currentList?.links && link ? currentList.links.indexOf(link) : 0;
-      const newLinkList = currentList
+      const index = link
+        ? currentList?.links?.indexOf(link)
+        : currentList?.links?.length;
+
+      const newLinks = currentList?.links?.length
         ? [
             ...currentList.links?.slice(0, index),
             configuredItem,
             ...currentList.links?.slice(index + 1),
           ]
         : [configuredItem];
+
       if (!currentList?.name) {
         message.error(
           "Error: Can't update list with no name. Enter a name and try again."
         );
         return;
-      } else {
-        onFinish(currentList?.name, newLinkList);
-      }
+      } else onFinish(true, currentList?.name, newLinks);
+
       setShowModal(false);
     } else message.warning("Can't add an empty item!");
   };
@@ -278,7 +281,7 @@ const StudioModal: React.FC<StudioModalProps> = ({
     <Modal
       title={editing.current ? 'Edit Link' : 'New Link'}
       visible={showModal}
-      onOk={saveOnClose}
+      onOk={saveOnOk}
       onCancel={handleCancel}
       okText="Save"
       cancelText="Cancel"
@@ -327,7 +330,7 @@ const StudioModal: React.FC<StudioModalProps> = ({
               {!editing.current && (
                 <>
                   <Col span={12}>
-                    <Form.Item label="Video" required>
+                    <Form.Item label="Video" name="video" required>
                       <Upload.VideoUpload
                         maxCount={1}
                         fileList={
@@ -346,7 +349,7 @@ const StudioModal: React.FC<StudioModalProps> = ({
                     </Form.Item>
                   </Col>
                   <Col span={12}>
-                    <Form.Item label="Thumbnail URL" required>
+                    <Form.Item label="Thumbnail URL" name="thumbnail" required>
                       <Upload.ImageUpload
                         maxCount={1}
                         type="thumbnail"
