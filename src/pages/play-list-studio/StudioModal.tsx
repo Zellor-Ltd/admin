@@ -224,7 +224,7 @@ const StudioModal: React.FC<StudioModalProps> = ({
     setTagDetails(false);
   };
 
-  const saveOnClose = () => {
+  const saveOnOk = () => {
     const item = customForm.getFieldsValue(true);
 
     if (item) {
@@ -254,7 +254,7 @@ const StudioModal: React.FC<StudioModalProps> = ({
         },
       };
 
-      const index = link?.id
+      const index = link
         ? currentList?.links?.indexOf(link)
         : currentList?.links?.length;
 
@@ -271,7 +271,7 @@ const StudioModal: React.FC<StudioModalProps> = ({
           "Error: Can't update list with no name. Enter a name and try again."
         );
         return;
-      } else onFinish(currentList?.name, newLinks);
+      } else onFinish(true, currentList?.name, newLinks);
 
       setShowModal(false);
     } else message.warning("Can't add an empty item!");
@@ -281,7 +281,7 @@ const StudioModal: React.FC<StudioModalProps> = ({
     <Modal
       title={editing.current ? 'Edit Link' : 'New Link'}
       visible={showModal}
-      onOk={saveOnClose}
+      onOk={saveOnOk}
       onCancel={handleCancel}
       okText="Save"
       cancelText="Cancel"

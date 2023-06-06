@@ -49,7 +49,7 @@ const StudioDetails: React.FC<StudioDetailsProps> = ({
 
   useEffect(() => {
     if (reordered.current) {
-      onFinish();
+      onFinish(true);
       reordered.current = false;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -63,7 +63,11 @@ const StudioDetails: React.FC<StudioDetailsProps> = ({
     setShowModal(true);
   }, [link]);
 
-  const onFinish = async (name?: string, links?: any[]) => {
+  const onFinish = async (
+    stayOnPage: boolean,
+    name?: string,
+    links?: any[]
+  ) => {
     try {
       if (name) form.setFieldsValue({ name: name });
       const customListForm = form.getFieldsValue(true);
@@ -84,11 +88,13 @@ const StudioDetails: React.FC<StudioDetailsProps> = ({
       message.error('Something went wrong. Try again later.');
     } finally {
       setShowModal(false);
-      setDetails(false);
+      if (!stayOnPage) setDetails(false);
+      else saveReorderedList(links);
     }
   };
 
-  const saveReorderedList = (list: any[]) => {
+  const saveReorderedList = (list?: any[]) => {
+    if (!list) return;
     reordered.current = true;
     setItemLinks(list);
   };
