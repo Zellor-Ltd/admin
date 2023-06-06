@@ -11,13 +11,11 @@ import {
   Tooltip,
 } from 'antd';
 import { useRequest } from 'hooks/useRequest';
-import { Ref, RefObject, useRef, useState } from 'react';
+import { useState } from 'react';
 import { fetchCustomLinkList } from 'services/DiscoClubService';
 import { DebounceSelect } from 'components/select/DebounceSelect';
 import { Upload } from 'components';
-import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
-import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { DeleteOutlined } from '@ant-design/icons';
 import { ColumnsType } from 'antd/lib/table';
 
 interface StudioModalProps {
