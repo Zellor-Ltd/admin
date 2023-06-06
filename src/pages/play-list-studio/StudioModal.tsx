@@ -2,93 +2,77 @@ import {
   Button,
   Col,
   Form,
+  Image,
   Input,
   Modal,
   Popconfirm,
   Row,
+  Select,
   Table,
   Tabs,
   Tooltip,
+  message,
 } from 'antd';
 import { useRequest } from 'hooks/useRequest';
-import { Ref, RefObject, useRef, useState } from 'react';
-import { fetchCustomLinkList } from 'services/DiscoClubService';
+import { Ref, RefObject, useContext, useEffect, useRef, useState } from 'react';
+import { fetchCustomLinkList, fetchTags } from 'services/DiscoClubService';
 import { DebounceSelect } from 'components/select/DebounceSelect';
 import { Upload } from 'components';
-import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
-import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { DeleteOutlined } from '@ant-design/icons';
 import { ColumnsType } from 'antd/lib/table';
+import MultipleFetchDebounceSelect from 'components/select/MultipleFetchDebounceSelect';
+import { Brand } from 'interfaces/Brand';
+import { SelectOption } from 'interfaces/SelectOption';
+import { AppContext } from 'contexts/AppContext';
+
+const tagOptionMapping: SelectOption = {
+  label: 'tagName',
+  value: 'tagName',
+  key: 'id',
+};
 
 interface StudioModalProps {
   link?: any;
   editing: any;
+  brands: Brand[];
   showModal: boolean;
+  currentList?: any;
+  onFinish: any;
   setShowModal: (value: boolean) => void;
 }
 
 const StudioModal: React.FC<StudioModalProps> = ({
   link,
   editing,
+  brands,
   showModal,
+  currentList,
+  onFinish,
   setShowModal,
 }) => {
-  const [, setLoading] = useState(false);
-  const { doFetch } = useRequest({ setLoading });
-  const [customItemForm] = Form.useForm();
-  const [, setQueriedLinks] = useState<any[]>([]);
-  const [, setSelectedOption] = useState<any>();
+  const { isMobile } = useContext(AppContext);
+  const [customForm] = Form.useForm();
+  const [tagForm] = Form.useForm();
   const [activeTabKey, setActiveTabKey] = useState('Details');
-  const [tags, setTags] = useState<any[]>(link?.feed?.package[0]?.tags ?? []);
+  const [tags, setTags] = useState<any[]>([]);
+  const [linkTags, setLinkTags] = useState<any[]>(
+    link?.feed?.package[0]?.tags ?? []
+  );
   const [tagDetails, setTagDetails] = useState<boolean>(false);
+  const [userInput, setUserInput] = useState<string | undefined>();
+  const [optionsPage, setOptionsPage] = useState<number>(0);
+  const [selectedBrandId, setSelectedBrandId] = useState<string | undefined>();
+  const [currentLink, setCurrentLink] = useState<any>(link);
 
-  const getOptions = async (query: string) => {
-    const response = await doFetch(() => fetchCustomLinkList(query));
-    setQueriedLinks(response.results);
-    return response.results;
-  };
+  useEffect(() => {
+    if (currentLink) {
+      customForm.resetFields();
+      setActiveTabKey('Details');
+    }
+  }, [currentLink]);
 
   const handleTabChange = (activeKey: string) => {
     setActiveTabKey(activeKey);
-  };
-
-  const handleSaveLink = () => {
-    /* 
-      const newItem = customItemForm.getFieldsValue(true);
-  
-      if (newItem) {
-        const pkg = [
-          {
-            videoUrl: newItem.video?.url,
-            thumbnailUrl: newItem.thumbnail?.url,
-          },
-        ];
-  
-        const feed = {
-          title: null,
-          videoLabel: 'selected',
-          shortDescription: 'informed by user',
-          creator: null,
-          package: pkg,
-          searchTags: null,
-          category: null,
-          videoType: ['Custom'],
-        };
-  
-        const configuredItem = {
-          index: 2,
-          hIndex: 889,
-          vIndex: 1000,
-          videoFeedId: null,
-          socialPlatform: 'Disco Club',
-          includeVideo: true,
-          feed: feed,
-        };
-  
-        setItemLinks([...itemLinks, configuredItem]);
-        setShowModal(false);
-      } else message.warning("Can't add an empty item!"); */
-    //add link and save table too
   };
 
   const handleCancel = () => {
@@ -96,12 +80,24 @@ const StudioModal: React.FC<StudioModalProps> = ({
     setShowModal(false);
   };
 
-  const handleLinkSelect = (entity: any) => {
-    setSelectedOption(entity);
-    setActiveTabKey('Details');
-  };
-
   const tagColumns: ColumnsType<any> = [
+    {
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Tag Name">Tag Name</Tooltip>
+          </div>
+        </div>
+      ),
+      dataIndex: 'tagName',
+      width: '15%',
+    },
     {
       title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
@@ -116,8 +112,12 @@ const StudioModal: React.FC<StudioModalProps> = ({
           </div>
         </div>
       ),
-      dataIndex: 'id',
-      width: '15%',
+      dataIndex: ['product', 'thumbnailUrl', 'url'],
+      width: '10%',
+      render: (value: string) => {
+        if (value) return <Image height={60} src={value} />;
+        else return 'No thumbnail';
+      },
     },
     {
       title: (
@@ -133,7 +133,11 @@ const StudioModal: React.FC<StudioModalProps> = ({
           </div>
         </div>
       ),
-      dataIndex: 'productName',
+      dataIndex: ['product', 'name'],
+      render: (value: string) => {
+        if (value) return value;
+        else return 'No linked Product';
+      },
       width: '15%',
     },
     {
@@ -159,16 +163,12 @@ const StudioModal: React.FC<StudioModalProps> = ({
             <Button
               type="link"
               style={{ padding: 0, margin: 6 }}
-              onClick={() => {
-                console.log('todo: delete');
-                /* 
-              const tags: any[] = segmentForm.getFieldValue('tags') || [];
-              tags.splice(index, 1);
-              segmentForm.setFieldsValue({
-                tags,
-              });
-              setSelectedSegment(segmentForm.getFieldsValue(true)); */
-              }}
+              onClick={() =>
+                setLinkTags(prev => [
+                  ...prev.slice(0, index),
+                  ...prev.slice(index + 1),
+                ])
+              }
             >
               <DeleteOutlined />
             </Button>
@@ -178,11 +178,107 @@ const StudioModal: React.FC<StudioModalProps> = ({
     },
   ];
 
+  const getTags = async (input?: string, loadNextPage?: boolean) => {
+    setUserInput(input);
+    const pageToUse = !!!loadNextPage ? 0 : optionsPage;
+    const response: any = await fetchTags({
+      page: pageToUse,
+      query: input,
+      brandId: selectedBrandId,
+      limit: 30,
+    });
+    setOptionsPage(pageToUse + 1);
+
+    if (pageToUse === 0) setTags(response.results);
+    else setTags(prev => [...prev.concat(response.results)]);
+
+    return response.results;
+  };
+
+  const onChangeTag = (value?: string, _selectedTag?: any) => {
+    if (_selectedTag) {
+      setUserInput(value);
+    } else {
+      setUserInput('');
+      setTags([]);
+      getTags();
+    }
+  };
+
+  const handleBrandFilter = async (value: any) => {
+    setSelectedBrandId(value);
+    if (value) {
+      const selectedBrand = brands.find(brand => brand.id === value);
+      tagForm.setFieldsValue({ brand: selectedBrand });
+    }
+    tagForm.setFieldsValue({ tagName: '' });
+  };
+
+  const filterOption = (input: string, option: any) => {
+    return option?.label?.toUpperCase().includes(input?.toUpperCase());
+  };
+
+  const onFinishTagForm = () => {
+    const newTag = tagForm.getFieldsValue(true);
+    setLinkTags([...linkTags, newTag]);
+    setTagDetails(false);
+  };
+
+  const saveOnClose = () => {
+    const item = customForm.getFieldsValue(true);
+
+    if (item) {
+      const configuredItem = {
+        index: 2,
+        hIndex: 889,
+        vIndex: 1000,
+        videoFeedId: null,
+        socialPlatform: 'Disco Club',
+        includeVideo: true,
+        feed: {
+          title: null,
+          videoLabel: item?.feed?.videoLabel,
+          shortDescription: item?.feed?.shortDescription,
+          creator: null,
+          package: [
+            {
+              tags: linkTags,
+              videoUrl: item?.video?.url,
+              thumbnailUrl: item?.thumbnail?.url,
+            },
+          ],
+          searchTags: null,
+          category: null,
+          videoType: ['Custom'],
+        },
+      };
+
+      const index =
+        currentList?.links && link ? currentList.links.indexOf(link) : 0;
+      const newLinkList = currentList
+        ? [
+            ...currentList.links?.slice(0, index),
+            configuredItem,
+            ...currentList.links?.slice(index + 1),
+          ]
+        : [configuredItem];
+      if (!currentList?.name) {
+        message.error(
+          "Error: Can't update list with no name. Enter a name and try again."
+        );
+        return;
+      } else {
+        onFinish(currentList?.name, newLinkList);
+      }
+      setShowModal(false);
+    } else message.warning("Can't add an empty item!");
+  };
+
   return (
     <Modal
       title={editing.current ? 'Edit Link' : 'New Link'}
       visible={showModal}
-      onOk={handleSaveLink}
+      onOk={saveOnClose}
       onCancel={handleCancel}
       okText="Save"
       cancelText="Cancel"
@@ -194,22 +290,36 @@ const StudioModal: React.FC<StudioModalProps> = ({
       >
         <Tabs.TabPane forceRender tab="Details" key="Details">
           <Form
-            form={customItemForm}
-            name="customItemForm"
+            form={customForm}
+            name="customForm"
             layout="vertical"
-            initialValues={link}
+            initialValues={currentLink}
           >
             <Row>
-              <Col xs={24} lg={12} style={{ paddingRight: '0.5rem' }}>
-                <Form.Item label="Label" name={['feed', 'title']} required>
+              <Col
+                xs={24}
+                lg={12}
+                style={isMobile ? {} : { paddingRight: '0.5rem' }}
+              >
+                <Form.Item
+                  label="Label"
+                  name={['feed', 'videoLabel']}
+                  required
+                  shouldUpdate
+                >
                   <Input placeholder="Enter a Label" />
                 </Form.Item>
               </Col>
-              <Col xs={24} lg={12} style={{ paddingLeft: '0.5rem' }}>
+              <Col
+                xs={24}
+                lg={12}
+                style={isMobile ? {} : { paddingLeft: '0.5rem' }}
+              >
                 <Form.Item
                   label="Short Description"
                   name={['feed', 'shortDescription']}
                   required
+                  shouldUpdate
                 >
                   <Input placeholder="Enter a Short Description" />
                 </Form.Item>
@@ -219,19 +329,41 @@ const StudioModal: React.FC<StudioModalProps> = ({
                   <Col span={12}>
                     <Form.Item label="Video" required>
                       <Upload.VideoUpload
-                        fileList={undefined}
+                        maxCount={1}
+                        fileList={
+                          currentLink?.feed?.package[0]?.videoUrl
+                            ? {
+                                url: currentLink?.feed?.package[0]?.videoUrl,
+                                oldUrl: currentLink?.feed?.package[0]?.videoUrl,
+                                originUrl:
+                                  currentLink?.feed?.package[0]?.videoUrl,
+                              }
+                            : undefined
+                        }
                         formProp="video"
-                        form={customItemForm}
+                        form={customForm}
                       />
                     </Form.Item>
                   </Col>
                   <Col span={12}>
                     <Form.Item label="Thumbnail URL" required>
                       <Upload.ImageUpload
+                        maxCount={1}
                         type="thumbnail"
-                        fileList={undefined}
+                        fileList={
+                          currentLink?.feed?.package[0]?.thumbnailUrl
+                            ? {
+                                url: currentLink?.feed?.package[0]
+                                  ?.thumbnailUrl,
+                                oldUrl:
+                                  currentLink?.feed?.package[0]?.thumbnailUrl,
+                                originUrl:
+                                  currentLink?.feed?.package[0]?.thumbnailUrl,
+                              }
+                            : undefined
+                        }
                         formProp="thumbnail"
-                        form={customItemForm}
+                        form={customForm}
                       />
                     </Form.Item>
                   </Col>
@@ -243,13 +375,11 @@ const StudioModal: React.FC<StudioModalProps> = ({
         <Tabs.TabPane forceRender tab="Search" key="Search">
           <h3 className="mb-05">Search Links</h3>
           <DebounceSelect
-            fetchOptions={value => {
-              if (value) getOptions(value);
-            }}
+            fetcherFunction={(value: string) => fetchCustomLinkList(value)}
             style={{ width: '100%' }}
             disabled={editing.current}
             placeholder="Type to search existing Link"
-            onChange={(_, entity) => handleLinkSelect(entity)}
+            onChange={(_, entity) => setCurrentLink(entity)}
             optionMapping={{
               key: 'id',
               value: 'id',
@@ -258,16 +388,13 @@ const StudioModal: React.FC<StudioModalProps> = ({
           />
         </Tabs.TabPane>
         <Tabs.TabPane forceRender tab="Tags" key="Tags">
-          {!tagDetails && (
+          {activeTabKey === 'Tags' && !tagDetails && (
             <>
               <Button
                 type="default"
                 style={{ float: 'right', marginBottom: '12px' }}
                 onClick={() => {
-                  console.log('open edition component with empty tag form'); /* 
-                      setSelectedTag(undefined);
-                      setSelectedTagIndex(-1);
-                      setShowTagForm(true); */
+                  setTagDetails(true);
                 }}
               >
                 New Tag
@@ -275,12 +402,77 @@ const StudioModal: React.FC<StudioModalProps> = ({
               <Table
                 rowKey="id"
                 columns={tagColumns}
-                dataSource={tags}
+                dataSource={linkTags}
                 pagination={false}
               />
             </>
           )}
-          {tagDetails && <></>}
+          {activeTabKey === 'Tags' && tagDetails && (
+            <>
+              <Form
+                name="tagForm"
+                form={tagForm}
+                onFinish={onFinishTagForm}
+                initialValues={undefined}
+                layout="vertical"
+              >
+                <Row gutter={8}>
+                  <Col lg={12} xs={24}>
+                    <Form.Item label="Brand" rules={[{ required: true }]}>
+                      <Select
+                        showSearch
+                        allowClear
+                        placeholder="Please select a Brand"
+                        filterOption={filterOption}
+                        onChange={v => handleBrandFilter(v)}
+                        value={selectedBrandId}
+                        disabled={!brands}
+                      >
+                        {brands.map(brand => (
+                          <Select.Option
+                            key={brand.id}
+                            value={brand.id}
+                            label={brand.brandName}
+                          >
+                            {brand.brandName}
+                          </Select.Option>
+                        ))}
+                      </Select>
+                    </Form.Item>
+                  </Col>
+                  <Col lg={12} xs={24}>
+                    <Form.Item
+                      name="tagName"
+                      label="Tag"
+                      rules={[{ required: true }]}
+                    >
+                      <MultipleFetchDebounceSelect
+                        style={{ width: '100%' }}
+                        onInput={getTags}
+                        onChange={onChangeTag}
+                        onClear={onChangeTag}
+                        optionMapping={tagOptionMapping}
+                        placeholder="Type to search a Tag"
+                        disabled={!selectedBrandId || !brands}
+                        input={userInput}
+                        options={tags}
+                      ></MultipleFetchDebounceSelect>
+                    </Form.Item>
+                  </Col>
+                </Row>
+                <Row gutter={8} justify="end">
+                  <Col>
+                    <Button onClick={() => setTagDetails(false)}>Cancel</Button>
+                  </Col>
+                  <Col>
+                    <Button type="primary" htmlType="submit">
+                      Add Tag
+                    </Button>
+                  </Col>
+                </Row>
+              </Form>
+            </>
+          )}
         </Tabs.TabPane>
       </Tabs>
     </Modal>
