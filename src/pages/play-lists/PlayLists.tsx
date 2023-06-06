@@ -16,10 +16,12 @@ import { EditOutlined, SearchOutlined } from '@ant-design/icons';
 import { ColumnsType } from 'antd/lib/table';
 import { useRequest } from 'hooks/useRequest';
 import {
+  fetchCustomLinkLists,
   fetchLinkBrand,
   fetchLinkCreator,
   fetchLinkProduct,
   fetchLinkProductBrand,
+  saveCustomLinkList,
   updateLinkBrand,
   updateLinkCreator,
   updateLinkProduct,
@@ -28,6 +30,7 @@ import {
 import CopyValueToClipboard from 'components/CopyValueToClipboard';
 import moment from 'moment';
 import PlayListDetails from './PlayListDetails';
+import StudioDetails from 'pages/play-list-studio/StudioDetails';
 
 const PlayLists: React.FC<RouteComponentProps> = () => {
   const [selectedTab, setSelectedTab] = useState<string>('brand');
@@ -40,6 +43,7 @@ const PlayLists: React.FC<RouteComponentProps> = () => {
   const [creators, setCreators] = useState<any[]>([]);
   const [products, setProducts] = useState<any[]>([]);
   const [productBrands, setProductBrands] = useState<any[]>([]);
+  const [custom, setCustom] = useState<any[]>([]);
   const filter = useRef<any>();
 
   useEffect(() => {
@@ -84,6 +88,16 @@ const PlayLists: React.FC<RouteComponentProps> = () => {
     return fetchData;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  const getCustomData = useMemo(() => {
+    const fetchData = async (query: string) => {
+      const response = await doFetch(() =>
+        fetchCustomLinkLists({ term: query })
+      );
+      setCustom(response.results);
+    };
+    return fetchData;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleTabChange = (value: string) => {
     setSelectedTab(value);
@@ -120,6 +134,13 @@ const PlayLists: React.FC<RouteComponentProps> = () => {
         case 'creator':
           await updateLinkCreator({ ...currentList, links: updatedLinks });
           break;
+        case 'custom':
+          await saveCustomLinkList({
+            ...currentList,
+            links: updatedLinks,
+            tp: 's',
+          });
+          break;
       }
 
       message.success('Register updated with success.');
@@ -132,6 +153,16 @@ const PlayLists: React.FC<RouteComponentProps> = () => {
 
   const handleCancelRecord = () => {
     setDetails(false);
+  };
+
+  const handleSaveCustomList = (record: any) => {
+    const listItem = custom.find(item => item.id === record.id);
+    if (!listItem) {
+      refreshTable(record, custom.length);
+      return;
+    }
+    const index = custom.indexOf(listItem);
+    refreshTable(record, index);
   };
 
   const handleSearch = (query: string) => {
@@ -148,7 +179,18 @@ const PlayLists: React.FC<RouteComponentProps> = () => {
       case 'creator':
         getCreatorData(query);
         break;
+      case 'custom':
+        getBrandData('');
+        getCustomData(query);
+        break;
     }
+  };
+  const refreshTable = (record: any, index: number) => {
+    setCustom(prev => [
+      ...prev.slice(0, index),
+      record,
+      ...prev.slice(index + 1),
+    ]);
   };
 
   const brandColumns: ColumnsType<any> = [
@@ -779,11 +821,143 @@ const PlayLists: React.FC<RouteComponentProps> = () => {
     },
   ];
 
+  const customColumns: ColumnsType<any> = [
+    {
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="id">id</Tooltip>
+          </div>
+        </div>
+      ),
+      dataIndex: 'id',
+      width: '3%',
+      render: id => <CopyValueToClipboard value={id} />,
+      align: 'center',
+    },
+    {
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Link">Link</Tooltip>
+          </div>
+        </div>
+      ),
+      dataIndex: 'id',
+      width: '10%',
+      align: 'center',
+      render: (value: string) => {
+        if (value)
+          return (
+            <a
+              href={'https://beautybuzz.io/' + value.slice(0, -4)}
+              target="blank"
+              style={value ? {} : { pointerEvents: 'none' }}
+            >
+              {value ? `https://beautybuzz.io/${value.slice(0, -4)}` : '-'}
+            </a>
+          );
+        else return '-';
+      },
+    },
+    {
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Name">Name</Tooltip>
+          </div>
+        </div>
+      ),
+      dataIndex: 'name',
+      width: '30%',
+      align: 'center',
+    },
+    {
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Links">Links</Tooltip>
+          </div>
+        </div>
+      ),
+      dataIndex: 'links',
+      width: '5%',
+      render: (links: [any]) => (links ? links.length : '0'),
+      align: 'center',
+    },
+    {
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Actions">Actions</Tooltip>
+          </div>
+        </div>
+      ),
+      key: 'action',
+      width: '5%',
+      align: 'right',
+      render: (_, record, index: number) => (
+        <>
+          <Link
+            to={{ pathname: window.location.pathname, state: record }}
+            onClick={() => handleEditRecord(record)}
+          >
+            <EditOutlined />
+          </Link>
+        </>
+      ),
+    },
+  ];
+
   return (
     <div className="play-lists">
       {!details && (
         <>
-          <PageHeader title="Play Lists" className="mb-n05" />
+          <PageHeader
+            title="Play Lists"
+            className="mb-n05"
+            extra={
+              selectedTab === 'custom' && (
+                <Button
+                  key="1"
+                  type="primary"
+                  onClick={() => handleEditRecord()}
+                >
+                  New Link List
+                </Button>
+              )
+            }
+          />
           <Row
             gutter={8}
             align="bottom"
@@ -871,10 +1045,36 @@ const PlayLists: React.FC<RouteComponentProps> = () => {
                 size="small"
               />
             </Tabs.TabPane>
+            <Tabs.TabPane tab="Custom" key="custom">
+              <Table
+                rowClassName={(_, index) => `scrollable-row-${index}`}
+                rowKey="id"
+                columns={customColumns}
+                dataSource={custom}
+                loading={loading}
+                pagination={false}
+                scroll={{ y: 240, x: true }}
+                size="small"
+              />
+            </Tabs.TabPane>
           </Tabs>
         </>
       )}
-      {details && (
+      {selectedTab === 'custom' && details && (
+        <>
+          <PageHeader
+            title={currentList ? `Edit ${currentList.name}` : 'New Link List'}
+            className="mb-n05"
+          />
+          <StudioDetails
+            currentList={currentList}
+            setDetails={setDetails}
+            brands={brands}
+            onSave={handleSaveCustomList}
+          />
+        </>
+      )}
+      {selectedTab !== 'custom' && details && (
         <PlayListDetails
           record={currentList}
           onSave={handleSaveRecord}
