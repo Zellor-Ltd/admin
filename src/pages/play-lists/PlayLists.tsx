@@ -180,6 +180,7 @@ const PlayLists: React.FC<RouteComponentProps> = () => {
         getCreatorData(query);
         break;
       case 'custom':
+        getBrandData('');
         getCustomData(query);
         break;
     }
@@ -1066,7 +1067,9 @@ const PlayLists: React.FC<RouteComponentProps> = () => {
             className="mb-n05"
           />
           <StudioDetails
-            customList={currentList}
+            currentList={currentList}
+            setDetails={setDetails}
+            brands={brands}
             onSave={handleSaveCustomList}
           />
         </>
