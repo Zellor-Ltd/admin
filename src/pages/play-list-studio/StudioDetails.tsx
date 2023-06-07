@@ -26,6 +26,7 @@ interface StudioDetailsProps {
   onSave: any;
   setDetails: any;
   brands: Brand[];
+  studio?: boolean;
 }
 
 const StudioDetails: React.FC<StudioDetailsProps> = ({
@@ -34,6 +35,7 @@ const StudioDetails: React.FC<StudioDetailsProps> = ({
   onSave,
   setDetails,
   brands,
+  studio,
 }) => {
   const [loading, setLoading] = useState(false);
   const { doFetch } = useRequest({ setLoading });
@@ -49,7 +51,7 @@ const StudioDetails: React.FC<StudioDetailsProps> = ({
   const editing = useRef<boolean>(false);
 
   useEffect(() => {
-    if (reordered.current) {
+    if (reordered.current && studio) {
       onFinish(false);
       reordered.current = false;
     }
@@ -59,20 +61,24 @@ const StudioDetails: React.FC<StudioDetailsProps> = ({
   const onFinish = async (goBack: boolean, name?: string, links?: any[]) => {
     try {
       if (name) form.setFieldsValue({ name: name });
-      const customListForm = form.getFieldsValue(true);
-      if (!customListForm.name) {
-        const nameField = document.getElementById('nameField');
-        scrollIntoView(nameField);
-        return;
+      if (studio) {
+        const customListForm = form.getFieldsValue(true);
+        if (!customListForm.name) {
+          const nameField = document.getElementById('nameField');
+          scrollIntoView(nameField);
+          return;
+        }
+        customListForm.links = links ?? itemLinks;
+        customListForm.tp = 's';
+        customListForm.name = customListForm.name.name ?? customListForm.name;
+        const response = await doFetch(() =>
+          saveCustomLinkList(customListForm)
+        );
+        customListForm.id
+          ? onSave(customListForm)
+          : onSave({ ...customListForm, id: response.result });
+        message.success('List registered with success.');
       }
-      customListForm.links = links ?? itemLinks;
-      customListForm.tp = 's';
-      customListForm.name = customListForm.name.name ?? customListForm.name;
-      const response = await doFetch(() => saveCustomLinkList(customListForm));
-      customListForm.id
-        ? onSave(customListForm)
-        : onSave({ ...customListForm, id: response.result });
-      message.success('List registered with success.');
     } catch (error) {
       message.error('Something went wrong. Try again later.');
     } finally {
