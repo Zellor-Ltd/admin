@@ -13,8 +13,7 @@ import {
   Tooltip,
   message,
 } from 'antd';
-import { useRequest } from 'hooks/useRequest';
-import { Ref, RefObject, useContext, useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { fetchCustomLinkList, fetchTags } from 'services/DiscoClubService';
 import { DebounceSelect } from 'components/select/DebounceSelect';
 import { Upload } from 'components';
@@ -70,6 +69,7 @@ const StudioModal: React.FC<StudioModalProps> = ({
       customForm.resetFields();
       setActiveTabKey('Details');
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentLink]);
 
   const handleTabChange = (activeKey: string) => {
