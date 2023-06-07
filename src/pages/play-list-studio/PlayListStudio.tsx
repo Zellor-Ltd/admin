@@ -305,6 +305,7 @@ const PlayListStudio: React.FC<RouteComponentProps> = () => {
             setDetails={setDetails}
             onSave={handleSave}
             brands={brands}
+            studio
           />
         </>
       )}
