@@ -29,10 +29,10 @@ import {
 } from 'services/DiscoClubService';
 import CopyValueToClipboard from 'components/CopyValueToClipboard';
 import moment from 'moment';
-import PlayListDetails from './PlayListDetails';
-import StudioDetails from 'pages/play-list-studio/StudioDetails';
+import PlaylistDetails from './PlaylistDetails';
+import CustomDetails from './CustomDetails';
 
-const PlayLists: React.FC<RouteComponentProps> = () => {
+const Playlists: React.FC<RouteComponentProps> = () => {
   const [selectedTab, setSelectedTab] = useState<string>('brand');
   const [loading, setLoading] = useState(false);
   const { doFetch } = useRequest({ setLoading });
@@ -940,11 +940,11 @@ const PlayLists: React.FC<RouteComponentProps> = () => {
   ];
 
   return (
-    <div className="play-lists">
+    <div className="playlists">
       {!details && (
         <>
           <PageHeader
-            title="Play Lists"
+            title="Playlists"
             className="mb-n05"
             extra={
               selectedTab === 'custom' && (
@@ -1066,7 +1066,7 @@ const PlayLists: React.FC<RouteComponentProps> = () => {
             title={currentList ? `Edit ${currentList.name}` : 'New Link List'}
             className="mb-n05"
           />
-          <StudioDetails
+          <CustomDetails
             setCurrentList={setCurrentList}
             currentList={currentList}
             setDetails={setDetails}
@@ -1076,7 +1076,7 @@ const PlayLists: React.FC<RouteComponentProps> = () => {
         </>
       )}
       {selectedTab !== 'custom' && details && (
-        <PlayListDetails
+        <PlaylistDetails
           record={currentList}
           onSave={handleSaveRecord}
           onCancel={handleCancelRecord}
@@ -1087,4 +1087,4 @@ const PlayLists: React.FC<RouteComponentProps> = () => {
   );
 };
 
-export default PlayLists;
+export default Playlists;

@@ -28,7 +28,7 @@ import CopyValueToClipboard from 'components/CopyValueToClipboard';
 import { AppContext } from 'contexts/AppContext';
 import { Brand } from 'interfaces/Brand';
 
-const PlayListStudio: React.FC<RouteComponentProps> = () => {
+const PlaylistStudio: React.FC<RouteComponentProps> = () => {
   const { isMobile } = useContext(AppContext);
   const [loading, setLoading] = useState(false);
   const { doFetch, doRequest } = useRequest({ setLoading });
@@ -222,11 +222,11 @@ const PlayListStudio: React.FC<RouteComponentProps> = () => {
   ];
 
   return (
-    <div className="play-lists">
+    <div className="playlists">
       {!details && (
         <>
           <PageHeader
-            title="Play List Studio"
+            title="Playlist Studio"
             className="mb-n05"
             extra={
               <Button key="1" type="primary" onClick={() => handleEdit(0)}>
@@ -305,7 +305,6 @@ const PlayListStudio: React.FC<RouteComponentProps> = () => {
             setDetails={setDetails}
             onSave={handleSave}
             brands={brands}
-            studio
           />
         </>
       )}
@@ -313,4 +312,4 @@ const PlayListStudio: React.FC<RouteComponentProps> = () => {
   );
 };
 
-export default PlayListStudio;
+export default PlaylistStudio;

@@ -36,8 +36,8 @@ interface StudioModalProps {
   brands: Brand[];
   showModal: boolean;
   currentList?: any;
-  onFinish: any;
   setShowModal: (value: boolean) => void;
+  setList: (value: any) => void;
 }
 
 const StudioModal: React.FC<StudioModalProps> = ({
@@ -46,8 +46,8 @@ const StudioModal: React.FC<StudioModalProps> = ({
   brands,
   showModal,
   currentList,
-  onFinish,
   setShowModal,
+  setList,
 }) => {
   const { isMobile } = useContext(AppContext);
   const [customForm] = Form.useForm();
@@ -61,16 +61,16 @@ const StudioModal: React.FC<StudioModalProps> = ({
   const [userInput, setUserInput] = useState<string | undefined>();
   const [optionsPage, setOptionsPage] = useState<number>(0);
   const [selectedBrandId, setSelectedBrandId] = useState<string | undefined>();
-  const [currentLink, setCurrentLink] = useState<any>(link);
+  const [selectedLink, setSelectedLink] = useState<any>(link);
   const [links, setLinks] = useState<any>(currentList?.links);
 
   useEffect(() => {
-    if (currentLink) {
+    if (selectedLink) {
       customForm.resetFields();
       setActiveTabKey('Details');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentLink]);
+  }, [selectedLink]);
 
   const handleTabChange = (activeKey: string) => {
     setActiveTabKey(activeKey);
@@ -225,7 +225,7 @@ const StudioModal: React.FC<StudioModalProps> = ({
     setTagDetails(false);
   };
 
-  const saveOnOk = () => {
+  const _onOk = () => {
     const item = customForm.getFieldsValue(true);
 
     if (item) {
@@ -272,7 +272,12 @@ const StudioModal: React.FC<StudioModalProps> = ({
         return;
       } else {
         setLinks(newLinks);
-        onFinish(false, currentList?.name, newLinks);
+        setList(prev => ({
+          ...prev,
+          links: newLinks,
+          name: currentList?.name,
+        }));
+        setShowModal(false);
       }
 
       setShowModal(false);
@@ -283,7 +288,7 @@ const StudioModal: React.FC<StudioModalProps> = ({
     <Modal
       title={editing.current ? 'Edit Link' : 'New Link'}
       visible={showModal}
-      onOk={saveOnOk}
+      onOk={_onOk}
       onCancel={handleCancel}
       okText="Save"
       cancelText="Cancel"
@@ -298,7 +303,7 @@ const StudioModal: React.FC<StudioModalProps> = ({
             form={customForm}
             name="customForm"
             layout="vertical"
-            initialValues={currentLink}
+            initialValues={selectedLink}
           >
             <Row>
               <Col
@@ -336,12 +341,13 @@ const StudioModal: React.FC<StudioModalProps> = ({
                       <Upload.VideoUpload
                         maxCount={1}
                         fileList={
-                          currentLink?.feed?.package[0]?.videoUrl
+                          selectedLink?.feed?.package[0]?.videoUrl
                             ? {
-                                url: currentLink?.feed?.package[0]?.videoUrl,
-                                oldUrl: currentLink?.feed?.package[0]?.videoUrl,
+                                url: selectedLink?.feed?.package[0]?.videoUrl,
+                                oldUrl:
+                                  selectedLink?.feed?.package[0]?.videoUrl,
                                 originUrl:
-                                  currentLink?.feed?.package[0]?.videoUrl,
+                                  selectedLink?.feed?.package[0]?.videoUrl,
                               }
                             : undefined
                         }
@@ -356,14 +362,14 @@ const StudioModal: React.FC<StudioModalProps> = ({
                         maxCount={1}
                         type="thumbnail"
                         fileList={
-                          currentLink?.feed?.package[0]?.thumbnailUrl
+                          selectedLink?.feed?.package[0]?.thumbnailUrl
                             ? {
-                                url: currentLink?.feed?.package[0]
+                                url: selectedLink?.feed?.package[0]
                                   ?.thumbnailUrl,
                                 oldUrl:
-                                  currentLink?.feed?.package[0]?.thumbnailUrl,
+                                  selectedLink?.feed?.package[0]?.thumbnailUrl,
                                 originUrl:
-                                  currentLink?.feed?.package[0]?.thumbnailUrl,
+                                  selectedLink?.feed?.package[0]?.thumbnailUrl,
                               }
                             : undefined
                         }
@@ -384,7 +390,7 @@ const StudioModal: React.FC<StudioModalProps> = ({
             style={{ width: '100%' }}
             disabled={editing.current}
             placeholder="Type to search existing Link"
-            onChange={(_, entity) => setCurrentLink(entity)}
+            onChange={(_, entity) => setSelectedLink(entity)}
             optionMapping={{
               key: 'id',
               value: 'id',
