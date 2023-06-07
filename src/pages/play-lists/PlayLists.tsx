@@ -1067,6 +1067,7 @@ const PlayLists: React.FC<RouteComponentProps> = () => {
             className="mb-n05"
           />
           <StudioDetails
+            setCurrentList={setCurrentList}
             currentList={currentList}
             setDetails={setDetails}
             brands={brands}
