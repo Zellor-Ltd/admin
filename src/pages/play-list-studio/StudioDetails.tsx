@@ -21,6 +21,7 @@ import { Brand } from 'interfaces/Brand';
 import scrollIntoView from 'scroll-into-view';
 
 interface StudioDetailsProps {
+  setCurrentList: (value: any[]) => void;
   currentList?: any;
   onSave: any;
   setDetails: any;
@@ -28,6 +29,7 @@ interface StudioDetailsProps {
 }
 
 const StudioDetails: React.FC<StudioDetailsProps> = ({
+  setCurrentList,
   currentList,
   onSave,
   setDetails,
@@ -45,29 +47,16 @@ const StudioDetails: React.FC<StudioDetailsProps> = ({
   );
   const reordered = useRef<boolean>(false);
   const editing = useRef<boolean>(false);
-  const mounted = useRef<boolean>(false);
 
   useEffect(() => {
     if (reordered.current) {
-      onFinish(true);
+      onFinish(false);
       reordered.current = false;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [itemLinks]);
 
-  useEffect(() => {
-    if (!mounted.current) {
-      mounted.current = true;
-      return;
-    }
-    setShowModal(true);
-  }, [link]);
-
-  const onFinish = async (
-    stayOnPage: boolean,
-    name?: string,
-    links?: any[]
-  ) => {
+  const onFinish = async (goBack: boolean, name?: string, links?: any[]) => {
     try {
       if (name) form.setFieldsValue({ name: name });
       const customListForm = form.getFieldsValue(true);
@@ -88,8 +77,14 @@ const StudioDetails: React.FC<StudioDetailsProps> = ({
       message.error('Something went wrong. Try again later.');
     } finally {
       setShowModal(false);
-      if (!stayOnPage) setDetails(false);
-      else saveReorderedList(links);
+      //check for boolean passed (onFinish also called by form submit)
+      if (goBack === true) setDetails(false);
+      else {
+        if (links) {
+          setCurrentList({ ...currentList, links: links });
+          setItemLinks(links!);
+        }
+      }
     }
   };
 
@@ -109,7 +104,8 @@ const StudioDetails: React.FC<StudioDetailsProps> = ({
 
   const handleEdit = (record?: any) => {
     if (record) editing.current = true;
-    setLink(record ?? {});
+    setLink(record);
+    setShowModal(true);
   };
 
   const columns: ColumnsType<any> = [

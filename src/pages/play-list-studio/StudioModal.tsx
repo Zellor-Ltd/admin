@@ -13,8 +13,7 @@ import {
   Tooltip,
   message,
 } from 'antd';
-import { useRequest } from 'hooks/useRequest';
-import { Ref, RefObject, useContext, useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { fetchCustomLinkList, fetchTags } from 'services/DiscoClubService';
 import { DebounceSelect } from 'components/select/DebounceSelect';
 import { Upload } from 'components';
@@ -63,12 +62,14 @@ const StudioModal: React.FC<StudioModalProps> = ({
   const [optionsPage, setOptionsPage] = useState<number>(0);
   const [selectedBrandId, setSelectedBrandId] = useState<string | undefined>();
   const [currentLink, setCurrentLink] = useState<any>(link);
+  const [links, setLinks] = useState<any>(currentList?.links);
 
   useEffect(() => {
     if (currentLink) {
       customForm.resetFields();
       setActiveTabKey('Details');
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentLink]);
 
   const handleTabChange = (activeKey: string) => {
@@ -254,15 +255,13 @@ const StudioModal: React.FC<StudioModalProps> = ({
         },
       };
 
-      const index = link
-        ? currentList?.links?.indexOf(link)
-        : currentList?.links?.length;
+      const index = link ? links?.indexOf(link) : links?.length;
 
-      const newLinks = currentList?.links?.length
+      const newLinks = links?.length
         ? [
-            ...currentList.links?.slice(0, index),
+            ...links?.slice(0, index),
             configuredItem,
-            ...currentList.links?.slice(index + 1),
+            ...links?.slice(index + 1),
           ]
         : [configuredItem];
 
@@ -271,7 +270,10 @@ const StudioModal: React.FC<StudioModalProps> = ({
           "Error: Can't update list with no name. Enter a name and try again."
         );
         return;
-      } else onFinish(true, currentList?.name, newLinks);
+      } else {
+        setLinks(newLinks);
+        onFinish(false, currentList?.name, newLinks);
+      }
 
       setShowModal(false);
     } else message.warning("Can't add an empty item!");

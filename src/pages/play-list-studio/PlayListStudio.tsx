@@ -36,7 +36,7 @@ const PlayListStudio: React.FC<RouteComponentProps> = () => {
   const history = useHistory();
   const [currentList, setCurrentList] = useState<any>();
   const [brands, setBrands] = useState<Brand[]>([]);
-  const [list, setList] = useState<any[]>([]);
+  const [lists, setLists] = useState<any[]>([]);
   const filter = useRef<any>();
   const listIndex = useRef<number>(0);
 
@@ -61,7 +61,7 @@ const PlayListStudio: React.FC<RouteComponentProps> = () => {
       const response = await doFetch(() =>
         fetchCustomLinkLists({ term: query })
       );
-      setList(response.results);
+      setLists(response.results);
     };
     return fetchData;
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -75,18 +75,18 @@ const PlayListStudio: React.FC<RouteComponentProps> = () => {
   };
 
   const handleSave = (record: any) => {
-    const listItem = list.find(item => item.id === record.id);
+    const listItem = lists.find(item => item.id === record.id);
     if (!listItem) {
-      refreshTable(record, list.length);
+      refreshTable(record, lists.length);
       return;
     }
-    const index = list.indexOf(listItem);
+    const index = lists.indexOf(listItem);
     refreshTable(record, index);
   };
 
   const handleDelete = async (id: string, index: number) => {
     await doRequest(() => deleteCustomLinkList({ id }));
-    setList(prev => [...prev.slice(0, index), ...prev.slice(index + 1)]);
+    setLists(prev => [...prev.slice(0, index), ...prev.slice(index + 1)]);
   };
 
   const handleSearch = (query: string) => {
@@ -94,7 +94,7 @@ const PlayListStudio: React.FC<RouteComponentProps> = () => {
   };
 
   const refreshTable = (record: any, index: number) => {
-    setList(prev => [
+    setLists(prev => [
       ...prev.slice(0, index),
       record,
       ...prev.slice(index + 1),
@@ -283,7 +283,7 @@ const PlayListStudio: React.FC<RouteComponentProps> = () => {
             rowClassName={(_, index) => `scrollable-row-${index}`}
             rowKey="id"
             columns={customColumns}
-            dataSource={list}
+            dataSource={lists}
             loading={loading}
             pagination={false}
             scroll={{ y: 240, x: true }}
@@ -300,6 +300,7 @@ const PlayListStudio: React.FC<RouteComponentProps> = () => {
             className="mb-n05"
           />
           <StudioDetails
+            setCurrentList={setCurrentList}
             currentList={currentList}
             setDetails={setDetails}
             onSave={handleSave}
