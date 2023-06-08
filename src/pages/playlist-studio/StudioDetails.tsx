@@ -8,7 +8,6 @@ import { ColumnsType } from 'antd/lib/table';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import StudioModal from './StudioModal';
 import { Brand } from 'interfaces/Brand';
-import scrollIntoView from 'scroll-into-view';
 
 interface StudioDetailsProps {
   setCurrentList: (value: any[]) => void;
@@ -49,9 +48,9 @@ const StudioDetails: React.FC<StudioDetailsProps> = ({
     if (deleting.current) return;
 
     handleSave();
-    setCurrentList({ ...currentList, links: list.links });
+    setCurrentList({ ...currentList, links: list?.links });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [list.links]);
+  }, [list?.links]);
 
   const onFinish = async () => {
     try {
@@ -66,7 +65,7 @@ const StudioDetails: React.FC<StudioDetailsProps> = ({
 
   const handleSave = async () => {
     const customListForm = form.getFieldsValue(true);
-    customListForm.links = list.links;
+    customListForm.links = list?.links;
     customListForm.tp = 's';
     customListForm.name = customListForm.name.name ?? customListForm.name;
     const response = await doFetch(() => saveCustomLinkList(customListForm));
@@ -85,8 +84,8 @@ const StudioDetails: React.FC<StudioDetailsProps> = ({
   const handleDelete = async (index: number) => {
     deleting.current = true;
     const updatedLinks = [
-      ...list.links.slice(0, index),
-      ...list.links.slice(index + 1),
+      ...list?.links.slice(0, index),
+      ...list?.links.slice(index + 1),
     ];
     setList(prev => ({ ...prev, links: updatedLinks }));
   };
@@ -213,8 +212,14 @@ const StudioDetails: React.FC<StudioDetailsProps> = ({
       align: 'right',
       render: (_, record: any, index: number) => (
         <>
-          <Button type="link" onClick={() => handleEdit(record)}>
-            <EditOutlined />
+          <Button
+            type="link"
+            disabled={disableButton}
+            onClick={() => handleEdit(record)}
+          >
+            <Tooltip title={disableButton ? 'Enter a list name first!' : ''}>
+              <EditOutlined />
+            </Tooltip>
           </Button>
           <Button
             type="link"
@@ -268,7 +273,11 @@ const StudioDetails: React.FC<StudioDetailsProps> = ({
                   disabled={disableButton}
                   onClick={() => handleEdit()}
                 >
-                  New Link
+                  <Tooltip
+                    title={disableButton ? 'Enter a list name first!' : ''}
+                  >
+                    New Link
+                  </Tooltip>
                 </Button>
               </Col>
             </Row>
@@ -278,7 +287,7 @@ const StudioDetails: React.FC<StudioDetailsProps> = ({
               scroll={{ x: true, y: '34em' }}
               rowKey="id"
               columns={columns}
-              dataSource={list.links}
+              dataSource={list?.links}
               setDataSource={saveReorderedList}
               loading={loading}
               className="my-2"

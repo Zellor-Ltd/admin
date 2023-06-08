@@ -39,9 +39,9 @@ const CustomDetails: React.FC<CustomDetailsProps> = ({
 
   useEffect(() => {
     if (reordered.current) reordered.current = false;
-    setCurrentList({ ...currentList, links: list.links });
+    setCurrentList({ ...currentList, links: list?.links });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [list.links]);
+  }, [list?.links]);
 
   const onFinish = async () => {
     try {
@@ -56,7 +56,7 @@ const CustomDetails: React.FC<CustomDetailsProps> = ({
 
   const handleSave = async () => {
     const customListForm = form.getFieldsValue(true);
-    customListForm.links = list.links;
+    customListForm.links = list?.links;
     customListForm.name = customListForm.name.name ?? customListForm.name;
     const response = await doFetch(() => saveCustomLinkList(customListForm));
     customListForm.id
@@ -73,8 +73,8 @@ const CustomDetails: React.FC<CustomDetailsProps> = ({
 
   const handleDelete = async (index: number) => {
     const updatedLinks = [
-      ...list.links.slice(0, index),
-      ...list.links.slice(index + 1),
+      ...list?.links.slice(0, index),
+      ...list?.links.slice(index + 1),
     ];
     setList(prev => ({ ...prev, links: updatedLinks }));
   };
@@ -201,8 +201,14 @@ const CustomDetails: React.FC<CustomDetailsProps> = ({
       align: 'right',
       render: (_, record: any, index: number) => (
         <>
-          <Button type="link" onClick={() => handleEdit(record)}>
-            <EditOutlined />
+          <Button
+            type="link"
+            disabled={disableButton}
+            onClick={() => handleEdit(record)}
+          >
+            <Tooltip title={disableButton ? 'Enter a list name first!' : ''}>
+              <EditOutlined />
+            </Tooltip>
           </Button>
           <Button
             type="link"
@@ -256,7 +262,11 @@ const CustomDetails: React.FC<CustomDetailsProps> = ({
                   disabled={disableButton}
                   onClick={() => handleEdit()}
                 >
-                  New Link
+                  <Tooltip
+                    title={disableButton ? 'Enter a list name first!' : ''}
+                  >
+                    New Link
+                  </Tooltip>
                 </Button>
               </Col>
             </Row>
@@ -266,7 +276,7 @@ const CustomDetails: React.FC<CustomDetailsProps> = ({
               scroll={{ x: true, y: '34em' }}
               rowKey="id"
               columns={columns}
-              dataSource={list.links}
+              dataSource={list?.links}
               setDataSource={saveReorderedList}
               loading={loading}
               className="my-2"
