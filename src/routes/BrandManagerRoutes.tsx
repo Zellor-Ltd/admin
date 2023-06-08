@@ -6,9 +6,9 @@ import { Redirect, Switch } from 'react-router-dom';
 import VideoFeed from 'pages/video-feed/BrandManager/VideoFeed';
 import VideoFeedDetail from 'pages/video-feed/BrandManager/VideoFeedDetail';
 import BrandDashboard from 'pages/dashboard/BrandDashboard';
-import PlayLists from 'pages/play-lists/PlayLists';
+import Playlists from 'pages/playlists/Playlists';
 import LiveProducts from 'pages/products/LiveProducts';
-import PlayListStudio from 'pages/play-list-studio/PlayListStudio';
+import PlaylistStudio from 'pages/playlist-studio/PlaylistStudio';
 
 function BrandManagerRoutes() {
   return (
@@ -31,13 +31,13 @@ function BrandManagerRoutes() {
         layout={AuthenticatedLayout}
       />
       <AppRoute
-        path="/play-lists"
-        component={PlayLists}
+        path="/playlists"
+        component={Playlists}
         layout={AuthenticatedLayout}
       />
       <AppRoute
-        path="/play-list-studio"
-        component={PlayListStudio}
+        path="/playlist-studio"
+        component={PlaylistStudio}
         layout={AuthenticatedLayout}
       />
       <AppRoute

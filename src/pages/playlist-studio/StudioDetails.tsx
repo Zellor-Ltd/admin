@@ -1,14 +1,4 @@
-import {
-  Button,
-  Col,
-  Form,
-  Image,
-  Input,
-  Popconfirm,
-  Row,
-  Tooltip,
-  message,
-} from 'antd';
+import { Button, Col, Form, Image, Input, Row, Tooltip, message } from 'antd';
 import { useRequest } from 'hooks/useRequest';
 import { useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
@@ -26,7 +16,6 @@ interface StudioDetailsProps {
   onSave: any;
   setDetails: any;
   brands: Brand[];
-  studio?: boolean;
 }
 
 const StudioDetails: React.FC<StudioDetailsProps> = ({
@@ -35,77 +24,71 @@ const StudioDetails: React.FC<StudioDetailsProps> = ({
   onSave,
   setDetails,
   brands,
-  studio,
 }) => {
   const [loading, setLoading] = useState(false);
   const { doFetch } = useRequest({ setLoading });
   const history = useHistory();
   const [form] = Form.useForm();
-  const [itemLinks, setItemLinks] = useState<any[]>(currentList?.links ?? []);
+  const [list, setList] = useState<any>(currentList);
   const [link, setLink] = useState<any>();
   const [showModal, setShowModal] = useState<boolean>(false);
   const [disableButton, setDisableButton] = useState<boolean>(
     !!!currentList?.name
   );
   const reordered = useRef<boolean>(false);
+  const mounted = useRef<boolean>(false);
   const editing = useRef<boolean>(false);
+  const deleting = useRef<boolean>(false);
 
   useEffect(() => {
-    if (reordered.current && studio) {
-      onFinish(false);
-      reordered.current = false;
+    if (!mounted.current) {
+      mounted.current = true;
+      return;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [itemLinks]);
+    if (reordered.current) reordered.current = false;
+    if (deleting.current) return;
 
-  const onFinish = async (goBack: boolean, name?: string, links?: any[]) => {
+    handleSave();
+    setCurrentList({ ...currentList, links: list.links });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [list.links]);
+
+  const onFinish = async () => {
     try {
-      if (name) form.setFieldsValue({ name: name });
-      if (studio) {
-        const customListForm = form.getFieldsValue(true);
-        if (!customListForm.name) {
-          const nameField = document.getElementById('nameField');
-          scrollIntoView(nameField);
-          return;
-        }
-        customListForm.links = links ?? itemLinks;
-        customListForm.tp = 's';
-        customListForm.name = customListForm.name.name ?? customListForm.name;
-        const response = await doFetch(() =>
-          saveCustomLinkList(customListForm)
-        );
-        customListForm.id
-          ? onSave(customListForm)
-          : onSave({ ...customListForm, id: response.result });
-        message.success('List registered with success.');
-      }
+      handleSave();
     } catch (error) {
       message.error('Something went wrong. Try again later.');
     } finally {
       setShowModal(false);
-      //check for boolean passed (onFinish also called by form submit)
-      if (goBack === true) setDetails(false);
-      else {
-        if (links) {
-          setCurrentList({ ...currentList, links: links });
-          setItemLinks(links!);
-        }
-      }
+      setDetails(false);
     }
+  };
+
+  const handleSave = async () => {
+    const customListForm = form.getFieldsValue(true);
+    customListForm.links = list.links;
+    customListForm.tp = 's';
+    customListForm.name = customListForm.name.name ?? customListForm.name;
+    const response = await doFetch(() => saveCustomLinkList(customListForm));
+    customListForm.id
+      ? onSave(customListForm)
+      : onSave({ ...customListForm, id: response.result });
+    message.success('List registered with success.');
   };
 
   const saveReorderedList = (list?: any[]) => {
     if (!list) return;
     reordered.current = true;
-    setItemLinks(list);
+    setList(prev => ({ ...prev, links: list }));
   };
 
   const handleDelete = async (index: number) => {
+    deleting.current = true;
     const updatedLinks = [
-      ...itemLinks.slice(0, index),
-      ...itemLinks.slice(index + 1),
+      ...list.links.slice(0, index),
+      ...list.links.slice(index + 1),
     ];
-    setItemLinks(updatedLinks);
+    setList(prev => ({ ...prev, links: updatedLinks }));
   };
 
   const handleEdit = (record?: any) => {
@@ -233,16 +216,13 @@ const StudioDetails: React.FC<StudioDetailsProps> = ({
           <Button type="link" onClick={() => handleEdit(record)}>
             <EditOutlined />
           </Button>
-          <Popconfirm
-            title="Are you sure？"
-            okText="Yes"
-            cancelText="No"
-            onConfirm={() => handleDelete(index)}
+          <Button
+            type="link"
+            onClick={() => handleDelete(index)}
+            style={{ padding: 0, margin: 6 }}
           >
-            <Button type="link" style={{ padding: 0, margin: 6 }}>
-              <DeleteOutlined />
-            </Button>
-          </Popconfirm>
+            <DeleteOutlined />
+          </Button>
         </>
       ),
     },
@@ -298,7 +278,7 @@ const StudioDetails: React.FC<StudioDetailsProps> = ({
               scroll={{ x: true, y: '34em' }}
               rowKey="id"
               columns={columns}
-              dataSource={itemLinks}
+              dataSource={list.links}
               setDataSource={saveReorderedList}
               loading={loading}
               className="my-2"
@@ -311,9 +291,9 @@ const StudioDetails: React.FC<StudioDetailsProps> = ({
                 editing={editing}
                 brands={brands}
                 showModal={showModal}
-                onFinish={onFinish}
                 currentList={currentList}
                 setShowModal={setShowModal}
+                setList={setList}
               />
             )}
           </Col>

@@ -20,8 +20,8 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
     'dashboard',
     'access-control',
     'settings',
-    'play-lists',
-    'play-list-studio',
+    'playlists',
+    'playlist-studio',
   ];
   const [style, setStyle] = useState<any>({
     padding: '24 0',

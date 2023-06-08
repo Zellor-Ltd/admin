@@ -4,14 +4,14 @@ import { SortableTable } from 'components';
 import { SimpleSwitch } from 'components/SimpleSwitch';
 import { useState } from 'react';
 
-interface PlayListDetailProps {
+interface PlaylistDetailProps {
   record: any;
   onSave: (record: any, setLoading: any, tabName: string) => void;
   onCancel: () => void;
   tabName: string;
 }
 
-const PlayListDetails: React.FC<PlayListDetailProps> = ({
+const PlaylistDetails: React.FC<PlaylistDetailProps> = ({
   record,
   onSave,
   onCancel,
@@ -181,6 +181,11 @@ const PlayListDetails: React.FC<PlayListDetailProps> = ({
       <Row>
         <Col flex="auto">Reorder links below</Col>
         <Col flex="100px">
+          <Button type="default" onClick={() => onCancel()}>
+            Cancel
+          </Button>
+        </Col>
+        <Col flex="100px">
           <Button
             disabled={loading}
             loading={loading}
@@ -189,11 +194,6 @@ const PlayListDetails: React.FC<PlayListDetailProps> = ({
             onClick={() => onSaveData()}
           >
             Save Changes
-          </Button>
-        </Col>
-        <Col flex="100px">
-          <Button type="default" onClick={() => onCancel()}>
-            Cancel
           </Button>
         </Col>
       </Row>
@@ -213,4 +213,4 @@ const PlayListDetails: React.FC<PlayListDetailProps> = ({
   );
 };
 
-export default PlayListDetails;
+export default PlaylistDetails;
