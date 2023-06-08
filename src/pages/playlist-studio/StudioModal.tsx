@@ -233,6 +233,26 @@ const StudioModal: React.FC<StudioModalProps> = ({
 
   const _onOk = () => {
     const item = customForm.getFieldsValue(true);
+    if (!item?.feed?.videoLabel) {
+      message.warning('Error: Label is required.');
+      setActiveTabKey('Details');
+      return;
+    }
+    if (!item?.feed?.shortDescription) {
+      message.warning('Error: Description is required.');
+      setActiveTabKey('Details');
+      return;
+    }
+    if (!item?.video?.url && !item?.feed?.package?.[0]?.videoUrl) {
+      message.warning('Error: Video is required.');
+      setActiveTabKey('Details');
+      return;
+    }
+    if (!item?.thumbnail?.url && !item?.feed?.package?.[0]?.thumbnailUrl) {
+      message.warning('Error: Thumbnail is required.');
+      setActiveTabKey('Details');
+      return;
+    }
 
     if (item) {
       const configuredItem = {
