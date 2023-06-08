@@ -230,7 +230,7 @@ const PlaylistStudio: React.FC<RouteComponentProps> = () => {
             className="mb-n05"
             extra={
               <Button key="1" type="primary" onClick={() => handleEdit(0)}>
-                New Link List
+                New Playlist
               </Button>
             }
           />
@@ -295,7 +295,7 @@ const PlaylistStudio: React.FC<RouteComponentProps> = () => {
         <>
           <PageHeader
             title={
-              currentList?.name ? `Edit ${currentList.name}` : 'New Link List'
+              currentList?.name ? `Edit ${currentList.name}` : 'New Playlist'
             }
             className="mb-n05"
           />

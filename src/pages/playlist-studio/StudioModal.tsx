@@ -23,6 +23,7 @@ import MultipleFetchDebounceSelect from 'components/select/MultipleFetchDebounce
 import { Brand } from 'interfaces/Brand';
 import { SelectOption } from 'interfaces/SelectOption';
 import { AppContext } from 'contexts/AppContext';
+import { useSelector } from 'react-redux';
 
 const tagOptionMapping: SelectOption = {
   label: 'tagName',
@@ -49,6 +50,9 @@ const StudioModal: React.FC<StudioModalProps> = ({
   setShowModal,
   setList,
 }) => {
+  const {
+    settings: { videoLabel = [] },
+  } = useSelector((state: any) => state.settings);
   const { isMobile } = useContext(AppContext);
   const [customForm] = Form.useForm();
   const [tagForm] = Form.useForm();
@@ -317,7 +321,23 @@ const StudioModal: React.FC<StudioModalProps> = ({
                   required
                   shouldUpdate
                 >
-                  <Input placeholder="Enter a Label" />
+                  <Select
+                    disabled={!videoLabel.length}
+                    placeholder="Select a Label"
+                    allowClear
+                    showSearch
+                    filterOption={filterOption}
+                  >
+                    {videoLabel.map(linkType => (
+                      <Select.Option
+                        key={linkType.value}
+                        value={linkType.value}
+                        label={linkType.name}
+                      >
+                        {linkType.name}
+                      </Select.Option>
+                    ))}
+                  </Select>
                 </Form.Item>
               </Col>
               <Col

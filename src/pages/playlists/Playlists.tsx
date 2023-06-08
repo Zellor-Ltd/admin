@@ -953,7 +953,7 @@ const Playlists: React.FC<RouteComponentProps> = () => {
                   type="primary"
                   onClick={() => handleEditRecord()}
                 >
-                  New Link List
+                  New Playlist
                 </Button>
               )
             }
@@ -1063,7 +1063,7 @@ const Playlists: React.FC<RouteComponentProps> = () => {
       {selectedTab === 'custom' && details && (
         <>
           <PageHeader
-            title={currentList ? `Edit ${currentList.name}` : 'New Link List'}
+            title={currentList ? `Edit ${currentList.name}` : 'New Playlist'}
             className="mb-n05"
           />
           <CustomDetails
