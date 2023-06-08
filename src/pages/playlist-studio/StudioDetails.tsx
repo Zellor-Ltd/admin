@@ -294,6 +294,7 @@ const StudioDetails: React.FC<StudioDetailsProps> = ({
                 currentList={currentList}
                 setShowModal={setShowModal}
                 setList={setList}
+                studio
               />
             )}
           </Col>

@@ -39,6 +39,7 @@ interface StudioModalProps {
   currentList?: any;
   setShowModal: (value: boolean) => void;
   setList: (value: any) => void;
+  studio?: boolean;
 }
 
 const StudioModal: React.FC<StudioModalProps> = ({
@@ -49,6 +50,7 @@ const StudioModal: React.FC<StudioModalProps> = ({
   currentList,
   setShowModal,
   setList,
+  studio,
 }) => {
   const {
     settings: { videoLabel = [] },
@@ -418,93 +420,97 @@ const StudioModal: React.FC<StudioModalProps> = ({
             }}
           />
         </Tabs.TabPane>
-        <Tabs.TabPane forceRender tab="Tags" key="Tags">
-          {activeTabKey === 'Tags' && !tagDetails && (
-            <>
-              <Button
-                type="default"
-                style={{ float: 'right', marginBottom: '12px' }}
-                onClick={() => {
-                  setTagDetails(true);
-                }}
-              >
-                New Tag
-              </Button>
-              <Table
-                rowKey="id"
-                columns={tagColumns}
-                dataSource={linkTags}
-                pagination={false}
-              />
-            </>
-          )}
-          {activeTabKey === 'Tags' && tagDetails && (
-            <>
-              <Form
-                name="tagForm"
-                form={tagForm}
-                onFinish={onFinishTagForm}
-                initialValues={undefined}
-                layout="vertical"
-              >
-                <Row gutter={8}>
-                  <Col lg={12} xs={24}>
-                    <Form.Item label="Brand" rules={[{ required: true }]}>
-                      <Select
-                        showSearch
-                        allowClear
-                        placeholder="Please select a Brand"
-                        filterOption={filterOption}
-                        onChange={v => handleBrandFilter(v)}
-                        value={selectedBrandId}
-                        disabled={!brands}
+        {studio && (
+          <Tabs.TabPane forceRender tab="Tags" key="Tags">
+            {activeTabKey === 'Tags' && !tagDetails && (
+              <>
+                <Button
+                  type="default"
+                  style={{ float: 'right', marginBottom: '12px' }}
+                  onClick={() => {
+                    setTagDetails(true);
+                  }}
+                >
+                  New Tag
+                </Button>
+                <Table
+                  rowKey="id"
+                  columns={tagColumns}
+                  dataSource={linkTags}
+                  pagination={false}
+                />
+              </>
+            )}
+            {activeTabKey === 'Tags' && tagDetails && (
+              <>
+                <Form
+                  name="tagForm"
+                  form={tagForm}
+                  onFinish={onFinishTagForm}
+                  initialValues={undefined}
+                  layout="vertical"
+                >
+                  <Row gutter={8}>
+                    <Col lg={12} xs={24}>
+                      <Form.Item label="Brand" rules={[{ required: true }]}>
+                        <Select
+                          showSearch
+                          allowClear
+                          placeholder="Please select a Brand"
+                          filterOption={filterOption}
+                          onChange={v => handleBrandFilter(v)}
+                          value={selectedBrandId}
+                          disabled={!brands}
+                        >
+                          {brands.map(brand => (
+                            <Select.Option
+                              key={brand.id}
+                              value={brand.id}
+                              label={brand.brandName}
+                            >
+                              {brand.brandName}
+                            </Select.Option>
+                          ))}
+                        </Select>
+                      </Form.Item>
+                    </Col>
+                    <Col lg={12} xs={24}>
+                      <Form.Item
+                        name="tagName"
+                        label="Tag"
+                        rules={[{ required: true }]}
                       >
-                        {brands.map(brand => (
-                          <Select.Option
-                            key={brand.id}
-                            value={brand.id}
-                            label={brand.brandName}
-                          >
-                            {brand.brandName}
-                          </Select.Option>
-                        ))}
-                      </Select>
-                    </Form.Item>
-                  </Col>
-                  <Col lg={12} xs={24}>
-                    <Form.Item
-                      name="tagName"
-                      label="Tag"
-                      rules={[{ required: true }]}
-                    >
-                      <MultipleFetchDebounceSelect
-                        style={{ width: '100%' }}
-                        onInput={getTags}
-                        onChange={onChangeTag}
-                        onClear={onChangeTag}
-                        optionMapping={tagOptionMapping}
-                        placeholder="Type to search a Tag"
-                        disabled={!selectedBrandId || !brands}
-                        input={userInput}
-                        options={tags}
-                      ></MultipleFetchDebounceSelect>
-                    </Form.Item>
-                  </Col>
-                </Row>
-                <Row gutter={8} justify="end">
-                  <Col>
-                    <Button onClick={() => setTagDetails(false)}>Cancel</Button>
-                  </Col>
-                  <Col>
-                    <Button type="primary" htmlType="submit">
-                      Add Tag
-                    </Button>
-                  </Col>
-                </Row>
-              </Form>
-            </>
-          )}
-        </Tabs.TabPane>
+                        <MultipleFetchDebounceSelect
+                          style={{ width: '100%' }}
+                          onInput={getTags}
+                          onChange={onChangeTag}
+                          onClear={onChangeTag}
+                          optionMapping={tagOptionMapping}
+                          placeholder="Type to search a Tag"
+                          disabled={!selectedBrandId || !brands}
+                          input={userInput}
+                          options={tags}
+                        ></MultipleFetchDebounceSelect>
+                      </Form.Item>
+                    </Col>
+                  </Row>
+                  <Row gutter={8} justify="end">
+                    <Col>
+                      <Button onClick={() => setTagDetails(false)}>
+                        Cancel
+                      </Button>
+                    </Col>
+                    <Col>
+                      <Button type="primary" htmlType="submit">
+                        Add Tag
+                      </Button>
+                    </Col>
+                  </Row>
+                </Form>
+              </>
+            )}
+          </Tabs.TabPane>
+        )}
       </Tabs>
     </Modal>
   );
