@@ -52,6 +52,7 @@ const PlaylistStudio: React.FC<RouteComponentProps> = () => {
   }, []);
 
   const getBrands = async () => {
+    if (brands?.length) return;
     const response: any = await doFetch(() => fetchBrands());
     setBrands(response.results);
   };
