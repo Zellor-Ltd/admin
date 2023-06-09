@@ -18,6 +18,7 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
   const { children, history, location } = props;
   const scrollable = [
     'dashboard',
+    'brand-dashboard',
     'access-control',
     'settings',
     'playlists',
@@ -43,7 +44,7 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
 
   const appName = useBuildTarget({
     ADMIN: 'Disco Admin',
-    BRAND_MANAGER: 'Brand Manager',
+    BRAND_MANAGER: 'Client Portal',
   });
 
   const logout = () => {

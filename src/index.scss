@@ -5,6 +5,11 @@ body {
   overflow-y: hidden;
 }
 
+a,
+.ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: rgb(56 19 38 / 64%) !important;
+}
+
 .site-layout-background {
   margin: 24px 16px;
   padding: 5px;
@@ -15,6 +20,16 @@ body {
 
 .ant-layout-sider-children {
   height: calc(100vh - 56px) !important;
+  background: rgb(245, 203, 221) !important;
+}
+
+.ant-menu.ant-menu-dark {
+  background: rgb(234, 121, 170);
+}
+
+.ant-menu-dark.ant-menu-dark:not(.ant-menu-horizontal) .ant-menu-item-selected,
+.ant-menu-dark .ant-menu-inline.ant-menu-sub {
+  background-color: rgb(245 203 221 / 48%);
 }
 
 .w-100,
@@ -225,7 +240,7 @@ body {
 }
 
 .carousel-focus {
-  border: 0.4px solid #1890ff;
+  border: 0.4px solid rgb(245, 203, 221);
 }
 
 .custom-link-item p {
@@ -314,6 +329,27 @@ body {
   position: -webkit-sticky;
   z-index: 5;
   top: 0px;
+  background: rgb(234, 121, 170);
+}
+
+.ant-btn-link {
+  color: rgb(245, 203, 221);
+}
+
+.ant-btn-primary,
+.ant-btn-primary:hover,
+.ant-btn-primary:focus,
+.ant-switch-checked,
+.ant-radio-group-solid
+  .ant-radio-button-wrapper-checked:not(
+    .ant-radio-button-wrapper-disabled
+  ):active,
+.ant-radio-button-wrapper-checked:not(
+    .ant-radio-button-wrapper-disabled
+  ):active::before,
+.ant-tabs-ink-bar {
+  border-color: rgb(56 19 38 / 64%);
+  background: rgb(56 19 38 / 64%);
 }
 
 .batch-process {
@@ -395,11 +431,11 @@ body {
 }
 
 #components-table-demo-drag-sorting tr.drop-over-downward td {
-  border-bottom: 2px dashed #1890ff;
+  border-bottom: 2px dashed rgb(245, 203, 221);
 }
 
 #components-table-demo-drag-sorting tr.drop-over-upward td {
-  border-top: 2px dashed #1890ff;
+  border-top: 2px dashed rgb(245, 203, 221);
 }
 
 .ant-upload-picture-card-wrapper {
@@ -411,7 +447,7 @@ body {
 }
 
 .instalink-input {
-  color: #1890ff;
+  color: rgb(245, 203, 221);
   text-decoration: none;
   background-color: transparent;
   outline: none;

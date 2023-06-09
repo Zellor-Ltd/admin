@@ -147,7 +147,9 @@ const Interests: React.FC<InterestsProps> = () => {
       </div>
     ),
     filterIcon: (filtered: any) => (
-      <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
+      <SearchOutlined
+        style={{ color: filtered ? 'rgb(245,203,221)' : undefined }}
+      />
     ),
     onFilter: (value: any, record: any) =>
       record[dataIndex]
