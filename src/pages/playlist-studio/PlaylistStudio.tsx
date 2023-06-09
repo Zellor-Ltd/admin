@@ -69,6 +69,7 @@ const PlaylistStudio: React.FC<RouteComponentProps> = () => {
   }, []);
 
   const handleEdit = (index: number, list?: any) => {
+    getCustomData('');
     setCurrentList(list);
     listIndex.current = index;
     setDetails(true);
