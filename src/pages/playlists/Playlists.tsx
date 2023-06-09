@@ -104,6 +104,7 @@ const Playlists: React.FC<RouteComponentProps> = () => {
   };
 
   const handleEditRecord = (list?: any) => {
+    getCustomData('');
     setCurrentList(list);
     setDetails(true);
     history.push(window.location.pathname);
