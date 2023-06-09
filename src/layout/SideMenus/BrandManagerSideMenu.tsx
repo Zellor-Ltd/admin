@@ -1,10 +1,4 @@
-import {
-  FundOutlined,
-  TagOutlined,
-  HeartFilled,
-  LinkOutlined,
-  HddOutlined,
-} from '@ant-design/icons';
+import { FundOutlined, TagOutlined, HddOutlined } from '@ant-design/icons';
 import { Menu } from 'antd';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 
@@ -21,32 +15,18 @@ const AdminSideMenu = () => {
         <Link to="/brand-dashboard">Dashboard</Link>
       </Menu.Item>
       <Menu.Item
-        key="products"
-        icon={<TagOutlined />}
-        onClick={() => refreshParent('products')}
-      >
-        <Link to="/products">Products</Link>
-      </Menu.Item>
-      <Menu.Item
-        key="feed"
-        icon={<HeartFilled />}
-        onClick={() => refreshParent('feed')}
-      >
-        <Link to="/feed">Videos Feed</Link>
-      </Menu.Item>
-      <Menu.Item
-        key="playlists"
-        icon={<LinkOutlined />}
-        onClick={() => refreshParent('playlists')}
-      >
-        <Link to="/playlists">Playlists</Link>
-      </Menu.Item>
-      <Menu.Item
         key="playlist-studio"
         icon={<HddOutlined />}
         onClick={() => refreshParent('playlist-studio')}
       >
         <Link to="/playlist-studio">Playlist Studio</Link>
+      </Menu.Item>
+      <Menu.Item
+        key="brand-products"
+        icon={<TagOutlined />}
+        onClick={() => refreshParent('brand-products')}
+      >
+        <Link to="/brand-products">Products</Link>
       </Menu.Item>
     </Menu>
   );
