@@ -1,114 +1,84 @@
+/* eslint-disable eqeqeq */
 /* eslint-disable react-hooks/exhaustive-deps */
-import {
-  ArrowRightOutlined,
-  DeleteOutlined,
-  EditOutlined,
-  SearchOutlined,
-  UpOutlined,
-} from '@ant-design/icons';
+import { EyeOutlined, SearchOutlined, UpOutlined } from '@ant-design/icons';
 import {
   Button,
-  Checkbox,
   Col,
   Collapse,
   Input,
-  message,
   PageHeader,
-  Popconfirm,
   Row,
   Select,
   Spin,
+  Table,
   Tooltip,
   Typography,
 } from 'antd';
-import { CheckboxChangeEvent } from 'antd/lib/checkbox';
-import EditableTable, { EditableColumnType } from 'components/EditableTable';
+import React, { useContext, useEffect, useRef, useState } from 'react';
+import { Link, RouteComponentProps, useHistory } from 'react-router-dom';
+import './Products.scss';
+import { EditableColumnType } from 'components/EditableTable';
+import { AppContext } from 'contexts/AppContext';
 import useAllCategories from 'hooks/useAllCategories';
-import InfiniteScroll from 'react-infinite-scroll-component';
 import { useRequest } from 'hooks/useRequest';
 import { Brand } from 'interfaces/Brand';
 import { Product } from 'interfaces/Product';
 import moment from 'moment';
-import React, { useContext, useEffect, useRef, useState } from 'react';
-import { Link, RouteComponentProps, useHistory } from 'react-router-dom';
+import InfiniteScroll from 'react-infinite-scroll-component';
 import {
-  addVariant,
-  barcodeLookup,
-  deleteStagingProduct,
-  exportToShopifyProduct,
   fetchBrands,
   fetchProductBrands,
-  fetchStagingProducts,
-  saveStagingProduct,
-  transferStageProduct,
+  fetchBrandManagerProducts,
 } from 'services/DiscoClubService';
-import ProductExpandedRow from './ProductExpandedRow';
-import CopyValueToClipboard from '../../components/CopyValueToClipboard';
-import './Products.scss';
-import { ProductCategory } from 'interfaces/Category';
-import { AppContext } from 'contexts/AppContext';
+import ProductAPITestModal from './ProductAPITestModal';
 import { ProductBrand } from 'interfaces/ProductBrand';
 import scrollIntoView from 'scroll-into-view';
 import { useMount } from 'react-use';
-import SimpleSelect from '../../components/select/SimpleSelect';
+import SimpleSelect from 'components/select/SimpleSelect';
 import { SelectOption } from '../../interfaces/SelectOption';
 import ProductDetail from './ProductDetail';
-import BrandManagerAlternate from './BrandManagerAlternate';
+import { ProductCategory } from 'interfaces/Category';
+import Icon, {
+  CustomIconComponentProps,
+} from '@ant-design/icons/lib/components/Icon';
 
 const { Panel } = Collapse;
 
 const BrandManagerProducts: React.FC<RouteComponentProps> = () => {
+  const { isMobile, setisScrollable } = useContext(AppContext);
   const inputRef = useRef<any>(null);
-  const [viewName, setViewName] = useState<'alternate' | 'default'>('default');
-  const previousViewName = useRef<'alternate' | 'default'>('default');
-  const saveProductFn = saveStagingProduct;
   const [brands, setBrands] = useState<Brand[]>([]);
   const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const loaded = useRef<boolean>(false);
-  const [disabled, setDisabled] = useState<boolean>(false);
-  const [loadingResources, setLoadingResources] = useState<boolean>(true);
+  const [loadingResources, setLoadingResources] = useState<boolean>(false);
   const { fetchAllCategories, allCategories } = useAllCategories({});
-
-  const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
-  const [selectedRows, setSelectedRows] = useState<Product[]>([]);
-  const [details, setDetails] = useState<boolean>(false);
-  const [currentProduct, setCurrentProduct] = useState<Product>();
-  const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
-
   const { usePageFilter } = useContext(AppContext);
-  const [barcodeFilter, setBarcodeFilter] = useState<string>();
+  const [productAPITest, setProductAPITest] = useState<Product | null>(null);
+  const { doFetch } = useRequest({ setLoading });
   const [searchFilter, setSearchFilter] = usePageFilter<string>('search');
-  const [runIdFilter, setRunIdFilter] = useState<string>();
-  const [brandFilter, setBrandFilter] = useState<Brand | undefined>();
   const [productBrandFilter, setProductBrandFilter] = useState<
     ProductBrand | undefined
   >();
-  const [outOfStockFilter, setOutOfStockFilter] = useState<boolean>(false);
-  const [unclassifiedFilter, setUnclassifiedFilter] = useState<boolean>(false);
-  const [page, setPage] = useState<number>(0);
-  const [eof, setEof] = useState<boolean>(false);
-  const [products, setProducts] = useState<Product[]>([]);
-
   const [currentMasterBrand, setCurrentMasterBrand] = useState<string>();
   const [currentProductBrand, setCurrentProductBrand] = useState<string>();
+  const [page, setPage] = useState<number>(0);
+  const [eof, setEof] = useState<boolean>(false);
+  const loaded = useRef<boolean>(false);
+  const [details, setDetails] = useState<boolean>(false);
+  const [currentProduct, setCurrentProduct] = useState<Product>();
+  const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
+  const [products, setProducts] = useState<Product[]>([]);
   const [productStatusFilter, setProductStatusFilter] =
     useState<string>('live');
 
-  const [currentSuperCategory, setCurrentSuperCategory] =
+  const [productSuperCategoryFilter, setProductSuperCategoryFilter] =
     useState<ProductCategory>();
-  const [currentCategory, setCurrentCategory] = useState<ProductCategory>();
-  const [currentSubCategory, setCurrentSubCategory] =
+  const [productCategoryFilter, setProductCategoryFilter] =
     useState<ProductCategory>();
-  const [currentSubSubCategory, setCurrentSubSubCategory] =
+  const [productSubCategoryFilter, setProductSubCategoryFilter] =
     useState<ProductCategory>();
-  const [style, setStyle] = useState<any>();
-  const { isMobile, setisScrollable } = useContext(AppContext);
-  const { doFetch, doRequest } = useRequest({ setLoading });
-  const { doRequest: saveCategories, loading: loadingCategories } =
-    useRequest();
-  const [activeKey, setActiveKey] = useState<string>('1');
-  const [btnStyle, setBtnStyle] = useState<any>();
+  const [productSubSubCategoryFilter, setProductSubSubCategoryFilter] =
+    useState<ProductCategory>();
   const history = useHistory();
 
   useEffect(() => {
@@ -117,17 +87,20 @@ const BrandManagerProducts: React.FC<RouteComponentProps> = () => {
     });
   });
 
-  useEffect(() => {
-    if (details || (isMobile && activeKey === '1'))
-      setStyle({ overflow: 'scroll', height: '100%' });
-    else setStyle({ overflow: 'clip', height: '100%' });
-  }, [details, isMobile, activeKey]);
+  const linkSvg = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      height="16"
+      viewBox="0 -960 960 960"
+      width="16"
+    >
+      <path d="M180-120q-24 0-42-18t-18-42v-600q0-24 18-42t42-18h279v60H180v600h600v-279h60v279q0 24-18 42t-42 18H180Zm202-219-42-43 398-398H519v-60h321v321h-60v-218L382-339Z" />
+    </svg>
+  );
 
-  useEffect(() => {
-    if (isMobile)
-      setBtnStyle({ position: 'fixed', top: '17rem', right: '3.5rem' });
-    else setBtnStyle({ position: 'fixed', top: '25.5rem', left: '15rem' });
-  }, [isMobile]);
+  const LinkIcon = (props: Partial<CustomIconComponentProps>) => (
+    <Icon component={linkSvg} {...props} />
+  );
 
   const optionMapping: SelectOption = {
     key: 'id',
@@ -158,6 +131,7 @@ const BrandManagerProducts: React.FC<RouteComponentProps> = () => {
     label: 'subSubCategory',
     value: 'id',
   };
+  const [activeKey, setActiveKey] = useState<string>('1');
 
   const [offset, setOffset] = useState<number>(64);
   const [panelStyle, setPanelStyle] = useState<React.CSSProperties>({
@@ -165,8 +139,15 @@ const BrandManagerProducts: React.FC<RouteComponentProps> = () => {
     marginBottom: '0.5rem',
     zIndex: 3,
   });
+  const [style, setStyle] = useState<any>();
   const filterPanelHeight = useRef<number>();
   const windowHeight = window.innerHeight;
+
+  useEffect(() => {
+    if (details || (isMobile && activeKey === '1'))
+      setStyle({ overflow: 'scroll', height: '100%' });
+    else setStyle({ overflow: 'clip', height: '100%' });
+  }, [details, isMobile, activeKey]);
 
   useEffect(() => {
     const panel = document.getElementById('filterPanel');
@@ -202,6 +183,26 @@ const BrandManagerProducts: React.FC<RouteComponentProps> = () => {
     setPanelStyle({ top: offset, zIndex: 3 });
   }, [offset]);
 
+  useMount(async () => {
+    const getBrands = async () => {
+      setLoading(true);
+      const response: any = await fetchBrands();
+      setLoading(false);
+      setBrands(response.results);
+    };
+
+    const getProductBrands = async () => {
+      const { results }: any = await fetchProductBrands();
+      setProductBrands(results);
+    };
+
+    await Promise.all([
+      getBrands(),
+      getProductBrands(),
+      fetchAllCategories(),
+    ]).then(() => setLoadingResources(false));
+  });
+
   useEffect(() => {
     if (inputRef.current)
       inputRef.current.focus({
@@ -209,81 +210,24 @@ const BrandManagerProducts: React.FC<RouteComponentProps> = () => {
       });
   }, [searchFilter]);
 
-  useEffect(() => {
-    setCurrentCategory(undefined);
-    setCurrentSubCategory(undefined);
-    setCurrentSubSubCategory(undefined);
-  }, [currentSuperCategory]);
-
-  useEffect(() => {
-    setCurrentSubCategory(undefined);
-    setCurrentSubSubCategory(undefined);
-  }, [currentCategory]);
-
-  useEffect(() => {
-    setCurrentSubSubCategory(undefined);
-  }, [currentSubCategory]);
-
-  useMount(async () => {
-    const getProductBrands = async () => {
-      const { results }: any = await fetchProductBrands();
-      setProductBrands(results);
-    };
-
-    const getBrands = async () => {
-      const { results }: any = await fetchBrands();
-      setBrands(results);
-    };
-
-    await Promise.all([
-      getBrands(),
-      getProductBrands(),
-      fetchAllCategories(),
-    ]).then(() => {
-      setLoadingResources(false);
-    });
-  });
-
-  const onAlternateViewSaveChanges = async (entity: Product) => {
-    setDisabled(true);
-    try {
-      const response = (await saveProductFn(entity)) as any;
-      refreshItem(response.result, 'alternate');
-
-      message.success('Register updated with success.');
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setDisabled(false);
-    }
-  };
-
-  const handleFilterClassified = (e: CheckboxChangeEvent) => {
-    setUnclassifiedFilter(e.target.checked);
-  };
-
-  const _fetchStagingProducts = async (resetResults?: boolean) => {
+  const _fetchProducts = async (resetResults?: boolean) => {
     if (resetResults) scrollToCenter(0);
     const pageToUse = resetResults ? 0 : page;
     const response = await doFetch(() =>
-      fetchStagingProducts({
+      fetchBrandManagerProducts({
         limit: 30,
         page: pageToUse,
-        brandId: brandFilter?.id,
         query: searchFilter,
-        unclassified: unclassifiedFilter,
+        unclassified: false,
         productBrandId: productBrandFilter?.id,
-        outOfStock: outOfStockFilter,
         status: productStatusFilter,
-        superCategoryId: currentSuperCategory?.id,
-        categoryId: currentCategory?.id,
-        subCategoryId: currentSubCategory?.id,
-        subSubCategoryId: currentSubSubCategory?.id,
-        runId: runIdFilter,
+        superCategoryId: productSuperCategoryFilter?.id,
+        categoryId: productCategoryFilter?.id,
+        subCategoryId: productSubCategoryFilter?.id,
+        subSubCategoryId: productSubSubCategoryFilter?.id,
       })
     );
     setPage(pageToUse + 1);
-
     if (response.results.length < 30) setEof(true);
     return response;
   };
@@ -297,75 +241,13 @@ const BrandManagerProducts: React.FC<RouteComponentProps> = () => {
       setEof(false);
       collapse(resetResults);
     }
-    const { results } = await doFetch(() =>
-      _fetchStagingProducts(resetResults)
-    );
-    loaded.current = true;
+    const { results } = await doFetch(() => _fetchProducts(resetResults));
     if (resetResults) setProducts(results);
     else setProducts(prev => [...prev.concat(results)]);
-  };
-
-  const deleteItem = async (_id: string, index: number) => {
-    await doRequest(() => deleteStagingProduct(_id));
-    setProducts(prev => [...prev.slice(0, index), ...prev.slice(index + 1)]);
-  };
-
-  const refreshItem = (record: Product, viewName?: 'default' | 'alternate') => {
-    products[lastViewedIndex] = record;
-    setProducts([...products]);
-    setViewName(viewName ?? previousViewName.current);
-  };
-
-  const onSaveCategories = async (record: Product) => {
-    await saveCategories(() => saveStagingProduct(record));
-    await getProducts(true);
-  };
-
-  const onSaveItem = async (record: Product) => {
-    await doRequest(() => saveStagingProduct(record));
-    await getProducts(true);
-  };
-
-  const handleStage = async (productId: string) => {
-    await doRequest(() => transferStageProduct(productId), 'Product commited.');
-    await getProducts(true);
-  };
-
-  const handleUploadToShopify = async (productId: string) => {
-    const response: any = await doRequest(
-      () => exportToShopifyProduct(productId),
-      '',
-      true
-    );
-    if (response.success) message.success(response.message);
-    else message.error('Error: ' + response.error);
-    await getProducts(true);
-  };
-
-  const handleFilterOutOfStock = (e: CheckboxChangeEvent) => {
-    setOutOfStockFilter(e.target.checked);
+    if (!loaded.current) loaded.current = true;
   };
 
   const columns: EditableColumnType<Product>[] = [
-    {
-      title: (
-        <div style={{ display: 'grid', placeItems: 'stretch' }}>
-          <div
-            style={{
-              textOverflow: 'ellipsis',
-              overflow: 'hidden',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            <Tooltip title="_id">_id</Tooltip>
-          </div>
-        </div>
-      ),
-      dataIndex: 'id',
-      width: '6%',
-      render: id => <CopyValueToClipboard value={id} />,
-      align: 'center',
-    },
     {
       title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
@@ -381,11 +263,13 @@ const BrandManagerProducts: React.FC<RouteComponentProps> = () => {
         </div>
       ),
       dataIndex: 'name',
-      width: '10%',
-      render: (value: string, record: Product, index: number) => (
+      width: '15%',
+      shouldCellUpdate: (prevRecord, nextRecord) =>
+        prevRecord.name != nextRecord.name,
+      render: (value: string, record, index) => (
         <>
           <Link
-            onClick={() => editProduct(record, index, 'default')}
+            onClick={() => viewProduct(index, record)}
             to={{ pathname: window.location.pathname, state: record }}
           >
             {value}
@@ -427,18 +311,56 @@ const BrandManagerProducts: React.FC<RouteComponentProps> = () => {
               whiteSpace: 'nowrap',
             }}
           >
-            <Tooltip title="Master Brand">Master Brand</Tooltip>
+            <Tooltip title="Link">Link</Tooltip>
           </div>
         </div>
       ),
-      dataIndex: ['brand', 'brandName'],
+      dataIndex: 'id',
       width: '10%',
       align: 'center',
+      render: (value: string) => {
+        if (value)
+          return (
+            <>
+              {' '}
+              <a
+                href={'https://beautybuzz.io/' + value.slice(0, -4)}
+                target="blank"
+                style={value ? {} : { pointerEvents: 'none' }}
+              >
+                <Tooltip title={'https://beautybuzz.io/' + value.slice(0, -4)}>
+                  <LinkIcon />
+                </Tooltip>
+              </a>
+            </>
+          );
+        else return '-';
+      },
+    },
+    {
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="In Stock">In Stock</Tooltip>
+          </div>
+        </div>
+      ),
+      dataIndex: 'outOfStock',
+      width: '7%',
+      align: 'center',
+      shouldCellUpdate: (prevRecord, nextRecord) =>
+        prevRecord.outOfStock != nextRecord.outOfStock,
+      render: (outOfStock: boolean) => (outOfStock ? 'No' : 'Yes'),
       sorter: (a, b): any => {
-        if (a.brand && b.brand)
-          return a.brand.brandName.localeCompare(b.brand.brandName);
-        else if (a.brand) return -1;
-        else if (b.brand) return 1;
+        if (a.outOfStock && b.outOfStock) return 0;
+        else if (a.outOfStock) return -1;
+        else if (b.outOfStock) return 1;
         else return 0;
       },
     },
@@ -452,14 +374,111 @@ const BrandManagerProducts: React.FC<RouteComponentProps> = () => {
               whiteSpace: 'nowrap',
             }}
           >
-            <Tooltip title="Import Run ID">Import Run ID</Tooltip>
+            <Tooltip title="Max DD">Max DD</Tooltip>
           </div>
         </div>
       ),
-      dataIndex: 'importRunId',
-      width: '7%',
+      dataIndex: 'maxDiscoDollars',
+      width: '5%',
       align: 'center',
       responsive: ['sm'],
+      shouldCellUpdate: (prevRecord, nextRecord) =>
+        prevRecord.maxDiscoDollars != nextRecord.maxDiscoDollars,
+      sorter: (a, b): any => {
+        if (a.maxDiscoDollars && b.maxDiscoDollars)
+          return a.maxDiscoDollars - b.maxDiscoDollars;
+        else if (a.maxDiscoDollars) return -1;
+        else if (b.maxDiscoDollars) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Disco %">Disco %</Tooltip>
+          </div>
+        </div>
+      ),
+      dataIndex: 'discoPercentage',
+      width: '5%',
+      align: 'center',
+      responsive: ['sm'],
+      shouldCellUpdate: (prevRecord, nextRecord) =>
+        prevRecord.discoPercentage != nextRecord.discoPercentage,
+      sorter: (a, b): any => {
+        if (a.discoPercentage && b.discoPercentage)
+          return a.discoPercentage - b.discoPercentage;
+        else if (a.discoPercentage) return -1;
+        else if (b.discoPercentage) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Expiration Date">Expiration Date</Tooltip>
+          </div>
+        </div>
+      ),
+      dataIndex: 'offerExpirationDate',
+      width: '10%',
+      align: 'center',
+      responsive: ['sm'],
+      shouldCellUpdate: (prevRecord, nextRecord) =>
+        prevRecord.offerExpirationDate != nextRecord.offerExpirationDate,
+
+      render: (creationDate: Date) => moment(creationDate).format('DD/MM/YYYY'),
+      sorter: (a, b): any => {
+        if (a.offerExpirationDate && b.offerExpirationDate)
+          return (
+            moment(a.offerExpirationDate).unix() -
+            moment(b.offerExpirationDate).unix()
+          );
+        else if (a.offerExpirationDate) return -1;
+        else if (b.offerExpirationDate) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Status">Status</Tooltip>
+          </div>
+        </div>
+      ),
+      dataIndex: 'status',
+      width: '12%',
+      align: 'center',
+      responsive: ['sm'],
+      shouldCellUpdate: (prevRecord, nextRecord) =>
+        prevRecord.status != nextRecord.status,
+      sorter: (a, b): any => {
+        if (a.name && b.name) return a.name.localeCompare(b.name);
+        else if (a.name) return -1;
+        else if (b.name) return 1;
+        else return 0;
+      },
     },
     {
       title: (
@@ -475,10 +494,12 @@ const BrandManagerProducts: React.FC<RouteComponentProps> = () => {
           </div>
         </div>
       ),
-      dataIndex: ['productBrand'],
-      width: '12%',
+      dataIndex: 'productBrand',
+      width: '10%',
       align: 'center',
       responsive: ['sm'],
+      shouldCellUpdate: (prevRecord, nextRecord) =>
+        prevRecord.productBrand != nextRecord.productBrand,
       render: (field, record) =>
         typeof record.productBrand === 'string'
           ? field
@@ -531,190 +552,32 @@ const BrandManagerProducts: React.FC<RouteComponentProps> = () => {
               whiteSpace: 'nowrap',
             }}
           >
-            <Tooltip title="SKU">SKU</Tooltip>
-          </div>
-        </div>
-      ),
-      dataIndex: 'sku',
-      width: '5%',
-      align: 'center',
-    },
-    {
-      title: (
-        <div style={{ display: 'grid', placeItems: 'stretch' }}>
-          <div
-            style={{
-              textOverflow: 'ellipsis',
-              overflow: 'hidden',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            <Tooltip title="In Stock">In Stock</Tooltip>
-          </div>
-        </div>
-      ),
-      dataIndex: 'outOfStock',
-      width: '7%',
-      align: 'center',
-      render: (outOfStock: boolean) => (outOfStock ? 'No' : 'Yes'),
-      sorter: (a, b): any => {
-        if (a.outOfStock && b.outOfStock) return 0;
-        else if (a.outOfStock) return -1;
-        else if (b.outOfStock) return 1;
-        else return 0;
-      },
-    },
-    {
-      title: (
-        <div style={{ display: 'grid', placeItems: 'stretch' }}>
-          <div
-            style={{
-              textOverflow: 'ellipsis',
-              overflow: 'hidden',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            <Tooltip title="Currency">Currency</Tooltip>
-          </div>
-        </div>
-      ),
-      dataIndex: 'currencyIsoCode',
-      width: '7%',
-      align: 'center',
-      sorter: (a, b): any => {
-        if (a.currencyIsoCode && b.currencyIsoCode)
-          return a.currencyIsoCode.localeCompare(b.currencyIsoCode);
-        else if (a.currencyIsoCode) return -1;
-        else if (b.currencyIsoCode) return 1;
-        else return 0;
-      },
-    },
-    {
-      title: (
-        <div style={{ display: 'grid', placeItems: 'stretch' }}>
-          <div
-            style={{
-              textOverflow: 'ellipsis',
-              overflow: 'hidden',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            <Tooltip title="Price">Price</Tooltip>
-          </div>
-        </div>
-      ),
-      dataIndex: 'originalPrice',
-      width: '7%',
-      align: 'center',
-      sorter: (a, b): any => {
-        if (a.originalPrice && b.originalPrice)
-          return a.originalPrice - b.originalPrice;
-        else if (a.originalPrice) return -1;
-        else if (b.originalPrice) return 1;
-        else return 0;
-      },
-    },
-    {
-      title: (
-        <div style={{ display: 'grid', placeItems: 'stretch' }}>
-          <div
-            style={{
-              textOverflow: 'ellipsis',
-              overflow: 'hidden',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            <Tooltip title="Max DD">Max DD</Tooltip>
-          </div>
-        </div>
-      ),
-      dataIndex: 'maxDiscoDollars',
-      width: '7%',
-      align: 'center',
-      editable: true,
-      number: true,
-      sorter: (a, b): any => {
-        if (a.maxDiscoDollars && b.maxDiscoDollars)
-          return a.maxDiscoDollars - b.maxDiscoDollars;
-        else if (a.maxDiscoDollars) return -1;
-        else if (b.maxDiscoDollars) return 1;
-        else return 0;
-      },
-    },
-    {
-      title: (
-        <div style={{ display: 'grid', placeItems: 'stretch' }}>
-          <div
-            style={{
-              textOverflow: 'ellipsis',
-              overflow: 'hidden',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            <Tooltip title="Last Import">Last Import</Tooltip>
-          </div>
-        </div>
-      ),
-      dataIndex: 'lastImportDate',
-      width: '12.5%',
-      align: 'center',
-      render: (lastImportDate: Date | null | undefined) =>
-        lastImportDate ? (
-          <>
-            <div>
-              {moment(lastImportDate).format('DD/MM/YY')}{' '}
-              {moment(lastImportDate).format('HH:mm')}
-            </div>
-          </>
-        ) : (
-          ''
-        ),
-      sorter: (a, b): any => {
-        if (a.offerExpirationDate && b.offerExpirationDate)
-          return (
-            moment(a.offerExpirationDate).unix() -
-            moment(b.offerExpirationDate).unix()
-          );
-        else if (a.offerExpirationDate) return -1;
-        else if (b.offerExpirationDate) return 1;
-        else return 0;
-      },
-    },
-    {
-      title: (
-        <div style={{ display: 'grid', placeItems: 'stretch' }}>
-          <div
-            style={{
-              textOverflow: 'ellipsis',
-              overflow: 'hidden',
-              whiteSpace: 'nowrap',
-            }}
-          >
             <Tooltip title="Last Go-Live">Last Go-Live</Tooltip>
           </div>
         </div>
       ),
-      dataIndex: 'lastGoLiveDate',
-      width: '12.5%',
+      dataIndex: 'goLiveDate',
+      width: '10%',
       align: 'center',
-      render: (lastGoLiveDate: Date | null | undefined) =>
-        lastGoLiveDate ? (
+      shouldCellUpdate: (prevRecord, nextRecord) =>
+        prevRecord.goLiveDate != nextRecord.goLiveDate,
+
+      render: (goLiveDate: Date | null | undefined) =>
+        goLiveDate ? (
           <>
             <div>
-              {moment(lastGoLiveDate).format('DD/MM/YY')}{' '}
-              {moment(lastGoLiveDate).format('HH:mm')}
+              {moment(goLiveDate).format('DD/MM/YY')}{' '}
+              {moment(goLiveDate).format('HH:mm')}
             </div>
           </>
         ) : (
           ''
         ),
       sorter: (a, b): any => {
-        if (a.lastGoLiveDate && b.lastGoLiveDate)
-          return (
-            moment(a.lastGoLiveDate).unix() - moment(b.lastGoLiveDate).unix()
-          );
-        else if (a.lastGoLiveDate) return -1;
-        else if (b.lastGoLiveDate) return 1;
+        if (a.goLiveDate && b.goLiveDate)
+          return moment(a.goLiveDate).unix() - moment(b.goLiveDate).unix();
+        else if (a.goLiveDate) return -1;
+        else if (b.goLiveDate) return 1;
         else return 0;
       },
     },
@@ -733,98 +596,25 @@ const BrandManagerProducts: React.FC<RouteComponentProps> = () => {
         </div>
       ),
       key: 'action',
-      width: '10%',
+      width: '12%',
       align: 'right',
-      render: (_, record: Product, index: number) => (
+      render: (_: any, record, index) => (
         <>
           <Link
-            onClick={() => editProduct(record, index, 'default')}
             to={{ pathname: window.location.pathname, state: record }}
+            onClick={() => viewProduct(index, record)}
           >
-            <EditOutlined />
+            <EyeOutlined />
           </Link>
-          <Popconfirm
-            title="Are you sure？"
-            okText="Yes"
-            cancelText="No"
-            onConfirm={() => deleteItem(record.id, index)}
-          >
-            <Button
-              type="link"
-              style={{ padding: 0, marginLeft: 8 }}
-              disabled={record.lastGoLiveDate != null}
-            >
-              <DeleteOutlined />
-            </Button>
-          </Popconfirm>
-          <Button
-            onClick={() => handleStage(record.id)}
-            type="link"
-            style={{ color: 'green', padding: 0, margin: 6 }}
-          >
-            <ArrowRightOutlined />
-          </Button>
-          <Button
-            onClick={() => handleUploadToShopify(record.id)}
-            type="link"
-            style={{ color: 'red', padding: 0, margin: 6 }}
-          >
-            <ArrowRightOutlined />
-          </Button>
         </>
       ),
     },
   ];
 
-  const onChangeBrand = async (_selectedBrand: Brand | undefined) => {
-    setBrandFilter(_selectedBrand);
-  };
-
   const onChangeProductBrand = async (
     _selectedBrand: ProductBrand | undefined
   ) => {
     setProductBrandFilter(_selectedBrand);
-  };
-
-  const createProduct = async (index: number) => {
-    try {
-      if (barcodeFilter) {
-        const { results }: any = await barcodeLookup(barcodeFilter, null);
-        setCurrentProduct(results?.[0]);
-        setCurrentMasterBrand(results?.[0]?.brand?.brandName);
-        setCurrentProductBrand(results?.[0]?.productBrand?.brandName);
-      }
-    } catch (error: any) {
-      setCurrentProduct(undefined);
-      setCurrentMasterBrand(undefined);
-      setCurrentProductBrand(undefined);
-    }
-    setLastViewedIndex(index);
-    setDetails(true);
-    history.push(window.location.pathname);
-  };
-
-  const editProduct = (
-    product: Product,
-    productIndex: number,
-    viewName: 'default' | 'alternate'
-  ) => {
-    previousViewName.current = viewName;
-    setCurrentProduct(product);
-    setLastViewedIndex(productIndex);
-    setCurrentMasterBrand(product.brand.brandName);
-    if (product.productBrand) {
-      if (typeof product.productBrand === 'string') {
-        setCurrentProductBrand(product.productBrand);
-      } else {
-        setCurrentProductBrand(product.productBrand.brandName);
-      }
-    } else {
-      setCurrentProductBrand('');
-    }
-    setViewName('default');
-    setDetails(true);
-    history.push(window.location.pathname);
   };
 
   const scrollToCenter = (index: number) => {
@@ -834,12 +624,39 @@ const BrandManagerProducts: React.FC<RouteComponentProps> = () => {
   };
 
   useEffect(() => {
-    if (!details) {
-      scrollToCenter(lastViewedIndex);
-    }
+    if (!details) scrollToCenter(lastViewedIndex);
 
     setisScrollable(details);
   }, [details]);
+
+  const viewProduct = (index: number, record?: Product) => {
+    setCurrentProduct(record);
+    setLastViewedIndex(index);
+    if (record) {
+      setCurrentMasterBrand(record.brand.brandName);
+      if (record.productBrand) {
+        if (typeof record.productBrand === 'string') {
+          setCurrentProductBrand(record.productBrand);
+        } else {
+          setCurrentProductBrand(record.productBrand.brandName);
+        }
+      }
+    } else {
+      setCurrentMasterBrand(record);
+      setCurrentProductBrand(record);
+    }
+    setDetails(true);
+    history.push(window.location.pathname);
+  };
+
+  const refreshItem = (record: Product) => {
+    if (loaded.current) {
+      products[lastViewedIndex] = record;
+      setProducts([...products]);
+    } else {
+      setProducts([record]);
+    }
+  };
 
   const onSaveProduct = (product: Product) => {
     refreshItem(product);
@@ -848,373 +665,140 @@ const BrandManagerProducts: React.FC<RouteComponentProps> = () => {
   };
 
   const onCancelProduct = () => {
-    if (previousViewName.current === 'alternate') setViewName('alternate');
     setDetails(false);
   };
 
-  const switchView = () => {
-    if (viewName === 'default') {
-      setViewName('alternate');
-    } else {
-      setViewName('default');
-    }
-  };
-
-  const onSelectChange = (selectedRowKeys: any, selectedRows: any) => {
-    setSelectedRowKeys(selectedRowKeys);
-    setSelectedRows(selectedRows);
-  };
-
-  const buildView = () => {
-    switch (viewName) {
-      case 'alternate':
-        return (
-          <BrandManagerAlternate
-            loadedRef={loaded}
-            products={products}
-            productBrands={productBrands}
-            allCategories={allCategories}
-            onSaveChanges={onAlternateViewSaveChanges}
-            lastViewedIndex={lastViewedIndex}
-            onRefreshItem={product => refreshItem(product, 'alternate')}
-            onEditProduct={(product, productIndex) =>
-              editProduct(product, productIndex, 'alternate')
-            }
-            onNextPage={getProducts}
-            page={page}
-            eof={eof}
-            disabled={disabled}
-            selectedRowKeys={selectedRowKeys}
-            setSelectedRowKeys={setSelectedRowKeys}
-            setSelectedRows={setSelectedRows}
-          ></BrandManagerAlternate>
-        );
-      case 'default':
-        if (!details) {
-          return (
-            <div className="preview custom-table">
-              <InfiniteScroll
-                height="27rem"
-                dataLength={products.length}
-                next={getProducts}
-                hasMore={!eof}
-                loader={
-                  page !== 0 &&
-                  loading && (
-                    <div className="scroll-message">
-                      <Spin />
-                    </div>
-                  )
-                }
-                endMessage={
-                  loaded.current && (
-                    <div className="scroll-message">
-                      <b>End of results.</b>
-                    </div>
-                  )
-                }
-              >
-                <EditableTable
-                  scroll={{ x: true }}
-                  rowClassName={(_, index) =>
-                    `scrollable-row-${index} ${
-                      index === lastViewedIndex ? 'selected-row' : ''
-                    }`
-                  }
-                  rowKey="id"
-                  columns={columns}
-                  dataSource={products}
-                  loading={loading || disabled}
-                  onSave={onSaveItem}
-                  pagination={false}
-                  rowSelection={{
-                    selectedRowKeys,
-                    onChange: onSelectChange,
-                  }}
-                  btnStyle={btnStyle}
-                  expandable={{
-                    expandedRowRender: (record: Product) => (
-                      <ProductExpandedRow
-                        key={record.id}
-                        record={record}
-                        allCategories={allCategories}
-                        onSaveProduct={onSaveCategories}
-                        loading={loadingCategories}
-                        isStaging
-                        productBrands={productBrands}
-                      ></ProductExpandedRow>
-                    ),
-                  }}
-                />
-              </InfiniteScroll>
-            </div>
-          );
-        } else {
-          return (
-            <ProductDetail
-              brands={brands}
-              productBrands={productBrands}
-              allCategories={allCategories}
-              onSave={onSaveProduct}
-              onCancel={onCancelProduct}
-              product={currentProduct}
-              productBrand={currentProductBrand}
-              brand={currentMasterBrand}
-              loadingResources={loadingResources}
-              isLive={false}
-            />
-          );
-        }
-      default:
-        return <h1>Houston...</h1>;
-    }
-  };
-
-  const handleGroupItems = () => {
-    selectedRows.forEach(
-      async item =>
-        await doRequest(() => addVariant(item.id, selectedRowKeys[0]))
-    );
-  };
-
   const filterOption = (input: string, option: any) => {
-    return option?.label?.toUpperCase().includes(input?.toUpperCase());
+    return !!option?.label
+      ?.toString()
+      ?.toUpperCase()
+      .includes(input?.toUpperCase());
   };
 
   const Filters = () => {
     return (
       <>
-        <Row gutter={[8, 8]} align="bottom">
-          <Col lg={6} xs={24}>
-            <Typography.Title level={5}>Product Name</Typography.Title>
-            <Input
-              allowClear
-              disabled={loadingResources}
-              ref={inputRef}
-              onChange={event => setSearchFilter(event.target.value)}
-              suffix={<SearchOutlined />}
-              value={searchFilter}
-              placeholder="Search by Name"
-              onPressEnter={() => getProducts(true)}
-            />
-          </Col>
-          <Col lg={6} xs={24}>
-            <Typography.Title level={5}>Master Brand</Typography.Title>
-            <SimpleSelect
-              showSearch
-              data={brands}
-              onChange={(_, brand) => onChangeBrand(brand)}
-              style={{ width: '100%' }}
-              selectedOption={brandFilter?.brandName}
-              optionMapping={optionMapping}
-              placeholder="Select a Master Brand"
-              disabled={loadingResources}
-              allowClear
-            ></SimpleSelect>
-          </Col>
-          <Col lg={6} xs={24}>
-            <Typography.Title level={5}>Product Brand</Typography.Title>
-            <SimpleSelect
-              showSearch
-              data={productBrands}
-              onChange={(_, productBrand) => onChangeProductBrand(productBrand)}
-              style={{ width: '100%' }}
-              selectedOption={productBrandFilter?.brandName}
-              optionMapping={optionMapping}
-              placeholder="Select a Product Brand"
-              disabled={loadingResources}
-              allowClear
-            ></SimpleSelect>
-          </Col>
-          <Col lg={6} xs={24}>
-            <Typography.Title level={5}>Status</Typography.Title>
-            <Select
-              disabled={loadingResources}
-              placeholder="Select a Status"
-              style={{ width: '100%' }}
-              onChange={setProductStatusFilter}
-              allowClear
-              defaultValue={productStatusFilter}
-              showSearch
-              filterOption={filterOption}
-            >
-              <Select.Option value="live" label="live">
-                Live
-              </Select.Option>
-              <Select.Option value="paused" label="paused">
-                Paused
-              </Select.Option>
-            </Select>
-          </Col>
-          <Col lg={6} xs={24}>
-            <Typography.Title level={5}>Super Category</Typography.Title>
-            <SimpleSelect
-              showSearch
-              data={allCategories['Super Category'].filter(item => {
-                return (
-                  item.superCategory === 'Women' ||
-                  item.superCategory === 'Men' ||
-                  item.superCategory === 'Children'
-                );
-              })}
-              onChange={(_, category) => setCurrentSuperCategory(category)}
-              style={{ width: '100%' }}
-              selectedOption={currentSuperCategory?.id}
-              optionMapping={productSuperCategoryOptionMapping}
-              placeholder="Select a Super Category"
-              disabled={loadingResources}
-              allowClear
-            ></SimpleSelect>
-          </Col>
-          <Col lg={6} xs={24}>
-            <Typography.Title level={5}>Category</Typography.Title>
-            <SimpleSelect
-              showSearch
-              data={allCategories.Category.filter(item => {
-                return currentSuperCategory
-                  ? item.superCategory === currentSuperCategory.superCategory
-                  : true;
-              })}
-              onChange={(_, category) => setCurrentCategory(category)}
-              style={{ width: '100%' }}
-              selectedOption={currentCategory?.id ?? null}
-              optionMapping={productCategoryOptionMapping}
-              placeholder="Select a Category"
-              disabled={loadingResources}
-              allowClear
-            ></SimpleSelect>
-          </Col>
-          <Col lg={6} xs={24}>
-            <Typography.Title level={5}>Sub Category</Typography.Title>
-            <SimpleSelect
-              showSearch
-              data={allCategories['Sub Category'].filter(item => {
-                return (
-                  (currentCategory
-                    ? item.category === currentCategory.category
-                    : true) &&
-                  (currentSuperCategory
-                    ? item.superCategory === currentSuperCategory.superCategory
-                    : true)
-                );
-              })}
-              onChange={(_, category) => setCurrentSubCategory(category)}
-              style={{ width: '100%' }}
-              selectedOption={currentSubCategory?.id ?? null}
-              optionMapping={productSubCategoryOptionMapping}
-              placeholder="Select a Sub Category"
-              disabled={
-                loadingResources ||
-                !allCategories['Sub Category'].filter(item => {
+        <Col lg={16} xs={24}>
+          <Row gutter={[8, 8]} align="bottom">
+            <Col lg={12} xs={24}>
+              <Typography.Title level={5}>Product Name</Typography.Title>
+              <Input
+                allowClear
+                disabled={loadingResources}
+                ref={inputRef}
+                onChange={event => setSearchFilter(event.target.value)}
+                suffix={<SearchOutlined />}
+                value={searchFilter}
+                placeholder="Search by Name"
+                onPressEnter={() => getProducts(true)}
+              />
+            </Col>
+            <Col lg={6} xs={24}>
+              <Typography.Title level={5}>Product Brand</Typography.Title>
+              <SimpleSelect
+                showSearch
+                data={productBrands}
+                onChange={(_, productBrand) =>
+                  onChangeProductBrand(productBrand)
+                }
+                style={{ width: '100%' }}
+                selectedOption={productBrandFilter?.brandName}
+                optionMapping={optionMapping}
+                placeholder="Select a Product Brand"
+                disabled={loadingResources}
+                allowClear
+              ></SimpleSelect>
+            </Col>
+            <Col lg={6} xs={24}>
+              <Typography.Title level={5}>Status</Typography.Title>
+              <Select
+                disabled={loadingResources}
+                placeholder="Select a Status"
+                style={{ width: '100%' }}
+                onChange={setProductStatusFilter}
+                allowClear
+                showSearch
+                filterOption={filterOption}
+                defaultValue={productStatusFilter}
+              >
+                <Select.Option value="live" label="live">
+                  Live
+                </Select.Option>
+                <Select.Option value="paused" label="paused">
+                  Paused
+                </Select.Option>
+              </Select>
+            </Col>
+            <Col lg={6} xs={24}>
+              <Typography.Title level={5}>Super Category</Typography.Title>
+              <SimpleSelect
+                showSearch
+                data={allCategories['Super Category'].filter(item => {
                   return (
-                    (currentCategory
-                      ? item.category === currentCategory.category
-                      : true) &&
-                    (currentSuperCategory
-                      ? item.superCategory ===
-                        currentSuperCategory.superCategory
-                      : true)
+                    item.superCategory === 'Women' ||
+                    item.superCategory === 'Men' ||
+                    item.superCategory === 'Children'
                   );
-                }).length
-              }
-              allowClear
-            ></SimpleSelect>
-          </Col>
-          <Col lg={6} xs={24}>
-            <Typography.Title level={5}>Sub Sub Category</Typography.Title>
-            <SimpleSelect
-              showSearch
-              data={allCategories['Sub Sub Category'].filter(item => {
-                return (
-                  (currentSubCategory
-                    ? item.subCategory === currentSubCategory.subCategory
-                    : true) &&
-                  (currentCategory
-                    ? item.category === currentCategory.category
-                    : true) &&
-                  (currentSuperCategory
-                    ? item.superCategory === currentSuperCategory.superCategory
-                    : true)
-                );
-              })}
-              onChange={(_, category) => setCurrentSubSubCategory(category)}
-              style={{ width: '100%' }}
-              selectedOption={currentSubSubCategory?.id ?? null}
-              optionMapping={productSubSubCategoryOptionMapping}
-              placeholder="Select a Sub Sub Category"
-              disabled={
-                loadingResources ||
-                !allCategories['Sub Sub Category'].filter(item => {
-                  return (
-                    (currentSubCategory
-                      ? item.subCategory === currentSubCategory.subCategory
-                      : true) &&
-                    (currentCategory
-                      ? item.category === currentCategory.category
-                      : true) &&
-                    (currentSuperCategory
-                      ? item.superCategory ===
-                        currentSuperCategory.superCategory
-                      : true)
-                  );
-                }).length
-              }
-              allowClear
-            ></SimpleSelect>
-          </Col>
-          <Col lg={6} xs={24}>
-            <Typography.Title level={5}>Run ID</Typography.Title>
-            <Input
-              allowClear
-              disabled={loadingResources}
-              onChange={evt => {
-                setRunIdFilter(evt.target.value);
-              }}
-              value={runIdFilter}
-              suffix={<SearchOutlined />}
-              placeholder="Search by Run ID"
-              onPressEnter={() => getProducts(true)}
-            />
-          </Col>
-          <Col lg={6} xs={24}>
-            <Checkbox
-              disabled={loadingResources}
-              onChange={handleFilterOutOfStock}
-              className={isMobile ? 'mt-1 mb-1' : 'mt-2 mb-05'}
-            >
-              <div style={{ display: 'grid', placeItems: 'stretch' }}>
-                <div
-                  style={{
-                    whiteSpace: 'nowrap',
-                    textOverflow: 'ellipsis',
-                    overflow: 'hidden',
-                  }}
-                >
-                  Out of Stock only
-                </div>
-              </div>
-            </Checkbox>
-          </Col>
-          <Col lg={6} xs={24}>
-            <Checkbox
-              disabled={loadingResources}
-              onChange={handleFilterClassified}
-              className={isMobile ? 'mb-2' : 'mt-2 mb-05'}
-            >
-              <div style={{ display: 'grid', placeItems: 'stretch' }}>
-                <div
-                  style={{
-                    whiteSpace: 'nowrap',
-                    textOverflow: 'ellipsis',
-                    overflow: 'hidden',
-                  }}
-                >
-                  Unclassified only
-                </div>
-              </div>
-            </Checkbox>
-          </Col>
-        </Row>
+                })}
+                onChange={(_, category) =>
+                  setProductSuperCategoryFilter(category)
+                }
+                style={{ width: '100%' }}
+                selectedOption={productSuperCategoryFilter?.id}
+                optionMapping={productSuperCategoryOptionMapping}
+                placeholder="Select a Super Category"
+                disabled={loadingResources}
+                allowClear
+              ></SimpleSelect>
+            </Col>
+            <Col lg={6} xs={24}>
+              <Typography.Title level={5}>Category</Typography.Title>
+              <SimpleSelect
+                showSearch
+                data={allCategories.Category}
+                onChange={(_, category) => setProductCategoryFilter(category)}
+                style={{ width: '100%' }}
+                selectedOption={productCategoryFilter?.id}
+                optionMapping={productCategoryOptionMapping}
+                placeholder="Select a Category"
+                disabled={loadingResources}
+                allowClear
+              ></SimpleSelect>
+            </Col>
+            <Col lg={6} xs={24}>
+              <Typography.Title level={5}>Sub Category</Typography.Title>
+              <SimpleSelect
+                showSearch
+                data={allCategories['Sub Category']}
+                onChange={(_, category) =>
+                  setProductSubCategoryFilter(category)
+                }
+                style={{ width: '100%' }}
+                selectedOption={productSubCategoryFilter?.id}
+                optionMapping={productSubCategoryOptionMapping}
+                placeholder="Select a Sub Category"
+                disabled={loadingResources}
+                allowClear
+              ></SimpleSelect>
+            </Col>
+            <Col lg={6} xs={24}>
+              <Typography.Title level={5}>Sub Sub Category</Typography.Title>
+              <SimpleSelect
+                showSearch
+                data={allCategories['Sub Sub Category']}
+                onChange={(_, category) =>
+                  setProductSubSubCategoryFilter(category)
+                }
+                style={{ width: '100%' }}
+                selectedOption={productSubSubCategoryFilter?.id}
+                optionMapping={productSubSubCategoryOptionMapping}
+                placeholder="Select a Sub Sub Category"
+                disabled={loadingResources}
+                allowClear
+              ></SimpleSelect>
+            </Col>
+          </Row>
+        </Col>
       </>
     );
   };
@@ -1236,132 +820,139 @@ const BrandManagerProducts: React.FC<RouteComponentProps> = () => {
         <>
           <PageHeader
             title="Products"
-            subTitle={
-              isMobile
-                ? ''
-                : viewName === 'default'
-                ? 'Default View'
-                : 'Alternate View'
-            }
-            className={isMobile ? 'mb-1 w-100' : ''}
-            extra={[
-              <Row
-                gutter={8}
-                justify="end"
-                align="bottom"
-                key="headerRow"
-                style={{ margin: 0 }}
-              >
-                <Col>
-                  <Input
-                    allowClear
-                    disabled={loadingResources}
-                    onChange={event => setBarcodeFilter(event.target.value)}
-                    suffix={<SearchOutlined />}
-                    value={barcodeFilter}
-                    placeholder="Lookup Barcode"
-                    onPressEnter={() => createProduct(products.length)}
-                  />
-                </Col>
-                <Col>
-                  <Button
-                    key="2"
-                    className={isMobile ? 'mt-05' : ''}
-                    onClick={() => createProduct(products.length)}
-                  >
-                    New Item
-                  </Button>
-                </Col>
-                <Col style={{ paddingRight: 0 }}>
-                  <Button
-                    key="3"
-                    type="primary"
-                    className={isMobile ? 'mt-05' : ''}
-                    onClick={switchView}
-                  >
-                    Switch View
-                  </Button>
-                </Col>
-              </Row>,
-            ]}
+            subTitle={isMobile ? '' : 'List of Live Products'}
           />
           <Row
             align="bottom"
             justify="space-between"
-            className="sticky-filter-box"
+            className="sticky-filter-box mb-15"
             id="filterPanel"
             style={panelStyle}
           >
-            <Col lg={16} xs={{ flex: 'auto' }}>
-              {!isMobile && <Filters />}
-              {isMobile && (
-                <Collapse
-                  ghost
-                  activeKey={activeKey}
-                  onChange={handleCollapseChange}
-                  destroyInactivePanel
-                >
-                  <Panel
-                    header={
-                      activeKey === '1' ? (
-                        <Typography.Title level={5}>
-                          Click to Collapse
-                        </Typography.Title>
-                      ) : (
-                        <Typography.Title level={5}>Filter</Typography.Title>
-                      )
-                    }
-                    key="1"
-                  >
-                    <Filters />
-                  </Panel>
-                </Collapse>
-              )}
-            </Col>
-            <Col
-              xs={{ flex: 'none' }}
-              className={activeKey === '1' ? 'mt-n1 mb-1' : ''}
-            >
-              <Row
-                justify="space-between"
-                align="top"
-                style={{ background: 'white' }}
+            {!isMobile && <Filters />}
+            {isMobile && (
+              <Collapse
+                ghost
+                accordion
+                activeKey={activeKey}
+                onChange={handleCollapseChange}
+                destroyInactivePanel
+                className="mb-n1"
               >
-                <Col flex="auto">
-                  <Button
-                    type="text"
-                    onClick={collapse}
-                    style={{
-                      display: isMobile && activeKey === '1' ? 'block' : 'none',
-                      background: 'none',
-                    }}
-                  >
-                    <UpOutlined />
-                  </Button>
+                <Panel
+                  header={
+                    activeKey === '1' ? (
+                      <Typography.Title level={5}>
+                        Click to Collapse
+                      </Typography.Title>
+                    ) : (
+                      <Typography.Title level={5}>Filter</Typography.Title>
+                    )
+                  }
+                  key="1"
+                >
+                  <Filters />
+                </Panel>
+              </Collapse>
+            )}
+            <Col className={activeKey === '1' ? 'mb-1' : ''}>
+              <Row justify="space-between" align="top">
+                <Col span={24}>
+                  <Row justify="start">
+                    <Col>
+                      <Button
+                        type="text"
+                        onClick={collapse}
+                        style={{
+                          display:
+                            isMobile && activeKey === '1' ? 'block' : 'none',
+                          background: 'none',
+                        }}
+                      >
+                        <UpOutlined />
+                      </Button>
+                    </Col>
+                  </Row>
                 </Col>
-                <Col>
-                  <Button
-                    onClick={handleGroupItems}
-                    loading={loading}
-                    disabled={selectedRowKeys.length < 2}
-                  >
-                    Group
-                  </Button>
-                  <Button
-                    type="primary"
-                    onClick={() => getProducts(true)}
-                    className="ml-1 mr-05"
-                  >
-                    Search
-                    <SearchOutlined style={{ color: 'white' }} />
-                  </Button>
+                <Col flex="none">
+                  <Row justify={activeKey === '1' ? 'end' : undefined}>
+                    <Col>
+                      <Button
+                        type="primary"
+                        onClick={() => getProducts(true)}
+                        className="mr-1"
+                        style={{
+                          position: 'relative',
+                          top: activeKey !== '1' && isMobile ? '1rem' : 0,
+                          width: '100%',
+                        }}
+                      >
+                        Search
+                        <SearchOutlined style={{ color: 'white' }} />
+                      </Button>
+                    </Col>
+                  </Row>
                 </Col>
               </Row>
             </Col>
           </Row>
+          <ProductAPITestModal
+            selectedRecord={productAPITest}
+            setSelectedRecord={setProductAPITest}
+          />
+          <div className="custom-table">
+            <InfiniteScroll
+              height="35rem"
+              dataLength={products.length}
+              next={getProducts}
+              hasMore={!eof}
+              loader={
+                page !== 0 &&
+                loading && (
+                  <div className="scroll-message">
+                    <Spin />
+                  </div>
+                )
+              }
+              endMessage={
+                loaded.current && (
+                  <div className="scroll-message">
+                    <b>End of results.</b>
+                  </div>
+                )
+              }
+            >
+              <Table
+                scroll={{ x: true }}
+                rowClassName={(_, index) =>
+                  `scrollable-row-${index} ${
+                    index === lastViewedIndex ? 'selected-row' : ''
+                  }`
+                }
+                rowKey="id"
+                columns={columns}
+                dataSource={products}
+                loading={loading}
+                pagination={false}
+              />
+            </InfiniteScroll>
+          </div>
         </>
       )}
-      {buildView()}
+      {details && (
+        <ProductDetail
+          brands={brands}
+          productBrands={productBrands}
+          allCategories={allCategories}
+          onSave={onSaveProduct}
+          onCancel={onCancelProduct}
+          product={currentProduct}
+          productBrand={currentProductBrand}
+          brand={currentMasterBrand}
+          loadingResources={loadingResources}
+          isLive
+        />
+      )}
     </div>
   );
 };

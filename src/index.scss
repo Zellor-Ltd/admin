@@ -20,7 +20,7 @@ a,
 
 .ant-layout-sider-children {
   height: calc(100vh - 56px) !important;
-  background: rgb(245, 203, 221) !important;
+  background: rgb(234, 121, 170) !important;
 }
 
 .ant-menu.ant-menu-dark {
@@ -322,6 +322,10 @@ a,
   overflow: hidden;
   display: inline-block;
   height: 32px;
+}
+
+.ant-layout {
+  background: rgb(245 203 221 / 26%);
 }
 
 .ant-layout-header {

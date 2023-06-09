@@ -378,6 +378,41 @@ export const fetchProducts = ({
     runId,
   });
 
+export const fetchBrandManagerProducts = ({
+  query,
+  unclassified,
+  page = 0,
+  limit = 30,
+  productBrandId,
+  date,
+  status,
+  superCategoryId,
+  categoryId,
+  subCategoryId,
+  subSubCategoryId,
+}: {
+  query?: string;
+  unclassified?: boolean;
+  productBrandId?: string;
+  date?: Date;
+  status?: string;
+  superCategoryId?: string;
+  categoryId?: string;
+  subCategoryId?: string;
+  subSubCategoryId?: string;
+} & Pagination) =>
+  instance.put(`Disco/Product/Bm/List/${page}/${limit}`, {
+    query,
+    unclassified,
+    productBrandId,
+    date,
+    status,
+    superCategoryId,
+    categoryId,
+    subCategoryId,
+    subSubCategoryId,
+  });
+
 export const fetchAllStagingProducts = () =>
   instance.put('Disco/Staging/Product/List/0/0');
 
