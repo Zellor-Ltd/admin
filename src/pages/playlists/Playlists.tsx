@@ -1064,7 +1064,9 @@ const Playlists: React.FC<RouteComponentProps> = () => {
       {selectedTab === 'custom' && details && (
         <>
           <PageHeader
-            title={currentList ? `Edit ${currentList.name}` : 'New Playlist'}
+            title={
+              currentList?.name ? `Edit ${currentList.name}` : 'New Playlist'
+            }
             className="mb-n05"
           />
           <CustomDetails
