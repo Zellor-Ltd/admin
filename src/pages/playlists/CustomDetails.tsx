@@ -1,4 +1,14 @@
-import { Button, Col, Form, Image, Input, Row, Tooltip, message } from 'antd';
+import {
+  Button,
+  Col,
+  Form,
+  Image,
+  Input,
+  Row,
+  Tooltip,
+  Typography,
+  message,
+} from 'antd';
 import { useRequest } from 'hooks/useRequest';
 import { useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
@@ -8,6 +18,7 @@ import { ColumnsType } from 'antd/lib/table';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import StudioModal from '../playlist-studio/StudioModal';
 import { Brand } from 'interfaces/Brand';
+import SimpleSelect from 'components/select/SimpleSelect';
 
 interface CustomDetailsProps {
   setCurrentList: (value: any[]) => void;
@@ -36,6 +47,7 @@ const CustomDetails: React.FC<CustomDetailsProps> = ({
   );
   const reordered = useRef<boolean>(false);
   const editing = useRef<boolean>(false);
+  const [brandId, setBrandId] = useState<string>(currentList?.brandId);
 
   useEffect(() => {
     if (reordered.current) reordered.current = false;
@@ -58,6 +70,7 @@ const CustomDetails: React.FC<CustomDetailsProps> = ({
     const customListForm = form.getFieldsValue(true);
     customListForm.links = list?.links;
     customListForm.name = customListForm.name.name ?? customListForm.name;
+    customListForm.brandId = brandId;
     const response = await doFetch(() => saveCustomLinkList(customListForm));
     customListForm.id
       ? onSave(customListForm)
@@ -253,12 +266,30 @@ const CustomDetails: React.FC<CustomDetailsProps> = ({
             </Form.Item>
           </Col>
           <Col span={24}>
+            <Typography.Title level={5}>Master Brand</Typography.Title>
+            <SimpleSelect
+              showSearch
+              data={brands}
+              style={{ width: '100%' }}
+              optionMapping={{
+                key: 'id',
+                label: 'brandName',
+                value: 'id',
+              }}
+              placeholder="Select a Master Brand"
+              onChange={setBrandId}
+              selectedOption={brandId}
+              disabled={!brands.length}
+              allowClear
+            />
+          </Col>
+          <Col span={24}>
             <Row justify="end">
               <Col flex="100px">
                 <Button
                   key="1"
                   type="primary"
-                  className="ml-1"
+                  className="ml-1 mt-15"
                   disabled={disableButton}
                   onClick={() => handleEdit()}
                 >
