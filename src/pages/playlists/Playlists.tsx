@@ -235,6 +235,34 @@ const Playlists: React.FC<RouteComponentProps> = () => {
               whiteSpace: 'nowrap',
             }}
           >
+            <Tooltip title="Copy embed code">Copy Embed Code</Tooltip>
+          </div>
+        </div>
+      ),
+      dataIndex: 'id',
+      width: '10%',
+      render: id => (
+        <Tooltip title="Copy embed code">
+          <CopyValueToClipboard
+            value={`<vlink-carousel src="${id?.slice(
+              0,
+              -4
+            )}"></vlink-carousel>`}
+          />
+        </Tooltip>
+      ),
+      align: 'center',
+    },
+    {
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
             <Tooltip title="Link">Link</Tooltip>
           </div>
         </div>
@@ -387,6 +415,34 @@ const Playlists: React.FC<RouteComponentProps> = () => {
               whiteSpace: 'nowrap',
             }}
           >
+            <Tooltip title="Copy embed code">Copy Embed Code</Tooltip>
+          </div>
+        </div>
+      ),
+      dataIndex: 'id',
+      width: '10%',
+      render: id => (
+        <Tooltip title="Copy embed code">
+          <CopyValueToClipboard
+            value={`<vlink-carousel src="${id?.slice(
+              0,
+              -4
+            )}"></vlink-carousel>`}
+          />
+        </Tooltip>
+      ),
+      align: 'center',
+    },
+    {
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
             <Tooltip title="Link">Link</Tooltip>
           </div>
         </div>
@@ -527,6 +583,34 @@ const Playlists: React.FC<RouteComponentProps> = () => {
       dataIndex: 'id',
       width: '3%',
       render: id => <CopyValueToClipboard value={id} />,
+      align: 'center',
+    },
+    {
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Copy embed code">Copy Embed Code</Tooltip>
+          </div>
+        </div>
+      ),
+      dataIndex: 'id',
+      width: '10%',
+      render: id => (
+        <Tooltip title="Copy embed code">
+          <CopyValueToClipboard
+            value={`<vlink-carousel src="${id?.slice(
+              0,
+              -4
+            )}"></vlink-carousel>`}
+          />
+        </Tooltip>
+      ),
       align: 'center',
     },
     {
@@ -710,6 +794,34 @@ const Playlists: React.FC<RouteComponentProps> = () => {
               whiteSpace: 'nowrap',
             }}
           >
+            <Tooltip title="Copy embed code">Copy Embed Code</Tooltip>
+          </div>
+        </div>
+      ),
+      dataIndex: 'id',
+      width: '10%',
+      render: id => (
+        <Tooltip title="Copy embed code">
+          <CopyValueToClipboard
+            value={`<vlink-carousel src="${id?.slice(
+              0,
+              -4
+            )}"></vlink-carousel>`}
+          />
+        </Tooltip>
+      ),
+      align: 'center',
+    },
+    {
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
             <Tooltip title="Link">Link</Tooltip>
           </div>
         </div>
@@ -851,6 +963,34 @@ const Playlists: React.FC<RouteComponentProps> = () => {
       dataIndex: 'id',
       width: '3%',
       render: id => <CopyValueToClipboard value={id} />,
+      align: 'center',
+    },
+    {
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Copy embed code">Copy Embed Code</Tooltip>
+          </div>
+        </div>
+      ),
+      dataIndex: 'id',
+      width: '10%',
+      render: id => (
+        <Tooltip title="Copy embed code">
+          <CopyValueToClipboard
+            value={`<vlink-carousel src="${id?.slice(
+              0,
+              -4
+            )}"></vlink-carousel>`}
+          />
+        </Tooltip>
+      ),
       align: 'center',
     },
     {
