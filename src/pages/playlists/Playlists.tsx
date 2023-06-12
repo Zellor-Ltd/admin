@@ -16,6 +16,7 @@ import { EditOutlined, SearchOutlined } from '@ant-design/icons';
 import { ColumnsType } from 'antd/lib/table';
 import { useRequest } from 'hooks/useRequest';
 import {
+  fetchBrands,
   fetchCustomLinkLists,
   fetchLinkBrand,
   fetchLinkCreator,
@@ -39,6 +40,7 @@ const Playlists: React.FC<RouteComponentProps> = () => {
   const [details, setDetails] = useState<boolean>(false);
   const history = useHistory();
   const [brands, setBrands] = useState<any[]>([]);
+  const [allBrands, setAllBrands] = useState<any[]>([]);
   const [currentList, setCurrentList] = useState<any>();
   const [creators, setCreators] = useState<any[]>([]);
   const [products, setProducts] = useState<any[]>([]);
@@ -52,6 +54,14 @@ const Playlists: React.FC<RouteComponentProps> = () => {
     });
   });
 
+  const getAllBrands = useMemo(() => {
+    const fetchData = async () => {
+      const response = await doFetch(() => fetchBrands());
+      setAllBrands(response.results);
+    };
+    return fetchData;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const getBrandData = useMemo(() => {
     const fetchData = async (query: string) => {
       const response = await doFetch(() => fetchLinkBrand({ term: query }));
@@ -104,6 +114,7 @@ const Playlists: React.FC<RouteComponentProps> = () => {
   };
 
   const handleEditRecord = (list?: any) => {
+    if (selectedTab === 'custom' && !brands.length) getAllBrands();
     getCustomData('');
     setCurrentList(list);
     setDetails(true);
@@ -181,7 +192,7 @@ const Playlists: React.FC<RouteComponentProps> = () => {
         getCreatorData(query);
         break;
       case 'custom':
-        getBrandData('');
+        getAllBrands();
         getCustomData(query);
         break;
     }
@@ -1073,7 +1084,7 @@ const Playlists: React.FC<RouteComponentProps> = () => {
             setCurrentList={setCurrentList}
             currentList={currentList}
             setDetails={setDetails}
-            brands={brands}
+            brands={allBrands}
             onSave={handleSaveCustomList}
           />
         </>
