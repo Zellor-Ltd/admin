@@ -1248,8 +1248,8 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                     fileList={_product?.tagImage}
                     formProp="tagImage"
                     form={form}
-                    onFitTo={onFitTo}
-                    onRollback={onRollback}
+                    onFitTo={isLive ? undefined : onFitTo}
+                    onRollback={isLive ? undefined : onRollback}
                     disabled={loadingResources || isLive}
                     onImageChange={(
                       image: Image,
@@ -1266,8 +1266,8 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                     fileList={_product?.thumbnailUrl}
                     formProp="thumbnailUrl"
                     form={form}
-                    onFitTo={onFitTo}
-                    onRollback={onRollback}
+                    onFitTo={isLive ? undefined : onFitTo}
+                    onRollback={isLive ? undefined : onRollback}
                     disabled={loadingResources || isLive}
                     onImageChange={(
                       image: Image,
@@ -1286,17 +1286,19 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                   >
                     <Upload.ImageUpload
                       type="image"
-                      maxCount={20}
+                      maxCount={isLive ? _product?.image?.length : 20}
                       fileList={_product?.image}
                       formProp="image"
                       form={form}
-                      onAssignToTag={onAssignToTag}
-                      onAssignToThumbnail={onAssignToThumbnail}
-                      croppable
+                      onAssignToTag={isLive ? undefined : onAssignToTag}
+                      onAssignToThumbnail={
+                        isLive ? undefined : onAssignToThumbnail
+                      }
+                      croppable={!isLive}
                       classNames="big-image-height scroll-x"
-                      onOrder={onOrder}
-                      onFitTo={onFitTo}
-                      onRollback={onRollback}
+                      onOrder={isLive ? undefined : onOrder}
+                      onFitTo={isLive ? undefined : onFitTo}
+                      onRollback={isLive ? undefined : onRollback}
                       disabled={loadingResources || isLive}
                       onImageChange={(
                         image: Image,
