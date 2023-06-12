@@ -1006,7 +1006,7 @@ const Playlists: React.FC<RouteComponentProps> = () => {
                 dataSource={brands}
                 loading={loading}
                 pagination={false}
-                scroll={{ y: 240, x: true }}
+                scroll={{ y: '100%', x: true }}
                 size="small"
               />
             </Tabs.TabPane>
@@ -1018,7 +1018,7 @@ const Playlists: React.FC<RouteComponentProps> = () => {
                 dataSource={productBrands}
                 loading={loading}
                 pagination={false}
-                scroll={{ y: 240, x: true }}
+                scroll={{ y: '100%', x: true }}
                 size="small"
               />
             </Tabs.TabPane>
@@ -1030,7 +1030,7 @@ const Playlists: React.FC<RouteComponentProps> = () => {
                 dataSource={products}
                 loading={loading}
                 pagination={false}
-                scroll={{ y: 240, x: true }}
+                scroll={{ y: '100%', x: true }}
                 size="small"
               />
             </Tabs.TabPane>
@@ -1042,7 +1042,7 @@ const Playlists: React.FC<RouteComponentProps> = () => {
                 dataSource={creators}
                 loading={loading}
                 pagination={false}
-                scroll={{ y: 240, x: true }}
+                scroll={{ y: '100%', x: true }}
                 size="small"
               />
             </Tabs.TabPane>
@@ -1054,7 +1054,7 @@ const Playlists: React.FC<RouteComponentProps> = () => {
                 dataSource={custom}
                 loading={loading}
                 pagination={false}
-                scroll={{ y: 240, x: true }}
+                scroll={{ y: '100%', x: true }}
                 size="small"
               />
             </Tabs.TabPane>
