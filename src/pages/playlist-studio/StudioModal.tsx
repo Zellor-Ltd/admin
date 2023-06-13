@@ -13,7 +13,7 @@ import {
   Tooltip,
   message,
 } from 'antd';
-import { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { fetchCustomLinkList, fetchTags } from 'services/DiscoClubService';
 import { DebounceSelect } from 'components/select/DebounceSelect';
 import { Upload } from 'components';
@@ -69,6 +69,33 @@ const StudioModal: React.FC<StudioModalProps> = ({
   const [selectedBrandId, setSelectedBrandId] = useState<string | undefined>();
   const [selectedLink, setSelectedLink] = useState<any>(link);
   const [links, setLinks] = useState<any>(currentList?.links);
+  const video = selectedLink?.feed?.package[0]?.videoUrl;
+
+  class VideoComponent extends React.PureComponent<any> {
+    componentDidMount() {
+      if (activeTabKey === 'Details' && video) checkVideo();
+    }
+
+    render() {
+      return (
+        <Upload.VideoUpload
+          maxCount={1}
+          fileList={
+            video
+              ? {
+                  url: video,
+                  oldUrl: video,
+                  originUrl: video,
+                }
+              : undefined
+          }
+          formProp="video"
+          form={customForm}
+          onImageChange={checkVideo}
+        />
+      );
+    }
+  }
 
   useEffect(() => {
     if (selectedLink) {
@@ -77,6 +104,18 @@ const StudioModal: React.FC<StudioModalProps> = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedLink]);
+
+  const checkVideo = async () => {
+    const videoElement = document.getElementsByClassName(
+      'ant-upload-list-item-info'
+    )[0];
+    if (videoElement) {
+      videoElement.classList.add('d-flex', 'justify-center', 'align-center');
+      videoElement.innerHTML = `<video style="max-width: 100%; max-height: 100%;" src=${
+        customForm.getFieldValue('video').url
+      }></video>`;
+    }
+  };
 
   const handleTabChange = (activeKey: string) => {
     setActiveTabKey(activeKey);
@@ -372,27 +411,17 @@ const StudioModal: React.FC<StudioModalProps> = ({
               {!editing.current && (
                 <>
                   <Col span={12}>
-                    <Form.Item label="Video" name="video" required>
-                      <Upload.VideoUpload
-                        maxCount={1}
-                        fileList={
-                          selectedLink?.feed?.package[0]?.videoUrl
-                            ? {
-                                url: selectedLink?.feed?.package[0]?.videoUrl,
-                                oldUrl:
-                                  selectedLink?.feed?.package[0]?.videoUrl,
-                                originUrl:
-                                  selectedLink?.feed?.package[0]?.videoUrl,
-                              }
-                            : undefined
-                        }
-                        formProp="video"
-                        form={customForm}
-                      />
+                    <Form.Item label="Video" name="video" required shouldUpdate>
+                      <VideoComponent />
                     </Form.Item>
                   </Col>
                   <Col span={12}>
-                    <Form.Item label="Thumbnail URL" name="thumbnail" required>
+                    <Form.Item
+                      label="Thumbnail URL"
+                      name="thumbnail"
+                      required
+                      shouldUpdate
+                    >
                       <Upload.ImageUpload
                         maxCount={1}
                         type="thumbnail"
