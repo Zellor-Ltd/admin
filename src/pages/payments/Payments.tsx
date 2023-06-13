@@ -236,7 +236,7 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
         else return 0;
       },
       render: (_, record: Commission) => (
-        <CopyValueToClipboard value={record.id} />
+        <CopyValueToClipboard tooltipText="Copy ID" value={record.id} />
       ),
     },
     {
@@ -263,7 +263,10 @@ const Payments: React.FC<RouteComponentProps> = ({ history, location }) => {
         else return 0;
       },
       render: (_, record: Commission) => (
-        <CopyValueToClipboard value={record.item?.id} />
+        <CopyValueToClipboard
+          tooltipText="Copy Product ID"
+          value={record.item?.id}
+        />
       ),
     },
     {

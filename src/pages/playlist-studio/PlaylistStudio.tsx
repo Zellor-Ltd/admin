@@ -128,6 +128,7 @@ const PlaylistStudio: React.FC<RouteComponentProps> = () => {
               <div style={{ transform: 'scale(0.8)', display: 'inline-block' }}>
                 <Tooltip title="Click to copy">
                   <CopyValueToClipboard
+                    tooltipText="Copy Link"
                     value={'https://beautybuzz.io/' + value.slice(0, -4)}
                   />
                 </Tooltip>

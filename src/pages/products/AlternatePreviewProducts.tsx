@@ -250,7 +250,7 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
       width: '5%',
       align: 'center',
       shouldCellUpdate: () => false,
-      render: id => <CopyValueToClipboard value={id} />,
+      render: id => <CopyValueToClipboard tooltipText="Copy ID" value={id} />,
     },
     {
       title: (
@@ -626,7 +626,11 @@ const AlternatePreviewProducts: React.FC<AlternatePreviewProductsProps> = ({
   };
 
   const handleUploadToShopify = async (productId: string) => {
-    const response: any = await doRequest(() => exportToShopifyProduct(productId),'',true);
+    const response: any = await doRequest(
+      () => exportToShopifyProduct(productId),
+      '',
+      true
+    );
     if (response.success) message.success(response.message);
     else message.error('Error: ' + response.error);
   };

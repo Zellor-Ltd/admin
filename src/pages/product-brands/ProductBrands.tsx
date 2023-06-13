@@ -43,7 +43,7 @@ import { SimpleSwitch } from 'components/SimpleSwitch';
 
 const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [loadingRow, setLoadingRow] = useState<string>("");
+  const [loadingRow, setLoadingRow] = useState<string>('');
   const { doFetch, doRequest } = useRequest({ setLoading });
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [details, setDetails] = useState<boolean>(false);
@@ -110,7 +110,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
 
   const rebuildVlink = async (productBrand: ProductBrand, index: number) => {
     try {
-      setLoadingRow(productBrand.brandLink ?? "");
+      setLoadingRow(productBrand.brandLink ?? '');
       const { result, success, message }: any = await rebuildLink(
         productBrand.brandLink!
       );
@@ -120,10 +120,10 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
         setData([...data]);
         msg.success(message);
       }
-    } catch {}
-    finally {
-      setLoadingRow("");
-    } 
+    } catch {
+    } finally {
+      setLoadingRow('');
+    }
   };
 
   const updateVIndex = async (record: ProductBrand, input?: number) => {
@@ -179,13 +179,13 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
               whiteSpace: 'nowrap',
             }}
           >
-            <Tooltip title="_id">_id</Tooltip>
+            <Tooltip title="ID">ID</Tooltip>
           </div>
         </div>
       ),
       dataIndex: 'id',
       width: '6%',
-      render: id => <CopyValueToClipboard value={id} />,
+      render: id => <CopyValueToClipboard tooltipText="Copy ID" value={id} />,
       align: 'center',
     },
     {
@@ -349,7 +349,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
             type="link"
             block
             onClick={() => rebuildVlink(record, index)}
-            disabled={!record.brandLink || loadingRow !== ""}
+            disabled={!record.brandLink || loadingRow !== ''}
             loading={loadingRow === record.brandLink}
           >
             {loadingRow !== record.brandLink && <RedoOutlined />}
@@ -544,14 +544,13 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
   ];
 
   const search = rows => {
-
     if (filter) {
       return rows.filter(
         row => row.brandName?.toUpperCase().indexOf(filter?.toUpperCase()) > -1
       );
     }
 
-    return rows
+    return rows;
   };
 
   const editProductBrand = (index: number, productBrand?: ProductBrand) => {

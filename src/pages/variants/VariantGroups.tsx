@@ -305,7 +305,9 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
       ),
       dataIndex: 'id',
       width: '10%',
-      render: id => <CopyValueToClipboard value={id} />,
+      render: id => (
+        <CopyValueToClipboard tooltipText="Copy VariantID" value={id} />
+      ),
       align: 'center',
     },
     {
