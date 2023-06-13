@@ -337,7 +337,6 @@ const StudioModal: React.FC<StudioModalProps> = ({
                   shouldUpdate
                 >
                   <Select
-                    disabled={!videoLabel.length}
                     placeholder="Select a Label"
                     allowClear
                     showSearch
