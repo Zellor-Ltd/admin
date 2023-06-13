@@ -216,13 +216,15 @@ const Playlists: React.FC<RouteComponentProps> = () => {
               whiteSpace: 'nowrap',
             }}
           >
-            <Tooltip title="id">id</Tooltip>
+            <Tooltip title="ID">ID</Tooltip>
           </div>
         </div>
       ),
       dataIndex: 'id',
       width: '3%',
-      render: id => <CopyValueToClipboard value={id} />,
+      render: id => (
+        <CopyValueToClipboard tooltipText="Copy Playlist ID" value={id} />
+      ),
       align: 'center',
     },
     {
@@ -242,14 +244,10 @@ const Playlists: React.FC<RouteComponentProps> = () => {
       dataIndex: 'id',
       width: '10%',
       render: id => (
-        <Tooltip title="Copy embed code">
-          <CopyValueToClipboard
-            value={`<vlink-carousel src="${id?.slice(
-              0,
-              -4
-            )}"></vlink-carousel>`}
-          />
-        </Tooltip>
+        <CopyValueToClipboard
+          tooltipText="Copy Embed Code"
+          value={`<vlink-carousel src="${id?.slice(0, -4)}"></vlink-carousel>`}
+        />
       ),
       align: 'center',
     },
@@ -396,13 +394,15 @@ const Playlists: React.FC<RouteComponentProps> = () => {
               whiteSpace: 'nowrap',
             }}
           >
-            <Tooltip title="id">id</Tooltip>
+            <Tooltip title="ID">ID</Tooltip>
           </div>
         </div>
       ),
       dataIndex: 'id',
       width: '3%',
-      render: id => <CopyValueToClipboard value={id} />,
+      render: id => (
+        <CopyValueToClipboard tooltipText="Copy Playlist ID" value={id} />
+      ),
       align: 'center',
     },
     {
@@ -422,14 +422,10 @@ const Playlists: React.FC<RouteComponentProps> = () => {
       dataIndex: 'id',
       width: '10%',
       render: id => (
-        <Tooltip title="Copy embed code">
-          <CopyValueToClipboard
-            value={`<vlink-carousel src="${id?.slice(
-              0,
-              -4
-            )}"></vlink-carousel>`}
-          />
-        </Tooltip>
+        <CopyValueToClipboard
+          tooltipText="Copy Embed Code"
+          value={`<vlink-carousel src="${id?.slice(0, -4)}"></vlink-carousel>`}
+        />
       ),
       align: 'center',
     },
@@ -576,13 +572,15 @@ const Playlists: React.FC<RouteComponentProps> = () => {
               whiteSpace: 'nowrap',
             }}
           >
-            <Tooltip title="id">id</Tooltip>
+            <Tooltip title="ID">ID</Tooltip>
           </div>
         </div>
       ),
       dataIndex: 'id',
       width: '3%',
-      render: id => <CopyValueToClipboard value={id} />,
+      render: id => (
+        <CopyValueToClipboard tooltipText="Copy Playlist ID" value={id} />
+      ),
       align: 'center',
     },
     {
@@ -604,6 +602,7 @@ const Playlists: React.FC<RouteComponentProps> = () => {
       render: id => (
         <Tooltip title="Copy embed code">
           <CopyValueToClipboard
+            tooltipText="Copy Embed Code"
             value={`<vlink-carousel src="${id?.slice(
               0,
               -4
@@ -775,13 +774,15 @@ const Playlists: React.FC<RouteComponentProps> = () => {
               whiteSpace: 'nowrap',
             }}
           >
-            <Tooltip title="id">id</Tooltip>
+            <Tooltip title="ID">ID</Tooltip>
           </div>
         </div>
       ),
       dataIndex: 'id',
       width: '3%',
-      render: id => <CopyValueToClipboard value={id} />,
+      render: id => (
+        <CopyValueToClipboard tooltipText="Copy Playlist ID" value={id} />
+      ),
       align: 'center',
     },
     {
@@ -801,14 +802,10 @@ const Playlists: React.FC<RouteComponentProps> = () => {
       dataIndex: 'id',
       width: '10%',
       render: id => (
-        <Tooltip title="Copy embed code">
-          <CopyValueToClipboard
-            value={`<vlink-carousel src="${id?.slice(
-              0,
-              -4
-            )}"></vlink-carousel>`}
-          />
-        </Tooltip>
+        <CopyValueToClipboard
+          tooltipText="Copy Embed Code"
+          value={`<vlink-carousel src="${id?.slice(0, -4)}"></vlink-carousel>`}
+        />
       ),
       align: 'center',
     },
@@ -956,13 +953,15 @@ const Playlists: React.FC<RouteComponentProps> = () => {
               whiteSpace: 'nowrap',
             }}
           >
-            <Tooltip title="id">id</Tooltip>
+            <Tooltip title="ID">ID</Tooltip>
           </div>
         </div>
       ),
       dataIndex: 'id',
       width: '3%',
-      render: id => <CopyValueToClipboard value={id} />,
+      render: id => (
+        <CopyValueToClipboard tooltipText="Copy Playlist ID" value={id} />
+      ),
       align: 'center',
     },
     {
@@ -982,14 +981,10 @@ const Playlists: React.FC<RouteComponentProps> = () => {
       dataIndex: 'id',
       width: '10%',
       render: id => (
-        <Tooltip title="Copy embed code">
-          <CopyValueToClipboard
-            value={`<vlink-carousel src="${id?.slice(
-              0,
-              -4
-            )}"></vlink-carousel>`}
-          />
-        </Tooltip>
+        <CopyValueToClipboard
+          tooltipText="Copy Embed Code"
+          value={`<vlink-carousel src="${id?.slice(0, -4)}"></vlink-carousel>`}
+        />
       ),
       align: 'center',
     },

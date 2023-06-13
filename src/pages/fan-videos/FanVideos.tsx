@@ -199,7 +199,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
       ),
       dataIndex: 'id',
       width: '3%',
-      render: id => <CopyValueToClipboard value={id} />,
+      render: id => <CopyValueToClipboard tooltipText="Copy ID" value={id} />,
       align: 'center',
     },
     {
@@ -548,11 +548,9 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
       const response: any = await fetchProductBrands();
       setProductBrands(response.results);
     }
-    await Promise.all([
-      getCategories(),
-      getBrands(),
-      getProductBrands(),
-    ]).then(() => setLoadingResources(false));
+    await Promise.all([getCategories(), getBrands(), getProductBrands()]).then(
+      () => setLoadingResources(false)
+    );
   };
 
   const search = rows => {
@@ -564,7 +562,8 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
     }
     if (creatorFilter) {
       updatedRows = updatedRows.filter(
-        row => row?.creator?.firstName?.indexOf(creatorFilter?.firstName ?? '') > -1
+        row =>
+          row?.creator?.firstName?.indexOf(creatorFilter?.firstName ?? '') > -1
       );
     }
     if (categoryFilter) {

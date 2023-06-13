@@ -137,13 +137,13 @@ const Tags: React.FC<RouteComponentProps> = ({ location }) => {
               whiteSpace: 'nowrap',
             }}
           >
-            <Tooltip title="_id">_id</Tooltip>
+            <Tooltip title="ID">ID</Tooltip>
           </div>
         </div>
       ),
       dataIndex: 'id',
       width: '6%',
-      render: id => <CopyValueToClipboard value={id} />,
+      render: id => <CopyValueToClipboard tooltipText="Copy ID" value={id} />,
       align: 'center',
     },
     {

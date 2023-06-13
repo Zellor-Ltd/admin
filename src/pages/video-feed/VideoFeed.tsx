@@ -81,7 +81,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const [activeKey, setActiveKey] = useState<string>('1');
   const [selectedVideoFeed, setSelectedVideoFeed] = useState<FeedItem>();
   const [loading, setLoading] = useState(false);
-  const [loadingRow, setLoadingRow] = useState<string>("");
+  const [loadingRow, setLoadingRow] = useState<string>('');
   const loaded = useRef<boolean>(false);
   const [loadingResources, setLoadingResources] = useState<boolean>(true);
   const [isCloning, setIsCloning] = useState<boolean>(false);
@@ -254,29 +254,27 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     try {
       setLoadingRow(value);
       lastFocusedIndex.current = index;
-        const { result, success, message }: any = await propagateVLink(value);
+      const { result, success, message }: any = await propagateVLink(value);
       if (success) {
         buffer[index] = { ...record, shareLink: result, rebuilt: true };
         setData([...buffer]);
         msg.success(message);
       }
-    } catch {} 
-    finally {
-      setLoadingRow("");
-    } 
+    } catch {
+    } finally {
+      setLoadingRow('');
+    }
   };
 
   const getvLinkId = (record: any): string => {
-
     let vlinkId = record.package
       ?.find(pack => pack.shareLink)
-      ?.shareLink
-      ?.split("/")
+      ?.shareLink?.split('/')
       ?.slice(-1)
-      ?.toString()
+      ?.toString();
 
-    return vlinkId
-  }
+    return vlinkId;
+  };
 
   const addToList = async (value: string, feedItem: FeedItem) => {
     try {
@@ -312,13 +310,13 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
               whiteSpace: 'nowrap',
             }}
           >
-            <Tooltip title="_id">_id</Tooltip>
+            <Tooltip title="ID">ID</Tooltip>
           </div>
         </div>
       ),
       dataIndex: 'id',
       width: '6%',
-      render: id => <CopyValueToClipboard value={id} />,
+      render: id => <CopyValueToClipboard tooltipText="Copy ID" value={id} />,
       align: 'center',
     },
     {
@@ -542,7 +540,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       ),
       width: '10%',
       render: (_: string, record: any) => (
-        <div style={{wordWrap: 'break-word', wordBreak: 'break-word' }}>
+        <div style={{ wordWrap: 'break-word', wordBreak: 'break-word' }}>
           <Link
             onClick={() =>
               window
@@ -550,7 +548,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                   record && record.rebuilt
                     ? record.shareLink ?? ''
                     : record.package?.find(pack => pack.shareLink)?.shareLink ??
-                    '',
+                        '',
                   '_blank'
                 )
                 ?.focus()
@@ -563,9 +561,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
                 : record.package?.find(pack => pack.shareLink)?.shareLink ?? ''
               : ''}
           </Link>
-
         </div>
-
       ),
     },
     {
@@ -647,14 +643,11 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
             type="link"
             block
             onFocus={() => (bufferIndex.current = buffer.indexOf(record))}
-            onClick={() =>
-              propagatevlink(
-                getvLinkId(record),
-                record,
-                index
-              )
+            onClick={() => propagatevlink(getvLinkId(record), record, index)}
+            disabled={
+              !record?.package?.find(pack => pack.shareLink) ||
+              loadingRow !== ''
             }
-            disabled={!record?.package?.find(pack => pack.shareLink) || loadingRow !== ""}
             loading={loadingRow === getvLinkId(record)}
           >
             {loadingRow !== getvLinkId(record) && <RedoOutlined />}
@@ -778,7 +771,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
         dateSort: dateSortFilter,
         creatorId: creatorFilter?.id,
         category: categoryFilter,
-        startIndex: indexFilter
+        startIndex: indexFilter,
       });
       setPage(pageToUse + 1);
       if (results.length < 30) setEof(true);
@@ -801,11 +794,9 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       const response: any = await fetchProductBrands();
       setProductBrands(response.results);
     }
-    await Promise.all([
-      getCategories(),
-      getBrands(),
-      getProductBrands(),
-    ]).then(() => setLoadingResources(false));
+    await Promise.all([getCategories(), getBrands(), getProductBrands()]).then(
+      () => setLoadingResources(false)
+    );
   };
 
   const deleteItem = async (_id: string, index: number) => {
@@ -833,7 +824,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     lastFocusedIndex.current = index;
 
     if (cloning) {
-      
       if (videoFeed?.package) {
         const pkg = videoFeed?.package?.map((item: any) => {
           return { ...item, shareLink: undefined };
@@ -843,18 +833,18 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
           id: undefined,
           shareLink: undefined,
           package: pkg,
-          title: `Cloned - ${videoFeed?.title}`
+          title: `Cloned - ${videoFeed?.title}`,
         });
       }
       if (!videoFeed?.package) {
         setSelectedVideoFeed({
           ...(videoFeed as any),
           id: undefined,
-          shareLink: undefined,   
-          title: `Cloned - ${videoFeed?.title}`      
+          shareLink: undefined,
+          title: `Cloned - ${videoFeed?.title}`,
         });
       }
-      setIsCloning(true)
+      setIsCloning(true);
     } else setSelectedVideoFeed(videoFeed);
     setDetails(true);
     history.push(window.location.pathname);
@@ -1048,11 +1038,11 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
           <Col lg={5} xs={24}>
             <Typography.Title level={5}>Creator</Typography.Title>
             <CreatorsMultipleFetchDebounceSelect
-                onChangeCreator={(_, creator) => setCreatorFilter(creator)}
-                input={creatorFilter?.firstName}
-                onClear={() => setCreatorFilter(null)}
-                disabled={loadingResources}
-              />
+              onChangeCreator={(_, creator) => setCreatorFilter(creator)}
+              input={creatorFilter?.firstName}
+              onClear={() => setCreatorFilter(null)}
+              disabled={loadingResources}
+            />
           </Col>
           <Col lg={5} xs={24}>
             <Typography.Title level={5}>Date Sort</Typography.Title>

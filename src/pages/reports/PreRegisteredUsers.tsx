@@ -50,13 +50,15 @@ const PreRegisteredUsers: React.FC<DashboardProps> = () => {
               whiteSpace: 'nowrap',
             }}
           >
-            <Tooltip title="_id">_id</Tooltip>
+            <Tooltip title="ID">ID</Tooltip>
           </div>
         </div>
       ),
       dataIndex: 'id',
       width: '5%',
-      render: (id: any) => <CopyValueToClipboard value={id} />,
+      render: (id: any) => (
+        <CopyValueToClipboard tooltipText="Copy ID" value={id} />
+      ),
       align: 'center',
     },
     {

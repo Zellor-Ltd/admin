@@ -148,7 +148,7 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
       ),
       dataIndex: 'id',
       width: '10%',
-      render: id => <CopyValueToClipboard value={id} />,
+      render: id => <CopyValueToClipboard tooltipText="Copy ID" value={id} />,
       align: 'center',
     },
     {
@@ -241,8 +241,7 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
       sorter: (a, b): any => {
         if (a.signUpDate && b.signUpDate)
           return (
-            moment(a.signUpDate as Date).unix() -
-            moment(b.signUpDate).unix()
+            moment(a.signUpDate as Date).unix() - moment(b.signUpDate).unix()
           );
         else if (a.signUpDate) return -1;
         else if (b.signUpDate) return 1;

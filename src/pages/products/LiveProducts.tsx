@@ -261,13 +261,13 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
               whiteSpace: 'nowrap',
             }}
           >
-            <Tooltip title="_id">_id</Tooltip>
+            <Tooltip title="ID">ID</Tooltip>
           </div>
         </div>
       ),
       dataIndex: 'id',
       width: '1%',
-      render: id => <CopyValueToClipboard value={id} />,
+      render: id => <CopyValueToClipboard tooltipText="Copy ID" value={id} />,
       align: 'center',
     },
     {
@@ -478,7 +478,9 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
       width: '4%',
       align: 'center',
       responsive: ['sm'],
-      render: importRunId => <CopyValueToClipboard value={importRunId} />,
+      render: importRunId => (
+        <CopyValueToClipboard tooltipText="Copy Run ID" value={importRunId} />
+      ),
     },
     {
       title: (

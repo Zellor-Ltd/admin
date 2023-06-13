@@ -563,7 +563,9 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
       ),
       dataIndex: 'link',
       width: '10%',
-      render: (_, record: any) => <CopyValueToClipboard value={record.link} />,
+      render: (_, record: any) => (
+        <CopyValueToClipboard tooltipText="Copy URL" value={record.link} />
+      ),
       align: 'center',
     },
   ];
