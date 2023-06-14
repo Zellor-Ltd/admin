@@ -148,6 +148,11 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
             uid: info.file.uid,
           },
         });
+        onImageChange?.(
+          info.file,
+          formProp as any,
+          info.file.status === 'removed'
+        );
       }
     }
   };
@@ -156,11 +161,6 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     setFileListLocal(info.fileList);
     if (maxCount === 1) {
       handleMaxOneImage(info);
-      onImageChange?.(
-        info.file,
-        formProp as any,
-        info.file.status === 'removed'
-      );
     } else {
       if (info.file.status === 'removed') {
         const image =

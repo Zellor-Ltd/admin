@@ -630,6 +630,18 @@ a,
   margin-top: -10px;
 }
 
+.d-flex {
+  display: flex;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.align-center {
+  align-items: center;
+}
+
 .of-clip {
   overflow: clip;
 }

@@ -11,6 +11,7 @@ interface VideoUploadProps {
   formProp: string | string[];
   maxCount?: number;
   accept?: string;
+  onImageChange?: any;
 }
 
 const VideoUpload: React.FC<VideoUploadProps> = props => {
@@ -19,6 +20,7 @@ const VideoUpload: React.FC<VideoUploadProps> = props => {
     // form,
     // formProp,
     accept = 'video/*',
+    onImageChange,
   } = props;
   // const [fileListLocal, setfileListLocal] = useState<any>([]);
 
@@ -66,7 +68,12 @@ const VideoUpload: React.FC<VideoUploadProps> = props => {
   // const action = `${process.env.REACT_APP_HOST_ENDPOINT}/Wi/Upload`;
 
   return (
-    <ImageUpload type="video" {...props} accept={accept} />
+    <ImageUpload
+      type="video"
+      {...props}
+      accept={accept}
+      onImageChange={onImageChange}
+    />
     // <Upload
     //   action={action}
     //   headers={{
