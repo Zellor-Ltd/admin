@@ -71,49 +71,36 @@ const StudioModal: React.FC<StudioModalProps> = ({
   const [links, setLinks] = useState<any>(currentList?.links);
   const video = selectedLink?.feed?.package[0]?.videoUrl;
 
-  class VideoComponent extends React.PureComponent<any> {
-    componentDidMount() {
-      if (activeTabKey === 'Details' && video) checkVideo();
-    }
-
-    render() {
-      return (
-        <Upload.VideoUpload
-          maxCount={1}
-          fileList={
-            video
-              ? {
-                  url: video,
-                  oldUrl: video,
-                  originUrl: video,
-                }
-              : undefined
-          }
-          formProp="video"
-          form={customForm}
-          onImageChange={checkVideo}
-        />
-      );
-    }
-  }
-
   useEffect(() => {
-    if (selectedLink) {
-      customForm.resetFields();
-      setActiveTabKey('Details');
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (selectedLink) setActiveTabKey('Details');
   }, [selectedLink]);
 
-  const checkVideo = async () => {
+  useEffect(() => {
+    if (activeTabKey === 'Details' && video) {
+      updateForm.then(() => updateVideoThumbnail(video));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTabKey]);
+
+  const updateForm = new Promise(function (resolve, reject) {
+    try {
+      resolve(customForm.resetFields());
+    } catch {
+      reject(
+        message.warning(
+          'Warning: something went wrong. Please try selecting again.'
+        )
+      );
+    }
+  });
+
+  const updateVideoThumbnail = async (src: string) => {
     const videoElement = document.getElementsByClassName(
       'ant-upload-list-item-info'
     )[0];
     if (videoElement) {
       videoElement.classList.add('d-flex', 'justify-center', 'align-center');
-      videoElement.innerHTML = `<video style="max-width: 100%; max-height: 100%;" src=${
-        customForm.getFieldValue('video').url
-      }></video>`;
+      videoElement.innerHTML = `<video style="max-width: 100%; max-height: 100%;" src=${src}></video>`;
     }
   };
 
@@ -411,7 +398,25 @@ const StudioModal: React.FC<StudioModalProps> = ({
                 <>
                   <Col span={12}>
                     <Form.Item label="Video" name="video" required shouldUpdate>
-                      <VideoComponent />
+                      <Upload.VideoUpload
+                        maxCount={1}
+                        fileList={
+                          video
+                            ? {
+                                url: video,
+                                oldUrl: video,
+                                originUrl: video,
+                              }
+                            : undefined
+                        }
+                        formProp="video"
+                        form={customForm}
+                        onImageChange={() =>
+                          updateVideoThumbnail(
+                            customForm.getFieldValue('video').url
+                          )
+                        }
+                      />
                     </Form.Item>
                   </Col>
                   <Col span={12}>
