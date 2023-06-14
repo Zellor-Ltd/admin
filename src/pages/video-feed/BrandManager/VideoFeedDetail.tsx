@@ -40,7 +40,13 @@ import React, {
   useState,
 } from 'react';
 import { useSelector } from 'react-redux';
-import { deleteLink, fetchCreatorById, fetchLinks, saveLink, saveVideoFeed } from 'services/DiscoClubService';
+import {
+  deleteLink,
+  fetchCreatorById,
+  fetchLinks,
+  saveLink,
+  saveVideoFeed,
+} from 'services/DiscoClubService';
 import BrandForm from '../BrandForm';
 import TagForm from '../TagForm';
 import '../VideoFeed.scss';
@@ -145,8 +151,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
   );
 
   useEffect(() => {
-    if (brands.length && productBrands.length)
-      setLoaded(true);
+    if (brands.length && productBrands.length) setLoaded(true);
   }, [brands, productBrands]);
 
   useEffect(() => {
@@ -161,25 +166,19 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
     setLinks(results);
   };
 
-  const fetchCreator = async ({
-    creatorId
-  }: {
-    creatorId: String
-  }) => {
-    const { result } = await doFetch(() => fetchCreatorById({creatorId}));
+  const fetchCreator = async ({ creatorId }: { creatorId: String }) => {
+    const { result } = await doFetch(() => fetchCreatorById({ creatorId }));
     const creator = result.creator;
-    creator.id = creatorId
-    creator.firstName = creator.name
+    creator.id = creatorId;
+    creator.firstName = creator.name;
     setCurrentCreator(creator);
   };
 
   useEffect(() => {
     if (selectedOption === 'creator') {
-
       if (feedItem?.selectedId) {
-        fetchCreator({creatorId: feedItem?.selectedId})
+        fetchCreator({ creatorId: feedItem?.selectedId });
       }
-      
     } else {
       const selectedProductBrand = productBrands.find(
         item => item.id === feedItem?.selectedId
@@ -569,8 +568,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
   };
 
   const handleDeleteLink = async (_id: string) => {
-    
-    const { success }: any = await deleteLink(_id);    
+    const { success }: any = await deleteLink(_id);
     if (success) {
       setLinks(links.filter(item => item.id !== _id));
     }
@@ -654,6 +652,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
       width: '10%',
       render: link => (
         <CopyValueToClipboard
+          tooltipText="Copy Link"
           value={'https://link.discoclub.com/' + link?.substring(0, 9)}
         />
       ),
@@ -676,7 +675,10 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
       dataIndex: 'id',
       width: '15%',
       render: id => (
-        <a href={'https://beautybuzz.io/' + id.replace('_STR', '')} target="blank">
+        <a
+          href={'https://beautybuzz.io/' + id.replace('_STR', '')}
+          target="blank"
+        >
           {id.replace('_STR', '')}
         </a>
       ),
@@ -717,7 +719,9 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
       dataIndex: 'videoFeedId',
       width: '15%',
       align: 'center',
-      render: videoFeedId => <CopyValueToClipboard value={videoFeedId} />,
+      render: videoFeedId => (
+        <CopyValueToClipboard tooltipText="Copy Feed ID" value={videoFeedId} />
+      ),
     },
     {
       title: (
@@ -1301,7 +1305,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                       input={currentCreator?.firstName}
                       onClear={() => onChangeCreator(null)}
                       disabled={!loaded}
-                    />                    
+                    />
                   </Form.Item>
                   {currentCreator && (
                     <Image
@@ -1318,12 +1322,12 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
               <div style={{ display: 'none' }}>
                 <Col lg={4} xs={24}>
                   <Typography.Title level={5}>Creator</Typography.Title>
-                    <CreatorsMultipleFetchDebounceSelect
-                      onChangeCreator={(_, creator) => onSelectCreator(creator)}
-                      input={videoCreator?.firstName}
-                      onClear={() => onSelectCreator(null)}
-                      disabled={!loaded}
-                    />
+                  <CreatorsMultipleFetchDebounceSelect
+                    onChangeCreator={(_, creator) => onSelectCreator(creator)}
+                    input={videoCreator?.firstName}
+                    onClear={() => onSelectCreator(null)}
+                    disabled={!loaded}
+                  />
                 </Col>
                 <Col lg={4} xs={24}>
                   <Typography.Title level={5}>Social platform</Typography.Title>

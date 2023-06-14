@@ -332,8 +332,12 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
   };
 
   const handleUploadToShopify = async (productId: string) => {
-    const response: any = await doRequest(() => exportToShopifyProduct(productId),'',true);
-    if (response.success) message.success(response.message);    
+    const response: any = await doRequest(
+      () => exportToShopifyProduct(productId),
+      '',
+      true
+    );
+    if (response.success) message.success(response.message);
     else message.error('Error: ' + response.error);
     await getProducts(true);
   };
@@ -353,13 +357,13 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
               whiteSpace: 'nowrap',
             }}
           >
-            <Tooltip title="_id">_id</Tooltip>
+            <Tooltip title="ID">ID</Tooltip>
           </div>
         </div>
       ),
       dataIndex: 'id',
       width: '6%',
-      render: id => <CopyValueToClipboard value={id} />,
+      render: id => <CopyValueToClipboard tooltipText="Copy ID" value={id} />,
       align: 'center',
     },
     {

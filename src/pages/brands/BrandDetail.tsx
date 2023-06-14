@@ -212,7 +212,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
       dataIndex: 'id',
       width: '6%',
       align: 'center',
-      render: id => <CopyValueToClipboard value={id} />,
+      render: id => <CopyValueToClipboard tooltipText="Copy ID" value={id} />,
     },
     {
       title: (

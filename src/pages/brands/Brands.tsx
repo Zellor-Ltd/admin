@@ -52,7 +52,7 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
   const [details, setDetails] = useState<boolean>(false);
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [loading, setLoading] = useState<boolean>(false);
-  const [loadingRow, setLoadingRow] = useState<string>("");
+  const [loadingRow, setLoadingRow] = useState<string>('');
   const { doFetch } = useRequest({ setLoading });
   const [brands, setBrands] = useState<Brand[]>([]);
   const [filterText, setFilterText] = useState('');
@@ -119,14 +119,13 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   const filterBrand = () => {
-
     if (filterText) {
       return brands.filter(brand =>
         brand.brandName?.toUpperCase().includes(filterText?.toUpperCase())
       );
     }
 
-    return brands    
+    return brands;
   };
 
   const handleSwitchChange = async (
@@ -166,7 +165,7 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
 
   const rebuildVlink = async (brand: Brand, index: number) => {
     try {
-      setLoadingRow(brand.masterBrandLink ?? "");
+      setLoadingRow(brand.masterBrandLink ?? '');
       const { result, success, message }: any = await rebuildLink(
         brand.masterBrandLink!
       );
@@ -175,10 +174,10 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
         setBrands([...brands]);
         msg.success(message);
       }
-    } catch {}
-    finally {
-      setLoadingRow("");
-    } 
+    } catch {
+    } finally {
+      setLoadingRow('');
+    }
   };
 
   const updateVIndex = async (record: Brand, input?: number) => {
@@ -227,7 +226,9 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
       ),
       dataIndex: 'id',
       width: '6%',
-      render: (_, record: Brand) => <CopyValueToClipboard value={record.id} />,
+      render: (_, record: Brand) => (
+        <CopyValueToClipboard tooltipText="Copy ID" value={record.id} />
+      ),
       align: 'center',
     },
     {
@@ -356,10 +357,10 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
             type="link"
             block
             onClick={() => rebuildVlink(record, index)}
-            disabled={!record.masterBrandLink  || loadingRow !== ""}
+            disabled={!record.masterBrandLink || loadingRow !== ''}
             loading={loadingRow === record.masterBrandLink}
           >
-             {loadingRow !== record.masterBrandLink && <RedoOutlined />}
+            {loadingRow !== record.masterBrandLink && <RedoOutlined />}
           </Button>
         </>
       ),

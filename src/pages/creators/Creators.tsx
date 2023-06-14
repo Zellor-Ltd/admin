@@ -42,7 +42,7 @@ import scrollIntoView from 'scroll-into-view';
 
 const Creators: React.FC<RouteComponentProps> = ({ location }) => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [loadingRow, setLoadingRow] = useState<string>("");
+  const [loadingRow, setLoadingRow] = useState<string>('');
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [details, setDetails] = useState<boolean>(false);
   const [currentCreator, setCurrentCreator] = useState<Creator>();
@@ -118,7 +118,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
 
   const rebuildVlink = async (creator: Creator, index: number) => {
     try {
-      setLoadingRow(creator.userName);      
+      setLoadingRow(creator.userName);
       const { result, success, message }: any = await rebuildLink(
         creator.userName!
       );
@@ -127,9 +127,9 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
         setCreators([...creators]);
         msg.success(message);
       }
-    } catch {}
-    finally {
-      setLoadingRow("");
+    } catch {
+    } finally {
+      setLoadingRow('');
     }
   };
 
@@ -179,7 +179,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
       ),
       dataIndex: 'id',
       width: '3%',
-      render: id => <CopyValueToClipboard value={id} />,
+      render: id => <CopyValueToClipboard tooltipText="Copy ID" value={id} />,
       align: 'center',
     },
     {
@@ -329,7 +329,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
             type="link"
             block
             onClick={() => rebuildVlink(record, index)}
-            disabled={!record.userName || loadingRow !== ""}  
+            disabled={!record.userName || loadingRow !== ''}
             loading={loadingRow === record.userName}
           >
             {loadingRow !== record.userName && <RedoOutlined />}

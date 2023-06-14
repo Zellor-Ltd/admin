@@ -58,7 +58,9 @@ const CommissionDetail: React.FC<CommissionDetailProps> = ({
       ),
       dataIndex: 'id',
       width: '1%',
-      render: id => <CopyValueToClipboard value={id} />,
+      render: id => (
+        <CopyValueToClipboard tooltipText="Copy Product ID" value={id} />
+      ),
       align: 'center',
     },
     {

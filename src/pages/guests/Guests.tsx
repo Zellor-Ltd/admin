@@ -133,7 +133,7 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
       ),
       dataIndex: 'id',
       width: '10%',
-      render: id => <CopyValueToClipboard value={id} />,
+      render: id => <CopyValueToClipboard tooltipText="Copy ID" value={id} />,
       align: 'center',
     },
     {
