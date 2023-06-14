@@ -26,6 +26,7 @@ interface CustomDetailsProps {
   onSave: any;
   setDetails: any;
   brands: Brand[];
+  isCloning?: boolean;
 }
 
 const CustomDetails: React.FC<CustomDetailsProps> = ({
@@ -34,6 +35,7 @@ const CustomDetails: React.FC<CustomDetailsProps> = ({
   onSave,
   setDetails,
   brands,
+  isCloning,
 }) => {
   const [loading, setLoading] = useState(false);
   const { doFetch } = useRequest({ setLoading });
@@ -70,7 +72,8 @@ const CustomDetails: React.FC<CustomDetailsProps> = ({
     const customListForm = form.getFieldsValue(true);
     customListForm.links = list?.links;
     customListForm.name = customListForm.name.name ?? customListForm.name;
-    customListForm.brandId = brandId;
+    if (isCloning) customListForm.brandId = null;
+    else customListForm.brandId = brandId;
     const response = await doFetch(() => saveCustomLinkList(customListForm));
     customListForm.id
       ? onSave(customListForm)
@@ -265,24 +268,26 @@ const CustomDetails: React.FC<CustomDetailsProps> = ({
               <Input allowClear placeholder="Enter a name" />
             </Form.Item>
           </Col>
-          <Col span={24}>
-            <Typography.Title level={5}>Master Brand</Typography.Title>
-            <SimpleSelect
-              showSearch
-              data={brands}
-              style={{ width: '100%' }}
-              optionMapping={{
-                key: 'id',
-                label: 'brandName',
-                value: 'id',
-              }}
-              placeholder="Select a Master Brand"
-              onChange={setBrandId}
-              selectedOption={brandId}
-              disabled={!brands.length}
-              allowClear
-            />
-          </Col>
+          {!isCloning && (
+            <Col span={24}>
+              <Typography.Title level={5}>Master Brand</Typography.Title>
+              <SimpleSelect
+                showSearch
+                data={brands}
+                style={{ width: '100%' }}
+                optionMapping={{
+                  key: 'id',
+                  label: 'brandName',
+                  value: 'id',
+                }}
+                placeholder="Select a Master Brand"
+                onChange={setBrandId}
+                selectedOption={brandId}
+                disabled={!brands.length}
+                allowClear
+              />
+            </Col>
+          )}
           <Col span={24}>
             <Row justify="end">
               <Col flex="100px">
@@ -329,7 +334,13 @@ const CustomDetails: React.FC<CustomDetailsProps> = ({
         </Row>
         <Row gutter={8} justify="end" className="br-buttons bg-white">
           <Col>
-            <Button type="default" onClick={() => history.goBack()}>
+            <Button
+              type="default"
+              onClick={() => {
+                if (isCloning) isCloning = false;
+                history.goBack();
+              }}
+            >
               Go Back
             </Button>
           </Col>

@@ -12,7 +12,7 @@ import {
 } from 'antd';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, RouteComponentProps, useHistory } from 'react-router-dom';
-import { EditOutlined, SearchOutlined } from '@ant-design/icons';
+import { CopyOutlined, EditOutlined, SearchOutlined } from '@ant-design/icons';
 import { ColumnsType } from 'antd/lib/table';
 import { useRequest } from 'hooks/useRequest';
 import {
@@ -47,6 +47,7 @@ const Playlists: React.FC<RouteComponentProps> = () => {
   const [productBrands, setProductBrands] = useState<any[]>([]);
   const [custom, setCustom] = useState<any[]>([]);
   const filter = useRef<any>();
+  const cloning = useRef<boolean>(false);
 
   useEffect(() => {
     history.listen((_, action) => {
@@ -113,10 +114,13 @@ const Playlists: React.FC<RouteComponentProps> = () => {
     setSelectedTab(value);
   };
 
-  const handleEditRecord = (list?: any) => {
+  const handleEdit = (list?: any, isCloning?: boolean) => {
     if (selectedTab === 'custom' && !brands.length) getAllBrands();
     getCustomData('');
-    setCurrentList(list);
+    if (isCloning) {
+      setCurrentList({ ...list, id: undefined });
+      cloning.current = true;
+    } else setCurrentList(list);
     setDetails(true);
     history.push(window.location.pathname);
   };
@@ -169,6 +173,7 @@ const Playlists: React.FC<RouteComponentProps> = () => {
 
   const handleSaveCustomList = (record: any) => {
     const listItem = custom.find(item => item.id === record.id);
+    if (cloning.current) cloning.current = false;
     if (!listItem) {
       refreshTable(record, custom.length);
       return;
@@ -374,7 +379,7 @@ const Playlists: React.FC<RouteComponentProps> = () => {
         <>
           <Link
             to={{ pathname: window.location.pathname, state: record }}
-            onClick={() => handleEditRecord(record)}
+            onClick={() => handleEdit(record)}
           >
             <EditOutlined />
           </Link>
@@ -552,7 +557,7 @@ const Playlists: React.FC<RouteComponentProps> = () => {
         <>
           <Link
             to={{ pathname: window.location.pathname, state: record }}
-            onClick={() => handleEditRecord(record)}
+            onClick={() => handleEdit(record)}
           >
             <EditOutlined />
           </Link>
@@ -754,7 +759,7 @@ const Playlists: React.FC<RouteComponentProps> = () => {
         <>
           <Link
             to={{ pathname: window.location.pathname, state: record }}
-            onClick={() => handleEditRecord(record)}
+            onClick={() => handleEdit(record)}
           >
             <EditOutlined />
           </Link>
@@ -933,7 +938,7 @@ const Playlists: React.FC<RouteComponentProps> = () => {
         <>
           <Link
             to={{ pathname: window.location.pathname, state: record }}
-            onClick={() => handleEditRecord(record)}
+            onClick={() => handleEdit(record)}
           >
             <EditOutlined />
           </Link>
@@ -1066,6 +1071,33 @@ const Playlists: React.FC<RouteComponentProps> = () => {
               whiteSpace: 'nowrap',
             }}
           >
+            <Tooltip title="Clone">Clone</Tooltip>
+          </div>
+        </div>
+      ),
+      width: '10%',
+      align: 'center',
+      render: (_, record: any, index: number) => (
+        <>
+          <Link
+            onClick={() => handleEdit(record, true)}
+            to={{ pathname: window.location.pathname, state: record }}
+          >
+            <CopyOutlined />
+          </Link>
+        </>
+      ),
+    },
+    {
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
             <Tooltip title="Actions">Actions</Tooltip>
           </div>
         </div>
@@ -1077,7 +1109,7 @@ const Playlists: React.FC<RouteComponentProps> = () => {
         <>
           <Link
             to={{ pathname: window.location.pathname, state: record }}
-            onClick={() => handleEditRecord(record)}
+            onClick={() => handleEdit(record)}
           >
             <EditOutlined />
           </Link>
@@ -1095,11 +1127,7 @@ const Playlists: React.FC<RouteComponentProps> = () => {
             className="mb-n05"
             extra={
               selectedTab === 'custom' && (
-                <Button
-                  key="1"
-                  type="primary"
-                  onClick={() => handleEditRecord()}
-                >
+                <Button key="1" type="primary" onClick={() => handleEdit()}>
                   New Playlist
                 </Button>
               )
@@ -1221,6 +1249,7 @@ const Playlists: React.FC<RouteComponentProps> = () => {
             setDetails={setDetails}
             brands={allBrands}
             onSave={handleSaveCustomList}
+            isCloning={cloning.current}
           />
         </>
       )}
