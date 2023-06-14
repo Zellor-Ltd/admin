@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import {
   ArrowRightOutlined,
+  CopyOutlined,
   DeleteOutlined,
   EditOutlined,
   SearchOutlined,
@@ -110,6 +111,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
   const [activeKey, setActiveKey] = useState<string>('1');
   const [btnStyle, setBtnStyle] = useState<any>();
   const history = useHistory();
+  const cloning = useRef<boolean>(false);
 
   useEffect(() => {
     history.listen((_, action) => {
@@ -385,7 +387,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
       render: (value: string, record: Product, index: number) => (
         <>
           <Link
-            onClick={() => editProduct(record, index, 'default')}
+            onClick={() => handleEdit(record, index, 'default')}
             to={{ pathname: window.location.pathname, state: record }}
           >
             {value}
@@ -656,7 +658,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
         </div>
       ),
       dataIndex: 'lastImportDate',
-      width: '12.5%',
+      width: '10%',
       align: 'center',
       render: (lastImportDate: Date | null | undefined) =>
         lastImportDate ? (
@@ -695,7 +697,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
         </div>
       ),
       dataIndex: 'lastGoLiveDate',
-      width: '12.5%',
+      width: '10%',
       align: 'center',
       render: (lastGoLiveDate: Date | null | undefined) =>
         lastGoLiveDate ? (
@@ -728,17 +730,44 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
               whiteSpace: 'nowrap',
             }}
           >
+            <Tooltip title="Clone">Clone</Tooltip>
+          </div>
+        </div>
+      ),
+      width: '10%',
+      align: 'center',
+      render: (_, record: Product, index: number) => (
+        <>
+          <Link
+            onClick={() => handleEdit(record, index, 'default', true)}
+            to={{ pathname: window.location.pathname, state: record }}
+          >
+            <CopyOutlined />
+          </Link>
+        </>
+      ),
+    },
+    {
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
             <Tooltip title="Actions">Actions</Tooltip>
           </div>
         </div>
       ),
       key: 'action',
-      width: '10%',
+      width: '15%',
       align: 'right',
       render: (_, record: Product, index: number) => (
         <>
           <Link
-            onClick={() => editProduct(record, index, 'default')}
+            onClick={() => handleEdit(record, index, 'default')}
             to={{ pathname: window.location.pathname, state: record }}
           >
             <EditOutlined />
@@ -804,13 +833,18 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
     history.push(window.location.pathname);
   };
 
-  const editProduct = (
+  const handleEdit = (
     product: Product,
     productIndex: number,
-    viewName: 'default' | 'alternate'
+    viewName: 'default' | 'alternate',
+    isCloning?: boolean
   ) => {
+    if (isCloning) {
+      cloning.current = true;
+      setCurrentProduct({ ...product, id: undefined as unknown as string });
+    } else setCurrentProduct(product);
+
     previousViewName.current = viewName;
-    setCurrentProduct(product);
     setLastViewedIndex(productIndex);
     setCurrentMasterBrand(product.brand.brandName);
     if (product.productBrand) {
@@ -841,15 +875,18 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
     setisScrollable(details);
   }, [details]);
 
-  const onSaveProduct = (product: Product) => {
+  const handleSave = (product: Product) => {
     refreshItem(product);
     setCurrentProduct(product);
     setDetails(false);
+    if (cloning.current) cloning.current = false;
   };
 
-  const onCancelProduct = () => {
+  const handleCancel = () => {
     if (previousViewName.current === 'alternate') setViewName('alternate');
     setDetails(false);
+    setDetails(false);
+    if (cloning.current) cloning.current = false;
   };
 
   const switchView = () => {
@@ -878,7 +915,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
             lastViewedIndex={lastViewedIndex}
             onRefreshItem={product => refreshItem(product, 'alternate')}
             onEditProduct={(product, productIndex) =>
-              editProduct(product, productIndex, 'alternate')
+              handleEdit(product, productIndex, 'alternate')
             }
             onNextPage={getProducts}
             page={page}
@@ -955,13 +992,14 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
               brands={brands}
               productBrands={productBrands}
               allCategories={allCategories}
-              onSave={onSaveProduct}
-              onCancel={onCancelProduct}
+              onSave={handleSave}
+              onCancel={handleCancel}
               product={currentProduct}
               productBrand={currentProductBrand}
               brand={currentMasterBrand}
               loadingResources={loadingResources}
               isLive={false}
+              isCloning={cloning.current}
             />
           );
         }
