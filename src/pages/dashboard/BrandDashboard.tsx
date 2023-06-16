@@ -21,7 +21,7 @@ import {
 import React, { useEffect, useRef, useState } from 'react';
 import { fetchStats } from 'services/DiscoClubService';
 import '@ant-design/flowchart/dist/index.css';
-import { Column } from '@ant-design/plots';
+import { Area, Column } from '@ant-design/plots';
 import Meta from 'antd/lib/card/Meta';
 import { ColumnsType } from 'antd/lib/table';
 import SimpleSelect from 'components/select/SimpleSelect';
@@ -502,6 +502,7 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
       dodgePadding: 0,
       maxColumnWidth: 20,
     };
+
     return <Column {...config} />;
   };
 
@@ -580,6 +581,70 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
       />
     </Card>
   );
+
+  const TableGraph = () => {
+    const data = [
+      {
+        date: '20230605',
+        number: 2850,
+      },
+
+      {
+        date: '20230607',
+        number: 3000,
+      },
+
+      {
+        date: '20230610',
+        number: 2000,
+      },
+
+      {
+        date: '20230616',
+        number: 3500,
+      },
+
+      {
+        date: '20230620',
+        number: 2500,
+      },
+
+      {
+        date: '20230622',
+        number: 2900,
+      },
+
+      {
+        date: '20230624',
+        number: 2500,
+      },
+
+      {
+        date: '20230626',
+        number: 2700,
+      },
+    ];
+    const config = {
+      data,
+      padding: 'auto' as any,
+      xField: 'date',
+      yField: 'number',
+      smooth: true,
+      meta: {
+        number: {
+          min: 1000,
+          max: 4000,
+        },
+      },
+      date: {
+        formatter: (value: string) => {
+          return `${value.slice(6, 8) + '/' + value.slice(4, 6)}`;
+        },
+      },
+    };
+
+    return <Area height={50} {...config} />;
+  };
 
   const columns: ColumnsType<any> = [
     {
@@ -775,7 +840,7 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
       width: '30%',
       align: 'center',
       render: () => {
-        return 'graph here';
+        return <TableGraph />;
       },
     },
   ];
