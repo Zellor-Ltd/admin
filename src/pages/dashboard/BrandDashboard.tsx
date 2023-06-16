@@ -2,7 +2,6 @@ import {
   Col,
   Row,
   Card,
-  Statistic,
   Tooltip,
   Avatar,
   Typography,
@@ -515,7 +514,7 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
     direction,
     precision,
   }) => (
-    <Card style={{ width: '100%', height: 150 }}>
+    <Card style={{ width: '100%', height: 175 }}>
       <Meta
         title={
           <div
@@ -557,36 +556,26 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
           </div>
         }
         description={
-          <>
-            <Row align="bottom">
-              <Col>
-                <strong
-                  className="mr-05"
-                  style={{ fontSize: '2rem', color: 'black' }}
-                >
-                  {number}
-                </strong>
-              </Col>
-              <Col>
-                <Statistic
-                  style={{ position: 'relative', bottom: 5 }}
-                  value={percentage}
-                  precision={precision}
-                  valueStyle={
-                    direction === 'up'
-                      ? { color: 'rgb(91,209,147)', fontSize: '1.2rem' }
-                      : { color: '#cf1322', fontSize: '1.2rem' }
-                  }
-                  suffix={
-                    <>
-                      %{'  '}
-                      <ArrowUpOutlined style={{ transform: 'scale(0.8)' }} />
-                    </>
-                  }
-                />
-              </Col>
-            </Row>
-          </>
+          <div style={{ width: '100%' }}>
+            <p>
+              <strong
+                className="mr-05"
+                style={{ fontSize: '2rem', color: 'black' }}
+              >
+                {number}
+              </strong>
+              <p
+                style={
+                  direction === 'up'
+                    ? { color: 'rgb(91,209,147)', fontSize: '1.1rem' }
+                    : { color: '#cf1322', fontSize: '1.1rem' }
+                }
+              >
+                {percentage}%{'  '}
+                <ArrowUpOutlined style={{ transform: 'scale(0.8)' }} />
+              </p>
+            </p>
+          </div>
         }
       />
     </Card>
