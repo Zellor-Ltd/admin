@@ -112,11 +112,12 @@ const Playlists: React.FC<RouteComponentProps> = () => {
 
   const handleTabChange = (value: string) => {
     setSelectedTab(value);
+    if (value === 'custom') getCustomData('');
   };
 
   const handleEdit = (list?: any, isCloning?: boolean) => {
     if (selectedTab === 'custom' && !brands.length) getAllBrands();
-    getCustomData('');
+
     if (isCloning) {
       setCurrentList({ ...list, id: undefined });
       cloning.current = true;
@@ -197,7 +198,7 @@ const Playlists: React.FC<RouteComponentProps> = () => {
         getCreatorData(query);
         break;
       case 'custom':
-        getAllBrands();
+        if (!brands.length) getAllBrands();
         getCustomData(query);
         break;
     }
