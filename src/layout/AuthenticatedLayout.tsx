@@ -97,7 +97,7 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
         <div className="sider-container">
           <Sider breakpoint="lg" collapsedWidth="0">
             {useBuildTarget({
-              ADMIN: <BrandManagerSideMenu />,
+              ADMIN: <AdminSideMenu isMobile={isMobile} />,
               BRAND_MANAGER: <BrandManagerSideMenu />,
             })}
           </Sider>
