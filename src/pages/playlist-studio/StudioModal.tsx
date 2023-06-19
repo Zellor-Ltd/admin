@@ -259,11 +259,6 @@ const StudioModal: React.FC<StudioModalProps> = ({
 
   const _onOk = () => {
     const item = customForm.getFieldsValue(true);
-    if (!item?.feed?.videoLabel) {
-      message.warning('Error: Label is required.');
-      setActiveTabKey('Details');
-      return;
-    }
     if (!item?.feed?.shortDescription) {
       message.warning('Error: Description is required.');
       setActiveTabKey('Details');
@@ -359,7 +354,6 @@ const StudioModal: React.FC<StudioModalProps> = ({
                 <Form.Item
                   label="Label"
                   name={['feed', 'videoLabel']}
-                  required
                   shouldUpdate
                 >
                   <Select
