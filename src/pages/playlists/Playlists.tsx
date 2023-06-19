@@ -48,7 +48,7 @@ const Playlists: React.FC<RouteComponentProps> = () => {
   const [products, setProducts] = useState<any[]>([]);
   const [productBrands, setProductBrands] = useState<any[]>([]);
   const [custom, setCustom] = useState<any[]>([]);
-  const customHeight = isMobile
+  const tableHeight = isMobile
     ? window.innerHeight - 400
     : window.innerHeight - 370;
   const filter = useRef<any>();
@@ -1181,7 +1181,7 @@ const Playlists: React.FC<RouteComponentProps> = () => {
             activeKey={selectedTab}
             style={{ minHeight: '100%' }}
           >
-            <Tabs.TabPane tab="Brand" key="brand">
+            <Tabs.TabPane tab="Brand" key="brand" style={{ height: '100%' }}>
               <Table
                 rowClassName={(_, index) => `scrollable-row-${index}`}
                 rowKey="id"
@@ -1189,11 +1189,15 @@ const Playlists: React.FC<RouteComponentProps> = () => {
                 dataSource={brands}
                 loading={loading}
                 pagination={false}
-                scroll={{ y: '100%', x: true }}
+                scroll={{ y: tableHeight, x: true }}
                 size="small"
               />
             </Tabs.TabPane>
-            <Tabs.TabPane tab="Product Brand" key="productBrand">
+            <Tabs.TabPane
+              tab="Product Brand"
+              key="productBrand"
+              style={{ height: '100%' }}
+            >
               <Table
                 rowClassName={(_, index) => `scrollable-row-${index}`}
                 rowKey="id"
@@ -1201,11 +1205,15 @@ const Playlists: React.FC<RouteComponentProps> = () => {
                 dataSource={productBrands}
                 loading={loading}
                 pagination={false}
-                scroll={{ y: '100%', x: true }}
+                scroll={{ y: tableHeight, x: true }}
                 size="small"
               />
             </Tabs.TabPane>
-            <Tabs.TabPane tab="Product" key="product">
+            <Tabs.TabPane
+              tab="Product"
+              key="product"
+              style={{ height: '100%' }}
+            >
               <Table
                 rowClassName={(_, index) => `scrollable-row-${index}`}
                 rowKey="id"
@@ -1213,11 +1221,15 @@ const Playlists: React.FC<RouteComponentProps> = () => {
                 dataSource={products}
                 loading={loading}
                 pagination={false}
-                scroll={{ y: '100%', x: true }}
+                scroll={{ y: tableHeight, x: true }}
                 size="small"
               />
             </Tabs.TabPane>
-            <Tabs.TabPane tab="Creator" key="creator">
+            <Tabs.TabPane
+              tab="Creator"
+              key="creator"
+              style={{ height: '100%' }}
+            >
               <Table
                 rowClassName={(_, index) => `scrollable-row-${index}`}
                 rowKey="id"
@@ -1225,7 +1237,7 @@ const Playlists: React.FC<RouteComponentProps> = () => {
                 dataSource={creators}
                 loading={loading}
                 pagination={false}
-                scroll={{ y: '100%', x: true }}
+                scroll={{ y: tableHeight, x: true }}
                 size="small"
               />
             </Tabs.TabPane>
@@ -1237,7 +1249,7 @@ const Playlists: React.FC<RouteComponentProps> = () => {
                 dataSource={custom}
                 loading={loading}
                 pagination={false}
-                scroll={{ y: customHeight, x: true }}
+                scroll={{ y: tableHeight, x: true }}
                 size="small"
               />
             </Tabs.TabPane>
