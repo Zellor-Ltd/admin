@@ -10,7 +10,7 @@ import {
   Typography,
   message,
 } from 'antd';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, RouteComponentProps, useHistory } from 'react-router-dom';
 import { CopyOutlined, EditOutlined, SearchOutlined } from '@ant-design/icons';
 import { ColumnsType } from 'antd/lib/table';
@@ -32,8 +32,10 @@ import CopyValueToClipboard from 'components/CopyValueToClipboard';
 import moment from 'moment';
 import PlaylistDetails from './PlaylistDetails';
 import CustomDetails from './CustomDetails';
+import { AppContext } from 'contexts/AppContext';
 
 const Playlists: React.FC<RouteComponentProps> = () => {
+  const isMobile = useContext(AppContext);
   const [selectedTab, setSelectedTab] = useState<string>('brand');
   const [loading, setLoading] = useState(false);
   const { doFetch } = useRequest({ setLoading });
@@ -46,7 +48,9 @@ const Playlists: React.FC<RouteComponentProps> = () => {
   const [products, setProducts] = useState<any[]>([]);
   const [productBrands, setProductBrands] = useState<any[]>([]);
   const [custom, setCustom] = useState<any[]>([]);
-  const customHeight = window.innerHeight - 370;
+  const customHeight = isMobile
+    ? window.innerHeight - 400
+    : window.innerHeight - 370;
   const filter = useRef<any>();
   const cloning = useRef<boolean>(false);
 
