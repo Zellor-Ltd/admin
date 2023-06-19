@@ -269,7 +269,7 @@ const AdminSideMenu = ({ isMobile }) => {
           <Link to="/creators">Creators</Link>
         </Menu.Item>
       </SubMenu>
-      <SubMenu key="settings" icon={<SettingOutlined />} title="Settings">
+      <SubMenu key="settings-menu" icon={<SettingOutlined />} title="Settings">
         <Menu.Item key="access-control" icon={<ControlOutlined />}>
           <Link to="/access-control">Access Control</Link>
         </Menu.Item>

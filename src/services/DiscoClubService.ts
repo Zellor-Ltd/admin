@@ -1167,7 +1167,7 @@ export const deleteCustomLinkList = (params: any) => {
 export const fetchStats = (startDate?: string, endDate?: string) => {
   if (startDate && endDate)
     return instance.get(
-      `Disco/Adm/Analytics/GetClientStats/${startDate}/${endDate}`
+      `Disco/Adm/Analytics/GetClientStats?startDate=${startDate}?endDate=${endDate}`
     );
   else return instance.get(`Disco/Adm/Analytics/GetClientStats/`);
 };

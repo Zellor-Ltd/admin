@@ -12,7 +12,6 @@ import {
 import { useRequest } from 'hooks/useRequest';
 import {
   AppstoreOutlined,
-  ArrowUpOutlined,
   DropboxOutlined,
   PlayCircleOutlined,
   SearchOutlined,
@@ -29,15 +28,17 @@ import { statusList } from 'components/select/select.utils';
 import CreatorsMultipleFetchDebounceSelect from 'pages/creators/components/CreatorsMultipleFetchDebounceSelect';
 import { Brand } from 'interfaces/Brand';
 import { Creator } from 'interfaces/Creator';
+import moment from 'moment';
 
 interface DashboardProps {}
 
 const BrandDashboard: React.FC<DashboardProps> = () => {
-  const [, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(true);
   const { doFetch } = useRequest({ setLoading });
-  const [, setStats] = useState<any>();
-  const [periodStart, setPeriodStart] = useState<string>();
+  const [videoData, setVideoData] = useState<any>();
+  const [startDate, setStartDate] = useState<string>();
   const inputRefTitle = useRef<any>(null);
+  //todo start here, reduce all filters to one state
   const [sourceFilter, setSourceFilter] = useState<string>();
   const [brandFilter, setBrandFilter] = useState<Brand>();
   const [titleFilter, setTitleFilter] = useState<string>();
@@ -72,11 +73,12 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
       totalWatchTime: 0,
     },
   ];
+  const [viewStats, setViewStats] = useState<any[]>([]);
 
   useEffect(() => {
-    getStats();
+    getVideoData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [startDate]);
 
   useEffect(() => {
     if (inputRefTitle.current)
@@ -85,395 +87,49 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
       });
   }, [titleFilter]);
 
-  const getStats = async () => {
-    const { result }: any = await doFetch(() => fetchStats(periodStart));
-    setStats(result);
+  //todo reduce
+  useEffect(() => {
+    console.log('render');
+  });
+
+  //todo fix this
+  useEffect(() => {
+    const stats: any = [];
+    if (videoData?.videos)
+      videoData.videos.forEach((video: any) => {
+        video.stats.forEach((item: any) => {
+          stats.push([
+            ...stats,
+            {
+              label: 'Impressions',
+              value: item.impressions,
+              date: item.date,
+            },
+            {
+              label: 'Product Clicks',
+              value: item.productClicks,
+              date: item.date,
+            },
+            {
+              label: 'Video Plays',
+              value: item.videoPlays,
+              date: item.date,
+            },
+          ]);
+        });
+      });
+    setViewStats(stats);
+  }, [videoData]);
+
+  const getVideoData = async () => {
+    const endDate = moment().format('YYYYMMDDhhmmss');
+    const { result }: any = await doFetch(() => fetchStats(startDate, endDate));
+    setVideoData(result);
   };
 
   const VideoGraph = () => {
-    const data = [
-      {
-        thumbnailUrl:
-          'https://cdn.discoclub.com/jfka72daefd700248f3a/8fcc92ee-93b1-4505-a618-b8f6621551e7_STR.jpg',
-        videoUrl:
-          'https://cdn.discoclub.com/jfka72daefd700248f3a/b2e6286d-70e0-4da6-9ff8-f5c1bab2345c_STR.mp4',
-        title:
-          'The gorgeous bag contains everything you need to enhance your beauty this Christmas.',
-        brandName: 'Luna by Lisa Jordan',
-        creator: 'Shanice Mavo',
-        impressions: 1000,
-        label: 'Page Loads',
-        value: 20,
-        productClicks: 123,
-        totalWatchTime: 0,
-        date: '20230521',
-      },
-      {
-        thumbnailUrl:
-          'https://cdn.discoclub.com/jfka72daefd700248f3a/8fcc92ee-93b1-4505-a618-b8f6621551e7_STR.jpg',
-        videoUrl:
-          'https://cdn.discoclub.com/jfka72daefd700248f3a/b2e6286d-70e0-4da6-9ff8-f5c1bab2345c_STR.mp4',
-        title:
-          'The gorgeous bag contains everything you need to enhance your beauty this Christmas.',
-        brandName: 'Luna by Lisa Jordan',
-        creator: 'Shanice Mavo',
-        impressions: 1000,
-        label: 'Page Loads',
-        value: 255,
-        productClicks: 123,
-        totalWatchTime: 0,
-        date: '20230522',
-      },
-      {
-        thumbnailUrl:
-          'https://cdn.discoclub.com/jfka72daefd700248f3a/8fcc92ee-93b1-4505-a618-b8f6621551e7_STR.jpg',
-        videoUrl:
-          'https://cdn.discoclub.com/jfka72daefd700248f3a/b2e6286d-70e0-4da6-9ff8-f5c1bab2345c_STR.mp4',
-        title:
-          'The gorgeous bag contains everything you need to enhance your beauty this Christmas.',
-        brandName: 'Luna by Lisa Jordan',
-        creator: 'Shanice Mavo',
-        impressions: 1000,
-        label: 'Page Loads',
-        value: 290,
-        productClicks: 123,
-        totalWatchTime: 0,
-        date: '20230523',
-      },
-      {
-        thumbnailUrl:
-          'https://cdn.discoclub.com/jfka72daefd700248f3a/8fcc92ee-93b1-4505-a618-b8f6621551e7_STR.jpg',
-        videoUrl:
-          'https://cdn.discoclub.com/jfka72daefd700248f3a/b2e6286d-70e0-4da6-9ff8-f5c1bab2345c_STR.mp4',
-        title:
-          'The gorgeous bag contains everything you need to enhance your beauty this Christmas.',
-        brandName: 'Luna by Lisa Jordan',
-        creator: 'Shanice Mavo',
-        impressions: 1000,
-        label: 'Page Loads',
-        value: 290,
-        productClicks: 123,
-        totalWatchTime: 0,
-        date: '20230524',
-      },
-      {
-        thumbnailUrl:
-          'https://cdn.discoclub.com/jfka72daefd700248f3a/8fcc92ee-93b1-4505-a618-b8f6621551e7_STR.jpg',
-        videoUrl:
-          'https://cdn.discoclub.com/jfka72daefd700248f3a/b2e6286d-70e0-4da6-9ff8-f5c1bab2345c_STR.mp4',
-        title:
-          'The gorgeous bag contains everything you need to enhance your beauty this Christmas.',
-        brandName: 'Luna by Lisa Jordan',
-        creator: 'Shanice Mavo',
-        impressions: 1000,
-        label: 'Page Loads',
-        value: 280,
-        productClicks: 123,
-        totalWatchTime: 0,
-        date: '20230525',
-      },
-      {
-        thumbnailUrl:
-          'https://cdn.discoclub.com/jfka72daefd700248f3a/8fcc92ee-93b1-4505-a618-b8f6621551e7_STR.jpg',
-        videoUrl:
-          'https://cdn.discoclub.com/jfka72daefd700248f3a/b2e6286d-70e0-4da6-9ff8-f5c1bab2345c_STR.mp4',
-        title:
-          'The gorgeous bag contains everything you need to enhance your beauty this Christmas.',
-        brandName: 'Luna by Lisa Jordan',
-        creator: 'Shanice Mavo',
-        impressions: 1000,
-        label: 'Page Loads',
-        value: 310,
-        productClicks: 123,
-        totalWatchTime: 0,
-        date: '20230526',
-      },
-      {
-        thumbnailUrl:
-          'https://cdn3.discoclub.com/jfka72daefd700248f3a/2b02d683-d6e4-4457-b2f9-f4665783db7c_STR.jpg',
-        videoUrl:
-          'https://cdn3.discoclub.com/jfka72daefd700248f3a/68f6031c-861d-4a54-ba05-87b71284deec_STR.MOV',
-        title: 'Show your pride with vivid rainbow makeup 🌈✨',
-        brandName: '',
-        creator: 'Evelyn',
-        impressions: 1000,
-        label: 'Page Loads',
-        value: 295,
-        productClicks: 123,
-        totalWatchTime: 0,
-        date: '20230527',
-      },
-      {
-        thumbnailUrl:
-          'https://cdn3.discoclub.com/jfka72daefd700248f3a/2b02d683-d6e4-4457-b2f9-f4665783db7c_STR.jpg',
-        videoUrl:
-          'https://cdn3.discoclub.com/jfka72daefd700248f3a/68f6031c-861d-4a54-ba05-87b71284deec_STR.MOV',
-        title: 'Show your pride with vivid rainbow makeup 🌈✨',
-        brandName: '',
-        creator: 'Evelyn',
-        impressions: 1000,
-        label: 'Page Loads',
-        value: 325,
-        productClicks: 123,
-        totalWatchTime: 0,
-        date: '20230528',
-      },
-      {
-        thumbnailUrl:
-          'https://cdn.discoclub.com/jfka72daefd700248f3a/8fcc92ee-93b1-4505-a618-b8f6621551e7_STR.jpg',
-        videoUrl:
-          'https://cdn.discoclub.com/jfka72daefd700248f3a/b2e6286d-70e0-4da6-9ff8-f5c1bab2345c_STR.mp4',
-        title:
-          'The gorgeous bag contains everything you need to enhance your beauty this Christmas.',
-        brandName: 'Luna by Lisa Jordan',
-        creator: 'Shanice Mavo',
-        impressions: 1000,
-        label: 'Product Clicks',
-        value: 210,
-        productClicks: 123,
-        totalWatchTime: 0,
-        date: '20230521',
-      },
-      {
-        thumbnailUrl:
-          'https://cdn.discoclub.com/jfka72daefd700248f3a/8fcc92ee-93b1-4505-a618-b8f6621551e7_STR.jpg',
-        videoUrl:
-          'https://cdn.discoclub.com/jfka72daefd700248f3a/b2e6286d-70e0-4da6-9ff8-f5c1bab2345c_STR.mp4',
-        title:
-          'The gorgeous bag contains everything you need to enhance your beauty this Christmas.',
-        brandName: 'Luna by Lisa Jordan',
-        creator: 'Shanice Mavo',
-        impressions: 1000,
-        label: 'Product Clicks',
-        value: 285,
-        productClicks: 123,
-        totalWatchTime: 0,
-        date: '20230522',
-      },
-      {
-        thumbnailUrl:
-          'https://cdn.discoclub.com/jfka72daefd700248f3a/8fcc92ee-93b1-4505-a618-b8f6621551e7_STR.jpg',
-        videoUrl:
-          'https://cdn.discoclub.com/jfka72daefd700248f3a/b2e6286d-70e0-4da6-9ff8-f5c1bab2345c_STR.mp4',
-        title:
-          'The gorgeous bag contains everything you need to enhance your beauty this Christmas.',
-        brandName: 'Luna by Lisa Jordan',
-        creator: 'Shanice Mavo',
-        impressions: 1000,
-        label: 'Product Clicks',
-        value: 240,
-        productClicks: 123,
-        totalWatchTime: 0,
-        date: '20230523',
-      },
-      {
-        thumbnailUrl:
-          'https://cdn.discoclub.com/jfka72daefd700248f3a/8fcc92ee-93b1-4505-a618-b8f6621551e7_STR.jpg',
-        videoUrl:
-          'https://cdn.discoclub.com/jfka72daefd700248f3a/b2e6286d-70e0-4da6-9ff8-f5c1bab2345c_STR.mp4',
-        title:
-          'The gorgeous bag contains everything you need to enhance your beauty this Christmas.',
-        brandName: 'Luna by Lisa Jordan',
-        creator: 'Shanice Mavo',
-        impressions: 1000,
-        label: 'Product Clicks',
-        value: 280,
-        productClicks: 123,
-        totalWatchTime: 0,
-        date: '20230524',
-      },
-      {
-        thumbnailUrl:
-          'https://cdn.discoclub.com/jfka72daefd700248f3a/8fcc92ee-93b1-4505-a618-b8f6621551e7_STR.jpg',
-        videoUrl:
-          'https://cdn.discoclub.com/jfka72daefd700248f3a/b2e6286d-70e0-4da6-9ff8-f5c1bab2345c_STR.mp4',
-        title:
-          'The gorgeous bag contains everything you need to enhance your beauty this Christmas.',
-        brandName: 'Luna by Lisa Jordan',
-        creator: 'Shanice Mavo',
-        impressions: 1000,
-        label: 'Product Clicks',
-        value: 250,
-        productClicks: 123,
-        totalWatchTime: 0,
-        date: '20230525',
-      },
-      {
-        thumbnailUrl:
-          'https://cdn.discoclub.com/jfka72daefd700248f3a/8fcc92ee-93b1-4505-a618-b8f6621551e7_STR.jpg',
-        videoUrl:
-          'https://cdn.discoclub.com/jfka72daefd700248f3a/b2e6286d-70e0-4da6-9ff8-f5c1bab2345c_STR.mp4',
-        title:
-          'The gorgeous bag contains everything you need to enhance your beauty this Christmas.',
-        brandName: 'Luna by Lisa Jordan',
-        creator: 'Shanice Mavo',
-        impressions: 1000,
-        label: 'Product Clicks',
-        value: 290,
-        productClicks: 123,
-        totalWatchTime: 0,
-        date: '20230526',
-      },
-      {
-        thumbnailUrl:
-          'https://cdn3.discoclub.com/jfka72daefd700248f3a/2b02d683-d6e4-4457-b2f9-f4665783db7c_STR.jpg',
-        videoUrl:
-          'https://cdn3.discoclub.com/jfka72daefd700248f3a/68f6031c-861d-4a54-ba05-87b71284deec_STR.MOV',
-        title: 'Show your pride with vivid rainbow makeup 🌈✨',
-        brandName: '',
-        creator: 'Evelyn',
-        impressions: 1000,
-        label: 'Product Clicks',
-        value: 265,
-        productClicks: 123,
-        totalWatchTime: 0,
-        date: '20230527',
-      },
-      {
-        thumbnailUrl:
-          'https://cdn3.discoclub.com/jfka72daefd700248f3a/2b02d683-d6e4-4457-b2f9-f4665783db7c_STR.jpg',
-        videoUrl:
-          'https://cdn3.discoclub.com/jfka72daefd700248f3a/68f6031c-861d-4a54-ba05-87b71284deec_STR.MOV',
-        title: 'Show your pride with vivid rainbow makeup 🌈✨',
-        brandName: '',
-        creator: 'Evelyn',
-        impressions: 1000,
-        label: 'Product Clicks',
-        value: 305,
-        productClicks: 123,
-        totalWatchTime: 0,
-        date: '20230528',
-      },
-      {
-        thumbnailUrl:
-          'https://cdn.discoclub.com/jfka72daefd700248f3a/8fcc92ee-93b1-4505-a618-b8f6621551e7_STR.jpg',
-        videoUrl:
-          'https://cdn.discoclub.com/jfka72daefd700248f3a/b2e6286d-70e0-4da6-9ff8-f5c1bab2345c_STR.mp4',
-        title:
-          'The gorgeous bag contains everything you need to enhance your beauty this Christmas.',
-        brandName: 'Luna by Lisa Jordan',
-        creator: 'Shanice Mavo',
-        impressions: 1000,
-        label: 'Video Plays',
-        value: 210,
-        productClicks: 123,
-        totalWatchTime: 0,
-        date: '20230521',
-      },
-      {
-        thumbnailUrl:
-          'https://cdn.discoclub.com/jfka72daefd700248f3a/8fcc92ee-93b1-4505-a618-b8f6621551e7_STR.jpg',
-        videoUrl:
-          'https://cdn.discoclub.com/jfka72daefd700248f3a/b2e6286d-70e0-4da6-9ff8-f5c1bab2345c_STR.mp4',
-        title:
-          'The gorgeous bag contains everything you need to enhance your beauty this Christmas.',
-        brandName: 'Luna by Lisa Jordan',
-        creator: 'Shanice Mavo',
-        impressions: 1000,
-        label: 'Video Plays',
-        value: 285,
-        productClicks: 123,
-        totalWatchTime: 0,
-        date: '20230522',
-      },
-      {
-        thumbnailUrl:
-          'https://cdn.discoclub.com/jfka72daefd700248f3a/8fcc92ee-93b1-4505-a618-b8f6621551e7_STR.jpg',
-        videoUrl:
-          'https://cdn.discoclub.com/jfka72daefd700248f3a/b2e6286d-70e0-4da6-9ff8-f5c1bab2345c_STR.mp4',
-        title:
-          'The gorgeous bag contains everything you need to enhance your beauty this Christmas.',
-        brandName: 'Luna by Lisa Jordan',
-        creator: 'Shanice Mavo',
-        impressions: 1000,
-        label: 'Video Plays',
-        value: 240,
-        productClicks: 123,
-        totalWatchTime: 0,
-        date: '20230523',
-      },
-      {
-        thumbnailUrl:
-          'https://cdn.discoclub.com/jfka72daefd700248f3a/8fcc92ee-93b1-4505-a618-b8f6621551e7_STR.jpg',
-        videoUrl:
-          'https://cdn.discoclub.com/jfka72daefd700248f3a/b2e6286d-70e0-4da6-9ff8-f5c1bab2345c_STR.mp4',
-        title:
-          'The gorgeous bag contains everything you need to enhance your beauty this Christmas.',
-        brandName: 'Luna by Lisa Jordan',
-        creator: 'Shanice Mavo',
-        impressions: 1000,
-        label: 'Video Plays',
-        value: 280,
-        productClicks: 123,
-        totalWatchTime: 0,
-        date: '20230524',
-      },
-      {
-        thumbnailUrl:
-          'https://cdn.discoclub.com/jfka72daefd700248f3a/8fcc92ee-93b1-4505-a618-b8f6621551e7_STR.jpg',
-        videoUrl:
-          'https://cdn.discoclub.com/jfka72daefd700248f3a/b2e6286d-70e0-4da6-9ff8-f5c1bab2345c_STR.mp4',
-        title:
-          'The gorgeous bag contains everything you need to enhance your beauty this Christmas.',
-        brandName: 'Luna by Lisa Jordan',
-        creator: 'Shanice Mavo',
-        impressions: 1000,
-        label: 'Video Plays',
-        value: 250,
-        productClicks: 123,
-        totalWatchTime: 0,
-        date: '20230525',
-      },
-      {
-        thumbnailUrl:
-          'https://cdn.discoclub.com/jfka72daefd700248f3a/8fcc92ee-93b1-4505-a618-b8f6621551e7_STR.jpg',
-        videoUrl:
-          'https://cdn.discoclub.com/jfka72daefd700248f3a/b2e6286d-70e0-4da6-9ff8-f5c1bab2345c_STR.mp4',
-        title:
-          'The gorgeous bag contains everything you need to enhance your beauty this Christmas.',
-        brandName: 'Luna by Lisa Jordan',
-        creator: 'Shanice Mavo',
-        impressions: 1000,
-        label: 'Video Plays',
-        value: 290,
-        productClicks: 123,
-        totalWatchTime: 0,
-        date: '20230526',
-      },
-      {
-        thumbnailUrl:
-          'https://cdn3.discoclub.com/jfka72daefd700248f3a/2b02d683-d6e4-4457-b2f9-f4665783db7c_STR.jpg',
-        videoUrl:
-          'https://cdn3.discoclub.com/jfka72daefd700248f3a/68f6031c-861d-4a54-ba05-87b71284deec_STR.MOV',
-        title: 'Show your pride with vivid rainbow makeup 🌈✨',
-        brandName: '',
-        creator: 'Evelyn',
-        impressions: 1000,
-        label: 'Video Plays',
-        value: 265,
-        productClicks: 123,
-        totalWatchTime: 0,
-        date: '20230527',
-      },
-      {
-        thumbnailUrl:
-          'https://cdn3.discoclub.com/jfka72daefd700248f3a/2b02d683-d6e4-4457-b2f9-f4665783db7c_STR.jpg',
-        videoUrl:
-          'https://cdn3.discoclub.com/jfka72daefd700248f3a/68f6031c-861d-4a54-ba05-87b71284deec_STR.MOV',
-        title: 'Show your pride with vivid rainbow makeup 🌈✨',
-        brandName: '',
-        creator: 'Evelyn',
-        impressions: 1000,
-        label: 'Video Plays',
-        value: 305,
-        productClicks: 123,
-        totalWatchTime: 0,
-        date: '20230528',
-      },
-    ];
-
     const config = {
-      data,
+      data: viewStats,
       isGroup: true,
       xField: 'date',
       yField: 'value',
@@ -482,7 +138,7 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
       meta: {
         views: {
           min: 0,
-          max: 400,
+          max: 1000,
         },
         date: {
           formatter: (value: string) => {
@@ -499,6 +155,7 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
       label: {
         content: '',
       } as any,
+      tickInterval: 100,
       dodgePadding: 0,
       maxColumnWidth: 20,
     };
@@ -506,16 +163,8 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
     return <Column {...config} />;
   };
 
-  const DashCard = ({
-    icon,
-    title,
-    time,
-    number,
-    percentage,
-    direction,
-    precision,
-  }) => (
-    <Card style={{ width: '100%', height: 175 }}>
+  const DashCard = ({ icon, title, time, number }) => (
+    <Card style={{ width: '100%', height: 150 }}>
       <Meta
         title={
           <div
@@ -565,16 +214,6 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
               >
                 {number}
               </strong>
-              <p
-                style={
-                  direction === 'up'
-                    ? { color: 'rgb(91,209,147)', fontSize: '1.1rem' }
-                    : { color: '#cf1322', fontSize: '1.1rem' }
-                }
-              >
-                {percentage}%{'  '}
-                <ArrowUpOutlined style={{ transform: 'scale(0.8)' }} />
-              </p>
             </p>
           </div>
         }
@@ -972,45 +611,68 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
               <Row justify="end">
                 <Col>
                   <Select
-                    disabled={true}
-                    onChange={setPeriodStart}
+                    disabled={loading}
+                    onChange={setStartDate}
                     placeholder="Timeframe"
                     style={{ width: '100%' }}
                     filterOption={filterOption}
                     allowClear
                     showSearch
-                    value={periodStart}
+                    value={startDate}
                   >
-                    <Select.Option key="Today" value={0} label="Today">
+                    <Select.Option
+                      key="Today"
+                      value={moment().startOf('day').format('YYYYMMDDhhmmss')}
+                      label="Today"
+                    >
                       Today
                     </Select.Option>
                     <Select.Option
                       key="Last 3 Days"
-                      value={3}
+                      value={moment()
+                        .subtract(3, 'days')
+                        .startOf('day')
+                        .format('YYYYMMDDhhmmss')}
                       label="Last 3 Days"
                     >
                       Last 3 Days
                     </Select.Option>
-                    <Select.Option key="Last Week" value={7} label="Last Week">
+                    <Select.Option
+                      key="Last Week"
+                      value={moment()
+                        .subtract(7, 'days')
+                        .startOf('day')
+                        .format('YYYYMMDDhhmmss')}
+                      label="Last Week"
+                    >
                       Last Week
                     </Select.Option>
                     <Select.Option
                       key="Last 30 Days"
-                      value={30}
+                      value={moment()
+                        .subtract(1, 'month')
+                        .startOf('day')
+                        .format('YYYYMMDDhhmmss')}
                       label="Last 30 Days"
                     >
                       Last 30 Days
                     </Select.Option>
                     <Select.Option
                       key="Last 3 months"
-                      value={90}
+                      value={moment()
+                        .subtract(3, 'months')
+                        .startOf('day')
+                        .format('YYYYMMDDhhmmss')}
                       label="Last 3 months"
                     >
                       Last 3 months
                     </Select.Option>
                     <Select.Option
                       key="Last Year"
-                      value={365}
+                      value={moment()
+                        .subtract(1, 'year')
+                        .startOf('day')
+                        .format('YYYYMMDDhhmmss')}
                       label="Last Year"
                     >
                       Last Year
@@ -1026,12 +688,9 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
         <Col lg={4} xs={24}>
           <DashCard
             icon={<TeamOutlined />}
-            title="Total Widget Impressions"
+            title="Widget Impressions"
             time="Last 30 Days"
             number={3756}
-            percentage={0.39}
-            direction="up"
-            precision={undefined}
           />
         </Col>
         <Col lg={4} xs={24}>
@@ -1040,20 +699,14 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
             title="Widget Interactions"
             time="Last 30 Days"
             number={2504}
-            percentage={2.84}
-            direction="up"
-            precision={undefined}
           />
         </Col>
         <Col lg={4} xs={24}>
           <DashCard
             icon={<PlayCircleOutlined />}
-            title="Total Video Plays"
+            title="Video Plays"
             time="Last 30 Days"
             number={2306}
-            percentage={2.84}
-            direction="up"
-            precision={undefined}
           />
         </Col>
         <Col lg={4} xs={24}>
@@ -1062,20 +715,14 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
             title="Avg Videos / Session"
             time="Last 30 Days"
             number="2m43s"
-            percentage={1.56}
-            direction="up"
-            precision={2}
           />
         </Col>
         <Col lg={4} xs={24}>
           <DashCard
             icon={<DropboxOutlined />}
-            title="Total Product Clicks"
+            title="Product Clicks"
             time="Last 30 Days"
             number={3.7}
-            percentage={2.56}
-            direction="up"
-            precision={1}
           />
         </Col>
         <Col span={23}>
