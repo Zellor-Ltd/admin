@@ -1163,3 +1163,11 @@ export const saveCustomLinkList = (params: any) => {
 export const deleteCustomLinkList = (params: any) => {
   return instance.delete('Disco/LinkCustom/Adm/Delete', params);
 };
+
+export const fetchStats = (startDate?: string, endDate?: string) => {
+  if (startDate && endDate)
+    return instance.get(
+      `Disco/Adm/Analytics/GetClientStats/${startDate}/${endDate}`
+    );
+  else return instance.get(`Disco/Adm/Analytics/GetClientStats/`);
+};
