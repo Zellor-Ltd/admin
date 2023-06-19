@@ -69,6 +69,9 @@ export const AppProvider = ({ children }: { children: JSX.Element }) => {
 
   useEffect(() => {
     window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
   });
 
   const setFilterValue: SetFilterValue = (key, value) => {

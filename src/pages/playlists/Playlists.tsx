@@ -46,6 +46,7 @@ const Playlists: React.FC<RouteComponentProps> = () => {
   const [products, setProducts] = useState<any[]>([]);
   const [productBrands, setProductBrands] = useState<any[]>([]);
   const [custom, setCustom] = useState<any[]>([]);
+  const customHeight = window.innerHeight - 370;
   const filter = useRef<any>();
   const cloning = useRef<boolean>(false);
 
@@ -1140,7 +1141,7 @@ const Playlists: React.FC<RouteComponentProps> = () => {
             gutter={8}
             align="bottom"
             justify="space-between"
-            className="mb-05 sticky-filter-box"
+            className="mb-05"
           >
             <Col lg={4} md={12} xs={24}>
               <Typography.Title level={5}>Search</Typography.Title>
@@ -1174,6 +1175,7 @@ const Playlists: React.FC<RouteComponentProps> = () => {
             className="tab-page"
             onChange={handleTabChange}
             activeKey={selectedTab}
+            style={{ minHeight: '100%' }}
           >
             <Tabs.TabPane tab="Brand" key="brand">
               <Table
@@ -1223,7 +1225,7 @@ const Playlists: React.FC<RouteComponentProps> = () => {
                 size="small"
               />
             </Tabs.TabPane>
-            <Tabs.TabPane tab="Custom" key="custom">
+            <Tabs.TabPane tab="Custom" key="custom" style={{ height: '100%' }}>
               <Table
                 rowClassName={(_, index) => `scrollable-row-${index}`}
                 rowKey="id"
@@ -1231,7 +1233,7 @@ const Playlists: React.FC<RouteComponentProps> = () => {
                 dataSource={custom}
                 loading={loading}
                 pagination={false}
-                scroll={{ y: '100%', x: true }}
+                scroll={{ y: customHeight, x: true }}
                 size="small"
               />
             </Tabs.TabPane>
