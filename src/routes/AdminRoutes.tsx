@@ -53,6 +53,7 @@ import DevelopmentDetail from 'pages/development/development';
 import { __isDev__ } from 'helpers/constants';
 import Playlists from 'pages/playlists/Playlists';
 import PlaylistStudio from 'pages/playlist-studio/PlaylistStudio';
+import BrandDashboard from 'pages/dashboard/BrandDashboard';
 
 function AdminRoutes() {
   return (
@@ -61,7 +62,12 @@ function AdminRoutes() {
         exact
         path="/"
         returnComponent
-        component={<Redirect to="/dashboard" />}
+        component={<Redirect to="/brand-dashboard" />}
+      />
+      <AppRoute
+        path="/brand-dashboard"
+        component={BrandDashboard}
+        layout={AuthenticatedLayout}
       />
       <AppRoute
         path="/dashboard"
