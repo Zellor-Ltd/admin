@@ -29,13 +29,16 @@ import CreatorsMultipleFetchDebounceSelect from 'pages/creators/components/Creat
 import { Brand } from 'interfaces/Brand';
 import { Creator } from 'interfaces/Creator';
 import moment from 'moment';
+import { ResponsiveBar } from '@nivo/bar';
 
 interface DashboardProps {}
 
 const BrandDashboard: React.FC<DashboardProps> = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const { doFetch } = useRequest({ setLoading });
-  const [startDate, setStartDate] = useState<string>();
+  const [startDate, setStartDate] = useState<string>(
+    moment().startOf('day').format('YYYYMMDDhhmmss')
+  );
   const inputRefTitle = useRef<any>(null);
   //todo reduce all filters to one state
   const [sourceFilter, setSourceFilter] = useState<string>();
@@ -43,68 +46,7 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
   const [titleFilter, setTitleFilter] = useState<string>();
   const [creatorFilter, setCreatorFilter] = useState<Creator | null>();
   const [impressionFilter, setImpressionFilter] = useState<string>();
-  const videos = [
-    {
-      thumbnailUrl:
-        'https://cdn.discoclub.com/jfka72daefd700248f3a/8fcc92ee-93b1-4505-a618-b8f6621551e7_STR.jpg',
-      videoUrl:
-        'https://cdn.discoclub.com/jfka72daefd700248f3a/b2e6286d-70e0-4da6-9ff8-f5c1bab2345c_STR.mp4',
-      title:
-        'The gorgeous bag contains everything you need to enhance your beauty this Christmas.',
-      brandName: 'Luna by Lisa Jordan',
-      creator: 'Shanice Mavo',
-      impressions: 1000,
-      views: 800,
-      productClicks: 123,
-      totalWatchTime: 0,
-    },
-    {
-      thumbnailUrl:
-        'https://cdn3.discoclub.com/jfka72daefd700248f3a/2b02d683-d6e4-4457-b2f9-f4665783db7c_STR.jpg',
-      videoUrl:
-        'https://cdn3.discoclub.com/jfka72daefd700248f3a/68f6031c-861d-4a54-ba05-87b71284deec_STR.MOV',
-      title: 'Show your pride with vivid rainbow makeup 🌈✨',
-      brandName: '',
-      creator: 'Evelyn',
-      impressions: 1000,
-      views: 800,
-      productClicks: 123,
-      totalWatchTime: 0,
-    },
-  ];
-  const [clientStats, setClientStats] = useState<any>();
-  const [viewStats, setViewStats] = useState<any>();
-
-  //get response, set stats(general, views)
-  //const derived from stats containing formatted view stats (uef dep stats)
-
-  useEffect(() => {
-    const tmp: any[] = [];
-    if (clientStats?.videos)
-      clientStats.videos.forEach((video: any) => {
-        video.stats.forEach((item: any) => {
-          tmp.push([
-            ...tmp,
-            {
-              label: 'Impressions',
-              value: item.impressions,
-              date: item.date,
-            },
-            {
-              label: 'Product Clicks',
-              value: item.productClicks,
-              date: item.date,
-            },
-            {
-              label: 'Video Plays',
-              value: item.videoPlays,
-              date: item.date,
-            },
-          ]);
-        });
-      });
-    setViewStats(tmp);
-  }, [clientStats]);
+  const [stats, setStats] = useState<any>();
 
   useEffect(() => {
     getStats();
@@ -129,45 +71,82 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
       const { result }: any = await doFetch(() =>
         fetchStats(startDate, endDate)
       );
-      setClientStats(result);
+      setStats(result);
     };
     return getClientStats;
   }, [startDate]);
 
   const VideoGraph = () => {
-    const config = {
-      data: viewStats,
-      isGroup: true,
-      xField: 'date',
-      yField: 'value',
-      seriesField: 'label',
-      legend: undefined,
-      meta: {
-        views: {
-          min: 0,
-          max: 1000,
-        },
-        date: {
-          formatter: (value: string) => {
-            return `${
-              value.slice(6, 8) +
-              '/' +
-              value.slice(4, 6) +
-              '/' +
-              value.slice(0, 4)
-            }`;
-          },
-        },
-      },
-      label: {
-        content: '',
-      } as any,
-      tickInterval: 100,
-      dodgePadding: 0,
-      maxColumnWidth: 20,
-    };
-
-    return <Column {...config} />;
+    return (
+      <div style={{ height: '400px' }}>
+        <ResponsiveBar
+          data={stats?.stats ?? []}
+          keys={['productClicks', 'impressions', 'videoPlays']}
+          indexBy="date"
+          margin={{ top: 50, right: 130, bottom: 50, left: 60 }}
+          padding={0.3}
+          groupMode="grouped"
+          valueScale={{ type: 'linear' }}
+          indexScale={{ type: 'band', round: true }}
+          colors={{ scheme: 'nivo' }}
+          borderColor={{
+            from: 'color',
+            modifiers: [['darker', 1.6]],
+          }}
+          axisBottom={{
+            tickSize: 5,
+            tickPadding: 5,
+            tickRotation: 0,
+            legend: null,
+            legendPosition: 'middle',
+            legendOffset: 32,
+            format: d =>
+              `${d.slice(6, 8) + '/' + d.slice(4, 6) + '/' + d.slice(0, 4)}`,
+          }}
+          axisLeft={{
+            tickSize: 5,
+            tickPadding: 5,
+            tickRotation: 0,
+            legend: null,
+            legendPosition: 'middle',
+            legendOffset: -40,
+          }}
+          axisTop={null}
+          axisRight={null}
+          labelSkipWidth={12}
+          labelSkipHeight={12}
+          labelTextColor={{
+            from: 'color',
+            modifiers: [['darker', 1.6]],
+          }}
+          legends={[
+            {
+              dataFrom: 'keys',
+              anchor: 'bottom-right',
+              direction: 'column',
+              justify: false,
+              translateX: 120,
+              translateY: 0,
+              itemsSpacing: 2,
+              itemWidth: 100,
+              itemHeight: 20,
+              itemDirection: 'left-to-right',
+              itemOpacity: 0.85,
+              symbolSize: 20,
+              effects: [
+                {
+                  on: 'hover',
+                  style: {
+                    itemOpacity: 1,
+                  },
+                },
+              ],
+            },
+          ]}
+          role="application"
+        />
+      </div>
+    );
   };
 
   const DashCard = ({ icon, title, time, number }) => (
@@ -498,7 +477,7 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
           rowClassName={(_, index) => `scrollable-row-${index}`}
           rowKey="id"
           columns={columns}
-          dataSource={videos}
+          dataSource={stats?.videos}
           pagination={false}
           scroll={{ y: 240, x: true }}
           size="small"
@@ -689,7 +668,6 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
               </Row>
             </Col>
           </Row>
-
           <VideoGraph />
         </Col>
         <Col lg={4} xs={24}>
