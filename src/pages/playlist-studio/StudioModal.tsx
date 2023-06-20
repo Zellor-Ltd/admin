@@ -72,7 +72,11 @@ const StudioModal: React.FC<StudioModalProps> = ({
   const video = selectedLink?.feed?.package[0]?.videoUrl;
 
   useEffect(() => {
-    if (selectedLink) setActiveTabKey('Details');
+    if (selectedLink) {
+      setActiveTabKey('Details');
+      customForm.setFieldsValue({ id: selectedLink.id });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedLink]);
 
   useEffect(() => {
@@ -277,17 +281,18 @@ const StudioModal: React.FC<StudioModalProps> = ({
 
     if (item) {
       const configuredItem = {
-        index: 2,
-        hIndex: 889,
-        vIndex: 1000,
-        videoFeedId: null,
-        socialPlatform: 'Disco Club',
-        includeVideo: true,
+        id: item.id ?? undefined,
+        index: item.index ?? 2,
+        hIndex: item.hIndex ?? 889,
+        vIndex: item.vIndex ?? 1000,
+        videoFeedId: item.videoFeedId ?? null,
+        socialPlatform: item.socialPlatform ?? 'Disco Club',
+        includeVideo: item.includeVideo ?? true,
         feed: {
-          title: null,
+          title: item.title ?? null,
           videoLabel: item?.feed?.videoLabel,
           shortDescription: item?.feed?.shortDescription,
-          creator: null,
+          creator: item.creator ?? null,
           package: [
             {
               tags: linkTags,
@@ -296,9 +301,9 @@ const StudioModal: React.FC<StudioModalProps> = ({
                 item?.thumbnail?.url ?? item?.feed?.package[0]?.thumbnailUrl,
             },
           ],
-          searchTags: null,
-          category: null,
-          videoType: ['Custom'],
+          searchTags: item.searchTags ?? null,
+          category: item.category ?? null,
+          videoType: item.videoType ?? ['Custom'],
         },
       };
 
