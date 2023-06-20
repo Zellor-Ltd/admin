@@ -40,7 +40,6 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
     moment().startOf('day').format('YYYYMMDDhhmmss')
   );
   const inputRefTitle = useRef<any>(null);
-  //todo reduce all filters to one state
   const [sourceFilter, setSourceFilter] = useState<string>();
   const [brandFilter, setBrandFilter] = useState<Brand>();
   const [titleFilter, setTitleFilter] = useState<string>();
@@ -59,11 +58,6 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
         cursor: 'end',
       });
   }, [titleFilter]);
-
-  //todo reduce
-  useEffect(() => {
-    console.log('render');
-  });
 
   const getStats = useMemo(() => {
     const getClientStats = async () => {
