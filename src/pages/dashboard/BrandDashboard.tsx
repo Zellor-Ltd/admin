@@ -17,7 +17,7 @@ import {
   SearchOutlined,
   TeamOutlined,
 } from '@ant-design/icons';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { fetchStats } from 'services/DiscoClubService';
 import '@ant-design/flowchart/dist/index.css';
 import { Area, Column } from '@ant-design/plots';
@@ -35,10 +35,9 @@ interface DashboardProps {}
 const BrandDashboard: React.FC<DashboardProps> = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const { doFetch } = useRequest({ setLoading });
-  const [videoData, setVideoData] = useState<any>();
   const [startDate, setStartDate] = useState<string>();
   const inputRefTitle = useRef<any>(null);
-  //todo start here, reduce all filters to one state
+  //todo reduce all filters to one state
   const [sourceFilter, setSourceFilter] = useState<string>();
   const [brandFilter, setBrandFilter] = useState<Brand>();
   const [titleFilter, setTitleFilter] = useState<string>();
@@ -73,33 +72,19 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
       totalWatchTime: 0,
     },
   ];
-  const [viewStats, setViewStats] = useState<any[]>([]);
+  const [clientStats, setClientStats] = useState<any>();
+  const [viewStats, setViewStats] = useState<any>();
+
+  //get response, set stats(general, views)
+  //const derived from stats containing formatted view stats (uef dep stats)
 
   useEffect(() => {
-    getVideoData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [startDate]);
-
-  useEffect(() => {
-    if (inputRefTitle.current)
-      inputRefTitle.current.focus({
-        cursor: 'end',
-      });
-  }, [titleFilter]);
-
-  //todo reduce
-  useEffect(() => {
-    console.log('render');
-  });
-
-  //todo fix this
-  useEffect(() => {
-    const stats: any = [];
-    if (videoData?.videos)
-      videoData.videos.forEach((video: any) => {
+    const tmp: any[] = [];
+    if (clientStats?.videos)
+      clientStats.videos.forEach((video: any) => {
         video.stats.forEach((item: any) => {
-          stats.push([
-            ...stats,
+          tmp.push([
+            ...tmp,
             {
               label: 'Impressions',
               value: item.impressions,
@@ -118,14 +103,36 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
           ]);
         });
       });
-    setViewStats(stats);
-  }, [videoData]);
+    setViewStats(tmp);
+  }, [clientStats]);
 
-  const getVideoData = async () => {
-    const endDate = moment().format('YYYYMMDDhhmmss');
-    const { result }: any = await doFetch(() => fetchStats(startDate, endDate));
-    setVideoData(result);
-  };
+  useEffect(() => {
+    getStats();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [startDate]);
+
+  useEffect(() => {
+    if (inputRefTitle.current)
+      inputRefTitle.current.focus({
+        cursor: 'end',
+      });
+  }, [titleFilter]);
+
+  //todo reduce
+  useEffect(() => {
+    console.log('render');
+  });
+
+  const getStats = useMemo(() => {
+    const getClientStats = async () => {
+      const endDate = moment().format('YYYYMMDDhhmmss');
+      const { result }: any = await doFetch(() =>
+        fetchStats(startDate, endDate)
+      );
+      setClientStats(result);
+    };
+    return getClientStats;
+  }, [startDate]);
 
   const VideoGraph = () => {
     const config = {
