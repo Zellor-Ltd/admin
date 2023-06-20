@@ -278,11 +278,11 @@ const Playlists: React.FC<RouteComponentProps> = () => {
         if (value)
           return (
             <a
-              href={'https://beautybuzz.io/' + value.slice(0, -4)}
+              href={'https://beautybuzz.io/' + value}
               target="blank"
               style={value ? {} : { pointerEvents: 'none' }}
             >
-              {value ? `https://beautybuzz.io/${value.slice(0, -4)}` : '-'}
+              {value ? `https://beautybuzz.io/${value}` : '-'}
             </a>
           );
         else return '-';
@@ -456,11 +456,11 @@ const Playlists: React.FC<RouteComponentProps> = () => {
         if (value)
           return (
             <a
-              href={'https://beautybuzz.io/' + value.slice(0, -4)}
+              href={'https://beautybuzz.io/' + value}
               target="blank"
               style={value ? {} : { pointerEvents: 'none' }}
             >
-              {value ? `https://beautybuzz.io/${value.slice(0, -4)}` : '-'}
+              {value ? `https://beautybuzz.io/${value}` : '-'}
             </a>
           );
         else return '-';
@@ -639,11 +639,11 @@ const Playlists: React.FC<RouteComponentProps> = () => {
         if (value)
           return (
             <a
-              href={'https://beautybuzz.io/' + value.slice(0, -4)}
+              href={'https://beautybuzz.io/' + value}
               target="blank"
               style={value ? {} : { pointerEvents: 'none' }}
             >
-              {value ? `https://beautybuzz.io/${value.slice(0, -4)}` : '-'}
+              {value ? `https://beautybuzz.io/${value}` : '-'}
             </a>
           );
         else return '-';
@@ -836,11 +836,11 @@ const Playlists: React.FC<RouteComponentProps> = () => {
         if (value)
           return (
             <a
-              href={'https://beautybuzz.io/' + value.slice(0, -4)}
+              href={'https://beautybuzz.io/' + value}
               target="blank"
               style={value ? {} : { pointerEvents: 'none' }}
             >
-              {value ? `https://beautybuzz.io/${value.slice(0, -4)}` : '-'}
+              {value ? `https://beautybuzz.io/${value}` : '-'}
             </a>
           );
         else return '-';
@@ -989,7 +989,7 @@ const Playlists: React.FC<RouteComponentProps> = () => {
       render: id => (
         <CopyValueToClipboard
           tooltipText="Copy Embed Code"
-          value={`<script src="https://beautybuzz.io/script/ce/vlink-ce.js"</script>
+          value={`<script src="https://beautybuzz.io/script/ce/vlink-ce.js"></script>
                   <vlink-carousel src=${id?.slice(0, -4)} size="1">
                   </vlink-carousel>`}
         />
@@ -1017,11 +1017,11 @@ const Playlists: React.FC<RouteComponentProps> = () => {
         if (value)
           return (
             <a
-              href={'https://beautybuzz.io/' + value.slice(0, -4)}
+              href={'https://beautybuzz.io/' + value}
               target="blank"
               style={value ? {} : { pointerEvents: 'none' }}
             >
-              {value ? `https://beautybuzz.io/${value.slice(0, -4)}` : '-'}
+              {value ? `https://beautybuzz.io/${value}` : '-'}
             </a>
           );
         else return '-';

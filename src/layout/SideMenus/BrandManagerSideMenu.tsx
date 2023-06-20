@@ -1,4 +1,4 @@
-import { FundOutlined, TagOutlined, HddOutlined } from '@ant-design/icons';
+import { FundOutlined, LinkOutlined } from '@ant-design/icons';
 import { Menu } from 'antd';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 
@@ -15,18 +15,11 @@ const AdminSideMenu = () => {
         <Link to="/brand-dashboard">Dashboard</Link>
       </Menu.Item>
       <Menu.Item
-        key="playlist-studio"
-        icon={<HddOutlined />}
-        onClick={() => refreshParent('playlist-studio')}
+        key="playlists"
+        icon={<LinkOutlined />}
+        onClick={() => refreshParent('playlists')}
       >
-        <Link to="/playlist-studio">Playlist Studio</Link>
-      </Menu.Item>
-      <Menu.Item
-        key="brand-products"
-        icon={<TagOutlined />}
-        onClick={() => refreshParent('brand-products')}
-      >
-        <Link to="/brand-products">Products</Link>
+        <Link to="/playlists">Playlists</Link>
       </Menu.Item>
     </Menu>
   );
