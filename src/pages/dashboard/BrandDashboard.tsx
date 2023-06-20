@@ -36,9 +36,6 @@ interface DashboardProps {}
 const BrandDashboard: React.FC<DashboardProps> = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const { doFetch } = useRequest({ setLoading });
-  const [startDate, setStartDate] = useState<string>(
-    moment().startOf('day').format('YYYYMMDDhhmmss')
-  );
   const inputRefTitle = useRef<any>(null);
   const [sourceFilter, setSourceFilter] = useState<string>();
   const [brandFilter, setBrandFilter] = useState<Brand>();
@@ -46,11 +43,12 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
   const [creatorFilter, setCreatorFilter] = useState<Creator | null>();
   const [impressionFilter, setImpressionFilter] = useState<string>();
   const [stats, setStats] = useState<any>();
+  const [period, setPeriod] = useState<string>('Today');
 
   useEffect(() => {
     getStats();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [startDate]);
+  }, [period]);
 
   useEffect(() => {
     if (inputRefTitle.current)
@@ -61,6 +59,43 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
 
   const getStats = useMemo(() => {
     const getClientStats = async () => {
+      let startDate;
+      switch (period) {
+        case 'Today':
+          startDate = moment().startOf('day').format('YYYYMMDDhhmmss');
+          break;
+        case 'Last 3 Days':
+          startDate = moment()
+            .subtract(3, 'days')
+            .startOf('day')
+            .format('YYYYMMDDhhmmss');
+          break;
+        case 'Last Week':
+          startDate = moment()
+            .subtract(7, 'days')
+            .startOf('day')
+            .format('YYYYMMDDhhmmss');
+          break;
+        case 'Last 30 Days':
+          startDate = moment()
+            .subtract(1, 'month')
+            .startOf('day')
+            .format('YYYYMMDDhhmmss');
+          break;
+        case 'Last 3 months':
+          startDate = moment()
+            .subtract(3, 'months')
+            .startOf('day')
+            .format('YYYYMMDDhhmmss');
+          break;
+        case 'Last Year':
+          startDate = moment()
+            .subtract(1, 'year')
+            .startOf('day')
+            .format('YYYYMMDDhhmmss');
+          break;
+      }
+
       const endDate = moment().format('YYYYMMDDhhmmss');
       const { result }: any = await doFetch(() =>
         fetchStats(startDate, endDate)
@@ -69,7 +104,7 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
     };
     return getClientStats;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [startDate]);
+  }, [period]);
 
   const VideoGraph = () => {
     return (
@@ -184,7 +219,7 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
     );
   };
 
-  const DashCard = ({ icon, title, time, number }) => (
+  const DashCard = ({ icon, title, number }) => (
     <Card style={{ width: '100%', height: 150 }}>
       <Meta
         title={
@@ -219,7 +254,7 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
                       marginBottom: '-1rem',
                     }}
                   >
-                    {time}
+                    {period}
                   </p>
                 </Tooltip>
               </div>
@@ -633,67 +668,48 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
                 <Col>
                   <Select
                     disabled={loading}
-                    onChange={setStartDate}
+                    onChange={setPeriod}
                     placeholder="Timeframe"
                     style={{ width: '100%' }}
                     filterOption={filterOption}
                     allowClear
                     showSearch
-                    value={startDate}
+                    value={period}
                   >
-                    <Select.Option
-                      key="Today"
-                      value={moment().startOf('day').format('YYYYMMDDhhmmss')}
-                      label="Today"
-                    >
+                    <Select.Option key="Today" value="Today" label="Today">
                       Today
                     </Select.Option>
                     <Select.Option
                       key="Last 3 Days"
-                      value={moment()
-                        .subtract(3, 'days')
-                        .startOf('day')
-                        .format('YYYYMMDDhhmmss')}
+                      value="Last 3 Days"
                       label="Last 3 Days"
                     >
                       Last 3 Days
                     </Select.Option>
                     <Select.Option
                       key="Last Week"
-                      value={moment()
-                        .subtract(7, 'days')
-                        .startOf('day')
-                        .format('YYYYMMDDhhmmss')}
+                      value="Last Week"
                       label="Last Week"
                     >
                       Last Week
                     </Select.Option>
                     <Select.Option
                       key="Last 30 Days"
-                      value={moment()
-                        .subtract(1, 'month')
-                        .startOf('day')
-                        .format('YYYYMMDDhhmmss')}
+                      value="Last 30 Days"
                       label="Last 30 Days"
                     >
                       Last 30 Days
                     </Select.Option>
                     <Select.Option
                       key="Last 3 months"
-                      value={moment()
-                        .subtract(3, 'months')
-                        .startOf('day')
-                        .format('YYYYMMDDhhmmss')}
+                      value="Last 3 Months"
                       label="Last 3 months"
                     >
                       Last 3 months
                     </Select.Option>
                     <Select.Option
                       key="Last Year"
-                      value={moment()
-                        .subtract(1, 'year')
-                        .startOf('day')
-                        .format('YYYYMMDDhhmmss')}
+                      value="Last Year"
                       label="Last Year"
                     >
                       Last Year
@@ -709,15 +725,13 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
           <DashCard
             icon={<TeamOutlined />}
             title="Widget Impressions"
-            time="Last 30 Days"
-            number={3756}
+            number={stats?.totalWidgetImpressions}
           />
         </Col>
         <Col lg={4} xs={24}>
           <DashCard
             icon={<AppstoreOutlined />}
             title="Widget Interactions"
-            time="Last 30 Days"
             number={2504}
           />
         </Col>
@@ -725,24 +739,21 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
           <DashCard
             icon={<PlayCircleOutlined />}
             title="Video Plays"
-            time="Last 30 Days"
-            number={2306}
+            number={stats?.totalVideoViews}
           />
         </Col>
         <Col lg={4} xs={24}>
           <DashCard
             icon={<PlayCircleOutlined />}
-            title="Avg Videos / Session"
-            time="Last 30 Days"
-            number="2m43s"
+            title="Avg Watch Time / Session"
+            number={stats?.avgWatchTime}
           />
         </Col>
         <Col lg={4} xs={24}>
           <DashCard
             icon={<DropboxOutlined />}
             title="Product Clicks"
-            time="Last 30 Days"
-            number={3.7}
+            number={stats?.totalProductClicks}
           />
         </Col>
         <Col span={23}>
