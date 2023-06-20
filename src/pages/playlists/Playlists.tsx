@@ -278,11 +278,11 @@ const Playlists: React.FC<RouteComponentProps> = () => {
         if (value)
           return (
             <a
-              href={'https://beautybuzz.io/' + value.slice(0, -4)}
+              href={'https://beautybuzz.io/' + value}
               target="blank"
               style={value ? {} : { pointerEvents: 'none' }}
             >
-              {value ? `https://beautybuzz.io/${value.slice(0, -4)}` : '-'}
+              {value ? `https://beautybuzz.io/${value}` : '-'}
             </a>
           );
         else return '-';
@@ -456,11 +456,11 @@ const Playlists: React.FC<RouteComponentProps> = () => {
         if (value)
           return (
             <a
-              href={'https://beautybuzz.io/' + value.slice(0, -4)}
+              href={'https://beautybuzz.io/' + value}
               target="blank"
               style={value ? {} : { pointerEvents: 'none' }}
             >
-              {value ? `https://beautybuzz.io/${value.slice(0, -4)}` : '-'}
+              {value ? `https://beautybuzz.io/${value}` : '-'}
             </a>
           );
         else return '-';
@@ -639,11 +639,11 @@ const Playlists: React.FC<RouteComponentProps> = () => {
         if (value)
           return (
             <a
-              href={'https://beautybuzz.io/' + value.slice(0, -4)}
+              href={'https://beautybuzz.io/' + value}
               target="blank"
               style={value ? {} : { pointerEvents: 'none' }}
             >
-              {value ? `https://beautybuzz.io/${value.slice(0, -4)}` : '-'}
+              {value ? `https://beautybuzz.io/${value}` : '-'}
             </a>
           );
         else return '-';
@@ -836,11 +836,11 @@ const Playlists: React.FC<RouteComponentProps> = () => {
         if (value)
           return (
             <a
-              href={'https://beautybuzz.io/' + value.slice(0, -4)}
+              href={'https://beautybuzz.io/' + value}
               target="blank"
               style={value ? {} : { pointerEvents: 'none' }}
             >
-              {value ? `https://beautybuzz.io/${value.slice(0, -4)}` : '-'}
+              {value ? `https://beautybuzz.io/${value}` : '-'}
             </a>
           );
         else return '-';
@@ -1017,11 +1017,11 @@ const Playlists: React.FC<RouteComponentProps> = () => {
         if (value)
           return (
             <a
-              href={'https://beautybuzz.io/' + value.slice(0, -4)}
+              href={'https://beautybuzz.io/' + value}
               target="blank"
               style={value ? {} : { pointerEvents: 'none' }}
             >
-              {value ? `https://beautybuzz.io/${value.slice(0, -4)}` : '-'}
+              {value ? `https://beautybuzz.io/${value}` : '-'}
             </a>
           );
         else return '-';
