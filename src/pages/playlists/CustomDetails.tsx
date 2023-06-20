@@ -52,6 +52,16 @@ const CustomDetails: React.FC<CustomDetailsProps> = ({
   const [brandId, setBrandId] = useState<string>(currentList?.brandId);
 
   useEffect(() => {
+    var script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.src = 'https://vlink.ie/script/ce/vlink-ce.js';
+    document.body.appendChild(script);
+    document.getElementById(
+      'carousel'
+    )!.innerHTML = `<vlink-carousel src="${currentList?.id}"></vlink-carousel>`;
+  }, []);
+
+  useEffect(() => {
     if (reordered.current) reordered.current = false;
     setCurrentList({ ...currentList, links: list?.links });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -289,12 +299,15 @@ const CustomDetails: React.FC<CustomDetailsProps> = ({
             </Col>
           )}
           <Col span={24}>
+            <div id="carousel" className="mt-15"></div>
+          </Col>
+          <Col span={24}>
             <Row justify="end">
               <Col flex="100px">
                 <Button
                   key="1"
                   type="primary"
-                  className="ml-1 mt-15"
+                  className="ml-1"
                   disabled={disableButton}
                   onClick={() => handleEdit()}
                 >
