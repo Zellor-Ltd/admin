@@ -20,7 +20,7 @@ import {
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { fetchStats } from 'services/DiscoClubService';
 import '@ant-design/flowchart/dist/index.css';
-import { Area, Column } from '@ant-design/plots';
+import { Area } from '@ant-design/plots';
 import Meta from 'antd/lib/card/Meta';
 import { ColumnsType } from 'antd/lib/table';
 import SimpleSelect from 'components/select/SimpleSelect';
@@ -74,6 +74,7 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
       setStats(result);
     };
     return getClientStats;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [startDate]);
 
   const VideoGraph = () => {
@@ -88,7 +89,7 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
           groupMode="grouped"
           valueScale={{ type: 'linear' }}
           indexScale={{ type: 'band', round: true }}
-          colors={{ scheme: 'nivo' }}
+          colors={{ scheme: 'purpleRed_green' }}
           borderColor={{
             from: 'color',
             modifiers: [['darker', 1.6]],
@@ -113,12 +114,7 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
           }}
           axisTop={null}
           axisRight={null}
-          labelSkipWidth={12}
-          labelSkipHeight={12}
-          labelTextColor={{
-            from: 'color',
-            modifiers: [['darker', 1.6]],
-          }}
+          label=""
           legends={[
             {
               dataFrom: 'keys',
@@ -143,7 +139,52 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
               ],
             },
           ]}
+          legendLabel={x => {
+            switch (x.id) {
+              case 'impressions':
+                return 'Impressions';
+              case 'productClicks':
+                return 'Product Clicks';
+              default:
+                return 'Video Plays';
+            }
+          }}
           role="application"
+          tooltip={({ id, label, value, color }) => {
+            const date = label.slice(-8);
+            let property;
+            switch (id) {
+              case 'impressions':
+                property = 'Impressions';
+                break;
+              case 'productClicks':
+                property = 'Product Clicks';
+                break;
+              default:
+                property = 'Video Plays';
+                break;
+            }
+            return (
+              <div
+                style={{
+                  padding: 12,
+                  background: 'white',
+                }}
+              >
+                <span>
+                  {date.slice(6, 8) +
+                    '/' +
+                    date.slice(4, 6) +
+                    '/' +
+                    date.slice(0, 4)}
+                </span>
+                <br />
+                <p style={{ color: color, display: 'inline' }}>■</p>
+                {'  '}
+                {property}: {value}
+              </div>
+            );
+          }}
         />
       </div>
     );
