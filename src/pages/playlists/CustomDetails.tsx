@@ -59,6 +59,7 @@ const CustomDetails: React.FC<CustomDetailsProps> = ({
     document.getElementById(
       'carousel'
     )!.innerHTML = `<vlink-carousel src="${currentList?.id}"></vlink-carousel>`;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
