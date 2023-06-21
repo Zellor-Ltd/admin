@@ -288,18 +288,20 @@ const Playlists: React.FC<RouteComponentProps> = () => {
           </div>
         </div>
       ),
-      dataIndex: ['brand', 'masterBrandLink'],
+      dataIndex: 'id',
       width: '10%',
       align: 'center',
       render: (value: string) => {
         if (value)
           return (
             <a
-              href={'https://beautybuzz.io/' + value}
+              href={'https://beautybuzz.io/' + value.toUpperCase().slice(0, -4)}
               target="blank"
               style={value ? {} : { pointerEvents: 'none' }}
             >
-              {value ? `https://beautybuzz.io/${value}` : '-'}
+              {value
+                ? `https://beautybuzz.io/${value.toUpperCase().slice(0, -4)}`
+                : '-'}
             </a>
           );
         else return '-';
@@ -466,18 +468,20 @@ const Playlists: React.FC<RouteComponentProps> = () => {
           </div>
         </div>
       ),
-      dataIndex: ['brand', 'brandLink'],
+      dataIndex: 'id',
       width: '10%',
       align: 'center',
       render: (value: string) => {
         if (value)
           return (
             <a
-              href={'https://beautybuzz.io/' + value}
+              href={'https://beautybuzz.io/' + value.toUpperCase().slice(0, -4)}
               target="blank"
               style={value ? {} : { pointerEvents: 'none' }}
             >
-              {value ? `https://beautybuzz.io/${value}` : '-'}
+              {value
+                ? `https://beautybuzz.io/${value.toUpperCase().slice(0, -4)}`
+                : '-'}
             </a>
           );
         else return '-';
@@ -656,11 +660,13 @@ const Playlists: React.FC<RouteComponentProps> = () => {
         if (value)
           return (
             <a
-              href={'https://beautybuzz.io/' + value.slice(0, -4)}
+              href={'https://beautybuzz.io/' + value.toUpperCase().slice(0, -4)}
               target="blank"
               style={value ? {} : { pointerEvents: 'none' }}
             >
-              {value ? `https://beautybuzz.io/${value.slice(0, -4)}` : '-'}
+              {value
+                ? `https://beautybuzz.io/${value.toUpperCase().slice(0, -4)}`
+                : '-'}
             </a>
           );
         else return '-';
@@ -1034,11 +1040,13 @@ const Playlists: React.FC<RouteComponentProps> = () => {
         if (value)
           return (
             <a
-              href={'https://beautybuzz.io/' + value.slice(0, -4)}
+              href={'https://beautybuzz.io/' + value.toUpperCase().slice(0, -4)}
               target="blank"
               style={value ? {} : { pointerEvents: 'none' }}
             >
-              {value ? `https://beautybuzz.io/${value.slice(0, -4)}` : '-'}
+              {value
+                ? `https://beautybuzz.io/${value.toUpperCase().slice(0, -4)}`
+                : '-'}
             </a>
           );
         else return '-';
