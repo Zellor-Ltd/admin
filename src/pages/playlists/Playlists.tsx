@@ -639,11 +639,11 @@ const Playlists: React.FC<RouteComponentProps> = () => {
         if (value)
           return (
             <a
-              href={'https://beautybuzz.io/' + value}
+              href={'https://beautybuzz.io/' + value.slice(0, -4)}
               target="blank"
               style={value ? {} : { pointerEvents: 'none' }}
             >
-              {value ? `https://beautybuzz.io/${value}` : '-'}
+              {value ? `https://beautybuzz.io/${value.slice(0, -4)}` : '-'}
             </a>
           );
         else return '-';
@@ -1017,11 +1017,11 @@ const Playlists: React.FC<RouteComponentProps> = () => {
         if (value)
           return (
             <a
-              href={'https://beautybuzz.io/' + value}
+              href={'https://beautybuzz.io/' + value.slice(0, -4)}
               target="blank"
               style={value ? {} : { pointerEvents: 'none' }}
             >
-              {value ? `https://beautybuzz.io/${value}` : '-'}
+              {value ? `https://beautybuzz.io/${value.slice(0, -4)}` : '-'}
             </a>
           );
         else return '-';
