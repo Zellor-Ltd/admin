@@ -3,6 +3,7 @@ import {
   Col,
   Input,
   PageHeader,
+  Popconfirm,
   Row,
   Table,
   Tabs,
@@ -12,10 +13,16 @@ import {
 } from 'antd';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, RouteComponentProps, useHistory } from 'react-router-dom';
-import { CopyOutlined, EditOutlined, SearchOutlined } from '@ant-design/icons';
+import {
+  CopyOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  SearchOutlined,
+} from '@ant-design/icons';
 import { ColumnsType } from 'antd/lib/table';
 import { useRequest } from 'hooks/useRequest';
 import {
+  deleteCustomLinkList,
   fetchBrands,
   fetchCustomLinkLists,
   fetchLinkBrand,
@@ -172,6 +179,16 @@ const Playlists: React.FC<RouteComponentProps> = () => {
     setDetails(false);
   };
 
+  const handleDelete = async (record: any, index: number) => {
+    try {
+      deleteCustomLinkList(record.id);
+      message.success('List deleted successfully.');
+      setCustom(prev => [...prev.slice(0, index), ...prev.slice(index + 1)]);
+    } catch (e) {
+      message.error('Error: something went wrong. Please try again');
+    }
+  };
+
   const handleSaveCustomList = (record: any) => {
     const listItem = custom.find(item => item.id === record.id);
     if (cloning.current) cloning.current = false;
@@ -271,18 +288,20 @@ const Playlists: React.FC<RouteComponentProps> = () => {
           </div>
         </div>
       ),
-      dataIndex: ['brand', 'masterBrandLink'],
+      dataIndex: 'id',
       width: '10%',
       align: 'center',
       render: (value: string) => {
         if (value)
           return (
             <a
-              href={'https://beautybuzz.io/' + value}
+              href={'https://beautybuzz.io/' + value.toUpperCase().slice(0, -4)}
               target="blank"
               style={value ? {} : { pointerEvents: 'none' }}
             >
-              {value ? `https://beautybuzz.io/${value}` : '-'}
+              {value
+                ? `https://beautybuzz.io/${value.toUpperCase().slice(0, -4)}`
+                : '-'}
             </a>
           );
         else return '-';
@@ -449,18 +468,20 @@ const Playlists: React.FC<RouteComponentProps> = () => {
           </div>
         </div>
       ),
-      dataIndex: ['brand', 'brandLink'],
+      dataIndex: 'id',
       width: '10%',
       align: 'center',
       render: (value: string) => {
         if (value)
           return (
             <a
-              href={'https://beautybuzz.io/' + value}
+              href={'https://beautybuzz.io/' + value.toUpperCase().slice(0, -4)}
               target="blank"
               style={value ? {} : { pointerEvents: 'none' }}
             >
-              {value ? `https://beautybuzz.io/${value}` : '-'}
+              {value
+                ? `https://beautybuzz.io/${value.toUpperCase().slice(0, -4)}`
+                : '-'}
             </a>
           );
         else return '-';
@@ -639,11 +660,13 @@ const Playlists: React.FC<RouteComponentProps> = () => {
         if (value)
           return (
             <a
-              href={'https://beautybuzz.io/' + value.slice(0, -4)}
+              href={'https://beautybuzz.io/' + value.toUpperCase().slice(0, -4)}
               target="blank"
               style={value ? {} : { pointerEvents: 'none' }}
             >
-              {value ? `https://beautybuzz.io/${value.slice(0, -4)}` : '-'}
+              {value
+                ? `https://beautybuzz.io/${value.toUpperCase().slice(0, -4)}`
+                : '-'}
             </a>
           );
         else return '-';
@@ -1017,11 +1040,13 @@ const Playlists: React.FC<RouteComponentProps> = () => {
         if (value)
           return (
             <a
-              href={'https://beautybuzz.io/' + value.slice(0, -4)}
+              href={'https://beautybuzz.io/' + value.toUpperCase().slice(0, -4)}
               target="blank"
               style={value ? {} : { pointerEvents: 'none' }}
             >
-              {value ? `https://beautybuzz.io/${value.slice(0, -4)}` : '-'}
+              {value
+                ? `https://beautybuzz.io/${value.toUpperCase().slice(0, -4)}`
+                : '-'}
             </a>
           );
         else return '-';
@@ -1116,6 +1141,16 @@ const Playlists: React.FC<RouteComponentProps> = () => {
           >
             <EditOutlined />
           </Link>
+          <Popconfirm
+            title="Are you sure？"
+            okText="Yes"
+            cancelText="No"
+            onConfirm={() => handleDelete(record, index)}
+          >
+            <Button type="link" style={{ padding: 0, margin: 6 }}>
+              <DeleteOutlined />
+            </Button>
+          </Popconfirm>
         </>
       ),
     },
