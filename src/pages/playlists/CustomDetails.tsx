@@ -45,7 +45,7 @@ const CustomDetails: React.FC<CustomDetailsProps> = ({
   const [link, setLink] = useState<any>();
   const [showModal, setShowModal] = useState<boolean>(false);
   const [disableButton, setDisableButton] = useState<boolean>(
-    !!!currentList?.name
+    !!!currentList?.name || !!!currentList?.brandId
   );
   const reordered = useRef<boolean>(false);
   const editing = useRef<boolean>(false);
@@ -84,7 +84,6 @@ const CustomDetails: React.FC<CustomDetailsProps> = ({
     customListForm.links = list?.links;
     customListForm.name = customListForm.name.name ?? customListForm.name;
     if (isCloning) customListForm.brandId = null;
-    else customListForm.brandId = brandId;
     const response = await doFetch(() => saveCustomLinkList(customListForm));
     customListForm.id
       ? onSave(customListForm)
@@ -251,11 +250,20 @@ const CustomDetails: React.FC<CustomDetailsProps> = ({
 
   const checkName = (_: any, value: string) => {
     if (value?.length > 0) {
-      setDisableButton(false);
+      if (brandId) setDisableButton(false);
       return Promise.resolve();
     }
     setDisableButton(true);
     return Promise.reject(new Error('List must include name!'));
+  };
+
+  const checkBrand = (_: any, value: string) => {
+    if (value?.length > 0) {
+      if (form.getFieldValue('name')) setDisableButton(false);
+      return Promise.resolve();
+    }
+    setDisableButton(true);
+    return Promise.reject(new Error('List must include brand!'));
   };
 
   return (
@@ -281,22 +289,30 @@ const CustomDetails: React.FC<CustomDetailsProps> = ({
           </Col>
           {!isCloning && (
             <Col span={24}>
-              <Typography.Title level={5}>Master Brand</Typography.Title>
-              <SimpleSelect
-                showSearch
-                data={brands}
-                style={{ width: '100%' }}
-                optionMapping={{
-                  key: 'id',
-                  label: 'brandName',
-                  value: 'id',
-                }}
-                placeholder="Select a Master Brand"
-                onChange={setBrandId}
-                selectedOption={brandId}
-                disabled={!brands.length}
-                allowClear
-              />
+              <Typography.Title level={5}></Typography.Title>
+              <Form.Item
+                label="Master Brand"
+                name="brandId"
+                id="brandField"
+                rules={[{ validator: checkBrand }]}
+                required
+              >
+                <SimpleSelect
+                  showSearch
+                  data={brands}
+                  style={{ width: '100%' }}
+                  optionMapping={{
+                    key: 'id',
+                    label: 'brandName',
+                    value: 'id',
+                  }}
+                  placeholder="Select a Master Brand"
+                  onChange={setBrandId}
+                  selectedOption={brandId}
+                  disabled={!brands.length}
+                  allowClear
+                />
+              </Form.Item>
             </Col>
           )}
           <Col span={24}>
@@ -359,7 +375,12 @@ const CustomDetails: React.FC<CustomDetailsProps> = ({
             </Button>
           </Col>
           <Col>
-            <Button type="primary" htmlType="submit" className="ml-1">
+            <Button
+              type="primary"
+              htmlType="submit"
+              className="ml-1"
+              disabled={disableButton}
+            >
               Save Changes
             </Button>
           </Col>
