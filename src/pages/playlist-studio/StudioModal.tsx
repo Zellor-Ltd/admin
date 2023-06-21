@@ -280,42 +280,35 @@ const StudioModal: React.FC<StudioModalProps> = ({
     }
 
     if (item) {
-      const configuredItem = {
-        id: item.id ?? undefined,
-        index: item.index ?? 2,
-        hIndex: item.hIndex ?? 889,
-        vIndex: item.vIndex ?? 1000,
-        videoFeedId: item.videoFeedId ?? null,
-        socialPlatform: item.socialPlatform ?? 'Disco Club',
-        includeVideo: item.includeVideo ?? true,
-        feed: {
-          title: item.title ?? null,
-          videoLabel: item?.feed?.videoLabel,
-          shortDescription: item?.feed?.shortDescription,
-          creator: item.creator ?? null,
-          package: [
-            {
-              tags: linkTags,
-              videoUrl: item?.video?.url ?? item?.feed?.package[0]?.videoUrl,
-              thumbnailUrl:
-                item?.thumbnail?.url ?? item?.feed?.package[0]?.thumbnailUrl,
-            },
-          ],
-          searchTags: item.searchTags ?? null,
-          category: item.category ?? null,
-          videoType: item.videoType ?? ['Custom'],
-        },
+      item.index = item.index ?? 2;
+      item.hIndex = item.hIndex ?? 889;
+      item.vIndex = item.vIndex ?? 1000;
+      item.videoFeedId = item.videoFeedId ?? null;
+      item.socialPlatform = item.socialPlatform ?? 'Disco Club';
+      item.includeVideo = item.includeVideo ?? true;
+      item.feed = {
+        title: item.feed?.title ?? null,
+        videoLabel: item?.feed?.videoLabel,
+        shortDescription: item?.feed?.shortDescription,
+        creator: item.feed?.creator ?? null,
+        package: [
+          {
+            tags: linkTags,
+            videoUrl: item?.video?.url ?? item?.feed?.package[0]?.videoUrl,
+            thumbnailUrl:
+              item?.thumbnail?.url ?? item?.feed?.package[0]?.thumbnailUrl,
+          },
+        ],
+        searchTags: item.searchTags ?? null,
+        category: item.category ?? null,
+        videoType: item.videoType ?? ['Custom'],
       };
 
       const index = link ? links?.indexOf(link) : links?.length;
 
       const newLinks = links?.length
-        ? [
-            ...links?.slice(0, index),
-            configuredItem,
-            ...links?.slice(index + 1),
-          ]
-        : [configuredItem];
+        ? [...links?.slice(0, index), item, ...links?.slice(index + 1)]
+        : [item];
 
       setLinks(newLinks);
       setList(prev => ({
@@ -323,8 +316,6 @@ const StudioModal: React.FC<StudioModalProps> = ({
         links: newLinks,
         name: currentList?.name,
       }));
-      setShowModal(false);
-
       setShowModal(false);
     } else message.warning("Can't add an empty item!");
   };
