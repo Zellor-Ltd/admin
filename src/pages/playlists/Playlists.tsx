@@ -3,6 +3,7 @@ import {
   Col,
   Input,
   PageHeader,
+  Popconfirm,
   Row,
   Table,
   Tabs,
@@ -12,10 +13,16 @@ import {
 } from 'antd';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, RouteComponentProps, useHistory } from 'react-router-dom';
-import { CopyOutlined, EditOutlined, SearchOutlined } from '@ant-design/icons';
+import {
+  CopyOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  SearchOutlined,
+} from '@ant-design/icons';
 import { ColumnsType } from 'antd/lib/table';
 import { useRequest } from 'hooks/useRequest';
 import {
+  deleteCustomLinkList,
   fetchBrands,
   fetchCustomLinkLists,
   fetchLinkBrand,
@@ -170,6 +177,16 @@ const Playlists: React.FC<RouteComponentProps> = () => {
 
   const handleCancelRecord = () => {
     setDetails(false);
+  };
+
+  const handleDelete = async (record: any, index: number) => {
+    try {
+      deleteCustomLinkList(record.id);
+      message.success('List deleted successfully.');
+      setCustom(prev => [...prev.slice(0, index), ...prev.slice(index + 1)]);
+    } catch (e) {
+      message.error('Error: something went wrong. Please try again');
+    }
   };
 
   const handleSaveCustomList = (record: any) => {
@@ -1116,6 +1133,16 @@ const Playlists: React.FC<RouteComponentProps> = () => {
           >
             <EditOutlined />
           </Link>
+          <Popconfirm
+            title="Are you sure？"
+            okText="Yes"
+            cancelText="No"
+            onConfirm={() => handleDelete(record, index)}
+          >
+            <Button type="link" style={{ padding: 0, margin: 6 }}>
+              <DeleteOutlined />
+            </Button>
+          </Popconfirm>
         </>
       ),
     },
