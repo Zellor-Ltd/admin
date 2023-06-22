@@ -1171,3 +1171,19 @@ export const fetchStats = (startDate?: string, endDate?: string) => {
     );
   else return instance.get(`Disco/Adm/Analytics/GetClientStats/`);
 };
+
+export const fetchClients = (page: number) => {
+  return instance.post(`Disco/Client/Adm/List/${page}`);
+};
+
+export const saveClient = (params: any) => {
+  if (params.id) {
+    return instance.post('Disco/Client/Update', params);
+  } else {
+    return instance.put('Disco/Client/Add', params);
+  }
+};
+
+export const deleteClient = (id: any) => {
+  return instance.delete(`Disco/Client/Delete/${id}`);
+};
