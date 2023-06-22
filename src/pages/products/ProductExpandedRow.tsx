@@ -174,7 +174,7 @@ const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
                   : record.productBrand?.brandName
               }
               optionMapping={optionMapping}
-              placeholder="Select a Brand"
+              placeholder="Select a Product Brand"
               loading={false}
               disabled={false}
               allowClear

@@ -199,7 +199,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = () => {
               whiteSpace: 'nowrap',
             }}
           >
-            <Tooltip title="Brand">Brand</Tooltip>
+            <Tooltip title="Client">Client</Tooltip>
           </div>
         </div>
       ),

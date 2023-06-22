@@ -41,7 +41,7 @@ import PlaylistDetails from './PlaylistDetails';
 import CustomDetails from './CustomDetails';
 
 const Playlists: React.FC<RouteComponentProps> = () => {
-  const [selectedTab, setSelectedTab] = useState<string>('brand');
+  const [selectedTab, setSelectedTab] = useState<string>('client');
   const [loading, setLoading] = useState(false);
   const { doFetch } = useRequest({ setLoading });
   const [details, setDetails] = useState<boolean>(false);
@@ -146,7 +146,7 @@ const Playlists: React.FC<RouteComponentProps> = () => {
       });
 
       switch (tabName) {
-        case 'brand':
+        case 'client':
           await updateLinkBrand({ ...currentList, links: updatedLinks });
           break;
         case 'productBrand':
@@ -202,7 +202,7 @@ const Playlists: React.FC<RouteComponentProps> = () => {
 
   const handleSearch = (query: string) => {
     switch (selectedTab) {
-      case 'brand':
+      case 'client':
         getBrandData(query);
         break;
       case 'productBrand':
@@ -317,7 +317,7 @@ const Playlists: React.FC<RouteComponentProps> = () => {
               whiteSpace: 'nowrap',
             }}
           >
-            <Tooltip title="Brand">Brand</Tooltip>
+            <Tooltip title="Client">Client</Tooltip>
           </div>
         </div>
       ),
@@ -1210,7 +1210,7 @@ const Playlists: React.FC<RouteComponentProps> = () => {
             onChange={handleTabChange}
             activeKey={selectedTab}
           >
-            <Tabs.TabPane tab="Brand" key="brand">
+            <Tabs.TabPane tab="Client" key="client">
               <Table
                 rowClassName={(_, index) => `scrollable-row-${index}`}
                 rowKey="id"

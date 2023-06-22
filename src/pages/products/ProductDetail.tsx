@@ -709,7 +709,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                           style={{ width: '100%' }}
                           selectedOption={brand}
                           optionMapping={optionMapping}
-                          placeholder="Select a Brand"
+                          placeholder="Select a Client"
                           disabled={loadingResources || isLive}
                           allowClear
                         ></SimpleSelect>
@@ -739,7 +739,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                         style={{ width: '100%' }}
                         selectedOption={productBrand}
                         optionMapping={optionMapping}
-                        placeholder="Select a Brand"
+                        placeholder="Select a Product Brand"
                         disabled={loadingResources || isLive}
                         allowClear
                       ></SimpleSelect>

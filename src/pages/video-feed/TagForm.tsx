@@ -92,11 +92,11 @@ const TagForm: React.FC<FormProps> = ({
     <Form name="tagForm" form={form} initialValues={tag} layout="vertical">
       <Row gutter={8}>
         <Col lg={12} xs={24}>
-          <Form.Item label="Brand" rules={[{ required: true }]}>
+          <Form.Item label="Client" rules={[{ required: true }]}>
             <Select
               showSearch
               allowClear
-              placeholder="Please select a Brand"
+              placeholder="Please select a Client"
               filterOption={filterOption}
               onChange={v => handleBrandFilter(v)}
               value={selectedBrandId}

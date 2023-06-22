@@ -173,7 +173,7 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
         </Col>
         <Col lg={18} xs={24}>
           <Col span={24}>
-            <Typography.Title level={4}>Brands</Typography.Title>
+            <Typography.Title level={4}>Clients</Typography.Title>
           </Col>
           <Col span={24}>
             <Form.List name="brands">
@@ -201,7 +201,7 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                           })
                         }
                       >
-                        Add Brand
+                        Add Client
                       </Button>
                     </Col>
                   </Row>
@@ -210,7 +210,7 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                       <Col lg={4} xs={24}>
                         <Form.Item
                           name={[field.name, 'id']}
-                          label="Brand"
+                          label="Client"
                           rules={[{ required: true }]}
                         >
                           <Select
@@ -242,7 +242,7 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                             return (
                               <Form.Item
                                 name={[field.name, 'selectedLogo']}
-                                label="Brand logo"
+                                label="Client logo"
                               >
                                 <Select
                                   placeholder="Please select a logo"
@@ -255,7 +255,7 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                                 >
                                   {bra.brandLogo?.url && (
                                     <Select.Option value="brandLogo">
-                                      Brand
+                                      Client
                                     </Select.Option>
                                   )}
 
@@ -380,7 +380,7 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                   {fields.map((field, index) => (
                     <Row gutter={8} key={Math.random()}>
                       <Col lg={12} xs={24}>
-                        <Form.Item label="Brand">
+                        <Form.Item label="Client">
                           <Select
                             showSearch
                             allowClear

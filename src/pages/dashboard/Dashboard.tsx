@@ -223,7 +223,7 @@ const Dashboard: React.FC<DashboardProps> = () => {
   const VideoQuantity = () => {
     const data = [
       {
-        type: 'Brand Videos',
+        type: 'Client Videos',
         value: 300,
       },
       {
@@ -556,7 +556,7 @@ const Dashboard: React.FC<DashboardProps> = () => {
                 value={125}
                 valueStyle={cardStyle}
                 suffix={<SkinOutlined style={{ color: '#cf1322' }} />}
-                title="Brands"
+                title="Clients"
               />
             </div>
           </Card>

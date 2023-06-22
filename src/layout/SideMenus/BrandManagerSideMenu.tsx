@@ -10,9 +10,9 @@ const AdminSideMenu = () => {
   };
 
   return (
-    <Menu theme="dark" mode="inline" defaultSelectedKeys={['brand-dashboard']}>
-      <Menu.Item key="brand-dashboard" icon={<FundOutlined />}>
-        <Link to="/brand-dashboard">Dashboard</Link>
+    <Menu theme="dark" mode="inline" defaultSelectedKeys={['client-dashboard']}>
+      <Menu.Item key="client-dashboard" icon={<FundOutlined />}>
+        <Link to="/client-dashboard">Dashboard</Link>
       </Menu.Item>
       <Menu.Item
         key="playlists"

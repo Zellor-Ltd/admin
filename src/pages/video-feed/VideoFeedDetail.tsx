@@ -1309,7 +1309,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                   >
                     <Select
                       id="productBrand"
-                      placeholder="Select a Brand"
+                      placeholder="Select a Product Brand"
                       disabled={!loaded}
                       onChange={(id: any) => handleBrandChange('listing', id)}
                       allowClear

@@ -56,7 +56,7 @@ const ModalBrand: React.FC<ModalFormProps> = ({ brand, visible, onCancel }) => {
 
   return (
     <Modal
-      title="Brand"
+      title="Client"
       visible={visible}
       onOk={onOk}
       onCancel={onCancel}
@@ -73,7 +73,7 @@ const ModalBrand: React.FC<ModalFormProps> = ({ brand, visible, onCancel }) => {
         <Input.Group>
           <Row gutter={8}>
             <Col lg={6} xs={0}>
-              <Form.Item name="brandName" label="Brand">
+              <Form.Item name="brandName" label="Client">
                 <Select
                   onChange={onChangeBrand}
                   allowClear
