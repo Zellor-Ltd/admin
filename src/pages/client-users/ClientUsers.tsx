@@ -19,7 +19,7 @@ import { Creator } from 'interfaces/Creator';
 import React, { useContext, useEffect, useState } from 'react';
 import { AppContext } from 'contexts/AppContext';
 import { RouteComponentProps, useHistory } from 'react-router-dom';
-import { deleteClient, fetchClients } from 'services/DiscoClubService';
+import { deleteClientUser, fetchClientUsers } from 'services/DiscoClubService';
 import { useRequest } from 'hooks/useRequest';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import scrollIntoView from 'scroll-into-view';
@@ -31,13 +31,13 @@ const tagColorByPermission: any = {
   Fan: '',
 };
 
-const Clients: React.FC<RouteComponentProps> = ({ location }) => {
+const ClientUsers: React.FC<RouteComponentProps> = ({ location }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [details, setDetails] = useState<boolean>(false);
   const [, setCurrentClient] = useState<Creator>();
   const { doFetch } = useRequest({ setLoading });
-  const [clients, setClients] = useState<any[]>([]);
+  const [clientUsers, setClientUsers] = useState<any[]>([]);
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
   const [searchFilter, setSearchFilter] = useState<string>();
@@ -70,13 +70,13 @@ const Clients: React.FC<RouteComponentProps> = ({ location }) => {
   const fetch = async (loadNextPage?: boolean) => {
     if (!loadNextPage) scrollToCenter(0);
     const pageToUse = loadNextPage ? page : 0;
-    const { results } = await doFetch(() => fetchClients(pageToUse));
+    const { results } = await doFetch(() => fetchClientUsers(pageToUse));
 
     setPage(pageToUse + 1);
     if (results.length < 100) setEof(true);
 
-    if (pageToUse === 0) setClients(results);
-    else setClients(prev => [...prev.concat(results)]);
+    if (pageToUse === 0) setClientUsers(results);
+    else setClientUsers(prev => [...prev.concat(results)]);
   };
 
   const handleEdit = (index: number, client?: any) => {
@@ -322,8 +322,11 @@ const Clients: React.FC<RouteComponentProps> = ({ location }) => {
   const deleteItem = async (id: string, index: number) => {
     try {
       setLoading(true);
-      await deleteClient(id);
-      setClients(prev => [...prev.slice(0, index), ...prev.slice(index + 1)]);
+      await deleteClientUser(id);
+      setClientUsers(prev => [
+        ...prev.slice(0, index),
+        ...prev.slice(index + 1),
+      ]);
     } catch (err) {
       console.log(err);
     }
@@ -334,13 +337,13 @@ const Clients: React.FC<RouteComponentProps> = ({ location }) => {
     <div style={style}>
       <div className="creator-container">
         <PageHeader
-          title="Clients"
-          subTitle={isMobile ? '' : 'List of Clients'}
+          title="Client Users"
+          subTitle={isMobile ? '' : 'List of Client Users'}
           extra={[
             <Button
               key="1"
               className={isMobile ? 'mt-05' : ''}
-              onClick={() => handleEdit(clients.length)}
+              onClick={() => handleEdit(clientUsers.length)}
             >
               New Item
             </Button>,
@@ -377,10 +380,10 @@ const Clients: React.FC<RouteComponentProps> = ({ location }) => {
             </Row>
           </Col>
         </Row>
-        <div className="clients custom-table">
+        <div className="client-users custom-table">
           <InfiniteScroll
             height="100%"
-            dataLength={clients.length}
+            dataLength={clientUsers.length}
             next={() => fetch(true)}
             hasMore={!eof}
             loader={
@@ -396,7 +399,7 @@ const Clients: React.FC<RouteComponentProps> = ({ location }) => {
               rowClassName={(_, index) => `scrollable-row-${index}`}
               rowKey="id"
               columns={columns}
-              dataSource={clients}
+              dataSource={clientUsers}
               loading={loading}
               pagination={false}
             />
@@ -407,4 +410,4 @@ const Clients: React.FC<RouteComponentProps> = ({ location }) => {
   );
 };
 
-export default Clients;
+export default ClientUsers;

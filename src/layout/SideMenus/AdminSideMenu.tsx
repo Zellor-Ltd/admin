@@ -269,11 +269,11 @@ const AdminSideMenu = ({ isMobile }) => {
           <Link to="/creators">Creators</Link>
         </Menu.Item>
         <Menu.Item
-          key="clients"
+          key="client-users"
           icon={<ShopOutlined />}
-          onClick={() => refreshParent('clients')}
+          onClick={() => refreshParent('client-users')}
         >
-          <Link to="/clients">Clients</Link>
+          <Link to="/client-users">Client Users</Link>
         </Menu.Item>
       </SubMenu>
       <SubMenu key="settings-menu" icon={<SettingOutlined />} title="Settings">
