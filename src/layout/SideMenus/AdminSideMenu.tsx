@@ -84,7 +84,7 @@ const AdminSideMenu = ({ isMobile }) => {
         icon={<ShopOutlined />}
         onClick={() => refreshParent('brands')}
       >
-        <Link to="/brands">Master Brands</Link>
+        <Link to="/brands">Clients</Link>
       </Menu.Item>
       <Menu.Item
         key="product-brands"

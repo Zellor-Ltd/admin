@@ -241,7 +241,7 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
               whiteSpace: 'nowrap',
             }}
           >
-            <Tooltip title="Master Brand Name">Master Brand Name</Tooltip>
+            <Tooltip title="Client Name">Client Name</Tooltip>
           </div>
         </div>
       ),
@@ -318,7 +318,7 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
               whiteSpace: 'nowrap',
             }}
           >
-            <Tooltip title="Master Brand Link">Master Brand Link</Tooltip>
+            <Tooltip title="Client Link">Client Link</Tooltip>
           </div>
         </div>
       ),
@@ -464,7 +464,7 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
               whiteSpace: 'nowrap',
             }}
           >
-            <Tooltip title="Master Brand Color">Master Brand Color</Tooltip>
+            <Tooltip title="Client Color">Client Color</Tooltip>
           </div>
         </div>
       ),
@@ -639,8 +639,8 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
       {!details && (
         <>
           <PageHeader
-            title="Master Brands"
-            subTitle={isMobile ? '' : 'List of Master Brands'}
+            title="Clients"
+            subTitle={isMobile ? '' : 'List of Clients'}
             extra={[
               <Button
                 key="1"

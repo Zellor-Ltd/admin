@@ -125,7 +125,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
               whiteSpace: 'nowrap',
             }}
           >
-            <Tooltip title="Master Brand">Master Brand</Tooltip>
+            <Tooltip title="Client">Client</Tooltip>
           </div>
         </div>
       ),
@@ -269,7 +269,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
                 </Col>
                 {selectedFan && (
                   <Col lg={4} xs={24} className={isMobile ? 'mt-05' : ''}>
-                    <Typography.Title level={5}>Master Brand</Typography.Title>
+                    <Typography.Title level={5}>Client</Typography.Title>
                     <SimpleSelect
                       showSearch
                       data={brands}
@@ -277,7 +277,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
                       style={{ width: '100%' }}
                       selectedOption={selectedBrand?.brandName}
                       optionMapping={optionMapping}
-                      placeholder="Select a Master Brand"
+                      placeholder="Select a Client"
                       disabled={!brands.length}
                       allowClear
                     ></SimpleSelect>

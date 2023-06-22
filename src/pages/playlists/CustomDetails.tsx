@@ -291,7 +291,7 @@ const CustomDetails: React.FC<CustomDetailsProps> = ({
             <Col span={24}>
               <Typography.Title level={5}></Typography.Title>
               <Form.Item
-                label="Master Brand"
+                label="Client"
                 name="brandId"
                 id="brandField"
                 rules={[{ validator: checkBrand }]}
@@ -306,7 +306,7 @@ const CustomDetails: React.FC<CustomDetailsProps> = ({
                     label: 'brandName',
                     value: 'id',
                   }}
-                  placeholder="Select a Master Brand"
+                  placeholder="Select a Client"
                   onChange={setBrandId}
                   selectedOption={brandId}
                   disabled={!brands.length}
