@@ -80,11 +80,11 @@ const AdminSideMenu = ({ isMobile }) => {
         </Menu.Item>
       </SubMenu>
       <Menu.Item
-        key="brands"
+        key="clients"
         icon={<ShopOutlined />}
-        onClick={() => refreshParent('brands')}
+        onClick={() => refreshParent('clients')}
       >
-        <Link to="/brands">Master Brands</Link>
+        <Link to="/clients">Clients</Link>
       </Menu.Item>
       <Menu.Item
         key="product-brands"
@@ -270,7 +270,7 @@ const AdminSideMenu = ({ isMobile }) => {
         </Menu.Item>
         <Menu.Item
           key="client-users"
-          icon={<ShopOutlined />}
+          icon={<UserOutlined />}
           onClick={() => refreshParent('client-users')}
         >
           <Link to="/client-users">Client Users</Link>

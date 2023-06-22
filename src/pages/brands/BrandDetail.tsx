@@ -562,7 +562,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
             ? 'Vault Update'
             : brand
             ? `${brand.brandName ?? ''} Update`
-            : 'New Master Brand'
+            : 'New Client'
         }
       />
       <Form.Provider>
@@ -621,18 +621,18 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                 <Col lg={12} xs={24}>
                   <Row gutter={8}>
                     <Col span={24}>
-                      <Form.Item label="Master Brand Name" name="brandName">
-                        <Input allowClear placeholder="Master Brand Name" />
+                      <Form.Item label="Client Name" name="brandName">
+                        <Input allowClear placeholder="Client Name" />
                       </Form.Item>
                     </Col>
                     <Col span={24}>
                       <Form.Item
-                        label="Master Brand Color"
+                        label="Client Color"
                         name="brandTxtColor"
                         rules={[
                           {
                             required: true,
-                            message: 'Master Brand Color is required.',
+                            message: 'Client Color is required.',
                           },
                         ]}
                       >
@@ -642,7 +642,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                     <Col lg={12} xs={24}>
                       <Form.Item
                         name="fitTo"
-                        label="Master Brand Default Image Sizing"
+                        label="Client Default Image Sizing"
                       >
                         <Select
                           allowClear
@@ -660,12 +660,9 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                       </Form.Item>
                     </Col>
                     <Col lg={12} xs={24}>
-                      <Form.Item
-                        label="Master Brand Link"
-                        name="masterBrandLink"
-                      >
+                      <Form.Item label="Client Link" name="masterBrandLink">
                         <Input
-                          placeholder="Master Brand Link"
+                          placeholder="Client Link"
                           allowClear
                           prefix="https://beautybuzz.io/"
                         />

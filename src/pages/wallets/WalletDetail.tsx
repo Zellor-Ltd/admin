@@ -201,7 +201,7 @@ const WalletDetail: React.FC<WalletDetailProps> = ({
         <Col span={24}>
           <Col>
             <Typography.Text>
-              Fan: {initial.fan.user} | Master Brand: {initial.brand.name}
+              Fan: {initial.fan.user} | Client: {initial.brand.name}
             </Typography.Text>
           </Col>
           <Col lg={20} xs={12}>

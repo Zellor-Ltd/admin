@@ -378,17 +378,17 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                   <Col lg={12} xs={24}>
                     <Form.Item
                       name="masterBrand"
-                      label="Master Brand"
+                      label="Client"
                       rules={[
                         {
                           required: true,
-                          message: 'Master Brand is required.',
+                          message: 'Client is required.',
                         },
                       ]}
                     >
                       <Select
                         id="masterBrand"
-                        placeholder="Select a Master Brand"
+                        placeholder="Select a Client"
                         style={{ width: '100%' }}
                         allowClear
                         showSearch

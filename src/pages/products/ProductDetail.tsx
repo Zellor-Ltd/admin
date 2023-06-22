@@ -691,11 +691,11 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                     <Col span={24}>
                       <Form.Item
                         name="brand"
-                        label="Master Brand"
+                        label="Client"
                         rules={[
                           {
                             required: true,
-                            message: 'Master Brand is required.',
+                            message: 'Client is required.',
                           },
                         ]}
                       >

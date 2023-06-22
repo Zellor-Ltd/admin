@@ -121,7 +121,7 @@ function AdminRoutes() {
         layout={AuthenticatedLayout}
       />
       <AppRoute
-        path="/clientUsers"
+        path="/client-users"
         component={ClientUsers}
         layout={AuthenticatedLayout}
       />
@@ -142,7 +142,7 @@ function AdminRoutes() {
       />
       <AppRoute path="/tags" component={Tags} layout={AuthenticatedLayout} />
       <AppRoute
-        path="/brands"
+        path="/clients"
         component={Brands}
         layout={AuthenticatedLayout}
       />

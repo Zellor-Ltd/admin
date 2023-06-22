@@ -943,7 +943,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
             />
           </Col>
           <Col lg={5} xs={24}>
-            <Typography.Title level={5}>Master Brand</Typography.Title>
+            <Typography.Title level={5}>Client</Typography.Title>
             <SimpleSelect
               showSearch
               data={brands}
@@ -951,7 +951,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
               style={{ width: '100%' }}
               selectedOption={brandFilter?.id}
               optionMapping={masterBrandMapping}
-              placeholder="Select a Master Brand"
+              placeholder="Select a Client"
               disabled={loadingResources}
               allowClear
             />

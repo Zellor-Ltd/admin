@@ -88,8 +88,7 @@ const DirectLinkDetail: React.FC<DirectLinkDetailProps> = ({
   });
 
   useEffect(() => {
-    if (brands.length && productBrands.length)
-      setLoaded(true);
+    if (brands.length && productBrands.length) setLoaded(true);
   }, [brands, productBrands]);
 
   useEffect(() => {
@@ -262,9 +261,9 @@ const DirectLinkDetail: React.FC<DirectLinkDetailProps> = ({
             </Col>
 
             <Col span={24}>
-              <Form.Item label="Master Brand" name={['brand', 'id']}>
+              <Form.Item label="Client" name={['brand', 'id']}>
                 <Select
-                  placeholder="Select a Master Brand"
+                  placeholder="Select a Client"
                   disabled={!loaded}
                   allowClear
                   showSearch
