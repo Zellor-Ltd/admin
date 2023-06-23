@@ -408,7 +408,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
       setPageTitle(
         selectedBrandIndex > -1
           ? `${selectedBrand?.brandName ?? ''} Update`
-          : 'New Segment Master Brand'
+          : 'New Segment Client'
       );
     else if (showTagForm)
       setPageTitle(
@@ -1229,7 +1229,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                   >
                     <Select
                       id="productBrand"
-                      placeholder="Select a Brand"
+                      placeholder="Select a Product Brand"
                       disabled={!loaded}
                       onChange={(id: any) => handleBrandChange('listing', id)}
                       allowClear
@@ -1417,10 +1417,10 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                   </Form.Item>
                 </Col>
                 <Col span={24}>
-                  <Form.Item name="promoMasterBrand" label="Master Brand">
+                  <Form.Item name="promoMasterBrand" label="Client">
                     <Select
                       onChange={onChangeBrand}
-                      placeholder="Master Brand"
+                      placeholder="Client"
                       filterOption={filterOption}
                       allowClear
                       showSearch
@@ -1461,12 +1461,9 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
               <Col lg={8} xs={24}>
                 <Row justify={isMobile ? 'end' : undefined}>
                   <Col span={24}>
-                    <Form.Item
-                      label="Master Brand"
-                      name={['vLink', 'brand', 'id']}
-                    >
+                    <Form.Item label="Client" name={['vLink', 'brand', 'id']}>
                       <Select
-                        placeholder="Select a Master Brand"
+                        placeholder="Select a Client"
                         disabled={!loaded}
                         onChange={id => handleBrandChange('vLinkBrand', id)}
                         allowClear
@@ -1999,10 +1996,8 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                 </Tabs.TabPane>
                 <Tabs.TabPane
                   forceRender
-                  tab={`Master Brands (${
-                    selectedSegment!.brands?.length || 0
-                  })`}
-                  key="Master Brands"
+                  tab={`Clients (${selectedSegment!.brands?.length || 0})`}
+                  key="Clients"
                 >
                   <Button
                     type="default"
@@ -2013,7 +2008,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                       setShowBrandForm(true);
                     }}
                   >
-                    New Master Brand
+                    New Client
                   </Button>
                   <Table
                     rowKey="id"

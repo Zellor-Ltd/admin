@@ -45,7 +45,7 @@ const EditableTable: React.FC<EditableTableProps<any>> = (
     id: 'Id',
     name: 'Name',
     masterBrand: {
-      header: 'Master Brand',
+      header: 'Client',
       formatter: (_fieldValue: any, record: any) => {
         if (typeof _fieldValue === 'string') {
           return _fieldValue;

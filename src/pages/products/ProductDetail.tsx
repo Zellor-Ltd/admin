@@ -691,11 +691,11 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                     <Col span={24}>
                       <Form.Item
                         name="brand"
-                        label="Master Brand"
+                        label="Client"
                         rules={[
                           {
                             required: true,
-                            message: 'Master Brand is required.',
+                            message: 'Client is required.',
                           },
                         ]}
                       >
@@ -709,7 +709,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                           style={{ width: '100%' }}
                           selectedOption={brand}
                           optionMapping={optionMapping}
-                          placeholder="Select a Brand"
+                          placeholder="Select a Client"
                           disabled={loadingResources || isLive}
                           allowClear
                         ></SimpleSelect>
@@ -739,7 +739,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                         style={{ width: '100%' }}
                         selectedOption={productBrand}
                         optionMapping={optionMapping}
-                        placeholder="Select a Brand"
+                        placeholder="Select a Product Brand"
                         disabled={loadingResources || isLive}
                         allowClear
                       ></SimpleSelect>

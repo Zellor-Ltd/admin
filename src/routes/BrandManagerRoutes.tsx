@@ -13,11 +13,11 @@ function BrandManagerRoutes() {
         exact
         path="/"
         returnComponent
-        component={<Redirect to="/brand-dashboard" />}
+        component={<Redirect to="/client-dashboard" />}
       />
       <AppRoute path="/login" component={Login} layout={OpenLayout} />
       <AppRoute
-        path="/brand-dashboard"
+        path="/client-dashboard"
         component={BrandDashboard}
         layout={AuthenticatedLayout}
       />

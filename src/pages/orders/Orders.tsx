@@ -1039,12 +1039,12 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
             <Col lg={16} xs={24}>
               <Row gutter={[8, 8]} align="bottom">
                 <Col lg={6} xs={24}>
-                  <Typography.Title level={5}>Master Brand</Typography.Title>
+                  <Typography.Title level={5}>Client</Typography.Title>
                   <Select
                     allowClear
                     onChange={handleChangeBrand}
                     style={{ width: '100%' }}
-                    placeholder="Select a Master Brand"
+                    placeholder="Select a Client"
                     value={brandId}
                     disabled={!brands.length}
                     showSearch

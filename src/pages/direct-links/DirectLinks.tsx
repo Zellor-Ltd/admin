@@ -333,7 +333,7 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
               whiteSpace: 'nowrap',
             }}
           >
-            <Tooltip title="Master Brand">Master Brand</Tooltip>
+            <Tooltip title="Client">Client</Tooltip>
           </div>
         </div>
       ),
@@ -699,7 +699,7 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
             />
           </Col>
           <Col lg={5} xs={24}>
-            <Typography.Title level={5}>Master Brand</Typography.Title>
+            <Typography.Title level={5}>Client</Typography.Title>
             <SimpleSelect
               showSearch
               data={brands}
@@ -707,7 +707,7 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
               style={{ width: '100%' }}
               selectedOption={brandFilter?.id}
               optionMapping={masterBrandMapping}
-              placeholder="Select a Master Brand"
+              placeholder="Select a Client"
               allowClear
             />
           </Col>
@@ -797,7 +797,7 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
         <>
           <PageHeader
             title="Platform Links"
-                      subTitle={isMobile ? '' : 'List of Platform Links'}
+            subTitle={isMobile ? '' : 'List of Platform Links'}
             extra={[
               <Button
                 key="2"

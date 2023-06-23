@@ -150,10 +150,10 @@ const TagDetail: React.FC<TagDetailProps> = ({ tag, onSave, onCancel }) => {
               </Form.Item>
             </Col>
             <Col lg={12} xs={24}>
-              <Form.Item name={['brand', 'id']} label="Master Brand">
+              <Form.Item name={['brand', 'id']} label="Client">
                 <Select
                   onChange={onChangeBrand}
-                  placeholder="Master Brand"
+                  placeholder="Client"
                   allowClear
                   showSearch
                   filterOption={filterOption}
