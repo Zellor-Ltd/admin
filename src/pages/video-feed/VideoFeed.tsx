@@ -127,15 +127,8 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const loadMore = useRef<boolean>(false);
   const [style, setStyle] = useState<any>();
   const history = useHistory();
-
-  useEffect(() => {
-    history.listen((_, action) => {
-      if (action === 'POP' && details) {
-        setDetails(false);
-        setIsCloning(false);
-      }
-    });
-  });
+  const inputFocused = useRef<boolean>(false);
+  const selectionEnd = useRef<number>();
 
   useEffect(() => {
     if (details || (isMobile && activeKey === '1'))
@@ -146,21 +139,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   useEffect(() => {
     getDetailsResources();
   }, []);
-
-  const search = rows => {
-    let updatedRows = rows;
-    if (indexFilter) {
-      updatedRows = updatedRows.filter(row => {
-        return row.index && row.index === indexFilter;
-      });
-    }
-    if (categoryFilter) {
-      updatedRows = updatedRows.filter(
-        row => row.category?.indexOf(categoryFilter) > -1
-      );
-    }
-    return updatedRows;
-  };
 
   useEffect(() => {
     if (!loaded.current) {
@@ -179,8 +157,14 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   }, [data]);
 
   useEffect(() => {
-    const panel = document.getElementById('filterPanel');
+    history.listen((_, action) => {
+      if (action === 'POP' && details) {
+        setDetails(false);
+        setIsCloning(false);
+      }
+    });
 
+    const panel = document.getElementById('filterPanel');
     if (isMobile && panel) {
       // Code for Chrome, Safari and Opera
       panel.addEventListener('webkitTransitionEnd', updateOffset);
@@ -196,18 +180,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     }
   });
 
-  const updateOffset = () => {
-    if (activeKey === '1') {
-      filterPanelHeight.current =
-        document.getElementById('filterPanel')!.offsetHeight;
-      if (filterPanelHeight.current! > windowHeight) {
-        const heightDifference = filterPanelHeight.current! - windowHeight;
-        const seventhWindowHeight = windowHeight / 7;
-        setOffset(-heightDifference - seventhWindowHeight);
-      }
-    } else setOffset(64);
-  };
-
   useEffect(() => {
     setPanelStyle({ top: offset, zIndex: 3 });
   }, [offset]);
@@ -220,11 +192,54 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   }, [indexFilter]);
 
   useEffect(() => {
-    if (inputRefTitle.current)
-      inputRefTitle.current.focus({
-        cursor: 'end',
-      });
+    if (inputRefTitle.current && titleFilter) {
+      if (inputFocused.current) {
+        const title = document.getElementById('title') as HTMLInputElement;
+        title!.setSelectionRange(selectionEnd.current!, selectionEnd.current!);
+        inputRefTitle.current.focus();
+      } else
+        inputRefTitle.current.focus({
+          cursor: 'end',
+        });
+    }
   }, [titleFilter]);
+
+  useEffect(() => {
+    if (data.length) loaded.current = true;
+  }, [data]);
+
+  useEffect(() => {
+    setisScrollable(details);
+
+    if (!details) scrollToCenter(lastFocusedIndex.current);
+  }, [details]);
+
+  const search = rows => {
+    let updatedRows = rows;
+    if (indexFilter) {
+      updatedRows = updatedRows.filter(row => {
+        return row.index && row.index === indexFilter;
+      });
+    }
+    if (categoryFilter) {
+      updatedRows = updatedRows.filter(
+        row => row.category?.indexOf(categoryFilter) > -1
+      );
+    }
+    return updatedRows;
+  };
+
+  const updateOffset = () => {
+    if (activeKey === '1') {
+      filterPanelHeight.current =
+        document.getElementById('filterPanel')!.offsetHeight;
+      if (filterPanelHeight.current! > windowHeight) {
+        const heightDifference = filterPanelHeight.current! - windowHeight;
+        const seventhWindowHeight = windowHeight / 7;
+        setOffset(-heightDifference - seventhWindowHeight);
+      }
+    } else setOffset(64);
+  };
 
   const masterBrandMapping: SelectOption = {
     key: 'id',
@@ -730,16 +745,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     );
   };
 
-  useEffect(() => {
-    if (data.length) loaded.current = true;
-  }, [data]);
-
-  useEffect(() => {
-    setisScrollable(details);
-
-    if (!details) scrollToCenter(lastFocusedIndex.current);
-  }, [details]);
-
   const getFeed = async (event?: Event, resetResults?: boolean) => {
     if (!loadMore.current && !resetResults && buffer.length < 30) {
       setEof(true);
@@ -923,6 +928,13 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     setIsCloning(false);
   };
 
+  const handleTitleFilterChange = (event: any) => {
+    setTitleFilter(event.target.value);
+    const selectionStart = event.target.selectionStart;
+    selectionEnd.current = event.target.selectionEnd;
+    if (selectionStart && selectionEnd) inputFocused.current = true;
+  };
+
   const Filters = () => {
     return (
       <>
@@ -932,10 +944,11 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
               Title
             </Typography.Title>
             <Input
+              id="title"
               allowClear
               disabled={loadingResources}
               ref={inputRefTitle}
-              onChange={event => setTitleFilter(event.target.value)}
+              onChange={event => handleTitleFilterChange(event)}
               suffix={<SearchOutlined />}
               value={titleFilter}
               placeholder="Search by Title"
