@@ -127,8 +127,10 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const loadMore = useRef<boolean>(false);
   const [style, setStyle] = useState<any>();
   const history = useHistory();
-  const inputFocused = useRef<boolean>(false);
-  const selectionEnd = useRef<number>();
+  const titleFocused = useRef<boolean>(false);
+  const titleSelectionEnd = useRef<number>();
+  const indexFocused = useRef<boolean>(false);
+  const indexSelectionEnd = useRef<number>();
 
   useEffect(() => {
     if (details || (isMobile && activeKey === '1'))
@@ -185,22 +187,42 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   }, [offset]);
 
   useEffect(() => {
-    if (inputRefIndex.current)
-      inputRefIndex.current.focus({
-        cursor: 'end',
-      });
+    if (inputRefIndex.current && indexFilter) {
+      if (
+        indexSelectionEnd.current === indexFilter.toString().length ||
+        !indexFocused.current
+      )
+        inputRefIndex.current.focus({
+          cursor: 'end',
+        });
+      else {
+        const title = document.getElementById('index') as HTMLInputElement;
+        inputRefIndex.current.focus();
+        title!.setSelectionRange(
+          indexSelectionEnd.current!,
+          indexSelectionEnd.current!
+        );
+      }
+    }
   }, [indexFilter]);
 
   useEffect(() => {
     if (inputRefTitle.current && titleFilter) {
-      if (inputFocused.current) {
-        const title = document.getElementById('title') as HTMLInputElement;
-        title!.setSelectionRange(selectionEnd.current!, selectionEnd.current!);
-        inputRefTitle.current.focus();
-      } else
+      if (
+        titleSelectionEnd.current === titleFilter.length ||
+        !titleFocused.current
+      )
         inputRefTitle.current.focus({
           cursor: 'end',
         });
+      else {
+        const title = document.getElementById('title') as HTMLInputElement;
+        inputRefTitle.current.focus();
+        title!.setSelectionRange(
+          titleSelectionEnd.current!,
+          titleSelectionEnd.current!
+        );
+      }
     }
   }, [titleFilter]);
 
@@ -931,8 +953,15 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const handleTitleFilterChange = (event: any) => {
     setTitleFilter(event.target.value);
     const selectionStart = event.target.selectionStart;
-    selectionEnd.current = event.target.selectionEnd;
-    if (selectionStart && selectionEnd) inputFocused.current = true;
+    titleSelectionEnd.current = event.target.SelectionEnd;
+    if (selectionStart && titleSelectionEnd) titleFocused.current = true;
+  };
+
+  const handleIndexFilterChange = (event: any) => {
+    setIndexFilter(event.target.value);
+    const selectionStart = event.target.selectionStart;
+    indexSelectionEnd.current = event.target.SelectionEnd;
+    if (selectionStart && titleSelectionEnd) titleFocused.current = true;
   };
 
   const Filters = () => {
@@ -1042,7 +1071,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
               disabled={loadingResources}
               min={0}
               ref={inputRefIndex}
-              onChange={startIndex => setIndexFilter(startIndex ?? undefined)}
+              onChange={event => handleIndexFilterChange(event)}
               placeholder="Select an Index"
               value={indexFilter}
               onPressEnter={() => getFeed(undefined, true)}
