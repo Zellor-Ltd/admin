@@ -121,7 +121,7 @@ function AdminRoutes() {
         layout={AuthenticatedLayout}
       />
       <AppRoute
-        path="/clientUsers"
+        path="/client-users"
         component={ClientUsers}
         layout={AuthenticatedLayout}
       />
