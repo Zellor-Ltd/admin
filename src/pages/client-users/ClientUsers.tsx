@@ -3,7 +3,6 @@ import { DeleteOutlined, SearchOutlined } from '@ant-design/icons';
 import {
   Button,
   Col,
-  Input,
   PageHeader,
   Popconfirm,
   Row,
@@ -19,11 +18,17 @@ import { Creator } from 'interfaces/Creator';
 import React, { useContext, useEffect, useState } from 'react';
 import { AppContext } from 'contexts/AppContext';
 import { RouteComponentProps, useHistory } from 'react-router-dom';
-import { deleteClientUser, fetchClientUsers } from 'services/DiscoClubService';
+import {
+  deleteClientUser,
+  fetchBrands,
+  fetchClientUsers,
+} from 'services/DiscoClubService';
 import { useRequest } from 'hooks/useRequest';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import scrollIntoView from 'scroll-into-view';
 import moment from 'moment';
+import SimpleSelect from 'components/select/SimpleSelect';
+import { Brand } from 'interfaces/Brand';
 
 const tagColorByPermission: any = {
   Admin: 'green',
@@ -37,10 +42,11 @@ const ClientUsers: React.FC<RouteComponentProps> = ({ location }) => {
   const [details, setDetails] = useState<boolean>(false);
   const [, setCurrentClient] = useState<Creator>();
   const { doFetch } = useRequest({ setLoading });
+  const [brands, setBrands] = useState<Brand[]>([]);
   const [clientUsers, setClientUsers] = useState<any[]>([]);
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
-  const [searchFilter, setSearchFilter] = useState<string>();
+  const [brandFilter, setBrandFilter] = useState<Brand | undefined>();
   const { isMobile, setisScrollable } = useContext(AppContext);
   const [style, setStyle] = useState<any>();
   const history = useHistory();
@@ -50,6 +56,16 @@ const ClientUsers: React.FC<RouteComponentProps> = ({ location }) => {
       if (action === 'POP' && details) setDetails(false);
     });
   });
+
+  useEffect(() => {
+    const getBrands = async () => {
+      setLoading(true);
+      const response: any = await fetchBrands();
+      setLoading(false);
+      setBrands(response.results);
+    };
+    getBrands();
+  }, []);
 
   const scrollToCenter = (index: number) => {
     scrollIntoView(
@@ -70,7 +86,9 @@ const ClientUsers: React.FC<RouteComponentProps> = ({ location }) => {
   const fetch = async (loadNextPage?: boolean) => {
     if (!loadNextPage) scrollToCenter(0);
     const pageToUse = loadNextPage ? page : 0;
-    const { results } = await doFetch(() => fetchClientUsers(pageToUse));
+    const { results } = await doFetch(() =>
+      fetchClientUsers(pageToUse, { clientId: brandFilter?.id ?? '' })
+    );
 
     setPage(pageToUse + 1);
     if (results.length < 100) setEof(true);
@@ -356,18 +374,22 @@ const ClientUsers: React.FC<RouteComponentProps> = ({ location }) => {
           className="sticky-filter-box mb-15"
         >
           <Col lg={4} xs={24}>
-            <Typography.Title level={5}>Search</Typography.Title>
-            <Input
-              allowClear
-              disabled={loading}
-              placeholder="Search by First Name"
-              suffix={<SearchOutlined />}
-              value={searchFilter}
-              onChange={event => {
-                setSearchFilter(event.target.value);
+            <Typography.Title level={5}>Client</Typography.Title>
+            <SimpleSelect
+              showSearch
+              data={brands}
+              onChange={(_, brand) => setBrandFilter(brand)}
+              style={{ width: '100%' }}
+              selectedOption={brandFilter?.brandName}
+              optionMapping={{
+                key: 'id',
+                label: 'brandName',
+                value: 'id',
               }}
-              onPressEnter={() => fetch()}
-            />
+              placeholder="Select a Client"
+              disabled={loading}
+              allowClear
+            ></SimpleSelect>
           </Col>
           <Col lg={8} xs={24}>
             <Row justify="end" className={isMobile ? 'mt-2' : 'mr-06'}>
