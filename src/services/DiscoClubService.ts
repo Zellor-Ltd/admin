@@ -1172,7 +1172,7 @@ export const fetchStats = (startDate?: string, endDate?: string) => {
   else return instance.get(`Disco/Adm/Analytics/GetClientStats/`);
 };
 
-export const fetchClientUsers = (page: number, params) => {
+export const fetchClientUsers = (page: number, params: any) => {
   return instance.post(`Disco/Client/User/List/${page}`, params);
 };
 
