@@ -138,7 +138,7 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
       await saveBrand(brand);
       msg.success('Register updated with success.');
     } catch (error) {
-      msg.error("Error: Couldn't set brand property. Try again.");
+      msg.error("Error: Couldn't set client property. Try again.");
     }
   };
 

@@ -391,7 +391,7 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
               whiteSpace: 'nowrap',
             }}
           >
-            <Tooltip title="Brand">Brand</Tooltip>
+            <Tooltip title="Client">Client</Tooltip>
           </div>
         </div>
       ),
@@ -589,7 +589,7 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
                 label: 'brandName',
                 value: 'id',
               }}
-              placeholder="Brands"
+              placeholder="Clients"
               disabled={true}
               allowClear
             />
