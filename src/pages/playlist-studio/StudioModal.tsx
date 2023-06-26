@@ -61,7 +61,7 @@ const StudioModal: React.FC<StudioModalProps> = ({
   const [activeTabKey, setActiveTabKey] = useState('Details');
   const [tags, setTags] = useState<any[]>([]);
   const [productTags, setProductTags] = useState<any[]>(
-    link?.feed?.package[0]?.tags ?? []
+    link?.feed?.package[0]?.products ?? []
   );
   const [tagDetails, setTagDetails] = useState<boolean>(false);
   const [userInput, setUserInput] = useState<string | undefined>();
@@ -483,7 +483,6 @@ const StudioModal: React.FC<StudioModalProps> = ({
                   name="tagForm"
                   form={tagForm}
                   onFinish={onFinishTagForm}
-                  initialValues={undefined}
                   layout="vertical"
                 >
                   <Row gutter={8}>
