@@ -36,7 +36,7 @@ interface DashboardProps {}
 const BrandDashboard: React.FC<DashboardProps> = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const { doFetch } = useRequest({ setLoading });
-  const inputRefTitle = useRef<any>(null);
+  const titleRef = useRef<any>(null);
   const [sourceFilter, setSourceFilter] = useState<string>();
   const [brandFilter, setBrandFilter] = useState<Brand>();
   const [titleFilter, setTitleFilter] = useState<string>();
@@ -44,8 +44,8 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
   const [impressionFilter, setImpressionFilter] = useState<string>();
   const [stats, setStats] = useState<any>();
   const [period, setPeriod] = useState<string>('Today');
-  const inputFocused = useRef<boolean>(false);
-  const selectionEnd = useRef<number>();
+  const titleFocused = useRef<boolean>(false);
+  const titleSelectionEnd = useRef<number>();
 
   useEffect(() => {
     getStats();
@@ -53,15 +53,21 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
   }, [period]);
 
   useEffect(() => {
-    if (inputRefTitle.current && titleFilter) {
-      if (selectionEnd.current === titleFilter.length || !inputFocused.current)
-        inputRefTitle.current.focus({
+    if (titleRef.current && titleFilter) {
+      if (
+        titleSelectionEnd.current === titleFilter.length ||
+        !titleFocused.current
+      )
+        titleRef.current.focus({
           cursor: 'end',
         });
       else {
         const title = document.getElementById('title') as HTMLInputElement;
-        inputRefTitle.current.focus();
-        title!.setSelectionRange(selectionEnd.current!, selectionEnd.current!);
+        titleRef.current.focus();
+        title!.setSelectionRange(
+          titleSelectionEnd.current!,
+          titleSelectionEnd.current!
+        );
       }
     }
   }, [titleFilter]);
@@ -568,8 +574,8 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
   const handleTitleFilterChange = (event: any) => {
     setTitleFilter(event.target.value);
     const selectionStart = event.target.selectionStart;
-    selectionEnd.current = event.target.selectionEnd;
-    if (selectionStart && selectionEnd) inputFocused.current = true;
+    titleSelectionEnd.current = event.target.selectionEnd;
+    if (selectionStart && titleSelectionEnd) titleFocused.current = true;
   };
 
   const TableFilters = () => {
@@ -586,7 +592,7 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
               allowClear
               id="title"
               disabled={true}
-              ref={inputRefTitle}
+              ref={titleRef}
               onChange={event => handleTitleFilterChange(event)}
               suffix={<SearchOutlined />}
               value={titleFilter}
