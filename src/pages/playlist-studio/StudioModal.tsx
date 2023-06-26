@@ -60,7 +60,7 @@ const StudioModal: React.FC<StudioModalProps> = ({
   const [tagForm] = Form.useForm();
   const [activeTabKey, setActiveTabKey] = useState('Details');
   const [tags, setTags] = useState<any[]>([]);
-  const [linkTags, setLinkTags] = useState<any[]>(
+  const [productTags, setProductTags] = useState<any[]>(
     link?.feed?.package[0]?.tags ?? []
   );
   const [tagDetails, setTagDetails] = useState<boolean>(false);
@@ -72,7 +72,11 @@ const StudioModal: React.FC<StudioModalProps> = ({
   const video = selectedLink?.feed?.package[0]?.videoUrl;
 
   useEffect(() => {
-    if (selectedLink) setActiveTabKey('Details');
+    if (selectedLink) {
+      setActiveTabKey('Details');
+      customForm.setFieldsValue({ id: selectedLink.id });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedLink]);
 
   useEffect(() => {
@@ -197,7 +201,7 @@ const StudioModal: React.FC<StudioModalProps> = ({
               type="link"
               style={{ padding: 0, margin: 6 }}
               onClick={() =>
-                setLinkTags(prev => [
+                setProductTags(prev => [
                   ...prev.slice(0, index),
                   ...prev.slice(index + 1),
                 ])
@@ -253,17 +257,12 @@ const StudioModal: React.FC<StudioModalProps> = ({
 
   const onFinishTagForm = () => {
     const newTag = tagForm.getFieldsValue(true);
-    setLinkTags([...linkTags, newTag]);
+    setProductTags([...productTags, newTag]);
     setTagDetails(false);
   };
 
   const _onOk = () => {
     const item = customForm.getFieldsValue(true);
-    if (!item?.feed?.videoLabel) {
-      message.warning('Error: Label is required.');
-      setActiveTabKey('Details');
-      return;
-    }
     if (!item?.feed?.shortDescription) {
       message.warning('Error: Description is required.');
       setActiveTabKey('Details');
@@ -281,41 +280,35 @@ const StudioModal: React.FC<StudioModalProps> = ({
     }
 
     if (item) {
-      const configuredItem = {
-        index: 2,
-        hIndex: 889,
-        vIndex: 1000,
-        videoFeedId: null,
-        socialPlatform: 'Disco Club',
-        includeVideo: true,
-        feed: {
-          title: null,
-          videoLabel: item?.feed?.videoLabel,
-          shortDescription: item?.feed?.shortDescription,
-          creator: null,
-          package: [
-            {
-              tags: linkTags,
-              videoUrl: item?.video?.url ?? item?.feed?.package[0]?.videoUrl,
-              thumbnailUrl:
-                item?.thumbnail?.url ?? item?.feed?.package[0]?.thumbnailUrl,
-            },
-          ],
-          searchTags: null,
-          category: null,
-          videoType: ['Custom'],
-        },
+      item.index = item.index ?? 2;
+      item.hIndex = item.hIndex ?? 889;
+      item.vIndex = item.vIndex ?? 1000;
+      item.videoFeedId = item.videoFeedId ?? null;
+      item.socialPlatform = item.socialPlatform ?? 'Disco Club';
+      item.includeVideo = item.includeVideo ?? true;
+      item.feed = {
+        title: item.feed?.title ?? null,
+        videoLabel: item?.feed?.videoLabel,
+        shortDescription: item?.feed?.shortDescription,
+        creator: item.feed?.creator ?? null,
+        package: [
+          {
+            products: productTags,
+            videoUrl: item?.video?.url ?? item?.feed?.package[0]?.videoUrl,
+            thumbnailUrl:
+              item?.thumbnail?.url ?? item?.feed?.package[0]?.thumbnailUrl,
+          },
+        ],
+        searchTags: item.searchTags ?? null,
+        category: item.category ?? null,
+        videoType: item.videoType ?? ['Custom'],
       };
 
       const index = link ? links?.indexOf(link) : links?.length;
 
       const newLinks = links?.length
-        ? [
-            ...links?.slice(0, index),
-            configuredItem,
-            ...links?.slice(index + 1),
-          ]
-        : [configuredItem];
+        ? [...links?.slice(0, index), item, ...links?.slice(index + 1)]
+        : [item];
 
       setLinks(newLinks);
       setList(prev => ({
@@ -323,8 +316,6 @@ const StudioModal: React.FC<StudioModalProps> = ({
         links: newLinks,
         name: currentList?.name,
       }));
-      setShowModal(false);
-
       setShowModal(false);
     } else message.warning("Can't add an empty item!");
   };
@@ -359,7 +350,6 @@ const StudioModal: React.FC<StudioModalProps> = ({
                 <Form.Item
                   label="Label"
                   name={['feed', 'videoLabel']}
-                  required
                   shouldUpdate
                 >
                   <Select
@@ -467,8 +457,8 @@ const StudioModal: React.FC<StudioModalProps> = ({
           />
         </Tabs.TabPane>
         {studio && (
-          <Tabs.TabPane forceRender tab="Tags" key="Tags">
-            {activeTabKey === 'Tags' && !tagDetails && (
+          <Tabs.TabPane forceRender tab="Product Tags" key="Product Tags">
+            {activeTabKey === 'Product Tags' && !tagDetails && (
               <>
                 <Button
                   type="default"
@@ -482,12 +472,12 @@ const StudioModal: React.FC<StudioModalProps> = ({
                 <Table
                   rowKey="id"
                   columns={tagColumns}
-                  dataSource={linkTags}
+                  dataSource={productTags}
                   pagination={false}
                 />
               </>
             )}
-            {activeTabKey === 'Tags' && tagDetails && (
+            {activeTabKey === 'Product Tags' && tagDetails && (
               <>
                 <Form
                   name="tagForm"
@@ -498,11 +488,11 @@ const StudioModal: React.FC<StudioModalProps> = ({
                 >
                   <Row gutter={8}>
                     <Col lg={12} xs={24}>
-                      <Form.Item label="Brand" rules={[{ required: true }]}>
+                      <Form.Item label="Client" rules={[{ required: true }]}>
                         <Select
                           showSearch
                           allowClear
-                          placeholder="Please select a Brand"
+                          placeholder="Please select a Client"
                           filterOption={filterOption}
                           onChange={v => handleBrandFilter(v)}
                           value={selectedBrandId}

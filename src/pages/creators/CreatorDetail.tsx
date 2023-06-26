@@ -366,7 +366,9 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
                     ref={inputRef}
                     type="url"
                     className={instaLink ? 'instalink-input' : undefined}
-                    value={instaLink ? `https://beautybuzz.io/${instaLink}` : ''}
+                    value={
+                      instaLink ? `https://beautybuzz.io/${instaLink}` : ''
+                    }
                     onFocus={event => handleInstaLinkFocus(event)}
                   />
                 </Form.Item>
@@ -595,13 +597,13 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
               </Col>
               <Col span={24}>
                 <Form.Item
-                  label="Top Brand collaborations you have completed"
+                  label="Top Client collaborations you have completed"
                   name="topBrands"
                 >
                   <Input.TextArea
                     rows={4}
                     allowClear
-                    placeholder="Top Brand collaborations you have completed"
+                    placeholder="Top Client collaborations you have completed"
                   />
                 </Form.Item>
               </Col>

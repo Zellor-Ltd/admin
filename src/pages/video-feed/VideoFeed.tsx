@@ -65,6 +65,30 @@ import CreatorsMultipleFetchDebounceSelect from 'pages/creators/components/Creat
 
 const { Panel } = Collapse;
 
+const masterBrandMapping: SelectOption = {
+  key: 'id',
+  label: 'brandName',
+  value: 'id',
+};
+
+const productBrandMapping: SelectOption = {
+  key: 'id',
+  label: 'brandName',
+  value: 'id',
+};
+
+const categoryMapping: SelectOption = {
+  key: 'id',
+  label: 'name',
+  value: 'id',
+};
+
+const videoTypeMapping: SelectOption = {
+  key: 'value',
+  label: 'value',
+  value: 'value',
+};
+
 const reduceSegmentsTags = (packages: Segment[]) => {
   return packages?.reduce((acc: number, curr: Segment) => {
     return acc + curr.tags?.length;
@@ -76,8 +100,8 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     settings: { feedList = [] },
   } = useSelector((state: any) => state.settings);
   const { isMobile, setisScrollable } = useContext(AppContext);
-  const inputRefTitle = useRef<any>(null);
-  const inputRefIndex = useRef<any>(null);
+  const titleRef = useRef<any>(null);
+  const indexRef = useRef<any>(null);
   const [activeKey, setActiveKey] = useState<string>('1');
   const [selectedVideoFeed, setSelectedVideoFeed] = useState<FeedItem>();
   const [loading, setLoading] = useState(false);
@@ -127,6 +151,10 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const loadMore = useRef<boolean>(false);
   const [style, setStyle] = useState<any>();
   const history = useHistory();
+  const titleFocused = useRef<boolean>(false);
+  const titleSelectionEnd = useRef<number>();
+  const indexFocused = useRef<boolean>(false);
+  const indexSelectionEnd = useRef<number>();
 
   useEffect(() => {
     history.listen((_, action) => {
@@ -135,7 +163,25 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
         setIsCloning(false);
       }
     });
+
+    const panel = document.getElementById('filterPanel');
+    if (isMobile && panel) {
+      // Code for Chrome, Safari and Opera
+      panel.addEventListener('webkitTransitionEnd', updateOffset);
+      // Standard syntax
+      panel.addEventListener('transitionend', updateOffset);
+      return () => {
+        // Code for Chrome, Safari and Opera
+        panel.removeEventListener('webkitTransitionEnd', updateOffset);
+        // Standard syntax
+        panel.removeEventListener('transitionend', updateOffset);
+      };
+    }
   });
+
+  useEffect(() => {
+    getDetailsResources();
+  }, []);
 
   useEffect(() => {
     if (details || (isMobile && activeKey === '1'))
@@ -144,8 +190,71 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   }, [details, isMobile, activeKey]);
 
   useEffect(() => {
-    getDetailsResources();
-  }, []);
+    if (!loaded.current) {
+      loaded.current = true;
+      return;
+    }
+
+    if (search(buffer).length < 30 && loadMore.current)
+      getFeed(undefined, false);
+    else setData(search(buffer));
+    loadMore.current = false;
+  }, [buffer]);
+
+  useEffect(() => {
+    if (data.length) loaded.current = true;
+    setLoading(false);
+  }, [data]);
+
+  useEffect(() => {
+    setPanelStyle({ top: offset, zIndex: 3 });
+  }, [offset]);
+
+  useEffect(() => {
+    setisScrollable(details);
+
+    if (!details) scrollToCenter(lastFocusedIndex.current);
+  }, [details]);
+
+  useEffect(() => {
+    if (titleRef.current && titleFilter) {
+      if (
+        titleSelectionEnd.current === titleFilter.length ||
+        !titleFocused.current
+      )
+        titleRef.current.focus({
+          cursor: 'end',
+        });
+      else {
+        const title = document.getElementById('title') as HTMLInputElement;
+        titleRef.current.focus();
+        title!.setSelectionRange(
+          titleSelectionEnd.current!,
+          titleSelectionEnd.current!
+        );
+      }
+    }
+  }, [titleFilter]);
+
+  useEffect(() => {
+    if (indexRef.current && indexFilter) {
+      if (
+        indexSelectionEnd.current === indexFilter.toString().length ||
+        !indexFocused.current
+      )
+        indexRef.current.focus({
+          cursor: 'end',
+        });
+      else {
+        const index = document.getElementById('index') as HTMLInputElement;
+        indexRef.current.focus();
+        index!.setSelectionRange(
+          indexSelectionEnd.current!,
+          indexSelectionEnd.current!
+        );
+      }
+    }
+  }, [indexFilter]);
 
   const search = rows => {
     let updatedRows = rows;
@@ -162,40 +271,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     return updatedRows;
   };
 
-  useEffect(() => {
-    if (!loaded.current) {
-      loaded.current = true;
-      return;
-    }
-
-    if (search(buffer).length < 30 && loadMore.current)
-      getFeed(undefined, false);
-    else setData(search(buffer));
-    loadMore.current = false;
-  }, [buffer]);
-
-  useEffect(() => {
-    setLoading(false);
-  }, [data]);
-
-  useEffect(() => {
-    const panel = document.getElementById('filterPanel');
-
-    if (isMobile && panel) {
-      // Code for Chrome, Safari and Opera
-      panel.addEventListener('webkitTransitionEnd', updateOffset);
-      // Standard syntax
-      panel.addEventListener('transitionend', updateOffset);
-
-      return () => {
-        // Code for Chrome, Safari and Opera
-        panel.removeEventListener('webkitTransitionEnd', updateOffset);
-        // Standard syntax
-        panel.removeEventListener('transitionend', updateOffset);
-      };
-    }
-  });
-
   const updateOffset = () => {
     if (activeKey === '1') {
       filterPanelHeight.current =
@@ -206,48 +281,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
         setOffset(-heightDifference - seventhWindowHeight);
       }
     } else setOffset(64);
-  };
-
-  useEffect(() => {
-    setPanelStyle({ top: offset, zIndex: 3 });
-  }, [offset]);
-
-  useEffect(() => {
-    if (inputRefIndex.current)
-      inputRefIndex.current.focus({
-        cursor: 'end',
-      });
-  }, [indexFilter]);
-
-  useEffect(() => {
-    if (inputRefTitle.current)
-      inputRefTitle.current.focus({
-        cursor: 'end',
-      });
-  }, [titleFilter]);
-
-  const masterBrandMapping: SelectOption = {
-    key: 'id',
-    label: 'brandName',
-    value: 'id',
-  };
-
-  const productBrandMapping: SelectOption = {
-    key: 'id',
-    label: 'brandName',
-    value: 'id',
-  };
-
-  const categoryMapping: SelectOption = {
-    key: 'id',
-    label: 'name',
-    value: 'id',
-  };
-
-  const videoTypeMapping: SelectOption = {
-    key: 'value',
-    label: 'value',
-    value: 'value',
   };
 
   const propagatevlink = async (value: string, record: any, index: number) => {
@@ -730,16 +763,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     );
   };
 
-  useEffect(() => {
-    if (data.length) loaded.current = true;
-  }, [data]);
-
-  useEffect(() => {
-    setisScrollable(details);
-
-    if (!details) scrollToCenter(lastFocusedIndex.current);
-  }, [details]);
-
   const getFeed = async (event?: Event, resetResults?: boolean) => {
     if (!loadMore.current && !resetResults && buffer.length < 30) {
       setEof(true);
@@ -908,6 +931,24 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     });
   };
 
+  const handleTitleChange = (event: any) => {
+    setTitleFilter(event.currentTarget.value);
+    const selectionStart = event.currentTarget.selectionStart;
+    titleSelectionEnd.current = event.currentTarget.selectionEnd;
+    if (selectionStart && titleSelectionEnd.current)
+      titleFocused.current = true;
+  };
+
+  const handleIndexChange = (value: number) => {
+    setIndexFilter(value);
+    const index = document.getElementById('index') as HTMLInputElement;
+    if (!index) return;
+    const selectionStart = index!.selectionStart;
+    indexSelectionEnd.current = index.selectionEnd!;
+    if (selectionStart && indexSelectionEnd.current)
+      indexFocused.current = true;
+  };
+
   const handleSave = (record: FeedItem, newItem?: boolean) => {
     if (newItem) {
       setIndexFilter(undefined);
@@ -932,10 +973,11 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
               Title
             </Typography.Title>
             <Input
+              id="title"
               allowClear
               disabled={loadingResources}
-              ref={inputRefTitle}
-              onChange={event => setTitleFilter(event.target.value)}
+              ref={titleRef}
+              onChange={event => handleTitleChange(event)}
               suffix={<SearchOutlined />}
               value={titleFilter}
               placeholder="Search by Title"
@@ -943,7 +985,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
             />
           </Col>
           <Col lg={5} xs={24}>
-            <Typography.Title level={5}>Master Brand</Typography.Title>
+            <Typography.Title level={5}>Client</Typography.Title>
             <SimpleSelect
               showSearch
               data={brands}
@@ -951,7 +993,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
               style={{ width: '100%' }}
               selectedOption={brandFilter?.id}
               optionMapping={masterBrandMapping}
-              placeholder="Select a Master Brand"
+              placeholder="Select a Client"
               disabled={loadingResources}
               allowClear
             />
@@ -1026,10 +1068,11 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
           <Col lg={5} xs={24}>
             <Typography.Title level={5}>Start Index</Typography.Title>
             <InputNumber
+              id="index"
               disabled={loadingResources}
               min={0}
-              ref={inputRefIndex}
-              onChange={startIndex => setIndexFilter(startIndex ?? undefined)}
+              ref={indexRef}
+              onChange={value => handleIndexChange(value!)}
               placeholder="Select an Index"
               value={indexFilter}
               onPressEnter={() => getFeed(undefined, true)}

@@ -131,6 +131,20 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
     else setBtnStyle({ position: 'fixed', top: '25.5rem', left: '15rem' });
   }, [isMobile]);
 
+  useEffect(() => {
+    if (inputRef.current && searchFilter) {
+      if (selectionEnd.current === searchFilter.length || !inputFocused.current)
+        inputRef.current.focus({
+          cursor: 'end',
+        });
+      else {
+        const title = document.getElementById('title') as HTMLInputElement;
+        inputRef.current.focus();
+        title!.setSelectionRange(selectionEnd.current!, selectionEnd.current!);
+      }
+    }
+  }, [searchFilter]);
+
   const optionMapping: SelectOption = {
     key: 'id',
     label: 'brandName',
@@ -169,6 +183,8 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
   });
   const filterPanelHeight = useRef<number>();
   const windowHeight = window.innerHeight;
+  const inputFocused = useRef<boolean>(false);
+  const selectionEnd = useRef<number>();
 
   useEffect(() => {
     const panel = document.getElementById('filterPanel');
@@ -203,13 +219,6 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
   useEffect(() => {
     setPanelStyle({ top: offset, zIndex: 3 });
   }, [offset]);
-
-  useEffect(() => {
-    if (inputRef.current)
-      inputRef.current.focus({
-        cursor: 'end',
-      });
-  }, [searchFilter]);
 
   useEffect(() => {
     setCurrentCategory(undefined);
@@ -429,7 +438,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
               whiteSpace: 'nowrap',
             }}
           >
-            <Tooltip title="Master Brand">Master Brand</Tooltip>
+            <Tooltip title="Client">Client</Tooltip>
           </div>
         </div>
       ),
@@ -1019,6 +1028,13 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
     return option?.label?.toUpperCase().includes(input?.toUpperCase());
   };
 
+  const handleTitleFilterChange = (event: any) => {
+    setSearchFilter(event.target.value);
+    const selectionStart = event.target.selectionStart;
+    selectionEnd.current = event.target.selectionEnd;
+    if (selectionStart && selectionEnd) inputFocused.current = true;
+  };
+
   const Filters = () => {
     return (
       <>
@@ -1027,9 +1043,10 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
             <Typography.Title level={5}>Product Name</Typography.Title>
             <Input
               allowClear
+              id="title"
               disabled={loadingResources}
               ref={inputRef}
-              onChange={event => setSearchFilter(event.target.value)}
+              onChange={event => handleTitleFilterChange(event)}
               suffix={<SearchOutlined />}
               value={searchFilter}
               placeholder="Search by Name"
@@ -1037,7 +1054,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
             />
           </Col>
           <Col lg={6} xs={24}>
-            <Typography.Title level={5}>Master Brand</Typography.Title>
+            <Typography.Title level={5}>Client</Typography.Title>
             <SimpleSelect
               showSearch
               data={brands}
@@ -1045,7 +1062,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
               style={{ width: '100%' }}
               selectedOption={brandFilter?.brandName}
               optionMapping={optionMapping}
-              placeholder="Select a Master Brand"
+              placeholder="Select a Client"
               disabled={loadingResources}
               allowClear
             ></SimpleSelect>

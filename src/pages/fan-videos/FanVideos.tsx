@@ -105,6 +105,8 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
   const windowHeight = window.innerHeight;
   const [style, setStyle] = useState<any>();
   const history = useHistory();
+  const inputFocused = useRef<boolean>(false);
+  const selectionEnd = useRef<number>();
 
   useEffect(() => {
     history.listen((_, action) => {
@@ -176,10 +178,17 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
   };
 
   useEffect(() => {
-    if (inputRef.current)
-      inputRef.current.focus({
-        cursor: 'end',
-      });
+    if (inputRef.current && titleFilter) {
+      if (selectionEnd.current === titleFilter.length || !inputFocused.current)
+        inputRef.current.focus({
+          cursor: 'end',
+        });
+      else {
+        const title = document.getElementById('title') as HTMLInputElement;
+        inputRef.current.focus();
+        title!.setSelectionRange(selectionEnd.current!, selectionEnd.current!);
+      }
+    }
   }, [titleFilter]);
 
   const feedItemColumns: ColumnsType<FeedItem> = [
@@ -659,6 +668,13 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
     return option?.label?.toUpperCase().includes(input?.toUpperCase());
   };
 
+  const handleTitleFilterChange = (event: any) => {
+    setTitleFilter(event.target.value);
+    const selectionStart = event.target.selectionStart;
+    selectionEnd.current = event.target.selectionEnd;
+    if (selectionStart && selectionEnd) inputFocused.current = true;
+  };
+
   const Filters = () => {
     return (
       <>
@@ -669,9 +685,10 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
             </Typography.Title>
             <Input
               allowClear
+              id="title"
               disabled={loadingResources}
               ref={inputRef}
-              onChange={event => setTitleFilter(event.target.value)}
+              onChange={event => handleTitleFilterChange(event)}
               suffix={<SearchOutlined />}
               value={titleFilter}
               placeholder="Enter a Title"
@@ -679,7 +696,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
             />
           </Col>
           <Col lg={6} xs={24}>
-            <Typography.Title level={5}>Master Brand</Typography.Title>
+            <Typography.Title level={5}>Client</Typography.Title>
             <SimpleSelect
               showSearch
               data={brands}
@@ -687,7 +704,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
               style={{ width: '100%' }}
               selectedOption={brandFilter?.id}
               optionMapping={masterBrandMapping}
-              placeholder="Select a Master Brand"
+              placeholder="Select a Client"
               disabled={loadingResources}
               allowClear
             />

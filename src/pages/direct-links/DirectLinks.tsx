@@ -43,6 +43,18 @@ import CreatorsMultipleFetchDebounceSelect from 'pages/creators/components/Creat
 
 const { Panel } = Collapse;
 
+const masterBrandMapping: SelectOption = {
+  key: 'id',
+  label: 'brandName',
+  value: 'id',
+};
+
+const productBrandMapping: SelectOption = {
+  key: 'id',
+  label: 'brandName',
+  value: 'id',
+};
+
 const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
   const { isMobile, setisScrollable } = useContext(AppContext);
   const linkRef = useRef<any>(null);
@@ -74,6 +86,12 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
   const lastFocusedIndex = useRef<number>(-1);
   const directLinksIndex = useRef<number>(-1);
   const history = useHistory();
+  const linkFocused = useRef<boolean>(false);
+  const linkSelectionEnd = useRef<number>();
+  const urlFocused = useRef<boolean>(false);
+  const urlSelectionEnd = useRef<number>();
+  const videoFocused = useRef<boolean>(false);
+  const videoSelectionEnd = useRef<number>();
 
   useEffect(() => {
     history.listen((_, action) => {
@@ -87,13 +105,96 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
   }, [details]);
 
   useEffect(() => {
-    if (!details) setStyle({ overflow: 'clip', height: '100%' });
-    else setStyle({ overflow: 'scroll', height: '100%' });
+    getDetailsResources();
+  }, []);
+
+  useEffect(() => {
+    if (linkRef.current && linkFilter) {
+      if (
+        linkSelectionEnd.current === linkFilter.length ||
+        !linkFocused.current
+      )
+        linkRef.current.focus({
+          cursor: 'end',
+        });
+      else {
+        const link = document.getElementById('link') as HTMLInputElement;
+        linkRef.current.focus();
+        link!.setSelectionRange(
+          linkSelectionEnd.current!,
+          linkSelectionEnd.current!
+        );
+      }
+    }
+  }, [linkFilter]);
+
+  useEffect(() => {
+    if (videoRef.current && videoFilter) {
+      if (
+        videoSelectionEnd.current === videoFilter.length ||
+        !videoFocused.current
+      )
+        videoRef.current.focus({
+          cursor: 'end',
+        });
+      else {
+        const video = document.getElementById('video') as HTMLInputElement;
+        videoRef.current.focus();
+        video!.setSelectionRange(
+          videoSelectionEnd.current!,
+          videoSelectionEnd.current!
+        );
+      }
+    }
+  }, [videoFilter]);
+
+  useEffect(() => {
+    if (urlRef.current && urlFilter) {
+      if (urlSelectionEnd.current === urlFilter.length || !urlFocused.current)
+        urlRef.current.focus({
+          cursor: 'end',
+        });
+      else {
+        const url = document.getElementById('url') as HTMLInputElement;
+        urlRef.current.focus();
+        url!.setSelectionRange(
+          urlSelectionEnd.current!,
+          urlSelectionEnd.current!
+        );
+      }
+    }
+  }, [urlFilter]);
+
+  useEffect(() => {
+    setLoading(false);
+  }, [directLinks]);
+
+  useEffect(() => {
+    const panel = document.getElementById('filterPanel');
+
+    if (isMobile && panel) {
+      // Code for Chrome, Safari and Opera
+      panel.addEventListener('webkitTransitionEnd', updateOffset);
+      // Standard syntax
+      panel.addEventListener('transitionend', updateOffset);
+
+      return () => {
+        // Code for Chrome, Safari and Opera
+        panel.removeEventListener('webkitTransitionEnd', updateOffset);
+        // Standard syntax
+        panel.removeEventListener('transitionend', updateOffset);
+      };
+    }
+  });
+
+  useEffect(() => {
+    setisScrollable(details);
+    if (!details) scrollToCenter(lastFocusedIndex.current);
   }, [details]);
 
   useEffect(() => {
-    getDetailsResources();
-  }, []);
+    setPanelStyle({ top: offset });
+  }, [offset]);
 
   const search = rows => {
     let updatedRows = rows;
@@ -135,28 +236,6 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
     return updatedRows;
   };
 
-  useEffect(() => {
-    setLoading(false);
-  }, [directLinks]);
-
-  useEffect(() => {
-    const panel = document.getElementById('filterPanel');
-
-    if (isMobile && panel) {
-      // Code for Chrome, Safari and Opera
-      panel.addEventListener('webkitTransitionEnd', updateOffset);
-      // Standard syntax
-      panel.addEventListener('transitionend', updateOffset);
-
-      return () => {
-        // Code for Chrome, Safari and Opera
-        panel.removeEventListener('webkitTransitionEnd', updateOffset);
-        // Standard syntax
-        panel.removeEventListener('transitionend', updateOffset);
-      };
-    }
-  });
-
   const updateOffset = () => {
     if (activeKey === '1') {
       filterPanelHeight.current =
@@ -167,43 +246,6 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
         setOffset(-heightDifference - seventhWindowHeight);
       }
     } else setOffset(64);
-  };
-
-  useEffect(() => {
-    setPanelStyle({ top: offset });
-  }, [offset]);
-
-  useEffect(() => {
-    if (linkRef.current)
-      linkRef.current.focus({
-        cursor: 'end',
-      });
-  }, [linkFilter]);
-
-  useEffect(() => {
-    if (videoRef.current)
-      videoRef.current.focus({
-        cursor: 'end',
-      });
-  }, [videoFilter]);
-
-  useEffect(() => {
-    if (urlRef.current)
-      urlRef.current.focus({
-        cursor: 'end',
-      });
-  }, [urlFilter]);
-
-  const masterBrandMapping: SelectOption = {
-    key: 'id',
-    label: 'brandName',
-    value: 'id',
-  };
-
-  const productBrandMapping: SelectOption = {
-    key: 'id',
-    label: 'brandName',
-    value: 'id',
   };
 
   const filterOption = (input: string, option: any) => {
@@ -333,7 +375,7 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
               whiteSpace: 'nowrap',
             }}
           >
-            <Tooltip title="Master Brand">Master Brand</Tooltip>
+            <Tooltip title="Client">Client</Tooltip>
           </div>
         </div>
       ),
@@ -597,11 +639,6 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
     );
   };
 
-  useEffect(() => {
-    setisScrollable(details);
-    if (!details) scrollToCenter(lastFocusedIndex.current);
-  }, [details]);
-
   const getDirectLinks = async (event?: Event, resetResults?: boolean) => {
     if (event && activeKey !== '1') event.stopPropagation();
     try {
@@ -672,6 +709,30 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
     setDetails(false);
   };
 
+  const handleLinkChange = (event: any) => {
+    setLinkFilter(event.target.value);
+    const selectionStart = event.target.selectionStart;
+    linkSelectionEnd.current = event.currentTarget.selectionEnd;
+    if (selectionStart && event.currentTarget.selectionEnd)
+      linkFocused.current = true;
+  };
+
+  const handleVideoChange = (event: any) => {
+    setVideoFilter(event.target.value);
+    const selectionStart = event.target.selectionStart;
+    videoSelectionEnd.current = event.currentTarget.selectionEnd;
+    if (selectionStart && event.currentTarget.selectionEnd)
+      videoFocused.current = true;
+  };
+
+  const handleUrlChange = (event: any) => {
+    setUrlFilter(event.target.value);
+    const selectionStart = event.target.selectionStart;
+    urlSelectionEnd.current = event.currentTarget.selectionEnd;
+    if (selectionStart && event.currentTarget.selectionEnd)
+      urlFocused.current = true;
+  };
+
   const Filters = () => {
     return (
       <>
@@ -681,9 +742,10 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
               Link
             </Typography.Title>
             <Input
+              id="link"
               allowClear
               ref={linkRef}
-              onChange={event => setLinkFilter(event.target.value)}
+              onChange={event => handleLinkChange(event)}
               suffix={<SearchOutlined />}
               value={linkFilter}
               placeholder="Search by Link"
@@ -699,7 +761,7 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
             />
           </Col>
           <Col lg={5} xs={24}>
-            <Typography.Title level={5}>Master Brand</Typography.Title>
+            <Typography.Title level={5}>Client</Typography.Title>
             <SimpleSelect
               showSearch
               data={brands}
@@ -707,7 +769,7 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
               style={{ width: '100%' }}
               selectedOption={brandFilter?.id}
               optionMapping={masterBrandMapping}
-              placeholder="Select a Master Brand"
+              placeholder="Select a Client"
               allowClear
             />
           </Col>
@@ -731,9 +793,10 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
               Video
             </Typography.Title>
             <Input
+              id="video"
               allowClear
               ref={videoRef}
-              onChange={event => setVideoFilter(event.target.value)}
+              onChange={event => handleVideoChange(event)}
               suffix={<SearchOutlined />}
               value={videoFilter}
               placeholder="Search by Video"
@@ -745,9 +808,10 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
               URL
             </Typography.Title>
             <Input
+              id="url"
               allowClear
               ref={urlRef}
-              onChange={event => setUrlFilter(event.target.value)}
+              onChange={event => handleUrlChange(event)}
               suffix={<SearchOutlined />}
               value={urlFilter}
               placeholder="Search by URL"
@@ -797,7 +861,7 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
         <>
           <PageHeader
             title="Platform Links"
-                      subTitle={isMobile ? '' : 'List of Platform Links'}
+            subTitle={isMobile ? '' : 'List of Platform Links'}
             extra={[
               <Button
                 key="2"

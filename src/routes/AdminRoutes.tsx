@@ -53,6 +53,7 @@ import DevelopmentDetail from 'pages/development/development';
 import { __isDev__ } from 'helpers/constants';
 import Playlists from 'pages/playlists/Playlists';
 import PlaylistStudio from 'pages/playlist-studio/PlaylistStudio';
+import ClientUsers from 'pages/client-users/ClientUsers';
 
 function AdminRoutes() {
   return (
@@ -120,6 +121,11 @@ function AdminRoutes() {
         layout={AuthenticatedLayout}
       />
       <AppRoute
+        path="/client-users"
+        component={ClientUsers}
+        layout={AuthenticatedLayout}
+      />
+      <AppRoute
         path="/creators"
         component={Creators}
         layout={AuthenticatedLayout}
@@ -136,7 +142,7 @@ function AdminRoutes() {
       />
       <AppRoute path="/tags" component={Tags} layout={AuthenticatedLayout} />
       <AppRoute
-        path="/brands"
+        path="/clients"
         component={Brands}
         layout={AuthenticatedLayout}
       />

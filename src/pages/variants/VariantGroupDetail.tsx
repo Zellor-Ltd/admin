@@ -380,7 +380,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
                 />
               </Col>
               <Col lg={6} xs={24}>
-                <Typography.Title level={5}>Master Brand</Typography.Title>
+                <Typography.Title level={5}>Client</Typography.Title>
                 <SimpleSelect
                   showSearch
                   data={brands}
@@ -388,7 +388,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
                   style={{ width: '100%' }}
                   selectedOption={brandFilter?.brandName}
                   optionMapping={optionMapping}
-                  placeholder="Select a Master Brand"
+                  placeholder="Select a Client"
                   allowClear
                   disabled={fetchingCategories}
                 ></SimpleSelect>

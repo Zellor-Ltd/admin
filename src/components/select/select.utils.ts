@@ -27,6 +27,9 @@ export const videoTypeList = [
     value: 'Brand',
   },
   {
+    value: 'Client',
+  },
+  {
     value: 'Review',
   },
 ];

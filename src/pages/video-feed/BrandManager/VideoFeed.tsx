@@ -44,7 +44,7 @@ import {
   fetchCategories,
   fetchProductBrands,
   fetchVideoFeedV3,
-  rebuildLink,
+  propagateVLink,
   addFeaturedFeed,
   saveVideoFeed,
 } from 'services/DiscoClubService';
@@ -52,19 +52,42 @@ import { Brand } from 'interfaces/Brand';
 import '@pathofdev/react-tag-input/build/index.css';
 import { Category } from 'interfaces/Category';
 import { Creator } from 'interfaces/Creator';
-import '../VideoFeed.scss';
-import '../VideoFeedDetail.scss';
+import './VideoFeed.scss';
+import './VideoFeedDetail.scss';
 import SimpleSelect from 'components/select/SimpleSelect';
 import { SelectOption } from 'interfaces/SelectOption';
-import VideoFeedDetail from '../VideoFeedDetail';
+import VideoFeedDetail from './VideoFeedDetail';
 import { statusList, videoTypeList } from 'components/select/select.utils';
-import moment from 'moment';
 import scrollIntoView from 'scroll-into-view';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useSelector } from 'react-redux';
 import CreatorsMultipleFetchDebounceSelect from 'pages/creators/components/CreatorsMultipleFetchDebounceSelect';
 
 const { Panel } = Collapse;
+
+const masterBrandMapping: SelectOption = {
+  key: 'id',
+  label: 'brandName',
+  value: 'id',
+};
+
+const productBrandMapping: SelectOption = {
+  key: 'id',
+  label: 'brandName',
+  value: 'id',
+};
+
+const categoryMapping: SelectOption = {
+  key: 'id',
+  label: 'name',
+  value: 'id',
+};
+
+const videoTypeMapping: SelectOption = {
+  key: 'value',
+  label: 'value',
+  value: 'value',
+};
 
 const reduceSegmentsTags = (packages: Segment[]) => {
   return packages?.reduce((acc: number, curr: Segment) => {
@@ -77,12 +100,15 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     settings: { feedList = [] },
   } = useSelector((state: any) => state.settings);
   const { isMobile, setisScrollable } = useContext(AppContext);
-  const inputRef = useRef<any>(null);
+  const titleRef = useRef<any>(null);
+  const indexRef = useRef<any>(null);
   const [activeKey, setActiveKey] = useState<string>('1');
   const [selectedVideoFeed, setSelectedVideoFeed] = useState<FeedItem>();
   const [loading, setLoading] = useState(false);
+  const [loadingRow, setLoadingRow] = useState<string>('');
   const loaded = useRef<boolean>(false);
   const [loadingResources, setLoadingResources] = useState<boolean>(true);
+  const [isCloning, setIsCloning] = useState<boolean>(false);
   const [details, setDetails] = useState<boolean>(false);
   const [categories, setCategories] = useState<Category[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
@@ -125,42 +151,43 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   const loadMore = useRef<boolean>(false);
   const [style, setStyle] = useState<any>();
   const history = useHistory();
+  const titleFocused = useRef<boolean>(false);
+  const titleSelectionEnd = useRef<number>();
+  const indexFocused = useRef<boolean>(false);
+  const indexSelectionEnd = useRef<number>();
 
   useEffect(() => {
     history.listen((_, action) => {
-      if (action === 'POP' && details) setDetails(false);
+      if (action === 'POP' && details) {
+        setDetails(false);
+        setIsCloning(false);
+      }
     });
+
+    const panel = document.getElementById('filterPanel');
+    if (isMobile && panel) {
+      // Code for Chrome, Safari and Opera
+      panel.addEventListener('webkitTransitionEnd', updateOffset);
+      // Standard syntax
+      panel.addEventListener('transitionend', updateOffset);
+      return () => {
+        // Code for Chrome, Safari and Opera
+        panel.removeEventListener('webkitTransitionEnd', updateOffset);
+        // Standard syntax
+        panel.removeEventListener('transitionend', updateOffset);
+      };
+    }
   });
+
+  useEffect(() => {
+    getDetailsResources();
+  }, []);
 
   useEffect(() => {
     if (details || (isMobile && activeKey === '1'))
       setStyle({ overflow: 'scroll', height: '100%' });
     else setStyle({ overflow: 'clip', height: '100%' });
   }, [details, isMobile, activeKey]);
-
-  useEffect(() => {
-    getDetailsResources();
-  }, []);
-
-  const search = rows => {
-    let updatedRows = rows;
-    if (indexFilter) {
-      updatedRows = updatedRows.filter(row => {
-        return row.index && row.index === indexFilter;
-      });
-    }
-    if (creatorFilter?.firstName) {
-      updatedRows = updatedRows.filter(
-        row => row?.creator?.firstName?.indexOf(creatorFilter?.firstName) > -1
-      );
-    }
-    if (categoryFilter) {
-      updatedRows = updatedRows.filter(
-        row => row.category?.indexOf(categoryFilter) > -1
-      );
-    }
-    return updatedRows;
-  };
 
   useEffect(() => {
     if (!loaded.current) {
@@ -175,31 +202,74 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
   }, [buffer]);
 
   useEffect(() => {
-    loadMore.current = true;
-    setBuffer([...buffer]);
-  }, [indexFilter, creatorFilter, categoryFilter]);
-
-  useEffect(() => {
+    if (data.length) loaded.current = true;
     setLoading(false);
   }, [data]);
 
   useEffect(() => {
-    const panel = document.getElementById('filterPanel');
+    setPanelStyle({ top: offset, zIndex: 3 });
+  }, [offset]);
 
-    if (isMobile && panel) {
-      // Code for Chrome, Safari and Opera
-      panel.addEventListener('webkitTransitionEnd', updateOffset);
-      // Standard syntax
-      panel.addEventListener('transitionend', updateOffset);
+  useEffect(() => {
+    setisScrollable(details);
 
-      return () => {
-        // Code for Chrome, Safari and Opera
-        panel.removeEventListener('webkitTransitionEnd', updateOffset);
-        // Standard syntax
-        panel.removeEventListener('transitionend', updateOffset);
-      };
+    if (!details) scrollToCenter(lastFocusedIndex.current);
+  }, [details]);
+
+  useEffect(() => {
+    if (titleRef.current && titleFilter) {
+      if (
+        titleSelectionEnd.current === titleFilter.length ||
+        !titleFocused.current
+      )
+        titleRef.current.focus({
+          cursor: 'end',
+        });
+      else {
+        const title = document.getElementById('title') as HTMLInputElement;
+        titleRef.current.focus();
+        title!.setSelectionRange(
+          titleSelectionEnd.current!,
+          titleSelectionEnd.current!
+        );
+      }
     }
-  });
+  }, [titleFilter]);
+
+  useEffect(() => {
+    if (indexRef.current && indexFilter) {
+      if (
+        indexSelectionEnd.current === indexFilter.toString().length ||
+        !indexFocused.current
+      )
+        indexRef.current.focus({
+          cursor: 'end',
+        });
+      else {
+        const index = document.getElementById('index') as HTMLInputElement;
+        indexRef.current.focus();
+        index!.setSelectionRange(
+          indexSelectionEnd.current!,
+          indexSelectionEnd.current!
+        );
+      }
+    }
+  }, [indexFilter]);
+
+  const search = rows => {
+    let updatedRows = rows;
+    if (indexFilter) {
+      updatedRows = updatedRows.filter(row => {
+        return row.index && row.index === indexFilter;
+      });
+    }
+    if (categoryFilter) {
+      updatedRows = updatedRows.filter(
+        row => row.category?.indexOf(categoryFilter) > -1
+      );
+    }
+    return updatedRows;
+  };
 
   const updateOffset = () => {
     if (activeKey === '1') {
@@ -213,51 +283,30 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     } else setOffset(64);
   };
 
-  useEffect(() => {
-    setPanelStyle({ top: offset, zIndex: 3 });
-  }, [offset]);
-
-  useEffect(() => {
-    if (inputRef.current)
-      inputRef.current.focus({
-        cursor: 'end',
-      });
-  }, [titleFilter]);
-
-  const masterBrandMapping: SelectOption = {
-    key: 'id',
-    label: 'brandName',
-    value: 'id',
-  };
-
-  const productBrandMapping: SelectOption = {
-    key: 'id',
-    label: 'brandName',
-    value: 'id',
-  };
-
-  const categoryMapping: SelectOption = {
-    key: 'id',
-    label: 'name',
-    value: 'id',
-  };
-
-  const videoTypeMapping: SelectOption = {
-    key: 'value',
-    label: 'value',
-    value: 'value',
-  };
-
-  const rebuildVlink = async (value: string, record: any, index: number) => {
+  const propagatevlink = async (value: string, record: any, index: number) => {
     try {
+      setLoadingRow(value);
       lastFocusedIndex.current = index;
-      const { result, success, message }: any = await rebuildLink(value);
+      const { result, success, message }: any = await propagateVLink(value);
       if (success) {
         buffer[index] = { ...record, shareLink: result, rebuilt: true };
         setData([...buffer]);
         msg.success(message);
       }
-    } catch {}
+    } catch {
+    } finally {
+      setLoadingRow('');
+    }
+  };
+
+  const getvLinkId = (record: any): string => {
+    let vlinkId = record.package
+      ?.find(pack => pack.shareLink)
+      ?.shareLink?.split('/')
+      ?.slice(-1)
+      ?.toString();
+
+    return vlinkId;
   };
 
   const addToList = async (value: string, feedItem: FeedItem) => {
@@ -294,12 +343,12 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
               whiteSpace: 'nowrap',
             }}
           >
-            <Tooltip title="_id">_id</Tooltip>
+            <Tooltip title="ID">ID</Tooltip>
           </div>
         </div>
       ),
       dataIndex: 'id',
-      width: '3%',
+      width: '6%',
       render: id => <CopyValueToClipboard tooltipText="Copy ID" value={id} />,
       align: 'center',
     },
@@ -318,34 +367,30 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
         </div>
       ),
       dataIndex: 'index',
-      width: '3%',
+      width: '6%',
       render: (_, feedItem, index) => {
         if (updatingIndex[feedItem?.id]) {
           const antIcon = <LoadingOutlined spin />;
           return <Spin indicator={antIcon} />;
         } else {
           return (
-            <InputNumber
-              type="number"
-              value={feedItem?.index}
-              onFocus={event => event.stopPropagation()}
-              onBlur={(event: any) =>
-                updateIndex(feedItem, event.target.value as unknown as any)
-              }
-              onPressEnter={(event: any) =>
-                updateIndex(feedItem, event.target.value as unknown as any)
-              }
-            />
+            <div style={{ minWidth: 10 }}>
+              <InputNumber
+                type="number"
+                value={feedItem?.index}
+                onFocus={event => event.stopPropagation()}
+                onBlur={(event: any) =>
+                  updateIndex(feedItem, event.target.value as unknown as any)
+                }
+                onPressEnter={(event: any) =>
+                  updateIndex(feedItem, event.target.value as unknown as any)
+                }
+              />
+            </div>
           );
         }
       },
       align: 'center',
-      sorter: (a, b): any => {
-        if (a.index && b.index) return a.index - b.index;
-        else if (a.index) return -1;
-        else if (b.index) return 1;
-        else return 0;
-      },
     },
     {
       title: (
@@ -362,7 +407,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
         </div>
       ),
       dataIndex: 'vIndex',
-      width: '3%',
+      width: '6%',
       render: (_, feedItem) => {
         if (updatingVIndex[feedItem?.id]) {
           const antIcon = <LoadingOutlined spin />;
@@ -384,12 +429,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
         }
       },
       align: 'center',
-      sorter: (a, b): any => {
-        if (a.vIndex && b.vIndex) return a.vIndex - b.vIndex;
-        else if (a.vIndex) return -1;
-        else if (b.vIndex) return 1;
-        else return 0;
-      },
     },
     {
       title: (
@@ -406,7 +445,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
         </div>
       ),
       dataIndex: 'title',
-      width: '18%',
+      width: '15%',
       render: (value: string, feedItem: FeedItem, index: number) => (
         <Link
           onFocus={() => (bufferIndex.current = buffer.indexOf(feedItem))}
@@ -416,12 +455,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
           {value}
         </Link>
       ),
-      sorter: (a, b): any => {
-        if (a.title && b.title) return a.title.localeCompare(b.title as string);
-        else if (a.title) return -1;
-        else if (b.title) return 1;
-        else return 0;
-      },
     },
     {
       title: (
@@ -439,7 +472,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       ),
       dataIndex: 'package',
       render: (pack: Array<any> = []) => <AntTag>{pack?.length ?? 0}</AntTag>,
-      width: '5%',
+      width: '8%',
       align: 'center',
     },
     {
@@ -457,15 +490,8 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
         </div>
       ),
       dataIndex: 'lengthTotal',
-      width: '5%',
+      width: '8%',
       align: 'center',
-      sorter: (a, b): any => {
-        if (a.lengthTotal && b.lengthTotal)
-          return a.lengthTotal - b.lengthTotal;
-        else if (a.lengthTotal) return -1;
-        else if (b.lengthTotal) return 1;
-        else return 0;
-      },
     },
     {
       title: (
@@ -482,7 +508,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
         </div>
       ),
       dataIndex: 'hCreationDate',
-      width: '10%',
+      width: '8%',
       render: (creation: Date) =>
         creation
           ? new Date(creation).toLocaleDateString('en-GB') +
@@ -490,16 +516,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
             new Date(creation).toLocaleTimeString('en-GB')
           : '-',
       align: 'center',
-      sorter: (a, b): any => {
-        if (a.hCreationDate && b.hCreationDate)
-          return (
-            moment(a.hCreationDate as Date).unix() -
-            moment(b.hCreationDate).unix()
-          );
-        else if (a.hCreationDate) return -1;
-        else if (b.hCreationDate) return 1;
-        else return 0;
-      },
     },
     {
       title: (
@@ -521,13 +537,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
         <AntTag>{reduceSegmentsTags(pack)}</AntTag>
       ),
       align: 'center',
-      sorter: (a, b): any => {
-        if (a.package && b.package)
-          return reduceSegmentsTags(a.package) - reduceSegmentsTags(b.package);
-        else if (a.package) return -1;
-        else if (b.package) return 1;
-        else return 0;
-      },
     },
     {
       title: (
@@ -544,16 +553,9 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
         </div>
       ),
       dataIndex: 'status',
-      width: '7%',
+      width: '6%',
       align: 'center',
       responsive: ['sm'],
-      sorter: (a, b): any => {
-        if (a.status && b.status)
-          return a.status.localeCompare(b.status as string);
-        else if (a.status) return -1;
-        else if (b.status) return 1;
-        else return 0;
-      },
     },
     {
       title: (
@@ -569,41 +571,31 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
           </div>
         </div>
       ),
-      width: '18%',
+      width: '10%',
       render: (_: string, record: any) => (
-        <Link
-          onClick={() =>
-            window
-              .open(
-                record && record.rebuilt
-                  ? record.shareLink ?? ''
-                  : record.package?.find(pack => pack.shareLink)?.shareLink ??
-                      '',
-                '_blank'
-              )
-              ?.focus()
-          }
-          to={{ pathname: window.location.pathname }}
-        >
-          {record
-            ? record.rebuilt
-              ? record.shareLink ?? ''
-              : record.package?.find(pack => pack.shareLink)?.shareLink ?? ''
-            : ''}
-        </Link>
+        <div style={{ wordWrap: 'break-word', wordBreak: 'break-word' }}>
+          <Link
+            onClick={() =>
+              window
+                .open(
+                  record && record.rebuilt
+                    ? record.shareLink ?? ''
+                    : record.package?.find(pack => pack.shareLink)?.shareLink ??
+                        '',
+                  '_blank'
+                )
+                ?.focus()
+            }
+            to={{ pathname: window.location.pathname }}
+          >
+            {record
+              ? record.rebuilt
+                ? record.shareLink ?? ''
+                : record.package?.find(pack => pack.shareLink)?.shareLink ?? ''
+              : ''}
+          </Link>
+        </div>
       ),
-      sorter: (a: any, b: any): any => {
-        if (a.shareLink && b.shareLink) {
-          const linkA = a.shareLink;
-          const linkB = b.shareLink;
-          if (linkA && linkB) return linkA.localeCompare(linkB);
-          else if (linkA) return -1;
-          else if (linkB) return 1;
-          else return 0;
-        } else if (a.shareLink) return -1;
-        else if (b.shareLink) return 1;
-        else return 0;
-      },
     },
     {
       title: (
@@ -676,7 +668,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
           </div>
         </div>
       ),
-      width: '5%',
+      width: '10%',
       align: 'center',
       render: (_: string, record: any, index: number) => (
         <>
@@ -684,22 +676,14 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
             type="link"
             block
             onFocus={() => (bufferIndex.current = buffer.indexOf(record))}
-            onClick={() =>
-              rebuildVlink(
-                record.package
-                  ?.find(pack => pack.shareLink)
-                  ?.shareLink?.slice(
-                    17,
-                    record.package?.find(pack => pack.shareLink)?.shareLink
-                      ?.length
-                  ),
-                record,
-                index
-              )
+            onClick={() => propagatevlink(getvLinkId(record), record, index)}
+            disabled={
+              !record?.package?.find(pack => pack.shareLink) ||
+              loadingRow !== ''
             }
-            disabled={!record?.package?.find(pack => pack.shareLink)}
+            loading={loadingRow === getvLinkId(record)}
           >
-            <RedoOutlined />
+            {loadingRow !== getvLinkId(record) && <RedoOutlined />}
           </Button>
         </>
       ),
@@ -718,7 +702,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
           </div>
         </div>
       ),
-      width: '5%',
+      width: '10%',
       align: 'center',
       render: (_, feedItem: FeedItem, index: number) => (
         <>
@@ -750,7 +734,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       width: '10%',
       align: 'right',
       render: (_, feedItem: FeedItem, index: number) => (
-        <>
+        <div style={{ minWidth: 50 }}>
           <Link
             onFocus={() => (bufferIndex.current = buffer.indexOf(feedItem))}
             onClick={() => handleEdit(index, feedItem)}
@@ -768,7 +752,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
               <DeleteOutlined />
             </Button>
           </Popconfirm>
-        </>
+        </div>
       ),
     },
   ];
@@ -778,16 +762,6 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
       document.querySelector(`.scrollable-row-${index}`) as HTMLElement
     );
   };
-
-  useEffect(() => {
-    if (data.length) loaded.current = true;
-  }, [data]);
-
-  useEffect(() => {
-    setisScrollable(details);
-
-    if (!details) scrollToCenter(lastFocusedIndex.current);
-  }, [details]);
 
   const getFeed = async (event?: Event, resetResults?: boolean) => {
     if (!loadMore.current && !resetResults && buffer.length < 30) {
@@ -818,6 +792,9 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
         videoType: videoTypeFilter,
         productBrandId: productBrandFilter,
         dateSort: dateSortFilter,
+        creatorId: creatorFilter?.id,
+        category: categoryFilter,
+        startIndex: indexFilter,
       });
       setPage(pageToUse + 1);
       if (results.length < 30) setEof(true);
@@ -858,6 +835,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     } else buffer[lastFocusedIndex.current] = record;
     setBuffer([...buffer]);
     setDetails(false);
+    setIsCloning(false);
     scrollToCenter(lastFocusedIndex.current);
   };
 
@@ -878,6 +856,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
           id: undefined,
           shareLink: undefined,
           package: pkg,
+          title: `Cloned - ${videoFeed?.title}`,
         });
       }
       if (!videoFeed?.package) {
@@ -885,8 +864,10 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
           ...(videoFeed as any),
           id: undefined,
           shareLink: undefined,
+          title: `Cloned - ${videoFeed?.title}`,
         });
       }
+      setIsCloning(true);
     } else setSelectedVideoFeed(videoFeed);
     setDetails(true);
     history.push(window.location.pathname);
@@ -950,10 +931,28 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
     });
   };
 
+  const handleTitleChange = (event: any) => {
+    setTitleFilter(event.currentTarget.value);
+    const selectionStart = event.currentTarget.selectionStart;
+    titleSelectionEnd.current = event.currentTarget.selectionEnd;
+    if (selectionStart && titleSelectionEnd.current)
+      titleFocused.current = true;
+  };
+
+  const handleIndexChange = (value: number) => {
+    setIndexFilter(value);
+    const index = document.getElementById('index') as HTMLInputElement;
+    if (!index) return;
+    const selectionStart = index!.selectionStart;
+    indexSelectionEnd.current = index.selectionEnd!;
+    if (selectionStart && indexSelectionEnd.current)
+      indexFocused.current = true;
+  };
+
   const handleSave = (record: FeedItem, newItem?: boolean) => {
     if (newItem) {
       setIndexFilter(undefined);
-      setCreatorFilter(null);
+      setCreatorFilter(undefined);
       setCategoryFilter(undefined);
     }
     refreshTable(record, newItem);
@@ -962,6 +961,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
 
   const handleCancel = () => {
     setDetails(false);
+    setIsCloning(false);
   };
 
   const Filters = () => {
@@ -973,10 +973,11 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
               Title
             </Typography.Title>
             <Input
+              id="title"
               allowClear
               disabled={loadingResources}
-              ref={inputRef}
-              onChange={event => setTitleFilter(event.target.value)}
+              ref={titleRef}
+              onChange={event => handleTitleChange(event)}
               suffix={<SearchOutlined />}
               value={titleFilter}
               placeholder="Search by Title"
@@ -984,7 +985,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
             />
           </Col>
           <Col lg={5} xs={24}>
-            <Typography.Title level={5}>Master Brand</Typography.Title>
+            <Typography.Title level={5}>Client</Typography.Title>
             <SimpleSelect
               showSearch
               data={brands}
@@ -992,7 +993,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
               style={{ width: '100%' }}
               selectedOption={brandFilter?.id}
               optionMapping={masterBrandMapping}
-              placeholder="Select a Master Brand"
+              placeholder="Select a Client"
               disabled={loadingResources}
               allowClear
             />
@@ -1067,11 +1068,14 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
           <Col lg={5} xs={24}>
             <Typography.Title level={5}>Start Index</Typography.Title>
             <InputNumber
+              id="index"
               disabled={loadingResources}
               min={0}
-              onChange={startIndex => setIndexFilter(startIndex ?? undefined)}
+              ref={indexRef}
+              onChange={value => handleIndexChange(value!)}
               placeholder="Select an Index"
               value={indexFilter}
+              onPressEnter={() => getFeed(undefined, true)}
             />
           </Col>
           <Col lg={5} xs={24}>
@@ -1080,6 +1084,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
               onChangeCreator={(_, creator) => setCreatorFilter(creator)}
               input={creatorFilter?.firstName}
               onClear={() => setCreatorFilter(null)}
+              disabled={loadingResources}
             />
           </Col>
           <Col lg={5} xs={24}>
@@ -1289,6 +1294,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
           feedItem={selectedVideoFeed}
           brands={brands}
           productBrands={productBrands}
+          isCloning={isCloning}
         />
       )}
     </div>

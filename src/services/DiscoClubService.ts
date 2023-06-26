@@ -1161,5 +1161,29 @@ export const saveCustomLinkList = (params: any) => {
 };
 
 export const deleteCustomLinkList = (params: any) => {
-  return instance.delete('Disco/LinkCustom/Adm/Delete', params);
+  return instance.delete(`Disco/LinkCustom/Adm/Delete/${params}`);
+};
+
+export const fetchStats = (startDate?: string, endDate?: string) => {
+  if (startDate && endDate)
+    return instance.get(
+      `Disco/Adm/Analytics/GetClientStats?startDate=${startDate}?endDate=${endDate}`
+    );
+  else return instance.get(`Disco/Adm/Analytics/GetClientStats/`);
+};
+
+export const fetchClientUsers = (page: number, params: any) => {
+  return instance.post(`Disco/Client/User/List/${page}`, params);
+};
+
+export const saveClientUser = (params: any) => {
+  if (params.id) {
+    return instance.post('Disco/Client/User/Update', params);
+  } else {
+    return instance.put('Disco/Client/User/Add', params);
+  }
+};
+
+export const deleteClientUser = (id: any) => {
+  return instance.delete(`Disco/Client/User/Delete/${id}`);
 };

@@ -39,7 +39,7 @@ export const PauseModal: React.FC<PauseModalProps> = ({
 
   return (
     <Modal
-      title="Pause Brand"
+      title="Pause Client"
       visible={showPauseModal}
       width="400px"
       confirmLoading={loading}
