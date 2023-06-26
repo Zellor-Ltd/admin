@@ -21,7 +21,6 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
     'brand-dashboard',
     'access-control',
     'settings',
-    'playlists',
     'playlist-studio',
   ];
   const [style, setStyle] = useState<any>({

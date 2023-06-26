@@ -11,7 +11,7 @@ import {
   Typography,
   message,
 } from 'antd';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, RouteComponentProps, useHistory } from 'react-router-dom';
 import {
   CopyOutlined,
@@ -39,8 +39,10 @@ import CopyValueToClipboard from 'components/CopyValueToClipboard';
 import moment from 'moment';
 import PlaylistDetails from './PlaylistDetails';
 import CustomDetails from './CustomDetails';
+import { AppContext } from 'contexts/AppContext';
 
 const Playlists: React.FC<RouteComponentProps> = () => {
+  const isMobile = useContext(AppContext);
   const [selectedTab, setSelectedTab] = useState<string>('client');
   const [loading, setLoading] = useState(false);
   const { doFetch } = useRequest({ setLoading });
@@ -53,6 +55,9 @@ const Playlists: React.FC<RouteComponentProps> = () => {
   const [products, setProducts] = useState<any[]>([]);
   const [productBrands, setProductBrands] = useState<any[]>([]);
   const [custom, setCustom] = useState<any[]>([]);
+  const tableHeight = isMobile
+    ? window.innerHeight - 400
+    : window.innerHeight - 370;
   const filter = useRef<any>();
   const cloning = useRef<boolean>(false);
 
@@ -1175,7 +1180,7 @@ const Playlists: React.FC<RouteComponentProps> = () => {
             gutter={8}
             align="bottom"
             justify="space-between"
-            className="mb-05 sticky-filter-box"
+            className="mb-05"
           >
             <Col lg={4} md={12} xs={24}>
               <Typography.Title level={5}>Search</Typography.Title>
@@ -1209,8 +1214,9 @@ const Playlists: React.FC<RouteComponentProps> = () => {
             className="tab-page"
             onChange={handleTabChange}
             activeKey={selectedTab}
+            style={{ minHeight: '100%' }}
           >
-            <Tabs.TabPane tab="Client" key="client">
+            <Tabs.TabPane tab="Client" key="client" style={{ height: '100%' }}>
               <Table
                 rowClassName={(_, index) => `scrollable-row-${index}`}
                 rowKey="id"
@@ -1218,11 +1224,15 @@ const Playlists: React.FC<RouteComponentProps> = () => {
                 dataSource={brands}
                 loading={loading}
                 pagination={false}
-                scroll={{ y: '100%', x: true }}
+                scroll={{ y: tableHeight, x: true }}
                 size="small"
               />
             </Tabs.TabPane>
-            <Tabs.TabPane tab="Product Brand" key="productBrand">
+            <Tabs.TabPane
+              tab="Product Brand"
+              key="productBrand"
+              style={{ height: '100%' }}
+            >
               <Table
                 rowClassName={(_, index) => `scrollable-row-${index}`}
                 rowKey="id"
@@ -1230,11 +1240,15 @@ const Playlists: React.FC<RouteComponentProps> = () => {
                 dataSource={productBrands}
                 loading={loading}
                 pagination={false}
-                scroll={{ y: '100%', x: true }}
+                scroll={{ y: tableHeight, x: true }}
                 size="small"
               />
             </Tabs.TabPane>
-            <Tabs.TabPane tab="Product" key="product">
+            <Tabs.TabPane
+              tab="Product"
+              key="product"
+              style={{ height: '100%' }}
+            >
               <Table
                 rowClassName={(_, index) => `scrollable-row-${index}`}
                 rowKey="id"
@@ -1242,11 +1256,15 @@ const Playlists: React.FC<RouteComponentProps> = () => {
                 dataSource={products}
                 loading={loading}
                 pagination={false}
-                scroll={{ y: '100%', x: true }}
+                scroll={{ y: tableHeight, x: true }}
                 size="small"
               />
             </Tabs.TabPane>
-            <Tabs.TabPane tab="Creator" key="creator">
+            <Tabs.TabPane
+              tab="Creator"
+              key="creator"
+              style={{ height: '100%' }}
+            >
               <Table
                 rowClassName={(_, index) => `scrollable-row-${index}`}
                 rowKey="id"
@@ -1254,11 +1272,11 @@ const Playlists: React.FC<RouteComponentProps> = () => {
                 dataSource={creators}
                 loading={loading}
                 pagination={false}
-                scroll={{ y: '100%', x: true }}
+                scroll={{ y: tableHeight, x: true }}
                 size="small"
               />
             </Tabs.TabPane>
-            <Tabs.TabPane tab="Custom" key="custom">
+            <Tabs.TabPane tab="Custom" key="custom" style={{ height: '100%' }}>
               <Table
                 rowClassName={(_, index) => `scrollable-row-${index}`}
                 rowKey="id"
@@ -1266,7 +1284,7 @@ const Playlists: React.FC<RouteComponentProps> = () => {
                 dataSource={custom}
                 loading={loading}
                 pagination={false}
-                scroll={{ y: '100%', x: true }}
+                scroll={{ y: tableHeight, x: true }}
                 size="small"
               />
             </Tabs.TabPane>
