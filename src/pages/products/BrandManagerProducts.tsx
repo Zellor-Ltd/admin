@@ -44,9 +44,39 @@ import Icon, {
 
 const { Panel } = Collapse;
 
+const optionMapping: SelectOption = {
+  key: 'id',
+  label: 'brandName',
+  value: 'id',
+};
+
+const productSuperCategoryOptionMapping: SelectOption = {
+  key: 'id',
+  label: 'superCategory',
+  value: 'id',
+};
+
+const productCategoryOptionMapping: SelectOption = {
+  key: 'id',
+  label: 'category',
+  value: 'id',
+};
+
+const productSubCategoryOptionMapping: SelectOption = {
+  key: 'id',
+  label: 'subCategory',
+  value: 'id',
+};
+
+const productSubSubCategoryOptionMapping: SelectOption = {
+  key: 'id',
+  label: 'subSubCategory',
+  value: 'id',
+};
+
 const BrandManagerProducts: React.FC<RouteComponentProps> = () => {
   const { isMobile, setisScrollable } = useContext(AppContext);
-  const inputRef = useRef<any>(null);
+  const titleRef = useRef<any>(null);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -80,59 +110,9 @@ const BrandManagerProducts: React.FC<RouteComponentProps> = () => {
   const [productSubSubCategoryFilter, setProductSubSubCategoryFilter] =
     useState<ProductCategory>();
   const history = useHistory();
-
-  useEffect(() => {
-    history.listen((_, action) => {
-      if (action === 'POP' && details) setDetails(false);
-    });
-  });
-
-  const linkSvg = () => (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      height="16"
-      viewBox="0 -960 960 960"
-      width="16"
-    >
-      <path d="M180-120q-24 0-42-18t-18-42v-600q0-24 18-42t42-18h279v60H180v600h600v-279h60v279q0 24-18 42t-42 18H180Zm202-219-42-43 398-398H519v-60h321v321h-60v-218L382-339Z" />
-    </svg>
-  );
-
-  const LinkIcon = (props: Partial<CustomIconComponentProps>) => (
-    <Icon component={linkSvg} {...props} />
-  );
-
-  const optionMapping: SelectOption = {
-    key: 'id',
-    label: 'brandName',
-    value: 'id',
-  };
-
-  const productSuperCategoryOptionMapping: SelectOption = {
-    key: 'id',
-    label: 'superCategory',
-    value: 'id',
-  };
-
-  const productCategoryOptionMapping: SelectOption = {
-    key: 'id',
-    label: 'category',
-    value: 'id',
-  };
-
-  const productSubCategoryOptionMapping: SelectOption = {
-    key: 'id',
-    label: 'subCategory',
-    value: 'id',
-  };
-
-  const productSubSubCategoryOptionMapping: SelectOption = {
-    key: 'id',
-    label: 'subSubCategory',
-    value: 'id',
-  };
+  const titleFocused = useRef<boolean>(false);
+  const titleSelectionEnd = useRef<number>();
   const [activeKey, setActiveKey] = useState<string>('1');
-
   const [offset, setOffset] = useState<number>(64);
   const [panelStyle, setPanelStyle] = useState<React.CSSProperties>({
     top: 64,
@@ -144,20 +124,16 @@ const BrandManagerProducts: React.FC<RouteComponentProps> = () => {
   const windowHeight = window.innerHeight;
 
   useEffect(() => {
-    if (details || (isMobile && activeKey === '1'))
-      setStyle({ overflow: 'scroll', height: '100%' });
-    else setStyle({ overflow: 'clip', height: '100%' });
-  }, [details, isMobile, activeKey]);
+    history.listen((_, action) => {
+      if (action === 'POP' && details) setDetails(false);
+    });
 
-  useEffect(() => {
     const panel = document.getElementById('filterPanel');
-
     if (isMobile && panel) {
       // Code for Chrome, Safari and Opera
       panel.addEventListener('webkitTransitionEnd', updateOffset);
       // Standard syntax
       panel.addEventListener('transitionend', updateOffset);
-
       return () => {
         // Code for Chrome, Safari and Opera
         panel.removeEventListener('webkitTransitionEnd', updateOffset);
@@ -167,21 +143,41 @@ const BrandManagerProducts: React.FC<RouteComponentProps> = () => {
     }
   });
 
-  const updateOffset = () => {
-    if (activeKey === '1') {
-      filterPanelHeight.current =
-        document.getElementById('filterPanel')!.offsetHeight;
-      if (filterPanelHeight.current! > windowHeight) {
-        const heightDifference = filterPanelHeight.current! - windowHeight;
-        const seventhWindowHeight = windowHeight / 7;
-        setOffset(-heightDifference - seventhWindowHeight);
-      }
-    } else setOffset(64);
-  };
+  useEffect(() => {
+    if (details || (isMobile && activeKey === '1'))
+      setStyle({ overflow: 'scroll', height: '100%' });
+    else setStyle({ overflow: 'clip', height: '100%' });
+  }, [details, isMobile, activeKey]);
 
   useEffect(() => {
     setPanelStyle({ top: offset, zIndex: 3 });
   }, [offset]);
+
+  useEffect(() => {
+    if (!details) scrollToCenter(lastViewedIndex);
+
+    setisScrollable(details);
+  }, [details]);
+
+  useEffect(() => {
+    if (titleRef.current && searchFilter) {
+      if (
+        titleSelectionEnd.current === searchFilter.length ||
+        !titleFocused.current
+      )
+        titleRef.current.focus({
+          cursor: 'end',
+        });
+      else {
+        const title = document.getElementById('title') as HTMLInputElement;
+        titleRef.current.focus();
+        title!.setSelectionRange(
+          titleSelectionEnd.current!,
+          titleSelectionEnd.current!
+        );
+      }
+    }
+  }, [searchFilter]);
 
   useMount(async () => {
     const getBrands = async () => {
@@ -203,12 +199,32 @@ const BrandManagerProducts: React.FC<RouteComponentProps> = () => {
     ]).then(() => setLoadingResources(false));
   });
 
-  useEffect(() => {
-    if (inputRef.current)
-      inputRef.current.focus({
-        cursor: 'end',
-      });
-  }, [searchFilter]);
+  const linkSvg = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      height="16"
+      viewBox="0 -960 960 960"
+      width="16"
+    >
+      <path d="M180-120q-24 0-42-18t-18-42v-600q0-24 18-42t42-18h279v60H180v600h600v-279h60v279q0 24-18 42t-42 18H180Zm202-219-42-43 398-398H519v-60h321v321h-60v-218L382-339Z" />
+    </svg>
+  );
+
+  const LinkIcon = (props: Partial<CustomIconComponentProps>) => (
+    <Icon component={linkSvg} {...props} />
+  );
+
+  const updateOffset = () => {
+    if (activeKey === '1') {
+      filterPanelHeight.current =
+        document.getElementById('filterPanel')!.offsetHeight;
+      if (filterPanelHeight.current! > windowHeight) {
+        const heightDifference = filterPanelHeight.current! - windowHeight;
+        const seventhWindowHeight = windowHeight / 7;
+        setOffset(-heightDifference - seventhWindowHeight);
+      }
+    } else setOffset(64);
+  };
 
   const _fetchProducts = async (resetResults?: boolean) => {
     if (resetResults) scrollToCenter(0);
@@ -623,12 +639,6 @@ const BrandManagerProducts: React.FC<RouteComponentProps> = () => {
     );
   };
 
-  useEffect(() => {
-    if (!details) scrollToCenter(lastViewedIndex);
-
-    setisScrollable(details);
-  }, [details]);
-
   const viewProduct = (index: number, record?: Product) => {
     setCurrentProduct(record);
     setLastViewedIndex(index);
@@ -675,6 +685,14 @@ const BrandManagerProducts: React.FC<RouteComponentProps> = () => {
       .includes(input?.toUpperCase());
   };
 
+  const handlesearchFilterChange = (event: any) => {
+    setSearchFilter(event.target.value);
+    const selectionStart = event.target.selectionStart;
+    titleSelectionEnd.current = event.target.selectionEnd;
+    if (selectionStart && titleSelectionEnd.current)
+      titleFocused.current = true;
+  };
+
   const Filters = () => {
     return (
       <>
@@ -683,10 +701,11 @@ const BrandManagerProducts: React.FC<RouteComponentProps> = () => {
             <Col lg={12} xs={24}>
               <Typography.Title level={5}>Product Name</Typography.Title>
               <Input
+                id="title"
                 allowClear
                 disabled={loadingResources}
-                ref={inputRef}
-                onChange={event => setSearchFilter(event.target.value)}
+                ref={titleRef}
+                onChange={event => handlesearchFilterChange(event)}
                 suffix={<SearchOutlined />}
                 value={searchFilter}
                 placeholder="Search by Name"

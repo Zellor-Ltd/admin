@@ -91,12 +91,28 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
   const [productSubSubCategoryFilter, setProductSubSubCategoryFilter] =
     useState<ProductCategory>();
   const history = useHistory();
+  const inputFocused = useRef<boolean>(false);
+  const selectionEnd = useRef<number>();
 
   useEffect(() => {
     history.listen((_, action) => {
       if (action === 'POP' && details) setDetails(false);
     });
   });
+
+  useEffect(() => {
+    if (inputRef.current && searchFilter) {
+      if (selectionEnd.current === searchFilter.length || !inputFocused.current)
+        inputRef.current.focus({
+          cursor: 'end',
+        });
+      else {
+        const title = document.getElementById('title') as HTMLInputElement;
+        inputRef.current.focus();
+        title!.setSelectionRange(selectionEnd.current!, selectionEnd.current!);
+      }
+    }
+  }, [searchFilter]);
 
   const optionMapping: SelectOption = {
     key: 'id',
@@ -202,13 +218,6 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
       fetchAllCategories(),
     ]).then(() => setLoadingResources(false));
   });
-
-  useEffect(() => {
-    if (inputRef.current)
-      inputRef.current.focus({
-        cursor: 'end',
-      });
-  }, [searchFilter]);
 
   const _fetchProducts = async (resetResults?: boolean) => {
     if (resetResults) scrollToCenter(0);
@@ -757,6 +766,13 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
       .includes(input?.toUpperCase());
   };
 
+  const handleTitleFilterChange = (event: any) => {
+    setSearchFilter(event.target.value);
+    const selectionStart = event.target.selectionStart;
+    selectionEnd.current = event.target.selectionEnd;
+    if (selectionStart && selectionEnd) inputFocused.current = true;
+  };
+
   const Filters = () => {
     return (
       <>
@@ -766,9 +782,10 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
               <Typography.Title level={5}>Product Name</Typography.Title>
               <Input
                 allowClear
+                id="title"
                 disabled={loadingResources}
                 ref={inputRef}
-                onChange={event => setSearchFilter(event.target.value)}
+                onChange={event => handleTitleFilterChange(event)}
                 suffix={<SearchOutlined />}
                 value={searchFilter}
                 placeholder="Search by Name"

@@ -36,7 +36,7 @@ interface DashboardProps {}
 const BrandDashboard: React.FC<DashboardProps> = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const { doFetch } = useRequest({ setLoading });
-  const inputRefTitle = useRef<any>(null);
+  const titleRef = useRef<any>(null);
   const [sourceFilter, setSourceFilter] = useState<string>();
   const [brandFilter, setBrandFilter] = useState<Brand>();
   const [titleFilter, setTitleFilter] = useState<string>();
@@ -44,6 +44,8 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
   const [impressionFilter, setImpressionFilter] = useState<string>();
   const [stats, setStats] = useState<any>();
   const [period, setPeriod] = useState<string>('Today');
+  const titleFocused = useRef<boolean>(false);
+  const titleSelectionEnd = useRef<number>();
 
   useEffect(() => {
     getStats();
@@ -51,10 +53,23 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
   }, [period]);
 
   useEffect(() => {
-    if (inputRefTitle.current)
-      inputRefTitle.current.focus({
-        cursor: 'end',
-      });
+    if (titleRef.current && titleFilter) {
+      if (
+        titleSelectionEnd.current === titleFilter.length ||
+        !titleFocused.current
+      )
+        titleRef.current.focus({
+          cursor: 'end',
+        });
+      else {
+        const title = document.getElementById('title') as HTMLInputElement;
+        titleRef.current.focus();
+        title!.setSelectionRange(
+          titleSelectionEnd.current!,
+          titleSelectionEnd.current!
+        );
+      }
+    }
   }, [titleFilter]);
 
   const getStats = useMemo(() => {
@@ -556,6 +571,13 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
     );
   };
 
+  const handleTitleFilterChange = (event: any) => {
+    setTitleFilter(event.target.value);
+    const selectionStart = event.target.selectionStart;
+    titleSelectionEnd.current = event.target.selectionEnd;
+    if (selectionStart && titleSelectionEnd) titleFocused.current = true;
+  };
+
   const TableFilters = () => {
     return (
       <>
@@ -568,13 +590,18 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
           <Col lg={6} xs={24}>
             <Input
               allowClear
+              id="title"
               disabled={true}
-              ref={inputRefTitle}
-              onChange={event => setTitleFilter(event.target.value)}
+              ref={titleRef}
+              onChange={event => handleTitleFilterChange(event)}
               suffix={<SearchOutlined />}
               value={titleFilter}
               placeholder="Video search"
-              onPressEnter={() => console.log('fetch here')}
+              onPressEnter={() =>
+                console.log(
+                  'fetch here, fix focus behavior + brandmanagerproducts behaviour too'
+                )
+              }
             />
           </Col>
           <Col lg={4} xs={12}>
