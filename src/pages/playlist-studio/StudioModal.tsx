@@ -73,6 +73,7 @@ const StudioModal: React.FC<StudioModalProps> = ({
 
   useEffect(() => {
     if (selectedLink) {
+      setProductTags(selectedLink.feed?.package[0]?.products ?? []);
       setActiveTabKey('Details');
       customForm.setFieldsValue({ id: selectedLink.id });
     }
