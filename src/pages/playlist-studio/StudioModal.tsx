@@ -60,7 +60,7 @@ const StudioModal: React.FC<StudioModalProps> = ({
   const [tagForm] = Form.useForm();
   const [activeTabKey, setActiveTabKey] = useState('Details');
   const [tags, setTags] = useState<any[]>([]);
-  const [linkTags, setLinkTags] = useState<any[]>(
+  const [productTags, setProductTags] = useState<any[]>(
     link?.feed?.package[0]?.tags ?? []
   );
   const [tagDetails, setTagDetails] = useState<boolean>(false);
@@ -201,7 +201,7 @@ const StudioModal: React.FC<StudioModalProps> = ({
               type="link"
               style={{ padding: 0, margin: 6 }}
               onClick={() =>
-                setLinkTags(prev => [
+                setProductTags(prev => [
                   ...prev.slice(0, index),
                   ...prev.slice(index + 1),
                 ])
@@ -257,7 +257,7 @@ const StudioModal: React.FC<StudioModalProps> = ({
 
   const onFinishTagForm = () => {
     const newTag = tagForm.getFieldsValue(true);
-    setLinkTags([...linkTags, newTag]);
+    setProductTags([...productTags, newTag]);
     setTagDetails(false);
   };
 
@@ -293,7 +293,7 @@ const StudioModal: React.FC<StudioModalProps> = ({
         creator: item.feed?.creator ?? null,
         package: [
           {
-            tags: linkTags,
+            products: productTags,
             videoUrl: item?.video?.url ?? item?.feed?.package[0]?.videoUrl,
             thumbnailUrl:
               item?.thumbnail?.url ?? item?.feed?.package[0]?.thumbnailUrl,
@@ -457,8 +457,8 @@ const StudioModal: React.FC<StudioModalProps> = ({
           />
         </Tabs.TabPane>
         {studio && (
-          <Tabs.TabPane forceRender tab="Tags" key="Tags">
-            {activeTabKey === 'Tags' && !tagDetails && (
+          <Tabs.TabPane forceRender tab="Product Tags" key="Product Tags">
+            {activeTabKey === 'Product Tags' && !tagDetails && (
               <>
                 <Button
                   type="default"
@@ -472,12 +472,12 @@ const StudioModal: React.FC<StudioModalProps> = ({
                 <Table
                   rowKey="id"
                   columns={tagColumns}
-                  dataSource={linkTags}
+                  dataSource={productTags}
                   pagination={false}
                 />
               </>
             )}
-            {activeTabKey === 'Tags' && tagDetails && (
+            {activeTabKey === 'Product Tags' && tagDetails && (
               <>
                 <Form
                   name="tagForm"
