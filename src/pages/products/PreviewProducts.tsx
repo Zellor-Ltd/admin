@@ -104,7 +104,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
   const [currentSubSubCategory, setCurrentSubSubCategory] =
     useState<ProductCategory>();
   const [style, setStyle] = useState<any>();
-  const { isMobile, setisScrollable } = useContext(AppContext);
+  const { isMobile, setIsScrollable } = useContext(AppContext);
   const { doFetch, doRequest } = useRequest({ setLoading });
   const { doRequest: saveCategories, loading: loadingCategories } =
     useRequest();
@@ -881,7 +881,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
       scrollToCenter(lastViewedIndex);
     }
 
-    setisScrollable(details);
+    setIsScrollable(details);
   }, [details]);
 
   const handleSave = (product: Product) => {

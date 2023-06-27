@@ -55,7 +55,7 @@ const ClientUsers: React.FC<RouteComponentProps> = ({ location }) => {
   const [eof, setEof] = useState<boolean>(false);
   const [disableButton, setDisableButton] = useState<boolean>(true);
   const [brandFilter, setBrandFilter] = useState<Brand | undefined>();
-  const { isMobile, setisScrollable } = useContext(AppContext);
+  const { isMobile, setIsScrollable } = useContext(AppContext);
   const [style, setStyle] = useState<any>();
   const history = useHistory();
 
@@ -87,7 +87,7 @@ const ClientUsers: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   useEffect(() => {
-    setisScrollable(details);
+    setIsScrollable(details);
     if (!details) scrollToCenter(lastViewedIndex);
   }, [details]);
 

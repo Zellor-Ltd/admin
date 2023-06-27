@@ -53,7 +53,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
   const [data, setData] = useState<ProductBrand[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [filter, setFilter] = useState<string>('');
-  const { isMobile, setisScrollable } = useContext(AppContext);
+  const { isMobile, setIsScrollable } = useContext(AppContext);
   const { fetchAllCategories, allCategories } = useAllCategories({});
   const [updatingVIndex, setUpdatingVIndex] = useState<Record<string, boolean>>(
     {}
@@ -105,7 +105,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
   useEffect(() => {
     if (!details) scrollToCenter(lastViewedIndex);
 
-    setisScrollable(details);
+    setIsScrollable(details);
   }, [details]);
 
   const rebuildVlink = async (productBrand: ProductBrand, index: number) => {

@@ -65,7 +65,7 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
     'Sub Sub Category': [],
   });
   const [categories, setCategories] = useState<any>([]);
-  const { isMobile, setisScrollable } = useContext(AppContext);
+  const { isMobile, setIsScrollable } = useContext(AppContext);
   const [style, setStyle] = useState<any>();
   const history = useHistory();
 
@@ -113,7 +113,7 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   useEffect(() => {
-    setisScrollable(details);
+    setIsScrollable(details);
 
     if (!details) {
       scrollIntoView(

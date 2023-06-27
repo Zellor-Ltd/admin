@@ -39,7 +39,7 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
   const [buffer, setBuffer] = useState<Masthead[]>([]);
   const [data, setData] = useState<Masthead[]>([]);
   const [filter, setFilter] = useState<string>('');
-  const { isMobile, setisScrollable } = useContext(AppContext);
+  const { isMobile, setIsScrollable } = useContext(AppContext);
   const [style, setStyle] = useState<any>();
   const history = useHistory();
 
@@ -69,7 +69,7 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
   }, [filter, buffer]);
 
   useEffect(() => {
-    setisScrollable(details);
+    setIsScrollable(details);
 
     if (!details) scrollToCenter(lastViewedIndex);
   }, [details]);

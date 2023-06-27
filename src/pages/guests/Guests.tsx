@@ -54,7 +54,7 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
   const scrolling = useRef(false);
   const [guests, setGuests] = useState<Fan[]>([]);
   const [buffer, setBuffer] = useState<Fan[]>([]);
-  const { isMobile, setisScrollable } = useContext(AppContext);
+  const { isMobile, setIsScrollable } = useContext(AppContext);
   const [style, setStyle] = useState<any>();
   const history = useHistory();
 
@@ -105,7 +105,7 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
       }
     }
 
-    setisScrollable(details);
+    setIsScrollable(details);
   }, [details]);
 
   useEffect(() => {

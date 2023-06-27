@@ -83,7 +83,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
   const [updatingFeedItemIndex, setUpdatingIndex] = useState<
     Record<string, boolean>
   >({});
-  const { isMobile, setisScrollable } = useContext(AppContext);
+  const { isMobile, setIsScrollable } = useContext(AppContext);
   const [statusFilter, setStatusFilter] = useState<string>();
   const [brandFilter, setBrandFilter] = useState<Brand>();
   const [productBrandFilter, setProductBrandFilter] = useState<string>();
@@ -514,7 +514,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
   }, [selectedVideoFeed]);
 
   useEffect(() => {
-    setisScrollable(details);
+    setIsScrollable(details);
 
     if (!details) scrollToCenter(lastViewedIndex);
   }, [details]);

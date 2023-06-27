@@ -56,7 +56,7 @@ const productBrandMapping: SelectOption = {
 };
 
 const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
-  const { isMobile, setisScrollable } = useContext(AppContext);
+  const { isMobile, setIsScrollable } = useContext(AppContext);
   const linkRef = useRef<any>(null);
   const videoRef = useRef<any>(null);
   const urlRef = useRef<any>(null);
@@ -188,7 +188,7 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
   });
 
   useEffect(() => {
-    setisScrollable(details);
+    setIsScrollable(details);
     if (!details) scrollToCenter(lastFocusedIndex.current);
   }, [details]);
 

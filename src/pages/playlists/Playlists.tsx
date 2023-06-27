@@ -1162,7 +1162,7 @@ const Playlists: React.FC<RouteComponentProps> = () => {
   ];
 
   return (
-    <div className="playlists">
+    <>
       {!details && (
         <>
           <PageHeader
@@ -1306,7 +1306,7 @@ const Playlists: React.FC<RouteComponentProps> = () => {
         </>
       )}
       {selectedTab === 'custom' && details && (
-        <>
+        <div style={{ overflow: 'scroll', height: '100%' }}>
           <PageHeader
             title={
               currentList?.name ? `Edit ${currentList.name}` : 'New Playlist'
@@ -1321,7 +1321,7 @@ const Playlists: React.FC<RouteComponentProps> = () => {
             onSave={handleSaveCustomList}
             isCloning={cloning.current}
           />
-        </>
+        </div>
       )}
       {selectedTab !== 'custom' && details && (
         <PlaylistDetails
@@ -1331,7 +1331,7 @@ const Playlists: React.FC<RouteComponentProps> = () => {
           tabName={selectedTab}
         />
       )}
-    </div>
+    </>
   );
 };
 

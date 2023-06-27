@@ -52,7 +52,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
   const [searchFilter, setSearchFilter] = useState<string>();
-  const { isMobile, setisScrollable } = useContext(AppContext);
+  const { isMobile, setIsScrollable } = useContext(AppContext);
   const [updatingVIndex, setUpdatingVIndex] = useState<Record<string, boolean>>(
     {}
   );
@@ -72,7 +72,7 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   useEffect(() => {
-    setisScrollable(details);
+    setIsScrollable(details);
     if (!details) scrollToCenter(lastViewedIndex);
   }, [details]);
 

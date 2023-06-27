@@ -14,7 +14,7 @@ import BrandManagerSideMenu from './SideMenus/BrandManagerSideMenu';
 const { Header, Sider, Content } = Layout;
 
 const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
-  const { isMobile, isScrollable, setisScrollable } = useContext(AppContext);
+  const { isMobile, isScrollable, setIsScrollable } = useContext(AppContext);
   const { children, history, location } = props;
   const scrollable = [
     'dashboard',
@@ -30,8 +30,8 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
   });
 
   useEffect(() => {
-    if (scrollable.includes(location.pathname.slice(1))) setisScrollable(true);
-    else setisScrollable(false);
+    if (scrollable.includes(location.pathname.slice(1))) setIsScrollable(true);
+    else setIsScrollable(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location]);
 

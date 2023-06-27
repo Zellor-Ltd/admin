@@ -40,7 +40,7 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
   const [buffer, setBuffer] = useState<PromoDisplay[]>([]);
   const [data, setData] = useState<PromoDisplay[]>([]);
   const [filter, setFilter] = useState<string>('');
-  const { isMobile, setisScrollable } = useContext(AppContext);
+  const { isMobile, setIsScrollable } = useContext(AppContext);
   const [style, setStyle] = useState<any>();
   const history = useHistory();
 
@@ -81,7 +81,7 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   useEffect(() => {
-    setisScrollable(details);
+    setIsScrollable(details);
   }, [details]);
 
   useEffect(() => {

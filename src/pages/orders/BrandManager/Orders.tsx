@@ -86,7 +86,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     label: 'user',
     value: 'user',
   };
-  const { isMobile, setisScrollable } = useContext(AppContext);
+  const { isMobile, setIsScrollable } = useContext(AppContext);
 
   useMount(async () => {
     const response: any = await fetchSettings();
@@ -223,7 +223,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       scrollToCenter(lastViewedIndex);
     }
 
-    setisScrollable(details);
+    setIsScrollable(details);
   }, [details]);
 
   const editFan = (index: number, fan?: Fan) => {

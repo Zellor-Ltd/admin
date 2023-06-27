@@ -57,7 +57,7 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
   const [brands, setBrands] = useState<Brand[]>([]);
   const [filterText, setFilterText] = useState('');
   const [currentBrand, setCurrentBrand] = useState<Brand>();
-  const { isMobile, setisScrollable } = useContext(AppContext);
+  const { isMobile, setIsScrollable } = useContext(AppContext);
   const [updatingVIndex, setUpdatingVIndex] = useState<Record<string, boolean>>(
     {}
   );
@@ -85,7 +85,7 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   useEffect(() => {
-    setisScrollable(details);
+    setIsScrollable(details);
 
     if (!details) {
       scrollIntoView(

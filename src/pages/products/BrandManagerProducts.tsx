@@ -75,7 +75,7 @@ const productSubSubCategoryOptionMapping: SelectOption = {
 };
 
 const BrandManagerProducts: React.FC<RouteComponentProps> = () => {
-  const { isMobile, setisScrollable } = useContext(AppContext);
+  const { isMobile, setIsScrollable } = useContext(AppContext);
   const titleRef = useRef<any>(null);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
@@ -156,7 +156,7 @@ const BrandManagerProducts: React.FC<RouteComponentProps> = () => {
   useEffect(() => {
     if (!details) scrollToCenter(lastViewedIndex);
 
-    setisScrollable(details);
+    setIsScrollable(details);
   }, [details]);
 
   useEffect(() => {

@@ -20,7 +20,7 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ location }) => {
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [details, setDetails] = useState<boolean>(false);
   const [currentBanner, setCurrentBanner] = useState<Banner>();
-  const { isMobile, setisScrollable } = useContext(AppContext);
+  const { isMobile, setIsScrollable } = useContext(AppContext);
   const [style, setStyle] = useState<any>();
   const history = useHistory();
 
@@ -55,7 +55,7 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ location }) => {
       );
     }
 
-    setisScrollable(details);
+    setIsScrollable(details);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [details]);
 

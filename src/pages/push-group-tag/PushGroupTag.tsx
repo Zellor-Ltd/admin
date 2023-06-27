@@ -67,7 +67,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = () => {
     value: 'id',
   };
 
-  const { isMobile, setisScrollable } = useContext(AppContext);
+  const { isMobile, setIsScrollable } = useContext(AppContext);
 
   const tagOptionMapping: SelectOption = {
     key: 'id',
@@ -119,7 +119,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = () => {
       }
     }
 
-    setisScrollable(details);
+    setIsScrollable(details);
   }, [details]);
 
   useEffect(() => {
