@@ -25,6 +25,18 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import MultipleFetchDebounceSelect from 'components/select/MultipleFetchDebounceSelect';
 import { usePrevious } from 'react-use';
 
+const optionMapping: SelectOption = {
+  key: 'id',
+  label: 'brandName',
+  value: 'id',
+};
+
+const tagOptionMapping: SelectOption = {
+  key: 'id',
+  label: 'tagName',
+  value: 'id',
+};
+
 const PushGroupTag: React.FC<RouteComponentProps> = () => {
   const [, setLoading] = useState<boolean>(false);
   const { doFetch } = useRequest({ setLoading });
@@ -47,33 +59,14 @@ const PushGroupTag: React.FC<RouteComponentProps> = () => {
   const updatingTable = useRef(false);
   const scrolling = useRef(false);
   const mounted = useRef(false);
-  const [style, setStyle] = useState<any>();
   const history = useHistory();
+  const { isMobile, setIsScrollable } = useContext(AppContext);
 
   useEffect(() => {
     history.listen((_, action) => {
       if (action === 'POP' && details) setDetails(false);
     });
   });
-
-  useEffect(() => {
-    if (!details) setStyle({ overflow: 'clip', height: '100%' });
-    else setStyle({ overflow: 'scroll', height: '100%' });
-  }, [details]);
-
-  const optionMapping: SelectOption = {
-    key: 'id',
-    label: 'brandName',
-    value: 'id',
-  };
-
-  const { isMobile, setIsScrollable } = useContext(AppContext);
-
-  const tagOptionMapping: SelectOption = {
-    key: 'id',
-    label: 'tagName',
-    value: 'id',
-  };
 
   useEffect(() => {
     if (!details) {
@@ -354,9 +347,9 @@ const PushGroupTag: React.FC<RouteComponentProps> = () => {
   };
 
   return (
-    <div style={style}>
+    <>
       {!details && (
-        <>
+        <div style={{ overflow: 'clip', height: '100%' }}>
           <PageHeader
             title={isMobile ? 'Push Tags to User Groups' : 'Tags'}
             subTitle={isMobile ? '' : 'Push Tags to user groups'}
@@ -456,10 +449,14 @@ const PushGroupTag: React.FC<RouteComponentProps> = () => {
               />
             </InfiniteScroll>
           </div>
-        </>
+        </div>
       )}
-      {details && <Step2 selectedTags={currentTags} onReturn={onReturnStep2} />}
-    </div>
+      {details && (
+        <div style={{ overflow: 'scroll', height: '100%' }}>
+          <Step2 selectedTags={currentTags} onReturn={onReturnStep2} />
+        </div>
+      )}
+    </>
   );
 };
 

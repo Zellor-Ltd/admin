@@ -67,7 +67,6 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [cartTableContent, setCartTableContent] = useState<any>();
   const [expandedRowKeys, setExpandedRowKeys] = useState<string[]>();
-  const [style, setStyle] = useState<any>();
   const history = useHistory();
 
   useEffect(() => {
@@ -75,11 +74,6 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       if (action === 'POP' && details) setDetails(false);
     });
   });
-
-  useEffect(() => {
-    if (!details) setStyle({ overflow: 'clip', height: '100%' });
-    else setStyle({ overflow: 'scroll', height: '100%' });
-  }, [details]);
 
   const fanOptionMapping: SelectOption = {
     key: 'id',
@@ -1023,9 +1017,9 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   return (
-    <div style={style}>
+    <>
       {!details && (
-        <>
+<div style={{ overflow: 'clip', height: '100%' }}>
           <PageHeader
             title="Orders"
             subTitle={isMobile ? '' : 'List of Orders'}
@@ -1181,12 +1175,13 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
               />
             </InfiniteScroll>
           </div>
-        </>
+        </div>
       )}
       {details && (
+<div style={{ overflow: 'scroll', height: '100%' }}>
         <FanDetail fan={currentFan} onSave={onSaveFan} onCancel={onCancelFan} />
-      )}
-    </div>
+      </div>)}
+    </>
   );
 };
 

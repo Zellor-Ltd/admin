@@ -56,7 +56,6 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
   const [searchFilter, setSearchFilter] = useState<string>();
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const { isMobile, setIsScrollable } = useContext(AppContext);
-  const [style, setStyle] = useState<any>();
   const history = useHistory();
 
   useEffect(() => {
@@ -64,11 +63,6 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
       if (action === 'POP' && details) setDetails(false);
     });
   });
-
-  useEffect(() => {
-    if (!details) setStyle({ overflow: 'clip', height: '100%' });
-    else setStyle({ overflow: 'scroll', height: '100%' });
-  }, [details]);
 
   useEffect(() => {
     if (refreshing) {
@@ -396,9 +390,9 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   return (
-    <div style={style}>
+    <>
       {!details && (
-        <>
+        <div style={{ overflow: 'clip', height: '100%' }}>
           <PageHeader
             title="Fans"
             subTitle={isMobile ? '' : 'List of Fans'}
@@ -505,12 +499,18 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
               />
             </InfiniteScroll>
           </div>
-        </>
+        </div>
       )}
       {details && (
-        <FanDetail fan={currentFan} onSave={onSaveFan} onCancel={onCancelFan} />
+        <div style={{ overflow: 'scroll', height: '100%' }}>
+          <FanDetail
+            fan={currentFan}
+            onSave={onSaveFan}
+            onCancel={onCancelFan}
+          />
+        </div>
       )}
-    </div>
+    </>
   );
 };
 export default Fans;

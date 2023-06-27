@@ -42,7 +42,6 @@ const Tags: React.FC<RouteComponentProps> = ({ location }) => {
   const [tags, setTags] = useState<Tag[]>([]);
   const { isMobile, setIsScrollable } = useContext(AppContext);
   const isMounted = useRef<boolean>(false);
-  const [style, setStyle] = useState<any>();
   const history = useHistory();
 
   useEffect(() => {
@@ -50,11 +49,6 @@ const Tags: React.FC<RouteComponentProps> = ({ location }) => {
       if (action === 'POP' && details) setDetails(false);
     });
   });
-
-  useEffect(() => {
-    if (!details) setStyle({ overflow: 'clip', height: '100%' });
-    else setStyle({ overflow: 'scroll', height: '100%' });
-  }, [details]);
 
   useEffect(() => {
     if (refreshing) {
@@ -322,9 +316,9 @@ const Tags: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   return (
-    <div style={style}>
+    <>
       {!details && (
-        <>
+        <div style={{ overflow: 'clip', height: '100%' }}>
           <PageHeader
             title="Tags"
             subTitle={isMobile ? '' : 'List of Tags'}
@@ -400,12 +394,18 @@ const Tags: React.FC<RouteComponentProps> = ({ location }) => {
               />
             </InfiniteScroll>
           </div>
-        </>
+        </div>
       )}
       {details && (
-        <TagDetail tag={currentTag} onSave={onSaveTag} onCancel={onCancelTag} />
+        <div style={{ overflow: 'scroll', height: '100%' }}>
+          <TagDetail
+            tag={currentTag}
+            onSave={onSaveTag}
+            onCancel={onCancelTag}
+          />
+        </div>
       )}
-    </div>
+    </>
   );
 };
 

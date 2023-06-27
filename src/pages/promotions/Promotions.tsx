@@ -40,7 +40,6 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
   const [dateFilter, setDateFilter] = useState<any[]>([]);
   const [idFilter, setIdFilter] = useState<string>('');
   const { isMobile, setIsScrollable } = useContext(AppContext);
-  const [style, setStyle] = useState<any>();
   const history = useHistory();
 
   useEffect(() => {
@@ -48,11 +47,6 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
       if (action === 'POP' && details) setDetails(false);
     });
   });
-
-  useEffect(() => {
-    if (!details) setStyle({ overflow: 'clip', height: '100%' });
-    else setStyle({ overflow: 'scroll', height: '100%' });
-  }, [details]);
 
   const getResources = useCallback(async () => {
     await getPromotions();
@@ -292,9 +286,9 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   return (
-    <div style={style}>
+    <>
       {!details && (
-        <>
+        <div style={{ overflow: 'clip', height: '100%' }}>
           <PageHeader
             title="Promotions"
             subTitle={isMobile ? '' : 'List of Promotions'}
@@ -333,16 +327,18 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
               pagination={false}
             />
           </div>
-        </>
+        </div>
       )}
       {details && (
-        <PromotionDetail
-          promotion={currentPromotion}
-          onSave={onSavePromotion}
-          onCancel={onCancelPromotion}
-        />
+        <div style={{ overflow: 'scroll', height: '100%' }}>
+          <PromotionDetail
+            promotion={currentPromotion}
+            onSave={onSavePromotion}
+            onCancel={onCancelPromotion}
+          />
+        </div>
       )}
-    </div>
+    </>
   );
 };
 

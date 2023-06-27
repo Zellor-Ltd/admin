@@ -58,7 +58,6 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
   const [updatingVIndex, setUpdatingVIndex] = useState<Record<string, boolean>>(
     {}
   );
-  const [style, setStyle] = useState<any>();
   const history = useHistory();
 
   useEffect(() => {
@@ -66,11 +65,6 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
       if (action === 'POP' && details) setDetails(false);
     });
   });
-
-  useEffect(() => {
-    if (!details) setStyle({ overflow: 'clip', height: '100%' });
-    else setStyle({ overflow: 'scroll', height: '100%' });
-  }, [details]);
 
   useEffect(() => {
     getResources();
@@ -586,9 +580,9 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   return (
-    <div style={style}>
+    <>
       {!details && (
-        <>
+        <div style={{ overflow: 'clip', height: '100%' }}>
           <PageHeader
             title="Product Brands"
             subTitle={isMobile ? '' : 'List of Product Brands'}
@@ -628,18 +622,20 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
               pagination={false}
             />
           </div>
-        </>
+        </div>
       )}
       {details && (
-        <ProductBrandDetail
-          productBrand={currentProductBrand as ProductBrand}
-          onSave={onSaveBrand}
-          onCancel={onCancelBrand}
-          brands={brands}
-          allCategories={allCategories}
-        />
+        <div style={{ overflow: 'scroll', height: '100%' }}>
+          <ProductBrandDetail
+            productBrand={currentProductBrand as ProductBrand}
+            onSave={onSaveBrand}
+            onCancel={onCancelBrand}
+            brands={brands}
+            allCategories={allCategories}
+          />
+        </div>
       )}
-    </div>
+    </>
   );
 };
 

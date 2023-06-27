@@ -42,6 +42,12 @@ import MultipleFetchDebounceSelect from 'components/select/MultipleFetchDebounce
 import { useRequest } from 'hooks/useRequest';
 import { BaseOptionType } from 'antd/lib/cascader';
 
+const fanOptionMapping: SelectOption = {
+  key: 'id',
+  label: 'user',
+  value: 'user',
+};
+
 const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const { doFetch } = useRequest({ setLoading: setLoading });
@@ -67,26 +73,14 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [cartTableContent, setCartTableContent] = useState<any>();
   const [expandedRowKeys, setExpandedRowKeys] = useState<string[]>();
-  const [style, setStyle] = useState<any>();
   const history = useHistory();
+  const { isMobile, setIsScrollable } = useContext(AppContext);
 
   useEffect(() => {
     history.listen((_, action) => {
       if (action === 'POP' && details) setDetails(false);
     });
   });
-
-  useEffect(() => {
-    if (!details) setStyle({ overflow: 'clip', height: '100%' });
-    else setStyle({ overflow: 'scroll', height: '100%' });
-  }, [details]);
-
-  const fanOptionMapping: SelectOption = {
-    key: 'id',
-    label: 'user',
-    value: 'user',
-  };
-  const { isMobile, setIsScrollable } = useContext(AppContext);
 
   useMount(async () => {
     const response: any = await fetchSettings();
@@ -1023,9 +1017,9 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   return (
-    <div style={style}>
+    <>
       {!details && (
-        <>
+        <div style={{ overflow: 'clip', height: '100%' }}>
           <PageHeader
             title="Orders"
             subTitle={isMobile ? '' : 'List of Orders'}
@@ -1181,12 +1175,18 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
               />
             </InfiniteScroll>
           </div>
-        </>
+        </div>
       )}
       {details && (
-        <FanDetail fan={currentFan} onSave={onSaveFan} onCancel={onCancelFan} />
+        <div style={{ overflow: 'scroll', height: '100%' }}>
+          <FanDetail
+            fan={currentFan}
+            onSave={onSaveFan}
+            onCancel={onCancelFan}
+          />
+        </div>
       )}
-    </div>
+    </>
   );
 };
 

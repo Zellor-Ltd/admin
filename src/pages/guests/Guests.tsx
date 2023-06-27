@@ -55,7 +55,6 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
   const [guests, setGuests] = useState<Fan[]>([]);
   const [buffer, setBuffer] = useState<Fan[]>([]);
   const { isMobile, setIsScrollable } = useContext(AppContext);
-  const [style, setStyle] = useState<any>();
   const history = useHistory();
 
   useEffect(() => {
@@ -63,11 +62,6 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
       if (action === 'POP' && details) setDetails(false);
     });
   });
-
-  useEffect(() => {
-    if (!details) setStyle({ overflow: 'clip', height: '100%' });
-    else setStyle({ overflow: 'scroll', height: '100%' });
-  }, [details]);
 
   const fanOptionMapping: SelectOption = {
     key: 'id',
@@ -396,9 +390,9 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   return (
-    <div style={style}>
+    <>
       {!details && (
-        <>
+        <div style={{ overflow: 'clip', height: '100%' }}>
           <PageHeader
             title="Guests"
             subTitle={isMobile ? '' : 'List of Guests'}
@@ -482,16 +476,18 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
               />
             </InfiniteScroll>
           </div>
-        </>
+        </div>
       )}
       {details && (
-        <GuestDetail
-          fan={currentGuest as Fan}
-          onSave={onSaveFan}
-          onCancel={onCancelFan}
-        />
+        <div style={{ overflow: 'scroll', height: '100%' }}>
+          <GuestDetail
+            fan={currentGuest as Fan}
+            onSave={onSaveFan}
+            onCancel={onCancelFan}
+          />
+        </div>
       )}
-    </div>
+    </>
   );
 };
 export default Guests;

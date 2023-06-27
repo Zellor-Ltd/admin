@@ -56,7 +56,6 @@ const ClientUsers: React.FC<RouteComponentProps> = ({ location }) => {
   const [disableButton, setDisableButton] = useState<boolean>(true);
   const [brandFilter, setBrandFilter] = useState<Brand | undefined>();
   const { isMobile, setIsScrollable } = useContext(AppContext);
-  const [style, setStyle] = useState<any>();
   const history = useHistory();
 
   useEffect(() => {
@@ -89,11 +88,6 @@ const ClientUsers: React.FC<RouteComponentProps> = ({ location }) => {
   useEffect(() => {
     setIsScrollable(details);
     if (!details) scrollToCenter(lastViewedIndex);
-  }, [details]);
-
-  useEffect(() => {
-    if (!details) setStyle({ overflow: 'clip', height: '100%' });
-    else setStyle({ overflow: 'scroll', height: '100%' });
   }, [details]);
 
   const fetch = async (loadNextPage?: boolean) => {
@@ -424,9 +418,12 @@ const ClientUsers: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   return (
-    <div style={style}>
+    <>
       {!details && (
-        <div className="creator-container">
+        <div
+          className="creator-container"
+          style={{ overflow: 'clip', height: '100%' }}
+        >
           <PageHeader
             title="Client Users"
             subTitle={isMobile ? '' : 'List of Client Users'}
@@ -506,14 +503,16 @@ const ClientUsers: React.FC<RouteComponentProps> = ({ location }) => {
         </div>
       )}
       {details && (
-        <ClientUserDetails
-          user={currentRecord}
-          clientId={brandFilter!.id}
-          onCancel={() => setDetails(false)}
-          onSave={handleSave}
-        />
+        <div style={{ overflow: 'scroll', height: '100%' }}>
+          <ClientUserDetails
+            user={currentRecord}
+            clientId={brandFilter!.id}
+            onCancel={() => setDetails(false)}
+            onSave={handleSave}
+          />
+        </div>
       )}
-    </div>
+    </>
   );
 };
 

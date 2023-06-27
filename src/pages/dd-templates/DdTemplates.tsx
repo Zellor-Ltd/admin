@@ -37,7 +37,6 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
   const [data, setData] = useState<DdTemplate[]>([]);
   const [filter, setFilter] = useState<string>('');
   const { isMobile, setIsScrollable } = useContext(AppContext);
-  const [style, setStyle] = useState<any>();
   const history = useHistory();
 
   useEffect(() => {
@@ -45,11 +44,6 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
       if (action === 'POP' && details) setDetails(false);
     });
   });
-
-  useEffect(() => {
-    if (!details) setStyle({ overflow: 'clip', height: '100%' });
-    else setStyle({ overflow: 'scroll', height: '100%' });
-  }, [details]);
 
   useEffect(() => {
     getResources();
@@ -319,9 +313,9 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   return (
-    <div style={style}>
+    <>
       {!details && (
-        <>
+        <div style={{ overflow: 'clip', height: '100%' }}>
           <PageHeader
             title="Disco Dollar Templates"
             subTitle={isMobile ? '' : 'List of Disco Dollar Templates'}
@@ -364,16 +358,18 @@ const DdTemplates: React.FC<RouteComponentProps> = ({ location }) => {
               pagination={false}
             />
           </div>
-        </>
+        </div>
       )}
       {details && (
-        <DdTemplateDetail
-          template={currentDdTemplate}
-          onSave={onSaveDdTemplate}
-          onCancel={onCancelDdTemplate}
-        />
+        <div style={{ overflow: 'scroll', height: '100%' }}>
+          <DdTemplateDetail
+            template={currentDdTemplate}
+            onSave={onSaveDdTemplate}
+            onCancel={onCancelDdTemplate}
+          />
+        </div>
       )}
-    </div>
+    </>
   );
 };
 

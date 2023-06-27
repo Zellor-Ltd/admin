@@ -40,7 +40,6 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
   const [data, setData] = useState<Masthead[]>([]);
   const [filter, setFilter] = useState<string>('');
   const { isMobile, setIsScrollable } = useContext(AppContext);
-  const [style, setStyle] = useState<any>();
   const history = useHistory();
 
   useEffect(() => {
@@ -48,11 +47,6 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
       if (action === 'POP' && details) setDetails(false);
     });
   });
-
-  useEffect(() => {
-    if (!details) setStyle({ overflow: 'clip', height: '100%' });
-    else setStyle({ overflow: 'scroll', height: '100%' });
-  }, [details]);
 
   const getResources = useCallback(async () => {
     const { results } = await doFetch(fetchMastheads);
@@ -225,9 +219,9 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   return (
-    <div style={style}>
+    <>
       {!details && (
-        <>
+        <div style={{ overflow: 'clip', height: '100%' }}>
           <PageHeader
             title="Mastheads"
             subTitle={isMobile ? '' : 'List of Mastheads'}
@@ -268,16 +262,18 @@ const CreatorsPage: React.FC<RouteComponentProps> = ({ location }) => {
               pagination={false}
             />
           </div>
-        </>
+        </div>
       )}
       {details && (
-        <CreatorsPageDetail
-          masthead={currentMasthead}
-          onSave={onSaveMasthead}
-          onCancel={onCancelMasthead}
-        />
+        <div style={{ overflow: 'scroll', height: '100%' }}>
+          <CreatorsPageDetail
+            masthead={currentMasthead}
+            onSave={onSaveMasthead}
+            onCancel={onCancelMasthead}
+          />
+        </div>
       )}
-    </div>
+    </>
   );
 };
 
