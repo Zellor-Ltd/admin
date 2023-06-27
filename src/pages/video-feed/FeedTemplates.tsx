@@ -49,8 +49,7 @@ const FeedTemplates: React.FC<RouteComponentProps> = () => {
   const [loaded, setLoaded] = useState<boolean>(false);
   const [feedTemplates, setFeedTemplates] = useState<any[]>([]);
   const { doFetch } = useRequest({ setLoading });
-  const { isMobile, setisScrollable } = useContext(AppContext);
-  const [style, setStyle] = useState<any>();
+  const { isMobile, setIsScrollable } = useContext(AppContext);
   const history = useHistory();
 
   useEffect(() => {
@@ -60,12 +59,7 @@ const FeedTemplates: React.FC<RouteComponentProps> = () => {
   });
 
   useEffect(() => {
-    if (!details) setStyle({ overflow: 'clip', height: '100%' });
-    else setStyle({ overflow: 'scroll', height: '100%' });
-  }, [details]);
-
-  useEffect(() => {
-    setisScrollable(details);
+    setIsScrollable(details);
   }, [details]);
 
   const columns: ColumnsType<any> = [
@@ -291,9 +285,9 @@ const FeedTemplates: React.FC<RouteComponentProps> = () => {
   };
 
   return (
-    <div style={style}>
+    <>
       {!details && (
-        <>
+        <div style={{ overflow: 'clip', height: '100%' }}>
           <PageHeader
             title="Feed Templates"
             subTitle={isMobile ? '' : 'List of Feed Templates'}
@@ -321,19 +315,21 @@ const FeedTemplates: React.FC<RouteComponentProps> = () => {
               loading={loading}
             />
           </div>
-        </>
+        </div>
       )}
       {details && (
-        <VideoFeedDetail
-          onSave={handleSave}
-          onCancel={handleCancel}
-          feedItem={selectedFeedTemplate}
-          brands={brands}
-          productBrands={productBrands}
-          template
-        />
+        <div style={{ overflow: 'scroll', height: '100%' }}>
+          <VideoFeedDetail
+            onSave={handleSave}
+            onCancel={handleCancel}
+            feedItem={selectedFeedTemplate}
+            brands={brands}
+            productBrands={productBrands}
+            template
+          />
+        </div>
       )}
-    </div>
+    </>
   );
 };
 

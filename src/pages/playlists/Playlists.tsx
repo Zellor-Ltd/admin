@@ -42,7 +42,7 @@ import CustomDetails from './CustomDetails';
 import { AppContext } from 'contexts/AppContext';
 
 const Playlists: React.FC<RouteComponentProps> = () => {
-  const isMobile = useContext(AppContext);
+  const { isMobile } = useContext(AppContext);
   const [selectedTab, setSelectedTab] = useState<string>('client');
   const [loading, setLoading] = useState(false);
   const { doFetch } = useRequest({ setLoading });
@@ -1162,7 +1162,7 @@ const Playlists: React.FC<RouteComponentProps> = () => {
   ];
 
   return (
-    <div className="playlists">
+    <>
       {!details && (
         <>
           <PageHeader
@@ -1182,7 +1182,16 @@ const Playlists: React.FC<RouteComponentProps> = () => {
             justify="space-between"
             className="mb-05"
           >
-            <Col lg={4} md={12} xs={24}>
+            <Col
+              lg={4}
+              md={12}
+              xs={24}
+              style={{
+                paddingLeft: '1rem',
+                paddingRight: '1.2rem',
+                paddingTop: '0.5rem',
+              }}
+            >
               <Typography.Title level={5}>Search</Typography.Title>
               <Input
                 allowClear
@@ -1199,6 +1208,11 @@ const Playlists: React.FC<RouteComponentProps> = () => {
               <Row justify="end" className="mt-1">
                 <Col>
                   <Button
+                    style={
+                      isMobile
+                        ? { marginRight: '1rem' }
+                        : { marginRight: '1.6rem' }
+                    }
                     type="primary"
                     onClick={() => handleSearch(filter.current)}
                     loading={loading}
@@ -1292,7 +1306,7 @@ const Playlists: React.FC<RouteComponentProps> = () => {
         </>
       )}
       {selectedTab === 'custom' && details && (
-        <>
+        <div style={{ overflow: 'scroll', height: '100%' }}>
           <PageHeader
             title={
               currentList?.name ? `Edit ${currentList.name}` : 'New Playlist'
@@ -1307,7 +1321,7 @@ const Playlists: React.FC<RouteComponentProps> = () => {
             onSave={handleSaveCustomList}
             isCloning={cloning.current}
           />
-        </>
+        </div>
       )}
       {selectedTab !== 'custom' && details && (
         <PlaylistDetails
@@ -1317,7 +1331,7 @@ const Playlists: React.FC<RouteComponentProps> = () => {
           tabName={selectedTab}
         />
       )}
-    </div>
+    </>
   );
 };
 

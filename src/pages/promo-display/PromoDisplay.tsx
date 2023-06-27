@@ -40,8 +40,7 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
   const [buffer, setBuffer] = useState<PromoDisplay[]>([]);
   const [data, setData] = useState<PromoDisplay[]>([]);
   const [filter, setFilter] = useState<string>('');
-  const { isMobile, setisScrollable } = useContext(AppContext);
-  const [style, setStyle] = useState<any>();
+  const { isMobile, setIsScrollable } = useContext(AppContext);
   const history = useHistory();
 
   useEffect(() => {
@@ -49,11 +48,6 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
       if (action === 'POP' && details) setDetails(false);
     });
   });
-
-  useEffect(() => {
-    if (!details) setStyle({ overflow: 'clip', height: '100%' });
-    else setStyle({ overflow: 'scroll', height: '100%' });
-  }, [details]);
 
   useEffect(() => {
     getResources();
@@ -81,7 +75,7 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   useEffect(() => {
-    setisScrollable(details);
+    setIsScrollable(details);
   }, [details]);
 
   useEffect(() => {
@@ -278,9 +272,9 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   return (
-    <div style={style}>
+    <>
       {!details && (
-        <>
+        <div style={{ overflow: 'clip', height: '100%' }}>
           <PageHeader
             title="Shop Display"
             subTitle={isMobile ? '' : 'List of Shop Displays'}
@@ -321,16 +315,18 @@ const PromoDisplays: React.FC<RouteComponentProps> = ({ location }) => {
               pagination={false}
             />
           </div>
-        </>
+        </div>
       )}
       {details && (
-        <PromoDisplayDetail
-          promoDisplay={currentPromoDisplay}
-          onSave={onSavePromoDisplay}
-          onCancel={onCancelPromoDisplay}
-        />
+        <div style={{ overflow: 'scroll', height: '100%' }}>
+          <PromoDisplayDetail
+            promoDisplay={currentPromoDisplay}
+            onSave={onSavePromoDisplay}
+            onCancel={onCancelPromoDisplay}
+          />
+        </div>
       )}
-    </div>
+    </>
   );
 };
 

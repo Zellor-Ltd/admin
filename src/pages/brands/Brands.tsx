@@ -57,11 +57,10 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
   const [brands, setBrands] = useState<Brand[]>([]);
   const [filterText, setFilterText] = useState('');
   const [currentBrand, setCurrentBrand] = useState<Brand>();
-  const { isMobile, setisScrollable } = useContext(AppContext);
+  const { isMobile, setIsScrollable } = useContext(AppContext);
   const [updatingVIndex, setUpdatingVIndex] = useState<Record<string, boolean>>(
     {}
   );
-  const [style, setStyle] = useState<any>();
   const history = useHistory();
 
   useEffect(() => {
@@ -74,18 +73,13 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
     fetch();
   }, []);
 
-  useEffect(() => {
-    if (!details) setStyle({ overflow: 'clip', height: '100%' });
-    else setStyle({ overflow: 'scroll', height: '100%' });
-  }, [details]);
-
   const fetch = async () => {
     const { results }: any = await doFetch(fetchBrands);
     setBrands(results);
   };
 
   useEffect(() => {
-    setisScrollable(details);
+    setIsScrollable(details);
 
     if (!details) {
       scrollIntoView(
@@ -635,9 +629,9 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
   ];
 
   return (
-    <div style={style}>
+    <>
       {!details && (
-        <>
+        <div style={{ overflow: 'clip', height: '100%' }}>
           <PageHeader
             title="Clients"
             subTitle={isMobile ? '' : 'List of Clients'}
@@ -676,16 +670,18 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
               pagination={false}
             />
           </div>
-        </>
+        </div>
       )}
       {details && (
-        <BrandDetail
-          onSave={onSaveBrand}
-          onCancel={onCancelBrand}
-          brand={currentBrand as Brand}
-        />
+        <div style={{ overflow: 'scroll', height: '100%' }}>
+          <BrandDetail
+            onSave={onSaveBrand}
+            onCancel={onCancelBrand}
+            brand={currentBrand as Brand}
+          />
+        </div>
       )}
-    </div>
+    </>
   );
 };
 

@@ -30,8 +30,7 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
   const [buffer, setBuffer] = useState<FanGroup[]>([]);
   const [data, setData] = useState<FanGroup[]>([]);
   const [filter, setFilter] = useState<string>('');
-  const { isMobile, setisScrollable } = useContext(AppContext);
-  const [style, setStyle] = useState<any>();
+  const { isMobile, setIsScrollable } = useContext(AppContext);
   const history = useHistory();
 
   useEffect(() => {
@@ -39,11 +38,6 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
       if (action === 'POP' && details) setDetails(false);
     });
   });
-
-  useEffect(() => {
-    if (!details) setStyle({ overflow: 'clip', height: '100%' });
-    else setStyle({ overflow: 'scroll', height: '100%' });
-  }, [details]);
 
   useEffect(() => {
     getResources();
@@ -71,7 +65,7 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
   };
 
   useEffect(() => {
-    setisScrollable(details);
+    setIsScrollable(details);
   }, [details]);
 
   useEffect(() => {
@@ -170,9 +164,9 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
   };
 
   return (
-    <div style={style}>
+    <>
       {!details && (
-        <>
+        <div style={{ overflow: 'clip', height: '100%' }}>
           <PageHeader
             title="Fan Groups"
             subTitle={isMobile ? '' : 'List of Fan Groups'}
@@ -213,16 +207,18 @@ const FanGroups: React.FC<RouteComponentProps> = props => {
               pagination={false}
             />
           </div>
-        </>
+        </div>
       )}
       {details && (
-        <FanGroupDetail
-          fanGroup={currentFanGroup}
-          onSave={onSaveFanGroup}
-          onCancel={onCancelFanGroup}
-        />
+        <div style={{ overflow: 'scroll', height: '100%' }}>
+          <FanGroupDetail
+            fanGroup={currentFanGroup}
+            onSave={onSaveFanGroup}
+            onCancel={onCancelFanGroup}
+          />
+        </div>
       )}
-    </div>
+    </>
   );
 };
 

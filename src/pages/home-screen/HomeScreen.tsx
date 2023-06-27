@@ -20,8 +20,7 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ location }) => {
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [details, setDetails] = useState<boolean>(false);
   const [currentBanner, setCurrentBanner] = useState<Banner>();
-  const { isMobile, setisScrollable } = useContext(AppContext);
-  const [style, setStyle] = useState<any>();
+  const { isMobile, setIsScrollable } = useContext(AppContext);
   const history = useHistory();
 
   useEffect(() => {
@@ -29,11 +28,6 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ location }) => {
       if (action === 'POP' && details) setDetails(false);
     });
   });
-
-  useEffect(() => {
-    if (!details) setStyle({ overflow: 'clip', height: '100%' });
-    else setStyle({ overflow: 'scroll', height: '100%' });
-  }, [details]);
 
   const getBanners = async () => {
     const response = await doFetch(() => fetchBanners());
@@ -55,7 +49,7 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ location }) => {
       );
     }
 
-    setisScrollable(details);
+    setIsScrollable(details);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [details]);
 
@@ -255,9 +249,9 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ location }) => {
     },
   ];
   return (
-    <div style={style}>
+    <>
       {!details && (
-        <>
+        <div style={{ overflow: 'clip', height: '100%' }}>
           <PageHeader
             title="Banners"
             subTitle={isMobile ? '' : 'List of Banners'}
@@ -283,16 +277,18 @@ const HomeScreen: React.FC<RouteComponentProps> = ({ location }) => {
               pagination={false}
             />
           </div>
-        </>
+        </div>
       )}
       {details && (
-        <HomeScreenDetail
-          banner={currentBanner as Banner}
-          onSave={onSaveBanner}
-          onCancel={onCancelBanner}
-        />
+        <div style={{ overflow: 'scroll', height: '100%' }}>
+          <HomeScreenDetail
+            banner={currentBanner as Banner}
+            onSave={onSaveBanner}
+            onCancel={onCancelBanner}
+          />
+        </div>
       )}
-    </div>
+    </>
   );
 };
 

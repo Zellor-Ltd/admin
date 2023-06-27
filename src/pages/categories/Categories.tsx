@@ -65,8 +65,7 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
     'Sub Sub Category': [],
   });
   const [categories, setCategories] = useState<any>([]);
-  const { isMobile, setisScrollable } = useContext(AppContext);
-  const [style, setStyle] = useState<any>();
+  const { isMobile, setIsScrollable } = useContext(AppContext);
   const history = useHistory();
 
   useEffect(() => {
@@ -93,11 +92,6 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
     }
   }, [refreshing]);
 
-  useEffect(() => {
-    if (!details) setStyle({ overflow: 'clip', height: '100%' });
-    else setStyle({ overflow: 'scroll', height: '100%' });
-  }, [details]);
-
   const updateDisplayedArray = async () => {
     if (!content[selectedTab].length) return;
     const pageToUse = refreshing ? 0 : page;
@@ -113,7 +107,7 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   useEffect(() => {
-    setisScrollable(details);
+    setIsScrollable(details);
 
     if (!details) {
       scrollIntoView(
@@ -439,9 +433,12 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   return (
-    <div className="categories" style={style}>
+    <>
       {!details && (
-        <>
+        <div
+          className="categories"
+          style={{ overflow: 'clip', height: '100%' }}
+        >
           <PageHeader
             title="Categories"
             subTitle={isMobile ? '' : 'List of Categories'}
@@ -516,17 +513,22 @@ const Categories: React.FC<RouteComponentProps> = ({ location }) => {
               </Tabs.TabPane>
             ))}
           </Tabs>
-        </>
+        </div>
       )}
       {details && (
-        <CategoryDetail
-          index={index}
-          category={currentProductCategory}
-          onSave={onSaveCategory}
-          onCancel={onCancelCategory}
-        />
+        <div
+          className="categories"
+          style={{ overflow: 'scroll', height: '100%' }}
+        >
+          <CategoryDetail
+            index={index}
+            category={currentProductCategory}
+            onSave={onSaveCategory}
+            onCancel={onCancelCategory}
+          />
+        </div>
       )}
-    </div>
+    </>
   );
 };
 

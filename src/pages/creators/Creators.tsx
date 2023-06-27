@@ -52,11 +52,10 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
   const [searchFilter, setSearchFilter] = useState<string>();
-  const { isMobile, setisScrollable } = useContext(AppContext);
+  const { isMobile, setIsScrollable } = useContext(AppContext);
   const [updatingVIndex, setUpdatingVIndex] = useState<Record<string, boolean>>(
     {}
   );
-  const [style, setStyle] = useState<any>();
   const history = useHistory();
 
   useEffect(() => {
@@ -72,13 +71,8 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   useEffect(() => {
-    setisScrollable(details);
+    setIsScrollable(details);
     if (!details) scrollToCenter(lastViewedIndex);
-  }, [details]);
-
-  useEffect(() => {
-    if (!details) setStyle({ overflow: 'clip', height: '100%' });
-    else setStyle({ overflow: 'scroll', height: '100%' });
   }, [details]);
 
   const fetch = async (loadNextPage?: boolean) => {
@@ -544,9 +538,12 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   return (
-    <div style={style}>
+    <>
       {!details && (
-        <div className="creator-container">
+        <div
+          className="creator-container"
+          style={{ overflow: 'clip', height: '100%' }}
+        >
           <PageHeader
             title="Creators"
             subTitle={isMobile ? '' : 'List of Creators'}
@@ -619,14 +616,16 @@ const Creators: React.FC<RouteComponentProps> = ({ location }) => {
         </div>
       )}
       {details && (
-        <CreatorDetail
-          creator={currentCreator}
-          onSave={onSaveCreator}
-          onCancel={onCancelCreator}
-          onRollback={onRollback}
-        />
+        <div style={{ overflow: 'scroll', height: '100%' }}>
+          <CreatorDetail
+            creator={currentCreator}
+            onSave={onSaveCreator}
+            onCancel={onCancelCreator}
+            onRollback={onRollback}
+          />
+        </div>
       )}
-    </div>
+    </>
   );
 };
 

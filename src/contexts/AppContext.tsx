@@ -31,7 +31,7 @@ interface AppContextProps {
   refreshContext: Function;
   isMobile: boolean;
   isScrollable: boolean;
-  setisScrollable: (boolean) => void;
+  setIsScrollable: (boolean) => void;
   needsMargin: boolean;
   details: boolean;
   setDetails: (value: boolean) => void;
@@ -47,31 +47,25 @@ export const AppProvider = ({ children }: { children: JSX.Element }) => {
   const [filterValues, setFilterValues] = useState<FilterValue>({});
   const [lastVisitedPage, setLastVisitedPage] = useState<string>('');
   const [tableData, setTableData] = useState<any[]>([]);
-  const [isScrollable, setisScrollable] = useState<boolean>(false);
+  const [isScrollable, setIsScrollable] = useState<boolean>(false);
   const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
   const [needsMargin, setNeedsMargin] = useState<boolean>(
     window.innerWidth < 1716 && window.innerWidth > 1376
   );
 
-  const handleResize = () => {
-    if (window.innerWidth < 1716 && window.innerWidth > 1376) {
-      setNeedsMargin(true);
-    } else {
-      setNeedsMargin(false);
-
-      if (window.innerWidth < 991) {
-        setIsMobile(true);
-      } else {
-        setIsMobile(false);
-      }
-    }
-  };
-
   useEffect(() => {
-    window.addEventListener('resize', handleResize);
-    return () => {
-      window.removeEventListener('resize', handleResize);
+    const handleResize = () => {
+      if (window.innerWidth < 991) setIsMobile(true);
+      else {
+        setIsMobile(false);
+        if (window.innerWidth < 1716 && window.innerWidth > 1376)
+          setNeedsMargin(true);
+        else setNeedsMargin(false);
+      }
     };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   });
 
   const setFilterValue: SetFilterValue = (key, value) => {
@@ -109,7 +103,7 @@ export const AppProvider = ({ children }: { children: JSX.Element }) => {
         isMobile,
         needsMargin,
         isScrollable,
-        setisScrollable,
+        setIsScrollable,
         details,
         setDetails,
       }}

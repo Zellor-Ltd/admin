@@ -30,7 +30,7 @@ import { useMount } from 'react-use';
 import ProductDetail from 'pages/products/ProductDetail';
 
 const ProductTemplates: React.FC<RouteComponentProps> = () => {
-  const { isMobile, setisScrollable } = useContext(AppContext);
+  const { isMobile, setIsScrollable } = useContext(AppContext);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [productBrands, setProductBrands] = useState<ProductBrand[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -47,7 +47,6 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
   const [currentTemplate, setCurrentTemplate] = useState<Product>();
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [productTemplates, setProductTemplates] = useState<Product[]>([]);
-  const [style, setStyle] = useState<any>();
   const history = useHistory();
 
   useEffect(() => {
@@ -55,11 +54,6 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
       if (action === 'POP' && details) setDetails(false);
     });
   });
-
-  useEffect(() => {
-    if (!details) setStyle({ overflow: 'clip', height: '100%' });
-    else setStyle({ overflow: 'scroll', height: '100%' });
-  }, [details]);
 
   useMount(async () => {
     const getBrands = async () => {
@@ -546,7 +540,7 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
       scrollToCenter(lastViewedIndex);
     }
 
-    setisScrollable(details);
+    setIsScrollable(details);
   }, [details]);
 
   const viewProductTemplate = (index: number, record?: Product) => {
@@ -598,9 +592,9 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
   };
 
   return (
-    <div style={style}>
+    <>
       {!details && (
-        <>
+        <div style={{ overflow: 'clip', height: '100%' }}>
           <PageHeader
             title="Product Templates"
             subTitle={isMobile ? '' : 'List of Product Templates'}
@@ -674,24 +668,26 @@ const ProductTemplates: React.FC<RouteComponentProps> = () => {
               }}
             />
           </div>
-        </>
+        </div>
       )}
       {details && (
-        <ProductDetail
-          brands={brands}
-          productBrands={productBrands}
-          allCategories={allCategories}
-          onSave={onSaveTemplate}
-          onCancel={onCancelTemplate}
-          product={currentTemplate}
-          productBrand={currentProductBrand}
-          brand={currentMasterBrand}
-          loadingResources={loadingResources}
-          isLive={false}
-          template
-        />
+        <div style={{ overflow: 'scroll', height: '100%' }}>
+          <ProductDetail
+            brands={brands}
+            productBrands={productBrands}
+            allCategories={allCategories}
+            onSave={onSaveTemplate}
+            onCancel={onCancelTemplate}
+            product={currentTemplate}
+            productBrand={currentProductBrand}
+            brand={currentMasterBrand}
+            loadingResources={loadingResources}
+            isLive={false}
+            template
+          />
+        </div>
       )}
-    </div>
+    </>
   );
 };
 

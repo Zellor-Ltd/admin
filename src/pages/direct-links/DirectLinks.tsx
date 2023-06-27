@@ -56,7 +56,7 @@ const productBrandMapping: SelectOption = {
 };
 
 const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
-  const { isMobile, setisScrollable } = useContext(AppContext);
+  const { isMobile, setIsScrollable } = useContext(AppContext);
   const linkRef = useRef<any>(null);
   const videoRef = useRef<any>(null);
   const urlRef = useRef<any>(null);
@@ -67,7 +67,6 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
   const [brands, setBrands] = useState<Brand[]>([]);
   const [productBrands, setProductBrands] = useState([]);
   const [directLinks, setDirectLinks] = useState<any[]>([]);
-  const [style, setStyle] = useState<any>();
   // Filter state
   const [brandFilter, setBrandFilter] = useState<Brand>();
   const [productBrandFilter, setProductBrandFilter] = useState<ProductBrand>();
@@ -98,11 +97,6 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
       if (action === 'POP' && details) setDetails(false);
     });
   });
-
-  useEffect(() => {
-    if (!details) setStyle({ overflow: 'clip', height: '100%' });
-    else setStyle({ overflow: 'scroll', height: '100%' });
-  }, [details]);
 
   useEffect(() => {
     getDetailsResources();
@@ -188,7 +182,7 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
   });
 
   useEffect(() => {
-    setisScrollable(details);
+    setIsScrollable(details);
     if (!details) scrollToCenter(lastFocusedIndex.current);
   }, [details]);
 
@@ -856,9 +850,9 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   return (
-    <div style={style}>
+    <>
       {!details && (
-        <>
+        <div style={{ overflow: 'clip', height: '100%' }}>
           <PageHeader
             title="Platform Links"
             subTitle={isMobile ? '' : 'List of Platform Links'}
@@ -965,19 +959,21 @@ const DirectLinks: React.FC<RouteComponentProps> = ({ location }) => {
               pagination={false}
             />
           </div>
-        </>
+        </div>
       )}
       {details && (
-        <DirectLinkDetail
-          onSave={handleSave}
-          onCancel={onCancelItem}
-          directLink={selectedLink}
-          brands={brands}
-          productBrands={productBrands}
-          setDetails={setDetails}
-        />
+        <div style={{ overflow: 'scroll', height: '100%' }}>
+          <DirectLinkDetail
+            onSave={handleSave}
+            onCancel={onCancelItem}
+            directLink={selectedLink}
+            brands={brands}
+            productBrands={productBrands}
+            setDetails={setDetails}
+          />
+        </div>
       )}
-    </div>
+    </>
   );
 };
 
