@@ -53,25 +53,19 @@ export const AppProvider = ({ children }: { children: JSX.Element }) => {
     window.innerWidth < 1716 && window.innerWidth > 1376
   );
 
-  const handleResize = () => {
-    if (window.innerWidth < 1716 && window.innerWidth > 1376) {
-      setNeedsMargin(true);
-    } else {
-      setNeedsMargin(false);
-
-      if (window.innerWidth < 991) {
-        setIsMobile(true);
-      } else {
-        setIsMobile(false);
-      }
-    }
-  };
-
   useEffect(() => {
-    window.addEventListener('resize', handleResize);
-    return () => {
-      window.removeEventListener('resize', handleResize);
+    const handleResize = () => {
+      if (window.innerWidth < 991) setIsMobile(true);
+      else {
+        setIsMobile(false);
+        if (window.innerWidth < 1716 && window.innerWidth > 1376)
+          setNeedsMargin(true);
+        else setNeedsMargin(false);
+      }
     };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   });
 
   const setFilterValue: SetFilterValue = (key, value) => {
