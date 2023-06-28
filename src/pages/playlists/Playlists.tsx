@@ -251,7 +251,10 @@ const Playlists: React.FC<RouteComponentProps> = () => {
       dataIndex: 'id',
       width: '3%',
       render: id => (
-        <CopyValueToClipboard tooltipText="Copy Playlist ID" value={id} />
+        <CopyValueToClipboard
+          tooltipText="Copy Playlist ID"
+          value={id?.slice(0, -4).toUpperCase()}
+        />
       ),
       align: 'center',
     },
@@ -431,7 +434,10 @@ const Playlists: React.FC<RouteComponentProps> = () => {
       dataIndex: 'id',
       width: '3%',
       render: id => (
-        <CopyValueToClipboard tooltipText="Copy Playlist ID" value={id} />
+        <CopyValueToClipboard
+          tooltipText="Copy Playlist ID"
+          value={id?.slice(0, -4).toUpperCase()}
+        />
       ),
       align: 'center',
     },
@@ -611,7 +617,10 @@ const Playlists: React.FC<RouteComponentProps> = () => {
       dataIndex: 'id',
       width: '3%',
       render: id => (
-        <CopyValueToClipboard tooltipText="Copy Playlist ID" value={id} />
+        <CopyValueToClipboard
+          tooltipText="Copy Playlist ID"
+          value={id?.slice(0, -4).toUpperCase()}
+        />
       ),
       align: 'center',
     },
@@ -815,7 +824,10 @@ const Playlists: React.FC<RouteComponentProps> = () => {
       dataIndex: 'id',
       width: '3%',
       render: id => (
-        <CopyValueToClipboard tooltipText="Copy Playlist ID" value={id} />
+        <CopyValueToClipboard
+          tooltipText="Copy Playlist ID"
+          value={id?.slice(0, -4).toUpperCase()}
+        />
       ),
       align: 'center',
     },
@@ -994,7 +1006,10 @@ const Playlists: React.FC<RouteComponentProps> = () => {
       dataIndex: 'id',
       width: '3%',
       render: id => (
-        <CopyValueToClipboard tooltipText="Copy Playlist ID" value={id} />
+        <CopyValueToClipboard
+          tooltipText="Copy Playlist ID"
+          value={id?.slice(0, -4).toUpperCase()}
+        />
       ),
       align: 'center',
     },
