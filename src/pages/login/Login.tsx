@@ -1,12 +1,13 @@
 import { Button, Card, Form, Input } from 'antd';
-import { useEffect, useState } from 'react';
+import { AppContext } from 'contexts/AppContext';
+import { useContext, useEffect, useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { fetchClient, loginService } from 'services/DiscoClubService';
 
 const Login: React.FC<RouteComponentProps> = props => {
   const { history } = props;
   const [loading, setLoading] = useState(false);
-  const [client, setClient] = useState<any>();
+  const { client, setClient } = useContext(AppContext);
 
   useEffect(() => {
     if (

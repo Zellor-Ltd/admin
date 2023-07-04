@@ -8,9 +8,10 @@ import {
   Row,
   Select,
 } from 'antd';
+import { AppContext } from 'contexts/AppContext';
 import { useRequest } from 'hooks/useRequest';
 import { Currency } from 'interfaces/Currency';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import {
   fetchClient,
@@ -31,15 +32,7 @@ const MyAccount: React.FC<any> = () => {
   const [form] = Form.useForm();
   const { doRequest } = useRequest({ setLoading });
   const history = useHistory();
-  const [client, setClient] = useState<any>({
-    clientName: 'client name here',
-    clientLink: 'client link here',
-    currencyCode: 'currency here',
-    currencySymbol: 'currency symbol here',
-    jumpUrl: 'jump url here',
-    redirectUrl: 'redirect url here',
-    shopName: 'shop name here',
-  });
+  const { client, setClient } = useContext(AppContext);
 
   useEffect(() => {
     const loadClientInfo = async () => {
@@ -67,7 +60,7 @@ const MyAccount: React.FC<any> = () => {
       const client = form.getFieldsValue(true);
       const { result } = await doRequest(() => saveClient(client));
       setLoading(false);
-      message.success('Register updated with success.');
+      message.success('Account updated with success.');
       /* client.id ? onSave?.(client) : onSave?.({ ...client, id: result }); */
     } catch (error: any) {
       setLoading(false);
