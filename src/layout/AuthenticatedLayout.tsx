@@ -1,4 +1,13 @@
-import { Button, Col, Layout, message, Row, Typography } from 'antd';
+import {
+  Button,
+  Col,
+  Dropdown,
+  Layout,
+  Menu,
+  message,
+  Row,
+  Typography,
+} from 'antd';
 import ErrorBoundary from 'components/ErrorBoundary';
 //import { Notifications } from 'components/Notifications';
 import jwt from 'helpers/jwt';
@@ -10,6 +19,7 @@ import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 import './AuthenticatedLayout.scss';
 import AdminSideMenu from './SideMenus/AdminSideMenu';
 import BrandManagerSideMenu from './SideMenus/BrandManagerSideMenu';
+import Icon, { UserOutlined } from '@ant-design/icons';
 
 const { Header, Sider, Content } = Layout;
 
@@ -60,6 +70,22 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
     }
   };
 
+  const menu = (
+    <Menu>
+      <Menu.Item key="0" style={{ pointerEvents: 'none' }}>
+        {getUserName()}
+      </Menu.Item>
+      <Menu.Divider />
+      <Menu.Item key="1">
+        <Link to="/my-account">My Account</Link>
+      </Menu.Item>
+      <Menu.Divider />
+      <Menu.Item key="3" onClick={logout}>
+        Log out
+      </Menu.Item>
+    </Menu>
+  );
+
   return (
     <Layout>
       <Header className="header">
@@ -72,23 +98,24 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
             </small>
           </Link>
         </h2>
-        <Row style={{ width: '35%' }} justify="end" wrap={false}>
+        <Row style={{ width: '35%' }} justify="end" align="bottom" wrap={false}>
           <div>
             <Col xs={0} lg={24} style={{ textAlign: 'end' }}>
               {/* <Notifications /> */}
             </Col>
           </div>
           <div>
-            <Col xs={0} lg={24} style={{ textAlign: 'end' }}>
-              <Typography.Text style={{ color: 'white' }}>
-                {getUserName()}
-              </Typography.Text>
+            <Col span={24} style={{ textAlign: 'end' }}>
+              <Dropdown overlay={menu} trigger={['click']}>
+                <a
+                  style={{ fontSize: '20px' }}
+                  className="ant-dropdown-link"
+                  onClick={e => e.preventDefault()}
+                >
+                  <UserOutlined />
+                </a>
+              </Dropdown>
             </Col>
-          </div>
-          <div>
-            <Button onClick={logout} type="link">
-              Logout
-            </Button>
           </div>
         </Row>
       </Header>
