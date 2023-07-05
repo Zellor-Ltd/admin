@@ -1,8 +1,8 @@
-import { Button, Col, Image, Row, Tooltip } from 'antd';
+import { Button, Col, Image, Row, Tooltip, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { SortableTable } from 'components';
 import { SimpleSwitch } from 'components/SimpleSwitch';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface PlaylistDetailProps {
   record: any;
@@ -19,6 +19,22 @@ const PlaylistDetails: React.FC<PlaylistDetailProps> = ({
 }) => {
   const [loading, setLoading] = useState(false);
   const [links, setLinks] = useState<any[]>(record.links);
+
+  useEffect(() => {
+    let parameter;
+    if (tabName === 'creator')
+      parameter = record.creator?.userName.toUpperCase();
+    else parameter = record.id.toUpperCase().slice(0, -4);
+
+    var script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.src = 'https://vlink.ie/script/ce/vlink-ce.js';
+    document.body.appendChild(script);
+    document.getElementById(
+      'carousel'
+    )!.innerHTML = `<vlink-carousel src=${parameter}></vlink-carousel>`;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const onSaveData = () => {
     onSave(record, setLoading, tabName);
@@ -179,7 +195,9 @@ const PlaylistDetails: React.FC<PlaylistDetailProps> = ({
   return (
     <>
       <Row>
-        <Col flex="auto">Reorder links below</Col>
+        <Col flex="auto">
+          <Typography.Title level={5}>Reorder links below</Typography.Title>
+        </Col>
         <Col flex="100px">
           <Button type="default" onClick={() => onCancel()}>
             Cancel
@@ -198,6 +216,9 @@ const PlaylistDetails: React.FC<PlaylistDetailProps> = ({
         </Col>
       </Row>
       <Row>
+        <Col span={24}>
+          <div id="carousel" className="mt-05"></div>
+        </Col>
         <Col span={24}>
           <SortableTable
             scroll={{ x: true, y: '34em' }}
