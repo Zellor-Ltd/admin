@@ -68,12 +68,7 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
       </Menu.Item>
       <Menu.Divider />
       {useBuildTarget({
-        /* todo admin undefined */
-        ADMIN: (
-          <Menu.Item key="1">
-            <Link to="/my-account">My Account</Link>
-          </Menu.Item>
-        ),
+        ADMIN: undefined,
         BRAND_MANAGER: (
           <Menu.Item key="1">
             <Link to="/my-account">My Account</Link>
