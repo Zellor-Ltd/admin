@@ -14,7 +14,6 @@ const Login: React.FC<RouteComponentProps> = props => {
       !client?.clientName ||
       !client?.clientLink ||
       !client?.currencyCode ||
-      !client?.currencySymbol ||
       !client?.jumpUrl ||
       !client?.redirectUrl ||
       !client?.shopName

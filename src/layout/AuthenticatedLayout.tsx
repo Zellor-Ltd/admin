@@ -1,15 +1,5 @@
-import {
-  Button,
-  Col,
-  Dropdown,
-  Layout,
-  Menu,
-  message,
-  Row,
-  Typography,
-} from 'antd';
+import { Button, Col, Dropdown, Layout, Menu, message, Row } from 'antd';
 import ErrorBoundary from 'components/ErrorBoundary';
-//import { Notifications } from 'components/Notifications';
 import jwt from 'helpers/jwt';
 import { useBuildTarget } from 'hooks/useBuildTarget';
 import ErrorPage from 'pages/error/ErrorPage';
@@ -19,7 +9,7 @@ import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 import './AuthenticatedLayout.scss';
 import AdminSideMenu from './SideMenus/AdminSideMenu';
 import BrandManagerSideMenu from './SideMenus/BrandManagerSideMenu';
-import Icon, { UserOutlined } from '@ant-design/icons';
+import { UserOutlined } from '@ant-design/icons';
 
 const { Header, Sider, Content } = Layout;
 
@@ -118,13 +108,14 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
           <div>
             <Col span={24} style={{ textAlign: 'end' }}>
               <Dropdown overlay={menu} trigger={['click']}>
-                <a
+                <Button
+                  type="text"
                   style={{ fontSize: '20px' }}
                   className="ant-dropdown-link"
                   onClick={e => e.preventDefault()}
                 >
                   <UserOutlined />
-                </a>
+                </Button>
               </Dropdown>
             </Col>
           </div>
