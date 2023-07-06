@@ -22,6 +22,7 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
     'access-control',
     'settings',
     'playlist-studio',
+    'sign-up',
   ];
   const [style, setStyle] = useState<any>({
     padding: '24 0',

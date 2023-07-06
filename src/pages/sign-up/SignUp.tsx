@@ -1,11 +1,10 @@
-import { Button, Card, Col, Form, Input, PageHeader, Row } from 'antd';
+import { Button, Col, Form, Image, Input, Row, Typography } from 'antd';
 import { useState } from 'react';
-import { Link, RouteComponentProps, useHistory } from 'react-router-dom';
-import { loginService } from 'services/DiscoClubService';
+import { useHistory } from 'react-router-dom';
 
 const SignUp: React.FC<any> = () => {
   const history = useHistory();
-  const [loading, setLoading] = useState(false);
+  const [loading] = useState(false);
 
   const onFinishFailed = (errorInfo: any) => {
     console.log('Failed:', errorInfo);
@@ -13,76 +12,96 @@ const SignUp: React.FC<any> = () => {
 
   return (
     <>
-      <PageHeader title="hi" />
-      <Card>
-        <Form
-          name="client"
-          initialValues={undefined}
-          onFinish={() => console.log('hi')}
-          onFinishFailed={onFinishFailed}
-        >
-          <Form.Item
-            label="Organisation Name"
-            name="organisation"
-            rules={[
-              {
-                required: true,
-                message: 'Please input your Organisation name!',
-              },
-            ]}
+      <div className="external-wrapper">
+        <div className="external-container">
+          <Image width="100%" style={{ padding: '5% 10%' }} src="/logo.svg" />
+          <Typography.Title level={3}>Sign Up</Typography.Title>
+          <Form
+            name="client"
+            layout="vertical"
+            className="mt-1"
+            initialValues={undefined}
+            onFinish={() => console.log('hi')}
+            onFinishFailed={onFinishFailed}
+            requiredMark={false}
           >
-            <Input allowClear />
-          </Form.Item>
-          <Form.Item
-            label="First Name"
-            name="firstName"
-            rules={[
-              { required: true, message: 'Please input your First name!' },
-            ]}
-          >
-            <Input allowClear />
-          </Form.Item>
-          <Form.Item
-            label="Second Name"
-            name="secondName"
-            rules={[
-              { required: true, message: 'Please input your Second name!' },
-            ]}
-          >
-            <Input allowClear />
-          </Form.Item>
-          <Form.Item
-            label="E-mail address"
-            name="user"
-            rules={[
-              { required: true, message: 'Please input your e-mail address!' },
-            ]}
-          >
-            <Input allowClear />
-          </Form.Item>
-          <Form.Item
-            label="Password"
-            name="pwd"
-            rules={[{ required: true, message: 'Please select a password!' }]}
-          >
-            <Input.Password allowClear />
-          </Form.Item>
-          <Row justify="space-between">
-            <Col>
-              <Button onClick={() => history.goBack()} loading={loading}>
-                Cancel
-              </Button>
-            </Col>
-            <Col>
-              <Form.Item>
-                <Button type="primary" htmlType="submit" loading={loading}>
-                  Sign up
+            <Form.Item
+              label={<strong>Organisation Name</strong>}
+              name="organisation"
+              className="mb-1"
+              rules={[
+                {
+                  required: true,
+                  message: 'Please input your Organisation name!',
+                },
+              ]}
+            >
+              <Input allowClear />
+            </Form.Item>
+            <Form.Item
+              label={<strong>Name</strong>}
+              name="firstName"
+              className="mb-1"
+              rules={[{ required: true, message: 'Please input your name!' }]}
+            >
+              <Input allowClear />
+            </Form.Item>
+            <Form.Item
+              label={<strong>Surname</strong>}
+              name="secondName"
+              className="mb-1"
+              rules={[
+                { required: true, message: 'Please input your surname!' },
+              ]}
+            >
+              <Input allowClear />
+            </Form.Item>
+            <Form.Item
+              label={<strong>Email</strong>}
+              name="user"
+              className="mb-1"
+              rules={[
+                {
+                  required: true,
+                  message: 'Please input your e-mail address!',
+                },
+              ]}
+            >
+              <Input allowClear />
+            </Form.Item>
+            <Form.Item
+              label={<strong>Password</strong>}
+              name="pwd"
+              className="mb-15"
+              rules={[{ required: true, message: 'Please select a password!' }]}
+            >
+              <Input.Password allowClear />
+            </Form.Item>
+            <Row justify="center">
+              <Col span={24}>
+                <Form.Item className="mb-1">
+                  <Button
+                    style={{ background: 'rgb(48,86,211)', width: '100%' }}
+                    type="primary"
+                    htmlType="submit"
+                    loading={loading}
+                  >
+                    Sign up
+                  </Button>
+                </Form.Item>
+                <Button
+                  className="mb-1"
+                  style={{ width: '100%' }}
+                  onClick={() => history.goBack()}
+                  loading={loading}
+                >
+                  Cancel
                 </Button>
-              </Form.Item>
-            </Col>
-          </Row>
-        </Form>
-      </Card>
+              </Col>
+            </Row>
+          </Form>
+        </div>
+      </div>
     </>
   );
 };

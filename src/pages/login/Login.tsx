@@ -1,13 +1,11 @@
-import { Button, Card, Col, Form, Input, PageHeader, Row } from 'antd';
-import SignUp from 'pages/sign-up/SignUp';
-import { useEffect, useState } from 'react';
+import { Button, Col, Form, Image, Input, Row, Typography } from 'antd';
+import { useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { loginService } from 'services/DiscoClubService';
 
 const Login: React.FC<RouteComponentProps> = props => {
   const { history } = props;
   const [loading, setLoading] = useState(false);
-  const [signUp, setSignUp] = useState<boolean>();
 
   const onFinish = async (values: any) => {
     setLoading(true);
@@ -25,23 +23,25 @@ const Login: React.FC<RouteComponentProps> = props => {
     console.log('Failed:', errorInfo);
   };
 
-  useEffect(() => {
-    if (signUp) history.push('/sign-up');
-    else history.goBack();
-  }, [signUp]);
-
   return (
     <>
-      {!signUp && (
-        <Card>
+      <div className="external-wrapper">
+        <div className="external-container">
+          <Image width="100%" style={{ padding: '5% 10%' }} src="/logo.svg" />
+          <Typography.Title level={4}>
+            <strong>Sign in to your account</strong>
+          </Typography.Title>
           <Form
             name="auth"
+            layout="vertical"
+            className="mt-075"
             initialValues={{ remember: true }}
             onFinish={onFinish}
+            requiredMark={false}
             onFinishFailed={onFinishFailed}
           >
             <Form.Item
-              label="Username"
+              label={<strong>Username</strong>}
               name="user"
               rules={[
                 { required: true, message: 'Please input your username!' },
@@ -50,110 +50,49 @@ const Login: React.FC<RouteComponentProps> = props => {
               <Input allowClear />
             </Form.Item>
             <Form.Item
-              label="Password"
+              label={<strong>Password</strong>}
               name="pwd"
+              className="mb-05"
               rules={[
                 { required: true, message: 'Please input your password!' },
               ]}
             >
               <Input.Password allowClear />
             </Form.Item>
-            <Row justify="space-between" style={{ alignItems: 'baseline' }}>
-              <Col>
-                <Button type="text" onClick={() => setSignUp(true)}>
-                  Sign up
-                </Button>
+            <Row justify="end" style={{ alignItems: 'baseline' }}>
+              <Col className="mb-05">
+                <Typography.Text type="secondary">
+                  <strong>Forgot your password?</strong>
+                </Typography.Text>
               </Col>
-              <Col>
-                <Form.Item>
-                  <Button type="primary" htmlType="submit" loading={loading}>
-                    Submit
+              <Col span={24}>
+                <Form.Item className="mb-1">
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    style={{ background: 'rgb(48,86,211)', width: '100%' }}
+                    loading={loading}
+                  >
+                    Sign In
                   </Button>
                 </Form.Item>
               </Col>
+              <Col span={24} className="mb-1">
+                <Row justify="center">
+                  <Col>
+                    <Typography.Text type="secondary" className="mr-15">
+                      Don't have an account yet?
+                    </Typography.Text>
+                  </Col>
+                  <Col>
+                    <Link to="/sign-up">Sign Up</Link>
+                  </Col>
+                </Row>
+              </Col>
             </Row>
           </Form>
-        </Card>
-      )}
-      {signUp && (
-        <>
-          <PageHeader title="hi" />
-          <Card>
-            <Form
-              name="client"
-              initialValues={undefined}
-              onFinish={() => console.log('hi')}
-              onFinishFailed={onFinishFailed}
-            >
-              <Form.Item
-                label="Organisation Name"
-                name="organisation"
-                rules={[
-                  {
-                    required: true,
-                    message: 'Please input your Organisation name!',
-                  },
-                ]}
-              >
-                <Input allowClear />
-              </Form.Item>
-              <Form.Item
-                label="First Name"
-                name="firstName"
-                rules={[
-                  { required: true, message: 'Please input your First name!' },
-                ]}
-              >
-                <Input allowClear />
-              </Form.Item>
-              <Form.Item
-                label="Second Name"
-                name="secondName"
-                rules={[
-                  { required: true, message: 'Please input your Second name!' },
-                ]}
-              >
-                <Input allowClear />
-              </Form.Item>
-              <Form.Item
-                label="E-mail address"
-                name="user"
-                rules={[
-                  {
-                    required: true,
-                    message: 'Please input your e-mail address!',
-                  },
-                ]}
-              >
-                <Input allowClear />
-              </Form.Item>
-              <Form.Item
-                label="Password"
-                name="pwd"
-                rules={[
-                  { required: true, message: 'Please select a password!' },
-                ]}
-              >
-                <Input.Password allowClear />
-              </Form.Item>
-              <Row justify="space-between">
-                <Col>
-                  <Button onClick={() => setSignUp(false)} loading={loading}>
-                    Cancel
-                  </Button>
-                </Col>
-                <Col>
-                  <Form.Item>
-                    <Button type="primary" htmlType="submit" loading={loading}>
-                      Sign up
-                    </Button>
-                  </Form.Item>
-                </Col>
-              </Row>
-            </Form>
-          </Card>
-        </>
-      )}
+        </div>
+      </div>
     </>
   );
 };
