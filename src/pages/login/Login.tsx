@@ -10,7 +10,7 @@ const Login: React.FC<RouteComponentProps> = props => {
   const { client, setClient } = useContext(AppContext);
 
   useEffect(() => {
-    if (
+    /* if (
       !client?.clientName ||
       !client?.clientLink ||
       !client?.currencyCode ||
@@ -20,7 +20,8 @@ const Login: React.FC<RouteComponentProps> = props => {
       !client?.shopName
     )
       history.push('/my-account');
-    else history.push('/');
+    else */
+    /* history.push('/'); */
   }, [client]);
 
   const loadClientInfo = async () => {
@@ -36,7 +37,8 @@ const Login: React.FC<RouteComponentProps> = props => {
       const response: any = await loginService(values);
       if (response.success) {
         localStorage.setItem('token', response.token);
-        loadClientInfo();
+        /* loadClientInfo(); */
+        history.push('/');
       }
     } catch (e) {}
     setLoading(false);

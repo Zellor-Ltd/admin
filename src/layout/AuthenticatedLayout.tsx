@@ -32,6 +32,7 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
     'access-control',
     'settings',
     'playlist-studio',
+    'my-account',
   ];
   const [style, setStyle] = useState<any>({
     padding: '24 0',
@@ -76,9 +77,19 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
         {getUserName()}
       </Menu.Item>
       <Menu.Divider />
-      <Menu.Item key="1">
-        <Link to="/my-account">My Account</Link>
-      </Menu.Item>
+      {useBuildTarget({
+        /* todo admin undefined */
+        ADMIN: (
+          <Menu.Item key="1">
+            <Link to="/my-account">My Account</Link>
+          </Menu.Item>
+        ),
+        BRAND_MANAGER: (
+          <Menu.Item key="1">
+            <Link to="/my-account">My Account</Link>
+          </Menu.Item>
+        ),
+      })}
       <Menu.Divider />
       <Menu.Item key="3" onClick={logout}>
         Log out

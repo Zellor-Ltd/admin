@@ -2,11 +2,13 @@ import {
   Button,
   Col,
   Form,
+  Image,
   Input,
   message,
   PageHeader,
   Row,
   Select,
+  Typography,
 } from 'antd';
 import { AppContext } from 'contexts/AppContext';
 import { useRequest } from 'hooks/useRequest';
@@ -43,7 +45,16 @@ const MyAccount: React.FC<any> = () => {
       // }
     };
 
-    loadClientInfo();
+    setClient({
+      clientName: '1',
+      clientLink: '2',
+      currencyCode: '3',
+      currencySymbol: '4',
+      jumpUrl: '5',
+      redirectUrl: '6',
+      shopName: '7',
+    });
+    //    loadClientInfo();
   }, []);
 
   useEffect(() => {
@@ -72,101 +83,127 @@ const MyAccount: React.FC<any> = () => {
     <>
       {client && (
         <>
-          <PageHeader title="My Account" />
-          <Form
-            name="userForm"
-            layout="vertical"
-            form={form}
-            initialValues={client}
-            onFinish={onFinish}
-          >
-            <Row gutter={8}>
-              <Col lg={12} xs={24}>
-                <Form.Item label="Client Name" name="clientName">
-                  <Input allowClear placeholder="Client Name" disabled />
-                </Form.Item>
-              </Col>
-              <Col lg={12} xs={24}>
-                <Form.Item label="Client Link" name="clientLink">
-                  <Input allowClear placeholder="Client Link" disabled />
-                </Form.Item>
-              </Col>
-              <Col lg={12} xs={24}>
-                <Form.Item label="Default Currency" name="currencyCode">
-                  <Select
-                    placeholder="Default Currency"
-                    allowClear
-                    showSearch
-                    filterOption={filterOption}
-                  >
-                    {currencies.map(currency => (
-                      <Select.Option key={currency.code} value={currency.code}>
-                        {currency.code}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </Form.Item>
-              </Col>
-              <Col lg={12} xs={24}>
-                <Form.Item
-                  name="currencySymbol"
-                  label="Currency Symbol"
-                  rules={[
-                    {
-                      required: false,
-                      message: 'Currency Symbol is required.',
-                    },
-                  ]}
-                >
-                  <Select
-                    allowClear
-                    showSearch
-                    filterOption={filterOption}
-                    placeholder="Please select a currency symbol"
-                  >
-                    <Select.Option key="£" value="£" label="£">
-                      £
-                    </Select.Option>
-                    <Select.Option key="€" value="€" label="€">
-                      €
-                    </Select.Option>
-                  </Select>
-                </Form.Item>
-              </Col>
-              <Col lg={12} xs={24}>
-                <Form.Item name="jumpUrl" label="Jump URL">
-                  <Input allowClear placeholder="Jump URL" />
-                </Form.Item>
-              </Col>
-              <Col lg={12} xs={24}>
-                <Form.Item name="redirectUrl" label="Redirect URL">
-                  <Input allowClear placeholder="Redirect URL" />
-                </Form.Item>
-              </Col>
-              <Col lg={12} xs={24}>
-                <Form.Item name="shopName" label="Shop Name">
-                  <Input allowClear placeholder="Shop Name" />
-                </Form.Item>
-              </Col>
-            </Row>
-            <Row gutter={8} justify="end">
-              <Col>
-                <Button type="default" onClick={() => history.go(-1)}>
-                  Cancel
-                </Button>
-              </Col>
-              <Col>
-                <Button
-                  loading={loading}
-                  type="primary"
-                  htmlType="submit"
-                  className="mb-1"
-                >
-                  Save Changes
-                </Button>
-              </Col>
-            </Row>
-          </Form>
+          <div className="my-account-container">
+            <div className="my-account">
+              <Image
+                width="100%"
+                style={{ padding: '10% 10% 0 10%' }}
+                src="/logo.svg"
+              />
+              <Typography.Title level={3}>Account Details</Typography.Title>
+              <Form
+                form={form}
+                name="userForm"
+                layout="vertical"
+                className="mt-15"
+                initialValues={client}
+                onFinish={onFinish}
+              >
+                <Row gutter={8}>
+                  <Col span={24}>
+                    <Form.Item
+                      label={<strong>Organisation Name</strong>}
+                      name="clientName"
+                    >
+                      <Input
+                        allowClear
+                        placeholder="New Organisation (Client) Name"
+                        disabled
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col span={24}>
+                    <Form.Item
+                      label={<strong>Organisation Link</strong>}
+                      name="clientLink"
+                    >
+                      <Input
+                        allowClear
+                        placeholder="New Organisation (Client) Link"
+                        disabled
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col span={24}>
+                    <Form.Item
+                      label={<strong>Currency</strong>}
+                      name="currencyCode"
+                    >
+                      <Select
+                        placeholder="Default Currency"
+                        allowClear
+                        showSearch
+                        filterOption={filterOption}
+                      >
+                        {currencies.map(currency => (
+                          <Select.Option
+                            key={currency.code}
+                            value={currency.code}
+                          >
+                            {currency.code}
+                          </Select.Option>
+                        ))}
+                      </Select>
+                    </Form.Item>
+                  </Col>
+                  <Col span={24}>
+                    <Form.Item name="jumpUrl" label={<strong>Jump URL</strong>}>
+                      <Input
+                        allowClear
+                        placeholder="E.g: shop.domain.com/home"
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col span={24}>
+                    <Form.Item
+                      name="redirectUrl"
+                      label={<strong>Store Product Base URL</strong>}
+                    >
+                      <Input
+                        allowClear
+                        placeholder="E.g: shop.domain.com/products"
+                        disabled
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col span={24}>
+                    <Form.Item
+                      name="shopName"
+                      label={<strong>Store Name</strong>}
+                    >
+                      <Input
+                        allowClear
+                        placeholder="E.g: shop.domain.com"
+                        disabled
+                      />
+                    </Form.Item>
+                  </Col>
+                </Row>
+                <Row gutter={8} justify="end">
+                  <Col span={24}>
+                    <Button
+                      loading={loading}
+                      type="primary"
+                      htmlType="submit"
+                      className="mt-05x mb-1"
+                      style={{ background: 'rgb(48,86,211)', width: '100%' }}
+                    >
+                      Save
+                    </Button>
+                  </Col>
+                  <Col span={24} className="mb-2">
+                    <Button
+                      type="default"
+                      onClick={() => history.go(-1)}
+                      style={{ width: '100%' }}
+                    >
+                      Cancel
+                    </Button>
+                  </Col>
+                </Row>
+              </Form>
+            </div>
+          </div>
         </>
       )}
     </>
