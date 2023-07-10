@@ -35,6 +35,8 @@ interface AppContextProps {
   needsMargin: boolean;
   details: boolean;
   setDetails: (value: boolean) => void;
+  client: any;
+  setClient: (value: any) => void;
 }
 
 export const AppContext = React.createContext({} as AppContextProps);
@@ -49,6 +51,7 @@ export const AppProvider = ({ children }: { children: JSX.Element }) => {
   const [tableData, setTableData] = useState<any[]>([]);
   const [isScrollable, setIsScrollable] = useState<boolean>(false);
   const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 991);
+  const [client, setClient] = useState<any>();
   const [needsMargin, setNeedsMargin] = useState<boolean>(
     window.innerWidth < 1716 && window.innerWidth > 1376
   );
@@ -106,6 +109,8 @@ export const AppProvider = ({ children }: { children: JSX.Element }) => {
         setIsScrollable,
         details,
         setDetails,
+        client,
+        setClient,
       }}
     >
       <PageInfiniteScrollProvider>{children}</PageInfiniteScrollProvider>

@@ -27,7 +27,8 @@ const AppRoute: React.FC<any> = props => {
     ...rest
   } = props;
   const authenticated = isAuthenticated();
-  if (!authenticated && path !== '/login') return <Redirect to="login" />;
+  if (!authenticated && path !== '/login' && path !== '/sign-up')
+    return <Redirect to="login" />;
   if (returnComponent) return Component;
   return (
     <LastLocationProvider>

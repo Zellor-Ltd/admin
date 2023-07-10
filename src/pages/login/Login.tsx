@@ -1,11 +1,33 @@
-import { Button, Card, Form, Input } from 'antd';
-import { useState } from 'react';
-import { RouteComponentProps } from 'react-router-dom';
-import { loginService } from 'services/DiscoClubService';
+import { Button, Col, Form, Image, Input, Row, Typography } from 'antd';
+import { AppContext } from 'contexts/AppContext';
+import { useContext, useEffect, useState } from 'react';
+import { fetchClient, loginService } from 'services/DiscoClubService';
+import { Link, RouteComponentProps } from 'react-router-dom';
 
 const Login: React.FC<RouteComponentProps> = props => {
   const { history } = props;
   const [loading, setLoading] = useState(false);
+  const { client, setClient } = useContext(AppContext);
+
+  /*   useEffect(() => {
+    if (
+      !client?.clientName ||
+      !client?.clientLink ||
+      !client?.currencyCode ||
+      !client?.jumpUrl ||
+      !client?.redirectUrl ||
+      !client?.shopName
+    )
+      history.push('/my-account');
+    else history.push('/');
+  }, [client]); */
+
+  const loadClientInfo = async () => {
+    const response: any = await fetchClient();
+    if (response.success) {
+      setClient(response.result.client);
+    }
+  };
 
   const onFinish = async (values: any) => {
     setLoading(true);
@@ -13,6 +35,7 @@ const Login: React.FC<RouteComponentProps> = props => {
       const response: any = await loginService(values);
       if (response.success) {
         localStorage.setItem('token', response.token);
+        /* loadClientInfo(); */
         history.push('/');
       }
     } catch (e) {}
@@ -24,34 +47,81 @@ const Login: React.FC<RouteComponentProps> = props => {
   };
 
   return (
-    <Card>
-      <Form
-        name="auth"
-        initialValues={{ remember: true }}
-        onFinish={onFinish}
-        onFinishFailed={onFinishFailed}
-      >
-        <Form.Item
-          label="Username"
-          name="user"
-          rules={[{ required: true, message: 'Please input your username!' }]}
-        >
-          <Input allowClear />
-        </Form.Item>
-        <Form.Item
-          label="Password"
-          name="pwd"
-          rules={[{ required: true, message: 'Please input your password!' }]}
-        >
-          <Input.Password allowClear />
-        </Form.Item>
-        <Form.Item>
-          <Button type="primary" htmlType="submit" loading={loading}>
-            Submit
-          </Button>
-        </Form.Item>
-      </Form>
-    </Card>
+    <>
+      <div className="external-wrapper">
+        <div className="external-container">
+          <Image
+            width="100%"
+            style={{ padding: '5% 10%' }}
+            src="/logo.svg"
+            preview={false}
+          />
+          <Typography.Title level={4}>
+            <strong>Sign in to your account</strong>
+          </Typography.Title>
+          <Form
+            name="auth"
+            layout="vertical"
+            className="mt-075"
+            initialValues={{ remember: true }}
+            onFinish={onFinish}
+            requiredMark={false}
+            onFinishFailed={onFinishFailed}
+          >
+            <Form.Item
+              label={<strong>Username</strong>}
+              name="user"
+              rules={[
+                { required: true, message: 'Please input your username!' },
+              ]}
+            >
+              <Input allowClear />
+            </Form.Item>
+            <Form.Item
+              label={<strong>Password</strong>}
+              name="pwd"
+              className="mb-05"
+              rules={[
+                { required: true, message: 'Please input your password!' },
+              ]}
+            >
+              <Input.Password allowClear />
+            </Form.Item>
+            <Row justify="end" style={{ alignItems: 'baseline' }}>
+              <Col className="mb-05">
+                <Typography.Text type="secondary">
+                  <strong>Forgot your password?</strong>
+                </Typography.Text>
+              </Col>
+              <Col span={24}>
+                <Form.Item className="mb-1">
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    style={{ background: 'rgb(48,86,211)', width: '100%' }}
+                    loading={loading}
+                  >
+                    Sign In
+                  </Button>
+                </Form.Item>
+              </Col>
+              <Col span={24} className="mb-1">
+                <Row justify="center">
+                  <Col>
+                    <Typography.Text type="secondary" className="mr-15">
+                      Don't have an account yet?
+                    </Typography.Text>
+                  </Col>
+                  <Col>
+                    <Link to="/sign-up">Sign Up</Link>
+                  </Col>
+                </Row>
+              </Col>
+            </Row>
+          </Form>
+        </div>
+      </div>
+    </>
   );
 };
 

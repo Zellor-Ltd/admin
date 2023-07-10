@@ -1187,3 +1187,13 @@ export const saveClientUser = (params: any) => {
 export const deleteClientUser = (id: any) => {
   return instance.delete(`Disco/Client/User/Delete/${id}`);
 };
+
+export const fetchClient = () => instance.get('Wi/Ep/ListClient');
+
+export const saveClient = (params: any) => {
+  if (params.id) {
+    return instance.post('Disco/Identity/Adm/UpdateClient', params);
+  } else {
+    return instance.put('Disco/Identity/Adm/AddClient', params);
+  }
+};
