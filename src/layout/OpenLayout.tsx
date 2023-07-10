@@ -12,14 +12,7 @@ const OpenLayout: React.FC<RouteComponentProps> = props => {
   const { isMobile } = useContext(AppContext);
 
   const appName = useBuildTarget({
-    ADMIN: (
-      <Image
-        width={150}
-        style={{ position: 'relative', inset: '-5px -10px' }}
-        src="/logowhite.svg"
-        preview={false}
-      />
-    ),
+    ADMIN: 'Disco Admin',
     BRAND_MANAGER: (
       <Image
         width={150}
