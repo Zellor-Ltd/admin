@@ -474,6 +474,23 @@ a,
   overflow: hidden;
 }
 
+.my-account-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.my-account {
+  background: rgb(240, 244, 255);
+  width: 314px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+}
+
 @media (max-width: 992px) {
   .br-buttons {
     position: fixed;
