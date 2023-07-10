@@ -1286,7 +1286,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                 </Form.Item>
               </Col>
               <Col span={24}>
-                <Form.Item label="Image">
+                <Form.Item label="Image" required>
                   <div
                     className={
                       _product ? (_product.image ? 'img-upload-div' : '') : ''
