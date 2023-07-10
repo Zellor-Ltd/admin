@@ -27,7 +27,13 @@ const AppRoute: React.FC<any> = props => {
     ...rest
   } = props;
   const authenticated = isAuthenticated();
-  if (!authenticated && path !== '/login' && path !== '/sign-up')
+  if (
+    !authenticated &&
+    path !== '/login' &&
+    path !== '/sign-up' &&
+    path !== '/verification' &&
+    path !== '/forgot-password'
+  )
     return <Redirect to="login" />;
   if (returnComponent) return Component;
   return (

@@ -6,6 +6,18 @@ const SignUp: React.FC<any> = () => {
   const history = useHistory();
   const [loading] = useState(false);
 
+  const onFinish = async (values: any) => {
+    try {
+      /* 
+      const response: any = await loginService(values);
+      if (response.success) {
+        localStorage.setItem('token', response.token);
+        /* loadClientInfo(); }
+     */
+      history.push('/verification');
+    } catch (e) {}
+  };
+
   const onFinishFailed = (errorInfo: any) => {
     console.log('Failed:', errorInfo);
   };
@@ -25,8 +37,9 @@ const SignUp: React.FC<any> = () => {
             name="client"
             layout="vertical"
             className="mt-1"
+            style={{ width: '100%' }}
             initialValues={undefined}
-            onFinish={() => console.log('hi')}
+            onFinish={onFinish}
             onFinishFailed={onFinishFailed}
             requiredMark={false}
           >
