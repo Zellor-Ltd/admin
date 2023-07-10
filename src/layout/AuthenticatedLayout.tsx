@@ -1,6 +1,15 @@
-import { Button, Col, Layout, message, Row, Typography } from 'antd';
+import {
+  Avatar,
+  Button,
+  Col,
+  Dropdown,
+  Image,
+  Layout,
+  Menu,
+  message,
+  Row,
+} from 'antd';
 import ErrorBoundary from 'components/ErrorBoundary';
-//import { Notifications } from 'components/Notifications';
 import jwt from 'helpers/jwt';
 import { useBuildTarget } from 'hooks/useBuildTarget';
 import ErrorPage from 'pages/error/ErrorPage';
@@ -10,6 +19,7 @@ import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 import './AuthenticatedLayout.scss';
 import AdminSideMenu from './SideMenus/AdminSideMenu';
 import BrandManagerSideMenu from './SideMenus/BrandManagerSideMenu';
+import { DownOutlined } from '@ant-design/icons';
 
 const { Header, Sider, Content } = Layout;
 
@@ -23,6 +33,7 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
     'settings',
     'playlist-studio',
     'sign-up',
+    'my-account',
   ];
   const [style, setStyle] = useState<any>({
     padding: '24 0',
@@ -44,7 +55,14 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
 
   const appName = useBuildTarget({
     ADMIN: 'Disco Admin',
-    BRAND_MANAGER: 'Client Portal',
+    BRAND_MANAGER: (
+      <Image
+        width={150}
+        style={{ position: 'relative', inset: '-5px -10px' }}
+        src="/logowhite.svg"
+        preview={false}
+      />
+    ),
   });
 
   const logout = () => {
@@ -61,6 +79,27 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
     }
   };
 
+  const menu = (
+    <Menu>
+      <Menu.Item key="0" style={{ pointerEvents: 'none' }}>
+        {getUserName()}
+      </Menu.Item>
+      <Menu.Divider />
+      {useBuildTarget({
+        ADMIN: undefined,
+        BRAND_MANAGER: (
+          <Menu.Item key="1">
+            <Link to="/my-account">My Account</Link>
+          </Menu.Item>
+        ),
+      })}
+      <Menu.Divider />
+      <Menu.Item key="3" onClick={logout}>
+        Sign out
+      </Menu.Item>
+    </Menu>
+  );
+
   return (
     <Layout>
       <Header className="header">
@@ -73,23 +112,27 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
             </small>
           </Link>
         </h2>
-        <Row style={{ width: '35%' }} justify="end" wrap={false}>
+        <Row style={{ width: '35%' }} justify="end" align="bottom" wrap={false}>
           <div>
             <Col xs={0} lg={24} style={{ textAlign: 'end' }}>
               {/* <Notifications /> */}
             </Col>
           </div>
           <div>
-            <Col xs={0} lg={24} style={{ textAlign: 'end' }}>
-              <Typography.Text style={{ color: 'white' }}>
-                {getUserName()}
-              </Typography.Text>
+            <Col span={24} style={{ textAlign: 'end' }}>
+              {getUserName()[0].toUpperCase()}
+              <Avatar className="ml-1" style={{ backgroundColor: 'white' }} />
+              <Dropdown overlay={menu} trigger={['click']}>
+                <Button
+                  type="text"
+                  style={{ fontSize: '20px' }}
+                  className="ant-dropdown-link"
+                  onClick={e => e.preventDefault()}
+                >
+                  <DownOutlined />
+                </Button>
+              </Dropdown>
             </Col>
-          </div>
-          <div>
-            <Button onClick={logout} type="link">
-              Logout
-            </Button>
           </div>
         </Row>
       </Header>

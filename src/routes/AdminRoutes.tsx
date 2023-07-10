@@ -55,6 +55,7 @@ import Playlists from 'pages/playlists/Playlists';
 import PlaylistStudio from 'pages/playlist-studio/PlaylistStudio';
 import ClientUsers from 'pages/client-users/ClientUsers';
 import SignUp from 'pages/sign-up/SignUp';
+import MyAccount from 'pages/my-account/MyAccount';
 
 function AdminRoutes() {
   return (
@@ -298,6 +299,11 @@ function AdminRoutes() {
       <AppRoute
         path="/playlist-studio"
         component={PlaylistStudio}
+        layout={AuthenticatedLayout}
+      />
+      <AppRoute
+        path="/my-account"
+        component={MyAccount}
         layout={AuthenticatedLayout}
       />
       {__isDev__ ? (

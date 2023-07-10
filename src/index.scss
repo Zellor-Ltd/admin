@@ -341,7 +341,12 @@ a,
   position: -webkit-sticky;
   z-index: 5;
   top: 0px;
-  background: rgb(234, 121, 170);
+  background: black;
+  color: white;
+}
+
+.ant-layout-header .ant-btn-text {
+  color: white;
 }
 
 .ant-btn-link {
