@@ -54,14 +54,7 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
   }, [isScrollable]);
 
   const appName = useBuildTarget({
-    ADMIN: (
-      <Image
-        width={150}
-        style={{ position: 'relative', inset: '-5px -10px' }}
-        src="/logowhite.svg"
-        preview={false}
-      />
-    ),
+    ADMIN: 'Disco Admin',
     BRAND_MANAGER: (
       <Image
         width={150}
@@ -93,11 +86,7 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
       </Menu.Item>
       <Menu.Divider />
       {useBuildTarget({
-        ADMIN: (
-          <Menu.Item key="1">
-            <Link to="/my-account">My Account</Link>
-          </Menu.Item>
-        ),
+        ADMIN: undefined,
         BRAND_MANAGER: (
           <Menu.Item key="1">
             <Link to="/my-account">My Account</Link>
