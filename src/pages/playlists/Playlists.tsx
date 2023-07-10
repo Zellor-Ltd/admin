@@ -251,7 +251,10 @@ const Playlists: React.FC<RouteComponentProps> = () => {
       dataIndex: 'id',
       width: '3%',
       render: id => (
-        <CopyValueToClipboard tooltipText="Copy Playlist ID" value={id} />
+        <CopyValueToClipboard
+          tooltipText="Copy Playlist ID"
+          value={id?.slice(0, -4).toUpperCase()}
+        />
       ),
       align: 'center',
     },
@@ -274,7 +277,9 @@ const Playlists: React.FC<RouteComponentProps> = () => {
       render: id => (
         <CopyValueToClipboard
           tooltipText="Copy Embed Code"
-          value={`<vlink-carousel src="${id?.slice(0, -4)}"></vlink-carousel>`}
+          value={`<script src="https://beautybuzz.io/script/ce/vlink-ce.js"></script>
+                  <vlink-carousel src=${id?.slice(0, -4)} size="1">
+                  </vlink-carousel>`}
         />
       ),
       align: 'center',
@@ -431,7 +436,10 @@ const Playlists: React.FC<RouteComponentProps> = () => {
       dataIndex: 'id',
       width: '3%',
       render: id => (
-        <CopyValueToClipboard tooltipText="Copy Playlist ID" value={id} />
+        <CopyValueToClipboard
+          tooltipText="Copy Playlist ID"
+          value={id?.slice(0, -4).toUpperCase()}
+        />
       ),
       align: 'center',
     },
@@ -454,7 +462,9 @@ const Playlists: React.FC<RouteComponentProps> = () => {
       render: id => (
         <CopyValueToClipboard
           tooltipText="Copy Embed Code"
-          value={`<vlink-carousel src="${id?.slice(0, -4)}"></vlink-carousel>`}
+          value={`<script src="https://beautybuzz.io/script/ce/vlink-ce.js"></script>
+                  <vlink-carousel src=${id?.slice(0, -4)} size="1">
+                  </vlink-carousel>`}
         />
       ),
       align: 'center',
@@ -611,7 +621,10 @@ const Playlists: React.FC<RouteComponentProps> = () => {
       dataIndex: 'id',
       width: '3%',
       render: id => (
-        <CopyValueToClipboard tooltipText="Copy Playlist ID" value={id} />
+        <CopyValueToClipboard
+          tooltipText="Copy Playlist ID"
+          value={id?.slice(0, -4).toUpperCase()}
+        />
       ),
       align: 'center',
     },
@@ -635,10 +648,9 @@ const Playlists: React.FC<RouteComponentProps> = () => {
         <Tooltip title="Copy embed code">
           <CopyValueToClipboard
             tooltipText="Copy Embed Code"
-            value={`<vlink-carousel src="${id?.slice(
-              0,
-              -4
-            )}"></vlink-carousel>`}
+            value={`<script src="https://beautybuzz.io/script/ce/vlink-ce.js"></script>
+                    <vlink-carousel src=${id?.slice(0, -4)} size="1">
+                    </vlink-carousel>`}
           />
         </Tooltip>
       ),
@@ -815,7 +827,10 @@ const Playlists: React.FC<RouteComponentProps> = () => {
       dataIndex: 'id',
       width: '3%',
       render: id => (
-        <CopyValueToClipboard tooltipText="Copy Playlist ID" value={id} />
+        <CopyValueToClipboard
+          tooltipText="Copy Playlist ID"
+          value={id?.slice(0, -4).toUpperCase()}
+        />
       ),
       align: 'center',
     },
@@ -838,7 +853,9 @@ const Playlists: React.FC<RouteComponentProps> = () => {
       render: id => (
         <CopyValueToClipboard
           tooltipText="Copy Embed Code"
-          value={`<vlink-carousel src="${id?.slice(0, -4)}"></vlink-carousel>`}
+          value={`<script src="https://beautybuzz.io/script/ce/vlink-ce.js"></script>
+                  <vlink-carousel src=${id?.slice(0, -4)} size="1">
+                  </vlink-carousel>`}
         />
       ),
       align: 'center',
@@ -994,7 +1011,10 @@ const Playlists: React.FC<RouteComponentProps> = () => {
       dataIndex: 'id',
       width: '3%',
       render: id => (
-        <CopyValueToClipboard tooltipText="Copy Playlist ID" value={id} />
+        <CopyValueToClipboard
+          tooltipText="Copy Playlist ID"
+          value={id?.slice(0, -4).toUpperCase()}
+        />
       ),
       align: 'center',
     },
