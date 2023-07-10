@@ -14,7 +14,12 @@ const SignUp: React.FC<any> = () => {
     <>
       <div className="external-wrapper">
         <div className="external-container">
-          <Image width="100%" style={{ padding: '5% 10%' }} src="/logo.svg" />
+          <Image
+            width="100%"
+            style={{ padding: '5% 10%' }}
+            src="/logo.svg"
+            preview={false}
+          />
           <Typography.Title level={3}>Sign Up</Typography.Title>
           <Form
             name="client"

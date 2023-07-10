@@ -83,8 +83,8 @@ const MyAccount: React.FC<any> = () => {
     <>
       {client && (
         <>
-          <div className="my-account-container">
-            <div className="my-account">
+          <div className="external-wrapper">
+            <div className="external-container">
               <Image
                 width="100%"
                 style={{ padding: '10% 10% 0 10%' }}

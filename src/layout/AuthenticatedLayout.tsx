@@ -1,4 +1,14 @@
-import { Button, Col, Dropdown, Layout, Menu, message, Row } from 'antd';
+import {
+  Avatar,
+  Button,
+  Col,
+  Dropdown,
+  Image,
+  Layout,
+  Menu,
+  message,
+  Row,
+} from 'antd';
 import ErrorBoundary from 'components/ErrorBoundary';
 import jwt from 'helpers/jwt';
 import { useBuildTarget } from 'hooks/useBuildTarget';
@@ -9,7 +19,7 @@ import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 import './AuthenticatedLayout.scss';
 import AdminSideMenu from './SideMenus/AdminSideMenu';
 import BrandManagerSideMenu from './SideMenus/BrandManagerSideMenu';
-import { UserOutlined } from '@ant-design/icons';
+import { DownOutlined } from '@ant-design/icons';
 
 const { Header, Sider, Content } = Layout;
 
@@ -44,8 +54,22 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
   }, [isScrollable]);
 
   const appName = useBuildTarget({
-    ADMIN: 'Disco Admin',
-    BRAND_MANAGER: 'Client Portal',
+    ADMIN: (
+      <Image
+        width={150}
+        style={{ position: 'relative', inset: '-5px -10px' }}
+        src="/logowhite.svg"
+        preview={false}
+      />
+    ),
+    BRAND_MANAGER: (
+      <Image
+        width={150}
+        style={{ position: 'relative', inset: '-5px -10px' }}
+        src="/logowhite.svg"
+        preview={false}
+      />
+    ),
   });
 
   const logout = () => {
@@ -69,7 +93,11 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
       </Menu.Item>
       <Menu.Divider />
       {useBuildTarget({
-        ADMIN: undefined,
+        ADMIN: (
+          <Menu.Item key="1">
+            <Link to="/my-account">My Account</Link>
+          </Menu.Item>
+        ),
         BRAND_MANAGER: (
           <Menu.Item key="1">
             <Link to="/my-account">My Account</Link>
@@ -78,7 +106,7 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
       })}
       <Menu.Divider />
       <Menu.Item key="3" onClick={logout}>
-        Log out
+        Sign out
       </Menu.Item>
     </Menu>
   );
@@ -103,6 +131,8 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
           </div>
           <div>
             <Col span={24} style={{ textAlign: 'end' }}>
+              {getUserName()[0].toUpperCase()}
+              <Avatar className="ml-1" style={{ backgroundColor: 'white' }} />
               <Dropdown overlay={menu} trigger={['click']}>
                 <Button
                   type="text"
@@ -110,7 +140,7 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
                   className="ant-dropdown-link"
                   onClick={e => e.preventDefault()}
                 >
-                  <UserOutlined />
+                  <DownOutlined />
                 </Button>
               </Dropdown>
             </Col>

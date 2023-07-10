@@ -50,7 +50,12 @@ const Login: React.FC<RouteComponentProps> = props => {
     <>
       <div className="external-wrapper">
         <div className="external-container">
-          <Image width="100%" style={{ padding: '5% 10%' }} src="/logo.svg" />
+          <Image
+            width="100%"
+            style={{ padding: '5% 10%' }}
+            src="/logo.svg"
+            preview={false}
+          />
           <Typography.Title level={4}>
             <strong>Sign in to your account</strong>
           </Typography.Title>
