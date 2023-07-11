@@ -18,8 +18,8 @@ import { AppContext } from 'contexts/AppContext';
 import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 import './AuthenticatedLayout.scss';
 import AdminSideMenu from './SideMenus/AdminSideMenu';
-import BrandManagerSideMenu from './SideMenus/BrandManagerSideMenu';
 import { DownOutlined } from '@ant-design/icons';
+import ClientMenu from './ClientMenu';
 
 const { Header, Sider, Content } = Layout;
 
@@ -28,7 +28,7 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
   const { children, history, location } = props;
   const scrollable = [
     'dashboard',
-    'brand-dashboard',
+    'client-dashboard',
     'access-control',
     'settings',
     'playlist-studio',
@@ -39,6 +39,7 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
     padding: '24 0',
     minHeight: 280,
     overflow: 'scroll',
+    width: '100%',
   });
 
   useEffect(() => {
@@ -49,8 +50,19 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
 
   useEffect(() => {
     if (isScrollable)
-      setStyle({ padding: '24 0', minHeight: 280, overflow: 'scroll' });
-    else setStyle({ padding: '24 0', minHeight: 280, overflow: 'clip' });
+      setStyle({
+        padding: '24 0',
+        minHeight: 280,
+        overflow: 'scroll',
+        width: '100%',
+      });
+    else
+      setStyle({
+        padding: '24 0',
+        minHeight: 280,
+        overflow: 'clip',
+        width: '100%',
+      });
   }, [isScrollable]);
 
   const appName = useBuildTarget({
@@ -137,14 +149,27 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
         </Row>
       </Header>
       <Layout>
-        <div className="sider-container">
-          <Sider breakpoint="lg" collapsedWidth="0">
-            {useBuildTarget({
-              ADMIN: <AdminSideMenu isMobile={isMobile} />,
-              BRAND_MANAGER: <BrandManagerSideMenu />,
-            })}
-          </Sider>
-        </div>
+        {useBuildTarget({
+          ADMIN: undefined,
+          BRAND_MANAGER: (
+            <Row style={{ width: '100%' }}>
+              <Col span={24}>
+                <ClientMenu />
+              </Col>
+            </Row>
+          ),
+        })}
+        {useBuildTarget({
+          ADMIN: (
+            <div className="sider-container">
+              <Sider breakpoint="lg" collapsedWidth="0">
+                <AdminSideMenu isMobile={isMobile} />
+              </Sider>
+            </div>
+          ),
+          BRAND_MANAGER: undefined,
+        })}
+
         <Content className="site-layout-background" style={style}>
           <ErrorBoundary fallbackComponent={ErrorPage()}>
             {children}

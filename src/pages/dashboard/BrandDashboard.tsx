@@ -17,7 +17,7 @@ import {
   SearchOutlined,
   TeamOutlined,
 } from '@ant-design/icons';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { fetchStats } from 'services/DiscoClubService';
 import '@ant-design/flowchart/dist/index.css';
 import { Area } from '@ant-design/plots';
@@ -30,6 +30,7 @@ import { Brand } from 'interfaces/Brand';
 import { Creator } from 'interfaces/Creator';
 import moment from 'moment';
 import { ResponsiveBar } from '@nivo/bar';
+import { AppContext } from 'contexts/AppContext';
 
 interface DashboardProps {}
 
@@ -46,6 +47,7 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
   const [period, setPeriod] = useState<string>('Today');
   const titleFocused = useRef<boolean>(false);
   const titleSelectionEnd = useRef<number>();
+  const { isMobile } = useContext(AppContext);
 
   useEffect(() => {
     getStats();
@@ -682,7 +684,7 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
       <Row
         gutter={[8, 8]}
         align="bottom"
-        justify="space-around"
+        justify={isMobile ? 'start' : 'center'}
         className="mb-1 mx-2"
       >
         <Col span={23} className="my-2">
@@ -748,35 +750,35 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
           </Row>
           <VideoGraph />
         </Col>
-        <Col lg={4} xs={24}>
+        <Col lg={4} xs={8}>
           <DashCard
             icon={<TeamOutlined />}
             title="Widget Impressions"
             number={stats?.totalWidgetImpressions}
           />
         </Col>
-        <Col lg={4} xs={24}>
+        <Col lg={4} xs={8}>
           <DashCard
             icon={<AppstoreOutlined />}
             title="Widget Interactions"
             number={2504}
           />
         </Col>
-        <Col lg={4} xs={24}>
+        <Col lg={4} xs={8}>
           <DashCard
             icon={<PlayCircleOutlined />}
             title="Video Plays"
             number={stats?.totalVideoViews}
           />
         </Col>
-        <Col lg={4} xs={24}>
+        <Col xs={{ span: 10, offset: 2 }} lg={{ span: 4, offset: 0 }}>
           <DashCard
             icon={<PlayCircleOutlined />}
             title="Avg Watch Time / Session"
             number={stats?.avgWatchTime}
           />
         </Col>
-        <Col lg={4} xs={24}>
+        <Col xs={10} lg={4}>
           <DashCard
             icon={<DropboxOutlined />}
             title="Product Clicks"
