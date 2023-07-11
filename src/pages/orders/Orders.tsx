@@ -282,9 +282,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       </div>
     ),
     filterIcon: (filtered: any) => (
-      <SearchOutlined
-        style={{ color: filtered ? 'rgb(245,203,221)' : undefined }}
-      />
+      <SearchOutlined style={{ color: filtered ? '#212427' : undefined }} />
     ),
     onFilter: (value: any, record: any) => {
       const fan = getFan(record.userid);

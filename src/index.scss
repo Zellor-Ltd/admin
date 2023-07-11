@@ -6,16 +6,14 @@ body {
 }
 
 a,
-.ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
-  color: rgb(56 19 38 / 64%) !important;
-}
-
+.ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn,
+.ant-menu-submenu-selected,
 .ant-layout-sider-children
   .ant-menu
   .ant-menu-item
   span.ant-menu-title-content
   a {
-  color: rgb(245, 203, 221) !important;
+  color: rgb(185, 187, 189) !important;
 }
 
 .site-layout-background {
@@ -28,16 +26,16 @@ a,
 
 .ant-layout-sider-children {
   height: calc(100vh - 56px) !important;
-  background: rgb(234, 121, 170) !important;
+  background: #212427 !important;
 }
 
 .ant-menu.ant-menu-dark {
-  background: rgb(234, 121, 170);
+  background: #212427;
 }
 
 .ant-menu-dark.ant-menu-dark:not(.ant-menu-horizontal) .ant-menu-item-selected,
 .ant-menu-dark .ant-menu-inline.ant-menu-sub {
-  background-color: rgb(245 203 221 / 48%);
+  background-color: #2124279e;
 }
 
 .w-100,
@@ -248,7 +246,7 @@ a,
 }
 
 .carousel-focus {
-  border: 0.4px solid rgb(245, 203, 221);
+  border: 0.4px solid #2124279e;
 }
 
 .custom-link-item p {
@@ -350,7 +348,7 @@ a,
 }
 
 .ant-btn-link {
-  color: rgb(245, 203, 221);
+  color: #2124279e;
 }
 
 .ant-btn-primary,
@@ -365,8 +363,8 @@ a,
     .ant-radio-button-wrapper-disabled
   ):active::before,
 .ant-tabs-ink-bar {
-  border-color: rgb(56 19 38 / 64%);
-  background: rgb(56 19 38 / 64%);
+  border-color: #212427;
+  background: #212427;
 }
 
 .batch-process {
@@ -448,11 +446,11 @@ a,
 }
 
 #components-table-demo-drag-sorting tr.drop-over-downward td {
-  border-bottom: 2px dashed rgb(245, 203, 221);
+  border-bottom: 2px dashed #2124279e;
 }
 
 #components-table-demo-drag-sorting tr.drop-over-upward td {
-  border-top: 2px dashed rgb(245, 203, 221);
+  border-top: 2px dashed #2124279e;
 }
 
 .ant-upload-picture-card-wrapper {
@@ -464,7 +462,7 @@ a,
 }
 
 .instalink-input {
-  color: rgb(245, 203, 221);
+  color: #2124279e;
   text-decoration: none;
   background-color: transparent;
   outline: none;

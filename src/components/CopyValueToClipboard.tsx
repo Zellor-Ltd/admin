@@ -19,7 +19,7 @@ export default function CopyValueToClipboard({
           type="link"
           style={{
             borderWidth: '1px',
-            borderColor: 'rgb(245,203,221)',
+            borderColor: '#212427',
             borderStyle: 'solid',
             width: '36px',
             padding: '0px 6px',
