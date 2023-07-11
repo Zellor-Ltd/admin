@@ -1,18 +1,27 @@
-import { FundOutlined, LinkOutlined, MenuOutlined } from '@ant-design/icons';
-import { Col, Dropdown, Image, Menu, Row, Tooltip } from 'antd';
+import { MenuOutlined } from '@ant-design/icons';
+import {
+  Button,
+  Col,
+  Dropdown,
+  Image,
+  Menu,
+  Row,
+  Tooltip,
+  Typography,
+} from 'antd';
 import { useState } from 'react';
-import { Link, useHistory, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const ClientMenu = () => {
-  const history = useHistory();
   const [hoveredMenuItem, setHoveredMenuItem] = useState<string>();
-  const [, pathname] = useLocation().pathname.split('/');
-  const refreshParent = (path: string) => {
-    if (pathname === path) history.go(0);
-  };
+  const [isFocusing, setIsFocusing] = useState(false);
 
   const clientMenuItems = (
-    <Menu>
+    <Menu
+      style={{ position: 'relative', top: '0.75rem' }}
+      onMouseEnter={() => setIsFocusing(true)}
+      onMouseLeave={() => setIsFocusing(false)}
+    >
       <Menu.Item>
         <Link
           to="/client-dashboard"
@@ -21,25 +30,25 @@ const ClientMenu = () => {
           Analytics
         </Link>
       </Menu.Item>
-      <Menu.Item disabled>
-        <a
-          target="_blank"
-          rel="noopener noreferrer"
-          href="."
-          onMouseOver={() => setHoveredMenuItem('Product Catalogue')}
-        >
-          Product Catalogue
-        </a>
+      <Menu.Item>
+        <Typography.Text type="secondary">
+          <p
+            style={{ display: 'inline' }}
+            onMouseEnter={() => setHoveredMenuItem('Product Catalogue')}
+          >
+            Product Catalogue
+          </p>
+        </Typography.Text>
       </Menu.Item>
-      <Menu.Item disabled>
-        <a
-          target="_blank"
-          rel="noopener noreferrer"
-          href="."
-          onMouseOver={() => setHoveredMenuItem('Video Library')}
-        >
-          Video Library
-        </a>
+      <Menu.Item>
+        <Typography.Text type="secondary">
+          <p
+            style={{ display: 'inline' }}
+            onMouseEnter={() => setHoveredMenuItem('Video Library')}
+          >
+            Video Library
+          </p>
+        </Typography.Text>
       </Menu.Item>
       <Menu.Item>
         <Link
@@ -62,13 +71,13 @@ const ClientMenu = () => {
           alignItems: 'center',
         }}
       >
-        <Dropdown overlay={clientMenuItems}>
-          <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
-            <Tooltip title={hoveredMenuItem} placement="right">
-              <MenuOutlined style={{ fontSize: '1.5rem', color: 'white' }} />
-            </Tooltip>
-          </a>
-        </Dropdown>
+        <Tooltip title={hoveredMenuItem} placement="right" visible={isFocusing}>
+          <Dropdown overlay={clientMenuItems} trigger={['click']}>
+            <Button className="ant-dropdown-link" type="text">
+              <MenuOutlined style={{ fontSize: '1.75rem', color: 'white' }} />
+            </Button>
+          </Dropdown>
+        </Tooltip>
       </Col>
       <Col span={22}>
         <Row justify="center">

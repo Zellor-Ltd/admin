@@ -28,7 +28,7 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
   const { children, history, location } = props;
   const scrollable = [
     'dashboard',
-    'brand-dashboard',
+    'client-dashboard',
     'access-control',
     'settings',
     'playlist-studio',
@@ -39,6 +39,7 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
     padding: '24 0',
     minHeight: 280,
     overflow: 'scroll',
+    width: '100%',
   });
 
   useEffect(() => {
@@ -49,19 +50,23 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
 
   useEffect(() => {
     if (isScrollable)
-      setStyle({ padding: '24 0', minHeight: 280, overflow: 'scroll' });
-    else setStyle({ padding: '24 0', minHeight: 280, overflow: 'clip' });
+      setStyle({
+        padding: '24 0',
+        minHeight: 280,
+        overflow: 'scroll',
+        width: '100%',
+      });
+    else
+      setStyle({
+        padding: '24 0',
+        minHeight: 280,
+        overflow: 'clip',
+        width: '100%',
+      });
   }, [isScrollable]);
 
   const appName = useBuildTarget({
-    ADMIN: (
-      <Image
-        width={150}
-        style={{ position: 'relative', inset: '-5px -10px' }}
-        src="/logowhite.svg"
-        preview={false}
-      />
-    ),
+    ADMIN: 'Disco Admin',
     BRAND_MANAGER: (
       <Image
         width={150}
@@ -93,11 +98,7 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
       </Menu.Item>
       <Menu.Divider />
       {useBuildTarget({
-        ADMIN: (
-          <Menu.Item key="1">
-            <Link to="/my-account">My Account</Link>
-          </Menu.Item>
-        ),
+        ADMIN: undefined,
         BRAND_MANAGER: (
           <Menu.Item key="1">
             <Link to="/my-account">My Account</Link>
@@ -148,14 +149,27 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
         </Row>
       </Header>
       <Layout>
-        <Row style={{ width: '100%' }}>
-          <Col span={24}>
-            {useBuildTarget({
-              ADMIN: <ClientMenu />,
-              BRAND_MANAGER: <ClientMenu />,
-            })}
-          </Col>
-        </Row>
+        {useBuildTarget({
+          ADMIN: undefined,
+          BRAND_MANAGER: (
+            <Row style={{ width: '100%' }}>
+              <Col span={24}>
+                <ClientMenu />
+              </Col>
+            </Row>
+          ),
+        })}
+        {useBuildTarget({
+          ADMIN: (
+            <div className="sider-container">
+              <Sider breakpoint="lg" collapsedWidth="0">
+                <AdminSideMenu isMobile={isMobile} />
+              </Sider>
+            </div>
+          ),
+          BRAND_MANAGER: undefined,
+        })}
+
         <Content className="site-layout-background" style={style}>
           <ErrorBoundary fallbackComponent={ErrorPage()}>
             {children}
