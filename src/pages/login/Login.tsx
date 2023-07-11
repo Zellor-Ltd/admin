@@ -1,13 +1,12 @@
 import { Button, Col, Form, Image, Input, Row, Typography } from 'antd';
-import { AppContext } from 'contexts/AppContext';
-import { useContext, useEffect, useState } from 'react';
-import { fetchClient, loginService } from 'services/DiscoClubService';
+import { useState } from 'react';
+import { loginService } from 'services/DiscoClubService';
 import { Link, RouteComponentProps } from 'react-router-dom';
 
 const Login: React.FC<RouteComponentProps> = props => {
   const { history } = props;
   const [loading, setLoading] = useState(false);
-  const { client, setClient } = useContext(AppContext);
+  //  const { client, setClient } = useContext(AppContext);
 
   /*   useEffect(() => {
     if (
@@ -22,12 +21,12 @@ const Login: React.FC<RouteComponentProps> = props => {
     else history.push('/');
   }, [client]); */
 
-  const loadClientInfo = async () => {
+  /*   const loadClientInfo = async () => {
     const response: any = await fetchClient();
     if (response.success) {
       setClient(response.result.client);
     }
-  };
+  }; */
 
   const onFinish = async (values: any) => {
     setLoading(true);
@@ -89,9 +88,7 @@ const Login: React.FC<RouteComponentProps> = props => {
             </Form.Item>
             <Row justify="end" style={{ alignItems: 'baseline' }}>
               <Col className="mb-05">
-                <Typography.Text type="secondary">
-                  <strong>Forgot your password?</strong>
-                </Typography.Text>
+                <Link to="/forgot-password">Forgot your password?</Link>
               </Col>
               <Col span={24}>
                 <Form.Item className="mb-1">

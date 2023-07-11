@@ -56,6 +56,8 @@ import PlaylistStudio from 'pages/playlist-studio/PlaylistStudio';
 import ClientUsers from 'pages/client-users/ClientUsers';
 import SignUp from 'pages/sign-up/SignUp';
 import MyAccount from 'pages/my-account/MyAccount';
+import ForgotPassword from 'pages/login/ForgotPassword';
+import VerificationCode from 'pages/login/VerificationCode';
 
 function AdminRoutes() {
   return (
@@ -73,6 +75,16 @@ function AdminRoutes() {
       />
       <AppRoute path="/sign-up" component={SignUp} layout={OpenLayout} />
       <AppRoute path="/login" component={Login} layout={OpenLayout} />
+      <AppRoute
+        path="/forgot-password"
+        component={ForgotPassword}
+        layout={OpenLayout}
+      />
+      <AppRoute
+        path="/verification"
+        component={VerificationCode}
+        layout={OpenLayout}
+      />
       <AppRoute
         path="/variant-groups"
         component={VariantGroups}
