@@ -6,27 +6,6 @@ import { Link, RouteComponentProps } from 'react-router-dom';
 const Login: React.FC<RouteComponentProps> = props => {
   const { history } = props;
   const [loading, setLoading] = useState(false);
-  //  const { client, setClient } = useContext(AppContext);
-
-  /*   useEffect(() => {
-    if (
-      !client?.clientName ||
-      !client?.clientLink ||
-      !client?.currencyCode ||
-      !client?.jumpUrl ||
-      !client?.redirectUrl ||
-      !client?.shopName
-    )
-      history.push('/my-account');
-    else history.push('/');
-  }, [client]); */
-
-  /*   const loadClientInfo = async () => {
-    const response: any = await fetchClient();
-    if (response.success) {
-      setClient(response.result.client);
-    }
-  }; */
 
   const onFinish = async (values: any) => {
     setLoading(true);
