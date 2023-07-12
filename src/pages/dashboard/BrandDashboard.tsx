@@ -47,26 +47,6 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
   const titleFocused = useRef<boolean>(false);
   const titleSelectionEnd = useRef<number>();
   const { isMobile } = useContext(AppContext);
-  const [widgetInteractions, setWidgetInteractions] = useState<number>();
-  const [widgetInteractionsPerc, setWidgetInteractionsPerc] =
-    useState<number>();
-
-  useEffect(() => {
-    if (stats) {
-      setWidgetInteractions(
-        stats?.totalWidgetImpressions ??
-          0 + stats?.totalVideoViews ??
-          0 + stats?.totalProductClicks ??
-          0
-      );
-      setWidgetInteractionsPerc(
-        (stats?.totalWidgetImpressionsPerc ??
-          0 + stats?.totalVideoViewsPerc ??
-          0 + stats?.totalProductClicksPerc ??
-          0) / 3
-      );
-    }
-  }, [stats]);
 
   useEffect(() => {
     getStats();
@@ -722,8 +702,8 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
           <DashCard
             icon={<AppstoreOutlined />}
             title="Widget Interactions"
-            number={widgetInteractions}
-            percentage={widgetInteractionsPerc?.toFixed(2)}
+            number={stats?.totalWidgetInteractions ?? 0}
+            percentage={stats?.totalWidgetInteractionsPerc?.toFixed(2) ?? 0}
           />
         </Col>
         <Col lg={4} xs={8}>
