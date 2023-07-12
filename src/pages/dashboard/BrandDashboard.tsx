@@ -20,7 +20,6 @@ import {
 import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { fetchStats } from 'services/DiscoClubService';
 import '@ant-design/flowchart/dist/index.css';
-import { Area } from '@ant-design/plots';
 import Meta from 'antd/lib/card/Meta';
 import { ColumnsType } from 'antd/lib/table';
 import SimpleSelect from 'components/select/SimpleSelect';
@@ -256,32 +255,32 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
   };
 
   const DashCard = ({ icon, title, number, percentage }) => (
-    <Card style={{ width: '100%', height: 175 }}>
-      <Meta
-        title={
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'bottom',
-            }}
-            className="mb-1"
-          >
-            <div style={{ width: '50px' }}>
-              <Avatar
-                className="mr-1"
-                shape="square"
-                size="large"
-                icon={icon}
-              />
-            </div>
+    <Tooltip title={title} placement="topRight">
+      <Card style={{ width: '100%', height: 175 }}>
+        <Meta
+          title={
             <div
               style={{
-                width: '100%',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'bottom',
               }}
+              className="mb-1"
             >
-              <div>
-                <Tooltip title={title}>
+              <div style={{ width: '50px' }}>
+                <Avatar
+                  className="mr-1"
+                  shape="square"
+                  size="large"
+                  icon={icon}
+                />
+              </div>
+              <div
+                style={{
+                  width: '100%',
+                }}
+              >
+                <div>
                   {title}
                   <p
                     style={{
@@ -292,40 +291,40 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
                   >
                     {period}
                   </p>
-                </Tooltip>
+                </div>
               </div>
             </div>
-          </div>
-        }
-        description={
-          <div style={{ width: '100%' }}>
-            <p>
-              <strong
-                className="mr-05"
-                style={{ fontSize: '2rem', color: 'black' }}
-              >
-                {number}
-              </strong>
-              <br />
-              {percentage && (
-                <>
-                  {percentage.toString()[0] !== '-' && (
-                    <Typography.Text type="success">
-                      {percentage}
-                    </Typography.Text>
-                  )}
-                  {percentage.toString()[0] === '-' && (
-                    <Typography.Text type="danger">
-                      {percentage}
-                    </Typography.Text>
-                  )}
-                </>
-              )}
-            </p>
-          </div>
-        }
-      />
-    </Card>
+          }
+          description={
+            <div style={{ width: '100%' }}>
+              <p>
+                <strong
+                  className="mr-05"
+                  style={{ fontSize: '2rem', color: 'black' }}
+                >
+                  {number}
+                </strong>
+                <br />
+                {percentage && (
+                  <>
+                    {percentage.toString()[0] !== '-' && (
+                      <Typography.Text type="success">
+                        +{percentage}%
+                      </Typography.Text>
+                    )}
+                    {percentage.toString()[0] === '-' && (
+                      <Typography.Text type="danger">
+                        {percentage}%
+                      </Typography.Text>
+                    )}
+                  </>
+                )}
+              </p>
+            </div>
+          }
+        />
+      </Card>
+    </Tooltip>
   );
 
   const columns: ColumnsType<any> = [
@@ -649,7 +648,7 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
         className="mb-1 mx-2"
       >
         <Col span={23} className="my-2">
-          <Row justify="space-between" align="bottom">
+          <Row justify="space-around" align="bottom">
             <Col>
               <Typography.Title level={3}>ENGAGEMENT</Typography.Title>
             </Col>

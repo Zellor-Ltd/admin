@@ -70,6 +70,11 @@ function AdminRoutes() {
         component={<Redirect to="/dashboard" />}
       />
       <AppRoute
+        path="/client-dashboard"
+        component={BrandDashboard}
+        layout={AuthenticatedLayout}
+      />
+      <AppRoute
         path="/dashboard"
         component={Dashboard}
         layout={AuthenticatedLayout}
