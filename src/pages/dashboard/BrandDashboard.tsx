@@ -48,6 +48,26 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
   const titleFocused = useRef<boolean>(false);
   const titleSelectionEnd = useRef<number>();
   const { isMobile } = useContext(AppContext);
+  const [widgetInteractions, setWidgetInteractions] = useState<number>();
+  const [widgetInteractionsPerc, setWidgetInteractionsPerc] =
+    useState<number>();
+
+  useEffect(() => {
+    if (stats) {
+      setWidgetInteractions(
+        stats?.totalWidgetImpressions ??
+          0 + stats?.totalVideoViews ??
+          0 + stats?.totalProductClicks ??
+          0
+      );
+      setWidgetInteractionsPerc(
+        (stats?.totalWidgetImpressionsPerc ??
+          0 + stats?.totalVideoViewsPerc ??
+          0 + stats?.totalProductClicksPerc ??
+          0) / 3
+      );
+    }
+  }, [stats]);
 
   useEffect(() => {
     getStats();
@@ -147,8 +167,7 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
             legend: null,
             legendPosition: 'middle',
             legendOffset: 32,
-            format: d =>
-              `${d.slice(6, 8) + '/' + d.slice(4, 6) + '/' + d.slice(0, 4)}`,
+            format: d => `${d.slice(6, 8) + '/' + d.slice(4, 6)}`,
           }}
           axisLeft={{
             tickSize: 5,
@@ -236,8 +255,8 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
     );
   };
 
-  const DashCard = ({ icon, title, number }) => (
-    <Card style={{ width: '100%', height: 150 }}>
+  const DashCard = ({ icon, title, number, percentage }) => (
+    <Card style={{ width: '100%', height: 175 }}>
       <Meta
         title={
           <div
@@ -287,76 +306,27 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
               >
                 {number}
               </strong>
+              <br />
+              {percentage && (
+                <>
+                  {percentage.toString()[0] !== '-' && (
+                    <Typography.Text type="success">
+                      {percentage}
+                    </Typography.Text>
+                  )}
+                  {percentage.toString()[0] === '-' && (
+                    <Typography.Text type="danger">
+                      {percentage}
+                    </Typography.Text>
+                  )}
+                </>
+              )}
             </p>
           </div>
         }
       />
     </Card>
   );
-
-  const TableGraph = () => {
-    const data = [
-      {
-        date: '20230605',
-        number: 2850,
-      },
-
-      {
-        date: '20230607',
-        number: 3000,
-      },
-
-      {
-        date: '20230610',
-        number: 2000,
-      },
-
-      {
-        date: '20230616',
-        number: 3500,
-      },
-
-      {
-        date: '20230620',
-        number: 2500,
-      },
-
-      {
-        date: '20230622',
-        number: 2900,
-      },
-
-      {
-        date: '20230624',
-        number: 2500,
-      },
-
-      {
-        date: '20230626',
-        number: 2700,
-      },
-    ];
-    const config = {
-      data,
-      padding: 'auto' as any,
-      xField: 'date',
-      yField: 'number',
-      smooth: true,
-      meta: {
-        number: {
-          min: 1000,
-          max: 4000,
-        },
-      },
-      date: {
-        formatter: (value: string) => {
-          return `${value.slice(6, 8) + '/' + value.slice(4, 6)}`;
-        },
-      },
-    };
-
-    return <Area height={50} {...config} />;
-  };
 
   const columns: ColumnsType<any> = [
     {
@@ -486,7 +456,7 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
           </div>
         </div>
       ),
-      dataIndex: 'views',
+      dataIndex: 'videoPlays',
       width: '10%',
       align: 'center',
       sorter: (a, b): any => {
@@ -510,7 +480,7 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
           </div>
         </div>
       ),
-      dataIndex: 'Product Clicks',
+      dataIndex: 'productClicks',
       width: '10%',
       align: 'center',
       sorter: (a, b): any => {
@@ -535,24 +505,15 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
           </div>
         </div>
       ),
-      dataIndex: 'totalWatchTime',
+      dataIndex: 'totalWatchTimeLabel',
       width: '10%',
       align: 'center',
       sorter: (a, b): any => {
-        if (a.totalWatchTime && b.totalWatchTime)
-          return a.totalWatchTime - b.totalWatchTime;
-        else if (a.totalWatchTime) return -1;
-        else if (b.totalWatchTime) return 1;
+        if (a.totalWatchTimeLabel && b.totalWatchTimeLabel)
+          return a.totalWatchTimeLabel - b.totalWatchTimeLabel;
+        else if (a.totalWatchTimeLabel) return -1;
+        else if (b.totalWatchTimeLabel) return 1;
         else return 0;
-      },
-    },
-    {
-      title: '',
-      dataIndex: 'name',
-      width: '30%',
-      align: 'center',
-      render: () => {
-        return <TableGraph />;
       },
     },
   ];
@@ -684,7 +645,7 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
       <Row
         gutter={[8, 8]}
         align="bottom"
-        justify={isMobile ? 'start' : 'center'}
+        justify={isMobile ? 'start' : 'space-around'}
         className="mb-1 mx-2"
       >
         <Col span={23} className="my-2">
@@ -754,35 +715,40 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
           <DashCard
             icon={<TeamOutlined />}
             title="Widget Impressions"
-            number={stats?.totalWidgetImpressions}
+            number={stats?.totalWidgetImpressions ?? 0}
+            percentage={stats?.totalWidgetImpressionsPerc.toFixed(2) ?? 0}
           />
         </Col>
         <Col lg={4} xs={8}>
           <DashCard
             icon={<AppstoreOutlined />}
             title="Widget Interactions"
-            number={2504}
+            number={widgetInteractions}
+            percentage={widgetInteractionsPerc?.toFixed(2)}
           />
         </Col>
         <Col lg={4} xs={8}>
           <DashCard
             icon={<PlayCircleOutlined />}
             title="Video Plays"
-            number={stats?.totalVideoViews}
+            number={stats?.totalVideoViews ?? 0}
+            percentage={stats?.totalVideoViewsPerc.toFixed(2) ?? 0}
           />
         </Col>
         <Col xs={{ span: 10, offset: 2 }} lg={{ span: 4, offset: 0 }}>
           <DashCard
             icon={<PlayCircleOutlined />}
             title="Avg Watch Time / Session"
-            number={stats?.avgWatchTime}
+            number={stats?.avgWatchTimeLabel ?? 0}
+            percentage={stats?.avgWatchTimePerc.toFixed(2) ?? 0}
           />
         </Col>
         <Col xs={10} lg={4}>
           <DashCard
             icon={<DropboxOutlined />}
             title="Product Clicks"
-            number={stats?.totalProductClicks}
+            number={stats?.totalProductClicks ?? 0}
+            percentage={stats?.totalProductClicksPerc.toFixed(2) ?? 0}
           />
         </Col>
         <Col span={23}>
