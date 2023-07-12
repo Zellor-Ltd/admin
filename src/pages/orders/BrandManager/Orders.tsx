@@ -282,9 +282,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
       </div>
     ),
     filterIcon: (filtered: any) => (
-      <SearchOutlined
-        style={{ color: filtered ? 'rgb(245,203,221)' : undefined }}
-      />
+      <SearchOutlined style={{ color: filtered ? '#212427' : undefined }} />
     ),
     onFilter: (value: any, record: any) => {
       const fan = getFan(record.userid);
@@ -1019,7 +1017,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
   return (
     <>
       {!details && (
-<div style={{ overflow: 'clip', height: '100%' }}>
+        <div style={{ overflow: 'clip', height: '100%' }}>
           <PageHeader
             title="Orders"
             subTitle={isMobile ? '' : 'List of Orders'}
@@ -1178,9 +1176,14 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
         </div>
       )}
       {details && (
-<div style={{ overflow: 'scroll', height: '100%' }}>
-        <FanDetail fan={currentFan} onSave={onSaveFan} onCancel={onCancelFan} />
-      </div>)}
+        <div style={{ overflow: 'scroll', height: '100%' }}>
+          <FanDetail
+            fan={currentFan}
+            onSave={onSaveFan}
+            onCancel={onCancelFan}
+          />
+        </div>
+      )}
     </>
   );
 };

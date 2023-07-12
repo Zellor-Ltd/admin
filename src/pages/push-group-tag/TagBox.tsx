@@ -28,8 +28,7 @@ export const TagBox: React.FC<TagBoxProps> = ({ tag, selectedFanGroup }) => {
       style={{
         height: 100,
         width: 100,
-        backgroundColor:
-          tag.template === 'dollar' ? 'rgb(245,203,221)' : 'yellow',
+        backgroundColor: tag.template === 'dollar' ? '#212427' : 'yellow',
         marginRight: '16px',
         marginBottom: '16px',
       }}
