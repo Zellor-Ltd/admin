@@ -1164,12 +1164,12 @@ export const deleteCustomLinkList = (params: any) => {
   return instance.delete(`Disco/LinkCustom/Adm/Delete/${params}`);
 };
 
-export const fetchStats = (startDate?: string, endDate?: string) => {
-  if (startDate && endDate)
+export const fetchStats = (period?: string) => {
+    if (period)
     return instance.get(
-      `Disco/Adm/Analytics/GetClientStats?startDate=${startDate}?endDate=${endDate}`
+        `Disco/Adm/Analytics/GetClientStats/${period}`
     );
-  else return instance.get(`Disco/Adm/Analytics/GetClientStats/`);
+  else return instance.get(`Disco/Adm/Analytics/GetClientStats/1`);
 };
 
 export const fetchClientUsers = (page: number, params: any) => {

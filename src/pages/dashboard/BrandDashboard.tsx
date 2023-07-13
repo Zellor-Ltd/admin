@@ -43,7 +43,7 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
   const [creatorFilter, setCreatorFilter] = useState<Creator | null>();
   const [impressionFilter, setImpressionFilter] = useState<string>();
   const [stats, setStats] = useState<any>();
-  const [period, setPeriod] = useState<string>('Today');
+  const [period, setPeriod] = useState<string>('1');
   const titleFocused = useRef<boolean>(false);
   const titleSelectionEnd = useRef<number>();
   const { isMobile } = useContext(AppContext);
@@ -75,46 +75,8 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
 
   const getStats = useMemo(() => {
     const getClientStats = async () => {
-      let startDate;
-      switch (period) {
-        case 'Today':
-          startDate = moment().startOf('day').format('YYYYMMDDhhmmss');
-          break;
-        case 'Last 3 Days':
-          startDate = moment()
-            .subtract(3, 'days')
-            .startOf('day')
-            .format('YYYYMMDDhhmmss');
-          break;
-        case 'Last Week':
-          startDate = moment()
-            .subtract(7, 'days')
-            .startOf('day')
-            .format('YYYYMMDDhhmmss');
-          break;
-        case 'Last 30 Days':
-          startDate = moment()
-            .subtract(1, 'month')
-            .startOf('day')
-            .format('YYYYMMDDhhmmss');
-          break;
-        case 'Last 3 months':
-          startDate = moment()
-            .subtract(3, 'months')
-            .startOf('day')
-            .format('YYYYMMDDhhmmss');
-          break;
-        case 'Last Year':
-          startDate = moment()
-            .subtract(1, 'year')
-            .startOf('day')
-            .format('YYYYMMDDhhmmss');
-          break;
-      }
-
-      const endDate = moment().format('YYYYMMDDhhmmss');
       const { result }: any = await doFetch(() =>
-        fetchStats(startDate, endDate)
+          fetchStats(period)
       );
       setStats(result);
     };
@@ -232,9 +194,9 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
         />
       </div>
     );
-  };
+    };
 
-  const DashCard = ({ icon, title, number, percentage }) => (
+  const DashCard = ({ icon, title, number }) => (
     <Tooltip title={title} placement="topRight">
       <Card style={{ width: '100%', height: 175 }}>
         <Meta
@@ -268,8 +230,8 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
                       fontSize: '1rem',
                       marginBottom: '-1rem',
                     }}
-                  >
-                    {period}
+                    >
+                    {period} {period != "1" ? "days" : "day"}
                   </p>
                 </div>
               </div>
@@ -285,20 +247,6 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
                   {number}
                 </strong>
                 <br />
-                {percentage && (
-                  <>
-                    {percentage.toString()[0] !== '-' && (
-                      <Typography.Text type="success">
-                        +{percentage}%
-                      </Typography.Text>
-                    )}
-                    {percentage.toString()[0] === '-' && (
-                      <Typography.Text type="danger">
-                        {percentage}%
-                      </Typography.Text>
-                    )}
-                  </>
-                )}
               </p>
             </div>
           }
@@ -344,31 +292,6 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
         if (a.title && b.title) return a.title.localeCompare(b.title);
         else if (a.title) return 1;
         else if (b.title) return -1;
-        else return 0;
-      },
-    },
-    {
-      title: (
-        <div style={{ display: 'grid', placeItems: 'stretch' }}>
-          <div
-            style={{
-              textOverflow: 'ellipsis',
-              overflow: 'hidden',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            <Tooltip title="Client">Client</Tooltip>
-          </div>
-        </div>
-      ),
-      dataIndex: 'brandName',
-      width: '15%',
-      align: 'center',
-      sorter: (a, b) => {
-        if (a.brandName && b.brandName)
-          return a.brandName.localeCompare(b.brandName);
-        else if (a.brandName) return 1;
-        else if (b.brandName) return -1;
         else return 0;
       },
     },
@@ -546,24 +469,7 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
               }
             />
           </Col>
-          <Col lg={4} xs={12}>
-            <SimpleSelect
-              showSearch
-              data={[]}
-              onChange={(_, brand) => setBrandFilter(brand)}
-              style={{ width: '100%' }}
-              selectedOption={brandFilter?.id}
-              optionMapping={{
-                key: 'id',
-                label: 'brandName',
-                value: 'id',
-              }}
-              placeholder="Clients"
-              disabled={true}
-              allowClear
-            />
-          </Col>
-          <Col lg={4} xs={12}>
+          <Col lg={6} xs={12}>
             <Select
               placeholder="Sources"
               disabled={true}
@@ -585,7 +491,7 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
               ))}
             </Select>
           </Col>
-          <Col lg={5} xs={12}>
+          <Col lg={7} xs={12}>
             <CreatorsMultipleFetchDebounceSelect
               onChangeCreator={(_, creator) => setCreatorFilter(creator)}
               input={creatorFilter?.firstName}
@@ -645,40 +551,40 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
                     showSearch
                     value={period}
                   >
-                    <Select.Option key="Today" value="Today" label="Today">
+                    <Select.Option key="1" value="1" label="Today">
                       Today
                     </Select.Option>
                     <Select.Option
-                      key="Last 3 Days"
-                      value="Last 3 Days"
+                      key="3"
+                      value="3"
                       label="Last 3 Days"
                     >
                       Last 3 Days
                     </Select.Option>
                     <Select.Option
-                      key="Last Week"
-                      value="Last Week"
+                      key="7"
+                      value="7"
                       label="Last Week"
                     >
                       Last Week
                     </Select.Option>
                     <Select.Option
-                      key="Last 30 Days"
-                      value="Last 30 Days"
+                      key="30"
+                      value="30"
                       label="Last 30 Days"
                     >
                       Last 30 Days
                     </Select.Option>
                     <Select.Option
-                      key="Last 3 months"
-                      value="Last 3 Months"
+                      key="90"
+                      value="90"
                       label="Last 3 months"
                     >
                       Last 3 months
                     </Select.Option>
                     <Select.Option
-                      key="Last Year"
-                      value="Last Year"
+                      key="365"
+                      value="365"
                       label="Last Year"
                     >
                       Last Year
@@ -695,7 +601,6 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
             icon={<TeamOutlined />}
             title="Widget Impressions"
             number={stats?.totalWidgetImpressions ?? 0}
-            percentage={stats?.totalWidgetImpressionsPerc.toFixed(2) ?? 0}
           />
         </Col>
         <Col lg={4} xs={8}>
@@ -703,7 +608,6 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
             icon={<AppstoreOutlined />}
             title="Widget Interactions"
             number={stats?.totalWidgetInteractions ?? 0}
-            percentage={stats?.totalWidgetInteractionsPerc?.toFixed(2) ?? 0}
           />
         </Col>
         <Col lg={4} xs={8}>
@@ -711,7 +615,6 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
             icon={<PlayCircleOutlined />}
             title="Video Plays"
             number={stats?.totalVideoViews ?? 0}
-            percentage={stats?.totalVideoViewsPerc.toFixed(2) ?? 0}
           />
         </Col>
         <Col xs={{ span: 10, offset: 2 }} lg={{ span: 4, offset: 0 }}>
@@ -719,7 +622,6 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
             icon={<PlayCircleOutlined />}
             title="Avg Watch Time / Session"
             number={stats?.avgWatchTimeLabel ?? 0}
-            percentage={stats?.avgWatchTimePerc.toFixed(2) ?? 0}
           />
         </Col>
         <Col xs={10} lg={4}>
@@ -727,7 +629,6 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
             icon={<DropboxOutlined />}
             title="Product Clicks"
             number={stats?.totalProductClicks ?? 0}
-            percentage={stats?.totalProductClicksPerc.toFixed(2) ?? 0}
           />
         </Col>
         <Col span={23}>
