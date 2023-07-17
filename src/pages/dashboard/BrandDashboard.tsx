@@ -22,12 +22,9 @@ import { fetchStats } from 'services/DiscoClubService';
 import '@ant-design/flowchart/dist/index.css';
 import Meta from 'antd/lib/card/Meta';
 import { ColumnsType } from 'antd/lib/table';
-import SimpleSelect from 'components/select/SimpleSelect';
 import { statusList } from 'components/select/select.utils';
 import CreatorsMultipleFetchDebounceSelect from 'pages/creators/components/CreatorsMultipleFetchDebounceSelect';
-import { Brand } from 'interfaces/Brand';
 import { Creator } from 'interfaces/Creator';
-import moment from 'moment';
 import { ResponsiveBar } from '@nivo/bar';
 import { AppContext } from 'contexts/AppContext';
 
@@ -38,7 +35,6 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
   const { doFetch } = useRequest({ setLoading });
   const titleRef = useRef<any>(null);
   const [sourceFilter, setSourceFilter] = useState<string>();
-  const [brandFilter, setBrandFilter] = useState<Brand>();
   const [titleFilter, setTitleFilter] = useState<string>();
   const [creatorFilter, setCreatorFilter] = useState<Creator | null>();
   const [impressionFilter, setImpressionFilter] = useState<string>();
@@ -46,7 +42,12 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
   const [period, setPeriod] = useState<string>('1');
   const titleFocused = useRef<boolean>(false);
   const titleSelectionEnd = useRef<number>();
+  const timeframe = useRef<any>();
   const { isMobile } = useContext(AppContext);
+
+  const handleScroll = () => {
+    if (timeframe.current) timeframe.current.blur();
+  };
 
   useEffect(() => {
     getStats();
@@ -75,9 +76,7 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
 
   const getStats = useMemo(() => {
     const getClientStats = async () => {
-      const { result }: any = await doFetch(() =>
-          fetchStats(period)
-      );
+      const { result }: any = await doFetch(() => fetchStats(period));
       setStats(result);
     };
     return getClientStats;
@@ -194,7 +193,7 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
         />
       </div>
     );
-    };
+  };
 
   const DashCard = ({ icon, title, number }) => (
     <Tooltip title={title} placement="topRight">
@@ -230,8 +229,8 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
                       fontSize: '1rem',
                       marginBottom: '-1rem',
                     }}
-                    >
-                    {period} {period != "1" ? "days" : "day"}
+                  >
+                    {period} {period !== '1' ? 'days' : 'day'}
                   </p>
                 </div>
               </div>
@@ -526,7 +525,7 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
   };
 
   return (
-    <>
+    <div onScroll={handleScroll} style={{ overflowY: 'auto', height: '100%' }}>
       <Row
         gutter={[8, 8]}
         align="bottom"
@@ -550,43 +549,24 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
                     allowClear
                     showSearch
                     value={period}
+                    ref={timeframe}
                   >
                     <Select.Option key="1" value="1" label="Today">
                       Today
                     </Select.Option>
-                    <Select.Option
-                      key="3"
-                      value="3"
-                      label="Last 3 Days"
-                    >
+                    <Select.Option key="3" value="3" label="Last 3 Days">
                       Last 3 Days
                     </Select.Option>
-                    <Select.Option
-                      key="7"
-                      value="7"
-                      label="Last Week"
-                    >
+                    <Select.Option key="7" value="7" label="Last Week">
                       Last Week
                     </Select.Option>
-                    <Select.Option
-                      key="30"
-                      value="30"
-                      label="Last 30 Days"
-                    >
+                    <Select.Option key="30" value="30" label="Last 30 Days">
                       Last 30 Days
                     </Select.Option>
-                    <Select.Option
-                      key="90"
-                      value="90"
-                      label="Last 3 months"
-                    >
+                    <Select.Option key="90" value="90" label="Last 3 months">
                       Last 3 months
                     </Select.Option>
-                    <Select.Option
-                      key="365"
-                      value="365"
-                      label="Last Year"
-                    >
+                    <Select.Option key="365" value="365" label="Last Year">
                       Last Year
                     </Select.Option>
                   </Select>
@@ -636,7 +616,7 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
           <StatTable />
         </Col>
       </Row>
-    </>
+    </div>
   );
 };
 
