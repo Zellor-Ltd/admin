@@ -1028,15 +1028,15 @@ const Playlists: React.FC<RouteComponentProps> = () => {
               whiteSpace: 'nowrap',
             }}
           >
-            <Tooltip title="Copy embed code">Copy Embed Code</Tooltip>
+            <Tooltip title="Copy embed code">Code</Tooltip>
           </div>
         </div>
       ),
       dataIndex: 'id',
-      width: '10%',
+      width: '5%',
       render: id => (
         <CopyValueToClipboard
-          tooltipText="Copy Embed Code"
+          tooltipText="Code"
           value={`<script src="https://beautybuzz.io/script/ce/vlink-ce.js"></script>
                   <vlink-carousel src=${id?.slice(0, -4)} size="1">
                   </vlink-carousel>`}
@@ -1076,7 +1076,26 @@ const Playlists: React.FC<RouteComponentProps> = () => {
           );
         else return '-';
       },
-    },
+      },
+      {
+          title: (
+              <div style={{ display: 'grid', placeItems: 'stretch' }}>
+                  <div
+                      style={{
+                          textOverflow: 'ellipsis',
+                          overflow: 'hidden',
+                          whiteSpace: 'nowrap',
+                      }}
+                  >
+                      <Tooltip title="Links">Client</Tooltip>
+                  </div>
+              </div>
+          ),
+          dataIndex: 'links',
+          width: '15%',
+          render: (links: [any]) => (links ? links[0].brand?.name : '-'),
+          align: 'center',
+      },
     {
       title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
