@@ -75,9 +75,7 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
 
   const getStats = useMemo(() => {
     const getClientStats = async () => {
-      const { result }: any = await doFetch(() =>
-          fetchStats(period)
-      );
+      const { result }: any = await doFetch(() => fetchStats(period));
       setStats(result);
     };
     return getClientStats;
@@ -194,11 +192,11 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
         />
       </div>
     );
-    };
+  };
 
   const DashCard = ({ icon, title, number }) => (
     <Tooltip title={title} placement="topRight">
-      <Card style={{ width: '100%', height: 175 }}>
+      <Card style={{ width: '100%', height: 150 }}>
         <Meta
           title={
             <div
@@ -230,8 +228,8 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
                       fontSize: '1rem',
                       marginBottom: '-1rem',
                     }}
-                    >
-                    {period} {period != "1" ? "days" : "day"}
+                  >
+                    {period} {period != '1' ? 'days' : 'day'}
                   </p>
                 </div>
               </div>
@@ -554,39 +552,19 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
                     <Select.Option key="1" value="1" label="Today">
                       Today
                     </Select.Option>
-                    <Select.Option
-                      key="3"
-                      value="3"
-                      label="Last 3 Days"
-                    >
+                    <Select.Option key="3" value="3" label="Last 3 Days">
                       Last 3 Days
                     </Select.Option>
-                    <Select.Option
-                      key="7"
-                      value="7"
-                      label="Last Week"
-                    >
+                    <Select.Option key="7" value="7" label="Last Week">
                       Last Week
                     </Select.Option>
-                    <Select.Option
-                      key="30"
-                      value="30"
-                      label="Last 30 Days"
-                    >
+                    <Select.Option key="30" value="30" label="Last 30 Days">
                       Last 30 Days
                     </Select.Option>
-                    <Select.Option
-                      key="90"
-                      value="90"
-                      label="Last 3 months"
-                    >
+                    <Select.Option key="90" value="90" label="Last 3 months">
                       Last 3 months
                     </Select.Option>
-                    <Select.Option
-                      key="365"
-                      value="365"
-                      label="Last Year"
-                    >
+                    <Select.Option key="365" value="365" label="Last Year">
                       Last Year
                     </Select.Option>
                   </Select>
@@ -620,8 +598,8 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
         <Col xs={{ span: 10, offset: 2 }} lg={{ span: 4, offset: 0 }}>
           <DashCard
             icon={<PlayCircleOutlined />}
-            title="Avg Watch Time / Session"
-            number={stats?.avgWatchTimeLabel ?? 0}
+            title="Total Watch Time"
+            number={stats?.totalWatchTime ?? 0}
           />
         </Col>
         <Col xs={10} lg={4}>
