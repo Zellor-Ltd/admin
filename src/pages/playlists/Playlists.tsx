@@ -40,6 +40,7 @@ import moment from 'moment';
 import PlaylistDetails from './PlaylistDetails';
 import CustomDetails from './CustomDetails';
 import { AppContext } from 'contexts/AppContext';
+import { SimpleSwitch } from '../../components/SimpleSwitch';
 
 const Playlists: React.FC<RouteComponentProps> = () => {
   const { isMobile } = useContext(AppContext);
@@ -231,6 +232,7 @@ const Playlists: React.FC<RouteComponentProps> = () => {
       record,
       ...prev.slice(index + 1),
     ]);
+    if (details) setDetails(false);
   };
 
   const brandColumns: ColumnsType<any> = [
@@ -993,6 +995,16 @@ const Playlists: React.FC<RouteComponentProps> = () => {
     },
   ];
 
+  const handleSwitchChange = async (record: any, toggled: boolean) => {
+    try {
+      record.displayTags = toggled;
+      await saveCustomLinkList(record);
+      message.success('Register updated with success.');
+    } catch (error) {
+      message.error("Error: Couldn't set client property. Try again.");
+    }
+  };
+
   const customColumns: ColumnsType<any> = [
     {
       title: (
@@ -1076,26 +1088,26 @@ const Playlists: React.FC<RouteComponentProps> = () => {
           );
         else return '-';
       },
-      },
-      {
-          title: (
-              <div style={{ display: 'grid', placeItems: 'stretch' }}>
-                  <div
-                      style={{
-                          textOverflow: 'ellipsis',
-                          overflow: 'hidden',
-                          whiteSpace: 'nowrap',
-                      }}
-                  >
-                      <Tooltip title="Links">Client</Tooltip>
-                  </div>
-              </div>
-          ),
-          dataIndex: 'links',
-          width: '15%',
-          render: (links: [any]) => (links ? links[0].brand?.name : '-'),
-          align: 'center',
-      },
+    },
+    {
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Links">Client</Tooltip>
+          </div>
+        </div>
+      ),
+      dataIndex: 'links',
+      width: '15%',
+      render: (links: [any]) => (links ? links[0].brand?.name : '-'),
+      align: 'center',
+    },
     {
       title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
@@ -1132,6 +1144,38 @@ const Playlists: React.FC<RouteComponentProps> = () => {
       width: '5%',
       render: (links: [any]) => (links ? links.length : '0'),
       align: 'center',
+    },
+    {
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Display Tags">Display Tags</Tooltip>
+          </div>
+        </div>
+      ),
+      dataIndex: 'displayTags',
+      width: '10%',
+      align: 'center',
+      render: (value: any, record: any) => (
+        <SimpleSwitch
+          toggled={!!record.displayTags}
+          handleSwitchChange={(toggled: boolean) =>
+            handleSwitchChange(record, toggled)
+          }
+        />
+      ),
+      sorter: (a, b): any => {
+        if (a.displayTags && b.displayTags) return 0;
+        else if (a.displayTags) return -1;
+        else if (b.displayTags) return 1;
+        else return 0;
+      },
     },
     {
       title: (
@@ -1355,7 +1399,6 @@ const Playlists: React.FC<RouteComponentProps> = () => {
           <CustomDetails
             setCurrentList={setCurrentList}
             currentList={currentList}
-            setDetails={setDetails}
             brands={allBrands}
             onSave={handleSaveCustomList}
             isCloning={cloning.current}
