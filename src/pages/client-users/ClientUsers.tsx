@@ -217,6 +217,33 @@ const ClientUsers: React.FC<RouteComponentProps> = ({ location }) => {
               whiteSpace: 'nowrap',
             }}
           >
+            <Tooltip title="Client">Client</Tooltip>
+          </div>
+        </div>
+      ),
+      dataIndex: 'clientId',
+      width: '25%',
+      align: 'center',
+      render: (value: string) =>
+        brands.find(item => item.id === value)?.brandName,
+      sorter: (a, b): any => {
+        if (a.clientId && b.clientId)
+          return a.clientId.localeCompare(b.clientId);
+        else if (a.clientId) return -1;
+        else if (b.clientId) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
             <Tooltip title="Creation">Creation</Tooltip>
           </div>
         </div>
@@ -428,7 +455,10 @@ const ClientUsers: React.FC<RouteComponentProps> = ({ location }) => {
             title="Client Users"
             subTitle={isMobile ? '' : 'List of Client Users'}
             extra={[
-              <Tooltip title={disableButton ? 'Select a Client first!' : ''}>
+              <Tooltip
+                title={disableButton ? 'Select a Client first!' : ''}
+                key={0}
+              >
                 <Button
                   key="1"
                   disabled={disableButton}
@@ -506,7 +536,7 @@ const ClientUsers: React.FC<RouteComponentProps> = ({ location }) => {
         <div style={{ overflow: 'scroll', height: '100%' }}>
           <ClientUserDetails
             user={currentRecord}
-            clientId={brandFilter!.id}
+            clientId={brandFilter?.id}
             onCancel={() => setDetails(false)}
             onSave={handleSave}
           />
@@ -517,5 +547,3 @@ const ClientUsers: React.FC<RouteComponentProps> = ({ location }) => {
 };
 
 export default ClientUsers;
-
-//todo refresh table, delete check

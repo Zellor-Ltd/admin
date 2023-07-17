@@ -17,7 +17,7 @@ import moment from 'moment';
 
 interface ClientUserDetailProps {
   user: any;
-  clientId: string;
+  clientId?: string;
   onSave?: (record: any) => void;
   onCancel?: () => void;
 }
@@ -66,7 +66,7 @@ const ClientUserDetail: React.FC<ClientUserDetailProps> = ({
         layout="vertical"
         onFinish={onFinish}
         onFinishFailed={({ errorFields }) => handleFinishFailed(errorFields)}
-        initialValues={{ ...user, clientId: clientId }}
+        initialValues={{ ...user, clientId: user.clientId ?? clientId }}
         autoComplete="off"
       >
         <Row gutter={8}>
