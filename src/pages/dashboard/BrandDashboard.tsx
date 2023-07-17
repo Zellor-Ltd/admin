@@ -197,7 +197,7 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
 
   const DashCard = ({ icon, title, number }) => (
     <Tooltip title={title} placement="topRight">
-      <Card style={{ width: '100%', height: 175 }}>
+      <Card style={{ width: '100%', height: 150 }}>
         <Meta
           title={
             <div
@@ -600,8 +600,8 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
         <Col xs={{ span: 10, offset: 2 }} lg={{ span: 4, offset: 0 }}>
           <DashCard
             icon={<PlayCircleOutlined />}
-            title="Avg Watch Time / Session"
-            number={stats?.avgWatchTimeLabel ?? 0}
+            title="Total Watch Time"
+            number={stats?.totalWatchTime ?? 0}
           />
         </Col>
         <Col xs={10} lg={4}>
