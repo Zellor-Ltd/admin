@@ -5,6 +5,7 @@ import {
   Image,
   Input,
   Row,
+  Switch,
   Tooltip,
   Typography,
   message,
@@ -24,7 +25,6 @@ interface CustomDetailsProps {
   setCurrentList: (value: any[]) => void;
   currentList?: any;
   onSave: any;
-  setDetails: any;
   brands: Brand[];
   isCloning?: boolean;
 }
@@ -33,7 +33,6 @@ const CustomDetails: React.FC<CustomDetailsProps> = ({
   setCurrentList,
   currentList,
   onSave,
-  setDetails,
   brands,
   isCloning,
 }) => {
@@ -75,7 +74,6 @@ const CustomDetails: React.FC<CustomDetailsProps> = ({
       message.error('Something went wrong. Try again later.');
     } finally {
       setShowModal(false);
-      setDetails(false);
     }
   };
 
@@ -315,6 +313,15 @@ const CustomDetails: React.FC<CustomDetailsProps> = ({
               </Form.Item>
             </Col>
           )}
+          <Col span={24}>
+            <Form.Item
+              name="displayTags"
+              label="Display Tags"
+              valuePropName="checked"
+            >
+              <Switch />
+            </Form.Item>
+          </Col>
           <Col span={24}>
             <div id="carousel" className="mt-15"></div>
           </Col>
