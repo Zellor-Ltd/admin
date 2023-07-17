@@ -58,7 +58,6 @@ import SignUp from 'pages/sign-up/SignUp';
 import MyAccount from 'pages/my-account/MyAccount';
 import ForgotPassword from 'pages/login/ForgotPassword';
 import VerificationCode from 'pages/login/VerificationCode';
-import BrandDashboard from 'pages/dashboard/BrandDashboard';
 
 function AdminRoutes() {
   return (
