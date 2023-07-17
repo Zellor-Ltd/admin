@@ -14,9 +14,12 @@ import { useRef, useState } from 'react';
 import { saveClientUser } from 'services/DiscoClubService';
 import scrollIntoView from 'scroll-into-view';
 import moment from 'moment';
+import SimpleSelect from 'components/select/SimpleSelect';
+import { Brand } from 'interfaces/Brand';
 
 interface ClientUserDetailProps {
   user: any;
+  brands: Brand[];
   clientId?: string;
   onSave?: (record: any) => void;
   onCancel?: () => void;
@@ -24,6 +27,7 @@ interface ClientUserDetailProps {
 
 const ClientUserDetail: React.FC<ClientUserDetailProps> = ({
   user,
+  brands,
   clientId,
   onSave,
   onCancel,
@@ -66,7 +70,7 @@ const ClientUserDetail: React.FC<ClientUserDetailProps> = ({
         layout="vertical"
         onFinish={onFinish}
         onFinishFailed={({ errorFields }) => handleFinishFailed(errorFields)}
-        initialValues={{ ...user, clientId: user.clientId ?? clientId }}
+        initialValues={user}
         autoComplete="off"
       >
         <Row gutter={8}>
@@ -131,6 +135,32 @@ const ClientUserDetail: React.FC<ClientUserDetailProps> = ({
               />
             </Form.Item>
           </Col>
+          {user?.id && (
+            <Col lg={12} xs={24}>
+              <Form.Item label="Client ID" name="clientId">
+                <Input placeholder="No Client ID" disabled />
+              </Form.Item>
+            </Col>
+          )}
+          {!user?.id && (
+            <Col lg={12} xs={24}>
+              <Form.Item label="Client" name="clientId" required>
+                <SimpleSelect
+                  showSearch
+                  data={brands}
+                  style={{ width: '100%' }}
+                  optionMapping={{
+                    key: 'id',
+                    label: 'brandName',
+                    value: 'id',
+                  }}
+                  placeholder="Select a Client"
+                  disabled={loading}
+                  allowClear
+                ></SimpleSelect>
+              </Form.Item>
+            </Col>
+          )}
         </Row>
         <Row gutter={[8, 8]} justify="end">
           <Col>

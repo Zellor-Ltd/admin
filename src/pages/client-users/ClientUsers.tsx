@@ -53,7 +53,6 @@ const ClientUsers: React.FC<RouteComponentProps> = ({ location }) => {
   const [clientUsers, setClientUsers] = useState<any[]>([]);
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
-  const [disableButton, setDisableButton] = useState<boolean>(true);
   const [brandFilter, setBrandFilter] = useState<Brand | undefined>();
   const { isMobile, setIsScrollable } = useContext(AppContext);
   const history = useHistory();
@@ -73,11 +72,6 @@ const ClientUsers: React.FC<RouteComponentProps> = ({ location }) => {
     };
     getBrands();
   }, []);
-
-  useEffect(() => {
-    if (brandFilter) setDisableButton(false);
-    else setDisableButton(true);
-  }, [brandFilter]);
 
   const scrollToCenter = (index: number) => {
     scrollIntoView(
@@ -454,21 +448,15 @@ const ClientUsers: React.FC<RouteComponentProps> = ({ location }) => {
           <PageHeader
             title="Client Users"
             subTitle={isMobile ? '' : 'List of Client Users'}
-            extra={[
-              <Tooltip
-                title={disableButton ? 'Select a Client first!' : ''}
-                key={0}
+            extra={
+              <Button
+                key="1"
+                className={isMobile ? 'mt-05' : ''}
+                onClick={() => handleEdit(clientUsers.length)}
               >
-                <Button
-                  key="1"
-                  disabled={disableButton}
-                  className={isMobile ? 'mt-05' : ''}
-                  onClick={() => handleEdit(clientUsers.length)}
-                >
-                  New Item
-                </Button>
-              </Tooltip>,
-            ]}
+                New Item
+              </Button>
+            }
           />
           <Row
             gutter={8}
@@ -535,6 +523,7 @@ const ClientUsers: React.FC<RouteComponentProps> = ({ location }) => {
       {details && (
         <div style={{ overflow: 'scroll', height: '100%' }}>
           <ClientUserDetails
+            brands={brands}
             user={currentRecord}
             clientId={brandFilter?.id}
             onCancel={() => setDetails(false)}
