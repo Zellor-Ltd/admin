@@ -601,7 +601,7 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
           <DashCard
             icon={<PlayCircleOutlined />}
             title="Total Watch Time"
-            number={stats?.totalWatchTime ?? 0}
+            number={stats?.totalWatchTimeLabel ?? 0}
           />
         </Col>
         <Col xs={10} lg={4}>
