@@ -101,7 +101,7 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
         ADMIN: undefined,
         BRAND_MANAGER: (
           <Menu.Item key="1">
-            <Link to="/my-account">My Account</Link>
+            <Link to="/my-account">Account Details</Link>
           </Menu.Item>
         ),
       })}
