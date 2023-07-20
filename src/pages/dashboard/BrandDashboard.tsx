@@ -361,9 +361,9 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
       width: '10%',
       align: 'center',
       sorter: (a, b): any => {
-        if (a.views && b.views) return a.views - b.views;
-        else if (a.views) return -1;
-        else if (b.views) return 1;
+        if (a.videoPlays && b.videoPlays) return a.videoPlays - b.videoPlays;
+        else if (a.videoPlays) return -1;
+        else if (b.videoPlays) return 1;
         else return 0;
       },
     },
@@ -410,10 +410,11 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
       width: '10%',
       align: 'center',
       sorter: (a, b): any => {
-        if (a.totalWatchTimeLabel && b.totalWatchTimeLabel)
-          return a.totalWatchTimeLabel - b.totalWatchTimeLabel;
-        else if (a.totalWatchTimeLabel) return -1;
-        else if (b.totalWatchTimeLabel) return 1;
+        const aTime = Number(a.totalWatchTimeLabel.slice(0, -1));
+        const bTime = Number(b.totalWatchTimeLabel.slice(0, -1));
+        if (aTime && bTime) return aTime - bTime;
+        else if (aTime) return -1;
+        else if (bTime) return 1;
         else return 0;
       },
     },
