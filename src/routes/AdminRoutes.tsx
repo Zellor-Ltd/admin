@@ -58,6 +58,7 @@ import SignUp from 'pages/sign-up/SignUp';
 import MyAccount from 'pages/my-account/MyAccount';
 import ForgotPassword from 'pages/login/ForgotPassword';
 import VerificationCode from 'pages/login/VerificationCode';
+import Analytics from 'pages/reports/Analytics';
 
 function AdminRoutes() {
   return (
@@ -71,6 +72,11 @@ function AdminRoutes() {
       <AppRoute
         path="/dashboard"
         component={Dashboard}
+        layout={AuthenticatedLayout}
+      />
+      <AppRoute
+        path="/analytics"
+        component={Analytics}
         layout={AuthenticatedLayout}
       />
       <AppRoute path="/sign-up" component={SignUp} layout={OpenLayout} />

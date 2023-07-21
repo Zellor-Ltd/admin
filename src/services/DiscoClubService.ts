@@ -1165,11 +1165,13 @@ export const deleteCustomLinkList = (params: any) => {
 };
 
 export const fetchStats = (period?: string) => {
-    if (period)
-    return instance.get(
-        `Disco/Adm/Analytics/GetClientStats/${period}`
-    );
+  if (period)
+    return instance.get(`Disco/Adm/Analytics/GetClientStats/${period}`);
   else return instance.get(`Disco/Adm/Analytics/GetClientStats/1`);
+};
+
+export const fetchInternalStats = (period: string, id: string) => {
+  return instance.get(`Adm/Analytics/GetInternalClientStats/${period}/${id}`);
 };
 
 export const fetchClientUsers = (page: number, params: any) => {
