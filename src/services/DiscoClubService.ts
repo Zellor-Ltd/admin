@@ -1171,7 +1171,9 @@ export const fetchStats = (period?: string) => {
 };
 
 export const fetchInternalStats = (period: string, id: string) => {
-  return instance.get(`Adm/Analytics/GetInternalClientStats/${period}/${id}`);
+  return instance.get(
+    `Disco/Adm/Analytics/GetInternalClientStats/${period}/${id}`
+  );
 };
 
 export const fetchClientUsers = (page: number, params: any) => {
