@@ -546,10 +546,12 @@ const Analytics: React.FC<DashboardProps> = () => {
         className="mb-1 mx-2"
       >
         <Col span={24}>
-          <CreatorsMultipleFetchDebounceSelect
-            onChangeCreator={(_, creator) => setCreator(creator)}
-            input={creator?.firstName}
-          />
+          <Col lg={4} xs={24}>
+            <CreatorsMultipleFetchDebounceSelect
+              onChangeCreator={(_, creator) => setCreator(creator)}
+              input={creator?.firstName}
+            />
+          </Col>
         </Col>
         <Col span={23} className="my-2">
           <Row justify="space-between" align="bottom">
