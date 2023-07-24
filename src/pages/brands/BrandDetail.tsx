@@ -80,7 +80,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
   const toFocus = useRef<any>();
 
   const {
-    settings: { checkoutType = [] },
+    settings: { checkoutType = [], currency = [] },
   } = useSelector((state: any) => state.settings);
 
   const [checkoutTypeList, setCheckoutTypeList] =
@@ -948,15 +948,19 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                         <Select
                           allowClear
                           showSearch
+                          options={currency}
                           filterOption={filterOption}
                           placeholder="Please select a currency symbol"
                         >
-                          <Select.Option key="£" value="£" label="£">
-                            £
-                          </Select.Option>
-                          <Select.Option key="€" value="€" label="€">
-                            €
-                          </Select.Option>
+                          {currency.map((curr: any) => (
+                            <Select.Option
+                              key={curr.value}
+                              value={curr.value}
+                              label={curr.name}
+                            >
+                              {curr.name}
+                            </Select.Option>
+                          ))}
                         </Select>
                       </Form.Item>
                     </Col>
