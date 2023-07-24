@@ -53,7 +53,6 @@ const ClientUsers: React.FC<RouteComponentProps> = ({ location }) => {
   const [clientUsers, setClientUsers] = useState<any[]>([]);
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
-  const [disableButton, setDisableButton] = useState<boolean>(true);
   const [brandFilter, setBrandFilter] = useState<Brand | undefined>();
   const { isMobile, setIsScrollable } = useContext(AppContext);
   const history = useHistory();
@@ -73,11 +72,6 @@ const ClientUsers: React.FC<RouteComponentProps> = ({ location }) => {
     };
     getBrands();
   }, []);
-
-  useEffect(() => {
-    if (brandFilter) setDisableButton(false);
-    else setDisableButton(true);
-  }, [brandFilter]);
 
   const scrollToCenter = (index: number) => {
     scrollIntoView(
@@ -204,6 +198,33 @@ const ClientUsers: React.FC<RouteComponentProps> = ({ location }) => {
           return a.userName.localeCompare(b.userName);
         else if (a.userName) return -1;
         else if (b.userName) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Client">Client</Tooltip>
+          </div>
+        </div>
+      ),
+      dataIndex: 'clientId',
+      width: '25%',
+      align: 'center',
+      render: (value: string) =>
+        brands.find(item => item.id === value)?.brandName,
+      sorter: (a, b): any => {
+        if (a.clientId && b.clientId)
+          return a.clientId.localeCompare(b.clientId);
+        else if (a.clientId) return -1;
+        else if (b.clientId) return 1;
         else return 0;
       },
     },
@@ -427,18 +448,15 @@ const ClientUsers: React.FC<RouteComponentProps> = ({ location }) => {
           <PageHeader
             title="Client Users"
             subTitle={isMobile ? '' : 'List of Client Users'}
-            extra={[
-              <Tooltip title={disableButton ? 'Select a Client first!' : ''}>
-                <Button
-                  key="1"
-                  disabled={disableButton}
-                  className={isMobile ? 'mt-05' : ''}
-                  onClick={() => handleEdit(clientUsers.length)}
-                >
-                  New Item
-                </Button>
-              </Tooltip>,
-            ]}
+            extra={
+              <Button
+                key="1"
+                className={isMobile ? 'mt-05' : ''}
+                onClick={() => handleEdit(clientUsers.length)}
+              >
+                New Item
+              </Button>
+            }
           />
           <Row
             gutter={8}
@@ -505,8 +523,9 @@ const ClientUsers: React.FC<RouteComponentProps> = ({ location }) => {
       {details && (
         <div style={{ overflow: 'scroll', height: '100%' }}>
           <ClientUserDetails
+            brands={brands}
             user={currentRecord}
-            clientId={brandFilter!.id}
+            clientId={brandFilter?.id}
             onCancel={() => setDetails(false)}
             onSave={handleSave}
           />
@@ -517,5 +536,3 @@ const ClientUsers: React.FC<RouteComponentProps> = ({ location }) => {
 };
 
 export default ClientUsers;
-
-//todo refresh table, delete check
