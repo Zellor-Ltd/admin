@@ -428,8 +428,15 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
           columns={columns}
           dataSource={stats?.videos}
           pagination={false}
-          scroll={{ y: 240, x: true }}
+          scroll={{ x: true }}
           size="small"
+          footer={() => (
+            <Row justify="center" className="mt-1">
+              <Col>
+                <Typography.Title level={5}>End of results.</Typography.Title>
+              </Col>
+            </Row>
+          )}
         />
       </>
     );
