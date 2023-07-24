@@ -132,8 +132,12 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
           </div>
           <div>
             <Col span={24} style={{ textAlign: 'end' }}>
-              {getUserName()[0].toUpperCase()}
-              <Avatar className="ml-1" style={{ backgroundColor: 'white' }} />
+              <Avatar
+                className="ml-1"
+                style={{ backgroundColor: 'white', color: '#212427' }}
+              >
+                {getUserName()[0].toUpperCase()}
+              </Avatar>
               <Dropdown overlay={menu} trigger={['click']}>
                 <Button
                   type="text"
