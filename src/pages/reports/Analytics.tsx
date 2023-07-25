@@ -19,7 +19,7 @@ import {
   TeamOutlined,
 } from '@ant-design/icons';
 import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { fetchInternalStats } from 'services/DiscoClubService';
+import { fetchBrands, fetchInternalStats } from 'services/DiscoClubService';
 import '@ant-design/flowchart/dist/index.css';
 import Meta from 'antd/lib/card/Meta';
 import { ColumnsType } from 'antd/lib/table';
@@ -28,6 +28,7 @@ import CreatorsMultipleFetchDebounceSelect from 'pages/creators/components/Creat
 import { Creator } from 'interfaces/Creator';
 import { ResponsiveBar } from '@nivo/bar';
 import { AppContext } from 'contexts/AppContext';
+import SimpleSelect from 'components/select/SimpleSelect';
 
 interface DashboardProps {}
 
@@ -45,12 +46,22 @@ const Analytics: React.FC<DashboardProps> = () => {
   const titleSelectionEnd = useRef<number>();
   const timeframe = useRef<any>();
   const { isMobile } = useContext(AppContext);
-  const [creator, setCreator] = useState<any>();
+  const [client, setClient] = useState<any>();
+  const [clients, setClients] = useState<any[]>([]);
   const mounted = useRef<boolean>();
 
   const handleScroll = () => {
     if (timeframe.current) timeframe.current.blur();
   };
+
+  useEffect(() => {
+    const getBrands = async () => {
+      const response: any = await fetchBrands();
+      setClients(response.results);
+    };
+
+    getBrands();
+  }, []);
 
   useEffect(() => {
     if (!mounted.current) {
@@ -59,7 +70,7 @@ const Analytics: React.FC<DashboardProps> = () => {
     }
     getStats();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [period, creator]);
+  }, [period, client]);
 
   useEffect(() => {
     if (titleRef.current && titleFilter) {
@@ -83,18 +94,18 @@ const Analytics: React.FC<DashboardProps> = () => {
 
   const getStats = useMemo(() => {
     const getClientStats = async () => {
-      if (!creator) {
-        message.warning('Please select a creator to get analytics report.');
+      if (!client) {
+        message.warning('Please select a client to get analytics report.');
         return;
       }
       const { result }: any = await doFetch(() =>
-        fetchInternalStats(period ?? 1, creator!.id)
+        fetchInternalStats(period ?? 1, client!.id)
       );
       setStats(result);
     };
     return getClientStats;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [period, creator]);
+  }, [period, client]);
 
   const VideoGraph = () => {
     return (
@@ -547,10 +558,21 @@ const Analytics: React.FC<DashboardProps> = () => {
       >
         <Col span={24}>
           <Col lg={4} xs={24}>
-            <CreatorsMultipleFetchDebounceSelect
-              onChangeCreator={(_, creator) => setCreator(creator)}
-              input={creator?.firstName}
-            />
+            <SimpleSelect
+              showSearch
+              data={clients}
+              onChange={(_, brand) => setClient(brand)}
+              style={{ width: '100%' }}
+              selectedOption={client?.brandName}
+              optionMapping={{
+                key: 'id',
+                label: 'brandName',
+                value: 'id',
+              }}
+              placeholder="Select a Client"
+              disabled={!clients.length}
+              allowClear
+            ></SimpleSelect>
           </Col>
         </Col>
         <Col span={23} className="my-2">
