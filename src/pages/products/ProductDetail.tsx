@@ -67,7 +67,6 @@ interface ProductDetailProps {
   isLive: boolean;
   template?: boolean;
   loadingResources?: boolean;
-  isCloning?: boolean;
 }
 
 const ProductDetail: React.FC<ProductDetailProps> = ({
@@ -82,7 +81,6 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
   isLive,
   template,
   loadingResources,
-  isCloning,
 }) => {
   const { isMobile } = useContext(AppContext);
   const [loading, setLoading] = useState<boolean>(false);
@@ -291,8 +289,6 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
       const productForm = form.getFieldsValue(true);
       if (productForm.description)
         productForm.description = DOMPurify.sanitize(productForm.description);
-
-      if (isCloning) productForm.brand = null;
       else
         productForm.brand = brands?.find(
           brand => brand.id === productForm.brand?.id
@@ -686,37 +682,35 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                 </Row>
               </Col>
               <Col lg={12} xs={24}>
-                {!isCloning && (
-                  <Row gutter={8}>
-                    <Col span={24}>
-                      <Form.Item
-                        name="brand"
-                        label="Client"
-                        rules={[
-                          {
-                            required: true,
-                            message: 'Client is required.',
-                          },
-                        ]}
-                      >
-                        <SimpleSelect
-                          showSearch
-                          id="brand"
-                          data={brands}
-                          onChange={(value, brand) =>
-                            updateForm(value, brand, 'brand')
-                          }
-                          style={{ width: '100%' }}
-                          selectedOption={brand}
-                          optionMapping={optionMapping}
-                          placeholder="Select a Client"
-                          disabled={loadingResources || isLive}
-                          allowClear
-                        ></SimpleSelect>
-                      </Form.Item>
-                    </Col>
-                  </Row>
-                )}
+                <Row gutter={8}>
+                  <Col span={24}>
+                    <Form.Item
+                      name="brand"
+                      label="Client"
+                      rules={[
+                        {
+                          required: true,
+                          message: 'Client is required.',
+                        },
+                      ]}
+                    >
+                      <SimpleSelect
+                        showSearch
+                        id="brand"
+                        data={brands}
+                        onChange={(value, brand) =>
+                          updateForm(value, brand, 'brand')
+                        }
+                        style={{ width: '100%' }}
+                        selectedOption={brand}
+                        optionMapping={optionMapping}
+                        placeholder="Select a Client"
+                        disabled={loadingResources || isLive}
+                        allowClear
+                      ></SimpleSelect>
+                    </Form.Item>
+                  </Col>
+                </Row>
                 <Row gutter={8}>
                   <Col span={24}>
                     <Form.Item

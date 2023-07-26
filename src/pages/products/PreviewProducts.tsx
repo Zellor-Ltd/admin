@@ -1008,7 +1008,6 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
               brand={currentMasterBrand}
               loadingResources={loadingResources}
               isLive={false}
-              isCloning={cloning.current}
             />
           );
         }

@@ -6,7 +6,6 @@ import {
   Avatar,
   Typography,
   Table,
-  message,
   Input,
   Select,
 } from 'antd';
@@ -19,7 +18,11 @@ import {
   TeamOutlined,
 } from '@ant-design/icons';
 import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { fetchBrands, fetchInternalStats } from 'services/DiscoClubService';
+import {
+  fetchBrands,
+  fetchInternalStats,
+  fetchStats,
+} from 'services/DiscoClubService';
 import '@ant-design/flowchart/dist/index.css';
 import Meta from 'antd/lib/card/Meta';
 import { ColumnsType } from 'antd/lib/table';
@@ -48,7 +51,6 @@ const Analytics: React.FC<DashboardProps> = () => {
   const { isMobile } = useContext(AppContext);
   const [client, setClient] = useState<any>();
   const [clients, setClients] = useState<any[]>([]);
-  const mounted = useRef<boolean>();
 
   const handleScroll = () => {
     if (timeframe.current) timeframe.current.blur();
@@ -64,10 +66,6 @@ const Analytics: React.FC<DashboardProps> = () => {
   }, []);
 
   useEffect(() => {
-    if (!mounted.current) {
-      mounted.current = true;
-      return;
-    }
     getStats();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [period, client]);
@@ -93,17 +91,20 @@ const Analytics: React.FC<DashboardProps> = () => {
   }, [titleFilter]);
 
   const getStats = useMemo(() => {
+    const getAllStats = async () => {
+      const { result }: any = await doFetch(() => fetchStats(period));
+      setStats(result);
+    };
+
     const getClientStats = async () => {
-      if (!client) {
-        message.warning('Please select a client to get analytics report.');
-        return;
-      }
       const { result }: any = await doFetch(() =>
-        fetchInternalStats(period ?? 1, client!.id)
+        fetchInternalStats(period ?? 1, client?.id)
       );
       setStats(result);
     };
-    return getClientStats;
+
+    if (client) return getClientStats;
+    else return getAllStats;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [period, client]);
 
