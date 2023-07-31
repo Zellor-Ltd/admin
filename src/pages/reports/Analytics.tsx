@@ -21,7 +21,7 @@ import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import {
   fetchBrands,
   fetchInternalStats,
-  fetchStats,
+  fetchAllInternalStats,
 } from 'services/DiscoClubService';
 import '@ant-design/flowchart/dist/index.css';
 import Meta from 'antd/lib/card/Meta';
@@ -92,7 +92,7 @@ const Analytics: React.FC<DashboardProps> = () => {
 
   const getStats = useMemo(() => {
     const getAllStats = async () => {
-      const { result }: any = await doFetch(() => fetchStats(period));
+        const { result }: any = await doFetch(() => fetchAllInternalStats(period));
       setStats(result);
     };
 
