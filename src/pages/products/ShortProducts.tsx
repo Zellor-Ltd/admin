@@ -45,7 +45,7 @@ import scrollIntoView from 'scroll-into-view';
 import { useMount } from 'react-use';
 import SimpleSelect from '../../components/select/SimpleSelect';
 import { SelectOption } from '../../interfaces/SelectOption';
-import ProductDetail from './ProductDetail';
+import ShortProductDetail from './ShortProductDetail';
 import useAllCategories from 'hooks/useAllCategories';
 
 const { Panel } = Collapse;
@@ -894,7 +894,7 @@ const ShortProducts: React.FC<RouteComponentProps> = () => {
         </>
       )}
       {details && (
-        <ProductDetail
+        <ShortProductDetail
           brands={brands}
           productBrands={productBrands}
           allCategories={allCategories}
