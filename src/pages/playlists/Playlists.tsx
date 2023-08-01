@@ -1049,9 +1049,12 @@ const Playlists: React.FC<RouteComponentProps> = () => {
       render: id => (
         <CopyValueToClipboard
           tooltipText="Code"
-          value={`<script src="https://beautybuzz.io/script/ce/vlink-ce.js"></script>
-                  <vlink-carousel src=${id?.slice(0, -4)} size="1">
-                  </vlink-carousel>`}
+          value={`<div data-bb-carousel-size="1" data-bb-carousel=${id
+            ?.toUpperCase()
+            .slice(
+              0,
+              -4
+            )}></div><script src="https://beautybuzz.io/api/widgets/v1/bb-widgets"></script>`}
         />
       ),
       align: 'center',
