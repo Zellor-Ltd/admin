@@ -59,6 +59,7 @@ import MyAccount from 'pages/my-account/MyAccount';
 import ForgotPassword from 'pages/login/ForgotPassword';
 import VerificationCode from 'pages/login/VerificationCode';
 import Analytics from 'pages/reports/Analytics';
+import ShortProducts from 'pages/products/ShortProducts';
 
 function AdminRoutes() {
   return (
@@ -222,6 +223,11 @@ function AdminRoutes() {
       <AppRoute
         path="/preview-products"
         component={PreviewProducts}
+        layout={AuthenticatedLayout}
+      />
+      <AppRoute
+        path="/short-products"
+        component={ShortProducts}
         layout={AuthenticatedLayout}
       />
       <AppRoute

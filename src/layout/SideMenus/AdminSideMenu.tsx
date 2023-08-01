@@ -38,6 +38,7 @@ import {
   FileSyncOutlined,
   HddOutlined,
   BarChartOutlined,
+  ProfileOutlined,
 } from '@ant-design/icons';
 import { Menu } from 'antd';
 import SubMenu from 'antd/lib/menu/SubMenu';
@@ -107,6 +108,13 @@ const AdminSideMenu = ({ isMobile }) => {
         onClick={() => refreshParent('preview-products')}
       >
         <Link to="/preview-products">Preview Products</Link>
+      </Menu.Item>
+      <Menu.Item
+        key="short-products"
+        icon={<ProfileOutlined />}
+        onClick={() => refreshParent('short-products')}
+      >
+        <Link to="/short-products">Short Products</Link>
       </Menu.Item>
       <Menu.Item
         key="variant-groups"
