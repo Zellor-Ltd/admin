@@ -17,6 +17,7 @@ import {
   CopyOutlined,
   DeleteOutlined,
   EditOutlined,
+  RedoOutlined,
   SearchOutlined,
 } from '@ant-design/icons';
 import { ColumnsType } from 'antd/lib/table';
@@ -34,6 +35,7 @@ import {
   updateLinkCreator,
   updateLinkProduct,
   updateLinkProductBrand,
+  rebuildVLink,
 } from 'services/DiscoClubService';
 import CopyValueToClipboard from 'components/CopyValueToClipboard';
 import moment from 'moment';
@@ -45,6 +47,7 @@ import { SimpleSwitch } from '../../components/SimpleSwitch';
 const Playlists: React.FC<RouteComponentProps> = () => {
   const { isMobile } = useContext(AppContext);
   const [selectedTab, setSelectedTab] = useState<string>('client');
+  const [loadingRow, setLoadingRow] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const { doFetch } = useRequest({ setLoading });
   const [details, setDetails] = useState<boolean>(false);
@@ -1005,6 +1008,17 @@ const Playlists: React.FC<RouteComponentProps> = () => {
     }
   };
 
+  const rebuildVlink = async (record: any) => {
+    try {
+      setLoadingRow(record.id ?? '');
+      const response: any = await rebuildVLink(record.id!);
+      if (response.success) message.success(response.message);
+    } catch {
+    } finally {
+      setLoadingRow('');
+    }
+  };
+
   const customColumns: ColumnsType<any> = [
     {
       title: (
@@ -1204,6 +1218,36 @@ const Playlists: React.FC<RouteComponentProps> = () => {
           >
             <CopyOutlined />
           </Link>
+        </>
+      ),
+    },
+    {
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Revalidate">Revalidate</Tooltip>
+          </div>
+        </div>
+      ),
+      width: '5%',
+      align: 'center',
+      render: (_, record: any) => (
+        <>
+          <Button
+            type="link"
+            block
+            onClick={() => rebuildVlink(record)}
+            disabled={!record.id || loadingRow !== ''}
+            loading={loadingRow === record.id}
+          >
+            {loadingRow !== record.id && <RedoOutlined />}
+          </Button>
         </>
       ),
     },
