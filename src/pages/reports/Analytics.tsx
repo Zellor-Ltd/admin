@@ -92,7 +92,9 @@ const Analytics: React.FC<DashboardProps> = () => {
 
   const getStats = useMemo(() => {
     const getAllStats = async () => {
-        const { result }: any = await doFetch(() => fetchAllInternalStats(period));
+      const { result }: any = await doFetch(() =>
+        fetchAllInternalStats(period)
+      );
       setStats(result);
     };
 
@@ -244,10 +246,11 @@ const Analytics: React.FC<DashboardProps> = () => {
               <div
                 style={{
                   width: '100%',
+                  whiteSpace: 'break-spaces',
                 }}
               >
                 <div>
-                  {title}
+                  <p>{title}</p>
                   <p
                     style={{
                       color: 'lightgray',
@@ -577,7 +580,7 @@ const Analytics: React.FC<DashboardProps> = () => {
           </Col>
         </Col>
         <Col span={23} className="my-2">
-          <Row justify="space-between" align="bottom">
+          <Row justify="center" align="bottom">
             <Col>
               <Typography.Title level={3}>ENGAGEMENT</Typography.Title>
             </Col>
