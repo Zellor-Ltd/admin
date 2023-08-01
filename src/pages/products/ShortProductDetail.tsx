@@ -670,15 +670,6 @@ const ShortProductDetail: React.FC<ShortProductDetailProps> = ({
                       />
                     </Form.Item>
                   </Col>
-                  <Col span={24}>
-                    <Form.Item label="Long description">
-                      <RichTextEditor
-                        formField="description"
-                        form={form}
-                        disabled={loadingResources || isLive}
-                      />
-                    </Form.Item>
-                  </Col>
                 </Row>
               </Col>
               <Col lg={12} xs={24}>
@@ -740,95 +731,6 @@ const ShortProductDetail: React.FC<ShortProductDetailProps> = ({
                     </Form.Item>
                   </Col>
                 </Row>
-                <Row gutter={8}>
-                  <Col lg={12} xs={24}>
-                    <Form.Item
-                      name="goLiveDate"
-                      label="Go Live Date"
-                      getValueProps={formatMoment}
-                    >
-                      <DatePicker
-                        format="DD/MM/YYYY"
-                        disabled={loadingResources || isLive}
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col lg={12} xs={24}>
-                    <Form.Item
-                      name="validity"
-                      label="Expiration Date"
-                      getValueProps={formatMoment}
-                    >
-                      <DatePicker
-                        format="DD/MM/YYYY"
-                        disabled={loadingResources || isLive}
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col lg={12} xs={24}>
-                    <Form.Item name="quantity" label="Quantity">
-                      <InputNumber
-                        id="quantity"
-                        placeholder="Quantity"
-                        pattern="^\d*$"
-                        title="Non-negative integers only."
-                        disabled={loadingResources || isLive}
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col lg={12} xs={24}></Col>
-                  <Col lg={12} xs={24}>
-                    <Col span={24}>
-                      <Form.Item name="variantId" label="Variant">
-                        <Input
-                          allowClear
-                          id="variantId"
-                          placeholder="Variant ID"
-                          disabled={loadingResources || isLive}
-                          pattern="^.{8}-.{4}-.{4}-.{4}-.{12}_STR$"
-                          title="Format must be XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX_STR."
-                        />
-                      </Form.Item>
-                    </Col>
-                    <Col span={24}>
-                      <Form.Item name="colourTitle" label="Colour">
-                        <Input
-                          allowClear
-                          placeholder="Colour name"
-                          disabled={loadingResources || isLive}
-                        />
-                      </Form.Item>
-                    </Col>
-                    <Col span={24}>
-                      <Form.Item name="size" label="Size">
-                        <Input
-                          allowClear
-                          placeholder="Size"
-                          disabled={loadingResources || isLive}
-                        />
-                      </Form.Item>
-                    </Col>
-                  </Col>
-                  <Col lg={12} xs={24}>
-                    <Col span={24}>
-                      <SketchPicker
-                        className="product-sketch-picker"
-                        color={color}
-                        onChange={selectedColor => setColor(selectedColor.hex)}
-                        presetColors={[
-                          '#4a2f10',
-                          '#704818',
-                          '#9e6521',
-                          '#C37D2A',
-                          '#E5AC69',
-                          '#F2C590',
-                          '#FFD6A6',
-                          '#FFF0CB',
-                        ]}
-                      />
-                    </Col>
-                  </Col>
-                </Row>
               </Col>
             </Row>
           </Tabs.TabPane>
@@ -858,137 +760,11 @@ const ShortProductDetail: React.FC<ShortProductDetailProps> = ({
                     </Form.Item>
                   </Col>
                   <Col span={24}>
-                    <Form.Item name="currencyIsoCodeUS" label="Currency US">
-                      <Select
-                        placeholder="Please select a currency"
-                        disabled={loadingResources || isLive}
-                        allowClear
-                        showSearch
-                        filterOption={filterOption}
-                      >
-                        {currency.map((curr: any) => (
-                          <Select.Option
-                            key={curr.value}
-                            value={curr.value}
-                            label={curr.name}
-                          >
-                            {curr.name}
-                          </Select.Option>
-                        ))}
-                      </Select>
-                    </Form.Item>
-                  </Col>
-                  <Col span={24}>
-                    <Form.Item name="currencyIsoCodeGB" label="Currency UK">
-                      <Select
-                        placeholder="Please select a currency"
-                        disabled={loadingResources || isLive}
-                        allowClear
-                        showSearch
-                        filterOption={filterOption}
-                      >
-                        {currency.map((curr: any) => (
-                          <Select.Option
-                            key={curr.value}
-                            value={curr.value}
-                            label={curr.name}
-                          >
-                            {curr.name}
-                          </Select.Option>
-                        ))}
-                      </Select>
-                    </Form.Item>
-                  </Col>
-                  <Col span={24}>
-                    <Form.Item name="currencyIsoCodeIE" label="Currency Europe">
-                      <Select
-                        placeholder="Please select a currency"
-                        disabled={loadingResources || isLive}
-                        allowClear
-                        showSearch
-                        filterOption={filterOption}
-                      >
-                        {currency.map((curr: any) => (
-                          <Select.Option
-                            key={curr.value}
-                            value={curr.value}
-                            label={curr.name}
-                          >
-                            {curr.name}
-                          </Select.Option>
-                        ))}
-                      </Select>
-                    </Form.Item>
-                  </Col>
-
-                  <Col span={24}>
-                    <Row
-                      gutter={8}
-                      justify={isMobile ? 'space-between' : undefined}
-                    >
-                      <Col lg={12}>
-                        <Form.Item
-                          name="displayDiscountPage"
-                          label="Allow Use of DD?"
-                          valuePropName="checked"
-                        >
-                          <Switch disabled={loadingResources || isLive} />
-                        </Form.Item>
-                      </Col>
-                      <Col lg={12}>
-                        <Form.Item
-                          name="onSale"
-                          label="On Sale"
-                          valuePropName="checked"
-                        >
-                          <Switch disabled={loadingResources || isLive} />
-                        </Form.Item>
-                      </Col>
-                    </Row>
-                  </Col>
-
-                  <Col lg={12} xs={24}>
-                    <Form.Item name="shopifyUniqueId" label="Shopify UID">
-                      <InputNumber
-                        disabled={loadingResources || isLive}
-                        placeholder="Shopify UID"
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col lg={12} xs={24}>
-                    <Form.Item name="magentoId" label="Magento ID">
-                      <InputNumber
-                        disabled={loadingResources || isLive}
-                        placeholder="Magento ID"
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col lg={12} xs={24}>
                     <Form.Item name="urlKey" label="URL Key">
                       <Input
                         allowClear
                         placeholder="Product Key"
                         disabled={loadingResources || isLive}
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col lg={12} xs={24}>
-                    <Form.Item name="weight" label="Weight">
-                      <InputNumber
-                        placeholder="Weight in Kg"
-                        disabled={loadingResources || isLive}
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col lg={12} xs={24}>
-                    <Form.Item name="barcode" label="Barcode">
-                      <Input
-                        allowClear
-                        id="barcode"
-                        pattern="^[0-9]{13}$"
-                        placeholder="Barcode number"
-                        disabled={loadingResources || isLive}
-                        title="Numbers only, 13 digits."
                       />
                     </Form.Item>
                   </Col>
@@ -1011,108 +787,6 @@ const ShortProductDetail: React.FC<ShortProductDetailProps> = ({
                         id="originalPrice"
                         disabled={loadingResources || isLive}
                         placeholder="Original Price"
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col span={24}>
-                    <Form.Item name="originalPriceUS" label="Price US">
-                      <InputNumber
-                        disabled={loadingResources || isLive}
-                        placeholder="Price US"
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col span={24}>
-                    <Form.Item name="originalPriceGB" label="Price UK">
-                      <InputNumber
-                        disabled={loadingResources || isLive}
-                        placeholder="Price UK"
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col span={24}>
-                    <Form.Item name="originalPriceIE" label="Price Europe">
-                      <InputNumber
-                        disabled={loadingResources || isLive}
-                        placeholder="Price Europe"
-                      />
-                    </Form.Item>
-                  </Col>
-
-                  <Col lg={12} xs={24}>
-                    <Form.Item
-                      name="maxDiscoDollars"
-                      label="Max Discount in DD"
-                      dependencies={['originalPrice']}
-                      rules={[
-                        {
-                          required: true,
-                          message: 'Max Discount is required.',
-                        },
-                        ({ getFieldValue }) => ({
-                          validator(_, maxDiscount) {
-                            // 3x the price
-                            const maxPossibleDiscount = Math.trunc(
-                              Number(getFieldValue('originalPrice')) * 3
-                            );
-                            if (
-                              maxDiscount &&
-                              maxDiscount > maxPossibleDiscount
-                            ) {
-                              if (!maxDiscountAlert) {
-                                setTimeout(
-                                  () =>
-                                    alert(
-                                      `The largest amount of DD you can apply for this price is ${maxPossibleDiscount}.`
-                                    ),
-                                  100
-                                );
-                              }
-                              setMaxDiscountAlert(true);
-                              return Promise.reject(
-                                new Error('Max discount not allowed.')
-                              );
-                            }
-                            setMaxDiscountAlert(false);
-                            return Promise.resolve();
-                          },
-                        }),
-                      ]}
-                    >
-                      <InputNumber
-                        id="maxDiscoDollars"
-                        parser={value => (value || '').replace(/-/g, '')}
-                        precision={0}
-                        disabled={loadingResources || isLive}
-                        placeholder="Max Discount in DD"
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col lg={12} xs={24}>
-                    <Form.Item
-                      name="discoPercentage"
-                      label="Disco Percentage %"
-                    >
-                      <InputNumber
-                        disabled={loadingResources || isLive}
-                        placeholder="Disco %"
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col lg={12} xs={24}>
-                    <Form.Item name="sku" label="SKU">
-                      <Input
-                        allowClear
-                        disabled={loadingResources || isLive}
-                        placeholder="SKU"
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col lg={12} xs={24}>
-                    <Form.Item name="creatorPercentage" label="Creator %">
-                      <InputNumber
-                        disabled={loadingResources || isLive}
-                        placeholder="Creator %"
                       />
                     </Form.Item>
                   </Col>
@@ -1140,60 +814,9 @@ const ShortProductDetail: React.FC<ShortProductDetailProps> = ({
                   />
                 </Form.Item>
               </Col>
-              <Col lg={24} xs={12}>
-                <Form.Item label="Thumbnail">
-                  <Upload.ImageUpload
-                    type="thumbnail"
-                    fileList={_product?.thumbnailUrl}
-                    formProp="thumbnailUrl"
-                    form={form}
-                    onFitTo={isLive ? undefined : onFitTo}
-                    onRollback={isLive ? undefined : onRollback}
-                    disabled={loadingResources || isLive}
-                    onImageChange={(
-                      image: Image,
-                      _: string,
-                      removed?: boolean
-                    ) => handleImageChange(image, 'thumbnailUrl', removed)}
-                  />
-                </Form.Item>
-              </Col>
-              <Col span={24}>
-                <Form.Item label="Image" required>
-                  <div
-                    className={
-                      _product ? (_product.image ? 'img-upload-div' : '') : ''
-                    }
-                  >
-                    <Upload.ImageUpload
-                      type="image"
-                      maxCount={isLive ? _product?.image?.length : 20}
-                      fileList={_product?.image}
-                      formProp="image"
-                      form={form}
-                      onAssignToTag={isLive ? undefined : onAssignToTag}
-                      onAssignToThumbnail={
-                        isLive ? undefined : onAssignToThumbnail
-                      }
-                      croppable={!isLive}
-                      classNames="big-image-height scroll-x"
-                      onOrder={isLive ? undefined : onOrder}
-                      onFitTo={isLive ? undefined : onFitTo}
-                      onRollback={isLive ? undefined : onRollback}
-                      disabled={loadingResources || isLive}
-                      onImageChange={(
-                        image: Image,
-                        _: string,
-                        removed?: boolean
-                      ) => handleImageChange(image, 'image', removed)}
-                    />
-                  </div>
-                </Form.Item>
-              </Col>
             </Row>
           </Tabs.TabPane>
         </Tabs>
-
         <Row gutter={8} justify="end">
           <Col>
             <Button

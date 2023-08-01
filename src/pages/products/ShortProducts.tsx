@@ -772,7 +772,6 @@ const ShortProducts: React.FC<RouteComponentProps> = () => {
                 <Col>
                   <Button
                     key="2"
-                    className={isMobile ? 'mt-05' : ''}
                     onClick={() => createProduct(products.length)}
                   >
                     New Item
