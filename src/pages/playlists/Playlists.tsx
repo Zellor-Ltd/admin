@@ -1108,7 +1108,8 @@ const Playlists: React.FC<RouteComponentProps> = () => {
       ),
       dataIndex: 'links',
       width: '15%',
-      render: (links: [any]) => (links ? links[0].brand?.name : '-'),
+        render: (links: [any]) => Array.isArray(links) && links.length > 0 && links[0].brand && links[0].brand.name ?
+            links[0].brand.name : '-',
       align: 'center',
     },
     {
