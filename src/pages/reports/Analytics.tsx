@@ -115,7 +115,12 @@ const Analytics: React.FC<DashboardProps> = () => {
       <div style={{ height: '400px' }}>
         <ResponsiveBar
           data={stats?.stats ?? []}
-          keys={['productClicks', 'impressions', 'videoPlays']}
+          keys={[
+            'productClicks',
+            'impressions',
+            'videoPlays',
+            'totalWatchTime',
+          ]}
           indexBy="date"
           margin={{ top: 50, right: 130, bottom: 50, left: 60 }}
           padding={0.3}
@@ -177,6 +182,8 @@ const Analytics: React.FC<DashboardProps> = () => {
                 return 'Impressions';
               case 'productClicks':
                 return 'Product Clicks';
+              case 'totalWatchTime':
+                return 'Total Watch Time';
               default:
                 return 'Video Plays';
             }
@@ -191,6 +198,9 @@ const Analytics: React.FC<DashboardProps> = () => {
                 break;
               case 'productClicks':
                 property = 'Product Clicks';
+                break;
+              case 'totalWatchTime':
+                property = 'Total Watch Time';
                 break;
               default:
                 property = 'Video Plays';
