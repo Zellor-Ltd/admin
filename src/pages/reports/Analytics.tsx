@@ -8,6 +8,7 @@ import {
   Table,
   Input,
   Select,
+  DatePicker,
 } from 'antd';
 import { useRequest } from 'hooks/useRequest';
 import {
@@ -32,6 +33,7 @@ import { Creator } from 'interfaces/Creator';
 import { ResponsiveBar } from '@nivo/bar';
 import { AppContext } from 'contexts/AppContext';
 import SimpleSelect from 'components/select/SimpleSelect';
+import moment from 'moment';
 
 interface DashboardProps {}
 
@@ -44,17 +46,14 @@ const Analytics: React.FC<DashboardProps> = () => {
   const [creatorFilter, setCreatorFilter] = useState<Creator | null>();
   const [impressionFilter, setImpressionFilter] = useState<string>();
   const [stats, setStats] = useState<any>();
-  const [period, setPeriod] = useState<string>('1');
   const titleFocused = useRef<boolean>(false);
   const titleSelectionEnd = useRef<number>();
-  const timeframe = useRef<any>();
   const { isMobile } = useContext(AppContext);
   const [client, setClient] = useState<any>();
   const [clients, setClients] = useState<any[]>([]);
-
-  const handleScroll = () => {
-    if (timeframe.current) timeframe.current.blur();
-  };
+  const [startDate, setStartDate] = useState<string>('0');
+  const [endDate, setEndDate] = useState<string>('1');
+  const period = useRef<number>(1);
 
   useEffect(() => {
     const getBrands = async () => {
@@ -68,7 +67,7 @@ const Analytics: React.FC<DashboardProps> = () => {
   useEffect(() => {
     getStats();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [period, client]);
+  }, [startDate, endDate, client]);
 
   useEffect(() => {
     if (titleRef.current && titleFilter) {
@@ -93,14 +92,18 @@ const Analytics: React.FC<DashboardProps> = () => {
   const getStats = useMemo(() => {
     const getAllStats = async () => {
       const { result }: any = await doFetch(() =>
-        fetchAllInternalStats(period)
+        fetchAllInternalStats(period.current.toString())
       );
       setStats(result);
     };
 
     const getClientStats = async () => {
       const { result }: any = await doFetch(() =>
-        fetchInternalStats(period ?? 1, client?.id)
+        fetchInternalStats({
+          brandId: client?.id,
+          startDate: startDate,
+          endDate: endDate,
+        })
       );
       setStats(result);
     };
@@ -267,7 +270,7 @@ const Analytics: React.FC<DashboardProps> = () => {
                       marginBottom: '-1rem',
                     }}
                   >
-                    {period} {period !== '1' ? 'days' : 'day'}
+                    {period.current} {period.current !== 1 ? 'days' : 'day'}
                   </p>
                 </div>
               </div>
@@ -561,8 +564,20 @@ const Analytics: React.FC<DashboardProps> = () => {
     return option?.label?.toUpperCase().includes(input?.toUpperCase());
   };
 
+  const onChangeDateRange = dates => {
+    if (dates) {
+      setStartDate(moment(dates[0]).format('YYYYMMDD'));
+      setEndDate(moment(dates[1]).format('YYYYMMDD'));
+      period.current = moment(dates[1]).diff(moment(dates[0]), 'days');
+    } else {
+      setStartDate('0');
+      setEndDate('1');
+      period.current = 1;
+    }
+  };
+
   return (
-    <div onScroll={handleScroll} style={{ overflowY: 'auto', height: '100%' }}>
+    <div style={{ overflowY: 'auto', height: '100%' }}>
       <Row
         gutter={[8, 8]}
         align="bottom"
@@ -596,36 +611,22 @@ const Analytics: React.FC<DashboardProps> = () => {
             <Col lg={6}>
               <Row justify="end">
                 <Col>
-                  <Select
-                    disabled={loading}
-                    onChange={setPeriod}
-                    placeholder="Timeframe"
-                    style={{ width: '100%' }}
-                    filterOption={filterOption}
-                    allowClear
-                    showSearch
-                    value={period}
-                    ref={timeframe}
-                  >
-                    <Select.Option key="1" value="1" label="Today">
-                      Today
-                    </Select.Option>
-                    <Select.Option key="3" value="3" label="Last 3 Days">
-                      Last 3 Days
-                    </Select.Option>
-                    <Select.Option key="7" value="7" label="Last Week">
-                      Last Week
-                    </Select.Option>
-                    <Select.Option key="30" value="30" label="Last 30 Days">
-                      Last 30 Days
-                    </Select.Option>
-                    <Select.Option key="90" value="90" label="Last 3 months">
-                      Last 3 months
-                    </Select.Option>
-                    <Select.Option key="365" value="365" label="Last Year">
-                      Last Year
-                    </Select.Option>
-                  </Select>
+                  <DatePicker.RangePicker
+                    onChange={onChangeDateRange}
+                    className="mb-1"
+                    ranges={{
+                      Today: [moment().subtract(1, 'day'), moment()],
+                      'Last 3 Days': [moment().subtract(3, 'days'), moment()],
+                      'Last Week': [moment().subtract(7, 'days'), moment()],
+                      'Last 30 Days': [moment().subtract(30, 'days'), moment()],
+                      'Last 3 Months': [
+                        moment().subtract(3, 'months'),
+                        moment(),
+                      ],
+                      'Last Year': [moment().subtract(1, 'year'), moment()],
+                    }}
+                    format="DD/MM/YYYY"
+                  />
                 </Col>
               </Row>
             </Col>
