@@ -2,7 +2,6 @@
 import {
   Button,
   Col,
-  DatePicker,
   Form,
   Input,
   InputNumber,
@@ -11,50 +10,29 @@ import {
   Radio,
   Row,
   Select,
-  Slider,
   Switch,
-  Table,
-  Tabs,
-  Tooltip,
-  Typography,
 } from 'antd';
 import { Upload } from 'components';
-import { RichTextEditor } from 'components/RichTextEditor';
-import { formatMoment } from 'helpers/formatMoment';
 import { categoryMapper } from 'helpers/categoryMapper';
 import { categoryUtils } from 'helpers/categoryUtils';
 import { Brand } from 'interfaces/Brand';
 import { ProductBrand } from '../../interfaces/ProductBrand';
 import { AllCategories } from 'interfaces/Category';
 import { Product } from 'interfaces/Product';
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { saveStagingProduct } from 'services/DiscoClubService';
-import ProductCategoriesTrees from './ProductCategoriesTrees';
 import './Products.scss';
 import SimpleSelect from 'components/select/SimpleSelect';
 import { SelectOption } from 'interfaces/SelectOption';
 import { Image } from '../../interfaces/Image';
 import { useRequest } from 'hooks/useRequest';
-import update from 'immutability-helper';
-import { SketchPicker } from 'react-color';
-import { AppContext } from 'contexts/AppContext';
-import { ColumnsType } from 'antd/lib/table';
-import { currencyRender } from 'helpers/currencyRender';
 import scrollIntoView from 'scroll-into-view';
-import CopyValueToClipboard from 'components/CopyValueToClipboard';
 import moment from 'moment';
 import DOMPurify from 'isomorphic-dompurify';
 
 const { categoriesKeys, categoriesFields } = categoryMapper;
-const { getSearchTags, getCategories, removeSearchTagsByCategory } =
-  categoryUtils;
+const { getSearchTags, getCategories } = categoryUtils;
 interface ShortProductDetailProps {
   brands: Brand[];
   productBrands: ProductBrand[];
@@ -82,16 +60,10 @@ const ShortProductDetail: React.FC<ShortProductDetailProps> = ({
   template,
   loadingResources,
 }) => {
-  const { isMobile } = useContext(AppContext);
   const [loading, setLoading] = useState<boolean>(false);
-  const [ageRange, setAgeRange] = useState<[number, number]>([12, 100]);
   const [form] = Form.useForm();
-  const [maxDiscountAlert, setMaxDiscountAlert] = useState<boolean>(false);
   const { doRequest } = useRequest({ setLoading });
   const [_product, _setProduct] = useState(product);
-  const [color, setColor] = useState<string | undefined>(product?.colour);
-  const [selectedStore, setSelectedStore] = useState<Brand>();
-  const [activeTabKey, setActiveTabKey] = useState<string>('Details');
   const toFocus = useRef<any>();
 
   const {
@@ -111,10 +83,6 @@ const ShortProductDetail: React.FC<ShortProductDetailProps> = ({
     setDiscoPercentageByBrand(true);
     setSearchTagsByCategory(true);
   }, [product]);
-
-  useEffect(() => {
-    form.setFieldsValue({ colour: color });
-  }, [color]);
 
   const setDiscoPercentageByBrand = useCallback(
     (useInitialValue: boolean) => {
@@ -197,51 +165,13 @@ const ShortProductDetail: React.FC<ShortProductDetailProps> = ({
     [form, product]
   );
 
-  const handleCategoryDelete = (productCategoryIndex: number) => {
-    removeSearchTagsByCategory(productCategoryIndex, product, form);
-  };
-
-  const handleCategoryChange = (
-    selectedCategories: any,
-    _productCategoryIndex: number,
-    filterCategory: Function,
-    categoryKey: string
-  ) => {
-    filterCategory(form);
-    setSearchTagsByCategory(
-      false,
-      selectedCategories,
-      categoryKey,
-      _productCategoryIndex
-    );
-  };
-
-  useEffect(() => {
-    if (product?.ageMin && product?.ageMax)
-      setAgeRange([product?.ageMin, product?.ageMax]);
-  }, [product]);
-
-  const onChangeAge = (value: [number, number]) => {
-    form.setFieldsValue({
-      ageMin: value[0],
-      ageMax: value[1],
-    });
-
-    setAgeRange(value);
-  };
-
   const checkConstraintValidity = () => {
     const quantity = document.getElementById('quantity') as HTMLInputElement;
     const barcode = document.getElementById('barcode') as HTMLInputElement;
     const variantId = document.getElementById('variantId') as HTMLInputElement;
     const elements = [barcode, variantId, quantity];
     toFocus.current = elements.find(item => !item?.checkValidity());
-    if (toFocus.current) {
-      if (toFocus.current === barcode) setActiveTabKey('Checkout');
-      else if (toFocus.current === variantId || quantity)
-        setActiveTabKey('Details');
-      scrollIntoView(toFocus.current);
-    }
+    if (toFocus.current) scrollIntoView(toFocus.current);
   };
 
   const handleFinishFailed = (errorFields: any[]) => {
@@ -262,23 +192,6 @@ const ShortProductDetail: React.FC<ShortProductDetailProps> = ({
     if (!toFocus.current) {
       const id = errorFields[errorIndex].name[0];
       const element = document.getElementById(id);
-
-      switch (id) {
-        case 'brand':
-        case 'productBrand':
-          setActiveTabKey('Details');
-          break;
-        case 'categories':
-        case 'gender':
-          setActiveTabKey('Categories');
-          break;
-        case 'originalPrice':
-        case 'maxDiscoDollars':
-          setActiveTabKey('Checkout');
-          break;
-        default:
-          console.log('Something went wrong.');
-      }
       scrollIntoView(element);
     }
   };
@@ -324,37 +237,6 @@ const ShortProductDetail: React.FC<ShortProductDetailProps> = ({
       form.setFieldsValue({ brand: entity });
     } else {
       form.setFieldsValue({ productBrand: entity });
-    }
-  };
-
-  const onAssignToThumbnail = (file: Image) => {
-    if (_product) {
-      form.setFieldsValue({ thumbnailUrl: file });
-      _product.thumbnailUrl = file;
-      _setProduct({ ..._product });
-    }
-  };
-
-  const onAssignToTag = (file: Image) => {
-    if (_product) {
-      form.setFieldsValue({ tagImage: file });
-      _product.tagImage = file;
-      _setProduct({ ..._product });
-    }
-  };
-
-  const onOrder = (dragIndex: number, hoverIndex: number) => {
-    if (_product) {
-      const dragImage = _product?.image[dragIndex];
-      _product.image = update(_product.image as any, {
-        $splice: [
-          [dragIndex, 1],
-          [hoverIndex, 0, dragImage],
-        ],
-      });
-
-      form.setFieldsValue({ image: _product.image });
-      _setProduct({ ..._product });
     }
   };
 
@@ -407,186 +289,6 @@ const ShortProductDetail: React.FC<ShortProductDetailProps> = ({
     }
   };
 
-  const storeColumns: ColumnsType<any> = [
-    {
-      title: (
-        <div style={{ display: 'grid', placeItems: 'stretch' }}>
-          <div
-            style={{
-              textOverflow: 'ellipsis',
-              overflow: 'hidden',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            <Tooltip title="Name">Name</Tooltip>
-          </div>
-        </div>
-      ),
-      dataIndex: 'name',
-      width: '18%',
-      align: 'center',
-      sorter: (a, b): any => {
-        if (a.name && b.name) return a.name.localeCompare(b.name);
-        else if (a.name) return -1;
-        else if (b.name) return 1;
-        else return 0;
-      },
-    },
-    {
-      title: (
-        <div style={{ display: 'grid', placeItems: 'stretch' }}>
-          <div
-            style={{
-              textOverflow: 'ellipsis',
-              overflow: 'hidden',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            <Tooltip title="Country">Country</Tooltip>
-          </div>
-        </div>
-      ),
-      dataIndex: 'country',
-      width: '15%',
-      align: 'center',
-      sorter: (a, b): any => {
-        if (a.country && b.country) return a.country.localeCompare(b.country);
-        else if (a.country) return -1;
-        else if (b.country) return 1;
-        else return 0;
-      },
-    },
-    {
-      title: (
-        <div style={{ display: 'grid', placeItems: 'stretch' }}>
-          <div
-            style={{
-              textOverflow: 'ellipsis',
-              overflow: 'hidden',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            <Tooltip title="Currency">Currency</Tooltip>
-          </div>
-        </div>
-      ),
-      dataIndex: 'currency',
-      width: '10%',
-      align: 'center',
-      sorter: (a, b): any => {
-        if (a.currency && b.currency)
-          return a.currency.localeCompare(b.currency);
-        else if (a.currency) return -1;
-        else if (b.currency) return 1;
-        else return 0;
-      },
-    },
-    {
-      title: (
-        <div style={{ display: 'grid', placeItems: 'stretch' }}>
-          <div
-            style={{
-              textOverflow: 'ellipsis',
-              overflow: 'hidden',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            <Tooltip title="Price">Price</Tooltip>
-          </div>
-        </div>
-      ),
-      dataIndex: 'price',
-      width: '10%',
-      align: 'center',
-      sorter: (a, b): any => {
-        if (a.price && b.price) return a.price - b.price;
-        else if (a.price) return -1;
-        else if (b.price) return 1;
-        else return 0;
-      },
-      render: (_: number, entity: any) =>
-        entity.price ? currencyRender(entity, 'price') : '-',
-    },
-    {
-      title: (
-        <div style={{ display: 'grid', placeItems: 'stretch' }}>
-          <div
-            style={{
-              textOverflow: 'ellipsis',
-              overflow: 'hidden',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            <Tooltip title="Link">Link</Tooltip>
-          </div>
-        </div>
-      ),
-      dataIndex: 'link',
-      width: '32%',
-      align: 'center',
-      sorter: (a, b): any => {
-        if (a.link && b.link) return a.link.localeCompare(b.link);
-        else if (a.link) return -1;
-        else if (b.link) return 1;
-        else return 0;
-      },
-      render: (value: string) => {
-        return (
-          <div style={{ display: 'grid', placeItems: 'stretch' }}>
-            <div
-              style={{
-                padding: '0.5rem',
-                textOverflow: 'ellipsis',
-                overflow: 'hidden',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              <Tooltip title={value}>{value}</Tooltip>
-            </div>
-          </div>
-        );
-      },
-    },
-    {
-      title: (
-        <div style={{ display: 'grid', placeItems: 'stretch' }}>
-          <div
-            style={{
-              textOverflow: 'ellipsis',
-              overflow: 'hidden',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            <Tooltip title="Copy URL">Copy URL</Tooltip>
-          </div>
-        </div>
-      ),
-      dataIndex: 'link',
-      width: '10%',
-      render: (_, record: any) => (
-        <CopyValueToClipboard tooltipText="Copy URL" value={record.link} />
-      ),
-      align: 'center',
-    },
-  ];
-
-  const rowSelection = {
-    onChange: (_: any, selectedRow: any) => {
-      setSelectedStore(selectedRow[0]);
-    },
-    getCheckboxProps: () => ({
-      disabled: isLive,
-    }),
-  };
-
-  const handleSelectStore = async () => {
-    form.setFieldsValue({ brand: selectedStore });
-  };
-
-  const handleTabChange = (value: string) => {
-    setActiveTabKey(value);
-  };
-
   const handleImageChange = (
     _: Image,
     sourceProp: string,
@@ -636,187 +338,169 @@ const ShortProductDetail: React.FC<ShortProductDetailProps> = ({
         onFinishFailed={({ errorFields }) => handleFinishFailed(errorFields)}
         layout="vertical"
       >
-        <Tabs onChange={handleTabChange} activeKey={activeTabKey}>
-          <Tabs.TabPane forceRender tab="Details" key="Details">
+        <Row gutter={8}>
+          <Col lg={12} xs={24}>
+            <Form.Item
+              name="brand"
+              label="Client"
+              rules={[
+                {
+                  required: true,
+                  message: 'Client is required.',
+                },
+              ]}
+            >
+              <SimpleSelect
+                showSearch
+                id="brand"
+                data={brands}
+                onChange={(value, brand) => updateForm(value, brand, 'brand')}
+                style={{ width: '100%' }}
+                selectedOption={brand}
+                optionMapping={optionMapping}
+                placeholder="Select a Client"
+                disabled={loadingResources || isLive}
+                allowClear
+              ></SimpleSelect>
+            </Form.Item>
+          </Col>
+          <Col lg={12} xs={24}>
+            <Form.Item
+              name="productBrand"
+              label="Product Brand"
+              rules={[
+                {
+                  required: true,
+                  message: 'Product Brand is required.',
+                },
+              ]}
+            >
+              <SimpleSelect
+                showSearch
+                id="productBrand"
+                data={productBrands}
+                onChange={(value, productBrand) =>
+                  updateForm(value, productBrand, 'productBrand')
+                }
+                style={{ width: '100%' }}
+                selectedOption={productBrand}
+                optionMapping={optionMapping}
+                placeholder="Select a Product Brand"
+                disabled={loadingResources || isLive}
+                allowClear
+              ></SimpleSelect>
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row gutter={8}>
+          <Col lg={12} xs={24}>
             <Row gutter={8}>
-              <Col lg={12} xs={24}>
-                <Row gutter={8} align="bottom">
-                  <Col lg={12} xs={12}>
-                    <Form.Item name="status" label="Status">
-                      <Radio.Group
-                        disabled={loadingResources || isLive}
-                        buttonStyle="solid"
-                      >
-                        <Radio.Button value="live">Live</Radio.Button>
-                        <Radio.Button value="paused">Paused</Radio.Button>
-                      </Radio.Group>
-                    </Form.Item>
-                  </Col>
-                  <Col lg={12} xs={12}>
-                    <Form.Item
-                      name="outOfStock"
-                      label="Out of stock"
-                      valuePropName="checked"
-                    >
-                      <Switch disabled={loadingResources || isLive} />
-                    </Form.Item>
-                  </Col>
-                  <Col span={24}>
-                    <Form.Item name="name" label="Short description">
-                      <Input
-                        allowClear
-                        disabled={loadingResources || isLive}
-                        placeholder="Short Description"
-                      />
-                    </Form.Item>
-                  </Col>
-                </Row>
-              </Col>
-              <Col lg={12} xs={24}>
-                <Row gutter={8}>
-                  <Col span={24}>
-                    <Form.Item
-                      name="brand"
-                      label="Client"
-                      rules={[
-                        {
-                          required: true,
-                          message: 'Client is required.',
-                        },
-                      ]}
-                    >
-                      <SimpleSelect
-                        showSearch
-                        id="brand"
-                        data={brands}
-                        onChange={(value, brand) =>
-                          updateForm(value, brand, 'brand')
-                        }
-                        style={{ width: '100%' }}
-                        selectedOption={brand}
-                        optionMapping={optionMapping}
-                        placeholder="Select a Client"
-                        disabled={loadingResources || isLive}
-                        allowClear
-                      ></SimpleSelect>
-                    </Form.Item>
-                  </Col>
-                </Row>
-                <Row gutter={8}>
-                  <Col span={24}>
-                    <Form.Item
-                      name="productBrand"
-                      label="Product Brand"
-                      rules={[
-                        {
-                          required: true,
-                          message: 'Product Brand is required.',
-                        },
-                      ]}
-                    >
-                      <SimpleSelect
-                        showSearch
-                        id="productBrand"
-                        data={productBrands}
-                        onChange={(value, productBrand) =>
-                          updateForm(value, productBrand, 'productBrand')
-                        }
-                        style={{ width: '100%' }}
-                        selectedOption={productBrand}
-                        optionMapping={optionMapping}
-                        placeholder="Select a Product Brand"
-                        disabled={loadingResources || isLive}
-                        allowClear
-                      ></SimpleSelect>
-                    </Form.Item>
-                  </Col>
-                </Row>
-              </Col>
-            </Row>
-          </Tabs.TabPane>
-          <Tabs.TabPane forceRender tab="Checkout" key="Checkout">
-            <Row gutter={8}>
-              <Col lg={12} xs={24}>
-                <Row gutter={8}>
-                  <Col span={24}>
-                    <Form.Item name="currencyIsoCode" label="Default Currency">
-                      <Select
-                        placeholder="Please select a currency"
-                        disabled={loadingResources || isLive}
-                        allowClear
-                        showSearch
-                        filterOption={filterOption}
-                      >
-                        {currency.map((curr: any) => (
-                          <Select.Option
-                            key={curr.value}
-                            value={curr.value}
-                            label={curr.name}
-                          >
-                            {curr.name}
-                          </Select.Option>
-                        ))}
-                      </Select>
-                    </Form.Item>
-                  </Col>
-                  <Col span={24}>
-                    <Form.Item name="urlKey" label="URL Key">
-                      <Input
-                        allowClear
-                        placeholder="Product Key"
-                        disabled={loadingResources || isLive}
-                      />
-                    </Form.Item>
-                  </Col>
-                </Row>
-              </Col>
-              <Col lg={12} xs={24}>
-                <Row gutter={8}>
-                  <Col span={24}>
-                    <Form.Item
-                      name="originalPrice"
-                      label="Default Price"
-                      rules={[
-                        {
-                          required: true,
-                          message: 'Default Price is required.',
-                        },
-                      ]}
-                    >
-                      <InputNumber
-                        id="originalPrice"
-                        disabled={loadingResources || isLive}
-                        placeholder="Original Price"
-                      />
-                    </Form.Item>
-                  </Col>
-                </Row>
-              </Col>
-            </Row>
-          </Tabs.TabPane>
-          <Tabs.TabPane forceRender tab="Images" key="Images">
-            <Row gutter={8}>
-              <Col lg={24} xs={12}>
-                <Form.Item label="Tag Image">
-                  <Upload.ImageUpload
-                    type="tag"
-                    fileList={_product?.tagImage}
-                    formProp="tagImage"
-                    form={form}
-                    onFitTo={isLive ? undefined : onFitTo}
-                    onRollback={isLive ? undefined : onRollback}
+              <Col span={24}>
+                <Form.Item name="currencyIsoCode" label="Default Currency">
+                  <Select
+                    placeholder="Please select a currency"
                     disabled={loadingResources || isLive}
-                    onImageChange={(
-                      image: Image,
-                      _: string,
-                      removed?: boolean
-                    ) => handleImageChange(image, 'tagImage', removed)}
+                    allowClear
+                    showSearch
+                    filterOption={filterOption}
+                  >
+                    {currency.map((curr: any) => (
+                      <Select.Option
+                        key={curr.value}
+                        value={curr.value}
+                        label={curr.name}
+                      >
+                        {curr.name}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col span={24}>
+                <Form.Item name="urlKey" label="URL Key">
+                  <Input
+                    allowClear
+                    placeholder="Product Key"
+                    disabled={loadingResources || isLive}
                   />
                 </Form.Item>
               </Col>
             </Row>
-          </Tabs.TabPane>
-        </Tabs>
+          </Col>
+          <Col lg={12} xs={24}>
+            <Row gutter={8}>
+              <Col span={24}>
+                <Form.Item
+                  name="originalPrice"
+                  label="Default Price"
+                  rules={[
+                    {
+                      required: true,
+                      message: 'Default Price is required.',
+                    },
+                  ]}
+                >
+                  <InputNumber
+                    id="originalPrice"
+                    disabled={loadingResources || isLive}
+                    placeholder="Original Price"
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={24}>
+                <Form.Item name="name" label="Short description">
+                  <Input
+                    allowClear
+                    disabled={loadingResources || isLive}
+                    placeholder="Short Description"
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
+          </Col>
+        </Row>
+        <Row gutter={8}>
+          <Col lg={12} xs={24}>
+            <Row gutter={8} align="bottom">
+              <Col lg={12} xs={12}>
+                <Form.Item name="status" label="Status">
+                  <Radio.Group
+                    disabled={loadingResources || isLive}
+                    buttonStyle="solid"
+                  >
+                    <Radio.Button value="live">Live</Radio.Button>
+                    <Radio.Button value="paused">Paused</Radio.Button>
+                  </Radio.Group>
+                </Form.Item>
+              </Col>
+              <Col lg={12} xs={12}>
+                <Form.Item
+                  name="outOfStock"
+                  label="Out of stock"
+                  valuePropName="checked"
+                >
+                  <Switch disabled={loadingResources || isLive} />
+                </Form.Item>
+              </Col>
+            </Row>
+          </Col>
+          <Col xs={24} lg={12}>
+            <Form.Item label="Tag Image">
+              <Upload.ImageUpload
+                type="tag"
+                fileList={_product?.tagImage}
+                formProp="tagImage"
+                form={form}
+                onFitTo={isLive ? undefined : onFitTo}
+                onRollback={isLive ? undefined : onRollback}
+                disabled={loadingResources || isLive}
+                onImageChange={(image: Image, _: string, removed?: boolean) =>
+                  handleImageChange(image, 'tagImage', removed)
+                }
+              />
+            </Form.Item>
+          </Col>
+        </Row>
         <Row gutter={8} justify="end">
           <Col>
             <Button
