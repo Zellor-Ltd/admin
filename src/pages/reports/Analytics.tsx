@@ -119,11 +119,11 @@ const Analytics: React.FC<DashboardProps> = () => {
         <ResponsiveBar
           data={stats?.stats ?? []}
           keys={[
-            'productClicks',
             'impressions',
-            'videoPlays',
-            'totalWatchTime',
             'interactions',
+            'videoPlays',
+            'productClicks',
+            'totalWatchTime',
           ]}
           indexBy="date"
           margin={{ top: 50, right: 130, bottom: 50, left: 60 }}
