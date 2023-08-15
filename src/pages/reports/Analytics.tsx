@@ -38,7 +38,7 @@ import moment from 'moment';
 interface DashboardProps {}
 
 const Analytics: React.FC<DashboardProps> = () => {
-  const [loading, setLoading] = useState<boolean>(true);
+  const [, setLoading] = useState<boolean>(true);
   const { doFetch } = useRequest({ setLoading });
   const titleRef = useRef<any>(null);
   const [sourceFilter, setSourceFilter] = useState<string>();
@@ -113,15 +113,16 @@ const Analytics: React.FC<DashboardProps> = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [period, client]);
 
-  const VideoGraph = () => {
+  const Engagement = () => {
     return (
       <div style={{ height: '400px' }}>
         <ResponsiveBar
           data={stats?.stats ?? []}
           keys={[
-            'productClicks',
             'impressions',
+            'interactions',
             'videoPlays',
+            'productClicks',
             'totalWatchTime',
           ]}
           indexBy="date"
@@ -183,6 +184,8 @@ const Analytics: React.FC<DashboardProps> = () => {
             switch (x.id) {
               case 'impressions':
                 return 'Impressions';
+              case 'interactions':
+                return 'Interactions';
               case 'productClicks':
                 return 'Product Clicks';
               case 'totalWatchTime':
@@ -198,6 +201,9 @@ const Analytics: React.FC<DashboardProps> = () => {
             switch (id) {
               case 'impressions':
                 property = 'Impressions';
+                break;
+              case 'interactions':
+                property = 'Interactions';
                 break;
               case 'productClicks':
                 property = 'Product Clicks';
@@ -631,7 +637,7 @@ const Analytics: React.FC<DashboardProps> = () => {
               </Row>
             </Col>
           </Row>
-          <VideoGraph />
+          <Engagement />
         </Col>
         <Col lg={4} xs={8}>
           <DashCard
@@ -644,7 +650,7 @@ const Analytics: React.FC<DashboardProps> = () => {
           <DashCard
             icon={<AppstoreOutlined />}
             title="Widget Interactions"
-            number={stats?.totalWidgetInteractions ?? 0}
+            number={stats?.totalinteractions ?? 0}
           />
         </Col>
         <Col lg={4} xs={8}>
