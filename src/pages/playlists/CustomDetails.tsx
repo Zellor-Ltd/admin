@@ -314,13 +314,26 @@ const CustomDetails: React.FC<CustomDetailsProps> = ({
             </Col>
           )}
           <Col span={24}>
-            <Form.Item
-              name="displayTags"
-              label="Display Tags"
-              valuePropName="checked"
-            >
-              <Switch />
-            </Form.Item>
+            <Row>
+              <Col>
+                <Form.Item
+                  name="disabled"
+                  label="Disabled"
+                  valuePropName="checked"
+                >
+                  <Switch className="mr-1" />
+                </Form.Item>
+              </Col>
+              <Col>
+                <Form.Item
+                  name="displayTags"
+                  label="Display Tags"
+                  valuePropName="checked"
+                >
+                  <Switch />
+                </Form.Item>
+              </Col>
+            </Row>
           </Col>
           <Col span={24}>
             <div id="carousel" className="mt-15"></div>
