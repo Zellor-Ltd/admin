@@ -19,11 +19,7 @@ import {
   TeamOutlined,
 } from '@ant-design/icons';
 import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
-import {
-  fetchBrands,
-  fetchInternalStats,
-  fetchAllInternalStats,
-} from 'services/DiscoClubService';
+import { fetchBrands, fetchInternalStats } from 'services/DiscoClubService';
 import '@ant-design/flowchart/dist/index.css';
 import Meta from 'antd/lib/card/Meta';
 import { ColumnsType } from 'antd/lib/table';
@@ -51,9 +47,12 @@ const Analytics: React.FC<DashboardProps> = () => {
   const { isMobile } = useContext(AppContext);
   const [client, setClient] = useState<any>();
   const [clients, setClients] = useState<any[]>([]);
-  const [startDate, setStartDate] = useState<string>('0');
-  const [endDate, setEndDate] = useState<string>('1');
+  const [startDate, setStartDate] = useState<string>(
+    moment().subtract(1, 'days').format('YYYYMMDD')
+  );
+  const [endDate, setEndDate] = useState<string>(moment().format('YYYYMMDD'));
   const period = useRef<number>(1);
+  const mounted = useRef<boolean>(false);
 
   useEffect(() => {
     const getBrands = async () => {
@@ -65,6 +64,10 @@ const Analytics: React.FC<DashboardProps> = () => {
   }, []);
 
   useEffect(() => {
+    if (!mounted.current) {
+      mounted.current = true;
+      return;
+    }
     getStats();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [startDate, endDate, client]);
@@ -90,13 +93,6 @@ const Analytics: React.FC<DashboardProps> = () => {
   }, [titleFilter]);
 
   const getStats = useMemo(() => {
-    const getAllStats = async () => {
-      const { result }: any = await doFetch(() =>
-        fetchAllInternalStats(period.current.toString())
-      );
-      setStats(result);
-    };
-
     const getClientStats = async () => {
       const { result }: any = await doFetch(() =>
         fetchInternalStats({
@@ -108,8 +104,7 @@ const Analytics: React.FC<DashboardProps> = () => {
       setStats(result);
     };
 
-    if (client) return getClientStats;
-    else return getAllStats;
+    return getClientStats;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [period, client]);
 
@@ -143,7 +138,8 @@ const Analytics: React.FC<DashboardProps> = () => {
             legend: null,
             legendPosition: 'middle',
             legendOffset: 32,
-              format: d => `${d.toString().slice(6, 8) + '/' + d.toString().slice(4, 6)}`,
+            format: d =>
+              `${d.toString().slice(6, 8) + '/' + d.toString().slice(4, 6)}`,
           }}
           axisLeft={{
             tickSize: 5,
