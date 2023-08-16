@@ -1171,7 +1171,7 @@ export const fetchStats = (period?: string) => {
 };
 
 export const fetchInternalStats = (params: any) => {
-  return instance.post('Adm/Analytics/V2/GetInternalClientStats', params);
+  return instance.post('Disco/Adm/Analytics/V2/GetInternalClientStats', params);
 };
 
 export const fetchAllInternalStats = (period: string) => {

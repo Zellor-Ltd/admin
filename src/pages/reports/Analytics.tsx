@@ -143,7 +143,7 @@ const Analytics: React.FC<DashboardProps> = () => {
             legend: null,
             legendPosition: 'middle',
             legendOffset: 32,
-            format: d => `${d.slice(6, 8) + '/' + d.slice(4, 6)}`,
+              format: d => `${d.toString().slice(6, 8) + '/' + d.toString().slice(4, 6)}`,
           }}
           axisLeft={{
             tickSize: 5,
