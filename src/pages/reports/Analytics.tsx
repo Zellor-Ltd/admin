@@ -51,8 +51,10 @@ const Analytics: React.FC<DashboardProps> = () => {
   const { isMobile } = useContext(AppContext);
   const [client, setClient] = useState<any>();
   const [clients, setClients] = useState<any[]>([]);
-  const [startDate, setStartDate] = useState<string>('0');
-  const [endDate, setEndDate] = useState<string>('1');
+  const [startDate, setStartDate] = useState<string>(
+    moment().subtract(1, 'days').format('YYYYMMDD')
+  );
+  const [endDate, setEndDate] = useState<string>(moment().format('YYYYMMDD'));
   const period = useRef<number>(1);
 
   useEffect(() => {
@@ -143,7 +145,8 @@ const Analytics: React.FC<DashboardProps> = () => {
             legend: null,
             legendPosition: 'middle',
             legendOffset: 32,
-              format: d => `${d.toString().slice(6, 8) + '/' + d.toString().slice(4, 6)}`,
+            format: d =>
+              `${d.toString().slice(6, 8) + '/' + d.toString().slice(4, 6)}`,
           }}
           axisLeft={{
             tickSize: 5,
