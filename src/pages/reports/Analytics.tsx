@@ -106,7 +106,7 @@ const Analytics: React.FC<DashboardProps> = () => {
 
     return getClientStats;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [period, client]);
+  }, [period, startDate, endDate, client]);
 
   const Engagement = () => {
     return (
