@@ -611,7 +611,7 @@ const Analytics: React.FC<DashboardProps> = () => {
                     onChange={onChangeDateRange}
                     className="mb-1"
                     ranges={{
-                      Today: [moment().subtract(1, 'day'), moment()],
+                      Today: [moment(), moment()],
                       'Last 3 Days': [moment().subtract(3, 'days'), moment()],
                       'Last Week': [moment().subtract(7, 'days'), moment()],
                       'Last 30 Days': [moment().subtract(30, 'days'), moment()],
