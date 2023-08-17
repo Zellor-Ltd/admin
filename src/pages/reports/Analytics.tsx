@@ -612,9 +612,12 @@ const Analytics: React.FC<DashboardProps> = () => {
                     className="mb-1"
                     ranges={{
                       Today: [moment(), moment()],
-                      'Last 3 Days': [moment().subtract(3, 'days'), moment()],
-                      'Last Week': [moment().subtract(7, 'days'), moment()],
-                      'Last 30 Days': [moment().subtract(30, 'days'), moment()],
+                      'Last 3 Days': [moment().subtract(2, 'days'), moment()],
+                      'Last Week': [moment().subtract(6, 'days'), moment()],
+                      'Last 30 Days': [
+                        moment().subtract(1, 'months'),
+                        moment(),
+                      ],
                       'Last 3 Months': [
                         moment().subtract(3, 'months'),
                         moment(),
