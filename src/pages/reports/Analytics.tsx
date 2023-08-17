@@ -8,6 +8,7 @@ import {
   Table,
   Input,
   Select,
+  DatePicker,
 } from 'antd';
 import { useRequest } from 'hooks/useRequest';
 import {
@@ -18,11 +19,7 @@ import {
   TeamOutlined,
 } from '@ant-design/icons';
 import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
-import {
-  fetchBrands,
-  fetchInternalStats,
-  fetchAllInternalStats,
-} from 'services/DiscoClubService';
+import { fetchBrands, fetchInternalStats } from 'services/DiscoClubService';
 import '@ant-design/flowchart/dist/index.css';
 import Meta from 'antd/lib/card/Meta';
 import { ColumnsType } from 'antd/lib/table';
@@ -32,11 +29,12 @@ import { Creator } from 'interfaces/Creator';
 import { ResponsiveBar } from '@nivo/bar';
 import { AppContext } from 'contexts/AppContext';
 import SimpleSelect from 'components/select/SimpleSelect';
+import moment from 'moment';
 
 interface DashboardProps {}
 
 const Analytics: React.FC<DashboardProps> = () => {
-  const [loading, setLoading] = useState<boolean>(true);
+  const [, setLoading] = useState<boolean>(true);
   const { doFetch } = useRequest({ setLoading });
   const titleRef = useRef<any>(null);
   const [sourceFilter, setSourceFilter] = useState<string>();
@@ -44,17 +42,17 @@ const Analytics: React.FC<DashboardProps> = () => {
   const [creatorFilter, setCreatorFilter] = useState<Creator | null>();
   const [impressionFilter, setImpressionFilter] = useState<string>();
   const [stats, setStats] = useState<any>();
-  const [period, setPeriod] = useState<string>('1');
   const titleFocused = useRef<boolean>(false);
   const titleSelectionEnd = useRef<number>();
-  const timeframe = useRef<any>();
   const { isMobile } = useContext(AppContext);
   const [client, setClient] = useState<any>();
   const [clients, setClients] = useState<any[]>([]);
-
-  const handleScroll = () => {
-    if (timeframe.current) timeframe.current.blur();
-  };
+  const [startDate, setStartDate] = useState<string>(
+    moment().subtract(1, 'days').format('YYYYMMDD')
+  );
+  const [endDate, setEndDate] = useState<string>(moment().format('YYYYMMDD'));
+  const period = useRef<number>(1);
+  const mounted = useRef<boolean>(false);
 
   useEffect(() => {
     const getBrands = async () => {
@@ -66,9 +64,13 @@ const Analytics: React.FC<DashboardProps> = () => {
   }, []);
 
   useEffect(() => {
+    if (!mounted.current) {
+      mounted.current = true;
+      return;
+    }
     getStats();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [period, client]);
+  }, [startDate, endDate, client]);
 
   useEffect(() => {
     if (titleRef.current && titleFilter) {
@@ -91,31 +93,27 @@ const Analytics: React.FC<DashboardProps> = () => {
   }, [titleFilter]);
 
   const getStats = useMemo(() => {
-    const getAllStats = async () => {
-      const { result }: any = await doFetch(() =>
-        fetchAllInternalStats(period)
-      );
-      setStats(result);
-    };
-
     const getClientStats = async () => {
       const { result }: any = await doFetch(() =>
-        fetchInternalStats(period ?? 1, client?.id)
+        fetchInternalStats({
+          brandId: client?.id,
+          startDate: startDate,
+          endDate: endDate,
+        })
       );
       setStats(result);
     };
 
-    if (client) return getClientStats;
-    else return getAllStats;
+    return getClientStats;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [period, client]);
+  }, [period, startDate, endDate, client]);
 
-  const VideoGraph = () => {
+  const Engagement = () => {
     return (
       <div style={{ height: '400px' }}>
         <ResponsiveBar
           data={stats?.stats ?? []}
-          keys={['productClicks', 'impressions', 'videoPlays']}
+          keys={['impressions', 'interactions', 'videoPlays', 'productClicks']}
           indexBy="date"
           margin={{ top: 50, right: 130, bottom: 50, left: 60 }}
           padding={0.3}
@@ -134,7 +132,8 @@ const Analytics: React.FC<DashboardProps> = () => {
             legend: null,
             legendPosition: 'middle',
             legendOffset: 32,
-            format: d => `${d.slice(6, 8) + '/' + d.slice(4, 6)}`,
+            format: d =>
+              `${d.toString().slice(6, 8) + '/' + d.toString().slice(4, 6)}`,
           }}
           axisLeft={{
             tickSize: 5,
@@ -175,8 +174,12 @@ const Analytics: React.FC<DashboardProps> = () => {
             switch (x.id) {
               case 'impressions':
                 return 'Impressions';
+              case 'interactions':
+                return 'Interactions';
               case 'productClicks':
                 return 'Product Clicks';
+              case 'totalWatchTime':
+                return 'Total Watch Time';
               default:
                 return 'Video Plays';
             }
@@ -189,8 +192,14 @@ const Analytics: React.FC<DashboardProps> = () => {
               case 'impressions':
                 property = 'Impressions';
                 break;
+              case 'interactions':
+                property = 'Interactions';
+                break;
               case 'productClicks':
                 property = 'Product Clicks';
+                break;
+              case 'totalWatchTime':
+                property = 'Total Watch Time';
                 break;
               default:
                 property = 'Video Plays';
@@ -224,7 +233,7 @@ const Analytics: React.FC<DashboardProps> = () => {
 
   const DashCard = ({ icon, title, number }) => (
     <Tooltip title={title} placement="topRight">
-      <Card style={{ width: '100%', height: 150 }}>
+      <Card style={{ width: '100%', height: 200 }}>
         <Meta
           title={
             <div
@@ -233,7 +242,6 @@ const Analytics: React.FC<DashboardProps> = () => {
                 justifyContent: 'space-between',
                 alignItems: 'bottom',
               }}
-              className="mb-1"
             >
               <div style={{ width: '50px' }}>
                 <Avatar
@@ -251,22 +259,33 @@ const Analytics: React.FC<DashboardProps> = () => {
               >
                 <div>
                   <p>{title}</p>
-                  <p
-                    style={{
-                      color: 'lightgray',
-                      fontSize: '1rem',
-                      marginBottom: '-1rem',
-                    }}
-                  >
-                    {period} {period !== '1' ? 'days' : 'day'}
-                  </p>
                 </div>
               </div>
             </div>
           }
           description={
-            <div style={{ width: '100%' }}>
-              <p>
+            <div
+              style={{
+                width: '100%',
+                display: 'flex',
+                alignItems: 'bottom',
+                flexDirection: 'column',
+                position: 'absolute',
+                bottom: '0px',
+              }}
+            >
+              <p
+                style={{
+                  color: 'lightgray',
+                  fontSize: '1rem',
+                  marginLeft: '50px',
+                  position: 'relative',
+                  top: '2px',
+                }}
+              >
+                {period.current} {period.current !== 1 ? 'days' : 'day'}
+              </p>
+              <p style={{ display: 'flex', justifyContent: 'center' }}>
                 <strong
                   className="mr-05"
                   style={{ fontSize: '2rem', color: 'black' }}
@@ -389,9 +408,9 @@ const Analytics: React.FC<DashboardProps> = () => {
       width: '10%',
       align: 'center',
       sorter: (a, b): any => {
-        if (a.views && b.views) return a.views - b.views;
-        else if (a.views) return -1;
-        else if (b.views) return 1;
+        if (a.videoPlays && b.videoPlays) return a.videoPlays - b.videoPlays;
+        else if (a.videoPlays) return -1;
+        else if (b.videoPlays) return 1;
         else return 0;
       },
     },
@@ -438,10 +457,10 @@ const Analytics: React.FC<DashboardProps> = () => {
       width: '10%',
       align: 'center',
       sorter: (a, b): any => {
-        if (a.totalWatchTimeLabel && b.totalWatchTimeLabel)
-          return a.totalWatchTimeLabel - b.totalWatchTimeLabel;
-        else if (a.totalWatchTimeLabel) return -1;
-        else if (b.totalWatchTimeLabel) return 1;
+        if (a.totalWatchTime && b.totalWatchTime)
+          return a.totalWatchTime - b.totalWatchTime;
+        else if (a.totalWatchTime) return -1;
+        else if (b.totalWatchTime) return 1;
         else return 0;
       },
     },
@@ -552,8 +571,20 @@ const Analytics: React.FC<DashboardProps> = () => {
     return option?.label?.toUpperCase().includes(input?.toUpperCase());
   };
 
+  const onChangeDateRange = dates => {
+    if (dates) {
+      setStartDate(moment(dates[0]).format('YYYYMMDD'));
+      setEndDate(moment(dates[1]).format('YYYYMMDD'));
+      period.current = moment(dates[1]).diff(moment(dates[0]), 'days');
+    } else {
+      setStartDate('0');
+      setEndDate('1');
+      period.current = 1;
+    }
+  };
+
   return (
-    <div onScroll={handleScroll} style={{ overflowY: 'auto', height: '100%' }}>
+    <div style={{ overflowY: 'auto', height: '100%' }}>
       <Row
         gutter={[8, 8]}
         align="bottom"
@@ -580,48 +611,37 @@ const Analytics: React.FC<DashboardProps> = () => {
           </Col>
         </Col>
         <Col span={23} className="my-2">
-          <Row justify="center" align="bottom">
+          <Row justify="space-between" align="bottom">
             <Col>
               <Typography.Title level={3}>ENGAGEMENT</Typography.Title>
             </Col>
             <Col lg={6}>
               <Row justify="end">
                 <Col>
-                  <Select
-                    disabled={loading}
-                    onChange={setPeriod}
-                    placeholder="Timeframe"
-                    style={{ width: '100%' }}
-                    filterOption={filterOption}
-                    allowClear
-                    showSearch
-                    value={period}
-                    ref={timeframe}
-                  >
-                    <Select.Option key="1" value="1" label="Today">
-                      Today
-                    </Select.Option>
-                    <Select.Option key="3" value="3" label="Last 3 Days">
-                      Last 3 Days
-                    </Select.Option>
-                    <Select.Option key="7" value="7" label="Last Week">
-                      Last Week
-                    </Select.Option>
-                    <Select.Option key="30" value="30" label="Last 30 Days">
-                      Last 30 Days
-                    </Select.Option>
-                    <Select.Option key="90" value="90" label="Last 3 months">
-                      Last 3 months
-                    </Select.Option>
-                    <Select.Option key="365" value="365" label="Last Year">
-                      Last Year
-                    </Select.Option>
-                  </Select>
+                  <DatePicker.RangePicker
+                    onChange={onChangeDateRange}
+                    className="mb-1"
+                    ranges={{
+                      Today: [moment(), moment()],
+                      'Last 3 Days': [moment().subtract(2, 'days'), moment()],
+                      'Last Week': [moment().subtract(6, 'days'), moment()],
+                      'Last 30 Days': [
+                        moment().subtract(1, 'months'),
+                        moment(),
+                      ],
+                      'Last 3 Months': [
+                        moment().subtract(3, 'months'),
+                        moment(),
+                      ],
+                      'Last Year': [moment().subtract(1, 'year'), moment()],
+                    }}
+                    format="DD/MM/YYYY"
+                  />
                 </Col>
               </Row>
             </Col>
           </Row>
-          <VideoGraph />
+          <Engagement />
         </Col>
         <Col lg={4} xs={8}>
           <DashCard
@@ -634,7 +654,7 @@ const Analytics: React.FC<DashboardProps> = () => {
           <DashCard
             icon={<AppstoreOutlined />}
             title="Widget Interactions"
-            number={stats?.totalWidgetInteractions ?? 0}
+            number={stats?.totalinteractions ?? 0}
           />
         </Col>
         <Col lg={4} xs={8}>

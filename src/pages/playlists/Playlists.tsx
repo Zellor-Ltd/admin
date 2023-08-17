@@ -17,6 +17,7 @@ import {
   CopyOutlined,
   DeleteOutlined,
   EditOutlined,
+  RedoOutlined,
   SearchOutlined,
 } from '@ant-design/icons';
 import { ColumnsType } from 'antd/lib/table';
@@ -34,6 +35,7 @@ import {
   updateLinkCreator,
   updateLinkProduct,
   updateLinkProductBrand,
+  rebuildVLink,
 } from 'services/DiscoClubService';
 import CopyValueToClipboard from 'components/CopyValueToClipboard';
 import moment from 'moment';
@@ -45,8 +47,9 @@ import { SimpleSwitch } from '../../components/SimpleSwitch';
 const Playlists: React.FC<RouteComponentProps> = () => {
   const { isMobile } = useContext(AppContext);
   const [selectedTab, setSelectedTab] = useState<string>('client');
+  const [loadingRow, setLoadingRow] = useState<string>('');
   const [loading, setLoading] = useState(false);
-  const { doFetch } = useRequest({ setLoading });
+  const { doFetch, doRequest } = useRequest({ setLoading });
   const [details, setDetails] = useState<boolean>(false);
   const history = useHistory();
   const [brands, setBrands] = useState<any[]>([]);
@@ -998,10 +1001,31 @@ const Playlists: React.FC<RouteComponentProps> = () => {
   const handleSwitchChange = async (record: any, toggled: boolean) => {
     try {
       record.displayTags = toggled;
-      await saveCustomLinkList(record);
+      await doRequest(() => saveCustomLinkList(record));
       message.success('Register updated with success.');
     } catch (error) {
-      message.error("Error: Couldn't set client property. Try again.");
+      message.error("Error: Couldn't set property. Try again.");
+    }
+  };
+
+  const handleDisabledChange = async (record: any, toggled: boolean) => {
+    try {
+      record.disabled = toggled;
+      await doRequest(() => saveCustomLinkList(record));
+      message.success('Register updated with success.');
+    } catch (error) {
+      message.error("Error: Couldn't set property. Try again.");
+    }
+  };
+
+  const rebuildVlink = async (record: any) => {
+    try {
+      setLoadingRow(record.id ?? '');
+      const response: any = await rebuildVLink(record.id!);
+      if (response.success) message.success(response.message);
+    } catch {
+    } finally {
+      setLoadingRow('');
     }
   };
 
@@ -1108,7 +1132,13 @@ const Playlists: React.FC<RouteComponentProps> = () => {
       ),
       dataIndex: 'links',
       width: '15%',
-      render: (links: [any]) => (links ? links[0].brand?.name : '-'),
+      render: (links: [any]) =>
+        Array.isArray(links) &&
+        links.length > 0 &&
+        links[0].brand &&
+        links[0].brand.name
+          ? links[0].brand.name
+          : '-',
       align: 'center',
     },
     {
@@ -1158,6 +1188,38 @@ const Playlists: React.FC<RouteComponentProps> = () => {
               whiteSpace: 'nowrap',
             }}
           >
+            <Tooltip title="Disabled">Disabled</Tooltip>
+          </div>
+        </div>
+      ),
+      dataIndex: 'disabled',
+      width: '10%',
+      align: 'center',
+      render: (_: any, record: any) => (
+        <SimpleSwitch
+          toggled={!!record.disabled}
+          handleSwitchChange={(toggled: boolean) =>
+            handleDisabledChange(record, toggled)
+          }
+        />
+      ),
+      sorter: (a, b): any => {
+        if (a.disabled && b.disabled) return 0;
+        else if (a.disabled) return -1;
+        else if (b.disabled) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
             <Tooltip title="Display Tags">Display Tags</Tooltip>
           </div>
         </div>
@@ -1165,7 +1227,7 @@ const Playlists: React.FC<RouteComponentProps> = () => {
       dataIndex: 'displayTags',
       width: '10%',
       align: 'center',
-      render: (value: any, record: any) => (
+      render: (_: any, record: any) => (
         <SimpleSwitch
           toggled={!!record.displayTags}
           handleSwitchChange={(toggled: boolean) =>
@@ -1204,6 +1266,36 @@ const Playlists: React.FC<RouteComponentProps> = () => {
           >
             <CopyOutlined />
           </Link>
+        </>
+      ),
+    },
+    {
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Revalidate">Revalidate</Tooltip>
+          </div>
+        </div>
+      ),
+      width: '5%',
+      align: 'center',
+      render: (_, record: any) => (
+        <>
+          <Button
+            type="link"
+            block
+            onClick={() => rebuildVlink(record)}
+            disabled={!record.id || loadingRow !== ''}
+            loading={loadingRow === record.id}
+          >
+            {loadingRow !== record.id && <RedoOutlined />}
+          </Button>
         </>
       ),
     },

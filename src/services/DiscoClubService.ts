@@ -1170,16 +1170,12 @@ export const fetchStats = (period?: string) => {
   else return instance.get(`Disco/Adm/Analytics/GetClientStats/1`);
 };
 
-export const fetchInternalStats = (period: string, id: string) => {
-  return instance.get(
-    `Disco/Adm/Analytics/GetInternalClientStats/${period}/${id}`
-  );
+export const fetchInternalStats = (params: any) => {
+  return instance.post('Disco/Adm/Analytics/V2/GetInternalClientStats', params);
 };
 
 export const fetchAllInternalStats = (period: string) => {
-    return instance.get(
-        `Disco/Adm/Analytics/GetInternalClientStats/${period}`
-    );
+  return instance.get(`Disco/Adm/Analytics/GetInternalClientStats/${period}`);
 };
 
 export const fetchClientUsers = (page: number, params: any) => {

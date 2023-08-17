@@ -45,8 +45,33 @@ import scrollIntoView from 'scroll-into-view';
 import { useMount } from 'react-use';
 import SimpleSelect from '../../components/select/SimpleSelect';
 import { SelectOption } from '../../interfaces/SelectOption';
-import ProductDetail from './ProductDetail';
+import ShortProductDetail from './ShortProductDetail';
 import useAllCategories from 'hooks/useAllCategories';
+import { ProductCategory } from 'interfaces/Category';
+
+const productSuperCategoryOptionMapping: SelectOption = {
+  key: 'id',
+  label: 'superCategory',
+  value: 'id',
+};
+
+const productCategoryOptionMapping: SelectOption = {
+  key: 'id',
+  label: 'category',
+  value: 'id',
+};
+
+const productSubCategoryOptionMapping: SelectOption = {
+  key: 'id',
+  label: 'subCategory',
+  value: 'id',
+};
+
+const productSubSubCategoryOptionMapping: SelectOption = {
+  key: 'id',
+  label: 'subSubCategory',
+  value: 'id',
+};
 
 const { Panel } = Collapse;
 
@@ -82,6 +107,13 @@ const ShortProducts: React.FC<RouteComponentProps> = () => {
   const history = useHistory();
   const cloning = useRef<boolean>(false);
   const { fetchAllCategories, allCategories } = useAllCategories({});
+  const [currentSuperCategory, setCurrentSuperCategory] =
+    useState<ProductCategory>();
+  const [currentCategory, setCurrentCategory] = useState<ProductCategory>();
+  const [currentSubCategory, setCurrentSubCategory] =
+    useState<ProductCategory>();
+  const [currentSubSubCategory, setCurrentSubSubCategory] =
+    useState<ProductCategory>();
 
   useEffect(() => {
     history.listen((_, action) => {
@@ -199,10 +231,10 @@ const ShortProducts: React.FC<RouteComponentProps> = () => {
         productBrandId: productBrandFilter?.id,
         outOfStock: undefined,
         status: undefined,
-        superCategoryId: undefined,
-        categoryId: undefined,
-        subCategoryId: undefined,
-        subSubCategoryId: undefined,
+        superCategoryId: currentSuperCategory?.id,
+        categoryId: currentCategory?.id,
+        subCategoryId: currentSubCategory?.id,
+        subSubCategoryId: currentSubSubCategory?.id,
         runId: undefined,
       })
     );
@@ -737,6 +769,123 @@ const ShortProducts: React.FC<RouteComponentProps> = () => {
               allowClear
             ></SimpleSelect>
           </Col>
+          <Col lg={6} xs={0}></Col>
+          <Col lg={6} xs={24}>
+            <Typography.Title level={5}>Super Category</Typography.Title>
+            <SimpleSelect
+              showSearch
+              data={allCategories['Super Category'].filter(item => {
+                return (
+                  item.superCategory === 'Women' ||
+                  item.superCategory === 'Men' ||
+                  item.superCategory === 'Children'
+                );
+              })}
+              onChange={(_, category) => setCurrentSuperCategory(category)}
+              style={{ width: '100%' }}
+              selectedOption={currentSuperCategory?.id}
+              optionMapping={productSuperCategoryOptionMapping}
+              placeholder="Select a Super Category"
+              disabled={loadingResources}
+              allowClear
+            ></SimpleSelect>
+          </Col>
+          <Col lg={6} xs={24}>
+            <Typography.Title level={5}>Category</Typography.Title>
+            <SimpleSelect
+              showSearch
+              data={allCategories.Category.filter(item => {
+                return currentSuperCategory
+                  ? item.superCategory === currentSuperCategory.superCategory
+                  : true;
+              })}
+              onChange={(_, category) => setCurrentCategory(category)}
+              style={{ width: '100%' }}
+              selectedOption={currentCategory?.id ?? null}
+              optionMapping={productCategoryOptionMapping}
+              placeholder="Select a Category"
+              disabled={loadingResources}
+              allowClear
+            ></SimpleSelect>
+          </Col>
+          <Col lg={6} xs={24}>
+            <Typography.Title level={5}>Sub Category</Typography.Title>
+            <SimpleSelect
+              showSearch
+              data={allCategories['Sub Category'].filter(item => {
+                return (
+                  (currentCategory
+                    ? item.category === currentCategory.category
+                    : true) &&
+                  (currentSuperCategory
+                    ? item.superCategory === currentSuperCategory.superCategory
+                    : true)
+                );
+              })}
+              onChange={(_, category) => setCurrentSubCategory(category)}
+              style={{ width: '100%' }}
+              selectedOption={currentSubCategory?.id ?? null}
+              optionMapping={productSubCategoryOptionMapping}
+              placeholder="Select a Sub Category"
+              disabled={
+                loadingResources ||
+                !allCategories['Sub Category'].filter(item => {
+                  return (
+                    (currentCategory
+                      ? item.category === currentCategory.category
+                      : true) &&
+                    (currentSuperCategory
+                      ? item.superCategory ===
+                        currentSuperCategory.superCategory
+                      : true)
+                  );
+                }).length
+              }
+              allowClear
+            ></SimpleSelect>
+          </Col>
+          <Col lg={6} xs={24}>
+            <Typography.Title level={5}>Sub Sub Category</Typography.Title>
+            <SimpleSelect
+              showSearch
+              data={allCategories['Sub Sub Category'].filter(item => {
+                return (
+                  (currentSubCategory
+                    ? item.subCategory === currentSubCategory.subCategory
+                    : true) &&
+                  (currentCategory
+                    ? item.category === currentCategory.category
+                    : true) &&
+                  (currentSuperCategory
+                    ? item.superCategory === currentSuperCategory.superCategory
+                    : true)
+                );
+              })}
+              onChange={(_, category) => setCurrentSubSubCategory(category)}
+              style={{ width: '100%' }}
+              selectedOption={currentSubSubCategory?.id ?? null}
+              optionMapping={productSubSubCategoryOptionMapping}
+              placeholder="Select a Sub Sub Category"
+              disabled={
+                loadingResources ||
+                !allCategories['Sub Sub Category'].filter(item => {
+                  return (
+                    (currentSubCategory
+                      ? item.subCategory === currentSubCategory.subCategory
+                      : true) &&
+                    (currentCategory
+                      ? item.category === currentCategory.category
+                      : true) &&
+                    (currentSuperCategory
+                      ? item.superCategory ===
+                        currentSuperCategory.superCategory
+                      : true)
+                  );
+                }).length
+              }
+              allowClear
+            ></SimpleSelect>
+          </Col>
         </Row>
       </>
     );
@@ -772,7 +921,6 @@ const ShortProducts: React.FC<RouteComponentProps> = () => {
                 <Col>
                   <Button
                     key="2"
-                    className={isMobile ? 'mt-05' : ''}
                     onClick={() => createProduct(products.length)}
                   >
                     New Item
@@ -894,7 +1042,7 @@ const ShortProducts: React.FC<RouteComponentProps> = () => {
         </>
       )}
       {details && (
-        <ProductDetail
+        <ShortProductDetail
           brands={brands}
           productBrands={productBrands}
           allCategories={allCategories}
