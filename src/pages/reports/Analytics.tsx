@@ -464,7 +464,7 @@ const Analytics: React.FC<DashboardProps> = () => {
           columns={columns}
           dataSource={stats?.videos}
           pagination={false}
-          scroll={{ y: 240, x: true }}
+          scroll={{ x: true }}
           size="small"
         />
       </>
