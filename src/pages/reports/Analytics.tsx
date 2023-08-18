@@ -477,6 +477,13 @@ const Analytics: React.FC<DashboardProps> = () => {
           pagination={false}
           scroll={{ x: true }}
           size="small"
+          footer={() => (
+            <Row justify="center" className="mt-1">
+              <Col>
+                <Typography.Title level={5}>End of results.</Typography.Title>
+              </Col>
+            </Row>
+          )}
         />
       </>
     );
