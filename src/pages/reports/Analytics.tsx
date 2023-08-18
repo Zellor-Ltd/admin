@@ -233,7 +233,7 @@ const Analytics: React.FC<DashboardProps> = () => {
 
   const DashCard = ({ icon, title, number }) => (
     <Tooltip title={title} placement="topRight">
-      <Card style={{ width: '100%', height: 150 }}>
+      <Card style={{ width: '100%', height: 200 }}>
         <Meta
           title={
             <div
@@ -242,7 +242,6 @@ const Analytics: React.FC<DashboardProps> = () => {
                 justifyContent: 'space-between',
                 alignItems: 'bottom',
               }}
-              className="mb-1"
             >
               <div style={{ width: '50px' }}>
                 <Avatar
@@ -255,26 +254,38 @@ const Analytics: React.FC<DashboardProps> = () => {
               <div
                 style={{
                   width: '100%',
+                  whiteSpace: 'break-spaces',
                 }}
               >
                 <div>
-                  {title}
-                  <p
-                    style={{
-                      color: 'lightgray',
-                      fontSize: '1rem',
-                      marginBottom: '-1rem',
-                    }}
-                  >
-                    {period.current} {period.current !== 1 ? 'days' : 'day'}
-                  </p>
+                  <p>{title}</p>
                 </div>
               </div>
             </div>
           }
           description={
-            <div style={{ width: '100%' }}>
-              <p>
+            <div
+              style={{
+                width: '100%',
+                display: 'flex',
+                alignItems: 'bottom',
+                flexDirection: 'column',
+                position: 'absolute',
+                bottom: '0px',
+              }}
+            >
+              <p
+                style={{
+                  color: 'lightgray',
+                  fontSize: '1rem',
+                  marginLeft: '50px',
+                  position: 'relative',
+                  top: '2px',
+                }}
+              >
+                {period.current} {period.current !== 1 ? 'days' : 'day'}
+              </p>
+              <p style={{ display: 'flex', justifyContent: 'center' }}>
                 <strong
                   className="mr-05"
                   style={{ fontSize: '2rem', color: 'black' }}
