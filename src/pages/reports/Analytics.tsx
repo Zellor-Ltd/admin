@@ -178,8 +178,6 @@ const Analytics: React.FC<DashboardProps> = () => {
                 return 'Interactions';
               case 'productClicks':
                 return 'Product Clicks';
-              case 'totalWatchTime':
-                return 'Total Watch Time';
               default:
                 return 'Video Plays';
             }
@@ -197,9 +195,6 @@ const Analytics: React.FC<DashboardProps> = () => {
                 break;
               case 'productClicks':
                 property = 'Product Clicks';
-                break;
-              case 'totalWatchTime':
-                property = 'Total Watch Time';
                 break;
               default:
                 property = 'Video Plays';
@@ -661,7 +656,7 @@ const Analytics: React.FC<DashboardProps> = () => {
           <DashCard
             icon={<AppstoreOutlined />}
             title="Widget Interactions"
-            number={stats?.totalinteractions ?? 0}
+            number={stats?.totalWidgetInteractions ?? 0}
           />
         </Col>
         <Col lg={4} xs={8}>
