@@ -24,7 +24,6 @@ import PreviewProducts from 'pages/products/PreviewProducts';
 import Promotions from 'pages/promotions/Promotions';
 import DdTemplates from 'pages/dd-templates/DdTemplates';
 import PromoDisplay from 'pages/promo-display/PromoDisplay';
-import Dashboard from 'pages/dashboard/Dashboard';
 import Interests from 'pages/interests/Interests';
 import FanGroups from 'pages/fan-groups/FanGroups';
 import Wallets from 'pages/wallets/Wallets';
@@ -68,12 +67,7 @@ function AdminRoutes() {
         exact
         path="/"
         returnComponent
-        component={<Redirect to="/dashboard" />}
-      />
-      <AppRoute
-        path="/dashboard"
-        component={Dashboard}
-        layout={AuthenticatedLayout}
+        component={<Redirect to="/analytics" />}
       />
       <AppRoute
         path="/analytics"
