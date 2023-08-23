@@ -12,7 +12,6 @@ import {
   TeamOutlined,
   UserOutlined,
   IssuesCloseOutlined,
-  DashboardOutlined,
   LineChartOutlined,
   LinkOutlined,
   UserAddOutlined,
@@ -60,13 +59,6 @@ const AdminSideMenu = ({ isMobile }) => {
       selectedKeys={[pathname]}
       defaultOpenKeys={[parentMenu]}
     >
-      <Menu.Item
-        style={isMobile ? { marginTop: 0 } : {}}
-        key="dashboard"
-        icon={<DashboardOutlined />}
-      >
-        <Link to="/dashboard">Dashboard</Link>
-      </Menu.Item>
       <SubMenu key="reports" icon={<LineChartOutlined />} title="Reports">
         <Menu.Item key="regs-per-day" icon={<UserAddOutlined />}>
           <Link to="/regs-per-day">Users per Day</Link>
@@ -143,13 +135,6 @@ const AdminSideMenu = ({ isMobile }) => {
         onClick={() => refreshParent('playlist-studio')}
       >
         <Link to="/playlist-studio">Playlist Studio</Link>
-      </Menu.Item>
-      <Menu.Item
-        key="analytics"
-        icon={<BarChartOutlined />}
-        onClick={() => refreshParent('analytics')}
-      >
-        <Link to="/analytics">Analytics</Link>
       </Menu.Item>
       <Menu.Item
         key="featured-feeds"
