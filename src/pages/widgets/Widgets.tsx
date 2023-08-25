@@ -60,14 +60,7 @@ const Widgets: React.FC<RouteComponentProps> = () => {
   const getCustomData = useMemo(() => {
     const fetchData = async (query: string) => {
       const response = await doFetch(() =>
-        fetchWidgets(
-          /* { term: query } */
-          {
-            "name": "Terrie McEvoy X SoSu - Face & Eye Palette - Daydream Collection",
-            "productBrand": "SoSu",
-            "video": "Introducing…. @Terrie Mc Evoy x SOSU COSMETICS DAYDREAM DROP 2",
-            "product": "Face & Eye Palette - Daydream Collection"
-          })
+        fetchWidgets({ term: query })
       );
       setLists(response.results);
     };
