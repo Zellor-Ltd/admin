@@ -50,8 +50,7 @@ import DirectLinks from 'pages/direct-links/DirectLinks';
 import Rebuilds from 'pages/rebuilds/Rebuilds';
 import DevelopmentDetail from 'pages/development/development';
 import { __isDev__ } from 'helpers/constants';
-import Playlists from 'pages/playlists/Playlists';
-import PlaylistStudio from 'pages/playlist-studio/PlaylistStudio';
+import Widgets from 'pages/widgets/Widgets';
 import ClientUsers from 'pages/client-users/ClientUsers';
 import SignUp from 'pages/sign-up/SignUp';
 import MyAccount from 'pages/my-account/MyAccount';
@@ -310,13 +309,8 @@ function AdminRoutes() {
         layout={AuthenticatedLayout}
       />
       <AppRoute
-        path="/playlists"
-        component={Playlists}
-        layout={AuthenticatedLayout}
-      />
-      <AppRoute
-        path="/playlist-studio"
-        component={PlaylistStudio}
+        path="/widgets"
+        component={Widgets}
         layout={AuthenticatedLayout}
       />
       <AppRoute

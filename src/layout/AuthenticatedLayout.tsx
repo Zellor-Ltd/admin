@@ -31,7 +31,7 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
     'client-dashboard',
     'access-control',
     'settings',
-    'playlist-studio',
+    'widgets',
     'sign-up',
     'my-account',
   ];

@@ -2,14 +2,14 @@ import { Button, Col, Form, Image, Input, Row, Tooltip, message } from 'antd';
 import { useRequest } from 'hooks/useRequest';
 import { useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { saveCustomLinkList } from 'services/DiscoClubService';
+import { saveWidget } from 'services/DiscoClubService';
 import { SortableTable } from 'components';
 import { ColumnsType } from 'antd/lib/table';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import StudioModal from './StudioModal';
+import WidgetModal from './WidgetModal';
 import { Brand } from 'interfaces/Brand';
 
-interface StudioDetailsProps {
+interface WidgetDetailsProps {
   setCurrentList: (value: any[]) => void;
   currentList?: any;
   onSave: any;
@@ -17,7 +17,7 @@ interface StudioDetailsProps {
   brands: Brand[];
 }
 
-const StudioDetails: React.FC<StudioDetailsProps> = ({
+const WidgetDetails: React.FC<WidgetDetailsProps> = ({
   setCurrentList,
   currentList,
   onSave,
@@ -68,7 +68,7 @@ const StudioDetails: React.FC<StudioDetailsProps> = ({
     customListForm.links = list?.links;
     customListForm.tp = 's';
     customListForm.name = customListForm.name.name ?? customListForm.name;
-    const response = await doFetch(() => saveCustomLinkList(customListForm));
+    const response = await doFetch(() => saveWidget(customListForm));
     customListForm.id
       ? onSave(customListForm)
       : onSave({ ...customListForm, id: response.result });
@@ -295,7 +295,7 @@ const StudioDetails: React.FC<StudioDetailsProps> = ({
           </Col>
           <Col span={24}>
             {showModal && (
-              <StudioModal
+              <WidgetModal
                 link={link}
                 editing={editing}
                 brands={brands}
@@ -325,4 +325,4 @@ const StudioDetails: React.FC<StudioDetailsProps> = ({
   );
 };
 
-export default StudioDetails;
+export default WidgetDetails;
