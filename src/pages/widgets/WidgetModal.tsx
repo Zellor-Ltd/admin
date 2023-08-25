@@ -14,7 +14,7 @@ import {
   message,
 } from 'antd';
 import React, { useContext, useEffect, useState } from 'react';
-import { fetchCustomLinkList, fetchTags } from 'services/DiscoClubService';
+import { fetchWidget, fetchTags } from 'services/DiscoClubService';
 import { DebounceSelect } from 'components/select/DebounceSelect';
 import { Upload } from 'components';
 import { DeleteOutlined } from '@ant-design/icons';
@@ -31,7 +31,7 @@ const tagOptionMapping: SelectOption = {
   key: 'id',
 };
 
-interface StudioModalProps {
+interface WidgetModalProps {
   link?: any;
   editing: any;
   brands: Brand[];
@@ -42,7 +42,7 @@ interface StudioModalProps {
   studio?: boolean;
 }
 
-const StudioModal: React.FC<StudioModalProps> = ({
+const WidgetModal: React.FC<WidgetModalProps> = ({
   link,
   editing,
   brands,
@@ -445,7 +445,7 @@ const StudioModal: React.FC<StudioModalProps> = ({
         <Tabs.TabPane forceRender tab="Search" key="Search">
           <h3 className="mb-05">Search Links</h3>
           <DebounceSelect
-            fetcherFunction={(value: string) => fetchCustomLinkList(value)}
+            fetcherFunction={(value: string) => fetchWidget(value)}
             style={{ width: '100%' }}
             disabled={editing.current}
             placeholder="Type to search existing Link"
@@ -552,4 +552,4 @@ const StudioModal: React.FC<StudioModalProps> = ({
   );
 };
 
-export default StudioModal;
+export default WidgetModal;

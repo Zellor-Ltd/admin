@@ -1144,24 +1144,24 @@ export const updateLinkCreator = (params: any) => {
   return instance.post('Disco/LinkCreator/adm/update', params);
 };
 
-export const fetchCustomLinkLists = (params: any) => {
-  return instance.post('Disco/LinkCustom/Adm/Search/', params);
+export const fetchWidgets = (params: any) => {
+  return instance.post('Bb/Widget/Adm/Search', params);
 };
 
-export const fetchCustomLinkList = (params: string) => {
-  return instance.get(`Disco/LinkCustom/Adm/SearchLinks/${params}`);
+export const fetchWidget = (params: string) => {
+  return instance.get(`Bb/Widget/Adm/SearchVideos/${params}`);
 };
 
-export const saveCustomLinkList = (params: any) => {
+export const saveWidget = (params: any) => {
   if (params.id) {
-    return instance.post('Disco/LinkCustom/Adm/Update', params);
+    return instance.post('Bb/Widget/Adm/Update', params);
   } else {
-    return instance.post('Disco/LinkCustom/Adm/Add', params);
+    return instance.post('Bb/Widget/Adm/Add', params);
   }
 };
 
-export const deleteCustomLinkList = (params: any) => {
-  return instance.delete(`Disco/LinkCustom/Adm/Delete/${params}`);
+export const deleteWidget = (params: any) => {
+  return instance.delete(`Bb/Widget/Adm/Delete/${params}`);
 };
 
 export const fetchStats = (period?: string) => {

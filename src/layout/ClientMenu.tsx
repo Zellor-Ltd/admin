@@ -52,7 +52,7 @@ const ClientMenu = () => {
       </Menu.Item>
       <Menu.Item>
         <Link
-          to="/playlists"
+          to="/widgets"
           onMouseOver={() => setHoveredMenuItem('Carousels')}
         >
           Carousels

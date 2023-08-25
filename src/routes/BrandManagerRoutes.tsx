@@ -4,7 +4,7 @@ import OpenLayout from 'layout/OpenLayout';
 import Login from 'pages/login/Login';
 import { Redirect, Switch } from 'react-router-dom';
 import BrandDashboard from 'pages/dashboard/BrandDashboard';
-import Playlists from 'pages/playlists/Playlists';
+import Widgets from 'pages/widgets/Widgets';
 
 function BrandManagerRoutes() {
   return (
@@ -22,8 +22,8 @@ function BrandManagerRoutes() {
         layout={AuthenticatedLayout}
       />
       <AppRoute
-        path="/playlists"
-        component={Playlists}
+        path="/widgets"
+        component={Widgets}
         layout={AuthenticatedLayout}
       />
     </Switch>

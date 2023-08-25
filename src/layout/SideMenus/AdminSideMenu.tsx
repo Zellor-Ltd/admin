@@ -36,7 +36,6 @@ import {
   PicLeftOutlined,
   FileSyncOutlined,
   HddOutlined,
-  BarChartOutlined,
   ProfileOutlined,
 } from '@ant-design/icons';
 import { Menu } from 'antd';
@@ -123,18 +122,11 @@ const AdminSideMenu = ({ isMobile }) => {
         <Link to="/feed">Video Feeds</Link>
       </Menu.Item>
       <Menu.Item
-        key="playlists"
-        icon={<LinkOutlined />}
-        onClick={() => refreshParent('playlists')}
-      >
-        <Link to="/playlists">Playlists</Link>
-      </Menu.Item>
-      <Menu.Item
-        key="playlist-studio"
+        key="widgets"
         icon={<HddOutlined />}
-        onClick={() => refreshParent('playlist-studio')}
+        onClick={() => refreshParent('widgets')}
       >
-        <Link to="/playlist-studio">Playlist Studio</Link>
+        <Link to="/widgets">Widgets</Link>
       </Menu.Item>
       <Menu.Item
         key="featured-feeds"

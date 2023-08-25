@@ -15,11 +15,11 @@ const AdminSideMenu = () => {
         <Link to="/client-dashboard">Dashboard</Link>
       </Menu.Item>
       <Menu.Item
-        key="playlists"
+        key="widgets"
         icon={<LinkOutlined />}
-        onClick={() => refreshParent('playlists')}
+        onClick={() => refreshParent('widgets')}
       >
-        <Link to="/playlists">Playlists</Link>
+        <Link to="/widgets">Widgets</Link>
       </Menu.Item>
     </Menu>
   );

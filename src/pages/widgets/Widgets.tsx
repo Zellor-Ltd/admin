@@ -19,16 +19,16 @@ import {
 import { ColumnsType } from 'antd/lib/table';
 import { useRequest } from 'hooks/useRequest';
 import {
-  fetchCustomLinkLists,
-  deleteCustomLinkList,
+  fetchWidgets,
+  deleteWidget,
   fetchBrands,
 } from 'services/DiscoClubService';
-import StudioDetails from './StudioDetails';
+import WidgetDetails from './WidgetDetails';
 import CopyValueToClipboard from 'components/CopyValueToClipboard';
 import { AppContext } from 'contexts/AppContext';
 import { Brand } from 'interfaces/Brand';
 
-const PlaylistStudio: React.FC<RouteComponentProps> = () => {
+const Widgets: React.FC<RouteComponentProps> = () => {
   const { isMobile } = useContext(AppContext);
   const [loading, setLoading] = useState(false);
   const { doFetch, doRequest } = useRequest({ setLoading });
@@ -60,7 +60,7 @@ const PlaylistStudio: React.FC<RouteComponentProps> = () => {
   const getCustomData = useMemo(() => {
     const fetchData = async (query: string) => {
       const response = await doFetch(() =>
-        fetchCustomLinkLists({ term: query })
+        fetchWidgets({ term: query })
       );
       setLists(response.results);
     };
@@ -87,7 +87,7 @@ const PlaylistStudio: React.FC<RouteComponentProps> = () => {
   };
 
   const handleDelete = async (id: string, index: number) => {
-    await doRequest(() => deleteCustomLinkList({ id }));
+    await doRequest(() => deleteWidget(id));
     setLists(prev => [...prev.slice(0, index), ...prev.slice(index + 1)]);
   };
 
@@ -225,15 +225,15 @@ const PlaylistStudio: React.FC<RouteComponentProps> = () => {
   ];
 
   return (
-    <div className="playlists">
+    <div className="widgets">
       {!details && (
         <>
           <PageHeader
-            title="Playlist Studio"
+            title="Widgets"
             className="mb-n05"
             extra={
               <Button key="1" type="primary" onClick={() => handleEdit(0)}>
-                New Playlist
+                New Widget
               </Button>
             }
           />
@@ -298,11 +298,11 @@ const PlaylistStudio: React.FC<RouteComponentProps> = () => {
         <>
           <PageHeader
             title={
-              currentList?.name ? `Edit ${currentList.name}` : 'New Playlist'
+              currentList?.name ? `Edit ${currentList.name}` : 'New Widget'
             }
             className="mb-n05"
           />
-          <StudioDetails
+          <WidgetDetails
             setCurrentList={setCurrentList}
             currentList={currentList}
             setDetails={setDetails}
@@ -315,4 +315,4 @@ const PlaylistStudio: React.FC<RouteComponentProps> = () => {
   );
 };
 
-export default PlaylistStudio;
+export default Widgets;
