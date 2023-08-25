@@ -64,14 +64,14 @@ const WidgetDetails: React.FC<WidgetDetailsProps> = ({
   };
 
   const handleSave = async () => {
-    const customListForm = form.getFieldsValue(true);
-    customListForm.links = list?.links;
-    customListForm.tp = 's';
-    customListForm.name = customListForm.name.name ?? customListForm.name;
-    const response = await doFetch(() => saveWidget(customListForm));
-    customListForm.id
-      ? onSave(customListForm)
-      : onSave({ ...customListForm, id: response.result });
+    const widgetForm = form.getFieldsValue(true);
+    widgetForm.videos = list?.videos;
+    widgetForm.tp = 's';
+    widgetForm.name = widgetForm.name.name ?? widgetForm.name;
+    const response = await doFetch(() => saveWidget(widgetForm));
+    widgetForm.id
+      ? onSave(widgetForm)
+      : onSave({ ...widgetForm, id: response.result });
     message.success('List registered with success.');
   };
 
@@ -287,7 +287,7 @@ const WidgetDetails: React.FC<WidgetDetailsProps> = ({
               scroll={{ x: true, y: '34em' }}
               rowKey="id"
               columns={columns}
-              dataSource={list?.links}
+              dataSource={list?.videos}
               setDataSource={saveReorderedList}
               loading={loading}
               className="my-2"

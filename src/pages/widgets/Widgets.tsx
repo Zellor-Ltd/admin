@@ -87,7 +87,7 @@ const Widgets: React.FC<RouteComponentProps> = () => {
   };
 
   const handleDelete = async (id: string, index: number) => {
-    await doRequest(() => deleteWidget({ id }));
+    await doRequest(() => deleteWidget(id));
     setLists(prev => [...prev.slice(0, index), ...prev.slice(index + 1)]);
   };
 
