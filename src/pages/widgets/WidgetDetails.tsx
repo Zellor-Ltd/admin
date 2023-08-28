@@ -141,11 +141,11 @@ const WidgetDetails: React.FC<WidgetDetailsProps> = ({
           </div>
         </div>
       ),
-      dataIndex: ['feed', 'package'],
+      dataIndex: 'thumbnailUrl',
       width: '10%',
       className: 'p-05',
-      render: (value: any[]) => {
-        if (value) return <Image height={60} src={value[0]?.thumbnailUrl} />;
+      render: (value: string) => {
+        if (value) return <Image height={60} src={value} />;
       },
       align: 'center',
     },
@@ -163,7 +163,7 @@ const WidgetDetails: React.FC<WidgetDetailsProps> = ({
           </div>
         </div>
       ),
-      dataIndex: ['feed', 'videoLabel'],
+      dataIndex: 'title',
       width: '10%',
       align: 'center',
     },
@@ -181,7 +181,7 @@ const WidgetDetails: React.FC<WidgetDetailsProps> = ({
           </div>
         </div>
       ),
-      dataIndex: ['feed', 'shortDescription'],
+      dataIndex: 'shortDescription',
       width: '30%',
       render: (value?: string) => (
         <>

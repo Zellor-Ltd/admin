@@ -103,7 +103,7 @@ const Widgets: React.FC<RouteComponentProps> = () => {
     ]);
   };
 
-  const customColumns: ColumnsType<any> = [
+  const columns: ColumnsType<any> = [
     {
       title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
@@ -179,7 +179,7 @@ const Widgets: React.FC<RouteComponentProps> = () => {
           </div>
         </div>
       ),
-      dataIndex: 'links',
+      dataIndex: 'videos',
       width: '5%',
       render: (links: [any]) => (links ? links.length : '0'),
       align: 'center',
@@ -285,7 +285,7 @@ const Widgets: React.FC<RouteComponentProps> = () => {
           <Table
             rowClassName={(_, index) => `scrollable-row-${index}`}
             rowKey="id"
-            columns={customColumns}
+            columns={columns}
             dataSource={lists}
             loading={loading}
             pagination={false}
