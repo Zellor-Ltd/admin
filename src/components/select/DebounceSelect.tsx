@@ -49,12 +49,12 @@ export const DebounceSelect: React.FC<DebounceSelectProps> = ({
                 return {
                   label: (
                     <Row justify="space-between">
-                      <Col>{item?.feed?.shortDescription}</Col>
+                      <Col>{item?.shortDescription}</Col>
                       <Col>
-                        {item.feed?.package?.length && (
+                        {item.package?.length && (
                           <Image
                             height={25}
-                            src={item.feed.package[0].thumbnailUrl}
+                            src={item.thumbnailUrl}
                           />
                         )}
                       </Col>
