@@ -1,4 +1,4 @@
-import { Button, Col, Form, Image, Input, Row, Tooltip, message } from 'antd';
+import { Button, Col, Form, Image, Input, Row, Switch, Tooltip, message } from 'antd';
 import { useRequest } from 'hooks/useRequest';
 import { useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
@@ -264,8 +264,17 @@ const WidgetDetails: React.FC<WidgetDetailsProps> = ({
             </Form.Item>
           </Col>
           <Col span={24}>
-            <Row justify="end">
-              <Col flex="100px">
+            <Row justify="space-between">
+                      <Col>
+                        <Form.Item
+                          name="displayTags"
+                          label="Show Tags"
+                          valuePropName="checked"
+                        >
+                          <Switch />
+                        </Form.Item>
+                      </Col>
+              <Col >
                 <Button
                   key="1"
                   type="primary"

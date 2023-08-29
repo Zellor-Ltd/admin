@@ -708,7 +708,8 @@ a,
 }
 
 .mx-1 {
-  margin: 0 1rem;
+  margin-left: 1rem;
+  margin-right: 1rem;
 }
 
 .mx-2 {
@@ -751,6 +752,11 @@ a,
 
 .mt-03 {
   margin-top: 0.3rem;
+}
+
+.my-0 {
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
 .my-05 {

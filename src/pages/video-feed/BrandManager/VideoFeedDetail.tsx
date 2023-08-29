@@ -48,6 +48,8 @@ import {
   saveVideoFeed,
   fetchVideoFeedV3,
 } from 'services/DiscoClubService';
+import BrandForm from '../BrandForm';
+import TagForm from '../TagForm';
 import './VideoFeed.scss';
 import './VideoFeedDetail.scss';
 import ReactTagInput from '@pathofdev/react-tag-input';
@@ -62,8 +64,6 @@ import scrollIntoView from 'scroll-into-view';
 import { AppContext } from 'contexts/AppContext';
 import DOMPurify from 'isomorphic-dompurify';
 import CreatorsMultipleFetchDebounceSelect from 'pages/creators/components/CreatorsMultipleFetchDebounceSelect';
-import BrandForm from '../BrandForm';
-import TagForm from '../TagForm';
 
 const { Title } = Typography;
 
@@ -873,12 +873,22 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                       justify={isMobile ? 'end' : undefined}
                       className={isMobile ? 'mb-1' : undefined}
                     >
+                    <Col>
+                      <Form.Item
+                        name="isDraft"
+                        label="Is Draft"
+                        valuePropName="checked"
+                        className="mt-1"
+                      >
+                        <Switch />
+                      </Form.Item>
+                    </Col>
                       <Col>
                         <Form.Item
-                          name="isDraft"
-                          label="Is Draft"
+                          name="displayTags"
+                          label="Show Tags"
                           valuePropName="checked"
-                          className="mx-1"
+                          className="mt-1 mx-1"
                         >
                           <Switch />
                         </Form.Item>
@@ -886,6 +896,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                       <Col>
                         <Button
                           type="primary"
+                        style={{position: "relative", bottom: "1.5rem"}}
                           onClick={
                             status === 'draft'
                               ? () => setStatus('live')
@@ -1796,110 +1807,6 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
     setSelectedBrand(brands.find(brand => brand.id === key));
   };
 
-  const brandsColumns: ColumnsType<any> = [
-    {
-      title: (
-        <div style={{ display: 'grid', placeItems: 'stretch' }}>
-          <div
-            style={{
-              textOverflow: 'ellipsis',
-              overflow: 'hidden',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            <Tooltip title="Name">Name</Tooltip>
-          </div>
-        </div>
-      ),
-      dataIndex: 'brandName',
-      width: '15%',
-    },
-    {
-      title: (
-        <div style={{ display: 'grid', placeItems: 'stretch' }}>
-          <div
-            style={{
-              textOverflow: 'ellipsis',
-              overflow: 'hidden',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            <Tooltip title="Start Time">Start Time</Tooltip>
-          </div>
-        </div>
-      ),
-      dataIndex: ['position', '0', 'startTime'],
-      width: '15%',
-    },
-    {
-      title: (
-        <div style={{ display: 'grid', placeItems: 'stretch' }}>
-          <div
-            style={{
-              textOverflow: 'ellipsis',
-              overflow: 'hidden',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            <Tooltip title="Duration">Duration</Tooltip>
-          </div>
-        </div>
-      ),
-      dataIndex: ['position', '0', 'duration'],
-      width: '15%',
-    },
-    {
-      title: (
-        <div style={{ display: 'grid', placeItems: 'stretch' }}>
-          <div
-            style={{
-              textOverflow: 'ellipsis',
-              overflow: 'hidden',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            <Tooltip title="Actions">Actions</Tooltip>
-          </div>
-        </div>
-      ),
-      key: 'action',
-      width: '5%',
-      align: 'right',
-      render: (_, __, index) => (
-        <>
-          <Button
-            type="link"
-            style={{ padding: 0 }}
-            onClick={() => {
-              const brands: any[] = segmentForm.getFieldValue('brands') || [];
-              setSelectedBrand(brands[index]);
-              setSelectedBrandIndex(index);
-              setShowBrandForm(true);
-            }}
-          >
-            <EditOutlined />
-          </Button>
-          <Popconfirm title="Are you sure？" okText="Yes" cancelText="No">
-            <Button
-              type="link"
-              style={{ padding: 0, margin: 6 }}
-              onClick={() => {
-                const brands: any[] = segmentForm.getFieldValue('brands') || [];
-                brands.splice(index, 1);
-                segmentForm.setFieldsValue({
-                  brands,
-                });
-                setSelectedSegment(segmentForm.getFieldsValue(true));
-              }}
-            >
-              <DeleteOutlined />
-            </Button>
-          </Popconfirm>
-        </>
-      ),
-    },
-  ];
-
   const tagsColumns: ColumnsType<any> = [
     {
       title: (
@@ -2080,30 +1987,6 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                       />
                     </Form.Item>
                   </Col>
-                </Tabs.TabPane>
-                <Tabs.TabPane
-                  forceRender
-                  tab={`Clients (${selectedSegment!.brands?.length || 0})`}
-                  key="Clients"
-                >
-                  <Button
-                    type="default"
-                    style={{ float: 'right', marginBottom: '12px' }}
-                    onClick={() => {
-                      setSelectedBrand(undefined);
-                      setSelectedBrandIndex(-1);
-                      setShowBrandForm(true);
-                    }}
-                  >
-                    New Client
-                  </Button>
-                  <Table
-                    rowKey="id"
-                    columns={brandsColumns}
-                    dataSource={selectedSegment!.brands}
-                    loading={loading}
-                    pagination={false}
-                  />
                 </Tabs.TabPane>
                 <Tabs.TabPane
                   forceRender

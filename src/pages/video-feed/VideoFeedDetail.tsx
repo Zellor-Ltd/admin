@@ -873,12 +873,22 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                       justify={isMobile ? 'end' : undefined}
                       className={isMobile ? 'mb-1' : undefined}
                     >
+                    <Col>
+                      <Form.Item
+                        name="isDraft"
+                        label="Is Draft"
+                        valuePropName="checked"
+                        className="mt-1"
+                      >
+                        <Switch />
+                      </Form.Item>
+                    </Col>
                       <Col>
                         <Form.Item
-                          name="isDraft"
-                          label="Is Draft"
+                          name="displayTags"
+                          label="Show Tags"
                           valuePropName="checked"
-                          className="mx-1"
+                          className="mt-1 mx-1"
                         >
                           <Switch />
                         </Form.Item>
@@ -886,6 +896,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                       <Col>
                         <Button
                           type="primary"
+                        style={{position: "relative", bottom: "1.5rem"}}
                           onClick={
                             status === 'draft'
                               ? () => setStatus('live')
