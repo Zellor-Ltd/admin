@@ -37,6 +37,7 @@ import {
   FileSyncOutlined,
   HddOutlined,
   ProfileOutlined,
+  BarChartOutlined,
 } from '@ant-design/icons';
 import { Menu } from 'antd';
 import SubMenu from 'antd/lib/menu/SubMenu';
@@ -127,6 +128,13 @@ const AdminSideMenu = ({ isMobile }) => {
         onClick={() => refreshParent('widgets')}
       >
         <Link to="/widgets">Widgets</Link>
+      </Menu.Item>
+      <Menu.Item
+        key="analytics"
+        icon={<BarChartOutlined />}
+        onClick={() => refreshParent('analytics')}
+      >
+        <Link to="/analytics">Analytics</Link>
       </Menu.Item>
       <Menu.Item
         key="featured-feeds"
