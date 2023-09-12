@@ -1179,7 +1179,7 @@ export const fetchAllInternalStats = (period: string) => {
 };
 
 export const loginAs = (params: any) => {
-  return instance.post('Disco/Bbs/Id/ChangeClient', params);
+  return instance.post('Bbs/Id/ChangeClient', params);
 };
 
 export const fetchClientUsers = (page: number, params: any) => {
