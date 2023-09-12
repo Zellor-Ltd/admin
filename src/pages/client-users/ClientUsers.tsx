@@ -2,6 +2,7 @@
 import {
   DeleteOutlined,
   EditOutlined,
+  LoadingOutlined,
   SearchOutlined,
 } from '@ant-design/icons';
 import {
@@ -26,6 +27,7 @@ import {
   deleteClientUser,
   fetchBrands,
   fetchClientUsers,
+  loginAs,
   saveClientUser,
 } from 'services/DiscoClubService';
 import { useRequest } from 'hooks/useRequest';
@@ -53,7 +55,10 @@ const ClientUsers: React.FC<RouteComponentProps> = ({ location }) => {
   const [clientUsers, setClientUsers] = useState<any[]>([]);
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
-  const [brandFilter, setBrandFilter] = useState<Brand | undefined>();
+  const [clientFilter, setclientFilter] = useState<Brand | undefined>();
+  const [updatingClient, setUpdatingClient] = useState<Record<string, boolean>>(
+    {}
+  );
   const { isMobile, setIsScrollable } = useContext(AppContext);
   const history = useHistory();
 
@@ -88,7 +93,7 @@ const ClientUsers: React.FC<RouteComponentProps> = ({ location }) => {
     if (!loadNextPage) scrollToCenter(0);
     const pageToUse = loadNextPage ? page : 0;
     const { results } = await doFetch(() =>
-      fetchClientUsers(pageToUse, { clientId: brandFilter?.id ?? '' })
+      fetchClientUsers(pageToUse, { clientId: clientFilter?.id ?? '' })
     );
 
     setPage(pageToUse + 1);
@@ -96,6 +101,19 @@ const ClientUsers: React.FC<RouteComponentProps> = ({ location }) => {
 
     if (pageToUse === 0) setClientUsers(results);
     else setClientUsers(prev => [...prev.concat(results)]);
+  };
+
+  const updateClient = async (record: Brand, selectedClient: Brand) => {
+    if (!selectedClient) return
+    if (record.id === selectedClient.id) return;
+
+    try {
+      await doRequest(()=>loginAs({userId: record.id, clientId: selectedClient.id}));
+      message.success(`Logged in as ${selectedClient}.`);
+    } catch (err) {
+      console.error(`Error while trying to log in as new client.`, err);
+    }
+
   };
 
   const handleEdit = (index: number, client?: any) => {
@@ -218,8 +236,33 @@ const ClientUsers: React.FC<RouteComponentProps> = ({ location }) => {
       dataIndex: 'clientId',
       width: '25%',
       align: 'center',
-      render: (value: string) =>
-        brands.find(item => item.id === value)?.brandName,
+      render: (_, client) => {
+        if (updatingClient[client?.id]) {
+          const antIcon = <LoadingOutlined spin />;
+          return <Spin indicator={antIcon} />;
+        } else {
+          return (
+            <div style={{ minWidth: 10 }}>
+              <SimpleSelect
+            showSearch
+            data={brands}
+            onChange={(_, brand) => updateClient(client, brand)
+            }
+            style={{ width: '100%' }}
+            selectedOption={clientFilter?.brandName}
+            optionMapping={{
+              key: 'id',
+              label: 'brandName',
+              value: 'id',
+            }}
+            placeholder="Select a Client to log in as"
+            disabled={loading}
+            allowClear
+          ></SimpleSelect>
+            </div>
+          );
+        }
+      },
       sorter: (a, b): any => {
         if (a.clientId && b.clientId)
           return a.clientId.localeCompare(b.clientId);
@@ -469,9 +512,9 @@ const ClientUsers: React.FC<RouteComponentProps> = ({ location }) => {
               <SimpleSelect
                 showSearch
                 data={brands}
-                onChange={(_, brand) => setBrandFilter(brand)}
+                onChange={(_, brand) => setclientFilter(brand)}
                 style={{ width: '100%' }}
-                selectedOption={brandFilter?.brandName}
+                selectedOption={clientFilter?.brandName}
                 optionMapping={{
                   key: 'id',
                   label: 'brandName',
@@ -525,7 +568,7 @@ const ClientUsers: React.FC<RouteComponentProps> = ({ location }) => {
           <ClientUserDetails
             brands={brands}
             user={currentRecord}
-            clientId={brandFilter?.id}
+            clientId={clientFilter?.id}
             onCancel={() => setDetails(false)}
             onSave={handleSave}
           />
