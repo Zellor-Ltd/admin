@@ -1178,6 +1178,10 @@ export const fetchAllInternalStats = (period: string) => {
   return instance.get(`Disco/Adm/Analytics/GetInternalClientStats/${period}`);
 };
 
+export const loginAs = (params: any) => {
+  return instance.post('Disco/Bbs/Id/ChangeClient', params);
+};
+
 export const fetchClientUsers = (page: number, params: any) => {
   return instance.post(`Disco/Client/User/List/${page}`, params);
 };
