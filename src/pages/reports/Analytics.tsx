@@ -400,15 +400,15 @@ const Analytics: React.FC<DashboardProps> = () => {
           </div>
         </div>
       ),
-      dataIndex: 'interactions',
+      dataIndex: 'widgetInteractions',
       width: '10%',
       align: 'center',
       render: (value?: number) => value ?? 0,
       sorter: (a, b): any => {
-        if (a.interactions && b.interactions)
-          return a.interactions - b.interactions;
-        else if (a.interactions) return -1;
-        else if (b.interactions) return 1;
+        if (a.widgetInteractions && b.widgetInteractions)
+          return a.widgetInteractions - b.widgetInteractions;
+        else if (a.widgetInteractions) return -1;
+        else if (b.widgetInteractions) return 1;
         else return 0;
       },
     },
