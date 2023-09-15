@@ -3,6 +3,6 @@ export interface Wallet {
   discoGold: number;
   brandId: string;
   totalProducts: string;
-  brandName: string;
+  name: string;
   [key: string]: any;
 }

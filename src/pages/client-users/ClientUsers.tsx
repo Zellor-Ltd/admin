@@ -104,16 +104,17 @@ const ClientUsers: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   const updateClient = async (record: Brand, selectedClient: Brand) => {
-    if (!selectedClient) return
+    if (!selectedClient) return;
     if (record.id === selectedClient.id) return;
 
     try {
-      await doRequest(()=>loginAs({userId: record.id, clientId: selectedClient.id}));
+      await doRequest(() =>
+        loginAs({ userId: record.id, clientId: selectedClient.id })
+      );
       message.success(`Logged in as ${selectedClient}.`);
     } catch (err) {
       console.error(`Error while trying to log in as new client.`, err);
     }
-
   };
 
   const handleEdit = (index: number, client?: any) => {
@@ -244,21 +245,20 @@ const ClientUsers: React.FC<RouteComponentProps> = ({ location }) => {
           return (
             <div style={{ minWidth: 10 }}>
               <SimpleSelect
-            showSearch
-            data={brands}
-            onChange={(_, brand) => updateClient(client, brand)
-            }
-            style={{ width: '100%' }}
-            selectedOption={clientFilter?.brandName}
-            optionMapping={{
-              key: 'id',
-              label: 'brandName',
-              value: 'id',
-            }}
-            placeholder="Select a Client to log in as"
-            disabled={loading}
-            allowClear
-          ></SimpleSelect>
+                showSearch
+                data={brands}
+                onChange={(_, brand) => updateClient(client, brand)}
+                style={{ width: '100%' }}
+                selectedOption={clientFilter?.name}
+                optionMapping={{
+                  key: 'id',
+                  label: 'name',
+                  value: 'id',
+                }}
+                placeholder="Select a Client to log in as"
+                disabled={loading}
+                allowClear
+              ></SimpleSelect>
             </div>
           );
         }
@@ -514,10 +514,10 @@ const ClientUsers: React.FC<RouteComponentProps> = ({ location }) => {
                 data={brands}
                 onChange={(_, brand) => setclientFilter(brand)}
                 style={{ width: '100%' }}
-                selectedOption={clientFilter?.brandName}
+                selectedOption={clientFilter?.name}
                 optionMapping={{
                   key: 'id',
-                  label: 'brandName',
+                  label: 'name',
                   value: 'id',
                 }}
                 placeholder="Select a Client"

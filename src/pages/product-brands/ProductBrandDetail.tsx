@@ -145,12 +145,12 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
         case 'discoPercentage':
         case 'creatorPercentage':
         case 'maxDiscoDollarPercentage':
-        case 'brandName':
+        case 'name':
         case 'masterBrand':
         case 'brandTxtColor':
           setActiveTabKey('Details');
           break;
-        case 'brandLogo':
+        case 'logo':
         case 'mastHead':
         case 'avatar':
           setActiveTabKey('Images');
@@ -281,7 +281,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
       <PageHeader
         title={
           productBrand
-            ? `${productBrand.brandName ?? ''} Update`
+            ? `${productBrand.name ?? ''} Update`
             : 'New Product Brand'
         }
       />
@@ -324,7 +324,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                   <Col lg={12} xs={24}>
                     <Form.Item
                       label="Product Brand Name"
-                      name="brandName"
+                      name="name"
                       rules={[
                         {
                           required: true,
@@ -334,7 +334,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                     >
                       <Input
                         allowClear
-                        id="brandName"
+                        id="name"
                         placeholder="Product Brand Name"
                       />
                     </Form.Item>
@@ -398,9 +398,9 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                           <Select.Option
                             key={curr.id}
                             value={curr.id}
-                            label={curr.brandName}
+                            label={curr.name}
                           >
-                            {curr.brandName}
+                            {curr.name}
                           </Select.Option>
                         ))}
                       </Select>
@@ -447,7 +447,7 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                     >
                       <p>
                         Would you like to apply this creator percentage to all{' '}
-                        {productBrand?.brandName} products?
+                        {productBrand?.name} products?
                       </p>
                     </Modal>
                   </Col>
@@ -689,15 +689,15 @@ const ProductBrandsDetail: React.FC<ProductBrandDetailProps> = ({
                       rules={[
                         { required: true, message: 'Logo Round is required.' },
                       ]}
-                      name="brandLogo"
+                      name="logo"
                     >
                       <Upload.ImageUpload
-                        id="brandLogo"
-                        type="brandLogo"
-                        fileList={productBrand?.brandLogo}
+                        id="logo"
+                        type="logo"
+                        fileList={productBrand?.logo}
                         maxCount={1}
                         form={form}
-                        formProp="brandLogo"
+                        formProp="logo"
                       />
                     </Form.Item>
                   </Col>

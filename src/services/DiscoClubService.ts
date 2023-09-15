@@ -480,7 +480,8 @@ export const fetchStagingProducts = ({
 export const fetchProductTemplates = () =>
   instance.get('Wi/Ep/ListProductTemplate');
 
-export const fetchBrands = () => instance.get('Wi/Ep/ListBrands');
+export const fetchBrands = (params?: any) =>
+  instance.post('Bbs/Client/Adm/Search', params);
 
 export const fetchCategories = () => instance.get('Wi/Ep/GetProductCategories');
 
@@ -810,9 +811,9 @@ export const saveTag = (params: Tag) => {
 
 export const saveBrand = (params: Brand) => {
   if (params.id) {
-    return instance.post('Disco/Brand/Update', params);
+    return instance.post('Bbs/Client/Adm/Update', params);
   } else {
-    return instance.put('Wi/Ep/AddBrand', params);
+    return instance.put('Bbs/Client/Adm/Add', params);
   }
 };
 
@@ -1064,8 +1065,8 @@ export const deleteProductTemplate = (data: AnyAction) => {
   return instance.delete('Wi/Ep/RemoveProductTemplate', { data });
 };
 
-export const deleteBrand = (data: IDelete) => {
-  return instance.delete('Wi/Ep/RemoveBrand', { data });
+export const deleteBrand = (id: string) => {
+  return instance.delete(`Bbs/Client/Adm/Delete/${id}`);
 };
 
 export const deleteCategory = (data: IDelete) => {

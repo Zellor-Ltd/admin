@@ -957,7 +957,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
     const getBrands = async () => {
       try {
         const { results }: any = await fetchBrands();
-        setBrands(results.filter((brand: any) => brand.brandName));
+        setBrands(results.filter((brand: any) => brand.name));
       } catch (e) {
       } finally {
       }
@@ -1046,9 +1046,9 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
                       <Select.Option
                         key={curr.id}
                         value={curr.id}
-                        label={curr.brandName}
+                        label={curr.name}
                       >
-                        {curr.brandName}
+                        {curr.name}
                       </Select.Option>
                     ))}
                   </Select>

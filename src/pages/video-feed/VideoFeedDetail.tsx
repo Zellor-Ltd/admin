@@ -48,7 +48,6 @@ import {
   saveVideoFeed,
   fetchVideoFeedV3,
 } from 'services/DiscoClubService';
-import BrandForm from './BrandForm';
 import TagForm from './TagForm';
 import './VideoFeed.scss';
 import './VideoFeedDetail.scss';
@@ -251,7 +250,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
   useEffect(() => {
     feedForm.setFieldsValue({
       selectedId: listingProductBrand?.id,
-      selectedFeedTitle: listingProductBrand?.brandName,
+      selectedFeedTitle: listingProductBrand?.name,
     });
   }, [listingProductBrand]);
 
@@ -354,7 +353,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
       loadIcons('vLinkBrand', entity);
       let vLinkFields = feedForm.getFieldValue('vLink');
       if (entity) {
-        vLinkFields.brand.brandName = entity?.brandName;
+        vLinkFields.brand.name = entity?.name;
         vLinkFields.brand.showPrice = false;
         vLinkFields.brand.selectedLogoUrl = undefined;
       } else {
@@ -374,7 +373,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
       loadIcons('vLinkProductBrand', entity);
       let vLinkFields = feedForm.getFieldValue('vLink');
       if (entity) {
-        vLinkFields.productBrand.brandName = entity?.brandName;
+        vLinkFields.productBrand.name = entity?.name;
         vLinkFields.productBrand.showPrice = false;
         vLinkFields.productBrand.selectedLogoUrl = undefined;
         vLinkFields.productBrand.selectedWhiteLogoUrl = undefined;
@@ -448,7 +447,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
     if (showBrandForm)
       setPageTitle(
         selectedBrandIndex > -1
-          ? `${selectedBrand?.brandName ?? ''} Update`
+          ? `${selectedBrand?.name ?? ''} Update`
           : 'New Segment Client'
       );
     else if (showTagForm)
@@ -644,29 +643,17 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
     entity?: ProductBrand | Brand
   ) => {
     const icons: any[] = [];
-    if (entity?.brandLogo)
+    if (entity?.logo)
       icons.push({
         key: 'Round',
         label: 'Round',
-        value: entity.brandLogo.url,
+        value: entity.logo.url,
       });
     if (entity?.whiteLogo)
       icons.push({
         key: 'White',
         label: 'White',
         value: entity.whiteLogo.url,
-      });
-    if (entity?.blackLogo)
-      icons.push({
-        key: 'Black',
-        label: 'Black',
-        value: entity.blackLogo.url,
-      });
-    if (entity?.colourLogo)
-      icons.push({
-        key: 'Colour',
-        label: 'Colour',
-        value: entity.colourLogo.url,
       });
 
     if (type === 'productBrand') setProductBrandIcons(icons);
@@ -873,16 +860,16 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                       justify={isMobile ? 'end' : undefined}
                       className={isMobile ? 'mb-1' : undefined}
                     >
-                    <Col>
-                      <Form.Item
-                        name="isDraft"
-                        label="Is Draft"
-                        valuePropName="checked"
-                        className="mt-1"
-                      >
-                        <Switch />
-                      </Form.Item>
-                    </Col>
+                      <Col>
+                        <Form.Item
+                          name="isDraft"
+                          label="Is Draft"
+                          valuePropName="checked"
+                          className="mt-1"
+                        >
+                          <Switch />
+                        </Form.Item>
+                      </Col>
                       <Col>
                         <Form.Item
                           name="displayTags"
@@ -896,7 +883,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                       <Col>
                         <Button
                           type="primary"
-                        style={{position: "relative", bottom: "1.5rem"}}
+                          style={{ position: 'relative', bottom: '1.5rem' }}
                           onClick={
                             status === 'draft'
                               ? () => setStatus('live')
@@ -1332,9 +1319,9 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                         <Select.Option
                           key={productBrand.id}
                           value={productBrand.id}
-                          label={productBrand.brandName}
+                          label={productBrand.name}
                         >
-                          {productBrand.brandName}
+                          {productBrand.name}
                         </Select.Option>
                       ))}
                     </Select>
@@ -1521,9 +1508,9 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                         <Select.Option
                           key={brand.id}
                           value={brand.id}
-                          label={brand.brandName}
+                          label={brand.name}
                         >
-                          {brand.brandName}
+                          {brand.name}
                         </Select.Option>
                       ))}
                     </Select>
@@ -1566,9 +1553,9 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                           <Select.Option
                             key={brand.id}
                             value={brand.id}
-                            label={brand.brandName}
+                            label={brand.name}
                           >
-                            {brand.brandName}
+                            {brand.name}
                           </Select.Option>
                         ))}
                       </Select>
@@ -1644,9 +1631,9 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
                           <Select.Option
                             key={productBrand.id}
                             value={productBrand.id}
-                            label={productBrand.brandName}
+                            label={productBrand.name}
                           >
-                            {productBrand.brandName}
+                            {productBrand.name}
                           </Select.Option>
                         ))}
                       </Select>
@@ -1822,7 +1809,7 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
           </div>
         </div>
       ),
-      dataIndex: ['brand', 'brandName'],
+      dataIndex: ['brand', 'name'],
       width: '15%',
     },
     {
@@ -1931,14 +1918,6 @@ const VideoFeedDetail: React.FC<VideoFeedDetailProps> = ({
   const SegmentPage = () => {
     return (
       <>
-        {showBrandForm && (
-          <BrandForm
-            setShowBrandForm={setShowBrandForm}
-            brand={selectedBrand}
-            brands={brands}
-            productBrands={productBrands}
-          />
-        )}
         {showTagForm && (
           <TagForm
             setTag={setSelectedTag}

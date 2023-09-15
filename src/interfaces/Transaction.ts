@@ -5,9 +5,9 @@ export interface Transaction {
   discoDollars: number;
   discoGold: number;
   brandId: string;
-  brandName: string;
+  name: string;
   brandTxtColor: string;
-  brandLogoUrl: string;
+  logoUrl: string;
   brandCardUrl: string;
   hCreationDate?: string;
   hLastUpdate?: string;

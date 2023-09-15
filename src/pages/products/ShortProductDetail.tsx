@@ -72,7 +72,7 @@ const ShortProductDetail: React.FC<ShortProductDetailProps> = ({
 
   const optionMapping: SelectOption = {
     key: 'id',
-    label: 'brandName',
+    label: 'name',
     value: 'id',
   };
 
@@ -92,13 +92,6 @@ const ShortProductDetail: React.FC<ShortProductDetailProps> = ({
       );
 
       let discoPercentage;
-
-      if (useInitialValue && product) {
-        discoPercentage =
-          product.discoPercentage || selectedBrand?.discoPercentage;
-      } else {
-        discoPercentage = selectedBrand?.discoPercentage;
-      }
 
       form.setFieldsValue({
         discoPercentage,

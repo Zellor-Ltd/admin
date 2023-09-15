@@ -196,7 +196,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
           </div>
         </div>
       ),
-      dataIndex: 'brandName',
+      dataIndex: 'name',
       width: '15%',
       render: (value: string, record: ProductBrand, index: number) => (
         <Link
@@ -207,10 +207,9 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
         </Link>
       ),
       sorter: (a, b): any => {
-        if (a.brandName && b.brandName)
-          return a.brandName.localeCompare(b.brandName);
-        else if (a.brandName) return -1;
-        else if (b.brandName) return 1;
+        if (a.name && b.name) return a.name.localeCompare(b.name);
+        else if (a.name) return -1;
+        else if (b.name) return 1;
         else return 0;
       },
     },
@@ -540,7 +539,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
   const search = rows => {
     if (filter) {
       return rows.filter(
-        row => row.brandName?.toUpperCase().indexOf(filter?.toUpperCase()) > -1
+        row => row.name?.toUpperCase().indexOf(filter?.toUpperCase()) > -1
       );
     }
 

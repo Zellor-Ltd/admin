@@ -73,7 +73,7 @@ const ModalBrand: React.FC<ModalFormProps> = ({ brand, visible, onCancel }) => {
         <Input.Group>
           <Row gutter={8}>
             <Col lg={6} xs={0}>
-              <Form.Item name="brandName" label="Client">
+              <Form.Item name="name" label="Client">
                 <Select
                   onChange={onChangeBrand}
                   allowClear
@@ -83,7 +83,7 @@ const ModalBrand: React.FC<ModalFormProps> = ({ brand, visible, onCancel }) => {
                 >
                   {brands.map(brand => (
                     <Select.Option key={brand.id} value={brand.id}>
-                      {brand.brandName}
+                      {brand.name}
                     </Select.Option>
                   ))}
                 </Select>

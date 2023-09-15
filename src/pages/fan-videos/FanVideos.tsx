@@ -161,13 +161,13 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
 
   const masterBrandMapping: SelectOption = {
     key: 'id',
-    label: 'brandName',
+    label: 'name',
     value: 'id',
   };
 
   const productBrandMapping: SelectOption = {
     key: 'id',
-    label: 'brandName',
+    label: 'name',
     value: 'id',
   };
 

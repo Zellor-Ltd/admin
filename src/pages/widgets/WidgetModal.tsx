@@ -502,9 +502,9 @@ const WidgetModal: React.FC<WidgetModalProps> = ({
                             <Select.Option
                               key={brand.id}
                               value={brand.id}
-                              label={brand.brandName}
+                              label={brand.name}
                             >
-                              {brand.brandName}
+                              {brand.name}
                             </Select.Option>
                           ))}
                         </Select>

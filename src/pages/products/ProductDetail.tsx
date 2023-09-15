@@ -100,7 +100,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
 
   const optionMapping: SelectOption = {
     key: 'id',
-    label: 'brandName',
+    label: 'name',
     value: 'id',
   };
 
@@ -124,13 +124,6 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
       );
 
       let discoPercentage;
-
-      if (useInitialValue && product) {
-        discoPercentage =
-          product.discoPercentage || selectedBrand?.discoPercentage;
-      } else {
-        discoPercentage = selectedBrand?.discoPercentage;
-      }
 
       form.setFieldsValue({
         discoPercentage,

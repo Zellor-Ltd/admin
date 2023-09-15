@@ -27,7 +27,7 @@ import { usePrevious } from 'react-use';
 
 const optionMapping: SelectOption = {
   key: 'id',
-  label: 'brandName',
+  label: 'name',
   value: 'id',
 };
 
@@ -196,11 +196,11 @@ const PushGroupTag: React.FC<RouteComponentProps> = () => {
           </div>
         </div>
       ),
-      dataIndex: ['brand', 'brandName'],
+      dataIndex: ['brand', 'name'],
       width: '20%',
       sorter: (a, b): any => {
         if (a.brand && b.brand)
-          return a.brand.brandName?.localeCompare(b.brand.brandName);
+          return a.brand.name?.localeCompare(b.brand.name);
         else if (a.brand) return -1;
         else if (b.brand) return 1;
         else return 0;
@@ -259,8 +259,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = () => {
   const search = rows => {
     return rows.filter(
       row =>
-        row.brand.brandName?.toUpperCase().indexOf(brandFilter?.toUpperCase()) >
-        -1
+        row.brand.name?.toUpperCase().indexOf(brandFilter?.toUpperCase()) > -1
     );
   };
 
@@ -388,9 +387,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = () => {
                   <SimpleSelect
                     showSearch
                     data={brands}
-                    onChange={(_, brand) =>
-                      setBrandFilter(brand?.brandName ?? '')
-                    }
+                    onChange={(_, brand) => setBrandFilter(brand?.name ?? '')}
                     style={{ width: '100%' }}
                     optionMapping={optionMapping}
                     placeholder="Select a Client"
