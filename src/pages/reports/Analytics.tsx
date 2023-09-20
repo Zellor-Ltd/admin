@@ -648,14 +648,14 @@ const Analytics: React.FC<DashboardProps> = () => {
         <Col lg={4} xs={8}>
           <DashCard
             icon={<TeamOutlined />}
-            title="Widget Impressions"
+            title="Carousel Impressions"
             number={stats?.totalWidgetImpressions ?? 0}
           />
         </Col>
         <Col lg={4} xs={8}>
           <DashCard
             icon={<AppstoreOutlined />}
-            title="Widget Interactions"
+            title="Carousel Engagement"
             number={stats?.totalWidgetInteractions ?? 0}
           />
         </Col>
