@@ -1,5 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Button, Col, Form, Input, message, PageHeader, Row } from 'antd';
+import {
+  Button,
+  Col,
+  Form,
+  Input,
+  InputNumber,
+  message,
+  PageHeader,
+  Row,
+} from 'antd';
 import { Upload } from 'components';
 import { Brand } from 'interfaces/Brand';
 import { useContext, useRef } from 'react';
@@ -123,6 +132,16 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
           </Row>
           <Row gutter={8}>
             <Col lg={12} xs={24}>
+              <Col span={24}>
+                <Form.Item name="limitOfVideos" label="Max Videos">
+                  <InputNumber
+                    max={20}
+                    min={0}
+                    title="Up to 20."
+                    placeholder="Select a number up to 20"
+                  />
+                </Form.Item>
+              </Col>
               <Col span={24}>
                 <Form.Item
                   name="shopUrl"
