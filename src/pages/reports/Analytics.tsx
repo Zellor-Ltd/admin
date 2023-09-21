@@ -377,11 +377,38 @@ const Analytics: React.FC<DashboardProps> = () => {
       dataIndex: 'impressions',
       width: '10%',
       align: 'center',
+      render: (value?: number) => value ?? 0,
       sorter: (a, b): any => {
         if (a.impressions && b.impressions)
           return a.impressions - b.impressions;
         else if (a.impressions) return -1;
         else if (b.impressions) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Interactions">Interactions</Tooltip>
+          </div>
+        </div>
+      ),
+      dataIndex: 'widgetInteractions',
+      width: '10%',
+      align: 'center',
+      render: (value?: number) => value ?? 0,
+      sorter: (a, b): any => {
+        if (a.widgetInteractions && b.widgetInteractions)
+          return a.widgetInteractions - b.widgetInteractions;
+        else if (a.widgetInteractions) return -1;
+        else if (b.widgetInteractions) return 1;
         else return 0;
       },
     },
@@ -402,6 +429,7 @@ const Analytics: React.FC<DashboardProps> = () => {
       dataIndex: 'videoPlays',
       width: '10%',
       align: 'center',
+      render: (value?: number) => value ?? 0,
       sorter: (a, b): any => {
         if (a.videoPlays && b.videoPlays) return a.videoPlays - b.videoPlays;
         else if (a.videoPlays) return -1;
@@ -426,6 +454,7 @@ const Analytics: React.FC<DashboardProps> = () => {
       dataIndex: 'productClicks',
       width: '10%',
       align: 'center',
+      render: (value?: number) => value ?? 0,
       sorter: (a, b): any => {
         if (a.productClicks && b.productClicks)
           return a.productClicks - b.productClicks;
@@ -448,9 +477,10 @@ const Analytics: React.FC<DashboardProps> = () => {
           </div>
         </div>
       ),
-      dataIndex: 'totalWatchTimeLabel',
+      dataIndex: 'totalWatchTime',
       width: '10%',
       align: 'center',
+      render: (value?: number) => value ?? 0,
       sorter: (a, b): any => {
         if (a.totalWatchTime && b.totalWatchTime)
           return a.totalWatchTime - b.totalWatchTime;
