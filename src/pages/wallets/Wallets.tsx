@@ -42,7 +42,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
 
   const optionMapping: SelectOption = {
     key: 'id',
-    label: 'brandName',
+    label: 'name',
     value: 'id',
   };
 
@@ -56,7 +56,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
     const getBrands = async () => {
       try {
         const { results }: any = await fetchBrands();
-        setBrands(results.filter((brand: any) => brand.brandName));
+        setBrands(results.filter((brand: any) => brand.name));
       } catch (e) {}
     };
 
@@ -101,10 +101,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
         discoGold: 0,
         brandId: selectedBrand?.id as string,
         totalProducts: '',
-        brandName: selectedBrand?.brandName as string,
-        brandTxtColor: selectedBrand?.brandTxtColor as string,
-        brandLogoUrl: selectedBrand?.brandLogoUrl as string,
-        brandCardUrl: selectedBrand?.brandCardUrl as string,
+        name: selectedBrand?.name as string,
       });
     }
     setWallets([...wallets]);
@@ -129,7 +126,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
           </div>
         </div>
       ),
-      dataIndex: 'brandName',
+      dataIndex: 'name',
       width: '40%',
       render: (value: string, record: Wallet, index: number) => (
         <Link
@@ -141,9 +138,9 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
                 id: record.brandId,
                 discoDollars: record.discoDollars,
                 discoGold: record.discoGold,
-                name: record.brandName,
+                name: record.name,
                 brandTxtColor: record.brandTxtColor,
-                brandLogoUrl: record.brandLogoUrl,
+                logoUrl: record.logoUrl,
                 brandCardUrl: record.brandCardUrl,
               },
             } as WalletDetailParams,
@@ -154,10 +151,9 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
         </Link>
       ),
       sorter: (a, b) => {
-        if (a.brandName && b.brandName)
-          return a.brandName.localeCompare(b.brandName);
-        else if (a.brandName) return 1;
-        else if (b.brandName) return -1;
+        if (a.name && b.name) return a.name.localeCompare(b.name);
+        else if (a.name) return 1;
+        else if (b.name) return -1;
         else return 0;
       },
     },
@@ -189,7 +185,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
   ];
 
   const handleChangeBrand = (brand?: Brand) => {
-    setFilter(brand?.brandName ?? '');
+    setFilter(brand?.name ?? '');
     setSelectedBrand(brand);
   };
 
@@ -231,7 +227,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   const search = rows => {
-    return rows?.filter(row => row.brandName?.indexOf(filter) > -1);
+    return rows?.filter(row => row.name?.indexOf(filter) > -1);
   };
 
   return (
@@ -275,7 +271,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
                       data={brands}
                       onChange={(_, brand) => handleChangeBrand(brand)}
                       style={{ width: '100%' }}
-                      selectedOption={selectedBrand?.brandName}
+                      selectedOption={selectedBrand?.name}
                       optionMapping={optionMapping}
                       placeholder="Select a Client"
                       disabled={!brands.length}

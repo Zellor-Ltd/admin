@@ -124,13 +124,13 @@ const DirectLinkDetail: React.FC<DirectLinkDetailProps> = ({
       if (item.brand)
         item.brand = {
           id: selectedMasterBrand!.id,
-          brandName: selectedMasterBrand!.brandName,
+          name: selectedMasterBrand!.name,
         };
 
       if (item.productBrand)
         item.productBrand = {
           id: selectedProductBrand!.id,
-          brandName: selectedProductBrand!.brandName,
+          name: selectedProductBrand!.name,
         };
 
       if (item.product)
@@ -274,9 +274,9 @@ const DirectLinkDetail: React.FC<DirectLinkDetailProps> = ({
                     <Select.Option
                       key={brand.id}
                       value={brand.id}
-                      label={brand.brandName}
+                      label={brand.name}
                     >
-                      {brand.brandName}
+                      {brand.name}
                     </Select.Option>
                   ))}
                 </Select>
@@ -296,9 +296,9 @@ const DirectLinkDetail: React.FC<DirectLinkDetailProps> = ({
                     <Select.Option
                       key={productBrand.id}
                       value={productBrand.id}
-                      label={productBrand.brandName}
+                      label={productBrand.name}
                     >
-                      {productBrand.brandName}
+                      {productBrand.name}
                     </Select.Option>
                   ))}
                 </Select>

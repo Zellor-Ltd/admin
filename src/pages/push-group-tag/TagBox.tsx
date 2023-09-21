@@ -79,7 +79,7 @@ export const TagBox: React.FC<TagBoxProps> = ({ tag, selectedFanGroup }) => {
           textOverflow: 'clip',
         }}
       >
-        {tag.brand?.brandName}
+        {tag.brand?.name}
       </div>
     </div>
   );

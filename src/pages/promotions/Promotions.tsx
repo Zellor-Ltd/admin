@@ -143,12 +143,11 @@ const Promotions: React.FC<RouteComponentProps> = ({ location }) => {
           </div>
         </div>
       ),
-      dataIndex: ['brand', 'brandName'],
+      dataIndex: ['brand', 'name'],
       width: '10%',
       align: 'center',
       sorter: (a, b): any => {
-        if (a.brand && b.brand)
-          return a.brand.brandName.localeCompare(b.brand.brandName);
+        if (a.brand && b.brand) return a.brand.name.localeCompare(b.brand.name);
         else if (a.brand) return -1;
         else if (b.brand) return 1;
         else return 0;

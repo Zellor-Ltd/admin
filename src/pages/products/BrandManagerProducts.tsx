@@ -46,7 +46,7 @@ const { Panel } = Collapse;
 
 const optionMapping: SelectOption = {
   key: 'id',
-  label: 'brandName',
+  label: 'name',
   value: 'id',
 };
 
@@ -519,7 +519,7 @@ const BrandManagerProducts: React.FC<RouteComponentProps> = () => {
       render: (field, record) =>
         typeof record.productBrand === 'string'
           ? field
-          : record.productBrand?.brandName,
+          : record.productBrand?.name,
       sorter: (a, b): any => {
         if (a.productBrand && b.productBrand) {
           if (typeof a.productBrand === typeof b.productBrand) {
@@ -532,8 +532,8 @@ const BrandManagerProducts: React.FC<RouteComponentProps> = () => {
               typeof a.productBrand !== 'string' &&
               typeof b.productBrand !== 'string'
             ) {
-              return a.productBrand?.brandName.localeCompare(
-                b.productBrand?.brandName as string
+              return a.productBrand?.name.localeCompare(
+                b.productBrand?.name as string
               ) as any;
             }
           }
@@ -542,14 +542,14 @@ const BrandManagerProducts: React.FC<RouteComponentProps> = () => {
             typeof b.productBrand !== 'string'
           ) {
             return a.productBrand.localeCompare(
-              b.productBrand?.brandName as any
+              b.productBrand?.name as any
             ) as any;
           }
           if (
             typeof a.productBrand !== 'string' &&
             typeof b.productBrand === 'string'
           ) {
-            return a.productBrand?.brandName.localeCompare(
+            return a.productBrand?.name.localeCompare(
               b.productBrand as string
             ) as any;
           }
@@ -643,12 +643,12 @@ const BrandManagerProducts: React.FC<RouteComponentProps> = () => {
     setCurrentProduct(record);
     setLastViewedIndex(index);
     if (record) {
-      setCurrentMasterBrand(record.brand.brandName);
+      setCurrentMasterBrand(record.brand.name);
       if (record.productBrand) {
         if (typeof record.productBrand === 'string') {
           setCurrentProductBrand(record.productBrand);
         } else {
-          setCurrentProductBrand(record.productBrand.brandName);
+          setCurrentProductBrand(record.productBrand.name);
         }
       }
     } else {
@@ -721,7 +721,7 @@ const BrandManagerProducts: React.FC<RouteComponentProps> = () => {
                   onChangeProductBrand(productBrand)
                 }
                 style={{ width: '100%' }}
-                selectedOption={productBrandFilter?.brandName}
+                selectedOption={productBrandFilter?.name}
                 optionMapping={optionMapping}
                 placeholder="Select a Product Brand"
                 disabled={loadingResources}

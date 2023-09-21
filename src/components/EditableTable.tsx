@@ -50,7 +50,7 @@ const EditableTable: React.FC<EditableTableProps<any>> = (
         if (typeof _fieldValue === 'string') {
           return _fieldValue;
         }
-        return record.brand.brandName;
+        return record.brand.name;
       },
     },
     sku: 'SKU',
@@ -70,7 +70,7 @@ const EditableTable: React.FC<EditableTableProps<any>> = (
         if (typeof _fieldValue === 'string') {
           return _fieldValue;
         }
-        return record.productBrand.brandName;
+        return record.productBrand.name;
       },
     },
     lastGoLiveDate: 'Last Go Live Date',

@@ -8,7 +8,7 @@ export interface WalletDetailParams {
     discoGold: number;
     name: string;
     brandTxtColor: string;
-    brandLogoUrl: string;
+    logoUrl: string;
     brandCardUrl: string;
   };
 }

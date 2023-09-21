@@ -600,10 +600,10 @@ const Analytics: React.FC<DashboardProps> = () => {
               data={clients}
               onChange={(_, brand) => setClient(brand)}
               style={{ width: '100%' }}
-              selectedOption={client?.brandName}
+              selectedOption={client?.name}
               optionMapping={{
                 key: 'id',
-                label: 'brandName',
+                label: 'name',
                 value: 'id',
               }}
               placeholder="Select a Client"

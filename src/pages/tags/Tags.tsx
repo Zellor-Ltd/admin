@@ -206,11 +206,11 @@ const Tags: React.FC<RouteComponentProps> = ({ location }) => {
           </div>
         </div>
       ),
-      dataIndex: ['brand', 'brandName'],
+      dataIndex: ['brand', 'name'],
       width: '20%',
       sorter: (a, b): any => {
         if (a.brand && b.brand)
-          return a.brand.brandName?.localeCompare(b.brand.brandName);
+          return a.brand.name?.localeCompare(b.brand.name);
         else if (a.brand) return -1;
         else if (b.brand) return 1;
         else return 0;

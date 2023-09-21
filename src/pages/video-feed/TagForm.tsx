@@ -106,9 +106,9 @@ const TagForm: React.FC<FormProps> = ({
                 <Select.Option
                   key={brand.id}
                   value={brand.id}
-                  label={brand.brandName}
+                  label={brand.name}
                 >
-                  {brand.brandName}
+                  {brand.name}
                 </Select.Option>
               ))}
             </Select>
