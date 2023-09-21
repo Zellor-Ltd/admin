@@ -642,7 +642,7 @@ const Analytics: React.FC<DashboardProps> = () => {
             ></SimpleSelect>
           </Col>
         </Col>
-        <Col span={23} className="my-2">
+        <Col span={24} className="mt-2">
           <Row justify="space-between" align="bottom">
             <Col>
               <Typography.Title level={3}>ENGAGEMENT</Typography.Title>
@@ -673,42 +673,52 @@ const Analytics: React.FC<DashboardProps> = () => {
               </Row>
             </Col>
           </Row>
+        </Col>
+        <Col span={10}>
           <Engagement />
         </Col>
-        <Col lg={4} xs={8}>
-          <DashCard
-            icon={<TeamOutlined />}
-            title="Widget Impressions"
-            number={stats?.totalWidgetImpressions ?? 0}
-          />
-        </Col>
-        <Col lg={4} xs={8}>
-          <DashCard
-            icon={<AppstoreOutlined />}
-            title="Widget Interactions"
-            number={stats?.totalWidgetInteractions ?? 0}
-          />
-        </Col>
-        <Col lg={4} xs={8}>
-          <DashCard
-            icon={<PlayCircleOutlined />}
-            title="Video Plays"
-            number={stats?.totalVideoViews ?? 0}
-          />
-        </Col>
-        <Col xs={{ span: 10, offset: 2 }} lg={{ span: 4, offset: 0 }}>
-          <DashCard
-            icon={<PlayCircleOutlined />}
-            title="Total Watch Time"
-            number={stats?.totalWatchTimeLabel ?? 0}
-          />
-        </Col>
-        <Col xs={10} lg={4}>
-          <DashCard
-            icon={<DropboxOutlined />}
-            title="Product Clicks"
-            number={stats?.totalProductClicks ?? 0}
-          />
+        <Col span={14}>
+          <Row
+            gutter={[8, 8]}
+            align="bottom"
+            justify={isMobile ? 'start' : 'space-around'}
+          >
+            <Col lg={4} xs={8}>
+              <DashCard
+                icon={<TeamOutlined />}
+                title="Widget Impressions"
+                number={stats?.totalWidgetImpressions ?? 0}
+              />
+            </Col>
+            <Col lg={4} xs={8}>
+              <DashCard
+                icon={<AppstoreOutlined />}
+                title="Widget Interactions"
+                number={stats?.totalWidgetInteractions ?? 0}
+              />
+            </Col>
+            <Col lg={4} xs={8}>
+              <DashCard
+                icon={<PlayCircleOutlined />}
+                title="Video Plays"
+                number={stats?.totalVideoViews ?? 0}
+              />
+            </Col>
+            <Col xs={{ span: 10, offset: 2 }} lg={{ span: 4, offset: 0 }}>
+              <DashCard
+                icon={<PlayCircleOutlined />}
+                title="Total Watch Time"
+                number={stats?.totalWatchTimeLabel ?? 0}
+              />
+            </Col>
+            <Col lg={4} xs={10}>
+              <DashCard
+                icon={<DropboxOutlined />}
+                title="Product Clicks"
+                number={stats?.totalProductClicks ?? 0}
+              />
+            </Col>
+          </Row>
         </Col>
         <Col span={23}>
           <TableFilters />
