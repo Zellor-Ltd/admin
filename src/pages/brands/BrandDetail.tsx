@@ -33,29 +33,6 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
   const [form] = Form.useForm();
   const toFocus = useRef<any>();
 
-  const checkConstraintValidity = () => {
-    const discoPercentage = document.getElementById('discoPercentage') as any;
-    const creatorPercentage = document.getElementById(
-      'creatorPercentage'
-    ) as any;
-    const maxDiscoDollarPercentage = document.getElementById(
-      'maxDiscoDollarPercentage'
-    ) as any;
-    const initialFreeDdAmount = document.getElementById(
-      'initialFreeDdAmount'
-    ) as any;
-    const returnPeriod = document.getElementById('returnPeriod') as any;
-    const elements = [
-      discoPercentage,
-      creatorPercentage,
-      maxDiscoDollarPercentage,
-      initialFreeDdAmount,
-      returnPeriod,
-    ];
-    toFocus.current = elements.find(item => !item?.checkValidity());
-    if (toFocus.current) scrollIntoView(toFocus.current);
-  };
-
   const handleFinishFailed = (errorFields: any[]) => {
     message.error('Error: ' + errorFields[0].errors[0]);
 
@@ -69,14 +46,8 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
   const onFinish = async () => {
     try {
       const brandForm = form.getFieldsValue(true);
-      if (brandForm.overlayHtmlWithoutDiscount)
-        brandForm.overlayHtmlWithoutDiscount = DOMPurify.sanitize(
-          brandForm.overlayHtmlWithoutDiscount
-        );
-      if (brandForm.overlayHtmlWithDiscount)
-        brandForm.overlayHtmlWithDiscount = DOMPurify.sanitize(
-          brandForm.overlayHtmlWithDiscount
-        );
+      // remove after upload component fix
+      if (brandForm.logo) brandForm.logo = brandForm.logo.url;
 
       const response: any = await saveBrand(brandForm);
       message.success('Register updated with success.');
@@ -96,7 +67,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
           name="brandForm"
           layout="vertical"
           form={form}
-          initialValues={brand}
+          initialValues={{ ...brand, limitOfVideos: 20 }}
           onFinish={onFinish}
           onFinishFailed={({ errorFields }) => handleFinishFailed(errorFields)}
         >
@@ -133,7 +104,16 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
           <Row gutter={8}>
             <Col lg={12} xs={24}>
               <Col span={24}>
-                <Form.Item name="limitOfVideos" label="Max Videos">
+                <Form.Item
+                  name="limitOfVideos"
+                  label="Max Videos"
+                  rules={[
+                    {
+                      required: true,
+                      message: 'Max Videos is required.',
+                    },
+                  ]}
+                >
                   <InputNumber
                     max={20}
                     min={0}
@@ -218,12 +198,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
               </Button>
             </Col>
             <Col>
-              <Button
-                type="primary"
-                htmlType="submit"
-                className="mb-1"
-                onClick={checkConstraintValidity}
-              >
+              <Button type="primary" htmlType="submit" className="mb-1">
                 Save Changes
               </Button>
             </Col>
