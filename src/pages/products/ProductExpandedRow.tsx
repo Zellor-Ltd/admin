@@ -35,7 +35,7 @@ const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
 
   const optionMapping: SelectOption = {
     key: 'id',
-    label: 'brandName',
+    label: 'name',
     value: 'id',
   };
 
@@ -171,7 +171,7 @@ const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
               selectedOption={
                 typeof record.productBrand === 'string'
                   ? record.productBrand
-                  : record.productBrand?.brandName
+                  : record.productBrand?.name
               }
               optionMapping={optionMapping}
               placeholder="Select a Product Brand"
@@ -193,7 +193,7 @@ const ProductExpandedRow: React.FC<ProductExpandedRowProps> = ({
       />
       <Col lg={24} xs={12}>
         <Button
-          disabled={record.brand.automated === true && !isStaging}
+          disabled={!isStaging}
           type="primary"
           htmlType="submit"
           loading={loading}

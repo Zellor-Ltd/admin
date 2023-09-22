@@ -67,13 +67,13 @@ const { Panel } = Collapse;
 
 const masterBrandMapping: SelectOption = {
   key: 'id',
-  label: 'brandName',
+  label: 'name',
   value: 'id',
 };
 
 const productBrandMapping: SelectOption = {
   key: 'id',
-  label: 'brandName',
+  label: 'name',
   value: 'id',
 };
 

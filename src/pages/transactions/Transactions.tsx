@@ -126,14 +126,13 @@ const Transactions: React.FC<RouteComponentProps> = () => {
           </div>
         </div>
       ),
-      dataIndex: 'brandName',
+      dataIndex: 'name',
       width: '15%',
       align: 'center',
       sorter: (a, b) => {
-        if (a.brandName && b.brandName)
-          return a.brandName.localeCompare(b.brandName);
-        else if (a.brandName) return 1;
-        else if (b.brandName) return -1;
+        if (a.name && b.name) return a.name.localeCompare(b.name);
+        else if (a.name) return 1;
+        else if (b.name) return -1;
         else return 0;
       },
     },

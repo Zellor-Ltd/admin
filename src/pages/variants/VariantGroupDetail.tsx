@@ -124,7 +124,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
 
   const optionMapping: SelectOption = {
     key: 'id',
-    label: 'brandName',
+    label: 'name',
     value: 'id',
   };
 
@@ -386,7 +386,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
                   data={brands}
                   onChange={(_, brand) => onChangeBrand(brand)}
                   style={{ width: '100%' }}
-                  selectedOption={brandFilter?.brandName}
+                  selectedOption={brandFilter?.name}
                   optionMapping={optionMapping}
                   placeholder="Select a Client"
                   allowClear
@@ -402,7 +402,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
                     onChangeProductBrand(productBrand)
                   }
                   style={{ width: '100%' }}
-                  selectedOption={productBrandFilter?.brandName}
+                  selectedOption={productBrandFilter?.name}
                   optionMapping={optionMapping}
                   placeholder="Select a Product Brand"
                   allowClear

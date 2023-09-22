@@ -8,10 +8,10 @@ export interface ProductBrand {
   apiCategory?: string;
   categories?: any;
   id: string;
-  brandName: string;
+  name: string;
   status: string;
   thumbnail?: any;
-  brandLogo?: any;
+  logo?: any;
   videoLogo?: any;
   mastHead?: any;
   avatar?: any;

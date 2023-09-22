@@ -151,7 +151,7 @@ const ClientUserDetail: React.FC<ClientUserDetailProps> = ({
                   style={{ width: '100%' }}
                   optionMapping={{
                     key: 'id',
-                    label: 'brandName',
+                    label: 'name',
                     value: 'id',
                   }}
                   placeholder="Select a Client"

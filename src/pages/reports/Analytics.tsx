@@ -377,11 +377,38 @@ const Analytics: React.FC<DashboardProps> = () => {
       dataIndex: 'impressions',
       width: '10%',
       align: 'center',
+      render: (value?: number) => value ?? 0,
       sorter: (a, b): any => {
         if (a.impressions && b.impressions)
           return a.impressions - b.impressions;
         else if (a.impressions) return -1;
         else if (b.impressions) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Interactions">Interactions</Tooltip>
+          </div>
+        </div>
+      ),
+      dataIndex: 'widgetInteractions',
+      width: '10%',
+      align: 'center',
+      render: (value?: number) => value ?? 0,
+      sorter: (a, b): any => {
+        if (a.widgetInteractions && b.widgetInteractions)
+          return a.widgetInteractions - b.widgetInteractions;
+        else if (a.widgetInteractions) return -1;
+        else if (b.widgetInteractions) return 1;
         else return 0;
       },
     },
@@ -402,6 +429,7 @@ const Analytics: React.FC<DashboardProps> = () => {
       dataIndex: 'videoPlays',
       width: '10%',
       align: 'center',
+      render: (value?: number) => value ?? 0,
       sorter: (a, b): any => {
         if (a.videoPlays && b.videoPlays) return a.videoPlays - b.videoPlays;
         else if (a.videoPlays) return -1;
@@ -426,6 +454,7 @@ const Analytics: React.FC<DashboardProps> = () => {
       dataIndex: 'productClicks',
       width: '10%',
       align: 'center',
+      render: (value?: number) => value ?? 0,
       sorter: (a, b): any => {
         if (a.productClicks && b.productClicks)
           return a.productClicks - b.productClicks;
@@ -448,9 +477,10 @@ const Analytics: React.FC<DashboardProps> = () => {
           </div>
         </div>
       ),
-      dataIndex: 'totalWatchTimeLabel',
+      dataIndex: 'totalWatchTime',
       width: '10%',
       align: 'center',
+      render: (value?: number) => value ?? 0,
       sorter: (a, b): any => {
         if (a.totalWatchTime && b.totalWatchTime)
           return a.totalWatchTime - b.totalWatchTime;
@@ -600,10 +630,10 @@ const Analytics: React.FC<DashboardProps> = () => {
               data={clients}
               onChange={(_, brand) => setClient(brand)}
               style={{ width: '100%' }}
-              selectedOption={client?.brandName}
+              selectedOption={client?.name}
               optionMapping={{
                 key: 'id',
-                label: 'brandName',
+                label: 'name',
                 value: 'id',
               }}
               placeholder="Select a Client"
@@ -612,7 +642,7 @@ const Analytics: React.FC<DashboardProps> = () => {
             ></SimpleSelect>
           </Col>
         </Col>
-        <Col span={23} className="my-2">
+        <Col span={24} className="mt-2">
           <Row justify="space-between" align="bottom">
             <Col>
               <Typography.Title level={3}>ENGAGEMENT</Typography.Title>
@@ -643,42 +673,52 @@ const Analytics: React.FC<DashboardProps> = () => {
               </Row>
             </Col>
           </Row>
+        </Col>
+        <Col span={10}>
           <Engagement />
         </Col>
-        <Col lg={4} xs={8}>
-          <DashCard
-            icon={<TeamOutlined />}
-            title="Carousel Impressions"
-            number={stats?.totalWidgetImpressions ?? 0}
-          />
-        </Col>
-        <Col lg={4} xs={8}>
-          <DashCard
-            icon={<AppstoreOutlined />}
-            title="Carousel Engagement"
-            number={stats?.totalWidgetInteractions ?? 0}
-          />
-        </Col>
-        <Col lg={4} xs={8}>
-          <DashCard
-            icon={<PlayCircleOutlined />}
-            title="Video Plays"
-            number={stats?.totalVideoViews ?? 0}
-          />
-        </Col>
-        <Col xs={{ span: 10, offset: 2 }} lg={{ span: 4, offset: 0 }}>
-          <DashCard
-            icon={<PlayCircleOutlined />}
-            title="Total Watch Time"
-            number={stats?.totalWatchTimeLabel ?? 0}
-          />
-        </Col>
-        <Col xs={10} lg={4}>
-          <DashCard
-            icon={<DropboxOutlined />}
-            title="Product Clicks"
-            number={stats?.totalProductClicks ?? 0}
-          />
+        <Col span={14}>
+          <Row
+            gutter={[8, 8]}
+            align="bottom"
+            justify={isMobile ? 'start' : 'space-around'}
+          >
+            <Col lg={4} xs={8}>
+              <DashCard
+                icon={<TeamOutlined />}
+                title="Carousel Impressions"
+                number={stats?.totalWidgetImpressions ?? 0}
+              />
+            </Col>
+            <Col lg={4} xs={8}>
+              <DashCard
+                icon={<AppstoreOutlined />}
+                title="Carousel Engagement"
+                number={stats?.totalWidgetInteractions ?? 0}
+              />
+            </Col>
+            <Col lg={4} xs={8}>
+              <DashCard
+                icon={<PlayCircleOutlined />}
+                title="Video Plays"
+                number={stats?.totalVideoViews ?? 0}
+              />
+            </Col>
+            <Col xs={{ span: 10, offset: 2 }} lg={{ span: 4, offset: 0 }}>
+              <DashCard
+                icon={<PlayCircleOutlined />}
+                title="Total Watch Time"
+                number={stats?.totalWatchTimeLabel ?? 0}
+              />
+            </Col>
+            <Col xs={10} lg={4}>
+              <DashCard
+                icon={<DropboxOutlined />}
+                title="Product Clicks"
+                number={stats?.totalProductClicks ?? 0}
+              />
+            </Col>
+          </Row>
         </Col>
         <Col span={23}>
           <TableFilters />

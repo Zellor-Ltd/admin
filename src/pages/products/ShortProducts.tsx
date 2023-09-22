@@ -149,7 +149,7 @@ const ShortProducts: React.FC<RouteComponentProps> = () => {
 
   const optionMapping: SelectOption = {
     key: 'id',
-    label: 'brandName',
+    label: 'name',
     value: 'id',
   };
 
@@ -359,12 +359,11 @@ const ShortProducts: React.FC<RouteComponentProps> = () => {
           </div>
         </div>
       ),
-      dataIndex: ['brand', 'brandName'],
+      dataIndex: ['brand', 'name'],
       width: '10%',
       align: 'center',
       sorter: (a, b): any => {
-        if (a.brand && b.brand)
-          return a.brand.brandName.localeCompare(b.brand.brandName);
+        if (a.brand && b.brand) return a.brand.name.localeCompare(b.brand.name);
         else if (a.brand) return -1;
         else if (b.brand) return 1;
         else return 0;
@@ -391,7 +390,7 @@ const ShortProducts: React.FC<RouteComponentProps> = () => {
       render: (field, record) =>
         typeof record.productBrand === 'string'
           ? field
-          : record.productBrand?.brandName,
+          : record.productBrand?.name,
       sorter: (a, b): any => {
         if (a.productBrand && b.productBrand) {
           if (typeof a.productBrand === typeof b.productBrand) {
@@ -404,8 +403,8 @@ const ShortProducts: React.FC<RouteComponentProps> = () => {
               typeof a.productBrand !== 'string' &&
               typeof b.productBrand !== 'string'
             ) {
-              return a.productBrand?.brandName.localeCompare(
-                b.productBrand?.brandName as string
+              return a.productBrand?.name.localeCompare(
+                b.productBrand?.name as string
               ) as any;
             }
           }
@@ -414,14 +413,14 @@ const ShortProducts: React.FC<RouteComponentProps> = () => {
             typeof b.productBrand !== 'string'
           ) {
             return a.productBrand.localeCompare(
-              b.productBrand?.brandName as any
+              b.productBrand?.name as any
             ) as any;
           }
           if (
             typeof a.productBrand !== 'string' &&
             typeof b.productBrand === 'string'
           ) {
-            return a.productBrand?.brandName.localeCompare(
+            return a.productBrand?.name.localeCompare(
               b.productBrand as string
             ) as any;
           }
@@ -672,12 +671,12 @@ const ShortProducts: React.FC<RouteComponentProps> = () => {
     } else setCurrentProduct(product);
 
     setLastViewedIndex(productIndex);
-    setCurrentMasterBrand(product.brand.brandName);
+    setCurrentMasterBrand(product.brand.name);
     if (product.productBrand) {
       if (typeof product.productBrand === 'string') {
         setCurrentProductBrand(product.productBrand);
       } else {
-        setCurrentProductBrand(product.productBrand.brandName);
+        setCurrentProductBrand(product.productBrand.name);
       }
     } else {
       setCurrentProductBrand('');
@@ -748,7 +747,7 @@ const ShortProducts: React.FC<RouteComponentProps> = () => {
               data={brands}
               onChange={(_, brand) => onChangeBrand(brand)}
               style={{ width: '100%' }}
-              selectedOption={brandFilter?.brandName}
+              selectedOption={brandFilter?.name}
               optionMapping={optionMapping}
               placeholder="Select a Client"
               disabled={loadingResources}
@@ -762,7 +761,7 @@ const ShortProducts: React.FC<RouteComponentProps> = () => {
               data={productBrands}
               onChange={(_, productBrand) => onChangeProductBrand(productBrand)}
               style={{ width: '100%' }}
-              selectedOption={productBrandFilter?.brandName}
+              selectedOption={productBrandFilter?.name}
               optionMapping={optionMapping}
               placeholder="Select a Product Brand"
               disabled={loadingResources}

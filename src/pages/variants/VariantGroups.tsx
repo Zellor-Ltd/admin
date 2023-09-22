@@ -45,7 +45,7 @@ const { Panel } = Collapse;
 
 const optionMapping: SelectOption = {
   key: 'id',
-  label: 'brandName',
+  label: 'name',
   value: 'id',
 };
 
@@ -401,7 +401,7 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
               data={brands}
               onChange={(_, brand) => onChangeBrand(brand)}
               style={{ width: '100%' }}
-              selectedOption={brandFilter?.brandName}
+              selectedOption={brandFilter?.name}
               optionMapping={optionMapping}
               placeholder="Select a Client"
               disabled={loadingResources}
@@ -415,7 +415,7 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
               data={productBrands}
               onChange={(_, productBrand) => onChangeProductBrand(productBrand)}
               style={{ width: '100%' }}
-              selectedOption={productBrandFilter?.brandName}
+              selectedOption={productBrandFilter?.name}
               optionMapping={optionMapping}
               placeholder="Select a Product Brand"
               disabled={loadingResources}

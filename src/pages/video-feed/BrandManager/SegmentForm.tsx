@@ -224,7 +224,7 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                           >
                             {brands.map(brand => (
                               <Select.Option key={brand.id} value={brand.id}>
-                                {brand.brandName}
+                                {brand.name}
                               </Select.Option>
                             ))}
                           </Select>
@@ -253,8 +253,8 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                                   allowClear
                                   showSearch
                                 >
-                                  {bra.brandLogo?.url && (
-                                    <Select.Option value="brandLogo">
+                                  {bra.logo?.url && (
+                                    <Select.Option value="logo">
                                       Client
                                     </Select.Option>
                                   )}
@@ -391,7 +391,7 @@ const SegmentForm: React.FC<FormProps> = ({ segment, onCancel, formFn }) => {
                           >
                             {brands.map(brand => (
                               <Select.Option key={brand.id} value={brand.id}>
-                                {brand.brandName}
+                                {brand.name}
                               </Select.Option>
                             ))}
                           </Select>

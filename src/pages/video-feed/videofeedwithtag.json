@@ -44,7 +44,7 @@
             "goLiveDate": "2022-02-18T16: 51: 01.763Z",
             "validity": "2023-02-18T16: 51: 03.332Z",
             "brand": {
-              "brandName": "McCabes",
+              "name": "McCabes",
               "brandTxtColor": "#7cc144",
               "colourLogo": {
                 "url": "https: //cdn.discoclub.com/jfkb8c943262a68401ca/edc2ab58-168e-40e3-a863-9e99948822f6_STR.png",
@@ -62,7 +62,7 @@
                 "url": "https://cdn.discoclub.com/jfkb8c943262a68401ca/357b9af4-02f1-4571-87c7-47a605264cfb_STR.png",
                 "uid": "rc-upload-1634301811112-13"
               },
-              "brandLogo": {
+              "logo": {
                 "url": "https://cdn.discoclub.com/jfkb8c943262a68401ca/9dd244ce-4960-4071-8cc2-a6bcf13fb26e_STR.png",
                 "uid": "rc-upload-1634301811112-15"
               },
@@ -172,7 +172,7 @@
             "_id": "27cf0b5d-60f6-4cbb-a8b9-958a50535cf3_STR"
           },
           "brand": {
-            "brandName": "McCabes",
+            "name": "McCabes",
             "brandTxtColor": "#7cc144",
             "colourLogo": {
               "url": "https: //cdn.discoclub.com/jfkb8c943262a68401ca/edc2ab58-168e-40e3-a863-9e99948822f6_STR.png",
@@ -190,7 +190,7 @@
               "url": "https://cdn.discoclub.com/jfkb8c943262a68401ca/357b9af4-02f1-4571-87c7-47a605264cfb_STR.png",
               "uid": "rc-upload-1634301811112-13"
             },
-            "brandLogo": {
+            "logo": {
               "url": "https://cdn.discoclub.com/jfkb8c943262a68401ca/9dd244ce-4960-4071-8cc2-a6bcf13fb26e_STR.png",
               "uid": "rc-upload-1634301811112-15"
             },
@@ -243,7 +243,7 @@
               "duration": 42
             }
           ],
-          "brandName": "McCabes",
+          "name": "McCabes",
           "brandTxtColor": "#7cc144",
           "colourLogo": {
             "url": "https: //cdn.discoclub.com/jfkb8c943262a68401ca/edc2ab58-168e-40e3-a863-9e99948822f6_STR.png",
@@ -261,7 +261,7 @@
             "url": "https://cdn.discoclub.com/jfkb8c943262a68401ca/357b9af4-02f1-4571-87c7-47a605264cfb_STR.png",
             "uid": "rc-upload-1634301811112-13"
           },
-          "brandLogo": {
+          "logo": {
             "url": "https://cdn.discoclub.com/jfkb8c943262a68401ca/9dd244ce-4960-4071-8cc2-a6bcf13fb26e_STR.png",
             "uid": "rc-upload-1634301811112-15"
           },
@@ -295,7 +295,7 @@
           "showOutOfStock": false,
           "initialFreeDdAmount": 50,
           "productBrand": {
-            "brandName": "Mylarins",
+            "name": "Mylarins",
             "brandTxtColor": "#abb8c3",
             "externalCode": "6918",
             "colourLogo": {
@@ -310,7 +310,7 @@
               "url": "https://cdn3.discoclub.com/jfka72daefd700248f3a/aca3eb91-ee26-4b67-8e43-0b5d8f71b7ba_STR.png",
               "uid": "rc-upload-1644916862454-36"
             },
-            "brandLogo": {
+            "logo": {
               "url": "https://cdn3.discoclub.com/jfka72daefd700248f3a/4bb46b39-08a4-46af-9e2e-deb8c2969e96_STR.png",
               "uid": "rc-upload-1644916862454-38"
             },

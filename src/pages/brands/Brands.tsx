@@ -1,11 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import {
-  CheckOutlined,
-  CloseOutlined,
   DeleteOutlined,
   EditOutlined,
-  LoadingOutlined,
-  RedoOutlined,
   SearchOutlined,
 } from '@ant-design/icons';
 import {
@@ -13,14 +9,10 @@ import {
   Button,
   Col,
   Input,
-  InputNumber,
-  message as msg,
   PageHeader,
   Popconfirm,
   Row,
-  Spin,
   Table,
-  Tag,
   Tooltip,
   Typography,
 } from 'antd';
@@ -31,36 +23,20 @@ import { Brand } from 'interfaces/Brand';
 import { useContext, useEffect, useState } from 'react';
 import { AppContext } from 'contexts/AppContext';
 import { Link, RouteComponentProps, useHistory } from 'react-router-dom';
-import {
-  deleteBrand,
-  fetchBrands,
-  rebuildLink,
-  saveBrand,
-} from 'services/DiscoClubService';
-import { SimpleSwitch } from '../../components/SimpleSwitch';
+import { deleteBrand, fetchBrands } from 'services/DiscoClubService';
 import BrandDetail from './BrandDetail';
 import scrollIntoView from 'scroll-into-view';
 import { useRequest } from 'hooks/useRequest';
-
-const tagColorByStatus: any = {
-  approved: 'green',
-  rejected: 'red',
-  pending: '',
-};
 
 const Brands: React.FC<RouteComponentProps> = ({ location }) => {
   const [details, setDetails] = useState<boolean>(false);
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [loading, setLoading] = useState<boolean>(false);
-  const [loadingRow, setLoadingRow] = useState<string>('');
   const { doFetch } = useRequest({ setLoading });
   const [brands, setBrands] = useState<Brand[]>([]);
-  const [filterText, setFilterText] = useState('');
+  const [brandFilter, setBrandFilter] = useState();
   const [currentBrand, setCurrentBrand] = useState<Brand>();
   const { isMobile, setIsScrollable } = useContext(AppContext);
-  const [updatingVIndex, setUpdatingVIndex] = useState<Record<string, boolean>>(
-    {}
-  );
   const history = useHistory();
 
   useEffect(() => {
@@ -70,11 +46,13 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
   });
 
   useEffect(() => {
-    fetch();
-  }, []);
+    if (!brandFilter) fetch();
+  }, [brandFilter]);
 
   const fetch = async () => {
-    const { results }: any = await doFetch(fetchBrands);
+    const { results }: any = await doFetch(() =>
+      fetchBrands({ name: brandFilter })
+    );
     setBrands(results);
   };
 
@@ -90,17 +68,10 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
     }
   }, [details]);
 
-  const aproveOrReject = async (aprove: boolean, creator: Brand) => {
-    creator.status = aprove ? 'approved' : 'rejected';
-    setLoading(true);
-    await saveBrand(creator);
-    fetch();
-  };
-
   const deleteItem = async (id: string, index: number) => {
     setLoading(true);
     try {
-      await deleteBrand({ id });
+      await deleteBrand(id);
       setBrands(prev => [...prev.slice(0, index), ...prev.slice(index + 1)]);
     } catch (err) {
       console.log(err);
@@ -109,31 +80,7 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   const onChangeFilter = (evt: any) => {
-    setFilterText(evt.target.value);
-  };
-
-  const filterBrand = () => {
-    if (filterText) {
-      return brands.filter(brand =>
-        brand.brandName?.toUpperCase().includes(filterText?.toUpperCase())
-      );
-    }
-
-    return brands;
-  };
-
-  const handleSwitchChange = async (
-    switchType: 'showOutOfStock' | 'paused',
-    brand: Brand,
-    toggled: boolean
-  ) => {
-    try {
-      brand[switchType] = toggled;
-      await saveBrand(brand);
-      msg.success('Register updated with success.');
-    } catch (error) {
-      msg.error("Error: Couldn't set client property. Try again.");
-    }
+    setBrandFilter(evt.target.value);
   };
 
   const editBrand = (index: number, brand?: Brand) => {
@@ -155,52 +102,6 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
 
   const onCancelBrand = () => {
     setDetails(false);
-  };
-
-  const rebuildVlink = async (brand: Brand, index: number) => {
-    try {
-      setLoadingRow(brand.masterBrandLink ?? '');
-      const { result, success, message }: any = await rebuildLink(
-        brand.masterBrandLink!
-      );
-      if (success) {
-        brands[index] = { ...brand, masterBrandLink: result };
-        setBrands([...brands]);
-        msg.success(message);
-      }
-    } catch {
-    } finally {
-      setLoadingRow('');
-    }
-  };
-
-  const updateVIndex = async (record: Brand, input?: number) => {
-    if (record.vIndex === input) return;
-    record.vIndex = input;
-
-    setUpdatingVIndex(prev => {
-      const newValue = {
-        ...prev,
-      };
-      newValue[record.id] = true;
-
-      return newValue;
-    });
-
-    try {
-      await saveBrand(record);
-      msg.success('Register updated with success.');
-    } catch (err) {
-      console.error(`Error while trying to update index.`, err);
-    }
-
-    setUpdatingVIndex(prev => {
-      const newValue = {
-        ...prev,
-      };
-      delete newValue[record.id];
-      return newValue;
-    });
   };
 
   const columns: ColumnsType<Brand> = [
@@ -239,7 +140,7 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
           </div>
         </div>
       ),
-      dataIndex: 'brandName',
+      dataIndex: 'name',
       width: '15%',
       render: (value: string, record: Brand, index: number) => (
         <Link to={location.pathname} onClick={() => editBrand(index, record)}>
@@ -251,10 +152,9 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
         </Link>
       ),
       sorter: (a, b) => {
-        if (a.brandName && b.brandName)
-          return a.brandName.localeCompare(b.brandName);
-        else if (a.brandName) return 1;
-        else if (b.brandName) return -1;
+        if (a.name && b.name) return a.name.localeCompare(b.name);
+        else if (a.name) return 1;
+        else if (b.name) return -1;
         else return 0;
       },
     },
@@ -268,37 +168,16 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
               whiteSpace: 'nowrap',
             }}
           >
-            <Tooltip title="vIndex">vIndex</Tooltip>
+            <Tooltip title="Client Email">Client Email</Tooltip>
           </div>
         </div>
       ),
-      dataIndex: 'vIndex',
-      width: '5%',
-      render: (_, brand, index) => {
-        if (updatingVIndex[brand.id]) {
-          const antIcon = <LoadingOutlined spin />;
-          return <Spin indicator={antIcon} />;
-        } else {
-          return (
-            <InputNumber
-              type="number"
-              value={brand.vIndex}
-              onFocus={event => event.stopPropagation()}
-              onBlur={(event: any) =>
-                updateVIndex(brand, event.target.value as unknown as number)
-              }
-              onPressEnter={(event: any) =>
-                updateVIndex(brand, event.target.value as unknown as number)
-              }
-            />
-          );
-        }
-      },
-      align: 'center',
-      sorter: (a, b): any => {
-        if (a.vIndex && b.vIndex) return a.vIndex - b.vIndex;
-        else if (a.vIndex) return -1;
-        else if (b.vIndex) return 1;
+      dataIndex: 'email',
+      width: '15%',
+      sorter: (a, b) => {
+        if (a.email && b.email) return a.email.localeCompare(b.email);
+        else if (a.email) return 1;
+        else if (b.email) return -1;
         else return 0;
       },
     },
@@ -312,82 +191,17 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
               whiteSpace: 'nowrap',
             }}
           >
-            <Tooltip title="Client Link">Client Link</Tooltip>
+            <Tooltip title="Shop Name">Shop Name</Tooltip>
           </div>
         </div>
       ),
-      dataIndex: 'masterBrandLink',
-      width: '5%',
-      align: 'center',
-      render: (value: string) => (
-        <a
-          href={'https://beautybuzz.io/' + value}
-          target="blank"
-          style={value ? {} : { pointerEvents: 'none' }}
-        >
-          {value ? `https://beautybuzz.io/${value}` : '-'}
-        </a>
-      ),
-    },
-    {
-      title: (
-        <div style={{ display: 'grid', placeItems: 'stretch' }}>
-          <div
-            style={{
-              textOverflow: 'ellipsis',
-              overflow: 'hidden',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            <Tooltip title="Rebuild">Rebuild</Tooltip>
-          </div>
-        </div>
-      ),
-      width: '5%',
-      align: 'center',
-      render: (_, record: Brand, index: number) => (
-        <>
-          <Button
-            type="link"
-            block
-            onClick={() => rebuildVlink(record, index)}
-            disabled={!record.masterBrandLink || loadingRow !== ''}
-            loading={loadingRow === record.masterBrandLink}
-          >
-            {loadingRow !== record.masterBrandLink && <RedoOutlined />}
-          </Button>
-        </>
-      ),
-    },
-    {
-      title: (
-        <div style={{ display: 'grid', placeItems: 'stretch' }}>
-          <div
-            style={{
-              textOverflow: 'ellipsis',
-              overflow: 'hidden',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            <Tooltip title="Paused">Paused</Tooltip>
-          </div>
-        </div>
-      ),
-      dataIndex: 'paused',
-      width: '10%',
-      align: 'center',
-      render: (_: any, record: Brand) => (
-        <SimpleSwitch
-          toggled={!!record.paused}
-          handleSwitchChange={(toggled: boolean) =>
-            handleSwitchChange('paused', record, toggled)
-          }
-        />
-      ),
-      sorter: (a, b): any => {
-        if (a.paused && b.paused) return 0;
-        else if (a.paused) return -1;
-        else if (b.paused) return 1;
+      dataIndex: 'shopName',
+      width: '15%',
+      sorter: (a, b) => {
+        if (a.shopName && b.shopName)
+          return a.shopName.localeCompare(b.shopName);
+        else if (a.shopName) return 1;
+        else if (b.shopName) return -1;
         else return 0;
       },
     },
@@ -401,50 +215,16 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
               whiteSpace: 'nowrap',
             }}
           >
-            <Tooltip title="Show Out of Stock">Show Out of Stock</Tooltip>
+            <Tooltip title="Shop URL">Shop URL</Tooltip>
           </div>
         </div>
       ),
-      dataIndex: 'showOutOfStock',
-      width: '10%',
-      align: 'center',
-      render: (value: any, record: Brand) => (
-        <SimpleSwitch
-          toggled={!!record.showOutOfStock}
-          handleSwitchChange={(toggled: boolean) =>
-            handleSwitchChange('showOutOfStock', record, toggled)
-          }
-        />
-      ),
-      sorter: (a, b): any => {
-        if (a.showOutOfStock && b.showOutOfStock) return 0;
-        else if (a.showOutOfStock) return -1;
-        else if (b.showOutOfStock) return 1;
-        else return 0;
-      },
-    },
-    {
-      title: (
-        <div style={{ display: 'grid', placeItems: 'stretch' }}>
-          <div
-            style={{
-              textOverflow: 'ellipsis',
-              overflow: 'hidden',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            <Tooltip title="Automated">Automated</Tooltip>
-          </div>
-        </div>
-      ),
-      dataIndex: 'automated',
-      width: '5%',
-      align: 'center',
-      render: (value: any) => <b>{value ? 'Yes' : 'No'}</b>,
-      sorter: (a, b): any => {
-        if (a.automated && b.automated) return 0;
-        else if (a.automated) return -1;
-        else if (b.automated) return 1;
+      dataIndex: 'shopUrl',
+      width: '15%',
+      sorter: (a, b) => {
+        if (a.shopUrl && b.shopUrl) return a.shopUrl.localeCompare(b.shopUrl);
+        else if (a.shopUrl) return 1;
+        else if (b.shopUrl) return -1;
         else return 0;
       },
     },
@@ -462,7 +242,7 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
           </div>
         </div>
       ),
-      dataIndex: 'brandTxtColor',
+      dataIndex: 'txtColor',
       width: '10%',
       align: 'center',
       render: (value: any) => (
@@ -470,112 +250,6 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
           style={{ backgroundColor: value, border: '1px solid #9c9c9c' }}
         />
       ),
-    },
-    {
-      title: (
-        <div style={{ display: 'grid', placeItems: 'stretch' }}>
-          <div
-            style={{
-              textOverflow: 'ellipsis',
-              overflow: 'hidden',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            <Tooltip title="D%">D%</Tooltip>
-          </div>
-        </div>
-      ),
-      dataIndex: 'discoPercentage',
-      width: '8%',
-      align: 'center',
-      render: (value: string) => <a href=".">{value}</a>,
-      sorter: (a, b): any => {
-        if (a.discoPercentage && b.discoPercentage)
-          return a.discoPercentage - b.discoPercentage;
-        else if (a.discoPercentage) return -1;
-        else if (b.discoPercentage) return 1;
-        else return 0;
-      },
-    },
-    {
-      title: (
-        <div style={{ display: 'grid', placeItems: 'stretch' }}>
-          <div
-            style={{
-              textOverflow: 'ellipsis',
-              overflow: 'hidden',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            <Tooltip title="C%">C%</Tooltip>
-          </div>
-        </div>
-      ),
-      dataIndex: 'creatorPercentage',
-      width: '8%',
-      align: 'center',
-      render: (value: string) => <a href=".">{value}</a>,
-      sorter: (a, b): any => {
-        if (a.creatorPercentage && b.creatorPercentage)
-          return a.creatorPercentage - b.creatorPercentage;
-        else if (a.creatorPercentage) return -1;
-        else if (b.creatorPercentage) return 1;
-        else return 0;
-      },
-    },
-    {
-      title: (
-        <div style={{ display: 'grid', placeItems: 'stretch' }}>
-          <div
-            style={{
-              textOverflow: 'ellipsis',
-              overflow: 'hidden',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            <Tooltip title="DD%">DD%</Tooltip>
-          </div>
-        </div>
-      ),
-      dataIndex: 'maxDiscoDollarPercentage',
-      width: '9%',
-      align: 'center',
-      render: (value: string) => <a href=".">{value}</a>,
-      sorter: (a, b): any => {
-        if (a.maxDiscoDollarPercentage && b.maxDiscoDollarPercentage)
-          return a.maxDiscoDollarPercentage - b.maxDiscoDollarPercentage;
-        else if (a.maxDiscoDollarPercentage) return -1;
-        else if (b.maxDiscoDollarPercentage) return 1;
-        else return 0;
-      },
-    },
-    {
-      title: (
-        <div style={{ display: 'grid', placeItems: 'stretch' }}>
-          <div
-            style={{
-              textOverflow: 'ellipsis',
-              overflow: 'hidden',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            <Tooltip title="Status">Status</Tooltip>
-          </div>
-        </div>
-      ),
-      dataIndex: 'status',
-      width: '10%',
-      align: 'center',
-      render: (value = 'pending') => (
-        <Tag color={tagColorByStatus[value]}>{value}</Tag>
-      ),
-      sorter: (a, b): any => {
-        if (a.status && b.status)
-          return a.status === b.status ? 0 : a.status === 'pending' ? 1 : -1;
-        else if (a.status) return -1;
-        else if (b.status) return 1;
-        else return 0;
-      },
     },
     {
       title: (
@@ -596,18 +270,6 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
       align: 'right',
       render: (_, record: Brand, index: number) => (
         <>
-          {!record.status && [
-            <CheckOutlined
-              key="approve"
-              style={{ color: 'green' }}
-              onClick={() => aproveOrReject(true, record)}
-            />,
-            <CloseOutlined
-              key="reject"
-              style={{ color: 'red', margin: '6px' }}
-              onClick={() => aproveOrReject(false, record)}
-            />,
-          ]}
           <Link to={location.pathname} onClick={() => editBrand(index, record)}>
             <EditOutlined />
           </Link>
@@ -639,7 +301,7 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
               <Button
                 key="1"
                 className={isMobile ? 'mt-05' : ''}
-                onClick={() => editBrand(filterBrand().length)}
+                onClick={() => editBrand(brands.length)}
               >
                 New Item
               </Button>,
@@ -656,6 +318,7 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
                 onChange={onChangeFilter}
                 placeholder="Search by Name"
                 suffix={<SearchOutlined />}
+                onPressEnter={fetch}
               />
             </Col>
           </Row>
@@ -665,7 +328,7 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
               rowClassName={(_, index) => `scrollable-row-${index}`}
               rowKey="id"
               columns={columns}
-              dataSource={filterBrand()}
+              dataSource={brands}
               loading={loading}
               pagination={false}
             />

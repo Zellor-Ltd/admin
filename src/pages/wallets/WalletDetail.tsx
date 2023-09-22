@@ -53,9 +53,9 @@ const WalletDetail: React.FC<WalletDetailProps> = ({
         discoDollars: initial.brand.discoDollars,
         brandId: initial.brand.id,
         totalProducts: '',
-        brandName: initial.brand.name,
+        name: initial.brand.name,
         brandTxtColor: initial.brand.brandTxtColor,
-        brandLogoUrl: initial.brand.brandLogoUrl,
+        logoUrl: initial.brand.logoUrl,
         brandCardUrl: initial.brand.brandCardUrl,
       }
     : undefined;
