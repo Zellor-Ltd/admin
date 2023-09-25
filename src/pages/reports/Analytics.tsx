@@ -642,7 +642,7 @@ const Analytics: React.FC<DashboardProps> = () => {
             ></SimpleSelect>
           </Col>
         </Col>
-        <Col span={24} className="mt-2">
+        <Col span={24} className="mt-2 ml-2">
           <Row justify="space-between" align="bottom">
             <Col>
               <Typography.Title level={3}>ENGAGEMENT</Typography.Title>
@@ -674,10 +674,10 @@ const Analytics: React.FC<DashboardProps> = () => {
             </Col>
           </Row>
         </Col>
-        <Col span={10}>
+        <Col span={24}>
           <Engagement />
         </Col>
-        <Col span={14}>
+        <Col span={24}>
           <Row
             gutter={[8, 8]}
             align="bottom"
