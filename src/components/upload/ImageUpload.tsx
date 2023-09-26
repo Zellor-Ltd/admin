@@ -143,10 +143,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
       if (info.file.status === 'done') {
         const response = JSON.parse(info.file.xhr.response);
         form.setFieldsValue({
-          [formProp]: {
-            url: response.result.replace(';', ''),
-            uid: info.file.uid,
-          },
+          [formProp]: response.result.replace(';', ''),
         });
         onImageChange?.(
           info.file,
@@ -183,10 +180,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
       }
       if (info.file.status === 'done') {
         const response = JSON.parse(info.file.xhr.response);
-        const imageData: any = {
-          url: response.result.replace(';', ''),
-          uid: info.file.uid,
-        };
+        const imageData: any = response.result.replace(';', '');
         updateForm(imageData);
         onImageChange?.(imageData, formProp as any);
         message.success(`${info.file.name} file uploaded successfully`);

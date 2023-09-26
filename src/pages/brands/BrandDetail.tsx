@@ -46,8 +46,6 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
   const onFinish = async () => {
     try {
       const brandForm = form.getFieldsValue(true);
-      // remove after upload component fix
-      if (brandForm.logo) brandForm.logo = brandForm.logo.url;
 
       const response: any = await saveBrand(brandForm);
       message.success('Register updated with success.');
