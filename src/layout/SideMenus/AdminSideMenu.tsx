@@ -59,20 +59,13 @@ const AdminSideMenu = ({ isMobile }) => {
       selectedKeys={[pathname]}
       defaultOpenKeys={[parentMenu]}
     >
-      <SubMenu key="reports" icon={<LineChartOutlined />} title="Reports">
-        <Menu.Item key="regs-per-day" icon={<UserAddOutlined />}>
-          <Link to="/regs-per-day">Users per Day</Link>
-        </Menu.Item>
-        <Menu.Item key="products-per-day" icon={<FolderAddOutlined />}>
-          <Link to="/products-per-day">Products per Day</Link>
-        </Menu.Item>
-        <Menu.Item key="pre-registered" icon={<UserOutlined />}>
-          <Link to="/pre-registered">Pre-Registered</Link>
-        </Menu.Item>
-        <Menu.Item key="fan-activities" icon={<IdcardOutlined />}>
-          <Link to="/fan-activities">Fan Activities</Link>
-        </Menu.Item>
-      </SubMenu>
+      <Menu.Item
+        key="analytics"
+        icon={<BarChartOutlined />}
+        onClick={() => refreshParent('analytics')}
+      >
+        <Link to="/analytics">Analytics</Link>
+      </Menu.Item>
       <Menu.Item
         key="clients"
         icon={<ShopOutlined />}
@@ -88,41 +81,6 @@ const AdminSideMenu = ({ isMobile }) => {
         <Link to="/product-brands">Product Brands</Link>
       </Menu.Item>
       <Menu.Item
-        key="products"
-        icon={<ShoppingOutlined />}
-        onClick={() => refreshParent('products')}
-      >
-        <Link to="/products">Live Products</Link>
-      </Menu.Item>
-      <Menu.Item
-        key="preview-products"
-        icon={<IssuesCloseOutlined />}
-        onClick={() => refreshParent('preview-products')}
-      >
-        <Link to="/preview-products">Preview Products</Link>
-      </Menu.Item>
-      <Menu.Item
-        key="short-products"
-        icon={<ProfileOutlined />}
-        onClick={() => refreshParent('short-products')}
-      >
-        <Link to="/short-products">Short Products</Link>
-      </Menu.Item>
-      <Menu.Item
-        key="variant-groups"
-        icon={<PartitionOutlined />}
-        onClick={() => refreshParent('variant-groups')}
-      >
-        <Link to="/variant-groups">Variant Groups</Link>
-      </Menu.Item>
-      <Menu.Item
-        key="feed"
-        icon={<MobileOutlined />}
-        onClick={() => refreshParent('feed')}
-      >
-        <Link to="/feed">Video Feeds</Link>
-      </Menu.Item>
-      <Menu.Item
         key="widgets"
         icon={<HddOutlined />}
         onClick={() => refreshParent('widgets')}
@@ -130,85 +88,11 @@ const AdminSideMenu = ({ isMobile }) => {
         <Link to="/widgets">Widgets</Link>
       </Menu.Item>
       <Menu.Item
-        key="analytics"
-        icon={<BarChartOutlined />}
-        onClick={() => refreshParent('analytics')}
-      >
-        <Link to="/analytics">Analytics</Link>
-      </Menu.Item>
-      <Menu.Item
         key="featured-feeds"
         icon={<PicLeftOutlined />}
         onClick={() => refreshParent('featured-feeds')}
       >
         <Link to="/featured-feeds">Featured Feeds</Link>
-      </Menu.Item>
-      <Menu.Item
-        key="fan-videos"
-        icon={<UsergroupAddOutlined />}
-        onClick={() => refreshParent('fan-videos')}
-      >
-        <Link to="/fan-videos">Fan Videos</Link>
-      </Menu.Item>
-      <SubMenu key="templates" icon={<BlockOutlined />} title="Templates">
-        <Menu.Item
-          key="product-templates"
-          icon={<ShoppingOutlined />}
-          onClick={() => refreshParent('product-templates')}
-        >
-          <Link to="/product-templates">Product Templates</Link>
-        </Menu.Item>
-        <Menu.Item
-          key="feed-templates"
-          icon={<MobileOutlined />}
-          onClick={() => refreshParent('feed-templates')}
-        >
-          <Link to="/feed-templates">Feed Templates</Link>
-        </Menu.Item>
-        <Menu.Item
-          key="dd-templates"
-          icon={<CreditCardOutlined />}
-          onClick={() => refreshParent('dd-templates')}
-        >
-          <Link to="/dd-templates">DD Templates</Link>
-        </Menu.Item>
-      </SubMenu>
-      <SubMenu key="finance" icon={<DollarOutlined />} title="Finance">
-        <Menu.Item
-          key="payments"
-          icon={<PercentageOutlined />}
-          onClick={() => refreshParent('payments')}
-        >
-          <Link to="/payments">Payments</Link>
-        </Menu.Item>
-        <Menu.Item
-          key="payment-history"
-          icon={<ScheduleOutlined />}
-          onClick={() => refreshParent('payment-history')}
-        >
-          <Link to="/payment-history">Payment History</Link>
-        </Menu.Item>
-        <Menu.Item
-          key="orders"
-          icon={<ShoppingCartOutlined />}
-          onClick={() => refreshParent('orders')}
-        >
-          <Link to="/orders">Orders</Link>
-        </Menu.Item>
-        <Menu.Item
-          key="wallets"
-          icon={<WalletOutlined />}
-          onClick={() => refreshParent('wallets')}
-        >
-          <Link to="/wallets">Wallets</Link>
-        </Menu.Item>
-      </SubMenu>
-      <Menu.Item
-        key="transactions"
-        icon={<UnorderedListOutlined />}
-        onClick={() => refreshParent('transactions')}
-      >
-        <Link to="/transactions">Transactions</Link>
       </Menu.Item>
       <SubMenu key="marketing" icon={<RocketOutlined />} title="Marketing">
         <Menu.Item
@@ -247,36 +131,13 @@ const AdminSideMenu = ({ isMobile }) => {
           <Link to="/direct-links">Platform Links</Link>
         </Menu.Item>
       </SubMenu>
-      <SubMenu key="users" icon={<TeamOutlined />} title="Users">
-        <Menu.Item
-          key="fans"
-          icon={<UserOutlined />}
-          onClick={() => refreshParent('fans')}
-        >
-          <Link to="/fans">Fans</Link>
-        </Menu.Item>
-        <Menu.Item
-          key="guests"
-          icon={<UserOutlined />}
-          onClick={() => refreshParent('guests')}
-        >
-          <Link to="/guests">Guests</Link>
-        </Menu.Item>
-        <Menu.Item
-          key="creators"
-          icon={<UserOutlined />}
-          onClick={() => refreshParent('creators')}
-        >
-          <Link to="/creators">Creators</Link>
-        </Menu.Item>
-        <Menu.Item
-          key="client-users"
-          icon={<UserOutlined />}
-          onClick={() => refreshParent('client-users')}
-        >
-          <Link to="/client-users">Client Users</Link>
-        </Menu.Item>
-      </SubMenu>
+      <Menu.Item
+        key="client-users"
+        icon={<UserOutlined />}
+        onClick={() => refreshParent('client-users')}
+      >
+        <Link to="/client-users">Client Users</Link>
+      </Menu.Item>
       <SubMenu key="settings-menu" icon={<SettingOutlined />} title="Settings">
         <Menu.Item key="access-control" icon={<ControlOutlined />}>
           <Link to="/access-control">Access Control</Link>
