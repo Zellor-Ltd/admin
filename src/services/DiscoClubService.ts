@@ -1189,9 +1189,9 @@ export const fetchClientUsers = (page: number, params: any) => {
 
 export const saveClientUser = (params: any) => {
   if (params.id) {
-    return instance.post('Disco/Client/User/Update', params);
+    return instance.post('Bbs/Id/Update', params);
   } else {
-    return instance.put('Disco/Client/User/Add', params);
+      return instance.put('Bbs/Id/Add', params);
   }
 };
 
