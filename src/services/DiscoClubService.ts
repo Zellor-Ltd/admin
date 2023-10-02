@@ -1184,19 +1184,19 @@ export const loginAs = (params: any) => {
 };
 
 export const fetchClientUsers = (page: number, params: any) => {
-  return instance.post(`Disco/Client/User/List/${page}`, params);
+  return instance.post(`Bbs/Id/Search/${page}`, params);
 };
 
 export const saveClientUser = (params: any) => {
   if (params.id) {
     return instance.post('Bbs/Id/Update', params);
   } else {
-      return instance.put('Bbs/Id/Add', params);
+    return instance.put('Bbs/Id/Add', params);
   }
 };
 
 export const deleteClientUser = (id: any) => {
-  return instance.delete(`Disco/Client/User/Delete/${id}`);
+  return instance.delete(`Bbs/Id/Remove/${id}`);
 };
 
 export const fetchClient = () => instance.get('Wi/Ep/ListClient');

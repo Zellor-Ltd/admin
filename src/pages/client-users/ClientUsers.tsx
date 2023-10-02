@@ -204,7 +204,7 @@ const ClientUsers: React.FC<RouteComponentProps> = ({ location }) => {
           </div>
         </div>
       ),
-      dataIndex: 'firstName',
+      dataIndex: 'name',
       width: '25%',
       align: 'center',
       render: (value, record: any, index: number) => (
@@ -352,7 +352,7 @@ const ClientUsers: React.FC<RouteComponentProps> = ({ location }) => {
           </div>
         </div>
       ),
-      dataIndex: 'user',
+      dataIndex: 'email',
       width: '20%',
       align: 'center',
       sorter: (a, b): any => {
