@@ -8,6 +8,7 @@ import {
   message,
   PageHeader,
   Row,
+  Switch,
 } from 'antd';
 import { Upload } from 'components';
 import { Brand } from 'interfaces/Brand';
@@ -17,7 +18,6 @@ import { TwitterPicker } from 'react-color';
 import { saveBrand } from 'services/DiscoClubService';
 import scrollIntoView from 'scroll-into-view';
 import { AppContext } from 'contexts/AppContext';
-import DOMPurify from 'isomorphic-dompurify';
 interface BrandDetailProps {
   onSave?: (record: Brand) => void;
   onCancel?: () => void;
@@ -118,6 +118,15 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                     title="Up to 20."
                     placeholder="Select a number up to 20"
                   />
+                </Form.Item>
+              </Col>
+              <Col span={24}>
+                <Form.Item
+                  name="hideSocialImportTag"
+                  label="Show Import tab"
+                  valuePropName="checked"
+                >
+                  <Switch />
                 </Form.Item>
               </Col>
               <Col span={24}>
