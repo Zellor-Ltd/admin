@@ -209,14 +209,13 @@ const ClientUsers: React.FC<RouteComponentProps> = ({ location }) => {
       align: 'center',
       render: (value, record: any, index: number) => (
         <Link to={location.pathname} onClick={() => handleEdit(index, record)}>
-          {value} {record.lastName}
+          {value} {record.surname}
         </Link>
       ),
       sorter: (a, b): any => {
-        if (a.userName && b.userName)
-          return a.userName.localeCompare(b.userName);
-        else if (a.userName) return -1;
-        else if (b.userName) return 1;
+        if (a.name && b.name) return a.name.localeCompare(b.name);
+        else if (a.name) return -1;
+        else if (b.name) return 1;
         else return 0;
       },
     },
@@ -315,39 +314,6 @@ const ClientUsers: React.FC<RouteComponentProps> = ({ location }) => {
               whiteSpace: 'nowrap',
             }}
           >
-            <Tooltip title="Creation">Sign up</Tooltip>
-          </div>
-        </div>
-      ),
-      dataIndex: 'signUpDate',
-      width: '7%',
-      align: 'center',
-      render: (value: Date) => (
-        <>
-          <div>{moment(value).format('DD/MM/YYYY')}</div>
-          <div>{moment(value).format('HH:mm')}</div>
-        </>
-      ),
-      sorter: (a, b): any => {
-        if (a.signUpDate && b.signUpDate)
-          return (
-            moment(a.signUpDate as Date).unix() - moment(b.signUpDate).unix()
-          );
-        else if (a.signUpDate) return -1;
-        else if (b.signUpDate) return 1;
-        else return 0;
-      },
-    },
-    {
-      title: (
-        <div style={{ display: 'grid', placeItems: 'stretch' }}>
-          <div
-            style={{
-              textOverflow: 'ellipsis',
-              overflow: 'hidden',
-              whiteSpace: 'nowrap',
-            }}
-          >
             <Tooltip title="E-mail">E-mail</Tooltip>
           </div>
         </div>
@@ -359,60 +325,6 @@ const ClientUsers: React.FC<RouteComponentProps> = ({ location }) => {
         if (a.user && b.user) return a.user.localeCompare(b.user);
         else if (a.user) return -1;
         else if (b.user) return 1;
-        else return 0;
-      },
-    },
-    {
-      title: (
-        <div style={{ display: 'grid', placeItems: 'stretch' }}>
-          <div
-            style={{
-              textOverflow: 'ellipsis',
-              overflow: 'hidden',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            <Tooltip title="Profile">Profile</Tooltip>
-          </div>
-        </div>
-      ),
-      dataIndex: 'profile',
-      width: '10%',
-      render: profile => (
-        <Tag color={tagColorByPermission[profile]}>{profile}</Tag>
-      ),
-      align: 'center',
-      sorter: (a, b): any => {
-        if (a.profile && b.profile) return a.profile.localeCompare(b.profile);
-        else if (a.profile) return -1;
-        else if (b.profile) return 1;
-        else return 0;
-      },
-    },
-    {
-      title: (
-        <div style={{ display: 'grid', placeItems: 'stretch' }}>
-          <div
-            style={{
-              textOverflow: 'ellipsis',
-              overflow: 'hidden',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            <Tooltip title="Group">Group</Tooltip>
-          </div>
-        </div>
-      ),
-      dataIndex: 'group',
-      width: '10%',
-      render: (_, record) => (
-        <Tag color={tagColorByPermission[record.profile]}>{record.group}</Tag>
-      ),
-      align: 'center',
-      sorter: (a, b): any => {
-        if (a.group && b.group) return a.group.localeCompare(b.group);
-        else if (a.group) return -1;
-        else if (b.group) return 1;
         else return 0;
       },
     },
