@@ -63,7 +63,7 @@ const ClientUserDetail: React.FC<ClientUserDetailProps> = ({
   return (
     <>
       <PageHeader
-        title={user ? `${user?.firstName ?? ''} Update` : 'New Client User'}
+        title={user ? `${user?.name ?? ''} Update` : 'New Client User'}
       />
       <Form
         form={form}
@@ -75,19 +75,24 @@ const ClientUserDetail: React.FC<ClientUserDetailProps> = ({
       >
         <Row gutter={8}>
           <Col lg={12} xs={24}>
-            <Form.Item label="First Name" name="firstName" required>
+            <Form.Item label="First Name" name="name" required>
               <Input allowClear placeholder="First Name" />
             </Form.Item>
           </Col>
           <Col lg={12} xs={24}>
-            <Form.Item label="Last name" name="lastName" required>
+            <Form.Item label="Last name" name="surname" required>
               <Input allowClear placeholder="Last name" />
+            </Form.Item>
+          </Col>
+          <Col lg={12} xs={24}>
+            <Form.Item label="Username" name="userName" required>
+              <Input allowClear placeholder="Username" />
             </Form.Item>
           </Col>
           <Col lg={12} xs={24}>
             <Form.Item
               label="Username (Email)"
-              name="user"
+              name="email"
               required
               rules={[
                 {
@@ -100,38 +105,11 @@ const ClientUserDetail: React.FC<ClientUserDetailProps> = ({
             </Form.Item>
           </Col>
           <Col lg={12} xs={24}>
-            <Form.Item label="Password" name="pwd" required>
+            <Form.Item label="Password" name="password" required>
               <Input.Password
                 autoComplete="off"
                 allowClear
                 placeholder="Password"
-              />
-            </Form.Item>
-          </Col>
-          <Col lg={12} xs={24}>
-            <Form.Item label="Description" name="description">
-              <Input
-                allowClear
-                showCount
-                maxLength={200}
-                placeholder="Description"
-              />
-            </Form.Item>
-          </Col>
-          <Col lg={12} xs={24}>
-            <Form.Item
-              label="Sign up Date"
-              name="signUpDate"
-              getValueProps={formatMoment}
-            >
-              <DatePicker
-                disabled
-                placeholder={
-                  user
-                    ? 'Sign up Date'
-                    : moment().format('DD/MM/YYYY').toString()
-                }
-                format="DD/MM/YYYY"
               />
             </Form.Item>
           </Col>
