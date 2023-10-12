@@ -1184,14 +1184,14 @@ export const loginAs = (params: any) => {
 };
 
 export const fetchClientUsers = (page: number, params: any) => {
-  return instance.post(`Bbs/Id/Search/${page}`, params);
+  return instance.post(`Bbs/Id/User/Search/${page}`, params);
 };
 
 export const saveClientUser = (params: any) => {
   if (params.id) {
-    return instance.post('Bbs/Id/Update', params);
+    return instance.post('Bbs/Id/User/Update', params);
   } else {
-    return instance.put('Bbs/Id/Add', params);
+      return instance.put('Bbs/Id/User/Add', params);
   }
 };
 
