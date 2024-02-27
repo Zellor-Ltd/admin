@@ -122,7 +122,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
               </Col>
               <Col span={24}>
                 <Form.Item
-                  name="hideSocialImportTag"
+                  name="showSocialImportTab"
                   label="Show Import tab"
                   valuePropName="checked"
                 >
