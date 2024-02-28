@@ -478,6 +478,46 @@ a,
   overflow: hidden;
 }
 
+.external-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.external-container {
+  background: rgb(240, 244, 255);
+  width: 314px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+}
+
+.character {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-variant: tabular-nums;
+  list-style: none;
+  font-feature-settings: 'tnum';
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  min-width: 0;
+  color: rgba(0, 0, 0, 0.85);
+  background-color: #fff;
+  background-image: none;
+  border: 1px solid #d9d9d9;
+  border-radius: 2px;
+  transition: all 0.3s;
+}
+
+.ant-table-body {
+  z-index: 3;
+}
+
 @media (max-width: 992px) {
   .br-buttons {
     position: fixed;
@@ -561,42 +601,6 @@ a,
   .ant-layout-content {
     padding: 16px;
   }
-}
-
-.external-wrapper {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-}
-
-.external-container {
-  background: rgb(240, 244, 255);
-  width: 314px;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 1rem;
-}
-
-.character {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-variant: tabular-nums;
-  list-style: none;
-  font-feature-settings: 'tnum';
-  position: relative;
-  display: inline-block;
-  width: 100%;
-  min-width: 0;
-  color: rgba(0, 0, 0, 0.85);
-  background-color: #fff;
-  background-image: none;
-  border: 1px solid #d9d9d9;
-  border-radius: 2px;
-  transition: all 0.3s;
 }
 
 @media (min-width: 992px) {
