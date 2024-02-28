@@ -145,10 +145,8 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                   ]}
                 >
                   <InputNumber
-                    max={20}
                     min={0}
-                    title="Up to 20."
-                    placeholder="Select a number up to 20"
+                    placeholder="Select a number"
                   />
                 </Form.Item>
               </Col>
