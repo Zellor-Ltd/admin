@@ -196,8 +196,8 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
           </div>
         </div>
       ),
-      dataIndex: 'name',
-      width: '15%',
+      dataIndex: 'brandName',
+      width: '10%',
       render: (value: string, record: ProductBrand, index: number) => (
         <Link
           to={location.pathname}
@@ -228,7 +228,7 @@ const ProductBrands: React.FC<RouteComponentProps> = ({ location }) => {
         </div>
       ),
       dataIndex: 'vIndex',
-      width: '3%',
+      width: '8%',
       render: (_, productBrand, index) => {
         if (updatingVIndex[productBrand.id]) {
           const antIcon = <LoadingOutlined spin />;
