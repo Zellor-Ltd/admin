@@ -91,7 +91,7 @@ const ClientUserDetail: React.FC<ClientUserDetailProps> = ({
           </Col>
           <Col lg={12} xs={24}>
             <Form.Item
-              label="Username (Email)"
+              label="Email"
               name="email"
               required
               rules={[
