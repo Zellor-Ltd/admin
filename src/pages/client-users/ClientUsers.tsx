@@ -55,7 +55,7 @@ const ClientUsers: React.FC<RouteComponentProps> = ({ location }) => {
   const [clientUsers, setClientUsers] = useState<any[]>([]);
   const [page, setPage] = useState<number>(0);
   const [eof, setEof] = useState<boolean>(false);
-  const [clientFilter, setclientFilter] = useState<Brand | undefined>();
+  const [clientFilter, setClientFilter] = useState<Brand | undefined>();
   const [updatingClient, setUpdatingClient] = useState<Record<string, boolean>>(
     {}
   );
@@ -77,6 +77,10 @@ const ClientUsers: React.FC<RouteComponentProps> = ({ location }) => {
     };
     getBrands();
   }, []);
+
+  useEffect(() => {
+    fetch()
+  }, [clientFilter]);
 
   const scrollToCenter = (index: number) => {
     scrollIntoView(
@@ -248,7 +252,7 @@ const ClientUsers: React.FC<RouteComponentProps> = ({ location }) => {
                 data={brands}
                 onChange={(_, brand) => updateClient(client, brand)}
                 style={{ width: '100%' }}
-                selectedOption={clientFilter?.name}
+                selectedOption={client?.name}
                 optionMapping={{
                   key: 'id',
                   label: 'name',
@@ -424,7 +428,7 @@ const ClientUsers: React.FC<RouteComponentProps> = ({ location }) => {
               <SimpleSelect
                 showSearch
                 data={brands}
-                onChange={(_, brand) => setclientFilter(brand)}
+                onChange={(_, brand) => setClientFilter(brand)}
                 style={{ width: '100%' }}
                 selectedOption={clientFilter?.name}
                 optionMapping={{
