@@ -8,6 +8,7 @@ import {
   message,
   PageHeader,
   Row,
+  Select,
   Switch,
 } from 'antd';
 import { Upload } from 'components';
@@ -18,6 +19,7 @@ import { TwitterPicker } from 'react-color';
 import { saveBrand } from 'services/DiscoClubService';
 import scrollIntoView from 'scroll-into-view';
 import { AppContext } from 'contexts/AppContext';
+import { useSelector } from 'react-redux';
 interface BrandDetailProps {
   onSave?: (record: Brand) => void;
   onCancel?: () => void;
@@ -32,6 +34,9 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
   const { isMobile } = useContext(AppContext);
   const [form] = Form.useForm();
   const toFocus = useRef<any>();
+  const {
+    settings: { plan = [] },
+  } = useSelector((state: any) => state.settings);
 
   const handleFinishFailed = (errorFields: any[]) => {
     message.error('Error: ' + errorFields[0].errors[0]);
@@ -95,6 +100,33 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                   >
                     <ColorPicker id="txtColor" />
                   </Form.Item>
+                </Col>
+                <Col span={24}>
+
+                <Form.Item
+                  label="Plan"
+                  name='plan'
+                  shouldUpdate
+                >
+                  <Select
+                    placeholder="Select a Plan"
+                    allowClear
+                    showSearch
+                    filterOption={(input: string, option: any) => {
+                      return option?.label?.toUpperCase().includes(input?.toUpperCase());
+                    }}
+                  >
+                    {plan.map(planType => (
+                      <Select.Option
+                        key={planType.value}
+                        value={planType.value}
+                        label={planType.name}
+                      >
+                        {planType.name}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Form.Item>
                 </Col>
               </Row>
             </Col>
