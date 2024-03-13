@@ -261,6 +261,31 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
               whiteSpace: 'nowrap',
             }}
           >
+            <Tooltip title="Login as">Login as</Tooltip>
+          </div>
+        </div>
+      ),
+      width: '10%',
+      align: 'center',
+      render: (_, __, index: number) => (
+        <Button
+          key={`item_${index}`}
+          onClick={() => console.log('continue here')}
+        >
+          Login as
+        </Button>
+      ),
+    },
+    {
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
             <Tooltip title="Actions">Actions</Tooltip>
           </div>
         </div>
