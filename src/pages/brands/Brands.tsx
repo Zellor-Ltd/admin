@@ -23,7 +23,11 @@ import { Brand } from 'interfaces/Brand';
 import { useContext, useEffect, useState } from 'react';
 import { AppContext } from 'contexts/AppContext';
 import { Link, RouteComponentProps, useHistory } from 'react-router-dom';
-import { deleteBrand, fetchBrands } from 'services/DiscoClubService';
+import {
+  deleteBrand,
+  fetchBrands,
+  loginAsClient,
+} from 'services/DiscoClubService';
 import BrandDetail from './BrandDetail';
 import scrollIntoView from 'scroll-into-view';
 import { useRequest } from 'hooks/useRequest';
@@ -103,6 +107,8 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
   const onCancelBrand = () => {
     setDetails(false);
   };
+
+  const loginAs = (id: string) => loginAsClient(id);
 
   const columns: ColumnsType<Brand> = [
     {
@@ -267,11 +273,8 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
       ),
       width: '10%',
       align: 'center',
-      render: (_, __, index: number) => (
-        <Button
-          key={`item_${index}`}
-          onClick={() => console.log('continue here')}
-        >
+      render: (_, record: Brand, index: number) => (
+        <Button key={`item_${index}`} onClick={() => loginAs(record.id)}>
           Login as
         </Button>
       ),

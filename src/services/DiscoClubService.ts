@@ -1191,7 +1191,7 @@ export const saveClientUser = (params: any) => {
   if (params.id) {
     return instance.post('Bbs/Id/User/Update', params);
   } else {
-      return instance.put('Bbs/Id/User/Add', params);
+    return instance.put('Bbs/Id/User/Add', params);
   }
 };
 
@@ -1207,4 +1207,8 @@ export const saveClient = (params: any) => {
   } else {
     return instance.put('Disco/Identity/Adm/AddClient', params);
   }
+};
+
+export const loginAsClient = (id: string) => {
+  return instance.get(`Bbs/Id/LoginAs/${id}`);
 };
