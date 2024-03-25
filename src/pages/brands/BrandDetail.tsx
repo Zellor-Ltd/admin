@@ -70,7 +70,10 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
           name="brandForm"
           layout="vertical"
           form={form}
-          initialValues={{ ...brand, limitOfVideos: 20 }}
+          initialValues={{
+            ...brand,
+            limitOfVideos: brand?.limitOfVideos ?? 20,
+          }}
           onFinish={onFinish}
           onFinishFailed={({ errorFields }) => handleFinishFailed(errorFields)}
         >
@@ -102,31 +105,28 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                   </Form.Item>
                 </Col>
                 <Col span={24}>
-
-                <Form.Item
-                  label="Plan"
-                  name='plan'
-                  shouldUpdate
-                >
-                  <Select
-                    placeholder="Select a Plan"
-                    allowClear
-                    showSearch
-                    filterOption={(input: string, option: any) => {
-                      return option?.label?.toUpperCase().includes(input?.toUpperCase());
-                    }}
-                  >
-                    {plan.map(planType => (
-                      <Select.Option
-                        key={planType.value}
-                        value={planType.value}
-                        label={planType.name}
-                      >
-                        {planType.name}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </Form.Item>
+                  <Form.Item label="Plan" name="plan" shouldUpdate>
+                    <Select
+                      placeholder="Select a Plan"
+                      allowClear
+                      showSearch
+                      filterOption={(input: string, option: any) => {
+                        return option?.label
+                          ?.toUpperCase()
+                          .includes(input?.toUpperCase());
+                      }}
+                    >
+                      {plan.map(planType => (
+                        <Select.Option
+                          key={planType.value}
+                          value={planType.value}
+                          label={planType.name}
+                        >
+                          {planType.name}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
                 </Col>
               </Row>
             </Col>
@@ -144,10 +144,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                     },
                   ]}
                 >
-                  <InputNumber
-                    min={0}
-                    placeholder="Select a number"
-                  />
+                  <InputNumber min={0} placeholder="Select a number" />
                 </Form.Item>
               </Col>
               <Col span={24}>

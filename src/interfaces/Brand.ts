@@ -3,9 +3,10 @@ export interface Brand {
   name: string;
   email: string;
   logo?: any;
-    whiteLogo?: any;
-    showSocialImportTab?: boolean;
+  whiteLogo?: any;
+  showSocialImportTab?: boolean;
   txtColor?: string;
   shopName?: string;
   shopUrl?: string;
+  limitOfVideos?: number;
 }
