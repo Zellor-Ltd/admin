@@ -35,7 +35,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
   const [form] = Form.useForm();
   const toFocus = useRef<any>();
   const {
-    settings: { plan = [], currency = [] },
+    settings: { plan = [] },
   } = useSelector((state: any) => state.settings);
 
   const handleFinishFailed = (errorFields: any[]) => {
@@ -157,7 +157,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                 </Form.Item>
               </Col>
               <Col span={24}>
-                <Form.Item label="Currency" name="currency" shouldUpdate>
+                <Form.Item label="Currency" name="currencyCode" shouldUpdate>
                   <Select
                     placeholder="Select a Currency"
                     allowClear
@@ -168,15 +168,17 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                         .includes(input?.toUpperCase());
                     }}
                   >
-                    {plan.map(planType => (
-                      <Select.Option
-                        key={planType.value}
-                        value={planType.value}
-                        label={planType.name}
-                      >
-                        {planType.name}
-                      </Select.Option>
-                    ))}
+                    <Select.Option key="USD" value="USD" label="USD">
+                      USD
+                    </Select.Option>
+
+                    <Select.Option key="EUR" value="EUR" label="EUR">
+                      EUR
+                    </Select.Option>
+
+                    <Select.Option key="GBP" value="GBP" label="GBP">
+                      GBP
+                    </Select.Option>
                   </Select>
                 </Form.Item>
               </Col>
