@@ -157,6 +157,32 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                 </Form.Item>
               </Col>
               <Col span={24}>
+                <Form.Item label="Currency" name="currencyCode" shouldUpdate>
+                  <Select
+                    placeholder="Select a Currency"
+                    allowClear
+                    showSearch
+                    filterOption={(input: string, option: any) => {
+                      return option?.label
+                        ?.toUpperCase()
+                        .includes(input?.toUpperCase());
+                    }}
+                  >
+                    <Select.Option key="USD" value="USD" label="USD">
+                      USD
+                    </Select.Option>
+
+                    <Select.Option key="EUR" value="EUR" label="EUR">
+                      EUR
+                    </Select.Option>
+
+                    <Select.Option key="GBP" value="GBP" label="GBP">
+                      GBP
+                    </Select.Option>
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col span={24}>
                 <Form.Item
                   name="shopUrl"
                   label="Shop URL (Template $DISCOID$)"
