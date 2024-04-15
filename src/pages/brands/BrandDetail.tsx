@@ -35,7 +35,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
   const [form] = Form.useForm();
   const toFocus = useRef<any>();
   const {
-    settings: { plan = [] },
+    settings: { plan = [], currency = [] },
   } = useSelector((state: any) => state.settings);
 
   const handleFinishFailed = (errorFields: any[]) => {
@@ -154,6 +154,30 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                   valuePropName="checked"
                 >
                   <Switch />
+                </Form.Item>
+              </Col>
+              <Col span={24}>
+                <Form.Item label="Currency" name="currency" shouldUpdate>
+                  <Select
+                    placeholder="Select a Currency"
+                    allowClear
+                    showSearch
+                    filterOption={(input: string, option: any) => {
+                      return option?.label
+                        ?.toUpperCase()
+                        .includes(input?.toUpperCase());
+                    }}
+                  >
+                    {plan.map(planType => (
+                      <Select.Option
+                        key={planType.value}
+                        value={planType.value}
+                        label={planType.name}
+                      >
+                        {planType.name}
+                      </Select.Option>
+                    ))}
+                  </Select>
                 </Form.Item>
               </Col>
               <Col span={24}>
