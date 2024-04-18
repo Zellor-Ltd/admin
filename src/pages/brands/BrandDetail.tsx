@@ -91,16 +91,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                   </Form.Item>
                 </Col>
                 <Col span={24}>
-                  <Form.Item
-                    label="Client Color"
-                    name="txtColor"
-                    rules={[
-                      {
-                        required: true,
-                        message: 'Client Color is required.',
-                      },
-                    ]}
-                  >
+                  <Form.Item label="Client Color" name="txtColor">
                     <ColorPicker id="txtColor" />
                   </Form.Item>
                 </Col>
@@ -183,16 +174,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                 </Form.Item>
               </Col>
               <Col span={24}>
-                <Form.Item
-                  name="shopUrl"
-                  label="Shop URL (Template $DISCOID$)"
-                  rules={[
-                    {
-                      required: true,
-                      message: 'Shop URL is required.',
-                    },
-                  ]}
-                >
+                <Form.Item name="shopUrl" label="Shop URL (Template $DISCOID$)">
                   <Input allowClear id="shopUrl" placeholder="Shop URL" />
                 </Form.Item>
               </Col>
@@ -200,9 +182,6 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                 <Form.Item
                   name="shopName"
                   label="Shop Name (without https:// or spaces)"
-                  rules={[
-                    { required: true, message: 'Shop Name is required.' },
-                  ]}
                 >
                   <Input
                     allowClear
@@ -220,11 +199,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
               className={isMobile ? 'mx-1 mb-n2' : 'mx-1'}
             >
               <Col lg={6}>
-                <Form.Item
-                  label="Logo"
-                  rules={[{ required: true, message: 'Logo is required.' }]}
-                  name="logo"
-                >
+                <Form.Item label="Logo" name="logo">
                   <Upload.ImageUpload
                     id="logo"
                     type="logo"
