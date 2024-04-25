@@ -13,7 +13,7 @@ import {
 } from 'antd';
 import { Upload } from 'components';
 import { Brand } from 'interfaces/Brand';
-import { useContext, useRef } from 'react';
+import { useContext, useEffect, useRef } from 'react';
 import React from 'react';
 import { TwitterPicker } from 'react-color';
 import { saveBrand } from 'services/DiscoClubService';
@@ -80,11 +80,34 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
           <Row gutter={8}>
             <Col lg={12} xs={24}>
               <Row gutter={8}>
-                <Col span={24}>
-                  <Form.Item label="Client Name" name="name">
-                    <Input allowClear placeholder="Client Name" />
-                  </Form.Item>
-                </Col>
+                {typeof brand?.isShopifyCustomer !== 'undefined' && (
+                  <>
+                    <Col span={12}>
+                      <Form.Item label="Client Name" name="name">
+                        <Input allowClear placeholder="Client Name" />
+                      </Form.Item>
+                    </Col>
+                    <Col span={12} className="mt-19">
+                      <Form.Item>
+                        <Input
+                          disabled
+                          value={
+                            brand?.isShopifyCustomer ? 'Shopify' : 'Not Shopify'
+                          }
+                        />
+                      </Form.Item>
+                    </Col>
+                  </>
+                )}
+                {typeof brand?.isShopifyCustomer === 'undefined' && (
+                  <>
+                    <Col span={24}>
+                      <Form.Item label="Client Name" name="name">
+                        <Input allowClear placeholder="Client Name" />
+                      </Form.Item>
+                    </Col>
+                  </>
+                )}
                 <Col span={24}>
                   <Form.Item label="E-mail" name="email">
                     <Input allowClear placeholder="E-mail" />
