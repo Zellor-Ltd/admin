@@ -13,7 +13,7 @@ import {
 } from 'antd';
 import { Upload } from 'components';
 import { Brand } from 'interfaces/Brand';
-import { useContext, useEffect, useRef } from 'react';
+import { useContext, useRef } from 'react';
 import React from 'react';
 import { TwitterPicker } from 'react-color';
 import { saveBrand } from 'services/DiscoClubService';
