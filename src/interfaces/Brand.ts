@@ -9,4 +9,5 @@ export interface Brand {
   shopName?: string;
   shopUrl?: string;
   limitOfVideos?: number;
+  isShopifyCustomer?: boolean;
 }
