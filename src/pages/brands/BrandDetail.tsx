@@ -51,6 +51,8 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
   const onFinish = async () => {
     try {
       const brandForm = form.getFieldsValue(true);
+      if (brandForm.importStrategy) brandForm.importStartegy = 'variants'
+      else  brandForm.importStartegy = 'unique';
 
       const response: any = await saveBrand(brandForm);
       message.success('Register updated with success.');
@@ -194,6 +196,15 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                       GBP
                     </Select.Option>
                   </Select>
+                </Form.Item>
+              </Col>
+              <Col span={24}>
+                <Form.Item
+                  name="importStrategy"
+                  label="Import Variants"
+                  valuePropName="checked"
+                >
+                  <Switch />
                 </Form.Item>
               </Col>
               <Col span={24}>
