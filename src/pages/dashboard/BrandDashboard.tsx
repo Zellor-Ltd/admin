@@ -533,7 +533,10 @@ const BrandDashboard: React.FC<DashboardProps> = () => {
   };
 
   return (
-    <div onScroll={handleScroll} style={{ overflowY: 'auto', height: '100%' }}>
+    <div
+      onScroll={handleScroll}
+      style={{ overflowY: 'auto', overflowX: 'clip', height: '100%' }}
+    >
       <Row
         gutter={[8, 8]}
         align="bottom"

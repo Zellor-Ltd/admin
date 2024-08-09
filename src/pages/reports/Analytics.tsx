@@ -616,7 +616,14 @@ const Analytics: React.FC<DashboardProps> = () => {
   };
 
   return (
-    <div style={{ overflowY: 'auto', height: '100%' }}>
+    <div
+      style={{
+        overflowY: 'auto',
+        overflowX: 'clip',
+        height: '100%',
+        paddingLeft: '1rem',
+      }}
+    >
       <Row
         gutter={[8, 8]}
         align="bottom"
