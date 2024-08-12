@@ -180,6 +180,7 @@ const AccessControl: React.FC = () => {
         name="accessControlForm"
         layout="vertical"
         onFinish={onFinish}
+        style={{ top: '9rem' }}
       >
         <div>
           <Tabs

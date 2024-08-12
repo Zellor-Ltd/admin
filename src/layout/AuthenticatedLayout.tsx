@@ -38,8 +38,7 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
   const [style, setStyle] = useState<any>({
     padding: '24 0',
     minHeight: 280,
-    overflow: 'scroll',
-    width: '100%',
+    overflow: 'clip scroll',
   });
 
   useEffect(() => {

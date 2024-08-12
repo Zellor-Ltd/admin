@@ -1,19 +1,8 @@
-import {
-  Button,
-  Col,
-  DatePicker,
-  Form,
-  Input,
-  message,
-  PageHeader,
-  Row,
-} from 'antd';
-import { formatMoment } from 'helpers/formatMoment';
+import { Button, Col, Form, Input, message, PageHeader, Row } from 'antd';
 import { useRequest } from 'hooks/useRequest';
 import { useRef, useState } from 'react';
 import { saveClientUser } from 'services/DiscoClubService';
 import scrollIntoView from 'scroll-into-view';
-import moment from 'moment';
 import SimpleSelect from 'components/select/SimpleSelect';
 import { Brand } from 'interfaces/Brand';
 

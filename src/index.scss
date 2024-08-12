@@ -24,6 +24,11 @@ a,
   height: calc(100vh - 105px) !important;
 }
 
+.site-layout-background > div {
+  overflow: clip scroll !important;
+  padding: 0 1rem;
+}
+
 .ant-layout-sider-children {
   height: calc(100vh - 56px) !important;
   background: #212427 !important;
