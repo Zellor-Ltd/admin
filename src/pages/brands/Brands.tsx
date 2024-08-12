@@ -20,7 +20,7 @@ import { ColumnsType } from 'antd/lib/table';
 import CopyValueToClipboard from 'components/CopyValueToClipboard';
 import { discoBrandId } from 'helpers/constants';
 import { Brand } from 'interfaces/Brand';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { AppContext } from 'contexts/AppContext';
 import { Link, RouteComponentProps, useHistory } from 'react-router-dom';
 import {
@@ -38,7 +38,9 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const { doFetch } = useRequest({ setLoading });
   const [brands, setBrands] = useState<Brand[]>([]);
-  const [brandFilter, setBrandFilter] = useState();
+  const allBrands = useRef<Brand[]>();
+  const [brandFilter, setBrandFilter] = useState<string>();
+  const [emailFilter, setEmailFilter] = useState<string>();
   const [currentBrand, setCurrentBrand] = useState<Brand>();
   const { isMobile, setIsScrollable } = useContext(AppContext);
   const history = useHistory();
@@ -50,14 +52,37 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
   });
 
   useEffect(() => {
-    if (!brandFilter) fetch();
+    if (!allBrands.current) return;
+    const filteredBrands: Brand[] = [];
+    allBrands.current.forEach((brand: Brand) => {
+      if (brand.name)
+        if (brand.name.toLowerCase().includes(brandFilter?.toLowerCase() ?? ''))
+          filteredBrands.push(brand);
+    });
+    setBrands(filteredBrands);
   }, [brandFilter]);
 
+  useEffect(() => {
+    if (!allBrands.current) return;
+    const filteredBrands: Brand[] = [];
+    allBrands.current.forEach((brand: Brand) => {
+      if (brand.email)
+        if (
+          brand.email.toLowerCase().includes(emailFilter?.toLowerCase() ?? '')
+        )
+          filteredBrands.push(brand);
+    });
+    setBrands(filteredBrands);
+  }, [emailFilter]);
+
+  useEffect(() => {
+    fetch();
+  }, []);
+
   const fetch = async () => {
-    const { results }: any = await doFetch(() =>
-      fetchBrands({ name: brandFilter })
-    );
+    const { results }: any = await doFetch(() => fetchBrands());
     setBrands(results);
+    if (results) allBrands.current = results;
   };
 
   useEffect(() => {
@@ -81,10 +106,6 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
       console.log(err);
     }
     setLoading(false);
-  };
-
-  const onChangeFilter = (evt: any) => {
-    setBrandFilter(evt.target.value);
   };
 
   const editBrand = (index: number, brand?: Brand) => {
@@ -338,15 +359,26 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
           <Row gutter={8} className="mb-05 sticky-filter-box">
             <Col lg={4} xs={24}>
               <Typography.Title level={5} title="Search">
-                Search
+                Name
               </Typography.Title>
               <Input
                 allowClear
                 disabled={loading}
-                onChange={onChangeFilter}
+                onChange={event => setBrandFilter(event.target.value)}
                 placeholder="Search by Name"
                 suffix={<SearchOutlined />}
-                onPressEnter={fetch}
+              />
+            </Col>
+            <Col lg={4} xs={24}>
+              <Typography.Title level={5} title="Search">
+                Email
+              </Typography.Title>
+              <Input
+                allowClear
+                disabled={loading}
+                onChange={event => setEmailFilter(event.target.value)}
+                placeholder="Search by Email"
+                suffix={<SearchOutlined />}
               />
             </Col>
           </Row>
