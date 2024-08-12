@@ -51,8 +51,8 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
   const onFinish = async () => {
     try {
       const brandForm = form.getFieldsValue(true);
-      if (brandForm.importStrategy) brandForm.importStartegy = 'variants'
-      else  brandForm.importStartegy = 'unique';
+      if (brandForm.importStrategy) brandForm.importStartegy = 'variants';
+      else brandForm.importStartegy = 'unique';
 
       const response: any = await saveBrand(brandForm);
       message.success('Register updated with success.');
@@ -157,6 +157,20 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                     {
                       required: true,
                       message: 'Max Videos is required.',
+                    },
+                  ]}
+                >
+                  <InputNumber min={0} placeholder="Select a number" />
+                </Form.Item>
+              </Col>
+              <Col span={24}>
+                <Form.Item
+                  name="videoPlayLimit"
+                  label="Max Video Plays/month"
+                  rules={[
+                    {
+                      required: true,
+                      message: 'Max Video Plays/month is required.',
                     },
                   ]}
                 >
