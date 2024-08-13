@@ -29,9 +29,9 @@ const MasterPassword: React.FC<RouteComponentProps> = () => {
         className={isMobile ? 'mb-n1' : ''}
       />
       {!masterPassword ? (
-        <Form className="sticky-filter-box" onFinish={onFinish}>
+        <Form className="" onFinish={onFinish}>
           <Row gutter={8} justify={isMobile ? 'end' : 'start'}>
-            <Col lg={4} xs={24}>
+            <Col lg={4} xs={24} style={{ marginTop: '2rem' }}>
               <Form.Item label="ID" name="id" rules={[{ required: true }]}>
                 <Input allowClear placeholder="Enter ID" />
               </Form.Item>

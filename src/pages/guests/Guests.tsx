@@ -398,11 +398,7 @@ const Guests: React.FC<RouteComponentProps> = ({ location }) => {
             subTitle={isMobile ? '' : 'List of Guests'}
             className={isMobile ? 'my-05 mb-1' : 'mb-1'}
           />
-          <Row
-            align="bottom"
-            justify="space-between"
-            className="mb-05 sticky-filter-box"
-          >
+          <Row align="bottom" justify="space-between" className="mb-05 ">
             <Col lg={16} xs={24}>
               <Row gutter={8}>
                 <Col lg={6} xs={24}>

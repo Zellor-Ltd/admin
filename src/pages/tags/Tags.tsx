@@ -332,11 +332,7 @@ const Tags: React.FC<RouteComponentProps> = ({ location }) => {
               </Button>,
             ]}
           />
-          <Row
-            align="bottom"
-            justify="space-between"
-            className="sticky-filter-box mb-05"
-          >
+          <Row align="bottom" justify="space-between" className="mb-05">
             <Col lg={4} xs={24}>
               <SearchFilterDebounce
                 disabled={refreshing || loading}

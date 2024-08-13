@@ -79,7 +79,7 @@ const ClientUsers: React.FC<RouteComponentProps> = ({ location }) => {
   }, []);
 
   useEffect(() => {
-    fetch()
+    fetch();
   }, [clientFilter]);
 
   const scrollToCenter = (index: number) => {
@@ -421,7 +421,7 @@ const ClientUsers: React.FC<RouteComponentProps> = ({ location }) => {
             gutter={8}
             align="bottom"
             justify="space-between"
-            className="sticky-filter-box mb-15"
+            className="mb-15"
           >
             <Col lg={4} xs={24}>
               <Typography.Title level={5}>Client</Typography.Title>

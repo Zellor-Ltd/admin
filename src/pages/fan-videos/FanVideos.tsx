@@ -818,7 +818,7 @@ const FanVideos: React.FC<RouteComponentProps> = () => {
           <Row
             align={isMobile ? 'middle' : 'bottom'}
             justify="space-between"
-            className="sticky-filter-box mb-05"
+            className="mb-05"
             id="filterPanel"
             style={panelStyle}
           >

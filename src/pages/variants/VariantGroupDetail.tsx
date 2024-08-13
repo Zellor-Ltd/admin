@@ -653,7 +653,7 @@ const VariantGroupDetail: React.FC<VariantGroupDetailProps> = ({
           <Row
             align="bottom"
             justify="space-between"
-            className="sticky-filter-box"
+            className=""
             id="filterPanel"
             style={panelStyle}
           >

@@ -59,9 +59,7 @@ const Widgets: React.FC<RouteComponentProps> = () => {
 
   const getCustomData = useMemo(() => {
     const fetchData = async (query: string) => {
-      const response = await doFetch(() =>
-        fetchWidgets({ term: query })
-      );
+      const response = await doFetch(() => fetchWidgets({ term: query }));
       setLists(response.results);
     };
     return fetchData;
@@ -237,12 +235,7 @@ const Widgets: React.FC<RouteComponentProps> = () => {
               </Button>
             }
           />
-          <Row
-            gutter={8}
-            align="bottom"
-            justify="end"
-            className="mb-05 sticky-filter-box"
-          >
+          <Row gutter={8} align="bottom" justify="end" className="mb-05 ">
             <Col lg={12} xs={24} style={{ paddingRight: '0px' }}>
               <Row justify="end">
                 <Col lg={12} xs={24}>

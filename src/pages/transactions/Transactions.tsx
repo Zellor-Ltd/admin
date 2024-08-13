@@ -232,7 +232,7 @@ const Transactions: React.FC<RouteComponentProps> = () => {
         title="Transactions"
         subTitle={isMobile ? '' : 'List of Transactions'}
       />
-      <Row gutter={8} className="sticky-filter-box mb-05">
+      <Row gutter={8} className="mb-05">
         <Col xxl={40} lg={4} xs={24}>
           <Typography.Title level={5}>Fan Filter</Typography.Title>
           <MultipleFetchDebounceSelect

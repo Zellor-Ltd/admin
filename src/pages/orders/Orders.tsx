@@ -1025,7 +1025,7 @@ const Orders: React.FC<RouteComponentProps> = ({ location }) => {
           <Row
             align="bottom"
             justify="space-between"
-            className="sticky-filter-box mb-05"
+            className="mb-05"
             gutter={8}
           >
             <Col lg={16} xs={24}>

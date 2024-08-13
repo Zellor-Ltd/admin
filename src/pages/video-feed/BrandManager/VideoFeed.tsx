@@ -1178,7 +1178,7 @@ const VideoFeed: React.FC<RouteComponentProps> = () => {
           <Row
             align="bottom"
             justify="space-between"
-            className="sticky-filter-box mb-1"
+            className="mb-1"
             id="filterPanel"
             style={panelStyle}
           >

@@ -411,7 +411,7 @@ const PaymentHistory: React.FC<RouteComponentProps> = ({ location }) => {
           {isMobile && (
             <Collapse
               ghost
-              className="sticky-filter-box"
+              className=""
               activeKey={activeKey}
               onChange={handleCollapseChange}
               destroyInactivePanel
