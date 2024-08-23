@@ -608,7 +608,7 @@ const VariantGroups: React.FC<RouteComponentProps> = () => {
           <Row
             align="bottom"
             justify="space-between"
-            className="sticky-filter-box mb-05"
+            className="mb-05"
             id="filterPanel"
             style={panelStyle}
           >

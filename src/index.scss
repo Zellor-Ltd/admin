@@ -26,7 +26,7 @@ a,
 
 .site-layout-background > div {
   overflow: clip scroll !important;
-  padding: 0 1rem;
+  padding: 0 2rem;
 }
 
 .ant-layout-sider-children {
@@ -231,6 +231,8 @@ a,
 .custom-table {
   overflow-x: scroll;
   overflow-y: clip;
+  position: relative;
+  left: 0.5rem;
 }
 
 .custom-link-container {
@@ -390,15 +392,6 @@ a,
 
 .tab-page {
   padding: 0rem 1rem 1rem 1rem;
-}
-
-.sticky-filter-box {
-  position: sticky;
-  position: -webkit-sticky;
-  z-index: 2;
-  top: 4rem;
-  background: white;
-  padding: 0rem 1rem 1rem 2rem;
 }
 
 .custom-filter-box {
@@ -566,14 +559,14 @@ a,
   }
 
   .ant-page-header {
-    padding: 1rem 1rem 1rem 0.75rem;
+    padding: 1rem 0rem;
     white-space: normal;
     overflow-wrap: normal;
     margin-bottom: -0.5rem;
     position: sticky;
     top: -10px;
     z-index: 3;
-    background: white;
+    background: none;
   }
 
   .ant-page-header-heading-title {
@@ -687,12 +680,20 @@ a,
   justify-content: center;
 }
 
+.align-between {
+  align-items: space-between;
+}
+
 .align-center {
   align-items: center;
 }
 
 .of-clip {
   overflow: clip;
+}
+
+.bg-none {
+  background: none;
 }
 
 .bg-white {

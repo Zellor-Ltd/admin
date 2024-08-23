@@ -142,7 +142,7 @@ const AccessControl: React.FC = () => {
         gutter={[8, 8]}
         justify={isMobile ? 'end' : 'start'}
         align="bottom"
-        className="sticky-filter-box"
+        className=""
       >
         <Col lg={4} xs={24}>
           <Typography.Title level={5}>Profile</Typography.Title>
@@ -175,7 +175,7 @@ const AccessControl: React.FC = () => {
         </Col>
       </Row>
       <Form
-        className="sticky-filter-box"
+        className=""
         form={form}
         name="accessControlForm"
         layout="vertical"

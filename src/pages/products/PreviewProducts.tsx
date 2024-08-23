@@ -1341,7 +1341,7 @@ const PreviewProducts: React.FC<RouteComponentProps> = () => {
           <Row
             align="bottom"
             justify="space-between"
-            className="sticky-filter-box"
+            className=""
             id="filterPanel"
             style={panelStyle}
           >

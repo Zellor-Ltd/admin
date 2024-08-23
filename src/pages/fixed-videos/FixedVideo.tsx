@@ -30,7 +30,7 @@ const FixedVideo: React.FC<RouteComponentProps> = () => {
         title="Fixed Video"
         subTitle={isMobile ? '' : 'New Fixed Video'}
       />
-      <div>
+      <div style={{ paddingTop: '1rem' }}>
         <Form
           form={form}
           layout="vertical"

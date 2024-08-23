@@ -342,7 +342,12 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
   return (
     <>
       {!details && (
-        <div style={{ overflow: 'clip', height: '100%' }}>
+        <div
+          style={{
+            overflow: 'clip',
+            height: '100%',
+          }}
+        >
           <PageHeader
             title="Clients"
             subTitle={isMobile ? '' : 'List of Clients'}
@@ -356,7 +361,7 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
               </Button>,
             ]}
           />
-          <Row gutter={8} className="mb-05 sticky-filter-box">
+          <Row gutter={8} className="mb-05">
             <Col lg={4} xs={24}>
               <Typography.Title level={5} title="Search">
                 Name

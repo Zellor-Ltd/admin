@@ -354,11 +354,7 @@ const PushGroupTag: React.FC<RouteComponentProps> = () => {
             subTitle={isMobile ? '' : 'Push Tags to user groups'}
             className={isMobile ? 'mb-05' : ''}
           />
-          <Row
-            align="bottom"
-            justify="space-between"
-            className="mb-05 sticky-filter-box"
-          >
+          <Row align="bottom" justify="space-between" className="mb-05 ">
             <Col lg={16} xs={24}>
               <Row gutter={[8, 8]} align="bottom">
                 <Col lg={6} xs={24}>

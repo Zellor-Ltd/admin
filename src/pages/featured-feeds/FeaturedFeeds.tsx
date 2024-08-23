@@ -384,11 +384,7 @@ const FeaturedFeed: React.FC<RouteComponentProps> = () => {
         title="Featured Feeds"
         subTitle={isMobile ? '' : 'List of Featured Feeds'}
       />
-      <Row
-        justify="space-between"
-        align="bottom"
-        className="mb-05 sticky-filter-box"
-      >
+      <Row justify="space-between" align="bottom" className="mb-05 ">
         <Col lg={4} xs={24}>
           <Typography.Title level={5}>List Name</Typography.Title>
 

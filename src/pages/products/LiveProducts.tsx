@@ -969,7 +969,7 @@ const LiveProducts: React.FC<RouteComponentProps> = () => {
           <Row
             align="bottom"
             justify="space-between"
-            className="sticky-filter-box mb-15"
+            className="mb-15"
             id="filterPanel"
             style={panelStyle}
           >

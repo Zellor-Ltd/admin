@@ -23,7 +23,7 @@ import { SimpleSwitch } from 'components/SimpleSwitch';
 
 const Trends: React.FC<RouteComponentProps> = props => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [loadingSwitch, setLoadingSwitch] = useState<String>("");
+  const [loadingSwitch, setLoadingSwitch] = useState<String>('');
   const { doFetch } = useRequest({ setLoading });
   const [filter, setFilter] = useState<string>('');
   const [updatingTrendIndex, setUpdatingIndex] = useState<
@@ -104,13 +104,10 @@ const Trends: React.FC<RouteComponentProps> = props => {
     shouldUpdateIndex.current = false;
   };
 
-  const handleSwitchChange = async (
-    trend: any,
-    toggled: boolean
-  ) => {
+  const handleSwitchChange = async (trend: any, toggled: boolean) => {
     try {
-      setLoadingSwitch(trend.id)
-      trend.enabled = toggled
+      setLoadingSwitch(trend.id);
+      trend.enabled = toggled;
       await saveTrend(trend);
       message.success(`Register ${trend.tag} updated with success.`);
     } catch (err) {
@@ -120,7 +117,7 @@ const Trends: React.FC<RouteComponentProps> = props => {
       );
       message.success('Error while trying to update Trend index.');
     } finally {
-      setLoadingSwitch("")
+      setLoadingSwitch('');
     }
   };
 
@@ -237,12 +234,7 @@ const Trends: React.FC<RouteComponentProps> = props => {
         subTitle={isMobile ? '' : 'List of Trends'}
         className={isMobile ? 'mb-05' : ''}
       />
-      <Row
-        gutter={8}
-        align="bottom"
-        justify="space-between"
-        className="mb-05 sticky-filter-box"
-      >
+      <Row gutter={8} align="bottom" justify="space-between" className="mb-05 ">
         <Col lg={4} md={12} xs={24}>
           <Typography.Title level={5}>Search</Typography.Title>
           <Input

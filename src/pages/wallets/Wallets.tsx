@@ -238,11 +238,7 @@ const Wallets: React.FC<RouteComponentProps> = ({ location }) => {
             title="Fan Wallets"
             subTitle={isMobile ? '' : 'List of Fan wallets'}
           />
-          <Row
-            align="bottom"
-            justify="space-between"
-            className="sticky-filter-box mb-05"
-          >
+          <Row align="bottom" justify="space-between" className="mb-05">
             <Col span={24}>
               <Row
                 gutter={8}

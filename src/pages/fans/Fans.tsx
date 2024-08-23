@@ -406,11 +406,7 @@ const Fans: React.FC<RouteComponentProps> = ({ location }) => {
               </Button>,
             ]}
           />
-          <Row
-            align="bottom"
-            justify="space-between"
-            className="sticky-filter-box mb-15"
-          >
+          <Row align="bottom" justify="space-between" className="mb-15">
             <Col lg={16} xs={24}>
               <Row gutter={8}>
                 <Col lg={6} xs={24}>
