@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import {
   Button,
+  Card,
   Col,
   Form,
   Input,
@@ -121,6 +122,28 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                   </Form.Item>
                 </Col>
                 <Col span={24}>
+                  <div className="ant-form-item">
+                    <p>Store Details</p>
+                    <Card
+                      style={{
+                        width: '100%',
+                        borderRadius: '5px',
+                        background: '#d3d3d32e',
+                      }}
+                    >
+                      <Form.Item label="First Name" name="marketingFirstName">
+                        <Input allowClear placeholder="First Name" />
+                      </Form.Item>
+                      <Form.Item label="Surname" name="marketingSurname">
+                        <Input allowClear placeholder="Surame" />
+                      </Form.Item>
+                      <Form.Item label="Email Address" name="marketingEmail">
+                        <Input allowClear placeholder="Email Address" />
+                      </Form.Item>
+                    </Card>
+                  </div>
+                </Col>
+                <Col span={24}>
                   <Form.Item label="Plan" name="plan" shouldUpdate>
                     <Select
                       placeholder="Select a Plan"
@@ -239,7 +262,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                 </Form.Item>
               </Col>
             </Col>
-          </Row>{' '}
+          </Row>
           <Col lg={16} xs={24}>
             <Row
               gutter={8}
