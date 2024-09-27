@@ -188,7 +188,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
               </Col>
               <Col span={24}>
                 <Form.Item
-                  name="videoPlayLimit"
+                  name="limitOfPlays"
                   label="Max Video Plays/month"
                   rules={[
                     {
