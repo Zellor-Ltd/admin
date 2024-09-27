@@ -175,6 +175,20 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
               <Col span={24}>
                 <Form.Item
                   name="limitOfVideos"
+                  label="Max Videos"
+                  rules={[
+                    {
+                      required: true,
+                      message: 'Max Videos is required.',
+                    },
+                  ]}
+                >
+                  <InputNumber min={0} placeholder="Select a number" />
+                </Form.Item>
+              </Col>
+              <Col span={24}>
+                <Form.Item
+                  name="limitOfPlays"
                   label="Max Video Plays/month"
                   rules={[
                     {
