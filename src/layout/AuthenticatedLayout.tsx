@@ -83,7 +83,7 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
 
   const getUserName = () => {
     const user: any = jwt.decode(localStorage.getItem('token') || '');
-    if (user) return user.name;
+    if (user) return user.username;
     else {
       message.error('Your session has expired, please login');
       logout();

@@ -18,30 +18,27 @@ import {
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import CopyValueToClipboard from 'components/CopyValueToClipboard';
-import { discoBrandId } from 'helpers/constants';
-import { Brand } from 'interfaces/Brand';
+import { adminClientId } from 'helpers/constants';
+import { Client } from 'interfaces/Client';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { AppContext } from 'contexts/AppContext';
 import { Link, RouteComponentProps, useHistory } from 'react-router-dom';
-import {
-  deleteBrand,
-  fetchBrands,
-  loginAsClient,
-} from 'services/DiscoClubService';
-import BrandDetail from './BrandDetail';
+import { loginAsClient } from 'services/DiscoClubService';
+import ClientDetail from './ClientDetail';
 import scrollIntoView from 'scroll-into-view';
 import { useRequest } from 'hooks/useRequest';
+import { getClients } from 'services/AdminService';
 
-const Brands: React.FC<RouteComponentProps> = ({ location }) => {
+const Clients: React.FC<RouteComponentProps> = ({ location }) => {
   const [details, setDetails] = useState<boolean>(false);
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [loading, setLoading] = useState<boolean>(false);
   const { doFetch } = useRequest({ setLoading });
-  const [brands, setBrands] = useState<Brand[]>([]);
-  const allBrands = useRef<Brand[]>();
-  const [brandFilter, setBrandFilter] = useState<string>();
+  const [clients, setClients] = useState<Client[]>([]);
+  const allClients = useRef<Client[]>();
+  const [clientFilter, setClientFilter] = useState<string>();
   const [emailFilter, setEmailFilter] = useState<string>();
-  const [currentBrand, setCurrentBrand] = useState<Brand>();
+  const [currentClient, setCurrentClient] = useState<Client>();
   const { isMobile, setIsScrollable } = useContext(AppContext);
   const history = useHistory();
 
@@ -52,27 +49,29 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
   });
 
   useEffect(() => {
-    if (!allBrands.current) return;
-    const filteredBrands: Brand[] = [];
-    allBrands.current.forEach((brand: Brand) => {
-      if (brand.name)
-        if (brand.name.toLowerCase().includes(brandFilter?.toLowerCase() ?? ''))
-          filteredBrands.push(brand);
+    if (!allClients.current) return;
+    const filteredClients: Client[] = [];
+    allClients.current.forEach((client: Client) => {
+      if (client.name)
+        if (
+          client.name.toLowerCase().includes(clientFilter?.toLowerCase() ?? '')
+        )
+          filteredClients.push(client);
     });
-    setBrands(filteredBrands);
-  }, [brandFilter]);
+    setClients(filteredClients);
+  }, [clientFilter]);
 
   useEffect(() => {
-    if (!allBrands.current) return;
-    const filteredBrands: Brand[] = [];
-    allBrands.current.forEach((brand: Brand) => {
-      if (brand.email)
+    if (!allClients.current) return;
+    const filteredClients: Client[] = [];
+    allClients.current.forEach((client: Client) => {
+      if (client.email)
         if (
-          brand.email.toLowerCase().includes(emailFilter?.toLowerCase() ?? '')
+          client.email.toLowerCase().includes(emailFilter?.toLowerCase() ?? '')
         )
-          filteredBrands.push(brand);
+          filteredClients.push(client);
     });
-    setBrands(filteredBrands);
+    setClients(filteredClients);
   }, [emailFilter]);
 
   useEffect(() => {
@@ -80,9 +79,9 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
   }, []);
 
   const fetch = async () => {
-    const { results }: any = await doFetch(() => fetchBrands());
-    setBrands(results);
-    if (results) allBrands.current = results;
+    const { results }: any = await doFetch(() => getClients());
+    setClients(results);
+    if (results) allClients.current = results;
   };
 
   useEffect(() => {
@@ -97,41 +96,41 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
     }
   }, [details]);
 
-  const deleteItem = async (id: string, index: number) => {
+  /*   const deleteItem = async (id: string, index: number) => {
     setLoading(true);
     try {
-      await deleteBrand(id);
-      setBrands(prev => [...prev.slice(0, index), ...prev.slice(index + 1)]);
+      await deleteClient(id);
+      setClients(prev => [...prev.slice(0, index), ...prev.slice(index + 1)]);
     } catch (err) {
       console.log(err);
     }
     setLoading(false);
-  };
+  }; */
 
-  const editBrand = (index: number, brand?: Brand) => {
+  const editClient = (index: number, client?: Client) => {
     setLastViewedIndex(index);
-    setCurrentBrand(brand);
+    setCurrentClient(client);
     setDetails(true);
     history.push(window.location.pathname);
   };
 
-  const refreshItem = (record: Brand) => {
-    brands[lastViewedIndex] = record;
-    setBrands([...brands]);
+  const refreshItem = (record: Client) => {
+    clients[lastViewedIndex] = record;
+    setClients([...clients]);
   };
 
-  const onSaveBrand = (record: Brand) => {
+  const onSaveClient = (record: Client) => {
     refreshItem(record);
     setDetails(false);
   };
 
-  const onCancelBrand = () => {
+  const onCancelClient = () => {
     setDetails(false);
   };
 
   const loginAs = (id: string) => loginAsClient(id);
 
-  const columns: ColumnsType<Brand> = [
+  const columns: ColumnsType<Client> = [
     {
       title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
@@ -148,7 +147,7 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
       ),
       dataIndex: 'id',
       width: '6%',
-      render: (_, record: Brand) => (
+      render: (_, record: Client) => (
         <CopyValueToClipboard tooltipText="Copy ID" value={record.id} />
       ),
       align: 'center',
@@ -169,9 +168,9 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
       ),
       dataIndex: 'name',
       width: '15%',
-      render: (value: string, record: Brand, index: number) => (
-        <Link to={location.pathname} onClick={() => editBrand(index, record)}>
-          {record.id !== discoBrandId ? (
+      render: (value: string, record: Client, index: number) => (
+        <Link to={location.pathname} onClick={() => editClient(index, record)}>
+          {record.id !== adminClientId ? (
             value
           ) : (
             <b style={{ color: 'lightcoral' }}>{value}</b>
@@ -294,7 +293,7 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
       ),
       width: '10%',
       align: 'center',
-      render: (_, record: Brand, index: number) => (
+      render: (_, record: Client, index: number) => (
         <Button key={`item_${index}`} onClick={() => loginAs(record.id)}>
           Login as
         </Button>
@@ -317,12 +316,15 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
       key: 'action',
       width: '15%',
       align: 'right',
-      render: (_, record: Brand, index: number) => (
+      render: (_, record: Client, index: number) => (
         <>
-          <Link to={location.pathname} onClick={() => editBrand(index, record)}>
+          <Link
+            to={location.pathname}
+            onClick={() => editClient(index, record)}
+          >
             <EditOutlined />
           </Link>
-          {record.id !== discoBrandId && (
+          {/* {record.id !== adminClientId && (
             <Popconfirm
               title="Are you sure？"
               okText="Yes"
@@ -333,7 +335,7 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
                 <DeleteOutlined />
               </Button>
             </Popconfirm>
-          )}
+          )} */}
         </>
       ),
     },
@@ -355,7 +357,7 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
               <Button
                 key="1"
                 className={isMobile ? 'mt-05' : ''}
-                onClick={() => editBrand(brands.length)}
+                onClick={() => editClient(clients.length)}
               >
                 New Item
               </Button>,
@@ -369,7 +371,7 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
               <Input
                 allowClear
                 disabled={loading}
-                onChange={event => setBrandFilter(event.target.value)}
+                onChange={event => setClientFilter(event.target.value)}
                 placeholder="Search by Name"
                 suffix={<SearchOutlined />}
               />
@@ -393,7 +395,7 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
               rowClassName={(_, index) => `scrollable-row-${index}`}
               rowKey="id"
               columns={columns}
-              dataSource={brands}
+              dataSource={clients}
               loading={loading}
               pagination={false}
             />
@@ -402,10 +404,10 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
       )}
       {details && (
         <div style={{ overflow: 'scroll', height: '100%' }}>
-          <BrandDetail
-            onSave={onSaveBrand}
-            onCancel={onCancelBrand}
-            brand={currentBrand as Brand}
+          <ClientDetail
+            onSave={onSaveClient}
+            onCancel={onCancelClient}
+            client={currentClient as Client}
           />
         </div>
       )}
@@ -413,4 +415,4 @@ const Brands: React.FC<RouteComponentProps> = ({ location }) => {
   );
 };
 
-export default Brands;
+export default Clients;

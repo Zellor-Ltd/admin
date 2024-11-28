@@ -56,16 +56,18 @@ const AdminSideMenu = ({ isMobile }) => {
     <Menu
       theme="dark"
       mode="inline"
+      inlineCollapsed={false}
       selectedKeys={[pathname]}
-      defaultOpenKeys={[parentMenu]}
+      defaultOpenKeys={['clients']}
     >
+      {/* 
       <Menu.Item
         key="analytics"
         icon={<BarChartOutlined />}
         onClick={() => refreshParent('analytics')}
       >
         <Link to="/analytics">Analytics</Link>
-      </Menu.Item>
+      </Menu.Item> */}
       <Menu.Item
         key="clients"
         icon={<ShopOutlined />}
@@ -73,7 +75,7 @@ const AdminSideMenu = ({ isMobile }) => {
       >
         <Link to="/clients">Clients</Link>
       </Menu.Item>
-      <Menu.Item
+      {/*       <Menu.Item
         key="product-brands"
         icon={<TagOutlined />}
         onClick={() => refreshParent('product-brands')}
@@ -202,7 +204,7 @@ const AdminSideMenu = ({ isMobile }) => {
         <Menu.Item key="master-password" icon={<LockOutlined />}>
           <Link to="/master-password">Master Password</Link>
         </Menu.Item>
-      </SubMenu>
+      </SubMenu> */}
     </Menu>
   );
 };

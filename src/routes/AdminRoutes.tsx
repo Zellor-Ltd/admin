@@ -4,7 +4,7 @@ import VideoFeed from 'pages/video-feed/VideoFeed';
 import Creators from 'pages/creators/Creators';
 import LiveProducts from 'pages/products/LiveProducts';
 import Tags from 'pages/tags/Tags';
-import Brands from 'pages/brands/Brands';
+import Brands from 'pages/clients/Clients';
 import EndpointDetail from 'pages/endpoints/EndpointDetail';
 import Endpoints from 'pages/endpoints/Endpoints';
 import Fans from 'pages/fans/Fans';
@@ -66,7 +66,7 @@ function AdminRoutes() {
         exact
         path="/"
         returnComponent
-        component={<Redirect to="/analytics" />}
+        component={<Redirect to="/clients" />}
       />
       <AppRoute
         path="/analytics"
