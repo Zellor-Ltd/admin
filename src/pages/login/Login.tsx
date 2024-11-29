@@ -1,19 +1,18 @@
 import { Button, Col, Form, Image, Input, Row, Typography } from 'antd';
 import { useState } from 'react';
-import { loginService } from 'services/DiscoClubService';
 import { Link, RouteComponentProps } from 'react-router-dom';
+import { signIn } from 'services/AdminService';
 
 const Login: React.FC<RouteComponentProps> = props => {
   const { history } = props;
   const [loading, setLoading] = useState(false);
 
-  const onFinish = async (values: any) => {
+  const onFinish = async (values: { email: string; password: string }) => {
     setLoading(true);
     try {
-      const response: any = await loginService(values);
-      if (response.success) {
-        localStorage.setItem('token', response.token);
-        /* loadClientInfo(); */
+      const response: any = await signIn(values);
+      if (response.accessToken) {
+        localStorage.setItem('token', response.accessToken);
         history.push('/');
       }
     } catch (e) {}
@@ -48,7 +47,7 @@ const Login: React.FC<RouteComponentProps> = props => {
           >
             <Form.Item
               label={<strong>Username</strong>}
-              name="user"
+              name="email"
               rules={[
                 { required: true, message: 'Please input your username!' },
               ]}
@@ -57,7 +56,7 @@ const Login: React.FC<RouteComponentProps> = props => {
             </Form.Item>
             <Form.Item
               label={<strong>Password</strong>}
-              name="pwd"
+              name="password"
               className="mb-05"
               rules={[
                 { required: true, message: 'Please input your password!' },

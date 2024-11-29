@@ -13,22 +13,22 @@ import {
   Switch,
 } from 'antd';
 import { Upload } from 'components';
-import { Brand } from 'interfaces/Brand';
 import { useContext, useRef } from 'react';
 import React from 'react';
 import { TwitterPicker } from 'react-color';
-import { saveBrand } from 'services/DiscoClubService';
 import scrollIntoView from 'scroll-into-view';
 import { AppContext } from 'contexts/AppContext';
 import { useSelector } from 'react-redux';
-interface BrandDetailProps {
-  onSave?: (record: Brand) => void;
+import { Client } from 'interfaces/Client';
+import { updateClient } from 'services/AdminService';
+interface ClientDetailProps {
+  onSave?: (record: Client) => void;
   onCancel?: () => void;
-  brand?: Brand;
+  client?: Client;
 }
 
-const BrandDetail: React.FC<BrandDetailProps> = ({
-  brand,
+const ClientDetail: React.FC<ClientDetailProps> = ({
+  client,
   onSave,
   onCancel,
 }) => {
@@ -51,15 +51,16 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
 
   const onFinish = async () => {
     try {
-      const brandForm = form.getFieldsValue(true);
-      if (brandForm.importStrategy) brandForm.importStartegy = 'variants';
-      else brandForm.importStartegy = 'unique';
+      const clientForm = form.getFieldsValue(true);
+      if (clientForm.importStrategy) clientForm.importStartegy = 'variants';
+      else clientForm.importStartegy = 'unique';
 
-      const response: any = await saveBrand(brandForm);
+      const response: any = await updateClient(clientForm);
+
       message.success('Register updated with success.');
-      brandForm.id
-        ? onSave?.(brandForm)
-        : onSave?.({ ...brandForm, id: response.result });
+      clientForm.id
+        ? onSave?.(clientForm)
+        : onSave?.({ ...clientForm, id: response.id });
     } catch (error: any) {
       message.error('Error: ' + error.error);
     }
@@ -67,15 +68,17 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
 
   return (
     <>
-      <PageHeader title={brand ? `${brand.name ?? ''} Update` : 'New Client'} />
+      <PageHeader
+        title={client ? `${client.name ?? ''} Update` : 'New Client'}
+      />
       <Form.Provider>
         <Form
-          name="brandForm"
+          name="clientForm"
           layout="vertical"
           form={form}
           initialValues={{
-            ...brand,
-            limitOfVideos: brand?.limitOfVideos ?? 20,
+            ...client,
+            limitOfVideos: client?.limitOfVideos ?? 20,
           }}
           onFinish={onFinish}
           onFinishFailed={({ errorFields }) => handleFinishFailed(errorFields)}
@@ -83,7 +86,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
           <Row gutter={8}>
             <Col lg={12} xs={24}>
               <Row gutter={8}>
-                {typeof brand?.isShopifyCustomer !== 'undefined' && (
+                {typeof client?.isShopifyCustomer !== 'undefined' && (
                   <>
                     <Col span={12}>
                       <Form.Item label="Client Name" name="name">
@@ -95,14 +98,16 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                         <Input
                           disabled
                           value={
-                            brand?.isShopifyCustomer ? 'Shopify' : 'Not Shopify'
+                            client?.isShopifyCustomer
+                              ? 'Shopify'
+                              : 'Not Shopify'
                           }
                         />
                       </Form.Item>
                     </Col>
                   </>
                 )}
-                {typeof brand?.isShopifyCustomer === 'undefined' && (
+                {typeof client?.isShopifyCustomer === 'undefined' && (
                   <>
                     <Col span={24}>
                       <Form.Item label="Client Name" name="name">
@@ -116,11 +121,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                     <Input allowClear placeholder="E-mail" />
                   </Form.Item>
                 </Col>
-                <Col span={24}>
-                  <Form.Item label="Client Color" name="txtColor">
-                    <ColorPicker id="txtColor" />
-                  </Form.Item>
-                </Col>
+                {/* 
                 <Col span={24}>
                   <div className="ant-form-item">
                     <p>Store Details</p>
@@ -142,7 +143,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                       </Form.Item>
                     </Card>
                   </div>
-                </Col>
+                </Col> */}
                 <Col span={24}>
                   <Form.Item label="Plan" name="plan" shouldUpdate>
                     <Select
@@ -176,33 +177,33 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                 <Form.Item
                   name="limitOfVideos"
                   label="Max Videos"
-                  rules={[
+                  /* rules={[
                     {
                       required: true,
                       message: 'Max Videos is required.',
                     },
-                  ]}
+                  ]} */
                 >
-                  <InputNumber min={0} placeholder="Select a number" />
+                  <InputNumber min={0} disabled placeholder="Select a number" />
                 </Form.Item>
               </Col>
               <Col span={24}>
                 <Form.Item
                   name="limitOfPlays"
                   label="Max Video Plays/month"
-                  rules={[
+                  /* rules={[
                     {
                       required: true,
                       message: 'Max Video Plays/month is required.',
                     },
-                  ]}
+                  ]} */
                 >
-                  <InputNumber min={0} placeholder="Select a number" />
+                  <InputNumber min={0} disabled placeholder="Select a number" />
                 </Form.Item>
               </Col>
               <Col span={24}>
                 <Form.Item
-                  name="showSocialImportTab"
+                  name="showImportTab"
                   label="Show Import tab"
                   valuePropName="checked"
                 >
@@ -249,54 +250,8 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
                   <Input allowClear id="shopUrl" placeholder="Shop URL" />
                 </Form.Item>
               </Col>
-              <Col span={24}>
-                <Form.Item
-                  name="shopName"
-                  label="Shop Name (without https:// or spaces)"
-                >
-                  <Input
-                    allowClear
-                    id="shopName"
-                    placeholder="casey-temp.myshopify.com"
-                  />
-                </Form.Item>
-              </Col>
             </Col>
           </Row>
-          <Col lg={16} xs={24}>
-            <Row
-              gutter={8}
-              justify={isMobile ? 'space-between' : undefined}
-              className={isMobile ? 'mx-1 mb-n2' : 'mx-1'}
-            >
-              <Col lg={6}>
-                <Form.Item label="Logo" name="logo">
-                  <Upload.ImageUpload
-                    id="logo"
-                    type="logo"
-                    onImageChange={() =>
-                      form.setFieldsValue({ propagationNeeded: true })
-                    }
-                    fileList={brand?.logo}
-                    maxCount={1}
-                    form={form}
-                    formProp="logo"
-                  />
-                </Form.Item>
-              </Col>
-              <Col lg={6}>
-                <Form.Item label="White">
-                  <Upload.ImageUpload
-                    type="whiteLogo"
-                    maxCount={1}
-                    fileList={brand?.whiteLogo}
-                    form={form}
-                    formProp="whiteLogo"
-                  />
-                </Form.Item>
-              </Col>
-            </Row>
-          </Col>
           <Row gutter={8} justify="end">
             <Col>
               <Button type="default" onClick={() => onCancel?.()}>
@@ -315,7 +270,7 @@ const BrandDetail: React.FC<BrandDetailProps> = ({
   );
 };
 
-export default BrandDetail;
+export default ClientDetail;
 
 const ColorPicker: React.FC<any> = props => {
   const { onChange } = props;
