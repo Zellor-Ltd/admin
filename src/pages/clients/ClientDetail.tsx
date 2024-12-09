@@ -246,8 +246,15 @@ const ClientDetail: React.FC<ClientDetailProps> = ({
                 </Form.Item>
               </Col>
               <Col span={24}>
-                <Form.Item name="shopUrl" label="Shop URL (Template $DISCOID$)">
-                  <Input allowClear id="shopUrl" placeholder="Shop URL" />
+                <Form.Item
+                  name="shopifyShopUrl"
+                  label="Shop URL (Template $DISCOID$)"
+                >
+                  <Input
+                    allowClear
+                    id="shopifyShopUrl"
+                    placeholder="Shop URL"
+                  />
                 </Form.Item>
               </Col>
             </Col>

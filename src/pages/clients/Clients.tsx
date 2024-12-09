@@ -82,6 +82,7 @@ const Clients: React.FC<RouteComponentProps> = ({ location }) => {
     const { results }: any = await doFetch(() => getClients());
     setClients(results);
     if (results) allClients.current = results;
+    console.log(allClients.current);
   };
 
   useEffect(() => {
@@ -217,40 +218,17 @@ const Clients: React.FC<RouteComponentProps> = ({ location }) => {
               whiteSpace: 'nowrap',
             }}
           >
-            <Tooltip title="Shop Name">Shop Name</Tooltip>
-          </div>
-        </div>
-      ),
-      dataIndex: 'shopName',
-      width: '15%',
-      sorter: (a, b) => {
-        if (a.shopName && b.shopName)
-          return a.shopName.localeCompare(b.shopName);
-        else if (a.shopName) return 1;
-        else if (b.shopName) return -1;
-        else return 0;
-      },
-    },
-    {
-      title: (
-        <div style={{ display: 'grid', placeItems: 'stretch' }}>
-          <div
-            style={{
-              textOverflow: 'ellipsis',
-              overflow: 'hidden',
-              whiteSpace: 'nowrap',
-            }}
-          >
             <Tooltip title="Shop URL">Shop URL</Tooltip>
           </div>
         </div>
       ),
-      dataIndex: 'shopUrl',
+      dataIndex: 'shopifyShopUrl',
       width: '15%',
       sorter: (a, b) => {
-        if (a.shopUrl && b.shopUrl) return a.shopUrl.localeCompare(b.shopUrl);
-        else if (a.shopUrl) return 1;
-        else if (b.shopUrl) return -1;
+        if (a.shopifyShopUrl && b.shopifyShopUrl)
+          return a.shopifyShopUrl.localeCompare(b.shopifyShopUrl);
+        else if (a.shopifyShopUrl) return 1;
+        else if (b.shopifyShopUrl) return -1;
         else return 0;
       },
     },

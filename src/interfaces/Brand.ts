@@ -6,8 +6,7 @@ export interface Brand {
   whiteLogo?: any;
   showSocialImportTab?: boolean;
   txtColor?: string;
-  shopName?: string;
-  shopUrl?: string;
+  shopifyShopUrl?: string;
   limitOfVideos?: number;
   isShopifyCustomer?: boolean;
 }
