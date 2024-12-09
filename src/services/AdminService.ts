@@ -67,7 +67,7 @@ instance.interceptors.request.use((config: AxiosRequestConfig) => {
 });
 
 export const signIn = (params: Login) =>
-  instance.post('v1/auth/signin', params);
+  instance.post('v1/auth/admin/signin', params);
 
 export const getClients = () => instance.get('v1/client');
 

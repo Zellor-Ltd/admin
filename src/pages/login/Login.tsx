@@ -79,7 +79,7 @@ const Login: React.FC<RouteComponentProps> = props => {
                     Sign In
                   </Button>
                 </Form.Item>
-              </Col>
+              </Col>{/* 
               <Col span={24} className="mb-1">
                 <Row justify="center">
                   <Col>
@@ -91,7 +91,7 @@ const Login: React.FC<RouteComponentProps> = props => {
                     <Link to="/sign-up">Sign Up</Link>
                   </Col>
                 </Row>
-              </Col>
+              </Col> */}
             </Row>
           </Form>
         </div>
