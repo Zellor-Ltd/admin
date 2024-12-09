@@ -184,7 +184,7 @@ const Clients: React.FC<RouteComponentProps> = ({ location }) => {
         else if (b.name) return -1;
         else return 0;
       },
-    },
+    } /* 
     {
       title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
@@ -207,7 +207,7 @@ const Clients: React.FC<RouteComponentProps> = ({ location }) => {
         else if (b.email) return -1;
         else return 0;
       },
-    },
+    }, */,
     {
       title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
@@ -231,29 +231,6 @@ const Clients: React.FC<RouteComponentProps> = ({ location }) => {
         else if (b.shopifyShopUrl) return -1;
         else return 0;
       },
-    },
-    {
-      title: (
-        <div style={{ display: 'grid', placeItems: 'stretch' }}>
-          <div
-            style={{
-              textOverflow: 'ellipsis',
-              overflow: 'hidden',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            <Tooltip title="Client Color">Client Color</Tooltip>
-          </div>
-        </div>
-      ),
-      dataIndex: 'txtColor',
-      width: '10%',
-      align: 'center',
-      render: (value: any) => (
-        <Avatar
-          style={{ backgroundColor: value, border: '1px solid #9c9c9c' }}
-        />
-      ),
     },
     {
       title: (
@@ -354,6 +331,7 @@ const Clients: React.FC<RouteComponentProps> = ({ location }) => {
                 suffix={<SearchOutlined />}
               />
             </Col>
+            {/* 
             <Col lg={4} xs={24}>
               <Typography.Title level={5} title="Search">
                 Email
@@ -365,7 +343,7 @@ const Clients: React.FC<RouteComponentProps> = ({ location }) => {
                 placeholder="Search by Email"
                 suffix={<SearchOutlined />}
               />
-            </Col>
+            </Col> */}
           </Row>
           <div className="custom-table">
             <Table

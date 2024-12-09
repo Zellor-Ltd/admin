@@ -116,11 +116,12 @@ const ClientDetail: React.FC<ClientDetailProps> = ({
                     </Col>
                   </>
                 )}
+                {/* 
                 <Col span={24}>
                   <Form.Item label="E-mail" name="email">
                     <Input allowClear placeholder="E-mail" />
                   </Form.Item>
-                </Col>
+                </Col> */}
                 {/* 
                 <Col span={24}>
                   <div className="ant-form-item">
@@ -175,7 +176,7 @@ const ClientDetail: React.FC<ClientDetailProps> = ({
             <Col lg={12} xs={24}>
               <Col span={24}>
                 <Form.Item
-                  name="limitOfVideos"
+                  name="videoUploads"
                   label="Max Videos"
                   /* rules={[
                     {
@@ -189,7 +190,7 @@ const ClientDetail: React.FC<ClientDetailProps> = ({
               </Col>
               <Col span={24}>
                 <Form.Item
-                  name="limitOfPlays"
+                  name="videoPlaysMonth"
                   label="Max Video Plays/month"
                   /* rules={[
                     {
