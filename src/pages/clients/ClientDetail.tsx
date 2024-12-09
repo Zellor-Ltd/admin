@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import {
   Button,
-  Card,
   Col,
   Form,
   Input,
@@ -12,12 +11,10 @@ import {
   Select,
   Switch,
 } from 'antd';
-import { Upload } from 'components';
-import { useContext, useRef } from 'react';
+import { useRef } from 'react';
 import React from 'react';
 import { TwitterPicker } from 'react-color';
 import scrollIntoView from 'scroll-into-view';
-import { AppContext } from 'contexts/AppContext';
 import { useSelector } from 'react-redux';
 import { Client } from 'interfaces/Client';
 import { updateClient } from 'services/AdminService';
@@ -32,7 +29,6 @@ const ClientDetail: React.FC<ClientDetailProps> = ({
   onSave,
   onCancel,
 }) => {
-  const { isMobile } = useContext(AppContext);
   const [form] = Form.useForm();
   const toFocus = useRef<any>();
   const {

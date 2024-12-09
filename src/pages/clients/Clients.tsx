@@ -1,16 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import {
-  DeleteOutlined,
-  EditOutlined,
-  SearchOutlined,
-} from '@ant-design/icons';
+import { EditOutlined, SearchOutlined } from '@ant-design/icons';
 import {
   Avatar,
   Button,
   Col,
   Input,
   PageHeader,
-  Popconfirm,
   Row,
   Table,
   Tooltip,
@@ -37,7 +32,6 @@ const Clients: React.FC<RouteComponentProps> = ({ location }) => {
   const [clients, setClients] = useState<Client[]>([]);
   const allClients = useRef<Client[]>();
   const [clientFilter, setClientFilter] = useState<string>();
-  const [emailFilter, setEmailFilter] = useState<string>();
   const [currentClient, setCurrentClient] = useState<Client>();
   const { isMobile, setIsScrollable } = useContext(AppContext);
   const history = useHistory();
@@ -60,7 +54,7 @@ const Clients: React.FC<RouteComponentProps> = ({ location }) => {
     });
     setClients(filteredClients);
   }, [clientFilter]);
-
+  /* 
   useEffect(() => {
     if (!allClients.current) return;
     const filteredClients: Client[] = [];
@@ -72,7 +66,7 @@ const Clients: React.FC<RouteComponentProps> = ({ location }) => {
           filteredClients.push(client);
     });
     setClients(filteredClients);
-  }, [emailFilter]);
+  }, [emailFilter]); */
 
   useEffect(() => {
     fetch();
@@ -82,7 +76,6 @@ const Clients: React.FC<RouteComponentProps> = ({ location }) => {
     const { results }: any = await doFetch(() => getClients());
     setClients(results);
     if (results) allClients.current = results;
-    console.log(allClients.current);
   };
 
   useEffect(() => {
