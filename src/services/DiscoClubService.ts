@@ -1208,7 +1208,3 @@ export const saveClient = (params: any) => {
     return instance.put('Disco/Identity/Adm/AddClient', params);
   }
 };
-
-export const loginAsClient = (id: string) => {
-  return instance.get(`Bbs/Id/LoginAs/${id}`);
-};

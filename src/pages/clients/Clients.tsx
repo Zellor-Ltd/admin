@@ -18,7 +18,7 @@ import { Client } from 'interfaces/Client';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { AppContext } from 'contexts/AppContext';
 import { Link, RouteComponentProps, useHistory } from 'react-router-dom';
-import { loginAsClient } from 'services/DiscoClubService';
+import { loginAsClient } from 'services/AdminService';
 import ClientDetail from './ClientDetail';
 import scrollIntoView from 'scroll-into-view';
 import { useRequest } from 'hooks/useRequest';
@@ -122,7 +122,10 @@ const Clients: React.FC<RouteComponentProps> = ({ location }) => {
     setDetails(false);
   };
 
-  const loginAs = (id: string) => loginAsClient(id);
+  const loginAs = (id: string) => {
+    const accessToken = loginAsClient(id);
+    document.cookie = `session=${accessToken}`;
+  };
 
   const columns: ColumnsType<Client> = [
     {

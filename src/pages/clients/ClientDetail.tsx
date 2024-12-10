@@ -153,15 +153,23 @@ const ClientDetail: React.FC<ClientDetailProps> = ({
                           .includes(input?.toUpperCase());
                       }}
                     >
-                      {plan.map(planType => (
-                        <Select.Option
-                          key={planType.value}
-                          value={planType.value}
-                          label={planType.name}
-                        >
-                          {planType.name}
-                        </Select.Option>
-                      ))}
+                      <Select.Option key="Free" value="Free" label="Free">
+                        Free
+                      </Select.Option>
+                      <Select.Option
+                        key="Standard"
+                        value="Standard"
+                        label="Standard"
+                      >
+                        Standard
+                      </Select.Option>
+                      <Select.Option
+                        key="Professional"
+                        value="Professional"
+                        label="Professional"
+                      >
+                        Professional
+                      </Select.Option>
                     </Select>
                   </Form.Item>
                 </Col>
