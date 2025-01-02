@@ -75,5 +75,5 @@ export const updateClient = (params: Client) =>
   instance.patch(`v1/client/${params.id}`, params);
 
 export const loginAsClient = (id: string) => {
-  return instance.get(`v1/admin/signin/${id}`);
+  return instance.get(`v1/auth/admin/signin-as/${id}`);
 };
