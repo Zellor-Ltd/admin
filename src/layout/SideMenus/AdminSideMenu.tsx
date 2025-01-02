@@ -43,7 +43,7 @@ import { Menu } from 'antd';
 import SubMenu from 'antd/lib/menu/SubMenu';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 
-const AdminSideMenu = ({ isMobile }) => {
+const AdminSideMenu = () => {
   const [, pathname] = useLocation().pathname.split('/');
   const [parentMenu] = pathname.split('_');
   const history = useHistory();
@@ -53,13 +53,7 @@ const AdminSideMenu = ({ isMobile }) => {
   };
 
   return (
-    <Menu
-      theme="dark"
-      mode="inline"
-      inlineCollapsed={false}
-      selectedKeys={[pathname]}
-      defaultOpenKeys={['clients']}
-    >
+    <Menu theme="dark" selectedKeys={[pathname]} defaultOpenKeys={['clients']}>
       {/* 
       <Menu.Item
         key="analytics"

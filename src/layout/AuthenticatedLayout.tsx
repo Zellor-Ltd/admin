@@ -166,7 +166,7 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
           ADMIN: (
             <div className="sider-container">
               <Sider breakpoint="lg" collapsedWidth="0">
-                <AdminSideMenu isMobile={isMobile} />
+                <AdminSideMenu />
               </Sider>
             </div>
           ),

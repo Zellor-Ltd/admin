@@ -147,6 +147,7 @@ const ClientDetail: React.FC<ClientDetailProps> = ({
                       placeholder="Select a Plan"
                       allowClear
                       showSearch
+                      disabled
                       filterOption={(input: string, option: any) => {
                         return option?.label
                           ?.toUpperCase()

@@ -650,10 +650,13 @@ a,
 }
 
 @media screen and (min-height: 700px) {
+  .ant-layout-sider-zero-width-trigger {
+    display: none;
+  }
   .ant-menu.ant-menu-inline-collapsed {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: flex-start;
     height: 100%;
   }
 }
