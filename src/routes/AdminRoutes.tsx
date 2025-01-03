@@ -58,6 +58,7 @@ import ForgotPassword from 'pages/login/ForgotPassword';
 import VerificationCode from 'pages/login/VerificationCode';
 import Analytics from 'pages/reports/Analytics';
 import ShortProducts from 'pages/products/ShortProducts';
+import Maintenance from 'pages/under-maintenance/Maintenance';
 
 function AdminRoutes() {
   return (
@@ -159,6 +160,11 @@ function AdminRoutes() {
       <AppRoute
         path="/clients"
         component={Brands}
+        layout={AuthenticatedLayout}
+      />
+      <AppRoute
+        path="/maintenance"
+        component={Maintenance}
         layout={AuthenticatedLayout}
       />
       <AppRoute

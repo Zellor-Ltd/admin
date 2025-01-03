@@ -38,6 +38,7 @@ import {
   HddOutlined,
   ProfileOutlined,
   BarChartOutlined,
+  ApiOutlined,
 } from '@ant-design/icons';
 import { Menu } from 'antd';
 import SubMenu from 'antd/lib/menu/SubMenu';
@@ -68,6 +69,13 @@ const AdminSideMenu = () => {
         onClick={() => refreshParent('clients')}
       >
         <Link to="/clients">Clients</Link>
+      </Menu.Item>
+      <Menu.Item
+        key="maintenance"
+        icon={<ApiOutlined />}
+        onClick={() => refreshParent('maintenance')}
+      >
+        <Link to="/maintenance">Maintenance</Link>
       </Menu.Item>
       {/*       <Menu.Item
         key="product-brands"

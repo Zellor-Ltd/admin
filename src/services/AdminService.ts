@@ -1,5 +1,6 @@
 import { message } from 'antd';
 import axios, { AxiosRequestConfig } from 'axios';
+import { AppSettings } from 'interfaces/AppSettings';
 import { Client } from 'interfaces/Client';
 import { Login } from 'interfaces/Login';
 
@@ -73,6 +74,11 @@ export const getClients = () => instance.get('v1/client');
 
 export const updateClient = (params: Client) =>
   instance.patch(`v1/client/${params.id}`, params);
+
+export const getSettings = () => instance.get('v1/settings');
+
+export const updateSettings = (params: AppSettings) =>
+  instance.patch('v1/settings', params);
 
 export const signInAs = async (id: string) => {
   return instance.get(`v1/auth/admin/signin-as/${id}`);
