@@ -54,8 +54,6 @@
     "web-vitals": "^1.0.1"
   },
   "scripts": {
-    "preinstall": "npm install --force",
-    "install": "npm install --force",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
