@@ -18,7 +18,7 @@ import { Client } from 'interfaces/Client';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { AppContext } from 'contexts/AppContext';
 import { Link, RouteComponentProps, useHistory } from 'react-router-dom';
-import { loginAsClient } from 'services/AdminService';
+import { signInAs } from 'services/AdminService';
 import ClientDetail from './ClientDetail';
 import scrollIntoView from 'scroll-into-view';
 import { useRequest } from 'hooks/useRequest';
@@ -70,6 +70,11 @@ const Clients: React.FC<RouteComponentProps> = ({ location }) => {
 
   useEffect(() => {
     fetch();
+    document.cookie.split(';').forEach(function (c) {
+      document.cookie = c
+        .replace(/^ +/, '')
+        .replace(/=.*/, '=;expires=' + new Date().toUTCString() + ';path=/');
+    });
   }, []);
 
   const fetch = async () => {
@@ -122,9 +127,10 @@ const Clients: React.FC<RouteComponentProps> = ({ location }) => {
     setDetails(false);
   };
 
-  const loginAs = (id: string) => {
-    const accessToken = loginAsClient(id);
-    document.cookie = `session=${accessToken}`;
+  const loginAs = async (id: string) => {
+    const { accessToken }: any = await signInAs(id);
+    document.cookie = `session=${accessToken}; Expires=1; Path=''; Secure; SameSite=None`;
+    //window.location.href = 'https://portaldev.zellor.com/videos';
   };
 
   const columns: ColumnsType<Client> = [
