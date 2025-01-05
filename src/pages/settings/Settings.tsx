@@ -1,25 +1,31 @@
-import { Col, PageHeader, Row } from 'antd';
+import { Col, PageHeader, Row, Switch } from 'antd';
 import { useRequest } from '../../hooks/useRequest';
 import { useEffect, useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { AppSettings } from 'interfaces/AppSettings';
 import { getSettings, updateSettings } from 'services/AdminService';
-import { SimpleSwitch } from 'components/SimpleSwitch';
 
 const Settings: React.FC<RouteComponentProps> = () => {
   const [loading, setLoading] = useState<boolean>(false);
-  const { doFetch, doRequest } = useRequest({ setLoading });
+  const { doRequest } = useRequest({ setLoading });
   const [appSettings, setAppSettings] = useState<AppSettings>({
+    id: '',
     underMaintenance: false,
   });
+  const toggled = appSettings.underMaintenance;
 
-  const handleToggleStatus = async (checked: boolean) => {
+  const toggleStatus = async (checked: boolean) => {
     try {
       setLoading(true);
       await doRequest(
-        async () => updateSettings({ underMaintenance: checked }),
+        async () =>
+          updateSettings({ ...appSettings, underMaintenance: checked }),
         `App settings update successful`
       );
+      setAppSettings((prev: AppSettings) => ({
+        ...prev,
+        underMaintenance: !prev.underMaintenance,
+      }));
     } catch (error: any) {
       setLoading(false);
     }
@@ -27,12 +33,16 @@ const Settings: React.FC<RouteComponentProps> = () => {
 
   useEffect(() => {
     const fetch = async () => {
-      const results: any = await doFetch(() => getSettings());
+      const results: any = await getSettings();
+      console.log(results);
       setAppSettings(results);
     };
 
     fetch();
-  }, [doFetch]);
+  }, []);
+  useEffect(() => {
+    console.log(toggled);
+  }, [toggled]);
 
   return (
     <>
@@ -46,12 +56,11 @@ const Settings: React.FC<RouteComponentProps> = () => {
             <Col span={12}>
               <Row justify="end">
                 <Col>
-                  <SimpleSwitch
+                  <Switch
+                    onChange={(toggled: boolean) => toggleStatus(toggled)}
+                    checked={toggled}
+                    loading={loading}
                     disabled={loading}
-                    toggled={appSettings.underMaintenance}
-                    handleSwitchChange={(toggled: boolean) =>
-                      handleToggleStatus(toggled)
-                    }
                   />
                 </Col>
               </Row>

@@ -78,7 +78,9 @@ export const updateClient = (params: Client) =>
 export const getSettings = () => instance.get('v1/settings');
 
 export const updateSettings = (params: AppSettings) =>
-  instance.patch('v1/settings', params);
+  instance.patch(`v1/settings/${params.id}`, {
+    underMaintenance: params.underMaintenance,
+  });
 
 export const signInAs = async (id: string) => {
   return instance.get(`v1/auth/admin/signin-as/${id}`);
