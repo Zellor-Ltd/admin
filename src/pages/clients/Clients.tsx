@@ -54,19 +54,6 @@ const Clients: React.FC<RouteComponentProps> = ({ location }) => {
     });
     setClients(filteredClients);
   }, [clientFilter]);
-  /* 
-  useEffect(() => {
-    if (!allClients.current) return;
-    const filteredClients: Client[] = [];
-    allClients.current.forEach((client: Client) => {
-      if (client.email)
-        if (
-          client.email.toLowerCase().includes(emailFilter?.toLowerCase() ?? '')
-        )
-          filteredClients.push(client);
-    });
-    setClients(filteredClients);
-  }, [emailFilter]); */
 
   useEffect(() => {
     fetch();
@@ -94,17 +81,6 @@ const Clients: React.FC<RouteComponentProps> = ({ location }) => {
       );
     }
   }, [details]);
-
-  /*   const deleteItem = async (id: string, index: number) => {
-    setLoading(true);
-    try {
-      await deleteClient(id);
-      setClients(prev => [...prev.slice(0, index), ...prev.slice(index + 1)]);
-    } catch (err) {
-      console.log(err);
-    }
-    setLoading(false);
-  }; */
 
   const editClient = (index: number, client?: Client) => {
     setLastViewedIndex(index);

@@ -34,15 +34,11 @@ const Settings: React.FC<RouteComponentProps> = () => {
   useEffect(() => {
     const fetch = async () => {
       const results: any = await getSettings();
-      console.log(results);
       setAppSettings(results);
     };
 
     fetch();
   }, []);
-  useEffect(() => {
-    console.log(toggled);
-  }, [toggled]);
 
   return (
     <>
