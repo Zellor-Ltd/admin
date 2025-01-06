@@ -30,7 +30,6 @@ const AppRoute: React.FC<any> = props => {
   if (
     !authenticated &&
     path !== '/login' &&
-    path !== '/sign-up' &&
     path !== '/verification' &&
     path !== '/forgot-password'
   )

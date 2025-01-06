@@ -1,7 +1,7 @@
 import React, { useMemo, useRef, useState } from 'react';
 import { Col, Image, Row, Select, Spin } from 'antd';
 import debounce from 'lodash/debounce';
-import { SelectOption } from '../../interfaces/SelectOption';
+import { SelectOption } from 'interfaces/SelectOption';
 
 interface DebounceSelectProps {
   fetcherFunction: (search: string) => any;
@@ -52,10 +52,7 @@ export const DebounceSelect: React.FC<DebounceSelectProps> = ({
                       <Col>{item?.shortDescription}</Col>
                       <Col>
                         {item.package?.length && (
-                          <Image
-                            height={25}
-                            src={item.thumbnailUrl}
-                          />
+                          <Image height={25} src={item.thumbnailUrl} />
                         )}
                       </Col>
                     </Row>

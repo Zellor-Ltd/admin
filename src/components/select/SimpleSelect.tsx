@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
-import { SelectOption } from '../../interfaces/SelectOption';
+import { SelectOption } from 'interfaces/SelectOption';
 import { Select } from 'antd';
 
 interface SimpleSelectProps {
@@ -32,7 +32,7 @@ const SimpleSelect: React.FC<SimpleSelectProps> = ({
   disabled,
   showSearch = true,
   className,
-  onSearch
+  onSearch,
 }) => {
   const [options, setOptions] = useState<SelectOption[]>([]);
   const [_selectedOption, _setSelectedOption] = useState<string | null>();

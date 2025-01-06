@@ -3,7 +3,6 @@ import {
   Button,
   Col,
   Dropdown,
-  Image,
   Layout,
   Menu,
   message,
@@ -11,7 +10,6 @@ import {
 } from 'antd';
 import ErrorBoundary from 'components/ErrorBoundary';
 import jwt from 'helpers/jwt';
-import { useBuildTarget } from 'hooks/useBuildTarget';
 import ErrorPage from 'pages/error/ErrorPage';
 import React, { useContext, useEffect, useState } from 'react';
 import { AppContext } from 'contexts/AppContext';
@@ -19,7 +17,6 @@ import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 import './AuthenticatedLayout.scss';
 import AdminSideMenu from './SideMenus/AdminSideMenu';
 import { DownOutlined } from '@ant-design/icons';
-import ClientMenu from './ClientMenu';
 
 const { Header, Sider, Content } = Layout;
 
@@ -64,17 +61,7 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
       });
   }, [isScrollable]);
 
-  const appName = useBuildTarget({
-    ADMIN: 'Disco Admin',
-    BRAND_MANAGER: (
-      <Image
-        width={150}
-        style={{ position: 'relative', inset: '-5px -10px' }}
-        src="/logowhite.svg"
-        preview={false}
-      />
-    ),
-  });
+  const appName = 'Portal Admin';
 
   const logout = () => {
     localStorage.clear();
@@ -95,15 +82,6 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
       <Menu.Item key="0" style={{ pointerEvents: 'none' }}>
         {getUserName()}
       </Menu.Item>
-      <Menu.Divider />
-      {useBuildTarget({
-        ADMIN: undefined,
-        BRAND_MANAGER: (
-          <Menu.Item key="1">
-            <Link to="/my-account">Account Details</Link>
-          </Menu.Item>
-        ),
-      })}
       <Menu.Divider />
       <Menu.Item key="3" onClick={logout}>
         Sign out
@@ -152,27 +130,11 @@ const AuthenticatedLayout: React.FC<RouteComponentProps> = props => {
         </Row>
       </Header>
       <Layout>
-        {useBuildTarget({
-          ADMIN: undefined,
-          BRAND_MANAGER: (
-            <Row style={{ width: '100%' }}>
-              <Col span={24}>
-                <ClientMenu />
-              </Col>
-            </Row>
-          ),
-        })}
-        {useBuildTarget({
-          ADMIN: (
-            <div className="sider-container">
-              <Sider breakpoint="lg" collapsedWidth="0">
-                <AdminSideMenu />
-              </Sider>
-            </div>
-          ),
-          BRAND_MANAGER: undefined,
-        })}
-
+        <div className="sider-container">
+          <Sider breakpoint="lg" collapsedWidth="0">
+            <AdminSideMenu />
+          </Sider>
+        </div>
         <Content className="site-layout-background" style={style}>
           <ErrorBoundary fallbackComponent={ErrorPage()}>
             {children}

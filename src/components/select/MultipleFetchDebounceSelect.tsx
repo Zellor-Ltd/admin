@@ -4,7 +4,7 @@ import { Select } from 'antd';
 import Spin from 'antd/es/spin';
 import 'antd/es/spin/style/css';
 import debounce from 'lodash/debounce';
-import { SelectOption } from '../../interfaces/SelectOption';
+import { SelectOption } from 'interfaces/SelectOption';
 
 interface MultipleFetchDebounceSelectProps {
   onInput: (search?: string, loadNextPage?: boolean) => any;

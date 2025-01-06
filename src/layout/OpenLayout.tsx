@@ -1,7 +1,6 @@
-import { Col, Image, Layout, Row } from 'antd';
+import { Col, Layout, Row } from 'antd';
 import './AuthenticatedLayout.scss';
 import { Header } from 'antd/lib/layout/layout';
-import { useBuildTarget } from 'hooks/useBuildTarget';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { AppContext } from 'contexts/AppContext';
 import { useContext } from 'react';
@@ -11,17 +10,7 @@ const OpenLayout: React.FC<RouteComponentProps> = props => {
   const { children } = props;
   const { isMobile } = useContext(AppContext);
 
-  const appName = useBuildTarget({
-    ADMIN: 'Disco Admin',
-    BRAND_MANAGER: (
-      <Image
-        width={150}
-        style={{ position: 'relative', inset: '-5px -10px' }}
-        src="/logowhite.svg"
-        preview={false}
-      />
-    ),
-  });
+  const appName = 'Portal Admin';
 
   return (
     <Layout style={{ height: '100vh' }}>

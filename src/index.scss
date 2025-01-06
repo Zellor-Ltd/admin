@@ -881,3 +881,8 @@ a,
 .mb-n2 {
   margin-bottom: -2rem;
 }
+
+.ant-layout-sider-zero-width-trigger,
+.ant-layout-sider-zero-width-trigger-left {
+  display: none;
+}

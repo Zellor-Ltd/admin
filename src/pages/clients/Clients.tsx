@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { EditOutlined, SearchOutlined } from '@ant-design/icons';
 import {
-  Avatar,
   Button,
   Col,
   Input,
