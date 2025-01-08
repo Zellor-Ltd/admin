@@ -82,6 +82,14 @@ export const updateSettings = (params: AppSettings) =>
     underMaintenance: params.underMaintenance,
   });
 
-export const signInAs = async (id: string) => {
+export const getToken = async (id: string) => {
   return instance.get(`v1/auth/admin/signin-as/${id}`);
 };
+
+export const signInAs = (params: { accessToken: string }) =>
+  axios
+    .create({
+      baseURL: 'http://localhost:5173/',
+      headers: { 'Content-Type': 'application/json' },
+    })
+    .post('api/admin-signin', params);
