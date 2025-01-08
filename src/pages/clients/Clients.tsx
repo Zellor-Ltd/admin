@@ -103,9 +103,7 @@ const Clients: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   const loginAs = async (id: string) => {
-    const { accessToken }: any = await signInAs(id);
-    document.cookie = `session=${accessToken}; Expires=1; Path=''; Secure; SameSite=None`;
-    //window.location.href = 'https://portaldev.zellor.com/videos';
+    window.location.href = `http://localhost:5173/auth/sign-in/${id}`;
   };
 
   const columns: ColumnsType<Client> = [
