@@ -17,7 +17,6 @@ import { Client } from 'interfaces/Client';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { AppContext } from 'contexts/AppContext';
 import { Link, RouteComponentProps, useHistory } from 'react-router-dom';
-import { getToken, signInAs } from 'services/AdminService';
 import ClientDetail from './ClientDetail';
 import scrollIntoView from 'scroll-into-view';
 import { useRequest } from 'hooks/useRequest';
@@ -53,15 +52,6 @@ const Clients: React.FC<RouteComponentProps> = ({ location }) => {
     });
     setClients(filteredClients);
   }, [clientFilter]);
-
-  useEffect(() => {
-    fetch();
-    document.cookie.split(';').forEach(function (c) {
-      document.cookie = c
-        .replace(/^ +/, '')
-        .replace(/=.*/, '=;expires=' + new Date().toUTCString() + ';path=/');
-    });
-  }, []);
 
   const fetch = async () => {
     const { results }: any = await doFetch(() => getClients());
@@ -103,12 +93,8 @@ const Clients: React.FC<RouteComponentProps> = ({ location }) => {
   };
 
   const loginAs = async (id: string) => {
-    const { accessToken }: any = await getToken(id);
-    const response = await signInAs({ accessToken: accessToken });
-    if (response.data.redirectTo)
-      window.location.href = response.data.redirectTo;
+    window.location.href = `https://portal.zellor.com/auth/admin-signin/${id}`;
   };
-
   const columns: ColumnsType<Client> = [
     {
       title: (
