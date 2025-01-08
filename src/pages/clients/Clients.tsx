@@ -53,6 +53,10 @@ const Clients: React.FC<RouteComponentProps> = ({ location }) => {
     setClients(filteredClients);
   }, [clientFilter]);
 
+  useEffect(() => {
+    fetch();
+  }, []);
+
   const fetch = async () => {
     const { results }: any = await doFetch(() => getClients());
     setClients(results);
