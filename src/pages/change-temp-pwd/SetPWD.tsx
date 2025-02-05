@@ -39,10 +39,10 @@ const SetPWD: React.FC<{}> = () => {
                   <Form.Item label="Email" name="email">
                     <Input allowClear placeholder="Email" />
                   </Form.Item>
-                  <Form.Item label="Old Password" name="oldPwd">
+                  <Form.Item label="Old Password" name="tempPassword">
                     <Input allowClear placeholder="Old Password" />
                   </Form.Item>
-                  <Form.Item label="New Password" name="newPwd">
+                  <Form.Item label="New Password" name="newPassword">
                     <Input allowClear placeholder="New Password" />
                   </Form.Item>
                 </Col>
