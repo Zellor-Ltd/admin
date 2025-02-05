@@ -1,6 +1,7 @@
 import { message } from 'antd';
 import axios, { AxiosRequestConfig } from 'axios';
 import { AppSettings } from 'interfaces/AppSettings';
+import { SetPwd } from 'interfaces/SetPwd';
 import { Client } from 'interfaces/Client';
 import { Login } from 'interfaces/Login';
 
@@ -85,3 +86,6 @@ export const updateSettings = (params: AppSettings) =>
 export const getToken = async (id: string) => {
   return instance.get(`v1/auth/admin/signin-as/${id}`);
 };
+
+export const setPwd = (params: SetPwd) =>
+  instance.post('v1/auth/change-temp-password', params);
