@@ -6,6 +6,7 @@ import AppRoute from './AppRoute';
 import AuthenticatedLayout from 'layout/AuthenticatedLayout';
 import OpenLayout from 'layout/OpenLayout';
 import ForgotPassword from 'pages/login/ForgotPassword';
+import SetPWD from 'pages/change-temp-pwd/SetPWD';
 
 function AdminRoutes() {
   return (
@@ -25,6 +26,11 @@ function AdminRoutes() {
       <AppRoute
         path="/clients"
         component={Brands}
+        layout={AuthenticatedLayout}
+      />
+      <AppRoute
+        path="/change-temp-password"
+        component={SetPWD}
         layout={AuthenticatedLayout}
       />
       <AppRoute

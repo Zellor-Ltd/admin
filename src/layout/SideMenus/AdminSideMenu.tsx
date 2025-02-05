@@ -1,4 +1,8 @@
-import { SettingOutlined, ShopOutlined } from '@ant-design/icons';
+import {
+  SettingOutlined,
+  ShopOutlined,
+  SmallDashOutlined,
+} from '@ant-design/icons';
 import { Menu } from 'antd';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 
@@ -18,6 +22,13 @@ const AdminSideMenu = () => {
         onClick={() => refreshParent('clients')}
       >
         <Link to="/clients">Clients</Link>
+      </Menu.Item>
+      <Menu.Item
+        key="change-temp-password"
+        icon={<SmallDashOutlined />}
+        onClick={() => refreshParent('change-temp-password')}
+      >
+        <Link to="/change-temp-password">Change Temp PWD</Link>
       </Menu.Item>
       <Menu.Item
         key="app-settings"
