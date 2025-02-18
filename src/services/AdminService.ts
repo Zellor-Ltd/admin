@@ -4,6 +4,7 @@ import { AppSettings } from 'interfaces/AppSettings';
 import { SetPwd } from 'interfaces/SetPwd';
 import { Client } from 'interfaces/Client';
 import { Login } from 'interfaces/Login';
+import { Plan } from 'interfaces/Plan';
 
 const MAX_STACKED_ERRORS = 1;
 const ERROR_MESSAGE_DURATION = 3000;
@@ -75,6 +76,16 @@ export const getClients = () => instance.get('v1/client');
 
 export const updateClient = (params: Client) =>
   instance.patch(`v1/client/${params.id}`, params);
+
+export const getPlans = () => instance.get('v1/plan');
+
+export const createPlan = (params: Plan) =>
+  instance.post(`v1/plan/${params.id}`, params);
+
+export const updatePlan = (params: Plan) =>
+  instance.patch(`v1/plan/${params.id}`, params);
+
+export const deletePlan = (id: string) => instance.delete(`v1/plan/${id}`);
 
 export const getSettings = () => instance.get('v1/settings');
 

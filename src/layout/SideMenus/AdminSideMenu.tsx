@@ -1,4 +1,5 @@
 import {
+  CreditCardOutlined,
   SettingOutlined,
   ShopOutlined,
   SmallDashOutlined,
@@ -22,6 +23,13 @@ const AdminSideMenu = () => {
         onClick={() => refreshParent('clients')}
       >
         <Link to="/clients">Clients</Link>
+      </Menu.Item>
+      <Menu.Item
+        key="plans"
+        icon={<CreditCardOutlined />}
+        onClick={() => refreshParent('plans')}
+      >
+        <Link to="/plans">Plans</Link>
       </Menu.Item>
       <Menu.Item
         key="change-temp-password"
