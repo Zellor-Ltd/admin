@@ -11,29 +11,24 @@ import {
   Select,
   Switch,
 } from 'antd';
-import { useRef } from 'react';
+import { useContext, useRef } from 'react';
 import React from 'react';
 import { TwitterPicker } from 'react-color';
 import scrollIntoView from 'scroll-into-view';
 import { useSelector } from 'react-redux';
-import { Client } from 'interfaces/Client';
-import { updateClient } from 'services/AdminService';
-interface ClientDetailProps {
-  onSave?: (record: Client) => void;
+import { Plan } from 'interfaces/Plan';
+import { updatePlan } from 'services/AdminService';
+import { AppContext } from 'contexts/AppContext';
+interface PlanDetailProps {
+  onSave?: (record: Plan) => void;
   onCancel?: () => void;
-  client?: Client;
+  plan?: Plan;
 }
 
-const PlanDetail: React.FC<ClientDetailProps> = ({
-  client,
-  onSave,
-  onCancel,
-}) => {
+const PlanDetail: React.FC<PlanDetailProps> = ({ plan, onSave, onCancel }) => {
   const [form] = Form.useForm();
   const toFocus = useRef<any>();
-  const {
-    settings: { plan = [] },
-  } = useSelector((state: any) => state.settings);
+  const { isMobile } = useContext(AppContext);
 
   const handleFinishFailed = (errorFields: any[]) => {
     message.error('Error: ' + errorFields[0].errors[0]);
@@ -47,16 +42,16 @@ const PlanDetail: React.FC<ClientDetailProps> = ({
 
   const onFinish = async () => {
     try {
-      const clientForm = form.getFieldsValue(true);
-      if (clientForm.importStrategy) clientForm.importStartegy = 'variants';
-      else clientForm.importStartegy = 'unique';
+      const planForm = form.getFieldsValue(true);
+      if (planForm.importStrategy) planForm.importStartegy = 'variants';
+      else planForm.importStartegy = 'unique';
 
-      const response: any = await updateClient(clientForm);
+      const response: any = await updatePlan(planForm);
 
       message.success('Register updated with success.');
-      clientForm.id
-        ? onSave?.(clientForm)
-        : onSave?.({ ...clientForm, id: response.id });
+      planForm.id
+        ? onSave?.(planForm)
+        : onSave?.({ ...planForm, id: response.id });
     } catch (error: any) {
       message.error('Error: ' + error.error);
     }
@@ -64,206 +59,73 @@ const PlanDetail: React.FC<ClientDetailProps> = ({
 
   return (
     <>
-      <PageHeader title={client ? 'Plan Update' : 'New Plan'} />
+      <PageHeader title={plan ? 'Plan Update' : 'New Plan'} />
       <Form.Provider>
         <Form
-          name="clientForm"
+          name="planForm"
           layout="vertical"
           form={form}
-          initialValues={{
-            ...client,
-            limitOfVideos: client?.limitOfVideos ?? 20,
-          }}
+          initialValues={plan}
+          style={
+            isMobile
+              ? { position: 'relative', right: '.625rem', top: '.5rem' }
+              : { marginLeft: '1.5rem' }
+          }
           onFinish={onFinish}
           onFinishFailed={({ errorFields }) => handleFinishFailed(errorFields)}
         >
           <Row gutter={8}>
             <Col lg={12} xs={24}>
-              <Row gutter={8}>
-                {typeof client?.isShopifyCustomer !== 'undefined' && (
-                  <>
-                    <Col span={12}>
-                      <Form.Item label="Client Name" name="name">
-                        <Input allowClear placeholder="Client Name" />
-                      </Form.Item>
-                    </Col>
-                    <Col span={12} className="mt-19">
-                      <Form.Item>
-                        <Input
-                          disabled
-                          value={
-                            client?.isShopifyCustomer
-                              ? 'Shopify'
-                              : 'Not Shopify'
-                          }
-                        />
-                      </Form.Item>
-                    </Col>
-                  </>
-                )}
-                {typeof client?.isShopifyCustomer === 'undefined' && (
-                  <>
-                    <Col span={24}>
-                      <Form.Item label="Client Name" name="name">
-                        <Input allowClear placeholder="Client Name" />
-                      </Form.Item>
-                    </Col>
-                  </>
-                )}
-                {/* 
-                <Col span={24}>
-                  <Form.Item label="E-mail" name="email">
-                    <Input allowClear placeholder="E-mail" />
-                  </Form.Item>
-                </Col> */}
-                {/* 
-                <Col span={24}>
-                  <div className="ant-form-item">
-                    <p>Store Details</p>
-                    <Card
-                      style={{
-                        width: '100%',
-                        borderRadius: '5px',
-                        background: '#d3d3d32e',
-                      }}
-                    >
-                      <Form.Item label="First Name" name="marketingFirstName">
-                        <Input allowClear placeholder="First Name" />
-                      </Form.Item>
-                      <Form.Item label="Surname" name="marketingSurname">
-                        <Input allowClear placeholder="Surame" />
-                      </Form.Item>
-                      <Form.Item label="Email Address" name="marketingEmail">
-                        <Input allowClear placeholder="Email Address" />
-                      </Form.Item>
-                    </Card>
-                  </div>
-                </Col> */}
-                <Col span={24}>
-                  <Form.Item label="Plan" name="plan" shouldUpdate>
-                    <Select
-                      placeholder="Select a Plan"
-                      allowClear
-                      showSearch
-                      disabled
-                      filterOption={(input: string, option: any) => {
-                        return option?.label
-                          ?.toUpperCase()
-                          .includes(input?.toUpperCase());
-                      }}
-                    >
-                      <Select.Option key="Free" value="Free" label="Free">
-                        Free
-                      </Select.Option>
-                      <Select.Option
-                        key="Standard"
-                        value="Standard"
-                        label="Standard"
-                      >
-                        Standard
-                      </Select.Option>
-                      <Select.Option
-                        key="Professional"
-                        value="Professional"
-                        label="Professional"
-                      >
-                        Professional
-                      </Select.Option>
-                    </Select>
-                  </Form.Item>
-                </Col>
-              </Row>
-            </Col>
-          </Row>
-          <Row gutter={8}>
-            <Col lg={12} xs={24}>
               <Col span={24}>
-                <Form.Item
-                  name="videoUploads"
-                  label="Max Videos"
-                  /* rules={[
-                    {
-                      required: true,
-                      message: 'Max Videos is required.',
-                    },
-                  ]} */
-                >
-                  <InputNumber min={0} disabled placeholder="Select a number" />
+                <Form.Item label="Plan Name" name="name">
+                  <Input allowClear placeholder="Plan Name" />
+                </Form.Item>
+              </Col>
+              <Col span={24}>
+                <Form.Item name="users" label="Users">
+                  <InputNumber min={0} placeholder="Select a number" />
+                </Form.Item>
+              </Col>
+              <Col span={24}>
+                <Form.Item name="priceMonthly" label="Price (Monthly)">
+                  <InputNumber min={0} placeholder="Select a number" />
+                </Form.Item>
+              </Col>
+              <Col span={24}>
+                <Form.Item name="priceYearly" label="Price (Yearly)">
+                  <InputNumber min={0} placeholder="Select a number" />
+                </Form.Item>
+              </Col>
+              <Col span={24}>
+                <Form.Item name="videoUploads" label="Max Videos">
+                  <InputNumber min={0} placeholder="Select a number" />
+                </Form.Item>
+              </Col>
+              <Col span={24}>
+                <Form.Item name="videoPlaysMonth" label="Max Video Plays/month">
+                  <InputNumber min={0} placeholder="Select a number" />
                 </Form.Item>
               </Col>
               <Col span={24}>
                 <Form.Item
-                  name="videoPlaysMonth"
-                  label="Max Video Plays/month"
-                  /* rules={[
-                    {
-                      required: true,
-                      message: 'Max Video Plays/month is required.',
-                    },
-                  ]} */
-                >
-                  <InputNumber min={0} disabled placeholder="Select a number" />
-                </Form.Item>
-              </Col>
-              <Col span={24}>
-                <Form.Item
-                  name="showImportTab"
-                  label="Show Import tab"
+                  name="showWatermark"
+                  label="Show Watermark"
                   valuePropName="checked"
                 >
                   <Switch />
                 </Form.Item>
               </Col>
-              <Col span={24}>
-                <Form.Item label="Currency" name="currencyCode" shouldUpdate>
-                  <Select
-                    placeholder="Select a Currency"
-                    allowClear
-                    showSearch
-                    filterOption={(input: string, option: any) => {
-                      return option?.label
-                        ?.toUpperCase()
-                        .includes(input?.toUpperCase());
-                    }}
-                  >
-                    <Select.Option key="USD" value="USD" label="USD">
-                      USD
-                    </Select.Option>
-
-                    <Select.Option key="EUR" value="EUR" label="EUR">
-                      EUR
-                    </Select.Option>
-
-                    <Select.Option key="GBP" value="GBP" label="GBP">
-                      GBP
-                    </Select.Option>
-                  </Select>
-                </Form.Item>
-              </Col>
-              <Col span={24}>
-                <Form.Item
-                  name="importStrategy"
-                  label="Import Variants"
-                  valuePropName="checked"
-                >
-                  <Switch />
-                </Form.Item>
-              </Col>
-              <Col span={24}>
-                <Form.Item
-                  name="shopifyShopUrl"
-                  label="Shop URL (Template $DISCOID$)"
-                >
-                  <Input
-                    allowClear
-                    id="shopifyShopUrl"
-                    placeholder="Shop URL"
-                  />
-                </Form.Item>
-              </Col>
             </Col>
           </Row>
-          <Row gutter={8} justify="end">
+          <Row
+            gutter={8}
+            justify="end"
+            style={{
+              position: isMobile ? 'fixed' : 'absolute',
+              bottom: '1rem',
+              right: '2rem',
+            }}
+          >
             <Col>
               <Button type="default" onClick={() => onCancel?.()}>
                 Cancel
@@ -282,25 +144,3 @@ const PlanDetail: React.FC<ClientDetailProps> = ({
 };
 
 export default PlanDetail;
-
-const ColorPicker: React.FC<any> = props => {
-  const { onChange } = props;
-
-  const _onChange = input => {
-    onChange(input);
-    for (let i = 2; i < 12; i += 2) {
-      if (document.getElementById(`rc-editable-input-${i}`)) {
-        var picker: any = document.getElementById(`rc-editable-input-${i}`);
-        picker.value = input;
-        break;
-      }
-    }
-  };
-
-  return (
-    <TwitterPicker
-      width="100%"
-      onChangeComplete={(value: any) => _onChange(value.hex)}
-    />
-  );
-};

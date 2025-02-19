@@ -1,10 +1,17 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { EditOutlined, SearchOutlined } from '@ant-design/icons';
+import {
+  CheckOutlined,
+  CloseOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  SearchOutlined,
+} from '@ant-design/icons';
 import {
   Button,
   Col,
   Input,
   PageHeader,
+  Popconfirm,
   Row,
   Table,
   Tooltip,
@@ -12,25 +19,24 @@ import {
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import CopyValueToClipboard from 'components/CopyValueToClipboard';
-import { adminClientId } from 'helpers/constants';
-import { Client } from 'interfaces/Client';
+import { Plan } from 'interfaces/Plan';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { AppContext } from 'contexts/AppContext';
 import { Link, RouteComponentProps, useHistory } from 'react-router-dom';
-import ClientDetail from './PlanDetail';
+import PlanDetail from './PlanDetail';
 import scrollIntoView from 'scroll-into-view';
 import { useRequest } from 'hooks/useRequest';
-import { getClients, getPlans } from 'services/AdminService';
+import { deletePlan, getPlans } from 'services/AdminService';
 
 const Plans: React.FC<RouteComponentProps> = ({ location }) => {
   const [details, setDetails] = useState<boolean>(false);
   const [lastViewedIndex, setLastViewedIndex] = useState<number>(-1);
   const [loading, setLoading] = useState<boolean>(false);
   const { doFetch } = useRequest({ setLoading });
-  const [clients, setClients] = useState<Client[]>([]);
-  const allClients = useRef<Client[]>();
-  const [clientFilter, setClientFilter] = useState<string>();
-  const [currentClient, setCurrentClient] = useState<Client>();
+  const [plans, setPlans] = useState<Plan[]>([]);
+  const allPlans = useRef<Plan[]>();
+  const [planFilter, setPlanFilter] = useState<string>();
+  const [currentPlan, setCurrentPlan] = useState<Plan>();
   const { isMobile, setIsScrollable } = useContext(AppContext);
   const history = useHistory();
 
@@ -41,17 +47,15 @@ const Plans: React.FC<RouteComponentProps> = ({ location }) => {
   });
 
   useEffect(() => {
-    if (!allClients.current) return;
-    const filteredClients: Client[] = [];
-    allClients.current.forEach((client: Client) => {
-      if (client.name)
-        if (
-          client.name.toLowerCase().includes(clientFilter?.toLowerCase() ?? '')
-        )
-          filteredClients.push(client);
+    if (!allPlans.current) return;
+    const filteredPlans: Plan[] = [];
+    allPlans.current.forEach((plan: Plan) => {
+      if (plan.name)
+        if (plan.name.toLowerCase().includes(planFilter?.toLowerCase() ?? ''))
+          filteredPlans.push(plan);
     });
-    setClients(filteredClients);
-  }, [clientFilter]);
+    setPlans(filteredPlans);
+  }, [planFilter]);
 
   useEffect(() => {
     fetch();
@@ -59,8 +63,8 @@ const Plans: React.FC<RouteComponentProps> = ({ location }) => {
 
   const fetch = async () => {
     const { results }: any = await doFetch(() => getPlans());
-    setClients(results);
-    if (results) allClients.current = results;
+    setPlans(results);
+    if (results) allPlans.current = results;
   };
 
   useEffect(() => {
@@ -75,31 +79,39 @@ const Plans: React.FC<RouteComponentProps> = ({ location }) => {
     }
   }, [details]);
 
-  const editClient = (index: number, client?: Client) => {
+  const editPlan = (index: number, plan?: Plan) => {
     setLastViewedIndex(index);
-    setCurrentClient(client);
+    setCurrentPlan(plan);
     setDetails(true);
     history.push(window.location.pathname);
   };
 
-  const refreshItem = (record: Client) => {
-    clients[lastViewedIndex] = record;
-    setClients([...clients]);
+  const refreshItem = (record: Plan) => {
+    plans[lastViewedIndex] = record;
+    setPlans([...plans]);
   };
 
-  const onSaveClient = (record: Client) => {
+  const savePlan = (record: Plan) => {
     refreshItem(record);
     setDetails(false);
   };
 
-  const onCancelClient = () => {
+  const cancelPlan = () => {
     setDetails(false);
   };
 
-  const loginAs = async (id: string) => {
-    window.location.href = `https://portal.zellor.com/auth/admin-signin/${id}`;
+  const deleteItem = async (id: string, index: number) => {
+    setLoading(true);
+    try {
+      await deletePlan(id);
+      setPlans(prev => [...prev.slice(0, index), ...prev.slice(index + 1)]);
+    } catch (err) {
+      console.log(err);
+    }
+    setLoading(false);
   };
-  const columns: ColumnsType<Client> = [
+
+  const columns: ColumnsType<Plan> = [
     {
       title: (
         <div style={{ display: 'grid', placeItems: 'stretch' }}>
@@ -116,7 +128,7 @@ const Plans: React.FC<RouteComponentProps> = ({ location }) => {
       ),
       dataIndex: 'id',
       width: '6%',
-      render: (_, record: Client) => (
+      render: (_, record: Plan) => (
         <CopyValueToClipboard tooltipText="Copy ID" value={record.id} />
       ),
       align: 'center',
@@ -131,72 +143,16 @@ const Plans: React.FC<RouteComponentProps> = ({ location }) => {
               whiteSpace: 'nowrap',
             }}
           >
-            <Tooltip title="Client Name">Client Name</Tooltip>
+            <Tooltip title=" Name"> Name</Tooltip>
           </div>
         </div>
       ),
       dataIndex: 'name',
       width: '15%',
-      render: (value: string, record: Client, index: number) => (
-        <Link to={location.pathname} onClick={() => editClient(index, record)}>
-          {record.id !== adminClientId ? (
-            value
-          ) : (
-            <b style={{ color: 'lightcoral' }}>{value}</b>
-          )}
-        </Link>
-      ),
       sorter: (a, b) => {
         if (a.name && b.name) return a.name.localeCompare(b.name);
         else if (a.name) return 1;
         else if (b.name) return -1;
-        else return 0;
-      },
-    } /* 
-    {
-      title: (
-        <div style={{ display: 'grid', placeItems: 'stretch' }}>
-          <div
-            style={{
-              textOverflow: 'ellipsis',
-              overflow: 'hidden',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            <Tooltip title="Client Email">Client Email</Tooltip>
-          </div>
-        </div>
-      ),
-      dataIndex: 'email',
-      width: '15%',
-      sorter: (a, b) => {
-        if (a.email && b.email) return a.email.localeCompare(b.email);
-        else if (a.email) return 1;
-        else if (b.email) return -1;
-        else return 0;
-      },
-    }, */,
-    {
-      title: (
-        <div style={{ display: 'grid', placeItems: 'stretch' }}>
-          <div
-            style={{
-              textOverflow: 'ellipsis',
-              overflow: 'hidden',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            <Tooltip title="Shop URL">Shop URL</Tooltip>
-          </div>
-        </div>
-      ),
-      dataIndex: 'shopifyShopUrl',
-      width: '15%',
-      sorter: (a, b) => {
-        if (a.shopifyShopUrl && b.shopifyShopUrl)
-          return a.shopifyShopUrl.localeCompare(b.shopifyShopUrl);
-        else if (a.shopifyShopUrl) return 1;
-        else if (b.shopifyShopUrl) return -1;
         else return 0;
       },
     },
@@ -210,17 +166,143 @@ const Plans: React.FC<RouteComponentProps> = ({ location }) => {
               whiteSpace: 'nowrap',
             }}
           >
-            <Tooltip title="Login as">Login as</Tooltip>
+            <Tooltip title="Users">Users</Tooltip>
           </div>
         </div>
       ),
+      dataIndex: 'users',
       width: '10%',
-      align: 'center',
-      render: (_, record: Client, index: number) => (
-        <Button key={`item_${index}`} onClick={() => loginAs(record.id)}>
-          Login as
-        </Button>
+      sorter: (a, b): any => {
+        if (a.users && b.users) return a.users - b.users;
+        else if (a.users) return -1;
+        else if (b.users) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Price (Monthly)">Price (Monthly)</Tooltip>
+          </div>
+        </div>
       ),
+      dataIndex: 'priceMonthly',
+      width: '10%',
+      sorter: (a, b): any => {
+        if (a.priceMonthly && b.priceMonthly)
+          return a.priceMonthly - b.priceMonthly;
+        else if (a.priceMonthly) return -1;
+        else if (b.priceMonthly) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Price (Yearly)">Price (Yearly)</Tooltip>
+          </div>
+        </div>
+      ),
+      dataIndex: 'priceYearly',
+      width: '10%',
+      sorter: (a, b): any => {
+        if (a.priceYearly && b.priceYearly)
+          return a.priceYearly - b.priceYearly;
+        else if (a.priceYearly) return -1;
+        else if (b.priceYearly) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Video Uploads">Video Uploads</Tooltip>
+          </div>
+        </div>
+      ),
+      dataIndex: 'videoUploads',
+      width: '10%',
+      sorter: (a, b): any => {
+        if (a.videoUploads && b.videoUploads)
+          return a.videoUploads - b.videoUploads;
+        else if (a.videoUploads) return -1;
+        else if (b.videoUploads) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Video Plays/Month">Video Plays/Month</Tooltip>
+          </div>
+        </div>
+      ),
+      dataIndex: 'videoPlaysMonth',
+      width: '10%',
+      sorter: (a, b): any => {
+        if (a.videoPlaysMonth && b.videoPlaysMonth)
+          return a.videoPlaysMonth - b.videoPlaysMonth;
+        else if (a.videoPlaysMonth) return -1;
+        else if (b.videoPlaysMonth) return 1;
+        else return 0;
+      },
+    },
+    {
+      title: (
+        <div style={{ display: 'grid', placeItems: 'stretch' }}>
+          <div
+            style={{
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <Tooltip title="Show Watermark">Show Watermark</Tooltip>
+          </div>
+        </div>
+      ),
+      dataIndex: 'showWatermark',
+      width: '15%',
+      align: 'center',
+      render: (value: boolean) => (
+        <div style={{ color: value ? 'green' : 'red' }}>
+          {value ? <CheckOutlined /> : <CloseOutlined />}
+        </div>
+      ),
+      sorter: (a, b): any => {
+        if (a.showWatermark && b.showWatermark) return 0;
+        else if (a.showWatermark) return -1;
+        else if (b.showWatermark) return 1;
+        else return 0;
+      },
     },
     {
       title: (
@@ -237,28 +319,23 @@ const Plans: React.FC<RouteComponentProps> = ({ location }) => {
         </div>
       ),
       key: 'action',
-      width: '15%',
-      align: 'right',
-      render: (_, record: Client, index: number) => (
+      width: '10%',
+      align: 'center',
+      render: (_, record: Plan, index: number) => (
         <>
-          <Link
-            to={location.pathname}
-            onClick={() => editClient(index, record)}
-          >
+          <Link to={location.pathname} onClick={() => editPlan(index, record)}>
             <EditOutlined />
           </Link>
-          {/* {record.id !== adminClientId && (
-            <Popconfirm
-              title="Are you sure？"
-              okText="Yes"
-              cancelText="No"
-              onConfirm={() => deleteItem(record.id, index)}
-            >
-              <Button type="link" style={{ padding: 0, margin: 6 }}>
-                <DeleteOutlined />
-              </Button>
-            </Popconfirm>
-          )} */}
+          <Popconfirm
+            title="Are you sure？"
+            okText="Yes"
+            cancelText="No"
+            onConfirm={() => deleteItem(record.id, index)}
+          >
+            <Button type="link" style={{ padding: 0, margin: 6 }}>
+              <DeleteOutlined />
+            </Button>
+          </Popconfirm>
         </>
       ),
     },
@@ -280,7 +357,7 @@ const Plans: React.FC<RouteComponentProps> = ({ location }) => {
               <Button
                 key="1"
                 className={isMobile ? 'mt-05' : ''}
-                onClick={() => editClient(clients.length)}
+                onClick={() => editPlan(plans.length)}
               >
                 New Item
               </Button>,
@@ -294,7 +371,7 @@ const Plans: React.FC<RouteComponentProps> = ({ location }) => {
               <Input
                 allowClear
                 disabled={loading}
-                onChange={event => setClientFilter(event.target.value)}
+                onChange={event => setPlanFilter(event.target.value)}
                 placeholder="Search by Name"
                 suffix={<SearchOutlined />}
               />
@@ -319,7 +396,7 @@ const Plans: React.FC<RouteComponentProps> = ({ location }) => {
               rowClassName={(_, index) => `scrollable-row-${index}`}
               rowKey="id"
               columns={columns}
-              dataSource={clients}
+              dataSource={plans}
               loading={loading}
               pagination={false}
             />
@@ -328,10 +405,10 @@ const Plans: React.FC<RouteComponentProps> = ({ location }) => {
       )}
       {details && (
         <div style={{ overflow: 'scroll', height: '100%' }}>
-          <ClientDetail
-            onSave={onSaveClient}
-            onCancel={onCancelClient}
-            client={currentClient as Client}
+          <PlanDetail
+            onSave={savePlan}
+            onCancel={cancelPlan}
+            plan={currentPlan as Plan}
           />
         </div>
       )}
