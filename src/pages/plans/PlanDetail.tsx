@@ -17,7 +17,7 @@ import { TwitterPicker } from 'react-color';
 import scrollIntoView from 'scroll-into-view';
 import { useSelector } from 'react-redux';
 import { Plan } from 'interfaces/Plan';
-import { updatePlan } from 'services/AdminService';
+import { createPlan, updatePlan } from 'services/AdminService';
 import { AppContext } from 'contexts/AppContext';
 interface PlanDetailProps {
   onSave?: (record: Plan) => void;
@@ -46,7 +46,9 @@ const PlanDetail: React.FC<PlanDetailProps> = ({ plan, onSave, onCancel }) => {
       if (planForm.importStrategy) planForm.importStartegy = 'variants';
       else planForm.importStartegy = 'unique';
 
-      const response: any = await updatePlan(planForm);
+      const response: any = (await plan)
+        ? updatePlan(planForm)
+        : createPlan(planForm);
 
       message.success('Register updated with success.');
       planForm.id
