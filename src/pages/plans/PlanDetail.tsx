@@ -42,6 +42,10 @@ const PlanDetail: React.FC<PlanDetailProps> = ({ plan, onSave, onCancel }) => {
       const planForm = form.getFieldsValue(true);
       if (!planForm.showWatermark) planForm.showWatermark = false;
       planForm.key = planForm.name.toLowerCase();
+      if (typeof planForm.priceMonthly === 'string')
+        planForm.priceMonthly = Number(planForm.priceMonthly);
+      if (typeof planForm.priceYearly === 'string')
+        planForm.priceYearly = Number(planForm.priceYearly);
 
       const response: any = plan
         ? await updatePlan(planForm)

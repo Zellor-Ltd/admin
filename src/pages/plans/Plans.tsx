@@ -10,6 +10,7 @@ import {
   Button,
   Col,
   Input,
+  message,
   PageHeader,
   Popconfirm,
   Row,
@@ -90,9 +91,6 @@ const Plans: React.FC<RouteComponentProps> = ({ location }) => {
     plans[lastViewedIndex] = record;
     setPlans([...plans]);
   };
-  /*   useEffect(() => {
-    console.log(plans);
-  }, [plans]); */
 
   const savePlan = (record: Plan) => {
     console.log(record);
@@ -107,10 +105,12 @@ const Plans: React.FC<RouteComponentProps> = ({ location }) => {
   const deleteItem = async (id: string, index: number) => {
     setLoading(true);
     try {
-      await deletePlan(id);
+      const response: any = await deletePlan(id);
       setPlans(prev => [...prev.slice(0, index), ...prev.slice(index + 1)]);
+      if (response.success) message.success('Register deleted with success.');
     } catch (err) {
       console.log(err);
+      message.error('Error: ' + err);
     }
     setLoading(false);
   };
@@ -380,19 +380,6 @@ const Plans: React.FC<RouteComponentProps> = ({ location }) => {
                 suffix={<SearchOutlined />}
               />
             </Col>
-            {/* 
-            <Col lg={4} xs={24}>
-              <Typography.Title level={5} title="Search">
-                Email
-              </Typography.Title>
-              <Input
-                allowClear
-                disabled={loading}
-                onChange={event => setEmailFilter(event.target.value)}
-                placeholder="Search by Email"
-                suffix={<SearchOutlined />}
-              />
-            </Col> */}
           </Row>
           <div className="custom-table">
             <Table
