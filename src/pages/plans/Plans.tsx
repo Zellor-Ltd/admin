@@ -90,8 +90,12 @@ const Plans: React.FC<RouteComponentProps> = ({ location }) => {
     plans[lastViewedIndex] = record;
     setPlans([...plans]);
   };
+  /*   useEffect(() => {
+    console.log(plans);
+  }, [plans]); */
 
   const savePlan = (record: Plan) => {
+    console.log(record);
     refreshItem(record);
     setDetails(false);
   };

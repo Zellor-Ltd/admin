@@ -8,14 +8,11 @@ import {
   message,
   PageHeader,
   Row,
-  Select,
   Switch,
 } from 'antd';
 import { useContext, useRef } from 'react';
 import React from 'react';
-import { TwitterPicker } from 'react-color';
 import scrollIntoView from 'scroll-into-view';
-import { useSelector } from 'react-redux';
 import { Plan } from 'interfaces/Plan';
 import { createPlan, updatePlan } from 'services/AdminService';
 import { AppContext } from 'contexts/AppContext';
@@ -43,12 +40,12 @@ const PlanDetail: React.FC<PlanDetailProps> = ({ plan, onSave, onCancel }) => {
   const onFinish = async () => {
     try {
       const planForm = form.getFieldsValue(true);
-      if (planForm.importStrategy) planForm.importStartegy = 'variants';
-      else planForm.importStartegy = 'unique';
+      if (!planForm.showWatermark) planForm.showWatermark = false;
+      planForm.key = planForm.name.toLowerCase();
 
-      const response: any = (await plan)
-        ? updatePlan(planForm)
-        : createPlan(planForm);
+      const response: any = plan
+        ? await updatePlan(planForm)
+        : await createPlan(planForm);
 
       message.success('Register updated with success.');
       planForm.id
@@ -79,32 +76,36 @@ const PlanDetail: React.FC<PlanDetailProps> = ({ plan, onSave, onCancel }) => {
           <Row gutter={8}>
             <Col lg={12} xs={24}>
               <Col span={24}>
-                <Form.Item label="Plan Name" name="name">
+                <Form.Item label="Plan Name" required name="name">
                   <Input allowClear placeholder="Plan Name" />
                 </Form.Item>
               </Col>
               <Col span={24}>
-                <Form.Item name="users" label="Users">
+                <Form.Item name="users" required label="Users">
                   <InputNumber min={0} placeholder="Select a number" />
                 </Form.Item>
               </Col>
               <Col span={24}>
-                <Form.Item name="priceMonthly" label="Price (Monthly)">
+                <Form.Item name="priceMonthly" required label="Price (Monthly)">
                   <InputNumber min={0} placeholder="Select a number" />
                 </Form.Item>
               </Col>
               <Col span={24}>
-                <Form.Item name="priceYearly" label="Price (Yearly)">
+                <Form.Item name="priceYearly" required label="Price (Yearly)">
                   <InputNumber min={0} placeholder="Select a number" />
                 </Form.Item>
               </Col>
               <Col span={24}>
-                <Form.Item name="videoUploads" label="Max Videos">
+                <Form.Item name="videoUploads" required label="Max Videos">
                   <InputNumber min={0} placeholder="Select a number" />
                 </Form.Item>
               </Col>
               <Col span={24}>
-                <Form.Item name="videoPlaysMonth" label="Max Video Plays/month">
+                <Form.Item
+                  name="videoPlaysMonth"
+                  required
+                  label="Max Video Plays/month"
+                >
                   <InputNumber min={0} placeholder="Select a number" />
                 </Form.Item>
               </Col>

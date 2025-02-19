@@ -79,11 +79,12 @@ export const updateClient = (params: Client) =>
 
 export const getPlans = () => instance.get('v1/plan');
 
-export const createPlan = (params: Plan) =>
-  instance.post(`v1/plan/${params.id}`, params);
+export const createPlan = (params: Plan) => instance.post(`v1/plan`, params);
 
-export const updatePlan = (params: Plan) =>
+export const updatePlan = (params: Plan) => {
+  console.log(params);
   instance.patch(`v1/plan/${params.id}`, params);
+};
 
 export const deletePlan = (id: string) => instance.delete(`v1/plan/${id}`);
 

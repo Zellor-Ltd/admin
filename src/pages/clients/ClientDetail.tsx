@@ -13,9 +13,7 @@ import {
 } from 'antd';
 import { useRef } from 'react';
 import React from 'react';
-import { TwitterPicker } from 'react-color';
 import scrollIntoView from 'scroll-into-view';
-import { useSelector } from 'react-redux';
 import { Client } from 'interfaces/Client';
 import { updateClient } from 'services/AdminService';
 interface ClientDetailProps {
@@ -31,9 +29,6 @@ const ClientDetail: React.FC<ClientDetailProps> = ({
 }) => {
   const [form] = Form.useForm();
   const toFocus = useRef<any>();
-  const {
-    settings: { plan = [] },
-  } = useSelector((state: any) => state.settings);
 
   const handleFinishFailed = (errorFields: any[]) => {
     message.error('Error: ' + errorFields[0].errors[0]);
@@ -284,25 +279,3 @@ const ClientDetail: React.FC<ClientDetailProps> = ({
 };
 
 export default ClientDetail;
-
-const ColorPicker: React.FC<any> = props => {
-  const { onChange } = props;
-
-  const _onChange = input => {
-    onChange(input);
-    for (let i = 2; i < 12; i += 2) {
-      if (document.getElementById(`rc-editable-input-${i}`)) {
-        var picker: any = document.getElementById(`rc-editable-input-${i}`);
-        picker.value = input;
-        break;
-      }
-    }
-  };
-
-  return (
-    <TwitterPicker
-      width="100%"
-      onChangeComplete={(value: any) => _onChange(value.hex)}
-    />
-  );
-};
